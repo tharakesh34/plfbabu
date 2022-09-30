@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.eventproperties.service.EventPropertiesService;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.AmortizationConstants;
@@ -16,6 +19,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class EventPropertiesServiceImpl implements EventPropertiesService {
+	private FinanceMainDAO financeMainDAO;
 
 	public enum EventType {
 		EOD(1), PRESENTMENT_BATCH_APPROVE(2), PRESENTMENT_RESPONSE_UPLOAD(3);
@@ -33,7 +37,6 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 
 	@Override
 	public EventProperties getEventProperties(EventType type) {
-
 		switch (type.getValue()) {
 		case 1:
 			return getEODParameters();
@@ -132,6 +135,8 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		}
 		ep.setEntityCode(entityCode);
 
+		ep.setPresentmentExcludeBounce(financeMainDAO.getBounceForPD());
+
 		ep.setParameterLoaded(true);
 
 		return ep;
@@ -212,6 +217,11 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		setRoundingModes(ep);
 
 		return ep;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

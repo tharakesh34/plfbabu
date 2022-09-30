@@ -50,11 +50,12 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.financemanagement.presentmentheader.model.PresentmentHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -158,7 +159,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 			this.help.setVisible(false);
 		}
 
-		if (StringUtils.equals(mandateType.getSelectedItem().getValue(), MandateConstants.TYPE_EMANDATE)) {
+		if (InstrumentType.isEMandate(mandateType.getSelectedItem().getValue())) {
 			if (!this.emandateSource.getValidatedValue().isEmpty()) {
 				this.searchObject.addFilterIn("EMANDATESOURCE", this.emandateSource.getValidatedValue());
 			}
@@ -243,7 +244,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 
 		fillList(status, PennantStaticListUtil.getPresentmentBatchStatusList(), null);
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
 		fillComboBox(this.presentmentType, "", PennantStaticListUtil.getPresetmentTypeList(), "");
 		this.presentmentDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.schdate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -261,7 +262,8 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		logger.debug(Literal.ENTERING);
 
 		String code = mandateType.getSelectedItem().getValue();
-		if (MandateConstants.TYPE_EMANDATE.equals(code)) {
+
+		if (InstrumentType.isEMandate(code)) {
 			this.emandateSource.setValue("");
 			this.emandateSource.setDescColumn("");
 			emandateSource.setVisible(true);

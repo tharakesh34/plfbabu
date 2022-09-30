@@ -2781,20 +2781,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public List<Long> getFinanceMainbyCustId(long custId, String type) {
-		StringBuilder selectSql = new StringBuilder("Select FinID");
-		selectSql.append(" From FinanceMain");
-		if (StringUtils.isNotBlank(type)) {
-			selectSql.append(type);
-		}
-		selectSql.append(" Where CustID = ? And FinIsActive = ?");
-
-		logger.debug(Literal.SQL + selectSql.toString());
-
-		return this.jdbcOperations.queryForList(selectSql.toString(), Long.class, custId, 1);
-	}
-
-	@Override
 	public String getFinanceType(long finID, TableType tabeType) {
 		StringBuilder sql = new StringBuilder("Select FinType");
 		sql.append(" From FinanceMain");
@@ -6438,6 +6424,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 	}
 
+	@Override
 	public List<FinanceMain> getFinanceMainActiveList(Date fromDate, Date toDate, String finType) {
 		logger.debug(Literal.ENTERING);
 
@@ -6468,5 +6455,25 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		logger.debug(Literal.LEAVING);
 		return finMains;
+	}
+
+	@Override
+	public Map<Integer, String> getBounceForPD() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" pec.ExcludeID, br.BounceCode");
+		sql.append(" From Presentment_Exclude_Codes pec");
+		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
+		sql.append(" Where CreateBounceOnDueDate = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		Map<Integer, String> map = new HashMap<>();
+
+		return jdbcOperations.query(sql.toString(), (rs) -> {
+			while (rs.next()) {
+				map.put(rs.getInt(1), rs.getString(2));
+			}
+			return map;
+		}, 1);
 	}
 }

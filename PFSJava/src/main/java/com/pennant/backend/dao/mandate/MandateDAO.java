@@ -29,13 +29,13 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public interface MandateDAO {
-	Mandate getMandate();
-
-	Mandate getNewMandate();
 
 	Mandate getMandateById(Long id, String type);
+
+	Mandate getMandateByFinReference(String finReference, String type);
 
 	Mandate getMandateByStatus(long id, String status, String type);
 
@@ -57,7 +57,7 @@ public interface MandateDAO {
 
 	void updateOrgReferecne(long mandateID, String orgReference, String type);
 
-	Mandate getMandateByOrgReference(String orgReference, String status, String type);
+	Mandate getMandateByOrgReference(String orgReference, Boolean isSecurityMandate, String status, String type);
 
 	int getBranch(long bankBranchID, String type);
 
@@ -86,4 +86,27 @@ public interface MandateDAO {
 	int updateMandateStatus(Mandate mandate);
 
 	int getMandateByMandateRef(String mandateRef);
+
+	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status);
+
+	List<Mandate> getLoans(long custId, String finRepayMethod);
+
+	Mandate getEmployerDetails(long custID);
+
+	Mandate getLoanInfo(String finReference);
+
+	Mandate getLoanInfo(String orgReference, long custID);
+
+	List<Long> getFinanceMainbyCustId(long custId);
+
+	void holdMandate(long mandateId, long bounceId);
+
+	void unHoldMandate(long mandateId);
+
+	boolean isValidMandate(Long id);
+
+	String getCustCIF(Long id);
+
+	Mandate getMandateDetail(long mandateID);
+
 }

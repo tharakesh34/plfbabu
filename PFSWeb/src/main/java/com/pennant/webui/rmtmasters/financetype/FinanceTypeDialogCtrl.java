@@ -119,6 +119,8 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.PTCKeditor;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -1442,11 +1444,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDftTerms.setValue(finDftTerms);
 		if (aFinanceType.isNewRecord() && !isCopyProcess) {
 			// Select manual repay by default.
-			fillComboBox(this.cbfinRepayMethod, FinanceConstants.REPAYMTH_MANUAL,
-					PennantStaticListUtil.getRepayMethods(), "");
+			fillComboBox(this.cbfinRepayMethod, InstrumentType.MANUAL.name(), MandateUtil.getRepayMethods(), "");
 		} else {
-			fillComboBox(this.cbfinRepayMethod, aFinanceType.getFinRepayMethod(),
-					PennantStaticListUtil.getRepayMethods(), "");
+			fillComboBox(this.cbfinRepayMethod, aFinanceType.getFinRepayMethod(), MandateUtil.getRepayMethods(), "");
 		}
 		boolean isAlwPartialRpy = aFinanceType.isFinIsAlwPartialRpy();
 		if (isOverdraft) {
@@ -7632,23 +7632,31 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onClick$btnSearchRpyMethod(Event event) {
-		logger.debug("Entering  " + event.toString());
+		logger.debug(Literal.ENTERING);
+
 		this.allowedRpyMethods.setErrorMessage("");
+
 		Clients.clearWrongValue(this.btnSearchRpyMethod);
+
 		String selectedValues = (String) MultiSelectionStaticListBox.show(this.window_FinanceTypeDialog,
 				"RepaymentMethod", allowedRpyMethods.getValue());
-		if (selectedValues != null) {
-			allowedRpyMethods.setValue(selectedValues);
-			if (StringUtils.isNotBlank(selectedValues)) {
-				List<String> repayMethodList = Arrays.asList(selectedValues.split(","));
-				if (!repayMethodList.contains(this.cbfinRepayMethod.getSelectedItem().getValue().toString())) {
-					fillComboBox(this.cbfinRepayMethod, "", PennantStaticListUtil.getRepayMethods(), "");
-				}
-			} else {
-				fillComboBox(this.cbfinRepayMethod, "", PennantStaticListUtil.getRepayMethods(), "");
-			}
+
+		if (selectedValues == null) {
+			return;
 		}
-		logger.debug("Leaving  " + event.toString());
+
+		allowedRpyMethods.setValue(selectedValues);
+
+		if (StringUtils.isNotBlank(selectedValues)) {
+			List<String> repayMethodList = Arrays.asList(selectedValues.split(","));
+			if (!repayMethodList.contains(this.cbfinRepayMethod.getSelectedItem().getValue().toString())) {
+				fillComboBox(this.cbfinRepayMethod, "", MandateUtil.getRepayMethods(), "");
+			}
+		} else {
+			fillComboBox(this.cbfinRepayMethod, "", MandateUtil.getRepayMethods(), "");
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnFrequencyRate(Event event) {

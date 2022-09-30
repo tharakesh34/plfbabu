@@ -159,7 +159,6 @@ import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
@@ -167,6 +166,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.AgreementGeneration;
 import com.pennanttech.framework.security.core.User;
@@ -178,7 +178,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -637,53 +636,48 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	private void validateChequeDetails(FinanceDetail fd) {
-		FinScheduleData schdData = fd.getFinScheduleData();
-
-		ChequeHeader ch = fd.getChequeHeader();
-		List<ChequeDetail> cdList = ch.getChequeDetailList();
-
-		String[] valueParm = new String[2];
 		boolean date = true;
+		FinScheduleData schdData = fd.getFinScheduleData();
+		ChequeHeader ch = fd.getChequeHeader();
+		List<ChequeDetail> cheques = ch.getChequeDetailList();
 
-		for (ChequeDetail cd : cdList) {
-			if (!FinanceConstants.REPAYMTH_PDC.equals(cd.getChequeType())) {
+		for (ChequeDetail cheque : cheques) {
+			if (!InstrumentType.isPDC(cheque.getChequeType())) {
 				continue;
 			}
 
-			List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+			List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 			for (FinanceScheduleDetail fsd : schedules) {
-				if (DateUtil.compare(fsd.getSchDate(), cd.getChequeDate()) == 0) {
-					date = true;
-					cd.seteMIRefNo(fsd.getInstNumber());
-					if (fsd.getRepayAmount().compareTo(cd.getAmount()) == 0) {
-						break;
-					}
 
-					String schDate = DateUtil.format(fsd.getSchDate(), DateFormat.FULL_DATE);
-
-					valueParm[0] = "Cheque Date " + schDate;
-					valueParm[1] = String.valueOf("Amount :" + fsd.getRepayAmount() + "INR");
-
-					schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
-
-					return;
-				} else {
+				if (DateUtil.compare(fsd.getSchDate(), cheque.getChequeDate()) != 0) {
 					date = false;
+					continue;
 				}
-			}
 
-			if (date) {
+				date = true;
+				cheque.seteMIRefNo(fsd.getInstNumber());
+
+				if (fsd.getRepayAmount().compareTo(cheque.getAmount()) == 0) {
+					break;
+				}
+
+				String[] valueParm = new String[2];
+				valueParm[0] = "Cheque Date " + new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
+				valueParm[1] = String.valueOf("Amount :" + fsd.getRepayAmount() + "INR");
+				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 				return;
 			}
 
+			if (date) {
+				continue;
+			}
+
+			String[] valueParm = new String[2];
 			valueParm[0] = "Cheque Date";
 			valueParm[1] = "ScheduleDates";
 			schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
-
-			return;
+			break;
 		}
-
-		return;
 	}
 
 	private WSReturnStatus prepareAgrrementDetails(AuditHeader auditHeader) {
@@ -1714,9 +1708,14 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		// set's the default chequeHeader to the financeDetail if chequeCapture
 		// is required.
-		if (MandateConstants.TYPE_PDC.equals(fm.getFinRepayMethod()) || finType.isChequeCaptureReq()) {
+		if (InstrumentType.isPDC(fm.getFinRepayMethod()) || finType.isChequeCaptureReq()) {
 			doSetDefaultChequeHeader(fd, moveLoanStage);
 		}
+
+		if (fd.getChequeHeader() != null) {
+			prepareCheques(fd, userDetails, stp, moveLoanStage);
+		}
+
 		doProcessOCRDetails(fd, userDetails);
 
 		// Covenants
@@ -2952,7 +2951,16 @@ public class CreateFinanceController extends SummaryDetailService {
 		} else {
 			auditHeader = getAuditHeader(fd.getMandate(), PennantConstants.TRAN_ADD);
 		}
-		finMandateService.saveOrUpdate(fd, auditHeader, type);
+
+		if (fd.getMandate() != null) {
+			Mandate mandate = fd.getMandate();
+			finMandateService.saveOrUpdate(fm, mandate, auditHeader, type);
+		}
+
+		if (fd.getSecurityMandate() != null) {
+			Mandate mandate = fd.getSecurityMandate();
+			finMandateService.saveOrUpdate(fm, mandate, auditHeader, type);
+		}
 
 		if (extMandateId == Long.MIN_VALUE || extMandateId == 0) {
 			Long mandateId = fm.getMandateID();
@@ -4416,6 +4424,62 @@ public class CreateFinanceController extends SummaryDetailService {
 		auditHeader.setAuditSessionID(userDetails.getSessionId());
 		auditHeader.setUsrLanguage(userDetails.getLanguage());
 		return auditHeader;
+	}
+
+	private void prepareCheques(FinanceDetail fd, LoggedInUser loggedInUser, boolean stp, boolean moveLoanStage) {
+		ChequeHeader ch = fd.getChequeHeader();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		ch.setTotalAmount(BigDecimal.ZERO);
+		ch.setFinID(fm.getFinID());
+		ch.setFinReference(fm.getFinReference());
+		ch.setActive(true);
+		ch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		ch.setLastMntBy(loggedInUser.getUserId());
+		ch.setRecordStatus(moveLoanStage ? fm.getRecordStatus() : getRecordStatus(fm.isQuickDisb(), stp));
+		ch.setVersion(1);
+		ch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		ch.setTaskId(fm.getTaskId());
+		ch.setNextTaskId(fm.getNextTaskId());
+		ch.setRoleCode(fm.getRoleCode());
+		ch.setNextRoleCode(fm.getNextRoleCode());
+		ch.setWorkflowId(fm.getWorkflowId());
+		ch.setNewRecord(true);
+
+		BigDecimal totalChequeAmount = BigDecimal.ZERO;
+		int chequeSerialNum = ch.getChequeSerialNo();
+
+		List<ChequeDetail> cheques = ch.getChequeDetailList();
+
+		String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+
+		for (ChequeDetail cheque : cheques) {
+			cheque.setChequeSerialNo(chequeSerialNum++);
+			cheque.setBankBranchID(ch.getBankBranchID());
+			cheque.setAccHolderName(ch.getAccHolderName());
+			cheque.setAccountNo(ch.getAccountNo());
+			cheque.setStatus(PennantConstants.CHEQUESTATUS_NEW);
+			cheque.setChequeStatus(PennantConstants.CHEQUESTATUS_NEW);
+			cheque.setChequeCcy(ccy);
+			cheque.setActive(true);
+			cheque.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			cheque.setLastMntBy(loggedInUser.getUserId());
+			cheque.setRecordStatus(moveLoanStage ? fm.getRecordStatus() : getRecordStatus(fm.isQuickDisb(), stp));
+			cheque.setVersion(2);
+			cheque.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			cheque.setTaskId(fm.getTaskId());
+			cheque.setNextTaskId(fm.getNextTaskId());
+			cheque.setRoleCode(fm.getRoleCode());
+			cheque.setNextRoleCode(fm.getNextRoleCode());
+			cheque.setWorkflowId(fm.getWorkflowId());
+			cheque.setNewRecord(true);
+
+			totalChequeAmount = totalChequeAmount.add(cheque.getAmount());
+		}
+
+		ch.setTotalAmount(totalChequeAmount);
 	}
 
 	protected String getTaskAssignmentMethod(String taskId) {

@@ -29,9 +29,11 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -40,8 +42,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.MandateCheckDigitDAO;
@@ -53,19 +57,24 @@ import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.mandate.MandateStatusUpdateDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
-import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -73,15 +82,17 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.external.MandateProcesses;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
-/**
- * Service implementation for methods that depends on <b>Mandate</b>.<br>
- * 
- */
 public class MandateServiceImpl extends GenericService<Mandate> implements MandateService {
 	private static final Logger logger = LogManager.getLogger(MandateServiceImpl.class);
 
@@ -96,27 +107,19 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
+	private BankBranchService bankBranchService;
+	private BankDetailService bankDetailService;
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table Mandates/Mandates_Temp by using
-	 * MandateDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by using
-	 * MandateDAO's update method 3) Audit the record in to AuditHeader and AdtMandates by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
+
 		String tableType = "";
 		Mandate mandate = (Mandate) auditHeader.getAuditDetail().getModelData();
 
@@ -126,102 +129,62 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		if (mandate.isNewRecord()) {
 			getDocument(mandate);
-			mandate.setId(getMandateDAO().save(mandate, tableType));
+			mandate.setMandateID(mandateDAO.save(mandate, tableType));
 			auditHeader.getAuditDetail().setModelData(mandate);
 			auditHeader.setAuditReference(String.valueOf(mandate.getMandateID()));
 		} else {
 			getDocument(mandate);
-			getMandateDAO().update(mandate, tableType);
+			mandateDAO.update(mandate, tableType);
+
 			if (StringUtils.trimToEmpty(mandate.getModule()).equals(MandateConstants.MODULE_REGISTRATION)) {
-				MandateStatus mandateStatus = new MandateStatus();
+				com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 				mandateStatus.setMandateID(mandate.getMandateID());
 				mandateStatus.setStatus(mandate.getStatus());
 				mandateStatus.setReason(mandate.getReason());
 				mandateStatus.setChangeDate(mandate.getInputDate());
-				getMandateStatusDAO().save(mandateStatus, "");
+				mandateStatusDAO.save(mandateStatus, "");
 			}
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * Mandates by using MandateDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtMandates by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		Mandate mandate = (Mandate) auditHeader.getAuditDetail().getModelData();
-		getMandateDAO().delete(mandate, "");
+		mandateDAO.delete(mandate, "");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * getMandateById fetch the details by using MandateDAO's getMandateById method.
-	 * 
-	 * @param id   (int)
-	 * @param type (String) ""/_Temp/_View
-	 * @return Mandate
-	 */
-
 	@Override
 	public Mandate getMandateById(long id) {
-		return getMandateDAO().getMandateById(id, "_View");
+		return mandateDAO.getMandateById(id, "_View");
 	}
 
 	@Override
 	public Mandate getMandateStatusUpdateById(long id, String status) {
-		return getMandateDAO().getMandateByStatus(id, status, "_View");
+		return mandateDAO.getMandateByStatus(id, status, "_View");
 	}
-
-	/**
-	 * getApprovedMandateById fetch the details by using MandateDAO's getMandateById method . with parameter id and type
-	 * as blank. it fetches the approved records from the Mandates.
-	 * 
-	 * @param id (int)
-	 * @return Mandate
-	 */
 
 	public Mandate getApprovedMandateById(long id) {
-		return getMandateDAO().getMandateById(id, "_AView");
+		return mandateDAO.getMandateById(id, "_AView");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getMandateDAO().delete with parameters
-	 * mandate,"" b) NEW Add new record in to main table by using getMandateDAO().save with parameters mandate,"" c)
-	 * EDIT Update record in the main table by using getMandateDAO().update with parameters mandate,"" 3) Delete the
-	 * record from the workFlow table by using getMandateDAO().delete with parameters mandate,"_Temp" 4) Audit the
-	 * record in to AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
-	 * Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
@@ -234,14 +197,14 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			// For Mandate deletion is not required , so make it as inActive
-			getMandateDAO().updateActive(mandate.getMandateID(), MandateConstants.STATUS_CANCEL, false);
+			mandateDAO.updateActive(mandate.getMandateID(), com.pennant.pff.mandate.MandateStatus.CANCEL, false);
 
-			MandateStatus mandateStatus = new MandateStatus();
+			com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 			mandateStatus.setMandateID(mandate.getMandateID());
-			mandateStatus.setStatus(MandateConstants.STATUS_CANCEL);
+			mandateStatus.setStatus(MandateStatus.CANCEL);
 			mandateStatus.setReason(mandate.getReason());
 			mandateStatus.setChangeDate(mandate.getInputDate());
-			getMandateStatusDAO().save(mandateStatus, "");
+			mandateStatusDAO.save(mandateStatus, "");
 
 		} else {
 			mandate.setRoleCode("");
@@ -251,37 +214,45 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			mandate.setWorkflowId(0);
 
 			boolean isApproved = false;
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_APPROVED)) {
+
+			if (MandateStatus.isApproved(mandate.getStatus())) {
 				isApproved = true;
 			}
 
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_RELEASE)) {
-				mandate.setStatus(MandateConstants.STATUS_APPROVED);
-			} else if (!StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
-				mandate.setStatus(MandateConstants.STATUS_NEW);
+			if (MandateStatus.isRelease(mandate.getStatus())) {
+				mandate.setStatus(MandateStatus.APPROVED);
+			} else if (!MandateStatus.isHold(mandate.getStatus())) {
+				mandate.setStatus(MandateStatus.NEW);
 			}
 
 			if (isApproved) {
-				mandate.setStatus(MandateConstants.STATUS_APPROVED);
-			}
-
-			if (isApproved) {
-				mandate.setStatus(MandateConstants.STATUS_APPROVED);
+				mandate.setStatus(MandateStatus.APPROVED);
 			}
 
 			if (StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
 				if (mandate.isApproveMandate()) {
-					mandate.setStatus(MandateConstants.STATUS_APPROVED);
+					mandate.setStatus(MandateStatus.APPROVED);
 				} else {
-					mandate.setStatus(MandateConstants.STATUS_NEW);
+					mandate.setStatus(MandateStatus.NEW);
 				}
 			}
-			if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, mandate.getMandateType())) {
+
+			String mandateType = mandate.getMandateType();
+			InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
+			switch (instrumentType) {
+			case EMANDATE:
+			case DAS:
+			case SI:
 				if (StringUtils.isNotBlank(mandate.getMandateRef())) {
-					mandate.setStatus(MandateConstants.STATUS_APPROVED);
+					mandate.setStatus(MandateStatus.APPROVED);
 				} else {
-					mandate.setStatus(MandateConstants.STATUS_AWAITCON);
+					mandate.setStatus(MandateStatus.AWAITCON);
 				}
+
+				break;
+
+			default:
+				break;
 			}
 
 			getDocument(mandate);
@@ -289,23 +260,21 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				mandate.setRecordType("");
-				mandate.setMandateID(getMandateDAO().save(mandate, ""));
+				mandate.setMandateID(mandateDAO.save(mandate, ""));
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				mandate.setRecordType("");
-				getMandateDAO().update(mandate, "");
+				mandateDAO.update(mandate, "");
 				mandate.setModificationDate(new Timestamp(System.currentTimeMillis()));
 			}
 
-			MandateStatus mandateStatus = new MandateStatus();
+			com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 			mandateStatus.setMandateID(mandate.getMandateID());
 			mandateStatus.setStatus(mandate.getStatus());
 			mandateStatus.setReason(mandate.getReason());
 			mandateStatus.setChangeDate(mandate.getInputDate());
 
-			getMandateStatusDAO().save(mandateStatus, "");
-
-			// Mandate Registration purpose
+			mandateStatusDAO.save(mandateStatus, "");
 
 			try {
 
@@ -325,14 +294,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 				boolean register = getMandateProcess().registerMandate(mandate);
 				if (register) {
-					mandate.setStatus(MandateConstants.STATUS_INPROCESS);
-					getMandateDAO().updateStatusAfterRegistration(mandate.getMandateID(),
-							MandateConstants.STATUS_INPROCESS);
+					mandate.setStatus(MandateStatus.INPROCESS);
+					mandateDAO.updateStatusAfterRegistration(mandate.getMandateID(), MandateStatus.INPROCESS);
 					mandateStatus.setMandateID(mandate.getMandateID());
 					mandateStatus.setStatus(mandate.getStatus());
 					mandateStatus.setReason(mandate.getReason());
 					mandateStatus.setChangeDate(mandate.getInputDate());
-					getMandateStatusDAO().save(mandateStatus, "");
+					mandateStatusDAO.save(mandateStatus, "");
 				}
 
 			} catch (Exception e) {
@@ -343,33 +311,23 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		if ((!StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)
 				&& !mandate.isSecondaryMandate())) {
-			getMandateDAO().delete(mandate, "_Temp");
+			mandateDAO.delete(mandate, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getAuditHeaderDAO().addAudit(auditHeader);
+			auditHeaderDAO.addAudit(auditHeader);
 		}
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(mandate);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getMandateDAO().delete with parameters mandate,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
@@ -378,41 +336,33 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		Mandate mandate = (Mandate) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getMandateDAO().delete(mandate, "_Temp");
+		mandateDAO.delete(mandate, "_Temp");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
-	 * assign the to auditHeader 3) identify the nextprocess
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
-
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	public List<ErrorDetail> doValidations(Mandate mandate) {
 		List<ErrorDetail> details = new ArrayList<>();
+
 		if (StringUtils.isNotBlank(mandate.getBarCodeNumber())) {
 			Pattern pattern = Pattern
 					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_BARCODE_NUMBER));
 			Matcher matcher = pattern.matcher(mandate.getBarCodeNumber());
 
-			if (matcher.matches() == false) {
+			if (matcher.matches()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = mandate.getBarCodeNumber();
 				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("barCodeNumber", "90404", valueParm, valueParm)));
@@ -425,11 +375,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			Matcher matcher = pattern.matcher(mandate.getAccHolderName());
 
 			if (!matcher.matches()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "AccHolderName";
-				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
+				details.add(getError("90502", "AccHolderName"));
 			}
 		}
+
 		if (!StringUtils.isBlank(mandate.getJointAccHolderName())) {
 			Pattern pattern = Pattern.compile(
 					PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
@@ -437,70 +386,45 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			Matcher matcher = pattern.matcher(mandate.getJointAccHolderName());
 
 			if (!matcher.matches()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "JointAccHolderName";
-				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN"));
+				details.add(getError("90237", "JointAccHolderName"));
 			}
 		}
-		return details;
 
+		return details;
 	}
 
-	/**
-	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
-	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from getMandateDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
-
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		Mandate mandate = (Mandate) auditDetail.getModelData();
 
 		Mandate tempMandate = null;
 		if (mandate.isWorkflow()) {
-			tempMandate = getMandateDAO().getMandateById(mandate.getId(), "_Temp");
+			tempMandate = mandateDAO.getMandateById(mandate.getMandateID(), "_Temp");
 		}
-		Mandate befMandate = getMandateDAO().getMandateById(mandate.getId(), "");
+		Mandate befMandate = mandateDAO.getMandateById(mandate.getMandateID(), "");
 
 		Mandate oldMandate = mandate.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(mandate.getId());
+		valueParm[0] = String.valueOf(mandate.getMandateID());
 		errParm[0] = PennantJavaUtil.getLabel("label_MandateID") + ":" + valueParm[0];
 
-		if (mandate.isNewRecord()) { // for New record or new record into work flow
+		if (mandate.isNewRecord()) {
 
-			if (!mandate.isWorkflow()) {// With out Work flow only new records
-				if (befMandate != null) { // Record Already Exists in the table
-											// then error
+			if (!mandate.isWorkflow()) {
+				if (befMandate != null) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
-			} else { // with work flow
-				if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																						// records
-																						// type
-																						// is
-																						// new
-					if (befMandate != null || tempMandate != null) { // if
-																		// records
-																		// already
-																		// exists
-																		// in
-																		// the
-																		// main
-																		// table
+			} else {
+				if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					if (befMandate != null || tempMandate != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				} else { // if records not exists in the Main flow table
+				} else {
 					if (befMandate == null || tempMandate != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
@@ -508,13 +432,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				}
 			}
 		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!mandate.isWorkflow()) { // With out Work flow for update and
-											// delete
+			if (!mandate.isWorkflow()) {
 
-				if (befMandate == null) { // if records not exists in the main
-											// table
+				if (befMandate == null) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -533,8 +453,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				}
 			} else {
 
-				if (tempMandate == null) { // if records not exists in the Work
-											// flow table
+				if (tempMandate == null) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -577,11 +496,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "90405", errParm1, valueParm1), usrLanguage));
 			}
-			/*
-			 * //BarCode Unique Validation int count = getMandateDAO().getBarCodeCount(barCode, mandate.getMandateID(),
-			 * "_View"); if (count > 0) { auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
-			 * ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm1, valueParm1), usrLanguage)); }
-			 */
+
 		}
 		List<ErrorDetail> errorDetails = ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage);
 		if (errorDetails != null) {
@@ -592,12 +507,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			auditDetail.setBefImage(befMandate);
 		}
 
-		if (!StringUtils.equals(mandate.getRecordType(), PennantConstants.RECORD_TYPE_NEW) && !((StringUtils
-				.equals(mandate.getStatus(), MandateConstants.STATUS_APPROVED)
-				|| (StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_REJECTED)
-						|| (StringUtils.equals(mandate.getStatus(), PennantConstants.List_Select)
-								|| (StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_HOLD))))))) {
-			boolean exists = getMandateDAO().checkMandateStatus(mandate.getMandateID());
+		String status = mandate.getStatus();
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(mandate.getRecordType()) && !((MandateStatus.isApproved(status)
+				|| (MandateStatus.isRejected(status))
+				|| (StringUtils.equals(status, PennantConstants.List_Select) || (MandateStatus.isHold(status)))))) {
+			boolean exists = mandateDAO.checkMandateStatus(mandate.getMandateID());
+
 			if (exists) {
 				String[] valueParm1 = new String[1];
 				valueParm1[0] = String.valueOf(mandate.getMandateID());
@@ -606,20 +521,16 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		}
 
-		if (StringUtils.equals(mandate.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
-				&& StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_INPROCESS)) {
+		if (PennantConstants.RECORD_TYPE_DEL.equals(mandate.getRecordType()) && MandateStatus.isInprocess(status)) {
 			String[] valueParm3 = new String[1];
 			valueParm3[0] = String.valueOf(mandate.getMandateID());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41023", valueParm3)));
 		}
 
-		if (!StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_INPROCESS)
-				&& !StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_NEW)
-				&& !mandate.isSecondaryMandate()
-				&& !((StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_APPROVED)
-						|| (StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_REJECTED))))
+		if (!MandateStatus.isInprocess(status) && !MandateStatus.isNew(status) && !mandate.isSecondaryMandate()
+				&& !((MandateStatus.isApproved(status) || (MandateStatus.isRejected(status))))
 				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
-			boolean exists = getMandateDAO().checkMandates(mandate.getOrgReference(), mandate.getMandateID());
+			boolean exists = mandateDAO.checkMandates(mandate.getOrgReference(), mandate.getMandateID());
 			if (exists) {
 				String[] valueParm2 = new String[1];
 				valueParm2[0] = String.valueOf(mandate.getOrgReference());
@@ -637,8 +548,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
-			if (mandate.getPartnerBankId() <= 0) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)
+				&& !(InstrumentType.isDAS(mandate.getMandateType()) || InstrumentType.isSI(mandate.getMandateType()))) {
+			if (mandate.getPartnerBankId() == null || mandate.getPartnerBankId() <= 0) {
 				String[] valueParm1 = new String[1];
 				valueParm1[0] = PennantJavaUtil.getLabel("label_MandateDialog_PartnerBank.value") + "Id";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm1)));
@@ -657,9 +569,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			}
 		}
 
-		// Business Validation for Default Mandate
 		if (mandate.isDefaultMandate()) {
-			if (getMandateDAO().getMandateCount(mandate.getCustID(), mandate.getMandateID()) >= 1) {
+			if (mandateDAO.getMandateCount(mandate.getCustID(), mandate.getMandateID()) >= 1) {
 				valueParm[0] = String.valueOf(mandate.getCustID());
 				errParm[0] = PennantJavaUtil.getLabel("label_MandateDialog_DefaultMandate.value") + ":" + valueParm[0];
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -667,7 +578,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			}
 		}
 
-		// Mandate Periodicity Validation
 		if (StringUtils.isEmpty(mandate.getOrgReference())) {
 			return auditDetail;
 		}
@@ -689,65 +599,68 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	public void processDownload(Mandate mandate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		getMandateDAO().updateStatus(mandate.getMandateID(), MandateConstants.STATUS_AWAITCON, mandate.getMandateRef(),
-				mandate.getApprovalID(), "");
-		MandateStatus mandateStatus = new MandateStatus();
-		mandateStatus.setMandateID(mandate.getMandateID());
-		mandateStatus.setStatus(MandateConstants.STATUS_AWAITCON);
+		long mandateID = mandate.getMandateID();
+		String approvalID = mandate.getApprovalID();
+
+		mandateDAO.updateStatus(mandateID, MandateStatus.AWAITCON, mandate.getMandateRef(), approvalID, "");
+		com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
+		mandateStatus.setMandateID(mandateID);
+		mandateStatus.setStatus(MandateStatus.AWAITCON);
 		mandateStatus.setReason("");
 		mandateStatus.setChangeDate(SysParamUtil.getAppDate());
-		getMandateStatusDAO().save(mandateStatus, "");
-		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_UPD);
-		getAuditHeaderDAO().addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		mandateStatusDAO.save(mandateStatus, "");
+		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_UPD);
+
+		auditHeaderDAO.addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void processFileUpload(Mandate mandate, String status, String reasons, long fileID) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		getMandateDAO().updateStatus(mandate.getMandateID(), status, mandate.getMandateRef(), mandate.getApprovalID(),
-				"");
-		MandateStatus mandateStatus = new MandateStatus();
+		mandateDAO.updateStatus(mandate.getMandateID(), status, mandate.getMandateRef(), mandate.getApprovalID(), "");
+
+		com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 		mandateStatus.setMandateID(mandate.getMandateID());
 		mandateStatus.setStatus(status);
 		mandateStatus.setReason(reasons);
 		mandateStatus.setFileID(fileID);
 		mandateStatus.setChangeDate(SysParamUtil.getAppDate());
-		getMandateStatusDAO().save(mandateStatus, "");
+
+		mandateStatusDAO.save(mandateStatus, "");
+
 		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_UPD);
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+
+		auditHeaderDAO.addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public long processStatusSave(MandateStatusUpdate mandateStatusUpdate) {
-		return getMandateStatusUpdateDAO().save(mandateStatusUpdate, "");
+		return mandateStatusUpdateDAO.save(mandateStatusUpdate, "");
 	}
 
 	public void processStatusUpdate(MandateStatusUpdate mandateStatusUpdate) {
-		getMandateStatusUpdateDAO().update(mandateStatusUpdate, "");
+		mandateStatusUpdateDAO.update(mandateStatusUpdate, "");
 	}
 
 	public List<FinanceEnquiry> getMandateFinanceDetailById(long id) {
-		return getMandateDAO().getMandateFinanceDetailById(id);
+		return mandateDAO.getMandateFinanceDetailById(id);
 	}
 
 	public int getFileCount(String fileName) {
-		return getMandateStatusUpdateDAO().getFileCount(fileName);
+		return mandateStatusUpdateDAO.getFileCount(fileName);
 	}
 
 	@Override
 	public List<Mandate> getApprovedMandatesByCustomerId(long custID) {
-		return getMandateDAO().getApprovedMandatesByCustomerId(custID, "_AView");
+		return mandateDAO.getApprovedMandatesByCustomerId(custID, "_AView");
 	}
 
-	/**
-	 * @param aAuthorizedSignatoryRepository
-	 * @param tranType
-	 * @return
-	 */
 	private AuditHeader getAuditHeader(Mandate aMandate, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aMandate.getBefImage(), aMandate);
 		return new AuditHeader(String.valueOf(aMandate.getMandateID()), null, null, null, auditDetail,
@@ -786,8 +699,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	@Override
 	public MandateCheckDigit getLookUpValueByCheckDigit(int rem) {
-
-		return getMandateCheckDigitDAO().getMandateCheckDigit(rem, "_View");
+		return mandateCheckDigitDAO.getMandateCheckDigit(rem, "_View");
 	}
 
 	private int checkSum(String barCode) {
@@ -854,115 +766,22 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		return valFrq;
 	}
 
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the mandateDAO
-	 */
-	public MandateDAO getMandateDAO() {
-		return mandateDAO;
-	}
-
-	/**
-	 * @param mandateDAO the mandateDAO to set
-	 */
-	public void setMandateDAO(MandateDAO mandateDAO) {
-		this.mandateDAO = mandateDAO;
-	}
-
-	/**
-	 * @return the mandate
-	 */
 	@Override
-	public Mandate getMandate() {
-		return getMandateDAO().getMandate();
+	public List<Mandate> getLoans(long custId, String finRepayMethod) {
+		List<Mandate> loans = mandateDAO.getLoans(custId, finRepayMethod);
+
+		return loans.stream().filter(fm -> fm.getAlwdRpyMethods().contains(finRepayMethod))
+				.collect(Collectors.toList());
 	}
 
-	/**
-	 * @return the mandateStatusDAO
-	 */
-	public MandateStatusDAO getMandateStatusDAO() {
-		return mandateStatusDAO;
-	}
-
-	/**
-	 * @param mandateStatusDAO the mandateStatusDAO to set
-	 */
-	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
-		this.mandateStatusDAO = mandateStatusDAO;
-	}
-
-	/**
-	 * mandateCheckDigitDAO
-	 * 
-	 * @return
-	 */
-	public MandateCheckDigitDAO getMandateCheckDigitDAO() {
-		return mandateCheckDigitDAO;
-	}
-
-	/**
-	 * 
-	 * @param mandateCheckDigitDAO
-	 */
-	public void setMandateCheckDigitDAO(MandateCheckDigitDAO mandateCheckDigitDAO) {
-		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
-	}
-
-	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
-		this.partnerBankDAO = partnerBankDAO;
+	@Override
+	public Mandate getEmployerDetails(long custID) {
+		return mandateDAO.getEmployerDetails(custID);
 	}
 
 	@Override
 	public int getSecondaryMandateCount(long mandateID) {
 		return mandateDAO.getSecondaryMandateCount(mandateID);
-	}
-
-	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
-		this.bankBranchDAO = bankBranchDAO;
-	}
-
-	private MandateProcesses getMandateProcess() {
-		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
-	}
-
-	public MandateStatusUpdateDAO getMandateStatusUpdateDAO() {
-		return mandateStatusUpdateDAO;
-	}
-
-	public void setMandateStatusUpdateDAO(MandateStatusUpdateDAO mandateStatusUpdateDAO) {
-		this.mandateStatusUpdateDAO = mandateStatusUpdateDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Autowired(required = false)
-	@Qualifier(value = "mandateProcesses")
-	public void setMandateProces(MandateProcesses mandateProcesses) {
-		this.mandateProcesses = mandateProcesses;
-	}
-
-	@Autowired
-	public void setDefaultMandateProcess(MandateProcesses defaultMandateProcess) {
-		this.defaultMandateProcess = defaultMandateProcess;
 	}
 
 	@Override
@@ -987,16 +806,428 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		return mandateDAO.updateMandateStatus(mandate);
 	}
 
-	public FinTypePartnerBankDAO getFinTypePartnerBankDAO() {
-		return finTypePartnerBankDAO;
-	}
-
-	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
-		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
+	@Override
+	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status) {
+		return mandateDAO.getPresentmentDetailsList(finreference, mandateID, status);
 	}
 
 	@Override
 	public int getMandateByMandateRef(String mandateRef) {
 		return mandateDAO.getMandateByMandateRef(mandateRef);
 	}
+
+	@Override
+	public ErrorDetail validate(FinanceDetail fd, String vldGroup) {
+		Mandate mandate = fd.getMandate();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String repaymentMethod = fm.getFinRepayMethod();
+
+		if (mandate == null && (!(InstrumentType.isManual(repaymentMethod) || InstrumentType.isPDC(repaymentMethod))
+				&& fd.isStp())) {
+			return ErrorUtil.getError("90502", "Mandate");
+		}
+
+		if (mandate == null) {
+			return null;
+		}
+		if (InstrumentType.isManual(repaymentMethod)) {
+			return ErrorUtil.getError("90329", "Mandate", "finRepayMethod is " + repaymentMethod);
+		}
+
+		ErrorDetail error = null;
+		if (mandate.isUseExisting()) {
+			error = validateExisting(fd, vldGroup);
+		} else {
+			error = validateNew(fd);
+		}
+
+		if (error != null) {
+			return error;
+		}
+
+		if (!InstrumentType.isEMandate(mandate.getMandateType())) {
+			return null;
+		}
+
+		if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
+			return ErrorUtil.getError("90502", "eMandateReferenceNo");
+		}
+
+		if (StringUtils.isBlank(mandate.geteMandateSource())) {
+			return ErrorUtil.getError("90502", "eMandateSource");
+		}
+
+		if (mandateDAO.validateEmandateSource(mandate.geteMandateSource()) == 0) {
+			return ErrorUtil.getError("90501", "eMandateSource" + mandate.geteMandateSource());
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validateNew(FinanceDetail fd) {
+		Mandate mandate = fd.getMandate();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		String repaymentMethod = fm.getFinRepayMethod();
+
+		mandate.setMandateID(Long.MIN_VALUE);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+			if (mandate.getPartnerBankId() <= 0) {
+				return ErrorUtil.getError("90502", "partnerBankId");
+			}
+
+			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
+			if (partnerBank == null) {
+				return ErrorUtil.getError("90263", "");
+			}
+		}
+
+		if (StringUtils.isBlank(mandate.getMandateType())) {
+			return ErrorUtil.getError("90502", "mandateType");
+		}
+
+		String ifsc = mandate.getIFSC();
+		String micr = mandate.getMICR();
+		if (StringUtils.isBlank(ifsc)
+				&& (StringUtils.isBlank(mandate.getBankCode()) || StringUtils.isBlank(mandate.getBranchCode()))) {
+			return ErrorUtil.getError("90313", "");
+		}
+
+		if (StringUtils.isBlank(mandate.getAccType())) {
+			return ErrorUtil.getError("90502", "accType");
+		}
+
+		if (StringUtils.isBlank(mandate.getAccNumber())) {
+			return ErrorUtil.getError("90502", "accNumber");
+		}
+
+		if (ImplementationConstants.ALLOW_BARCODE && StringUtils.isBlank(mandate.getBarCodeNumber())) {
+			return ErrorUtil.getError("90502", "BarCodeNumber");
+		}
+
+		if (mandate.getAccNumber().length() > 50) {
+			return ErrorUtil.getError("30568", "accNumber length", "50");
+		}
+
+		if (StringUtils.isBlank(mandate.getAccHolderName())) {
+			return ErrorUtil.getError("90502", "accHolderName");
+		}
+
+		if (mandate.getStartDate() == null) {
+			return ErrorUtil.getError("90502", "startDate");
+		}
+
+		if (!mandate.isOpenMandate()) {
+			if (mandate.getExpiryDate() == null) {
+				return ErrorUtil.getError("90502", "expiryDate");
+			}
+		} else {
+			if (mandate.getExpiryDate() != null) {
+				return ErrorUtil.getError("90329", "expiryDate", "open mandate");
+			}
+		}
+
+		if (StringUtils.isNotBlank(mandate.getBarCodeNumber())) {
+			Pattern pattern = Pattern
+					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_BARCODE_NUMBER));
+			Matcher matcher = pattern.matcher(mandate.getBarCodeNumber());
+
+			if (matcher.matches() == false) {
+				return ErrorUtil.getError("90404", "barCodeNumber", mandate.getBarCodeNumber());
+			}
+		}
+
+		if (mandate.getMaxLimit() == null) {
+			return ErrorUtil.getError("90242", "maxLimit");
+		}
+
+		if (mandate.getMaxLimit().compareTo(BigDecimal.ZERO) <= 0) {
+			return ErrorUtil.getError("91121", "maxLimit", "0");
+		}
+
+		Date dftAppEndDate = SysParamUtil.getValueAsDate(SMTParameterConstants.APP_DFT_END_DATE);
+		String strEndDate = DateUtil.formatToLongDate(dftAppEndDate);
+		if (mandate.getExpiryDate() != null) {
+			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
+					|| mandate.getExpiryDate().after(dftAppEndDate)) {
+				String strStartDate = DateUtil.formatToLongDate(DateUtil.addDays(mandate.getStartDate(), 1));
+
+				return ErrorUtil.getError("90318", "Mandate ExpiryDate", strStartDate, strEndDate);
+			}
+		}
+
+		if (mandate.getStartDate() != null) {
+			Date mandbackDate = DateUtil.addDays(SysParamUtil.getAppDate(),
+					-SysParamUtil.getValueAsInt(SMTParameterConstants.MANDATE_STARTDATE));
+			if (mandate.getStartDate().before(mandbackDate) || mandate.getStartDate().after(dftAppEndDate)) {
+				String strStartDate = DateUtil.formatToLongDate(mandbackDate);
+				return ErrorUtil.getError("90318", "mandate start date", strStartDate, strEndDate);
+			}
+		}
+
+		String bankCode = mandate.getBankCode();
+		String branchCode = mandate.getBranchCode();
+
+		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+		if (bankBranch.getError() != null) {
+			return bankBranch.getError();
+		}
+
+		mandate.setBankCode(bankBranch.getBankCode());
+		mandate.setMICR(bankBranch.getMICR());
+
+		if (!bankBranchService.validateBranchCode(bankBranch, mandate.getMandateType())) {
+			return ErrorUtil.getError("90333", mandate.getMandateType());
+		}
+
+		if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
+			BankDetail bankDetail = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+			if (bankDetail != null) {
+				int maxAccNoLength = bankDetail.getAccNoLength();
+				int minAccNoLength = bankDetail.getMinAccNoLength();
+				if (mandate.getAccNumber().length() < minAccNoLength
+						|| mandate.getAccNumber().length() > maxAccNoLength) {
+					String minChar = String.valueOf(minAccNoLength) + " characters";
+					String maxChar = String.valueOf(maxAccNoLength) + " characters";
+					return ErrorUtil.getError("BNK001", "AccountNumber(Mandate)", minChar, maxChar);
+				}
+			}
+		}
+
+		String mobileNumber = mandate.getPhoneNumber();
+		if (StringUtils.isNotBlank(mobileNumber) && !(mobileNumber.matches("\\d{10}"))) {
+			return ErrorUtil.getError("90278", "");
+		}
+
+		String accHolderRegix = "^$|^[A-Za-z]+[A-Za-z.\\s]*";
+
+		String accHolderName = mandate.getAccHolderName();
+		if (StringUtils.isNotBlank(accHolderName) && !(accHolderName.matches(accHolderRegix))) {
+			return ErrorUtil.getError("90237", "AccHolderName");
+		}
+
+		String jointAccHolderName = mandate.getJointAccHolderName();
+		if (StringUtils.isNotBlank(jointAccHolderName) && !(jointAccHolderName.matches(accHolderRegix))) {
+			return ErrorUtil.getError("90237", "JointAccHolderName");
+		}
+
+		if (StringUtils.isNotBlank(mandate.getMandateType())) {
+			List<ValueLabel> mandateType = MandateUtil.getInstrumentTypes();
+			boolean mandateTypeSts = false;
+			for (ValueLabel value : mandateType) {
+				if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
+					mandateTypeSts = true;
+					break;
+				}
+			}
+			if (!mandateTypeSts) {
+				return ErrorUtil.getError("90307", mandate.getMandateType());
+			}
+		}
+
+		if (StringUtils.isNotBlank(mandate.getAccType())) {
+			List<ValueLabel> accType = MandateUtil.getAccountTypes();
+			boolean accTypeSts = false;
+			for (ValueLabel value : accType) {
+				if (StringUtils.equals(value.getValue(), mandate.getAccType())) {
+					accTypeSts = true;
+					break;
+				}
+			}
+			if (!accTypeSts) {
+				return ErrorUtil.getError("90308", mandate.getAccType());
+			}
+		}
+
+		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
+			ErrorDetail error = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
+			if (error != null && StringUtils.isNotBlank(error.getCode())) {
+				return ErrorUtil.getError("90207", mandate.getPeriodicity());
+			}
+		} else {
+			mandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
+		}
+
+		if (StringUtils.isNotBlank(mandate.getStatus())) {
+			List<ValueLabel> status = MandateUtil.getMandateStatus();
+			boolean sts = false;
+			for (ValueLabel value : status) {
+				if (StringUtils.equals(value.getValue(), mandate.getStatus())) {
+					sts = true;
+					break;
+				}
+			}
+			if (!sts) {
+				return ErrorUtil.getError("90309", mandate.getStatus());
+			}
+		}
+
+		if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), repaymentMethod)) {
+			return ErrorUtil.getError("90311", repaymentMethod, mandate.getMandateType());
+		}
+
+		if (mandate.getDocImage() == null && StringUtils.isBlank(mandate.getExternalRef())) {
+			return ErrorUtil.getError("90123", "docContent", "docRefId");
+		} else if (StringUtils.isBlank(mandate.getDocumentName())) {
+			return ErrorUtil.getError("90502", "Document Name");
+		}
+
+		if (StringUtils.isNotBlank(mandate.getDocumentName())) {
+			String docName = mandate.getDocumentName().toLowerCase();
+			if (!docName.contains(".")) {
+				return ErrorUtil.getError("90291", mandate.getDocumentName());
+			}
+
+			if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
+				return ErrorUtil.getError("90502", "Document Name");
+			}
+
+			if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")
+					&& !docName.endsWith(".pdf")) {
+				return ErrorUtil.getError("90122", "Document Extension available ext are:JPG,JPEG,PNG,PDF ");
+			}
+		}
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+			if (mandate.getPartnerBankId() <= 0) {
+				return ErrorUtil.getError("90502", "partnerBankId");
+			} else {
+				PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
+				if (partnerBank == null) {
+					return ErrorUtil.getError("90263", "");
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validateExisting(FinanceDetail fd, String vldGroup) {
+		Mandate mandate = fd.getMandate();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String repaymentMethod = fm.getFinRepayMethod();
+
+		if (mandate.getMandateID() == Long.MIN_VALUE) {
+			return ErrorUtil.getError("90502", "MandateID");
+		}
+
+		Mandate curMandate = mandateDAO.getMandateById(mandate.getMandateID(), "_AView");
+		if (curMandate == null) {
+			return ErrorUtil.getError("90303", String.valueOf(mandate.getMandateID()));
+		}
+
+		String fmCustCIF = fm.getLovDescCustCIF();
+		if (!PennantConstants.VLD_UPD_LOAN.equals(vldGroup) && !curMandate.getCustCIF().equals(fmCustCIF)) {
+			return ErrorUtil.getError("90310", fmCustCIF, curMandate.getCustCIF());
+		}
+
+		if (curMandate.getCustID() != fm.getCustID()) {
+			return ErrorUtil.getError("90310", fmCustCIF, curMandate.getCustCIF());
+		}
+
+		if (!repaymentMethod.equalsIgnoreCase(curMandate.getMandateType())) {
+			return ErrorUtil.getError("90311", repaymentMethod, curMandate.getMandateType());
+		}
+
+		if (!(curMandate.isOpenMandate() || (curMandate.getOrgReference() == null))) {
+			return ErrorUtil.getError("90312", String.valueOf(mandate.getMandateID()));
+		}
+
+		if (!curMandate.isActive()) {
+			return ErrorUtil.getError("81004", "mandate:", String.valueOf(mandate.getMandateID()));
+		}
+
+		fd.setMandate(curMandate);
+		return null;
+	}
+
+	@Override
+	public long saveStatus(com.pennant.backend.model.mandate.MandateStatus mandateStatus) {
+		return mandateStatusDAO.save(mandateStatus, "");
+	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "mandateProcesses")
+	public void setMandateProces(MandateProcesses mandateProcesses) {
+		this.mandateProcesses = mandateProcesses;
+	}
+
+	@Autowired
+	public void setDefaultMandateProcess(MandateProcesses defaultMandateProcess) {
+		this.defaultMandateProcess = defaultMandateProcess;
+	}
+
+	@Autowired
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
+	@Autowired
+	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
+		this.mandateStatusDAO = mandateStatusDAO;
+	}
+
+	@Autowired
+	public void setMandateStatusUpdateDAO(MandateStatusUpdateDAO mandateStatusUpdateDAO) {
+		this.mandateStatusUpdateDAO = mandateStatusUpdateDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setMandateCheckDigitDAO(MandateCheckDigitDAO mandateCheckDigitDAO) {
+		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
+	}
+
+	@Autowired
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	@Autowired
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
+	}
+
+	@Autowired
+	public void setMandateProcesses(MandateProcesses mandateProcesses) {
+		this.mandateProcesses = mandateProcesses;
+	}
+
+	@Autowired
+	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
+		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
+	}
+
+	@Autowired
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
+	}
+
+	private MandateProcesses getMandateProcess() {
+		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
+	}
+
+	public void setBankBranchService(BankBranchService bankBranchService) {
+		this.bankBranchService = bankBranchService;
+	}
+
+	public void setBankDetailService(BankDetailService bankDetailService) {
+		this.bankDetailService = bankDetailService;
+	}
+
 }

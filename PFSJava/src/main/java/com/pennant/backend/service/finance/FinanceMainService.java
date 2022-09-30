@@ -52,8 +52,6 @@ public interface FinanceMainService {
 
 	List<Long> getFinIDList(String custCIF, String closingStatus);
 
-	List<Long> getFinanceMainbyCustId(long custID, String type);
-
 	FinanceMain getFinanceMainByFinRef(String finReference);
 
 	FinanceMain getFinanceMainByFinRef(long finID);
@@ -78,4 +76,5 @@ public interface FinanceMainService {
 
 	FinanceMain getFinanceMainForAdviseUpload(String finRefernce);
 
+	Long getFinID(String finReference, TableType tableType);
 }

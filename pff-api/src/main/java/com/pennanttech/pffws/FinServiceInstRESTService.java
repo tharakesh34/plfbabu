@@ -139,25 +139,25 @@ public interface FinServiceInstRESTService {
 	@Path("/loanInstructionService/updateCovenants")
 	public WSReturnStatus updateCovenants(FinanceDetail financeDetail) throws ServiceException;
 
+	@GET
+	@Path("/loanInstructionService/getChequeDetails/{finReference}")
+	public ChequeHeader getChequeDetails(@PathParam("finReference") String finReference);
+
 	@POST
 	@Path("/loanInstructionService/chequeDetailsMaintainence")
-	public WSReturnStatus saveChequeDetails(FinanceDetail financeDetail) throws ServiceException;
+	public WSReturnStatus saveChequeDetails(FinanceDetail financeDetail);
 
 	@POST
 	@Path("/loanInstructionService/createChequeDetails")
-	public WSReturnStatus createChequeDetails(FinanceDetail financeDetail) throws ServiceException;
+	public WSReturnStatus createChequeDetails(FinanceDetail financeDetail);
 
 	@POST
 	@Path("/loanInstructionService/updateChequeDetailsInMaintainence")
-	public WSReturnStatus updateChequeDetailsInMaintainence(FinanceDetail financeDetail) throws ServiceException;
+	public WSReturnStatus updateChequeDetailsInMaintainence(FinanceDetail financeDetail);
 
 	@POST
 	@Path("/loanInstructionService/updateChequeDetails")
-	public WSReturnStatus updateChequeDetails(FinanceDetail financeDetail) throws ServiceException;
-
-	@GET
-	@Path("/loanInstructionService/getChequeDetails/{finReference}")
-	public ChequeHeader getChequeDetails(@PathParam("finReference") String finReference) throws ServiceException;
+	public WSReturnStatus updateChequeDetails(FinanceDetail financeDetail);
 
 	@POST
 	@Path("/loanInstructionService/cancelDisbursementInstructions")

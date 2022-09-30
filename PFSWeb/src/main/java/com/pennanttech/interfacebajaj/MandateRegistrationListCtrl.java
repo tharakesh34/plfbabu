@@ -83,13 +83,13 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.MandateStatus;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -209,12 +209,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		// Register buttons and fields.
 		registerButton(button_MandateList_MandateSearch);
 
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
-		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
-		fillComboBox(this.status, "",
-				PennantStaticListUtil
-						.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS)),
-				Collections.singletonList(MandateConstants.STATUS_FIN));
+		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
+		fillComboBox(this.accType, "", MandateUtil.getAccountTypes(), "");
+		fillComboBox(this.status, "", MandateUtil.getMandateStatus(), Collections.singletonList(MandateStatus.FIN));
 
 		registerField("inputDate");
 
@@ -435,13 +432,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 			lc = new Listcell();
 			list_CheckBox = new Checkbox();
-			list_CheckBox.setValue(mandate.getId());
+			list_CheckBox.setValue(mandate.getMandateID());
 			list_CheckBox.addForward("onClick", self, "onClick_listCellCheckBox");
 			lc.appendChild(list_CheckBox);
 			if (listHeader_CheckBox_Comp.isChecked()) {
 				list_CheckBox.setChecked(true);
 			} else {
-				list_CheckBox.setChecked(mandateIdMap.containsKey(mandate.getId()));
+				list_CheckBox.setChecked(mandateIdMap.containsKey(mandate.getMandateID()));
 			}
 			lc.setParent(item);
 
@@ -462,8 +459,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(), PennantStaticListUtil
-					.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
+			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(), MandateUtil.getMandateStatus()));
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
 			lc.setParent(item);
@@ -472,7 +468,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			lc = new Listcell(PennantJavaUtil.getLabel(mandate.getRecordType()));
 			lc.setParent(item);
 
-			item.setAttribute("id", mandate.getId());
+			item.setAttribute("id", mandate.getMandateID());
 
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onMandateItemDoubleClicked");
 		}
@@ -494,7 +490,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			Filter filter = searchControl.getFilter();
 			if (filter != null) {
 				if (filter.getProperty().equals("accType")) {
-					List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
+					List<ValueLabel> accTypeList = MandateUtil.getAccountTypes();
 					for (ValueLabel valueLabel : accTypeList) {
 						if (valueLabel.getValue().equals(filter.getValue())) {
 							filter.setValue(valueLabel.getLabel());
@@ -606,7 +602,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			if (filter != null) {
 
 				if (filter.getProperty().equals("accType")) {
-					List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
+					List<ValueLabel> accTypeList = MandateUtil.getAccountTypes();
 					for (ValueLabel valueLabel : accTypeList) {
 						if (valueLabel.getValue().equals(filter.getValue())) {
 							filter.setValue(valueLabel.getLabel());

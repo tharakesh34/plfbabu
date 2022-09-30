@@ -700,6 +700,12 @@ public class PennantJavaUtil {
 						new String[] { "EmployerDetail", "EmployerDetail_AView" }, masterWF,
 						new String[] { "EmpName", "EmpIndustry" }, new Object[][] { { "EmpIsActive", "0", 1 } }, 350));
 
+		ModuleUtil.register("EmployerDetails",
+				new ModuleMapping("EmployerDetail", EmployerDetail.class,
+						new String[] { "EmployerDetail", "EmployerDetail_AView" }, masterWF,
+						new String[] { "EmployerId", "EmpName", "EmpIndustry" },
+						new Object[][] { { "EmpIsActive", "0", 1 } }, 350));
+
 		ModuleUtil.register("EmploymentType", new ModuleMapping("EmploymentType", EmploymentType.class,
 				new String[] { "RMTEmpTypes", "RMTEmpTypes_AView" }, masterWF,
 				new String[] { "EmpType", "EmpTypeDesc" }, new Object[][] { { "EmpTypeIsActive", "0", 1 } }, 300));

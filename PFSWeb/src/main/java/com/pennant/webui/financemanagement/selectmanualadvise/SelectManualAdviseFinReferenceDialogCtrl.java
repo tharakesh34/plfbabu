@@ -274,11 +274,14 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 			}
 
 		} else {
-			FinanceMain financeMain = manualAdviseService.getFinanceDetails(finID);
+			FinanceMain fm = manualAdviseService.getFinanceDetails(finID);
+
+			manualAdvise.setFinID(finID);
+			manualAdvise.setFinReference(fm.getFinReference());
 
 			arg.put("manualAdvise", manualAdvise);
 			arg.put("manualAdviseListCtrl", manualAdviseListCtrl);
-			arg.put("financeMain", financeMain);
+			arg.put("financeMain", fm);
 			arg.put("module", this.module);
 			try {
 				Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul",

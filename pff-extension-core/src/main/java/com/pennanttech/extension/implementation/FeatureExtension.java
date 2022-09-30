@@ -57,7 +57,9 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("MANDATE_PTNRBNK_IN_DWNLD", false);
 
-		customConstants.put("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", true);
+		customConstants.put("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
+
+		customConstants.put("INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
 
 		customConstants.put("GROUP_BATCH_BY_PARTNERBANK", true);
 

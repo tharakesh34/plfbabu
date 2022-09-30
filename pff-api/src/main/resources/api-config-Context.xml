@@ -108,7 +108,7 @@
 
 	<!-- Mandate controller -->
 	<bean id="mandateController" class="com.pennanttech.controller.MandateController" autowire="byName"
-		scope="prototype">
+		scope="prototype" parent="absractController">
 	</bean>
 
 	<!-- Limit service controller -->

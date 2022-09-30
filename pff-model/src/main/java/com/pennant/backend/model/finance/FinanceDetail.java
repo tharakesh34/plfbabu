@@ -197,6 +197,8 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private FinRepayHeader finRepayHeader;
 	@XmlElement(name = "mandateDetail")
 	private Mandate mandate;
+	@XmlElement(name = "securityMandateDetail")
+	private Mandate securityMandate;
 	@XmlElement(name = "taxDetail")
 	private FinanceTaxDetail financeTaxDetail;
 	@XmlElementWrapper(name = "financeFlags")
@@ -1657,5 +1659,13 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 
 	public void setPaymentMode(String paymentMode) {
 		this.paymentMode = paymentMode;
+	}
+
+	public Mandate getSecurityMandate() {
+		return securityMandate;
+	}
+
+	public void setSecurityMandate(Mandate securityMandate) {
+		this.securityMandate = securityMandate;
 	}
 }

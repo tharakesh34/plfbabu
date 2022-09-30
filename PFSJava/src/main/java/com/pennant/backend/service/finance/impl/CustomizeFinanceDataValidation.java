@@ -33,7 +33,7 @@ import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -343,7 +343,7 @@ public class CustomizeFinanceDataValidation {
 
 				// validate MandateType
 				if (StringUtils.isNotBlank(mandate.getMandateType())) {
-					List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
+					List<ValueLabel> mandateType = MandateUtil.getInstrumentTypes();
 					boolean mandateTypeSts = false;
 					for (ValueLabel value : mandateType) {
 						if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
@@ -360,7 +360,7 @@ public class CustomizeFinanceDataValidation {
 
 				// validate AccType
 				if (StringUtils.isNotBlank(mandate.getAccType())) {
-					List<ValueLabel> accType = PennantStaticListUtil.getAccTypeList();
+					List<ValueLabel> accType = MandateUtil.getAccountTypes();
 					boolean accTypeSts = false;
 					for (ValueLabel value : accType) {
 						if (StringUtils.equals(value.getValue(), mandate.getAccType())) {
@@ -389,8 +389,7 @@ public class CustomizeFinanceDataValidation {
 
 				// validate status
 				if (StringUtils.isNotBlank(mandate.getStatus())) {
-					List<ValueLabel> status = PennantStaticListUtil
-							.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+					List<ValueLabel> status = MandateUtil.getMandateStatus();
 					boolean sts = false;
 					for (ValueLabel value : status) {
 						if (StringUtils.equals(value.getValue(), mandate.getStatus())) {

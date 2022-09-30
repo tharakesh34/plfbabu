@@ -272,7 +272,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		} else {
-			BankDetail bankDetail = bankDetailDAO.getAccNoLengthByCode(customerBankInfo.getBankName(), "");
+			BankDetail bankDetail = bankDetailDAO.getAccNoLengthByCode(customerBankInfo.getBankName());
 			if (bankDetail != null) {
 				int maxAccNoLength = bankDetail.getAccNoLength();
 				int minAccNoLength = bankDetail.getMinAccNoLength();

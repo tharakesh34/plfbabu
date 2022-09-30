@@ -661,7 +661,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			errors.append("Repayment from is Mandatory;");
 		}
 
-		BankDetail bd = bankDetailDAO.getAccNoLengthByCode(ce.getRepayBank(), "");
+		BankDetail bd = bankDetailDAO.getAccNoLengthByCode(ce.getRepayBank());
 		if (bd == null) {
 			errors.append("Given Repayment from is not valid;");
 		}

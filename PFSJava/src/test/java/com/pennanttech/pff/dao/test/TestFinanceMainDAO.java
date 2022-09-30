@@ -207,9 +207,6 @@ public class TestFinanceMainDAO {
 		financeMainDAO.isDeveloperFinance(5353, "", true);
 		financeMainDAO.isDeveloperFinance(500, "", false);
 
-		financeMainDAO.getFinanceMainbyCustId(1463, "");
-		financeMainDAO.getFinanceMainbyCustId(1, "_Temp");
-
 		// financeMainDAO.getFinanceTypeFinReference(5354, ""); // method removed in dao impl
 		// financeMainDAO.getFinanceTypeFinReference(500, ""); // method removed in dao impl
 

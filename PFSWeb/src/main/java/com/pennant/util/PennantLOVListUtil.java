@@ -6,6 +6,7 @@ import java.util.Map;
 import com.pennant.backend.model.ModuleListcode;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.MandateUtil;
 
 public class PennantLOVListUtil {
 
@@ -23,8 +24,7 @@ public class PennantLOVListUtil {
 							PennantStaticListUtil.getEarlyPayEffectOn(),
 							getHeadings(new String[] { "EarlyPayMethod_Code", "EarlyPayMethod_Desc" })));
 			put("RepaymentMethod",
-					new ModuleListcode("RepaymentMethod", getHeading("Repayment Method"),
-							PennantStaticListUtil.getRepayMethods(),
+					new ModuleListcode("RepaymentMethod", getHeading("Repayment Method"), MandateUtil.getRepayMethods(),
 							getHeadings(new String[] { "label_RepayMethod", "label_RepayMethodDesc" })));
 			put("FrequencyDaysMethod", new ModuleListcode("FrequencyDaysMethod", getHeading("Frequency Days Method"),
 					PennantStaticListUtil.getFrequencyDays(),

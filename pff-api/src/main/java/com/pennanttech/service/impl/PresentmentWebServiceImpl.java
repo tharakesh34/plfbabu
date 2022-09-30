@@ -20,9 +20,9 @@ import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.PresentmentServiceController;
@@ -164,9 +164,7 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 	}
 
 	private boolean isValidPaymentMode(String mandateType) {
-		return MandateConstants.TYPE_DDM.equals(mandateType) || MandateConstants.TYPE_ECS.equals(mandateType)
-				|| MandateConstants.TYPE_NACH.equals(mandateType) || MandateConstants.TYPE_PDC.equals(mandateType)
-				|| MandateConstants.TYPE_EMANDATE.equals(mandateType);
+		return InstrumentType.isManual(mandateType);
 	}
 
 	@Override
@@ -176,7 +174,7 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 
 		long headerId = presentmentHeader.getId();
 		String reference = presentmentHeader.getReference();
-		long partnerBankId = presentmentHeader.getPartnerBankId();
+		Long partnerBankId = presentmentHeader.getPartnerBankId();
 
 		logger.info("PresentmentHeader Id >>{}", headerId);
 		logger.info("Presentment Batch Reference >>{}", reference);
@@ -211,7 +209,7 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
 			return response;
 		}
-		if (partnerBankId <= 0) {
+		if (partnerBankId == null || partnerBankId <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "PartnerBank Id";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));

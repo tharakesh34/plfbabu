@@ -67,92 +67,90 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#84.1" author="saikrishna.b">
 		<addColumn tableName="AdtSecusers">
 			<column name="DisableReason" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#84.2" author="saikrishna.b">
 		<addColumn tableName="AdtSecusers">
 			<column name="EmployeeType" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#85.1" author="saikrishna.b">
 		<addColumn tableName="AdtSecusers">
 			<column name="CreatedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#85.2" author="saikrishna.b">
 		<addColumn tableName="AdtSecusers">
 			<column name="CreatedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#85.3" author="saikrishna.b">
 		<addColumn tableName="AdtSecusers">
 			<column name="ApprovedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#85.4" author="saikrishna.b">
 		<addColumn tableName="AdtSecusers">
 			<column name="ApprovedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="ST#85.5" author="saikrishna.b" >
+
+	<changeSet id="ST#85.5" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				UPDATE ADTSECUSERS SET CREATEDBY = LASTMNTBY WHERE CREATEDBY IS NULL;
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="ST#85.6" author="saikrishna.b" >
+
+	<changeSet id="ST#85.6" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				UPDATE ADTSECUSERS SET CREATEDON = LASTMNTON WHERE CREATEDON IS NULL;
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="ST#85.7" author="saikrishna.b" >
+
+	<changeSet id="ST#85.7" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				UPDATE ADTSECUSERS SET APPROVEDBY = LASTMNTBY WHERE APPROVEDBY IS NULL;
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="ST#85.8" author="saikrishna.b" >
+
+	<changeSet id="ST#85.8" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				UPDATE ADTSECUSERS SET APPROVEDON = LASTMNTON WHERE APPROVEDON IS NULL;
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#85.9" author="saikrishna.b">
-		<addNotNullConstraint tableName="AdtSecusers" columnName="CreatedBy"
-			columnDataType="bigint" />
+		<addNotNullConstraint tableName="AdtSecusers" columnName="CreatedBy" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="ST#85.10" author="saikrishna.b">
-		<addNotNullConstraint tableName="AdtSecusers" columnName="CreatedOn"
-			columnDataType="datetime" />
+		<addNotNullConstraint tableName="AdtSecusers" columnName="CreatedOn" columnDataType="datetime" />
 	</changeSet>
-	
+
 	<changeSet id="ST#103.01" author="vasudevarao.s">
 		<addColumn tableName="ADTFEETYPES">
 			<column name="PayableLinkTo" type="varchar(30)" />
 			<column name="RecvFeeTypeId" type="Bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#103.02" author="vasudevarao.s" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -160,7 +158,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#103.03" author="vasudevarao.s" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -171,6 +169,92 @@
 
 	<changeSet id="ST#103.04" author="vasudevarao.s" dbms="postgresql, oracle">
 		<addDefaultValue columnName="RecvFeeTypeId" tableName="ADTFEETYPES" defaultValue="0" />
-	</changeSet>	
-	
+	</changeSet>
+
+	<changeSet id="ST#76.1" author="saikiran.n">
+		<addColumn tableName="AdtMandates">
+			<column name="SwapEffectiveDate" type="datetime" />
+			<column name="HoldReason" type="bigint" />
+			<column name="SecurityMandate" type="boolean" />
+			<column name="EmployeeID" type="bigint" />
+			<column name="EmployerName" type="varchar(200)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.2" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE ADTMANDATES SET SECURITYMANDATE = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.3" author="saikiran.n">
+		<addNotNullConstraint tableName="ADTMANDATES" columnName="SECURITYMANDATE"
+			columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="ST#76.4" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SecurityMandate" tableName="ADTMANDATES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#76.4" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTMANDATES ADD CONSTRAINT DF_ADTMANDATES_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81" author="nagavamsi.p">
+		<addColumn tableName="ADTEMPLOYERDETAIL">
+			<column name="AllowDAS" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#81.1" author="nagavamsi.p">
+		<sql>
+		<![CDATA[  
+			UPDATE AdtEmployerDetail SET AllowDAS = 0 ;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#98" author="nagavamsi.p">
+		<addColumn tableName="ADTRMTBaseRates">
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#79" author="nagavamsi.p">
+		<addColumn tableName="ADTBounceReasons">
+			<column name="InstrumentType" type="varchar(8)" />
+			<column name="HoldMarkBounceCount" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#79.1" author="nagavamsi.p">
+		<sql>
+		<![CDATA[  
+			UPDATE AdtBounceReasons SET HoldMarkBounceCount = 0 ;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#94.1" author="saikiran.n">
+		<addColumn tableName="Adtbmtbankdetail">
+			<column name="Nach" type="boolean" />
+			<column name="Dd" type="boolean" />
+			<column name="Dda" type="boolean" />
+			<column name="Ecs" type="boolean" />
+			<column name="Cheque" type="boolean" />
+			<column name="Emandate" type="boolean" />
+			<column name="AllowedSources" type="varchar(50)" />
+			<column name="UpdateBranches" type="boolean" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

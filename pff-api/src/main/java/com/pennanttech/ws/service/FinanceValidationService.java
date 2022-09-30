@@ -56,11 +56,11 @@ import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.util.APIConstants;
@@ -291,7 +291,7 @@ public class FinanceValidationService {
 
 			// finRepay method
 			if (StringUtils.isNotBlank(financeMain.getFinRepayMethod())) {
-				List<ValueLabel> repayMethods = PennantStaticListUtil.getRepayMethods();
+				List<ValueLabel> repayMethods = MandateUtil.getRepayMethods();
 				boolean repayMehodSts = false;
 				for (ValueLabel value : repayMethods) {
 					if (StringUtils.equals(value.getValue(), financeMain.getFinRepayMethod())) {
@@ -700,7 +700,7 @@ public class FinanceValidationService {
 			Mandate mandate = financeDetail.getMandate();
 
 			if (mandate != null) {
-				String ifsc = mandate.getiFSC();
+				String ifsc = mandate.getIFSC();
 				String micr = mandate.getMICR();
 				String bankCode = mandate.getBankCode();
 				String branchCode = mandate.getBranchCode();
@@ -713,7 +713,7 @@ public class FinanceValidationService {
 
 				// validate MandateType
 				if (StringUtils.isNotBlank(mandate.getMandateType())) {
-					List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
+					List<ValueLabel> mandateType = MandateUtil.getInstrumentTypes();
 					boolean mandateTypeSts = false;
 					for (ValueLabel value : mandateType) {
 						if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
@@ -730,7 +730,7 @@ public class FinanceValidationService {
 
 				// validate AccType
 				if (StringUtils.isNotBlank(mandate.getAccType())) {
-					List<ValueLabel> accType = PennantStaticListUtil.getAccTypeList();
+					List<ValueLabel> accType = MandateUtil.getAccountTypes();
 					boolean accTypeSts = false;
 					for (ValueLabel value : accType) {
 						if (StringUtils.equals(value.getValue(), mandate.getAccType())) {
@@ -757,8 +757,7 @@ public class FinanceValidationService {
 
 				// validate status
 				if (StringUtils.isNotBlank(mandate.getStatus())) {
-					List<ValueLabel> status = PennantStaticListUtil
-							.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+					List<ValueLabel> status = MandateUtil.getMandateStatus();
 					boolean sts = false;
 					for (ValueLabel value : status) {
 						if (StringUtils.equals(value.getValue(), mandate.getStatus())) {

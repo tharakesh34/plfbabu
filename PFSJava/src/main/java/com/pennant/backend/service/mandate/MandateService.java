@@ -29,14 +29,15 @@ import java.util.List;
 
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public interface MandateService {
-
-	Mandate getMandate();
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
@@ -83,4 +84,14 @@ public interface MandateService {
 	int updateMandateStatus(Mandate mandate);
 
 	int getMandateByMandateRef(String mandateRef);
+
+	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status);
+
+	List<Mandate> getLoans(long custId, String finRepayMethod);
+
+	ErrorDetail validate(FinanceDetail fd, String vldGroup);
+
+	Mandate getEmployerDetails(long custID);
+
+	long saveStatus(MandateStatus mandateStatus);
 }

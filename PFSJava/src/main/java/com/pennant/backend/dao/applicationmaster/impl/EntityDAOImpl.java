@@ -27,14 +27,9 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.model.applicationmaster.Entity;
@@ -51,7 +46,6 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>Entity</code> with set of CRUD operations.
  */
 public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
-	private static Logger logger = LogManager.getLogger(EntityDAOImpl.class);
 
 	public EntityDAOImpl() {
 		super();
@@ -69,14 +63,14 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 			sql.append(", CountryName, ProvinceName, CityName, PinCodeName");
 		}
 
-		sql.append(" from Entity");
+		sql.append(" From Entity");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where EntityCode = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { entityCode }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				Entity e = new Entity();
 
 				e.setEntityCode(rs.getString("EntityCode"));
@@ -115,124 +109,165 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 				}
 
 				return e;
-			});
+			}, entityCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
 	public String save(Entity entity, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into Entity");
+		StringBuilder sql = new StringBuilder("Insert into Entity");
 		sql.append(tableType.getSuffix());
-		sql.append("(entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
-		sql.append(
-				" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox, active, gstinAvailable, ");
-		sql.append(" pinCodeId,");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber)");
-		sql.append(" values(");
-		sql.append(" :entityCode, :entityDesc, :pANNumber, :country, :stateCode, :cityCode, ");
-		sql.append(
-				" :pinCode,:entityAddrLine1,:entityAddrLine2,:entityAddrHNbr,:entityFlatNbr,:entityAddrStreet,:entityPOBox,:active, :gstinAvailable,");
-		sql.append(" :pinCodeId,");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:cINNumber)");
+		sql.append("(EntityCode, EntityDesc, PanNumber, Country, StateCode, CityCode");
+		sql.append(", PinCode, EntityAddrLine1, EntityAddrLine2, EntityAddrHNbr, EntityFlatNbr");
+		sql.append(", EntityAddrStreet, EntityPOBox, Active, GstInAvailable, PinCodeId, CINNumber");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values( ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, entity.getEntityCode());
+				ps.setString(index++, entity.getEntityDesc());
+				ps.setString(index++, entity.getPANNumber());
+				ps.setString(index++, entity.getCountry());
+				ps.setString(index++, entity.getStateCode());
+				ps.setString(index++, entity.getCityCode());
+				ps.setString(index++, entity.getPinCode());
+				ps.setString(index++, entity.getEntityAddrLine1());
+				ps.setString(index++, entity.getEntityAddrLine2());
+				ps.setString(index++, entity.getEntityAddrHNbr());
+				ps.setString(index++, entity.getEntityFlatNbr());
+				ps.setString(index++, entity.getEntityAddrStreet());
+				ps.setString(index++, entity.getEntityPOBox());
+				ps.setBoolean(index++, entity.isActive());
+				ps.setBoolean(index++, entity.isGstinAvailable());
+				ps.setLong(index++, entity.getPinCodeId());
+				ps.setString(index++, entity.getcINNumber());
+				ps.setInt(index++, entity.getVersion());
+				ps.setLong(index++, entity.getLastMntBy());
+				ps.setTimestamp(index++, entity.getLastMntOn());
+				ps.setString(index++, entity.getRecordStatus());
+				ps.setString(index++, entity.getRoleCode());
+				ps.setString(index++, entity.getNextRoleCode());
+				ps.setString(index++, entity.getTaskId());
+				ps.setString(index++, entity.getNextTaskId());
+				ps.setString(index++, entity.getRecordType());
+				ps.setLong(index, entity.getWorkflowId());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return String.valueOf(entity.getEntityCode());
 	}
 
 	@Override
 	public void update(Entity entity, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update Entity");
+		StringBuilder sql = new StringBuilder("Update Entity");
 		sql.append(tableType.getSuffix());
-		sql.append("  set entityDesc = :entityDesc, pANNumber = :pANNumber, country = :country, ");
-		sql.append(
-				" stateCode = :stateCode, cityCode = :cityCode, pinCode = :pinCode,entityAddrLine1=:entityAddrLine1,entityAddrLine2=:entityAddrLine2,");
-		sql.append(
-				"entityAddrHNbr=:entityAddrHNbr,entityFlatNbr=:entityFlatNbr,entityAddrStreet=:entityAddrStreet,entityPOBox=:entityPOBox,");
-		sql.append(" active = :active, gstinAvailable = :gstinAvailable, PinCodeId = :PinCodeId,");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,cINNumber =:cINNumber");
-		sql.append(" where entityCode = :entityCode ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" set EntityDesc = ?, PANNumber = ?, Country = ?, ");
+		sql.append(" StateCode = ?, CityCode = ?, PinCode = ?, EntityAddrLine1 = ?, EntityAddrLine2 = ?,");
+		sql.append("entityAddrHNbr = ?, entityFlatNbr = ?, entityAddrStreet = ?, entityPOBox = ?,");
+		sql.append(" active = ?, gstinAvailable = ?, PinCodeId = ?, CINNumber = ?,");
+		sql.append(" Version = ?, LastMntOn = ?, LastMntBy = ?, RecordStatus = ?, RoleCode = ?,");
+		sql.append(" NextRoleCode = ?, TaskId = ?, NextTaskId = ?,");
+		sql.append(" RecordType = ?, WorkflowId = ?");
+		sql.append(" Where EntityCode = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setString(index++, entity.getEntityDesc());
+			ps.setString(index++, entity.getPANNumber());
+			ps.setString(index++, entity.getCountry());
+			ps.setString(index++, entity.getStateCode());
+			ps.setString(index++, entity.getCityCode());
+			ps.setString(index++, entity.getPinCode());
+			ps.setString(index++, entity.getEntityAddrLine1());
+			ps.setString(index++, entity.getEntityAddrLine2());
+			ps.setString(index++, entity.getEntityAddrHNbr());
+			ps.setString(index++, entity.getEntityFlatNbr());
+			ps.setString(index++, entity.getEntityAddrStreet());
+			ps.setString(index++, entity.getEntityPOBox());
+			ps.setBoolean(index++, entity.isActive());
+			ps.setBoolean(index++, entity.isGstinAvailable());
+			ps.setLong(index++, entity.getPinCodeId());
+			ps.setString(index++, entity.getcINNumber());
+			ps.setInt(index++, entity.getVersion());
+			ps.setLong(index++, entity.getLastMntBy());
+			ps.setTimestamp(index++, entity.getLastMntOn());
+			ps.setString(index++, entity.getRecordStatus());
+			ps.setString(index++, entity.getRoleCode());
+			ps.setString(index++, entity.getNextRoleCode());
+			ps.setString(index++, entity.getTaskId());
+			ps.setString(index++, entity.getNextTaskId());
+			ps.setString(index++, entity.getRecordType());
+			ps.setLong(index++, entity.getWorkflowId());
+
+			ps.setString(index++, entity.getEntityCode());
+
+			if (tableType == TableType.TEMP_TAB) {
+				ps.setTimestamp(index, entity.getPrevMntOn());
+			} else {
+				ps.setInt(index, entity.getVersion() - 1);
+			}
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void delete(Entity entity, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from Entity");
+		StringBuilder sql = new StringBuilder("Delete From Entity");
 		sql.append(tableType.getSuffix());
-		sql.append(" where entityCode = :entityCode ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Where entityCode = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
-		int recordCount = 0;
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				ps.setString(1, entity.getEntityCode());
+
+				if (tableType == TableType.TEMP_TAB) {
+					ps.setTimestamp(2, entity.getPrevMntOn());
+				} else {
+					ps.setInt(2, entity.getVersion() - 1);
+				}
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public boolean count(String entityCode, String pANNumber, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
 		String sql;
 		String whereClause = null;
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+
+		Object[] obj = new Object[] {};
 		if (StringUtils.isNotBlank(entityCode)) {
-			whereClause = "entityCode = :entityCode ";
-			paramSource.addValue("entityCode", entityCode);
+			whereClause = "EntityCode = ?";
+			obj = new Object[] { entityCode };
 		} else if (StringUtils.isNotBlank(pANNumber)) {
-			whereClause = "pANNumber = :pANNumber ";
-			paramSource.addValue("pANNumber", pANNumber);
+			whereClause = "PanNumber = ?";
+			obj = new Object[] { pANNumber };
 		}
 
 		switch (tableType) {
@@ -244,29 +279,26 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 			break;
 		default:
 			sql = QueryUtil.getCountQuery(new String[] { "Entity_Temp", "Entity" }, whereClause);
+
+			if (StringUtils.isNotBlank(entityCode)) {
+				obj = new Object[] { entityCode, entityCode };
+			} else if (StringUtils.isNotBlank(pANNumber)) {
+				obj = new Object[] { pANNumber, pANNumber };
+			}
 			break;
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
 	@Override
 	public boolean panNumberExist(String pANNumber, String entityCode, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
 		String sql;
-		String whereClause = "pANNumber = :pANNumber AND entityCode = :entityCode";
+		String whereClause = "pANNumber = ? and entityCode = ?";
+
+		Object[] obj = new Object[] { pANNumber, entityCode };
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -277,36 +309,23 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 			break;
 		default:
 			sql = QueryUtil.getCountQuery(new String[] { "Entity_Temp", "Entity" }, whereClause);
+			obj = new Object[] { pANNumber, entityCode, pANNumber, entityCode };
 			break;
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("pANNumber", pANNumber);
-		paramSource.addValue("entityCode", entityCode);
+		logger.debug(Literal.SQL.concat(sql));
 
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
 	@Override
 	public Entity getEntityByFinDivision(String divisionCode, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" EntityCode, EntityDesc, PANNumber From Entity");
-		sql.append(" Where EntityCode = (Select EntityCode from SMTDivisionDetail where DivisionCode = ?)");
+		String sql = "Select EntityCode, EntityDesc, PANNumber From Entity Where EntityCode = (Select EntityCode from SMTDivisionDetail where DivisionCode = ?)";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { divisionCode }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				Entity e = new Entity();
 
 				e.setEntityCode(rs.getString("EntityCode"));
@@ -314,7 +333,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 				e.setPANNumber(rs.getString("PANNumber"));
 
 				return e;
-			});
+			}, divisionCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -331,8 +350,10 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 		sql.append(" Inner Join SMTDivisionDetail D ON D.DivisionCode = F.FinDivision");
 		sql.append(" Where FinType = ?)");
 
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finType }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				Entity e = new Entity();
 
 				e.setEntityCode(rs.getString("EntityCode"));
@@ -340,23 +361,20 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 				e.setPANNumber(rs.getString("PANNumber"));
 
 				return e;
-			});
+			}, finType);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in Entity{} for the Loan type >> {}", type, finType);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
 	public List<Entity> getEntites() {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select EntityCode, EntityDesc FROM Entity";
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT EntityCode, EntityDesc");
-		sql.append(" FROM Entity");
+		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			Entity et = new Entity();
 			et.setEntityCode(rs.getString("EntityCode"));
 			et.setEntityDesc(rs.getString("EntityDesc"));
@@ -366,19 +384,10 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 
 	@Override
 	public int getEntityCount(String entityCode) {
-		String sql = "Select EntityCode FROM Entity Where EntityCode = ?";
+		String sql = "Select count(EntityCode) From Entity Where EntityCode = ? and Active = ?";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
-		try {
-			String code = this.jdbcOperations.queryForObject(sql, new Object[] { entityCode }, String.class);
-
-			if (code != null) {
-				return 1;
-			}
-		} catch (EmptyResultDataAccessException e) {
-			return 0;
-		}
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, entityCode, 1);
 	}
 }

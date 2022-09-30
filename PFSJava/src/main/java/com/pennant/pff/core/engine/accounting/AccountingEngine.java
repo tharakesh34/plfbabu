@@ -8,9 +8,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.event.PostingEvent;
 import com.pennanttech.pennapps.core.AppException;
 
@@ -20,19 +20,19 @@ public class AccountingEngine {
 	private static PostingsDAO postingsDAO;
 	private static AccountEngineExecution engineExecution;
 
-	public static List<ReturnDataSet> execute(String accEvent, FinanceDetail fd, String userBranch) {
+	public static List<ReturnDataSet> execute(String accEvent, PostingDTO postingDTO) {
 		List<ReturnDataSet> transactions = new ArrayList<>();
 
-		List<AEEvent> events = executeEvent(accEvent, fd, userBranch);
+		List<AEEvent> events = executeEvent(accEvent, postingDTO);
 
 		events.stream().forEach(aeEvent -> transactions.addAll(aeEvent.getReturnDataSet()));
 
 		return transactions;
 	}
 
-	public static List<ReturnDataSet> post(String accEvent, FinanceDetail fd, String userBranch) {
+	public static List<ReturnDataSet> post(String accEvent, PostingDTO postingDTO) {
 		logger.info("Posting accounting tranactions for {} event .", accEvent);
-		List<AEEvent> events = executeEvent(accEvent, fd, userBranch);
+		List<AEEvent> events = executeEvent(accEvent, postingDTO);
 
 		List<ReturnDataSet> transactions = new ArrayList<>();
 
@@ -46,7 +46,7 @@ public class AccountingEngine {
 		});
 
 		PostingEvent postingEvent = getPostingEvent(accEvent);
-		postingEvent.setEventDetails(events, fd);
+		postingEvent.setEventDetails(events, postingDTO);
 
 		postingsDAO.saveBatch(transactions);
 
@@ -64,9 +64,10 @@ public class AccountingEngine {
 		return returnDataSets;
 	}
 
-	private static List<AEEvent> executeEvent(String eventName, FinanceDetail fd, String userBranch) {
+	private static List<AEEvent> executeEvent(String eventName, PostingDTO postingDTO) {
 		logger.info("Executing accounting tranactions for {} event started.", eventName);
-		List<AEEvent> events = getPostingEvent(eventName).prepareAEEvents(fd, userBranch);
+
+		List<AEEvent> events = getPostingEvent(eventName).prepareAEEvents(postingDTO);
 
 		events.stream().forEach(aeEvent -> {
 			engineExecution.getAccEngineExecResults(aeEvent);

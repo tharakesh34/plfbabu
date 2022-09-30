@@ -81,12 +81,12 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.DocType;
@@ -383,7 +383,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	public void doWriteBeanToComponents(PresentmentHeader aPresentmentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		if (presentmentHeader.getPartnerBankId() != 0) {
+		if (presentmentHeader.getPartnerBankId() != null && presentmentHeader.getPartnerBankId() != 0) {
 			this.partnerBank.setValue(String.valueOf(presentmentHeader.getPartnerBankId()));
 			this.partnerBank.setDescription(presentmentHeader.getPartnerBankName());
 			if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)) {
@@ -422,11 +422,13 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		setPresentmentDetailPagedListWrapper();
 		this.parameterSearchObject = new JdbcSearchObject<PresentmentDetail>();
 		this.parameterSearchObject.setSearchClass(PresentmentDetail.class);
-		if (MandateConstants.TYPE_PDC.equals(aPresentmentHeader.getMandateType())) {
+
+		if (InstrumentType.isPDC(aPresentmentHeader.getMandateType())) {
 			this.parameterSearchObject.addTabelName("PresentmentDetails_PDCAView");
 		} else {
 			this.parameterSearchObject.addTabelName("PresentmentDetails_AView");
 		}
+
 		parameterSearchObject.addSort("FINREFERENCE", false);
 
 		StringBuilder whereClause = new StringBuilder();
@@ -531,7 +533,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			addCell(item, PennantApplicationUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
 			addCell(item, presentmentDetail.getPresentmentRef());
 
-			if (MandateConstants.TYPE_PDC.equals(presentmentDetail.getMandateType())) {
+			if (InstrumentType.isPDC(presentmentDetail.getMandateType())) {
 				addCell(item, Labels.getLabel("label_Mandate_PDC"));
 			} else {
 				addCell(item, presentmentDetail.getMandateType());

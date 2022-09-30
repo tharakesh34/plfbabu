@@ -34,17 +34,15 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface BankDetailDAO extends BasicCrudDao<BankDetail> {
 
+	boolean isDuplicateKey(String bankCode, TableType tableType);
+
 	BankDetail getBankDetailById(String id, String type);
 
 	BankDetail getBankDetailByIfsc(String ifsc);
 
-	boolean isDuplicateKey(String bankCode, TableType tableType);
-
-	BankDetail getAccNoLengthByCode(String bankCode, String type);
+	BankDetail getAccNoLengthByCode(String bankCode);
 
 	String getBankCodeByName(String bankName);
-
-	boolean isBankCodeExits(String bankCode, String type, boolean active);
 
 	boolean isBankCodeExits(String bankCode);
 

@@ -101,11 +101,11 @@ import com.pennant.backend.service.finance.validation.FinGuarantorDetailValidati
 import com.pennant.backend.service.finance.validation.FinJointAccountDetailValidation;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -1098,7 +1098,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// Cheque detail maintaince Inserting the entry in the cheque details
 		// if the repayment mode changed to pdc
 		if (fm.getBefImage() != null) {
-			if (MandateConstants.TYPE_PDC.equals(fm.getFinRepayMethod())) {
+			if (InstrumentType.isPDC(fm.getFinRepayMethod())) {
 				if (!fm.getFinRepayMethod().equals(fm.getBefImage().getFinRepayMethod())) {
 					if (!chequeHeaderDAO.isChequeDetilsExists(finID)) {
 						ChequeHeader chequeHeader = new ChequeHeader();

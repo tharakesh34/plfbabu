@@ -84,6 +84,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1160,7 +1161,10 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 					fd.getFinScheduleData().setFinanceMain(financeMain);
 					fd.setAdvancePaymentsList(issueHeader.getFinAdvancePaymentsList());
 
-					datasetList.addAll(AccountingEngine.execute(AccountingEvent.DISBINS, fd, null));
+					PostingDTO postingDTO = new PostingDTO();
+					postingDTO.setFinanceDetail(fd);
+
+					datasetList.addAll(AccountingEngine.execute(AccountingEvent.DISBINS, postingDTO));
 				}
 
 				datasetList.addAll(payOrderIssueService.getDisbursementPostings(financeMain.getFinID()));

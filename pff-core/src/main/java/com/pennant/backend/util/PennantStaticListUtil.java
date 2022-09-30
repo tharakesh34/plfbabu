@@ -73,9 +73,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> mathOperators;
 	private static List<ValueLabel> revRateAppPeriods;
 	private static List<ValueLabel> screenCodesList;
-	private static List<ValueLabel> mandateTypeList;
-	private static List<ValueLabel> accTypeList;
-	private static List<ValueLabel> statusTypeList;
 	private static List<ValueLabel> reportNameList;
 	private static List<ValueLabel> waiverDeciders;
 	private static List<ValueLabel> schCalOnList;
@@ -2628,30 +2625,6 @@ public class PennantStaticListUtil {
 		return schMthdList;
 	}
 
-	public static List<ValueLabel> getMandateTypeList() {
-		if (mandateTypeList == null) {
-			mandateTypeList = new ArrayList<ValueLabel>(4);
-			if (ImplementationConstants.ECS_ALLOWED) {
-				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_ECS, Labels.getLabel("label_Mandate_Ecs")));
-			}
-			if (ImplementationConstants.DDM_ALLOWED) {
-				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_DDM, Labels.getLabel("label_Mandate_DD")));
-			}
-			if (ImplementationConstants.NACH_ALLOWED) {
-				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_NACH, Labels.getLabel("label_Mandate_Nach")));
-			}
-			if (ImplementationConstants.PDC_ALLOWED) {
-				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_PDC, Labels.getLabel("label_Mandate_PDC")));
-			}
-			if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_EMANDATE_REQUIRED)) {
-				mandateTypeList
-						.add(new ValueLabel(MandateConstants.TYPE_EMANDATE, Labels.getLabel("label_Mandate_EMandate")));
-			}
-
-		}
-		return mandateTypeList;
-	}
-
 	public static List<ValueLabel> getPresentmentExclusionList() {
 		if (presentmentExclusionList == null) {
 			presentmentExclusionList = new ArrayList<ValueLabel>(11);
@@ -2669,59 +2642,6 @@ public class PennantStaticListUtil {
 			presentmentExclusionList.add(new ValueLabel("12", Labels.getLabel("label_Represent_AdvanceInterestOrEMI")));
 		}
 		return presentmentExclusionList;
-	}
-
-	public static List<ValueLabel> getAccTypeList() {
-		if (accTypeList == null) {
-			accTypeList = new ArrayList<ValueLabel>(3);
-			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_CA, Labels.getLabel("label_Mandate_CA")));
-			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_SA, Labels.getLabel("label_Mandate_SA")));
-			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_CC, Labels.getLabel("label_Mandate_CC")));
-			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_NRO, Labels.getLabel("label_Mandate_NRO")));
-			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_NRE, Labels.getLabel("label_Mandate_NRE")));
-
-		}
-		return accTypeList;
-	}
-
-	public static List<ValueLabel> getStatusTypeList(String customMandateStatus) {
-		statusTypeList = getStatusTypeList();
-		// Added custom mandate status to the list if sysprams contains
-		// custom mandate Status.
-		if (StringUtils.isNotBlank(customMandateStatus)) {
-			statusTypeList
-					.add(new ValueLabel(customMandateStatus, Labels.getLabel("label_Mandate_" + customMandateStatus)));
-		}
-		return statusTypeList;
-	}
-
-	public static List<ValueLabel> getStatusTypeList() {
-		statusTypeList = new ArrayList<ValueLabel>(7);
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_NEW, Labels.getLabel("label_Mandate_NEW")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_APPROVED, Labels.getLabel("label_Mandate_APPROVED")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_REJECTED, Labels.getLabel("label_Mandate_REJECTED")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_HOLD, Labels.getLabel("label_Mandate_HOLD")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_RELEASE, Labels.getLabel("label_Mandate_RELEASE")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_FIN, Labels.getLabel("label_Mandate_FINANCE")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_CANCEL, Labels.getLabel("label_Mandate_CANCEL")));
-		statusTypeList
-				.add(new ValueLabel(MandateConstants.STATUS_INPROCESS, Labels.getLabel("label_Mandate_INPROCESS")));
-		return statusTypeList;
-	}
-
-	public static List<ValueLabel> getRepayMethods() {
-		if (repayMethodList == null) {
-			repayMethodList = new ArrayList<ValueLabel>(3);
-			repayMethodList
-					.add(new ValueLabel(FinanceConstants.REPAYMTH_MANUAL, Labels.getLabel("label_RepayMethod_Manual")));
-			if (ImplementationConstants.AUTO_ALLOWED) {
-				repayMethodList
-						.add(new ValueLabel(FinanceConstants.REPAYMTH_AUTO, Labels.getLabel("label_RepayMethod_Casa")));
-			}
-			repayMethodList.addAll(getMandateTypeList());
-		}
-		return repayMethodList;
 	}
 
 	public static List<ValueLabel> getProductCategories() {
@@ -3508,15 +3428,6 @@ public class PennantStaticListUtil {
 		return accountMapping;
 	}
 
-	public static List<ValueLabel> getMandateStatusTypeList() {
-		if (statusTypeList == null) {
-			statusTypeList = new ArrayList<ValueLabel>(7);
-			statusTypeList
-					.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
-		}
-		return statusTypeList;
-	}
-
 	public static List<ValueLabel> getUploadLevelsList() {
 
 		if (uploadLevels == null) {
@@ -3548,16 +3459,6 @@ public class PennantStaticListUtil {
 			monthMapping.add(new ValueLabel("12", Labels.getLabel("label_DataExtraction_Dec")));
 		}
 		return monthMapping;
-	}
-
-	public static List<ValueLabel> getMandateMapping() {
-
-		if (mandateMapping == null) {
-			mandateMapping = new ArrayList<ValueLabel>(2);
-			mandateMapping.add(new ValueLabel(MandateConstants.TYPE_DDM, Labels.getLabel("label_Mandate_DD")));
-			mandateMapping.add(new ValueLabel(MandateConstants.TYPE_NACH, Labels.getLabel("label_Mandate_Nach")));
-		}
-		return mandateMapping;
 	}
 
 	public static List<ValueLabel> getPresentmentMapping() {
@@ -3724,17 +3625,6 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_DataExtraction_GSTDownLoad_Summary")));
 		}
 		return gstMapping;
-	}
-
-	public static List<ValueLabel> getChequeTypes() {
-		if (chequeTypesList == null) {
-			chequeTypesList = new ArrayList<ValueLabel>(3);
-			chequeTypesList.add(new ValueLabel(FinanceConstants.REPAYMTH_PDC,
-					Labels.getLabel("label_Finance_Cheque_RepayMethod_PDC")));
-			chequeTypesList.add(new ValueLabel(FinanceConstants.REPAYMTH_UDC,
-					Labels.getLabel("label_Finance_Cheque_RepayMethod_UDC")));
-		}
-		return chequeTypesList;
 	}
 
 	// GST Fee Tax Types

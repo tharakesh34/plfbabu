@@ -35,25 +35,21 @@ public interface ChequeDetailDAO {
 
 	ChequeDetail getChequeDetail(long headerID, String type);
 
-	boolean isDuplicateKey(long chequeDetailsID, long bankBranchID, String accountNo, int chequeSerialNo,
-			TableType tableType);
-
-	void delete(ChequeDetail chequeDetail, TableType tableType);
-
-	String save(ChequeDetail chequeDetail, TableType tableType);
-
-	void update(ChequeDetail chequeDetail, TableType tableType);
-
 	List<ChequeDetail> getChequeDetailList(long headerID, String type);
 
-	void deleteByCheqID(final long headerID, String type);
+	boolean isDuplicateKey(long chequeID, long branchID, String accountNo, int chequeSerial, TableType type);
 
-	void updateChequeStatus(long chequeDetailsId, String status);
+	String save(ChequeDetail cheque, TableType type);
 
-	void batchUpdateChequeStatus(List<Long> chequeDetailsId, String chequestatus);
+	void update(ChequeDetail cheque, TableType type);
+
+	void delete(ChequeDetail cheque, TableType type);
+
+	void batchUpdateChequeStatus(List<Long> detailIDs, String status);
 
 	int updateChequeStatus(List<PresentmentDetail> presentments);
 
-	boolean isChequeExists(long headerID, Date chequeDate);
+	void updateChequeStatus(long detailID, String status);
 
+	boolean isChequeExists(long headerID, Date chequeDate);
 }

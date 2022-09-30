@@ -37,8 +37,12 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -52,6 +56,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -76,11 +81,22 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	protected Intbox minAccNoLength;
 	protected Textbox bankShortCode;
 	protected Checkbox allowMultipleIFSC; // autoWired
+	protected Checkbox cheque;
+	protected Checkbox dd;
+	protected Checkbox ecs;
+	protected Checkbox nach;
+	protected Checkbox dda;
+	protected Checkbox eMandate;
+	protected Checkbox updateBranches;
+	protected Textbox allowedSources;
+	protected Button btnMultiSource;
+	protected Groupbox gb_instrumenttypes;
 	// not autoWired variables
 	private BankDetail bankDetail; // overHanded per parameter
 	private transient BankDetailListCtrl bankDetailListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
+	private boolean isSkip = false;
 
 	// ServiceDAOs / Domain Classes
 	private transient BankDetailService bankDetailService;
@@ -97,25 +113,14 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		super.pageRightName = "BankDetailDialog";
 	}
 
-	// Component Events
-
-	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected BankDetail object in a Map.
-	 * 
-	 * @param event
-	 */
 	public void onCreate$window_BankDetailDialog(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// Set the page level components.
 		setPageComponents(window_BankDetailDialog);
 
 		try {
-			/* set components visible dependent of the users rights */
 			doCheckRights();
 
-			// READ OVERHANDED parameters !
 			if (arguments.containsKey("bankDetail")) {
 				this.bankDetail = (BankDetail) arguments.get("bankDetail");
 				BankDetail befImage = new BankDetail();
@@ -136,156 +141,104 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
-			// READ OVERHANDED parameters !
-			// we get the bankDetailListWindow controller. So we have
-			// access
-			// to it and can synchronize the shown data when we do insert, edit
-			// or
-			// delete bankDetail here.
 			if (arguments.containsKey("bankDetailListCtrl")) {
 				setBankDetailListCtrl((BankDetailListCtrl) arguments.get("bankDetailListCtrl"));
 			} else {
 				setBankDetailListCtrl(null);
 			}
 
-			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getBankDetail());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_BankDetailDialog.onClose();
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the properties of the fields, like maxLength.<br>
-	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// Empty sent any required attributes
 		this.bankCode.setMaxlength(8);
 		this.bankName.setMaxlength(50);
 		this.accNoLength.setMaxlength(2);
 		this.minAccNoLength.setMaxlength(2);
 		this.bankShortCode.setMaxlength(20);
+		// this.updateBranches.setChecked(true);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving");
+
+		if (this.eMandate.isChecked()) {
+			this.allowedSources.setReadonly(false);
+			this.btnMultiSource.setVisible(true);
+		} else {
+			this.allowedSources.setDisabled(true);
+			this.btnMultiSource.setVisible(false);
+			this.allowedSources.setValue("");
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * User rights check. <br>
-	 * Only components are set visible=true if the logged-in <br>
-	 * user have the right for it. <br>
-	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
-	 */
 	private void doCheckRights() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_BankDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BankDetailDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_BankDetailDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_BankDetailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * when the "save" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSave();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * when the "edit" button is clicked. <br>
-	 * 
-	 * @param event
-	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doEdit();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * when the "help" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		MessageUtil.showHelpWindow(event, window_BankDetailDialog);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * when the "delete" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doDelete();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * when the "cancel" button is clicked. <br>
-	 * 
-	 * @param event
-	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doCancel();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * The Click event is raised when the Close Button control is clicked.
-	 * 
-	 * @param event An event sent to the event handler of a component.
-	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
 
-	/**
-	 * Cancel the actual operation. <br>
-	 * <br>
-	 * Resets to the original status.<br>
-	 * 
-	 */
 	private void doCancel() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		doWriteBeanToComponents(this.bankDetail.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Writes the bean data to the components.<br>
-	 * 
-	 * @param aBankDetail BankDetail
-	 */
 	public void doWriteBeanToComponents(BankDetail aBankDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.bankCode.setValue(aBankDetail.getBankCode());
 		this.bankName.setValue(aBankDetail.getBankName());
 		this.active.setChecked(aBankDetail.isActive());
@@ -294,22 +247,29 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankShortCode.setValue(aBankDetail.getBankShortCode());
 		this.recordStatus.setValue(aBankDetail.getRecordStatus());
 		this.allowMultipleIFSC.setChecked(aBankDetail.isAllowMultipleIFSC());
+		this.nach.setChecked(aBankDetail.isNach());
+		this.ecs.setChecked(aBankDetail.isEcs());
+		this.dd.setChecked(aBankDetail.isDd());
+		this.cheque.setChecked(aBankDetail.isCheque());
+		this.dda.setChecked(aBankDetail.isDda());
+		this.eMandate.setChecked(aBankDetail.isEmandate());
+		this.allowedSources.setValue(aBankDetail.getAllowedSources());
+		if (aBankDetail.isNewRecord()) {
+			this.updateBranches.setChecked(true);
+		} else {
+			this.updateBranches.setChecked(aBankDetail.isUpdateBranches());
+		}
 
 		if (aBankDetail.isNewRecord() || (aBankDetail.getRecordType() != null ? aBankDetail.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Writes the components values to the bean.<br>
-	 * 
-	 * @param aBankDetail
-	 */
 	public void doWriteComponentsToBean(BankDetail aBankDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BankDetail bankDetail = bankDetailService.getAccNoLengths(this.bankDetail.getBankCode());
 		int minAcNoLength = bankDetail.getMinAccNoLength();
@@ -373,6 +333,55 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aBankDetail.setNach(this.nach.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aBankDetail.setEcs(this.ecs.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aBankDetail.setDd(this.dd.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aBankDetail.setDda(this.dda.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aBankDetail.setCheque(this.cheque.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aBankDetail.setEmandate(this.eMandate.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.btnMultiSource.isVisible() && StringUtils.isBlank(this.allowedSources.getValue())) {
+				throw new WrongValueException(this.btnMultiSource,
+						Labels.getLabel("label_BankDetailDialog_AllowedSources.value") + " is Mandatory");
+			}
+			aBankDetail.setAllowedSources(this.allowedSources.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aBankDetail.setUpdateBranches(this.updateBranches.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -386,30 +395,25 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		}
 
 		aBankDetail.setRecordStatus(this.recordStatus.getValue());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Opens the Dialog window modal.
-	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
-	 * 
-	 * @param aBankDetail
-	 */
 	public void doShowDialog(BankDetail aBankDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// set Read only mode accordingly if the object is new or not.
 		if (aBankDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
-			// setFocus
 			this.bankCode.focus();
+
+			this.updateBranches.setChecked(true);
+
 		} else {
 			if (isWorkFlowEnabled()) {
 				this.bankName.focus();
 				if (StringUtils.isNotBlank(aBankDetail.getRecordType())) {
 					this.btnNotes.setVisible(true);
+					// this.updateBranches.setChecked(true);
 				}
 				doEdit();
 			} else {
@@ -420,7 +424,6 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		}
 
 		try {
-			// fill the components with the data
 			doWriteBeanToComponents(aBankDetail);
 
 			setDialog(DialogType.EMBEDDED);
@@ -430,14 +433,11 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Sets the Validation by setting the accordingly constraints to the fields.
-	 */
 	private void doSetValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setValidationOn(true);
 
@@ -462,41 +462,28 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 					Labels.getLabel("label_BankDetailDialog_MinimumAccNoLength.value"), true, false, 0));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Disables the Validation by setting empty constraints.
-	 */
 	private void doRemoveValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setValidationOn(false);
 		this.bankCode.setConstraint("");
 		this.bankName.setConstraint("");
 		this.accNoLength.setConstraint("");
 		this.minAccNoLength.setConstraint("");
 		this.bankShortCode.setConstraint("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set Validations for LOV Fields
-	 */
 	private void doSetLOVValidation() {
 	}
 
-	/**
-	 * Remove Validations for LOV Fields
-	 */
 	private void doRemoveLOVValidation() {
 	}
 
-	/**
-	 * Remove Error Messages for Fields
-	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug("Entering");
 
 		this.bankCode.setErrorMessage("");
 		this.bankName.setErrorMessage("");
@@ -504,7 +491,6 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.minAccNoLength.setErrorMessage("");
 		this.bankShortCode.setErrorMessage("");
 
-		logger.debug("Leaving");
 	}
 
 	private void doDelete() throws InterruptedException {
@@ -519,11 +505,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the components for edit mode. <br>
-	 */
 	private void doEdit() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (getBankDetail().isNewRecord()) {
 			this.bankCode.setReadonly(false);
@@ -538,6 +521,16 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.minAccNoLength.setReadonly(isReadOnly("BankDetailDialog_accNoLength"));
 		this.bankShortCode.setReadonly(isReadOnly("BankDetailDialog_bankShortCode"));
 		this.allowMultipleIFSC.setDisabled(isReadOnly("BankDetailDialog_allowMultipleIFSC"));
+
+		readOnlyComponent(isReadOnly("BankDetailDialog_ECS"), this.ecs);
+		readOnlyComponent(isReadOnly("BankDetailDialog_DDA"), this.dda);
+		readOnlyComponent(isReadOnly("BankDetailDialog_DD"), this.dd);
+		readOnlyComponent(isReadOnly("BankDetailDialog_NACH"), this.nach);
+		readOnlyComponent(isReadOnly("BankDetailDialog_Cheque"), this.cheque);
+		readOnlyComponent(isReadOnly("BankDetailDialog_Emandate"), this.eMandate);
+		readOnlyComponent(isReadOnly("BankDetailDialog_AllowedSources"), this.allowedSources);
+		this.btnMultiSource.setDisabled(isReadOnly("button_BankDetailDialog_btnMultiSource"));
+		readOnlyComponent(isReadOnly("BankDetailDialog_UpdateBranches"), this.updateBranches);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -551,16 +544,12 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			// btnCancel.setVisible(true);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the components to ReadOnly. <br>
-	 */
 	public void doReadOnly() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.bankCode.setReadonly(true);
 		this.bankName.setReadonly(true);
@@ -569,6 +558,13 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.minAccNoLength.setReadonly(true);
 		this.bankShortCode.setReadonly(true);
 		this.allowMultipleIFSC.setDisabled(true);
+		this.dd.setDisabled(true);
+		this.nach.setDisabled(true);
+		this.dda.setDisabled(true);
+		this.cheque.setDisabled(true);
+		this.ecs.setDisabled(true);
+		this.eMandate.setDisabled(true);
+		this.allowedSources.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -579,15 +575,11 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Clears the components values. <br>
-	 */
 	public void doClear() {
-		logger.debug("Entering");
-		// remove validation, if there are a save before
+		logger.debug(Literal.ENTERING);
 		this.bankCode.setValue("");
 		this.bankName.setValue("");
 		this.active.setChecked(false);
@@ -595,31 +587,49 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.minAccNoLength.setValue(0);
 		this.bankShortCode.setValue("");
 		this.allowMultipleIFSC.setChecked(false);
-		logger.debug("Leaving");
+		this.nach.setChecked(false);
+		this.ecs.setChecked(false);
+		this.dd.setChecked(false);
+		this.dda.setChecked(false);
+		this.cheque.setChecked(false);
+		this.active.setChecked(false);
+		this.eMandate.setChecked(false);
+		this.allowedSources.setValue("");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	public void doSave() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final BankDetail aBankDetail = new BankDetail();
 		BeanUtils.copyProperties(getBankDetail(), aBankDetail);
 		boolean isNew = false;
 
-		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
-		// fill the BankDetail object with the components data
-		doWriteComponentsToBean(aBankDetail);
-
-		// Write the additional validations as per below example
-		// get the selected branch object from the list box
-		// Do data level validations here
 
 		isNew = aBankDetail.isNewRecord();
+		if (this.userAction.getSelectedItem() != null) {
+			if ((PennantConstants.RCD_STATUS_SUBMITTED.equalsIgnoreCase(this.userAction.getSelectedItem().getValue())
+					|| PennantConstants.RCD_STATUS_SAVED
+							.equalsIgnoreCase(this.userAction.getSelectedItem().getValue()))) {
+				if (this.updateBranches.isChecked()) {
+					this.isSkip = false;
+					MessageUtil.confirm("Are you sure, want to Update the Instrument Types in Bank Branches ?",
+							event -> {
+								if (Messagebox.ON_NO.equals(event.getName())) {
+									this.isSkip = true;
+								}
+							});
+
+					if (this.isSkip) {
+						return;
+					}
+				}
+			}
+		}
+
+		doWriteComponentsToBean(aBankDetail);
+
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -642,33 +652,21 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 			}
 		}
 
-		// save it to database
 		try {
 
 			if (doProcess(aBankDetail, tranType)) {
 				refreshList();
-				// Close the Existing Dialog
 				closeDialog();
 			}
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the workFlow Details List to Object
-	 * 
-	 * @param aBankDetail (BankDetail)
-	 * 
-	 * @param tranType    (String)
-	 * 
-	 * @return boolean
-	 * 
-	 */
 	protected boolean doProcess(BankDetail aBankDetail, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -742,19 +740,12 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 			auditHeader = getAuditHeader(aBankDetail, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
-	/**
-	 * Get the result after processing DataBase Operations
-	 * 
-	 * @param auditHeader
-	 * @param method
-	 * @return
-	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -812,49 +803,78 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 				auditHeader.setOverideMessage(null);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.ENTERING);
 		return processCompleted;
 	}
 
-	// WorkFlow Components
-
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aBankDetail (BankDetail)
-	 * @param tranType    (String)
-	 * @return auditHeader
-	 */
 	private AuditHeader getAuditHeader(BankDetail aBankDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBankDetail.getBefImage(), aBankDetail);
 		return new AuditHeader(String.valueOf(aBankDetail.getId()), null, null, null, auditDetail,
 				aBankDetail.getUserDetails(), getOverideMap());
 	}
 
-	/**
-	 * Get the window for entering Notes
-	 * 
-	 * @param event (Event)
-	 */
+	@SuppressWarnings("unused")
+	private void showMessage(Exception e) {
+		logger.debug(Literal.ENTERING);
+
+		AuditHeader auditHeader = new AuditHeader();
+		try {
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_BankDetailDialog, auditHeader);
+		} catch (Exception exp) {
+			logger.error("Exception: ", exp);
+		}
+		logger.debug(Literal.ENTERING);
+	}
+
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.bankDetail);
 	}
 
-	/**
-	 * Refresh the list page with the filters that are applied in list page.
-	 */
 	protected void refreshList() {
 		getBankDetailListCtrl().search();
+	}
+
+	public void onCheck$eMandate(Event event) {
+		doShowEMandateSources(this.eMandate);
+	}
+
+	private void doShowEMandateSources(Checkbox event) {
+		logger.debug(Literal.ENTERING);
+		if (this.eMandate.isChecked()) {
+			this.allowedSources.setReadonly(true);
+			this.btnMultiSource.setVisible(true);
+		} else {
+			this.allowedSources.setReadonly(true);
+			this.btnMultiSource.setVisible(false);
+			this.allowedSources.setValue("");
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	public void onClick$btnMultiSource(Event event) {
+		logger.debug(Literal.ENTERING);
+		Clients.clearWrongValue(this.btnMultiSource);
+
+		Object dataObject = MultiSelectionSearchListBox.show(this.window, "Mandate_Sources",
+				this.allowedSources.getValue(), null);
+		if (dataObject instanceof String) {
+			this.allowedSources.setValue(dataObject.toString());
+		} else {
+			String details = (String) dataObject;
+			if (details != null) {
+				this.allowedSources.setValue(details);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.bankDetail.getBankCode());
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;

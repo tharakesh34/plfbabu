@@ -47,7 +47,7 @@ public interface PresentmentDetailDAO {
 
 	int updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude);
 
-	void updatePresentmentHeader(long presentmentId, int pexcBatchCreated, long partnerBankId);
+	void updatePresentmentHeader(long presentmentId, int pexcBatchCreated, Long partnerBankId);
 
 	void updatePresentmentIdAsZero(long presentmentId);
 

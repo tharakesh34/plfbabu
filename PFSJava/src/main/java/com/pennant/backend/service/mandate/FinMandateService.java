@@ -30,21 +30,24 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 
 public interface FinMandateService {
 
 	Mandate getMnadateByID(Long mandateID);
 
-	void saveOrUpdate(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType);
+	Mandate getSecurityMandate(String finReference);
+
+	void saveOrUpdate(FinanceMain fm, Mandate mandate, AuditHeader auditHeader, String tableType);
 
 	void doRejct(FinanceDetail financeDetail, AuditHeader auditHeader);
 
-	void doApprove(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType);
+	void doApprove(FinanceDetail financeDetail, Mandate mandate, AuditHeader auditHeader, String tableType);
 
 	List<Mandate> getMnadateByCustID(long custID, long mandateID);
 
-	void validateMandate(AuditDetail auditDetail, FinanceDetail financeDetail);
+	void validateMandate(AuditDetail auditDetail, FinanceDetail financeDetail, Mandate mandate);
 
 	void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail);
 

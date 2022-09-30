@@ -559,8 +559,6 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			limitCheckDetails.doProcessLimits(schdData.getFinanceMain(), FinanceConstants.CANCEL_UTILIZATION);
 		}
 
-		// Save Salaried Posting Details
-		saveFinSalPayment(schdData, orgNextSchd, true);
 		// updating the processed with 1 in finstageAccountingLog
 		finStageAccountingLogDAO.update(finID, fd.getModuleDefiner(), false);
 

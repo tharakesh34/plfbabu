@@ -121,13 +121,6 @@ public class FinanceConstants {
 	public static final String SCH_TYPE_SCHEDULE = "S";
 	public static final String SCH_TYPE_LATEPAYPROFIT = "I";
 
-	// Repayments Method Types
-	public static final String REPAYMTH_AUTO = "CASA";
-	public static final String REPAYMTH_MANUAL = "MANUAL";
-	public static final String REPAYMTH_NACH = "NACH";
-	public static final String REPAYMTH_PDC = "PDC";
-	public static final String REPAYMTH_UDC = "UDC";
-
 	// Finance Reference Generation Constants
 	public static final String REF_DIVISION_RETAIL = "PB";
 	public static final String REF_DIVISION_CORP = "WB";

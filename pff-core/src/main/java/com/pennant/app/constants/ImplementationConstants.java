@@ -1,11 +1,8 @@
 package com.pennant.app.constants;
 
-import java.util.Map;
-
 import org.springframework.stereotype.Component;
 
-import com.pennanttech.extension.implementation.IFeatureExtension;
-import com.pennanttech.pennapps.core.FactoryException;
+import com.pennanttech.extension.FeatureExtension;
 import com.pennanttech.pff.npa.NpaScope;
 import com.pennanttech.pff.provision.ProvisionBook;
 import com.pennanttech.pff.provision.ProvisionReversalStage;
@@ -29,310 +26,286 @@ public class ImplementationConstants {
 		// - pff-extension-core (dummy implementation and can be used for testing the constants as well)
 		// - pff-extension-client
 
-		Map<String, Object> extensions = getFeatureExtensions();
-
-		ALLOW_MULTI_CCY = getValueAsBoolean(extensions, "ALLOW_MULTI_CCY", false);
-		LIST_RENDER_ON_LOAD = getValueAsBoolean(extensions, "LIST_RENDER_ON_LOAD", false);
-		LIMIT_INTERNAL = getValueAsBoolean(extensions, "LIMIT_INTERNAL", true);
-		ONLINE_IRL_CHECK = getValueAsBoolean(extensions, "ONLINE_IRL_CHECK", false);
-		ALLOW_MULTIPLE_EMPLOYMENTS = getValueAsBoolean(extensions, "ALLOW_MULTIPLE_EMPLOYMENTS", true);
-		ALLOW_CUSTOMER_MAINTENANCE = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_MAINTENANCE", true);
-		ALLOW_CUSTOMER_RATINGS = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_RATINGS", false);
-		ALLOW_CUSTOMER_INCOMES = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_INCOMES", true);
-		ALLOW_CUSTCIF_IN_IMD = getValueAsBoolean(extensions, "ALLOW_CUSTCIF_IN_IMD", true);
-		ALLOW_CUSTOMER_SHAREHOLDERS = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_SHAREHOLDERS", true);
-		ALLOW_COLLATERAL_VALUE_UPDATION = getValueAsBoolean(extensions, "ALLOW_COLLATERAL_VALUE_UPDATION", false);
-		INDIAN_IMPLEMENTATION = getValueAsBoolean(extensions, "INDIAN_IMPLEMENTATION", true);
-		VALIDATE_CORE_CUST_UPDATE = getValueAsBoolean(extensions, "VALIDATE_CORE_CUST_UPDATE", false);
-		ALLOW_COVENANT_TYPES = getValueAsBoolean(extensions, "ALLOW_COVENANT_TYPES", true);
-		COLLATERAL_INTERNAL = getValueAsBoolean(extensions, "COLLATERAL_INTERNAL", true);
-		ALLOW_VAS = getValueAsBoolean(extensions, "ALLOW_VAS", true);
-		LP_MARK_FIRSTDAY = getValueAsBoolean(extensions, "LP_MARK_FIRSTDAY", true);
-		LPP_CALC_SOD = getValueAsBoolean(extensions, "LPP_CALC_SOD", true);
-		AUTO_ALLOWED = getValueAsBoolean(extensions, "AUTO_ALLOWED", false);
-		DDM_ALLOWED = getValueAsBoolean(extensions, "DDM_ALLOWED", true);
-		ECS_ALLOWED = getValueAsBoolean(extensions, "ECS_ALLOWED", true);
-		NACH_ALLOWED = getValueAsBoolean(extensions, "NACH_ALLOWED", true);
-		PDC_ALLOWED = getValueAsBoolean(extensions, "PDC_ALLOWED", true);
-		PREAPPROVAL_ALLOWED = getValueAsBoolean(extensions, "PREAPPROVAL_ALLOWED", false);
-		ALLOW_DEVIATIONS = getValueAsBoolean(extensions, "ALLOW_DEVIATIONS", true);
-		LATEPAY_PROFIT_CAL_ON_DAYZERO = getValueAsBoolean(extensions, "LATEPAY_PROFIT_CAL_ON_DAYZERO", true);
-		ADD_FEEINFTV_ONCALC = getValueAsBoolean(extensions, "ADD_FEEINFTV_ONCALC", true);
-		ALLOW_FIN_SALARY_PAYMENT = getValueAsBoolean(extensions, "ALLOW_FIN_SALARY_PAYMENT", true);
-		ALLOW_SPECIALRATE = getValueAsBoolean(extensions, "ALLOW_SPECIALRATE", false);
-		ALLOW_MANUAL_SCHEDULE = getValueAsBoolean(extensions, "ALLOW_MANUAL_SCHEDULE", false);
-		CAPTURE_APPLICATION_NUMBER = getValueAsBoolean(extensions, "CAPTURE_APPLICATION_NUMBER", true);
-		ALLOW_PLANNED_EMIHOLIDAY = getValueAsBoolean(extensions, "ALLOW_PLANNED_EMIHOLIDAY", true);
-		ALLOW_UNPLANNED_EMIHOLIDAY = getValueAsBoolean(extensions, "ALLOW_UNPLANNED_EMIHOLIDAY", true);
-		ALLOW_REAGE = getValueAsBoolean(extensions, "ALLOW_REAGE", true);
-		ALLOW_BPI_TREATMENT = getValueAsBoolean(extensions, "ALLOW_BPI_TREATMENT", true);
-		INTERESTON_PASTDUE_PRINCIPAL = getValueAsBoolean(extensions, "INTERESTON_PASTDUE_PRINCIPAL", true);
-		ALLOW_PLANNED_DEFERMENTS = getValueAsBoolean(extensions, "ALLOW_PLANNED_DEFERMENTS", false);
-		ALLOW_PRICINGPOLICY = getValueAsBoolean(extensions, "ALLOW_PRICINGPOLICY", false);
-		ALLOW_COMMITMENT = getValueAsBoolean(extensions, "ALLOW_COMMITMENT", false);
-		ALLOW_PFTUNCHG = getValueAsBoolean(extensions, "ALLOW_PFTUNCHG", false);
-		COLLATERAL_DELINK_AUTO = getValueAsBoolean(extensions, "COLLATERAL_DELINK_AUTO", false);
-		CLIENT_NFL = getValueAsBoolean(extensions, "CLIENT_NFL", false);
-		ALLOW_ADDRESSTYPE_PRIORITY = getValueAsBoolean(extensions, "ALLOW_ADDRESSTYPE_PRIORITY", false);
-		ALLOW_EMIALTYPE_PRIORITY = getValueAsBoolean(extensions, "ALLOW_EMIALTYPE_PRIORITY", false);
-		ALLOW_PHONETYPE_PRIORITY = getValueAsBoolean(extensions, "ALLOW_PHONETYPE_PRIORITY", false);
-		EARLYPAY_ADJ_PRI = getValueAsBoolean(extensions, "EARLYPAY_ADJ_PRI", true);
-		// ALLOW_INSURANCE = getValueAsBoolean(extensions, "ALLOW_INSURANCE", false);
-		ALLOW_RIA = getValueAsBoolean(extensions, "ALLOW_RIA", false);
-		ALLOW_ADDDBSF = getValueAsBoolean(extensions, "ALLOW_ADDDBSF", false);
-		UPFRONT_ADJUST_PAYABLEADVISE = getValueAsBoolean(extensions, "UPFRONT_ADJUST_PAYABLEADVISE", false);
-		CO_APP_ENQ_SAME_AS_CUST_ENQ = getValueAsBoolean(extensions, "CO_APP_ENQ_SAME_AS_CUST_ENQ", true);
-		PAN_DUPLICATE_NOT_ALLOWED = getValueAsBoolean(extensions, "PAN_DUPLICATE_NOT_ALLOWED", true);
-		ALLOW_AUTO_DISBURSEMENTS = getValueAsBoolean(extensions, "ALLOW_AUTO_DISBURSEMENTS", false);
-		VARTUAL_DPD = getValueAsBoolean(extensions, "VARTUAL_DPD", true);
-		ALLOW_COSTOFFUNDS = getValueAsBoolean(extensions, "ALLOW_COSTOFFUNDS", true);
-		ALLOW_IRRCODES = getValueAsBoolean(extensions, "ALLOW_IRRCODES", true);
-		ALLOW_FEES_RECALCULATE = getValueAsBoolean(extensions, "ALLOW_FEES_RECALCULATE", true);
-		ALLOW_PAID_FEE_SCHEDULE_METHOD = getValueAsBoolean(extensions, "ALLOW_PAID_FEE_SCHEDULE_METHOD", false);
-		ALLOW_BARCODE = getValueAsBoolean(extensions, "ALLOW_BARCODE", false);
-		PPPERCENT_VALIDATION_REQ = getValueAsBoolean(extensions, "PPPERCENT_VALIDATION_REQ", false);
-		DEPOSIT_PROC_REQ = getValueAsBoolean(extensions, "DEPOSIT_PROC_REQ", false);
-		ENTITY_REQ_TRAIL_BAL = getValueAsBoolean(extensions, "ENTITY_REQ_TRAIL_BAL", false);
-		ALW_LPP_RULE_FIXED = getValueAsBoolean(extensions, "ALW_LPP_RULE_FIXED", false);
-		ALW_LOAN_AUTO_CANCEL = getValueAsBoolean(extensions, "ALW_LOAN_AUTO_CANCEL", false);
-		DFT_CPZ_RESET_ON_RECAL_LOCK = getValueAsBoolean(extensions, "DFT_CPZ_RESET_ON_RECAL_LOCK", false);
-		ALW_LPP_MIN_CAP_AMT = getValueAsBoolean(extensions, "ALW_LPP_MIN_CAP_AMT", false);
-		SEND_NOTIFICATION_ON_CREATE_LOAN_API = getValueAsBoolean(extensions, "SEND_NOTIFICATION_ON_CREATE_LOAN_API",
-				false);
-		ALW_APPROVED_MANDATE_IN_ORG = getValueAsBoolean(extensions, "ALW_APPROVED_MANDATE_IN_ORG", false);
-		ALW_PROFIT_SCHD_INVOICE = getValueAsBoolean(extensions, "ALW_PROFIT_SCHD_INVOICE", true);
-		NEGATE_SIGN_TB = getValueAsBoolean(extensions, "NEGATE_SIGN_TB", false);
-		ALLOW_ACCESS_CONTROL_TYPE = getValueAsBoolean(extensions, "ALLOW_ACCESS_CONTROL_TYPE", true);
-		APPLY_FDDLOCKPERIOD_AFTERGRACE = getValueAsBoolean(extensions, "APPLY_FDDLOCKPERIOD_AFTERGRACE", false);
-		ALW_FLEXI = getValueAsBoolean(extensions, "ALW_FLEXI", false);
-		ALW_SUBVENSION = getValueAsBoolean(extensions, "ALW_SUBVENSION", false);
-		ALLOW_ADVEMI_FREQUENCY = getValueAsBoolean(extensions, "ALLOW_ADVEMI_FREQUENCY", false);
-		ALLOW_ADVINT_FREQUENCY = getValueAsBoolean(extensions, "ALLOW_ADVINT_FREQUENCY", true);
-		RCVADV_CREATE_ON_INTEMI = getValueAsBoolean(extensions, "RCVADV_CREATE_ON_INTEMI", true);
-		PYBADV_CREATE_ON_INTEMI = getValueAsBoolean(extensions, "PYBADV_CREATE_ON_INTEMI", true);
-		COVENANT_REQUIRED = getValueAsBoolean(extensions, "COVENANT_REQUIRED", false);
-		QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES = getValueAsBoolean(extensions, "QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES",
+		ALLOW_MULTI_CCY = getValueAsBoolean("ALLOW_MULTI_CCY", false);
+		LIST_RENDER_ON_LOAD = getValueAsBoolean("LIST_RENDER_ON_LOAD", false);
+		LIMIT_INTERNAL = getValueAsBoolean("LIMIT_INTERNAL", true);
+		ONLINE_IRL_CHECK = getValueAsBoolean("ONLINE_IRL_CHECK", false);
+		ALLOW_MULTIPLE_EMPLOYMENTS = getValueAsBoolean("ALLOW_MULTIPLE_EMPLOYMENTS", true);
+		ALLOW_CUSTOMER_MAINTENANCE = getValueAsBoolean("ALLOW_CUSTOMER_MAINTENANCE", true);
+		ALLOW_CUSTOMER_RATINGS = getValueAsBoolean("ALLOW_CUSTOMER_RATINGS", false);
+		ALLOW_CUSTOMER_INCOMES = getValueAsBoolean("ALLOW_CUSTOMER_INCOMES", true);
+		ALLOW_CUSTCIF_IN_IMD = getValueAsBoolean("ALLOW_CUSTCIF_IN_IMD", true);
+		ALLOW_CUSTOMER_SHAREHOLDERS = getValueAsBoolean("ALLOW_CUSTOMER_SHAREHOLDERS", true);
+		ALLOW_COLLATERAL_VALUE_UPDATION = getValueAsBoolean("ALLOW_COLLATERAL_VALUE_UPDATION", false);
+		INDIAN_IMPLEMENTATION = getValueAsBoolean("INDIAN_IMPLEMENTATION", true);
+		VALIDATE_CORE_CUST_UPDATE = getValueAsBoolean("VALIDATE_CORE_CUST_UPDATE", false);
+		ALLOW_COVENANT_TYPES = getValueAsBoolean("ALLOW_COVENANT_TYPES", true);
+		COLLATERAL_INTERNAL = getValueAsBoolean("COLLATERAL_INTERNAL", true);
+		ALLOW_VAS = getValueAsBoolean("ALLOW_VAS", true);
+		LP_MARK_FIRSTDAY = getValueAsBoolean("LP_MARK_FIRSTDAY", true);
+		LPP_CALC_SOD = getValueAsBoolean("LPP_CALC_SOD", true);
+		AUTO_ALLOWED = getValueAsBoolean("AUTO_ALLOWED", false);
+		PREAPPROVAL_ALLOWED = getValueAsBoolean("PREAPPROVAL_ALLOWED", false);
+		ALLOW_DEVIATIONS = getValueAsBoolean("ALLOW_DEVIATIONS", true);
+		LATEPAY_PROFIT_CAL_ON_DAYZERO = getValueAsBoolean("LATEPAY_PROFIT_CAL_ON_DAYZERO", true);
+		ADD_FEEINFTV_ONCALC = getValueAsBoolean("ADD_FEEINFTV_ONCALC", true);
+		ALLOW_SPECIALRATE = getValueAsBoolean("ALLOW_SPECIALRATE", false);
+		ALLOW_MANUAL_SCHEDULE = getValueAsBoolean("ALLOW_MANUAL_SCHEDULE", false);
+		CAPTURE_APPLICATION_NUMBER = getValueAsBoolean("CAPTURE_APPLICATION_NUMBER", true);
+		ALLOW_PLANNED_EMIHOLIDAY = getValueAsBoolean("ALLOW_PLANNED_EMIHOLIDAY", true);
+		ALLOW_UNPLANNED_EMIHOLIDAY = getValueAsBoolean("ALLOW_UNPLANNED_EMIHOLIDAY", true);
+		ALLOW_REAGE = getValueAsBoolean("ALLOW_REAGE", true);
+		ALLOW_BPI_TREATMENT = getValueAsBoolean("ALLOW_BPI_TREATMENT", true);
+		INTERESTON_PASTDUE_PRINCIPAL = getValueAsBoolean("INTERESTON_PASTDUE_PRINCIPAL", true);
+		ALLOW_PLANNED_DEFERMENTS = getValueAsBoolean("ALLOW_PLANNED_DEFERMENTS", false);
+		ALLOW_PRICINGPOLICY = getValueAsBoolean("ALLOW_PRICINGPOLICY", false);
+		ALLOW_COMMITMENT = getValueAsBoolean("ALLOW_COMMITMENT", false);
+		ALLOW_PFTUNCHG = getValueAsBoolean("ALLOW_PFTUNCHG", false);
+		COLLATERAL_DELINK_AUTO = getValueAsBoolean("COLLATERAL_DELINK_AUTO", false);
+		CLIENT_NFL = getValueAsBoolean("CLIENT_NFL", false);
+		ALLOW_ADDRESSTYPE_PRIORITY = getValueAsBoolean("ALLOW_ADDRESSTYPE_PRIORITY", false);
+		ALLOW_EMIALTYPE_PRIORITY = getValueAsBoolean("ALLOW_EMIALTYPE_PRIORITY", false);
+		ALLOW_PHONETYPE_PRIORITY = getValueAsBoolean("ALLOW_PHONETYPE_PRIORITY", false);
+		EARLYPAY_ADJ_PRI = getValueAsBoolean("EARLYPAY_ADJ_PRI", true);
+		ALLOW_RIA = getValueAsBoolean("ALLOW_RIA", false);
+		ALLOW_ADDDBSF = getValueAsBoolean("ALLOW_ADDDBSF", false);
+		UPFRONT_ADJUST_PAYABLEADVISE = getValueAsBoolean("UPFRONT_ADJUST_PAYABLEADVISE", false);
+		CO_APP_ENQ_SAME_AS_CUST_ENQ = getValueAsBoolean("CO_APP_ENQ_SAME_AS_CUST_ENQ", true);
+		PAN_DUPLICATE_NOT_ALLOWED = getValueAsBoolean("PAN_DUPLICATE_NOT_ALLOWED", true);
+		ALLOW_AUTO_DISBURSEMENTS = getValueAsBoolean("ALLOW_AUTO_DISBURSEMENTS", false);
+		VARTUAL_DPD = getValueAsBoolean("VARTUAL_DPD", true);
+		ALLOW_COSTOFFUNDS = getValueAsBoolean("ALLOW_COSTOFFUNDS", true);
+		ALLOW_IRRCODES = getValueAsBoolean("ALLOW_IRRCODES", true);
+		ALLOW_FEES_RECALCULATE = getValueAsBoolean("ALLOW_FEES_RECALCULATE", true);
+		ALLOW_PAID_FEE_SCHEDULE_METHOD = getValueAsBoolean("ALLOW_PAID_FEE_SCHEDULE_METHOD", false);
+		ALLOW_BARCODE = getValueAsBoolean("ALLOW_BARCODE", false);
+		PPPERCENT_VALIDATION_REQ = getValueAsBoolean("PPPERCENT_VALIDATION_REQ", false);
+		DEPOSIT_PROC_REQ = getValueAsBoolean("DEPOSIT_PROC_REQ", false);
+		ENTITY_REQ_TRAIL_BAL = getValueAsBoolean("ENTITY_REQ_TRAIL_BAL", false);
+		ALW_LPP_RULE_FIXED = getValueAsBoolean("ALW_LPP_RULE_FIXED", false);
+		ALW_LOAN_AUTO_CANCEL = getValueAsBoolean("ALW_LOAN_AUTO_CANCEL", false);
+		DFT_CPZ_RESET_ON_RECAL_LOCK = getValueAsBoolean("DFT_CPZ_RESET_ON_RECAL_LOCK", false);
+		ALW_LPP_MIN_CAP_AMT = getValueAsBoolean("ALW_LPP_MIN_CAP_AMT", false);
+		SEND_NOTIFICATION_ON_CREATE_LOAN_API = getValueAsBoolean("SEND_NOTIFICATION_ON_CREATE_LOAN_API", false);
+		ALW_APPROVED_MANDATE_IN_ORG = getValueAsBoolean("ALW_APPROVED_MANDATE_IN_ORG", false);
+		ALW_PROFIT_SCHD_INVOICE = getValueAsBoolean("ALW_PROFIT_SCHD_INVOICE", true);
+		NEGATE_SIGN_TB = getValueAsBoolean("NEGATE_SIGN_TB", false);
+		ALLOW_ACCESS_CONTROL_TYPE = getValueAsBoolean("ALLOW_ACCESS_CONTROL_TYPE", true);
+		APPLY_FDDLOCKPERIOD_AFTERGRACE = getValueAsBoolean("APPLY_FDDLOCKPERIOD_AFTERGRACE", false);
+		ALW_FLEXI = getValueAsBoolean("ALW_FLEXI", false);
+		ALW_SUBVENSION = getValueAsBoolean("ALW_SUBVENSION", false);
+		ALLOW_ADVEMI_FREQUENCY = getValueAsBoolean("ALLOW_ADVEMI_FREQUENCY", false);
+		ALLOW_ADVINT_FREQUENCY = getValueAsBoolean("ALLOW_ADVINT_FREQUENCY", true);
+		RCVADV_CREATE_ON_INTEMI = getValueAsBoolean("RCVADV_CREATE_ON_INTEMI", true);
+		PYBADV_CREATE_ON_INTEMI = getValueAsBoolean("PYBADV_CREATE_ON_INTEMI", true);
+		COVENANT_REQUIRED = getValueAsBoolean("COVENANT_REQUIRED", false);
+		QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES = getValueAsBoolean("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES", true);
+		UPFRONT_FEE_REVERSAL_REQ = getValueAsBoolean("UPFRONT_FEE_REVERSAL_REQ", false);
+		GAP_INTEREST_REQUIRED = getValueAsBoolean("GAP_INTEREST_REQUIRED", true);
+		ALLOW_ALL_SERV_RCDS = getValueAsBoolean("ALLOW_ALL_SERV_RCDS", false);
+		LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
+		INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean("INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS",
 				true);
-		UPFRONT_FEE_REVERSAL_REQ = getValueAsBoolean(extensions, "UPFRONT_FEE_REVERSAL_REQ", false);
-		GAP_INTEREST_REQUIRED = getValueAsBoolean(extensions, "GAP_INTEREST_REQUIRED", true);
-		ALLOW_ALL_SERV_RCDS = getValueAsBoolean(extensions, "ALLOW_ALL_SERV_RCDS", false);
-		LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean(extensions, "LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS",
-				false);
-		ENTITYCODE_REQ_FOR_MANDATE_PROCESS = getValueAsBoolean(extensions, "ENTITYCODE_REQ_FOR_MANDATE_PROCESS", false);
-		DISBURSEMENT_AUTO_DOWNLOAD = getValueAsBoolean(extensions, "DISBURSEMENT_AUTO_DOWNLOAD", false);
-		DISBURSEMENT_AUTO_UPLOAD = getValueAsBoolean(extensions, "DISBURSEMENT_AUTO_UPLOAD", false);
-		MANDATE_AUTO_DOWNLOAD = getValueAsBoolean(extensions, "MANDATE_AUTO_DOWNLOAD", false);
-		MANDATE_AUTO_UPLOAD = getValueAsBoolean(extensions, "MANDATE_AUTO_UPLOAD", false);
-		PRESENTMENT_AUTO_DOWNLOAD = getValueAsBoolean(extensions, "PRESENTMENT_AUTO_DOWNLOAD", false);
-		PRESENTMENT_AUTO_UPLOAD = getValueAsBoolean(extensions, "PRESENTMENT_AUTO_UPLOAD", false);
-		VALIDATE_BENFICIARY_ACCOUNT = getValueAsBoolean(extensions, "VALIDATE_BENFICIARY_ACCOUNT", false);
-		AUTO_EOD_REQUIRED = getValueAsBoolean(extensions, "AUTO_EOD_REQUIRED", false);
-		ALW_ADV_INTEMI_ADVICE_CREATION = getValueAsBoolean(extensions, "ALW_ADV_INTEMI_ADVICE_CREATION", false);
-		TAX_DFT_CR_INV_REQ = getValueAsBoolean(extensions, "TAX_DFT_CR_INV_REQ", false);
-		ALLOW_IND_AS = getValueAsBoolean(extensions, "ALLOW_IND_AS", false);
-		IND_AS_ACCOUNTING_REQ = getValueAsBoolean(extensions, "IND_AS_ACCOUNTING_REQ", false);
-		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
-		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", true);
-		ALLOW_DSF_CASHCLT = getValueAsBoolean(extensions, "ALLOW_DSF_CASHCLT", false);
-		ALLOW_ADV_INT = getValueAsBoolean(extensions, "ALLOW_ADV_INT", false);
-		ALLOW_ADV_EMI = getValueAsBoolean(extensions, "ALLOW_ADV_EMI", false);
-		ALLOW_TDS_ON_FEE = getValueAsBoolean(extensions, "ALLOW_TDS_ON_FEE", false);
-		ALLOW_CD_LOANS = getValueAsBoolean(extensions, "ALLOW_CD_LOANS", false);
-		ALLOW_OD_LOANS = getValueAsBoolean(extensions, "ALLOW_OD_LOANS", false);
-		ALLOW_SAMPLING = getValueAsBoolean(extensions, "ALLOW_SAMPLING", false);
-		ALLOW_SCHOOL_ORG = getValueAsBoolean(extensions, "ALLOW_SCHOOL_ORG", false);
-		ALLOW_FDD_ON_RVW_DATE = getValueAsBoolean(extensions, "ALLOW_FDD_ON_RVW_DATE", false);
-		ALLOW_UNACCURED_PENALITY_SOA = getValueAsBoolean(extensions, "ALLOW_UNACCURED_PENALITY_SOA", true);
-		ALLOW_AUTO_GRACE_EXT = getValueAsBoolean(extensions, "ALLOW_AUTO_GRACE_EXT", false);
-		ALLOW_LOAN_DOWNSIZING = getValueAsBoolean(extensions, "ALLOW_LOAN_DOWNSIZING", false);
-		ALLOW_RESTRUCTURING = getValueAsBoolean(extensions, "ALLOW_RESTRUCTURING", false);
-		LOAN_DOWNSIZING_ACCOUNTING_REQ = getValueAsBoolean(extensions, "LOAN_DOWNSIZING_ACCOUNTING_REQ", false);
+		ENTITYCODE_REQ_FOR_MANDATE_PROCESS = getValueAsBoolean("ENTITYCODE_REQ_FOR_MANDATE_PROCESS", false);
+		DISBURSEMENT_AUTO_DOWNLOAD = getValueAsBoolean("DISBURSEMENT_AUTO_DOWNLOAD", false);
+		DISBURSEMENT_AUTO_UPLOAD = getValueAsBoolean("DISBURSEMENT_AUTO_UPLOAD", false);
+		MANDATE_AUTO_DOWNLOAD = getValueAsBoolean("MANDATE_AUTO_DOWNLOAD", false);
+		MANDATE_AUTO_UPLOAD = getValueAsBoolean("MANDATE_AUTO_UPLOAD", false);
+		PRESENTMENT_AUTO_DOWNLOAD = getValueAsBoolean("PRESENTMENT_AUTO_DOWNLOAD", false);
+		PRESENTMENT_AUTO_UPLOAD = getValueAsBoolean("PRESENTMENT_AUTO_UPLOAD", false);
+		VALIDATE_BENFICIARY_ACCOUNT = getValueAsBoolean("VALIDATE_BENFICIARY_ACCOUNT", false);
+		AUTO_EOD_REQUIRED = getValueAsBoolean("AUTO_EOD_REQUIRED", false);
+		ALW_ADV_INTEMI_ADVICE_CREATION = getValueAsBoolean("ALW_ADV_INTEMI_ADVICE_CREATION", false);
+		TAX_DFT_CR_INV_REQ = getValueAsBoolean("TAX_DFT_CR_INV_REQ", false);
+		ALLOW_IND_AS = getValueAsBoolean("ALLOW_IND_AS", false);
+		IND_AS_ACCOUNTING_REQ = getValueAsBoolean("IND_AS_ACCOUNTING_REQ", false);
+		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean("ALLOW_AUTO_KNOCK_OFF", false);
+		ALLOW_OLDEST_DUE = getValueAsBoolean("ALLOW_OLDEST_DUE", true);
+		ALLOW_DSF_CASHCLT = getValueAsBoolean("ALLOW_DSF_CASHCLT", false);
+		ALLOW_ADV_INT = getValueAsBoolean("ALLOW_ADV_INT", false);
+		ALLOW_ADV_EMI = getValueAsBoolean("ALLOW_ADV_EMI", false);
+		ALLOW_TDS_ON_FEE = getValueAsBoolean("ALLOW_TDS_ON_FEE", false);
+		ALLOW_CD_LOANS = getValueAsBoolean("ALLOW_CD_LOANS", false);
+		ALLOW_OD_LOANS = getValueAsBoolean("ALLOW_OD_LOANS", false);
+		ALLOW_SAMPLING = getValueAsBoolean("ALLOW_SAMPLING", false);
+		ALLOW_SCHOOL_ORG = getValueAsBoolean("ALLOW_SCHOOL_ORG", false);
+		ALLOW_FDD_ON_RVW_DATE = getValueAsBoolean("ALLOW_FDD_ON_RVW_DATE", false);
+		ALLOW_UNACCURED_PENALITY_SOA = getValueAsBoolean("ALLOW_UNACCURED_PENALITY_SOA", true);
+		ALLOW_AUTO_GRACE_EXT = getValueAsBoolean("ALLOW_AUTO_GRACE_EXT", false);
+		ALLOW_LOAN_DOWNSIZING = getValueAsBoolean("ALLOW_LOAN_DOWNSIZING", false);
+		ALLOW_RESTRUCTURING = getValueAsBoolean("ALLOW_RESTRUCTURING", false);
+		LOAN_DOWNSIZING_ACCOUNTING_REQ = getValueAsBoolean("LOAN_DOWNSIZING_ACCOUNTING_REQ", false);
 
 		// FROM HL
-		ALLOW_LOAN_SPLIT = getValueAsBoolean(extensions, "ALLOW_LOAN_SPLIT", false);
-		SCHD_INST_CAL_ON_DISB_RELIZATION = getValueAsBoolean(extensions, "SCHD_INST_CAL_ON_DISB_RELIZATION", false);
+		ALLOW_LOAN_SPLIT = getValueAsBoolean("ALLOW_LOAN_SPLIT", false);
+		SCHD_INST_CAL_ON_DISB_RELIZATION = getValueAsBoolean("SCHD_INST_CAL_ON_DISB_RELIZATION", false);
 
-		SHOW_CUSTOM_BLACKLIST_FIELDS = getValueAsBoolean(extensions, "SHOW_CUSTOM_BLACKLIST_FIELDS", false);
-		DSA_CODE_READONLY_FIELD = getValueAsBoolean(extensions, "DSA_CODE_READONLY_FIELD", false);
-		COAPP_PANNUMBER_NON_MANDATORY = getValueAsBoolean(extensions, "COAPP_PANNUMBER_NON_MANDATORY", false);
-		GENERATECIBIL_BTN_MANDATORY = getValueAsBoolean(extensions, "GENERATECIBIL_BTN_MANDATORY", false);
-		ALLOW_ALL_SERV_RCDS = getValueAsBoolean(extensions, "ALLOW_ALL_SERV_RCDS", false);
-		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean(extensions, "TV_FINALVAL_AMOUNT_VALD", false);
-		CUST_ADDR_AUTO_FILL = getValueAsBoolean(extensions, "CUST_ADDR_AUTO_FILL", true);
-		SHOW_CUST_EMP_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_EMP_DETAILS", true);
-		SHOW_CUST_SHARE_HOLDER_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_SHARE_HOLDER_DETAILS", true);
-		ALLOW_SIMILARITY = getValueAsBoolean(extensions, "ALLOW_SIMILARITY", false);
+		SHOW_CUSTOM_BLACKLIST_FIELDS = getValueAsBoolean("SHOW_CUSTOM_BLACKLIST_FIELDS", false);
+		DSA_CODE_READONLY_FIELD = getValueAsBoolean("DSA_CODE_READONLY_FIELD", false);
+		COAPP_PANNUMBER_NON_MANDATORY = getValueAsBoolean("COAPP_PANNUMBER_NON_MANDATORY", false);
+		GENERATECIBIL_BTN_MANDATORY = getValueAsBoolean("GENERATECIBIL_BTN_MANDATORY", false);
+		ALLOW_ALL_SERV_RCDS = getValueAsBoolean("ALLOW_ALL_SERV_RCDS", false);
+		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean("TV_FINALVAL_AMOUNT_VALD", false);
+		CUST_ADDR_AUTO_FILL = getValueAsBoolean("CUST_ADDR_AUTO_FILL", true);
+		SHOW_CUST_EMP_DETAILS = getValueAsBoolean("SHOW_CUST_EMP_DETAILS", true);
+		SHOW_CUST_SHARE_HOLDER_DETAILS = getValueAsBoolean("SHOW_CUST_SHARE_HOLDER_DETAILS", true);
+		ALLOW_SIMILARITY = getValueAsBoolean("ALLOW_SIMILARITY", false);
 
-		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
-		CUST_EMP_TYPE_MANDATORY = getValueAsBoolean(extensions, "CUST_EMP_TYPE_MANDATORY", false);
-		DEDUP_BLACKLIST_COAPP = getValueAsBoolean(extensions, "DEDUP_BLACKLIST_COAPP", false);
-		POPULATE_DFT_INCOME_DETAILS = getValueAsBoolean(extensions, "POPULATE_DFT_INCOME_DETAILS", false);
-		CUST_MOB_MANDATORY = getValueAsBoolean(extensions, "CUST_MOB_MANDATORY", true);
+		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean("GROUP_BATCH_BY_PARTNERBANK", false);
+		CUST_EMP_TYPE_MANDATORY = getValueAsBoolean("CUST_EMP_TYPE_MANDATORY", false);
+		DEDUP_BLACKLIST_COAPP = getValueAsBoolean("DEDUP_BLACKLIST_COAPP", false);
+		POPULATE_DFT_INCOME_DETAILS = getValueAsBoolean("POPULATE_DFT_INCOME_DETAILS", false);
+		CUST_MOB_MANDATORY = getValueAsBoolean("CUST_MOB_MANDATORY", true);
 
-		NOC_GENERATION_MULTIPLE = getValueAsBoolean(extensions, "NOC_GENERATION_MULTIPLE", false);
-		NOC_LINKED_LOANS_CHECK_REQ = getValueAsBoolean(extensions, "NOC_LINKED_LOANS_CHECK_REQ", false);
+		NOC_GENERATION_MULTIPLE = getValueAsBoolean("NOC_GENERATION_MULTIPLE", false);
+		NOC_LINKED_LOANS_CHECK_REQ = getValueAsBoolean("NOC_LINKED_LOANS_CHECK_REQ", false);
 
-		ACCOUNTING_VALIDATION = getValueAsBoolean(extensions, "ACCOUNTING_VALIDATION", false);
-		RCU_DOC_FIELDS_DISABLED = getValueAsBoolean(extensions, "RCU_DOC_FIELDS_DISABLED", false);
+		ACCOUNTING_VALIDATION = getValueAsBoolean("ACCOUNTING_VALIDATION", false);
+		RCU_DOC_FIELDS_DISABLED = getValueAsBoolean("RCU_DOC_FIELDS_DISABLED", false);
 
-		CUSTOMIZED_TEMPLATES = getValueAsBoolean(extensions, "CUSTOMIZED_TEMPLATES", false);
-		DERIVED_EMI_REQ = getValueAsBoolean(extensions, "DERIVED_EMI_REQ", false);
-		IS_DATA_SYNC_REQ_BY_APP_DATE = getValueAsBoolean(extensions, "IS_DATA_SYNC_REQ_BY_APP_DATE", false);
-		CUSTOM_BLACKLIST_PARAMS = getValueAsBoolean(extensions, "CUSTOM_BLACKLIST_PARAMS", false);
-		MANDATE_ALLOW_CO_APP = getValueAsBoolean(extensions, "MANDATE_ALLOW_CO_APP", false);
-		DISBURSEMENT_ALLOW_CO_APP = getValueAsBoolean(extensions, "DISBURSEMENT_ALLOW_CO_APP", false);
-		CHEQUE_ALLOW_CO_APP = getValueAsBoolean(extensions, "CHEQUE_ALLOW_CO_APP", false);
-		FEE_SERVICEING_STAMPIN_ON_ORG = getValueAsBoolean(extensions, "FEE_SERVICEING_STAMPIN_ON_ORG", false);
-		ALW_VERIFICATION_SYNC = getValueAsBoolean(extensions, "ALW_VERIFICATION_SYNC", false);
-		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
-		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean(extensions, "ALLOW_ED_FIELDS_IN_NPA", false);
-		ALLOW_EOD_INTERVAL_VALIDATION = getValueAsBoolean(extensions, "ALLOW_EOD_INTERVAL_VALIDATION", false);
-		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean(extensions, "DEFAULT_VAS_MODE_OF_PAYMENT", false);
-		PRESENTMENT_EXTRACT_DEALER_MAN = getValueAsBoolean(extensions, "PRESENTMENT_EXTRACT_DEALER_MAN", true);
-		ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE = getValueAsBoolean(extensions,
-				"ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE", false);
-		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean(extensions, "DEFAULT_VAS_MODE_OF_PAYMENT", false);
-		SUSP_CHECK_REQ = getValueAsBoolean(extensions, "SUSP_CHECK_REQ", false);
-		VER_INITATE_REMARKS_MANDATORY = getValueAsBoolean(extensions, "VER_INITATE_REMARKS_MANDATORY", false);
-		ALLOW_NEGATIVE_VALUES_EXTFIELDS = getValueAsBoolean(extensions, "ALLOW_NEGATIVE_VALUES_EXTFIELDS", false);
-		FINREFERENCE_ALW_SWIFT_CODE = getValueAsBoolean(extensions, "FINREFERENCE_ALW_SWIFT_CODE", false);
-		DISB_PAID_CANCELLATION_REQ = getValueAsBoolean(extensions, "DISB_PAID_CANCELLATION_REQ", false);
-		MANDATE_PTNRBNK_IN_DWNLD = getValueAsBoolean(extensions, "MANDATE_PTNRBNK_IN_DWNLD", false);
-		PRESENTMENT_STAGE_ACCOUNTING_REQ = getValueAsBoolean(extensions, "PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
-		ALLOW_LOAN_VAS_RATIO_CALC = getValueAsBoolean(extensions, "ALLOW_LOAN_VAS_RATIO_CALC", false);
-		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean(extensions, "ALLOW_ED_FIELDS_IN_NPA", false);
-		FRQ_15DAYS_REQ = getValueAsBoolean(extensions, "FRQ_15DAYS_REQ", false);
-		NON_FRQ_CAPITALISATION = getValueAsBoolean(extensions, "NON_FRQ_CAPITALISATION", false);
-		ALW_DOWNPAY_IN_LOANENQ_AND_SOA = getValueAsBoolean(extensions, "ALW_DOWNPAY_IN_LOANENQ_AND_SOA", false);
-		FA_CANCEL_CHEQUE_AUTO_OPEN = getValueAsBoolean(extensions, "FA_CANCEL_CHEQUE_AUTO_OPEN", false);
-		PRESENT_RECEIPTS_ON_RESP = getValueAsBoolean(extensions, "PRESENT_RECEIPTS_ON_RESP", false);
-		ALLOW_SUBVENTION = getValueAsBoolean(extensions, "ALLOW_SUBVENTION", false);
-		PRESENT_RESP_BOUNCE_REMARKS_MAN = getValueAsBoolean(extensions, "PRESENT_RESP_BOUNCE_REMARKS_MAN", false);
-		VAS_VALIDATION_FOR_PREMIUM_CALC = getValueAsBoolean(extensions, "VAS_VALIDATION_FOR_PREMIUM_CALC", false);
-		SNAP_SHOT_DATE_AS_CUR_BUS_DATE = getValueAsBoolean(extensions, "SNAP_SHOT_DATE_AS_CUR_BUS_DATE", false);
+		CUSTOMIZED_TEMPLATES = getValueAsBoolean("CUSTOMIZED_TEMPLATES", false);
+		DERIVED_EMI_REQ = getValueAsBoolean("DERIVED_EMI_REQ", false);
+		IS_DATA_SYNC_REQ_BY_APP_DATE = getValueAsBoolean("IS_DATA_SYNC_REQ_BY_APP_DATE", false);
+		CUSTOM_BLACKLIST_PARAMS = getValueAsBoolean("CUSTOM_BLACKLIST_PARAMS", false);
+		MANDATE_ALLOW_CO_APP = getValueAsBoolean("MANDATE_ALLOW_CO_APP", false);
+		DISBURSEMENT_ALLOW_CO_APP = getValueAsBoolean("DISBURSEMENT_ALLOW_CO_APP", false);
+		CHEQUE_ALLOW_CO_APP = getValueAsBoolean("CHEQUE_ALLOW_CO_APP", false);
+		FEE_SERVICEING_STAMPIN_ON_ORG = getValueAsBoolean("FEE_SERVICEING_STAMPIN_ON_ORG", false);
+		ALW_VERIFICATION_SYNC = getValueAsBoolean("ALW_VERIFICATION_SYNC", false);
+		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean("GROUP_BATCH_BY_PARTNERBANK", false);
+		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean("ALLOW_ED_FIELDS_IN_NPA", false);
+		ALLOW_EOD_INTERVAL_VALIDATION = getValueAsBoolean("ALLOW_EOD_INTERVAL_VALIDATION", false);
+		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean("DEFAULT_VAS_MODE_OF_PAYMENT", false);
+		PRESENTMENT_EXTRACT_DEALER_MAN = getValueAsBoolean("PRESENTMENT_EXTRACT_DEALER_MAN", true);
+		ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE = getValueAsBoolean("ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE",
+				false);
+		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean("DEFAULT_VAS_MODE_OF_PAYMENT", false);
+		SUSP_CHECK_REQ = getValueAsBoolean("SUSP_CHECK_REQ", false);
+		VER_INITATE_REMARKS_MANDATORY = getValueAsBoolean("VER_INITATE_REMARKS_MANDATORY", false);
+		ALLOW_NEGATIVE_VALUES_EXTFIELDS = getValueAsBoolean("ALLOW_NEGATIVE_VALUES_EXTFIELDS", false);
+		FINREFERENCE_ALW_SWIFT_CODE = getValueAsBoolean("FINREFERENCE_ALW_SWIFT_CODE", false);
+		DISB_PAID_CANCELLATION_REQ = getValueAsBoolean("DISB_PAID_CANCELLATION_REQ", false);
+		MANDATE_PTNRBNK_IN_DWNLD = getValueAsBoolean("MANDATE_PTNRBNK_IN_DWNLD", false);
+		PRESENTMENT_STAGE_ACCOUNTING_REQ = getValueAsBoolean("PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
+		ALLOW_LOAN_VAS_RATIO_CALC = getValueAsBoolean("ALLOW_LOAN_VAS_RATIO_CALC", false);
+		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean("ALLOW_ED_FIELDS_IN_NPA", false);
+		FRQ_15DAYS_REQ = getValueAsBoolean("FRQ_15DAYS_REQ", false);
+		NON_FRQ_CAPITALISATION = getValueAsBoolean("NON_FRQ_CAPITALISATION", false);
+		ALW_DOWNPAY_IN_LOANENQ_AND_SOA = getValueAsBoolean("ALW_DOWNPAY_IN_LOANENQ_AND_SOA", false);
+		FA_CANCEL_CHEQUE_AUTO_OPEN = getValueAsBoolean("FA_CANCEL_CHEQUE_AUTO_OPEN", false);
+		PRESENT_RECEIPTS_ON_RESP = getValueAsBoolean("PRESENT_RECEIPTS_ON_RESP", false);
+		ALLOW_SUBVENTION = getValueAsBoolean("ALLOW_SUBVENTION", false);
+		PRESENT_RESP_BOUNCE_REMARKS_MAN = getValueAsBoolean("PRESENT_RESP_BOUNCE_REMARKS_MAN", false);
+		VAS_VALIDATION_FOR_PREMIUM_CALC = getValueAsBoolean("VAS_VALIDATION_FOR_PREMIUM_CALC", false);
+		SNAP_SHOT_DATE_AS_CUR_BUS_DATE = getValueAsBoolean("SNAP_SHOT_DATE_AS_CUR_BUS_DATE", false);
 		// this constant should be true for goderaj
-		CHEQUE_AMOUNT_ZERO_UDC = getValueAsBoolean(extensions, "CHEQUE_AMOUNT_ZERO_UDC", false);
-		ALLOW_SINGLE_FEE_CONFIG = getValueAsBoolean(extensions, "ALLOW_SINGLE_FEE_CONFIG", false);
-		VALIDATION_ON_CHECKER_APPROVER_ALLOWED = getValueAsBoolean(extensions, "VALIDATION_ON_CHECKER_APPROVER_ALLOWED",
-				false);
-		CIBIL_BASED_ON_ENTITY = getValueAsBoolean(extensions, "CIBIL_BASED_ON_ENTITY", false);
-		RESTRUCTURE_DFT_APP_DATE = getValueAsBoolean(extensions, "RESTRUCTURE_DFT_APP_DATE", false);
-		RESTRUCTURE_DATE_ALW_EDIT = getValueAsBoolean(extensions, "RESTRUCTURE_DATE_ALW_EDIT", false);
-		RESTRUCTURE_RATE_CHG_ALW = getValueAsBoolean(extensions, "RESTRUCTURE_RATE_CHG_ALW", false);
-		RESTRUCTURE_ALW_CHARGES = getValueAsBoolean(extensions, "RESTRUCTURE_ALW_CHARGES", false);
-		PENALTY_CALC_ON_REPRESENTATION = getValueAsBoolean(extensions, "PENALTY_CALC_ON_REPRESENTATION", false);
-		MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK = getValueAsBoolean(extensions, "MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK",
-				false);
-		DISB_REQ_RES_FILE_GEN_MODE = getValueAsBoolean(extensions, "DISB_REQ_RES_FILE_GEN_MODE", false);
-		ALLOW_SHADOW_POSTINGS = getValueAsBoolean(extensions, "ALLOW_SHADOW_POSTINGS", false);
-		ALLOW_ESCROW_MODE = getValueAsBoolean(extensions, "ALLOW_ESCROW_MODE", false);
+		CHEQUE_AMOUNT_ZERO_UDC = getValueAsBoolean("CHEQUE_AMOUNT_ZERO_UDC", false);
+		ALLOW_SINGLE_FEE_CONFIG = getValueAsBoolean("ALLOW_SINGLE_FEE_CONFIG", false);
+		VALIDATION_ON_CHECKER_APPROVER_ALLOWED = getValueAsBoolean("VALIDATION_ON_CHECKER_APPROVER_ALLOWED", false);
+		CIBIL_BASED_ON_ENTITY = getValueAsBoolean("CIBIL_BASED_ON_ENTITY", false);
+		RESTRUCTURE_DFT_APP_DATE = getValueAsBoolean("RESTRUCTURE_DFT_APP_DATE", false);
+		RESTRUCTURE_DATE_ALW_EDIT = getValueAsBoolean("RESTRUCTURE_DATE_ALW_EDIT", false);
+		RESTRUCTURE_RATE_CHG_ALW = getValueAsBoolean("RESTRUCTURE_RATE_CHG_ALW", false);
+		RESTRUCTURE_ALW_CHARGES = getValueAsBoolean("RESTRUCTURE_ALW_CHARGES", false);
+		PENALTY_CALC_ON_REPRESENTATION = getValueAsBoolean("PENALTY_CALC_ON_REPRESENTATION", false);
+		MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK = getValueAsBoolean("MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK", false);
+		DISB_REQ_RES_FILE_GEN_MODE = getValueAsBoolean("DISB_REQ_RES_FILE_GEN_MODE", false);
+		ALLOW_SHADOW_POSTINGS = getValueAsBoolean("ALLOW_SHADOW_POSTINGS", false);
+		ALLOW_ESCROW_MODE = getValueAsBoolean("ALLOW_ESCROW_MODE", false);
 		/*
-		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
-		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
-		 * ALLOW_LV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_LV_INITIATION_LOS", true);
-		 * ALLOW_RCU_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_RCU_INITIATION_LOS", true);
+		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean("ALLOW_FI_INITIATION_LOS", true); ALLOW_TV_INITIATION_LOS =
+		 * getValueAsBoolean("ALLOW_TV_INITIATION_LOS", true); ALLOW_LV_INITIATION_LOS =
+		 * getValueAsBoolean("ALLOW_LV_INITIATION_LOS", true); ALLOW_RCU_INITIATION_LOS =
+		 * getValueAsBoolean("ALLOW_RCU_INITIATION_LOS", true);
 		 */
 
-		REPAY_HIERARCHY_METHOD = getValueAsString(extensions, "REPAY_HIERARCHY_METHOD", "FCIP");
-		REPAY_INTEREST_HIERARCHY = getValueAsString(extensions, "REPAY_INTEREST_HIERARCHY", "LI");
-		CLIENT_BFL = getValueAsString(extensions, "CLIENT_BFL", "BFL");
-		CLIENT_NAME = getValueAsString(extensions, "CLIENT_NAME", "BFL");
-		NBFC = getValueAsString(extensions, "NBFC", "NBFC");
-		BANK = getValueAsString(extensions, "BANK", "BANK");
-		CLIENTTYPE = getValueAsString(extensions, "CLIENTTYPE", "NBFC");
-		COLLATERAL_ADJ = getValueAsString(extensions, "COLLATERAL_ADJ", "NO_ADJ");
-		LPP_GST_DUE_ON = getValueAsString(extensions, "LPP_GST_DUE_ON", "A");
-		GST_SCHD_CAL_ON = getValueAsString(extensions, "GST_SCHD_CAL_ON", "I");
-		ALLOW_AMOIUNT_INTEGRAL_PART = getValueAsString(extensions, "ALLOW_AMOIUNT_INTEGRAL_PART", "Y");
+		REPAY_HIERARCHY_METHOD = getValueAsString("REPAY_HIERARCHY_METHOD", "FCIP");
+		REPAY_INTEREST_HIERARCHY = getValueAsString("REPAY_INTEREST_HIERARCHY", "LI");
+		CLIENT_BFL = getValueAsString("CLIENT_BFL", "BFL");
+		CLIENT_NAME = getValueAsString("CLIENT_NAME", "BFL");
+		NBFC = getValueAsString("NBFC", "NBFC");
+		BANK = getValueAsString("BANK", "BANK");
+		CLIENTTYPE = getValueAsString("CLIENTTYPE", "NBFC");
+		COLLATERAL_ADJ = getValueAsString("COLLATERAL_ADJ", "NO_ADJ");
+		LPP_GST_DUE_ON = getValueAsString("LPP_GST_DUE_ON", "A");
+		GST_SCHD_CAL_ON = getValueAsString("GST_SCHD_CAL_ON", "I");
+		ALLOW_AMOIUNT_INTEGRAL_PART = getValueAsString("ALLOW_AMOIUNT_INTEGRAL_PART", "Y");
+		BASE_CCY = getValueAsString("BASE_CCY", "INR");
 
-		BASE_CCY = getValueAsString(extensions, "BASE_CCY", "INR");
-		PRESENTMENT_EXPORT_STATUS_MIN_LENGTH = getValueAsInt(extensions, "PRESENTMENT_EXPORT_STATUS_MIN_LENGTH", 1);
-		PRESENTMENT_EXPORT_STATUS_MAX_LENGTH = getValueAsInt(extensions, "PRESENTMENT_EXPORT_STATUS_MAX_LENGTH", 1);
-		BASE_CCY_EDT_FIELD = getValueAsInt(extensions, "BASE_CCY_EDT_FIELD", 2);
-		// FIXME HL >>
+		PRESENTMENT_EXPORT_STATUS_MIN_LENGTH = getValueAsInt("PRESENTMENT_EXPORT_STATUS_MIN_LENGTH", 1);
+		PRESENTMENT_EXPORT_STATUS_MAX_LENGTH = getValueAsInt("PRESENTMENT_EXPORT_STATUS_MAX_LENGTH", 1);
+		BASE_CCY_EDT_FIELD = getValueAsInt("BASE_CCY_EDT_FIELD", 2);
 
-		// <<
-
-		VAS_INST_EDITABLE = getValueAsBoolean(extensions, "VAS_INST_EDITABLE", false);
-		ALLOW_DISB_ENQUIRY = getValueAsBoolean(extensions, "ALLOW_DISB_ENQUIRY", false);
-		ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE = getValueAsBoolean(extensions,
-				"ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE", false);
-		CUSTOM_EXT_LIABILITIES = getValueAsBoolean(extensions, "CUSTOM_EXT_LIABILITIES", false);
-		DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL = getValueAsBoolean(extensions, "DISB_REVERSAL_REQ_IN_LOAN_CANCEL", false);
-		UPDATE_METADATA_IN_DMS = getValueAsBoolean(extensions, "UPDATE_METADATA_IN_DMS", false);
-		CHEQUENO_MANDATORY_DISB_INS = getValueAsBoolean(extensions, "CHEQUENO_MANDATORY_DISB_INS", false);
-		ALW_QDP_CUSTOMIZATION = getValueAsBoolean(extensions, "ALW_QDP_CUSTOMIZATION", false);
-		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
-		CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = getValueAsBoolean(extensions, "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER",
-				true);
-
-		ALLOW_PMAY = getValueAsBoolean(extensions, "ALLOW_PMAY", false);
-		ALLOW_OCR = getValueAsBoolean(extensions, "ALLOW_OCR", false);
-
-		setVerificationConstants(extensions);
-
-		ADVANCE_PAYMENT_INT = getValueAsBoolean(extensions, "ADVANCE_PAYMENT_INT", false);
-		ADVANCE_PAYMENT_EMI = getValueAsBoolean(extensions, "ADVANCE_PAYMENT_EMI", false);
-		COVENANT_MODULE_NEW = getValueAsBoolean(extensions, "COVENANT_MODULE_NEW", true);
-		ADV_EMI_STAGE_FRONT_END = getValueAsBoolean(extensions, "ADV_EMI_STAGE_FRONT_END", true);
-		ADV_EMI_STAGE_REAR_END = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REAR_END", false);
-		ADV_EMI_STAGE_REPAY_TERMS = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REPAY_TERMS", false);
-
-		AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT = getValueAsBoolean(extensions, "AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", false);
-		RECEIPTS_SHOW_ACCOUNTING_TAB = getValueAsBoolean(extensions, "RECEIPTS_SHOW_ACCOUNTING_TAB", true);
-		BRANCHWISE_RCU_INITIATION = getValueAsBoolean(extensions, "BRANCHWISE_RCU_INITIATION", false);
-		ALLOW_NON_LAN_RECEIPTS = getValueAsBoolean(extensions, "ALLOW_NON_LAN_RECEIPTS", false);
-		ALLOW_BUILDER_BENEFICIARY_DETAILS = getValueAsBoolean(extensions, "ALLOW_BUILDER_BENEFICIARY_DETAILS", false);
-		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
-		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true);
-		COVENANT_ADTNL_REMARKS = getValueAsBoolean(extensions, "COVENANT_ADTNL_REMARKS", false);
-		HOLD_DISB_INST_POST = getValueAsBoolean(extensions, "HOLD_DISB_INST_POST", false);
-		VAS_INST_ON_DISB = getValueAsBoolean(extensions, "VAS_INST_ON_DISB", false);
-		FUR_DISBINST_ACC_REQ = getValueAsBoolean(extensions, "FUR_DISBINST_ACC_REQ", false);
-
-		ALLOW_TDS_PERC_BASED_ON_YEAR = getValueAsBoolean(extensions, "ALLOW_TDS_PERC_BASED_ON_YEAR", false);
-		ALLOW_TDS_CERTIFICATE_ADJUSTMENT = getValueAsBoolean(extensions, "ALLOW_TDS_CERTIFICATE_ADJUSTMENT", false);
-
-		GST_INCLUSIVE_SYMBOL = getValueAsString(extensions, "GST_INCLUSIVE_SYMBOL", "");
-		GST_EXCLUSIVE_SYMBOL = getValueAsString(extensions, "GST_EXCLUSIVE_SYMBOL", "");
-		ALW_RATE_CHANGE = getValueAsBoolean(extensions, "ALW_RATE_CHANGE", false);
-		MANDATE_FRQ_DES_REQ = getValueAsBoolean(extensions, "MANDATE_FRQ_DES_REQ", false);
-		IMD_EXT_REFERENCE = getValueAsBoolean(extensions, "IMD_EXT_REFERENCE", false);
-		BOUNCE_CHARGE_ON_DPD_COUNT = getValueAsBoolean(extensions, "BOUNCE_CHARGE_ON_DPD_COUNT", false);
-		RETAIL_CUST_PAN_MANDATORY = getValueAsBoolean(extensions, "RETAIL_CUST_PAN_MANDATORY", true);
-		FINREFERENCE_ALW_FREE_TEXT = getValueAsBoolean(extensions, "FINREFERENCE_ALW_FREE_TEXT", false);
-		ALLOW_ISRA_DETAILS = getValueAsBoolean(extensions, "ALLOW_ISRA_DETAILS", false);
-		ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS = getValueAsBoolean(extensions, "ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS",
+		VAS_INST_EDITABLE = getValueAsBoolean("VAS_INST_EDITABLE", false);
+		ALLOW_DISB_ENQUIRY = getValueAsBoolean("ALLOW_DISB_ENQUIRY", false);
+		ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE = getValueAsBoolean("ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE", false);
+		CUSTOM_EXT_LIABILITIES = getValueAsBoolean("CUSTOM_EXT_LIABILITIES", false);
+		DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL = getValueAsBoolean("DISB_REVERSAL_REQ_IN_LOAN_CANCEL", false);
+		UPDATE_METADATA_IN_DMS = getValueAsBoolean("UPDATE_METADATA_IN_DMS", false);
+		CHEQUENO_MANDATORY_DISB_INS = getValueAsBoolean("CHEQUENO_MANDATORY_DISB_INS", false);
+		ALW_QDP_CUSTOMIZATION = getValueAsBoolean("ALW_QDP_CUSTOMIZATION", false);
+		ALLOW_OLDEST_DUE = getValueAsBoolean("ALLOW_OLDEST_DUE", false);
+		CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = getValueAsBoolean("CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER", true);
+		ALLOW_PMAY = getValueAsBoolean("ALLOW_PMAY", false);
+		ALLOW_OCR = getValueAsBoolean("ALLOW_OCR", false);
+		ADVANCE_PAYMENT_INT = getValueAsBoolean("ADVANCE_PAYMENT_INT", false);
+		ADVANCE_PAYMENT_EMI = getValueAsBoolean("ADVANCE_PAYMENT_EMI", false);
+		COVENANT_MODULE_NEW = getValueAsBoolean("COVENANT_MODULE_NEW", true);
+		ADV_EMI_STAGE_FRONT_END = getValueAsBoolean("ADV_EMI_STAGE_FRONT_END", true);
+		ADV_EMI_STAGE_REAR_END = getValueAsBoolean("ADV_EMI_STAGE_REAR_END", false);
+		ADV_EMI_STAGE_REPAY_TERMS = getValueAsBoolean("ADV_EMI_STAGE_REPAY_TERMS", false);
+		AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT = getValueAsBoolean("AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", false);
+		RECEIPTS_SHOW_ACCOUNTING_TAB = getValueAsBoolean("RECEIPTS_SHOW_ACCOUNTING_TAB", true);
+		BRANCHWISE_RCU_INITIATION = getValueAsBoolean("BRANCHWISE_RCU_INITIATION", false);
+		ALLOW_NON_LAN_RECEIPTS = getValueAsBoolean("ALLOW_NON_LAN_RECEIPTS", false);
+		ALLOW_BUILDER_BENEFICIARY_DETAILS = getValueAsBoolean("ALLOW_BUILDER_BENEFICIARY_DETAILS", false);
+		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean("ALLOW_AUTO_KNOCK_OFF", false);
+		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean("SOA_SHOW_UNACCURED_PENALITY", true);
+		COVENANT_ADTNL_REMARKS = getValueAsBoolean("COVENANT_ADTNL_REMARKS", false);
+		HOLD_DISB_INST_POST = getValueAsBoolean("HOLD_DISB_INST_POST", false);
+		VAS_INST_ON_DISB = getValueAsBoolean("VAS_INST_ON_DISB", false);
+		FUR_DISBINST_ACC_REQ = getValueAsBoolean("FUR_DISBINST_ACC_REQ", false);
+		ALLOW_TDS_PERC_BASED_ON_YEAR = getValueAsBoolean("ALLOW_TDS_PERC_BASED_ON_YEAR", false);
+		ALLOW_TDS_CERTIFICATE_ADJUSTMENT = getValueAsBoolean("ALLOW_TDS_CERTIFICATE_ADJUSTMENT", false);
+		GST_INCLUSIVE_SYMBOL = getValueAsString("GST_INCLUSIVE_SYMBOL", "");
+		GST_EXCLUSIVE_SYMBOL = getValueAsString("GST_EXCLUSIVE_SYMBOL", "");
+		ALW_RATE_CHANGE = getValueAsBoolean("ALW_RATE_CHANGE", false);
+		MANDATE_FRQ_DES_REQ = getValueAsBoolean("MANDATE_FRQ_DES_REQ", false);
+		IMD_EXT_REFERENCE = getValueAsBoolean("IMD_EXT_REFERENCE", false);
+		BOUNCE_CHARGE_ON_DPD_COUNT = getValueAsBoolean("BOUNCE_CHARGE_ON_DPD_COUNT", false);
+		RETAIL_CUST_PAN_MANDATORY = getValueAsBoolean("RETAIL_CUST_PAN_MANDATORY", true);
+		FINREFERENCE_ALW_FREE_TEXT = getValueAsBoolean("FINREFERENCE_ALW_FREE_TEXT", false);
+		ALLOW_ISRA_DETAILS = getValueAsBoolean("ALLOW_ISRA_DETAILS", false);
+		ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS = getValueAsBoolean("ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS", false);
+		ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS = getValueAsBoolean("ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS",
 				false);
-		ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS = getValueAsBoolean(extensions,
-				"ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS", false);
-		ALLOW_OD_POSINT_SCHD_METHOD = getValueAsBoolean(extensions, "Allow_OD_POSINT_SCHD_METHOD", true);
-		RECEIPT_DUPLICATE_CHECK_STOP = getValueAsBoolean(extensions, "RECEIPT_DUPLICATE_CHECK_STOP", false);
-		EXTENDEDFIELDS_ORG_WORKFLOW = getValueAsBoolean(extensions, "EXTENDEDFIELDS_ORG_WORKFLOW", false);
-		OVERDRAFT_REPRESENTMENT_CHARGES_INCLUDE = getValueAsBoolean(extensions,
-				"OVERDRAFT_REPRESENTMENT_CHARGES_INCLUDE", true);
-		MANUAL_ADVISE_FUTURE_DATE = getValueAsBoolean(extensions, "MANUAL_ADVISE_FUTURE_DATE", true);
-		DISB_INST_POST_DWNLD = getValueAsBoolean(extensions, "DISB_INST_POST_DWNLD", false);
-		ACCRUAL_DIFF_ONETIME_POST = getValueAsBoolean(extensions, "ACCRUAL_DIFF_ONETIME_POST", true);
-		ALLOW_GST_DETAILS = getValueAsBoolean(extensions, "ALLOW_GST_DETAILS", false);
-		SAN_BASED_EMI_REQUIRED_STEP = getValueAsBoolean(extensions, "SAN_BASED_EMI_REQUIRED_STEP", false);
-		ALLOW_ZERO_STEP_AMOUNT_PERC = getValueAsBoolean(extensions, "ALLOW_ZERO_STEP_AMOUNT_PERC", false);
-		ALLOW_STEP_RECAL_PRORATA = getValueAsBoolean(extensions, "ALLOW_STEP_RECAL_PRORATA", false);
-		RECEIPT_DUPLICATE_FORMAT = getValueAsString(extensions, "RECEIPT_DUPLICATE_FORMAT", "TR_VD_AMT");
-		CUSTOMER_PAN_VALIDATION_STOP = getValueAsBoolean(extensions, "CUSTOMER_PAN_VALIDATION_STOP", false);
-		ALLOW_NPA = getValueAsBoolean(extensions, "ALLOW_NPA", false);
-		ALLOW_PROVISION = getValueAsBoolean(extensions, "ALLOW_PROVISION", false);
-		NPA_SCOPE = (NpaScope) getValue(extensions, "NPA_SCOPE", NpaScope.LOAN);
-		PROVISION_REVERSAL_REQ = getValueAsBoolean(extensions, "PROVISION_REVERSAL_REQ", false);
-		PROVISION_BOOKS = (ProvisionBook) getValue(extensions, "PROVISION_BOOKS", ProvisionBook.NO_PROVISION);
-		PROVISION_REVERSAL_STAGE = (ProvisionReversalStage) getValue(extensions, "PROVISION_REVERSAL_STAGE",
+		ALLOW_OD_POSINT_SCHD_METHOD = getValueAsBoolean("Allow_OD_POSINT_SCHD_METHOD", true);
+		RECEIPT_DUPLICATE_CHECK_STOP = getValueAsBoolean("RECEIPT_DUPLICATE_CHECK_STOP", false);
+		EXTENDEDFIELDS_ORG_WORKFLOW = getValueAsBoolean("EXTENDEDFIELDS_ORG_WORKFLOW", false);
+		OVERDRAFT_REPRESENTMENT_CHARGES_INCLUDE = getValueAsBoolean("OVERDRAFT_REPRESENTMENT_CHARGES_INCLUDE", true);
+		MANUAL_ADVISE_FUTURE_DATE = getValueAsBoolean("MANUAL_ADVISE_FUTURE_DATE", true);
+		DISB_INST_POST_DWNLD = getValueAsBoolean("DISB_INST_POST_DWNLD", false);
+		ACCRUAL_DIFF_ONETIME_POST = getValueAsBoolean("ACCRUAL_DIFF_ONETIME_POST", true);
+		ALLOW_GST_DETAILS = getValueAsBoolean("ALLOW_GST_DETAILS", false);
+		SAN_BASED_EMI_REQUIRED_STEP = getValueAsBoolean("SAN_BASED_EMI_REQUIRED_STEP", false);
+		ALLOW_ZERO_STEP_AMOUNT_PERC = getValueAsBoolean("ALLOW_ZERO_STEP_AMOUNT_PERC", false);
+		ALLOW_STEP_RECAL_PRORATA = getValueAsBoolean("ALLOW_STEP_RECAL_PRORATA", false);
+		RECEIPT_DUPLICATE_FORMAT = getValueAsString("RECEIPT_DUPLICATE_FORMAT", "TR_VD_AMT");
+		CUSTOMER_PAN_VALIDATION_STOP = getValueAsBoolean("CUSTOMER_PAN_VALIDATION_STOP", false);
+		ALLOW_NPA = getValueAsBoolean("ALLOW_NPA", false);
+		ALLOW_PROVISION = getValueAsBoolean("ALLOW_PROVISION", false);
+		NPA_SCOPE = (NpaScope) getValueAsObject("NPA_SCOPE", NpaScope.LOAN);
+		PROVISION_REVERSAL_REQ = getValueAsBoolean("PROVISION_REVERSAL_REQ", false);
+		PROVISION_BOOKS = (ProvisionBook) getValueAsObject("PROVISION_BOOKS", ProvisionBook.NO_PROVISION);
+		PROVISION_REVERSAL_STAGE = (ProvisionReversalStage) getValueAsObject("PROVISION_REVERSAL_STAGE",
 				ProvisionReversalStage.SOM);
-		ALLOW_EXTENDEDFIELDS_IN_WORKFLOW = getValueAsBoolean(extensions, "ALLOW_EXTENDEDFIELDS_IN_WORKFLOW", false);
-		PROVISION_POSTINGS_REQ = getValueAsBoolean(extensions, "PROVISION_POSTINGS_REQ", true);
-		RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT = getValueAsBoolean(extensions,
-				"RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT", true);
-		RECEIPT_ALLOW_FULL_WAIVER = getValueAsBoolean(extensions, "RECEIPT_ALLOW_FULL_WAIVER", false);
-		ALLOW_CERSAI = getValueAsBoolean(extensions, "ALLOW_CERSAI", false);
+		ALLOW_EXTENDEDFIELDS_IN_WORKFLOW = getValueAsBoolean("ALLOW_EXTENDEDFIELDS_IN_WORKFLOW", false);
+		PROVISION_POSTINGS_REQ = getValueAsBoolean("PROVISION_POSTINGS_REQ", true);
+		RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT",
+				true);
+		RECEIPT_ALLOW_FULL_WAIVER = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER", false);
+
+		setVerificationConstants();
 	}
 
 	public static boolean LIMIT_INTERNAL;
@@ -351,15 +324,10 @@ public class ImplementationConstants {
 	public static boolean LP_MARK_FIRSTDAY;
 	public static boolean LPP_CALC_SOD;
 	public static boolean AUTO_ALLOWED;
-	public static boolean DDM_ALLOWED;
-	public static boolean ECS_ALLOWED;
-	public static boolean NACH_ALLOWED;
-	public static boolean PDC_ALLOWED;
 	public static boolean PREAPPROVAL_ALLOWED;
 	public static boolean ALLOW_DEVIATIONS;
 	public static boolean LATEPAY_PROFIT_CAL_ON_DAYZERO;
 	public static boolean ADD_FEEINFTV_ONCALC;
-	public static boolean ALLOW_FIN_SALARY_PAYMENT;
 	public static boolean ALLOW_SPECIALRATE;
 	public static boolean ALLOW_MANUAL_SCHEDULE;
 	public static boolean CAPTURE_APPLICATION_NUMBER;
@@ -415,6 +383,7 @@ public class ImplementationConstants {
 	public static boolean GAP_INTEREST_REQUIRED;
 	public static boolean ALLOW_ALL_SERV_RCDS;
 	public static boolean LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS;
+	public static boolean INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS;
 	public static boolean ENTITYCODE_REQ_FOR_MANDATE_PROCESS;
 	public static boolean DISBURSEMENT_AUTO_DOWNLOAD;
 	public static boolean DISBURSEMENT_AUTO_UPLOAD;
@@ -625,71 +594,6 @@ public class ImplementationConstants {
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER;
 	public static boolean ALLOW_CERSAI;
 
-	private static Map<String, Object> getFeatureExtensions() {
-		IFeatureExtension featureExtension;
-		try {
-			Object object = Class.forName("com.pennanttech.extension.implementation.FeatureExtension").newInstance();
-			if (object != null) {
-				featureExtension = (IFeatureExtension) object;
-				return featureExtension.getCustomConstants();
-			} else {
-				throw new FactoryException(
-						"The IFeature implimentation should be available in the client exetension layer to override the implimentation constants.");
-			}
-		} catch (Exception e) {
-			throw new FactoryException(
-					"The IFeature implimentation should be available in the client exetension layer to override the implimentation constants.");
-
-		}
-
-	}
-
-	/**
-	 * Returns the value as boolean from extended constants to which the specified key is mapped, or defaultValue if the
-	 * extended constants contain no mapping for the key.
-	 * 
-	 * @param extendedConstants The constants specified in the extension layer.
-	 * @param key               The key whose associated value is to be returned.
-	 * @param defaultValue      The default value that has to be used if the extended constants contain no mapping for
-	 *                          the key.
-	 * @return the value as boolean from extended constants to which the specified key is mapped, or defaultValue if
-	 *         this map contain no mapping for the key.
-	 */
-	private static boolean getValueAsBoolean(Map<String, Object> extendedConstants, String key, boolean defaultValue) {
-		try {
-			return (boolean) extendedConstants.computeIfAbsent(key, ft -> defaultValue);
-		} catch (Exception ex) {
-			return defaultValue;
-		}
-	}
-
-	/**
-	 * Returns the value as String from extended constants to which the specified key is mapped, or defaultValue if the
-	 * extended constants contain no mapping for the key.
-	 * 
-	 * @param extendedConstants The constants specified in the extension layer.
-	 * @param key               The key whose associated value is to be returned.
-	 * @param defaultValue      The default value that has to be used if the extended constants contain no mapping for
-	 *                          the key.
-	 * @return the value as String from extended constants to which the specified key is mapped, or defaultValue if this
-	 *         map contain no mapping for the key.
-	 */
-	private static String getValueAsString(Map<String, Object> extendedConstants, String key, String defaultValue) {
-		try {
-			return (String) extendedConstants.computeIfAbsent(key, ft -> defaultValue);
-		} catch (Exception ex) {
-			return defaultValue;
-		}
-	}
-
-	private static int getValueAsInt(Map<String, Object> extendedConstants, String key, int defaultValue) {
-		try {
-			return (int) extendedConstants.computeIfAbsent(key, ft -> defaultValue);
-		} catch (Exception ex) {
-			return defaultValue;
-		}
-	}
-
 	// FIXME MURTHT
 	public static final boolean OLD_FINANCIALS_REQUIRED = false;
 	// Old Phone numbers required listbox
@@ -741,30 +645,41 @@ public class ImplementationConstants {
 
 	public static boolean VER_RCU_INITATE_BY_AGENCY;
 
-	private static void setVerificationConstants(Map<String, Object> extensions) {
-		VER_INIT_FROM_OUTSIDE = getValueAsBoolean(extensions, "VER_INIT_FROM_OUTSIDE", false);
-		VER_INIT_AGENT_MANDATORY = getValueAsBoolean(extensions, "VER_INIT_AGENT_MANDATORY", false);
-		VER_AGENCY_FILTER_BY_CITY = getValueAsBoolean(extensions, "VER_AGENCY_FILTER_BY_CITY", true);
+	private static void setVerificationConstants() {
+		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);
+		VER_INIT_AGENT_MANDATORY = getValueAsBoolean("VER_INIT_AGENT_MANDATORY", false);
+		VER_AGENCY_FILTER_BY_CITY = getValueAsBoolean("VER_AGENCY_FILTER_BY_CITY", true);
 
-		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_ADDR_COLUMN",
+		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString("VER_TV_COLL_ED_ADDR_COLUMN",
 				"PROPERTYCITY"); /* HL>>FIXME "CITY" for HL */
-		VER_TV_COLL_ED_PROP_VAL_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_VAL_COLUMN",
-				"TOTALVALUATIONASPE"); // HL>>FIXME "DOCVALUE" for HL
-		VER_TV_COLL_ED_PROP_COST_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_COST_COLUMN",
-				"COSTOFPROPERTY"); // HL>>FIXME "DOCVALUE" for HL
-		VER_RCU_DFT_REQ_TYPE_REQUEST = getValueAsBoolean(extensions, "VER_RCU_DFT_REQ_TYPE_REQUEST", false);
-		VER_REASON_CODE_FILTER_BY_REASONTYPE = getValueAsBoolean(extensions, "VER_REASON_CODES_REASONTYPE_FILTER",
-				false);
-		VER_INITATE_DURING_SAVE = getValueAsBoolean(extensions, "VER_INITATE_DURING_SAVE", true);
-		VER_RCU_INITATE_BY_AGENCY = getValueAsBoolean(extensions, "VER_RCU_INITATE_BY_AGENCY", true);
+		VER_TV_COLL_ED_PROP_VAL_COLUMN = getValueAsString("VER_TV_COLL_ED_PROP_VAL_COLUMN", "TOTALVALUATIONASPE"); // HL>>FIXME
+																													// "DOCVALUE"
+																													// for
+																													// HL
+		VER_TV_COLL_ED_PROP_COST_COLUMN = getValueAsString("VER_TV_COLL_ED_PROP_COST_COLUMN", "COSTOFPROPERTY"); // HL>>FIXME
+																													// "DOCVALUE"
+																													// for
+																													// HL
+		VER_RCU_DFT_REQ_TYPE_REQUEST = getValueAsBoolean("VER_RCU_DFT_REQ_TYPE_REQUEST", false);
+		VER_REASON_CODE_FILTER_BY_REASONTYPE = getValueAsBoolean("VER_REASON_CODES_REASONTYPE_FILTER", false);
+		VER_INITATE_DURING_SAVE = getValueAsBoolean("VER_INITATE_DURING_SAVE", true);
+		VER_RCU_INITATE_BY_AGENCY = getValueAsBoolean("VER_RCU_INITATE_BY_AGENCY", true);
 	}
 
-	private static Object getValue(Map<String, Object> extensions, String key, Object defaultValue) {
-		try {
-			return (Object) extensions.computeIfAbsent(key, ft -> defaultValue);
-		} catch (Exception ex) {
-			return defaultValue;
-		}
+	public static boolean getValueAsBoolean(String key, boolean defaultValue) {
+		return FeatureExtension.getValueAsBoolean(key, defaultValue);
+	}
+
+	public static String getValueAsString(String key, String defaultValue) {
+		return FeatureExtension.getValueAsString(key, defaultValue);
+	}
+
+	public static Object getValueAsObject(String key, Object defaultValue) {
+		return FeatureExtension.getValueAsObject(key, defaultValue);
+	}
+
+	public static int getValueAsInt(String key, int defaultValue) {
+		return FeatureExtension.getValueAsInt(key, defaultValue);
 	}
 
 }

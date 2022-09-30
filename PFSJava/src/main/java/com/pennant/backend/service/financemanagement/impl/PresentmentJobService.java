@@ -31,8 +31,8 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -96,7 +96,8 @@ public class PresentmentJobService extends AbstractInterface {
 
 				logger.debug("No of Records in Exclude List  : {}", excludeList.size());
 
-				if (StringUtils.isEmpty(ph.getPartnerAcctNumber()) && ph.getPartnerBankId() == 0) {
+				if (StringUtils.isEmpty(ph.getPartnerAcctNumber())
+						&& (ph.getPartnerBankId() == null || ph.getPartnerBankId() <= 0)) {
 					Presentment pb = getPartnerBankId(ph.getLoanType(), ph.getMandateType());
 					ph.setPartnerAcctNumber(pb.getAccountNo());
 					ph.setPartnerBankId(pb.getPartnerBankId());
@@ -263,13 +264,13 @@ public class PresentmentJobService extends AbstractInterface {
 	}
 
 	private String getInstrumentType(String name) {
-		String instrumentType = null;
-		if (StringUtils.contains(name, MandateConstants.TYPE_NACH)) {
-			instrumentType = MandateConstants.TYPE_NACH;
-		} else if (StringUtils.contains(name, MandateConstants.TYPE_PDC)) {
-			instrumentType = MandateConstants.TYPE_PDC;
+		if (InstrumentType.isNACH(name)) {
+			return InstrumentType.NACH.name();
+		} else if (InstrumentType.isPDC(name)) {
+			return InstrumentType.PDC.name();
 		}
-		return instrumentType;
+
+		return null;
 	}
 
 	private EventProperties getPostEvent(Map<String, EventProperties> properties, String postEvent) {

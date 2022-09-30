@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -24,7 +22,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.MandateConstants;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -33,7 +31,6 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.mandate.dao.MandateProcessDAO;
 
 public class MandateProcessDAOImpl extends SequenceDao<Object> implements MandateProcessDAO {
-	protected final Logger logger = LogManager.getLogger(getClass());
 
 	@Override
 	public long saveMandateRequests(List<Long> mandateIds) {
@@ -52,10 +49,8 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 			}
 		}
 
-		if (!(result == null)) {
-			save(processId, result, bankCodeSeq);
-			mandateSet.clear();
-		}
+		save(processId, result, bankCodeSeq);
+		mandateSet.clear();
 		return processId;
 	}
 
@@ -383,7 +378,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MANDATEID", Arrays.asList(result));
-		paramMap.addValue("AC", MandateConstants.STATUS_AWAITCON);
+		paramMap.addValue("AC", MandateStatus.AWAITCON);
 
 		this.jdbcTemplate.update(sql.toString(), paramMap);
 

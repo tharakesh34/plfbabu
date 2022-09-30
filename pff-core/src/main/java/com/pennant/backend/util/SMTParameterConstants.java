@@ -430,4 +430,6 @@ public class SMTParameterConstants {
 	public static final String USR_EXPIRY_DAYS = "USR_EXPIRY_DAYS";
 	public static final String OTP_SENDTO_MAIL = "OTP_SENDTO_MAIL";
 	public static final String EXTERNAL_CUSTOMER_DEDUP = "EXTERNAL_CUSTOMER_DEDUP";
+	public static final String APP_DFT_END_DATE = "APP_DFT_END_DATE";
+	public static final String MANDATE_STARTDATE = "MANDATE_STARTDATE";
 }

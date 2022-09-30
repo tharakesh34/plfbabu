@@ -592,9 +592,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	/* Mandate */
 	private Long mandateID;
+	private Long securityMandateID;
 
 	private BigDecimal refundAmount = BigDecimal.ZERO;
-	private List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+	private List<ErrorDetail> errorDetails = new ArrayList<>();
 	private Map<String, String> lovDescNextUsersRolesMap = null;
 
 	@XmlElement
@@ -1079,6 +1080,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("cpzPosIntact");
 		excludeFields.add("moduleDefiner");
 		excludeFields.add("resetFromLastStep");
+		excludeFields.add("securityMandateID");
 
 		return excludeFields;
 	}
@@ -1398,10 +1400,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setLovDescLimitRefName(this.lovDescLimitRefName);
 		entity.setProductCategory(this.productCategory);
 		entity.setMandateID(this.mandateID);
+		entity.setSecurityMandateID(this.securityMandateID);
 		entity.setRefundAmount(this.refundAmount);
 		this.errorDetails.stream().forEach(e -> entity.getErrorDetails().add(e));
 		if (lovDescNextUsersRolesMap != null) {
-			entity.setLovDescNextUsersRolesMap(new HashMap<String, String>());
+			entity.setLovDescNextUsersRolesMap(new HashMap<>());
 			this.lovDescNextUsersRolesMap.entrySet().stream()
 					.forEach(e -> entity.getLovDescNextUsersRolesMap().put(e.getKey(), e.getValue()));
 		}
@@ -5530,4 +5533,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setResetFromLastStep(boolean resetFromLastStep) {
 		this.resetFromLastStep = resetFromLastStep;
 	}
+
+	public Long getSecurityMandateID() {
+		return securityMandateID;
+	}
+
+	public void setSecurityMandateID(Long securityMandateID) {
+		this.securityMandateID = securityMandateID;
+	}
+
 }

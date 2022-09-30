@@ -80,24 +80,6 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
-	<!-- NPA Service -->
-	<bean id="npaService" class="com.pennant.app.core.NPAService" parent="serviceHelper">
-		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="nPAProvisionHeaderDAO" ref="nPAProvisionHeaderDAO" />
-		<property name="nPAProvisionDetailDAO" ref="nPAProvisionDetailDAO" />
-		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
-		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
-		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
-	</bean>
-
-	<!-- NPAProvisionHeader -->
-	<bean id="nPAProvisionHeaderDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPAProvisionHeaderDAOImpl"
-		parent="sequenceDao" />
-
-	<!-- NPAProvisionDetail -->
-	<bean id="nPAProvisionDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPAProvisionDetailDAOImpl"
-		parent="sequenceDao" />
-
 	<!-- Suspense -->
 	<bean id="coreSuspenseService" class="com.pennant.app.core.SuspenseService" parent="serviceHelper">
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
@@ -151,7 +133,7 @@
 
 	<bean id="loadFinanceData" class="com.pennant.app.core.LoadFinanceData" parent="serviceHelper" />
 
-	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper" />
+	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" />
 
 	<bean id="autoDisbursementService" class="com.pennant.app.core.AutoDisbursementService" parent="serviceHelper" />
 
@@ -182,7 +164,6 @@
 		<property name="dateRollOverService" ref="dateRollOverService" />
 		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
-		<property name="npaService" ref="npaService" />
 		<property name="autoDisbursementService" ref="autoDisbursementService" />
 		<property name="receiptPaymentService" ref="receiptPaymentService" />
 		<property name="loadFinanceData" ref="loadFinanceData" />
@@ -513,9 +494,6 @@
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 	</bean>
 
-	<bean id="receiptAllocationDetailDAO" class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl"
-		parent="sequenceDao" />
-
 	<!-- Income Amortization IND AS for InActive Loans -->
 	<bean id="finMaturityService" class="com.pennant.app.core.FinMaturityService" parent="serviceHelper">
 		<property name="dataSource" ref="dataSource" />
@@ -593,13 +571,7 @@
 	</bean>
 
 	<!-- FinMandate service -->
-	<bean id="finMandateService" class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl">
-		<property name="mandateDAO" ref="mandateDAO" />
-		<property name="mandateStatusDAO" ref="mandateStatusDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="dMSService" ref="dMSService" />
-		<property name="mandateCheckDigitDAO" ref="mandateCheckDigitDAO" />
-	</bean>
+	<bean id="finMandateService" class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl"/>
 
 	<bean id="abstractInterface" class="com.pennanttech.pff.external.AbstractInterface" abstract="true">
 		<property name="dataSource" ref="dataSource" />

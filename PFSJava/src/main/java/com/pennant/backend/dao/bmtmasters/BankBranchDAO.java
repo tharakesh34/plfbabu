@@ -24,7 +24,11 @@
  */
 package com.pennant.backend.dao.bmtmasters;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pff.core.TableType;
 
 public interface BankBranchDAO {
@@ -63,5 +67,9 @@ public interface BankBranchDAO {
 	int getBankBranchCountByIFSC(String iFSC, String type);
 
 	BankBranch getBankBranchByIFSCMICR(String iFSC, String micr);
+
+	int updateInstruments(String bankcode, Map<InstrumentType, Boolean> instrumenttype, String emnadeSource);
+
+	List<BankBranch> getBrancesByCode(String bankCode);
 
 }

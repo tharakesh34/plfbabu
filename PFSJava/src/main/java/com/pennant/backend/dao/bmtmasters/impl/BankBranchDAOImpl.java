@@ -27,6 +27,9 @@ package com.pennant.backend.dao.bmtmasters.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
@@ -37,6 +40,7 @@ import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -79,9 +83,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	@Override
 	public BankBranch getBankBranchById(final long id, String type) {
 		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where BankBranchID = ?");
+		sql.append(" Where BankBranchId = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new BankBranchRM(type), id);
@@ -93,11 +97,11 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 	@Override
 	public int getBankBranchByIFSC(final String iFSC, long id, String type) {
-		StringBuilder sql = new StringBuilder("Select Count(BankBranchID) From BankBranches");
+		StringBuilder sql = new StringBuilder("Select Count(IFSC) From BankBranches");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where IFSC = ? and BankBranchID != ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, iFSC, id);
 	}
@@ -108,18 +112,18 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where MICR = ? and BankBranchID != ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, mICR, id);
 	}
 
 	@Override
 	public int getBankBrachByBank(String bankCode, String type) {
-		StringBuilder sql = new StringBuilder("Select Count(BankBranchID) From BankBranches");
+		StringBuilder sql = new StringBuilder("Select Count(BankCode) From BankBranches");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where BankCode = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, bankCode);
 	}
@@ -134,15 +138,15 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 		StringBuilder sql = new StringBuilder("Insert Into BankBranches");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR");
-		sql.append(", IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		sql.append(" (BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC");
+		sql.append(", AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
 		sql.append(", ParentBranch, ParentBranchDesc, Emandate, Allowedsources");
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -174,7 +178,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			ps.setString(index++, bankBranch.getTaskId());
 			ps.setString(index++, bankBranch.getNextTaskId());
 			ps.setString(index++, bankBranch.getRecordType());
-			ps.setLong(index++, bankBranch.getWorkflowId());
+			ps.setLong(index, bankBranch.getWorkflowId());
 
 		});
 
@@ -193,10 +197,10 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		sql.append(" Where BankBranchID = ?");
 
 		if (!type.endsWith("_Temp")) {
-			sql.append("  and Version = ?");
+			sql.append(" and Version = ?");
 		}
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -232,7 +236,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			ps.setLong(index++, bankBranch.getBankBranchID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, bankBranch.getVersion() - 1);
+				ps.setInt(index, bankBranch.getVersion() - 1);
 			}
 		});
 
@@ -247,11 +251,10 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where BankBranchID = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, bb.getBankBranchID()));
-			if (recordCount <= 0) {
+			if (this.jdbcOperations.update(sql.toString(), bb.getBankBranchID()) <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
@@ -264,7 +267,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where IFSC = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new BankBranchRM(type), ifsc);
@@ -279,7 +282,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where BankCode = ? and BranchCode = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new BankBranchRM(type), bankCode, branchCode);
@@ -291,14 +294,14 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 	@Override
 	public BankBranch getBankBrachByMicr(String micr, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" b.BankCode, bb.MICR, bb.BranchCode, bb.BankBranchID, b.AccNoLength, b.BankName, bb.BranchDesc");
+		StringBuilder sql = new StringBuilder("Select b.BankCode, bb.MICR");
+		sql.append(", bb.BranchCode, bb.BankBranchID, b.AccNoLength, b.BankName, bb.BranchDesc");
 		sql.append(" From BMTBankDetail b ");
 		sql.append("Inner Join BankBranches bb on b.Bankcode = bb.bankCode");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where MICR = ? and bb.Active = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
@@ -327,7 +330,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where IFSC = ? And MICR = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new BankBranchRM(type), ifsc, micr);
@@ -359,7 +362,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			break;
 		}
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForObject(sql, Integer.class, args) > 0;
 	}
@@ -370,14 +373,199 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where Ifsc = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, ifscCode);
 		} catch (EmptyResultDataAccessException dae) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 			return 0;
 		}
+	}
+
+	@Override
+	public BankBranch getBankBranchByIFSC(String ifsc, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City");
+		sql.append(", MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", BankName");
+		}
+
+		sql.append(" From BankBranches");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where IFSC = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BankBranch bb = new BankBranch();
+
+				bb.setBankBranchID(rs.getLong("BankBranchID"));
+				bb.setBankCode(rs.getString("BankCode"));
+				bb.setBranchCode(rs.getString("BranchCode"));
+				bb.setBranchDesc(rs.getString("BranchDesc"));
+				bb.setCity(rs.getString("City"));
+				bb.setMICR(rs.getString("MICR"));
+				bb.setIFSC(rs.getString("IFSC"));
+				bb.setAddOfBranch(rs.getString("AddOfBranch"));
+				bb.setNach(rs.getBoolean("Nach"));
+				bb.setDd(rs.getBoolean("Dd"));
+				bb.setDda(rs.getBoolean("Dda"));
+				bb.setEcs(rs.getBoolean("Ecs"));
+				bb.setCheque(rs.getBoolean("Cheque"));
+				bb.setActive(rs.getBoolean("Active"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					bb.setBankName(rs.getString("BankName"));
+				}
+
+				return bb;
+			}, ifsc);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public int getBankBranchCountByIFSC(final String iFSC, String type) {
+		StringBuilder sql = new StringBuilder("Select count(Ifsc) From BankBranches");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Ifsc = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, iFSC);
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return 0;
+	}
+
+	@Override
+	public BankBranch getBankBranchByIFSCMICR(String iFSC, String micr) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC");
+		sql.append(", AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		sql.append(" From BankBranches");
+		sql.append(" Where IFSC = ? and Micr = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BankBranch bb = new BankBranch();
+
+				bb.setBankBranchID(rs.getLong("BankBranchID"));
+				bb.setBankCode(rs.getString("BankCode"));
+				bb.setBranchCode(rs.getString("BranchCode"));
+				bb.setBranchDesc(rs.getString("BranchDesc"));
+				bb.setCity(rs.getString("City"));
+				bb.setMICR(rs.getString("MICR"));
+				bb.setIFSC(rs.getString("IFSC"));
+				bb.setAddOfBranch(rs.getString("AddOfBranch"));
+				bb.setNach(rs.getBoolean("Nach"));
+				bb.setDd(rs.getBoolean("Dd"));
+				bb.setDda(rs.getBoolean("Dda"));
+				bb.setEcs(rs.getBoolean("Ecs"));
+				bb.setCheque(rs.getBoolean("Cheque"));
+				bb.setActive(rs.getBoolean("Active"));
+
+				return bb;
+			}, iFSC, micr);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public int updateInstruments(String bankcode, Map<InstrumentType, Boolean> instrumenttype, String emnadeSource) {
+		StringBuilder sql = new StringBuilder("Update BankBranches set ");
+
+		StringBuilder update = new StringBuilder();
+		for (Entry<InstrumentType, Boolean> item : instrumenttype.entrySet()) {
+			if (update.length() > 0) {
+				update.append(", ");
+			}
+			update.append(item.getKey().name());
+			update.append(" = ?");
+		}
+
+		if (emnadeSource != null) {
+			update.append(", AllowedSources = ?");
+		}
+
+		sql.append(update.toString());
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			for (Entry<InstrumentType, Boolean> item : instrumenttype.entrySet()) {
+				ps.setBoolean(index++, item.getValue());
+			}
+
+			if (emnadeSource != null) {
+				ps.setString(index++, emnadeSource);
+			}
+		});
+	}
+
+	@Override
+	public List<BankBranch> getBrancesByCode(String bankCode) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR");
+		sql.append(", IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		sql.append(", ParentBranch, ParentBranchDesc, Emandate, AllowedSources");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from BankBranches");
+		sql.append(" Where BankCode = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, bankCode);
+		}, (rs, rowNum) -> {
+			BankBranch bb = new BankBranch();
+
+			bb.setBankBranchID(rs.getLong("BankBranchID"));
+			bb.setBankCode(rs.getString("BankCode"));
+			bb.setBranchCode(rs.getString("BranchCode"));
+			bb.setBranchDesc(rs.getString("BranchDesc"));
+			bb.setCity(rs.getString("City"));
+			bb.setMICR(rs.getString("MICR"));
+			bb.setIFSC(rs.getString("IFSC"));
+			bb.setAddOfBranch(rs.getString("AddOfBranch"));
+			bb.setNach(rs.getBoolean("Nach"));
+			bb.setDd(rs.getBoolean("Dd"));
+			bb.setDda(rs.getBoolean("Dda"));
+			bb.setEcs(rs.getBoolean("Ecs"));
+			bb.setCheque(rs.getBoolean("Cheque"));
+			bb.setActive(rs.getBoolean("Active"));
+			bb.setParentBranch(rs.getString("ParentBranch"));
+			bb.setParentBranchDesc(rs.getString("ParentBranchDesc"));
+			bb.setEmandate(rs.getBoolean("Emandate"));
+			bb.setAllowedSources(rs.getString("AllowedSources"));
+			bb.setVersion(rs.getInt("Version"));
+			bb.setLastMntBy(rs.getLong("LastMntBy"));
+			bb.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			bb.setRecordStatus(rs.getString("RecordStatus"));
+			bb.setRoleCode(rs.getString("RoleCode"));
+			bb.setNextRoleCode(rs.getString("NextRoleCode"));
+			bb.setTaskId(rs.getString("TaskId"));
+			bb.setNextTaskId(rs.getString("NextTaskId"));
+			bb.setRecordType(rs.getString("RecordType"));
+			bb.setWorkflowId(rs.getLong("WorkflowId"));
+			return bb;
+		});
 	}
 
 	private StringBuilder getSqlQuery(String type) {
@@ -446,105 +634,4 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		}
 	}
 
-	@Override
-	public BankBranch getBankBranchByIFSC(String ifsc, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR");
-		sql.append(", IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", BankName");
-		}
-		sql.append(" From BankBranches");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where IFSC = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				BankBranch bb = new BankBranch();
-
-				bb.setBankBranchID(rs.getLong("BankBranchID"));
-				bb.setBankCode(rs.getString("BankCode"));
-				bb.setBranchCode(rs.getString("BranchCode"));
-				bb.setBranchDesc(rs.getString("BranchDesc"));
-				bb.setCity(rs.getString("City"));
-				bb.setMICR(rs.getString("MICR"));
-				bb.setIFSC(rs.getString("IFSC"));
-				bb.setAddOfBranch(rs.getString("AddOfBranch"));
-				bb.setNach(rs.getBoolean("Nach"));
-				bb.setDd(rs.getBoolean("Dd"));
-				bb.setDda(rs.getBoolean("Dda"));
-				bb.setEcs(rs.getBoolean("Ecs"));
-				bb.setCheque(rs.getBoolean("Cheque"));
-				bb.setActive(rs.getBoolean("Active"));
-
-				if (StringUtils.trimToEmpty(type).contains("View")) {
-					bb.setBankName(rs.getString("BankName"));
-				}
-
-				return bb;
-			}, ifsc);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
-	}
-
-	@Override
-	public int getBankBranchCountByIFSC(final String iFSC, String type) {
-		StringBuilder sql = new StringBuilder("Select count(Ifsc) From BankBranches");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where Ifsc = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-		
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				return rs.getInt("Count");
-			}, iFSC);
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		return 0;
-	}
-
-	@Override
-	public BankBranch getBankBranchByIFSCMICR(String iFSC, String micr) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC");
-		sql.append(", AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
-		sql.append(" From BankBranches");
-		sql.append(" Where IFSC = ? and Micr = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				BankBranch bb = new BankBranch();
-
-				bb.setBankBranchID(rs.getLong("BankBranchID"));
-				bb.setBankCode(rs.getString("BankCode"));
-				bb.setBranchCode(rs.getString("BranchCode"));
-				bb.setBranchDesc(rs.getString("BranchDesc"));
-				bb.setCity(rs.getString("City"));
-				bb.setMICR(rs.getString("MICR"));
-				bb.setIFSC(rs.getString("IFSC"));
-				bb.setAddOfBranch(rs.getString("AddOfBranch"));
-				bb.setNach(rs.getBoolean("Nach"));
-				bb.setDd(rs.getBoolean("Dd"));
-				bb.setDda(rs.getBoolean("Dda"));
-				bb.setEcs(rs.getBoolean("Ecs"));
-				bb.setCheque(rs.getBoolean("Cheque"));
-				bb.setActive(rs.getBoolean("Active"));
-
-				return bb;
-			}, iFSC, micr);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
-	}
 }

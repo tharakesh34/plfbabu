@@ -413,9 +413,6 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 
 			if (object != null) {
 				aFinTypePartnerBank.setPartnerBankID(Long.parseLong(object.toString()));
-
-			} else {
-				aFinTypePartnerBank.setPartnerBankID(0);
 			}
 
 		} catch (WrongValueException we) {

@@ -24,4 +24,5 @@ public class StageTabConstants {
 	public static final String PricingDetails = "PRITAB";
 	public static final String TANDetails = "TANTAB";
 	public static final String Linked = "Linked";
+	public static final String SECMANDATES = "SecMandates";
 }

@@ -81,6 +81,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -777,7 +778,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	private void generateAccounting(FinanceDetail fd) {
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
-		AccountingEngine.post(AccountingEvent.DISBINS, fd, fm.getFinBranch());
+
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setUserBranch(fm.getFinBranch());
+
+		AccountingEngine.post(AccountingEvent.DISBINS, postingDTO);
 	}
 
 	@Override

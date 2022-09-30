@@ -189,7 +189,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	@Override
 	public void update(ManualAdvise ma, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update");
-		sql.append("ManualAdvise");
+		sql.append(" ManualAdvise");
 		sql.append(tableType.getSuffix());
 		sql.append(" Set AdviseType = ?, FinID = ?,  FinReference = ?, FeeTypeID = ?");
 		sql.append(", Sequence = ?, AdviseAmount = ?, PaidAmount = ?");
@@ -1890,7 +1890,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc");
-			sql.append(", taxApplicable, taxComponent, TdsReq, LinkedTranId");
+			sql.append(", taxApplicable, taxComponent, TdsReq, LinkedTranId, PayableLinkTo");
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");

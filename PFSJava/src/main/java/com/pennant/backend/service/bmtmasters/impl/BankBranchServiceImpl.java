@@ -44,9 +44,9 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
@@ -69,165 +69,78 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	@Qualifier("bankBranchPostValidationHook")
 	private PostValidationHook postValidationHook;
 
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the bankBranchDAO
-	 */
-	public BankBranchDAO getBankBranchDAO() {
-		return bankBranchDAO;
-	}
-
-	/**
-	 * @param bankBranchDAO the bankBranchDAO to set
-	 */
-	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
-		this.bankBranchDAO = bankBranchDAO;
-	}
-
-	/**
-	 * @return the bankBranch
-	 */
 	@Override
 	public BankBranch getBankBranch() {
-		return getBankBranchDAO().getBankBranch();
+		return bankBranchDAO.getBankBranch();
 	}
 
-	/**
-	 * @return the bankBranch for New Record
-	 */
 	@Override
 	public BankBranch getNewBankBranch() {
-		return getBankBranchDAO().getNewBankBranch();
+		return bankBranchDAO.getNewBankBranch();
 	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BankBranches/BankBranches_Temp
-	 * by using BankBranchDAO's save method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using BankBranchDAO's update method 3) Audit the record in to AuditHeader and AdtBankBranches
-	 * by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		logger.debug(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 		String tableType = "";
 		BankBranch bankBranch = (BankBranch) auditHeader.getAuditDetail().getModelData();
 
 		if (bankBranch.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB.getSuffix();
 		}
 
 		if (bankBranch.isNewRecord()) {
-			bankBranch.setId(getBankBranchDAO().save(bankBranch, tableType));
+			bankBranch.setId(bankBranchDAO.save(bankBranch, tableType));
 			auditHeader.getAuditDetail().setModelData(bankBranch);
 			auditHeader.setAuditReference(String.valueOf(bankBranch.getBankBranchID()));
 		} else {
-			getBankBranchDAO().update(bankBranch, tableType);
+			bankBranchDAO.update(bankBranch, tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * BankBranches by using BankBranchDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtBankBranches by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "delete");
+		logger.debug(Literal.ENTERING);
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		BankBranch bankBranch = (BankBranch) auditHeader.getAuditDetail().getModelData();
-		getBankBranchDAO().delete(bankBranch, "");
+		bankBranchDAO.delete(bankBranch, "");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * getBankBranchById fetch the details by using BankBranchDAO's getBankBranchById method.
-	 * 
-	 * @param id   (int)
-	 * @param type (String) ""/_Temp/_View
-	 * @return BankBranch
-	 */
-
 	@Override
 	public BankBranch getBankBranchById(long id) {
-		return getBankBranchDAO().getBankBranchById(id, "_View");
+		return bankBranchDAO.getBankBranchById(id, TableType.VIEW.getSuffix());
 	}
-
-	/**
-	 * getApprovedBankBranchById fetch the details by using BankBranchDAO's getBankBranchById method . with parameter id
-	 * and type as blank. it fetches the approved records from the BankBranches.
-	 * 
-	 * @param id (int)
-	 * @return BankBranch
-	 */
 
 	@Override
 	public BankBranch getApprovedBankBranchById(long id) {
-		return getBankBranchDAO().getBankBranchById(id, "_AView");
+		return bankBranchDAO.getBankBranchById(id, "_AView");
 	}
-
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getBankBranchDAO().delete with
-	 * parameters bankBranch,"" b) NEW Add new record in to main table by using getBankBranchDAO().save with parameters
-	 * bankBranch,"" c) EDIT Update record in the main table by using getBankBranchDAO().update with parameters
-	 * bankBranch,"" 3) Delete the record from the workFlow table by using getBankBranchDAO().delete with parameters
-	 * bankBranch,"_Temp" 4) Audit the record in to AuditHeader and AdtBankBranches by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBankBranches by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -238,7 +151,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		if (bankBranch.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getBankBranchDAO().delete(bankBranch, "");
+			bankBranchDAO.delete(bankBranch, "");
 
 		} else {
 			bankBranch.setRoleCode("");
@@ -250,42 +163,32 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 			if (bankBranch.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				bankBranch.setRecordType("");
-				getBankBranchDAO().save(bankBranch, "");
+				bankBranchDAO.save(bankBranch, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				bankBranch.setRecordType("");
-				getBankBranchDAO().update(bankBranch, "");
+				bankBranchDAO.update(bankBranch, "");
 			}
 		}
 
-		getBankBranchDAO().delete(bankBranch, "_Temp");
+		bankBranchDAO.delete(bankBranch, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(bankBranch);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getBankBranchDAO().delete with parameters bankBranch,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtBankBranches by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "doReject");
+		logger.debug(Literal.ENTERING);
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -293,31 +196,22 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		BankBranch bankBranch = (BankBranch) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getBankBranchDAO().delete(bankBranch, "_Temp");
+		bankBranchDAO.delete(bankBranch, "_Temp");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
-	 * assign the to auditHeader 3) identify the nextprocess
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
-
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		doPostHookValidation(auditHeader);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -332,23 +226,11 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		}
 	}
 
-	/**
-	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
-	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from getBankBranchDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
-
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
-		// Get the model object.
 		BankBranch bankBranch = (BankBranch) auditDetail.getModelData();
-		// Check the unique keys.
+
 		if (bankBranch.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(bankBranch.getRecordType())
 				&& bankBranchDAO.isDuplicateKey(bankBranch.getBankCode(), bankBranch.getBranchCode(),
 						bankBranch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
@@ -414,24 +296,11 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		return auditDetail;
 	}
 
-	/**
-	 * fetch Bank Branch details by IFSC code.
-	 * 
-	 * @param ifsc
-	 * @return BankBranch
-	 */
 	@Override
 	public BankBranch getBankBrachByIFSC(String ifsc) {
 		return bankBranchDAO.getBankBrachByIFSC(ifsc, "");
 	}
 
-	/**
-	 * fetch Bank Branch details by bankCode and branchCode.
-	 * 
-	 * @param bankCode
-	 * @param branchCode
-	 * @return BankBranch
-	 */
 	@Override
 	public BankBranch getBankBrachByCode(String bankCode, String branchCode) {
 		return bankBranchDAO.getBankBrachByCode(bankCode, branchCode, "");
@@ -439,26 +308,14 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 
 	@Override
 	public BankBranch getBankBrachByMicr(String micr) {
-		return getBankBranchDAO().getBankBrachByMicr(micr, "");
+		return bankBranchDAO.getBankBrachByMicr(micr, "");
 	}
 
-	/**
-	 * fetch Bank Branch details by IFSC code.
-	 * 
-	 * @param ifsc
-	 * @return BankBranch
-	 */
 	@Override
 	public BankBranch getBankBranchByIFSC(String ifsc) {
 		return bankBranchDAO.getBankBranchByIFSC(ifsc, "");
 	}
 
-	/**
-	 * fetch Bank Branch Count by IFSC code.
-	 * 
-	 * @param ifsc
-	 * @return BankBranchCount
-	 */
 	@Override
 	public int getBankBranchCountByIFSC(final String iFSC, String type) {
 		return bankBranchDAO.getBankBranchCountByIFSC(iFSC, type);
@@ -472,117 +329,86 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	public BankBranch getBankBranch(String iFSC, String micr, String bankCode, String branchCode) {
 		logger.debug(Literal.ENTERING);
 
-		String[] valueParm = new String[2];
-
 		BankBranch bankBranch = new BankBranch();
 
 		if (StringUtils.isBlank(iFSC) && (StringUtils.isBlank(bankCode) || StringUtils.isBlank(branchCode))) {
-			valueParm[0] = "IFSC";
-			valueParm[1] = "Bank/Branch code";
-
-			bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90215", valueParm)));
+			bankBranch.setError(getError("90215", "IFSC", "Bank/Branch code"));
 			return bankBranch;
 		}
 
 		if (StringUtils.isNotBlank(bankCode) && StringUtils.isNotBlank(branchCode)) {
-			bankBranch = getBankBrachByCode(bankCode, branchCode);
+			bankBranch = bankBranchDAO.getBankBrachByCode(bankCode, branchCode, "");
 			if (bankBranch == null) {
-				valueParm[0] = bankCode;
-				valueParm[1] = branchCode;
-
 				bankBranch = new BankBranch();
-				bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90302", valueParm)));
+				bankBranch.setError(getError("90302", bankCode, branchCode));
 				return bankBranch;
-			} else {
-				if (StringUtils.isNotBlank(micr)) {
-					if (!micr.equals(bankBranch.getMICR())) {
-						valueParm[0] = "MICR";
-						valueParm[1] = micr;
-
-						bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-						return bankBranch;
-					}
-				}
-			}
-		} else if (StringUtils.isNotEmpty(iFSC) && StringUtils.isNotEmpty(micr)) {
-			bankBranch = getBankBranchByIFSCMICR(iFSC, micr);
-			if (bankBranch == null) {
-				valueParm[0] = iFSC;
-				valueParm[1] = micr;
-
-				bankBranch = new BankBranch();
-				bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90703", valueParm)));
-				return bankBranch;
-			} else {
-				if (StringUtils.isNotBlank(micr)) {
-					if (!micr.equals(bankBranch.getMICR())) {
-						valueParm[0] = "MICR";
-						valueParm[1] = micr;
-
-						bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-						return bankBranch;
-					}
-				}
-			}
-		} else if (StringUtils.isNotBlank(iFSC)) {
-			if (getBankBranchCountByIFSC(iFSC, "") > 1) {
-				String[] parm = new String[1];
-				parm[0] = iFSC;
-
-				bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90702", valueParm)));
-				return bankBranch;
-			}
-
-			bankBranch = getBankBranchByIFSC(iFSC);
-
-			if (bankBranch == null) {
-				valueParm = new String[2];
-				valueParm[0] = "IFSC";
-				valueParm[1] = iFSC;
-				bankBranch = new BankBranch();
-				bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90301", valueParm)));
-				return bankBranch;
-			} else {
-				if (StringUtils.isNotBlank(micr)) {
-					if (!micr.equals(bankBranch.getMICR())) {
-						valueParm[0] = "MICR";
-						valueParm[1] = micr;
-
-						bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-						return bankBranch;
-					}
-				}
 			}
 		}
 
-		if (StringUtils.isNotBlank(bankCode)) {
-			String branchBankCode = StringUtils.trimToEmpty(bankBranch.getBankCode());
-			if (!branchBankCode.equals(bankCode)) {
-				valueParm = new String[1];
-				valueParm[0] = iFSC;
+		if (StringUtils.isNotBlank(micr) && !micr.equals(bankBranch.getMICR())) {
+			bankBranch.setError(getError("90701", "MICR", micr));
+			return bankBranch;
+		}
 
-				bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("99020", valueParm)));
+		if (StringUtils.isNotEmpty(iFSC) && StringUtils.isNotEmpty(micr)) {
+			bankBranch = bankBranchDAO.getBankBranchByIFSCMICR(iFSC, micr);
+			if (bankBranch == null) {
+				bankBranch = new BankBranch();
+				bankBranch.setError(getError("90703", iFSC, micr));
 				return bankBranch;
 			}
 		}
+
+		if (StringUtils.isNotBlank(micr) && !micr.equals(bankBranch.getMICR())) {
+			bankBranch.setError(getError("90701", "MICR", micr));
+			return bankBranch;
+		}
+
+		if (StringUtils.isNotBlank(iFSC) && bankBranchDAO.getBankBranchCountByIFSC(iFSC, "") > 1) {
+			bankBranch.setError(getError("90702", iFSC));
+			return bankBranch;
+		}
+
+		bankBranch = bankBranchDAO.getBankBranchByIFSC(iFSC, "");
+		if (bankBranch == null) {
+			bankBranch = new BankBranch();
+			bankBranch.setError(getError("90301", "IFSC", iFSC));
+			return bankBranch;
+		}
+
+		if (StringUtils.isNotBlank(micr) && !micr.equals(bankBranch.getMICR())) {
+			bankBranch.setError(getError("90701", "MICR", micr));
+			return bankBranch;
+		}
+
+		if (StringUtils.isNotBlank(bankCode) && !StringUtils.trimToEmpty(bankBranch.getBankCode()).equals(bankCode)) {
+			bankBranch.setError(getError("99020", iFSC));
+			return bankBranch;
+		}
+
 		logger.debug(Literal.LEAVING);
-
 		return bankBranch;
 	}
 
 	public boolean validateBranchCode(BankBranch bankBranch, String mandateType) {
-		switch (mandateType) {
-		case MandateConstants.TYPE_ECS:
+		InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
+
+		if (instrumentType == null) {
+			return false;
+		}
+
+		switch (instrumentType) {
+		case ECS:
 			if (!bankBranch.isEcs()) {
 				return false;
 			}
 			break;
-		case MandateConstants.TYPE_DDM:
-			if (!bankBranch.isDda()) {
+		case DD:
+			if (!bankBranch.isDd()) {
 				return false;
 			}
 			break;
-		case MandateConstants.TYPE_NACH:
+		case NACH:
 			if (!bankBranch.isNach()) {
 				return false;
 			}
@@ -620,7 +446,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 
 	@Override
 	public int getAccNoLengthByIFSC(String ifscCode) {
-		return getBankBranchDAO().getAccNoLengthByIFSC(ifscCode, "_View");
+		return bankBranchDAO.getAccNoLengthByIFSC(ifscCode, "_View");
 	}
 
 }

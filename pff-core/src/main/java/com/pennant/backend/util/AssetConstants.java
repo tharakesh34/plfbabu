@@ -103,6 +103,7 @@ public class AssetConstants {
 	public static final String UNIQUE_ID_MANUALSCHEDULE = "MANUALSCHEDULE";
 	public static final String UNIQUE_ID_VARIABLE_SCHEDULE = "VARIABLECHEDULE";
 	public static final String UNIQUE_ID_ISRADETAILS = "ISRA_DETAILS";
+	public static final String UNIQUE_ID_SECURITYMANDATE = "SECMAN";
 
 	public static final int DEFAULT_ITEMNO = 1;
 

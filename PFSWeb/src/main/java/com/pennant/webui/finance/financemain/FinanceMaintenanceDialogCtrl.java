@@ -109,6 +109,8 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -544,9 +546,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	private void doCheckMandate(String finRepayMethod, long CustID, boolean onChange) {
-		if (MandateConstants.TYPE_ECS.equals(finRepayMethod) || MandateConstants.TYPE_DDM.equals(finRepayMethod)
-				|| MandateConstants.TYPE_NACH.equals(finRepayMethod)
-				|| MandateConstants.TYPE_EMANDATE.equals(finRepayMethod)) {
+		if (InstrumentType.isManual(finRepayMethod)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_mandateId"), this.mandateRef);
 			if (onChange) {
 				this.row_Escrow.setVisible(false);
@@ -557,8 +557,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.mandateRef.setValue("");
 			}
 
-		} else if (FinanceConstants.REPAYMTH_MANUAL.equals(finRepayMethod)
-				&& ImplementationConstants.ALLOW_ESCROW_MODE) {
+		} else if (InstrumentType.isManual(finRepayMethod) && ImplementationConstants.ALLOW_ESCROW_MODE) {
 			readOnlyComponent(true, this.mandateRef);
 			this.mandateRef.setValue("");
 			this.mandateRef.setAttribute("mandateID", new Long(0));
@@ -3499,7 +3498,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			whereCaluse.append(" AND MANDATEREF IS NOT NULL ");
 		} else {
 			whereCaluse.append(" AND STATUS != '");
-			whereCaluse.append(MandateConstants.STATUS_REJECTED);
+			whereCaluse.append(MandateStatus.REJECTED);
 			whereCaluse.append("'");
 		}
 

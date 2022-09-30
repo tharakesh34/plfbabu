@@ -303,7 +303,10 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.util.ErrorControl;
@@ -329,6 +332,7 @@ import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.finance.psldetails.PSLDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
+import com.pennant.webui.mandate.mandate.SecurityMandateDialogCtrl;
 import com.pennant.webui.pdfupload.PdfParserCaller;
 import com.pennant.webui.systemmasters.pmay.PMAYDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -914,6 +918,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient ChequeDetailDialogCtrl chequeDetailDialogCtrl;
 	private transient DeviationDetailDialogCtrl deviationDetailDialogCtrl;
 	private transient MandateDialogCtrl mandateDialogCtrl;
+	private transient SecurityMandateDialogCtrl securityMandateDialogCtrl;
 	private transient FinanceTaxDetailDialogCtrl financeTaxDetailDialogCtrl;
 	private transient FinAdvancePaymentsListCtrl finAdvancePaymentsListCtrl;
 	private transient FinFeeDetailListCtrl finFeeDetailListCtrl;
@@ -2148,6 +2153,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				appendMandateDetailTab(onLoad);
 			}
 
+			if (isTabVisible(StageTabConstants.SECMANDATES)) {
+				appendSecurityMandatedetailtab(onLoad);
+			}
+
 			if (isTabVisible(StageTabConstants.Cheque)) {
 				appendChequeDetailTab(onLoad);
 			}
@@ -2618,7 +2627,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void appendChequeDetailTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		if (onLoad) {
-			createTab(AssetConstants.UNIQUE_ID_CHEQUE, false);
+			createTab(AssetConstants.UNIQUE_ID_CHEQUE, true);
 		} else {
 			final Map<String, Object> map = getDefaultArguments();
 			ChequeHeader chequeHeader = null;
@@ -3071,10 +3080,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			final Map<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_MANDATE));
 			map.put("fromLoan", true);
+			map.put("MandateType", this.finRepayMethod.getValue());
+			map.put("securityMandate", false);
 			Executions.createComponents("/WEB-INF/pages/Mandate/MandateDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_MANDATE), map);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected void appendSecurityMandatedetailtab(boolean onLoad) {
+		logger.debug(Literal.ENTERING);
+
+		if (onLoad) {
+			createTab(AssetConstants.UNIQUE_ID_SECURITYMANDATE, false);
+		} else {
+			final Map<String, Object> map = getDefaultArguments();
+			map.put("tab", getTab(AssetConstants.UNIQUE_ID_SECURITYMANDATE));
+			map.put("fromLoan", true);
+			map.put("securityMandate", true);
+			Executions.createComponents("/WEB-INF/pages/Mandate/SecurityMandateDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_SECURITYMANDATE), map);
+		}
+
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	/**
@@ -3254,6 +3283,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			mandateDialogCtrl.doSetLabels(getFinBasicDetails());
 			if (ImplementationConstants.MANDATE_ALLOW_CO_APP) {
 				mandateDialogCtrl.doSetCustomerFilters();
+			}
+			break;
+		case AssetConstants.UNIQUE_ID_SECURITYMANDATE:
+			securityMandateDialogCtrl.doSetLabels(getFinBasicDetails());
+			if (ImplementationConstants.MANDATE_ALLOW_CO_APP) {
+				securityMandateDialogCtrl.doSetCustomerFilters();
 			}
 			break;
 		case AssetConstants.UNIQUE_ID_TAX:
@@ -3669,7 +3704,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			String[] rpMthds = financeType.getAlwdRpyMethods().trim().split(",");
 			if (rpMthds.length > 0) {
 				List<String> list = Arrays.asList(rpMthds);
-				for (ValueLabel rpyMthd : PennantStaticListUtil.getRepayMethods()) {
+				for (ValueLabel rpyMthd : MandateUtil.getRepayMethods()) {
 					if (list.contains(rpyMthd.getValue().trim())) {
 						rpyMethodList.add(rpyMthd);
 					}
@@ -4685,7 +4720,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		/* Escrow Mode */
 		if (ImplementationConstants.ALLOW_ESCROW_MODE && conventional) {
-			if (FinanceConstants.REPAYMTH_MANUAL.equals(aFinanceMain.getFinRepayMethod())) {
+			if (InstrumentType.isManual(aFinanceMain.getFinRepayMethod())) {
 				this.row_Escrow.setVisible(true);
 			}
 
@@ -8113,6 +8148,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			mandateDialogCtrl.doSave_Mandate(afd, mandateTab, recSave);
 		}
 
+		Tab secmandateTab = getTab(AssetConstants.UNIQUE_ID_SECURITYMANDATE);
+		if (securityMandateDialogCtrl != null && secmandateTab.isVisible()) {
+			securityMandateDialogCtrl.doSave_Mandate(afd, secmandateTab, recSave);
+		}
+
 		// Linked Finances Details
 		if (!(StringUtils.endsWithIgnoreCase(this.userAction.getSelectedItem().getLabel(), "Cancel")
 				|| StringUtils.contains(this.userAction.getSelectedItem().getLabel(), "Reject"))) {
@@ -8124,11 +8164,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// PDC
 		Tab pdcTab = getTab(AssetConstants.UNIQUE_ID_CHEQUE);
 		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()
+				&& (InstrumentType.isPDC(getFinanceMain().getFinRepayMethod()) || finType.isChequeCaptureReq())
 				&& (!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 						&& !this.userAction.getSelectedItem().getLabel().contains("Reject")
 						&& !this.userAction.getSelectedItem().getLabel().contains("Resubmit")
 						&& !this.userAction.getSelectedItem().getLabel().contains("Revert"))) {
-			chequeDetailDialogCtrl.doSave_PDC(afd, getFinanceMain().getFinReference());
+			chequeDetailDialogCtrl.doSavePDC(afd, getFinanceMain().getFinReference());
 		}
 
 		// Tax Detail
@@ -15670,14 +15711,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceDetail(financeDetail);
+
 		// Disb Instruction Posting
 		if (AccountingEvent.isDisbursementEvent(eventCode)) {
 			if (!ImplementationConstants.HOLD_DISB_INST_POST) {
-				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.DISBINS, financeDetail, null));
+				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.DISBINS, postingDTO));
 			}
 
 			if (FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
-				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.VAS_FEE, financeDetail, null));
+				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.VAS_FEE, postingDTO));
 			}
 		}
 
@@ -16078,7 +16122,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				String[] rpMthds = financeType.getAlwdRpyMethods().trim().split(",");
 				if (rpMthds.length > 0) {
 					List<String> list = Arrays.asList(rpMthds);
-					for (ValueLabel rpyMthd : PennantStaticListUtil.getRepayMethods()) {
+					for (ValueLabel rpyMthd : MandateUtil.getRepayMethods()) {
 						if (list.contains(rpyMthd.getValue().trim())) {
 							rpyMethodList.add(rpyMthd);
 						}
@@ -18160,7 +18204,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			repymethod = this.finRepayMethod.getSelectedItem().getValue().toString();
 		}
 
-		if (FinanceConstants.REPAYMTH_MANUAL.equals(repymethod) && ImplementationConstants.ALLOW_ESCROW_MODE) {
+		if (PennantConstants.List_Select.equals(repymethod)) {
+			return;
+		}
+
+		if (InstrumentType.isManual(repymethod) && ImplementationConstants.ALLOW_ESCROW_MODE) {
 			this.row_Escrow.setVisible(true);
 			if (!this.escrow.isChecked()) {
 				this.customerBankAcct.setReadonly(true);
@@ -18174,12 +18222,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.customerBankAcct.setAttribute("CustBankId", null);
 		}
 
-		if (getMandateDialogCtrl() != null) {
-			getMandateDialogCtrl().checkTabDisplay(repymethod, true);
+		if (mandateDialogCtrl != null) {
+			mandateDialogCtrl.checkTabDisplay(repymethod, true);
 		}
 
-		if (getChequeDetailDialogCtrl() != null) {
-			getChequeDetailDialogCtrl().checkTabDisplay(this.financeDetail, repymethod, true);
+		if (securityMandateDialogCtrl != null) {
+			securityMandateDialogCtrl.checkTabDisplay(repymethod, true);
+		}
+
+		if (chequeDetailDialogCtrl != null) {
+			chequeDetailDialogCtrl.checkTabDisplay(this.financeDetail, repymethod, true);
 		}
 
 		logger.debug(Literal.LEAVING + event.toString());
@@ -18313,6 +18365,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Closing Mandate Details Window
 		if (mandateDialogCtrl != null) {
 			mandateDialogCtrl.closeDialog();
+		}
+
+		if (securityMandateDialogCtrl != null) {
+			securityMandateDialogCtrl.closeDialog();
 		}
 
 		// Closing Finance Tax Details Window
@@ -23964,4 +24020,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
 	}
+
+	public void setSecurityMandateDialogCtrl(SecurityMandateDialogCtrl securityMandateDialogCtrl) {
+		this.securityMandateDialogCtrl = securityMandateDialogCtrl;
+	}
+
 }

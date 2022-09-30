@@ -93,8 +93,8 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	private Button _searchButton;
 	@SuppressWarnings("rawtypes")
 	private ListModelList listModelList;
-	private final int _height = 410;
-	private int _width = 300;
+	private final int _height = 550;
+	private int _width = 500;
 
 	private Object objClass = null;
 	private transient PagedListService pagedListService;

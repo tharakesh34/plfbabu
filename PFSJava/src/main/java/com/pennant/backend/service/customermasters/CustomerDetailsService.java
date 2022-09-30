@@ -12,10 +12,9 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.perfios.PerfiosHeader;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
-import com.pennant.backend.model.finance.FinanceEnquiry;
-import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface CustomerDetailsService {
@@ -55,8 +54,6 @@ public interface CustomerDetailsService {
 
 	CustomerDetails getCustomerDetailsbyIdandPhoneType(long id, String phoneType);
 
-	AvailPastDue getCustPastDueDetailByCustId(AvailPastDue pastDue, String limitCcy);
-
 	CustomerDetails setCustomerDetails(CustomerDetails customer);
 
 	DirectorDetail getNewDirectorDetail();
@@ -72,19 +69,13 @@ public interface CustomerDetailsService {
 
 	String getEIDNumberById(String eidNumber, String type);
 
-	long getEIDNumberByCustId(String eidNumber, String type);
+	long getEIDNumberByCustId(String eidNumber);
 
 	WIFCustomer getWIFByEIDNumber(String eidNumber, String type);
 
 	boolean isDuplicateCrcpr(long custId, String custCRCPR);
 
-	void updateProspectCustCIF(String oldCustCIF, String newCustCIF);
-
 	String getCustCoreBankIdByCIF(String custCIF);
-
-	String getNewCoreCustomerCIF();
-
-	void updateCorebankCustCIF(String newCoreCustCIF);
 
 	AuditDetail doCustomerValidations(AuditHeader auditHeader);
 
@@ -93,6 +84,8 @@ public interface CustomerDetailsService {
 	boolean getCustomerByCoreBankId(String custCoreBank);
 
 	Customer checkCustomerByCIF(String cif, String type);
+
+	Customer getCustomer(String cif);
 
 	int updateCustCRCPR(String custDocTitle, long custID);
 
@@ -131,4 +124,6 @@ public interface CustomerDetailsService {
 	boolean isPanFoundByCustIds(List<Long> coAppCustIds, String panNumber);
 
 	List<FinanceEnquiry> setFinForCoApplicantAndGuarantor(CustomerDetails customerDetails);
+
+	long getCustIDByCIF(String custCIF);
 }

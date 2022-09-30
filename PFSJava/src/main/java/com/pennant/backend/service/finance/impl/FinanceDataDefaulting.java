@@ -41,8 +41,8 @@ import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -256,7 +256,7 @@ public class FinanceDataDefaulting {
 		}
 
 		if (StringUtils.isNotBlank(repayMethod)) {
-			List<ValueLabel> mandateType = PennantStaticListUtil.getRepayMethods();
+			List<ValueLabel> mandateType = MandateUtil.getRepayMethods();
 			boolean mandateTypeSts = false;
 
 			for (ValueLabel value : mandateType) {

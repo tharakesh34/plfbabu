@@ -706,7 +706,6 @@
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
-		<property name="npaService" ref="npaService" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 	</bean>
 
@@ -858,4 +857,7 @@
 	
 	<bean id="payOrderIssueHeaderDAO" class="com.pennant.backend.dao.payorderissue.impl.PayOrderIssueHeaderDAOImpl"
 		parent="basicDao" />
+		
+	<bean name="receiptCancellationService"
+		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" />
 </beans>

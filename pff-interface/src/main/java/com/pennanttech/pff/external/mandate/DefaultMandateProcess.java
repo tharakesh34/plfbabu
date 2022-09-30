@@ -501,9 +501,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			m.setFinReference(rs.getString("FINREFERENCE"));
 			m.setCustCIF(rs.getString("CUSTCIF"));
 			m.setMICR(rs.getString("MICR_CODE"));
-			m.setmICR(rs.getString("MICR_CODE"));
 			m.setIFSC(rs.getString("IFSC_CODE"));
-			m.setiFSC(rs.getString("IFSC_CODE"));
 			m.setAccNumber(rs.getString("ACCT_NUMBER"));
 			m.setLovValue(rs.getString("LovValue"));
 			m.setMandateType(rs.getString("MANDATE_TYPE"));
@@ -612,8 +610,6 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				m.setFinReference(rs.getString("FINREFERENCE"));
 				m.setCustCIF(rs.getString("CUSTCIF"));
 				m.setMICR(rs.getString("MICR_CODE"));
-				m.setmICR(rs.getString("MICR_CODE"));
-				m.setiFSC(rs.getString("IFSC_CODE"));
 				m.setIFSC(rs.getString("IFSC_CODE"));
 				m.setAccNumber(rs.getString("ACCT_NUMBER"));
 				m.setLovValue(rs.getString("OPENFLAG"));

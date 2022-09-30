@@ -205,6 +205,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.loanquery.QueryDetail;
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -621,10 +622,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			deviationHelper.setDeviationDetails(fd, deviations, apprDeviations);
 		}
 
-		/* Mandate */
 		if (mandateID != null && mandateID > 0) {
 			fd.setMandate(finMandateService.getMnadateByID(mandateID));
 		}
+		/* Mandate */
+		fd.setSecurityMandate(finMandateService.getSecurityMandate(finReference));
 
 		/* Finance Tax Detail */
 		fd.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(finID, "_TView"));
@@ -2082,9 +2084,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			updateTaskLog(fm, true);
 		}
 
-		// Mandate Should be processed first for changes since the mandate id
-		// will be updated in the finance main.
-		finMandateService.saveOrUpdate(fd, auditHeader, table);
+		if (fd.getMandate() != null) {
+			Mandate mandate = fd.getMandate();
+			finMandateService.saveOrUpdate(fm, mandate, auditHeader, table);
+		}
+
+		if (fd.getSecurityMandate() != null) {
+			Mandate mandate = fd.getSecurityMandate();
+			finMandateService.saveOrUpdate(fm, mandate, auditHeader, table);
+		}
 
 		if (fm.isNewRecord()) {
 			// Lock Functionality not required while Creating loan From API
@@ -2793,6 +2801,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processPricingLoans(fd, table, auditTranType);
 		}
 		logger.debug(Literal.LEAVING);
+
 		return auditHeader;
 
 	}
@@ -3898,12 +3907,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetails.addAll(linkedFinancesService.doApproveLinkedFinanceList(fd));
 		}
 
-		// Fetch Next Payment Details from Finance for Salaried Postings
-		// Verification
-		FinanceScheduleDetail orgNextSchd = null;
-		if (ImplementationConstants.ALLOW_FIN_SALARY_PAYMENT && StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
-			orgNextSchd = financeScheduleDetailDAO.getNextSchPayment(finID, curBDay);
-		}
 		String recordType = fm.getRecordType();
 
 		if (!isWIF) {
@@ -3981,7 +3984,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Mandate Should be processed first for changes since the
 				// mandate id will be updated in the finance
 				// main.
-				finMandateService.doApprove(fd, auditHeader, "");
+				// finMandateService.doApprove(fd, auditHeader, "");
+				if (fd.getMandate() != null) {
+					Mandate mandate = fd.getMandate();
+					finMandateService.doApprove(fd, mandate, auditHeader, "");
+				}
+
+				if (fd.getSecurityMandate() != null) {
+					Mandate mandate = fd.getSecurityMandate();
+					finMandateService.doApprove(fd, mandate, auditHeader, "");
+				}
 
 				tranType = PennantConstants.TRAN_ADD;
 				fm.setRecordType("");
@@ -4627,11 +4639,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// =======================================
 		fm.setRoleCode(roleCode);
 		updateTaskLog(fm, false);
-
-		// Save Salaried Posting Details
-		if (ImplementationConstants.ALLOW_FIN_SALARY_PAYMENT && StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
-			saveFinSalPayment(schdData, orgNextSchd, false);
-		}
 
 		// Receipt creation through Restructure Process
 		if (restructReceiptReq) {
@@ -7434,7 +7441,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					new ErrorDetail(PennantConstants.KEY_FIELD, "60222", errParm, valueParm), usrLanguage));
 		}
 
-		finMandateService.validateMandate(auditDetail, fd);
+		finMandateService.validateMandate(auditDetail, fd, fd.getMandate());
+
+		finMandateService.validateMandate(auditDetail, fd, fd.getSecurityMandate());
+
 		if (!StringUtils.equals(fm.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
 			// finMandateService.promptMandate(auditDetail,
 			// financeDetail);//FIXME: Override issue to be fixed

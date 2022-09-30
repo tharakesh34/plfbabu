@@ -689,7 +689,7 @@ public class DocumentStatusDialogCtrl extends GFCBaseCtrl<DocumentStatusDetail> 
 		fillComboBox(status, doc.getStatus(), getStatusList());
 	}
 
-	public void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
+	protected void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
 		combobox.getChildren().clear();
 		for (ValueLabel valueLabel : list) {
 			Comboitem comboitem = new Comboitem();

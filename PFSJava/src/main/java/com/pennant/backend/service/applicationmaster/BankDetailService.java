@@ -52,7 +52,5 @@ public interface BankDetailService {
 
 	BankDetail getBankDetailsByIfsc(String ifsc);
 
-	boolean isBankCodeExits(String bankCode, String string, boolean active);
-
 	BankDetail getAccNoLengths(String bankCode);
 }

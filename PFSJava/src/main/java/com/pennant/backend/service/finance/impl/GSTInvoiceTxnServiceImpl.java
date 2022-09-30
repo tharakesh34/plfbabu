@@ -8,7 +8,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
@@ -19,6 +22,7 @@ import com.pennant.backend.dao.customermasters.GSTDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -28,6 +32,8 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.GSTDetail;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.AdviseDueTaxDetail;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -35,6 +41,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GSTInvoiceTxn;
 import com.pennant.backend.model.finance.GSTInvoiceTxnDetails;
 import com.pennant.backend.model.finance.InvoiceDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
@@ -48,6 +55,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 
@@ -65,6 +73,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	private FinanceMainDAO financeMainDAO;
 	private VehicleDealerDAO vehicleDealerDAO;
 	private GSTDetailDAO gstDetailDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 
 	public GSTInvoiceTxnServiceImpl() {
 		super();
@@ -1035,6 +1044,88 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		return invoice;
 	}
 
+	private void createGSTInvoiceForBounce(PostingDTO postingDTO) {
+		FinanceMain fm = postingDTO.getFinanceMain();
+		ManualAdvise ma = postingDTO.getManualAdvise();
+		FeeType feeType = postingDTO.getFeeType();
+		TaxHeader taxHeader = postingDTO.getTaxHeader();
+
+		long linkedTranID = ma.getLinkedTranId();
+
+		if (linkedTranID <= 0) {
+			return;
+		}
+
+		if (taxHeader == null || CollectionUtils.isEmpty(taxHeader.getTaxDetails())) {
+			return;
+		}
+
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE)) {
+			return;
+		}
+
+		ma.setDueCreation(true);
+
+		ManualAdviseMovements advMovement = new ManualAdviseMovements();
+		advMovement.setFeeTypeCode(ma.getFeeTypeCode());
+		advMovement.setFeeTypeDesc(ma.getFeeTypeDesc());
+		advMovement.setMovementAmount(ma.getAdviseAmount());
+
+		advMovement.setFeeTypeCode(feeType.getFeeTypeCode());
+		advMovement.setFeeTypeDesc(feeType.getFeeTypeDesc());
+		advMovement.setTaxApplicable(feeType.isTaxApplicable());
+		advMovement.setTaxComponent(feeType.getTaxComponent());
+		advMovement.setStatus("D");
+
+		advMovement.setPaidAmount(ma.getAdviseAmount());
+		advMovement.setTaxHeader(taxHeader);
+
+		List<Taxes> taxDetails = taxHeader.getTaxDetails();
+		BigDecimal gstAmount = BigDecimal.ZERO;
+		for (Taxes taxes : taxDetails) {
+			gstAmount = gstAmount.add(taxes.getPaidTax());
+		}
+
+		if (gstAmount.compareTo(BigDecimal.ZERO) > 0) {
+			List<ManualAdviseMovements> advMovements = new ArrayList<>();
+			advMovements.add(advMovement);
+
+			FinanceDetail financeDetail = new FinanceDetail();
+			financeDetail.getFinScheduleData().setFinanceMain(fm);
+
+			InvoiceDetail invoiceDetail = new InvoiceDetail();
+			invoiceDetail.setLinkedTranId(linkedTranID);
+			invoiceDetail.setFinanceDetail(financeDetail);
+			invoiceDetail.setMovements(advMovements);
+			invoiceDetail.setWaiver(false);
+			invoiceDetail.setDbInvSetReq(false);
+			invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+
+			Long invoiceID = advTaxInvoicePreparation(invoiceDetail);
+
+			saveDueTaxDetail(ma, taxDetails, invoiceID);
+		}
+	}
+
+	private void saveDueTaxDetail(ManualAdvise ma, List<Taxes> taxes, Long invoiceID) {
+		AdviseDueTaxDetail detail = new AdviseDueTaxDetail();
+
+		detail.setAdviseID(ma.getAdviseID());
+		detail.setTaxType(ma.getTaxComponent());
+		detail.setTaxType(ma.getTaxComponent());
+		detail.setInvoiceID(invoiceID);
+
+		detail.setAmount(ma.getAdviseAmount());
+		detail.setCGST(GSTCalculator.getPaidTax(RuleConstants.CODE_CGST, taxes));
+		detail.setSGST(GSTCalculator.getPaidTax(RuleConstants.CODE_SGST, taxes));
+		detail.setUGST(GSTCalculator.getPaidTax(RuleConstants.CODE_UGST, taxes));
+		detail.setIGST(GSTCalculator.getPaidTax(RuleConstants.CODE_IGST, taxes));
+		detail.setCESS(GSTCalculator.getPaidTax(RuleConstants.CODE_CESS, taxes));
+		detail.setTotalGST(CalculationUtil.getTotalGST(detail));
+
+		manualAdviseDAO.saveDueTaxDetail(detail);
+	}
+
 	private String getCommaSeperate(String... values) {
 		StringBuilder address = new StringBuilder();
 
@@ -1149,4 +1240,10 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	public void setGstDetailDAO(GSTDetailDAO gstDetailDAO) {
 		this.gstDetailDAO = gstDetailDAO;
 	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
 }

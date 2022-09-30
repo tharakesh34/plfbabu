@@ -91,8 +91,6 @@ public interface FinanceMainDAO {
 
 	void saveFinanceSnapshot(FinanceMain financeMain);
 
-	// FinanceMain getFinanceMainByRef(String reference, String type, boolean isRejectFinance); FIXME
-
 	String getApprovedRepayMethod(long finID, String type);
 
 	void updateMaturity(long finID, String closingStatus, boolean finIsActive, Date date);
@@ -192,8 +190,6 @@ public interface FinanceMainDAO {
 	boolean isDeveloperFinance(long finID, String type, boolean wif);
 
 	FinanceMain getFinanceDetailsByFinRefence(long finID, String type);
-
-	List<Long> getFinanceMainbyCustId(long custId, String type);
 
 	String getFinanceType(String finReference, TableType tabelType);
 
@@ -389,7 +385,7 @@ public interface FinanceMainDAO {
 	Map<String, Object> getExtendedFields(String reference, String tableName);
 
 	// FIXME the below method should be moved to corresponding DAO classes of CD/OverDraft
-	FinanceMain getFinanceMainByReference(String FinReference, boolean active);
+	FinanceMain getFinanceMainByReference(String finReference, boolean active);
 
 	boolean isOverDraft(String finReference);
 
@@ -406,4 +402,6 @@ public interface FinanceMainDAO {
 	int getBucketByFinStatus(long finID);
 
 	List<FinanceMain> getFinanceMainActiveList(Date fromDate, Date toDate, String finType);
+
+	Map<Integer, String> getBounceForPD();
 }

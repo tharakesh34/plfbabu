@@ -53,6 +53,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -75,9 +76,10 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -112,6 +114,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private ConsecutiveBounceDAO consecutiveBounceDAO;
+	private MandateDAO mandateDAO;
 	private NotificationService notificationService;
 	private ReceiptPaymentService receiptPaymentService;
 	private PresentmentImportProcess presentmentImportProcess;
@@ -178,7 +182,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		}
 
 		long presentmentId = ph.getId();
-		long partnerBankId = ph.getPartnerBankId();
+		Long partnerBankId = ph.getPartnerBankId();
 		String userAction = ph.getUserAction();
 
 		switch (userAction) {
@@ -218,7 +222,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 	@Override
 	public String savePresentmentDetails(PresentmentHeader ph) {
-		if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+		if (InstrumentType.isPDC(ph.getMandateType())) {
 			return savePDCPresentments(ph);
 		}
 		return savePresentments(ph);
@@ -306,6 +310,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		pde.setFinODDetailsDAO(finODDetailsDAO);
 		pde.setFinReceiptDetailDAO(finReceiptDetailDAO);
 		pde.setFinExcessAmountDAO(finExcessAmountDAO);
+		pde.setConsecutiveBounceDAO(consecutiveBounceDAO);
+		pde.setMandateDAO(mandateDAO);
 
 		/* Service's */
 		pde.setPresentmentDetailService(this);
@@ -322,7 +328,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		List<Long> includeList = ph.getIncludeList();
 		List<Long> excludeList = ph.getExcludeList();
 		long id = ph.getId();
-		long partnerBankId = ph.getPartnerBankId();
+		Long partnerBankId = ph.getPartnerBankId();
 
 		int count = 0;
 		if (CollectionUtils.isNotEmpty(includeList)) {
@@ -345,7 +351,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		List<Long> includeList = ph.getIncludeList();
 		List<Long> excludeList = ph.getExcludeList();
 		long id = ph.getId();
-		long partnerBankId = ph.getPartnerBankId();
+		Long partnerBankId = ph.getPartnerBankId();
 
 		int count = 0;
 		if (CollectionUtils.isNotEmpty(includeList)) {
@@ -359,7 +365,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.presentmentDetailDAO.updatePresentmentHeader(id, RepayConstants.PEXC_AWAITING_CONF, partnerBankId);
 	}
 
-	private void resubmitPresentments(long presentmentId, long partnerBankId) {
+	private void resubmitPresentments(long presentmentId, Long partnerBankId) {
 		this.presentmentDetailDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED,
 				partnerBankId);
 	}
@@ -396,8 +402,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 						excessAmountList = new ArrayList<>();
 					}
 				}
-
-				if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+				if (InstrumentType.isPDC(ph.getMandateType())) {
 					chequeStatusList.add(item.getMandateId());
 
 					if (chequeStatusList.size() == PennantConstants.CHUNK_SIZE) {
@@ -432,7 +437,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			updatePresentmentIdAsZero(pd.getId());
 
 			String paymentMode = this.presentmentDetailDAO.getPaymenyMode(pd.getPresentmentRef());
-			if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
+			if (InstrumentType.isPDC(paymentMode)) {
 				updateChequeStatus(pd.getMandateId(), PennantConstants.CHEQUESTATUS_NEW);
 			}
 
@@ -545,7 +550,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		try {
 			String presentmentRef = presentmentHeader.getReference();
 			String bankAccNo = presentmentHeader.getPartnerAcctNumber();
-			boolean isPDC = MandateConstants.TYPE_PDC.equals(presentmentHeader.getMandateType());
+			boolean isPDC = InstrumentType.isPDC(presentmentHeader.getMandateType());
 
 			getPresentmentRequest().sendReqest(idList, idExcludeEmiList, headerId, isError, isPDC, presentmentRef,
 					bankAccNo);
@@ -1069,6 +1074,16 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
 
+	@Autowired
+	public void setConsecutiveBounceDAO(ConsecutiveBounceDAO consecutiveBounceDAO) {
+		this.consecutiveBounceDAO = consecutiveBounceDAO;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
@@ -1106,4 +1121,5 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public void setCustomerDataService(CustomerDataService customerDataService) {
 		this.customerDataService = customerDataService;
 	}
+
 }

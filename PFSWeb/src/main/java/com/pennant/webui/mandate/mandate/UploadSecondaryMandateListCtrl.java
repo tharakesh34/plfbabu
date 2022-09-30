@@ -80,10 +80,11 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.mandate.UploadSecondaryMandateService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -492,7 +493,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 			remarks.append("MICR is Mandatory,");
 		} else {
 			if (mandate.getMICR().length() > 20) {
-				mandate.setmICR(mandate.getMICR().substring(0, 19));
+				mandate.setMICR(mandate.getMICR().substring(0, 19));
 				remarks.append("Invalid MICR Size,");
 			}
 		}
@@ -549,9 +550,8 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 
 		// validate MandateType
 		if (StringUtils.isNotBlank(mandate.getMandateType())) {
-			List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
 			boolean mandateTypeSts = false;
-			for (ValueLabel value : mandateType) {
+			for (ValueLabel value : MandateUtil.getInstrumentTypes()) {
 				if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
 					mandateTypeSts = true;
 					break;
@@ -570,7 +570,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		}
 		// validate AccType
 		if (StringUtils.isNotBlank(mandate.getAccType())) {
-			List<ValueLabel> accType = PennantStaticListUtil.getAccTypeList();
+			List<ValueLabel> accType = MandateUtil.getAccountTypes();
 			boolean accTypeSts = false;
 			for (ValueLabel value : accType) {
 				if (StringUtils.equals(value.getValue(), mandate.getAccType())) {
@@ -609,7 +609,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		// Mandate Type in the upload should match with the mandate type
 		// available against the mandate ID.
 		if (StringUtils.equals(mandate.getMandateType(), preMandate.getMandateType())) {
-			mandate.setMandateType(MandateConstants.TYPE_ECS);
+			mandate.setMandateType(InstrumentType.ECS.name());
 		} else {
 			remarks.append("Invalid Mandate Type,");
 		}
@@ -618,8 +618,8 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		if (errors != null && !errors.isEmpty()) {
 			remarks.append("Invalid BarCode,");
 		}
-		// validate the primary mnadte status
-		if (!StringUtils.equals(preMandate.getStatus(), MandateConstants.STATUS_AWAITCON)) {
+
+		if (!MandateStatus.isAwaitingConf(preMandate.getStatus())) {
 			remarks.append("Invalid Status,");
 		}
 		// Upload will not be allowed if there is an active secondary mandate

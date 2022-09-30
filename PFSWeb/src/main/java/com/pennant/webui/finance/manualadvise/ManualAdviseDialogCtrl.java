@@ -124,7 +124,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(ManualAdviseDialogCtrl.class);
-	
+
 	protected Window window_ManualAdviseDialog;
 	protected Combobox adviseType;
 	protected ExtendedCombobox finReference;
@@ -1825,7 +1825,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	}
 
 	private boolean isValidPayableLink(String linkTo, int adviseType) {
-		if (AdviseType.isPayable(adviseType) || linkTo == null) {
+		if (AdviseType.isReceivable(adviseType) || linkTo == null) {
 			return false;
 		}
 

@@ -90,4 +90,6 @@ public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
 
 	PartnerBank getPartnerBankById(long partnerBankId);
 
+	long getPartnerBankID(String code);
+
 }

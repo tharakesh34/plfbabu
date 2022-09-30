@@ -1,33 +1,27 @@
 package com.pennanttech.service.impl;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.EntityDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.BankDetail;
-import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.bmtmasters.BankBranch;
-import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
-import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
@@ -38,28 +32,26 @@ import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.api.service.AbstractService;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
-import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.MandateController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.MandateRestService;
 import com.pennanttech.pffws.MandateSoapService;
-import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.mandate.MandateDetial;
-import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class MandateWebServiceImpl extends ExtendedTestClass implements MandateRestService, MandateSoapService {
-	private static final Logger logger = LogManager.getLogger(MandateWebServiceImpl.class);
-
+public class MandateWebServiceImpl extends AbstractService implements MandateRestService, MandateSoapService {
 	private ValidationUtility validationUtility;
 	private MandateController mandateController;
 	private CustomerDetailsService customerDetailsService;
@@ -72,1003 +64,243 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 	private FinanceTypeService financeTypeService;
 	private PartnerBankDAO partnerBankDAO;
 	private FinanceMainDAO financeMainDAO;
+	private MandateDAO mandateDAO;
+	private EntityDAO entityDAO;
+	private CustomerDAO customerDAO;
 
-	/**
-	 * Method for create Mandate in PLF system.
-	 * 
-	 * @param mandate
-	 * @throws ServiceException
-	 */
 	@Override
 	public Mandate createMandate(Mandate mandate) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// bean validations
 		validationUtility.validate(mandate, SaveValidationGroup.class);
-		Mandate response = null;
+
+		Mandate response = new Mandate();
 
 		WSReturnStatus returnStatus = doMandateValidation(mandate);
-		if (StringUtils.isNotBlank(mandate.getMandateRef())) {
-			if (!MandateConstants.TYPE_EMANDATE.equals(mandate.getMandateType())) {
-				response = new Mandate();
-				String[] paramValue = new String[2];
-				paramValue[0] = "mandateRef";
-				paramValue[1] = "createMandate";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90329", paramValue));
-				return response;
-			}
-		}
-		// for logging purpose
-		String[] logFields = new String[3];
-		logFields[0] = mandate.getCustCIF();
-		logFields[1] = mandate.getAccNumber();
-		logFields[2] = mandate.getAccHolderName();
-		APIErrorHandlerService.logKeyFields(logFields);
 
-		if (StringUtils.isBlank(returnStatus.getReturnCode())) {
-			response = mandateController.createMandate(mandate);
-		} else {
-			response = new Mandate();
+		if (returnStatus != null) {
 			response.setReturnStatus(returnStatus);
-		}
-		// for logging purpose
-		if (response.getMandateID() != Long.MIN_VALUE) {
-			APIErrorHandlerService.logReference(String.valueOf(response.getMandateID()));
-		}
-		logger.debug("Leaving");
-		return response;
-	}
-
-	/**
-	 * get the mandate Details by the given mandate Id.
-	 * 
-	 * @param mandateID
-	 * @return MandateDetails
-	 * @throws ServiceException
-	 */
-	@Override
-	public Mandate getMandate(long mandateID) throws ServiceException {
-		logger.debug("Entering");
-		// Mandatory validation
-		if (mandateID < 0) {
-			validationUtility.fieldLevelException();
-		}
-		// for logging purpose
-		APIErrorHandlerService.logReference(String.valueOf(mandateID));
-		Mandate response = mandateController.getMandate(mandateID);
-		logger.debug("Leaving");
-		return response;
-	}
-
-	/**
-	 * Method for update Mandate in PLF system.
-	 * 
-	 * @param mandate
-	 * @throws ServiceException
-	 */
-
-	@Override
-	public WSReturnStatus updateMandate(Mandate mandate) throws ServiceException {
-		logger.debug("Entering");
-		// beanValidation
-		validationUtility.validate(mandate, UpdateValidationGroup.class);
-
-		// for logging purpose
-		String[] logFields = new String[3];
-		logFields[0] = mandate.getCustCIF();
-		logFields[1] = mandate.getAccNumber();
-		logFields[2] = mandate.getAccHolderName();
-		APIErrorHandlerService.logKeyFields(logFields);
-
-		Mandate mandateDetails = mandateService.getApprovedMandateById(mandate.getMandateID());
-		WSReturnStatus returnStatus = null;
-		if (mandateDetails != null) {
-			// for logging purpose
-			APIErrorHandlerService.logReference(String.valueOf(mandate.getMandateID()));
-
-			if (MandateConstants.STATUS_APPROVED.equals(mandateDetails.getStatus())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Approved";
-				returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
-				return returnStatus;
-			}
-
-			returnStatus = doMandateValidation(mandate);
-			if (StringUtils.isNotBlank(mandate.getMandateRef())) {
-				String[] paramValue = new String[2];
-				paramValue[0] = "mandateRef";
-				paramValue[1] = "updateMandate";
-				returnStatus = APIErrorHandlerService.getFailedStatus("90329", paramValue);
-				return returnStatus;
-			}
-			if (StringUtils.isBlank(returnStatus.getReturnCode())) {
-				if (StringUtils.equals(MandateConstants.STATUS_AWAITCON, mandateDetails.getStatus())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Awaiting Confirmation";
-					returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
-					return returnStatus;
-				}
-				if (StringUtils.equals(MandateConstants.STATUS_HOLD, mandateDetails.getStatus())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Hold";
-					returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
-					return returnStatus;
-				}
-				returnStatus = mandateController.updateMandate(mandate);
-			} else {
-				return returnStatus;
-			}
-		} else {
-			returnStatus = new WSReturnStatus();
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandate.getMandateID());
-			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
-		}
-		logger.debug("Leaving");
-		return returnStatus;
-	}
-
-	/**
-	 * delete the mandate by the given mandate Id.
-	 * 
-	 * @param mandateID
-	 * @return WSReturnStatus
-	 * @throws ServiceException
-	 */
-
-	@Override
-	public WSReturnStatus deleteMandate(long mandateID) throws ServiceException {
-		logger.debug("Entering");
-		// Mandatory validation
-		if (mandateID < 0) {
-			validationUtility.fieldLevelException();
-		}
-		// for logging purpose
-		APIErrorHandlerService.logReference(String.valueOf(mandateID));
-
-		// Mandate Id is Available or not in PLF
-		WSReturnStatus response = new WSReturnStatus();
-		Mandate mandate = mandateService.getApprovedMandateById(mandateID);
-		if (mandate != null) {
-			response = mandateController.deleteMandate(mandateID);
-		} else {
-
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandateID);
-			response = APIErrorHandlerService.getFailedStatus("90303", valueParm);
-		}
-		logger.debug("Leaving");
-		return response;
-	}
-
-	/**
-	 * get the mandate Details by the given cif.
-	 * 
-	 * @param cif
-	 * @return MandatesDetails
-	 * @throws ServiceException
-	 */
-	@Override
-	public MandateDetial getMandates(String cif) throws ServiceException {
-		logger.debug("Entering");
-		// Mandatory validation
-		if (StringUtils.isBlank(cif)) {
-			validationUtility.fieldLevelException();
-		}
-		// for logging purpose
-		APIErrorHandlerService.logReference(cif);
-
-		MandateDetial response = new MandateDetial();
-		// validation
-		Customer customer = customerDetailsService.getCustomerByCIF(cif);
-		if (customer == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = cif;
-			response.setReturnStatus(getErrorDetails("90101", valueParm));
-		} else {
-			response = mandateController.getMandates(cif);
-		}
-		logger.debug("Leaving");
-
-		return response;
-	}
-
-	/**
-	 * loanMandateSwapping the mandate Details.
-	 * 
-	 * @param mandate
-	 * @return WSReturnStatus
-	 * @throws ServiceException
-	 */
-
-	@Override
-	public WSReturnStatus loanMandateSwapping(MandateDetial mandate) throws ServiceException {
-		logger.debug("Entering");
-
-		// validate customer details as per the API specification
-		WSReturnStatus response = doValidation(mandate);
-		// for logging purpose
-		APIErrorHandlerService.logReference(mandate.getFinReference());
-		if (response == null) {
-			return response = mandateController.loanMandateSwapping(mandate);
-		} else {
 			return response;
 		}
 
-	}
-
-	/**
-	 * Validate the mandatory fields in the request object
-	 * 
-	 * @param mandate
-	 * @return returnStatus
-	 */
-	private WSReturnStatus doValidation(MandateDetial md) {
-		logger.debug("Entering");
-
-		WSReturnStatus returnStatus = null;
-
-		String finReference = md.getFinReference();
-		Long oldMandateId = md.getOldMandateId();
-		Long newMandateId = md.getNewMandateId();
-		Date appDate = SysParamUtil.getAppDate();
-
-		if (finReference == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "FinReference";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			return returnStatus;
+		if (StringUtils.isNotBlank(mandate.getMandateRef()) && !InstrumentType.isEMandate(mandate.getMandateType())) {
+			response.setReturnStatus(getFailedStatus("90329", "mandateRef", "createMandate"));
+			return response;
 		}
 
-		if (oldMandateId == null || oldMandateId <= 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "OldMandateId";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			return returnStatus;
+		logKeyFields(mandate.getCustCIF(), mandate.getAccNumber(), mandate.getAccHolderName());
+
+		if (!(InstrumentType.isDAS(mandate.getMandateType()) || InstrumentType.isSI(mandate.getMandateType()))) {
+			response = mandateController.createMandate(mandate);
+		} else {
+			response = mandateController.createMandate(prepareMandate(mandate));
 		}
 
-		if (newMandateId == null || newMandateId <= 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "NewMandateId";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			return returnStatus;
+		if (response.getMandateID() != Long.MIN_VALUE) {
+			logReference(String.valueOf(response.getMandateID()));
 		}
 
-		// validate oldMandate
-		Mandate oldMandate = mandateService.getApprovedMandateById(oldMandateId);
-		if (oldMandate == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(oldMandateId);
-			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
-			return returnStatus;
-		}
-		// validate FinanceReference
-		Long finID = financeMainDAO.getFinIDForMandate(finReference, oldMandateId);
-		if (finID == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finReference;
-			return getErrorDetails("90201", valueParm);
-		}
-		// validate newMandateId
-		Mandate newMandate = mandateService.getApprovedMandateById(newMandateId);
-		if (newMandate == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(newMandateId);
-			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
-			return returnStatus;
-		}
-
-		List<FinanceScheduleDetail> schdeules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
-		BigDecimal repayAmt = BigDecimal.ZERO;
-
-		for (FinanceScheduleDetail curSchd : schdeules) {
-			if (DateUtility.compare(curSchd.getSchDate(), appDate) >= 0 && curSchd.isRepayOnSchDate()) {
-				repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
-				break;
-			}
-		}
-		BigDecimal maxLimit = newMandate.getMaxLimit();
-		if (repayAmt.compareTo(maxLimit) > 0) {
-			returnStatus = APIErrorHandlerService.getFailedStatus("90320");
-			return returnStatus;
-		}
-		// validate cif
-		if (!StringUtils.equals(oldMandate.getCustCIF(), newMandate.getCustCIF())) {
-			returnStatus = APIErrorHandlerService.getFailedStatus("90342");
-			return returnStatus;
-		}
-		// validations for MandateRef
-		if (!MandateConstants.skipRegistration().contains(newMandate.getMandateType()))
-			if (StringUtils.isBlank(newMandate.getMandateRef())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(newMandateId);
-				returnStatus = APIErrorHandlerService.getFailedStatus("90305", valueParm);
-				return returnStatus;
-			}
-		// validations for Status
-		if (StringUtils.equals(MandateConstants.STATUS_REJECTED, newMandate.getStatus())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(newMandateId);
-			returnStatus = APIErrorHandlerService.getFailedStatus("90306", valueParm);
-			return returnStatus;
-		}
-		// openMandate
-		if (!newMandate.isOpenMandate()) {
-			if (StringUtils.isNotBlank(newMandate.getOrgReference())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(newMandateId);
-				returnStatus = APIErrorHandlerService.getFailedStatus("90312", valueParm);
-				return returnStatus;
-			}
-		}
-
-		// set mandate type
-		md.setMandateType(newMandate.getMandateType());
-
-		logger.debug("Leaving");
-		return returnStatus;
-	}
-
-	/**
-	 * Validate the mandatory fields in the request object
-	 * 
-	 * @param mandate
-	 * @return returnStatus
-	 */
-	private WSReturnStatus doMandateValidation(Mandate mandate) {
-		logger.debug("Entering");
-
-		WSReturnStatus returnStatus = new WSReturnStatus();
-		// validate customer
-		String custCIF = mandate.getCustCIF();
-		Customer customer = null;
-		if (StringUtils.isNotBlank(custCIF)) {
-			customer = customerDetailsService.getCustomerByCIF(custCIF);
-			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = custCIF;
-				return getErrorDetails("90101", valueParm);
-			}
-		}
-
-		// validate the entityCode
-		if (StringUtils.isBlank(mandate.getEntityCode())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "Entity";
-			return getErrorDetails("90502", valueParm);
-		}
-		Entity entity = entityService.getApprovedEntity(mandate.getEntityCode());
-		if (entity == null || !entity.isActive()) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "Entity";
-			valueParm[1] = mandate.getEntityCode();
-			return getErrorDetails("90701", valueParm);
-
-		}
-
-		if (StringUtils.isNotEmpty(mandate.getCustCIF()) && StringUtils.isNotEmpty(mandate.getEntityCode())
-				&& StringUtils.isEmpty(mandate.getOrgReference())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "FinReference";
-			return getErrorDetails("90502", valueParm);
-		}
-
-		// validate finance reference
-		/*
-		 * if(StringUtils.isBlank(mandate.getOrgReference())){ String[] valueParm = new String[1]; valueParm[0] =
-		 * "finReference"; return getErrorDetails("90502", valueParm); }
-		 */
-
-		Long finID = null;
-		boolean alwmandate = ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG;
-		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
-			if (!alwmandate) {
-				finID = financeMainDAO.getActiveFinID(mandate.getOrgReference(), TableType.MAIN_TAB);
-				if (finID == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = mandate.getOrgReference();
-					return getErrorDetails("90201", valueParm);
-				}
-			} else {
-				finID = financeMainDAO.getFinID(mandate.getOrgReference(), TableType.TEMP_TAB);
-				if (finID == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = mandate.getOrgReference();
-					return getErrorDetails("90201", valueParm);
-				}
-			}
-			String type = "";
-			if (alwmandate) {
-				type = "_View";
-			}
-			List<Long> finRefList = financeMainService.getFinanceMainbyCustId(customer.getCustID(), type);
-			boolean validFinrefernce = true;
-			for (Long id : finRefList) {
-				if (id.compareTo(finID) == 0) {
-					validFinrefernce = false;
-					break;
-				}
-			}
-			if (validFinrefernce) {
-				returnStatus = new WSReturnStatus();
-				String[] valueParm = new String[2];
-				valueParm[0] = mandate.getCustCIF();
-				valueParm[1] = mandate.getOrgReference();
-				return APIErrorHandlerService.getFailedStatus("90406", valueParm);
-			}
-
-			List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false);
-			BigDecimal repayAmt = BigDecimal.ZERO;
-
-			Date appDate = SysParamUtil.getAppDate();
-			for (FinanceScheduleDetail curSchd : schedules) {
-				if (DateUtility.compare(curSchd.getSchDate(), appDate) >= 0 && curSchd.isRepayOnSchDate()) {
-					repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
-					break;
-				}
-			}
-			if (repayAmt.compareTo(mandate.getMaxLimit()) > 0) {
-				String[] valueParm = new String[1];
-				returnStatus = APIErrorHandlerService.getFailedStatus("90320");
-				return getErrorDetails("90320", valueParm);
-			}
-		}
-
-		// validate MandateType
-		if (StringUtils.isNotBlank(mandate.getMandateType())) {
-			List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
-			boolean mandateTypeSts = false;
-			for (ValueLabel value : mandateType) {
-				if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
-					mandateTypeSts = true;
-					break;
-				}
-			}
-			if (!mandateTypeSts) {
-				String[] valueParm = new String[1];
-				valueParm[0] = mandate.getMandateType();
-				return getErrorDetails("90307", valueParm);
-			}
-		}
-
-		// validate AccType
-		if (StringUtils.isNotBlank(mandate.getAccType())) {
-			List<ValueLabel> accType = PennantStaticListUtil.getAccTypeList();
-			boolean accTypeSts = false;
-			for (ValueLabel value : accType) {
-				if (StringUtils.equals(value.getValue(), mandate.getAccType())) {
-					accTypeSts = true;
-					break;
-				}
-			}
-			if (!accTypeSts) {
-				String[] valueParm = new String[1];
-				valueParm[0] = mandate.getAccType();
-				return getErrorDetails("90308", valueParm);
-			}
-		}
-		// validate Phone number
-		String mobileNumber = mandate.getPhoneNumber();
-		if (StringUtils.isNotBlank(mobileNumber)) {
-			if (!(mobileNumber.matches("\\d{10}"))) {
-				return getErrorDetails("90278", null);
-			}
-		}
-		// validate status
-		if (StringUtils.isNotBlank(mandate.getStatus())) {
-			List<ValueLabel> status = PennantStaticListUtil
-					.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
-			boolean sts = false;
-			for (ValueLabel value : status) {
-				if (StringUtils.equals(value.getValue(), mandate.getStatus())) {
-					sts = true;
-					break;
-				}
-			}
-			if (!sts) {
-				String[] valueParm = new String[1];
-				valueParm[0] = mandate.getStatus();
-				return getErrorDetails("90309", valueParm);
-			}
-		}
-
-		// validate periodicity
-		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
-			ErrorDetail errorDetail = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
-			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = mandate.getPeriodicity();
-				return getErrorDetails("90207", valueParm);
-			}
-		}
-
-		String ifsc = mandate.getIFSC();
-		String micr = mandate.getMICR();
-		String bankCode = mandate.getBankCode();
-		String branchCode = mandate.getBranchCode();
-
-		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
-
-		if (bankBranch.getError() != null) {
-			WSReturnStatus status = new WSReturnStatus();
-			status.setReturnCode(bankBranch.getError().getCode());
-			status.setReturnText("");
-
-			ErrorDetail ed = ErrorUtil.getErrorDetailById(bankBranch.getError().getCode());
-
-			if (ed != null) {
-				status.setReturnText(ErrorUtil.getErrorMessage(ed.getMessage(), bankBranch.getError().getParameters()));
-			}
-
-			return status;
-		}
-
-		mandate.setBankCode(bankBranch.getBankCode());
-		mandate.setMICR(bankBranch.getMICR());
-
-		if (!bankBranchService.validateBranchCode(bankBranch, mandate.getMandateType())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = mandate.getMandateType();
-			return getErrorDetails("90333", valueParm);
-		}
-		// validate AccNumber length
-		if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
-			BankDetail bankDetails = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
-			int length = mandate.getAccNumber().length();
-			if (bankDetails != null) {
-				int maxAccNoLength = bankDetails.getAccNoLength();
-				int minAccNolength = bankDetails.getMinAccNoLength();
-				if (length < minAccNolength || length > maxAccNoLength) {
-					String[] valueParm = new String[3];
-					valueParm[0] = "AccountNumber";
-					valueParm[1] = String.valueOf(minAccNolength) + " characters";
-					valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
-					return getErrorDetails("BNK001", valueParm);
-				}
-			}
-		}
-
-		if (!mandate.isOpenMandate()) {
-			if (mandate.getExpiryDate() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "expiryDate";
-				return getErrorDetails("90502", valueParm);
-			}
-		}
-		// validate Dates
-		if (mandate.getExpiryDate() != null) {
-			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
-					|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
-				String[] valueParm = new String[3];
-				valueParm[0] = "ExpiryDate";
-				valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
-				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-				return getErrorDetails("90318", valueParm);
-			}
-		}
-		if (mandate.getStartDate() != null) {
-			Date appDate = SysParamUtil.getAppDate();
-			Date mandbackDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
-			if (mandate.getStartDate().before(mandbackDate)
-					|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
-				String[] valueParm = new String[3];
-				valueParm[0] = "mandate start date";
-				valueParm[1] = DateUtility.formatToLongDate(mandbackDate);
-				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-				return getErrorDetails("90318", valueParm);
-			}
-		}
-		// barCode validation
-		if (ImplementationConstants.ALLOW_BARCODE) {
-			if (StringUtils.isBlank(mandate.getBarCodeNumber())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "barCode";
-				return getErrorDetails("90502", valueParm);
-			}
-		}
-		List<ErrorDetail> errors = mandateService.doValidations(mandate);
-		if (errors != null && !errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				if (StringUtils.isNotBlank(errorDetails.getCode())) {
-					returnStatus = (APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
-							errorDetails.getError()));
-					return returnStatus;
-				}
-			}
-		}
-		if (mandate.getPartnerBankId() <= 0 && StringUtils.isNotBlank(mandate.getPartnerBankCode())) {
-			PartnerBank partnerBank = partnerBankDAO.getPartnerBankByCode(mandate.getPartnerBankCode(), "");
-			if (partnerBank == null) {
-				String[] valueParm1 = new String[2];
-				valueParm1[0] = PennantJavaUtil.getLabel("label_MandateDialog_PartnerBank.value");
-				valueParm1[1] = mandate.getPartnerBankCode();
-				return getErrorDetails("90224", valueParm1);
-			} else {
-				mandate.setPartnerBankId(partnerBank.getPartnerBankId());
-			}
-		}
-
-		if (StringUtils.equals(mandate.getMandateType(), MandateConstants.TYPE_EMANDATE)) {
-			if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
-				String[] valueParm1 = new String[1];
-				valueParm1[0] = "eMandateReferenceNo";
-				return getErrorDetails("90502", valueParm1);
-			}
-			if (StringUtils.isBlank(mandate.geteMandateSource())) {
-				String[] valueParm1 = new String[1];
-				valueParm1[0] = "eMandateSource";
-				return getErrorDetails("90502", valueParm1);
-			} else {
-				int count = mandateService.validateEmandateSource(mandate.geteMandateSource());
-				if (count == 0) {
-					String[] valueParm1 = new String[1];
-					valueParm1[0] = "eMandateSource " + mandate.geteMandateSource();
-					return getErrorDetails("90501", valueParm1);
-				}
-			}
-		}
-		logger.debug("Leaving");
-
-		return returnStatus;
-	}
-
-	/**
-	 * Method for prepare response object with errorDetails.
-	 * 
-	 * @param errorCode
-	 * @param valueParm
-	 * @return
-	 */
-	public WSReturnStatus getErrorDetails(String errorCode, String[] valueParm) {
-		logger.debug("Entering");
-
-		WSReturnStatus response = new WSReturnStatus();
-		response = APIErrorHandlerService.getFailedStatus(errorCode, valueParm);
-
-		// set default error code and description in case of Error code does not exists.
-		if (StringUtils.isBlank(response.getReturnCode())) {
-			response = APIErrorHandlerService.getFailedStatus(APIConstants.RES_FAILED_CODE,
-					APIConstants.RES_FAILED_DESC);
-		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
+	}
+
+	@Override
+	public Mandate getMandate(long mandateID) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		if (mandateID < 0) {
+			validationUtility.fieldLevelException();
+		}
+
+		logReference(String.valueOf(mandateID));
+		return mandateController.getMandate(mandateID);
+	}
+
+	@Override
+	public WSReturnStatus updateMandate(Mandate mandate) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		validationUtility.validate(mandate, UpdateValidationGroup.class);
+
+		logKeyFields(mandate.getCustCIF(), mandate.getAccNumber(), mandate.getAccHolderName());
+
+		long mandateID = mandate.getMandateID();
+
+		Mandate detail = mandateService.getApprovedMandateById(mandateID);
+
+		if (detail == null) {
+			return getFailedStatus("90303", String.valueOf(mandateID));
+		}
+
+		logReference(String.valueOf(mandateID));
+
+		String mandateStatus = detail.getStatus();
+
+		if (MandateStatus.isApproved(mandateStatus)) {
+			return getFailedStatus("90345", "Approved");
+		}
+
+		WSReturnStatus returnStatus = doMandateValidation(mandate);
+
+		if (returnStatus != null) {
+			return returnStatus;
+		}
+
+		if (StringUtils.isNotBlank(mandate.getMandateRef())) {
+			return getFailedStatus("90329", "mandateRef", "updateMandate");
+		}
+
+		if (MandateStatus.isAwaitingConf(mandateStatus)) {
+			return getFailedStatus("90345", "Awaiting Confirmation");
+		}
+
+		if (MandateStatus.isHold(mandateStatus)) {
+			return getFailedStatus("90345", "Hold");
+		}
+
+		return mandateController.updateMandate(mandate);
+	}
+
+	@Override
+	public WSReturnStatus deleteMandate(long mandateID) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		if (mandateID < 0) {
+			validationUtility.fieldLevelException();
+		}
+
+		logReference(String.valueOf(mandateID));
+
+		if (!mandateDAO.isValidMandate(mandateID)) {
+			return getFailedStatus("90303", String.valueOf(mandateID));
+		}
+
+		return mandateController.deleteMandate(mandateID);
+	}
+
+	@Override
+	public MandateDetial getMandates(String cif) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		if (StringUtils.isBlank(cif)) {
+			validationUtility.fieldLevelException();
+		}
+
+		logReference(cif);
+
+		long custID = customerDAO.getCustIDByCIF(cif);
+		if (custID <= 0) {
+			MandateDetial response = new MandateDetial();
+			response.setReturnStatus(getFailedStatus("90101", cif));
+
+			return response;
+		}
+
+		return mandateController.getMandates(cif);
+	}
+
+	@Override
+	public WSReturnStatus loanMandateSwapping(MandateDetial mandate) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus response = doValidation(mandate);
+		logReference(mandate.getFinReference());
+
+		if (response != null) {
+			return response;
+		}
+
+		return mandateController.loanMandateSwapping(mandate);
 	}
 
 	@Override
 	public Mandate approveMandate(Mandate mandate) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		Mandate response = null;
+		Mandate response = new Mandate();
 
-		// bean validations
 		validationUtility.validate(mandate, SaveValidationGroup.class);
 
 		WSReturnStatus returnStatus = doMandateValidation(mandate);
 
-		// for logging purpose
-		String[] logFields = new String[3];
-		logFields[0] = mandate.getCustCIF();
-		logFields[1] = mandate.getAccNumber();
-		logFields[2] = mandate.getAccHolderName();
-		APIErrorHandlerService.logKeyFields(logFields);
-
-		if (StringUtils.isBlank(returnStatus.getReturnCode())) {
-			if (StringUtils.isBlank(mandate.getMandateRef())) {
-				response = new Mandate();
-				String[] paramValue = new String[1];
-				paramValue[0] = "mandateRef";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", paramValue));
-				return response;
-			} else {
-				// Validating duplicate UMRN
-				int count = mandateService.getMandateByMandateRef(mandate.getMandateRef());
-				if (count > 0) {
-					response = new Mandate();
-					String[] paramValue = new String[2];
-					paramValue[0] = "mandateRef with ";
-					paramValue[1] = mandate.getMandateRef();
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41001", paramValue));
-					return response;
-				}
-			}
-			if (mandate.isSwapIsActive() && StringUtils.isBlank(mandate.getOrgReference())) {
-				response = new Mandate();
-				String[] paramValue = new String[1];
-				paramValue[0] = "finReference";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", paramValue));
-				return response;
-			}
-			if (mandate.isSwapIsActive()) {
-				TableType tableType = TableType.MAIN_TAB;
-				if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
-					tableType = TableType.TEMP_TAB;
-				}
-
-				String finType = financeMainDAO.getFinanceType(mandate.getOrgReference(), tableType);
-
-				String allowedRepayModes = StringUtils.trimToEmpty(financeTypeService.getAllowedRepayMethods(finType));
-				if (StringUtils.isNotBlank(allowedRepayModes)) {
-					boolean isTypeFound = false;
-					String[] types = allowedRepayModes.split(PennantConstants.DELIMITER_COMMA);
-					for (String type : types) {
-						if (StringUtils.equals(type, mandate.getMandateType())) {
-							isTypeFound = true;
-							break;
-						}
-					}
-					if (!isTypeFound) {
-						String[] valueParm = new String[2];
-						valueParm[0] = mandate.getMandateType();
-						returnStatus = APIErrorHandlerService.getFailedStatus("90307", valueParm);
-						response = new Mandate();
-						response.setReturnStatus(returnStatus);
-						return response;
-					}
-				}
-			}
-
-			response = mandateController.doApproveMandate(mandate);
-		} else {
-			response = new Mandate();
+		if (returnStatus != null) {
 			response.setReturnStatus(returnStatus);
 		}
-		// for logging purpose
-		if (response.getMandateID() != Long.MIN_VALUE) {
-			APIErrorHandlerService.logReference(String.valueOf(response.getMandateID()));
-		}
-		logger.debug("Leaving");
-		return response;
-	}
 
-	/**
-	 * Method for update Mandate status in PLF system.
-	 * 
-	 * @param mandate
-	 * @throws ServiceException
-	 */
-	@Override
-	public WSReturnStatus updateMandateStatus(Mandate mandate) throws ServiceException {
-		logger.debug(Literal.ENTERING);
+		logKeyFields(mandate.getCustCIF(), mandate.getAccNumber(), mandate.getAccHolderName());
 
-		WSReturnStatus returnStatus = validateRequestData(mandate);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			return returnStatus;
-		} else {
-			returnStatus = mandateController.updateMandateStatus(mandate);
+		if (StringUtils.isBlank(mandate.getMandateRef())) {
+			response.setReturnStatus(getFailedStatus("90502", "mandateRef"));
+			return response;
 		}
 
-		logger.debug(Literal.LEAVING);
-		return returnStatus;
-	}
-
-	public WSReturnStatus validateRequestData(Mandate mandate) {
-		logger.debug(Literal.ENTERING);
-
-		WSReturnStatus returnStatus = new WSReturnStatus();
-		Mandate aMandate = null;
-		if (mandate.getMandateID() == Long.MIN_VALUE) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "mandateID";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			return returnStatus;
-		} else {
-			aMandate = mandateService.getApprovedMandateById(mandate.getMandateID());
-			if (aMandate == null || !aMandate.isActive()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(mandate.getMandateID());
-				returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
-				return returnStatus;
-			}
+		if (mandateService.getMandateByMandateRef(mandate.getMandateRef()) > 0) {
+			response.setReturnStatus(getFailedStatus("41001", "mandateRef with ", mandate.getMandateRef()));
+			return response;
 		}
 
-		if (StringUtils.isBlank(mandate.getStatus())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "status";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			return returnStatus;
-		} else {
-			String mandateStatus = "N";
-			String mandateRegStatus = SysParamUtil.getValueAsString(SMTParameterConstants.MANDATE_REGISTRATION_STATUS);
-			if (StringUtils.isNotBlank(mandateRegStatus)) {
-				mandateStatus = mandateRegStatus;
-			}
-
-			if (StringUtils.equalsIgnoreCase(mandateStatus, mandate.getStatus())) {
-				mandate.setStatus(mandate.getStatus().toUpperCase());
-				if (StringUtils.isNotBlank(aMandate.getMandateRef())) {
-					// String[] valueParm = new String[1];
-					// valueParm[0] = "mandateRef is already exist";
-					// returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
-					// return returnStatus;
-				}
-			}
-
-			if (!StringUtils.equalsIgnoreCase(mandateStatus, mandate.getStatus())
-					&& !StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, mandate.getStatus())
-					&& !StringUtils.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE,
-							mandate.getStatus())) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "status";
-				valueParm[1] = mandateRegStatus + ", " + PennantConstants.RCD_STATUS_REJECTED + ", "
-						+ MandateConstants.MANDATE_STATUS_ACKNOWLEDGE;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90281", valueParm);
-				return returnStatus;
-			}
-
-			if (StringUtils.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, mandate.getStatus())
-					&& !StringUtils.equals(MandateConstants.STATUS_AWAITCON, aMandate.getStatus())) {
-				// String[] valueParm = new String[2];
-				// valueParm[0] = "Mandate current status is " + aMandate.getStatus();
-				// valueParm[1] = " not allowed to pass " + MandateConstants.MANDATE_STATUS_ACKNOWLEDGE;
-				// returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
-				// return returnStatus;
-			}
-
-			if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
-					|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus()))
-					&& StringUtils.isBlank(mandate.getMandateRef())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "mandateRef/UMRNNo";
-				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-				return returnStatus;
-			}
-
-			if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
-					|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus())
-					|| StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, mandate.getStatus()))
-					&& StringUtils.isNotBlank(mandate.getMandateRef()) && !StringUtils
-							.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, aMandate.getStatus())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Mandate will Approve/Reject only when it is Acknowledged.";
-				returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
-				return returnStatus;
-			}
-			if (StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, mandate.getStatus())
-					&& StringUtils.isBlank(mandate.getReason())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "reason";
-				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-				return returnStatus;
-			}
-
-			if (StringUtils.isNotBlank((mandateRegStatus))
-					&& StringUtils.equalsIgnoreCase(mandate.getStatus(), mandateRegStatus)) {
-				mandate.setStatus("APPROVED");
-			} else {
-				mandate.setStatus(mandate.getStatus().toUpperCase());
-			}
+		if (mandate.isSwapIsActive() && StringUtils.isBlank(mandate.getOrgReference())) {
+			response.setReturnStatus(getFailedStatus("90502", "finReference"));
+			return response;
 		}
 
-		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
-			Mandate tempMandate = mandateService.getMandateStatusById(mandate.getOrgReference(),
-					mandate.getMandateID());
-			if (tempMandate == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "finReference " + mandate.getOrgReference() + " is not assign to mandateId "
-						+ mandate.getMandateID();
-				returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
-				return returnStatus;
-
-			}
-		} else {
-			mandate.setOrgReference(aMandate.getOrgReference());
-		}
-
-		if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
-				|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus())) && aMandate.isSwapIsActive()) {
-			mandate.setSwapIsActive(aMandate.isSwapIsActive());
-			mandate.setMandateType(aMandate.getMandateType());
-			// FinanceMain finMain =
-			// financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
+		if (mandate.isSwapIsActive()) {
 			TableType tableType = TableType.MAIN_TAB;
 			if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
 				tableType = TableType.TEMP_TAB;
 			}
 
 			String finType = financeMainDAO.getFinanceType(mandate.getOrgReference(), tableType);
-			String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finType);
-			if (StringUtils.isNotBlank(allowedRepayModes)) {
-				boolean isTypeFound = false;
-				String[] types = allowedRepayModes.split(PennantConstants.DELIMITER_COMMA);
-				for (String type : types) {
-					if (StringUtils.equals(type, aMandate.getMandateType())) {
-						isTypeFound = true;
-						break;
-					}
-				}
-				if (!isTypeFound) {
-					String[] valueParm = new String[2];
-					valueParm[0] = mandate.getMandateType();
-					returnStatus = APIErrorHandlerService.getFailedStatus("90307", valueParm);
-					return returnStatus;
-				}
+
+			String alwRepayMthds = StringUtils.trimToEmpty(financeTypeService.getAllowedRepayMethods(finType));
+			if (StringUtils.isNotBlank(alwRepayMthds) && !alwRepayMthds.contains(mandate.getMandateType())) {
+				response.setReturnStatus(getFailedStatus("90307", mandate.getMandateType()));
+				return response;
 			}
 		}
 
+		if (!(InstrumentType.isDAS(mandate.getMandateType()) || InstrumentType.isSI(mandate.getMandateType()))) {
+			response = mandateController.createMandate(mandate);
+		} else {
+			response = mandateController.createMandate(prepareMandate(mandate));
+		}
+
+		if (response.getMandateID() != Long.MIN_VALUE) {
+			logReference(String.valueOf(response.getMandateID()));
+		}
+
 		logger.debug(Literal.LEAVING);
-		return returnStatus;
+		return response;
 	}
 
-	@Autowired
-	public void setValidationUtility(ValidationUtility validationUtility) {
-		this.validationUtility = validationUtility;
-	}
+	@Override
+	public WSReturnStatus updateMandateStatus(Mandate mandate) throws ServiceException {
+		logger.debug(Literal.ENTERING);
 
-	@Autowired
-	public void setMandateController(MandateController mandateController) {
-		this.mandateController = mandateController;
-	}
+		WSReturnStatus returnStatus = validateRequestData(mandate);
+		if (returnStatus != null) {
+			return returnStatus;
+		}
 
-	@Autowired
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	@Autowired
-	public void setBankBranchService(BankBranchService bankBranchService) {
-		this.bankBranchService = bankBranchService;
-	}
-
-	@Autowired
-	public void setMandateService(MandateService mandateService) {
-		this.mandateService = mandateService;
-	}
-
-	@Autowired
-	public void setFinanceMainService(FinanceMainService financeMainService) {
-		this.financeMainService = financeMainService;
-	}
-
-	@Autowired
-	public void setBankDetailService(BankDetailService bankDetailService) {
-		this.bankDetailService = bankDetailService;
-	}
-
-	@Autowired
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	@Autowired
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
-
-	@Autowired
-	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
-		this.financeTypeService = financeTypeService;
-	}
-
-	@Autowired
-	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
-		this.partnerBankDAO = partnerBankDAO;
-	}
-
-	@Autowired
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
+		return mandateController.updateMandateStatus(mandate);
 	}
 
 	@Override
 	public WSReturnStatus updateApprovedMandate(Mandate mandate) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		String[] logFields = new String[2];
-		logFields[0] = String.valueOf(mandate.getMandateID());
-		logFields[1] = mandate.getMandateRef();
-		APIErrorHandlerService.logKeyFields(logFields);
+		logKeyFields(String.valueOf(mandate.getMandateID()), mandate.getMandateRef());
 
 		WSReturnStatus returnStatus = validate(mandate);
 
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (returnStatus != null) {
 			return returnStatus;
 		}
 
-		returnStatus = mandateController.updateApprovedMandate(copyBeforeImage(mandate));
+		mandateController.updateApprovedMandate(copyBeforeImage(mandate));
 
 		logger.debug(Literal.LEAVING);
-		return APIErrorHandlerService.getSuccessStatus();
+		return getSuccessStatus();
 	}
 
 	private Mandate copyBeforeImage(Mandate request) {
@@ -1088,57 +320,442 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 
 	private WSReturnStatus validate(Mandate request) {
 		WSReturnStatus returnStatus = new WSReturnStatus();
-		Mandate aMandate = null;
 
 		if (request.getMandateID() == Long.MIN_VALUE) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "mandateID";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
-		} else {
-			aMandate = mandateService.getApprovedMandateById(request.getMandateID());
-			if (aMandate == null || !aMandate.isActive()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(request.getMandateID());
-				return APIErrorHandlerService.getFailedStatus("90303", valueParm);
-			}
+			return getFailedStatus("90502", "mandateID");
+		}
+
+		Mandate aMandate = mandateDAO.getMandateDetail(request.getMandateID());
+		if (aMandate == null || !aMandate.isActive()) {
+			return getFailedStatus("90303", String.valueOf(request.getMandateID()));
 		}
 
 		if (StringUtils.isBlank(request.getStatus())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "status";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
-
-		} else if (!StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, request.getStatus())
-				&& !StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, request.getStatus())) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "status";
-			valueParm[1] = MandateConstants.STATUS_APPROVED + ", " + MandateConstants.STATUS_REJECTED;
-			returnStatus = APIErrorHandlerService.getFailedStatus("90281", valueParm);
-		} else if (MandateConstants.STATUS_APPROVED.equals(aMandate.getStatus())
-				|| MandateConstants.STATUS_REJECTED.equals(aMandate.getStatus())) {
-
-			String[] valueParm = new String[1];
-			valueParm[0] = "already " + aMandate.getStatus();
-			returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
-			return returnStatus;
+			return getFailedStatus("90502", "status");
 		}
 
-		if (StringUtils.isNotEmpty(request.getMandateRef())
-				&& StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, request.getStatus())) {
+		if (!MandateStatus.isApproved(request.getStatus()) && !MandateStatus.isRejected(request.getStatus())) {
+			return getFailedStatus("90281", "status", MandateStatus.APPROVED + ", " + MandateStatus.REJECTED);
+		} else if (MandateStatus.isApproved(aMandate.getStatus()) || MandateStatus.isRejected(aMandate.getStatus())) {
+			return getFailedStatus("90345", "already ", aMandate.getStatus());
+		}
 
-			String[] valueParm = new String[1];
-			valueParm[0] = "For the Status REJECTED mandateRef is";
-			returnStatus = APIErrorHandlerService.getFailedStatus("RU0039", valueParm);
-			return returnStatus;
+		if (StringUtils.isNotEmpty(request.getMandateRef()) && MandateStatus.isRejected(request.getStatus())) {
+			return getFailedStatus("RU0039", "For the Status REJECTED mandateRef is");
 
 		} else if (!StringUtils.isBlank(request.getMandateRef()) && request.getMandateRef().length() > 50) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "mandateRef";
-			valueParm[1] = "50";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90300", valueParm);
+			return getFailedStatus("90300", "mandateRef", "50");
+		}
+
+		return returnStatus;
+	}
+
+	private WSReturnStatus doMandateValidation(Mandate mandate) {
+		logger.debug(Literal.ENTERING);
+
+		String mandateType = mandate.getMandateType();
+
+		WSReturnStatus returnStatus = basicDetailValidation(mandate);
+
+		if (returnStatus != null) {
 			return returnStatus;
 		}
 
+		switch (InstrumentType.valueOf(mandateType)) {
+		case ECS:
+		case DD:
+		case NACH:
+		case EMANDATE:
+			returnStatus = validateBankDetail(mandate);
+			break;
+		case DAS:
+			if (mandate.getEmployeeID() == null) {
+				returnStatus = getFailedStatus("90502", "employeeID");
+			}
+			break;
+		default:
+			break;
+		}
+
+		if (returnStatus != null) {
+			return returnStatus;
+		}
+
+		if (mandate.getPartnerBankId() <= 0 && StringUtils.isNotBlank(mandate.getPartnerBankCode())) {
+			long partnerBankID = partnerBankDAO.getPartnerBankID(mandate.getPartnerBankCode());
+			if (partnerBankID <= 0) {
+				String pbLabel = PennantJavaUtil.getLabel("label_MandateDialog_PartnerBank.value");
+				return getFailedStatus("90224", pbLabel, mandate.getPartnerBankCode());
+			} else {
+				mandate.setPartnerBankId(partnerBankID);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	private WSReturnStatus basicDetailValidation(Mandate mandate) {
+		String custCIF = mandate.getCustCIF();
+		String entityCode = mandate.getEntityCode();
+		String mandateType = mandate.getMandateType();
+		String orgReference = mandate.getOrgReference();
+
+		long custID = customerDetailsService.getCustIDByCIF(custCIF);
+		if (custID == 0) {
+			return getFailedStatus("90101", custCIF);
+		}
+
+		mandate.setCustID(custID);
+
+		if (StringUtils.isBlank(entityCode)) {
+			return getFailedStatus("90502", "Entity");
+		}
+
+		if (entityDAO.getEntityCount(entityCode) == 0) {
+			return getFailedStatus("90701", "Entity", entityCode);
+		}
+
+		if (StringUtils.isEmpty(orgReference)) {
+			return getFailedStatus("90502", "FinReference");
+		}
+
+		Mandate loanInfo = mandateDAO.getLoanInfo(orgReference);
+
+		if (loanInfo == null) {
+			return getFailedStatus("90201", orgReference);
+		}
+
+		if (StringUtils.isNotEmpty(custCIF) && loanInfo.getCustID() != mandate.getCustID()) {
+			return getFailedStatus("90406", custCIF, orgReference);
+		} else {
+			mandate.setCustID(loanInfo.getCustID());
+		}
+
+		if (!loanInfo.getAlwdRpyMethods().contains(mandateType)) {
+			return getFailedStatus("90307", mandateType);
+		}
+
+		return null;
+	}
+
+	private WSReturnStatus validateBankDetail(Mandate mandate) {
+		if (StringUtils.isNotBlank(mandate.getAccType())) {
+			List<ValueLabel> accType = MandateUtil.getAccountTypes();
+
+			if (accType.stream().noneMatch(ac -> ac.getValue().equals(mandate.getAccType()))) {
+				return getFailedStatus("90308", mandate.getAccType());
+			}
+		}
+
+		String mobileNumber = mandate.getPhoneNumber();
+		if (StringUtils.isNotBlank(mobileNumber) && !(mobileNumber.matches("\\d{10}"))) {
+			return getFailedStatus("90278", mobileNumber);
+		}
+
+		String ifsc = mandate.getIFSC();
+		String micr = mandate.getMICR();
+		String bankCode = mandate.getBankCode();
+		String branchCode = mandate.getBranchCode();
+
+		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+		ErrorDetail error = bankBranch.getError();
+		if (error != null) {
+			return getFailedStatus(error.getCode(), error.getError());
+		}
+
+		mandate.setBankCode(bankBranch.getBankCode());
+		mandate.setMICR(bankBranch.getMICR());
+
+		if (!bankBranchService.validateBranchCode(bankBranch, mandate.getMandateType())) {
+			return getFailedStatus("90333", mandate.getMandateType());
+		}
+
+		if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
+			BankDetail bankDetails = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+			int length = mandate.getAccNumber().length();
+
+			if (bankDetails != null) {
+				int maxAccNoLength = bankDetails.getAccNoLength();
+				int minAccNolength = bankDetails.getMinAccNoLength();
+				if (length < minAccNolength || length > maxAccNoLength) {
+					String minMsg = String.valueOf(minAccNolength).concat(" characters");
+					String maxMsg = String.valueOf(maxAccNoLength).concat(" characters");
+					return getFailedStatus("BNK001", "AccountNumber", minMsg, maxMsg);
+				}
+			}
+		}
+
+		return mandateDetailValidation(mandate);
+	}
+
+	private WSReturnStatus mandateDetailValidation(Mandate mandate) {
+		String mandateStatus = mandate.getStatus();
+		String periodicity = mandate.getPeriodicity();
+
+		if (StringUtils.isNotBlank(mandateStatus)) {
+			List<ValueLabel> status = MandateUtil.getMandateStatus();
+
+			if (status.stream().noneMatch(sts -> sts.getValue().equals(mandateStatus))) {
+				return getFailedStatus("90309", mandateStatus);
+			}
+		}
+
+		if (StringUtils.isNotBlank(periodicity)) {
+			ErrorDetail error = FrequencyUtil.validateFrequency(periodicity);
+			if (error != null && StringUtils.isNotBlank(error.getCode())) {
+				return getFailedStatus("90207", periodicity);
+			}
+		}
+
+		if (ImplementationConstants.ALLOW_BARCODE && StringUtils.isBlank(mandate.getBarCodeNumber())) {
+			return getFailedStatus("90502", "barCode");
+		}
+
+		WSReturnStatus returnSts = mandateDateValidation(mandate);
+		if (returnSts != null) {
+			return returnSts;
+		}
+
+		if (InstrumentType.isEMandate(mandate.getMandateType())) {
+			returnSts = validateEMandate(mandate);
+			if (returnSts != null) {
+				return returnSts;
+			}
+		}
+
+		List<ErrorDetail> errors = mandateService.doValidations(mandate);
+		if (CollectionUtils.isNotEmpty(errors)) {
+			for (ErrorDetail error : errors) {
+				if (StringUtils.isNotBlank(error.getCode())) {
+					return getFailedStatus(error.getCode(), error.getError());
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private WSReturnStatus mandateDateValidation(Mandate mandate) {
+		Date expiryDate = mandate.getExpiryDate();
+
+		if (!mandate.isOpenMandate() && expiryDate == null) {
+			return getFailedStatus("90502", "expiryDate");
+		}
+
+		Date mandateStartDate = mandate.getStartDate();
+		Date dftEndDate = null;
+		if (expiryDate != null) {
+			dftEndDate = SysParamUtil.getValueAsDate(SMTParameterConstants.APP_DFT_END_DATE);
+			if (expiryDate.compareTo(mandateStartDate) <= 0 || expiryDate.after(dftEndDate)) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "ExpiryDate";
+				valueParm[1] = DateUtil.formatToLongDate(DateUtil.addDays(mandateStartDate, 1));
+				valueParm[2] = DateUtil.formatToLongDate(dftEndDate);
+				return getFailedStatus("90318", valueParm);
+			}
+		}
+
+		if (mandateStartDate != null) {
+			Date appDate = SysParamUtil.getAppDate();
+			int mandStartDate = SysParamUtil.getValueAsInt(SMTParameterConstants.MANDATE_STARTDATE);
+			if (dftEndDate == null) {
+				dftEndDate = SysParamUtil.getValueAsDate(SMTParameterConstants.APP_DFT_END_DATE);
+			}
+			Date mandbackDate = DateUtil.addDays(appDate, -mandStartDate);
+			if (mandateStartDate.before(mandbackDate) || mandateStartDate.after(dftEndDate)) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "mandate start date";
+				valueParm[1] = DateUtil.formatToLongDate(mandbackDate);
+				valueParm[2] = DateUtil.formatToLongDate(dftEndDate);
+				return getFailedStatus("90318", valueParm);
+			}
+		}
+
+		return null;
+	}
+
+	private WSReturnStatus validateEMandate(Mandate mandate) {
+		if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
+			return getFailedStatus("90502", "eMandateReferenceNo");
+		}
+		if (StringUtils.isBlank(mandate.geteMandateSource())) {
+			return getFailedStatus("90502", "eMandateSource");
+		}
+
+		if (mandateService.validateEmandateSource(mandate.geteMandateSource()) == 0) {
+			return getFailedStatus("90501", "eMandateSource ".concat(mandate.geteMandateSource()));
+		}
+
+		return null;
+	}
+
+	private Mandate prepareMandate(Mandate mandate) {
+		Mandate mndt = new Mandate();
+		mndt.setMandateType(mandate.getMandateType());
+		mndt.setOrgReference(mandate.getOrgReference());
+		mndt.setEntityCode(mandate.getEntityCode());
+		mndt.setCustCIF(mandate.getCustCIF());
+
+		if (InstrumentType.isDAS(mandate.getMandateType())) {
+			mndt.setSourceId(PennantConstants.FINSOURCE_ID_API);
+			mndt.setEmployeeID(mandate.getEmployeeID());
+			mndt.setEmployerName(mandate.getEmployerName());
+		} else if (InstrumentType.isSI(mandate.getMandateType())) {
+			mndt.setBankBranchID(mandate.getBankBranchID());
+			mndt.setCity(mandate.getCity());
+		}
+
+		return mndt;
+	}
+
+	private WSReturnStatus doValidation(MandateDetial md) {
+		logger.debug(Literal.ENTERING);
+
+		String finReference = md.getFinReference();
+		Long oldMandateId = md.getOldMandateId();
+		Long newMandateId = md.getNewMandateId();
+
+		if (finReference == null) {
+			return getFailedStatus("90502", "FinReference");
+		}
+
+		if (oldMandateId == null || oldMandateId <= 0) {
+			return getFailedStatus("90502", "OldMandateId");
+		}
+
+		if (newMandateId == null || newMandateId <= 0) {
+			return getFailedStatus("90502", "NewMandateId");
+		}
+
+		String custCIF = mandateDAO.getCustCIF(oldMandateId);
+		if (custCIF == null) {
+			return getFailedStatus("90303", String.valueOf(oldMandateId));
+		}
+
+		Long finID = financeMainDAO.getFinIDForMandate(finReference, oldMandateId);
+		if (finID == null) {
+			return getFailedStatus("90201", finReference);
+		}
+
+		Mandate newMandate = mandateService.getApprovedMandateById(newMandateId);
+		if (newMandate == null) {
+			return getFailedStatus("90303", String.valueOf(newMandateId));
+		}
+
+		if (!StringUtils.equals(custCIF, newMandate.getCustCIF())) {
+			return getFailedStatus("90342");
+		}
+
+		if (!MandateConstants.skipRegistration().contains(newMandate.getMandateType())
+				&& StringUtils.isBlank(newMandate.getMandateRef())) {
+			return getFailedStatus("90305", String.valueOf(newMandateId));
+		}
+
+		if (MandateStatus.isRejected(newMandate.getStatus())) {
+			return getFailedStatus("90306", newMandate.getStatus());
+		}
+
+		if (!newMandate.isOpenMandate() && StringUtils.isNotBlank(newMandate.getOrgReference())) {
+			return getFailedStatus("90312", String.valueOf(newMandateId));
+		}
+
+		md.setMandateType(newMandate.getMandateType());
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	private WSReturnStatus validateRequestData(Mandate mandate) {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus returnStatus = new WSReturnStatus();
+
+		if (mandate.getMandateID() == Long.MIN_VALUE) {
+			return getFailedStatus("90502", "mandateID");
+		}
+
+		Mandate aMandate = mandateDAO.getMandateDetail(mandate.getMandateID());
+		if (aMandate == null || !aMandate.isActive()) {
+			return getFailedStatus("90303", String.valueOf(mandate.getMandateID()));
+		}
+
+		String status = mandate.getStatus();
+
+		if (StringUtils.isBlank(status)) {
+			return getFailedStatus("90502", "status");
+		}
+
+		String mandateStatus = "N";
+		String mandateRegStatus = SysParamUtil.getValueAsString(SMTParameterConstants.MANDATE_REGISTRATION_STATUS);
+		if (StringUtils.isNotBlank(mandateRegStatus)) {
+			mandateStatus = mandateRegStatus;
+		}
+
+		if (StringUtils.equalsIgnoreCase(mandateStatus, status)) {
+			mandate.setStatus(status.toUpperCase());
+		}
+
+		if (!StringUtils.equalsIgnoreCase(mandateStatus, status) && !MandateStatus.isRejected(status)
+				&& !MandateStatus.isAcknowledge(status)) {
+			String msg = mandateRegStatus.concat(", ").concat(PennantConstants.RCD_STATUS_REJECTED).concat(", ")
+					.concat(MandateStatus.ACKNOWLEDGE);
+			return getFailedStatus("90281", "status", msg);
+		}
+
+		if ((MandateStatus.isApproved(status) || MandateStatus.isAccepted(status))
+				&& StringUtils.isBlank(mandate.getMandateRef())) {
+			return getFailedStatus("90502", "mandateRef/UMRNNo");
+		}
+
+		if ((MandateStatus.isApproved(status) || MandateStatus.isAccepted(status) || MandateStatus.isRejected(status))
+				&& StringUtils.isNotBlank(mandate.getMandateRef())
+				&& !MandateStatus.isAcknowledge(aMandate.getStatus())) {
+			return getFailedStatus("30550", "Mandate will Approve/Reject only when it is Acknowledged.");
+		}
+
+		if (MandateStatus.isRejected(status) && StringUtils.isBlank(mandate.getReason())) {
+			return getFailedStatus("90502", "reason");
+		}
+
+		if (StringUtils.isNotBlank((mandateRegStatus)) && StringUtils.equalsIgnoreCase(status, mandateRegStatus)) {
+			mandate.setStatus("APPROVED");
+		} else {
+			mandate.setStatus(status.toUpperCase());
+		}
+
+		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
+			Mandate tempMandate = mandateService.getMandateStatusById(mandate.getOrgReference(),
+					mandate.getMandateID());
+			if (tempMandate == null) {
+				StringBuilder msg = new StringBuilder("FinReference ");
+				msg.append(mandate.getOrgReference());
+				msg.append(" is not assign to mandateId ");
+				msg.append(mandate.getMandateID());
+
+				return getFailedStatus("30550", msg.toString());
+			}
+		}
+
+		if ((MandateStatus.isApproved(status) || MandateStatus.isAccepted(status)) && aMandate.isSwapIsActive()) {
+			mandate.setSwapIsActive(aMandate.isSwapIsActive());
+			mandate.setMandateType(aMandate.getMandateType());
+
+			TableType tableType = TableType.MAIN_TAB;
+			if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+				tableType = TableType.TEMP_TAB;
+			}
+
+			String finType = financeMainDAO.getFinanceType(mandate.getOrgReference(), tableType);
+			String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finType);
+
+			if (!allowedRepayModes.contains(aMandate.getMandateType())) {
+				return getFailedStatus("90307", mandate.getMandateType());
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 }

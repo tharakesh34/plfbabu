@@ -112,12 +112,12 @@ import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -2377,7 +2377,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 								// instlNo = instNumbers.computeIfAbsent(pd.getReceiptID(), rid -> 0);
 
-								if (mandateType.equals(MandateConstants.TYPE_DDM)) {
+								if (InstrumentType.isDD(mandateType)) {
 									paymentType = "Direct Debit";
 								} else {
 									paymentType = mandateType;

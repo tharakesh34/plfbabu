@@ -25,16 +25,9 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.model.applicationmaster.BankDetail;
@@ -53,45 +46,185 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetailDAO {
-	private static Logger logger = LogManager.getLogger(BankDetailDAOImpl.class);
 
 	public BankDetailDAOImpl() {
 		super();
 	}
 
 	@Override
-	public BankDetail getBankDetailByIfsc(String ifsc) {
-		BankDetail bankDetail = new BankDetail();
-		bankDetail.setIfsc(ifsc);
+	public String save(BankDetail bd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert into BMTBankDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength");
+		sql.append(", AllowMultipleIFSC, Nach, Dd, Dda, Ecs, Cheque, Emandate, AllowedSources");
+		sql.append(", UpdateBranches, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" select branch.branchdesc bankBranch,bank.bankname bankName from BankBranches branch");
-		selectSql.append(" left join BMTBankDetail bank on");
-		selectSql.append(" branch.bankcode=bank.bankcode where ifsc=:ifsc");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
-		RowMapper<BankDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(BankDetail.class);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, bd.getBankCode());
+				ps.setString(index++, bd.getBankName());
+				ps.setString(index++, bd.getBankShortCode());
+				ps.setBoolean(index++, bd.isActive());
+				ps.setInt(index++, bd.getAccNoLength());
+				ps.setInt(index++, bd.getMinAccNoLength());
+				ps.setBoolean(index++, bd.isAllowMultipleIFSC());
+				ps.setBoolean(index++, bd.isNach());
+				ps.setBoolean(index++, bd.isDd());
+				ps.setBoolean(index++, bd.isDda());
+				ps.setBoolean(index++, bd.isEcs());
+				ps.setBoolean(index++, bd.isCheque());
+				ps.setBoolean(index++, bd.isEmandate());
+				ps.setString(index++, bd.getAllowedSources());
+				ps.setBoolean(index++, bd.isUpdateBranches());
+				ps.setInt(index++, bd.getVersion());
+				ps.setLong(index++, bd.getLastMntBy());
+				ps.setTimestamp(index++, bd.getLastMntOn());
+				ps.setString(index++, bd.getRecordStatus());
+				ps.setString(index++, bd.getRoleCode());
+				ps.setString(index++, bd.getNextRoleCode());
+				ps.setString(index++, bd.getTaskId());
+				ps.setString(index++, bd.getNextTaskId());
+				ps.setString(index++, bd.getRecordType());
+				ps.setLong(index, bd.getWorkflowId());
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
+
+		return bd.getId();
+	}
+
+	@Override
+	public void update(BankDetail bd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update BMTBankDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" Set BankName = ?, BankShortCode = ?, Active = ?");
+		sql.append(", AccNoLength = ?, MinAccNoLength = ?, AllowMultipleIFSC = ?");
+		sql.append(", Nach = ?, Dd = ?, Dda = ?, Ecs = ?, Cheque = ?, Emandate = ?");
+		sql.append(", AllowedSources = ?, UpdateBranches = ?, Version = ?");
+		sql.append(", LastMntBy = ?, LastMntOn = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?");
+		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" where BankCode = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, bd.getBankName());
+			ps.setString(index++, bd.getBankShortCode());
+			ps.setBoolean(index++, bd.isActive());
+			ps.setInt(index++, bd.getAccNoLength());
+			ps.setInt(index++, bd.getMinAccNoLength());
+			ps.setBoolean(index++, bd.isAllowMultipleIFSC());
+			ps.setBoolean(index++, bd.isNach());
+			ps.setBoolean(index++, bd.isDd());
+			ps.setBoolean(index++, bd.isDda());
+			ps.setBoolean(index++, bd.isEcs());
+			ps.setBoolean(index++, bd.isCheque());
+			ps.setBoolean(index++, bd.isEmandate());
+			ps.setString(index++, bd.getAllowedSources());
+			ps.setBoolean(index++, bd.isUpdateBranches());
+			ps.setInt(index++, bd.getVersion());
+			ps.setLong(index++, bd.getLastMntBy());
+			ps.setTimestamp(index++, bd.getLastMntOn());
+			ps.setString(index++, bd.getRecordStatus());
+			ps.setString(index++, bd.getRoleCode());
+			ps.setString(index++, bd.getNextRoleCode());
+			ps.setString(index++, bd.getTaskId());
+			ps.setString(index++, bd.getNextTaskId());
+			ps.setString(index++, bd.getRecordType());
+			ps.setLong(index++, bd.getWorkflowId());
+
+			ps.setString(index++, bd.getBankCode());
+
+			if (tableType == TableType.TEMP_TAB) {
+				ps.setTimestamp(index, bd.getPrevMntOn());
+			} else {
+				ps.setInt(index, bd.getVersion() - 1);
+			}
+		});
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public void delete(BankDetail bd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete from BMTBankDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where BankCode = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, bd.getBankCode());
+
+				if (tableType == TableType.TEMP_TAB) {
+					ps.setTimestamp(index++, bd.getPrevMntOn());
+				} else {
+					ps.setInt(index++, bd.getVersion() - 1);
+				}
+
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+	}
+
+	@Override
+	public boolean isDuplicateKey(String bankCode, TableType tableType) {
+		String sql;
+		String whereClause = "BankCode = ?";
+		Object[] obj = new Object[] { bankCode };
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTBankDetail", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTBankDetail_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTBankDetail_Temp", "BMTBankDetail" }, whereClause);
+			obj = new Object[] { bankCode, bankCode };
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
 	@Override
 	public BankDetail getBankDetailById(final String id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" BankCode, BankName, BankShortCode, Active, AccNoLength, MinAccNoLength, AllowMultipleIFSC");
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId");
+		sql.append(" BankCode, BankName, BankShortCode, Active, AccNoLength, MinAccNolength");
+		sql.append(", AllowMultipleIFSC, Nach, Dd, Dda, Ecs, Cheque, Emandate, AllowedSources");
+		sql.append(", UpdateBranches, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" from BMTBankDetail");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where BankCode = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
@@ -102,8 +235,16 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 				bd.setBankShortCode(rs.getString("BankShortCode"));
 				bd.setActive(rs.getBoolean("Active"));
 				bd.setAccNoLength(rs.getInt("AccNoLength"));
-				bd.setMinAccNoLength(rs.getInt("MinAccNoLength"));
+				bd.setMinAccNoLength(rs.getInt("MinAccNolength"));
 				bd.setAllowMultipleIFSC(rs.getBoolean("AllowMultipleIFSC"));
+				bd.setNach(rs.getBoolean("Nach"));
+				bd.setDd(rs.getBoolean("Dd"));
+				bd.setDda(rs.getBoolean("Dda"));
+				bd.setEcs(rs.getBoolean("Ecs"));
+				bd.setCheque(rs.getBoolean("Cheque"));
+				bd.setEmandate(rs.getBoolean("Emandate"));
+				bd.setAllowedSources(rs.getString("AllowedSources"));
+				bd.setUpdateBranches(rs.getBoolean("UpdateBranches"));
 				bd.setVersion(rs.getInt("Version"));
 				bd.setLastMntOn(rs.getTimestamp("LastMntOn"));
 				bd.setLastMntBy(rs.getLong("LastMntBy"));
@@ -124,209 +265,70 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 	}
 
 	@Override
-	public boolean isDuplicateKey(String bankCode, TableType tableType) {
-		logger.debug(Literal.ENTERING);
+	public BankDetail getBankDetailByIfsc(String ifsc) {
+		StringBuilder sql = new StringBuilder("Select bb.BranchDesc, bbd.BankName");
+		sql.append(" From BankBranches bb");
+		sql.append(" Left Join BMTBankDetail bbd on bb.bankcode = bbd.bankcode");
+		sql.append(" Where Ifsc = ?");
 
-		// Prepare the SQL.
-		String sql;
-		String whereClause = "BankCode = :bankCode";
-
-		switch (tableType) {
-		case MAIN_TAB:
-			sql = QueryUtil.getCountQuery("BMTBankDetail", whereClause);
-			break;
-		case TEMP_TAB:
-			sql = QueryUtil.getCountQuery("BMTBankDetail_Temp", whereClause);
-			break;
-		default:
-			sql = QueryUtil.getCountQuery(new String[] { "BMTBankDetail_Temp", "BMTBankDetail" }, whereClause);
-			break;
-		}
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("bankCode", bankCode);
-
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
-	}
-
-	@Override
-	public String save(BankDetail bankDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("insert into BMTBankDetail");
-		sql.append(tableType.getSuffix());
-		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength, AllowMultipleIFSC,");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(
-				" values(:BankCode, :BankName, :BankShortCode, :Active, :AccNoLength, :MinAccNoLength, :AllowMultipleIFSC,");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bankDetail);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BankDetail bd = new BankDetail();
 
-		logger.debug(Literal.LEAVING);
-		return bankDetail.getId();
-	}
+				bd.setBankBranch(rs.getString("BranchDesc"));
+				bd.setBankName(rs.getString("BankName"));
 
-	@Override
-	public void update(BankDetail bankDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql = new StringBuilder("update BMTBankDetail");
-		sql.append(tableType.getSuffix());
-		sql.append(
-				" Set BankName = :BankName, BankShortCode = :BankShortCode, Active = :Active, AccNoLength = :AccNoLength, MinAccNoLength = :MinAccNoLength,");
-		sql.append(
-				" AllowMultipleIFSC = :AllowMultipleIFSC, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		sql.append(
-				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where BankCode =:BankCode ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bankDetail);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void delete(BankDetail bankDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from BMTBankDetail");
-		sql.append(tableType.getSuffix());
-		sql.append(" Where BankCode =:BankCode");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bankDetail);
-		int recordCount = 0;
-
-		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public BankDetail getAccNoLengthByCode(String bankCode, String type) {
-		logger.debug("Entering");
-
-		BankDetail bankDetail = new BankDetail();
-		bankDetail.setBankCode(bankCode);
-
-		StringBuilder selectSql = new StringBuilder("Select AccNoLength, MinAccNoLength");
-
-		selectSql.append(" From BMTBankDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BankCode =:BankCode");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
-		RowMapper<BankDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(BankDetail.class);
-
-		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
+				return bd;
+			}, ifsc);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			return bankDetail;
+			return null;
 		}
 	}
 
 	@Override
-	public String getBankCodeByName(String bankName) {
-		logger.debug("Entering");
+	public BankDetail getAccNoLengthByCode(String bankCode) {
+		String sql = "Select AccNoLength, MinAccNoLength From BMTBankDetail Where BankCode = ?";
 
-		BankDetail bankDetail = new BankDetail();
-		bankDetail.setBankName(bankName);
-
-		StringBuilder selectSql = new StringBuilder("Select BankCode");
-
-		selectSql.append(" From BMTBankDetail");
-		selectSql.append(" Where bankName =:bankName");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				BankDetail bankDetail = new BankDetail();
+
+				bankDetail.setBankCode(bankCode);
+				bankDetail.setAccNoLength(rs.getInt("AccNoLength"));
+				bankDetail.setMinAccNoLength(rs.getInt("MinAccNoLength"));
+
+				return bankDetail;
+			}, bankCode);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
 
-	/**
-	 * Ticket id:124998 return boolean value based on bankcode and active status exists in table .
-	 * 
-	 * @param bankCode
-	 * @param type
-	 * @param active
-	 */
 	@Override
-	public boolean isBankCodeExits(String bankCode, String type, boolean active) {
-		logger.debug("Entering");
+	public String getBankCodeByName(String bankName) {
+		String sql = "Select BankCode From BMTBankDetail Where BankName = ?";
 
-		BankDetail bankDetail = new BankDetail();
-		bankDetail.setBankCode(bankCode);
-		bankDetail.setActive(active);
+		logger.debug(Literal.SQL.concat(sql));
 
-		StringBuilder selectSql = new StringBuilder("Select count(*) ");
-
-		selectSql.append(" From BMTBankDetail");
-		selectSql.append(type);
-		selectSql.append(" Where BankCode =:BankCode and Active = :Active");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
-
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class) > 0;
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, bankName);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override
 	public boolean isBankCodeExits(String bankCode) {
 		String sql = "Select BankCode From BMTBankDetail Where BankCode = ? and Active = ?";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
 			return jdbcOperations.queryForObject(sql, String.class, bankCode, 1) != null;
@@ -343,35 +345,37 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 			length = "len";
 		}
 
+		final String UNION_ALL = " Union all";
+
 		StringBuilder sql = new StringBuilder("Select min(");
 		sql.append(length);
 		sql.append("(AccNo)) MinAccNoLength, max(");
 		sql.append(length);
 		sql.append("(AccNo)) MaxAccNoLength from (");
 		sql.append(" select BeneficiaryAccno AccNo, BankBranchId From FinAdvancePayments");
-		sql.append(" Union all");
+		sql.append(UNION_ALL);
 		sql.append(" Select BeneficiaryAccno AccNo, BankBranchId From FinAdvancePayments_Temp");
-		sql.append(" union all");
+		sql.append(UNION_ALL);
 		sql.append(" Select AccountNo  AccNo, BankBranchId From PaymentInstructions");
-		sql.append(" union all");
+		sql.append(UNION_ALL);
 		sql.append(" Select AccountNo  AccNo, BankBranchId From PaymentInstructions_Temp");
-		sql.append(" union all");
+		sql.append(UNION_ALL);
 		sql.append(" Select AccNumber  AccNo, BankBranchId From Mandates");
-		sql.append(" union all");
+		sql.append(UNION_ALL);
 		sql.append(" Select AccNumber  AccNo, BankBranchId From Mandates_Temp");
-		sql.append(" union all");
+		sql.append(UNION_ALL);
 		sql.append(" Select AccountNo  AccNo, BankBranchId From ChequeDetail");
-		sql.append(" union all");
+		sql.append(UNION_ALL);
 		sql.append(" Select AccountNo  AccNo, BankBranchId From ChequeDetail_Temp");
-		sql.append(" union all");
+		sql.append(UNION_ALL);
 		sql.append(" Select AccountNumber  AccNo, BankBranchId From CustomerBankInfo");
-		sql.append(" union all");
+		sql.append(UNION_ALL);
 		sql.append(" Select AccountNumber  AccNo, BankBranchId From CustomerBankInfo_Temp");
 		sql.append(" ) T");
 		sql.append(" Inner Join BankBranches bb on bb.BankBranchId = T.BankBranchId");
 		sql.append(" where bb.BankCode = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
@@ -387,5 +391,4 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 			return null;
 		}
 	}
-
 }

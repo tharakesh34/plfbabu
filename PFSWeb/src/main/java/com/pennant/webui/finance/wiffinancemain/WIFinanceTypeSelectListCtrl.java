@@ -576,7 +576,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 		if (custType_New.isChecked()) {
 			if (StringUtils.isNotBlank(this.eidNumber.getValue())) {
 				String eidNum = PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue());
-				Long custID = getCustomerDetailsService().getEIDNumberByCustId(eidNum, "_View");
+				Long custID = customerDetailsService.getEIDNumberByCustId(eidNum);
 				if (!custID.equals(0)) {
 					String msg = Labels.getLabel("label_SelectFinanceTypeDialog_ProspectExist",
 							new String[] { Labels.getLabel("label_CustCRCPR"), custID + ". \n" });

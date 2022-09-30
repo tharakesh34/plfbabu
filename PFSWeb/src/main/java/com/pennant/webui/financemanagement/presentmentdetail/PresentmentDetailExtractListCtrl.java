@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -55,12 +56,14 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
+import com.pennant.pff.presentment.PresentmentExtractionService;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -102,8 +105,12 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Row row_lppAndBounceRequited;
 	protected Checkbox lppRequired;
 	protected Checkbox bounceRequired;
+	protected Space space_mandateType;
 
 	private transient PresentmentDetailService presentmentDetailService;
+
+	@Autowired
+	private transient PresentmentExtractionService presentmentExtractionService;
 
 	/**
 	 * default constructor.<br>
@@ -144,7 +151,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
 		fillComboBox(this.presentmentType, PennantConstants.PROCESS_PRESENTMENT,
 				PennantStaticListUtil.getPresetmentTypeList(), "");
 
@@ -152,6 +159,10 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.toDate.setFormat(PennantConstants.dateFormat);
 		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS) {
 			this.loanType.setMandatoryStyle(true);
+		}
+
+		if (ImplementationConstants.INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS) {
+			this.space_mandateType.setSclass("mandatory");
 		}
 
 		this.entity.setModuleName("Entity");
@@ -210,14 +221,16 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		doRemoveValidation();
 		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS
-				&& !mandateType.getSelectedItem().getValue().equals(MandateConstants.TYPE_NACH)) {
+				&& !InstrumentType.isNACH(mandateType.getSelectedItem().getValue())) {
 			this.loanType
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PresentmentDetailList_Product.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
 		}
-		this.mandateType
-				.setConstraint(new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
-						PennantStaticListUtil.getMandateTypeList(), true));
+		if (ImplementationConstants.INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS) {
+			this.mandateType.setConstraint(
+					new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
+							MandateUtil.getInstrumentTypes(), true));
+		}
 		this.presentmentType.setConstraint(
 				new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_PresentmentType.value"),
 						PennantStaticListUtil.getPresetmentTypeList(), true));
@@ -272,7 +285,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		}
 
 		try {
-			if (StringUtils.equals(mandateType.getSelectedItem().getValue(), MandateConstants.TYPE_EMANDATE)) {
+			if (InstrumentType.isEMandate(mandateType.getSelectedItem().getValue())) {
 				detailHeader.setEmandateSource(StringUtils.trimToNull(this.emandateSource.getValidatedValue()));
 			}
 		} catch (WrongValueException we) {
@@ -311,7 +324,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			wve.add(we);
 		}
 		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS
-				&& !mandateType.getSelectedItem().getValue().equals(MandateConstants.TYPE_NACH)) {
+				&& !InstrumentType.isNACH(mandateType.getSelectedItem().getValue())) {
 			try {
 				detailHeader.setLoanType(this.loanType.getValue());
 			} catch (WrongValueException we) {
@@ -388,7 +401,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS
-				&& !mandateType.getSelectedItem().getValue().equals(MandateConstants.TYPE_NACH)) {
+				&& !InstrumentType.isNACH(mandateType.getSelectedItem().getValue())) {
 			detailHeader.setLoanType(this.loanType.getValue());
 		}
 		detailHeader.setFinBranch(this.branches.getValue());
@@ -398,7 +411,9 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		detailHeader.setEmandateSource(emandateSource.getValidatedValue());
 		logger.debug(Literal.LEAVING);
 
-		return presentmentDetailService.savePresentmentDetails(detailHeader);
+		presentmentExtractionService.extractPresentment(detailHeader);
+
+		return "";
 	}
 
 	/**
@@ -413,7 +428,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	private void doResetInitValues() {
 		logger.debug(Literal.ENTERING);
 
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
 		fillComboBox(this.presentmentType, "", PennantStaticListUtil.getPresetmentTypeList(), "");
 		this.loanType.setErrorMessage("");
 		this.loanType.setValue("");
@@ -462,12 +477,16 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		String code = mandateType.getSelectedItem().getValue();
-		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS
-				&& StringUtils.equals(code, MandateConstants.TYPE_NACH)) {
+		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS && InstrumentType.isNACH(code)) {
 			this.loanType.setMandatoryStyle(false);
 			Clients.clearWrongValue(loanType);
 		}
-		if (MandateConstants.TYPE_EMANDATE.equals(code)) {
+		
+		if (PennantConstants.List_Select.equals(code)) {
+			return;
+		}
+
+		if (InstrumentType.isEMandate(code)) {
 			this.emandateSource.setValue("");
 			this.emandateSource.setDescColumn("");
 			emandateSource.setVisible(true);

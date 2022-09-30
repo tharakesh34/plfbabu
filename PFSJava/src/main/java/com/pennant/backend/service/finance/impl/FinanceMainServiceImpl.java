@@ -102,11 +102,6 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
-	public List<Long> getFinanceMainbyCustId(long custID, String type) {
-		return financeMainDAO.getFinanceMainbyCustId(custID, type);
-	}
-
-	@Override
 	public List<LoanPendingData> getCustomerODLoanDetails(long userID) {
 		return financeMainDAO.getCustomerODLoanDetails(userID);
 	}
@@ -144,6 +139,11 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	@Override
 	public Long getFinID(String finRefernce) {
 		return financeMainDAO.getFinID(finRefernce);
+	}
+
+	@Override
+	public Long getFinID(String finReference, TableType tableType) {
+		return financeMainDAO.getFinID(finReference, tableType);
 	}
 
 	@Override

@@ -862,7 +862,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Leaving");
 	}
 
-	public void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
+	protected void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
 		logger.debug("Entering fillComboBox()");
 		combobox.getChildren().clear();
 		Comboitem comboitem = new Comboitem();

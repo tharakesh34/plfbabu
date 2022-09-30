@@ -8,6 +8,7 @@
 		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 	<import resource="classpath:applicationContext-jdbc.xml" />
+	<import resource="classpath:presentment-extraction-job.xml" />
 
 	<!-- ====================================================== -->
 	<!-- Audit Details Configuration -->
@@ -3560,6 +3561,7 @@
 		<property name="covenantTypeDAO" ref="covenantTypeDAO" />
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="chequeHeaderService" ref="chequeHeaderService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -4581,7 +4583,7 @@
 	</bean>
 
 	<bean name="receiptCancellationServiceTarget"
-		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" parent="genericFinanceDetailService" />
+		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" />
 
 	<!--============ Overdue Charge Recovery Details ============== -->
 	<bean id="overdueChargeRecoveryDAO"
@@ -5246,7 +5248,6 @@
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="npaService" ref="npaService" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 	</bean>
 
@@ -6263,18 +6264,8 @@
 		</property>
 	</bean>
 
-	<bean name="mandateServiceTarget" class="com.pennant.backend.service.mandate.impl.MandateServiceImpl">
-		<property name="mandateDAO" ref="mandateDAO" />
-		<property name="mandateStatusDAO" ref="mandateStatusDAO" />
-		<property name="mandateStatusUpdateDAO" ref="mandateStatusUpdateDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="dMSService" ref="dMSService" />
-		<property name="mandateCheckDigitDAO" ref="mandateCheckDigitDAO" />
-		<property name="bankBranchDAO" ref="bankBranchDAO" />
-		<property name="partnerBankDAO" ref="partnerBankDAO" />
-		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
-	</bean>
+	<bean name="mandateServiceTarget" class="com.pennant.backend.service.mandate.impl.MandateServiceImpl"/>
+	
 	<!-- Finance Mandate -->
 	<bean id="finMandateService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -6294,16 +6285,7 @@
 		</property>
 	</bean>
 
-	<bean name="finMandateServiceTarget" class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl">
-		<property name="mandateDAO" ref="mandateDAO" />
-		<property name="mandateStatusDAO" ref="mandateStatusDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="bankBranchService" ref="bankBranchService" />
-		<property name="mandateCheckDigitDAO" ref="mandateCheckDigitDAO" />
-		<property name="bankBranchDAO" ref="bankBranchDAO" />
-		<property name="dMSService" ref="dMSService" />
-	</bean>
+	<bean name="finMandateServiceTarget" class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl"/>
 
 	<bean id="rateChangeService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -12024,24 +12006,19 @@
 		parent="abstractInterface" />
 
 
-	<!-- Start Accounting Engine -->
+	<!-- Accounting Engine Start -->
 	<bean id="postingEvent" class="com.pennant.pff.core.engine.accounting.event.PostingEvent" abstract="true" />
 
 	<bean id="disbInsPostingEvent" class="com.pennant.pff.core.engine.accounting.event.DisbInsPostingEvent"
-		parent="postingEvent">
-		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
-		<property name="vehicleDealerService" ref="vehicleDealerService" />
-	</bean>
+		parent="postingEvent"/>
 
 	<bean id="vasFeePostingEvent" class="com.pennant.pff.core.engine.accounting.event.VASFeePostingEvent"
-		parent="postingEvent">
-		<property name="vehicleDealerService" ref="vehicleDealerService" />
-	</bean>
+		parent="postingEvent"/>
+	
+	<bean id="bouncePostingEvent" class="com.pennant.pff.core.engine.accounting.event.BouncePostingEvent"
+		parent="postingEvent"/>
 
-	<bean id="postingEventFactory" class="com.pennant.pff.core.engine.accounting.PostingEventFactory">
-		<property name="disbInsPostingEvent" ref="disbInsPostingEvent" />
-		<property name="vasFeePostingEvent" ref="vasFeePostingEvent" />
-	</bean>
+	<bean id="postingEventFactory" class="com.pennant.pff.core.engine.accounting.PostingEventFactory"/>
 
 	<bean id="accountingEngine" class="com.pennant.pff.core.engine.accounting.AccountingEngine">
 		<property name="factory" ref="postingEventFactory" />
@@ -12224,7 +12201,7 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
-	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper" />
+	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" />
 
 	<!-- DB-Based Scheduler -->
 	<bean id="jobJmxClient" class="com.pennanttech.pennapps.core.job.monitor.JobJmxClient" />
@@ -13007,4 +12984,12 @@
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
 
+	<!-- PresentmentExtractionStage -->
+	<bean id="presentmentDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentDAOImpl" parent="sequenceDao" />
+
+	<bean name="presentmentEngine" class="com.pennant.pff.presentment.service.PresentmentEngine"/>
+	
+	<!-- Consecutive Presentment -->
+	<bean id="consecutiveBounceDAO" class="com.pennant.pff.presentment.dao.impl.ConsecutiveBounceDAOImpl"
+		parent="sequenceDao" />
 </beans>

@@ -26,173 +26,126 @@
 package com.pennant.backend.dao.mandate.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
-/**
- * DAO methods implementation for the <b>MandateStatus model</b> class.<br>
- * 
- */
-
 public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements MandateStatusDAO {
-	private static Logger logger = LogManager.getLogger(MandateStatusDAOImpl.class);
 
 	public MandateStatusDAOImpl() {
 		super();
 	}
 
-	/**
-	 * Fetch the Record MandateStatus details by key field
-	 * 
-	 * @param id   (int)
-	 * @param type (String) ""/_Temp/_View
-	 * @return MandateStatus
-	 */
 	@Override
 	public MandateStatus getMandateStatusById(final long id, String type) {
-		logger.debug("Entering");
 		MandateStatus mandateStatus = new MandateStatus();
 		mandateStatus.setId(id);
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" mandateID,status,reason,changeDate,fileID,");
-
-		if (type.contains("View")) {
-			sql.append("");
-		}
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" MandateID, Status, Reason, ChangeDate, FileID");
 		sql.append(" From MandatesStatus");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where MandateID =:MandateID");
+		sql.append(" Where MandateId = ?");
 
-		logger.debug("sql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
-		RowMapper<MandateStatus> typeRowMapper = BeanPropertyRowMapper.newInstance(MandateStatus.class);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				MandateStatus ms = new MandateStatus();
+
+				ms.setMandateID(rs.getLong("MandateID"));
+				ms.setStatus(rs.getString("Status"));
+				ms.setReason(rs.getString("Reason"));
+				ms.setChangeDate(JdbcUtil.getDate(rs.getDate("ChangeDate")));
+				ms.setFileID(rs.getLong("FileID"));
+
+				return ms;
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
 
-	/**
-	 * This method Deletes the Record from the MandatesStatus or MandatesStatus_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete MandateStatus by key MandateID
-	 * 
-	 * @param MandateStatus (mandateStatus)
-	 * @param type          (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(MandateStatus mandateStatus, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-
+	public void delete(MandateStatus ms, String type) {
 		StringBuilder sql = new StringBuilder("Delete From MandatesStatus");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where MandateID =:MandateID");
+		sql.append(" Where MandateID = ?");
 
-		logger.debug("sql: " + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
 		try {
-			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
-			if (recordCount <= 0) {
+			if (this.jdbcOperations.update(sql.toString(), ms.getMandateID()) <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method insert new Records into MandatesStatus or MandatesStatus_Temp. it fetches the available Sequence form
-	 * SeqMandatesStatus by using getNextidviewDAO().getNextId() method.
-	 *
-	 * save MandateStatus
-	 * 
-	 * @param MandateStatus (mandateStatus)
-	 * @param type          (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public long save(MandateStatus mandateStatus, String type) {
-		logger.debug("Entering");
-		if (mandateStatus.getId() == Long.MIN_VALUE) {
-			/*
-			 * mandateStatus.setId(getNextidviewDAO().getNextValue("SeqMandatesStatus"));
-			 * logger.debug("get NextValue:"+mandateStatus.getId());
-			 */
-		}
+	public long save(MandateStatus ms, String type) {
+		ms.setChangeDate(DateUtil.getSysDate());
 
-		mandateStatus.setChangeDate(DateUtil.getSysDate());
-		StringBuilder sql = new StringBuilder("Insert Into MandatesStatus ");
+		StringBuilder sql = new StringBuilder("Insert Into MandatesStatus");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (mandateID,status,reason,changeDate,fileID)");
-		sql.append(" Values(:mandateID,:status,:reason,:changeDate,:fileID)");
+		sql.append(" (MandateID, Status, Reason, ChangeDate, FileID)");
+		sql.append(" Values(?, ?, ?, ?, ?)");
 
-		logger.debug("sql: " + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return mandateStatus.getId();
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, ms.getMandateID());
+			ps.setString(index++, ms.getStatus());
+			ps.setString(index++, ms.getReason());
+			ps.setDate(index++, JdbcUtil.getDate(ms.getChangeDate()));
+			ps.setLong(index++, ms.getFileID());
+		});
+
+		return ms.getId();
 	}
 
-	/**
-	 * This method updates the Record MandatesStatus or MandatesStatus_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update MandateStatus by key MandateID and Version
-	 * 
-	 * @param MandateStatus (mandateStatus)
-	 * @param type          (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(MandateStatus mandateStatus, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-
-		mandateStatus.setChangeDate(DateUtil.getSysDate());
+	public void update(MandateStatus ms, String type) {
+		ms.setChangeDate(DateUtil.getSysDate());
 		StringBuilder sql = new StringBuilder("Update MandatesStatus");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set status=:status,reason=:reason,");
-		sql.append(" changeDate=:changeDate,fileID=:fileID");
-		sql.append(" Where MandateID =:MandateID");
+		sql.append(" Set Status = ?, Reason = ?, ChangeDate = ?, FileID = ?");
+		sql.append(" Where MandateID = ?");
 
 		if (!type.endsWith("_Temp")) {
-			sql.append("  AND Version= :Version-1");
+			sql.append(" and Version= ?");
 		}
 
-		logger.debug("Sql: " + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, ms.getStatus());
+			ps.setString(index++, ms.getReason());
+			ps.setDate(index++, JdbcUtil.getDate(ms.getChangeDate()));
+			ps.setLong(index++, ms.getFileID());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, ms.getVersion() - 1);
+			}
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 }

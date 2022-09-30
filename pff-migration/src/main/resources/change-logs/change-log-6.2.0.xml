@@ -1753,5 +1753,1731 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="ST#76.1" author="saikiran.n">
+		<addColumn tableName="Mandates_Temp">
+			<column name="SwapEffectiveDate" type="datetime" />
+			<column name="HoldReason" type="bigint" />
+			<column name="SecurityMandate" type="boolean" />
+			<column name="EmployeeID" type="bigint" />
+			<column name="EmployerName" type="varchar(200)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.1.1" author="saikiran.n">
+		<addForeignKeyConstraint constraintName="fk_mandates_temp_holdreason"
+			referencedTableName="BounceReasons" baseColumnNames="HoldReason" baseTableName="Mandates_Temp"
+			referencedColumnNames="BounceId" />
+	</changeSet>
+
+	<changeSet id="ST#76.1.2" author="saikiran.n">
+		<addForeignKeyConstraint constraintName="fk_mandates_temp_employeeid"
+			referencedTableName="EmployerDetail" baseColumnNames="EmployeeID" baseTableName="Mandates_Temp"
+			referencedColumnNames="employerid" />
+	</changeSet>
+
+	<changeSet id="ST#76.1.3" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE MANDATES_TEMP SET SECURITYMANDATE = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.1.4" author="saikiran.n">
+		<addNotNullConstraint tableName="MANDATES_TEMP" columnName="SECURITYMANDATE"
+			columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="ST#76.1.5" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SecurityMandate" tableName="Mandates_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#76.1.5" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Mandates_Temp ADD CONSTRAINT DF_MANDATES_TEMP_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.2" author="saikiran.n">
+		<addColumn tableName="Mandates">
+			<column name="SwapEffectiveDate" type="datetime" />
+			<column name="HoldReason" type="bigint" />
+			<column name="SecurityMandate" type="boolean" />
+			<column name="EmployeeID" type="bigint" />
+			<column name="EmployerName" type="varchar(200)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.2.1" author="saikiran.n">
+		<addForeignKeyConstraint constraintName="fk_mandates_holdreason"
+			referencedTableName="BounceReasons" baseColumnNames="HoldReason" baseTableName="Mandates"
+			referencedColumnNames="BounceId" />
+	</changeSet>
+
+	<changeSet id="ST#76.2.2" author="saikiran.n">
+		<addForeignKeyConstraint constraintName="fk_mandates_employeeid"
+			referencedTableName="EmployerDetail" baseColumnNames="EmployeeID" baseTableName="Mandates"
+			referencedColumnNames="employerid" />
+	</changeSet>
+
+	<changeSet id="ST#76.2.3" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE MANDATES SET SECURITYMANDATE = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.2.4" author="saikiran.n">
+		<addNotNullConstraint tableName="MANDATES" columnName="SECURITYMANDATE" columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="ST#76.2.5" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SecurityMandate" tableName="Mandates" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#76.2.5" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Mandates ADD CONSTRAINT DF_MANDATES_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+
+
+	<changeSet id="ST#76.3_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.3" author="saikiran.n">
+		<createView viewName="MANDATES_AVIEW" replaceIfExists="true">
+				<![CDATA[
+					SELECT M.MANDATEID
+						, M.CUSTID
+						, M.MANDATEREF
+						, M.MANDATETYPE
+						, M.BANKBRANCHID
+						, M.ACCNUMBER
+						, M.ACCHOLDERNAME
+						, M.JOINTACCHOLDERNAME
+						, M.ACCTYPE
+						, M.OPENMANDATE
+						, M.STARTDATE
+						, M.EXPIRYDATE
+						, M.MAXLIMIT
+						, M.PERIODICITY
+						, M.PHONECOUNTRYCODE
+						, M.PHONEAREACODE
+						, M.PHONENUMBER
+						, M.STATUS
+						, M.APPROVALID
+						, M.VERSION
+						, M.LASTMNTBY
+						, M.LASTMNTON
+						, M.RECORDSTATUS
+						, M.ROLECODE
+						, M.NEXTROLECODE
+						, M.TASKID
+						, M.NEXTTASKID
+						, M.RECORDTYPE
+						, M.WORKFLOWID
+						, M.REASON
+						, M.MANDATECCY
+						, C.CUSTCIF
+						, C.CUSTSHRTNAME
+						, BB.BANKCODE
+						, BB.BRANCHCODE
+						, BB.BRANCHDESC
+						, BB.MICR
+						, BB.IFSC
+						, BB.CITY
+						, BD.BANKNAME
+						, M.INPUTDATE
+						, M.INPUTDATE FROMDATE
+						, M.INPUTDATE TODATE
+						, M.ACTIVE
+						, M.DEFAULTMANDATE
+						, 1  USEEXISTING
+						, M.ORGREFERENCE
+						, PC.PCCITYNAME
+						, M.DOCUMENTNAME
+						, M.DOCUMENTREF
+						, M.EXTERNALREF
+						, M.ENTITYCODE
+						, E.ENTITYDESC
+						, M.PRIMARYMANDATEID
+						, M.SWAPISACTIVE
+						, M.BARCODENUMBER
+						, PB.PARTNERBANKCODE
+						, PB.PARTNERBANKNAME
+						, M.PARTNERBANKID
+						, M.EMANDATESOURCE
+						, M.EMANDATEREFERENCENO
+						, FM.FINTYPE
+						, M.HOLDREASON
+						, M.SWAPEFFECTIVEDATE
+						, M.SECURITYMANDATE
+						, M.EMPLOYEEID
+						, M.EMPLOYERNAME
+					FROM MANDATES M
+					INNER JOIN CUSTOMERS C ON C.CUSTID = M.CUSTID
+					LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+					LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE 
+					LEFT JOIN RMTPROVINCEVSCITY PC ON PC.PCCITY = BB.CITY
+					LEFT JOIN ENTITY E ON E.ENTITYCODE = M.ENTITYCODE
+					LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
+					LEFT JOIN FINANCEMAIN FM ON FM.FINREFERENCE = M.ORGREFERENCE
+				]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#76.3_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.3.1_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.3.1" author="saikiran.n">
+		<createView viewName="MANDATES_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT 	M.MANDATEID
+					, M.CUSTID
+					, M.MANDATEREF
+					, M.MANDATETYPE
+					, M.BANKBRANCHID
+					, M.ACCNUMBER
+					, M.ACCHOLDERNAME
+					, M.JOINTACCHOLDERNAME
+					, M.ACCTYPE
+					, M.OPENMANDATE
+					, M.STARTDATE
+					, M.EXPIRYDATE
+					, M.MAXLIMIT
+					, M.PERIODICITY
+					, M.PHONECOUNTRYCODE
+					, M.PHONEAREACODE
+					, M.PHONENUMBER
+					, M.STATUS
+					, M.APPROVALID
+					, M.VERSION
+					, M.LASTMNTBY
+					, M.LASTMNTON
+					, M.RECORDSTATUS
+					, M.ROLECODE
+					, M.NEXTROLECODE
+					, M.TASKID
+					, M.NEXTTASKID
+					, M.RECORDTYPE
+					, M.WORKFLOWID
+					, M.REASON
+					, M.MANDATECCY
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, BB.BANKCODE
+					, BB.BRANCHCODE
+					, BB.BRANCHDESC
+					, BB.MICR
+					, BB.IFSC
+					, BB.CITY
+					, BD.BANKNAME
+					, M.INPUTDATE
+					, M.ACTIVE
+					, M.DEFAULTMANDATE
+					, 0 USEEXISTING
+					, M.ORGREFERENCE
+					, PC.PCCITYNAME
+					, M.DOCUMENTNAME
+					, M.DOCUMENTREF
+					, M.EXTERNALREF
+					, M.ENTITYCODE
+					, E.ENTITYDESC
+					, M.PRIMARYMANDATEID
+					, M.SWAPISACTIVE
+					, M.BARCODENUMBER
+					, PB.PARTNERBANKCODE
+					, PB.PARTNERBANKNAME
+					, M.PARTNERBANKID
+					, M.EMANDATESOURCE
+					, M.EMANDATEREFERENCENO
+					, FM.FINTYPE
+					, M.HOLDREASON
+					, M.SWAPEFFECTIVEDATE
+					, M.SECURITYMANDATE
+					, M.EMPLOYEEID
+					, M.EMPLOYERNAME
+				FROM MANDATES_TEMP M
+				INNER JOIN CUSTOMERS C ON C.CUSTID = M.CUSTID
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PC ON PC.PCCITY = BB.CITY
+				LEFT JOIN ENTITY E ON E.ENTITYCODE = M.ENTITYCODE
+				LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
+				LEFT JOIN FINANCEMAIN FM ON FM.FINREFERENCE = M.ORGREFERENCE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#76.3.1_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.3.2_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.3.2" author="saikiran.n">
+		<createView viewName="MANDATES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT M.MANDATEID
+					    , M.CUSTID
+					    , M.MANDATEREF
+					    , M.MANDATETYPE
+					    , M.BANKBRANCHID
+					    , M.ACCNUMBER
+					    , M.ACCHOLDERNAME
+					    , M.JOINTACCHOLDERNAME
+					    , M.ACCTYPE
+					    , M.OPENMANDATE
+					    , M.STARTDATE
+					    , M.EXPIRYDATE
+					    , M.MAXLIMIT
+					    , M.PERIODICITY
+					    , M.PHONECOUNTRYCODE
+					    , M.PHONEAREACODE
+					    , M.PHONENUMBER
+					    , M.STATUS
+					    , M.APPROVALID
+					    , M.VERSION
+					    , M.LASTMNTBY
+					    , M.LASTMNTON
+					    , M.RECORDSTATUS
+					    , M.ROLECODE
+					    , M.NEXTROLECODE
+					    , M.TASKID
+					    , M.NEXTTASKID
+					    , M.RECORDTYPE
+					    , M.WORKFLOWID
+					    , M.REASON
+					    , M.MANDATECCY
+					    , C.CUSTCIF
+					    , C.CUSTSHRTNAME
+					    , BB.BANKCODE
+					    , BB.BRANCHCODE
+					    , BB.BRANCHDESC
+					    , BB.MICR
+					    , BB.IFSC
+					    , BB.CITY
+					    , BD.BANKNAME
+					    , M.INPUTDATE
+					    , M.ACTIVE
+					    , M.DEFAULTMANDATE
+					    , 0 USEEXISTING
+					    , M.ORGREFERENCE
+					    , PC.PCCITYNAME
+					    , M.DOCUMENTNAME
+					    , M.DOCUMENTREF
+					    , M.EXTERNALREF
+					    , M.ENTITYCODE
+					    , E.ENTITYDESC
+					    , M.PRIMARYMANDATEID
+					    , M.SWAPISACTIVE
+					    , M.BARCODENUMBER
+					    , PB.PARTNERBANKCODE
+					    , PB.PARTNERBANKNAME
+					    , M.PARTNERBANKID
+					    , M.EMANDATESOURCE
+					    , M.EMANDATEREFERENCENO
+						, FM.FINTYPE
+						, M.HOLDREASON
+						, M.SWAPEFFECTIVEDATE
+						, M.SECURITYMANDATE
+						, M.EMPLOYEEID
+						, M.EMPLOYERNAME
+					FROM MANDATES_TEMP M
+					JOIN CUSTOMERS C ON M.CUSTID = C.CUSTID
+					LEFT JOIN BANKBRANCHES BB ON M.BANKBRANCHID = BB.BANKBRANCHID
+					LEFT JOIN BMTBANKDETAIL BD ON BB.BANKCODE = BD.BANKCODE
+					LEFT JOIN RMTPROVINCEVSCITY PC ON BB.CITY = PC.PCCITY
+					LEFT JOIN ENTITY E ON M.ENTITYCODE = E.ENTITYCODE
+					LEFT JOIN PARTNERBANKS PB ON M.PARTNERBANKID = PB.PARTNERBANKID
+					LEFT JOIN FINANCEMAIN FM ON M.ORGREFERENCE = FM.FINREFERENCE
+					UNION ALL
+					SELECT M.MANDATEID
+						, M.CUSTID
+						, M.MANDATEREF
+						, M.MANDATETYPE
+						, M.BANKBRANCHID
+						, M.ACCNUMBER
+						, M.ACCHOLDERNAME
+						, M.JOINTACCHOLDERNAME
+						, M.ACCTYPE
+						, M.OPENMANDATE
+						, M.STARTDATE
+						, M.EXPIRYDATE
+						, M.MAXLIMIT
+						, M.PERIODICITY
+						, M.PHONECOUNTRYCODE
+						, M.PHONEAREACODE
+						, M.PHONENUMBER
+						, M.STATUS
+						, M.APPROVALID
+						, M.VERSION
+						, M.LASTMNTBY
+						, M.LASTMNTON
+						, M.RECORDSTATUS
+						, M.ROLECODE
+						, M.NEXTROLECODE
+						, M.TASKID
+						, M.NEXTTASKID
+						, M.RECORDTYPE
+						, M.WORKFLOWID
+						, M.REASON
+						, M.MANDATECCY
+						, C.CUSTCIF
+						, C.CUSTSHRTNAME
+						, BB.BANKCODE
+						, BB.BRANCHCODE
+						, BB.BRANCHDESC
+						, BB.MICR
+						, BB.IFSC
+						, BB.CITY
+						, BD.BANKNAME
+						, M.INPUTDATE
+						, M.ACTIVE
+						, M.DEFAULTMANDATE
+						, 1 USEEXISTING
+						, M.ORGREFERENCE
+						, PC.PCCITYNAME
+						, M.DOCUMENTNAME
+						, M.DOCUMENTREF
+						, M.EXTERNALREF
+						, M.ENTITYCODE
+						, E.ENTITYDESC
+						, M.PRIMARYMANDATEID
+						, M.SWAPISACTIVE
+						, M.BARCODENUMBER
+						, PB.PARTNERBANKCODE
+						, PB.PARTNERBANKNAME
+						, M.PARTNERBANKID
+						, M.EMANDATESOURCE
+						, M.EMANDATEREFERENCENO
+						, FM.FINTYPE
+						, M.HOLDREASON
+						, M.SWAPEFFECTIVEDATE
+						, M.SECURITYMANDATE
+						, M.EMPLOYEEID
+						, M.EMPLOYERNAME
+					FROM MANDATES M
+					JOIN CUSTOMERS C ON M.CUSTID = C.CUSTID
+					LEFT JOIN BANKBRANCHES BB ON M.BANKBRANCHID = BB.BANKBRANCHID
+					LEFT JOIN BMTBANKDETAIL BD ON BB.BANKCODE = BD.BANKCODE
+					LEFT JOIN RMTPROVINCEVSCITY PC ON BB.CITY = PC.PCCITY
+					LEFT JOIN ENTITY E ON M.ENTITYCODE = E.ENTITYCODE
+					LEFT JOIN PARTNERBANKS PB ON M.PARTNERBANKID = PB.PARTNERBANKID
+					LEFT JOIN FINANCEMAIN FM ON M.ORGREFERENCE = FM.FINREFERENCE
+					WHERE NOT (EXISTS ( SELECT 1
+					FROM MANDATES_TEMP
+					WHERE MANDATES_TEMP.MANDATEID = M.MANDATEID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#76.3.2_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.4" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_ExternalMandate');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_ExternalMandate');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_ExternalMandate';
+					
+			    INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'MandateDialog_ExternalMandate', 'MandateDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_ExternalMandate'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_ExternalMandate'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+						
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SwapEffectiveDate');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SwapEffectiveDate');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SwapEffectiveDate';
+					
+			    INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'MandateDialog_SwapEffectiveDate', 'MandateDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SwapEffectiveDate'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SwapEffectiveDate'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+							
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReason');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReason');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReason';
+					
+			    INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3,'MandateDialog_HoldReason', 'MandateDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReason'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReason'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SecurityMandate');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SecurityMandate');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SecurityMandate';
+					
+			    INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'MandateDialog_SecurityMandate', 'MandateDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SecurityMandate'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SecurityMandate'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_EmployeeID');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_EmployeeID');
+				DELETE FROM SECRIGHTS where RIGHTNAME='MandateDialog_EmployeeID';
+					
+			    INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'MandateDialog_EmployeeID', 'MandateDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_EmployeeID'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_EmployeeID'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_EmployerName');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_EmployerName');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_EmployerName';
+					
+			    INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'MandateDialog_EmployerName', 'MandateDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_EmployerName'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_EmployerName'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81.1" author="nagavamsi.p">
+		<addColumn tableName="EMPLOYERDETAIL_TEMP">
+			<column name="AllowDAS" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#81.1.1" author="nagavamsi.p">
+		<sql>
+		<![CDATA[  
+			UPDATE EmployerDetail_Temp SET AllowDAS = 0;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81.1.2" author="nagavamsi.p" dbms="oracle, postgresql">
+		<addNotNullConstraint tableName="EMPLOYERDETAIL_TEMP" columnName="AllowDAS"
+			columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="ST#81.1.3" author="nagavamsi.p">
+		<addDefaultValue columnName="AllowDAS" tableName="EMPLOYERDETAIL_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#76.1.3" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE EMPLOYERDETAIL_TEMP ADD CONSTRAINT DF_EMPLOYERDETAIL_TEMP_ALLOWDAS DEFAULT 0 FOR ALLOWDAS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81.2" author="nagavamsi.p">
+		<addColumn tableName="EMPLOYERDETAIL">
+			<column name="AllowDAS" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#81.2.1" author="nagavamsi.p">
+		<sql>
+		<![CDATA[  
+			UPDATE EmployerDetail SET AllowDAS = 0 ;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81.2.2" author="nagavamsi.p" dbms="oracle, postgresql">
+		<addNotNullConstraint tableName="EMPLOYERDETAIL" columnName="AllowDAS" columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="ST#81.2.3" author="nagavamsi.p">
+		<addDefaultValue columnName="AllowDAS" tableName="EMPLOYERDETAIL" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#81.2.3" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE EMPLOYERDETAIL ADD CONSTRAINT DF_EMPLOYERDETAIL_ALLOWDAS DEFAULT 0 FOR ALLOWDAS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81.3_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'employerdetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81.3" author="nagavamsi.p">
+		<createView viewName="EMPLOYERDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+					Select ed.employerid
+						, ed.EmpIndustry
+						, ed.EmpName
+						, ed.EstablishDate
+						, ed.EmpAddrhNbr
+						, ed.EmpFlatNbr
+						, ed.EmpAddrStreet
+						, ed.EmpAddrLine1
+						, ed.EmpAddrLine2
+						, ed.EmpPoBox
+						, ed.EmpCountry
+						, ed.EmpPhone
+						, ed.EmpFax
+						, ed.EmpTelexno
+						, ed.EmpEmailId
+						, ed.EmpProvince
+						, ed.EmpCity
+						, ed.EmpWebsite
+						, ed.ContactPersonName
+						, ed.ContactPersonNo
+						, ed.EmpAlocationType
+						, ed.BankRefNo
+						, ed.EmpCategory
+						, ed.EmpIsActive
+						, ed.AllowDas
+						, ed.Version
+						, ed.LastMntBy
+						, ed.LastMntOn
+						, ed.RecordStatus
+						, ed.RoleCode
+						, ed.NextRoleCode
+						, ed.TaskId
+						, ed.NextTaskId
+						, ed.RecordType
+						, ed.WorkflowId
+						, su.UsrLogin
+						, su.UsrFName
+						, su.UsrMName
+						, su.UsrLName
+						, ids.IndustryDesc LovDescIndustryDesc
+						, c.CountryDesc LovDescCountryDesc
+						, cp.CpProvinceName LovdesCprovinceName
+						, pc.PcCityName LovDescCityName
+					FROM EmployerDetail_Temp ed
+					INNER JOIN SecUsers su ON su.UsrId = ed.LastMntBy
+					LEFT JOIN BmtIndustries ids ON ids.IndustryCode = ed.EmpIndustry
+					LEFT JOIN BmtCountries c ON c.countrycode = ed.EmpCountry
+					LEFT JOIN RmtCountryVsProvince cp ON cp.CpProvince = ed.EmpProvince and cp.CpCountry = ed.EmpCountry
+					LEFT JOIN RmtProvinceVsCity pc ON pc.PcCity = ed.EmpCity and pc.PcProvince = ed.EmpProvince and pc.PcCountry = ed.EmpCountry
+					UNION ALL
+					Select ed.employerid
+						, ed.EmpIndustry
+						, ed.EmpName
+						, ed.EstablishDate
+						, ed.EmpAddrhNbr
+						, ed.EmpFlatNbr
+						, ed.EmpAddrStreet
+						, ed.EmpAddrLine1
+						, ed.EmpAddrLine2
+						, ed.EmpPoBox
+						, ed.EmpCountry
+						, ed.EmpPhone
+						, ed.EmpFax
+						, ed.EmpTelexno
+						, ed.EmpEmailId
+						, ed.EmpProvince
+						, ed.EmpCity
+						, ed.EmpWebsite
+						, ed.ContactPersonName
+						, ed.ContactPersonNo
+						, ed.EmpAlocationType
+						, ed.BankRefNo
+						, ed.EmpCategory
+						, ed.EmpIsActive
+						, ed.AllowDas
+						, ed.Version
+						, ed.LastMntBy
+						, ed.LastMntOn
+						, ed.RecordStatus
+						, ed.RoleCode
+						, ed.NextRoleCode
+						, ed.TaskId
+						, ed.NextTaskId
+						, ed.RecordType
+						, ed.WorkflowId
+						, su.UsrLogin
+						, su.UsrFName
+						, su.UsrMName
+						, su.UsrLName
+						, ids.IndustryDesc LovDescIndustryDesc
+						, c.CountryDesc LovDescCountryDesc
+						, cp.CpProvinceName LovdesCprovinceName
+						, pc.PcCityName LovDescCityName
+					FROM EmployerDetail ed
+					INNER JOIN SecUsers su ON su.UsrId = ed.LastMntBy
+					LEFT JOIN BmtIndustries ids ON ids.IndustryCode = ed.EmpIndustry
+					LEFT JOIN BmtCountries c ON c.countrycode = ed.EmpCountry
+					LEFT JOIN RmtCountryVsProvince cp ON cp.CpProvince = ed.EmpProvince and cp.CpCountry = ed.EmpCountry
+					LEFT JOIN RmtProvinceVsCity pc ON pc.PcCity = ed.EmpCity and pc.PcProvince = ed.EmpProvince and pc.PcCountry = ed.EmpCountry
+						  WHERE NOT (EXISTS ( SELECT 1
+						           FROM EmployerDetail_Temp
+						          WHERE EmployerDetail_Temp.EmployerId = ed.EmployerId))				
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#81.3_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'employerdetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81.4_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'employerdetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81.4" author="nagavamsi.p">
+		<createView viewName="EMPLOYERDETAIL_AVIEW" replaceIfExists="true">
+			<![CDATA[
+					Select ed.employerid
+						, ed.EmpIndustry
+						, ed.EmpName
+						, ed.EstablishDate
+						, ed.EmpAddrhNbr
+						, ed.EmpFlatNbr
+						, ed.EmpAddrStreet
+						, ed.EmpAddrLine1
+						, ed.EmpAddrLine2
+						, ed.EmpPoBox
+						, ed.EmpCountry
+						, ed.EmpPhone
+						, ed.EmpFax
+						, ed.EmpTelexno
+						, ed.EmpEmailId
+						, ed.EmpProvince
+						, ed.EmpCity
+						, ed.EmpWebsite
+						, ed.ContactPersonName
+						, ed.ContactPersonNo
+						, ed.EmpAlocationType
+						, ed.BankRefNo
+						, ed.EmpCategory
+						, ed.EmpIsActive
+						, ed.AllowDas
+						, ed.Version
+						, ed.LastMntBy
+						, ed.LastMntOn
+						, ed.RecordStatus
+						, ed.RoleCode
+						, ed.NextRoleCode
+						, ed.TaskId
+						, ed.NextTaskId
+						, ed.RecordType
+						, ed.WorkflowId
+						, su.UsrLogin
+						, su.UsrFName
+						, su.UsrMName
+						, su.UsrLName
+						, ids.IndustryDesc LovDescIndustryDesc
+						, c.CountryDesc LovDescCountryDesc
+						, cp.CpProvinceName LovdesCprovinceName
+						, pc.PcCityName LovDescCityName
+					FROM EmployerDetail ed
+					INNER JOIN SecUsers su ON su.UsrId = ed.LastMntBy
+					LEFT JOIN BmtIndustries ids ON ids.IndustryCode = ed.EmpIndustry
+					LEFT JOIN BmtCountries c ON c.countrycode = ed.EmpCountry
+					LEFT JOIN RmtCountryVsProvince cp ON cp.CpProvince = ed.EmpProvince and cp.CpCountry = ed.EmpCountry
+					LEFT JOIN RmtProvinceVsCity pc ON pc.PcCity = ed.EmpCity and pc.PcProvince = ed.EmpProvince and pc.PcCountry = ed.EmpCountry			
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#81.4_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'employerdetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81.5" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'EmployerDetailDialog_AllowDas');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'EmployerDetailDialog_AllowDas';
+			
+				INSERT INTO SECRIGHTS VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'EmployerDetailDialog_AllowDas', 'EmployerDetailDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='EMPLOYERDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='EmployerDetailDialog_AllowDas'), 1, 0, 10000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+        	 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#98.1" author="nagavamsi.p">
+		<addColumn tableName="RMTBaseRates_Temp">
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#98.2" author="nagavamsi.p">
+		<addColumn tableName="RMTBaseRates">
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#98.3_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtbaserates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#98.3" author="nagavamsi.p">
+		<createView viewName="RMTBASERATES_VIEW" replaceIfExists="true">
+			<![CDATA[
+					Select br.BrType
+				    , brc.BrTypeDesc LovDescBrTypeName
+				    , br.Currency
+				    , br.BrEffDate
+				    , br.BrRate
+				    , br.BrTypeIsActive
+					, br.LastMdfDate
+				    , br.DelExistingRates
+					, br.LockingPeriod
+					, br.CreatedBy
+					, br.CreatedOn
+					, br.ApprovedBy
+					, br.ApprovedOn
+					, br.Version
+				    , br.LastMntBy
+				    , br.LastMntOn
+				    , br.RecordStatus
+				    , br.RoleCode
+				    , br.NextRoleCode
+				    , br.TaskId
+				    , br.NextTaskId
+				    , br.RecordType
+				    , br.WorkflowId
+				    , suc.Usrlogin CreatedUser
+				    , sua.Usrlogin ApprovedUser
+				FROM RmtBaseRates_Temp br
+				INNER JOIN RmtBaseRateCodes brc ON brc.BrType = br.BrType
+				LEFT JOIN SecUsers suc ON suc.UsrId = br.CreatedBy
+				LEFT JOIN SecUsers sua ON sua.UsrId = br.ApprovedBy
+				UNION ALL
+				Select br.BrType
+				    , brc.BrTypeDesc LovDescBrTypeName
+				    , br.Currency
+				    , br.BrEffDate
+				    , br.BrRate
+				    , br.BrTypeIsActive
+					, br.LastMdfDate
+				    , br.DelExistingRates
+					, br.LockingPeriod
+					, br.CreatedBy
+					, br.CreatedOn
+					, br.ApprovedBy
+					, br.ApprovedOn
+					, br.Version
+				    , br.LastMntBy
+				    , br.LastMntOn
+				    , br.RecordStatus
+				    , br.RoleCode
+				    , br.NextRoleCode
+				    , br.TaskId
+				    , br.NextTaskId
+				    , br.RecordType
+				    , br.WorkflowId
+				    , suc.Usrlogin CreatedUser
+				    , sua.Usrlogin ApprovedUser
+				FROM RmtBaseRates br
+				INNER JOIN RmtBaseRateCodes brc ON brc.BrType = br.BrType
+				LEFT JOIN SecUsers suc ON suc.UsrId = br.CreatedBy
+				LEFT JOIN SecUsers sua ON sua.UsrId = br.ApprovedBy
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM RmtBaseRates_Temp
+				          WHERE RmtBaseRates_Temp.BrType = br.BrType and RmtBaseRates_Temp.BrEffDate = br.BrEffDate and RmtBaseRates_Temp.Currency = br.Currency))			
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#98.3_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtbaserates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#98.4_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtbaserates_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#98.4" author="nagavamsi.p">
+		<createView viewName="RMTBASERATES_AVIEW" replaceIfExists="true">
+			<![CDATA[
+					Select br.BrType
+				    , brc.BrTypeDesc LovDescBrTypeName
+				    , br.Currency
+				    , br.BrEffDate
+				    , br.BrRate
+				    , br.BrTypeIsActive
+					, br.LastMdfDate
+				    , br.DelExistingRates
+					, br.LockingPeriod
+					, br.CreatedBy
+					, br.CreatedOn
+					, br.ApprovedBy
+					, br.ApprovedOn
+					, br.Version
+				    , br.LastMntBy
+				    , br.LastMntOn
+				    , br.RecordStatus
+				    , br.RoleCode
+				    , br.NextRoleCode
+				    , br.TaskId
+				    , br.NextTaskId
+				    , br.RecordType
+				    , br.WorkflowId
+				    , suc.Usrlogin CreatedUser
+				    , sua.Usrlogin ApprovedUser
+				FROM RmtBaseRates_Temp br
+				INNER JOIN RmtBaseRateCodes brc ON brc.BrType = br.BrType	
+				LEFT JOIN SecUsers suc ON suc.UsrId = br.CreatedBy
+				LEFT JOIN SecUsers sua ON sua.UsrId = br.ApprovedBy
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#98.4_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtbaserates_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#79.1" author="nagavamsi.p">
+		<addColumn tableName="BounceReasons_Temp">
+			<column name="InstrumentType" type="varchar(8)" />
+			<column name="HoldMarkBounceCount" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#79.1.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[  
+				UPDATE BounceReasons_Temp Set HoldMarkBounceCount = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#79.1.2" author="nagavamsi.p" dbms="oracle, postgresql">
+		<addNotNullConstraint tableName="BounceReasons_Temp" columnName="HoldMarkBounceCount"
+			columnDataType="int" />
+	</changeSet>
+
+	<changeSet id="ST#79.1.3" author="nagavamsi.p">
+		<addDefaultValue columnName="HoldMarkBounceCount" tableName="BounceReasons_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#79.1.3" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BOUNCEREASONS_TEMP ADD CONSTRAINT DF_BOUNCEREASONS_TEMP_HOLDMARKBOUNCECOUNT DEFAULT 0 FOR HOLDMARKBOUNCECOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#79.2" author="nagavamsi.p">
+		<addColumn tableName="BounceReasons">
+			<column name="InstrumentType" type="varchar(8)" />
+			<column name="HoldMarkBounceCount" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#79.2.1" author="nagavamsi.p">
+		<sql>
+		<![CDATA[  
+			UPDATE BounceReasons SET HoldMarkBounceCount = 0 ;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#79.2.2" author="nagavamsi.p" dbms="oracle, postgresql">
+		<addNotNullConstraint tableName="BounceReasons" columnName="HoldMarkBounceCount"
+			columnDataType="int" />
+	</changeSet>
+
+	<changeSet id="ST#79.2.3" author="nagavamsi.p">
+		<addDefaultValue columnName="HoldMarkBounceCount" tableName="BounceReasons" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#79.2.3" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BOUNCEREASONS ADD CONSTRAINT DF_BOUNCEREASONS_HOLDMARKBOUNCECOUNT DEFAULT 0 FOR HOLDMARKBOUNCECOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#79.3_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'bouncereasons_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#79.3" author="nagavamsi.p">
+		<createView viewName="BOUNCEREASONS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				Select br.BounceId
+					, br.BounceCode
+					, br.ReasonType
+					, CASE WHEN br.ReasonType = 1 THEN 'CANCELLED CHEQUES'
+						WHEN br.ReasonType = 2 THEN 'BOUNCED CHEQUES'
+						WHEN br.ReasonType = 3 THEN 'HOLD CHEQUES'
+						ELSE NULL END LovDescReasonType
+					, br.Category
+					, CASE WHEN br.Category = 1 THEN 'TECHNICAL'
+						WHEN br.Category = 2 THEN 'NON TECHNICAL'
+						ELSE NULL END LovDescCategory
+					, br.Reason
+					, br.Action
+					, br.RuleId
+					, br.ReturnCode
+					, br.InstrumentType
+					, br.HoldMarkBounceCount
+					, r.RuleCode
+					, r.RuleCodeDesc
+					, br.Active
+					, br.Version
+					, br.LastMntBy
+					, br.LastMntOn
+					, br.RecordStatus
+					, br.RoleCode
+					, br.NextRoleCode
+					, br.TaskId
+					, br.NextTaskId
+					, br.RecordType
+					, br.WorkflowId
+				FROM BOUNCEREASONS_TEMP br
+				INNER JOIN RULES r ON r.RuleID = br.RuleID
+				UNION ALL
+				Select br.BounceId
+					, br.BounceCode
+					, br.ReasonType
+					, CASE WHEN br.ReasonType = 1 THEN 'CANCELLED CHEQUES'
+						WHEN br.ReasonType = 2 THEN 'BOUNCED CHEQUES'
+						WHEN br.ReasonType = 3 THEN 'HOLD CHEQUES'
+						ELSE NULL END LovDescReasonType
+					, br.Category
+					, CASE WHEN br.Category = 1 THEN 'TECHNICAL'
+						WHEN br.Category = 2 THEN 'NON TECHNICAL'
+						ELSE NULL END LovDescCategory
+					, br.Reason
+					, br.Action
+					, br.RuleId
+					, br.ReturnCode
+					, br.InstrumentType
+					, br.HoldMarkBounceCount
+					, r.RuleCode
+					, r.RuleCodeDesc
+					, br.Active
+					, br.Version
+					, br.LastMntBy
+					, br.LastMntOn
+					, br.RecordStatus
+					, br.RoleCode
+					, br.NextRoleCode
+					, br.TaskId
+					, br.NextTaskId
+					, br.RecordType
+					, br.WorkflowId
+				FROM BOUNCEREASONS br
+				INNER JOIN RULES r ON r.RuleID = br.RuleID
+				WHERE NOT EXISTS (SELECT 1 FROM BOUNCEREASONS_TEMP WHERE BounceId = br.BounceId)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#79.3_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'bouncereasons_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#79.4_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'bouncereasons_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#79.4" author="nagavamsi.p">
+		<createView viewName="BOUNCEREASONS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				Select br.BounceId
+					, br.BounceCode
+					, br.ReasonType
+					, CASE WHEN br.ReasonType = 1 THEN 'CANCELLED CHEQUES'
+						WHEN br.ReasonType = 2 THEN 'BOUNCED CHEQUES'
+						WHEN br.ReasonType = 3 THEN 'HOLD CHEQUES'
+						ELSE NULL END LovDescReasonType
+					, br.Category
+					, CASE WHEN br.Category = 1 THEN 'TECHNICAL'
+						WHEN br.Category = 2 THEN 'NON TECHNICAL'
+						ELSE NULL END LovDescCategory
+					, br.Reason
+					, br.Action
+					, br.RuleId
+					, br.ReturnCode
+					, br.InstrumentType
+					, br.HoldMarkBounceCount
+					, r.RuleCode
+					, r.RuleCodeDesc
+					, br.Active
+					, br.Version
+					, br.LastMntBy
+					, br.LastMntOn
+					, br.RecordStatus
+					, br.RoleCode
+					, br.NextRoleCode
+					, br.TaskId
+					, br.NextTaskId
+					, br.RecordType
+					, br.WorkflowId
+				FROM BOUNCEREASONS br
+				INNER JOIN RULES r ON r.RuleID = br.RuleID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#79.4_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'bouncereasons_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#79.5" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+			DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'BounceReasonDialog_InstrumentType');
+			DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'BounceReasonDialog_HoldMarkBounceCount');
+			
+			DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'BounceReasonDialog_InstrumentType';
+			DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'BounceReasonDialog_HoldMarkBounceCount';
+			
+			INSERT INTO SECRIGHTS VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3, 'BounceReasonDialog_InstrumentType', 'BounceReasonDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SECRIGHTS VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3, 'BounceReasonDialog_HoldMarkBounceCount', 'BounceReasonDialog', 0, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BOUNCEREASON_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BounceReasonDialog_InstrumentType'), 1, 0, 10000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BOUNCEREASON_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BounceReasonDialog_HoldMarkBounceCount'), 1, 0, 10000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			
+        	 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.1" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='MANDATE_EMANDATE_REQUIRED';
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="ST#94.2.1" author="saikiran.n">
+		<addColumn tableName="BMTBankDetail_Temp">
+			<column name="Nach" type="boolean" />
+			<column name="Dd" type="boolean" />
+			<column name="Dda" type="boolean" />
+			<column name="Ecs" type="boolean" />
+			<column name="Cheque" type="boolean" />
+			<column name="Emandate" type="boolean" />
+			<column name="AllowedSources" type="varchar(50)" />
+			<column name="UpdateBranches" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.2.2" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Nach" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Dd" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Dda" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Ecs" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Cheque" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Emandate" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="UpdateBranches" tableName="BMTBankDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.2.2" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_NACH DEFAULT 0 FOR NACH;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_DD DEFAULT 0 FOR DD;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_DDA DEFAULT 0 FOR DDA;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_ECS DEFAULT 0 FOR ECS;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_CHEQUE DEFAULT 0 FOR CHEQUE;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_EMANDATE DEFAULT 0 FOR EMANDATE;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_UPDATEBRANCHES DEFAULT 0 FOR UPDATEBRANCHES;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#94.3.1" author="saikiran.n">
+		<addColumn tableName="BMTBankDetail">
+			<column name="Nach" type="boolean" />
+			<column name="Dd" type="boolean" />
+			<column name="Dda" type="boolean" />
+			<column name="Ecs" type="boolean" />
+			<column name="Cheque" type="boolean" />
+			<column name="Emandate" type="boolean" />
+			<column name="AllowedSources" type="varchar(50)" />
+			<column name="UpdateBranches" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.3.2" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Nach" tableName="BMTBankDetail" defaultValue="0" />
+		<addDefaultValue columnName="Dd" tableName="BMTBankDetail" defaultValue="0"/>
+		<addDefaultValue columnName="Dda" tableName="BMTBankDetail" defaultValue="0"/>
+		<addDefaultValue columnName="Ecs" tableName="BMTBankDetail" defaultValue="0"/>
+		<addDefaultValue columnName="Cheque" tableName="BMTBankDetail" defaultValue="0"/>
+		<addDefaultValue columnName="Emandate" tableName="BMTBankDetail" defaultValue="0"/>
+		<addDefaultValue columnName="UpdateBranches" tableName="BMTBankDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.3.2" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_NACH DEFAULT 0 FOR NACH;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_DD DEFAULT 0 FOR DD;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_DDA DEFAULT 0 FOR DDA;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_ECS DEFAULT 0 FOR ECS;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_CHEQUE DEFAULT 0 FOR CHEQUE;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_EMANDATE DEFAULT 0 FOR EMANDATE;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_UPDATEBRANCHES DEFAULT 0 FOR UPDATEBRANCHES;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.4.1" author="saikiran.n">
+		<createView viewName="Bank_Instrument_mapping" replaceIfExists="true">
+			<![CDATA[
+				Select BankCode
+				, max(dd) dd
+				, max(dda) dda
+				, max(nach) nach
+				, max(ecs) ecs
+				, max(cheque) cheque
+				, max(emandate) emandate
+			from (
+				Select BankCode, dd, dda, nach, ecs, cheque, emandate From BankBranches Where (dd = 1 or dda = 1 or nach = 1 or ecs = 1 or cheque = 1 or emandate = 1)
+				Union 
+				Select BankCode, dd, dda, nach, ecs, cheque, emandate From BankBranches_Temp Where (dd = 1 or dda = 1 or nach = 1 or ecs = 1 or cheque = 1 or emandate = 1)
+			) T group by BankCode
+																																		   
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#94.4.2" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				Update BMTBankDetail Set DD = (Select bb.DD From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.DD = 1);
+				Update BMTBankDetail Set DDA = (Select bb.DDA From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.DDA = 1);
+				Update BMTBankDetail Set NACH = (Select bb.NACH From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.NACH = 1);
+				Update BMTBankDetail Set ECS = (Select bb.ECS From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.ECS = 1);
+				Update BMTBankDetail Set CHEQUE = (Select bb.CHEQUE From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.CHEQUE = 1);
+				Update BMTBankDetail Set EMANDATE = (Select bb.DD From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.EMANDATE = 1);
+
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.4.3" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				Update BMTBankDetail_Temp Set DD = (Select bb.DD From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.DD = 1);
+				Update BMTBankDetail_Temp Set DDA = (Select bb.DDA From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.DDA = 1);
+				Update BMTBankDetail_Temp Set NACH = (Select bb.NACH From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.NACH = 1);
+				Update BMTBankDetail_Temp Set ECS = (Select bb.ECS From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.ECS = 1);
+				Update BMTBankDetail_Temp Set CHEQUE = (Select bb.CHEQUE From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.CHEQUE = 1);
+				Update BMTBankDetail_Temp Set EMANDATE = (Select bb.EMANDATE From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.EMANDATE = 1);
+
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#94.4.4" author="saikiran.n">
+		<dropView viewName="Bank_Instrument_mapping"/>
+	</changeSet>
+	
+	<changeSet id="ST#94.4.5" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE BMTBankDetail_Temp SET Nach = 0 where Nach is null;
+				UPDATE BMTBankDetail_Temp SET Dd = 0 where Dd is null;
+				UPDATE BMTBankDetail_Temp SET Dda = 0 where dda is null;
+				UPDATE BMTBankDetail_Temp SET Ecs = 0 where Ecs is null;
+				UPDATE BMTBankDetail_Temp SET Cheque = 0 where Cheque is null;
+				UPDATE BMTBankDetail_Temp SET Emandate = 0 where Emandate is null;
+				UPDATE BMTBankDetail_Temp SET UpdateBranches = 0 where UpdateBranches is null;
+				
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.4.6" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE BMTBankDetail SET Nach = 0 where Nach is null;
+				UPDATE BMTBankDetail SET Dd = 0 where Dd is null;
+				UPDATE BMTBankDetail SET Dda = 0 where Dda is null;
+				UPDATE BMTBankDetail SET Ecs = 0 where Ecs is null;
+				UPDATE BMTBankDetail SET Cheque = 0 where Cheque is null;
+				UPDATE BMTBankDetail SET Emandate = 0 where Emandate is null;
+				UPDATE BMTBankDetail SET UpdateBranches = 0 where UpdateBranches is null;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#94.5" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_ECS');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DDA');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DD');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_NACH');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Cheque');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Emandate');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_AllowedSources');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BankDetailDialog_btnMultiSource');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_UpdateBranches');
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_ECS';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DDA';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DD';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_NACH';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Cheque';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Emandate';
+				DELETE FROM SecRights where RightName='BankDetailDialog_AllowedSources';
+				DELETE FROM SecRights where RightName='button_BankDetailDialog_btnMultiSource';
+				DELETE FROM SecRights where RightName='BankDetailDialog_UpdateBranches';
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_ECS', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_DDA', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_DD', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_NACH', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_Cheque', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_Emandate', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_AllowedSources', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 2, 'button_BankDetailDialog_btnMultiSource', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_UpdateBranches', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_ECS'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DDA'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DD'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_NACH'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Cheque'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Emandate'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_AllowedSources'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BankDetailDialog_btnMultiSource'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_UpdateBranches'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.6_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'bmtbankdetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#94.6" author="saikiran.n">
+		<createView viewName="BMTBANKDETAIL_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT BankCode
+					, BankName
+					, BankShortCode
+					, AccnoLength
+					, AllowMultipleIfsc
+					, MinAccnoLength
+					, Nach
+					, Dda
+					, Dd
+					, Ecs
+					, Cheque
+					, Emandate
+					, AllowedSources
+					, UpdateBranches
+					, Active
+					, Version
+					, LastMntBy
+					, LastMntOn
+					, RecordStatus
+					, RoleCode
+					, NextRoleCode
+					, TaskId
+					, NextTaskId
+					, RecordType
+					, WorkFlowId
+				From BmtBankDetail
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#94.6_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'bmtbankdetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#94.6.1_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'bmtbankdetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#94.6.1" author="saikiran.n">
+		<createView viewName="BMTBANKDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT BankCode
+					, BankName
+					, BankShortCode
+					, AccnoLength
+					, AllowMultipleIfsc
+					, MinAccnoLength
+					, Nach
+					, Dda
+					, Dd
+					, Ecs
+					, Cheque
+					, Emandate
+					, AllowedSources
+					, UpdateBranches
+					, Active
+					, Version
+					, LastMntBy
+					, LastMntOn
+					, RecordStatus
+					, RoleCode
+					, NextRoleCode
+					, TaskId
+					, NextTaskId
+					, RecordType
+					, WorkFlowId
+				From BmtBankDetail_Temp
+				Union All 
+				SELECT BankCode
+					, BankName
+					, BankShortCode
+					, AccnoLength
+					, AllowMultipleIfsc
+					, MinAccnoLength
+					, Nach
+					, Dda
+					, Dd
+					, Ecs
+					, Cheque
+					, Emandate
+					, AllowedSources
+					, UpdateBranches
+					, Active
+					, Version
+					, LastMntBy
+					, LastMntOn
+					, RecordStatus
+					, RoleCode
+					, NextRoleCode
+					, TaskId
+					, NextTaskId
+					, RecordType
+					, WorkFlowId
+				From BmtBankDetail Where Not Exists (Select 1 From BmtBankDetail_Temp Where BankCode = BmtBankDetail.BankCode) 
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#94.6.1_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'bmtbankdetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b">
+		<createTable tableName="Presentment_Exclude_Codes">
+			<column name="ID" type="bigint" />
+			<column name="Code" type="varchar(20)" />
+			<column name="Description" type="varchar(100)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcludeId" type="int"/>
+			<column name="BounceID" type="bigint" />
+			<column name="CreateBounceOnDueDate" type="boolean" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" >
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMnton" type="datetime" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean" >
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFloWId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Version" tableName="Presentment_Exclude_Codes" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_EXCLUDE_CODES ADD CONSTRAINT DF_PEC_VERSION DEFAULT 0 FOR Version;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Active" tableName="Presentment_Exclude_Codes" defaultValue="false" />
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_EXCLUDE_CODES ADD CONSTRAINT DF_PEC_ACTIVE DEFAULT false FOR ACTIVE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="CreateBounceOnDueDate" tableName="Presentment_Exclude_Codes" defaultValue="false" />
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_EXCLUDE_CODES ADD CONSTRAINT DF_PEC_CREATEBOUNCEONDUEDATE DEFAULT false FOR CREATEBOUNCEONDUEDATE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b">
+		<addPrimaryKey tableName="Presentment_Exclude_Codes" columnNames="ID" constraintName="pk_presentment_exclude_codes" />
+	</changeSet>
+
+	<changeSet id="" author="saikrishna.b">
+		<addUniqueConstraint tableName="Presentment_Exclude_Codes" columnNames="Code" constraintName="uk_pec_code" />
+	</changeSet>
+
+	<changeSet id="" author="saikrishna.b">
+		<addForeignKeyConstraint constraintName="fk_pec_bounceid" referencedTableName="BounceReasons" referencedColumnNames="BounceId" baseTableName="Presentment_Exclude_Codes" baseColumnNames="BounceId" />
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(1, 'EMI_IN_ADVANCE', 			'Due adjusted from the EMI in Advance', 	1, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(2, 'EMI_HOLD', 				'EMI is marked as hold', 					2, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(3, 'MANDATE_HOLD', 			'Mandate is marked as hold', 				3, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(4, 'MANDATE_NOT_APPROVED', 	'Mandate is not registered', 				4, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(5, 'MANDATE_EXPIRED', 		'Mandate Expired', 							5, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(6, 'MANUAL_EXCLUDE', 			'Excluded Manually', 						6, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(7, 'MANDATE_REJECTED',		'Mandate rejected',							7, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(8, 'INT_ADV', 				'Due adjusted from interest in advance', 	8, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(9, 'EMI_ADV', 				'Due adjusted from EMI in advance', 		9, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="ST#76.5" author="saikiran.n">
+		<sql>
+            <![CDATA[
+            	DELETE FROM STAGETABDETAIL WHERE TABCODE = 'SECMAN';
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, ACTIVE) VALUES (22, 'SECMAN', 'Security Mandates', 1);
+            ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1.0" author="saikrishna.b">
+		<createTable tableName="Presentment_Stage">
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="FinType" type="varchar(8)" />
+			<column name="ProductCategory" type="varchar(8)" />
+			<column name="FinBranch" type="varchar(12)" />
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="BpiTreatment" type="char(1)" />
+			<column name="GrcPeriodEndDate" type="datetime" />
+			<column name="GrcAdvType" type="varchar(10)" />
+			<column name="AdvType" type="varchar(10)" />
+			<column name="AdvStage" type="varchar(10)" />
+			<column name="SchDate" type="datetime" />
+			<column name="DefSchdDate" type="datetime" />
+			<column name="SchSeq" type="bigint" />
+			<column name="InstNumber" type="int" />
+			<column name="BpiOrHoliday" type="char(1)" />
+			<column name="ProfitSchd" type="decimal(18,0)" />
+			<column name="PrincipalSchd" type="decimal(18,0)" />
+			<column name="FeeSchd" type="decimal(18,0)" />
+			<column name="TDSAmount" type="decimal(18,0)" />
+			<column name="SchdPftPaid" type="decimal(18,0)" />
+			<column name="SchdPriPaid" type="decimal(18,0)" />
+			<column name="SchdFeePaid" type="decimal(18,0)" />
+			<column name="TDSPaid" type="decimal(18,0)" />
+			<column name="InstrumentType" type="varchar(20)" />
+			<column name="MandateId" type="bigint" />
+			<column name="MandateType" type="varchar(20)" />
+			<column name="EmandateSource" type="varchar(50)" />
+			<column name="MandateStatus" type="varchar(20)" />
+			<column name="MandateExpiryDate" type="datetime" />
+			<column name="ChequeID" type="int" />
+			<column name="ChequeType" type="varchar(8)" />
+			<column name="ChequeStatus" type="varchar(10)" />
+			<column name="ChequeDate" type="datetime" />
+			<column name="PartnerBankId" type="bigint" />
+			<column name="BranchCode" type="varchar(12)" />
+			<column name="BankCode" type="varchar(8)" />
+			<column name="DueDate" type="datetime" />
+			<column name="EmployerId" type="bigint" />
+			<column name="EmployerName" type="varchar(50)" />
+			<column name="HeaderId" type="bigint" />
+			<column name="ProcessingFlag" type="smallint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="1.1" author="saikrishna.b">
+		<addPrimaryKey tableName="Presentment_Stage" columnNames="ID" constraintName="pk_presentment_stage_ID" />
+	</changeSet>
+	
+	<changeSet id="1.2" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ProcessingFlag" tableName="Presentment_Stage" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="1.2" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_STAGE ADD CONSTRAINT DF_PS_PROCESSINGFLAG DEFAULT 0 FOR PROCESSINGFLAG;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b">
+		<createTable tableName="Presentment_Consecutive_Bounce">
+			<column name="ID" type="bigint" autoIncrement = "true" >
+				<constraints nullable="false" />
+			</column>
+			<column name="MandateId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BounceId" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="LastBounceDate" type="datetime" >
+				<constraints nullable="false" />
+			</column>
+			<column name="BounceCount" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime" >
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMnton" type="datetime" >
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b">
+		<addPrimaryKey tableName="Presentment_consecutive_Bounce" columnNames="ID" constraintName="pk_pcb_id" />
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b">
+		<addForeignKeyConstraint constraintName="fk_pcb_BounceId" referencedTableName="BounceReasons" referencedColumnNames="BounceId" baseTableName="Presentment_consecutive_Bounce" baseColumnNames="BounceId" />
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b">
+		<createIndex tableName="Presentment_consecutive_Bounce" indexName="idx_pcb_mid_bid" unique = "true">
+			<column name="MandateId" type="bigint"/>
+			<column name="BounceId" type="bigint"/>
+		</createIndex>
+	</changeSet>
 	
 </databaseChangeLog>

@@ -54,6 +54,7 @@ import com.pennant.backend.service.applicationmaster.BounceReasonService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -93,7 +94,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	private List<Property> listReasonType = PennantStaticListUtil.getReasonType();
 	private List<Property> listCategory = PennantStaticListUtil.getCategoryType();
 	private List<ValueLabel> listAction = PennantStaticListUtil.getAction();
-	private final List<ValueLabel> instrumentTypeList = PennantStaticListUtil.getMandateTypeList();
+	private final List<ValueLabel> instrumentTypeList = MandateUtil.getInstrumentTypes();
 	private BounceReason bounceReason;
 
 	/**

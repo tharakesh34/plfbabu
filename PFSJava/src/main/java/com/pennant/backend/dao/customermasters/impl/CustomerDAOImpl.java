@@ -34,8 +34,6 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -46,11 +44,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.customermasters.Abuser;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
@@ -61,7 +57,6 @@ import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ProspectCustomer;
-import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -84,41 +79,30 @@ import com.pennanttech.ws.model.customer.SRMCustRequest;
  * 
  */
 public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDAO {
-	private static Logger logger = LogManager.getLogger(CustomerDAOImpl.class);
 
 	public CustomerDAOImpl() {
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new Customer
-	 * 
-	 * @return Customer
-	 */
 	@Override
 	public Customer getCustomer(boolean createNew, Customer customer) {
-		logger.debug("Entering");
+
 		WorkFlowDetails workFlowDetails = null;
 		if (!createNew) {
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Customer");
 		} else {
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("CustomerQDE");
 		}
+
 		if (workFlowDetails != null) {
 			customer.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
+
 		return customer;
 	}
 
-	/**
-	 * This method get the module from method getCustomer() and set the new record flag as true and return Customer()
-	 * 
-	 * @return Customer
-	 */
 	@Override
 	public Customer getNewCustomer(boolean createNew, Customer customer) {
-		logger.debug("Entering");
 
 		Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
 
@@ -154,17 +138,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		customer.setCustGroupID(0);
 
-		logger.debug("Leaving");
 		return customer;
 	}
 
-	/**
-	 * Fetch the Record Customers details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return Customer
-	 */
 	@Override
 	public Customer getCustomerByID(final long id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
@@ -210,14 +186,14 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			sql.append(", CasteCode, ReligionCode, CasteDesc, ReligionDesc, BranchProvince");
 		}
 
-		sql.append(" from Customers");
+		sql.append(" From Customers");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CustID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				Customer c = new Customer();
 				c.setNatureOfBusiness(rs.getString("NatureOfBusiness"));
 				c.setQualification(rs.getString("Qualification"));
@@ -226,7 +202,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				c.setCustResidentialSts(rs.getString("CustResidentialSts"));
 				c.setOtherCaste(rs.getString("OtherCaste"));
 				c.setEntityType(rs.getString("EntityType"));
-
 				c.setCustID(rs.getLong("CustID"));
 				c.setCustCIF(rs.getString("CustCIF"));
 				c.setCustCoreBank(rs.getString("CustCoreBank"));
@@ -412,331 +387,491 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				}
 
 				return c;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Customer not found in Customers{} table/view for the specified CustID >> {}", type, id);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Fetch the Record Customers details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return Customer
-	 */
-	@Override
-	public Customer getCustomerForPostings(final long custId) {
-		logger.debug("Entering");
-		Customer customer = new Customer();
-		customer.setId(custId);
-
-		StringBuilder selectSql = new StringBuilder("SELECT CustCIF, CustCOB, CustCtgCode, CustIndustry,");
-		selectSql.append(" CustIsStaff, CustNationality, CustParentCountry, CustResdCountry,");
-		selectSql.append(" CustRiskCountry, CustSector, CustSubSector, CustTypeCode");
-		selectSql.append(" , CasteId, ReligionId, SubCategory");
-
-		selectSql.append(" FROM  Customers");
-		selectSql.append(" Where CustID =:CustID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
-
-		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
 
-	/**
-	 * This method Deletes the Record from the Customers or Customers_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Customers by key CustID
-	 * 
-	 * @param Customers (customer)
-	 * @param type      (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(Customer customer, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public Customer getCustomerForPostings(final long custId) {
+		StringBuilder sql = new StringBuilder("Select CustCIF, CustCOB, CustCtgCode, CustIndustry");
+		sql.append(", CustIsStaff, CustNationality, CustParentCountry, CustResdCountry");
+		sql.append(", CustRiskCountry, CustSector, CustSubSector, CustTypeCode");
+		sql.append(", CasteId, ReligionId, SubCategory");
+		sql.append(" From Customers");
+		sql.append(" Where CustID = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From Customers");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where CustID =:CustID");
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Customer c = new Customer();
 
-			if (recordCount <= 0) {
+				c.setCustCIF(rs.getString("CustCIF"));
+				c.setCustDOB(JdbcUtil.getDate(rs.getDate("CustCOB")));
+				c.setCustCtgCode(rs.getString("CustCtgCode"));
+				c.setCustIndustry(rs.getString("CustIndustry"));
+				c.setCustIsStaff(rs.getBoolean("CustIsStaff"));
+				c.setCustNationality(rs.getString("CustNationality"));
+				c.setCustParentCountry(rs.getString("CustParentCountry"));
+				c.setCustResdCountry(rs.getString("CustResdCountry"));
+				c.setCustRiskCountry(rs.getString("CustRiskCountry"));
+				c.setCustSector(rs.getString("CustSector"));
+				c.setCustSubSector(rs.getString("CustSubSector"));
+				c.setCustTypeCode(rs.getString("CustTypeCode"));
+				c.setCasteId(rs.getLong("CasteId"));
+				c.setReligionId(rs.getLong("ReligionId"));
+				c.setSubCategory(rs.getString("SubCategory"));
+
+				return c;
+			}, custId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public void delete(Customer customer, String type) {
+		StringBuilder sql = new StringBuilder("Delete From Customers");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			if (this.jdbcOperations.update(sql.toString(), customer.getCustID()) <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+
 	}
 
-	/**
-	 * This method insert new Records into Customers or Customers_Temp.
-	 *
-	 * save Customers
-	 * 
-	 * @param Customers (customer)
-	 * @param type      (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public long save(Customer customer, String type) {
-		logger.debug("Entering");
-
-		if (customer.getCustID() == 0 || customer.getCustID() == Long.MIN_VALUE) {
-			customer.setCustID(getNextValue("SeqCustomers"));
+	public long save(Customer c, String type) {
+		if (c.getCustID() == 0 || c.getCustID() == Long.MIN_VALUE) {
+			c.setCustID(getNextValue("SeqCustomers"));
 		}
-		// FIXME : To be discussed
 
-		StringBuilder insertSql = new StringBuilder("Insert Into Customers");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append("(CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustSalutationCode, CustFName,");
-		insertSql.append(" CustMName, CustLName, CustShrtName, CustFNameLclLng, CustMNameLclLng, CustLNameLclLng,");
-		insertSql.append(
-				" CustShrtNameLclLng, CustDftBranch, CustGenderCode, CustDOB, CustPOB, CustCOB, CustPassportNo,");
-		insertSql.append(
-				" CustMotherMaiden, CustIsMinor, CustReferedBy, CustDSA, CustDSADept, CustRO1, CustRO2, CustGroupID,");
-		insertSql.append(
-				" CustSts, CustStsChgDate, CustGroupSts, CustIsBlocked, CustIsActive, CustIsClosed, CustInactiveReason,");
-		insertSql.append(" CustIsDecease, CustIsDormant, CustIsDelinquent, CustIsTradeFinCust,CustTradeLicenceNum ,");
-		insertSql.append(
-				" CustTradeLicenceExpiry,CustPassportExpiry,CustVisaNum ,CustVisaExpiry, CustIsStaff, CustStaffID,");
-		insertSql.append(
-				" CustIndustry, CustSector, CustSubSector, CustProfession, CustTotalIncome, CustMaritalSts, CustEmpSts,");
-		insertSql.append(
-				" CustSegment, CustSubSegment, CustIsBlackListed, CustBLRsnCode, CustIsRejected, CustRejectedRsn,");
-		insertSql
-				.append(" CustBaseCcy, CustLng, CustParentCountry, CustResdCountry, CustRiskCountry, CustNationality,");
-		insertSql.append(
-				" CustClosedOn, CustStmtFrq, CustIsStmtCombined, CustStmtLastDate, CustStmtNextDate, CustStmtDispatchMode,");
-		insertSql.append(
-				" CustFirstBusinessDate, CustAddlVar81, CustAddlVar82, CustAddlVar83, CustAddlVar84, CustAddlVar85,");
-		insertSql.append(
-				" CustAddlVar86, CustAddlVar87, CustAddlVar88, CustAddlVar89, CustAddlDate1, CustAddlDate2, CustAddlDate3,");
-		insertSql.append(
-				" CustAddlDate4, CustAddlDate5, CustAddlVar1, CustAddlVar2, CustAddlVar3, CustAddlVar4, CustAddlVar5,");
-		insertSql.append(
-				" CustAddlVar6, CustAddlVar7, CustAddlVar8, CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1,");
-		insertSql.append(
-				" CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5, CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4,CustAddlInt5,");
-		insertSql.append(
-				" DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR,CustSourceID,");
-		insertSql.append(
-				" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer,ApplicationNo, Dnd,");
-		insertSql.append(
-				" OtherCaste, OtherReligion, NatureOfBusiness, EntityType, CustResidentialSts, Qualification, Vip");
-		insertSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		insertSql.append(" ,CasteId, ReligionId, SubCategory,MarginDeviation, ResidentialStatus  )");
-		insertSql.append(
-				" Values(:CustID, :CustCIF, :CustCoreBank, :CustCtgCode, :CustTypeCode, :CustSalutationCode, :CustFName, :CustMName,");
-		insertSql.append(
-				" :CustLName, :CustShrtName, :CustFNameLclLng, :CustMNameLclLng, :CustLNameLclLng, :CustShrtNameLclLng, :CustDftBranch,");
-		insertSql.append(
-				" :CustGenderCode, :CustDOB, :CustPOB, :CustCOB, :CustPassportNo, :CustMotherMaiden, :CustIsMinor, :CustReferedBy,");
-		insertSql.append(
-				" :CustDSA, :CustDSADept, :CustRO1, :CustRO2, :CustGroupID, :CustSts, :CustStsChgDate, :CustGroupSts, :CustIsBlocked,");
-		insertSql.append(
-				" :CustIsActive, :CustIsClosed, :CustInactiveReason, :CustIsDecease, :CustIsDormant, :CustIsDelinquent,");
-		insertSql.append(
-				" :CustIsTradeFinCust, :CustTradeLicenceNum ,:CustTradeLicenceExpiry, :CustPassportExpiry, :CustVisaNum , :CustVisaExpiry,");
-		insertSql.append(
-				" :CustIsStaff, :CustStaffID, :CustIndustry, :CustSector, :CustSubSector, :CustProfession, :CustTotalIncome,");
-		insertSql.append(
-				" :CustMaritalSts, :CustEmpSts, :CustSegment, :CustSubSegment, :CustIsBlackListed, :CustBLRsnCode, :CustIsRejected,");
-		insertSql.append(
-				" :CustRejectedRsn, :CustBaseCcy, :CustLng, :CustParentCountry, :CustResdCountry, :CustRiskCountry, :CustNationality,");
-		insertSql.append(
-				" :CustClosedOn, :CustStmtFrq, :CustIsStmtCombined, :CustStmtLastDate, :CustStmtNextDate, :CustStmtDispatchMode,");
-		insertSql.append(
-				" :CustFirstBusinessDate, :CustAddlVar81, :CustAddlVar82, :CustAddlVar83, :CustAddlVar84, :CustAddlVar85, :CustAddlVar86,");
-		insertSql.append(
-				" :CustAddlVar87, :CustAddlVar88, :CustAddlVar89, :CustAddlDate1, :CustAddlDate2, :CustAddlDate3, :CustAddlDate4,");
-		insertSql.append(
-				" :CustAddlDate5, :CustAddlVar1, :CustAddlVar2, :CustAddlVar3, :CustAddlVar4, :CustAddlVar5, :CustAddlVar6, :CustAddlVar7,");
-		insertSql.append(
-				" :CustAddlVar8, :CustAddlVar9, :CustAddlVar10, :CustAddlVar11, :CustAddlDec1, :CustAddlDec2, :CustAddlDec3, :CustAddlDec4,");
-		insertSql.append(" :CustAddlDec5, :CustAddlInt1, :CustAddlInt2, :CustAddlInt3, :CustAddlInt4, :CustAddlInt5,");
-		insertSql.append(
-				" :DedupFound,:SkipDedup,:CustTotalExpense,:CustBlackListDate,:NoOfDependents,:CustCRCPR,:CustSourceID,");
-		insertSql.append(
-				" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber, :SalariedCustomer, :ApplicationNo, :Dnd,");
-		insertSql.append(
-				" :OtherCaste, :OtherReligion, :NatureOfBusiness, :EntityType, :CustResidentialSts, :Qualification, :Vip");
-		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
-		insertSql.append(" ,:CasteId, :ReligionId, :SubCategory, :MarginDeviation, :ResidentialStatus)");
+		StringBuilder sql = new StringBuilder("Insert Into Customers");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("(CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustSalutationCode, CustFName");
+		sql.append(", CustMName, CustLName, CustShrtName, CustFNameLclLng, CustMNameLclLng, CustLNameLclLng");
+		sql.append(", CustShrtNameLclLng, CustDftBranch, CustGenderCode, CustDOB, CustPOB, CustCOB, CustPassportNo");
+		sql.append(", CustMotherMaiden, CustIsMinor, CustReferedBy, CustDSA, CustDSADept, CustRO1, CustRO2");
+		sql.append(", CustGroupID, CustSts, CustStsChgDate, CustGroupSts, CustIsBlocked, CustIsActive, CustIsClosed");
+		sql.append(", CustInactiveReason, CustIsDecease, CustIsDormant, CustIsDelinquent, CustIsTradeFinCust");
+		sql.append(", CustTradeLicenceNum, CustTradeLicenceExpiry, CustPassportExpiry, CustVisaNum");
+		sql.append(", CustVisaExpiry, CustIsStaff, CustStaffID, CustIndustry, CustSector");
+		sql.append(", CustSubSector, CustProfession, CustTotalIncome, CustMaritalSts, CustEmpSts");
+		sql.append(", CustSegment, CustSubSegment, CustIsBlackListed, CustBLRsnCode, CustIsRejected, CustRejectedRsn");
+		sql.append(", CustBaseCcy, CustLng, CustParentCountry, CustResdCountry, CustRiskCountry, CustNationality");
+		sql.append(", CustClosedOn, CustStmtFrq, CustIsStmtCombined, CustStmtLastDate, CustStmtNextDate");
+		sql.append(", CustStmtDispatchMode, CustFirstBusinessDate, CustAddlVar81, CustAddlVar82, CustAddlVar83");
+		sql.append(", CustAddlVar84, CustAddlVar85, CustAddlVar86, CustAddlVar87, CustAddlVar88, CustAddlVar89");
+		sql.append(", CustAddlDate1, CustAddlDate2, CustAddlDate3, CustAddlDate4, CustAddlDate5, CustAddlVar1");
+		sql.append(", CustAddlVar2, CustAddlVar3, CustAddlVar4, CustAddlVar5, CustAddlVar6, CustAddlVar7");
+		sql.append(", CustAddlVar8, CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1, CustAddlDec2");
+		sql.append(", CustAddlDec3, CustAddlDec4, CustAddlDec5, CustAddlInt1, CustAddlInt2, CustAddlInt3");
+		sql.append(", CustAddlInt4, CustAddlInt5, DedupFound, SkipDedup, CustTotalExpense, CustBlackListDate");
+		sql.append(", NoOfDependents, CustCRCPR, CustSourceID, JointCust, JointCustName, JointCustDob");
+		sql.append(", CustRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer,ApplicationNo, Dnd");
+		sql.append(", OtherCaste, OtherReligion, NatureOfBusiness, EntityType, CustResidentialSts, Qualification");
+		sql.append(", Vip, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, CasteId, ReligionId, SubCategory, MarginDeviation, ResidentialStatus)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		logger.debug("Leaving");
-		return customer.getId();
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, c.getCustID());
+			ps.setString(index++, c.getCustCIF());
+			ps.setString(index++, c.getCustCoreBank());
+			ps.setString(index++, c.getCustCtgCode());
+			ps.setString(index++, c.getCustTypeCode());
+			ps.setString(index++, c.getCustSalutationCode());
+			ps.setString(index++, c.getCustFName());
+			ps.setString(index++, c.getCustMName());
+			ps.setString(index++, c.getCustLName());
+			ps.setString(index++, c.getCustShrtName());
+			ps.setString(index++, c.getCustFNameLclLng());
+			ps.setString(index++, c.getCustMNameLclLng());
+			ps.setString(index++, c.getCustLNameLclLng());
+			ps.setString(index++, c.getCustShrtNameLclLng());
+			ps.setString(index++, c.getCustDftBranch());
+			ps.setString(index++, c.getCustGenderCode());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustDOB()));
+			ps.setString(index++, c.getCustPOB());
+			ps.setString(index++, c.getCustCOB());
+			ps.setString(index++, c.getCustPassportNo());
+			ps.setString(index++, c.getCustMotherMaiden());
+			ps.setBoolean(index++, c.isCustIsMinor());
+			ps.setString(index++, c.getCustReferedBy());
+			ps.setString(index++, c.getCustDSA());
+			ps.setString(index++, c.getCustDSADept());
+			ps.setLong(index++, c.getCustRO1());
+			ps.setString(index++, c.getCustRO2());
+			ps.setLong(index++, c.getCustGroupID());
+			ps.setString(index++, c.getCustSts());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustStsChgDate()));
+			ps.setString(index++, c.getCustGroupSts());
+			ps.setBoolean(index++, c.isCustIsBlocked());
+			ps.setBoolean(index++, c.isCustIsActive());
+			ps.setBoolean(index++, c.isCustIsClosed());
+			ps.setString(index++, c.getCustInactiveReason());
+			ps.setBoolean(index++, c.isCustIsDecease());
+			ps.setBoolean(index++, c.isCustIsDormant());
+			ps.setBoolean(index++, c.isCustIsDelinquent());
+			ps.setBoolean(index++, c.isCustIsTradeFinCust());
+			ps.setString(index++, c.getCustTradeLicenceNum());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustTradeLicenceExpiry()));
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustPassportExpiry()));
+			ps.setString(index++, c.getCustVisaNum());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustVisaExpiry()));
+			ps.setBoolean(index++, c.isCustIsStaff());
+			ps.setString(index++, c.getCustStaffID());
+			ps.setString(index++, c.getCustIndustry());
+			ps.setString(index++, c.getCustSector());
+			ps.setString(index++, c.getCustSubSector());
+			ps.setString(index++, c.getCustProfession());
+			ps.setBigDecimal(index++, c.getCustTotalIncome());
+			ps.setString(index++, c.getCustMaritalSts());
+			ps.setString(index++, c.getCustEmpSts());
+			ps.setString(index++, c.getCustSegment());
+			ps.setString(index++, c.getCustSubSegment());
+			ps.setBoolean(index++, c.isCustIsBlackListed());
+			ps.setString(index++, c.getCustBLRsnCode());
+			ps.setBoolean(index++, c.isCustIsRejected());
+			ps.setString(index++, c.getCustRejectedRsn());
+			ps.setString(index++, c.getCustBaseCcy());
+			ps.setString(index++, c.getCustLng());
+			ps.setString(index++, c.getCustParentCountry());
+			ps.setString(index++, c.getCustResdCountry());
+			ps.setString(index++, c.getCustRiskCountry());
+			ps.setString(index++, c.getCustNationality());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustClosedOn()));
+			ps.setString(index++, c.getCustStmtFrq());
+			ps.setBoolean(index++, c.isCustIsStmtCombined());
+			ps.setTimestamp(index++, c.getCustStmtLastDate());
+			ps.setTimestamp(index++, c.getCustStmtNextDate());
+			ps.setString(index++, c.getCustStmtDispatchMode());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustFirstBusinessDate()));
+			ps.setString(index++, c.getCustAddlVar81());
+			ps.setString(index++, c.getCustAddlVar82());
+			ps.setString(index++, c.getCustAddlVar83());
+			ps.setString(index++, c.getCustAddlVar84());
+			ps.setString(index++, c.getCustAddlVar85());
+			ps.setString(index++, c.getCustAddlVar86());
+			ps.setString(index++, c.getCustAddlVar87());
+			ps.setString(index++, c.getCustAddlVar88());
+			ps.setString(index++, c.getCustAddlVar89());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate1()));
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate2()));
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate3()));
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate4()));
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate5()));
+			ps.setString(index++, c.getCustAddlVar1());
+			ps.setString(index++, c.getCustAddlVar2());
+			ps.setString(index++, c.getCustAddlVar3());
+			ps.setString(index++, c.getCustAddlVar4());
+			ps.setString(index++, c.getCustAddlVar5());
+			ps.setString(index++, c.getCustAddlVar6());
+			ps.setString(index++, c.getCustAddlVar7());
+			ps.setString(index++, c.getCustAddlVar8());
+			ps.setString(index++, c.getCustAddlVar9());
+			ps.setString(index++, c.getCustAddlVar10());
+			ps.setString(index++, c.getCustAddlVar11());
+			ps.setBigDecimal(index++, c.getCustAddlDec1());
+			ps.setDouble(index++, c.getCustAddlDec2());
+			ps.setDouble(index++, c.getCustAddlDec3());
+			ps.setDouble(index++, c.getCustAddlDec4());
+			ps.setDouble(index++, c.getCustAddlDec5());
+			ps.setInt(index++, c.getCustAddlInt1());
+			ps.setInt(index++, c.getCustAddlInt2());
+			ps.setInt(index++, c.getCustAddlInt3());
+			ps.setInt(index++, c.getCustAddlInt4());
+			ps.setInt(index++, c.getCustAddlInt5());
+			ps.setBoolean(index++, c.isDedupFound());
+			ps.setBoolean(index++, c.isSkipDedup());
+			ps.setBigDecimal(index++, c.getCustTotalExpense());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustBlackListDate()));
+			ps.setInt(index++, c.getNoOfDependents());
+			ps.setString(index++, c.getCustCRCPR());
+			ps.setString(index++, c.getCustSourceID());
+			ps.setBoolean(index++, c.isJointCust());
+			ps.setString(index++, c.getJointCustName());
+			ps.setDate(index++, JdbcUtil.getDate(c.getJointCustDob()));
+			ps.setString(index++, c.getCustRelation());
+			ps.setString(index++, c.getContactPersonName());
+			ps.setString(index++, c.getEmailID());
+			ps.setString(index++, c.getPhoneNumber());
+			ps.setBoolean(index++, c.isSalariedCustomer());
+			ps.setString(index++, c.getApplicationNo());
+			ps.setBoolean(index++, c.isDnd());
+			ps.setString(index++, c.getOtherCaste());
+			ps.setString(index++, c.getOtherReligion());
+			ps.setString(index++, c.getNatureOfBusiness());
+			ps.setString(index++, c.getEntityType());
+			ps.setString(index++, c.getCustResidentialSts());
+			ps.setString(index++, c.getQualification());
+			ps.setBoolean(index++, c.isVip());
+			ps.setInt(index++, c.getVersion());
+			ps.setLong(index++, c.getLastMntBy());
+			ps.setTimestamp(index++, c.getLastMntOn());
+			ps.setString(index++, c.getRecordStatus());
+			ps.setString(index++, c.getRoleCode());
+			ps.setString(index++, c.getNextRoleCode());
+			ps.setString(index++, c.getTaskId());
+			ps.setString(index++, c.getNextTaskId());
+			ps.setString(index++, c.getRecordType());
+			ps.setLong(index++, c.getWorkflowId());
+			ps.setLong(index++, c.getCasteId());
+			ps.setLong(index++, c.getReligionId());
+			ps.setString(index++, c.getSubCategory());
+			ps.setBoolean(index++, c.isMarginDeviation());
+			ps.setString(index, c.getResidentialStatus());
+		});
+
+		return c.getId();
 	}
 
-	/**
-	 * This method updates the Record Customers or Customers_Temp. if Record not updated then throws DataAccessException
-	 * with error 41004. update Customers by key CustID and Version
-	 * 
-	 * @param Customers (customer)
-	 * @param type      (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(Customer customer, String type) {
+	public void update(Customer c, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update Customers");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set CustCtgCode = :CustCtgCode,CustCoreBank =:CustCoreBank, CustTypeCode = :CustTypeCode, CustSalutationCode = :CustSalutationCode, CustFName = :CustFName,");
-		updateSql.append(
-				" CustMName = :CustMName, CustLName = :CustLName, CustShrtName = :CustShrtName, CustFNameLclLng = :CustFNameLclLng,");
-		updateSql.append(
-				" CustMNameLclLng = :CustMNameLclLng, CustLNameLclLng = :CustLNameLclLng, CustShrtNameLclLng = :CustShrtNameLclLng,");
-		updateSql.append(
-				" CustDftBranch = :CustDftBranch, CustGenderCode = :CustGenderCode, CustDOB = :CustDOB, CustPOB = :CustPOB,");
-		updateSql.append(
-				" CustCOB = :CustCOB, CustPassportNo = :CustPassportNo, CustMotherMaiden = :CustMotherMaiden, CustIsMinor = :CustIsMinor,");
-		updateSql.append(
-				" CustReferedBy = :CustReferedBy, CustDSA = :CustDSA, CustDSADept = :CustDSADept, CustRO1 = :CustRO1,");
-		updateSql.append(
-				" CustRO2 = :CustRO2, custRelation = :custRelation, CustGroupID = :CustGroupID, CustSts = :CustSts, CustStsChgDate = :CustStsChgDate,");
-		updateSql.append(
-				" CustGroupSts = :CustGroupSts, CustIsBlocked = :CustIsBlocked, CustIsActive = :CustIsActive, CustIsClosed = :CustIsClosed,");
-		updateSql.append(
-				" CustInactiveReason = :CustInactiveReason, CustIsDecease = :CustIsDecease, CustIsDormant = :CustIsDormant,");
-		updateSql.append(
-				" CustIsDelinquent = :CustIsDelinquent, CustIsTradeFinCust = :CustIsTradeFinCust, CustTradeLicenceNum = :CustTradeLicenceNum,");
-		updateSql.append(
-				" CustTradeLicenceExpiry= :CustTradeLicenceExpiry,CustPassportExpiry = :CustPassportExpiry,CustVisaNum = :CustVisaNum, ");
-		updateSql.append(
-				" CustVisaExpiry = :CustVisaExpiry, CustIsStaff = :CustIsStaff, CustStaffID = :CustStaffID, CustIndustry = :CustIndustry,");
-		updateSql
-				.append(" CustSector = :CustSector, CustSubSector = :CustSubSector, CustProfession = :CustProfession,");
-		updateSql.append(
-				" CustTotalIncome = :CustTotalIncome, CustMaritalSts = :CustMaritalSts, CustEmpSts = :CustEmpSts,");
-		updateSql.append(
-				" CustSegment = :CustSegment, CustSubSegment = :CustSubSegment, CustIsBlackListed = :CustIsBlackListed,");
-		updateSql.append(
-				" CustBLRsnCode = :CustBLRsnCode, CustIsRejected = :CustIsRejected, CustRejectedRsn = :CustRejectedRsn,");
-		updateSql.append(
-				" CustBaseCcy = :CustBaseCcy, CustLng = :CustLng, CustParentCountry = :CustParentCountry, CustResdCountry = :CustResdCountry,");
-		updateSql.append(
-				" CustRiskCountry = :CustRiskCountry, CustNationality = :CustNationality, CustClosedOn = :CustClosedOn,");
-		updateSql.append(
-				" CustStmtFrq = :CustStmtFrq, CustIsStmtCombined = :CustIsStmtCombined, CustStmtLastDate = :CustStmtLastDate,MarginDeviation = :MarginDeviation,");
-		updateSql.append(" CustStmtNextDate = :CustStmtNextDate, CustStmtDispatchMode = :CustStmtDispatchMode,");
-		updateSql.append(
-				" CustFirstBusinessDate = :CustFirstBusinessDate, CustAddlVar81 = :CustAddlVar81, CustAddlVar82 = :CustAddlVar82,");
-		updateSql.append(
-				" CustAddlVar83 = :CustAddlVar83, CustAddlVar84 = :CustAddlVar84, CustAddlVar85 = :CustAddlVar85,");
-		updateSql.append(
-				" CustAddlVar86 = :CustAddlVar86, CustAddlVar87 = :CustAddlVar87, CustAddlVar88 = :CustAddlVar88,");
-		updateSql.append(
-				" CustAddlVar89 = :CustAddlVar89, CustAddlDate1 = :CustAddlDate1, CustAddlDate2 = :CustAddlDate2,");
-		updateSql.append(
-				" CustAddlDate3 = :CustAddlDate3, CustAddlDate4 = :CustAddlDate4, CustAddlDate5 = :CustAddlDate5,");
-		updateSql.append(
-				" CustAddlVar1 = :CustAddlVar1, CustAddlVar2 = :CustAddlVar2, CustAddlVar3 = :CustAddlVar3, CustAddlVar4 = :CustAddlVar4,");
-		updateSql.append(
-				" CustAddlVar5 = :CustAddlVar5, CustAddlVar6 = :CustAddlVar6, CustAddlVar7 = :CustAddlVar7, CustAddlVar8 = :CustAddlVar8,");
-		updateSql.append(
-				" CustAddlVar9 = :CustAddlVar9, CustAddlVar10 = :CustAddlVar10, CustAddlVar11 = :CustAddlVar11, CustAddlDec1 = :CustAddlDec1,");
-		updateSql.append(
-				" CustAddlDec2 = :CustAddlDec2, CustAddlDec3 = :CustAddlDec3, CustAddlDec4 = :CustAddlDec4, CustAddlDec5 = :CustAddlDec5,");
-		updateSql.append(
-				" CustAddlInt1 = :CustAddlInt1, CustAddlInt2 = :CustAddlInt2, CustAddlInt3 = :CustAddlInt3, CustAddlInt4 = :CustAddlInt4,");
-		updateSql.append(
-				" CustAddlInt5 = :CustAddlInt5,DedupFound=:DedupFound,SkipDedup=:SkipDedup,CustTotalExpense=:CustTotalExpense,");
-		updateSql.append(
-				" CustBlackListDate = :CustBlackListDate, NoOfDependents=:NoOfDependents,CustCRCPR=:CustCRCPR,CustSourceID=:CustSourceID,");
-		updateSql.append(" JointCust = :JointCust, JointCustName = :JointCustName, JointCustDob = :JointCustDob,");
-		updateSql.append(
-				" ContactPersonName = :ContactPersonName, EmailID = :EmailID, PhoneNumber = :PhoneNumber, SalariedCustomer = :SalariedCustomer,");
-		updateSql.append(
-				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		updateSql.append(
-				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(
-				" ,CasteId = :CasteId, ReligionId = :ReligionId, SubCategory = :SubCategory, ApplicationNo = :ApplicationNo, Dnd = :Dnd, ResidentialStatus = :ResidentialStatus");
-		updateSql.append(
-				", OtherCaste= :OtherCaste, OtherReligion= :OtherReligion, NatureOfBusiness= :NatureOfBusiness, EntityType= :EntityType,");
-		updateSql.append(" CustResidentialSts= :CustResidentialSts, Qualification= :Qualification, Vip = :Vip");
-		updateSql.append(" Where CustID =:CustID");
+		StringBuilder sql = new StringBuilder("Update Customers").append(StringUtils.trimToEmpty(type));
+		sql.append(" Set CustCtgCode = ?, CustCoreBank = ?, CustTypeCode = ?, CustSalutationCode = ?");
+		sql.append(", CustFName = ?, CustMName = ?, CustLName = ?, CustShrtName = ?, CustFNameLclLng = ?");
+		sql.append(", CustMNameLclLng = ?, CustLNameLclLng = ?, CustShrtNameLclLng = ?, CustDftBranch = ?");
+		sql.append(", CustGenderCode = ?, CustDOB = ?, CustPOB = ?, CustCOB = ?, CustPassportNo = ?");
+		sql.append(", CustMotherMaiden = ?, CustIsMinor = ?, CustReferedBy = ?, CustDSA = ?");
+		sql.append(", CustDSADept = ?, CustRO1 = ?, CustRO2 = ?, custRelation = ?, CustGroupID = ?");
+		sql.append(", CustSts = ?, CustStsChgDate = ?, CustGroupSts = ?, CustIsBlocked = ?, CustIsActive = ?");
+		sql.append(", CustIsClosed = ?, CustInactiveReason = ?, CustIsDecease = ?, CustIsDormant = ?");
+		sql.append(", CustIsDelinquent = ?, CustIsTradeFinCust = ?, CustTradeLicenceNum = ?");
+		sql.append(", CustTradeLicenceExpiry= ?, CustPassportExpiry = ?, CustVisaNum = ?, CustVisaExpiry = ?");
+		sql.append(", CustIsStaff = ?, CustStaffID = ?, CustIndustry = ?, CustSector = ?, CustSubSector = ?");
+		sql.append(", CustProfession = ?, CustTotalIncome = ?, CustMaritalSts = ?, CustEmpSts = ?,CustSegment = ?");
+		sql.append(", CustSubSegment = ?, CustIsBlackListed = ?, CustBLRsnCode = ?, CustIsRejected = ?");
+		sql.append(", CustRejectedRsn = ?, CustBaseCcy = ?, CustLng = ?, CustParentCountry = ?, CustResdCountry = ?");
+		sql.append(", CustRiskCountry = ?, CustNationality = ?, CustClosedOn = ?, CustStmtFrq = ?");
+		sql.append(", CustIsStmtCombined = ?, CustStmtLastDate = ?, MarginDeviation = ?, CustStmtNextDate = ?");
+		sql.append(", CustStmtDispatchMode = ?, CustFirstBusinessDate = ?, CustAddlVar81 = ?, CustAddlVar82 = ?");
+		sql.append(", CustAddlVar83 = ?, CustAddlVar84 = ?, CustAddlVar85 = ?, CustAddlVar86 = ?, CustAddlVar87 = ?");
+		sql.append(", CustAddlVar88 = ?, CustAddlVar89 = ?, CustAddlDate1 = ?, CustAddlDate2 = ?");
+		sql.append(", CustAddlDate3 = ?, CustAddlDate4 = ?, CustAddlDate5 = ?, CustAddlVar1 = ?, CustAddlVar2 = ?");
+		sql.append(", CustAddlVar3 = ?, CustAddlVar4 = ?, CustAddlVar5 = ?, CustAddlVar6 = ?, CustAddlVar7 = ?");
+		sql.append(", CustAddlVar8 = ?, CustAddlVar9 = ?, CustAddlVar10 = ?, CustAddlVar11 = ?, CustAddlDec1 = ?");
+		sql.append(", CustAddlDec2 = ?, CustAddlDec3 = ?, CustAddlDec4 = ?, CustAddlDec5 = ?, CustAddlInt1 = ?");
+		sql.append(", CustAddlInt2 = ?, CustAddlInt3 = ?, CustAddlInt4 = ?, CustAddlInt5 = ?, DedupFound = ?");
+		sql.append(", SkipDedup = ?, CustTotalExpense = ?, CustBlackListDate = ?, NoOfDependents = ?, CustCRCPR = ?");
+		sql.append(", CustSourceID = ?, JointCust = ?, JointCustName = ?, JointCustDob = ?, ContactPersonName = ?");
+		sql.append(", EmailID = ?, PhoneNumber = ?, SalariedCustomer = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(", RecordStatus= ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?");
+		sql.append(", WorkflowId = ?, CasteId = ?, ReligionId = ?, SubCategory = ?, ApplicationNo = ?");
+		sql.append(", Dnd = ?, ResidentialStatus = ?, OtherCaste= ?, OtherReligion= ?, NatureOfBusiness= ?");
+		sql.append(", EntityType= ?, CustResidentialSts= ?, Qualification= ?, Vip = ?");
+		sql.append(" Where CustID = ?");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append(" and Version = ?");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, c.getCustCtgCode());
+			ps.setString(index++, c.getCustCoreBank());
+			ps.setString(index++, c.getCustTypeCode());
+			ps.setString(index++, c.getCustSalutationCode());
+			ps.setString(index++, c.getCustFName());
+			ps.setString(index++, c.getCustMName());
+			ps.setString(index++, c.getCustLName());
+			ps.setString(index++, c.getCustShrtName());
+			ps.setString(index++, c.getCustFNameLclLng());
+			ps.setString(index++, c.getCustMNameLclLng());
+			ps.setString(index++, c.getCustLNameLclLng());
+			ps.setString(index++, c.getCustShrtNameLclLng());
+			ps.setString(index++, c.getCustDftBranch());
+			ps.setString(index++, c.getCustGenderCode());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustDOB()));
+			ps.setString(index++, c.getCustPOB());
+			ps.setString(index++, c.getCustCOB());
+			ps.setString(index++, c.getCustPassportNo());
+			ps.setString(index++, c.getCustMotherMaiden());
+			ps.setBoolean(index++, c.isCustIsMinor());
+			ps.setString(index++, c.getCustReferedBy());
+			ps.setString(index++, c.getCustDSA());
+			ps.setString(index++, c.getCustDSADept());
+			ps.setLong(index++, c.getCustRO1());
+			ps.setString(index++, c.getCustRO2());
+			ps.setString(index++, c.getCustRelation());
+			ps.setLong(index++, c.getCustGroupID());
+			ps.setString(index++, c.getCustSts());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustStsChgDate()));
+			ps.setString(index++, c.getCustGroupSts());
+			ps.setBoolean(index++, c.isCustIsBlocked());
+			ps.setBoolean(index++, c.isCustIsActive());
+			ps.setBoolean(index++, c.isCustIsClosed());
+			ps.setString(index++, c.getCustInactiveReason());
+			ps.setBoolean(index++, c.isCustIsDecease());
+			ps.setBoolean(index++, c.isCustIsDormant());
+			ps.setBoolean(index++, c.isCustIsDelinquent());
+			ps.setBoolean(index++, c.isCustIsTradeFinCust());
+			ps.setString(index++, c.getCustTradeLicenceNum());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustTradeLicenceExpiry()));
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustPassportExpiry()));
+			ps.setString(index++, c.getCustVisaNum());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustVisaExpiry()));
+			ps.setBoolean(index++, c.isCustIsStaff());
+			ps.setString(index++, c.getCustStaffID());
+			ps.setString(index++, c.getCustIndustry());
+			ps.setString(index++, c.getCustSector());
+			ps.setString(index++, c.getCustSubSector());
+			ps.setString(index++, c.getCustProfession());
+			ps.setBigDecimal(index++, c.getCustTotalIncome());
+			ps.setString(index++, c.getCustMaritalSts());
+			ps.setString(index++, c.getCustEmpSts());
+			ps.setString(index++, c.getCustSegment());
+			ps.setString(index++, c.getCustSubSegment());
+			ps.setBoolean(index++, c.isCustIsBlackListed());
+			ps.setString(index++, c.getCustBLRsnCode());
+			ps.setBoolean(index++, c.isCustIsRejected());
+			ps.setString(index++, c.getCustRejectedRsn());
+			ps.setString(index++, c.getCustBaseCcy());
+			ps.setString(index++, c.getCustLng());
+			ps.setString(index++, c.getCustParentCountry());
+			ps.setString(index++, c.getCustResdCountry());
+			ps.setString(index++, c.getCustRiskCountry());
+			ps.setString(index++, c.getCustNationality());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustClosedOn()));
+			ps.setString(index++, c.getCustStmtFrq());
+			ps.setBoolean(index++, c.isCustIsStmtCombined());
+			ps.setTimestamp(index++, c.getCustStmtLastDate());
+			ps.setBoolean(index++, c.isMarginDeviation());
+			ps.setTimestamp(index++, c.getCustStmtNextDate());
+			ps.setString(index++, c.getCustStmtDispatchMode());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustFirstBusinessDate()));
+			ps.setString(index++, c.getCustAddlVar81());
+			ps.setString(index++, c.getCustAddlVar82());
+			ps.setString(index++, c.getCustAddlVar83());
+			ps.setString(index++, c.getCustAddlVar84());
+			ps.setString(index++, c.getCustAddlVar85());
+			ps.setString(index++, c.getCustAddlVar86());
+			ps.setString(index++, c.getCustAddlVar87());
+			ps.setString(index++, c.getCustAddlVar88());
+			ps.setString(index++, c.getCustAddlVar89());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate1()));
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate2()));
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate3()));
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate4()));
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate5()));
+			ps.setString(index++, c.getCustAddlVar1());
+			ps.setString(index++, c.getCustAddlVar2());
+			ps.setString(index++, c.getCustAddlVar3());
+			ps.setString(index++, c.getCustAddlVar4());
+			ps.setString(index++, c.getCustAddlVar5());
+			ps.setString(index++, c.getCustAddlVar6());
+			ps.setString(index++, c.getCustAddlVar7());
+			ps.setString(index++, c.getCustAddlVar8());
+			ps.setString(index++, c.getCustAddlVar9());
+			ps.setString(index++, c.getCustAddlVar10());
+			ps.setString(index++, c.getCustAddlVar11());
+			ps.setBigDecimal(index++, c.getCustAddlDec1());
+			ps.setDouble(index++, c.getCustAddlDec2());
+			ps.setDouble(index++, c.getCustAddlDec3());
+			ps.setDouble(index++, c.getCustAddlDec4());
+			ps.setDouble(index++, c.getCustAddlDec5());
+			ps.setInt(index++, c.getCustAddlInt1());
+			ps.setInt(index++, c.getCustAddlInt2());
+			ps.setInt(index++, c.getCustAddlInt3());
+			ps.setInt(index++, c.getCustAddlInt4());
+			ps.setInt(index++, c.getCustAddlInt5());
+			ps.setBoolean(index++, c.isDedupFound());
+			ps.setBoolean(index++, c.isSkipDedup());
+			ps.setBigDecimal(index++, c.getCustTotalExpense());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustBlackListDate()));
+			ps.setInt(index++, c.getNoOfDependents());
+			ps.setString(index++, c.getCustCRCPR());
+			ps.setString(index++, c.getCustSourceID());
+			ps.setBoolean(index++, c.isJointCust());
+			ps.setString(index++, c.getJointCustName());
+			ps.setDate(index++, JdbcUtil.getDate(c.getJointCustDob()));
+			ps.setString(index++, c.getContactPersonName());
+			ps.setString(index++, c.getEmailID());
+			ps.setString(index++, c.getPhoneNumber());
+			ps.setBoolean(index++, c.isSalariedCustomer());
+			ps.setInt(index++, c.getVersion());
+			ps.setLong(index++, c.getLastMntBy());
+			ps.setTimestamp(index++, c.getLastMntOn());
+			ps.setString(index++, c.getRecordStatus());
+			ps.setString(index++, c.getRoleCode());
+			ps.setString(index++, c.getNextRoleCode());
+			ps.setString(index++, c.getTaskId());
+			ps.setString(index++, c.getNextTaskId());
+			ps.setString(index++, c.getRecordType());
+			ps.setLong(index++, c.getWorkflowId());
+			ps.setLong(index++, c.getCasteId());
+			ps.setLong(index++, c.getReligionId());
+			ps.setString(index++, c.getSubCategory());
+			ps.setString(index++, c.getApplicationNo());
+			ps.setBoolean(index++, c.isDnd());
+			ps.setString(index++, c.getResidentialStatus());
+			ps.setString(index++, c.getOtherCaste());
+			ps.setString(index++, c.getOtherReligion());
+			ps.setString(index++, c.getNatureOfBusiness());
+			ps.setString(index++, c.getEntityType());
+			ps.setString(index++, c.getCustResidentialSts());
+			ps.setString(index++, c.getQualification());
+			ps.setBoolean(index++, c.isVip());
+
+			ps.setLong(index++, c.getCustID());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index, c.getVersion() - 1);
+			}
+
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+
 	}
 
 	@Override
 	public boolean isDuplicateCif(long custId, String cif) {
-		logger.debug(Literal.ENTERING);
-
-		boolean exists = false;
-
-		// Prepare the parameter source.
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("CustID", custId);
-		paramSource.addValue("CustCIF", cif);
-
-		// Check whether the document id exists for another customer.
 		String sql = QueryUtil.getCountQuery(new String[] { "Customers_Temp", "Customers" },
-				"CustID != :CustID and CustCIF = :CustCIF");
+				"CustID != ? and CustCIF = ?");
 
-		logger.trace(Literal.SQL + sql);
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Object[] obj = new Object[] { custId, cif, custId, cif };
 
-		if (count > 0) {
-			exists = true;
-		}
+		logger.debug(Literal.SQL.concat(sql));
 
-		logger.debug(Literal.LEAVING);
-		return exists;
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
+	@Override
 	public Customer getCustomerByCIF(String cifId, String type) {
 		StringBuilder sql = selectCustomerBasicInfo(type);
 		sql.append(" Where CustCIF = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
-
-		CustomerRowMapper rowMapper = new CustomerRowMapper(type);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, cifId);
+			return this.jdbcOperations.queryForObject(sql.toString(), new CustomerRowMapper(type), cifId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -753,11 +888,12 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			sql.append(", LovDescCustStsName, CasteCode, CasteDesc, ReligionCode, ReligionDesc");
 		}
 
-		sql.append(" from Customers");
+		sql.append(" From Customers");
 		sql.append(StringUtils.trimToEmpty(type));
 		return sql;
 	}
 
+	@Override
 	public Customer checkCustomerByCIF(String cif, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, CustCIF");
@@ -765,49 +901,86 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CustCIF = ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cif }, (rs, i) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 				Customer c = new Customer();
 
 				c.setCustID(rs.getLong("CustID"));
 				c.setCustCIF(rs.getString("CustCIF"));
 
 				return c;
-			});
+			}, cif);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in Customers{} for the specified CustCIF >> {}", type, cif);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
-	/**
-	 * fetch customer and Employee details
-	 * 
-	 * @return WIFCustomer
-	 */
-	public WIFCustomer getWIFCustomerByCIF(long cifId, String type) {
-		logger.debug("Entering");
-		WIFCustomer wifCustomer = new WIFCustomer();
-		wifCustomer.setCustID(cifId);
+	@Override
+	public Customer getCustomer(String cif) {
+		String sql = "Select CustID, CustCIF From Customers Where CustCIF = ?";
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT T1.CustCRCPR, T1.CustFName, T1.CustShrtName, T1.CustTypeCode, T1.CustCtgCode, T1.CustDOB, T1.custNationality,");
-		selectSql.append(
-				" T1.custGenderCode, T1.custSalutationCode, T1.custMaritalSts, T1.CustEmpSts,T1.CustTotalIncome as TotalIncome,T1.custTotalExpense as TotalExpense,T1.CustBaseCcy,T1.CustSubSector,");
-		selectSql.append(
-				" T1.NoOfDependents,T1.SalariedCustomer,T1.LovDescCustMaritalStsName,T1.LovDescCustCtgCodeName,T1.LovDescCustTypeCodeName,T1.LovDescCustNationalityName,T1.LovDescCustEmpStsName ");
-		selectSql.append(" FROM  Customers_View  T1  ");
-		selectSql.append(" Where T1.CustID=:CustID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wifCustomer);
-		RowMapper<WIFCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(WIFCustomer.class);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql, (rs, i) -> {
+				Customer c = new Customer();
+
+				c.setCustID(rs.getLong("CustID"));
+				c.setCustCIF(rs.getString("CustCIF"));
+
+				return c;
+			}, cif);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	public WIFCustomer getWIFCustomerByCIF(long cifId, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustCRCPR, CustShrtName, CustTypeCode, CustCtgCode");
+		sql.append(", CustDOB, CustNationality, CustGenderCode, CustSalutationCode");
+		sql.append(", CustMaritalSts, CustEmpSts, CustTotalIncome");
+		sql.append(", CustTotalExpense, CustBaseCcy, CustSubSector");
+		sql.append(", NoOfDependents, SalariedCustomer, LovDescCustMaritalStsName, LovDescCustCtgCodeName");
+		sql.append(", LovDescCustTypeCodeName, LovDescCustNationalityName, LovDescCustEmpStsName");
+		sql.append(" From Customers_View");
+		sql.append(" Where CustID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+
+				WIFCustomer wif = new WIFCustomer();
+
+				wif.setCustCRCPR(rs.getString("CustCRCPR"));
+				wif.setCustShrtName(rs.getString("CustShrtName"));
+				wif.setCustTypeCode(rs.getString("CustTypeCode"));
+				wif.setCustCtgCode(rs.getString("CustCtgCode"));
+				wif.setCustDOB(JdbcUtil.getDate(rs.getDate("CustDOB")));
+				wif.setCustNationality(rs.getString("CustNationality"));
+				wif.setCustGenderCode(rs.getString("CustGenderCode"));
+				wif.setCustSalutationCode(rs.getString("CustSalutationCode"));
+				wif.setCustMaritalSts(rs.getString("CustMaritalSts"));
+				wif.setCustEmpSts(rs.getString("CustEmpSts"));
+				wif.setTotalIncome(rs.getBigDecimal("CustTotalIncome"));
+				wif.setTotalExpense(rs.getBigDecimal("CustTotalExpense"));
+				wif.setCustBaseCcy(rs.getString("CustBaseCcy"));
+				wif.setCustSubSector(rs.getString("CustSubSector"));
+				wif.setNoOfDependents(rs.getInt("NoOfDependents"));
+				wif.setSalariedCustomer(rs.getBoolean("SalariedCustomer"));
+				wif.setLovDescCustMaritalStsName(rs.getString("LovDescCustMaritalStsName"));
+				wif.setLovDescCustCtgCodeName(rs.getString("LovDescCustCtgCodeName"));
+				wif.setLovDescCustTypeCodeName(rs.getString("LovDescCustTypeCodeName"));
+				wif.setLovDescCustNationalityName(rs.getString("LovDescCustNationalityName"));
+				wif.setLovDescCustEmpStsName(rs.getString("LovDescCustEmpStsName"));
+
+				return wif;
+			}, cifId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -821,17 +994,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public List<FinanceProfitDetail> getCustFinAmtDetails(long custId, CustomerEligibilityCheck eligibilityCheck) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinCcy, TotalPriBal, TotalPftBal, ODProfit, ODPrincipal");
-		sql.append(" from FinPftDetails");
-		sql.append(" where CustID = ?");
+		String sql = "Select FinCcy, TotalPriBal, TotalPftBal, ODProfit, ODPrincipal From FinPftDetails Where CustID = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-			ps.setLong(index++, custId);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			FinanceProfitDetail fpd = new FinanceProfitDetail();
 
 			fpd.setFinCcy(rs.getString("FinCcy"));
@@ -841,77 +1008,45 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
 
 			return fpd;
-		});
+		}, custId);
 	}
 
 	@Override
 	public String getCustEmpDesg(long custID) {
-		logger.debug("Entering");
+		String sql = "Select CustEmpDesg From CustomerEmpDetails Where CustID = ? and CurrentEmployer = ?";
 
-		String custEmpDesg = "";
-		CustomerEmploymentDetail detail = new CustomerEmploymentDetail();
-		detail.setCustID(custID);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT CustEmpDesg ");
-		selectSql.append(" FROM  CustomerEmpDetails ");
-		selectSql.append(" WHERE CustID=:CustID AND CurrentEmployer = 1 ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			custEmpDesg = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcOperations.queryForObject(sql, String.class, custID, 1);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			custEmpDesg = "";
+			return "";
 		}
-
-		logger.debug("Leaving");
-		return custEmpDesg == null ? "" : custEmpDesg;
 	}
 
 	@Override
 	public String getCustCurEmpAlocType(long custID) {
-		logger.debug("Entering");
+		String sql = "Select EmpAlocationType From CustomerEmpDetails_AView Where CustID = ? and CurrentEmployer = ?";
 
-		String custCurEmpAloctype = "";
-		CustomerEmploymentDetail detail = new CustomerEmploymentDetail();
-		detail.setCustID(custID);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT EmpAlocationType ");
-		selectSql.append(" FROM  CustomerEmpDetails_AView ");
-		selectSql.append(" WHERE CustID=:CustID AND CurrentEmployer = 1 ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			custCurEmpAloctype = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcOperations.queryForObject(sql, String.class, custID, 1);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			custCurEmpAloctype = "";
+			return "";
 		}
-
-		logger.debug("Leaving");
-		return custCurEmpAloctype == null ? "" : custCurEmpAloctype;
 	}
 
 	@Override
 	public BigDecimal getCustRepayOtherTotal(long custID) {
-		logger.debug("Entering");
+		String sql = "Select CustRepayOther From CustOthExpense_View Where CustID = ?";
 
-		CustomerIncome detail = new CustomerIncome();
-		detail.setCustId(custID);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT CustRepayOther ");
-		selectSql.append(" FROM  CustOthExpense_View ");
-		selectSql.append(" WHERE CustID=:CustID ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, custID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;
@@ -920,45 +1055,35 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public BigDecimal getCustRepayBankTotal(long custID) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustId, TotalRepayAmt, MaturityDate, FinStartDate, FinCcy");
-		sql.append(" From FinanceMain");
-		sql.append(" Where FinIsActive = 1 and CustID = ?");
+		String sql = "Select CustId, TotalRepayAmt, MaturityDate, FinStartDate, FinCcy From FinanceMain Where FinIsActive = ? and CustID = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql));
 
-		List<CustomerIncome> incDtls = null;
-		BigDecimal crb = BigDecimal.ZERO;
+		List<CustomerIncome> incDtls = this.jdbcOperations.query(sql, (rs, rowNum) -> {
+			CustomerIncome custInc = new CustomerIncome();
 
-		try {
-			incDtls = this.jdbcOperations.query(sql.toString(), new Object[] { custID }, (rs, rowNum) -> {
-				CustomerIncome custInc = new CustomerIncome();
+			custInc.setFinCcy(rs.getString("FinCcy"));
+			custInc.setTotalRepayAmt(rs.getBigDecimal("TotalRepayAmt"));
+			custInc.setCustId(rs.getLong("CustId"));
+			custInc.setFinStartDate(rs.getDate("FinStartDate"));
+			custInc.setMaturityDate(rs.getDate("MaturityDate"));
 
-				custInc.setFinCcy(rs.getString("FinCcy"));
-				custInc.setTotalRepayAmt(rs.getBigDecimal("TotalRepayAmt"));
-				custInc.setCustId(rs.getLong("CustId"));
-				custInc.setFinStartDate(rs.getDate("FinStartDate"));
-				custInc.setMaturityDate(rs.getDate("MaturityDate"));
+			return custInc;
+		}, 1, custID);
 
-				return custInc;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in FinanceMain for the Customer Id >> {}", custID);
-		}
 		if (CollectionUtils.isEmpty(incDtls)) {
-			return crb;
+			return BigDecimal.ZERO;
 		}
 
+		BigDecimal crb = BigDecimal.ZERO;
 		String appCurrency = SysParamUtil.getAppCurrency();
 
 		for (CustomerIncome ci : incDtls) {
 			ci.setToCcy(appCurrency);
 
 			int months = DateUtil.getMonthsBetween(ci.getFinStartDate(), ci.getMaturityDate());
-			BigDecimal totalRepayAmt = BigDecimal.ZERO;
-			if (months == 0) {
-				totalRepayAmt = ci.getTotalRepayAmt();
-			} else {
+			BigDecimal totalRepayAmt = ci.getTotalRepayAmt();
+			if (months > 0) {
 				totalRepayAmt = ci.getTotalRepayAmt().divide(new BigDecimal(months), RoundingMode.HALF_UP);
 			}
 
@@ -971,29 +1096,30 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public BigDecimal getCustRepayProcBank(long custID, String curFinReference) {
-		StringBuilder sql = new StringBuilder("select CustId CustCif, TotalRepayAmt, MaturityDate, FinStartDate,");
-		sql.append(" FinCcy");
-		sql.append(" from FinanceMain_Temp where CustID = :CustID and RcdMaintainSts is null");
-		sql.append(" and FinReference <> :FinReference");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustId CustCif, TotalRepayAmt, MaturityDate, FinStartDate, FinCcy");
+		sql.append(" From FinanceMain_Temp Where CustID = ? and RcdMaintainSts is null and FinReference <> ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("CustID", custID);
-		paramSource.addValue("FinReference", curFinReference);
+		List<FinanceExposure> financeExposures = this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinanceExposure fe = new FinanceExposure();
 
-		RowMapper<FinanceExposure> rowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
+			fe.setCustCif(rs.getString("CustId"));
+			fe.setTotalRepayAmt(rs.getBigDecimal("TotalRepayAmt"));
+			fe.setMaturityDate(JdbcUtil.getDate(rs.getDate("MaturityDate")));
+			fe.setFinStartDate(JdbcUtil.getDate(rs.getDate("FinStartDate")));
+			fe.setFinCCY(rs.getString("FinCcy"));
 
-		List<FinanceExposure> financeExposures = this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			return fe;
+		}, custID, curFinReference);
 
 		String toCcy = SysParamUtil.getAppCurrency();
 		BigDecimal totalRepayAmt = BigDecimal.ZERO;
-		BigDecimal repayAmt;
-		int months;
 
 		for (FinanceExposure finExposure : financeExposures) {
-			months = DateUtility.getMonthsBetween(finExposure.getFinStartDate(), finExposure.getMaturityDate(), true);
-			repayAmt = finExposure.getTotalRepayAmt();
+			int months = DateUtil.getMonthsBetween(finExposure.getFinStartDate(), finExposure.getMaturityDate());
+			BigDecimal repayAmt = finExposure.getTotalRepayAmt();
 
 			if (months > 0) {
 				repayAmt = repayAmt.divide(new BigDecimal(months), RoundingMode.HALF_UP);
@@ -1013,7 +1139,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public FinanceExposure getCoAppRepayBankTotal(String custCIF) {
 		String sql = "Select CustID, CustBaseCcy, CustTotalIncome, CustTotalExpense From Customers Where CustCIF = ?";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
 			return jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
@@ -1048,39 +1174,37 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" Where f.finStatus = s.CustStsCode and f.CustID = ?");
 		sql.append(") t2 on t1.DueDays = t2.MaxDays");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custID }, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, custID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.debug("Records are not found in BMTCustStatusCodes for the specified customer ID >> {}", custID);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
 	public String getCustWorstStsbyCurFinSts(long custID, String finReference, String curFinSts) {
-		logger.debug("Entering");
-
 		String custWorstSts = "";
 		FinanceMain main = new FinanceMain();
 		main.setCustID(custID);
 		main.setFinReference(finReference);
 		main.setFinStatus(curFinSts);
 
-		StringBuilder selectSql = new StringBuilder(" Select CustStsCode from BMTCustStatusCodes ");
-		selectSql.append(
-				" WHERE DueDays= (Select MAX(MaxODDays)MaxDays from (select MAX(DueDays)MaxODDays from FinanceMain F ");
+		StringBuilder selectSql = new StringBuilder("Select CustStsCode from BMTCustStatusCodes  Where DueDays = ");
+		selectSql.append("(Select MAX(MaxODDays)MaxDays from (select MAX(DueDays) MaxODDays from FinanceMain F ");
+
 		if (App.DATABASE == Database.SQL_SERVER) {
 			selectSql.append(" WITH(NOLOCK) ");
 		}
-		selectSql.append(", BMTCustStatusCodes S  ");
+
+		selectSql.append(", BMTCustStatusCodes S");
 		selectSql.append(
-				" WHERE F.FinStatus = S.CustStsCode and F.CustID = :CustID and F.FinReference <> :FinReference	UNION ");
+				" Where F.FinStatus = S.CustStsCode and F.CustID = :CustID and F.FinReference <> :FinReference	UNION ");
 		selectSql.append(" Select DueDays from BMTCustStatusCodes where CustStsCode=:FinStatus ) T )  ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(main);
 
 		try {
@@ -1090,27 +1214,24 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			custWorstSts = "";
 		}
 
-		logger.debug("Leaving");
 		return custWorstSts == null ? "" : custWorstSts;
 	}
 
 	@Override
 	public String getCustWorstStsDesc(long custID) {
-		logger.debug("Entering");
-
 		String custWorstSts = "";
 		CustomerEmploymentDetail detail = new CustomerEmploymentDetail();
 		detail.setCustID(custID);
 
-		StringBuilder selectSql = new StringBuilder(" SELECT T1.CustStsDescription FROM BMTCustStatusCodes T1 ");
-		selectSql.append(" INNER JOIN (SELECT MAX(DueDays) MaxDays from FinanceMain F ");
+		StringBuilder selectSql = new StringBuilder("Select T1.CustStsDescription From BMTCustStatusCodes T1");
+		selectSql.append(" Inner Join (Select MAX(DueDays) MaxDays from FinanceMain F ");
 		if (App.DATABASE == Database.SQL_SERVER) {
 			selectSql.append(" WITH(NOLOCK) ");
 		}
 		selectSql.append(
 				" , BMTCustStatusCodes S  WHERE F.FinStatus = S.CustStsCode and F.CustID = :CustID)T2 ON T1.DueDays=T2.MaxDays  ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 
 		try {
@@ -1119,29 +1240,18 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			logger.warn(Message.NO_RECORD_FOUND);
 			custWorstSts = "";
 		}
-		logger.debug("Leaving");
+
 		return custWorstSts == null ? "" : custWorstSts;
 	}
 
-	/**
-	 * Method for Checking JOint Customer Existence in Customer Details Data
-	 */
 	@Override
 	public boolean isJointCustExist(long custID) {
-		logger.debug("Entering");
+		String sql = "Select JointCust From Customers_AView Where CustID = ?";
 
-		Customer detail = new Customer();
-		detail.setCustID(custID);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT JointCust ");
-		selectSql.append(" FROM  Customers_AView ");
-		selectSql.append(" WHERE CustID=:CustID ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Boolean.class);
+			return this.jdbcOperations.queryForObject(sql, Boolean.class, custID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return false;
@@ -1149,173 +1259,223 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	@Override
-	public long saveWIFCustomer(WIFCustomer customer) {
-
-		logger.debug("Entering");
-
-		if (customer.getCustID() == 0 || customer.getCustID() == Long.MIN_VALUE) {
-			customer.setCustID(getNextValue("SeqWIFCustomer"));
+	public long saveWIFCustomer(WIFCustomer c) {
+		if (c.getCustID() == 0 || c.getCustID() == Long.MIN_VALUE) {
+			c.setCustID(getNextValue("SeqWIFCustomer"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into WIFCustomers");
-		insertSql.append(
-				" (CustID , CustCRCPR , CustCtgCode , CustTypeCode , CustShrtName , CustGenderCode , CustDOB , ");
-		insertSql.append(
-				" CustSector , CustSubSector , CustMaritalSts , CustEmpSts , CustIsBlackListed , CustBlackListDate , ");
-		insertSql.append(" NoOfDependents , CustBaseCcy , CustNationality , JointCust, ExistCustID, ElgRequired, ");
-		insertSql.append(
-				" SalariedCustomer,EmpName,EmpDept,EmpDesg,TotalIncome,TotalExpense,CustSalutationCode,CustSegment)");
-		insertSql.append(
-				" VALUES (:CustID , :CustCRCPR , :CustCtgCode , :CustTypeCode , :CustShrtName , :CustGenderCode , :CustDOB , ");
-		insertSql.append(
-				" :CustSector , :CustSubSector , :CustMaritalSts , :CustEmpSts , :CustIsBlackListed , :CustBlackListDate , ");
-		insertSql
-				.append(" :NoOfDependents , :CustBaseCcy , :CustNationality ,:JointCust, :ExistCustID, :ElgRequired ,");
-		insertSql.append(
-				" :SalariedCustomer,:EmpName,:EmpDept,:EmpDesg,:TotalIncome,:TotalExpense,:CustSalutationCode,:CustSegment)");
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		StringBuilder sql = new StringBuilder("Insert Into WIFCustomers");
+		sql.append(" (CustID, CustCRCPR, CustCtgCode, CustTypeCode, CustShrtName, CustGenderCode, CustDOB");
+		sql.append(", CustSector, CustSubSector, CustMaritalSts, CustEmpSts, CustIsBlackListed");
+		sql.append(", CustBlackListDate, NoOfDependents, CustBaseCcy, CustNationality, JointCust");
+		sql.append(", ExistCustID, ElgRequired, SalariedCustomer, EmpName, EmpDept");
+		sql.append(", EmpDesg, TotalIncome, TotalExpense, CustSalutationCode, CustSegment)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("Leaving");
-		return customer.getCustID();
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, c.getCustID());
+			ps.setString(index++, c.getCustCRCPR());
+			ps.setString(index++, c.getCustCtgCode());
+			ps.setString(index++, c.getCustTypeCode());
+			ps.setString(index++, c.getCustShrtName());
+			ps.setString(index++, c.getCustGenderCode());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustDOB()));
+			ps.setString(index++, c.getCustSector());
+			ps.setString(index++, c.getCustSubSector());
+			ps.setString(index++, c.getCustMaritalSts());
+			ps.setString(index++, c.getCustEmpSts());
+			ps.setBoolean(index++, c.isCustIsBlackListed());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustBlackListDate()));
+			ps.setInt(index++, c.getNoOfDependents());
+			ps.setString(index++, c.getCustBaseCcy());
+			ps.setString(index++, c.getCustNationality());
+			ps.setBoolean(index++, c.isJointCust());
+			ps.setLong(index++, c.getExistCustID());
+			ps.setBoolean(index++, c.isElgRequired());
+			ps.setBoolean(index++, c.isSalariedCustomer());
+			ps.setLong(index++, c.getEmpName());
+			ps.setString(index++, c.getEmpDept());
+			ps.setString(index++, c.getEmpDesg());
+			ps.setBigDecimal(index++, c.getTotalIncome());
+			ps.setBigDecimal(index++, c.getTotalExpense());
+			ps.setString(index++, c.getCustSalutationCode());
+			ps.setString(index, c.getCustSegment());
+		});
+
+		return c.getCustID();
 	}
 
 	@Override
-	public void updateWIFCustomer(WIFCustomer customer) {
+	public void updateWIFCustomer(WIFCustomer c) {
 		int recordCount = 0;
-		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder(" Update WIFCustomers");
-		updateSql.append(" Set CustCRCPR=:CustCRCPR , CustCtgCode=:CustCtgCode , CustTypeCode=:CustTypeCode , ");
-		updateSql.append(
-				" CustShrtName=:CustShrtName , CustGenderCode=:CustGenderCode , CustDOB=:CustDOB , CustSector=:CustSector , ");
-		updateSql.append(" CustSubSector=:CustSubSector , CustMaritalSts=:CustMaritalSts , CustEmpSts=:CustEmpSts , ");
-		updateSql.append(
-				" CustIsBlackListed=:CustIsBlackListed , CustBlackListDate=:CustBlackListDate , NoOfDependents=:NoOfDependents , ");
-		updateSql.append(
-				" CustBaseCcy=:CustBaseCcy , CustNationality=:CustNationality , JointCust=:JointCust , ExistCustID=:ExistCustID, ElgRequired=:ElgRequired ,");
-		updateSql.append(
-				" SalariedCustomer=:SalariedCustomer,EmpName=:EmpName,EmpDept=:EmpDept,EmpDesg=:EmpDesg,TotalIncome=:TotalIncome,");
-		updateSql.append("TotalExpense=:TotalExpense,CustSalutationCode=:CustSalutationCode,CustSegment=:CustSegment");
-		updateSql.append(" WHERE CustID=:CustID ");
+		StringBuilder sql = new StringBuilder(" Update WIFCustomers");
+		sql.append(" Set CustCRCPR= ?, CustCtgCode = ?, CustTypeCode = ?");
+		sql.append(", CustShrtName = ?, CustGenderCode = ?, CustDOB = ?, CustSector = ?");
+		sql.append(", CustSubSector = ?, CustMaritalSts = ?, CustEmpSts = ?");
+		sql.append(", CustIsBlackListed = ?, CustBlackListDate = ?, NoOfDependents = ?");
+		sql.append(", CustBaseCcy = ?, CustNationality = ?, JointCust = ?, ExistCustID = ?, ElgRequired = ?");
+		sql.append(", SalariedCustomer = ?, EmpName = ?, EmpDept = ?, EmpDesg = ?, TotalIncome = ?");
+		sql.append(", TotalExpense = ?, CustSalutationCode = ?, CustSegment = ?");
+		sql.append(" Where CustID = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, c.getCustCRCPR());
+			ps.setString(index++, c.getCustCtgCode());
+			ps.setString(index++, c.getCustTypeCode());
+			ps.setString(index++, c.getCustShrtName());
+			ps.setString(index++, c.getCustGenderCode());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustDOB()));
+			ps.setString(index++, c.getCustSector());
+			ps.setString(index++, c.getCustSubSector());
+			ps.setString(index++, c.getCustMaritalSts());
+			ps.setString(index++, c.getCustEmpSts());
+			ps.setBoolean(index++, c.isCustIsBlackListed());
+			ps.setDate(index++, JdbcUtil.getDate(c.getCustBlackListDate()));
+			ps.setInt(index++, c.getNoOfDependents());
+			ps.setString(index++, c.getCustBaseCcy());
+			ps.setString(index++, c.getCustNationality());
+			ps.setBoolean(index++, c.isJointCust());
+			ps.setLong(index++, c.getExistCustID());
+			ps.setBoolean(index++, c.isElgRequired());
+			ps.setBoolean(index++, c.isSalariedCustomer());
+			ps.setLong(index++, c.getEmpName());
+			ps.setString(index++, c.getEmpDept());
+			ps.setString(index++, c.getEmpDesg());
+			ps.setBigDecimal(index++, c.getTotalIncome());
+			ps.setBigDecimal(index++, c.getTotalExpense());
+			ps.setString(index++, c.getCustSalutationCode());
+			ps.setString(index++, c.getCustSegment());
+
+			ps.setLong(index, c.getCustID());
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 
 	}
 
-	/**
-	 * Fetch the Record Customers details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return Customer
-	 */
 	@Override
 	public WIFCustomer getWIFCustomerByID(final long custId, String custCRCPR, String type) {
-		logger.debug("Entering");
-		WIFCustomer customer = new WIFCustomer();
-		customer.setCustID(custId);
-		customer.setCustCRCPR(custCRCPR);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustCtgCode, CustTypeCode, CustShrtName, CustGenderCode, CustDOB, CustSector");
+		sql.append(", CustSubSector, CustMaritalSts, CustEmpSts, CustIsBlackListed, CustBlackListDate, CustCRCPR");
+		sql.append(", NoOfDependents, CustBaseCcy, CustNationality, JointCust, ExistCustID, ElgRequired, CustSegment");
+		sql.append(", SalariedCustomer, EmpName, EmpDept, EmpDesg, TotalIncome, TotalExpense, CustSalutationCode");
 
-		StringBuilder selectSql = new StringBuilder(
-				" SELECT CustID , CustCtgCode , CustTypeCode , CustShrtName , CustGenderCode , ");
-		selectSql.append(
-				" CustDOB , CustSector , CustSubSector , CustMaritalSts , CustEmpSts , CustIsBlackListed , CustBlackListDate ,");
-		selectSql.append(
-				" NoOfDependents , CustBaseCcy , CustNationality , CustCRCPR , JointCust, ExistCustID, ElgRequired , ");
-		selectSql.append(
-				" SalariedCustomer,EmpName,EmpDept,EmpDesg,TotalIncome,TotalExpense,CustSalutationCode,CustSegment ");
 		if (type.contains("View")) {
-			selectSql.append(
-					" ,lovDescCustTypeCodeName, lovDescCustMaritalStsName, lovDescCustEmpStsName, lovDescCustNationalityName, ");
-			selectSql.append(
-					" lovDescCustSectorName, lovDescCustSubSectorName, lovDescCustGenderCodeName, lovDescCustCtgCodeName, ");
-			selectSql.append(" lovDescEmpName,lovDescEmpDept,lovDescEmpDesg,lovDescCustSegmentName ");
+			sql.append(", LovDescCustTypeCodeName, LovDescCustMaritalStsName, LovDescCustEmpStsName");
+			sql.append(", LovDescCustNationalityName, LovDescCustSectorName, LovDescCustSubSectorName");
+			sql.append(", LovDescCustGenderCodeName, LovDescCustCtgCodeName, LovDescEmpName");
+			sql.append(", LovDescEmpDept, LovDescEmpDesg, LovDescCustSegmentName");
 		}
-		selectSql.append(" FROM WIFCustomers");
-		selectSql.append(StringUtils.trimToEmpty(type));
 
+		sql.append(" From WIFCustomers");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		Object[] obj = new Object[] { custId };
 		if (custCRCPR == null) {
-			selectSql.append(" Where CustID =:CustID");
+			sql.append(" Where CustID = ?");
 		} else {
-			selectSql.append(" Where CustCRCPR =:CustCRCPR");
+			sql.append(" Where CustCRCPR = ?");
+			obj = new Object[] { custCRCPR };
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<WIFCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(WIFCustomer.class);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				WIFCustomer wif = new WIFCustomer();
+
+				wif.setCustID(rs.getLong("CustID"));
+				wif.setCustCtgCode(rs.getString("CustCtgCode"));
+				wif.setCustTypeCode(rs.getString("CustTypeCode"));
+				wif.setCustShrtName(rs.getString("CustShrtName"));
+				wif.setCustGenderCode(rs.getString("CustGenderCode"));
+				wif.setCustDOB(JdbcUtil.getDate(rs.getDate("CustDOB")));
+				wif.setCustSector(rs.getString("CustSector"));
+				wif.setCustSubSector(rs.getString("CustSubSector"));
+				wif.setCustMaritalSts(rs.getString("CustMaritalSts"));
+				wif.setCustEmpSts(rs.getString("CustEmpSts"));
+				wif.setCustIsBlackListed(rs.getBoolean("CustIsBlackListed"));
+				wif.setCustBlackListDate(JdbcUtil.getDate(rs.getDate("CustBlackListDate")));
+				wif.setCustCRCPR(rs.getString("CustCRCPR"));
+				wif.setNoOfDependents(rs.getInt("NoOfDependents"));
+				wif.setCustBaseCcy(rs.getString("CustBaseCcy"));
+				wif.setCustNationality(rs.getString("CustBaseCcy"));
+				wif.setJointCust(rs.getBoolean("JointCust"));
+				wif.setExistCustID(rs.getLong("ExistCustID"));
+				wif.setElgRequired(rs.getBoolean("ElgRequired"));
+				wif.setCustSegment(rs.getString("CustSegment"));
+				wif.setSalariedCustomer(rs.getBoolean("SalariedCustomer"));
+				wif.setEmpName(rs.getLong("EmpName"));
+				wif.setEmpDept(rs.getString("EmpDept"));
+				wif.setEmpDesg(rs.getString("EmpDesg"));
+				wif.setCustSegment(rs.getString("CustSegment"));
+				wif.setCustSegment(rs.getString("CustSegment"));
+				wif.setTotalIncome(rs.getBigDecimal("TotalIncome"));
+				wif.setTotalExpense(rs.getBigDecimal("TotalExpense"));
+				wif.setCustSalutationCode(rs.getString("CustSalutationCode"));
+
+				if (type.contains("View")) {
+					wif.setLovDescCustTypeCodeName(rs.getString("LovDescCustTypeCodeName"));
+					wif.setLovDescCustMaritalStsName(rs.getString("LovDescCustMaritalStsName"));
+					wif.setLovDescCustEmpStsName(rs.getString("LovDescCustEmpStsName"));
+					wif.setLovDescCustNationalityName(rs.getString("LovDescCustNationalityName"));
+					wif.setLovDescCustSectorName(rs.getString("LovDescCustSectorName"));
+					wif.setLovDescCustSubSectorName(rs.getString("LovDescCustSubSectorName"));
+					wif.setLovDescCustGenderCodeName(rs.getString("LovDescCustGenderCodeName"));
+					wif.setLovDescCustCtgCodeName(rs.getString("LovDescCustCtgCodeName"));
+					wif.setLovDescEmpName(rs.getString("LovDescEmpName"));
+					wif.setLovDescEmpDept(rs.getString("LovDescEmpDept"));
+					wif.setLovDescEmpDesg(rs.getString("LovDescEmpDesg"));
+					wif.setLovDescCustSegmentName(rs.getString("LovDescCustSegmentName"));
+				}
+
+				return wif;
+			}, obj);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
 
-	/**
-	 * Fetch the Record Customers details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return Customer
-	 */
 	@Override
-	public String getCustomerByCRCPR(final String custCRCPR, String type) {
-		logger.debug("Entering");
+	public String getCustomerByCRCPR(String custCRCPR, String type) {
+		StringBuilder sql = new StringBuilder("Select CustCIF From Customers");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustCRCPR = ?");
 
-		WIFCustomer customer = new WIFCustomer();
-		customer.setCustCRCPR(custCRCPR);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT CustCIF ");
-		selectSql.append(" FROM Customers");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustCRCPR =:CustCRCPR");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, custCRCPR);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
 
-	/**
-	 * Fetch the Record Customers details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return Customer
-	 */
 	@Override
 	public Date getCustBlackListedDate(final String custCRCPR, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select AbuserExpDate  From EQNAbuserList");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where AbuserIDNumber = ?");
 
-		Abuser abuser = new Abuser();
-		abuser.setAbuserIDNumber(custCRCPR);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT AbuserExpDate ");
-		selectSql.append(" FROM EQNAbuserList");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where AbuserIDNumber =:AbuserIDNumber");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(abuser);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, custCRCPR);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -1323,22 +1483,17 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	public void updateProspectCustomer(Customer customer) {
-		logger.debug("Entering");
 		long custID = customer.getCustID();
 
-		if (custID != 0) {
-			StringBuilder updateSql = new StringBuilder(" Update Customers set CustCoreBank = :CustCoreBank ");
-			updateSql.append(" where CustID = :custID ");
-			updateCustID(updateSql.toString(), customer);
+		if (custID == 0) {
+			return;
 		}
-		logger.debug("Leaving");
-	}
+		String sql = "Update Customers set CustCoreBank = ? where CustID = ?";
 
-	public void updateCustID(String updateSql, Customer customer) {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		this.jdbcTemplate.update(updateSql, beanParameters);
-		logger.debug("Leaving");
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, customer.getCustCoreBank(), custID);
+
 	}
 
 	@Override
@@ -1349,7 +1504,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNUm) -> {
@@ -1371,49 +1526,30 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	public boolean isAvailableCustomer(final long id, String type) {
-		logger.debug("Entering");
-		Customer customer = new Customer();
-		customer.setId(id);
+		StringBuilder sql = new StringBuilder("Select count(CustID) From Customers");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = ?");
 
-		StringBuilder selectSql = new StringBuilder("SELECT CustID ");
-		selectSql.append(" FROM  Customers");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID =:CustID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, id) > 0;
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			customer = null;
+			return false;
 		}
-		logger.debug("Leaving");
-		return customer == null ? false : true;
 	}
 
-	/**
-	 * Method for Fetch Customer CR/CPR number For Checking Black listed data
-	 */
 	@Override
 	public String getCustCRCPRById(long custId, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select CustCRCPR From Customers");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = ?");
 
-		Customer customer = new Customer();
-		customer.setCustID(custId);
-
-		StringBuilder selectSql = new StringBuilder("SELECT CustCRCPR ");
-		selectSql.append(" FROM  Customers");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID =:CustID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, custId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return "";
@@ -1422,42 +1558,22 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public void updateFromFacility(Customer customer, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Update Customers");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set CustCOB = ?, CustRiskCountry = ?, CustDOB = ?, CustSector = ? Where CustID = ?");
 
-		StringBuilder updateSql = new StringBuilder("Update Customers");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set CustCOB = :CustCOB, CustRiskCountry = :CustRiskCountry, CustDOB = :CustDOB, CustSector = :CustSector");
-		updateSql.append(" Where CustID =:CustID");
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("Leaving");
-	}
+			ps.setString(index++, customer.getCustCOB());
+			ps.setString(index++, customer.getCustRiskCountry());
+			ps.setDate(index++, JdbcUtil.getDate(customer.getCustDOB()));
+			ps.setString(index++, customer.getCustSector());
 
-	@Override
-	public AvailPastDue getCustPastDueDetailByCustId(AvailPastDue pastDue, String limitCcy) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder(" select T1.CustID,  ");
-		selectSql.append(" SUM([dbo].[UDF_ConvertCurrency](FinCurODAmt, T2.FinCcy, '");
-		selectSql.append(limitCcy.trim());
-		selectSql.append("')) PastDueAmount, MAX(FinCurODDays) DueDays ,MIN(FinODSchdDate) PastDueFrom ");
-		selectSql.append(" FROM FinODDetails T1 INNER JOIN FinanceMain T2 ON T1.FinReference = T2.FinReference ");
-		selectSql.append(" where FinCurODAmt>0 AND T1.CustID =:CustID Group By T1.CustID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pastDue);
-		RowMapper<AvailPastDue> typeRowMapper = BeanPropertyRowMapper.newInstance(AvailPastDue.class);
-
-		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
+			ps.setLong(index, customer.getCustID());
+		});
 	}
 
 	@Override
@@ -1468,10 +1584,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" from Customers");
 		sql.append(" Where CustID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				Customer c = new Customer();
 
 				c.setCustCIF(rs.getString("CustCIF"));
@@ -1487,20 +1603,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				c.setSubCategory(rs.getString("SubCategory"));
 
 				return c;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
 
-	/**
-	 * Fetch the Customer Finance Details
-	 * 
-	 * @param curBD
-	 * @param nextBD
-	 * @return
-	 */
 	@Override
 	public List<FinanceEnquiry> getCustomerFinanceDetailById(long custId) {
 		StringBuilder sql = new StringBuilder("Select");
@@ -1514,7 +1623,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" from FinPftdetails) t6 on t6.FinReference = fm.Finreference");
 		sql.append(" where CustID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -1541,37 +1650,28 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	@Override
-	public boolean financeExistForCustomer(final long id, String type) {
-		logger.debug("Entering");
+	public boolean financeExistForCustomer(long custID) {
+		StringBuilder sql = new StringBuilder("Select count(CustID) From (");
+		sql.append(" Select CustID From FinanceMain_Temp Where CustID = ?");
+		sql.append(" union all");
+		sql.append(" Select CustID From FinanceMain Where CustID = ?");
+		sql.append(" Where not exists (Select 1 from FinanceMain_Temp where FinID = FinanceMain.FinID)");
 
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("CustID", id);
-
-		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(CustID)  FROM  FinanceMain");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :CustID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
+		logger.debug(Literal.SQL.concat(sql.toString()));
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, custID, custID) > 0;
 	}
 
 	@Override
-	public long getCustCRCPRByCustId(String custCRCPR, String type) {
-		logger.debug("Entering");
+	public long getCustCRCPRByCustId(String custCRCPR) {
+		StringBuilder sql = new StringBuilder("Select CustId From Customers_Temp Where CustCRCPR = ?");
+		sql.append(" union all");
+		sql.append(" Select CustId From Customers Where CustCRCPR = ?");
+		sql.append(" Where not exists (Select 1 from Customers_Temp where CustId = Customers.CustId)");
 
-		WIFCustomer customer = new WIFCustomer();
-		customer.setCustCRCPR(custCRCPR);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT CustId ");
-		selectSql.append(" FROM Customers");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustCRCPR =:CustCRCPR");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, custCRCPR, custCRCPR);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return Long.valueOf(0);
@@ -1580,17 +1680,15 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public WIFCustomer getWIFByCustCRCPR(String custCRCPR, String type) {
-		logger.debug("Entering");
-
 		WIFCustomer customer = new WIFCustomer();
 		customer.setCustCRCPR(custCRCPR);
 
-		StringBuilder selectSql = new StringBuilder(" SELECT * ");
+		StringBuilder selectSql = new StringBuilder("Select * ");
 		selectSql.append(" FROM WIFCustomers");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustCRCPR =:CustCRCPR");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		RowMapper<WIFCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(WIFCustomer.class);
 		try {
@@ -1603,130 +1701,16 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public boolean isDuplicateCrcpr(long custId, String custCRCPR) {
-		logger.debug(Literal.ENTERING);
-
-		boolean exists = false;
-
-		// Prepare the parameter source.
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("CustID", custId);
-		paramSource.addValue("CustCRCPR", custCRCPR);
-
-		// Check whether the document id exists for another customer.
 		String sql = QueryUtil.getCountQuery(new String[] { "Customers_Temp", "Customers" },
-				"CustID != :CustID and CustCRCPR = :CustCRCPR");
+				"CustID != ? and CustCRCPR = ?");
 
-		logger.trace(Literal.SQL + sql);
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		logger.debug(Literal.SQL.concat(sql));
 
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
+		return jdbcOperations.queryForObject(sql, Integer.class, custId, custCRCPR, custId, custCRCPR) > 0;
 	}
 
-	/**
-	 * Method for check OldProspectCIF exists in other tables and update with newCIF
-	 * 
-	 * @param oldCustCIF
-	 * @param newCustCIF
-	 */
-	@Override
-	public void updateProspectCustCIF(String oldCustCIF, String newCustCIF) {
-		logger.debug("Entering");
-
-		if (!StringUtils.isBlank(oldCustCIF) && !StringUtils.isBlank(newCustCIF)) {
-
-			MapSqlParameterSource source = new MapSqlParameterSource();
-			source.addValue("OldCustCIF", oldCustCIF);
-			source.addValue("NewCustCIF", newCustCIF);
-
-			StringBuilder updateSql = new StringBuilder(
-					" Update Customers set CustCIF =:NewCustCIF, CustCoreBank =:NewCustCIF");
-			if (isExistsProspectCIF("Customers", oldCustCIF)) {
-				updateSql.append(" where CustCIF =:OldCustCIF ");
-				updateCustCIF(updateSql.toString(), source);
-			}
-			updateSql.delete(0, updateSql.length());
-
-			updateSql = new StringBuilder(" Update FinBlackListDetail set CustCIF =:NewCustCIF ");
-			if (isExistsProspectCIF("FinBlackListDetail", oldCustCIF)) {
-				updateSql.append(" where CustCIF = :OldCustCIF ");
-				updateCustCIF(updateSql.toString(), source);
-			}
-			updateSql.delete(0, updateSql.length());
-
-			if (isExistsProspectCIF("CustomerDedupDetail", oldCustCIF)) {
-				updateSql.append(" Update CustomerDedupDetail set CustCIF =:NewCustCIF ");
-				updateSql.append(" where CustCIF = :OldCustCIF ");
-				updateCustCIF(updateSql.toString(), source);
-			}
-			updateSql.delete(0, updateSql.length());
-
-			if (isExistsProspectCIF("FinDedupDetail", oldCustCIF)) {
-				updateSql.append(" Update FinDedupDetail set CustCIF =:NewCustCIF ");
-				updateSql.append(" where CustCIF = :OldCustCIF ");
-				updateCustCIF(updateSql.toString(), source);
-			}
-			updateSql.delete(0, updateSql.length());
-
-			logger.debug("Leaving");
-		}
-
-	}
-
-	/**
-	 * Method for Check Is ProspectCustCIF Exists or not with old CustCIF
-	 * 
-	 * @param tableName
-	 * @param oldCustCIF
-	 * @return
-	 */
-	private boolean isExistsProspectCIF(String tableName, String oldCustCIF) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustCIF", oldCustCIF);
-
-		StringBuilder selectSql = new StringBuilder("SELECT CustCIF FROM ");
-		selectSql.append(tableName);
-		selectSql.append(" WHERE CustCIF=:CustCIF");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		logger.debug("Leaving");
-
-		List<String> objList = this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
-		if (objList != null && !objList.isEmpty()) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Method for Update Corebank CustCIF for Prospect Customer
-	 * 
-	 * @param updateSql
-	 * @param source
-	 */
-	private void updateCustCIF(String updateSql, MapSqlParameterSource source) {
-		logger.debug("Entering");
-		this.jdbcTemplate.update(updateSql, source);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for fetch Customer core bank id
-	 * 
-	 * @param CustCIF
-	 * @return String
-	 */
 	@Override
 	public String getCustCoreBankIdByCIF(String custCIF) {
-		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustCIF", custCIF);
@@ -1735,9 +1719,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustCIF=:CustCIF");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 
-		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
@@ -1746,34 +1729,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 	}
 
-	/**
-	 * Method for generate new CustCIF for core bank
-	 */
-	@Override
-	public String getNewCoreCustomerCIF() {
-		logger.debug("Entering");
-		// FIXME murthy
-		// String coreCustCIF =
-		// String.valueOf(getNextidviewDAO().getNextValue("SeqCorebankCustomer"));
-
-		logger.debug("Leaving");
-		// return StringUtils.leftPad(coreCustCIF, 7, "0");
-		return "";
-	}
-
-	@Override
-	public void updateCorebankCustCIF(String coreCustCIF) {
-		logger.debug("Entering");
-		// FIXME murthy
-		// getNextidviewDAO().setSeqNumber("SeqCorebankCustomer",
-		// (Long.parseLong(coreCustCIF)) - 1);
-
-		logger.debug("Leaving");
-	}
-
 	@Override
 	public void updateCustSuspenseDetails(Customer aCustomer, String tableType) {
-		logger.debug("Entering");
 
 		StringBuffer updateSql = new StringBuffer();
 		updateSql.append("UPDATE Customers");
@@ -1791,12 +1748,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aCustomer);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
-		logger.debug("Leaving");
 	}
 
 	@Override
 	public void saveCustSuspMovements(Customer aCustomer) {
-		logger.debug("Entering");
 
 		StringBuffer insertSql = new StringBuffer();
 		insertSql.append("INSERT INTO CustSuspMovements ");
@@ -1808,12 +1763,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aCustomer);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
-		logger.debug("Leaving");
 	}
 
 	@Override
 	public String getCustSuspRemarks(long custID) {
-		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
@@ -1826,7 +1779,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("insertSql: " + selectSql.toString());
 
-		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException dae) {
@@ -1837,7 +1789,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public Customer getSuspendCustomer(Long custID) {
-		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
@@ -1850,7 +1801,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("insertSql: " + selectSql.toString());
 
-		logger.debug("Leaving");
 		try {
 			RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -1879,7 +1829,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 */
 	@Override
 	public int getLookupCount(String tableName, String columnName, Object value) {
-		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ColumnName", columnName);
@@ -1905,7 +1854,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 */
 	@Override
 	public int getCustomerCountByCIF(String custCIF, String type) {
-		logger.debug("Entering");
+
 		Customer customer = new Customer();
 		customer.setCustCIF(custCIF);
 
@@ -1914,7 +1863,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE CustCIF = :CustCIF");
 
-		logger.debug("SelectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
@@ -1927,7 +1876,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 * @param custCoreBank
 	 */
 	public boolean getCustomerByCoreBankId(String custCoreBank) {
-		logger.debug("Entering");
+
 		Customer customer = new Customer();
 		customer.setCustCoreBank(custCoreBank);
 
@@ -1935,7 +1884,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append("SELECT COUNT(*) FROM Customers ");
 		selectSql.append(" WHERE CustCoreBank = :CustCoreBank");
 
-		logger.debug("SelectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
@@ -1944,16 +1893,15 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public void updateCustStatus(String custStatus, Date statusChgdate, long custId) {
-		logger.debug("Entering");
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustSts", custStatus);
 		source.addValue("CustStsChgDate", statusChgdate);
 		source.addValue("CustId", custId);
 		StringBuilder selectSql = new StringBuilder("Update Customers  ");
 		selectSql.append(" Set CustSts = :CustSts, CustStsChgDate= :CustStsChgDate WHERE CustId=:CustId ");
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 
-		logger.debug("Leaving");
 		this.jdbcTemplate.update(selectSql.toString(), source);
 	}
 
@@ -1961,7 +1909,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public String getCustomerStatus(long custId) {
 		String sql = "Select CustSts From Customers where CustID = ?";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForObject(sql, String.class, custId);
 	}
@@ -1976,7 +1924,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" From Customers");
 		sql.append(" Where CustID = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
@@ -2033,7 +1981,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		sql.append(" WHERE CustId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -2068,7 +2016,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 */
 	@Override
 	public List<Customer> getCustomerByGroupID(final long custGroupID) {
-		logger.debug("Entering");
+
 		Customer customer = new Customer();
 		customer.setCustGroupID(custGroupID);
 
@@ -2111,18 +2059,18 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustGroupID =:CustGroupID");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 		List<Customer> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		logger.debug("Leaving");
+
 		return list;
 	}
 
 	@Override
 	public int updateCustCRCPR(String custDocTitle, long custID) {
 		int recordCount = 0;
-		logger.debug("Entering");
+
 		Customer customer = new Customer();
 		customer.setCustCRCPR(custDocTitle);
 		customer.setCustID(custID);
@@ -2135,7 +2083,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+
 		return recordCount;
 
 	}
@@ -2146,7 +2094,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 */
 	@Override
 	public boolean customerExistingCustGrp(long custGrpID, String type) {
-		logger.debug("Entering");
 
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("CustGroupID", custGrpID);
@@ -2155,12 +2102,12 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustGroupID = :CustGroupID");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 
 	public int getCustCountByDealerId(long dealerId) {
-		logger.debug("Entering");
+
 		Customer customer = new Customer();
 		customer.setCustRO1(dealerId);
 
@@ -2168,7 +2115,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" From Customers");
 		selectSql.append(" Where CustRO1 =:CustRO1");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
@@ -2180,7 +2127,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 */
 	@Override
 	public boolean isCasteExist(long casteId, String type) {
-		logger.debug("Entering");
 
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("CasteId", casteId);
@@ -2189,7 +2135,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CasteId = :CasteId");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 
@@ -2199,7 +2145,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 */
 	@Override
 	public boolean isReligionExist(long religionId, String type) {
-		logger.debug("Entering");
 
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("ReligionId", religionId);
@@ -2208,14 +2153,14 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ReligionId = :ReligionId");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 
 	@Override
 	public int getCustomerCountByCustID(long custID, String type) {
 		// TODO Auto-generated method stub
-		logger.debug("Entering");
+
 		Customer customer = new Customer();
 		customer.setCustID(custID);
 
@@ -2224,7 +2169,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE CustID = :CustID");
 
-		logger.debug("SelectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
@@ -2258,7 +2203,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type) {
-		logger.debug("Entering");
 
 		Customer customer = new Customer();
 		customer.setCustCRCPR(custCRCPR);
@@ -2322,7 +2266,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustCRCPR =:CustCRCPR and CustCtgCode=:CustCtgCode");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
@@ -2331,12 +2275,12 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public Customer getCustomerByCoreBankId(String externalCif, String type) {
-		logger.debug("Entering");
+
 		Customer customer = new Customer();
 		customer.setCustCoreBank(externalCif);
 		StringBuilder selectSql = selectCustomerBasicInfo(type);
 		selectSql.append(" Where CustCoreBank = :CustCoreBank");
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
@@ -2357,8 +2301,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 */
 	@Override
 	public String getCustomerByCRCPR(final String custCRCPR, final String custCtgCode, String type) {
-		logger.debug("Entering");
-
 		WIFCustomer customer = new WIFCustomer();
 		customer.setCustCRCPR(custCRCPR);
 		customer.setCustCtgCode(custCtgCode);
@@ -2369,7 +2311,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" Where CustCRCPR =:CustCRCPR");
 		selectSql.append(" And   custCtgCode =:custCtgCode");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL.concat(selectSql.toString()));
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
 		try {
@@ -2596,7 +2538,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" Select CustId from Customers");
 		sql.append(" where custCIF = ?) T");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custCIF, custCIF },
@@ -2667,7 +2609,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" from Customers");
 		sql.append(" where custId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custId }, new RowMapper<String>() {
@@ -2692,7 +2634,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" From Customers");
 		sql.append(" Where CustId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Customer>() {
@@ -2723,7 +2665,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CustTypeCode = :CustTypeCode");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 		return this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 
@@ -2735,7 +2677,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" where  Reference = :Reference ");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", cif);
-		logger.trace("selectSql: " + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
@@ -2798,7 +2740,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			sql.append(" and fm.FinID = ?");
 		}
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -2864,7 +2806,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.deleteCharAt(sql.length() - 1);
 		sql.append(")");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, obj) > 0;
@@ -2878,13 +2820,27 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public String getCustDefaulBranchByCIF(String custCIF) {
 		String sql = "Select CustDftBranch  from Customers  Where CustCIF = ?";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
 			return jdbcOperations.queryForObject(sql, String.class, custCIF);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
+		}
+	}
+
+	@Override
+	public long getCustIDByCIF(String custCIF) {
+		String sql = "Select CustID From Customers Where CustCIF = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql, Long.class, custCIF);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
 	}
 }

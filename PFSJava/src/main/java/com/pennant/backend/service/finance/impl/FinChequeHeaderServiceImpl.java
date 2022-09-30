@@ -49,11 +49,10 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinChequeHeaderService;
-import com.pennant.backend.service.pdc.impl.ChequeHeaderServiceImpl;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.StageTabConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -63,7 +62,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>ChequeHeader</b>.<br>
  */
 public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> implements FinChequeHeaderService {
-	private static final Logger logger = LogManager.getLogger(ChequeHeaderServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinChequeHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
@@ -562,8 +561,8 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			boolean isListContainsPDC = false;
 			if (chequeDetailList != null && !chequeDetailList.isEmpty()) {
 				for (ChequeDetail chequeDetail : chequeDetailList) {
-					if (StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_PDC) && !StringUtils
-							.equals(chequeDetail.getChequeStatus(), PennantConstants.CHEQUESTATUS_CANCELLED)) {
+					if (InstrumentType.isPDC(chequeDetail.getChequeType())
+							&& !PennantConstants.CHEQUESTATUS_CANCELLED.equals(chequeDetail.getChequeStatus())) {
 						isListContainsPDC = true;
 					}
 					if (chequeDetail.isNewRecord() && chequeDetailDAO.isDuplicateKey(chequeDetail.getChequeDetailsID(),
@@ -586,9 +585,8 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			}
 			// if finance Payment Method is PDC and there is no PDC cheques.
 			String finRepayMethod = fd.getFinScheduleData().getFinanceMain().getFinRepayMethod();
-			if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_PDC)
-					&& !StringUtils.equals(PennantConstants.FINSOURCE_ID_API,
-							fd.getFinScheduleData().getFinanceMain().getFinSourceID())) {
+			if (InstrumentType.isPDC(finRepayMethod) && !PennantConstants.FINSOURCE_ID_API
+					.equals(fd.getFinScheduleData().getFinanceMain().getFinSourceID())) {
 				// PSD#163298 Issue addressed for validation raised While Resubmitting.
 				if (!isListContainsPDC && !StringUtils.contains(chequeHeader.getRecordStatus(), "Resubmit")) {
 					String[] parameters = new String[2];

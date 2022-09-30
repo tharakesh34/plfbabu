@@ -4,21 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class VASFeePostingEvent extends PostingEvent {
-
 	private VehicleDealerService vehicleDealerService;
 
+	public VASFeePostingEvent() {
+		super();
+	}
+
 	@Override
-	public List<AEEvent> prepareAEEvents(FinanceDetail fd, String userBranch) {
+	public List<AEEvent> prepareAEEvents(PostingDTO postingDTO) {
 		logger.info(LITERAL3, AccountingEvent.VAS_FEE);
+
+		FinanceDetail fd = postingDTO.getFinanceDetail();
+		String userBranch = postingDTO.getUserBranch();
 
 		List<AEEvent> events = new ArrayList<>();
 
@@ -54,6 +63,7 @@ public class VASFeePostingEvent extends PostingEvent {
 
 	}
 
+	@Autowired
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
 	}

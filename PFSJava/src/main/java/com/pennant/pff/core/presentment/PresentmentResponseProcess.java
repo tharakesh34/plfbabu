@@ -32,9 +32,11 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -51,11 +53,13 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.pff.eod.cache.BounceConfigCache;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
@@ -63,11 +67,14 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
+import com.pennanttech.pff.presentment.model.ConsecutiveBounce;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class PresentmentResponseProcess implements Runnable {
 	private static final Logger logger = LogManager.getLogger(PresentmentResponseProcess.class);
@@ -83,6 +90,8 @@ public class PresentmentResponseProcess implements Runnable {
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
+	private ConsecutiveBounceDAO consecutiveBounceDAO;
+	private MandateDAO mandateDAO;
 
 	/* Service's */
 	private ReceiptPaymentService receiptPaymentService;
@@ -221,11 +230,11 @@ public class PresentmentResponseProcess implements Runnable {
 				rh = getFinReceiptHeader(receiptID);
 			}
 
-			if (MandateConstants.TYPE_PDC.equals(mandateType)) {
+			if (InstrumentType.isPDC(mandateType)) {
 				checkStatus = PennantConstants.CHEQUESTATUS_REALISED;
 			}
 		} else {
-			if (MandateConstants.TYPE_PDC.equals(mandateType)) {
+			if (InstrumentType.isPDC(mandateType)) {
 				if (StringUtils.trimToNull(pd.getErrorDesc()) == null) {
 					checkStatus = PennantConstants.CHEQUESTATUS_BOUNCE;
 				} else {
@@ -246,6 +255,10 @@ public class PresentmentResponseProcess implements Runnable {
 				}
 				status = RepayConstants.PEXC_SUCCESS;
 				pd.setStatus(status);
+
+				if (!InstrumentType.isPDC(mandateType)) {
+					unHoldMandate(pd);
+				}
 			} else {
 				status = RepayConstants.PEXC_BOUNCE;
 				pd.setStatus(status);
@@ -258,9 +271,13 @@ public class PresentmentResponseProcess implements Runnable {
 				}
 
 				presentmentDetailDAO.updatePresentmentIdAsZero(pd.getId());
+
+				if (!InstrumentType.isPDC(mandateType)) {
+					holdMandate(pd);
+				}
 			}
 
-			if (MandateConstants.TYPE_PDC.equals(mandateType) && checkStatus != null) {
+			if (InstrumentType.isPDC(mandateType) && checkStatus != null) {
 				presentmentDetailDAO.updateChequeStatus(mandateID, checkStatus);
 			}
 
@@ -303,13 +320,27 @@ public class PresentmentResponseProcess implements Runnable {
 		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(0);
 		Customer customer = custEODEvent.getCustomer();
 
+		ReceiptDTO receiptDTO = new ReceiptDTO();
+
+		receiptDTO.setFinType(finEODEvent.getFinType());
+		receiptDTO.setPresentmentDetail(pd);
+		receiptDTO.setBussinessDate(pd.getSchDate());
+		receiptDTO.setCustomer(customer);
+		receiptDTO.setFinanceMain(finEODEvent.getFinanceMain());
+		receiptDTO.setProfitDetail(finEODEvent.getFinProfitDetail());
+		receiptDTO.setSchedules(finEODEvent.getFinanceScheduleDetails());
+		receiptDTO.setNoReserve(false);
+		receiptDTO.setPdDetailsExits(true);
+		receiptDTO.setValuedate(pd.getSchDate());
+		receiptDTO.setPostDate(pd.getSchDate());
+
 		logger.info("Creating presentment receipt for inactive loan.");
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
 
 		try {
-			receiptPaymentService.processprestment(pd, finEODEvent, customer, pd.getSchDate(), false, true);
+			receiptPaymentService.createReceipt(receiptDTO);
 			receiptID = pd.getReceiptID();
 
 			transactionManager.commit(transactionStatus);
@@ -588,6 +619,59 @@ public class PresentmentResponseProcess implements Runnable {
 		presentmentDetailDAO.updatePresentmentDetail(pd);
 	}
 
+	private void holdMandate(PresentmentDetail pd) {
+		BounceReason bounceReason = BounceConfigCache.getCacheBounceReason(pd.getBounceCode());
+
+		if (bounceReason == null) {
+			return;
+		}
+
+		int consecutiveBounceCount = 0;
+
+		Long mandateId = pd.getMandateId();
+		Long bounceId = pd.getBounceID();
+		Date schdDate = pd.getSchDate();
+
+		ConsecutiveBounce consecBounces = consecutiveBounceDAO.getBounces(mandateId);
+
+		if (consecBounces == null) {
+			consecutiveBounceDAO.create(mandateId, bounceId, schdDate);
+			return;
+		}
+
+		long lastBounceId = consecBounces.getBounceID();
+		int bounceCount = consecBounces.getBounceCount();
+		Date lastBounceDate = consecBounces.getLastBounceDate();
+
+		if (lastBounceId != bounceId) {
+			consecutiveBounceDAO.resetConter(mandateId, bounceId, schdDate);
+		}
+
+		if (DateUtil.getMonthsBetween(lastBounceDate, schdDate) == 1) {
+			bounceCount = bounceCount + 1;
+			consecutiveBounceDAO.update(mandateId, schdDate, bounceCount);
+		}
+
+		if (bounceCount >= consecutiveBounceCount) {
+			return;
+		}
+
+		mandateDAO.holdMandate(mandateId, bounceId);
+	}
+
+	private void unHoldMandate(PresentmentDetail pd) {
+		long mandateId = pd.getMandateId();
+		ConsecutiveBounce consecBounces = consecutiveBounceDAO.getBounces(mandateId);
+
+		if (consecBounces == null) {
+			return;
+		}
+
+		consecutiveBounceDAO.delete(mandateId);
+
+		mandateDAO.unHoldMandate(mandateId);
+	}
+
 	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
 		this.receiptPaymentService = receiptPaymentService;
 	}
@@ -650,6 +734,14 @@ public class PresentmentResponseProcess implements Runnable {
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	public void setConsecutiveBounceDAO(ConsecutiveBounceDAO consecutiveBounceDAO) {
+		this.consecutiveBounceDAO = consecutiveBounceDAO;
+	}
+
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
 	}
 
 	public DataEngineStatus getDeStatus() {

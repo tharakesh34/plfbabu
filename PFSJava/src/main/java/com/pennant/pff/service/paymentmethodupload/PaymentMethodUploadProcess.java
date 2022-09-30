@@ -27,10 +27,11 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUpload;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUploadHeader;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -143,8 +144,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(pmu.getUploadStatusRemarks()));
 			String rpyMethod = pmu.getFinRepayMethod();
 			int ccyFormat = 0;
-			boolean mandateCheck = FinanceConstants.REPAYMTH_MANUAL.equalsIgnoreCase(rpyMethod)
-					|| (FinanceConstants.REPAYMTH_PDC.equalsIgnoreCase(rpyMethod));
+			boolean mandateCheck = InstrumentType.isManual(rpyMethod) || InstrumentType.isPDC(rpyMethod);
 
 			// Loan Status Checking
 			boolean isError = false;
@@ -249,7 +249,8 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 				// validations for Status()
 				error = "Mandate status is not approved with mandate Id :" + mandate.getMandateID();
-				if (StringUtils.equals(MandateConstants.STATUS_REJECTED, mandate.getStatus())) {
+
+				if (MandateStatus.isRejected(mandate.getStatus())) {
 					setErrorDeatils(pmu, remarks, error, "CPU002");
 					continue;
 				}
@@ -333,7 +334,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 			paymentMethodUploadDAO.updateFinRepaymethod(changePayment);
 			paymentMethodUploadDAO.updateChangePaymentDetails(changePayment);
 
-			if (MandateConstants.TYPE_PDC.equals(changePayment.getFinRepayMethod())) {
+			if (InstrumentType.isPDC(changePayment.getFinRepayMethod())) {
 				if (!chequeHeaderDAO.isChequeDetilsExists(changePayment.getFinID())) {
 					ChequeHeader ch = new ChequeHeader();
 					ch.setRoleCode("");

@@ -129,6 +129,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -210,7 +211,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinSamplingService finSamplingService;
 
 	private List<ValueLabel> enquiryList = PennantStaticListUtil.getEnquiryTypes();
-	private List<ValueLabel> mandateList = PennantStaticListUtil.getMandateTypeList();
+	private List<ValueLabel> mandateList = MandateUtil.getInstrumentTypes();
 	private FinanceEnquiryListCtrl financeEnquiryListCtrl = null;
 	private VASRecordingDialogCtrl vASRecordingDialogCtrl = null;
 	private FinScheduleData finScheduleData;
@@ -594,7 +595,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("mandate", list.get(0));
 				map.put("fromLoanEnquiry", true);
 				map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
-				path = "/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul";
+				path = "/WEB-INF/pages/Mandate/MandateDialog.zul";
 			}
 		} else if ("ODENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OverdueEnquiry"));

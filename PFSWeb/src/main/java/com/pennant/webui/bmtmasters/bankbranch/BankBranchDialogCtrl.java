@@ -40,13 +40,13 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -54,7 +54,6 @@ import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -93,6 +92,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	protected Textbox allowedSources;
 	protected Row row_eMandate;
 	protected Button btnMultiSource;
+	protected Groupbox gb_instrumenttypes;
 
 	private boolean enqModule = false;
 	// not auto wired vars
@@ -103,12 +103,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	protected Button btnSearchCity;
 	protected Space space_MICR;
 
-	// ServiceDAOs / Domain Classes
 	private transient BankBranchService bankBranchService;
 
-	/**
-	 * default constructor.<br>
-	 */
 	public BankBranchDialogCtrl() {
 		super();
 	}
@@ -118,23 +114,11 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		super.pageRightName = "BankBranchDialog";
 	}
 
-	// ************************************************* //
-	// *************** Component Events **************** //
-	// ************************************************* //
-
-	/**
-	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
-	 * selected BankBranch object in a Map.
-	 * 
-	 * @param event
-	 */
 	public void onCreate$window_BankBranchDialog(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// Set the page level components.
 		setPageComponents(window_BankBranchDialog);
 
-		/* set components visible dependent of the users rights */
 		try {
 
 			if (arguments.containsKey("enqModule")) {
@@ -166,32 +150,23 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
-			// READ OVERHANDED parameters !
-			// we get the AcademicListWindow controller. So we have access
-			// to it and can synchronize the shown data when we do insert, edit or
-			// delete Academic here.
 			if (arguments.containsKey("bankBranchListCtrl")) {
 				setBankBranchListCtrl((BankBranchListCtrl) arguments.get("bankBranchListCtrl"));
 			} else {
 				setBankBranchListCtrl(null);
 			}
 
-			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getBankBranch());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_BankBranchDialog.onClose();
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.ENTERING);
 	}
 
-	/**
-	 * Set the properties of the fields, like maxLength.<br>
-	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
-		// Empty sent any required attributes
+		logger.debug(Literal.ENTERING);
 		this.bankCode.setMaxlength(8);
 		this.parentBranch.setMaxlength(12);
 		this.branchCode.setMaxlength(PennantConstants.branchCode_maxValue);
@@ -220,9 +195,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.city.setDescColumn("PCCityName");
 		this.city.setDisplayStyle(2);
 		this.city.setValidateColumns(new String[] { "PCCity", "PCCityName" });
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_EMANDATE_REQUIRED)) {
-			this.row_eMandate.setVisible(true);
-		}
+		this.row_eMandate.setVisible(true);
 
 		this.allowedSources.setValue("Code");
 		if (isWorkFlowEnabled()) {
@@ -230,19 +203,11 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving");
-
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * User rights check. <br>
-	 * Only components are set visible=true if the logged-in <br>
-	 * user have the right for it. <br>
-	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
-	 */
 	private void doCheckRights() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnNew"));
@@ -252,22 +217,11 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			this.btnCancel.setVisible(false);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	// ************************************************************
-	// ****************** Components events ***********************
-	// ************************************************************
-
-	/**
-	 * when the "save" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
-
 	public void onClick$btnMultiSource(Event event) {
-		logger.debug("Entering  " + event.toString());
+		logger.debug(Literal.ENTERING);
 		Clients.clearWrongValue(this.btnMultiSource);
 
 		Object dataObject = MultiSelectionSearchListBox.show(this.window, "Mandate_Sources",
@@ -281,96 +235,57 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			}
 		}
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSave();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * when the "edit" button is clicked. <br>
-	 * 
-	 * @param event
-	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doEdit();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * when the "help" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		MessageUtil.showHelpWindow(event, window_BankBranchDialog);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * when the "delete" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doDelete();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * when the "cancel" button is clicked. <br>
-	 * 
-	 * @param event
-	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doCancel();
 		this.btnEdit.setVisible(true);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * when the "close" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
 	public void onClick$btnClose(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doClose(this.btnSave.isVisible());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Cancel the actual operation. <br>
-	 * <br>
-	 * Resets to the original status.<br>
-	 * 
-	 */
 	private void doCancel() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		doWriteBeanToComponents(this.bankBranch.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Writes the bean data to the components.<br>
-	 * 
-	 * @param aBankBranch BankBranch
-	 */
 	public void doWriteBeanToComponents(BankBranch aBankBranch) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.bankCode.setValue(aBankBranch.getBankCode());
 		this.bankCode.setDescription(aBankBranch.getBankName());
 		this.branchCode.setValue(aBankBranch.getBranchCode());
@@ -395,7 +310,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		setMICRValidation(aBankBranch.isAllowMultipleIFSC());
 		doShowEMandateSources(this.eMandate);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$eMandate(Event event) {
@@ -403,7 +318,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	}
 
 	private void doShowEMandateSources(Checkbox event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (this.eMandate.isChecked()) {
 			this.allowedSources.setReadonly(true);
 			this.btnMultiSource.setVisible(true);
@@ -412,15 +327,10 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			this.btnMultiSource.setVisible(false);
 			this.allowedSources.setValue("");
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
-	/**
-	 * Writes the components values to the bean.<br>
-	 * 
-	 * @param aBankBranch
-	 */
 	public void doWriteComponentsToBean(BankBranch aBankBranch) {
 		logger.debug("Entering");
 		doSetLOVValidation();
@@ -433,11 +343,13 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		try {
 			aBankBranch.setParentBranch(this.parentBranch.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		try {
 			aBankBranch.setParentBranchDesc(this.parentBranch.getDescription());
 		} catch (WrongValueException we) {
@@ -479,6 +391,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		try {
 			aBankBranch.setNach(this.nach.isChecked());
 		} catch (WrongValueException we) {
@@ -508,11 +421,13 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		try {
 			aBankBranch.setEmandate(this.eMandate.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		try {
 			if (this.btnMultiSource.isVisible() && StringUtils.isBlank(this.allowedSources.getValue())) {
 				throw new WrongValueException(this.btnMultiSource,
@@ -542,36 +457,21 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 
 		aBankBranch.setRecordStatus(this.recordStatus.getValue());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Opens the Dialog window modal.
-	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
-	 * 
-	 * @param aBankBranch
-	 * @throws InterruptedException
-	 */
 	public void doShowDialog(BankBranch aBankBranch) throws InterruptedException {
-		logger.debug("Entering");
-		// if aAcademic == null then we opened the Dialog without
-		// arguments for a given entity, so we get a new Object().
+		logger.debug(Literal.ENTERING);
 		if (aBankBranch == null) {
-			/** !!! DO NOT BREAK THE TIERS !!! */
-			// We don't create a new DomainObject() in the frontEnd.
-			// We GET it from the backEnd.
 			aBankBranch = getBankBranchService().getNewBankBranch();
 
 			setBankBranch(aBankBranch);
 		} else {
 			setBankBranch(aBankBranch);
 		}
-		// set ReadOnly mode accordingly if the object is new or not.
 		if (aBankBranch.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
-			// setFocus
 			this.branchCode.focus();
 		} else {
 			if (isWorkFlowEnabled()) {
@@ -589,7 +489,6 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		}
 
 		try {
-			// fill the components with the data
 			doWriteBeanToComponents(aBankBranch);
 
 			setDialog(DialogType.EMBEDDED);
@@ -599,14 +498,11 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Sets the Validation by setting the accordingly constraints to the fields.
-	 */
 	private void doSetValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Bank Code
 		if (!this.bankCode.isReadonly()) {
 			this.bankCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_BankCode.value"),
@@ -640,14 +536,11 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_AddOfBranch.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Remove the Validation by setting empty constraints.
-	 */
 	private void doRemoveValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setValidation(false);
 		this.bankCode.setConstraint("");
 		this.branchCode.setConstraint("");
@@ -657,29 +550,20 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.iFSC.setConstraint("");
 		this.addOfBranch.setConstraint("");
 		this.parentBranch.setConstraint("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set Validations for LOV Fields
-	 */
 
 	private void doSetLOVValidation() {
 	}
 
-	/**
-	 * Remove the Validation by setting empty constraints.
-	 */
 
 	private void doRemoveLOVValidation() {
 	}
 
-	/**
-	 * Remove Error Messages for Fields
-	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.bankCode.setErrorMessage("");
 		this.branchCode.setErrorMessage("");
 		this.branchDesc.setErrorMessage("");
@@ -687,7 +571,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.mICR.setErrorMessage("");
 		this.iFSC.setErrorMessage("");
 		this.addOfBranch.setErrorMessage("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doDelete() throws InterruptedException {
@@ -702,11 +586,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the components for edit mode. <br>
-	 */
 	private void doEdit() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (getBankBranch().isNewRecord()) {
 			this.branchCode.setReadonly(false);
 			this.bankCode.setReadonly(false);
@@ -716,7 +597,6 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			this.branchCode.setReadonly(true);
 			this.bankCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
-			// this.parentBranch.setReadonly(true);
 		}
 		readOnlyComponent(isReadOnly("BankBranchDialog_BranchDesc"), this.branchDesc);
 		readOnlyComponent(isReadOnly("BankBranchDialog_City"), this.city);
@@ -746,12 +626,9 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the components to ReadOnly. <br>
-	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.branchCode.setReadonly(true);
@@ -784,12 +661,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Clears the components values. <br>
-	 */
 	public void doClear() {
 		logger.debug("Entering");
-		// remove validation, if there are a save before
 
 		this.bankCode.setValue("");
 		this.branchCode.setValue("");
@@ -810,11 +683,6 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
 		final BankBranch aBankBranch = new BankBranch();
@@ -834,9 +702,6 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			// fill the BankBranch object with the components data
 			doWriteComponentsToBean(aBankBranch);
 		}
-		// Write the additional validations as per below example
-		// get the selected branch object from the listbox
-		// Do data level validations here
 
 		isNew = aBankBranch.isNewRecord();
 		String tranType = "";
@@ -861,11 +726,9 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			}
 		}
 
-		// save it to database
 		try {
 
 			if (doProcess(aBankBranch, tranType)) {
-				// doWriteBeanToComponents(aBankBranch);
 				refreshList();
 				closeDialog();
 			}
@@ -876,19 +739,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the workFlow Details List to Object
-	 * 
-	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
-	 * 
-	 * @param tranType                       (String)
-	 * 
-	 * @return boolean
-	 * 
-	 */
-
 	protected boolean doProcess(BankBranch aBankBranch, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -965,17 +817,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 
 	}
 
-	/**
-	 * Get the result after processing DataBase Operations
-	 * 
-	 * @param AuditHeader auditHeader
-	 * @param method      (String)
-	 * @return boolean
-	 * 
-	 */
-
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
@@ -1040,7 +883,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	}
 
 	public void onFulfill$bankCode(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		Object dataObject = bankCode.getObject();
 		if (dataObject instanceof String) {
 			this.bankCode.setValue("");
@@ -1059,11 +902,11 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		}
 
 		setMICRValidation(false);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$parentBranch(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		Object dataObject = parentBranch.getObject();
 
 		if (dataObject instanceof String) {
@@ -1076,7 +919,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 				this.parentBranch.setDescription(details.getBranchDesc());
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setMICRValidation(boolean allowMultipleIFSC) {
@@ -1091,49 +934,24 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		}
 	}
 
-	// ******************************************************//
-	// ***************** WorkFlow Components*****************//
-	// ******************************************************//
-
-	/**
-	 * @param aAuthorizedSignatoryRepository
-	 * @param tranType
-	 * @return
-	 */
-
 	private AuditHeader getAuditHeader(BankBranch aBankBranch, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBankBranch.getBefImage(), aBankBranch);
 		return new AuditHeader(String.valueOf(aBankBranch.getBankBranchID()), null, null, null, auditDetail,
 				aBankBranch.getUserDetails(), getOverideMap());
 	}
 
-	/**
-	 * Get the window for entering Notes
-	 * 
-	 * @param event (Event)
-	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.bankBranch);
 	}
 
-	/**
-	 * Refresh the list page with the filters that are applied in list page.
-	 */
 	protected void refreshList() {
 		getBankBranchListCtrl().search();
 	}
 
-	/**
-	 * Get the Reference value
-	 */
 	@Override
 	protected String getReference() {
 		return String.valueOf(getBankBranch().getBankBranchID());
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public BankBranch getBankBranch() {
 		return this.bankBranch;

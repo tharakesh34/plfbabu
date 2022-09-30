@@ -54,11 +54,11 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.financemanagement.impl.PresentmentDetailExtractService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.presentment.PresentmentResponseRowmapper;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -192,7 +192,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				ps.setLong(i++, pd.getFinID());
 				ps.setString(i++, pd.getFinReference());
 				ps.setDate(i++, JdbcUtil.getDate(pd.getSchDate()));
-				ps.setLong(i++, pd.getMandateId());
+				ps.setObject(i++, pd.getMandateId());
 				ps.setBigDecimal(i++, pd.getSchAmtDue());
 				ps.setBigDecimal(i++, pd.getSchPriDue());
 				ps.setBigDecimal(i++, pd.getSchPftDue());
@@ -255,8 +255,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(" AND ((SCHDATE >= ? AND SCHDATE <= ? OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?))) ");
 
 		if (StringUtils.trimToNull(ph.getMandateType()) != null) {
-			if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, ph.getMandateType())
-					&& StringUtils.isNotEmpty(ph.getEmandateSource())) {
+			if (InstrumentType.isEMandate(ph.getMandateType()) && StringUtils.isNotEmpty(ph.getEmandateSource())) {
 				sql.append(" AND (T4.MANDATETYPE = ?) AND (T4.EMANDATESOURCE = ?) ");
 			} else {
 				sql.append(" AND (T4.MANDATETYPE = ?) ");
@@ -318,8 +317,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	private boolean isGroupByPartnerBank(PresentmentHeader ph) {
-		return (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK
-				&& !MandateConstants.TYPE_PDC.equals(ph.getMandateType()));
+		return (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK && !InstrumentType.isPDC(ph.getMandateType()));
+
 	}
 
 	@Override
@@ -340,8 +339,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			if (StringUtils.trimToNull(ph.getMandateType()) != null) {
 				index = index + 1;
 				ps.setString(index, ph.getMandateType());
-				if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, ph.getMandateType())
-						&& StringUtils.isNotEmpty(ph.getEmandateSource())) {
+
+				if (InstrumentType.isEMandate(ph.getMandateType()) && StringUtils.isNotEmpty(ph.getEmandateSource())) {
 					index = index + 1;
 					ps.setString(index, ph.getEmandateSource());
 				}
@@ -768,7 +767,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setLong(index++, ph.getId());
 			ps.setString(index++, ph.getReference());
 			ps.setDate(index++, JdbcUtil.getDate(ph.getPresentmentDate()));
-			ps.setLong(index++, ph.getPartnerBankId());
+			ps.setObject(index++, ph.getPartnerBankId());
 			ps.setDate(index++, JdbcUtil.getDate(ph.getFromDate()));
 			ps.setDate(index++, JdbcUtil.getDate(ph.getToDate()));
 			ps.setString(index++, ph.getPresentmentType());
@@ -896,14 +895,14 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	@Override
-	public void updatePresentmentHeader(long presentmentId, int manualExclude, long partnerBankId) {
+	public void updatePresentmentHeader(long presentmentId, int manualExclude, Long partnerBankId) {
 		String sql = " UPDATE PresentmentHeader Set Status = ?, PartnerBankId = ? Where ID = ?";
 		logger.debug(Literal.SQL + sql);
 
 		this.jdbcOperations.update(sql, ps -> {
 			ps.setInt(1, manualExclude);
 			ps.setLong(2, partnerBankId);
-			ps.setLong(3, presentmentId);
+			ps.setObject(3, presentmentId);
 		});
 	}
 
@@ -996,7 +995,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" Id, PresentmentId, FinID, FinReference, SchDate, MandateId, SchAmtDue, SchPriDue, SchPftDue");
 		sql.append(", SchFeeDue, SchInsDue, SchPenaltyDue, AdvanceAmt, ExcessID, AdviseAmt, PresentmentAmt");
-		sql.append(", TDSAmount, ExcludeReason, EmiNo, Atatus, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", TDSAmount, ExcludeReason, EmiNo, Status, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PresentmentRef");
 		sql.append(", ECSReturn, ReceiptID, ErrorCode, ErrorDesc, ManualAdviseId");
 		if (StringUtils.containsIgnoreCase(type, "View")) {

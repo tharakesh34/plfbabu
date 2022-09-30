@@ -156,7 +156,6 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.perfios.PerfiosHeader;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
-import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
@@ -350,35 +349,35 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customerDetails.setCustomer(customerDAO.getNewCustomer(createNew, customerDetails.getCustomer()));
 
 		if (CollectionUtils.isEmpty(customerDetails.getRatingsList())) {
-			customerDetails.setRatingsList(new ArrayList<CustomerRating>());
+			customerDetails.setRatingsList(new ArrayList<>());
 		}
 
 		if (CollectionUtils.isEmpty(customerDetails.getEmploymentDetailsList())) {
-			customerDetails.setEmploymentDetailsList(new ArrayList<CustomerEmploymentDetail>());
+			customerDetails.setEmploymentDetailsList(new ArrayList<>());
 		}
 
 		if (CollectionUtils.isEmpty(customerDetails.getAddressList())) {
-			customerDetails.setAddressList(new ArrayList<CustomerAddres>());
+			customerDetails.setAddressList(new ArrayList<>());
 		}
 
 		if (CollectionUtils.isEmpty(customerDetails.getCustomerEMailList())) {
-			customerDetails.setCustomerEMailList(new ArrayList<CustomerEMail>());
+			customerDetails.setCustomerEMailList(new ArrayList<>());
 		}
 
 		if (CollectionUtils.isEmpty(customerDetails.getCustomerPhoneNumList())) {
-			customerDetails.setCustomerPhoneNumList(new ArrayList<CustomerPhoneNumber>());
+			customerDetails.setCustomerPhoneNumList(new ArrayList<>());
 		}
 
 		if (CollectionUtils.isEmpty(customerDetails.getCustomerIncomeList())) {
-			customerDetails.setCustomerIncomeList(new ArrayList<CustomerIncome>());
+			customerDetails.setCustomerIncomeList(new ArrayList<>());
 		}
 
 		if (CollectionUtils.isEmpty(customerDetails.getCustomerDocumentsList())) {
-			customerDetails.setCustomerDocumentsList(new ArrayList<CustomerDocument>());
+			customerDetails.setCustomerDocumentsList(new ArrayList<>());
 		}
 
 		if (CollectionUtils.isEmpty(customerDetails.getGstDetailsList())) {
-			customerDetails.setGstDetailsList(new ArrayList<GSTDetail>());
+			customerDetails.setGstDetailsList(new ArrayList<>());
 		}
 
 		customerDetails.setNewRecord(true);
@@ -393,7 +392,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	@Override
 	public void prepareDefaultIncomeExpenseList(CustomerDetails customerDetails) {
-		List<CustomerIncome> customerIncomes = new ArrayList<CustomerIncome>();
+		List<CustomerIncome> customerIncomes = new ArrayList<>();
 		if (ImplementationConstants.POPULATE_DFT_INCOME_DETAILS && customerDetails.isNewRecord()) {
 			List<IncomeType> incomeTypes = incomeTypeDAO.getDefaultIncomeTypeList();
 			if (CollectionUtils.isNotEmpty(incomeTypes)) {
@@ -718,6 +717,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Override
 	public Customer checkCustomerByCIF(String cif, String type) {
 		return customerDAO.checkCustomerByCIF(cif, type);
+	}
+
+	@Override
+	public Customer getCustomer(String cif) {
+		return customerDAO.getCustomer(cif);
 	}
 
 	/**
@@ -2768,7 +2772,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				// validate AccNumber length
 				if (StringUtils.isNotBlank(custBankInfo.getBankName())
 						&& StringUtils.isNotBlank(custBankInfo.getAccountNumber())) {
-					BankDetail bankDetail = bankDetailDAO.getAccNoLengthByCode(custBankInfo.getBankName(), "");
+					BankDetail bankDetail = bankDetailDAO.getAccNoLengthByCode(custBankInfo.getBankName());
 					if (bankDetail != null) {
 						int maxAccNoLength = bankDetail.getAccNoLength();
 						int minAccNoLength = bankDetail.getMinAccNoLength();
@@ -2824,7 +2828,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				 * valueParm)); auditDetail.setErrorDetail(errorDetail); }
 				 */ // validate AccNumber length
 				if (StringUtils.isNotBlank(customerGST.getGstNumber())) {
-					BankDetail bankDetail = bankDetailDAO.getAccNoLengthByCode(customerGST.getGstNumber(), "");
+					BankDetail bankDetail = bankDetailDAO.getAccNoLengthByCode(customerGST.getGstNumber());
 					int gstNoLength = bankDetail.getAccNoLength();
 					int minAccNoLength = bankDetail.getMinAccNoLength();
 					if (bankDetail != null) {
@@ -2950,10 +2954,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	private void setError(AuditDetail auditDetail, String code, String... valueParm) {
 		auditDetail.setErrorDetail(getError(code, valueParm));
-	}
-
-	private ErrorDetail getError(String code, String... valueParm) {
-		return ErrorUtil.getErrorDetail(new ErrorDetail(code, valueParm));
 	}
 
 	private AuditDetail validateGSTDetail(GSTDetail gstDetail, AuditDetail auditDetail, List<GSTDetail> gstDetailList) {
@@ -4636,7 +4636,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(customer.getRecordType())) {
-			boolean financeExistForCustomer = customerDAO.financeExistForCustomer(customer.getId(), "_View");
+			boolean financeExistForCustomer = customerDAO.financeExistForCustomer(customer.getId());
 			if (financeExistForCustomer) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, null));
 			}
@@ -7731,14 +7731,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * Method for Fetching Past Due Details By CustID
-	 */
-	@Override
-	public AvailPastDue getCustPastDueDetailByCustId(AvailPastDue pastDue, String limitCcy) {
-		return customerDAO.getCustPastDueDetailByCustId(pastDue, limitCcy);
-	}
-
-	/**
 	 * @return the customer
 	 */
 	@Override
@@ -7883,8 +7875,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
-	public long getEIDNumberByCustId(String eidNumber, String type) {
-		return customerDAO.getCustCRCPRByCustId(eidNumber, type);
+	public long getEIDNumberByCustId(String eidNumber) {
+		return customerDAO.getCustCRCPRByCustId(eidNumber);
 	}
 
 	@Override
@@ -7903,34 +7895,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
-	public void updateProspectCustCIF(String oldCustCIF, String newCustCIF) {
-		logger.debug(Literal.ENTERING);
-		customerDAO.updateProspectCustCIF(oldCustCIF, newCustCIF);
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
 	public String getCustCoreBankIdByCIF(String custCIF) {
 		logger.debug(Literal.ENTERING);
 		logger.debug(Literal.LEAVING);
 		return customerDAO.getCustCoreBankIdByCIF(custCIF);
-	}
-
-	@Override
-	public String getNewCoreCustomerCIF() {
-		logger.debug(Literal.ENTERING);
-		logger.debug(Literal.LEAVING);
-		return customerDAO.getNewCoreCustomerCIF();
-	}
-
-	@Override
-	public void updateCorebankCustCIF(String coreCustCIF) {
-		logger.debug(Literal.ENTERING);
-
-		customerDAO.updateCorebankCustCIF(coreCustCIF);
-
-		logger.debug(Literal.LEAVING);
-
 	}
 
 	/**
@@ -8522,6 +8490,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Override
 	public boolean isCrifDeroge(String tablename, String reference) {
 		return customerDAO.isCrifDeroge(tablename, reference);
+	}
+
+	@Override
+	public long getCustIDByCIF(String custCIF) {
+		return customerDAO.getCustIDByCIF(custCIF);
 	}
 
 	// ******************************************************//

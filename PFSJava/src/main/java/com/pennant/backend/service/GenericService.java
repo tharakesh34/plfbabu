@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -324,6 +325,10 @@ public abstract class GenericService<T> {
 
 		}
 		return flag;
+	}
+
+	protected ErrorDetail getError(String errorCode, String... parms) {
+		return ErrorUtil.getError(errorCode, parms);
 	}
 
 	protected DocumentManager getDocumentManager(long docID) {

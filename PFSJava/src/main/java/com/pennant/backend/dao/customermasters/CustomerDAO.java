@@ -36,7 +36,6 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ProspectCustomer;
-import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennanttech.ws.model.customer.SRMCustRequest;
 
 public interface CustomerDAO {
@@ -57,6 +56,8 @@ public interface CustomerDAO {
 	Customer getCustomerByCIF(String cifId, String type);
 
 	Customer checkCustomerByCIF(String cifId, String type);
+
+	Customer getCustomer(String cif);
 
 	WIFCustomer getWIFCustomerByCIF(long cifId, String type);
 
@@ -96,8 +97,6 @@ public interface CustomerDAO {
 
 	void updateFromFacility(Customer customer, String type);
 
-	AvailPastDue getCustPastDueDetailByCustId(AvailPastDue pastDue, String limitCcy);
-
 	String getCustWorstStsDesc(long custID);
 
 	String getCustWorstStsbyCurFinSts(long custID, String finReference, String curFinSts);
@@ -106,21 +105,15 @@ public interface CustomerDAO {
 
 	List<FinanceEnquiry> getCustomerFinanceDetailById(long custId);
 
-	boolean financeExistForCustomer(final long id, String type);
+	boolean financeExistForCustomer(long id);
 
-	long getCustCRCPRByCustId(String custCRCPR, String type);
+	long getCustCRCPRByCustId(String custCRCPR);
 
 	WIFCustomer getWIFByCustCRCPR(String custCRCPR, String type);
 
 	boolean isDuplicateCrcpr(long custId, String custCRCPR);
 
-	void updateProspectCustCIF(String oldCustCIF, String newCustCIF);
-
 	String getCustCoreBankIdByCIF(String custCIF);
-
-	String getNewCoreCustomerCIF();
-
-	void updateCorebankCustCIF(String newCoreCustCIF);
 
 	void updateCustSuspenseDetails(Customer aCustomer, String tableType);
 
@@ -205,4 +198,6 @@ public interface CustomerDAO {
 	boolean isPanFoundByCustIds(List<Long> coAppCustIds, String panNumber);
 
 	String getCustDefaulBranchByCIF(String custCIF);
+
+	long getCustIDByCIF(String custCIF);
 }

@@ -24,11 +24,12 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -142,13 +143,13 @@ public class PresentmentDetailExtractService {
 
 		presentmentDetailDAO.updateSchdWithPresentmentId(includeList);
 
-		if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+		if (InstrumentType.isPDC(ph.getMandateType())) {
 			chequeDetailDAO.updateChequeStatus(includeList);
 		}
 	}
 
 	private boolean isGroupByPartnerBank(PresentmentHeader ph) {
-		if (ph.isGroupByPartnerBank() && !MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+		if (ph.isGroupByPartnerBank() && !InstrumentType.isPDC(ph.getMandateType())) {
 			return true;
 		}
 		return false;
@@ -541,7 +542,8 @@ public class PresentmentDetailExtractService {
 		logger.debug(Literal.ENTERING);
 
 		String mandateStatus = pd.getMandateStatus();
-		if (MandateConstants.STATUS_REJECTED.equals(mandateStatus)) {
+
+		if (MandateStatus.isRejected(mandateStatus)) {
 			pd.setExcludeReason(RepayConstants.PEXC_MANDATE_REJECTED);
 			return;
 		}
@@ -553,14 +555,14 @@ public class PresentmentDetailExtractService {
 		}
 
 		// Mandate Hold
-		if (MandateConstants.STATUS_HOLD.equals(mandateStatus)) {
+		if (MandateStatus.isHold(mandateStatus)) {
 			pd.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
 			return;
 		}
 
-		boolean isECSMandate = MandateConstants.TYPE_ECS.equals(pd.getMandateType());
+		boolean isECSMandate = InstrumentType.isECS(pd.getMandateType());
 		if (!isECSMandate) {
-			if (!MandateConstants.STATUS_APPROVED.equals(mandateStatus)) {
+			if (!MandateStatus.isApproved(mandateStatus)) {
 				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
 				return;
 			}

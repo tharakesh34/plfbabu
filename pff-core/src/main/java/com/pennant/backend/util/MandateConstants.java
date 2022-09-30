@@ -45,30 +45,13 @@ public class MandateConstants {
 		super();
 	}
 
-	public static final String TYPE_ECS = "ECS";
-	public static final String TYPE_DDM = "DDM";
-	public static final String TYPE_NACH = "NACH";
-	public static final String TYPE_PDC = "PDC";
-	public static final String TYPE_EMANDATE = "EMNDT";
-
-	public static final String MANDATE_AC_TYPE_CA = "11";
-	public static final String MANDATE_AC_TYPE_SA = "10";
-	public static final String MANDATE_AC_TYPE_CC = "12";
-	public static final String MANDATE_AC_TYPE_NRE = "13";
-	public static final String MANDATE_AC_TYPE_NRO = "14";
+	public static final String AC_TYPE_CA = "11";
+	public static final String AC_TYPE_SA = "10";
+	public static final String AC_TYPE_CC = "12";
+	public static final String AC_TYPE_NRE = "13";
+	public static final String AC_TYPE_NRO = "14";
 
 	public static final String MANDATE_DEFAULT_FRQ = "M0001";
-
-	public static final String STATUS_FIN = "FINANCE";
-	public static final String STATUS_NEW = "NEW";
-	public static final String STATUS_AWAITCON = "AC";
-	public static final String STATUS_APPROVED = "APPROVED";
-	public static final String STATUS_REJECTED = "REJECTED";
-	public static final String STATUS_HOLD = "HOLD";
-	public static final String STATUS_RELEASE = "RELEASE";
-	public static final String STATUS_CANCEL = "CANCEL";
-	public static final String STATUS_INPROCESS = "INPROCESS";
-	public static final String MANDATE_STATUS_ACKNOWLEDGE = "ACK";
 
 	public static final String MODULE_REGISTRATION = "REGISTRATION";
 	public static final String MODULE_STATUSUPLOAD = "STATUSUPLOAD";
@@ -77,7 +60,10 @@ public class MandateConstants {
 
 	public static final List<String> skipRegistration() {
 		List<String> list = new ArrayList<String>(1);
-		list.add(TYPE_ECS);
+		// list.add(TYPE_ECS);
+		// list.add(TYPE_SI);
+		// list.add(TYPE_DAS);
+
 		return list;
 
 	}

@@ -163,11 +163,11 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 		this.paymentMode = paymentMode;
 	}
 
-	public long getPartnerBankID() {
+	public Long getPartnerBankID() {
 		return partnerBankID;
 	}
 
-	public void setPartnerBankID(long partnerBankID) {
+	public void setPartnerBankID(Long partnerBankID) {
 		this.partnerBankID = partnerBankID;
 	}
 

@@ -1,6 +1,8 @@
 package com.pennant.eod;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,30 +16,35 @@ import com.pennant.app.core.AutoKnockOffService;
 import com.pennant.app.core.ChangeGraceEndService;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
+import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.LatePayBucketService;
 import com.pennant.app.core.LatePayDueCreationService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.core.LoadFinanceData;
-import com.pennant.app.core.NPAService;
 import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.limitservice.LimitRebuild;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
-import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
+import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class EodService {
 	private static Logger logger = LogManager.getLogger(EodService.class);
 
 	private LatePayMarkingService latePayMarkingService;
 	private LatePayBucketService latePayBuketService;
-	private NPAService npaService;
 	private DateRollOverService dateRollOverService;
 	private LoadFinanceData loadFinanceData;
 	private RateReviewService rateReviewService;
@@ -55,6 +62,7 @@ public class EodService {
 	private OverdrafLoanService overdrafLoanService;
 	private ManualAdviseService manualAdviseService;
 	private AssetClassificationService assetClassificationService;
+	private PresentmentDetailDAO presentmentDetailDAO;
 
 	public EodService() {
 		super();
@@ -66,7 +74,7 @@ public class EodService {
 		loadFinanceData.updateFinEODEvents(custEODEvent);
 		// receipt postings on SOD
 		if (custEODEvent.isCheckPresentment()) {
-			receiptPaymentService.processrReceipts(custEODEvent);
+			createPresentmentReceipts(custEODEvent);
 		}
 
 		limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(), true);
@@ -80,7 +88,73 @@ public class EodService {
 		Date nextDate = custEODEvent.getEventProperties().getNextDate();
 		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus,
 				nextDate);
+	}
 
+	private PresentmentDetail getPresentmentDetail(List<PresentmentDetail> pd, String finReference, Date schDate) {
+		for (PresentmentDetail detail : pd) {
+			if (detail.getFinReference().equals(finReference) && detail.getSchDate().compareTo(schDate) == 0) {
+				return detail;
+			}
+
+		}
+		return null;
+	}
+
+	private void createPresentmentReceipts(CustEODEvent custEODEvent) {
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+
+		boolean presentment = false;
+
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			if (finEODEvent.getIdxPresentment() >= 0) {
+				presentment = true;
+				break;
+			}
+		}
+
+		if (!presentment) {
+			return;
+		}
+
+		Date businessDate = custEODEvent.getEodValueDate();
+		Customer customer = custEODEvent.getCustomer();
+		long custID = customer.getCustID();
+
+		List<PresentmentDetail> presentments = presentmentDetailDAO.getPresentmenToPost(custID, businessDate);
+
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			FinanceMain fm = finEODEvent.getFinanceMain();
+			String finReference = fm.getFinReference();
+			FinExcessAmount emiInAdvance = null;
+
+			List<FinExcessAmount> finExcessAmounts = finEODEvent.getFinExcessAmounts();
+			for (FinExcessAmount fea : finExcessAmounts) {
+				if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(fea.getAmountType())) {
+					emiInAdvance = fea;
+				}
+			}
+
+			PresentmentDetail pd = getPresentmentDetail(presentments, finReference, businessDate);
+
+			if (pd == null && (emiInAdvance == null || emiInAdvance.getBalanceAmt().compareTo(BigDecimal.ZERO) <= 0)) {
+				continue;
+			}
+
+			ReceiptDTO receiptDTO = new ReceiptDTO();
+
+			receiptDTO.setFinType(finEODEvent.getFinType());
+			receiptDTO.setPresentmentDetail(pd);
+			receiptDTO.setBussinessDate(businessDate);
+			receiptDTO.setCustomer(customer);
+			receiptDTO.setFinanceMain(fm);
+			receiptDTO.setEmiInAdvance(emiInAdvance);
+			receiptDTO.setProfitDetail(finEODEvent.getFinProfitDetail());
+			receiptDTO.setSchedules(finEODEvent.getFinanceScheduleDetails());
+			receiptDTO.setValuedate(businessDate);
+			receiptDTO.setPostDate(businessDate);
+
+			receiptPaymentService.processReceipts(receiptDTO, finEODEvent.getIdxPresentment());
+		}
 	}
 
 	public void doUpdate(CustEODEvent custEODEvent, boolean isLimitRebuild) throws Exception {
@@ -89,7 +163,7 @@ public class EodService {
 		loadFinanceData.updateFinEODEvents(custEODEvent);
 		// receipt postings on SOD
 		if (custEODEvent.isCheckPresentment()) {
-			receiptPaymentService.processrReceipts(custEODEvent);
+			createPresentmentReceipts(custEODEvent);
 		}
 
 		if (isLimitRebuild) {
@@ -271,11 +345,6 @@ public class EodService {
 	}
 
 	@Autowired
-	public void setNpaService(NPAService npaService) {
-		this.npaService = npaService;
-	}
-
-	@Autowired
 	public void setAutoDisbursementService(AutoDisbursementService autoDisbursementService) {
 		this.autoDisbursementService = autoDisbursementService;
 	}
@@ -337,6 +406,11 @@ public class EodService {
 	@Autowired
 	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
 		this.assetClassificationService = assetClassificationService;
+	}
+
+	@Autowired
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 
 }

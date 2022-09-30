@@ -60,33 +60,28 @@ public class Mandate extends AbstractWorkflowEntity {
 	private long requestID;
 	@XmlElement
 	private String mandateRef;
+	@XmlElement
+	private boolean openMandate;
+	@XmlElement
+	private String mandateType;
+	@XmlElement
+	private String eMandateSource;
+	@XmlElement
+	private String eMandateReferenceNo;
 	private long custID;
-
 	@XmlElement(name = "cif")
 	private String custCIF;
 	private String custShrtName;
-
-	@XmlElement
-	private String mandateType;
-
 	private Long bankBranchID;
 	@XmlElement
 	private String branchCode;
 	private String branchDesc;
 	@XmlElement
-	private String eMandateSource;
-	@XmlElement
-	private String eMandateReferenceNo;
-
-	@XmlElement
 	private String bankCode;
-
 	private String bankName;
 	private String city;
-
 	@XmlElement(name = "micr")
 	private String mICR;
-
 	@XmlElement(name = "ifsc")
 	private String iFSC;
 	@XmlElement
@@ -97,10 +92,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String jointAccHolderName;
 	@XmlElement
 	private String accType;
-
 	private String accTypeName;
-	@XmlElement
-	private boolean openMandate;
 	@XmlElement
 	private Date startDate;
 	@XmlElement
@@ -115,7 +107,6 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String phoneAreaCode;
 	@XmlElement
 	private String phoneNumber;
-
 	@XmlElement
 	private String status;
 	private String statusName;
@@ -144,9 +135,6 @@ public class Mandate extends AbstractWorkflowEntity {
 	private byte[] docImage;
 	@XmlElement(name = "docRefId")
 	private String externalRef;
-
-	// API validation purpose only
-	private Mandate validateMandate = this;
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	@XmlElement
@@ -160,7 +148,6 @@ public class Mandate extends AbstractWorkflowEntity {
 	private boolean swapIsActive;
 	private long primaryMandateId = 0;
 	private boolean secondaryMandate;
-
 	private long finID;
 	private String finReference;
 	private long applId;
@@ -176,16 +163,13 @@ public class Mandate extends AbstractWorkflowEntity {
 	private Date processDate;
 	private String finType;
 	private String finBranch;
-	private String machineFlag = "N";
 	private Date firstDueDate;
 	private String loanBranch;
-	private Date machineFlagUploadDate;
 	private boolean activeFlag = true;
 	@XmlElement
 	private String entityCode;
 	private String entityDesc;
 	private boolean approveMandate;
-
 	@XmlElement
 	private long partnerBankId;
 	@XmlElement
@@ -193,18 +177,23 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String partnerBankName;
 	@XmlElement
 	private Boolean pennyDropStatus;
+	private Date swapEffectiveDate;
+	private Long holdReason;
+	private boolean securityMandate;
+	@XmlElement
+	private Long employeeID;
+	@XmlElement
+	private String employerName;
+	private String finRepayMethod;
+	private String alwdRpyMethods;
 
 	public Mandate() {
 		super();
 	}
 
-	public Mandate(long id) {
-		super();
-		this.setId(id);
-	}
-
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
+
 		excludeFields.add("custCIF");
 		excludeFields.add("custShrtName");
 		excludeFields.add("branchCode");
@@ -219,7 +208,6 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("module");
 		excludeFields.add("reason");
 		excludeFields.add("useExisting");
-		excludeFields.add("validateMandate");
 		excludeFields.add("sourceId");
 		excludeFields.add("returnStatus");
 		excludeFields.add("totEMIAmount");
@@ -241,11 +229,9 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("processDate");
 		excludeFields.add("finType");
 		excludeFields.add("finBranch");
-		excludeFields.add("machineFlag");
 		excludeFields.add("firstDueDate");
 		excludeFields.add("activeFlag");
 		excludeFields.add("loanBranch");
-		excludeFields.add("machineFlagUploadDate");
 		excludeFields.add("amountInWords");
 		excludeFields.add("finID");
 		excludeFields.add("finReference");
@@ -254,19 +240,10 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("partnerBankName");
 		excludeFields.add("pennyDropStatus");
+		excludeFields.add("finRepayMethod");
+		excludeFields.add("alwdRpyMethods");
+
 		return excludeFields;
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter ******************//
-	// ******************************************************//
-
-	public long getId() {
-		return mandateID;
-	}
-
-	public void setId(long id) {
-		this.mandateID = id;
 	}
 
 	public long getMandateID() {
@@ -672,30 +649,6 @@ public class Mandate extends AbstractWorkflowEntity {
 		this.secondaryMandate = secondaryMandate;
 	}
 
-	public String getmICR() {
-		return mICR;
-	}
-
-	public void setmICR(String mICR) {
-		this.mICR = mICR;
-	}
-
-	public String getiFSC() {
-		return iFSC;
-	}
-
-	public void setiFSC(String iFSC) {
-		this.iFSC = iFSC;
-	}
-
-	public Mandate getValidateMandate() {
-		return validateMandate;
-	}
-
-	public void setValidateMandate(Mandate validateMandate) {
-		this.validateMandate = validateMandate;
-	}
-
 	public long getFinID() {
 		return finID;
 	}
@@ -816,14 +769,6 @@ public class Mandate extends AbstractWorkflowEntity {
 		this.finBranch = finBranch;
 	}
 
-	public String getMachineFlag() {
-		return machineFlag;
-	}
-
-	public void setMachineFlag(String machineFlag) {
-		this.machineFlag = machineFlag;
-	}
-
 	public Date getFirstDueDate() {
 		return firstDueDate;
 	}
@@ -838,14 +783,6 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setLoanBranch(String loanBranch) {
 		this.loanBranch = loanBranch;
-	}
-
-	public Date getMachineFlagUploadDate() {
-		return machineFlagUploadDate;
-	}
-
-	public void setMachineFlagUploadDate(Date machineFlagUploadDate) {
-		this.machineFlagUploadDate = machineFlagUploadDate;
 	}
 
 	public boolean isActiveFlag() {
@@ -912,11 +849,11 @@ public class Mandate extends AbstractWorkflowEntity {
 		this.approveMandate = approveMandate;
 	}
 
-	public long getPartnerBankId() {
+	public Long getPartnerBankId() {
 		return partnerBankId;
 	}
 
-	public void setPartnerBankId(long partnerBankId) {
+	public void setPartnerBankId(Long partnerBankId) {
 		this.partnerBankId = partnerBankId;
 	}
 
@@ -967,4 +904,61 @@ public class Mandate extends AbstractWorkflowEntity {
 	public void seteMandateReferenceNo(String eMandateReferenceNo) {
 		this.eMandateReferenceNo = eMandateReferenceNo;
 	}
+
+	public Date getSwapEffectiveDate() {
+		return swapEffectiveDate;
+	}
+
+	public void setSwapEffectiveDate(Date swapEffectiveDate) {
+		this.swapEffectiveDate = swapEffectiveDate;
+	}
+
+	public Long getHoldReason() {
+		return holdReason;
+	}
+
+	public void setHoldReason(Long holdReason) {
+		this.holdReason = holdReason;
+	}
+
+	public boolean isSecurityMandate() {
+		return securityMandate;
+	}
+
+	public void setSecurityMandate(boolean securityMandate) {
+		this.securityMandate = securityMandate;
+	}
+
+	public Long getEmployeeID() {
+		return employeeID;
+	}
+
+	public void setEmployeeID(Long employeeID) {
+		this.employeeID = employeeID;
+	}
+
+	public String getEmployerName() {
+		return employerName;
+	}
+
+	public void setEmployerName(String employerName) {
+		this.employerName = employerName;
+	}
+
+	public String getFinRepayMethod() {
+		return finRepayMethod;
+	}
+
+	public void setFinRepayMethod(String finRepayMethod) {
+		this.finRepayMethod = finRepayMethod;
+	}
+
+	public String getAlwdRpyMethods() {
+		return alwdRpyMethods;
+	}
+
+	public void setAlwdRpyMethods(String alwdRpyMethods) {
+		this.alwdRpyMethods = alwdRpyMethods;
+	}
+
 }

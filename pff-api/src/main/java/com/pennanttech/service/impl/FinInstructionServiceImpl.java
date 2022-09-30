@@ -1,7 +1,6 @@
 package com.pennanttech.service.impl;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -106,6 +105,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.core.schd.service.PartCancellationService;
 import com.pennant.pff.dao.subvention.SubventionUploadDAO;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.model.subvention.Subvention;
 import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.pff.service.subvention.SubventionKnockOffService;
@@ -2293,309 +2293,227 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Override
-	public WSReturnStatus saveChequeDetails(FinanceDetail fd) throws ServiceException {
+	public ChequeHeader getChequeDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
+		ChequeHeader response = new ChequeHeader();
+
+		if (StringUtils.isBlank(finReference)) {
+			validationUtility.fieldLevelException();
+		}
+
+		APIErrorHandlerService.logReference(finReference);
+
+		if (StringUtils.isBlank(finReference)) {
+			response.setReturnStatus(getError("90502", "finReference"));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+		if (finID == null) {
+			response.setReturnStatus(getError("90201", finReference));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		response = chequeHeaderDAO.getChequeHeaderByRef(finID, "_View");
+		if (response == null) {
+			response = new ChequeHeader();
+			response.setReturnStatus(getError("90201", "No Cheque Details"));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		response.setChequeDetailList(chequeDetailDAO.getChequeDetailList(response.getHeaderID(), "_View"));
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
+	public WSReturnStatus saveChequeDetails(FinanceDetail fd) {
+		WSReturnStatus wsStatus = validateBasicDetails(fd, "");
+
+		if (wsStatus != null) {
+			return wsStatus;
+		}
+
+		ErrorDetail error = chequeHeaderService.chequeValidationForUpdate(fd, PennantConstants.method_save, "");
+
+		if (error != null) {
+			return getError(error.getCode(), error.getParameters());
+		}
+
+		return finServiceInstController.processChequeDetail(fd, "");
+	}
+
+	@Override
+	public WSReturnStatus createChequeDetails(FinanceDetail fd) {
+		String type = "_Temp";
+
+		WSReturnStatus wsStatus = validateBasicDetails(fd, type);
+
+		if (wsStatus != null) {
+			return wsStatus;
+		}
+
+		ErrorDetail error = chequeHeaderService.chequeValidation(fd, PennantConstants.method_save, type);
+
+		if (error != null) {
+			return getError(error.getCode(), error.getParameters());
+		}
+
+		return finServiceInstController.processChequeDetail(fd, type);
+	}
+
+	@Override
+	public WSReturnStatus updateChequeDetails(FinanceDetail fd) {
+		String type = "_Temp";
+
+		WSReturnStatus wsStatus = validateBasicDetails(fd, type);
+
+		if (wsStatus != null) {
+			return wsStatus;
+		}
+
+		ErrorDetail error = chequeHeaderService.chequeValidationForUpdate(fd, PennantConstants.method_Update, type);
+
+		if (error != null) {
+			return getError(error.getCode(), error.getParameters());
+		}
+
+		return finServiceInstController.updateCheque(fd, type);
+	}
+
+	@Override
+	public WSReturnStatus updateChequeDetailsInMaintainence(FinanceDetail fd) {
+		WSReturnStatus wsStatus = validateBasicDetails(fd, "");
+
+		if (wsStatus != null) {
+			return wsStatus;
+		}
+
+		ErrorDetail error = chequeHeaderService.chequeValidationInMaintainence(fd, PennantConstants.method_Update, "");
+
+		if (error != null) {
+			return getError(error.getCode(), error.getParameters());
+		}
+
+		return finServiceInstController.updateChequeDetailsinMaintainence(fd, "");
+	}
+
+	private WSReturnStatus validateBasicDetails(FinanceDetail fd, String type) {
 		String finReference = fd.getFinReference();
 
-		WSReturnStatus returnStatus = new WSReturnStatus();
-		List<ErrorDetail> errorDetails;
-		try {
-			FinanceMain fm = null;
+		APIErrorHandlerService.logReference(finReference);
 
-			ChequeHeader chequeHeader = fd.getChequeHeader();
+		ChequeHeader chequeHeader = fd.getChequeHeader();
 
-			FinScheduleData schdData = fd.getFinScheduleData();
-			if (finReference == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "FinReference";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			} else {
-				fm = financeMainDAO.getFinanceMainByRef(finReference, "", false);
-				if (fm == null || !fm.isFinIsActive() || StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finReference;
-					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-				} else {
-					schdData.setFinanceMain(fm);
-					fd.setFinID(fm.getFinID());
-				}
-				returnStatus = isWriteoffLoan(fm.getFinID());
-				if (returnStatus != null) {
-					return returnStatus;
-				}
-			}
-
-			if (chequeHeader == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Cheque Details ";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			}
-
-			// for logging purpose
-			APIErrorHandlerService.logReference(finReference);
-			errorDetails = chequeHeaderService.chequeValidationForUpdate(fd, PennantConstants.method_save, "");
-			for (ErrorDetail errorDetail : errorDetails) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getParameters());
-				return returnStatus;
-			}
-
-			List<FinanceScheduleDetail> schedules = null;
-			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
-			schdData.setFinanceScheduleDetails(schedules);
-
-			validateChequeDetails(fd, true);
-
-			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-				}
-			}
-			returnStatus = finServiceInstController.processChequeDetail(fd, "");
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION + e);
-			return APIErrorHandlerService.getFailedStatus();
+		if (chequeHeader == null) {
+			return getError("90502", "Cheque Details ");
 		}
-		logger.debug(Literal.LEAVING);
-		return returnStatus;
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		if (finReference == null) {
+			return getError("90502", "FinReference");
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+
+		if (finID == null) {
+			return getError("90201", finReference);
+		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
+
+		if (StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
+			return getError("90201", finReference);
+		}
+
+		if (fm.isWriteoffLoan()) {
+			return getError("FWF001", "");
+		}
+
+		schdData.setFinanceMain(fm);
+		fd.setFinID(finID);
+
+		return validateChequeDetails(fd, type, true);
 	}
 
-	private void validateChequeDetails(FinanceDetail financeDetail, boolean validReq) {
+	private WSReturnStatus validateChequeDetails(FinanceDetail fd, String type, boolean validReq) {
 		boolean date = true;
-		FinScheduleData schdData = financeDetail.getFinScheduleData();
-		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
-		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
 
-		for (ChequeDetail chequeDetail : chequeDetailsList) {
-			if (FinanceConstants.REPAYMTH_PDC.equals(chequeDetail.getChequeType())) {
-				List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
-				for (FinanceScheduleDetail fsd : schedules) {
-					if (DateUtil.compare(fsd.getSchDate(), chequeDetail.getChequeDate()) == 0) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
+
+		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
+
+		ChequeHeader ch = fd.getChequeHeader();
+		List<ChequeDetail> cheques = ch.getChequeDetailList();
+
+		for (ChequeDetail cheque : cheques) {
+			if (InstrumentType.isPDC(cheque.getChequeType())) {
+				List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
+				for (FinanceScheduleDetail schedule : schedules) {
+					date = false;
+
+					if (DateUtil.compare(schedule.getSchDate(), cheque.getChequeDate()) == 0) {
 						date = true;
-						chequeDetail.seteMIRefNo(fsd.getInstNumber());
-						if (fsd.getRepayAmount().compareTo(chequeDetail.getAmount()) != 0) {
-							// {0} Should be equal To {1}
-							String[] valueParm = new String[2];
-							valueParm[0] = new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
-							valueParm[1] = String.valueOf(fsd.getRepayAmount() + "INR");
-							schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
-							return;
-						} else if (validReq
-								&& chequeDetailDAO.isChequeExists(chequeHeader.getHeaderID(), fsd.getSchDate())) {
-							String[] valueParm = new String[2];
-							valueParm[0] = "Cheque ";
-							valueParm[1] = "Cheque Date : " + fsd.getSchDate();
-							schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
-							return;
-						} else {
-							break;
-						}
-					} else {
-						date = false;
+						cheque.seteMIRefNo(schedule.getInstNumber());
+
+						validate(schdData, schedule, cheque, validReq, ch.getHeaderID());
+						break;
 					}
 				}
-				if (date == false) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "Cheque Date";
-					valueParm[1] = "ScheduleDates";
-					schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
-					return;
-				}
 
+				if (!date) {
+					setError(schdData, "30570", "Cheque Date", "ScheduleDates");
+					break;
+				}
 			}
 		}
 
-		return;
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+		if (CollectionUtils.isNotEmpty(errors)) {
+			ErrorDetail ed = errors.get(0);
+			return getError(ed.getCode(), ed.getError());
+		}
+
+		return null;
 	}
 
-	@Override
-	public WSReturnStatus createChequeDetails(FinanceDetail financeDetail) throws ServiceException {
-		logger.debug(Literal.ENTERING);
-		WSReturnStatus returnStatus = new WSReturnStatus();
-		List<ErrorDetail> errorDetails;
-		String tableType = "_Temp";
-		try {
-			FinanceMain fm = null;
-			String finReference = financeDetail.getFinReference();
-			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+	private void validate(FinScheduleData schdData, FinanceScheduleDetail schedule, ChequeDetail cheque,
+			boolean validReq, long headerID) {
+		BigDecimal repayAmount = schedule.getRepayAmount();
+		Date schDate = schedule.getSchDate();
 
-			FinScheduleData schdData = financeDetail.getFinScheduleData();
-			if (finReference == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "FinReference";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			} else {
-				fm = financeMainDAO.getFinanceMainByRef(finReference, tableType, false);
-				if (fm == null || !fm.isFinIsActive() || StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finReference;
-					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-				} else {
-					schdData.setFinanceMain(fm);
-				}
-
-				long finID = fm.getFinID();
-
-				returnStatus = isWriteoffLoan(finID);
-				if (returnStatus != null) {
-					return returnStatus;
-				}
-			}
-
-			if (chequeHeader == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Cheque Details ";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			}
-
-			// for logging purpose
-			APIErrorHandlerService.logReference(finReference);
-			errorDetails = chequeHeaderService.chequeValidation(financeDetail, PennantConstants.method_save, tableType);
-			for (ErrorDetail errorDetail : errorDetails) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getParameters());
-				return returnStatus;
-			}
-
-			List<FinanceScheduleDetail> schedules = null;
-			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), tableType, false);
-			schdData.setFinanceScheduleDetails(schedules);
-			validateChequeDetails(financeDetail, true);
-			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-				}
-			}
-			returnStatus = finServiceInstController.processChequeDetail(financeDetail, tableType);
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION + e);
-			return APIErrorHandlerService.getFailedStatus();
+		if (repayAmount.compareTo(cheque.getAmount()) != 0) {
+			setError(schdData, "30570", DateUtil.formatToLongDate(schDate), String.valueOf(repayAmount + "INR"));
+			return;
 		}
-		logger.debug(Literal.LEAVING);
-		return returnStatus;
+
+		if (validReq && chequeDetailDAO.isChequeExists(headerID, schDate)) {
+			setError(schdData, "41018", "Cheque ", "Cheque Date : " + schDate);
+		}
 	}
 
-	@Override
-	public WSReturnStatus updateChequeDetailsInMaintainence(FinanceDetail financeDetail) throws ServiceException {
-		logger.debug(Literal.ENTERING);
-		WSReturnStatus returnStatus = new WSReturnStatus();
-		List<ErrorDetail> errorDetails;
-		try {
+	private void setError(FinScheduleData schdData, String code, String... parm) {
+		ErrorDetail error = ErrorUtil.getError(code, parm);
 
-			String finReference = financeDetail.getFinReference();
-			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+		StringBuilder logMsg = new StringBuilder();
+		logMsg.append("\n");
+		logMsg.append("=======================================================\n");
+		logMsg.append("Error-Code: ").append(error.getCode()).append("\n");
+		logMsg.append("Error-Message: ").append(error.getMessage()).append("\n");
+		logMsg.append("=======================================================");
+		logMsg.append("\n");
 
-			// for logging purpose
-			APIErrorHandlerService.logReference(finReference);
-			Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		logger.error(Literal.EXCEPTION, logMsg);
 
-			if (finID == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "finReference";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-
-			financeDetail.setFinID(finID);
-			errorDetails = chequeHeaderService.chequeValidationInMaintainence(financeDetail,
-					PennantConstants.method_Update, "");
-			for (ErrorDetail errorDetail : errorDetails) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getParameters());
-				return returnStatus;
-			}
-
-			if (chequeHeader.getChequeDetailList() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Cheque Details ";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			}
-			List<ChequeDetail> chequeDetails = chequeHeader.getChequeDetailList();
-			for (ChequeDetail chequeDetail : chequeDetails) {
-				if (chequeDetail.getChequeDetailsID() == 0) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "ChequeDetails Id ";
-					return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-				}
-
-			}
-
-			List<FinanceScheduleDetail> schedules = null;
-			FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "", false);
-			FinScheduleData schdData = financeDetail.getFinScheduleData();
-			schdData.setFinanceMain(fm);
-			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
-			schdData.setFinanceScheduleDetails(schedules);
-
-			validateChequeDetails(financeDetail, false);
-			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-				}
-			}
-			returnStatus = finServiceInstController.updateChequeDetailsinMaintainence(financeDetail, "");
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION + e);
-			return APIErrorHandlerService.getFailedStatus();
-		}
-
-		return returnStatus;
-	}
-
-	@Override
-	public WSReturnStatus updateChequeDetails(FinanceDetail financeDetail) throws ServiceException {
-		logger.debug(Literal.ENTERING);
-		WSReturnStatus returnStatus = new WSReturnStatus();
-		List<ErrorDetail> errorDetails;
-		String tableType = "_Temp";
-		try {
-			String finReference = financeDetail.getFinReference();
-			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
-
-			Long finID = financeMainDAO.getFinID(finReference);
-
-			financeDetail.setFinID(finID);
-
-			// for logging purpose
-			APIErrorHandlerService.logReference(finReference);
-			errorDetails = chequeHeaderService.chequeValidationForUpdate(financeDetail, PennantConstants.method_Update,
-					tableType);
-			for (ErrorDetail errorDetail : errorDetails) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getParameters());
-				return returnStatus;
-			}
-
-			if (chequeHeader.getChequeDetailList() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Cheque Details ";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			}
-
-			List<FinanceScheduleDetail> schedules = null;
-			FinanceMain fm = financeMainDAO.getFinanceMainById(finID, tableType, false);
-			FinScheduleData schdData = financeDetail.getFinScheduleData();
-			schdData.setFinanceMain(fm);
-			schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, tableType, false);
-			schdData.setFinanceScheduleDetails(schedules);
-
-			validateChequeDetails(financeDetail, true);
-			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-				}
-			}
-			returnStatus = finServiceInstController.updateCheque(financeDetail, tableType);
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION + e);
-			return APIErrorHandlerService.getFailedStatus();
-		}
-
-		return returnStatus;
+		schdData.setErrorDetail(error);
 	}
 
 	/**
@@ -2644,58 +2562,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 		return dueAmount;
 
-	}
-
-	@Override
-	public ChequeHeader getChequeDetails(String finReference) throws ServiceException {
-		logger.debug(Literal.ENTERING);
-
-		ChequeHeader response = new ChequeHeader();
-		// Mandatory validation
-		if (StringUtils.isBlank(finReference)) {
-			validationUtility.fieldLevelException();
-		}
-
-		// for logging purpose
-		APIErrorHandlerService.logReference(finReference);
-
-		if (StringUtils.isBlank(finReference)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "finReference";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			return response;
-		}
-
-		Long finID = financeMainDAO.getActiveFinID(finReference);
-		if (finID == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finReference;
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
-			return response;
-		}
-
-		try {
-			response = chequeHeaderDAO.getChequeHeaderByRef(finID, "_View");
-			if (response == null) {
-				response = new ChequeHeader();
-				String[] valueParm = new String[1];
-				valueParm[0] = "No Cheque Details";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
-				return response;
-			}
-
-			if (response != null) {
-				List<ChequeDetail> chequeDetailList = chequeDetailDAO.getChequeDetailList(response.getHeaderID(),
-						"_View");
-				response.setChequeDetailList(chequeDetailList);
-			}
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION + e);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			return response;
-		}
-		return response;
 	}
 
 	@Override
@@ -3658,6 +3524,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		logger.debug(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
+	}
+
+	private WSReturnStatus getError(String code, String... parm) {
+		return APIErrorHandlerService.getFailedStatus(code, parm);
 	}
 
 	@Autowired

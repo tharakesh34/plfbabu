@@ -85,6 +85,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	private String bankCode;
 	private String branchCode;
 	private String branchDesc;
+	@XmlElement
 	private String micr;
 	private String ifsc;
 	private String city;
@@ -96,6 +97,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	private String sourceId;
 	@XmlElement
 	private boolean isDelete = false;
+	private boolean oldCheque;
 
 	public ChequeDetail() {
 		super();
@@ -124,6 +126,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("excbankBranchID");
 		excludeFields.add("sourceId");
 		excludeFields.add("isDelete");
+		excludeFields.add("oldCheque");
 		return excludeFields;
 	}
 
@@ -409,6 +412,14 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 
 	public void setDelete(boolean isDelete) {
 		this.isDelete = isDelete;
+	}
+
+	public boolean isOldCheque() {
+		return oldCheque;
+	}
+
+	public void setOldCheque(boolean oldCheque) {
+		this.oldCheque = oldCheque;
 	}
 
 }

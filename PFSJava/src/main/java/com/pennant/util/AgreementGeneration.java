@@ -225,6 +225,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.document.generator.TemplateEngine;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.framework.security.core.User;
@@ -2219,7 +2220,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				chDetail.setChequeSerialNo(String.valueOf(chequeDetail.getChequeSerialNo()));
 				chDetail.setChequeType(chequeDetail.getChequeType());
 				chDetail.setChequeTypeDesc(PennantApplicationUtil.getLabelDesc(chequeDetail.getChequeType(),
-						PennantStaticListUtil.getChequeTypes()));
+						MandateUtil.getChequeTypes()));
 				if (chequeDetail.getChequeDate() != null) {
 					chDetail.setChequeDate(DateUtil.formatToShortDate(chequeDetail.getChequeDate()));
 				}

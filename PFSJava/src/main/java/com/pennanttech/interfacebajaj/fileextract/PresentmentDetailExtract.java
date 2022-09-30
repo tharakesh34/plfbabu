@@ -29,6 +29,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -40,6 +41,7 @@ import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.presentment.PresentmentResponseProcess;
+import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -72,6 +74,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private FinODDetailsDAO finODDetailsDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
+	private ConsecutiveBounceDAO consecutiveBounceDAO;
+	private MandateDAO mandateDAO;
 
 	/* Service's */
 	private NotificationService notificationService;
@@ -278,6 +282,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			prp.setCustomerDAO(customerDAO);
 			prp.setFinanceScheduleDetailDAO(financeScheduleDetailDAO);
 			prp.setFinanceProfitDetailDAO(financeProfitDetailDAO);
+			prp.setConsecutiveBounceDAO(consecutiveBounceDAO);
+			prp.setMandateDAO(mandateDAO);
 			prp.setRepaymentPostingsUtil(repaymentPostingsUtil);
 			prp.setFinODDetailsDAO(finODDetailsDAO);
 			prp.setReceiptCalculator(receiptCalculator);
@@ -540,6 +546,14 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public void setConsecutiveBounceDAO(ConsecutiveBounceDAO consecutiveBounceDAO) {
+		this.consecutiveBounceDAO = consecutiveBounceDAO;
+	}
+
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
 	}
 
 	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {

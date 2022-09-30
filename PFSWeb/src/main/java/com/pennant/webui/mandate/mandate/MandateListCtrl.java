@@ -29,7 +29,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -47,17 +46,17 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.MandateConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.MandateStatus;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.mandate.mandate.model.MandateListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -138,7 +137,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		super.doAddFilters();
 		if (!enqiryModule && !searchObject.getFilters().isEmpty()) {
 			searchObject.addFilterEqual("active", 1);
-			searchObject.addFilterNotEqual("Status", MandateConstants.STATUS_FIN);
+			searchObject.addFilterNotEqual("Status", MandateStatus.FIN);
 		}
 	}
 
@@ -157,12 +156,9 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		registerButton(button_MandateList_MandateSearch);
 		registerButton(button_MandateList_NewMandate, "button_MandateList_NewMandate", true);
 
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
-		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
-		fillComboBox(this.status, "",
-				PennantStaticListUtil
-						.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS)),
-				Collections.singletonList(MandateConstants.STATUS_FIN));
+		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
+		fillComboBox(this.accType, "", MandateUtil.getAccountTypes(), "");
+		fillComboBox(this.status, "", MandateUtil.getMandateStatus(), Collections.singletonList(MandateStatus.FIN));
 
 		registerField("mandateID", listheader_MandateId, SortOrder.ASC, mandateID, sortOperator_MandateID,
 				Operators.NUMERIC);
@@ -214,7 +210,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_MandateList_NewMandate(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Create a new entity.
 		Mandate mandate = new Mandate();
@@ -222,9 +218,15 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		mandate.setWorkflowId(getWorkFlowId());
 
 		// Display the dialog page.
-		doShowDialogPage(mandate);
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("mandate", mandate);
+		arg.put("mandateListCtrl", this);
+		arg.put("enqModule", enqiryModule);
+		arg.put("fromLoan", false);
 
-		logger.debug("Leaving");
+		Executions.createComponents("/WEB-INF/pages/Mandate/SelectMandateDialog.zul", null, arg);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -235,7 +237,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 */
 
 	public void onMandateItemDoubleClicked(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxMandate.getSelectedItem();
@@ -264,7 +266,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -273,7 +275,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 * @param mandate The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Mandate mandate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			Map<String, Object> arg = getDefaultArguments();
 			arg.put("mandate", mandate);
@@ -281,18 +283,17 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 			arg.put("enqModule", enqiryModule);
 			arg.put("fromLoan", false);
 
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_AWAITCON)) {
+			if (MandateStatus.isAwaitingConf(mandate.getStatus())) {
 				arg.put("enqModule", true);
 			}
 
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equalsIgnoreCase(MandateConstants.STATUS_APPROVED)
-					|| StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
+			if (MandateStatus.isApproved(mandate.getStatus()) || MandateStatus.isHold(mandate.getStatus())) {
 				arg.put("maintain", true);
 			}
 
 			String page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
 			if (enqiryModule) {
-				page = "/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul";
+				page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
 			}
 
 			Executions.createComponents(page, null, arg);
@@ -300,7 +301,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -357,13 +358,13 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 * Method for Showing Customer Search Window
 	 */
 	private void doSearchCustomerCIF() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Map<String, Object> map = getDefaultArguments();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -373,7 +374,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 * @param newSearchObject
 	 */
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
 
@@ -383,7 +384,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		} else {
 			this.custCIF.setValue("");
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
