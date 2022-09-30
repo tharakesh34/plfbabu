@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.documents.model.Document;
 import com.pennanttech.pff.documents.model.DocumentStatus;
@@ -101,7 +102,8 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 
 				return ds;
 			});
-		} catch (Exception e) {
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}
@@ -380,7 +382,7 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), new DocumentStatusRowMapper(), id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

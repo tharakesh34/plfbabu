@@ -858,13 +858,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		Object obj = new Object[] { finID, FinanceConstants.MANUAL_ADVISE_RECEIVABLE, valueDate,
 				PennantConstants.MANUALADVISE_MAINTAIN };
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, obj);
-		} catch (Exception e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, obj);
 	}
 
 	@Override
@@ -1840,13 +1834,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		java.sql.Date appDate = JdbcUtil.getDate(SysParamUtil.getAppDate());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finID, appDate);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, appDate);
 	}
 
 	@Override
@@ -1918,7 +1906,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		try {
 			return jdbcOperations.queryForObject(sql, Long.class, adviseID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return Long.MIN_VALUE;

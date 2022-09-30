@@ -16,6 +16,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.provision.dao.ProvisionDAO;
@@ -56,13 +57,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
-		} catch (DataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
 	}
 
 	@Override
@@ -128,7 +123,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		try {
 			return this.jdbcOperations.queryForObject(sql, Long.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -207,7 +202,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 			}, finReference, 0);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -277,7 +272,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				return p;
 			}, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -294,13 +289,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
 	}
 
 	@Override
@@ -309,13 +298,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finReference);
 	}
 
 	@Override
@@ -620,7 +603,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				return p;
 			}, finReference, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -667,7 +650,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new ProvisionRowMapper());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

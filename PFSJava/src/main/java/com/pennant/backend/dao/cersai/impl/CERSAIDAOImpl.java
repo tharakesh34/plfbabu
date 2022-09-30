@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -40,6 +41,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
@@ -100,7 +102,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		paramMap.addValue("EndTime", DateUtil.getSysDate());
 		try {
 			this.jdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
@@ -136,7 +138,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		paramMap.addValue("segmentType", fileInfo.getDownloadType());
 		try {
 			this.jdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "id" });
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		fileInfo.setId(keyHolder.getKey().longValue());
@@ -631,8 +633,6 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 
 	@Override
 	public List<Map<String, Object>> getExtendedFieldMap(String reference, String tableName, String type) {
-		List<Map<String, Object>> renderMap = null;
-
 		type = StringUtils.trimToEmpty(type).toLowerCase();
 
 		StringBuilder sql = new StringBuilder();
@@ -647,13 +647,11 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", reference);
 		try {
-			renderMap = this.jdbcTemplate.queryForList(sql.toString(), source);
-		} catch (Exception e) {
-			logger.warn("Records not found in {}{} for the reference : {}", tableName, type, reference);
-			renderMap = new ArrayList<>();
+			return this.jdbcTemplate.queryForList(sql.toString(), source);
+		} catch (DataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new ArrayList<>();
 		}
-
-		return renderMap;
 	}
 
 	@Override
@@ -995,7 +993,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 
 		try {
 			this.jdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
+		} catch (DuplicateKeyException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.trace(Literal.LEAVING);

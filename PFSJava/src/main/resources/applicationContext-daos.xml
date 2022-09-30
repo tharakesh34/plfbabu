@@ -10439,7 +10439,6 @@
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finMaintainInstructionDAO" ref="finMaintainInstructionDAO" />
 		<property name="lowerTaxDeductionDAO" ref="lowerTaxDeductionDAO" />

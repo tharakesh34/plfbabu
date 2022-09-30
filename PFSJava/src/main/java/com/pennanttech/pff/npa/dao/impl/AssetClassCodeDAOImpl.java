@@ -9,6 +9,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.npa.dao.AssetClassCodeDAO;
@@ -59,7 +60,7 @@ public class AssetClassCodeDAOImpl extends SequenceDao<AssetClassCode> implement
 				return accde;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}

@@ -2137,13 +2137,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finReference, RepayConstants.PEXC_APPROV);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finReference, RepayConstants.PEXC_APPROV);
 	}
 
 	@Override

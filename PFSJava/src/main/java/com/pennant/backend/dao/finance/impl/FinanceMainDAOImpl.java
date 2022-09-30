@@ -6211,8 +6211,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		try {
 			return this.jdbcOperations.queryForMap(sql.toString(), reference);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return new HashMap<>();

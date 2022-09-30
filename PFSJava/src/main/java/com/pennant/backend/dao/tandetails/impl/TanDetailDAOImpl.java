@@ -11,6 +11,7 @@ import com.pennanttech.finance.tds.cerificate.model.TanDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -142,7 +143,7 @@ public class TanDetailDAOImpl extends SequenceDao<TanDetail> implements TanDetai
 				return tanDetail;
 			}, Id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}

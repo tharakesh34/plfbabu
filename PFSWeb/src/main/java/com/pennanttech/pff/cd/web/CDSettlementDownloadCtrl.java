@@ -11,7 +11,6 @@ import java.io.Serializable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
@@ -49,13 +48,9 @@ public class CDSettlementDownloadCtrl extends GFCBaseListCtrl<CDSettlementProces
 	protected Timer timer;
 	private Button downlaod;
 
-	private Media media = null;
-	private File file = null;
 	String module = null;
 
 	private long userId;
-	private DataEngineStatus SETTLEMENT_REQUEST_DOWNLOAD = new DataEngineStatus(
-			PennantConstants.SETTLEMENT_REQUEST_DOWNLOAD);
 
 	protected DataEngineConfig dataEngineConfig;
 	protected CDSettlementResponseUpload cdSettlementResponseUpload;
@@ -167,7 +162,7 @@ public class CDSettlementDownloadCtrl extends GFCBaseListCtrl<CDSettlementProces
 		}
 
 		inputStream.close();
-		inputStream = null;
+
 		Filedownload.save(stream.toByteArray(), "application/octet-stream", fileName);
 		stream.close();
 	}

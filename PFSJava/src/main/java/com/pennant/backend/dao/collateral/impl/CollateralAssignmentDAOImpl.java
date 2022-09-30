@@ -734,14 +734,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		paramMap.addValue("SiId", siId);
 		paramMap.addValue("AssetId", assetId);
 		paramMap.addValue("CollateralRef", ref);
-		try {
 
-			this.jdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+		this.jdbcTemplate.update(sql.toString(), paramMap);
 
 		logger.debug(Literal.LEAVING);
 	}
-
 }

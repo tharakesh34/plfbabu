@@ -66,6 +66,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
@@ -527,7 +528,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), String.class, finType);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}

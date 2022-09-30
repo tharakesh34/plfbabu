@@ -515,12 +515,8 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 		paramMap.addValue("Modified", modified);
 		paramMap.addValue("CollateralRef", collateralref);
-		try {
 
-			this.jdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+		this.jdbcTemplate.update(sql.toString(), paramMap);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -560,8 +556,10 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		source.addValue("seqNo", seqNo);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Date.class);
-		} catch (Exception e) {
-			logger.warn("Records not found in {} for the reference : {}", tableName, reference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return null;

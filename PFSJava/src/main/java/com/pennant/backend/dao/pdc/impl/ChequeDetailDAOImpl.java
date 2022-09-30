@@ -441,14 +441,8 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		sql.append(" Where cd.BankBranchID = ? and cd.AccountNo = ? and cd.ChequeSerialNo = ?");
 		sql.append(" and cd.ChequeDetailsID != ?");
 
-		try {
-			return jdbcOperations.queryForObject(sql.toString(), Integer.class, bankBranchID, accountNo,
-					String.valueOf(chequeSerialNo), chequeDetailsID) > 0;
-		} catch (Exception e) {
-			//
-		}
-
-		return false;
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, bankBranchID, accountNo,
+				String.valueOf(chequeSerialNo), chequeDetailsID) > 0;
 	}
 
 	private boolean isNonActiveChequeDetails(long chequeDetailsID, long bankBranchID, String accountNo,
@@ -461,13 +455,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		sql.append(" Where cd.BankBranchID = ? and cd.AccountNo = ? and cd.ChequeSerialNo = ?");
 		sql.append(" and cd.ChequeDetailsID != ?");
 
-		try {
-			return jdbcOperations.queryForObject(sql.toString(), Integer.class, bankBranchID, accountNo,
-					String.valueOf(chequeSerialNo), chequeDetailsID) > 0;
-		} catch (Exception e) {
-			//
-		}
-
-		return false;
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, bankBranchID, accountNo,
+				String.valueOf(chequeSerialNo), chequeDetailsID) > 0;
 	}
 }
