@@ -44,6 +44,21 @@ public class MandateExtension {
 	 */
 	public static boolean FRQ_DES_CHANGE_ON_EXTRACTION;
 
+	/**
+	 * Feature extension to capture partner bank in mandate creation
+	 */
+	public static boolean PARTNER_BANK_REQ;
+
+	/**
+	 * Feature extension to capture partner bank in mandate creation
+	 */
+	public static boolean SWAP_EFFECTIVE_DATE_DEFAULT;
+
+	/**
+	 * Feature extension to capture partner bank in mandate creation
+	 */
+	public static boolean ACCOUNT_DETAILS_READONLY;
+
 	static {
 		APPROVE_ON_LOAN_ORG = getValueAsBoolean("APPROVE_ON_LOAN_ORG", false);
 		UPLOAD_ENITITY_CODE_MANDATORY = getValueAsBoolean("UPLOAD_ENITITY_CODE_MANDATORY", false);
@@ -52,6 +67,9 @@ public class MandateExtension {
 		ALLOW_CO_APP = getValueAsBoolean("ALLOW_CO_APP", false);
 		PARTNER_BANK_WISE_EXTARCTION = getValueAsBoolean("PARTNER_BANK_WISE_EXTARCTION", false);
 		FRQ_DES_CHANGE_ON_EXTRACTION = getValueAsBoolean("FRQ_DES_CHANGE_ON_EXTRACTION", false);
+		PARTNER_BANK_REQ = getValueAsBoolean("PARTNER_BANK_REQ", false);
+		SWAP_EFFECTIVE_DATE_DEFAULT = getValueAsBoolean("SWAP_EFFECTIVE_DATE_DEFAULT", false);
+		ACCOUNT_DETAILS_READONLY = getValueAsBoolean("ACCOUNT_DETAILS_READONLY", false);
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {

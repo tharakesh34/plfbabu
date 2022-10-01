@@ -27,6 +27,7 @@ package com.pennant.backend.service.mandate;
 
 import java.util.List;
 
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -94,4 +95,6 @@ public interface MandateService {
 	Mandate getEmployerDetails(long custID);
 
 	long saveStatus(MandateStatus mandateStatus);
+
+	public List<Entity> getEntities();
 }

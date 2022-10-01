@@ -172,13 +172,15 @@
 					</groupbox>
 					<space/>
 					<groupbox>
-					<caption label="${c:l('label_Cheque_Detail_PDC')}" />
 						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" >
 							<toolbar align="end" sclass="toolbar-end">
 								<button id="deleteCheques" label="${c:l('btnDelete.label')}"
 									tooltiptext="${c:l('btnDelete.label')}" sclass="z-toolbarbutton" visible="false" />
 							</toolbar>
 						</hbox>
+						</groupbox>
+						<groupbox>
+						<caption label="${c:l('label_Cheque_Detail_PDC')}" />
 						<listbox id="listBoxChequeDetail" emptyMessage="${c:l('listbox.emptyMessage')}"
 							fixedLayout="true" sizedByContent="true" span="true" width="100%" style="overflow:auto;" multiple="false">
 							<listhead sizable="true">

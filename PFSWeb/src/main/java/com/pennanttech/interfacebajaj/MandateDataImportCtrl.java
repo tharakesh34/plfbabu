@@ -138,7 +138,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 
 		fillComboBox(fileConfiguration, "", menuList, "");
-		if (!ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+		if (!MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 			this.rowMandateType.setVisible(false);
 			this.rowPartnerBank.setVisible(false);
 		}
@@ -157,7 +157,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 			this.btnImport.setVisible(false);
 		}
-		if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 			fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
 			this.partnerBank.setMaxlength(8);
 			this.partnerBank.setTextBoxWidth(135);
@@ -418,7 +418,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			return;
 		}
 
-		if (this.mandateType.getSelectedIndex() == 0 && ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+		if (this.mandateType.getSelectedIndex() == 0 && MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 			MessageUtil.showError("Please select Mandate Type.");
 			return;
 		}
@@ -438,7 +438,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			Thread thread;
 
 			if (fileConfiguration.getSelectedItem().getValue().equals("MANDATES_IMPORT")
-					|| ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+					|| MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 				thread = new Thread(new ProcessData(userId, MANDATES_IMPORT));
 			} else {
 				thread = new Thread(new ProcessData(userId, MANDATES_ACK));

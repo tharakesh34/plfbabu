@@ -273,7 +273,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 
-		if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 			this.space_MandateType.setSclass(PennantConstants.mandateSclass);
 		} else {
 			this.space_MandateType.setSclass("");
@@ -511,7 +511,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		StringBuilder whereClause = new StringBuilder();
 		whereClause.append("(INPUTDATE >= ").append("'").append(fromDate).append("'").append(" AND INPUTDATE <= ")
 				.append("'").append(toDate).append("'").append(")");
-		if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 			whereClause.append(" AND MandateType =").append("'").append(manadateType).append("'")
 					.append(" AND PartnerBankCode = ").append("'").append(partnerBankCode).append("'");
 		}
@@ -669,7 +669,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		}
 
 		try {
-			if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK
+			if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION
 					&& getComboboxValue(this.mandateType).equals(PennantConstants.List_Select)) {
 				throw new WrongValueException(this.mandateType, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_MandateList_MandateType.value") }));

@@ -419,9 +419,9 @@
 											vflex="1">
 											<columns>
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 											</columns>
 											<rows>
 												<row>

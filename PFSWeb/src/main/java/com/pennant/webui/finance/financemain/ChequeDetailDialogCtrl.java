@@ -157,6 +157,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private boolean fromLoan = false;
 	private String ccy = SysParamUtil.getAppCurrency();
 	private int ccyEditField = PennantConstants.defaultCCYDecPos;
+	private boolean pdcReqFlag = false;
 
 	private List<FinanceScheduleDetail> financeSchedules = new ArrayList<>();
 	private List<ChequeDetail> chequeDocuments = new ArrayList<>();
@@ -736,7 +737,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		FinScheduleData schdData = financeDetail.getFinScheduleData();
 
-		fillComboBox(this.chequeType, "", chequeTypeList);
+		if (pdcReqFlag && fromLoan) {
+			fillComboBox(this.chequeType, "", chequeTypeList);
+		} else {
+			fillComboBox(this.chequeType, "", chequeTypeList, ", PDC");
+		}
+
 		fillComboBox(this.chequeStatus, PennantConstants.CHEQUESTATUS_NEW, chequeStatusList);
 		fillComboBox(this.accountType, "", accTypeList);
 
@@ -1206,7 +1212,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				}
 			}
 
-			this.deleteCheques.setVisible(totalCheques > 0);
+			this.deleteCheques.setVisible(cheques.size() > 0);
 			this.totNoOfCheques.setValue(totalCheques);
 			chequeDetailList.addAll(cheques);
 
@@ -1693,7 +1699,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			return;
 		}
 
-		this.deleteCheques.setDisabled(listBoxChequeDetail.getItems().size() == count);
+		this.deleteCheques.setDisabled(getListItems().size() == count);
 
 		listBoxChequeDetail.getItems().clear();
 		listBoxSPDCChequeDetail.getItems().clear();
@@ -1880,8 +1886,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			if (InstrumentType.isPDC(mandateType)) {
 				fillComboBox(this.chequeType, mandateType, chequeTypeList);
+				this.pdcReqFlag = true;
 			} else {
 				fillComboBox(this.chequeType, InstrumentType.UDC.name(), chequeTypeList);
+				this.pdcReqFlag = false;
 			}
 		}
 
@@ -2295,7 +2303,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private void appendSelectBox(Listitem listitem, boolean isReadOnly, ChequeDetail cd) {
 		Checkbox checkBox = new Checkbox();
 		checkBox.setChecked(PennantConstants.CHEQUESTATUS_CANCELLED.equals(cd.getChequeStatus()));
-		checkBox.setDisabled(InstrumentType.isSPDC(cd.getChequeType()) || !isDeleteVisible() || isReadOnly);
+		checkBox.setDisabled(!isDeleteVisible() || isReadOnly);
 		checkBox.addForward(Events.ON_CLICK, this.window, "onClickCheckBox");
 
 		Listcell lc = new Listcell();

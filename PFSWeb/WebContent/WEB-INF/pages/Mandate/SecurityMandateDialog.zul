@@ -122,12 +122,6 @@
 									<checkbox id="defaultMandate" checked="false" />
 								</row>
 								<row>
-									<label value="${c:l('label_MandateDialog_SwapActive.value')}" />
-									<checkbox id="swapMandate" />
-									<label value="${c:l('label_MandateDialog_SwapEffectiveDate.value')}" />
-									<datebox id="swapEffectiveDate" width="200px" />
-								</row>
-								<row>
 									<label value="${c:l('label_MandateDialog_InputDate.value')}" />
 									<datebox id="inputDate" width="200px" />
 									<label value="${c:l('label_MandateDialog_StartDate.value')}" />
@@ -142,8 +136,6 @@
 										<space spacing="2px" sclass="mandatory" />
 										<datebox id="expiryDate" width="200px" />
 									</hbox>
-								</row>
-								<row visible="false">
 									<label value="${c:l('label_MandateDialog_Periodicity.value')}" />
 									<frequencybox id="periodicity" />
 								</row>
@@ -154,7 +146,7 @@
 									<label id="amountInWords" style="font-weight:bold;" />
 								</row>
 								<row id="holdRow" visible="false">
-									<label value="${c:l('label_MandateDialog_HoldReasons.value')}" />
+									<label value="${c:l('label_MandateDialog_HoldReason.value')}" />
 									<extendedcombobox id="holdReason" width="200px" />
 								</row>
 								<row id="mandateStatusRow">
@@ -169,7 +161,7 @@
 								<row id="reasonRow">
 									<label value="${c:l('label_MandateStatusDialog_Reason.value')}" />
 									<cell colspan="3">
-										<textbox id="reason" maxlength="200" width="300px" multiline="true" rows="5" />
+										<textbox id="reason" maxlength="200" width="880px" multiline="true" rows="5" />
 									</cell>
 								</row>
 								<row>
@@ -185,10 +177,28 @@
 							</rows>
 						</grid>
 					</groupbox>
+					<groupbox id="mandateSwapGroupbox" visible="false" sclass="gb-dialog">
+						<caption label="Mandate Swap" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:10px;">
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_MandateDialog_SwapActive.value')}" />
+									<checkbox id="swapMandate" />
+									<label value="${c:l('label_MandateDialog_SwapEffectiveDate.value')}" />
+									<datebox id="swapEffectiveDate" width="200px" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
 					<groupbox id="accDetailsGroupbox" visible="false" sclass="gb-dialog">
 						<caption label="Account Details" />
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:10px;">
-
 							<columns>
 								<column width="220px" />
 								<column />
@@ -209,7 +219,6 @@
 										<space spacing="2px" sclass="mandatory" />
 										<combobox id="accType" width="200px" />
 									</hbox>
-
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_AccHolderName.value')}" />
@@ -285,9 +294,9 @@
 							<rows>
 								<row id="dasRow" visible="false">
 									<label value="${c:l('label_MandateDialog_EmployeeID.value')}" />
-									<extendedcombobox id="employeeID" width="200px" />
+									<extendedcombobox id="employeeID" width="200px" readonly="true" />
 									<label value="${c:l('label_MandateDialog_EmployerName.value')}" />
-									<textbox id="employerName" />
+									<textbox id="employerName" width="250px" />
 								</row>
 							</rows>
 						</grid>

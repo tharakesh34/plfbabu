@@ -26,6 +26,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -150,6 +151,13 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private void doSetFieldProperties() {
 		fillComboBox(this.mandateTypes, "", mandateTypeList, InstrumentType.PDC.name());
+
+		List<Entity> entity = mandateService.getEntities();
+
+		if (entity.size() == 1) {
+			this.entityCode.setValue(entity.get(0).getEntityCode());
+			this.entityCode.setDescColumn(entity.get(0).getEntityDesc());
+		}
 
 		this.entityCode.setMaxlength(8);
 		this.entityCode.setDisplayStyle(2);
