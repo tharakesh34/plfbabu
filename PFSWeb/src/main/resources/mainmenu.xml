@@ -1368,6 +1368,9 @@
 			zulNavigation="/WEB-INF/pages/Sampling/SamplingList.zul?enqiryModule=Y" rightName="menuItem_Sampling_Enquiry" />
 
 		<menu id="menu_Category_BulkProcessingEnquiry">
+			<menuItem id="menuItem_Bounce_BounceCode"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/BounceCode/BounceCodeList.zul"
+				rightName="menuItem_Bounce_BounceCode" />
 			<menuItem id="menu_Item_PresentmentHeaderEnquiry"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailList.zul?ModuleType=E"
 				rightName="menuItem_PresentmentDetail_PresentmentEnquiry" />
@@ -2369,10 +2372,11 @@
 		zulNavigation="/~./pages/account-updater/AccountUpdaterStatus.zul" rightName="menuItem_AccountUpdater_Engine" />
 	<!--//APPEND AFTER THIS// -->
 
-	<menuItem id="menuItem_MenuRoles" zulNavigation="/WEB-INF/pages/MenuRoles/MenuRolesList.zul"
-		rightName="menu_Item_MenuRoles" />
+	<menuItem id="menuItem_MenuRoles" zulNavigation="/WEB-INF/pages/MenuRoles/MenuRolesList.zul" rightName="" />
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
+
+
 
 </ns2:XMLRootMenu>

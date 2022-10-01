@@ -78,6 +78,7 @@ import com.pennant.backend.model.applicationmaster.AssetClassificationHeader;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
+import com.pennant.backend.model.applicationmaster.BounceCode;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.BusinessVertical;
@@ -3736,6 +3737,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("Provision", Provision.class,
 						new String[] { "Loan_Provisions", "Loan_Provisions_AView" }, masterWF,
 						new String[] { "FinReference", "ProvisionAmt" }, null, 300));
+
+		ModuleUtil.register("BounceCode",
+				new ModuleMapping("BounceCode", BounceCode.class,
+						new String[] { "Presentment_Exclude_Codes", "Presentment_Exclude_Codes" }, masterWF,
+						new String[] { "Code", "BounceCode", "BounceCodeDesc" }, null, 700));
 
 		registerCustomModules();
 	}

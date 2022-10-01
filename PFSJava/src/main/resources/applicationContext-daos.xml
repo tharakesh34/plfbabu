@@ -12762,4 +12762,27 @@
 	<bean id="presentmentDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentDAOImpl" parent="sequenceDao" />
 
 	<bean name="presentmentEngine" class="com.pennant.pff.presentment.service.PresentmentEngine"/>
+	
+	<bean id="bounceCodeDao" class="com.pennant.backend.dao.applicationmaster.impl.BounceCodeDaoImpl" parent="sequenceDao" />
+	
+	<bean id="bounceCodeService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="bounceCodeServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="bounceCodeServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.BounceCodeServiceImpl"/>
+	
 </beans>

@@ -5943,5 +5943,15 @@
 		class="com.pennant.webui.finance.enquiry.TdsCertificateEnquiryDialogCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="tanAssignmentService" ref="tanAssignmentService" />
 	</bean>
+	
+	<bean id="bounceCodeListCtrl" class="com.pennant.webui.applicationmaster.bouncecode.BounceCodeListCtrl"
+		parent="basisListCtrl" scope="prototype" >
+	 <property name="bounceCodeService" ref="bounceCodeService" /> 
+		</bean>
+		
+		<bean id="bounceCodeDialogCtrl" class="com.pennant.webui.applicationmaster.bouncecode.BounceCodeDialogCtrl"
+		parent="basisCtrl" scope="prototype" >
+	 <property name="bounceCodeService" ref="bounceCodeService" /> 
+		</bean>
 
 </beans>
