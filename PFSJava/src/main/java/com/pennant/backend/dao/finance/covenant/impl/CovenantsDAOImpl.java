@@ -182,7 +182,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 			ps.setString(index++, covenant.getTaskId());
 			ps.setString(index++, covenant.getNextTaskId());
 			ps.setString(index++, covenant.getRecordType());
-			ps.setLong(index++, covenant.getWorkflowId());
+			ps.setLong(index, covenant.getWorkflowId());
 		});
 
 		return String.valueOf(covenant.getId());
@@ -299,7 +299,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 			ps.setLong(index++, covenant.getWorkflowId());
 
 			ps.setLong(index++, covenant.getId());
-			ps.setString(index++, covenant.getModule());
+			ps.setString(index, covenant.getModule());
 		});
 
 		if (recordCount <= 0) {
@@ -376,7 +376,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 				ps.setString(index++, covenant.getKeyReference());
 				ps.setLong(index++, covenant.getCovenantTypeId());
-				ps.setString(index++, covenant.getModule());
+				ps.setString(index, covenant.getModule());
 			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -400,7 +400,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 					int index = 1;
 
-					ps.setLong(index++, cd.getId());
+					ps.setLong(index, cd.getId());
 				}
 
 				@Override
@@ -491,7 +491,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		List<Covenant> list = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, finReference);
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, rowNum) -> {
 			Covenant c = new Covenant();
 
@@ -720,7 +720,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 				ps.setDate(index++, JdbcUtil.getDate(cd.getDocumentReceivedDate()));
 				ps.setLong(index++, cd.getDocumentId());
 
-				ps.setLong(index++, cd.getCovenantId());
+				ps.setLong(index, cd.getCovenantId());
 			}
 
 			@Override

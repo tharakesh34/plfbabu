@@ -220,6 +220,7 @@ public class AccrualService extends ServiceHelper {
 			pfd.setAdvanceEMI(fm.getAdvanceEMI());
 			pfd.setSvAmount(fm.getSvAmount());
 			pfd.setCbAmount(fm.getCbAmount());
+			pfd.setCurReducingRate(fm.getRepayProfitRate());
 		}
 
 		EventProperties eventProperties = fm.getEventProperties();

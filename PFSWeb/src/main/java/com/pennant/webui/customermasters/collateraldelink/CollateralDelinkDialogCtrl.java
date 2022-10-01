@@ -104,7 +104,6 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	private FinMaintainInstruction finMaintainInstruction;
 	private FinanceSelectCtrl financeSelectCtrl = null;
 	private transient boolean newFinance;
-	private CollateralAssignment collateralAssignment;
 
 	// Collateral Total Count Details
 	protected Label collateralCount;
@@ -172,7 +171,6 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				if (arguments.get("financeMainDialogCtrl") instanceof FinanceMainBaseCtrl) {
 					financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
-					financeMainDialogCtrl.setCollateralDelinkDialogCtrl(this);
 					setNewFinance(true);
 				}
 			}
@@ -274,15 +272,8 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				doEdit();
 			}
 
-			// Setting Controller to the Parent Controller
-			try {
-				if (getFinanceMainDialogCtrl() != null) {
-					getFinanceMainDialogCtrl().getClass().getMethod("setCollateralDelinkDialogCtrl", this.getClass())
-							.invoke(getFinanceMainDialogCtrl(), this);
-				}
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-			}
+			// 26-09-2022: Removed setting controller to the FinanceMainBaseCtrl as the object was never used.
+
 			doWriteBeanToComponents();
 			getBorderLayoutHeight();
 

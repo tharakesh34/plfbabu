@@ -109,7 +109,7 @@ public class LegalNoteDAOImpl extends SequenceDao<LegalNote> implements LegalNot
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setLong(index++, legalId);
+				ps.setLong(index, legalId);
 			}
 		}, new RowMapper<LegalNote>() {
 			@Override

@@ -123,7 +123,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 				ps.setString(index++, rd.getSplRate());
 				ps.setBigDecimal(index++, rd.getMargin());
 				ps.setBigDecimal(index++, rd.getGrcMaxAmount());
-				ps.setLong(index++, JdbcUtil.setLong(rd.getReceiptID()));
+				ps.setLong(index++, JdbcUtil.getLong(rd.getReceiptID()));
 				ps.setInt(index++, rd.getVersion());
 				ps.setLong(index++, rd.getLastMntBy());
 				ps.setTimestamp(index++, rd.getLastMntOn());
@@ -133,7 +133,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 				ps.setString(index++, rd.getTaskId());
 				ps.setString(index++, rd.getNextTaskId());
 				ps.setString(index++, rd.getRecordType());
-				ps.setLong(index++, rd.getWorkflowId());
+				ps.setLong(index, rd.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
@@ -260,7 +260,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 			ps.setLong(index++, rd.getWorkflowId());
 			ps.setString(index++, rd.getRestructureReason());
 
-			ps.setLong(index++, rd.getId());
+			ps.setLong(index, rd.getId());
 		});
 
 		if (recordCount == 0) {
@@ -279,7 +279,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		});
 	}
 
@@ -456,7 +456,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 					ps.setBigDecimal(index++, rc.getTdsAmount());
 					ps.setBigDecimal(index++, rc.getTotalAmount());
 					ps.setInt(index++, rc.getVersion());
-					ps.setLong(index++, JdbcUtil.setLong(rc.getLastMntBy()));
+					ps.setLong(index++, JdbcUtil.getLong(rc.getLastMntBy()));
 					ps.setTimestamp(index++, rc.getLastMntOn());
 					ps.setString(index++, rc.getRecordStatus());
 					ps.setString(index++, rc.getRoleCode());
@@ -464,7 +464,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 					ps.setString(index++, rc.getTaskId());
 					ps.setString(index++, rc.getNextTaskId());
 					ps.setString(index++, rc.getRecordType());
-					ps.setLong(index++, JdbcUtil.setLong(rc.getWorkflowId()));
+					ps.setLong(index, JdbcUtil.getLong(rc.getWorkflowId()));
 				}
 
 				@Override

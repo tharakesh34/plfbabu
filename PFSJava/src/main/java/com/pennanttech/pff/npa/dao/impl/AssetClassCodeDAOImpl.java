@@ -9,6 +9,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.npa.dao.AssetClassCodeDAO;
@@ -59,7 +60,7 @@ public class AssetClassCodeDAOImpl extends SequenceDao<AssetClassCode> implement
 				return accde;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}
@@ -115,7 +116,7 @@ public class AssetClassCodeDAOImpl extends SequenceDao<AssetClassCode> implement
 				ps.setInt(index++, assetClassCode.getVersion());
 				ps.setLong(index++, assetClassCode.getCreatedBy());
 				ps.setTimestamp(index++, assetClassCode.getCreatedOn());
-				ps.setLong(index++, JdbcUtil.setLong(assetClassCode.getApprovedBy()));
+				ps.setLong(index++, JdbcUtil.getLong(assetClassCode.getApprovedBy()));
 				ps.setTimestamp(index++, assetClassCode.getApprovedOn());
 				ps.setLong(index++, assetClassCode.getLastMntBy());
 				ps.setTimestamp(index++, assetClassCode.getLastMntOn());
@@ -125,7 +126,7 @@ public class AssetClassCodeDAOImpl extends SequenceDao<AssetClassCode> implement
 				ps.setString(index++, assetClassCode.getTaskId());
 				ps.setString(index++, assetClassCode.getNextTaskId());
 				ps.setString(index++, assetClassCode.getRecordType());
-				ps.setLong(index++, assetClassCode.getWorkflowId());
+				ps.setLong(index, assetClassCode.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
@@ -164,7 +165,7 @@ public class AssetClassCodeDAOImpl extends SequenceDao<AssetClassCode> implement
 			ps.setString(index++, assetClassCode.getRecordType());
 			ps.setLong(index++, assetClassCode.getWorkflowId());
 
-			ps.setLong(index++, assetClassCode.getId());
+			ps.setLong(index, assetClassCode.getId());
 		});
 	}
 
@@ -179,7 +180,7 @@ public class AssetClassCodeDAOImpl extends SequenceDao<AssetClassCode> implement
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, assetClassCode.getId());
+			ps.setLong(index, assetClassCode.getId());
 
 		});
 

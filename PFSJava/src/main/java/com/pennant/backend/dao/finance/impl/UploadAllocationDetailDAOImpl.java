@@ -98,7 +98,7 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 				ps.setString(index++, uad.getAllocationType());
 				ps.setString(index++, uad.getReferenceCode());
 				ps.setBigDecimal(index++, uad.getPaidAmount());
-				ps.setBigDecimal(index++, uad.getWaivedAmount());
+				ps.setBigDecimal(index, uad.getWaivedAmount());
 			}
 
 			@Override

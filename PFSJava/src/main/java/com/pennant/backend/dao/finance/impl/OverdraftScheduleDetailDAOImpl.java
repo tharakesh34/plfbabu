@@ -57,7 +57,7 @@ public class OverdraftScheduleDetailDAOImpl extends BasicDao<OverdraftScheduleDe
 					ps.setBigDecimal(index++, odSch.getDroplineRate());
 					ps.setBigDecimal(index++, odSch.getLimitDrop());
 					ps.setBigDecimal(index++, odSch.getODLimit());
-					ps.setBigDecimal(index++, odSch.getLimitIncreaseAmt());
+					ps.setBigDecimal(index, odSch.getLimitIncreaseAmt());
 
 				}
 
@@ -92,7 +92,7 @@ public class OverdraftScheduleDetailDAOImpl extends BasicDao<OverdraftScheduleDe
 		List<OverdraftScheduleDetail> odSchedules = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			OverdraftScheduleDetail schd = new OverdraftScheduleDetail();
 
@@ -160,7 +160,7 @@ public class OverdraftScheduleDetailDAOImpl extends BasicDao<OverdraftScheduleDe
 			ps.setString(index++, odm.getDroplineFrq());
 			ps.setBigDecimal(index++, odm.getLimitChange());
 			ps.setBigDecimal(index++, odm.getODLimit());
-			ps.setDate(index++, JdbcUtil.getDate(odm.getValueDate()));
+			ps.setDate(index, JdbcUtil.getDate(odm.getValueDate()));
 
 		});
 

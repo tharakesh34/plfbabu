@@ -99,7 +99,7 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 			ps.setString(index++, ocr.getNextTaskId());
 			ps.setString(index++, ocr.getRecordType());
 			ps.setLong(index++, ocr.getWorkflowId());
-			ps.setLong(index++, ocr.getId());
+			ps.setLong(index, ocr.getId());
 		});
 
 		if (recordCount <= 0) {
@@ -163,7 +163,7 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 			ps.setString(index++, ocr.getTaskId());
 			ps.setString(index++, ocr.getNextTaskId());
 			ps.setString(index++, ocr.getRecordType());
-			ps.setLong(index++, ocr.getWorkflowId());
+			ps.setLong(index, ocr.getWorkflowId());
 		});
 
 		return ocr.getId();
@@ -180,7 +180,7 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 }

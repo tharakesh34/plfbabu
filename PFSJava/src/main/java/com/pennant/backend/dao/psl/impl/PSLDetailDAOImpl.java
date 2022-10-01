@@ -147,7 +147,7 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 				ps.setString(index++, psld.getTaskId());
 				ps.setString(index++, psld.getNextTaskId());
 				ps.setString(index++, psld.getRecordType());
-				ps.setLong(index++, psld.getWorkflowId());
+				ps.setLong(index, psld.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -191,7 +191,7 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 			ps.setString(index++, psld.getLoanPurpose());
 			ps.setBigDecimal(index++, psld.getEligibleAmount());
 
-			ps.setLong(index++, psld.getFinID());
+			ps.setLong(index, psld.getFinID());
 		});
 
 		if (recordCount == 0) {
@@ -211,7 +211,7 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, psld.getFinID());
+				ps.setLong(index, psld.getFinID());
 			});
 
 			if (recordCount == 0) {

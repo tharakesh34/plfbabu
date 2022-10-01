@@ -98,7 +98,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, rowMapper);
 	}
 
@@ -113,7 +113,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, reference);
+			ps.setString(index, reference);
 		}, rowMapper);
 	}
 
@@ -130,7 +130,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setString(index++, finEvent);
+			ps.setString(index, finEvent);
 		}, rowMapper);
 	}
 
@@ -147,7 +147,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			int index = 1;
 
 			ps.setLong(index++, referenceId);
-			ps.setString(index++, finEvent);
+			ps.setString(index, finEvent);
 		}, rowMapper);
 	}
 
@@ -167,7 +167,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setString(index++, "STFI");
 			ps.setString(index++, "STNI");
 			ps.setString(index++, "STET");
-			ps.setString(index++, "POSP");
+			ps.setString(index, "POSP");
 		}, rowMapper);
 	}
 
@@ -200,7 +200,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setInt(index++, 0);
 			ps.setString(index++, "DISB");
 			ps.setString(index++, "PBCU");
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, num) -> {
 			FinFeeDetail ffd = new FinFeeDetail();
 
@@ -287,7 +287,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 				ps.setLong(index++, fd.getFeeID());
 
 				if (StringUtils.isNotBlank(fd.getVasReference())) {
-					ps.setString(index++, fd.getVasReference());
+					ps.setString(index, fd.getVasReference());
 				}
 			});
 		} catch (DataAccessException e) {
@@ -405,7 +405,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setString(index++, fe.getTaskId());
 			ps.setString(index++, fe.getNextTaskId());
 			ps.setString(index++, fe.getRecordType());
-			ps.setLong(index++, fe.getWorkflowId());
+			ps.setLong(index, fe.getWorkflowId());
 		});
 
 		return fe.getFeeID();
@@ -502,7 +502,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setString(index++, fe.getNextTaskId());
 			ps.setString(index++, fe.getRecordType());
 			ps.setLong(index++, fe.getWorkflowId());
-			ps.setLong(index++, fe.getFeeID());
+			ps.setLong(index, fe.getFeeID());
 		});
 
 		if (recordCount <= 0) {
@@ -529,7 +529,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			int index = 1;
 
 			ps.setString(index++, status);
-			ps.setLong(index++, feeID);
+			ps.setLong(index, feeID);
 		});
 
 		if (recordCount <= 0) {
@@ -587,7 +587,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 			ps.setBigDecimal(index++, tp.getTaxPercent());
 			ps.setLong(index++, tp.getFinID());
-			ps.setLong(index++, tp.getFeeTypeId());
+			ps.setLong(index, tp.getFeeTypeId());
 		});
 
 		if (recordCount == 0) {
@@ -623,7 +623,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, extReference);
-			ps.setLong(index++, feeTypeId);
+			ps.setLong(index, feeTypeId);
 		}, new FinFeeDetailsRowMapper(tableType, false));
 	}
 
@@ -639,7 +639,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, reference);
+			ps.setString(index, reference);
 		}, rowMapper);
 	}
 
@@ -686,7 +686,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setString(index++, AccountingEvent.ADDDBSP);
 			ps.setString(index++, AccountingEvent.ADDDBSN);
 			ps.setString(index++, AdvanceRuleCode.ADVINT.name());
-			ps.setString(index++, AdvanceRuleCode.ADVEMI.name());
+			ps.setString(index, AdvanceRuleCode.ADVEMI.name());
 
 		}, (rs, num) -> {
 			FinFeeDetail fd = new FinFeeDetail();
@@ -741,7 +741,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setBigDecimal(index++, fd.getRemTDS());
 			ps.setTimestamp(index++, fd.getLastMntOn());
 
-			ps.setLong(index++, fd.getFeeID());
+			ps.setLong(index, fd.getFeeID());
 		});
 
 		if (recordCount <= 0) {
@@ -767,7 +767,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, transactionId);
+			ps.setString(index, transactionId);
 		});
 	}
 

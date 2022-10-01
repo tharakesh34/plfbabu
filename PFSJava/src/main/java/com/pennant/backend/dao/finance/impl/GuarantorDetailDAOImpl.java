@@ -180,7 +180,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 			ps.setString(index++, gd.getTaskId());
 			ps.setString(index++, gd.getNextTaskId());
 			ps.setString(index++, gd.getRecordType());
-			ps.setLong(index++, gd.getWorkflowId());
+			ps.setLong(index, gd.getWorkflowId());
 		});
 
 		return gd.getId();
@@ -257,7 +257,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 			ps.setLong(index++, gd.getGuarantorId());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, gd.getVersion() - 1);
+				ps.setInt(index, gd.getVersion() - 1);
 			}
 		});
 
@@ -291,7 +291,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, new GuarantorDetailRowMapper(type));
 	}
 
@@ -328,7 +328,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 			int index = 1;
 
 			ps.setString(index++, gd.getGuarantorCIF());
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, num) -> {
 			FinanceExposure fe = new FinanceExposure();
 
@@ -373,7 +373,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 			int index = 1;
 
 			ps.setString(index++, gd.getGuarantorCIF());
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, num) -> {
 			FinanceExposure fe = new FinanceExposure();
 
@@ -417,7 +417,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 			int index = 1;
 
 			ps.setString(index++, gd.getGuarantorCIF());
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, num) -> {
 			FinanceExposure fe = new FinanceExposure();
 
@@ -538,7 +538,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, custCif);
+			ps.setString(index, custCif);
 		}, (rs, rowNum) -> {
 			FinanceEnquiry fm = new FinanceEnquiry();
 

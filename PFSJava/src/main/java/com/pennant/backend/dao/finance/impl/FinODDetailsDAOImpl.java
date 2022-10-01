@@ -177,7 +177,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 				ps.setLong(index++, od.getFinID());
 				ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
-				ps.setString(index++, od.getFinODFor());
+				ps.setString(index, od.getFinODFor());
 			}
 
 			@Override
@@ -212,7 +212,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			ps.setBigDecimal(index++, od.getCurOverdraftTxnChrg());
 
 			ps.setLong(index++, od.getFinID());
-			ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
+			ps.setDate(index, JdbcUtil.getDate(od.getFinODSchdDate()));
 		});
 	}
 
@@ -234,7 +234,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		ps.setBigDecimal(index++, od.getTotPenaltyBal());
 
 		ps.setLong(index++, od.getFinID());
-		ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
+		ps.setDate(index, JdbcUtil.getDate(od.getFinODSchdDate()));
 	}
 
 	// FIXME: PV 09AUG19. Doubt. How come both paid and balance are setting with
@@ -296,7 +296,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			ps.setBigDecimal(index++, od.getLpCurCpzBal());
 
 			ps.setLong(index++, od.getFinID());
-			ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
+			ps.setDate(index, JdbcUtil.getDate(od.getFinODSchdDate()));
 		});
 	}
 
@@ -389,7 +389,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			int index = 1;
 			ps.setLong(index++, finID);
 			if (odSchdDate != null) {
-				ps.setDate(index++, JdbcUtil.getDate(odSchdDate));
+				ps.setDate(index, JdbcUtil.getDate(odSchdDate));
 			}
 		}, (rs, rowNum) -> {
 			FinODDetails odd = new FinODDetails();
@@ -532,7 +532,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			ps.setBigDecimal(index++, od.getLpCurCpzBal());
 
 			ps.setLong(index++, od.getFinID());
-			ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
+			ps.setDate(index, JdbcUtil.getDate(od.getFinODSchdDate()));
 		});
 
 	}
@@ -574,7 +574,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				ps.setBigDecimal(index++, od.getWaivedNow());
 
 				ps.setLong(index++, od.getFinID());
-				ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
+				ps.setDate(index, JdbcUtil.getDate(od.getFinODSchdDate()));
 			}
 
 			@Override
@@ -601,7 +601,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			ps.setBigDecimal(index++, latePftPaid);
 
 			ps.setLong(index++, finID);
-			ps.setDate(index++, JdbcUtil.getDate(odSchDate));
+			ps.setDate(index, JdbcUtil.getDate(odSchDate));
 		});
 	}
 
@@ -682,7 +682,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		List<FinODDetails> odList = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			FinODDetails fod = new FinODDetails();
 
@@ -797,7 +797,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				ps.setBigDecimal(index++, odd.getODMaxWaiverPerc());
 				ps.setString(index++, odd.getODRuleCode());
 				ps.setBigDecimal(index++, odd.getCurOverdraftTxnChrg());
-				ps.setBigDecimal(index++, odd.getMaxOverdraftTxnChrg());
+				ps.setBigDecimal(index, odd.getMaxOverdraftTxnChrg());
 			}
 
 			@Override
@@ -836,9 +836,9 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			ps.setLong(index++, finID);
 			if (!isrender) {
 				if (ispft) {
-					ps.setBigDecimal(index++, BigDecimal.ZERO);
+					ps.setBigDecimal(index, BigDecimal.ZERO);
 				} else {
-					ps.setBigDecimal(index++, BigDecimal.ZERO);
+					ps.setBigDecimal(index, BigDecimal.ZERO);
 				}
 			}
 		}, (rs, rowNum) -> {
@@ -905,7 +905,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			ps.setBigDecimal(index++, penAmount.add(waivedAmount));
 
 			ps.setLong(index++, finID);
-			ps.setDate(index++, JdbcUtil.getDate(odDate));
+			ps.setDate(index, JdbcUtil.getDate(odDate));
 		});
 	}
 

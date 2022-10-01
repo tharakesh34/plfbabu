@@ -111,7 +111,7 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 
 		}, (rs, rowNum) -> {
 			CustomerRating cr = new CustomerRating();

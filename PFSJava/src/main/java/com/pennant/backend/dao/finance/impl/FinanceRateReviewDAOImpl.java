@@ -104,7 +104,7 @@ public class FinanceRateReviewDAOImpl extends BasicDao<FinanceRateReview> implem
 			ps.setDate(index++, JdbcUtil.getDate(frr.getEventToDate()));
 			ps.setDate(index++, JdbcUtil.getDate(frr.getRecalFromdate()));
 			ps.setDate(index++, JdbcUtil.getDate(frr.getRecalToDate()));
-			ps.setBigDecimal(index++, frr.geteMIAmount());
+			ps.setBigDecimal(index, frr.geteMIAmount());
 		});
 
 	}

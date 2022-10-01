@@ -122,7 +122,7 @@ public class FinAgreementDetailDAOImpl extends BasicDao<FinAgreementDetail> impl
 			ps.setString(index++, fag.getTaskId());
 			ps.setString(index++, fag.getNextTaskId());
 			ps.setString(index++, fag.getRecordType());
-			ps.setLong(index++, fag.getWorkflowId());
+			ps.setLong(index, fag.getWorkflowId());
 
 		});
 
@@ -158,7 +158,7 @@ public class FinAgreementDetailDAOImpl extends BasicDao<FinAgreementDetail> impl
 			ps.setString(index++, fag.getRecordType());
 			ps.setLong(index++, fag.getWorkflowId());
 			ps.setLong(index++, fag.getFinID());
-			ps.setLong(index++, fag.getAgrId());
+			ps.setLong(index, fag.getAgrId());
 		});
 
 		if (recordCount <= 0) {
@@ -178,7 +178,7 @@ public class FinAgreementDetailDAOImpl extends BasicDao<FinAgreementDetail> impl
 			int index = 1;
 
 			ps.setLong(index++, fag.getFinID());
-			ps.setLong(index++, fag.getAgrId());
+			ps.setLong(index, fag.getAgrId());
 		});
 
 		if (recordCount <= 0) {

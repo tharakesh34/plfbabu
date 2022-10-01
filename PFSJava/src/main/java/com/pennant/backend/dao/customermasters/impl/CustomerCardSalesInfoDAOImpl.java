@@ -78,7 +78,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		}, (rs, rowNum) -> {
 			CustCardSales ccs = new CustCardSales();
 
@@ -247,7 +247,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setLong(index++, CardSaleId);
+				ps.setLong(index, CardSaleId);
 			}
 		}, new RowMapper<CustCardSalesDetails>() {
 			@Override

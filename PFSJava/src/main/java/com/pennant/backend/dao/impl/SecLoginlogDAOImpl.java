@@ -87,7 +87,7 @@ public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecL
 				ps.setString(index++, ssl.getLoginBrowserType());
 				ps.setInt(index++, ssl.getLoginStsID());
 				ps.setString(index++, ssl.getLoginSessionID());
-				ps.setString(index++, ssl.getLoginError());
+				ps.setString(index, ssl.getLoginError());
 			}
 		});
 
@@ -127,7 +127,7 @@ public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecL
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setDate(index++, JdbcUtil.getDate(loginTime));
+				ps.setDate(index, JdbcUtil.getDate(loginTime));
 			}
 
 		}, new RowMapper<String>() {

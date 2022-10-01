@@ -197,7 +197,7 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
 				ps.setString(index++, module);
-				ps.setString(index++, finType);
+				ps.setString(index, finType);
 			}
 		}, new RowMapper<DeviationDetail>() {
 			@Override

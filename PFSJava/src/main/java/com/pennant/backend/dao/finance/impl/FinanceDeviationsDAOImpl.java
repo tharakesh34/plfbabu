@@ -51,7 +51,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 
 			int index = 1;
 			ps.setLong(index++, finID);
-			ps.setBoolean(index++, deviProcessed);
+			ps.setBoolean(index, deviProcessed);
 		}, new FinDeviationRowMapper(type));
 	}
 
@@ -87,7 +87,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			ps.setBoolean(index++, fd.isMarkDeleted());
 			ps.setString(index++, fd.getRaisedUser());
 			ps.setString(index++, fd.getMitigants());
-			ps.setLong(index++, fd.getDeviationId());
+			ps.setLong(index, fd.getDeviationId());
 
 		});
 
@@ -132,7 +132,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			ps.setString(index++, fd.getDeviationDesc());
 			ps.setBoolean(index++, fd.isMarkDeleted());
 			ps.setString(index++, fd.getRaisedUser());
-			ps.setString(index++, fd.getMitigants());
+			ps.setString(index, fd.getMitigants());
 		});
 		return fd.getId();
 	}
@@ -151,7 +151,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 
 				ps.setLong(index++, fd.getFinID());
 				ps.setString(index++, fd.getModule());
-				ps.setString(index++, fd.getDeviationCode());
+				ps.setString(index, fd.getDeviationCode());
 			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -175,7 +175,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 				ps.setString(index++, module);
 				ps.setString(index++, refId + DeviationConstants.CL_EXPIRED);
 				ps.setString(index++, refId + DeviationConstants.CL_POSTPONED);
-				ps.setString(index++, refId + DeviationConstants.CL_WAIVED);
+				ps.setString(index, refId + DeviationConstants.CL_WAIVED);
 			});
 
 		} catch (DataAccessException e) {
@@ -196,7 +196,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 
 			ps.setInt(index++, 1);
 			ps.setLong(index++, finID);
-			ps.setInt(index++, 0);
+			ps.setInt(index, 0);
 		});
 	}
 
@@ -227,7 +227,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			int index = 1;
 
 			ps.setInt(index++, 1);
-			ps.setLong(index++, deviationId);
+			ps.setLong(index, deviationId);
 		});
 	}
 
@@ -241,7 +241,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			int index = 1;
 
 			ps.setBoolean(index++, markDeleted);
-			ps.setLong(index++, deviationId);
+			ps.setLong(index, deviationId);
 		});
 	}
 
@@ -258,7 +258,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setString(index++, status);
+			ps.setString(index, status);
 		}, rowMapper);
 	}
 

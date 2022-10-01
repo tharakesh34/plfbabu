@@ -92,7 +92,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 				ps.setString(index++, frh.getTaskId());
 				ps.setString(index++, frh.getNextTaskId());
 				ps.setString(index++, frh.getRecordType());
-				ps.setLong(index++, frh.getWorkflowId());
+				ps.setLong(index, frh.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -130,7 +130,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 			ps.setString(index++, frh.getRecordType());
 			ps.setLong(index++, frh.getWorkflowId());
 
-			ps.setLong(index++, frh.getHeaderId());
+			ps.setLong(index, frh.getHeaderId());
 		});
 
 		if (recordCount == 0) {
@@ -154,9 +154,9 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 				ps.setLong(index++, frh.getHeaderId());
 
 				if (tableType == TableType.TEMP_TAB) {
-					ps.setTimestamp(index++, frh.getPrevMntOn());
+					ps.setTimestamp(index, frh.getPrevMntOn());
 				} else {
-					ps.setInt(index++, frh.getVersion() - 1);
+					ps.setInt(index, frh.getVersion() - 1);
 				}
 
 			});
@@ -342,7 +342,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 				ps.setString(index++, frd.getTaskId());
 				ps.setString(index++, frd.getNextTaskId());
 				ps.setString(index++, frd.getRecordType());
-				ps.setLong(index++, frd.getWorkflowId());
+				ps.setLong(index, frd.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -383,7 +383,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 			ps.setString(index++, frd.getRecordType());
 			ps.setLong(index++, frd.getWorkflowId());
 
-			ps.setLong(index++, frd.getId());
+			ps.setLong(index, frd.getId());
 		});
 
 		if (recordCount == 0) {

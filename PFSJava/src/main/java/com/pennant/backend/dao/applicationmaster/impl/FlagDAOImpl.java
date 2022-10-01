@@ -144,7 +144,7 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 				ps.setString(index++, flag.getTaskId());
 				ps.setString(index++, flag.getNextTaskId());
 				ps.setString(index++, flag.getRecordType());
-				ps.setLong(index++, flag.getWorkflowId());
+				ps.setLong(index, flag.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -183,9 +183,9 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 
 			ps.setString(index++, flag.getFlagCode());
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, flag.getPrevMntOn());
+				ps.setTimestamp(index, flag.getPrevMntOn());
 			} else {
-				ps.setInt(index++, flag.getVersion() - 1);
+				ps.setInt(index, flag.getVersion() - 1);
 			}
 		});
 
@@ -209,9 +209,9 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 
 				ps.setString(index++, flag.getFlagCode());
 				if (tableType == TableType.TEMP_TAB) {
-					ps.setTimestamp(index++, flag.getPrevMntOn());
+					ps.setTimestamp(index, flag.getPrevMntOn());
 				} else {
-					ps.setInt(index++, flag.getVersion() - 1);
+					ps.setInt(index, flag.getVersion() - 1);
 				}
 			});
 

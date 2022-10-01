@@ -200,7 +200,7 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setString(index++, finType);
+				ps.setString(index, finType);
 			}
 		}, new RowMapper<IRRFinanceType>() {
 			@Override

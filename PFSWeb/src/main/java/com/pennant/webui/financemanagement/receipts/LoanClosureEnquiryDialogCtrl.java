@@ -547,7 +547,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		FinanceMain financeMain = financeMainService.getFinanceMainByRef(this.finReference.getValue(), false);
 		Date maturityDate = financeMain.getMaturityDate();
-		if (this.receiptDate.getValue().compareTo(maturityDate) > 0) {
+		if (!isMatured && this.receiptDate.getValue().compareTo(maturityDate) > 0) {
 			MessageUtil.showError("Receipt Date is not allowed more than Maturity Date");
 			this.receiptDate.setValue(SysParamUtil.getAppDate());
 			return;

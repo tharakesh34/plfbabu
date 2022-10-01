@@ -1,7 +1,6 @@
 package com.pennant.backend.service.collateral.impl;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -166,9 +165,6 @@ public class ExtendedFieldDetailsValidation {
 		case ExtendedFieldConstants.FIELDTYPE_TIME:
 			Date dateValue = null;
 			try {
-				SimpleDateFormat sdf = new SimpleDateFormat(PennantConstants.APIDateFormatter);
-				sdf.setLenient(false);
-				Date date1 = sdf.parse(fieldValue);
 				dateValue = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
 			} catch (Exception e) {
 				String[] valueParm = new String[2];

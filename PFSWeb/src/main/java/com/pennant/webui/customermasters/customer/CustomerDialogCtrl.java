@@ -8082,6 +8082,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			extendedCombobox.setErrorMessage("");
 		} else {
 			calculatedAmtCell.setLabel("");
+			margin.setValue(BigDecimal.ZERO);
 		}
 		updateIncomeValue();
 		logger.debug(Literal.LEAVING);

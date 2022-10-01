@@ -245,7 +245,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 			int index = 1;
 
 			ps.setLong(index++, linkId);
-			ps.setString(index++, incomeType);
+			ps.setString(index, incomeType);
 		});
 	}
 }

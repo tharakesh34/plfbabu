@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.ImplementationConstants;
@@ -14,7 +15,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -23,10 +23,8 @@ import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
-import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.MandateConstants;
@@ -59,9 +57,6 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 	private BankBranchService bankBranchService;
 	private MandateService mandateService;
 	private BankDetailService bankDetailService;
-	private FinanceMainService financeMainService;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private EntityService entityService;
 	private FinanceTypeService financeTypeService;
 	private PartnerBankDAO partnerBankDAO;
 	private FinanceMainDAO financeMainDAO;
@@ -483,7 +478,12 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 				if (length < minAccNolength || length > maxAccNoLength) {
 					String minMsg = String.valueOf(minAccNolength).concat(" characters");
 					String maxMsg = String.valueOf(maxAccNoLength).concat(" characters");
-					return getFailedStatus("BNK001", "AccountNumber", minMsg, maxMsg);
+
+					if (minAccNolength == maxAccNoLength) {
+						return getFailedStatus("30570", "AccountNumber", maxMsg);
+					} else {
+						return getFailedStatus("BNK001", "AccountNumber", minMsg, maxMsg);
+					}
 				}
 			}
 		}
@@ -759,4 +759,65 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
+
+	@Autowired
+	public void setValidationUtility(ValidationUtility validationUtility) {
+		this.validationUtility = validationUtility;
+	}
+
+	@Autowired
+	public void setMandateController(MandateController mandateController) {
+		this.mandateController = mandateController;
+	}
+
+	@Autowired
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	@Autowired
+	public void setBankBranchService(BankBranchService bankBranchService) {
+		this.bankBranchService = bankBranchService;
+	}
+
+	@Autowired
+	public void setMandateService(MandateService mandateService) {
+		this.mandateService = mandateService;
+	}
+
+	@Autowired
+	public void setBankDetailService(BankDetailService bankDetailService) {
+		this.bankDetailService = bankDetailService;
+	}
+
+	@Autowired
+	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
+		this.financeTypeService = financeTypeService;
+	}
+
+	@Autowired
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
+	@Autowired
+	public void setEntityDAO(EntityDAO entityDAO) {
+		this.entityDAO = entityDAO;
+	}
+
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
 }

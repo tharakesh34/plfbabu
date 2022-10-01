@@ -13,6 +13,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.cd.model.MerchantDetails;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -85,7 +86,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 				return merch;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -151,7 +152,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 				ps.setString(index++, merchantDetails.getTaskId());
 				ps.setString(index++, merchantDetails.getNextTaskId());
 				ps.setString(index++, merchantDetails.getRecordType());
-				ps.setLong(index++, merchantDetails.getWorkflowId());
+				ps.setLong(index, merchantDetails.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -219,9 +220,9 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 			ps.setLong(index++, merchantDetails.getMerchantId());
 
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, merchantDetails.getPrevMntOn());
+				ps.setTimestamp(index, merchantDetails.getPrevMntOn());
 			} else {
-				ps.setInt(index++, merchantDetails.getVersion() - 1);
+				ps.setInt(index, merchantDetails.getVersion() - 1);
 			}
 		});
 
@@ -246,9 +247,9 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 				ps.setLong(index++, merchantDetails.getMerchantId());
 
 				if (tableType == TableType.TEMP_TAB) {
-					ps.setTimestamp(index++, merchantDetails.getPrevMntOn());
+					ps.setTimestamp(index, merchantDetails.getPrevMntOn());
 				} else {
-					ps.setInt(index++, merchantDetails.getVersion() - 1);
+					ps.setInt(index, merchantDetails.getVersion() - 1);
 				}
 			});
 		} catch (DataAccessException e) {
@@ -352,7 +353,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 				return merch;
 			}, mId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

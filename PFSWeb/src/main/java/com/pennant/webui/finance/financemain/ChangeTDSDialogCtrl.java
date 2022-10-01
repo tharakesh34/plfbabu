@@ -125,7 +125,6 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	protected Label label_windowTitle;
 	boolean isTDSChecked = false;
 	private Object financeMainDialogCtrl;
-	// private transient boolean recSave = false;
 	private boolean isEnquiry = false;
 	protected String moduleDefiner = "";
 	protected String eventCode = "";
@@ -327,9 +326,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	protected void doSave() {
 		logger.debug("Entering");
 
-		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
 		Cloner cloner = new Cloner();
-		aFinMaintainInstruction = cloner.deepClone(getFinMaintainInstruction());
+		FinMaintainInstruction aFinMaintainInstruction = cloner.deepClone(getFinMaintainInstruction());
 
 		doSetValidation();
 

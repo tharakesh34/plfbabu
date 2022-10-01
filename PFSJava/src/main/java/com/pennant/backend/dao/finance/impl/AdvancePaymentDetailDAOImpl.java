@@ -94,9 +94,7 @@ public class AdvancePaymentDetailDAOImpl extends BasicDao<AdvancePaymentDetail> 
 			ps.setBigDecimal(index++, apd.getAdvInt());
 			ps.setBigDecimal(index++, apd.getAdvIntTds());
 			ps.setBigDecimal(index++, apd.getAdvEMI());
-			ps.setBigDecimal(index++, apd.getAdvEMITds());
+			ps.setBigDecimal(index, apd.getAdvEMITds());
 		});
-
 	}
-
 }

@@ -349,7 +349,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 				ps.setLong(index++, finID);
 				ps.setString(index++, finReference);
 				ps.setString(index++, reason);
-				ps.setString(index++, "F");
+				ps.setString(index, "F");
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -526,7 +526,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 					ps.setString(index++, "I");
 					ps.setString(index++, memberDetail.getFilePath());
 					ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
-					ps.setString(index++, memberDetail.getSegmentType());
+					ps.setString(index, memberDetail.getSegmentType());
 
 					return ps;
 				}
@@ -582,7 +582,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 					ps.setString(index++, PennantConstants.PFF_CUSTCTG_INDIV);
 				}
 
-				ps.setDate(index++, JdbcUtil.getDate(DateUtil.addMonths(SysParamUtil.getAppDate(), -36)));
+				ps.setDate(index, JdbcUtil.getDate(DateUtil.addMonths(SysParamUtil.getAppDate(), -36)));
 			});
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -608,7 +608,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			ps.setString(index++, fileInfo.getRemarks());
 			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 
-			ps.setLong(index++, fileInfo.getId());
+			ps.setLong(index, fileInfo.getId());
 		});
 	}
 

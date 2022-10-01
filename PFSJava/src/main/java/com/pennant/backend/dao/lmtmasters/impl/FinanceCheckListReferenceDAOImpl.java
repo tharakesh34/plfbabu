@@ -165,7 +165,7 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 
 				ps.setLong(index++, fclr.getFinID());
 				ps.setLong(index++, fclr.getQuestionId());
-				ps.setLong(index++, fclr.getAnswer());
+				ps.setLong(index, fclr.getAnswer());
 			});
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -224,7 +224,7 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 			ps.setString(index++, fclr.getTaskId());
 			ps.setString(index++, fclr.getNextTaskId());
 			ps.setString(index++, fclr.getRecordType());
-			ps.setLong(index++, fclr.getWorkflowId());
+			ps.setLong(index, fclr.getWorkflowId());
 		});
 		return fclr.getId();
 	}
@@ -264,7 +264,7 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 			ps.setLong(index++, fclr.getAnswer());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, fclr.getVersion() - 1);
+				ps.setInt(index, fclr.getVersion() - 1);
 			}
 		});
 

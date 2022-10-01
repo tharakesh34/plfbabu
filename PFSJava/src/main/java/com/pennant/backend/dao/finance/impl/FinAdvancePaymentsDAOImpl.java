@@ -105,7 +105,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 
 		}, rowMapper);
 	}
@@ -198,7 +198,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			ps.setString(index++, fap.getTaskId());
 			ps.setString(index++, fap.getNextTaskId());
 			ps.setString(index++, fap.getRecordType());
-			ps.setLong(index++, fap.getWorkflowId());
+			ps.setLong(index, fap.getWorkflowId());
 
 		});
 		return fap.getFinReference();
@@ -270,7 +270,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			ps.setBoolean(index++, fap.isHoldDisbursement());
 			ps.setLong(index++, fap.getLinkedTranId());
 			ps.setString(index++, fap.getLei());
-			ps.setLong(index++, fap.getPaymentId());
+			ps.setLong(index, fap.getPaymentId());
 		});
 
 		if (recordCount <= 0) {
@@ -292,7 +292,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 			ps.setString(index++, fap.getStatus());
 			ps.setLong(index++, fap.getFinID());
-			ps.setLong(index++, fap.getDisbSeq());
+			ps.setLong(index, fap.getDisbSeq());
 		});
 	}
 
@@ -310,7 +310,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 			ps.setString(index++, fap.getStatus());
 			ps.setLong(index++, fap.getFinID());
-			ps.setLong(index++, fap.getPaymentId());
+			ps.setLong(index, fap.getPaymentId());
 		});
 	}
 
@@ -357,7 +357,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			int index = 1;
 
 			ps.setLong(index++, linkedTranId);
-			ps.setLong(index++, paymentId);
+			ps.setLong(index, paymentId);
 		});
 
 		if (recordCount <= 0) {
@@ -404,7 +404,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			}
 
 			ps.setLong(index++, fap.getPaymentId());
-			ps.setString(index++, DisbursementConstants.STATUS_AWAITCON);
+			ps.setString(index, DisbursementConstants.STATUS_AWAITCON);
 		});
 	}
 
@@ -481,7 +481,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, finID);
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index, JdbcUtil.getDate(toDate));
 		}, rowMapper);
 	}
 
@@ -495,7 +495,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			int index = 1;
 
 			ps.setLong(index++, fap.getLinkedTranId());
-			ps.setLong(index++, fap.getPaymentId());
+			ps.setLong(index, fap.getPaymentId());
 		});
 	}
 
@@ -535,7 +535,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			ps.setString(index++, fap.getStatus());
 			ps.setLong(index++, fap.getLinkedTranId());
 			ps.setLong(index++, fap.getFinID());
-			ps.setLong(index++, fap.getPaymentSeq());
+			ps.setLong(index, fap.getPaymentSeq());
 
 		});
 	}

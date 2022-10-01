@@ -74,7 +74,7 @@ public class IRRScheduleDetailDAOImpl extends BasicDao<IRRScheduleDetail> implem
 					ps.setBigDecimal(index++, irrd.getPrincipalCalc());
 					ps.setBigDecimal(index++, irrd.getRepayAmount());
 					ps.setBigDecimal(index++, irrd.getClosingBalance());
-					ps.setBigDecimal(index++, irrd.getGapInterst());
+					ps.setBigDecimal(index, irrd.getGapInterst());
 				}
 
 				@Override
@@ -96,7 +96,7 @@ public class IRRScheduleDetailDAOImpl extends BasicDao<IRRScheduleDetail> implem
 		List<IRRScheduleDetail> finSchdDetails = this.jdbcOperations.query(sql, ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, num) -> {
 			IRRScheduleDetail irrd = new IRRScheduleDetail();
 

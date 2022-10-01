@@ -150,7 +150,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 			ps.setString(index++, wfd.getRoleCode());
 			ps.setString(index++, wfd.getNextRoleCode());
 			ps.setString(index++, wfd.getTaskId());
-			ps.setString(index++, wfd.getNextTaskId());
+			ps.setString(index, wfd.getNextTaskId());
 		});
 
 		return wfd.getWorkFlowId();
@@ -169,7 +169,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 			ps.setLong(index++, wfd.getLastMntBy());
 			ps.setTimestamp(index++, wfd.getLastMntOn());
 
-			ps.setLong(index++, wfd.getWorkFlowId());
+			ps.setLong(index, wfd.getWorkFlowId());
 		});
 
 		clearWorkflowCache(wfd.getWorkFlowId());

@@ -1459,7 +1459,6 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		return processCompleted;
 	}
 
-	@SuppressWarnings("deprecation")
 	private void setCustomerLimitList(LimitHeader aLimitHeader) {
 
 		String limitCccy = aLimitHeader.getLimitCcy();

@@ -16,6 +16,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.provision.dao.ProvisionDAO;
@@ -56,13 +57,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
-		} catch (DataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
 	}
 
 	@Override
@@ -128,7 +123,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		try {
 			return this.jdbcOperations.queryForObject(sql, Long.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -207,7 +202,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 			}, finReference, 0);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -277,7 +272,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				return p;
 			}, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -294,13 +289,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
 	}
 
 	@Override
@@ -309,13 +298,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finReference);
 	}
 
 	@Override
@@ -392,11 +375,11 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setObject(index++, p.getLinkedTranId());
 			ps.setObject(index++, p.getChgLinkedTranId());
 			ps.setInt(index++, p.getVersion());
-			ps.setObject(index++, JdbcUtil.setLong(p.getCreatedBy()));
+			ps.setObject(index++, JdbcUtil.getLong(p.getCreatedBy()));
 			ps.setTimestamp(index++, p.getCreatedOn());
-			ps.setObject(index++, JdbcUtil.setLong(p.getApprovedBy()));
+			ps.setObject(index++, JdbcUtil.getLong(p.getApprovedBy()));
 			ps.setTimestamp(index++, p.getApprovedOn());
-			ps.setLong(index++, JdbcUtil.setLong(p.getLastMntBy()));
+			ps.setLong(index++, JdbcUtil.getLong(p.getLastMntBy()));
 			ps.setTimestamp(index++, p.getLastMntOn());
 			ps.setString(index++, p.getRecordStatus());
 			ps.setString(index++, p.getRoleCode());
@@ -404,7 +387,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, p.getTaskId());
 			ps.setString(index++, p.getNextTaskId());
 			ps.setString(index++, p.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(p.getWorkflowId()));
+			ps.setLong(index, JdbcUtil.getLong(p.getWorkflowId()));
 		});
 	}
 
@@ -483,11 +466,11 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setObject(index++, p.getLinkedTranId());
 			ps.setObject(index++, p.getChgLinkedTranId());
 			ps.setInt(index++, p.getVersion());
-			ps.setObject(index++, JdbcUtil.setLong(p.getCreatedBy()));
+			ps.setObject(index++, JdbcUtil.getLong(p.getCreatedBy()));
 			ps.setTimestamp(index++, p.getCreatedOn());
-			ps.setObject(index++, JdbcUtil.setLong(p.getApprovedBy()));
+			ps.setObject(index++, JdbcUtil.getLong(p.getApprovedBy()));
 			ps.setTimestamp(index++, p.getApprovedOn());
-			ps.setLong(index++, JdbcUtil.setLong(p.getLastMntBy()));
+			ps.setLong(index++, JdbcUtil.getLong(p.getLastMntBy()));
 			ps.setTimestamp(index++, p.getLastMntOn());
 			ps.setString(index++, p.getRecordStatus());
 			ps.setString(index++, p.getRoleCode());
@@ -495,9 +478,9 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, p.getTaskId());
 			ps.setString(index++, p.getNextTaskId());
 			ps.setString(index++, p.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(p.getWorkflowId()));
+			ps.setLong(index++, JdbcUtil.getLong(p.getWorkflowId()));
 
-			ps.setLong(index++, p.getId());
+			ps.setLong(index, p.getId());
 		});
 	}
 
@@ -620,7 +603,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				return p;
 			}, finReference, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -667,7 +650,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new ProvisionRowMapper());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

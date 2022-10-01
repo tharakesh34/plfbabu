@@ -1136,7 +1136,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" From ManualAdviseMovements");
 		sql.append(" Where ReceiptID in (");
 		sql.append(JdbcUtil.getInCondition(receiptList));
-		sql.append(")");
+		sql.append(") Group by AdviseID");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -2134,7 +2134,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			ManualAdvise ma = new ManualAdvise();
@@ -2152,7 +2152,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	public void updateStatus(List<ManualAdvise> list, String type) {
 		String sql = "Update ManualAdvise Set Status  = ? where AdviseId = ?";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -2163,7 +2163,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				int index = 1;
 
 				ps.setString(index++, ma.getStatus());
-				ps.setLong(index++, ma.getAdviseID());
+				ps.setLong(index, ma.getAdviseID());
 			}
 
 			@Override

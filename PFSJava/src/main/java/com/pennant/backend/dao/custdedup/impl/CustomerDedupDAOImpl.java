@@ -65,7 +65,7 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 				ps.setString(index++, cd.getDedupRule());
 				ps.setBoolean(index++, cd.isOverride());
 				ps.setString(index++, cd.getOverrideUser());
-				ps.setString(index++, cd.getModule());
+				ps.setString(index, cd.getModule());
 			}
 
 			@Override
@@ -107,7 +107,7 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 				ps.setString(index++, cd.getModule());
 
 				ps.setLong(index++, cd.getFinID());
-				ps.setString(index++, cd.getCustCIF());
+				ps.setString(index, cd.getCustCIF());
 			}
 
 			@Override

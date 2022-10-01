@@ -30,6 +30,7 @@ import org.zkoss.zss.ui.AuxAction;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Radiogroup;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -57,16 +58,19 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private static final Logger logger = LogManager.getLogger(FinanceSpreadSheetCtrl.class);
 
 	protected Window window_SpreadSheetDialog;
+
 	protected Button button_FetchData;
 	protected Spreadsheet spreadSheet = null;
 
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private boolean isReadOnly;
+	private boolean enqiryModule;
 
 	private CreditReviewDetails creditReviewDetails = null;
 	private CreditReviewData creditReviewData = null;
 
 	private FinanceDetail fd;
+	private Tab parentTab;
 
 	public FinanceSpreadSheetCtrl() {
 		super();
@@ -83,6 +87,11 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		setPageComponents(window_SpreadSheetDialog);
 
 		try {
+
+			if (arguments.containsKey("parentTab")) {
+				this.parentTab = (Tab) arguments.get("parentTab");
+			}
+
 			if (arguments.containsKey("creditReviewDetails")) {
 				this.creditReviewDetails = (CreditReviewDetails) arguments.get("creditReviewDetails");
 			}
@@ -107,6 +116,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				isReadOnly = (boolean) arguments.get("enqiryModule");
 			}
 
+			if (arguments.containsKey("enqiryModule")) {
+				enqiryModule = (boolean) arguments.get("enqiryModule");
+			}
+
 			if (this.creditReviewDetails != null) {
 				doShowDialog();
 			}
@@ -115,12 +128,28 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				financeMainDialogCtrl.setFinanceSpreadSheetCtrl(this);
 			}
 
+			if (parentTab != null && creditReviewDetails != null) {
+				doDisplayTab(creditReviewDetails.getEligibilityMethod());
+			} else {
+				doDisplayTab(null);
+			}
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_SpreadSheetDialog.onClose();
 		}
 
 		logger.debug("Leaving");
+	}
+
+	public void doDisplayTab(String eligibilityMethod) {
+		if (parentTab != null) {
+			this.parentTab.setVisible(StringUtils.isNotEmpty(eligibilityMethod));
+		}
+	}
+
+	public boolean isTabVisible() {
+		return parentTab == null ? false : parentTab.isVisible();
 	}
 
 	private File getFile(String fileName) {
@@ -206,7 +235,9 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 				doSetData(sheet);
 
-				doSetScreenData(sheet, applicantDataMap);
+				if (!enqiryModule) {
+					doSetScreenData(sheet, applicantDataMap);
+				}
 
 				spreadSheet.setSelectedSheet(sheet.getSheetName());
 			} catch (Exception e) {
@@ -265,7 +296,9 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		doSetData(sheet);
 
-		doSetScreenData(sheet, applicantDataMap);
+		if (!enqiryModule) {
+			doSetScreenData(sheet, applicantDataMap);
+		}
 	}
 
 	private String removeEndOperator(String deriveFormula) {
@@ -280,7 +313,16 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private void setFormula(Sheet sheet, String formulaFieldName) {
 		Range range = getRange(sheet, formulaFieldName);
 
+		if (range == null) {
+			return;
+		}
+
 		CellData cellData = range.getCellData();
+
+		if (cellData == null) {
+			return;
+		}
+
 		CellType type = cellData.getType();
 
 		if (type != CellType.FORMULA) {
@@ -795,17 +837,23 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 	private Map<String, Object> getApplicantData() {
 
-		CustomerDialogCtrl customerDialogCtrl = financeMainDialogCtrl.getCustomerDialogCtrl();
+		CustomerDialogCtrl customerDialogCtrl = null;
+
+		if (financeMainDialogCtrl != null) {
+			customerDialogCtrl = financeMainDialogCtrl.getCustomerDialogCtrl();
+		}
 
 		CustomerDetails cd = null;
 		if (customerDialogCtrl != null) {
 			cd = customerDialogCtrl.getCustomerDetails();
-		} else {
-			cd = financeMainDialogCtrl.getFinanceDetail().getCustomerDetails();
+		}
+
+		if (cd == null && fd != null) {
+			cd = fd.getCustomerDetails();
 		}
 
 		if (cd == null) {
-			cd = fd.getCustomerDetails();
+			return new HashMap<>();
 		}
 
 		return getCustData(cd);
@@ -814,16 +862,18 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private Map<String, Map<String, Object>> getCoApplicantData() {
 		Map<String, Map<String, Object>> map = new HashMap<>();
 
-		JointAccountDetailDialogCtrl jaddCtrl = financeMainDialogCtrl.getJointAccountDetailDialogCtrl();
+		JointAccountDetailDialogCtrl jaddCtrl = null;
+
+		if (financeMainDialogCtrl != null) {
+			jaddCtrl = financeMainDialogCtrl.getJointAccountDetailDialogCtrl();
+		}
 
 		List<JointAccountDetail> jadList = null;
 		if (jaddCtrl != null) {
 			jadList = jaddCtrl.getJointAccountDetailList();
-		} else {
-			jadList = financeMainDialogCtrl.getFinanceDetail().getJointAccountDetailList();
 		}
 
-		if (jadList == null) {
+		if (jadList == null && fd != null) {
 			jadList = fd.getJointAccountDetailList();
 		}
 
@@ -904,23 +954,27 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	}
 
 	private Date getMaturityDate() {
-		return financeMainDialogCtrl.maturityDate_two.getValue();
+		if (financeMainDialogCtrl != null) {
+			return financeMainDialogCtrl.maturityDate_two.getValue();
+		}
+
+		return null;
 	}
 
 	private Date getFinStartDate() {
-		return financeMainDialogCtrl.finStartDate.getValue();
+		if (financeMainDialogCtrl != null) {
+			return financeMainDialogCtrl.finStartDate.getValue();
+		}
+		return null;
+
 	}
 
 	private BigDecimal getFinAssetValue() {
-		BigDecimal loanAmount = BigDecimal.ZERO;
-
-		if (financeMainDialogCtrl == null) {
-			return loanAmount;
+		if (financeMainDialogCtrl != null) {
+			return financeMainDialogCtrl.finAssetValue.getActualValue();
 		}
 
-		loanAmount = financeMainDialogCtrl.finAssetValue.getActualValue();
-
-		return loanAmount;
+		return BigDecimal.ZERO;
 	}
 
 	private BigDecimal getROI() {
@@ -951,7 +1005,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	}
 
 	private int getTenor() {
-		return financeMainDialogCtrl.numberOfTerms_two.intValue();
+		if (financeMainDialogCtrl != null) {
+			return financeMainDialogCtrl.numberOfTerms_two.intValue();
+		}
+		return 0;
 	}
 
 	public void doSaveScoreDetail(FinanceDetail afd) {

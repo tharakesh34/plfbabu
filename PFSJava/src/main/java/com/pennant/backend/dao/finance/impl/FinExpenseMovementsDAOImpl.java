@@ -77,7 +77,7 @@ public class FinExpenseMovementsDAOImpl extends SequenceDao<FinExpenseMovements>
 			ps.setTimestamp(index++, fem.getLastMntOn());
 			ps.setDate(index++, JdbcUtil.getDate((fem.getTransactionDate())));
 			ps.setObject(index++, fem.getLinkedTranId());
-			ps.setObject(index++, fem.getRevLinkedTranId());
+			ps.setObject(index, fem.getRevLinkedTranId());
 		});
 
 		return fem.getFinExpenseMovemntId();
@@ -122,7 +122,7 @@ public class FinExpenseMovementsDAOImpl extends SequenceDao<FinExpenseMovements>
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setLong(index++, expenseTypeID);
+			ps.setLong(index, expenseTypeID);
 		}, (rs, num) -> {
 			FinExpenseMovements movement = new FinExpenseMovements();
 			movement.setFinExpenseMovemntId(rs.getLong("FinExpenseMovemntID"));
@@ -142,7 +142,7 @@ public class FinExpenseMovementsDAOImpl extends SequenceDao<FinExpenseMovements>
 			int index = 1;
 
 			ps.setLong(index++, revLinkedTranID);
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		});
 	}
 }

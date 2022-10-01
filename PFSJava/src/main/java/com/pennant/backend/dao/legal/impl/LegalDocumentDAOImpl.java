@@ -119,7 +119,7 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setLong(index++, legalId);
+				ps.setLong(index, legalId);
 			}
 		}, new RowMapper<LegalDocument>() {
 			@Override

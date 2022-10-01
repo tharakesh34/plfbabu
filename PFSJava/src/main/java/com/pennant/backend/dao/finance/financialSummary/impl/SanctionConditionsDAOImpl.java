@@ -75,7 +75,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			SanctionConditions sc = new SanctionConditions();
 
@@ -113,7 +113,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 				int index = 1;
 
 				ps.setLong(index++, sc.getId());
-				ps.setLong(index++, sc.getFinID());
+				ps.setLong(index, sc.getFinID());
 			});
 
 			if (recordCount <= 0) {
@@ -160,7 +160,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 				ps.setString(index++, sc.getTaskId());
 				ps.setString(index++, sc.getNextTaskId());
 				ps.setString(index++, sc.getRecordType());
-				ps.setLong(index++, sc.getWorkflowId());
+				ps.setLong(index, sc.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -203,7 +203,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 			ps.setLong(index++, sc.getFinID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, sc.getVersion() - 1);
+				ps.setInt(index, sc.getVersion() - 1);
 			}
 
 		});

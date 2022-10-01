@@ -96,4 +96,7 @@ public interface FinanceReferenceDetailDAO {
 	List<SecurityUser> getUpLevelUsers(long usrId, String branch);
 
 	List<FinanceReferenceDetail> getLMTFinRefDetails(String limitCode, String finType);
+
+	boolean isTabCodeExists(String tabCode, String finType, String type);
+
 }

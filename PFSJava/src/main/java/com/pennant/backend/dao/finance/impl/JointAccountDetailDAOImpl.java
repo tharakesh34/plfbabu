@@ -161,7 +161,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 			ps.setString(index++, jad.getTaskId());
 			ps.setString(index++, jad.getNextTaskId());
 			ps.setString(index++, jad.getRecordType());
-			ps.setLong(index++, jad.getWorkflowId());
+			ps.setLong(index, jad.getWorkflowId());
 		});
 
 		return jad.getId();
@@ -209,7 +209,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 			ps.setLong(index++, jad.getJointAccountId());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, jad.getVersion() - 1);
+				ps.setInt(index, jad.getVersion() - 1);
 			}
 
 		});
@@ -244,7 +244,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		return this.jdbcOperations.query(sql, ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			JointAccountDetail ad = new JointAccountDetail();
 
@@ -268,7 +268,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, rowMapper);
 	}
 
@@ -283,7 +283,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
+			ps.setString(index, finReference);
 		}, rowMapper);
 	}
 
@@ -310,7 +310,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 			int index = 1;
 
 			ps.setString(index++, jad.getCustCIF());
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, num) -> {
 			FinanceExposure fe = new FinanceExposure();
 
@@ -368,7 +368,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 				ps.setString(index++, custCIF);
 			}
 
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, num) -> {
 			FinanceExposure fe = new FinanceExposure();
 
@@ -417,7 +417,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 			int index = 1;
 
 			ps.setString(index++, jad.getCustCIF());
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 
 		}, (rs, num) -> {
 			FinanceExposure fe = new FinanceExposure();
@@ -470,7 +470,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 				ps.setString(index++, custCIF);
 			}
 
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 
 		}, (rs, num) -> {
 			FinanceExposure fe = new FinanceExposure();
@@ -517,7 +517,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 			int index = 1;
 
 			ps.setString(index++, jad.getCustCIF());
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, num) -> {
 			FinanceExposure fe = new FinanceExposure();
 
@@ -641,7 +641,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, custCif);
+			ps.setString(index, custCif);
 		}, (rs, rowNum) -> {
 			FinanceEnquiry fm = new FinanceEnquiry();
 

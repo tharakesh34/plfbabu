@@ -217,7 +217,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				ps.setString(index++, bl.getWatchListRule());
 				ps.setBoolean(index++, bl.isOverride());
 				ps.setString(index++, bl.getOverrideUser());
-				ps.setString(index++, bl.getSourceCIF());
+				ps.setString(index, bl.getSourceCIF());
 			}
 
 			@Override
@@ -242,7 +242,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 			ps.setString(index++, finReference);
 			ps.setString(index++, sourceCIF);
-			ps.setString(index++, "%" + queryCode + "%");
+			ps.setString(index, "%" + queryCode + "%");
 		}, rowMapper);
 	}
 
@@ -296,7 +296,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 				ps.setLong(index++, bl.getFinID());
 				ps.setString(index++, bl.getCustCIF());
-				ps.setString(index++, bl.getSourceCIF());
+				ps.setString(index, bl.getSourceCIF());
 			}
 
 			@Override
@@ -400,9 +400,9 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 			ps.setString(index++, blc.getCustCIF());
 
 			if (TableType.TEMP_TAB.equals(tableType)) {
-				ps.setTimestamp(index++, blc.getPrevMntOn());
+				ps.setTimestamp(index, blc.getPrevMntOn());
 			} else {
-				ps.setInt(index++, blc.getVersion() - 1);
+				ps.setInt(index, blc.getVersion() - 1);
 			}
 
 		});
@@ -426,9 +426,9 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				int index = 1;
 				ps.setString(index++, blc.getCustCIF());
 				if (TableType.TEMP_TAB.equals(tableType)) {
-					ps.setTimestamp(index++, blc.getPrevMntOn());
+					ps.setTimestamp(index, blc.getPrevMntOn());
 				} else {
-					ps.setInt(index++, blc.getVersion() - 1);
+					ps.setInt(index, blc.getVersion() - 1);
 				}
 			});
 
@@ -518,7 +518,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				ps.setString(index++, blc.getAdditionalField12());
 				ps.setString(index++, blc.getAdditionalField13());
 				ps.setString(index++, blc.getAddress());
-				ps.setString(index++, blc.getAdditionalField14());
+				ps.setString(index, blc.getAdditionalField14());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -638,7 +638,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				ps.setString(index++, nrc.getTaskId());
 				ps.setString(index++, nrc.getNextTaskId());
 				ps.setString(index++, nrc.getRecordType());
-				ps.setLong(index++, nrc.getWorkflowId());
+				ps.setLong(index, nrc.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);

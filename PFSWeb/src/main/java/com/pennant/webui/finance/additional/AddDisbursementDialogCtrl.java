@@ -1298,6 +1298,31 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			aFinScheduleData.setStepPolicyDetails(aFinScheduleData.getStepPolicyDetails(), true);
 		}
 
+		List<FinanceScheduleDetail> fsd = finScheduleData.getFinanceScheduleDetails();
+		int schdDetailsSize = fsd.size();
+		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
+		boolean priRecalFromDate = false;
+		boolean priRecalToDate = false;
+
+		for (int i = 0; i < schdDetailsSize; i++) {
+			curSchd = fsd.get(i);
+
+			if (DateUtil.compare(curSchd.getSchDate(), finMain.getRecalFromDate()) == 0
+					&& FinanceConstants.FLAG_RESTRUCTURE_PRIH.equals(curSchd.getBpiOrHoliday())) {
+				priRecalFromDate = true;
+			}
+
+			if (DateUtil.compare(curSchd.getSchDate(), finMain.getRecalToDate()) == 0
+					&& FinanceConstants.FLAG_RESTRUCTURE_PRIH.equals(curSchd.getBpiOrHoliday())) {
+				priRecalToDate = true;
+				break;
+			}
+		}
+
+		if (priRecalFromDate && priRecalToDate) {
+			MessageUtil.showError("Unable to Perform Add Disbursment Due to Principal Holidays");
+		}
+
 		// Service details calling for Schedule calculation
 		aFinScheduleData.setFinServiceInstruction(finServiceInstruction);
 		aFinScheduleData = addDisbursementService.getAddDisbDetails(aFinScheduleData, finServiceInstruction.getAmount(),

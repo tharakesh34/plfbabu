@@ -199,7 +199,7 @@ public class CommitmentMovementDAOImpl extends BasicDao<CommitmentMovement> impl
 			ps.setString(index++, cm.getTaskId());
 			ps.setString(index++, cm.getNextTaskId());
 			ps.setString(index++, cm.getRecordType());
-			ps.setLong(index++, cm.getWorkflowId());
+			ps.setLong(index, cm.getWorkflowId());
 		});
 
 		return cm.getId();
@@ -252,7 +252,7 @@ public class CommitmentMovementDAOImpl extends BasicDao<CommitmentMovement> impl
 
 			ps.setString(index++, cm.getCmtReference());
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, cm.getVersion());
+				ps.setInt(index, cm.getVersion());
 			}
 		});
 

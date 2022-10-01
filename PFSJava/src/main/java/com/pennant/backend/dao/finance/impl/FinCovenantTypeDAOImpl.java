@@ -56,7 +56,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
+			ps.setString(index, finReference);
 		}, new FinCovenantTypeRowMapper(type, isEnquiry));
 	}
 
@@ -73,7 +73,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 				int index = 1;
 
 				ps.setString(index++, fct.getFinReference());
-				ps.setString(index++, fct.getCovenantType());
+				ps.setString(index, fct.getCovenantType());
 			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -114,7 +114,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 			ps.setString(index++, fct.getTaskId());
 			ps.setString(index++, fct.getNextTaskId());
 			ps.setString(index++, fct.getRecordType());
-			ps.setLong(index++, fct.getWorkflowId());
+			ps.setLong(index, fct.getWorkflowId());
 		});
 
 		return fct.getId();
@@ -162,7 +162,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 			ps.setString(index++, fct.getCovenantType());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, fct.getVersion() - 1);
+				ps.setInt(index, fct.getVersion() - 1);
 			}
 		});
 
@@ -181,7 +181,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
+			ps.setString(index, finReference);
 		});
 	}
 
@@ -291,7 +291,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 			int index = 1;
 
 			ps.setInt(index++, 1);
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, num) -> {
 			DocumentType dt = new DocumentType();
 

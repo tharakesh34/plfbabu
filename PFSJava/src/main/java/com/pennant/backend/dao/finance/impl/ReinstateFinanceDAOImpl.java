@@ -212,7 +212,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, rf.getFinID());
+				ps.setLong(index, rf.getFinID());
 			});
 
 			if (recordCount <= 0) {
@@ -249,7 +249,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 			ps.setString(index++, rf.getTaskId());
 			ps.setString(index++, rf.getNextTaskId());
 			ps.setString(index++, rf.getRecordType());
-			ps.setLong(index++, rf.getWorkflowId());
+			ps.setLong(index, rf.getWorkflowId());
 		});
 
 		return rf.getFinReference();
@@ -287,7 +287,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 			ps.setLong(index++, rf.getFinID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, rf.getVersion() - 1);
+				ps.setInt(index, rf.getVersion() - 1);
 			}
 
 		});
@@ -358,7 +358,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -368,7 +368,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
-			ps.setString(index++, finReference);
+			ps.setString(index, finReference);
 		});
 	}
 
@@ -378,7 +378,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -392,7 +392,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -402,7 +402,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
-			ps.setString(index++, finReference);
+			ps.setString(index, finReference);
 		});
 	}
 
@@ -412,7 +412,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -426,7 +426,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, rf.getFinID());
+			ps.setLong(index, rf.getFinID());
 
 		});
 	}

@@ -177,7 +177,7 @@ public class CacheAdmin {
 			ps.setLong(index++, cs.getLastMntBy());
 			ps.setTimestamp(index++, cs.getLastMntOn());
 
-			ps.setLong(index++, cs.getId());
+			ps.setLong(index, cs.getId());
 		});
 	}
 

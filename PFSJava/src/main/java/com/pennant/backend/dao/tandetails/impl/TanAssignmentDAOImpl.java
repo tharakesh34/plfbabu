@@ -119,7 +119,7 @@ public class TanAssignmentDAOImpl extends SequenceDao<TanAssignment> implements 
 				ps.setString(index++, tanAssignment.getTaskId());
 				ps.setString(index++, tanAssignment.getNextTaskId());
 				ps.setString(index++, tanAssignment.getRecordType());
-				ps.setLong(index++, tanAssignment.getWorkflowId());
+				ps.setLong(index, tanAssignment.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
@@ -156,7 +156,7 @@ public class TanAssignmentDAOImpl extends SequenceDao<TanAssignment> implements 
 			ps.setString(index++, tanAssignment.getRecordType());
 			ps.setLong(index++, tanAssignment.getWorkflowId());
 
-			ps.setLong(index++, tanAssignment.getTanID());
+			ps.setLong(index, tanAssignment.getTanID());
 
 		});
 
@@ -172,7 +172,7 @@ public class TanAssignmentDAOImpl extends SequenceDao<TanAssignment> implements 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, tanAssignment.getId());
+			ps.setLong(index, tanAssignment.getId());
 
 		});
 
@@ -264,7 +264,7 @@ public class TanAssignmentDAOImpl extends SequenceDao<TanAssignment> implements 
 
 			ps.setLong(index++, custId);
 			if (StringUtils.isNotEmpty(finReference)) {
-				ps.setString(index++, finReference);
+				ps.setString(index, finReference);
 			}
 		}, (rs, rowNum) -> {
 			TanAssignment ta = new TanAssignment();
@@ -362,7 +362,7 @@ public class TanAssignmentDAOImpl extends SequenceDao<TanAssignment> implements 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, custId);
-			ps.setString(index++, finReference);
+			ps.setString(index, finReference);
 		}, new TanAssignmentRowMapper());
 	}
 

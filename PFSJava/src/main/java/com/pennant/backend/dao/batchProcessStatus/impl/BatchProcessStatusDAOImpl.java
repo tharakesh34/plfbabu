@@ -43,7 +43,7 @@ public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements Ba
 
 				ps.setString(index++, batchName);
 				ps.setString(index++, status);
-				ps.setDate(index++, JdbcUtil.getDate(startTime));
+				ps.setDate(index, JdbcUtil.getDate(startTime));
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -59,8 +59,7 @@ public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements Ba
 
 			ps.setString(index++, status);
 			ps.setDate(index++, JdbcUtil.getDate(endTime));
-			ps.setString(index++, batchName);
+			ps.setString(index, batchName);
 		});
-
 	}
 }

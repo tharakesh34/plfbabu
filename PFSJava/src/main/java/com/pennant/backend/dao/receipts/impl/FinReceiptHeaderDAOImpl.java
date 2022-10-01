@@ -198,7 +198,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rh.getFromState());
 			ps.setString(index++, rh.getFinType());
 			ps.setObject(index++, rh.getCustBankId());
-			ps.setString(index++, rh.getModuleType());
+			ps.setString(index, rh.getModuleType());
 		});
 
 		return rh.getId();
@@ -445,7 +445,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		parameters[i++] = RepayConstants.PAYSTATUS_CANCEL;
 		parameters[i++] = PennantConstants.RECORD_TYPE_NEW;
 		parameters[i++] = depositBranch;
-		parameters[i++] = receiptId;
+		parameters[i] = receiptId;
 
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
 	}
@@ -497,7 +497,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, extRef);
+			ps.setString(index, extRef);
 		}, rowMapper);
 	}
 
@@ -552,7 +552,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		}
 
 		if (!rpyPostingsRevReq) {
-			parameters[i++] = FinServiceEvent.SCHDRPY;
+			parameters[i] = FinServiceEvent.SCHDRPY;
 		}
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -611,7 +611,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, reference);
+			ps.setString(index, reference);
 		}, rowMapper);
 	}
 
@@ -733,7 +733,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setLong(index++, rch.getBounceReason());
 			ps.setString(index++, valueMap.get("uploadStatus"));
 			ps.setString(index++, valueMap.get("reason"));
-			ps.setString(index++, rch.getCancelRemarks());
+			ps.setString(index, rch.getCancelRemarks());
 
 		});
 	}
@@ -762,7 +762,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				ps.setDate(index++, JdbcUtil.getDate(rql.getTransactionDate()));
 				ps.setLong(index++, rql.getThreadId());
 				ps.setInt(index++, rql.getProgress());
-				ps.setString(index++, rql.getStartTime());
+				ps.setString(index, rql.getStartTime());
 
 			}
 
@@ -805,7 +805,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				ps.setInt(index++, rql.getProgress());
 
 				ps.setLong(index++, rql.getUploadId());
-				ps.setLong(index++, rql.getReceiptId());
+				ps.setLong(index, rql.getReceiptId());
 			}
 
 			@Override
@@ -928,9 +928,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, RepayConstants.PAYSTATUS_REALIZED);
 			ps.setBigDecimal(index++, fsi.getAmount());
 			if (isOnline) {
-				ps.setString(index++, fsi.getTransactionRef());
+				ps.setString(index, fsi.getTransactionRef());
 			} else if (isChequeOrDD) {
-				ps.setString(index++, fsi.getFavourNumber());
+				ps.setString(index, fsi.getFavourNumber());
 			}
 
 		}, (rs, roNum) -> {
@@ -1077,7 +1077,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				ps.setString(index++, request.getResponseCode());
 				ps.setInt(index++, ((request.getRetryCount()) + 1));
 				ps.setDate(index++, JdbcUtil.getDate(request.getRetryOn()));
-				ps.setLong(index++, request.getReceiptId());
+				ps.setLong(index, request.getReceiptId());
 
 			}
 		});
@@ -1105,7 +1105,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				ps.setDate(index++, JdbcUtil.getDate(request.getRequestTime()));
 				ps.setString(index++, request.getStatus());
 				ps.setString(index++, request.getResponseCode());
-				ps.setInt(index++, request.getRetryCount());
+				ps.setInt(index, request.getRetryCount());
 				return ps;
 
 			}
@@ -1495,7 +1495,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rud.getReference());
 			ps.setString(index++, rud.getReceiptMode());
 			ps.setString(index++, rud.getChequeNo());
-			ps.setString(index++, rud.getTransactionRef());
+			ps.setString(index, rud.getTransactionRef());
 
 		}, (rs, roNum) -> {
 			return rs.getLong(1);
@@ -1531,7 +1531,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rud.getTransactionRef());
 			ps.setString(index++, rud.getBankCode());
 			ps.setString(index++, "B");
-			ps.setString(index++, "C");
+			ps.setString(index, "C");
 		}, (rs, rowNum) -> {
 			return rs.getLong(1);
 		}).size() > 0;
@@ -1564,7 +1564,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rud.getReceiptMode());
 			ps.setString(index++, rud.getTransactionRef());
 			ps.setString(index++, "B");
-			ps.setString(index++, "C");
+			ps.setString(index, "C");
 		}, (rs, rowNum) -> {
 			return rs.getLong(1);
 		}).size() > 0;

@@ -130,7 +130,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, provision.getFinID());
+			ps.setLong(index, provision.getFinID());
 		});
 	}
 
@@ -188,7 +188,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, provision.getNextTaskId());
 			ps.setString(index++, provision.getRecordType());
 			ps.setLong(index++, provision.getWorkflowId());
-			ps.setObject(index++, provision.getNpaTemplateId());
+			ps.setObject(index, provision.getNpaTemplateId());
 		});
 
 		return provision.getId();
@@ -249,7 +249,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, provision.getNextTaskId());
 			ps.setString(index++, provision.getRecordType());
 			ps.setLong(index++, provision.getWorkflowId());
-			ps.setObject(index++, provision.getNpaTemplateId());
+			ps.setObject(index, provision.getNpaTemplateId());
 		});
 
 		return provision.getId();
@@ -287,7 +287,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				ps.setString(index++, pa.getProvisionType());
 				ps.setString(index++, pa.getAssetCode());
 				ps.setBigDecimal(index++, pa.getProvisionPer());
-				ps.setBigDecimal(index++, pa.getProvisionAmtCal());
+				ps.setBigDecimal(index, pa.getProvisionAmtCal());
 			}
 
 			@Override
@@ -345,7 +345,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, prv.getRecordType());
 			ps.setLong(index++, prv.getWorkflowId());
 			ps.setObject(index++, prv.getNpaTemplateId());
-			ps.setLong(index++, prv.getId());
+			ps.setLong(index, prv.getId());
 		});
 	}
 
@@ -366,7 +366,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				ps.setString(index++, prv.getAssetCode());
 				ps.setBigDecimal(index++, prv.getProvisionPer());
 				ps.setBigDecimal(index++, prv.getProvisionAmtCal());
-				ps.setLong(index++, prv.getId());
+				ps.setLong(index, prv.getId());
 			}
 
 			@Override
@@ -398,7 +398,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, provisionId);
+			ps.setLong(index, provisionId);
 		});
 	}
 
@@ -414,7 +414,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		}, (rs, rowNum) -> {
 			ProvisionAmount pa = new ProvisionAmount();
 

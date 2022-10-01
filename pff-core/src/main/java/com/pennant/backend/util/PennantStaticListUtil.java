@@ -2317,6 +2317,8 @@ public class PennantStaticListUtil {
 					"CTDS"));
 			events.add(new FinServicingEvent(FinServiceEvent.LOANDOWNSIZING,
 					Labels.getLabel("label_FinSerEvent_LoanDownSizing"), "LDS"));
+			events.add(new FinServicingEvent(FinServiceEvent.LINKDELINK,
+					Labels.getLabel("label_FinSerEvent_LinkDelink"), "LDFIN"));
 
 			if (ImplementationConstants.ALLOW_RESTRUCTURING) {
 				events.add(new FinServicingEvent(FinServiceEvent.RESTRUCTURE,

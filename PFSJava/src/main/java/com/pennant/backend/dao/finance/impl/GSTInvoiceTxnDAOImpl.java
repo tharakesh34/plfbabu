@@ -109,7 +109,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 				ps.setString(index++, gsti.getInvoice_Status());
 				ps.setString(index++, gsti.getInvoiceType());
 				ps.setObject(index++, gsti.getDueInvoiceId());
-				ps.setString(index++, gsti.getInvoiceFor());
+				ps.setString(index, gsti.getInvoiceFor());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -174,7 +174,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		int recordCount = jdbcOperations.update(sql, ps -> {
 			int index = 1;
 			ps.setString(index++, invoice.getInvoiceNo());
-			ps.setLong(index++, invoice.getInvoiceId());
+			ps.setLong(index, invoice.getInvoiceId());
 		});
 
 		if (recordCount == 0) {
@@ -256,7 +256,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 					ps.setString(index++, invoice.getEntityCode());
 					ps.setString(index++, invoice.getStateCode());
 					ps.setString(index++, invoice.getTransactionType());
-					ps.setString(index++, invoice.getMonthYear());
+					ps.setString(index, invoice.getMonthYear());
 				}
 			});
 		} catch (DuplicateKeyException e) {
@@ -395,7 +395,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 			if (fromDate != null && toDate != null) {
 				ps.setDate(index++, JdbcUtil.getDate(fromDate));
-				ps.setDate(index++, JdbcUtil.getDate(toDate));
+				ps.setDate(index, JdbcUtil.getDate(toDate));
 
 			}
 		}, (rs, rowNum) -> {

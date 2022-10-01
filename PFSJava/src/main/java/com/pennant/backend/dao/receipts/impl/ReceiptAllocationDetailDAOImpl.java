@@ -74,7 +74,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, receiptID);
+			ps.setLong(index, receiptID);
 		}, (rs, rowNum) -> {
 			ReceiptAllocationDetail rad = new ReceiptAllocationDetail();
 
@@ -160,7 +160,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 				ps.setObject(index++, rAD.getTaxHeaderId());
 				ps.setBigDecimal(index++, rAD.getTdsDue());
 				ps.setBigDecimal(index++, rAD.getTdsPaid());
-				ps.setBigDecimal(index++, rAD.getTdsWaived());
+				ps.setBigDecimal(index, rAD.getTdsWaived());
 
 			}
 

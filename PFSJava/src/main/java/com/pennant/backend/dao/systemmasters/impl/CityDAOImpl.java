@@ -145,27 +145,41 @@ public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 	 */
 	@Override
 	public String save(City city, TableType tableType) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Insert Into RMTProvinceVsCity");
+		sql.append(tableType.getSuffix());
+		sql.append(" (PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, DistrictId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTProvinceVsCity");
-		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, DistrictId)");
-		insertSql.append(
-				" Values(:PCCountry, :PCProvince, :PCCity, :PCCityName, :PCCityClassification, :BankRefNo, :CityIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :DistrictId)");
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		logger.trace(Literal.SQL + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
 		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, city.getPCCountry());
+				ps.setString(index++, city.getPCProvince());
+				ps.setString(index++, city.getPCCity());
+				ps.setString(index++, city.getPCCityName());
+				ps.setString(index++, city.getPCCityClassification());
+				ps.setString(index++, city.getBankRefNo());
+				ps.setBoolean(index++, city.isCityIsActive());
+				ps.setInt(index++, city.getVersion());
+				ps.setLong(index++, city.getLastMntBy());
+				ps.setTimestamp(index++, city.getLastMntOn());
+				ps.setString(index++, city.getRecordStatus());
+				ps.setString(index++, city.getRoleCode());
+				ps.setString(index++, city.getNextRoleCode());
+				ps.setString(index++, city.getTaskId());
+				ps.setString(index++, city.getNextTaskId());
+				ps.setString(index++, city.getRecordType());
+				ps.setLong(index++, city.getWorkflowId());
+				ps.setObject(index, city.getDistrictId());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

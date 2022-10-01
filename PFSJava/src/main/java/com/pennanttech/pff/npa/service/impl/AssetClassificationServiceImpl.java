@@ -281,6 +281,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		npa.setEffNpaPastDueDate(effective.getNpaPastDueDate());
 		npa.setEffNpaClassID(effective.getNpaClassID());
 		npa.setEffNpaStage(effective.isNpaStage());
+		npa.setFinIsActive(true);
 	}
 
 	@Override
@@ -293,39 +294,11 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 		Long effFinID = effective.getEffFinID();
 
-		AssetClassification effNpa = null;
-
-		if (npa.isEffNpaStage()) {
-			effNpa = assetClassificationDAO.getNpaClassification(npa.getEffFinID());
-
-			if (!npa.isFinIsActive()) {
-				effNpa = new AssetClassification();
-
-				effNpa.setFinID(npa.getFinID());
-				effNpa.setFinReference(npa.getEffFinReference());
-				effNpa.setPastDueDays(npa.getEffPastDueDays());
-				effNpa.setPastDueDate(npa.getEffPastDueDate());
-				effNpa.setNpaPastDueDays(npa.getEffNpaPastDueDays() + 1);
-				effNpa.setNpaPastDueDate(npa.getEffNpaPastDueDate());
-
-				AssetClassification temp = new AssetClassification();
-				temp.setFinID(finID);
-				temp.setFinReference(finReference);
-
-				temp.setAssetClassSetup(npa.getAssetClassSetup());
-				temp.setNpaPastDueDays(npa.getNpaPastDueDays());
-
-				effNpa.setNpaClassID(getNpaClassId(temp, list));
-				effNpa.setNpaStage(npa.isEffNpaStage());
-			}
-
-		} else {
-			effNpa = assetClassificationDAO.getNpaClassification(effFinID);
-		}
+		AssetClassification effNpa = assetClassificationDAO.getNpaClassification(effFinID);
 
 		setEffNpaDetails(npa, effNpa);
 
-		if (npa.getPastDueDays() == 0 && !npa.isEffNpaStage()) {
+		if (npa.getPastDueDays() == 0 && npa.isEffNpaStage()) {
 			npa.setNpaPastDueDays(0);
 			npa.setNpaPastDueDate(null);
 			npa.setNpaClassID(getNpaClassId(npa, list));
@@ -486,6 +459,15 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		npa.setEntityCode(assetClassificationDAO.getEntityCodeFromStage(finID));
 
 		setNpaClassification(npa);
+
+		npa.setEffPastDueDays(0);
+		npa.setEffPastDueDate(null);
+		npa.setEffNpaPastDueDays(0);
+		npa.setEffNpaPastDueDate(null);
+		npa.setEffNpaStage(npa.isNpaStage());
+		npa.setEffNpaClassID(npa.getNpaClassID());
+		npa.setFinID(finID);
+		npa.setEffFinReference(npa.getFinReference());
 
 		updateClassification(npa);
 	}

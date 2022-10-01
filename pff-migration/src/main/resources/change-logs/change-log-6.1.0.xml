@@ -37,4 +37,55 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="PSD#205798" author="vasudevarao.s">
+		<dropNotNullConstraint tableName="COVENANTS" columnName="REMARKS" columnDataType="varchar(500)" />
+	</changeSet>
+
+	<changeSet id="PSD#205798.01" author="vasudevarao.s">
+		<dropNotNullConstraint tableName="COVENANTS_TEMP" columnName="REMARKS" columnDataType="varchar(500)" />
+	</changeSet>
+	
+	<changeSet id="PSD#205878_pre" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'querydetail');
+				select deps_save_and_drop_dependencies ('plf', 'querydetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	 <changeSet id="PSD#205878.1" author="Mounika.M">
+    	<modifyDataType tableName="QueryDetail" columnName="QryNotes" newDataType="varchar(2000)"/>
+    </changeSet>
+    
+    <changeSet id="PSD#205878.2" author="Mounika.M">
+    	<modifyDataType tableName="QueryDetail" columnName="Status" newDataType="varchar(100)"/>
+    </changeSet>
+    
+     <changeSet id="PSD#205878.3" author="Mounika.M">
+		<modifyDataType tableName="Querydetail_Temp" columnName="QryNotes" newDataType="varchar(2000)"/>
+     </changeSet>
+     
+      <changeSet id="PSD#205878.4" author="Mounika.M">
+      	<modifyDataType tableName="Querydetail_Temp" columnName="Status" newDataType="varchar(100)"/>
+     </changeSet>
+	 
+	 <changeSet id="PSD#205878_post" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'querydetail_temp');
+				select deps_restore_dependencies ('plf', 'querydetail');
+			]]>
+		</sql>
+	</changeSet>
+     
+     <changeSet id="Linked_1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM STAGETABDETAIL WHERE TABCODE = 'Linked';
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, ACTIVE) VALUES ((SELECT MAX(TABID)+1 FROM STAGETABDETAIL), 'Linked', 'Linking/De-Linking  details', 1);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

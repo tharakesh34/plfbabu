@@ -137,8 +137,6 @@ public class AssetClassificationTaskLet implements Tasklet {
 				assetClassificationService.updateProgress(finID, EodConstants.PROGRESS_FAILED);
 
 				break;
-			} finally {
-				txStatus = null;
 			}
 		}
 

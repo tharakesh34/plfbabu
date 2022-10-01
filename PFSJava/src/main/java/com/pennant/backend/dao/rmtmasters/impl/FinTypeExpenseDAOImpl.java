@@ -139,7 +139,7 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setString(index++, finType);
+				ps.setString(index, finType);
 			}
 		}, rowMapper);
 	}
@@ -158,7 +158,7 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
 				ps.setString(index++, finType);
-				ps.setInt(index++, 1);
+				ps.setInt(index, 1);
 			}
 		}, rowMapper);
 	}

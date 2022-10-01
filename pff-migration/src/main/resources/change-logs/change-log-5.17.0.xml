@@ -2694,7 +2694,7 @@
 		   ]]>
 		</sql>
 	</changeSet>
-	<changeSet id="ST#3546.24" author="nagavamsi.p">
+	<changeSet id="ST#3546.24.1" author="nagavamsi.p">
 		<sql>
 		   <![CDATA[
 		   		DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='AMZ' and AMOUNTCODE = 'ae_npa'; 
@@ -2712,7 +2712,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#3546.26" author="nagavamsi.p">
+	<changeSet id="ST#3546.26.1" author="nagavamsi.p">
 		<sql>
 			<![CDATA[
 		    	DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REPAY' AND AMOUNTCODE = 'ae_rpPftPr';

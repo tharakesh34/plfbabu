@@ -66,6 +66,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
@@ -134,7 +135,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			}
 
 			if (!showZeroBal) {
-				ps.setBigDecimal(index++, BigDecimal.ZERO);
+				ps.setBigDecimal(index, BigDecimal.ZERO);
 			}
 
 		}, (rs, rowNum) -> {
@@ -264,7 +265,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 					ps.setDate(index++, JdbcUtil.getDate(pstngs.getCustAppDate()));
 					ps.setString(index++, pstngs.getAccountType());
 					ps.setLong(index++, pstngs.getOldLinkedTranId());
-					ps.setString(index++, pstngs.getEntityCode());
+					ps.setString(index, pstngs.getEntityCode());
 				}
 
 				@Override
@@ -401,7 +402,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 				ps.setString(index++, "REJECTED");
 				ps.setString(index++, "CANCELED");
 				ps.setString(index++, reference);
-				ps.setString(index++, "DISBINS");
+				ps.setString(index, "DISBINS");
 
 			}
 
@@ -430,7 +431,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, AccountConstants.POSTINGS_SUCCESS);
-			ps.setString(index++, String.valueOf(postrRef));
+			ps.setString(index, String.valueOf(postrRef));
 		}, new ReturnDataSetRowMapper());
 
 	}
@@ -527,7 +528,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), String.class, finType);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}
@@ -662,7 +663,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 			ps.setString(index++, finReference);
 			ps.setDate(index++, JdbcUtil.getDate(valueDate));
-			ps.setString(index++, AccountingEvent.AMZ);
+			ps.setString(index, AccountingEvent.AMZ);
 		}, (rs, rowNum) -> {
 			return rs.getLong(1);
 		});

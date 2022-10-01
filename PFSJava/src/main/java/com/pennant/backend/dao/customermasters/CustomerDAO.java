@@ -25,7 +25,6 @@
 package com.pennant.backend.dao.customermasters;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -126,8 +125,6 @@ public interface CustomerDAO {
 	FinanceExposure getCoAppRepayBankTotal(String custCIF);
 
 	BigDecimal getCustRepayProcBank(long custID, String curFinReference);
-
-	ArrayList<Customer> getCustomerByLimitRule(String queryCode, String sqlQuery);
 
 	int getLookupCount(String tableName, String columnName, Object value);
 

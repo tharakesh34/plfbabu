@@ -138,7 +138,6 @@ public class VASWebServiceImpl extends ExtendedTestClass implements VASSoapServi
 		WSReturnStatus returnStatus = null;
 		try {
 			if (StringUtils.isBlank(vasRecording.getVasReference())) {
-				returnStatus = new WSReturnStatus();
 				String[] valueParm = new String[1];
 				valueParm[0] = "vasReference";
 				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
@@ -188,7 +187,6 @@ public class VASWebServiceImpl extends ExtendedTestClass implements VASSoapServi
 					returnStatus = APIErrorHandlerService.getFailedStatus("90267", valueParm);
 				}
 			} else {
-				returnStatus = new WSReturnStatus();
 				String[] valueParm = new String[1];
 				valueParm[0] = "vas Reference:" + vasRecording.getVasReference();
 				returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParm);

@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.pennant.backend.dao.feewaiverupload.FeeWaiverUploadDAO;
 import com.pennant.backend.model.finance.FeeWaiverUpload;
@@ -60,7 +59,7 @@ public class FeeWaiverUploadDAOImpl extends SequenceDao<FeeWaiverUpload> impleme
 			ps.setString(index++, fwu.getTaskId());
 			ps.setString(index++, fwu.getNextTaskId());
 			ps.setString(index++, fwu.getRecordType());
-			ps.setLong(index++, fwu.getWorkflowId());
+			ps.setLong(index, fwu.getWorkflowId());
 
 		});
 
@@ -103,7 +102,7 @@ public class FeeWaiverUploadDAOImpl extends SequenceDao<FeeWaiverUpload> impleme
 			ps.setString(index++, fwu.getRejectStage());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, fwu.getVersion() - 1);
+				ps.setInt(index, fwu.getVersion() - 1);
 			}
 		});
 
@@ -140,42 +139,35 @@ public class FeeWaiverUploadDAOImpl extends SequenceDao<FeeWaiverUpload> impleme
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, uploadId), (rs, rowNum) -> {
-				FeeWaiverUpload fw = new FeeWaiverUpload();
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, uploadId), (rs, rowNum) -> {
+			FeeWaiverUpload fw = new FeeWaiverUpload();
 
-				fw.setWaiverId(rs.getLong("WaiverId"));
-				fw.setUploadId(rs.getLong("UploadId"));
-				fw.setFinReference(rs.getString("FinReference"));
-				fw.setFeeTypeCode(rs.getString("FeeTypeCode"));
-				fw.setValueDate(rs.getTimestamp("ValueDate"));
-				fw.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-				fw.setRemarks(rs.getString("Remarks"));
-				fw.setStatus(rs.getString("Status"));
-				fw.setReason(rs.getString("Reason"));
-				fw.setRejectStage(rs.getString("RejectStage"));
-				fw.setVersion(rs.getInt("Version"));
-				fw.setLastMntBy(rs.getLong("LastMntBy"));
-				fw.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				fw.setRecordStatus(rs.getString("RecordStatus"));
-				fw.setRoleCode(rs.getString("RoleCode"));
-				fw.setNextRoleCode(rs.getString("NextRoleCode"));
-				fw.setTaskId(rs.getString("TaskId"));
-				fw.setNextTaskId(rs.getString("NextTaskId"));
-				fw.setRecordType(rs.getString("RecordType"));
-				fw.setWorkflowId(rs.getLong("WorkflowId"));
+			fw.setWaiverId(rs.getLong("WaiverId"));
+			fw.setUploadId(rs.getLong("UploadId"));
+			fw.setFinReference(rs.getString("FinReference"));
+			fw.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			fw.setValueDate(rs.getTimestamp("ValueDate"));
+			fw.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			fw.setRemarks(rs.getString("Remarks"));
+			fw.setStatus(rs.getString("Status"));
+			fw.setReason(rs.getString("Reason"));
+			fw.setRejectStage(rs.getString("RejectStage"));
+			fw.setVersion(rs.getInt("Version"));
+			fw.setLastMntBy(rs.getLong("LastMntBy"));
+			fw.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fw.setRecordStatus(rs.getString("RecordStatus"));
+			fw.setRoleCode(rs.getString("RoleCode"));
+			fw.setNextRoleCode(rs.getString("NextRoleCode"));
+			fw.setTaskId(rs.getString("TaskId"));
+			fw.setNextTaskId(rs.getString("NextTaskId"));
+			fw.setRecordType(rs.getString("RecordType"));
+			fw.setWorkflowId(rs.getLong("WorkflowId"));
 
-				if (type.contains("View")) {
-					fw.setFeeTypeID(rs.getLong("FeeTypeId"));
-				}
+			if (type.contains("View")) {
+				fw.setFeeTypeID(rs.getLong("FeeTypeId"));
+			}
 
-				return fw;
-			});
-
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+			return fw;
+		});
 	}
 }

@@ -262,8 +262,6 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 
 	@Override
 	public List<DocumentType> getDocumentTypes() {
-		StringBuilder sql = new StringBuilder();
-
 		logger.trace(Literal.SQL + getSelectAllQuery());
 		return this.jdbcTemplate.query(selectAllQuery, new MapSqlParameterSource(), new RowMapper<DocumentType>() {
 

@@ -118,7 +118,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 				ps.setString(index++, ruh.getRecordType());
 				ps.setLong(index++, ruh.getWorkflowId());
 				ps.setString(index++, ruh.getEntityCode());
-				ps.setInt(index++, ruh.getUploadProgress());
+				ps.setInt(index, ruh.getUploadProgress());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -159,7 +159,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 			ps.setLong(index++, ruh.getWorkflowId());
 			ps.setString(index++, ruh.getEntityCode());
 			ps.setInt(index++, ruh.getUploadProgress());
-			ps.setLong(index++, ruh.getUploadHeaderId());
+			ps.setLong(index, ruh.getUploadHeaderId());
 
 		});
 
@@ -244,7 +244,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 			ps.setInt(index++, sucessCount);
 			ps.setInt(index++, failedCount);
 			ps.setInt(index++, failedCount + sucessCount);
-			ps.setLong(index++, uploadHeaderId);
+			ps.setLong(index, uploadHeaderId);
 		});
 
 	}
@@ -261,7 +261,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 			ps.setInt(index++, status);
-			ps.setLong(index++, uploadHeaderId);
+			ps.setLong(index, uploadHeaderId);
 
 		});
 
@@ -327,7 +327,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 				ps.setLong(index++, ua.getId());
 				ps.setLong(index++, Id);
 				ps.setLong(index++, header.getAttemptNo());
-				ps.setInt(index++, ReceiptUploadConstants.ATTEMPSTATUS_INPROCESS);
+				ps.setInt(index, ReceiptUploadConstants.ATTEMPSTATUS_INPROCESS);
 				map.put(Id, ua);
 			}
 
@@ -353,7 +353,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 			ps.setInt(index++, apprLog.getFailRecords().get());
 			ps.setInt(index++, apprLog.getProcessedRecords().get());
 			ps.setInt(index++, ReceiptUploadConstants.ATTEMPSTATUS_DONE);
-			ps.setLong(index++, apprLog.getId());
+			ps.setLong(index, apprLog.getId());
 		});
 	}
 

@@ -22,7 +22,6 @@ import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.LowerTaxDeductionDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
@@ -47,7 +46,6 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceMainDAO financeMainDAO;
-	private FinanceTypeDAO financeTypeDAO;
 	private FinMaintainInstructionDAO finMaintainInstructionDAO;
 	private AuditHeaderDAO auditHeaderDAO;
 	private LowerTaxDeductionDAO lowerTaxDeductionDAO;
@@ -385,14 +383,6 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
 
-		String auditTranType = "";
-
-		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
-			if (fmi.isWorkflow()) {
-				auditTranType = PennantConstants.TRAN_WF;
-			}
-		}
-
 		fmi.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(fmi);
 		auditHeader.setAuditDetails(auditDetails);
@@ -513,10 +503,6 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-
 	public void setFinMaintainInstructionDAO(FinMaintainInstructionDAO finMaintainInstructionDAO) {
 		this.finMaintainInstructionDAO = finMaintainInstructionDAO;
 	}
@@ -528,5 +514,4 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 	public void setLowerTaxDeductionDAO(LowerTaxDeductionDAO lowerTaxDeductionDAO) {
 		this.lowerTaxDeductionDAO = lowerTaxDeductionDAO;
 	}
-
 }

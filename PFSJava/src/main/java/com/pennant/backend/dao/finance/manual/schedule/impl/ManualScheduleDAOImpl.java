@@ -57,7 +57,7 @@ public class ManualScheduleDAOImpl extends SequenceDao<ManualScheduleHeader> imp
 				ps.setString(index++, schdHdr.getFinEvent());
 				ps.setString(index++, schdHdr.getFinReference());
 				ps.setInt(index++, schdHdr.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(schdHdr.getLastMntBy()));
+				ps.setLong(index++, JdbcUtil.getLong(schdHdr.getLastMntBy()));
 				ps.setTimestamp(index++, schdHdr.getLastMntOn());
 				ps.setString(index++, schdHdr.getRecordStatus());
 				ps.setString(index++, schdHdr.getRoleCode());
@@ -65,7 +65,7 @@ public class ManualScheduleDAOImpl extends SequenceDao<ManualScheduleHeader> imp
 				ps.setString(index++, schdHdr.getTaskId());
 				ps.setString(index++, schdHdr.getNextTaskId());
 				ps.setString(index++, schdHdr.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(schdHdr.getWorkflowId()));
+				ps.setLong(index, JdbcUtil.getLong(schdHdr.getWorkflowId()));
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -157,26 +157,20 @@ public class ManualScheduleDAOImpl extends SequenceDao<ManualScheduleHeader> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new Object[] { headerId }, (rs, rowNum) -> {
-				ManualScheduleDetail msDtl = new ManualScheduleDetail();
+		return this.jdbcOperations.query(sql.toString(), new Object[] { headerId }, (rs, rowNum) -> {
+			ManualScheduleDetail msDtl = new ManualScheduleDetail();
 
-				msDtl.setId(rs.getLong("Id"));
-				msDtl.setHeaderId(rs.getLong("Header_Id"));
-				msDtl.setSchDate(rs.getDate("SchDate"));
-				msDtl.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
-				msDtl.setPftOnSchDate(rs.getBoolean("PftOnSchDate"));
-				msDtl.setRvwOnSchDate(rs.getBoolean("RvwOnSchDate"));
-				msDtl.setStatus(rs.getString("Status"));
-				msDtl.setReason(rs.getString("Reason"));
+			msDtl.setId(rs.getLong("Id"));
+			msDtl.setHeaderId(rs.getLong("Header_Id"));
+			msDtl.setSchDate(rs.getDate("SchDate"));
+			msDtl.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+			msDtl.setPftOnSchDate(rs.getBoolean("PftOnSchDate"));
+			msDtl.setRvwOnSchDate(rs.getBoolean("RvwOnSchDate"));
+			msDtl.setStatus(rs.getString("Status"));
+			msDtl.setReason(rs.getString("Reason"));
 
-				return msDtl;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+			return msDtl;
+		});
 	}
 
 	public void delete(ManualScheduleHeader uploadManualSchdHeader, TableType tableType) {
@@ -225,7 +219,7 @@ public class ManualScheduleDAOImpl extends SequenceDao<ManualScheduleHeader> imp
 		ps.setBoolean(index++, schdDtl.isPftOnSchDate());
 		ps.setBoolean(index++, schdDtl.isRvwOnSchDate());
 		ps.setString(index++, schdDtl.getStatus());
-		ps.setString(index++, schdDtl.getReason());
+		ps.setString(index, schdDtl.getReason());
 	}
 
 	@Override

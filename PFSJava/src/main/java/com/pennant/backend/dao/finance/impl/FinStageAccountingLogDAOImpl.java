@@ -101,7 +101,7 @@ public class FinStageAccountingLogDAOImpl extends BasicDao<FinStageAccountingLog
 			ps.setString(index++, saLog.getRoleCode());
 			ps.setLong(index++, saLog.getLinkedTranId());
 			ps.setBoolean(index++, saLog.isProcessed());
-			ps.setString(index++, saLog.getReceiptNo());
+			ps.setString(index, saLog.getReceiptNo());
 		});
 	}
 
@@ -164,7 +164,7 @@ public class FinStageAccountingLogDAOImpl extends BasicDao<FinStageAccountingLog
 		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
-			ps.setString(index++, receiptNo);
+			ps.setString(index, receiptNo);
 		});
 	}
 

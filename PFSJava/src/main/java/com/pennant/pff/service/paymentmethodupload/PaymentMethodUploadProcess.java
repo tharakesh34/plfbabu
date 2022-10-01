@@ -92,19 +92,17 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
-			StringBuilder remarks = new StringBuilder();
 			if (header.getTotalRecords() > 0) {
-				if (header.getFailureRecords() > 0) {
-					remarks.append("Completed with exceptions, total Records: ");
-					remarks.append(header.getTotalRecords() > 0);
-					remarks.append(", Success: ");
-					remarks.append(header.getSucessRecords());
-					remarks.append(", Failure: ");
-					remarks.append(header.getFailureRecords());
-					deStatus.setSuccessRecords(header.getSucessRecords());
-					deStatus.setFailedRecords(header.getFailureRecords());
-					deStatus.setRemarks(remarks.toString());
-				}
+				StringBuilder remarks = new StringBuilder();
+				remarks.append("Completed with exceptions, total Records: ");
+				remarks.append(header.getTotalRecords() > 0);
+				remarks.append(", Success: ");
+				remarks.append(header.getSucessRecords());
+				remarks.append(", Failure: ");
+				remarks.append(header.getFailureRecords());
+				deStatus.setSuccessRecords(header.getSucessRecords());
+				deStatus.setFailedRecords(header.getFailureRecords());
+				deStatus.setRemarks(remarks.toString());
 				setExceptionLog(deStatus);
 			}
 
@@ -127,6 +125,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 			}
 
 			paymentMethodUploadDAO.updateRemarks(header);
+			paymentMethodUploadDAO.updateDeRemarks(deStatus);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -314,7 +313,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 			if ("F".equals(status)) {
 				if (changePayment.getFinID() != null) {
-				paymentMethodUploadDAO.updateChangePaymentDetails(changePayment);
+					paymentMethodUploadDAO.updateChangePaymentDetails(changePayment);
 				}
 				updateLog(header.getDeStatus().getId(), changePayment.getFinReference(), "F",
 						changePayment.getUploadStatusRemarks());

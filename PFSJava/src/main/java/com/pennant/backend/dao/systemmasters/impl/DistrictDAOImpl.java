@@ -41,33 +41,46 @@ public class DistrictDAOImpl extends SequenceDao<District> implements DistrictDA
 	 * 
 	 */
 	@Override
-	public String save(final District district, final TableType tableType) {
-		logger.debug(Literal.ENTERING);
+	public String save(District dis, final TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert Into RMTDistricts");
+		sql.append(tableType.getSuffix());
+		sql.append(" (Id, Code, Name, HostReferenceNo, Active,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		if (district.getId() == Long.MIN_VALUE) {
-			district.setId(getNextValue("SeqRmtDistricts"));
-			logger.debug("get NextID:" + district.getId());
+		if (dis.getId() == Long.MIN_VALUE) {
+			dis.setId(getNextValue("SeqRmtDistricts"));
 		}
-
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTDistricts");
-		insertSql.append(tableType.getSuffix());
-		insertSql.append(" ( Id, Code, Name, HostReferenceNo, Active,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:Id,:Code, :Name, :HostReferenceNo, :Active,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		logger.trace(Literal.SQL + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(district);
+		
+		logger.debug(Literal.SQL.concat(sql.toString()));
+		
 		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, dis.getId());
+				ps.setString(index++, dis.getCode());
+				ps.setString(index++, dis.getName());
+				ps.setString(index++, dis.getHostReferenceNo());
+				ps.setBoolean(index++, dis.isActive());
+				ps.setInt(index++, dis.getVersion());
+				ps.setLong(index++, dis.getLastMntBy());
+				ps.setTimestamp(index++, dis.getLastMntOn());
+				ps.setString(index++, dis.getRecordStatus());
+				ps.setString(index++, dis.getRoleCode());
+				ps.setString(index++, dis.getNextRoleCode());
+				ps.setString(index++, dis.getTaskId());
+				ps.setString(index++, dis.getNextTaskId());
+				ps.setString(index++, dis.getRecordType());
+				ps.setLong(index, dis.getWorkflowId());
+			});
+
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(district.getId());
+		
+		return String.valueOf(dis.getId());
 	}
 
 	/**

@@ -15,6 +15,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.overdraft.OverdraftConstants;
 import com.pennanttech.pff.overdraft.dao.OverdraftLimitDAO;
@@ -100,7 +101,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 			ps.setInt(index++, odlh.getVersion() + 1);
 
 			ps.setLong(index++, odlh.getId());
-			ps.setTimestamp(index++, odlh.getPrevMntOn());
+			ps.setTimestamp(index, odlh.getPrevMntOn());
 		});
 
 		if (count == 0) {
@@ -135,7 +136,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 			ps.setString(index++, odlh.getRecordType());
 			ps.setLong(index++, odlh.getWorkflowId());
 
-			ps.setLong(index++, odlh.getId());
+			ps.setLong(index, odlh.getId());
 		});
 	}
 
@@ -177,7 +178,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 				return limit;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -224,7 +225,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 				ps.setString(index++, odld.getNarration());
 				ps.setString(index++, odld.getNarration1());
 				ps.setString(index++, odld.getNarration2());
-				ps.setString(index++, odld.getNarration3());
+				ps.setString(index, odld.getNarration3());
 			}
 
 			@Override
@@ -246,7 +247,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 			ps.setBoolean(index++, false);
 			ps.setString(index++, OverdraftConstants.AUTO_BLOCK_STATUS);
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 
 	}
@@ -265,14 +266,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finID,
-					OverdraftConstants.AUTO_BLOCK_STATUS) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, OverdraftConstants.AUTO_BLOCK_STATUS) > 0;
 	}
 
 	@Override
@@ -296,7 +290,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 				ps.setString(index++, OverdraftConstants.AUTO_BLOCK_STATUS);
 
 				ps.setLong(index++, limit.getId());
-				ps.setTimestamp(index++, limit.getPrevMntOn());
+				ps.setTimestamp(index, limit.getPrevMntOn());
 			}
 
 			@Override
@@ -315,7 +309,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 		try {
 			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return false;
@@ -407,7 +401,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 				return limit;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

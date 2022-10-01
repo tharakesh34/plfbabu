@@ -78,7 +78,7 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
 				ps.setString(index++, uri);
-				ps.setLong(index++, id);
+				ps.setLong(index, id);
 			}
 		});
 	}

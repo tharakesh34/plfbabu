@@ -149,7 +149,7 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDet
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, schd.getFinID());
+				ps.setLong(index, schd.getFinID());
 			});
 
 			if (recordCount <= 0) {
@@ -223,7 +223,7 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDet
 			ps.setString(index++, schd.getTaskId());
 			ps.setString(index++, schd.getNextTaskId());
 			ps.setString(index++, schd.getRecordType());
-			ps.setLong(index++, schd.getWorkflowId());
+			ps.setLong(index, schd.getWorkflowId());
 
 		});
 
@@ -299,7 +299,7 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDet
 			ps.setLong(index++, schd.getFinID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, schd.getVersion() - 1);
+				ps.setInt(index, schd.getVersion() - 1);
 			}
 		});
 

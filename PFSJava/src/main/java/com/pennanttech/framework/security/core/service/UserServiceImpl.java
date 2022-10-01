@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
 
 		Date signOnTo = user.getUsrCanSignonTo();
 		if (signOnTo != null && date.compareTo(signOnTo) > 0) {
-			String strSignOnTo = DateUtil.format(signonFrom, DateFormat.LONG_TIME);
+			String strSignOnTo = DateUtil.format(signOnTo, DateFormat.LONG_TIME);
 			throw new UserAuthenticationException(AuthenticationError.LOGIN_AFTER, strSignOnTo);
 		}
 		return user;

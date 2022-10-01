@@ -313,7 +313,7 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 			ps.setString(index++, bRType);
 			ps.setString(index++, currency);
 			ps.setDate(index++, JdbcUtil.getDate(bREffDate));
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, rowNum) -> {
 			BaseRate br = new BaseRate();
 
@@ -347,7 +347,7 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 			ps.setString(index++, bRType);
 			ps.setString(index++, currency);
 			ps.setDate(index++, JdbcUtil.getDate(bREffDate));
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, rowNum) -> {
 			BaseRate br = new BaseRate();
 

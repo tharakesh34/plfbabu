@@ -176,6 +176,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -3821,16 +3822,51 @@ public class FinanceDataValidation {
 		int advMinTerms = finType.getAdvMinTerms();
 
 		if (StringUtils.isNotBlank(fm.getAdvType())) {
-			if ((advMinTerms > 0 && advMaxTerms > 0) && (advTerms < advMinTerms || advTerms > advMaxTerms)) {
-				String[] valueParm = new String[3];
-				valueParm[0] = "Advance Intrest/EMI";
-				valueParm[1] = String.valueOf(advMinTerms);
-				valueParm[2] = String.valueOf(advMaxTerms);
+			AdvanceType advanceType = AdvanceType.getType(fm.getAdvType());
 
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
-
+			if (advanceType == null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "AdvanceType";
+				valueParm[1] = fm.getAdvType();
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
 				return;
 			}
+
+			switch (advanceType) {
+			case UF:
+				if (advTerms > 0) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Upfront Interest Full Tenor the  Terms " + String.valueOf(fm.getAdvTerms());
+					valueParm[1] = "0";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
+					return;
+				}
+				break;
+			case AF:
+				if (advTerms > 0) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Advance at Interest Frequency the Terms " + String.valueOf(advTerms);
+					valueParm[1] = "0";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
+					return;
+				}
+				break;
+			case UT:
+				if (advTerms <= 0) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Advance Intrest/EMI";
+					valueParm[1] = String.valueOf(advMinTerms);
+					valueParm[2] = String.valueOf(advMaxTerms);
+
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
+
+					return;
+				}
+				break;
+			default:
+				break;
+			}
+
 			if (advTerms >= numberOfTerms) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Advance Intrest/EMI" + String.valueOf(advTerms);
@@ -3848,6 +3884,10 @@ public class FinanceDataValidation {
 			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 
 			return;
+		} else {
+			fm.setAdvType(finType.getAdvType());
+			fm.setAdvTerms(finType.getAdvDefaultTerms());
+			fm.setAdvStage(finType.getAdvStage());
 		}
 
 		if (finType.isAlwHybridRate()) {

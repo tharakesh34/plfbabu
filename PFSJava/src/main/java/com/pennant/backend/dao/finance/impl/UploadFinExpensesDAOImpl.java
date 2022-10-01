@@ -77,7 +77,7 @@ public class UploadFinExpensesDAOImpl extends BasicDao<UploadFinExpenses> implem
 				ps.setBigDecimal(index++, ufe.getAmountValue());
 				ps.setString(index++, ufe.getType());
 				ps.setString(index++, ufe.getStatus());
-				ps.setString(index++, ufe.getReason());
+				ps.setString(index, ufe.getReason());
 
 			}
 
@@ -87,5 +87,4 @@ public class UploadFinExpensesDAOImpl extends BasicDao<UploadFinExpenses> implem
 			}
 		});
 	}
-
 }

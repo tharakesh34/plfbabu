@@ -109,7 +109,7 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 
 			ps.setBoolean(index++, fr.isExcludeFromRpt());
 			ps.setLong(index++, fr.getFinID());
-			ps.setString(index++, fr.getFeeCode());
+			ps.setString(index, fr.getFeeCode());
 		});
 
 		if (recordCount <= 0) {
@@ -160,7 +160,7 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 				ps.setBigDecimal(index++, fr.getPaidAmount());
 				ps.setBoolean(index++, fr.isCalFeeModify());
 				ps.setString(index++, fr.getFeeMethod());
-				ps.setInt(index++, fr.getScheduleTerms());
+				ps.setInt(index, fr.getScheduleTerms());
 			}
 
 			@Override
@@ -189,7 +189,7 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setString(index++, finEvent);
+			ps.setString(index, finEvent);
 		});
 	}
 
@@ -225,7 +225,7 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 			ps.setLong(index++, finID);
 
 			if (StringUtils.isNotEmpty(finEvent)) {
-				ps.setString(index++, finEvent);
+				ps.setString(index, finEvent);
 			}
 
 		}, (rs, num) -> {

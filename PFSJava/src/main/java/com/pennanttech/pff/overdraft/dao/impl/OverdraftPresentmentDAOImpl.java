@@ -41,7 +41,7 @@ public class OverdraftPresentmentDAOImpl extends SequenceDao<AbstractWorkflowEnt
 			ps.setBigDecimal(index++, charges);
 			ps.setBigDecimal(index++, charges);
 
-			ps.setLong(index++, presentmentId);
+			ps.setLong(index, presentmentId);
 		});
 
 		if (recordCount <= 0) {
@@ -70,7 +70,7 @@ public class OverdraftPresentmentDAOImpl extends SequenceDao<AbstractWorkflowEnt
 				ps.setLong(index++, od.getPresentmentID());
 				ps.setString(index++, od.getFinReference());
 				ps.setInt(index++, 0);
-				ps.setInt(index++, 0);
+				ps.setInt(index, 0);
 
 			}
 
@@ -94,7 +94,7 @@ public class OverdraftPresentmentDAOImpl extends SequenceDao<AbstractWorkflowEnt
 				ManualAdvise ma = maList.get(i);
 				int index = 1;
 				ps.setObject(index++, ma.getPresentmentID());
-				ps.setLong(index++, ma.getAdviseID());
+				ps.setLong(index, ma.getAdviseID());
 
 			}
 
@@ -116,7 +116,7 @@ public class OverdraftPresentmentDAOImpl extends SequenceDao<AbstractWorkflowEnt
 			int index = 1;
 
 			ps.setLong(index++, 0);
-			ps.setLong(index++, presentmentID);
+			ps.setLong(index, presentmentID);
 		});
 
 	}
@@ -130,7 +130,7 @@ public class OverdraftPresentmentDAOImpl extends SequenceDao<AbstractWorkflowEnt
 		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 			ps.setLong(index++, 0);
-			ps.setLong(index++, presentmentID);
+			ps.setLong(index, presentmentID);
 		});
 	}
 
@@ -183,7 +183,7 @@ public class OverdraftPresentmentDAOImpl extends SequenceDao<AbstractWorkflowEnt
 					ps.setBigDecimal(index++, pc.getUgstAmount());
 					ps.setBigDecimal(index++, pc.getCessAmount());
 					ps.setBigDecimal(index++, pc.getFeeAmount());
-					ps.setLong(index++, pc.getAdviseId());
+					ps.setLong(index, pc.getAdviseId());
 				}
 
 				@Override
@@ -249,7 +249,7 @@ public class OverdraftPresentmentDAOImpl extends SequenceDao<AbstractWorkflowEnt
 			ps.setLong(index++, dtls.getHeaderId());
 
 			if (StringUtils.isNotBlank(dtls.getStatus())) {
-				ps.setString(index++, dtls.getStatus());
+				ps.setString(index, dtls.getStatus());
 			}
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();

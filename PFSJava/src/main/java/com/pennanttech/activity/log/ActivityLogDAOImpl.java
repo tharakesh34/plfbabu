@@ -1,5 +1,6 @@
 package com.pennanttech.activity.log;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -95,7 +96,7 @@ public class ActivityLogDAOImpl extends BasicDao<Activity> implements ActivityLo
 				sql.append(" Inner Join Secusers U ON U.usrid = A.lastmntby");
 				break;
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			logger.error(Literal.EXCEPTION, e);
 			return new ArrayList<>();
 		}
@@ -154,7 +155,7 @@ public class ActivityLogDAOImpl extends BasicDao<Activity> implements ActivityLo
 				sql.append(" Inner Join Secusers U ON U.usrid = A.lastmntby");
 				break;
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			logger.error(Literal.EXCEPTION, e);
 			return new ArrayList<>();
 		}

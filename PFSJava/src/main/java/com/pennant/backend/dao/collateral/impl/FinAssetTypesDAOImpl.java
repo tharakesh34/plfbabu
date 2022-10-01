@@ -121,7 +121,7 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, reference);
+			ps.setString(index, reference);
 		}, (rs, rowNum) -> {
 			FinAssetTypes fat = new FinAssetTypes();
 

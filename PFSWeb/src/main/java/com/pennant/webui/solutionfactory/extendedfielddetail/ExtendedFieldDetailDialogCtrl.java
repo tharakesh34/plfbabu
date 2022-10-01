@@ -538,22 +538,6 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	}
 
 	/**
-	 * Method for find is there any child elements containing that element or not.
-	 * 
-	 * @param groupName
-	 * @return
-	 */
-	private boolean isGroupContainChilds(String groupName) {
-		List<ExtendedFieldDetail> extendedFieldDetail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
-		for (ExtendedFieldDetail detail : extendedFieldDetail) {
-			if (StringUtils.equals(groupName, detail.getParentTag())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aExtendedFieldDetail

@@ -299,6 +299,8 @@ public class ImplementationConstants {
 		RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT",
 				true);
 		RECEIPT_ALLOW_FULL_WAIVER = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER", false);
+		ALLOW_CERSAI = getValueAsBoolean("ALLOW_CERSAI", false);
+		DISB_STP = getValueAsBoolean("DISB_STP", false);
 
 		setVerificationConstants();
 	}
@@ -583,6 +585,7 @@ public class ImplementationConstants {
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT;
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER;
 	public static boolean ALLOW_CERSAI;
+	public static boolean DISB_STP;
 
 	// FIXME MURTHT
 	public static final boolean OLD_FINANCIALS_REQUIRED = false;

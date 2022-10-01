@@ -82,7 +82,7 @@ public class FinOCRDetailDAOImpl extends SequenceDao<FinOCRDetail> implements Fi
 			ps.setString(index++, ocrDtls.getRecordType());
 			ps.setLong(index++, ocrDtls.getWorkflowId());
 
-			ps.setLong(index++, ocrDtls.getDetailID());
+			ps.setLong(index, ocrDtls.getDetailID());
 		});
 
 		if (recordCount <= 0) {
@@ -138,7 +138,7 @@ public class FinOCRDetailDAOImpl extends SequenceDao<FinOCRDetail> implements Fi
 			ps.setString(index++, ocrDtls.getTaskId());
 			ps.setString(index++, ocrDtls.getNextTaskId());
 			ps.setString(index++, ocrDtls.getRecordType());
-			ps.setLong(index++, ocrDtls.getWorkflowId());
+			ps.setLong(index, ocrDtls.getWorkflowId());
 		});
 
 		return ocrDtls.getDetailID();

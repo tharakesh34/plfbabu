@@ -158,7 +158,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 			ps.setString(index++, uh.getTaskId());
 			ps.setString(index++, uh.getNextTaskId());
 			ps.setString(index++, uh.getRecordType());
-			ps.setLong(index++, uh.getWorkflowId());
+			ps.setLong(index, uh.getWorkflowId());
 		});
 
 		return uh.getUploadId();
@@ -184,7 +184,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 			ps.setString(index++, "FAILED");
 			ps.setLong(index++, uh.getUploadId());
 			ps.setLong(index++, uh.getUploadId());
-			ps.setLong(index++, uh.getUploadId());
+			ps.setLong(index, uh.getUploadId());
 		});
 	}
 
@@ -200,7 +200,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 			ps.setInt(index++, uh.getSuccessCount());
 			ps.setInt(index++, uh.getFailedCount());
 			ps.setInt(index++, uh.getTotalRecords());
-			ps.setLong(index++, uh.getUploadId());
+			ps.setLong(index, uh.getUploadId());
 		});
 	}
 
@@ -276,7 +276,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 				int index = 1;
 
 				ps.setBoolean(index++, fileDownload);
-				ps.setLong(index++, uploadId);
+				ps.setLong(index, uploadId);
 			});
 		} catch (Exception e) {
 			throw e;
@@ -326,7 +326,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 			ps.setString(index++, uh.getTaskId());
 			ps.setString(index++, uh.getNextTaskId());
 			ps.setString(index++, uh.getRecordType());
-			ps.setLong(index++, uh.getWorkflowId());
+			ps.setLong(index, uh.getWorkflowId());
 		});
 
 		return uh.getUploadId();
@@ -375,9 +375,9 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 			ps.setLong(index++, uh.getUploadId());
 
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, uh.getPrevMntOn());
+				ps.setTimestamp(index, uh.getPrevMntOn());
 			} else {
-				ps.setInt(index++, uh.getVersion() - 1);
+				ps.setInt(index, uh.getVersion() - 1);
 			}
 
 		});
@@ -403,9 +403,9 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 				ps.setLong(index++, uh.getUploadId());
 
 				if (tableType == TableType.TEMP_TAB) {
-					ps.setTimestamp(index++, uh.getPrevMntOn());
+					ps.setTimestamp(index, uh.getPrevMntOn());
 				} else {
-					ps.setInt(index++, uh.getVersion() - 1);
+					ps.setInt(index, uh.getVersion() - 1);
 				}
 
 			});
@@ -477,7 +477,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		List<UploadReceipt> urList = jdbcOperations.query(sql, ps -> {
 			int index = 1;
 
-			ps.setLong(index++, uploadId);
+			ps.setLong(index, uploadId);
 		}, (rs, rowNum) -> {
 			UploadReceipt ur = new UploadReceipt();
 
@@ -488,7 +488,5 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 
 		return urList.stream().sorted((s1, s2) -> StringUtils.compare(s1.getStatus(), s2.getStatus()))
 				.collect(Collectors.toList());
-
 	}
-
 }

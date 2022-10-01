@@ -50,7 +50,7 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 			ps.setString(index++, poi.getTaskId());
 			ps.setString(index++, poi.getNextTaskId());
 			ps.setString(index++, poi.getRecordType());
-			ps.setLong(index++, poi.getWorkflowId());
+			ps.setLong(index, poi.getWorkflowId());
 		});
 
 	}
@@ -93,7 +93,7 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 			ps.setLong(index++, poi.getFinID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, poi.getVersion() - 1);
+				ps.setInt(index, poi.getVersion() - 1);
 			}
 		});
 
@@ -173,7 +173,7 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, poi.getFinID());
+			ps.setLong(index, poi.getFinID());
 		});
 	}
 

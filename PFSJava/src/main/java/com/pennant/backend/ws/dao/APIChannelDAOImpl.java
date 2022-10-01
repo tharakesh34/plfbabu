@@ -350,7 +350,6 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	@Override
 	public void deleteChannelAuthDetails(long id, String type) {
 		logger.debug("Entering ");
-		MapSqlParameterSource source = null;
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Delete From API_CHANNEL_IP_DETAILS");
@@ -359,7 +358,7 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 
 		logger.debug("deleteSql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ChannelId", id);
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);
@@ -367,7 +366,6 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 			throw new DependencyFoundException(e);
 		} finally {
 			logger.debug("Leaving");
-			source = null;
 		}
 	}
 
