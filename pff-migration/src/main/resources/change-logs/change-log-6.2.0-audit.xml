@@ -309,5 +309,225 @@
 		<addPrimaryKey tableName="AdtPresentment_Exclude_Codes" constraintName="pk_adt_pec"
 			columnNames="AuditId, AuditDate, AuditSeq, AuditImage" />
 	</changeSet>
+	
+	<changeSet id="ST#90.0" author="Alekhya.T">
+		<createTable tableName="ADTInstrumentTypes">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="Code" type="varchar(8)" />
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Internal" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Enabled" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="AutoExtraction" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExtractionDays" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#90.1" author="Alekhya.T">
+		<addPrimaryKey tableName="ADTInstrumentTypes" columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
+			constraintName="PK_AdtInstrumentType" />
+	</changeSet>
+
+	<changeSet id="ST#90.2" author="Alekhya.T" dbms="posgres,oracle">
+		<addDefaultValue tableName="ADTINSTRUMENTTYPES" columnName="Internal" defaultValue="0" />
+		<addDefaultValue tableName="ADTINSTRUMENTTYPES" columnName="Enabled" defaultValue="0" />
+		<addDefaultValue tableName="ADTINSTRUMENTTYPES" columnName="AutoExtraction" defaultValue="0" />
+		<addDefaultValue tableName="ADTINSTRUMENTTYPES" columnName="ExtractionDays" defaultValue="0" />
+		<addDefaultValue tableName="ADTINSTRUMENTTYPES" columnName="Version" defaultValue="0" />
+		<addDefaultValue tableName="ADTINSTRUMENTTYPES" columnName="Active" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#90.2" author="Alekhya.T" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTINSTRUMENTTYPES ADD CONSTRAINT DF_AIT_INTERNAL DEFAULT 		0 FOR INTERNAL;
+				ALTER TABLE ADTINSTRUMENTTYPES ADD CONSTRAINT DF_AIT_ENABLED DEFAULT 		0 FOR ENABLED;
+				ALTER TABLE ADTINSTRUMENTTYPES ADD CONSTRAINT DF_AIT_AUTOEXTRACTION DEFAULT 0 FOR AUTOEXTRACTION;
+				ALTER TABLE ADTINSTRUMENTTYPES ADD CONSTRAINT DF_AIT_EXTRACTIONDAYS DEFAULT 0 FOR EXTRACTIONDAYS;
+				ALTER TABLE ADTINSTRUMENTTYPES ADD CONSTRAINT DF_AIT_VERSION DEFAULT 		0 FOR VERSION;
+				ALTER TABLE ADTINSTRUMENTTYPES ADD CONSTRAINT DF_AIT_ACTIVE DEFAULT 		0 FOR ACTIVE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#90.3" author="Alekhya.T">
+		<createTable tableName="ADTDue_Extraction_Header">
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="ExtractionMonth" type="varchar(10)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#90.4" author="Alekhya.T">
+		<addPrimaryKey tableName="ADTDue_Extraction_Header" columnNames="ID"
+			constraintName="PK_ADTDue_Extraction_Header" />
+	</changeSet>
+	
+	<changeSet id="ST#90.5" author="Alekhya.T" dbms="posgres,oracle">
+		<addDefaultValue tableName="ADTDue_Extraction_Header" columnName="Version" defaultValue="0" />
+		<addDefaultValue tableName="ADTDue_Extraction_Header" columnName="Active" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#90.5" author="Alekhya.T" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTDUE_EXTRACTION_HEADER ADD CONSTRAINT DF_ADEH_VERSION DEFAULT 0 FOR VERSION;
+				ALTER TABLE ADTDUE_EXTRACTION_HEADER ADD CONSTRAINT DF_ADEH_ACTIVE DEFAULT  0 FOR ACTIVE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#90.6" author="Alekhya.T">
+		<createTable tableName="ADTDue_Extraction_Config">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="InstrumentType" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExtractionDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name ="Modified" type = "boolean"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#90.7" author="Alekhya.T">
+		<addPrimaryKey tableName="ADTDue_Extraction_Config"
+			columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="PK_ADTDue_Extraction_Config" />
+	</changeSet>
+
+	<changeSet id="ST#90.8" author="Alekhya.T" dbms="posgres,oracle">
+		<addDefaultValue tableName="ADTDue_Extraction_Config" columnName="Version" defaultValue="0" />
+		<addDefaultValue tableName="ADTDue_Extraction_Config" columnName="Active" defaultValue="0" />
+		<addDefaultValue tableName="ADTDue_Extraction_Config" columnName="Modified" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#90.8s" author="Alekhya.T" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTDUE_EXTRACTION_CONFIG ADD CONSTRAINT DF_APEC_VERSION  DEFAULT 0 FOR VERSION;
+				ALTER TABLE ADTDUE_EXTRACTION_CONFIG ADD CONSTRAINT DF_APEC_ACTIVE   DEFAULT 0 FOR ACTIVE;
+				ALTER TABLE ADTDUE_EXTRACTION_CONFIG ADD CONSTRAINT DF_APEC_MODIFIED DEFAULT 0 FOR MODIFIED;	
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

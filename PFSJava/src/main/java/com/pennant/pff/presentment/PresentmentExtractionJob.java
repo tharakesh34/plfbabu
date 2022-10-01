@@ -20,6 +20,7 @@ import com.pennant.pff.presentment.service.PresentmentEngine;
 import com.pennant.pff.presentment.tasklet.ClearQueueTasklet;
 import com.pennant.pff.presentment.tasklet.GroupingTasklet;
 import com.pennant.pff.presentment.tasklet.PreparationTasklet;
+import com.pennant.pff.presentment.tasklet.PresentmentDueConfigTasklet;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public class PresentmentExtractionJob {
@@ -32,6 +33,9 @@ public class PresentmentExtractionJob {
 
 	@Autowired
 	private StepBuilderFactory peStepBuilderFactory;
+
+	@Autowired
+	private PresentmentDueConfigTasklet dueConfig;
 
 	@Autowired
 	private PreparationTasklet preparation;
@@ -54,7 +58,9 @@ public class PresentmentExtractionJob {
 	@Bean
 	public Job peExtractionJob() {
 		return this.peJobBuilderFactory.get("peExtractionJob").incrementer(peBatchJobParameterIncrementer)
-				.start(preparation())
+				.start(dueConfig())
+
+				.next(preparation()).on("FAILED").fail()
 
 				.next(grouping()).on("FAILED").fail()
 
@@ -65,6 +71,11 @@ public class PresentmentExtractionJob {
 				.end()
 
 				.build();
+	}
+
+	@Bean
+	private TaskletStep dueConfig() {
+		return this.peStepBuilderFactory.get("CONFIGURATION").tasklet(dueConfig).build();
 	}
 
 	@Bean
@@ -86,7 +97,7 @@ public class PresentmentExtractionJob {
 				.reader(new PresentmentItemReader(this.dataSource))
 				.processor(new PresentmentItemProcessor(this.presentmentEngine))
 				.writer(new PresentmentItemWriter(this.peTransactionManager, this.presentmentEngine))
-				// .taskExecutor(taskExecutor())
+				.taskExecutor(taskExecutor())
 				// .transactionAttribute(attribute)
 				.build();
 	}

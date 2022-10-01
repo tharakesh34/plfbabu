@@ -2269,6 +2269,22 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="76.5" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'MANDATE_ALW_PARTNER_BANK';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="76.6" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'ALLOW_MANDATE_ACCT_DET_READONLY';
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#81.1" author="nagavamsi.p">
 		<addColumn tableName="EMPLOYERDETAIL_TEMP">
@@ -3584,5 +3600,530 @@
 			]]>
 		</sql>
 	</changeSet> 
+	
+	<changeSet id="ST#90.0" author="Alekhya.T">
+		<createTable tableName="Instrument_Types">
+			<column name="ID" type="bigint" />
+			<column name="Code" type="varchar(8)" />
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Internal" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Enabled" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="AutoExtraction" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExtractionDays" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#90.1" author="Alekhya.T">
+		<addPrimaryKey tableName="Instrument_Types" columnNames="ID" constraintName="PK_Instrument_Type" />
+	</changeSet>
+
+	<changeSet id="ST#90.2" author="Alekhya.T">
+		<addUniqueConstraint tableName="Instrument_Types" columnNames="Code" constraintName="UK_Codes" />
+	</changeSet>
+
+	<changeSet id="ST#90.3" author="Alekhya.T" dbms="posgres,oracle">
+		<addDefaultValue tableName="INSTRUMENT_TYPES" columnName="Internal" defaultValue="0" />
+		<addDefaultValue tableName="INSTRUMENT_TYPES" columnName="Enabled" defaultValue="0" />
+		<addDefaultValue tableName="INSTRUMENT_TYPES" columnName="AutoExtraction" defaultValue="0" />
+		<addDefaultValue tableName="INSTRUMENT_TYPES" columnName="ExtractionDays" defaultValue="0" />
+		<addDefaultValue tableName="INSTRUMENT_TYPES" columnName="Version" defaultValue="0" />
+		<addDefaultValue tableName="INSTRUMENT_TYPES" columnName="Active" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#90.3" author="Alekhya.T" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE INSTRUMENT_TYPES ADD CONSTRAINT DF_IT_INTERNAL DEFAULT       0 FOR INTERNAL;
+				ALTER TABLE INSTRUMENT_TYPES ADD CONSTRAINT DF_IT_ENABLED DEFAULT        0 FOR ENABLED;
+				ALTER TABLE INSTRUMENT_TYPES ADD CONSTRAINT DF_IT_AUTOEXTRACTION DEFAULT 0 FOR AUTOEXTRACTION;
+				ALTER TABLE INSTRUMENT_TYPES ADD CONSTRAINT DF_IT_EXTRACTIONDAYS DEFAULT 0 FOR EXTRACTIONDAYS;
+				ALTER TABLE INSTRUMENT_TYPES ADD CONSTRAINT DF_IT_VERSION DEFAULT        0 FOR VERSION;
+				ALTER TABLE INSTRUMENT_TYPES ADD CONSTRAINT DF_IT_ACTIVE DEFAULT         0 FOR ACTIVE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#90.4" author="Alekhya.T">
+		<createTable tableName="Instrument_Types_Temp">
+			<column name="ID" type="bigint" />
+			<column name="Code" type="varchar(8)" />
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Internal" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Enabled" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="AutoExtraction" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExtractionDays" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#90.5" author="Alekhya.T">
+		<addPrimaryKey tableName="Instrument_Types_Temp" columnNames="ID" constraintName="PK_Instrument_Type_T" />
+	</changeSet>
+
+	<changeSet id="ST#90.6" author="Alekhya.T">
+		<addUniqueConstraint tableName="Instrument_Types_Temp" columnNames="Code"
+			constraintName="UK_Codes_T" />
+	</changeSet>
+
+	<changeSet id="ST#90.7" author="Alekhya.T" dbms="posgres,oracle">
+		<addDefaultValue tableName="INSTRUMENT_TYPES_TEMP" columnName="Internal" defaultValue="0" />
+		<addDefaultValue tableName="INSTRUMENT_TYPES_TEMP" columnName="Enabled" defaultValue="0" />
+		<addDefaultValue tableName="INSTRUMENT_TYPES_TEMP" columnName="AutoExtraction" defaultValue="0" />
+		<addDefaultValue tableName="INSTRUMENT_TYPES_TEMP" columnName="ExtractionDays" defaultValue="0" />
+		<addDefaultValue tableName="INSTRUMENT_TYPES_TEMP" columnName="Version" defaultValue="0" />
+		<addDefaultValue tableName="INSTRUMENT_TYPES_TEMP" columnName="Active" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#90.7" author="Alekhya.T" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE INSTRUMENT_TYPES_TEMP ADD CONSTRAINT DF_ITT_INTERNAL DEFAULT       0 FOR INTERNAL;
+				ALTER TABLE INSTRUMENT_TYPES_TEMP ADD CONSTRAINT DF_ITT_ENABLED DEFAULT        0 FOR ENABLED;
+				ALTER TABLE INSTRUMENT_TYPES_TEMP ADD CONSTRAINT DF_ITT_AUTOEXTRACTION DEFAULT 0 FOR AUTOEXTRACTION;
+				ALTER TABLE INSTRUMENT_TYPES_TEMP ADD CONSTRAINT DF_ITT_EXTRACTIONDAYS DEFAULT 0 FOR EXTRACTIONDAYS;
+				ALTER TABLE INSTRUMENT_TYPES_TEMP ADD CONSTRAINT DF_ITT_VERSION DEFAULT        0 FOR VERSION;
+				ALTER TABLE INSTRUMENT_TYPES_TEMP ADD CONSTRAINT DF_ITT_ACTIVE DEFAULT         0 FOR ACTIVE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#90.8" author="Alekhya.T">
+		<createSequence sequenceName="Seq_Due_Extraction_Header" minValue="1" maxValue="999999999999999999" startValue="1"/>
+	</changeSet>
+	
+	<changeSet id="ST#90.9" author="Alekhya.T">
+		<createTable tableName="Due_Extraction_Header">
+			<column name="ID" type="bigint"/>
+			<column name="ExtractionMonth" type="varchar(10)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#90.10" author="Alekhya.T">
+		<addPrimaryKey tableName="Due_Extraction_Header" columnNames="ID"
+			constraintName="PK_Due_Extraction_Header" />
+	</changeSet>
+	
+	<changeSet id="ST#90.11" author="Alekhya.T" dbms="posgres,oracle">
+		<addDefaultValue tableName="Due_Extraction_Header" columnName="Version" defaultValue="0" />
+		<addDefaultValue tableName="Due_Extraction_Header" columnName="Active" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#90.11" author="Alekhya.T" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE DUE_EXTRACTION_HEADER ADD CONSTRAINT DF_DEH_VERSION DEFAULT 0 FOR VERSION;
+				ALTER TABLE DUE_EXTRACTION_HEADER ADD CONSTRAINT DF_DEH_ACTIVE DEFAULT  0 FOR ACTIVE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#90.12" author="Alekhya.T">
+		<createTable tableName="Due_Extraction_Header_Temp">
+			<column name="ID" type="bigint" />
+			<column name="ExtractionMonth" type="varchar(10)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#90.13" author="Alekhya.T">
+		<addPrimaryKey tableName="Due_Extraction_Header_Temp" columnNames="ID"
+			constraintName="PK_Due_Extraction_Header_Temp" />
+	</changeSet>
+	
+	<changeSet id="ST#90.14" author="Alekhya.T" dbms="posgres,oracle">
+		<addDefaultValue tableName="Due_Extraction_Header_Temp" columnName="Version" defaultValue="0" />
+		<addDefaultValue tableName="Due_Extraction_Header_Temp" columnName="Active" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#90.14" author="Alekhya.T" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE DUE_EXTRACTION_HEADER_TEMP ADD CONSTRAINT DF_DEHT_VERSION DEFAULT 0 FOR VERSION;
+				ALTER TABLE DUE_EXTRACTION_HEADER_TEMP ADD CONSTRAINT DF_DEHT_ACTIVE DEFAULT  0 FOR ACTIVE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#90.15" author="Alekhya.T">
+		<createSequence sequenceName="Seq_Due_Extraction_Config" minValue="1" maxValue="999999999999999999" startValue="1"/>
+	</changeSet>
+
+	<changeSet id="ST#90.16" author="Alekhya.T">
+		<createTable tableName="Due_Extraction_Config">
+			<column name="ID" type="bigint" />
+			<column name="MonthID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="InstrumentID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExtractionDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Modified" type="boolean" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#90.17" author="Alekhya.T">
+		<addPrimaryKey tableName="Due_Extraction_Config" columnNames="ID"
+			constraintName="PK_Due_Extraction_Config" />
+	</changeSet>
+
+	<changeSet id="ST#90.18" author="Alekhya.T">
+		<addForeignKeyConstraint constraintName="FK_Due_Extraction_Config_ID"
+			referencedTableName="Instrument_Types" referencedColumnNames="ID" 
+			baseColumnNames="InstrumentID" baseTableName="Due_Extraction_Config" />
+	</changeSet>
+	
+	<changeSet id="ST#90.19" author="Alekhya.T">
+		<addForeignKeyConstraint constraintName="FK_DEC_MonthId"
+			referencedTableName="Due_Extraction_Header" referencedColumnNames="ID" 
+			baseColumnNames="MonthId" baseTableName="Due_Extraction_Config" />
+	</changeSet>
+
+	<changeSet id="ST#90.20" author="Alekhya.T">
+		<addUniqueConstraint tableName="Due_Extraction_Config"
+			columnNames="InstrumentID, DueDate, ExtractionDate" constraintName="UK_DEC_II_DD_ED" />
+	</changeSet>
+
+	<changeSet id="ST#90.21" author="Alekhya.T" dbms="posgres,oracle">
+		<addDefaultValue tableName="Due_Extraction_Config" columnName="Version" defaultValue="0" />
+		<addDefaultValue tableName="Due_Extraction_Config" columnName="Active" defaultValue="0" />
+		<addDefaultValue tableName="Due_Extraction_Config" columnName="Modified" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#90.21" author="Alekhya.T" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE DUE_EXTRACTION_CONFIG ADD CONSTRAINT DF_DEC_VERSION DEFAULT  0 FOR VERSION;
+				ALTER TABLE DUE_EXTRACTION_CONFIG ADD CONSTRAINT DF_DEC_ACTIVE DEFAULT   0 FOR ACTIVE;
+				ALTER TABLE DUE_EXTRACTION_CONFIG ADD CONSTRAINT DF_DEC_MODIFIED DEFAULT 0 FOR MODIFIED;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#90.22" author="Alekhya.T">
+		<createTable tableName="Due_Extraction_Config_Temp">
+			<column name="ID" type="bigint" />
+			<column name="InstrumentID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExtractionDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Modified" type="boolean" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#90.23" author="Alekhya.T">
+		<addPrimaryKey tableName="Due_Extraction_Config_Temp" columnNames="ID"
+			constraintName="PK_Due_Extraction_Config_T" />
+	</changeSet>
+
+	<changeSet id="ST#90.24" author="Alekhya.T">
+		<addForeignKeyConstraint constraintName="FK_Due_Extraction_Config_T_ID"
+			referencedTableName="InstrumentTypes" referencedColumnNames="ID"
+			baseColumnNames="InstrumentID" baseTableName="Due_Extraction_Config_Temp"/>
+	</changeSet>
+	
+	<changeSet id="ST#90.25" author="Alekhya.T">
+		<addForeignKeyConstraint constraintName="FK_DECT_MonthId"
+			referencedTableName="Due_Extraction_Header" referencedColumnNames="ID" 
+			baseColumnNames="MonthId" baseTableName="Due_Extraction_Config_Temp" />
+	</changeSet>
+
+	<changeSet id="ST#90.26" author="Alekhya.T">
+		<addUniqueConstraint tableName="Due_Extraction_Config_Temp"
+			columnNames="InstrumentID, DueDate, ExtractionDate" constraintName="UK_DEC_II_DD_ED_Te" />
+	</changeSet>
+
+	<changeSet id="ST#90.27" author="Alekhya.T" dbms="postgresql, oracle">
+		<addDefaultValue tableName="Due_Extraction_Config_Temp" columnName="Version" defaultValue="0" />
+		<addDefaultValue tableName="Due_Extraction_Config_Temp" columnName="Active" defaultValue="0" />
+		<addDefaultValue tableName="Due_Extraction_Config_Temp" columnName="Modified" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#90.27" author="Alekhya.T" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE DUE_EXTRACTION_CONFIG_TEMP ADD CONSTRAINT DF_DECT_VERSION  DEFAULT 0 FOR VERSION;
+				ALTER TABLE DUE_EXTRACTION_CONFIG_TEMP ADD CONSTRAINT DF_DECT_ACTIVE   DEFAULT 0 FOR ACTIVE;
+				ALTER TABLE DUE_EXTRACTION_CONFIG_TEMP ADD CONSTRAINT DF_DECT_MODIFIED DEFAULT 0 FOR MODIFIED;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#90.28" author="Alekhya.T">
+		<createTable tableName="Due_Extraction_Config_Log">
+			<column name="ID" type="bigint" />
+			<column name="MonthID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="InstrumentID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExtractionDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Modified" type="boolean" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#90.29" author="Alekhya.T">
+		<addPrimaryKey tableName="Due_Extraction_Config" columnNames="ID"
+			constraintName="PK_Due_Extraction_Config" />
+	</changeSet>
+	
+	<changeSet id="ST#90.30" author="Alekhya.T">
+		<sql>
+			<![CDATA[
+				INSERT INTO INSTRUMENT_TYPES(ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'ECS',    'ELECTRONIC CLEARING SERVICE', 					0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO INSTRUMENT_TYPES(ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'DDM',    'Direct Debit', 									0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO INSTRUMENT_TYPES(ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'NACH',   'NATIONAL AUTOMATED CLEARING HOUSE', 				0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO INSTRUMENT_TYPES(ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'PDC',    'POST DATED CHEQUE', 								0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO INSTRUMENT_TYPES(ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'EMNDT',  'ELECTRONIC MANDATE', 								0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO INSTRUMENT_TYPES(ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'DAS',    'DEDUCTION AGAINST SALARY',			 			0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO INSTRUMENT_TYPES(ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'SI',     'STANDING INSTRUCTION',			 				0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO INSTRUMENT_TYPES(ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'E-NACH', 'ELECTRONIC NATIONAL AUTOMATED CLEARING HOUSE',	0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO INSTRUMENT_TYPES(ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'IPDC',   'INTERNAL POST DATED CHEQUE', 						1, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#90.31" author="Alekhya.T">
+		<sql>
+			<![CDATA[
+				UPDATE INSTRUMENT_TYPES SET EXTRACTIONDAYS = (SELECT SYSPARMVALUE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_NACH_DATE_FREQUENCY') WHERE CODE = 'ECS';
+				UPDATE INSTRUMENT_TYPES SET EXTRACTIONDAYS = (SELECT SYSPARMVALUE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_NACH_DATE_FREQUENCY') WHERE CODE = 'DDM';
+				UPDATE INSTRUMENT_TYPES SET EXTRACTIONDAYS = (SELECT SYSPARMVALUE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_NACH_DATE_FREQUENCY') WHERE CODE = 'NACH';
+				UPDATE INSTRUMENT_TYPES SET EXTRACTIONDAYS = (SELECT SYSPARMVALUE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_NACH_DATE_FREQUENCY') WHERE CODE = 'EMNDT';
+				UPDATE INSTRUMENT_TYPES SET EXTRACTIONDAYS = (SELECT SYSPARMVALUE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_NACH_DATE_FREQUENCY') WHERE CODE = 'E-NACH';
+				UPDATE INSTRUMENT_TYPES SET EXTRACTIONDAYS = (SELECT SYSPARMVALUE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_PDC_DATE_FREQUENCY')  WHERE CODE = 'PDC';
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>

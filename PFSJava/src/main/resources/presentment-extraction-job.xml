@@ -8,6 +8,8 @@
 	
 	<bean id="presentmentExtractionJob" class="com.pennant.pff.presentment.PresentmentExtractionJob"/>
 
+	<bean id="dueConfig" class="com.pennant.pff.presentment.tasklet.PresentmentDueConfigTasklet"/>
+	
 	<bean id="preparation" class="com.pennant.pff.presentment.tasklet.PreparationTasklet" />
 
 	<bean id="grouping" class="com.pennant.pff.presentment.tasklet.GroupingTasklet" />

@@ -154,6 +154,12 @@
 		</step>
 		<step id="datesUpdate">
 			<tasklet ref="datesUpdateTaskLet" />
+			<next on="*" to="presentmentExtraction" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="presentmentExtraction">
+			<tasklet ref="presentmentExtractionTasklet" />
 			<next on="*" to="snapShotPreparation" />
 			<fail on="FAILED" />
 		</step>

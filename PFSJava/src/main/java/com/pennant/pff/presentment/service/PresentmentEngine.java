@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -23,6 +23,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
+import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -33,14 +34,29 @@ import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public class PresentmentEngine {
-	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private OverdrafLoanService overdrafLoanService;
 	private ChequeDetailDAO chequeDetailDAO;
 	private PresentmentDAO presentmentDAO;
+	private DueExtractionConfigDAO dueExtractionConfigDAO;
 
 	public PresentmentEngine() {
 		super();
+	};
+
+	public void preparation(JobParameters jobParameters) {
+		Date appDate = jobParameters.getDate("AppDate");
+
+		Map<String, Date> dueDates = dueExtractionConfigDAO.getDueDates(appDate);
+
+		for (String code : dueDates.keySet()) {
+			PresentmentHeader ph = new PresentmentHeader();
+
+			ph.setAppDate(appDate);
+			ph.setDueDate(dueDates.get(code));
+
+			prepareDues(ph);
+		}
 	}
 
 	public void preparation(PresentmentHeader ph) {
@@ -537,11 +553,6 @@ public class PresentmentEngine {
 	}
 
 	@Autowired
-	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
-		this.presentmentDetailDAO = presentmentDetailDAO;
-	}
-
-	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
@@ -554,6 +565,11 @@ public class PresentmentEngine {
 	@Autowired
 	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
 		this.chequeDetailDAO = chequeDetailDAO;
+	}
+
+	@Autowired
+	public void setDueExtractionConfigDAO(DueExtractionConfigDAO dueExtractionConfigDAO) {
+		this.dueExtractionConfigDAO = dueExtractionConfigDAO;
 	}
 
 }
