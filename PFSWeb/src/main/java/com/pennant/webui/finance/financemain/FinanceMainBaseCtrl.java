@@ -130,6 +130,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
+import com.pennant.UserWorkspace;
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -1670,12 +1671,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		// displaying the group boxes based on right
-		this.gb_sourcingDetails.setVisible(isReadOnly("FinanceMainDialog_gb_sourcingDetails"));
-		this.gb_basicDetails.setVisible(isReadOnly("FinanceMainDialog_gb_basicDetails"));
-		this.gb_gracePeriodDetails.setVisible(isReadOnly("FinanceMainDialog_gb_gracePeriodDetails"));
-		this.gb_repaymentDetails.setVisible(isReadOnly("FinanceMainDialog_gb_repaymentDetails"));
-		this.gb_OverDuePenalty.setVisible(isReadOnly("FinanceMainDialog_gb_OverDuePenalty"));
+
+		UserWorkspace workspace = getUserWorkspace();
+
+		this.gb_sourcingDetails.setVisible(workspace.isNotAllowed("Hide_FinanceMainDialog_gb_sourcingDetails"));
+		this.gb_basicDetails.setVisible(workspace.isNotAllowed("Hide_FinanceMainDialog_gb_basicDetails"));
+		this.gb_gracePeriodDetails.setVisible(workspace.isNotAllowed("Hide_FinanceMainDialog_gb_gracePeriodDetails"));
+		this.gb_repaymentDetails.setVisible(workspace.isNotAllowed("Hide_FinanceMainDialog_gb_repaymentDetails"));
+		this.gb_OverDuePenalty.setVisible(workspace.isNotAllowed("Hide_FinanceMainDialog_gb_OverDuePenalty"));
 
 		if (!financeMain.isNewRecord() && ImplementationConstants.ALLOW_LOAN_SPLIT) {
 			this.row_AllowLoanTypes.setVisible(true);
@@ -2102,7 +2105,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendCheckListDetailTab(aFinanceDetail, onLoad);
 
 		// Document Detail Tab Addition
-		if (isTabVisible(StageTabConstants.Documents) && !FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
+		if (!FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
 			appendDocumentDetailTab(onLoad);
 		} else {
 			this.btnSplitDoc.setVisible(false);
@@ -2133,7 +2136,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			// Deviation Detail Tab
-			if (ImplementationConstants.ALLOW_DEVIATIONS) {
+			if (ImplementationConstants.ALLOW_DEVIATIONS && isTabVisible(StageTabConstants.DEVI)) {
 				boolean allowed = deviationExecutionCtrl.deviationAllowed(financeType.getFinCategory());
 				if (allowed) {
 					appendDeviationDetailTab(onLoad);
@@ -2180,15 +2183,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Stage Accounting details Tab Addition
 		appendStageAccountingDetailsTab(onLoad);
 
-		if (PennantConstants.OLD_CREDITREVIEWTAB
-				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
-				&& isTabVisible(StageTabConstants.CreditReviewDetails) && StringUtils.isEmpty(moduleDefiner)
-				&& !FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
+		String CREDIT_REVIEW_TAB = SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB);
+		boolean tabVisible = isTabVisible(StageTabConstants.CreditReviewDetails);
+		boolean restructure = FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner);
+
+		if (PennantConstants.OLD_CREDITREVIEWTAB.equals(CREDIT_REVIEW_TAB) && tabVisible && !restructure) {
 			appendCreditReviewDetailTab(false);
-		} else if (PennantConstants.NEW_CREDITREVIEWTAB
-				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
-				&& isTabVisible(StageTabConstants.CreditReviewDetails) && StringUtils.isEmpty(moduleDefiner)
-				&& !FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
+		} else if (PennantConstants.NEW_CREDITREVIEWTAB.equals(CREDIT_REVIEW_TAB) && tabVisible && !restructure) {
 			appendCreditReviewDetailSummaryTab(false);
 		}
 
@@ -4483,7 +4484,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (isFinPreApproved) {
 					this.gb_OverDuePenalty.setVisible(false);
 				} else {
-					this.gb_OverDuePenalty.setVisible(isReadOnly("FinanceMainDialog_gb_OverDuePenalty"));
+					UserWorkspace workspace = getUserWorkspace();
+					this.gb_OverDuePenalty.setVisible(isReadOnly("FinanceMainDialog_gb_OverDuePenalty")
+							&& workspace.isNotAllowed("Hide_FinanceMainDialog_gb_OverDuePenalty"));
 				}
 				this.applyODPenalty.setChecked(penaltyRate.isApplyODPenalty());
 				this.oDIncGrcDays.setChecked(penaltyRate.isODIncGrcDays());
@@ -5081,6 +5084,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		map.put("financeMainDialogCtrl", this);
+		map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY));
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceSpreadSheet.zul",
@@ -7439,7 +7443,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			afd.setCreditReviewData(spreadSheetCtrl.getCreditReviewData());
 		}
 
-		if (financeSpreadSheetCtrl != null && !isReadOnly("FinanceMainDialog_Eligibility")) {
+		if (financeSpreadSheetCtrl != null && !isReadOnly("FinanceMainDialog_Eligibility")
+				&& financeSpreadSheetCtrl.isTabVisible()) {
 			if (financeSpreadSheetCtrl.doSave(userAction, true)) {
 				return;
 			}
@@ -10977,7 +10982,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onFulfill$eligibilityMethod(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = eligibilityMethod.getObject();
-		String fieldCode = "";
+		String eligibilityMethod = "";
 		if (dataObject == null || dataObject instanceof String) {
 			this.eligibilityMethod.setValue("");
 			this.eligibilityMethod.setDescription("");
@@ -10986,20 +10991,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
 				this.eligibilityMethod.setAttribute("FieldCodeId", details.getFieldCodeId());
-				fieldCode = details.getFieldCodeValue();
+				eligibilityMethod = details.getFieldCodeValue();
 			}
 		}
 
-		if (PennantConstants.OLD_CREDITREVIEWTAB
-				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
-				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
+		String CREDIT_REVIEW_TAB = SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB);
+		boolean tabVisible = isTabVisible(StageTabConstants.CreditReviewDetails);
+
+		if (PennantConstants.OLD_CREDITREVIEWTAB.equals(CREDIT_REVIEW_TAB) && tabVisible) {
 			appendCreditReviewDetailTab(true);
-		} else if (PennantConstants.NEW_CREDITREVIEWTAB
-				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
-				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
+		} else if (PennantConstants.NEW_CREDITREVIEWTAB.equals(CREDIT_REVIEW_TAB) && tabVisible) {
 			appendCreditReviewDetailSummaryTab(true);
 		}
-		setEligibilityMethod(fieldCode);
+
+		setEligibilityMethod(eligibilityMethod);
+
+		if (financeSpreadSheetCtrl != null) {
+			financeSpreadSheetCtrl.doDisplayTab(eligibilityMethod);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -23899,4 +23909,5 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
 	}
+
 }

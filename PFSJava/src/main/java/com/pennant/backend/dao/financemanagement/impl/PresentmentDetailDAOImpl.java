@@ -1681,7 +1681,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public int getMinIDByHeaderID(long headerId) {
-		String sql = "select min(ID) from Presentment_Resp_Dtls where Header_Id = ?";
+		String sql = "select COALESCE(min(ID), 0) from Presentment_Resp_Dtls where Header_Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -1695,7 +1695,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public int getMaxIDByHeaderID(long headerId) {
-		String sql = "select max(ID) from Presentment_Resp_Dtls where Header_Id = ?";
+		String sql = "select COALESCE(max(ID), 0) from Presentment_Resp_Dtls where Header_Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 

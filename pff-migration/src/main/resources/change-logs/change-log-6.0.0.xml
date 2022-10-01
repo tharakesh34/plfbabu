@@ -26254,4 +26254,26 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="Deviation_1" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+			    DELETE FROM STAGETABDETAIL WHERE TABCODE = 'DEVI'
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, ACTIVE) VALUES ((SELECT MAX(TABID)+1 FROM STAGETABDETAIL), 'DEVI', 'Deviations', 1);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="SAV_6" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+			    UPDATE SECRIGHTS SET RIGHTNAME = 'Hide_FinanceMainDialog_gb_sourcingDetails' WHERE RIGHTNAME = 'FinanceMainDialog_gb_sourcingDetails'
+			    UPDATE SECRIGHTS SET RIGHTNAME = 'Hide_FinanceMainDialog_gb_basicDetails' WHERE RIGHTNAME = 'FinanceMainDialog_gb_basicDetails'
+			    UPDATE SECRIGHTS SET RIGHTNAME = 'Hide_FinanceMainDialog_gb_gracePeriodDetails' WHERE RIGHTNAME = 'FinanceMainDialog_gb_gracePeriodDetails'
+			    UPDATE SECRIGHTS SET RIGHTNAME = 'Hide_FinanceMainDialog_gb_repaymentDetails' WHERE RIGHTNAME = 'FinanceMainDialog_gb_repaymentDetails'
+			    UPDATE SECRIGHTS SET RIGHTNAME = 'Hide_FinanceMainDialog_gb_OverDuePenalty' WHERE RIGHTNAME = 'FinanceMainDialog_gb_OverDuePenalty'
+			 ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
