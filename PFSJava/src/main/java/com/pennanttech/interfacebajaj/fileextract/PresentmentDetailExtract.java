@@ -30,6 +30,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -76,6 +77,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ConsecutiveBounceDAO consecutiveBounceDAO;
 	private MandateDAO mandateDAO;
+	private MandateStatusDAO mandateStatusDAO;
 
 	/* Service's */
 	private NotificationService notificationService;
@@ -284,6 +286,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			prp.setFinanceProfitDetailDAO(financeProfitDetailDAO);
 			prp.setConsecutiveBounceDAO(consecutiveBounceDAO);
 			prp.setMandateDAO(mandateDAO);
+			prp.setMandateStatusDAO(mandateStatusDAO);
 			prp.setRepaymentPostingsUtil(repaymentPostingsUtil);
 			prp.setFinODDetailsDAO(finODDetailsDAO);
 			prp.setReceiptCalculator(receiptCalculator);
@@ -554,6 +557,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
+	}
+
+	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
+		this.mandateStatusDAO = mandateStatusDAO;
 	}
 
 	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {

@@ -54,6 +54,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -116,6 +117,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private ConsecutiveBounceDAO consecutiveBounceDAO;
 	private MandateDAO mandateDAO;
+	private MandateStatusDAO mandateStatusDAO;
 	private NotificationService notificationService;
 	private ReceiptPaymentService receiptPaymentService;
 	private PresentmentImportProcess presentmentImportProcess;
@@ -312,6 +314,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		pde.setFinExcessAmountDAO(finExcessAmountDAO);
 		pde.setConsecutiveBounceDAO(consecutiveBounceDAO);
 		pde.setMandateDAO(mandateDAO);
+		pde.setMandateStatusDAO(mandateStatusDAO);
 
 		/* Service's */
 		pde.setPresentmentDetailService(this);
@@ -1084,10 +1087,17 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.mandateDAO = mandateDAO;
 	}
 
+	@Autowired
+	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
+		this.mandateStatusDAO = mandateStatusDAO;
+	}
+
+	@Autowired
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
 
+	@Autowired
 	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
 		this.receiptPaymentService = receiptPaymentService;
 	}
@@ -1098,6 +1108,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.presentmentImportProcess = presentmentImportProcess;
 	}
 
+	@Autowired
 	public void setEventPropertiesService(EventPropertiesService eventPropertiesService) {
 		this.eventPropertiesService = eventPropertiesService;
 	}

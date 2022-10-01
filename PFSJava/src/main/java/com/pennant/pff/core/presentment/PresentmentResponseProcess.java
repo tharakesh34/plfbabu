@@ -33,6 +33,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -59,6 +60,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.pff.eod.cache.BounceConfigCache;
 import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -92,6 +94,7 @@ public class PresentmentResponseProcess implements Runnable {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ConsecutiveBounceDAO consecutiveBounceDAO;
 	private MandateDAO mandateDAO;
+	private MandateStatusDAO mandateStatusDAO;
 
 	/* Service's */
 	private ReceiptPaymentService receiptPaymentService;
@@ -654,6 +657,14 @@ public class PresentmentResponseProcess implements Runnable {
 		}
 
 		mandateDAO.holdMandate(mandateId, bounceId);
+
+		com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
+		mandateStatus.setMandateID(mandateId);
+		mandateStatus.setStatus(MandateStatus.HOLD);
+		mandateStatus.setReason(bounceReason.getReason());
+		mandateStatus.setChangeDate(DateUtil.getSysDate());
+
+		mandateStatusDAO.save(mandateStatus, "");
 	}
 
 	private void unHoldMandate(PresentmentDetail pd) {
@@ -667,6 +678,14 @@ public class PresentmentResponseProcess implements Runnable {
 		consecutiveBounceDAO.delete(mandateId);
 
 		mandateDAO.unHoldMandate(mandateId);
+
+		com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
+		mandateStatus.setMandateID(mandateId);
+		mandateStatus.setStatus(MandateStatus.APPROVED);
+		mandateStatus.setReason("Un-Hold Mandate");
+		mandateStatus.setChangeDate(DateUtil.getSysDate());
+
+		mandateStatusDAO.save(mandateStatus, "");
 	}
 
 	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
@@ -739,6 +758,10 @@ public class PresentmentResponseProcess implements Runnable {
 
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
+	}
+
+	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
+		this.mandateStatusDAO = mandateStatusDAO;
 	}
 
 	public DataEngineStatus getDeStatus() {
