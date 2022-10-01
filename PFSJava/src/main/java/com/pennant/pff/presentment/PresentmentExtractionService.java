@@ -5,7 +5,6 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.support.SimpleJobOperator;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
@@ -18,11 +17,14 @@ import com.pennanttech.pff.presentment.model.PresentmentHeader;
 public class PresentmentExtractionService {
 
 	@Autowired
-	private JobLauncher peJobLauncher;
+	private static JobLauncher peJobLauncher;
 	@Autowired
-	private Job peExtractionJob;
-	@Autowired
-	private SimpleJobOperator peJobOperator;
+	private static Job peExtractionJob;
+
+	public static void extractPresentment() {
+		Thread thread = new Thread(new PresentmentExtractionThread());
+		thread.start();
+	}
 
 	public void extractPresentment(PresentmentHeader ph) {
 		Thread thread = new Thread(new PresentmentExtractionThread(ph));
@@ -34,8 +36,12 @@ public class PresentmentExtractionService {
 		thread.start();
 	}
 
-	public class PresentmentExtractionThread implements Runnable {
+	public static class PresentmentExtractionThread implements Runnable {
 		private PresentmentHeader ph;
+
+		public PresentmentExtractionThread() {
+			super();
+		}
 
 		public PresentmentExtractionThread(PresentmentHeader ph) {
 			this.ph = ph;
@@ -46,15 +52,22 @@ public class PresentmentExtractionService {
 			JobParametersBuilder builder = new JobParametersBuilder();
 
 			builder.addDate("AppDate", SysParamUtil.getAppDate());
-			builder.addString("MandateType", ph.getMandateType());
-			builder.addString("EmandateSource", ph.getEmandateSource());
-			builder.addString("LoanType", ph.getLoanType());
-			builder.addString("EntityCode", ph.getEntityCode());
-			builder.addString("FinBranch", ph.getFinBranch());
-			builder.addDate("FromDate", ph.getFromDate());
-			builder.addDate("ToDate", ph.getToDate());
-			builder.addDate("DueDate", ph.getDueDate());
-			builder.addString("PresentmentType", ph.getPresentmentType());
+			if (ph != null) {
+				builder.addString("MandateType", ph.getMandateType());
+				builder.addString("EmandateSource", ph.getEmandateSource());
+				builder.addString("LoanType", ph.getLoanType());
+				builder.addString("EntityCode", ph.getEntityCode());
+				builder.addString("FinBranch", ph.getFinBranch());
+				builder.addDate("FromDate", ph.getFromDate());
+				builder.addDate("ToDate", ph.getToDate());
+				builder.addDate("DueDate", ph.getDueDate());
+				builder.addString("PresentmentType", ph.getPresentmentType());
+				builder.addString("AUTOMATION", "N");
+			} else {
+				builder.addString("AUTOMATION", "Y");
+				builder.addString("PresentmentType", "P");
+			}
+
 			builder.addString("BpiPaidOnInstDate",
 					(String) SysParamUtil.getValue(SMTParameterConstants.BPI_PAID_ON_INSTDATE));
 			builder.addString("GroupByBank", (String) SysParamUtil.getValue(SMTParameterConstants.GROUP_BATCH_BY_BANK));

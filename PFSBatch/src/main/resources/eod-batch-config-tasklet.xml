@@ -219,4 +219,6 @@
 	<bean id="cashFlowPreperationTaskLet" class="com.pennant.backend.endofday.tasklet.CashFlowPreperation">
 		<property name="cashFlowService" ref="cashFlowService" />
 	</bean>
+	
+	<bean id="presentmentExtractionTasklet" class="com.pennant.pff.presentment.tasklet.PresentmentExtractionTasklet"/>
 </beans>

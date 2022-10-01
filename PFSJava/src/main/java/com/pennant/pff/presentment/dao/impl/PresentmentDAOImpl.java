@@ -643,7 +643,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public int updateSchdWithPresentmentId(List<PresentmentDetail> presenetments) {
-		String sql = "Update FinScheduleDetails Set PresentmentId = ? Where FinID = ? and SchDate = ? and  SchSeq = ?";
+		String sql = "Update FinScheduleDetails Set PresentmentId = ? Where FinID = ? and SchDate = ? and  SchSeq = ? and (PresentmentId = 0 or PresentmentId is null)";
 
 		logger.debug(Literal.SQL.concat(sql));
 

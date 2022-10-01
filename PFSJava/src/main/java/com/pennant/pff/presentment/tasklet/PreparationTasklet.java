@@ -20,22 +20,28 @@ public class PreparationTasklet implements Tasklet {
 		PresentmentHeader ph = new PresentmentHeader();
 
 		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
+		String automation = jobParameters.getString("AUTOMATION");
 
-		ph.setAppDate(jobParameters.getDate("AppDate"));
-		ph.setMandateType(jobParameters.getString("MandateType"));
-		ph.setEmandateSource(jobParameters.getString("EmandateSource"));
-		ph.setLoanType(jobParameters.getString("LoanType"));
-		ph.setEntityCode(jobParameters.getString("EntityCode"));
-		ph.setFinBranch(jobParameters.getString("FinBranch"));
-		ph.setFromDate(jobParameters.getDate("FromDate"));
-		ph.setToDate(jobParameters.getDate("ToDate"));
-		ph.setDueDate(jobParameters.getDate("DueDate"));
-		ph.setPresentmentType(jobParameters.getString("PresentmentType"));
-		ph.setBpiPaidOnInstDate(Boolean.valueOf(jobParameters.getString("BpiPaidOnInstDate")));
-		ph.setGroupByBank(Boolean.valueOf(jobParameters.getString("GroupByBank")));
-		ph.setGroupByPartnerBank(ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK);
+		if (automation.equals("Y")) {
+			presentmentEngine.preparation(jobParameters);
+		} else {
+			ph.setAppDate(jobParameters.getDate("AppDate"));
+			ph.setMandateType(jobParameters.getString("MandateType"));
+			ph.setEmandateSource(jobParameters.getString("EmandateSource"));
+			ph.setLoanType(jobParameters.getString("LoanType"));
+			ph.setEntityCode(jobParameters.getString("EntityCode"));
+			ph.setFinBranch(jobParameters.getString("FinBranch"));
+			ph.setFromDate(jobParameters.getDate("FromDate"));
+			ph.setToDate(jobParameters.getDate("ToDate"));
+			ph.setDueDate(jobParameters.getDate("DueDate"));
+			ph.setPresentmentType(jobParameters.getString("PresentmentType"));
+			ph.setBpiPaidOnInstDate(Boolean.valueOf(jobParameters.getString("BpiPaidOnInstDate")));
+			ph.setGroupByBank(Boolean.valueOf(jobParameters.getString("GroupByBank")));
+			ph.setGroupByPartnerBank(ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK);
 
-		presentmentEngine.preparation(ph);
+			presentmentEngine.preparation(ph);
+
+		}
 
 		return RepeatStatus.FINISHED;
 	}
