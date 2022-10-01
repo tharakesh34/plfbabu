@@ -60,10 +60,10 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.pennant.app.constants.DataEngineConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ValidateRecord;
@@ -172,7 +172,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		try {
 			String configName = null;
 
-			if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+			if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 				Long partnerBankId = (Long) filterMap.get("PARTNERBANKID");
 				if (partnerBankId == null) {
 					partnerBankId = 0L;

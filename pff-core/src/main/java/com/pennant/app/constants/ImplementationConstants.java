@@ -204,7 +204,6 @@ public class ImplementationConstants {
 		RESTRUCTURE_RATE_CHG_ALW = getValueAsBoolean("RESTRUCTURE_RATE_CHG_ALW", false);
 		RESTRUCTURE_ALW_CHARGES = getValueAsBoolean("RESTRUCTURE_ALW_CHARGES", false);
 		PENALTY_CALC_ON_REPRESENTATION = getValueAsBoolean("PENALTY_CALC_ON_REPRESENTATION", false);
-		MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK = getValueAsBoolean("MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK", false);
 		DISB_REQ_RES_FILE_GEN_MODE = getValueAsBoolean("DISB_REQ_RES_FILE_GEN_MODE", false);
 		ALLOW_SHADOW_POSTINGS = getValueAsBoolean("ALLOW_SHADOW_POSTINGS", false);
 		ALLOW_ESCROW_MODE = getValueAsBoolean("ALLOW_ESCROW_MODE", false);
@@ -497,7 +496,6 @@ public class ImplementationConstants {
 	public static boolean RESTRUCTURE_RATE_CHG_ALW;
 	// Allow Charges for User Selection for POS calculation
 	public static boolean RESTRUCTURE_ALW_CHARGES;
-	public static boolean MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK;
 	public static boolean ALLOW_SHADOW_POSTINGS;
 	public static boolean DISB_REQ_RES_FILE_GEN_MODE;
 	public static boolean ALLOW_ESCROW_MODE;

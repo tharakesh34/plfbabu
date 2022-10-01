@@ -1,7 +1,6 @@
 package com.pennant.pff.mandate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.zkoss.util.resource.Labels;
@@ -17,6 +16,7 @@ public class MandateUtil {
 	}
 
 	private static List<ValueLabel> instrumentTypes;
+	private static List<ValueLabel> securityInstrumentTypes;
 	private static List<ValueLabel> repaymentMethods;
 	private static List<ValueLabel> mandateStatus;
 	private static List<ValueLabel> chequeTypesList;
@@ -49,13 +49,29 @@ public class MandateUtil {
 		return instrumentTypes;
 	}
 
-	public static List<ValueLabel> excludeRepayMethods(String... instrumentTypes) {
-		List<ValueLabel> repayMethods = new ArrayList<ValueLabel>(getRepayMethods());
-		List<String> instrumentCodes = Arrays.asList(instrumentTypes);
+	public static List<ValueLabel> getSecurityInstrumentTypes() {
+		if (securityInstrumentTypes != null) {
+			return securityInstrumentTypes;
+		}
 
-		repayMethods.removeIf(x -> instrumentCodes.contains(x.getValue()));
+		securityInstrumentTypes = new ArrayList<>(4);
 
-		return repayMethods;
+		for (InstrumentType item : InstrumentType.values()) {
+			switch (item) {
+			case NACH:
+			case ECS:
+			case ENACH:
+			case EMANDATE:
+			case PDC:
+				instrumentTypes.add(new ValueLabel(item.name(), item.code()));
+				break;
+
+			default:
+				continue;
+			}
+		}
+
+		return instrumentTypes;
 	}
 
 	public static List<ValueLabel> getRepayMethods() {

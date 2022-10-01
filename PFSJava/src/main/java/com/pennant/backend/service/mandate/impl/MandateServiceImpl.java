@@ -48,6 +48,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.applicationmaster.MandateCheckDigitDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
@@ -59,6 +60,7 @@ import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -106,6 +108,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private PartnerBankDAO partnerBankDAO;
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
+	private EntityDAO entityDAO;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
 	private BankBranchService bankBranchService;
 	private BankDetailService bankDetailService;
@@ -1148,6 +1151,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	@Override
+	public List<Entity> getEntities() {
+		return this.entityDAO.getEntites();
+	}
+
+	@Override
 	public long saveStatus(com.pennant.backend.model.mandate.MandateStatus mandateStatus) {
 		return mandateStatusDAO.save(mandateStatus, "");
 	}
@@ -1228,6 +1236,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
+	}
+
+	@Autowired
+	public void setEntityDAO(EntityDAO entityDAO) {
+		this.entityDAO = entityDAO;
 	}
 
 }

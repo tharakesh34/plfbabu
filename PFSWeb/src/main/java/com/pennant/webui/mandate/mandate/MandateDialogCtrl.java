@@ -172,8 +172,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private Checkbox securityMandate;
 	protected Checkbox openMandate;
 	protected Checkbox defaultMandate;
-	protected Checkbox swapMandate;
-	private Datebox swapEffectiveDate;
 	protected Datebox startDate;
 	protected Datebox expiryDate;
 	protected CurrencyBox maxLimit;
@@ -187,6 +185,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Row reasonRow;
 	protected Textbox reason;
 	protected Textbox documentName;
+
+	protected Groupbox mandateSwapGroupbox;
+	protected Checkbox swapMandate;
+	private Datebox swapEffectiveDate;
 
 	protected Groupbox accDetailsGroupbox;
 	protected ExtendedCombobox bankBranchID;
@@ -323,9 +325,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			issecurityMandate = (Boolean) arguments.get("securityMandate");
 		}
 
-		if (issecurityMandate) {
-			mandateTypeList = MandateUtil.excludeRepayMethods(InstrumentType.DAS.code(), InstrumentType.SI.code());
-		}
+		/*
+		 * if (issecurityMandate) { mandateTypeList = MandateUtil.excludeRepayMethods(InstrumentType.DAS.code(),
+		 * InstrumentType.SI.code()); }
+		 */
 
 		fillComboBox(this.mandateType, mandate.getMandateType(), mandateTypeList, "");
 	}
@@ -521,7 +524,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.entityCode.setDisplayStyle(2);
 		this.entityCode.setTextBoxWidth(150);
 
-		this.partnerBank.setVisible(true);
+		this.partnerBank.setVisible(MandateExtension.PARTNER_BANK_REQ);
 		this.partnerBank.setMaxlength(8);
 		this.partnerBank.setDisplayStyle(2);
 		this.partnerBank.setMandatoryStyle(true);
@@ -704,6 +707,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 	}
 
+	public void onCheck$externalMandate(Event event) {
+		if (this.externalMandate.isChecked()) {
+			readOnlyComponent(isReadOnly("MandateDialog_umrNumber"), this.umrNumber);
+		} else {
+			readOnlyComponent(true, this.umrNumber);
+		}
+
+	}
+
 	public void onCheck$openMandate(Event event) {
 		checkOpenMandate();
 	}
@@ -714,6 +726,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (this.swapMandate.isChecked()) {
 			this.swapEffectiveDate.setReadonly(false);
 			this.swapEffectiveDate.setDisabled(false);
+
+			if (MandateExtension.SWAP_EFFECTIVE_DATE_DEFAULT) {
+				this.swapEffectiveDate.setValue(SysParamUtil.getAppDate());
+			}
 		} else {
 			this.swapEffectiveDate.setReadonly(true);
 			this.swapEffectiveDate.setValue(null);
@@ -911,9 +927,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.emandateRow.setVisible(false);
 			this.dasGroupbox.setVisible(false);
 			this.accDetailsGroupbox.setVisible(false);
+			this.mandateSwapGroupbox.setVisible(false);
 			this.mandateDetailsGroupbox.setVisible(false);
 			this.otherDetailsGroupbox.setVisible(false);
-
+		} else {
+			doEdit();
 		}
 
 		if (instrumentType == InstrumentType.EMANDATE) {
@@ -923,9 +941,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (instrumentType == InstrumentType.DAS || maintain) {
-
 			this.dasGroupbox.setVisible(true);
 			this.dasRow.setVisible(true);
+			this.mandateSwapGroupbox.setVisible(true);
 
 			if (fromLoan) {
 				readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
@@ -937,7 +955,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (instrumentType == InstrumentType.SI) {
-
 			this.accDetailsGroupbox.setVisible(true);
 
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
@@ -955,6 +972,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateDetailsGroupbox.setVisible(true);
 			this.accDetailsGroupbox.setVisible(true);
 			this.otherDetailsGroupbox.setVisible(true);
+			this.mandateSwapGroupbox.setVisible(true);
 
 			this.bankBranchID.setFilters(new Filter[] { new Filter(instrumentType.name(), 1, Filter.OP_EQUAL) });
 			break;
@@ -968,6 +986,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateDetailsGroupbox.setVisible(true);
 			this.otherDetailsGroupbox.setVisible(true);
 			this.useExisting.setVisible(true);
+			this.mandateSwapGroupbox.setVisible(true);
 		}
 	}
 
@@ -1098,8 +1117,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.externalMandate);
 		}
 
-		if (MandateStatus.isApproved(status) || MandateStatus.isRelease(status) || MandateStatus.isHold(status)
-				|| enqiryModule) {
+		if (MandateStatus.isApproved(status) || MandateStatus.isRelease(status) || MandateStatus.isHold(status)) {
 			holdRow.setVisible(true);
 
 			readOnlyComponent(isReadOnly("MandateDialog_HoldReason"), this.holdReason);
@@ -1184,9 +1202,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.finReference);
 		}
 
-		readOnlyComponent(true, this.mandateType);
+		if (fromLoan || issecurityMandate) {
+			readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType);
+		} else {
+			readOnlyComponent(true, this.mandateType);
+		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_MANDATE_ACCT_DET_READONLY)) {
+		if (MandateExtension.ACCOUNT_DETAILS_READONLY) {
 			readOnlyComponent(true, accNumber);
 			readOnlyComponent(true, bankBranchID);
 		} else {
@@ -1227,7 +1249,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
 		readOnlyComponent(isReadOnly("button_MandateDialog_btnPennyDropResult"), this.btnPennyDropResult);
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+		if (MandateExtension.PARTNER_BANK_REQ) {
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
 		} else {
 			readOnlyComponent(true, partnerBank);
@@ -2520,9 +2542,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
 		doEditFieldByInstrument(instrumentType);
 
-		if (issecurityMandate) {
-			mandateTypeList = MandateUtil.excludeRepayMethods(InstrumentType.DAS.code(), InstrumentType.SI.code());
-		}
+		/*
+		 * if (issecurityMandate) { mandateTypeList = MandateUtil.excludeRepayMethods(InstrumentType.DAS.code(),
+		 * InstrumentType.SI.code()); }
+		 */
 
 		if (!InstrumentType.isPDC(val)) {
 			for (ValueLabel valueLabel : mandateTypeList) {
