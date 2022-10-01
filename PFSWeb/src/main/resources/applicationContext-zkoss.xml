@@ -6053,4 +6053,11 @@
 	<bean id="custExternalDedupCtrl" class="com.pennant.webui.customermasters.customer.CustExternalDedupCtrl" parent="basisCtrl" scope="prototype"> 
 		<property name="financeMainService" ref="financeMainService" />
 	</bean>
+	
+	<bean id="presentmentExcludeCodeListCtrl" class="com.pennant.pff.presentment.web.PresentmentExcludeCodeListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+		
+	<bean id="presentmentExcludeCodeDialogCtrl"
+	class="com.pennant.pff.presentment.web.PresentmentExcludeCodeDialogCtrl" parent="basisCtrl" scope="prototype" />
+
 </beans>

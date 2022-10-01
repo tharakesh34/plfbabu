@@ -12940,4 +12940,27 @@
 	<!-- Consecutive Presentment -->
 	<bean id="consecutiveBounceDAO" class="com.pennant.pff.presentment.dao.impl.ConsecutiveBounceDAOImpl"
 		parent="sequenceDao" />
+		
+	<bean id="presentmentExcludeCodeDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentExcludeCodeDAOImpl" parent="sequenceDao" />
+	
+	<bean id="presentmentExcludeCodeService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="presentmentExcludeCodeServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="presentmentExcludeCodeServiceTarget" class="com.pennant.pff.presentment.service.impl.PresentmentExcludeCodeServiceImpl"/>
+	
 </beans>

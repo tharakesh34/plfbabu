@@ -256,5 +256,58 @@
 			<column name="UpdateBranches" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#112.11" author="sandeepkumar.m">
+		<createTable tableName="AdtPresentment_Exclude_Codes">
+			<column name="AuditId" type="bigint"/>
+			<column name="AuditDate" type="datetime"/>
+			<column name="AuditSeq" type="int"/>
+			<column name="AuditImage" type="varchar(2)"/>
+			<column name="ID" type="bigint" />
+			<column name="Code" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcludeId" type="int" />
+			<column name="BounceID" type="bigint" />
+			<column name="CreateBounceOnDueDate" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMnton" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFloWId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#112.21" author="sandeepkumar.m">
+		<addPrimaryKey tableName="AdtPresentment_Exclude_Codes" constraintName="pk_adt_pec"
+			columnNames="AuditId, AuditDate, AuditSeq, AuditImage" />
+	</changeSet>
 
 </databaseChangeLog>

@@ -403,5 +403,4 @@ public interface FinanceMainDAO {
 
 	List<FinanceMain> getFinanceMainActiveList(Date fromDate, Date toDate, String finType);
 
-	Map<Integer, String> getBounceForPD();
 }

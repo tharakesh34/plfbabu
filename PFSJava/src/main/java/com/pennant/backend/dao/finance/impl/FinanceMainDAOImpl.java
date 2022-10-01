@@ -6459,23 +6459,4 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return finMains;
 	}
 
-	@Override
-	public Map<Integer, String> getBounceForPD() {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" pec.ExcludeID, br.BounceCode");
-		sql.append(" From Presentment_Exclude_Codes pec");
-		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
-		sql.append(" Where CreateBounceOnDueDate = ?");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		Map<Integer, String> map = new HashMap<>();
-
-		return jdbcOperations.query(sql.toString(), (rs) -> {
-			while (rs.next()) {
-				map.put(rs.getInt(1), rs.getString(2));
-			}
-			return map;
-		}, 1);
-	}
 }

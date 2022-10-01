@@ -443,6 +443,7 @@ import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennant.pff.model.subvention.SubventionHeader;
+import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.finance.tds.cerificate.model.TanDetail;
@@ -3794,6 +3795,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("ProvinceMapping", ProvinceMapping.class,
 						new String[] { "ProvinceMapping", "ProvinceMapping_AView" }, masterWF,
 						new String[] { "MappingValue", "Province", "MappingType" }, null, 600));
+
+		ModuleUtil.register("PresentmentExcludeCode",
+				new ModuleMapping("PresentmentExcludeCode", PresentmentExcludeCode.class,
+						new String[] { "Presentment_Exclude_Codes", "Presentment_Exclude_Codes" }, masterWF,
+						new String[] { "Code", "BounceCode", "BounceCodeDesc" }, null, 700));
 
 		registerCustomModules();
 	}

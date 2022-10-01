@@ -242,7 +242,6 @@ public class ReceiptPaymentService {
 		pd.setStatus(RepayConstants.PEXC_BOUNCE);
 		pd.setReceiptID(rch.getReceiptID());
 		pd.setBounceCode(bounceCode);
-		pd.setBounceRemarks(bounceCode);
 
 		logger.info("Bouncing the receipt with Bounce Code {}", bounceCode);
 		receiptCancellationService.presentmentCancellation(pd, custEODEvent);
