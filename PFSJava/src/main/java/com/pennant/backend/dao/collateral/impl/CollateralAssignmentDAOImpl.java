@@ -167,7 +167,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, reference);
-			ps.setString(index++, moduleName);
+			ps.setString(index, moduleName);
 		}, rowMapper);
 	}
 
@@ -194,7 +194,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, collateralRef);
+			ps.setString(index, collateralRef);
 		}, (rs, rowNum) -> {
 			AssignmentDetails ad = new AssignmentDetails();
 
@@ -734,14 +734,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		paramMap.addValue("SiId", siId);
 		paramMap.addValue("AssetId", assetId);
 		paramMap.addValue("CollateralRef", ref);
-		try {
 
-			this.jdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+		this.jdbcTemplate.update(sql.toString(), paramMap);
 
 		logger.debug(Literal.LEAVING);
 	}
-
 }

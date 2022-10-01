@@ -177,7 +177,7 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setLong(index++, feeID);
+				ps.setLong(index, feeID);
 			}
 		}, new RowMapper<FinFeeScheduleDetail>() {
 			@Override

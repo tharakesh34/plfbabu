@@ -9,6 +9,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.npa.dao.AssetSubClassCodeDAO;
@@ -71,7 +72,7 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 				return ascc;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}
@@ -129,7 +130,7 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 				ps.setInt(index++, ascc.getVersion());
 				ps.setLong(index++, ascc.getCreatedBy());
 				ps.setTimestamp(index++, ascc.getCreatedOn());
-				ps.setLong(index++, JdbcUtil.setLong(ascc.getApprovedBy()));
+				ps.setLong(index++, JdbcUtil.getLong(ascc.getApprovedBy()));
 				ps.setTimestamp(index++, ascc.getApprovedOn());
 				ps.setLong(index++, ascc.getLastMntBy());
 				ps.setTimestamp(index++, ascc.getLastMntOn());
@@ -139,7 +140,7 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 				ps.setString(index++, ascc.getTaskId());
 				ps.setString(index++, ascc.getNextTaskId());
 				ps.setString(index++, ascc.getRecordType());
-				ps.setLong(index++, ascc.getWorkflowId());
+				ps.setLong(index, ascc.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
@@ -179,7 +180,7 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 			ps.setString(index++, ascc.getRecordType());
 			ps.setLong(index++, ascc.getWorkflowId());
 
-			ps.setLong(index++, ascc.getId());
+			ps.setLong(index, ascc.getId());
 		});
 
 	}

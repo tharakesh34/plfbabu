@@ -412,7 +412,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 						+ valueParm1[1];
 				errParm1[2] = PennantJavaUtil.getLabel("label_CustCIF") + " : " + valueParm1[2];
 
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41021", errParm1, valueParm1));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errParm1, valueParm1));
 			}
 		}
 		// ### 31-10-2017 -END

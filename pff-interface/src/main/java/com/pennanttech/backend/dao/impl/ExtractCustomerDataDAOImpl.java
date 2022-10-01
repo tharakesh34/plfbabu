@@ -152,7 +152,7 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 				ps.setString(index++, "E");
 				ps.setString(index++, "M");
 				ps.setTimestamp(index++, curTime);
-				ps.setTimestamp(index++, prevTime);
+				ps.setTimestamp(index, prevTime);
 
 			}
 
@@ -191,7 +191,7 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 				ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
 
 				if (prevTime != null) {
-					ps.setTimestamp(index++, prevTime);
+					ps.setTimestamp(index, prevTime);
 				}
 			}
 
@@ -314,7 +314,7 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 					ps.setString(index++, cs.getEmail());
 					ps.setString(index++, cs.getAltEmail());
 					ps.setString(index++, cs.getPhoneNo());
-					ps.setString(index++, cs.getAltPhoneNo());
+					ps.setString(index, cs.getAltPhoneNo());
 				}
 			});
 		} catch (DuplicateKeyException e) {

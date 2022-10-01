@@ -11,6 +11,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.overdraft.dao.OverdraftLoanDAO;
 import com.pennanttech.pff.overdraft.model.OverdraftDTO;
 import com.pennanttech.pff.overdraft.model.OverdraftLimit;
@@ -76,7 +77,7 @@ public class OverdraftLoanDAOImpl extends SequenceDao<OverdraftLimit> implements
 				return fm;
 			}, finID, FinanceConstants.PRODUCT_ODFACILITY);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -107,7 +108,7 @@ public class OverdraftLoanDAOImpl extends SequenceDao<OverdraftLimit> implements
 				return fm;
 			}, finID, FinanceConstants.PRODUCT_ODFACILITY);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -135,7 +136,7 @@ public class OverdraftLoanDAOImpl extends SequenceDao<OverdraftLimit> implements
 				return fm;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -150,7 +151,7 @@ public class OverdraftLoanDAOImpl extends SequenceDao<OverdraftLimit> implements
 		try {
 			return jdbcOperations.queryForObject(sql, Long.class, finType);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		logger.debug(Literal.LEAVING);
 		return Long.MIN_VALUE;

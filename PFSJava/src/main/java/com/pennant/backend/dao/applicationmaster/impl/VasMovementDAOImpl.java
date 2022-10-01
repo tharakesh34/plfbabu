@@ -110,7 +110,7 @@ public class VasMovementDAOImpl extends SequenceDao<VasMovement> implements VasM
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, vm.getFinID());
+				ps.setLong(index, vm.getFinID());
 			});
 
 			if (recordCount <= 0) {
@@ -152,7 +152,7 @@ public class VasMovementDAOImpl extends SequenceDao<VasMovement> implements VasM
 			ps.setString(index++, vm.getTaskId());
 			ps.setString(index++, vm.getNextTaskId());
 			ps.setString(index++, vm.getRecordType());
-			ps.setLong(index++, vm.getWorkflowId());
+			ps.setLong(index, vm.getWorkflowId());
 		});
 
 		return vm.getId();
@@ -188,7 +188,7 @@ public class VasMovementDAOImpl extends SequenceDao<VasMovement> implements VasM
 			ps.setLong(index++, vm.getFinID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, vm.getVersion() - 1);
+				ps.setInt(index, vm.getVersion() - 1);
 			}
 
 		});

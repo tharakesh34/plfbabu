@@ -3420,7 +3420,6 @@
 		<property name="payOrderIssueHeaderDAO" ref="payOrderIssueHeaderDAO" />
 		<property name="tatDetailDAO" ref="tatDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="overdraftScheduleDetailDAO" ref="overdraftScheduleDetailDAO" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
@@ -3727,7 +3726,6 @@
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
@@ -4432,7 +4430,6 @@
 		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="financeDetailService" ref="financeDetailService" />
@@ -4740,7 +4737,6 @@
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
@@ -6135,10 +6131,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<!-- Ext Tables DAO Details -->
-	<bean id="extTablesDAO" class="com.pennant.backend.dao.ext.impl.ExtTablesDAOImpl" parent="basicDao" />
-
-
 	<!-- Document Manager Details -->
 	<bean id="documentManagerDAO" class="com.pennant.backend.dao.documentdetails.impl.DocumentManagerDAOImpl"
 		parent="sequenceDao" />
@@ -6170,42 +6162,6 @@
 	<bean name="limitRuleServiceTarget" class="com.pennant.backend.service.rulefactory.impl.LimitRuleServiceImpl">
 		<property name="limitRuleDAO" ref="limitRuleDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-	</bean>
-
-
-	<!-- <bean name="limitRuleManagement" class="com.pennant.backend.service.limitservice.impl.LimitRuleManagement"> <property 
-		name="limitDetailDAO" ref="limitDetailDAO" /> <property name="limitHeaderDAO" ref="limitHeaderDAO" /> <property name="limitReferenceMappingDAO" 
-		ref="limitReferenceMappingDAO" /> <property name="limitTransactionDetailDAO" ref="limitTransactionDetailDAO" /> <property 
-		name="customerDAO" ref="customerDAO" /> <property name="limitRuleDAO" ref="limitRuleDAO" /> <property name="financeMainDAO" 
-		ref="financeMainDAO" /> </bean> -->
-
-
-	<bean id="limitRuleManagementService"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="limitRuleManagementServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="processLimitRuleTransactions*">PROPAGATION_REQUIRED</prop>
-				<prop key="updateRuleBasedLimits*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="limitRuleManagementServiceTarget"
-		class="com.pennant.backend.service.limitservice.impl.LimitRuleManagement">
-		<property name="limitDetailDAO" ref="limitDetailDAO" />
-		<property name="limitHeaderDAO" ref="limitHeaderDAO" />
-		<property name="limitReferenceMappingDAO" ref="limitReferenceMappingDAO" />
-		<property name="limitTransactionDetailDAO" ref="limitTransactionDetailDAO" />
-		<property name="customerDAO" ref="customerDAO" />
-		<property name="limitRuleDAO" ref="limitRuleDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<!-- Bank Branch -->
@@ -10468,7 +10424,6 @@
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finMaintainInstructionDAO" ref="finMaintainInstructionDAO" />
 		<property name="lowerTaxDeductionDAO" ref="lowerTaxDeductionDAO" />
@@ -10549,7 +10504,6 @@
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />

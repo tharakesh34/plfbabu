@@ -111,7 +111,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			ps.setBoolean(index++, cs.isModified());
 			ps.setDate(index++, JdbcUtil.getDate(cs.getRegistrationDate()));
 			ps.setDate(index++, JdbcUtil.getDate(cs.getModificationDate()));
-			ps.setDate(index++, JdbcUtil.getDate(cs.getSatisfactionDate()));
+			ps.setDate(index, JdbcUtil.getDate(cs.getSatisfactionDate()));
 
 		});
 
@@ -162,7 +162,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			ps.setString(index++, cs.getRecordType());
 			ps.setLong(index++, cs.getWorkflowId());
 
-			ps.setString(index++, cs.getCollateralRef());
+			ps.setString(index, cs.getCollateralRef());
 		});
 
 		if (recordCount <= 0) {
@@ -242,7 +242,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, depositorId);
+			ps.setLong(index, depositorId);
 		}, rowMapper);
 
 	}
@@ -515,12 +515,8 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 		paramMap.addValue("Modified", modified);
 		paramMap.addValue("CollateralRef", collateralref);
-		try {
 
-			this.jdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+		this.jdbcTemplate.update(sql.toString(), paramMap);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -560,8 +556,10 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		source.addValue("seqNo", seqNo);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Date.class);
-		} catch (Exception e) {
-			logger.warn("Records not found in {} for the reference : {}", tableName, reference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return null;
@@ -582,7 +580,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 				int index = 1;
 
 				ps.setString(index++, collateralRef);
-				ps.setDate(index++, JdbcUtil.getDate(revDate));
+				ps.setDate(index, JdbcUtil.getDate(revDate));
 
 			});
 		} catch (DuplicateKeyException e) {

@@ -286,7 +286,7 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setString(index++, statecode);
+				ps.setString(index, statecode);
 			}
 		}, new RowMapper<TaxDetail>() {
 			@Override
@@ -368,7 +368,7 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, statecode);
-			ps.setString(index++, entityCode);
+			ps.setString(index, entityCode);
 		}, (rs, rowNum) -> {
 			TaxDetail td = new TaxDetail();
 

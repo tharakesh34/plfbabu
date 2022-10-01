@@ -2,11 +2,12 @@ package com.pennanttech.pff.overdraft.dao.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.odsettlementprocess.model.ODSettlementProcess;
 import com.pennanttech.pff.overdraft.dao.OverdraftSettlementDAO;
 
@@ -30,8 +31,8 @@ public class OverdraftSettlementDAOImpl extends SequenceDao<ODSettlementProcess>
 
 		try {
 			jdbcTemplate.update(sql.toString(), oDSettlementMapdata);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 

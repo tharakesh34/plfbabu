@@ -2,7 +2,6 @@ package com.pennant.backend.service.custom;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +36,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.BlacklistCheck;
 import com.pennanttech.pff.external.BreService;
-import com.pennanttech.pff.external.BureauScore;
 import com.pennanttech.pff.external.CibilConsumerService;
 import com.pennanttech.pff.external.CriffBureauService;
 import com.pennanttech.pff.external.Crm;
@@ -61,9 +59,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 
 	@Autowired(required = false)
 	private CriffBureauService criffBureauService;
-
-	@Autowired(required = false)
-	private BureauScore bureauscore;
 
 	@Autowired(required = false)
 	private CibilConsumerService cibilConsumerService;
@@ -90,7 +85,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail afinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
-		List<ErrorDetail> errors = new ArrayList<>();
+
 		boolean taskExecuted = true;
 		boolean executed = getServiceTaskStatus(serviceTask, afinanceMain.getFinReference());
 		if (executed) {

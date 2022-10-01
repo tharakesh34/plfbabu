@@ -243,7 +243,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 				ps.setString(index++, ld.getExternalRef());
 				ps.setString(index++, ld.getExternalRef1());
 				ps.setInt(index++, ld.getTenor());
-				ps.setBigDecimal(index++, ld.getOsPriBal());
+				ps.setBigDecimal(index, ld.getOsPriBal());
 			}
 		});
 
@@ -307,7 +307,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 				ps.setString(index++, ld.getLimitCondition());
 				ps.setLong(index++, ld.getDetailId());
 				if (!type.endsWith("_Temp")) {
-					ps.setInt(index++, ld.getVersion());
+					ps.setInt(index, ld.getVersion());
 				}
 			}
 		});
@@ -335,7 +335,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 			ps.setBigDecimal(index++, limitDetail.getUtilisedLimit());
 			ps.setBigDecimal(index++, limitDetail.getNonRvlUtilised());
 			ps.setBigDecimal(index++, limitDetail.getOsPriBal());
-			ps.setLong(index++, limitDetail.getDetailId());
+			ps.setLong(index, limitDetail.getDetailId());
 		});
 	}
 

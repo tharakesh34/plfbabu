@@ -55,7 +55,7 @@ public class CollateralMarkDAOImpl extends SequenceDao<FinCollateralMark> implem
 				ps.setDate(index++, JdbcUtil.getDate(fcm.getBlockingDate()));
 				ps.setString(index++, fcm.getReturnCode());
 				ps.setString(index++, fcm.getReturnText());
-				ps.setBoolean(index++, fcm.isProcessed());
+				ps.setBoolean(index, fcm.isProcessed());
 
 			});
 		} catch (DataAccessException e) {

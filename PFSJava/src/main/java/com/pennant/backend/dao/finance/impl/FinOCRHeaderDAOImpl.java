@@ -108,7 +108,7 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 			ps.setString(index++, ocrh.getNextTaskId());
 			ps.setString(index++, ocrh.getRecordType());
 			ps.setLong(index++, ocrh.getWorkflowId());
-			ps.setLong(index++, ocrh.getHeaderID());
+			ps.setLong(index, ocrh.getHeaderID());
 		});
 
 		if (recordCount <= 0) {
@@ -129,7 +129,7 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, ocrh.getHeaderID());
+				ps.setLong(index, ocrh.getHeaderID());
 			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -173,7 +173,7 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 			ps.setString(index++, ocrh.getTaskId());
 			ps.setString(index++, ocrh.getNextTaskId());
 			ps.setString(index++, ocrh.getRecordType());
-			ps.setLong(index++, ocrh.getWorkflowId());
+			ps.setLong(index, ocrh.getWorkflowId());
 		});
 
 		return ocrh.getHeaderID();

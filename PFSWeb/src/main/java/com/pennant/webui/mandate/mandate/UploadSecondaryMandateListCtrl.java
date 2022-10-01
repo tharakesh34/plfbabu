@@ -206,7 +206,6 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		btndownload.setVisible(false);
 		if (!MediaUtil.isExcel(media)) {
 			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
-			media = null;
 			return;
 		}
 

@@ -558,7 +558,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setBoolean(index++, false);
+			ps.setBoolean(index, false);
 		}, (rs, roeNum) -> {
 			SystemNotificationExecutionDetails sysNoti = new SystemNotificationExecutionDetails();
 

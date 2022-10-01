@@ -26,7 +26,6 @@ public class QueryModuleController extends ExtendedTestClass {
 
 	public WSReturnStatus doQueryUpdate(QueryDetail queryDetail) {
 		logger.debug(Literal.ENTERING);
-		QueryDetail detail = null;
 
 		// do set document details
 		doSetDocumentDetails(queryDetail);
@@ -41,8 +40,8 @@ public class QueryModuleController extends ExtendedTestClass {
 				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
-		logger.debug(Literal.LEAVING);
 
+		logger.debug(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 

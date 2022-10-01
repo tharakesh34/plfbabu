@@ -1330,6 +1330,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinScheduleData schdData = fd.getFinScheduleData();
 		List<FinFeeDetail> feeDetailsList = schdData.getFinFeeDetailList();
 		String finReference = receiptData.getFinReference();
+		Long finId = receiptData.getFinID();
 
 		List<FinFeeDetail> oldFeedetails = receiptData.getFinFeeDetails();
 		if (CollectionUtils.isNotEmpty(oldFeedetails)) {
@@ -1365,6 +1366,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fee.setTaskId("");
 			fee.setNextTaskId("");
 			fee.setWorkflowId(0);
+			fee.setFinID(finId);
 			fee.setFinReference(finReference);
 
 			TaxHeader taxHeader = fee.getTaxHeader();
@@ -2129,7 +2131,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			advancePaymentService.setAdvancePaymentDetails(scheduleData.getFinanceMain(), scheduleData);
 		}
 
-		if (ImplementationConstants.ALLOW_NPA && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+		if (ImplementationConstants.ALLOW_NPA && (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()))
+				|| !fm.isFinIsActive()) {
 			assetClassificationService.doProcessEarlySettlement(fm.getFinID());
 		}
 
@@ -3651,7 +3654,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		boolean alwCashMode = ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE;
 
 		if (!autoReceipt && fsi.isNewReceipt() && !ReceiptMode.isFundingAccountReq(receiptMode)
-				|| (alwCashMode && ReceiptMode.CASH.equals(receiptMode)) && fundingAccount > 0) {
+				&& !ReceiptMode.CASH.equals(receiptMode) || (alwCashMode && fundingAccount > 0)) {
 			String receipts = AccountConstants.PARTNERSBANK_RECEIPTS;
 			String finType = fm.getFinType();
 			if (finTypePartnerBankDAO.getPartnerBankCount(finType, receiptMode, receipts, fundingAccount) <= 0) {

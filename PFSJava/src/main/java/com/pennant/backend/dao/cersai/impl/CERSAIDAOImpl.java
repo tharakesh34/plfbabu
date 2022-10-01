@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -40,6 +41,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
@@ -100,7 +102,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		paramMap.addValue("EndTime", DateUtil.getSysDate());
 		try {
 			this.jdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
@@ -136,7 +138,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		paramMap.addValue("segmentType", fileInfo.getDownloadType());
 		try {
 			this.jdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "id" });
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		fileInfo.setId(keyHolder.getKey().longValue());
@@ -167,7 +169,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setString(index++, ch.getFileHeader());
 				ps.setString(index++, ch.getFileType());
 				ps.setLong(index++, ch.getTotalRecords());
-				ps.setDate(index++, JdbcUtil.getDate(ch.getFileDate()));
+				ps.setDate(index, JdbcUtil.getDate(ch.getFileDate()));
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -391,7 +393,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		ps.setLong(index++, collDtl.getNoOfBrrowers());
 		ps.setLong(index++, collDtl.getNoOfAssetOwners());
 		ps.setLong(index++, collDtl.getNoOfConsortiumMemebers());
-		ps.setLong(index++, JdbcUtil.setLong(collDtl.getSiTypeId()));
+		ps.setLong(index++, JdbcUtil.getLong(collDtl.getSiTypeId()));
 		ps.setString(index++, collDtl.getSiTypeOthers());
 		ps.setString(index++, collDtl.getFinancingTypeId());
 		ps.setDate(index++, JdbcUtil.getDate(collDtl.getSiCreationDate()));
@@ -619,7 +621,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setString(index++, collDetails.getReasonOthers());
 				ps.setString(index++, collDetails.getBatchRefNumber());
 				ps.setString(index++, collDetails.getReasonForDelay());
-				ps.setLong(index++, collDetails.getBatchId());
+				ps.setLong(index, collDetails.getBatchId());
 
 			});
 		} catch (Exception e) {
@@ -631,8 +633,6 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 
 	@Override
 	public List<Map<String, Object>> getExtendedFieldMap(String reference, String tableName, String type) {
-		List<Map<String, Object>> renderMap = null;
-
 		type = StringUtils.trimToEmpty(type).toLowerCase();
 
 		StringBuilder sql = new StringBuilder();
@@ -647,13 +647,11 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", reference);
 		try {
-			renderMap = this.jdbcTemplate.queryForList(sql.toString(), source);
-		} catch (Exception e) {
-			logger.warn("Records not found in {}{} for the reference : {}", tableName, type, reference);
-			renderMap = new ArrayList<>();
+			return this.jdbcTemplate.queryForList(sql.toString(), source);
+		} catch (DataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new ArrayList<>();
 		}
-
-		return renderMap;
 	}
 
 	@Override
@@ -746,7 +744,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setLong(index++, colDtl.getPincode());
 				ps.setString(index++, colDtl.getCountry());
 				ps.setString(index++, colDtl.getBatchRefNumber());
-				ps.setLong(index++, colDtl.getBatchId());
+				ps.setLong(index, colDtl.getBatchId());
 
 			});
 		} catch (Exception e) {
@@ -861,7 +859,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setString(index++, cma.getState());
 				ps.setLong(index++, cma.getPincode());
 				ps.setString(index++, cma.getCountry());
-				ps.setLong(index++, cma.getBatchId());
+				ps.setLong(index, cma.getBatchId());
 
 			});
 		} catch (Exception e) {
@@ -915,7 +913,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setString(index++, cima.getLatitudeLongitude1());
 				ps.setString(index++, cima.getLatitudeLongitude2());
 				ps.setString(index++, cima.getLatitudeLongitude3());
-				ps.setString(index++, cima.getLatitudeLongitude4());
+				ps.setString(index, cima.getLatitudeLongitude4());
 
 			});
 		} catch (Exception e) {
@@ -961,7 +959,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setString(index++, cia.getDesignClass());
 				ps.setString(index++, cia.getTradeMarkAppNumber());
 				ps.setDate(index++, JdbcUtil.getDate(cia.getTradeMarkAppDate()));
-				ps.setLong(index++, cia.getBatchId());
+				ps.setLong(index, cia.getBatchId());
 
 			});
 		} catch (Exception e) {
@@ -995,7 +993,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 
 		try {
 			this.jdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
+		} catch (DuplicateKeyException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.trace(Literal.LEAVING);

@@ -1634,7 +1634,6 @@
 		<property name="dedupValidation" ref="dedupValidation" />
 		<property name="reScheduleService" ref="reScheduleService" />
 		<property name="accrualService" ref="accrualService" />
-		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="pdfParserCaller" ref="pdfParserCaller" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
@@ -3368,7 +3367,6 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="limitDetailService" ref="limitDetailService" />
-		<property name="limitRuleManagementService" ref="limitRuleManagementService" />
 		<property name="limitManagement" ref="limitManagement" />
 	</bean>
 
@@ -4992,7 +4990,6 @@
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="partnerBankService" ref="partnerBankService" />
-		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 	<!-- Loan Closure Enquiry -->

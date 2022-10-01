@@ -12,7 +12,6 @@ import org.springframework.util.StopWatch;
 
 import com.sun.management.OperatingSystemMXBean;
 
-@SuppressWarnings("restriction")
 public class PerfLogInterceptor implements MethodInterceptor {
 	private final Logger log = LogManager.getLogger(PerfLogInterceptor.class);
 

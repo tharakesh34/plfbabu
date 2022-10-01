@@ -106,7 +106,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			ps.setLong(index++, finID);
 
 			if (logKey != 0) {
-				ps.setLong(index++, logKey);
+				ps.setLong(index, logKey);
 			}
 		});
 	}
@@ -199,7 +199,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			ps.setString(index++, fd.getTaskId());
 			ps.setString(index++, fd.getNextTaskId());
 			ps.setString(index++, fd.getRecordType());
-			ps.setLong(index++, fd.getWorkflowId());
+			ps.setLong(index, fd.getWorkflowId());
 		});
 
 		return fd.getId();
@@ -282,7 +282,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 				ps.setString(index++, fd.getTaskId());
 				ps.setString(index++, fd.getNextTaskId());
 				ps.setString(index++, fd.getRecordType());
-				ps.setLong(index++, fd.getWorkflowId());
+				ps.setLong(index, fd.getWorkflowId());
 
 			}
 
@@ -349,7 +349,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 
 			ps.setLong(index++, fd.getFinID());
 			ps.setDate(index++, JdbcUtil.getDate(fd.getDisbDate()));
-			ps.setInt(index++, fd.getDisbSeq());
+			ps.setInt(index, fd.getDisbSeq());
 
 		});
 
@@ -376,7 +376,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 				ps.setLong(index++, fd.getLinkedTranId());
 				ps.setLong(index++, fd.getFinID());
 				ps.setDate(index++, JdbcUtil.getDate(fd.getDisbDate()));
-				ps.setInt(index++, fd.getDisbSeq());
+				ps.setInt(index, fd.getDisbSeq());
 			}
 
 			@Override
@@ -454,7 +454,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
 				ps.setLong(index++, finID);
-				ps.setLong(index++, logKey);
+				ps.setLong(index, logKey);
 			}
 		}, rowMapper);
 	}
@@ -473,7 +473,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			int index = 1;
 			ps.setLong(index++, finID);
 			ps.setDate(index++, JdbcUtil.getDate(disbDate));
-			ps.setString(index++, FinanceConstants.DISB_STATUS_CANCEL);
+			ps.setString(index, FinanceConstants.DISB_STATUS_CANCEL);
 
 		}, (rs, rowNum) -> {
 			FinanceDisbursement fd = new FinanceDisbursement();
@@ -574,7 +574,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			ps.setString(index++, AccountingEvent.ADDDBSP);
 			ps.setLong(index++, finID);
 			ps.setString(index++, AccountingEvent.ADDDBSN);
-			ps.setString(index++, AccountingEvent.ADDDBSP);
+			ps.setString(index, AccountingEvent.ADDDBSP);
 		}, (rs, rowNum) -> {
 			FinanceDisbursement fd = new FinanceDisbursement();
 

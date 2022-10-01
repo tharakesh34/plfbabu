@@ -392,7 +392,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 
 			ps.setInt(index++, 1);
 			ps.setLong(index++, custID);
-			ps.setDate(index++, JdbcUtil.getDate(valueDate));
+			ps.setDate(index, JdbcUtil.getDate(valueDate));
 		}, (rs, rowNum) -> {
 			AutoKnockOffExcess knockOff = new AutoKnockOffExcess();
 

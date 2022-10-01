@@ -204,7 +204,6 @@ public class ImplementationConstants {
 		RESTRUCTURE_RATE_CHG_ALW = getValueAsBoolean("RESTRUCTURE_RATE_CHG_ALW", false);
 		RESTRUCTURE_ALW_CHARGES = getValueAsBoolean("RESTRUCTURE_ALW_CHARGES", false);
 		PENALTY_CALC_ON_REPRESENTATION = getValueAsBoolean("PENALTY_CALC_ON_REPRESENTATION", false);
-		MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK = getValueAsBoolean("MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK", false);
 		DISB_REQ_RES_FILE_GEN_MODE = getValueAsBoolean("DISB_REQ_RES_FILE_GEN_MODE", false);
 		ALLOW_SHADOW_POSTINGS = getValueAsBoolean("ALLOW_SHADOW_POSTINGS", false);
 		ALLOW_ESCROW_MODE = getValueAsBoolean("ALLOW_ESCROW_MODE", false);
@@ -299,6 +298,8 @@ public class ImplementationConstants {
 		RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT",
 				true);
 		RECEIPT_ALLOW_FULL_WAIVER = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER", false);
+		ALLOW_CERSAI = getValueAsBoolean("ALLOW_CERSAI", false);
+		DISB_STP = getValueAsBoolean("DISB_STP", false);
 
 		setVerificationConstants();
 	}
@@ -495,7 +496,6 @@ public class ImplementationConstants {
 	public static boolean RESTRUCTURE_RATE_CHG_ALW;
 	// Allow Charges for User Selection for POS calculation
 	public static boolean RESTRUCTURE_ALW_CHARGES;
-	public static boolean MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK;
 	public static boolean ALLOW_SHADOW_POSTINGS;
 	public static boolean DISB_REQ_RES_FILE_GEN_MODE;
 	public static boolean ALLOW_ESCROW_MODE;
@@ -583,6 +583,7 @@ public class ImplementationConstants {
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT;
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER;
 	public static boolean ALLOW_CERSAI;
+	public static boolean DISB_STP;
 
 	// FIXME MURTHT
 	public static final boolean OLD_FINANCIALS_REQUIRED = false;

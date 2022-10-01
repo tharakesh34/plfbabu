@@ -229,7 +229,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 	private void setStepFinanceDetails(InstBasedSchdDetails instSchdDetail, FinanceDetail fd, FinanceMain fm) {
 		FinScheduleData schdData = fd.getFinScheduleData();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
+
 		schdData.setStepPolicyDetails(financeDetailService.getFinStepDetailListByFinRef(finID, "_view", false));
 
 		Date recalFromDate = null;

@@ -204,7 +204,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 			ps.setLong(index++, ri.getFinID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, ri.getVersion() - 1);
+				ps.setInt(index, ri.getVersion() - 1);
 			}
 
 		});
@@ -225,7 +225,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, rowMapper);
 	}
 
@@ -241,7 +241,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, finID);
-			ps.setLong(index++, logKey);
+			ps.setLong(index, logKey);
 		}, rowMapper);
 	}
 
@@ -256,7 +256,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			RepayInstruction ri = new RepayInstruction();
 
@@ -278,7 +278,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -313,7 +313,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 				ps.setString(index++, rpi.getTaskId());
 				ps.setString(index++, rpi.getNextTaskId());
 				ps.setString(index++, rpi.getRecordType());
-				ps.setLong(index++, rpi.getWorkflowId());
+				ps.setLong(index, rpi.getWorkflowId());
 			}
 
 			@Override
@@ -375,7 +375,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 		ps.setString(index++, ri.getTaskId());
 		ps.setString(index++, ri.getNextTaskId());
 		ps.setString(index++, ri.getRecordType());
-		ps.setLong(index++, ri.getWorkflowId());
+		ps.setLong(index, ri.getWorkflowId());
 	}
 
 	private StringBuilder getSqlQuery(String type, boolean isWIF) {

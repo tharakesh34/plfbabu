@@ -148,9 +148,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Checkbox listHeader_CheckBox_Comp;
 	protected Checkbox list_CheckBox;
 
-	private String roleCode;
-	private String recordAction;
-
 	private Map<Long, FinReceiptHeader> recHeaderMap = new HashMap<Long, FinReceiptHeader>();
 	private Map<Long, FinReceiptHeader> headerMap = new HashMap<Long, FinReceiptHeader>(); // it has all data
 

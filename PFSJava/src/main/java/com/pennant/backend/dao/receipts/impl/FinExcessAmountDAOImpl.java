@@ -75,7 +75,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finId);
+			ps.setLong(index, finId);
 		}, rowMapper);
 	}
 
@@ -104,7 +104,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, fe.getAmount());
 			ps.setBigDecimal(index++, fe.getUtilisedAmt());
 			ps.setBigDecimal(index++, fe.getReservedAmt());
-			ps.setBigDecimal(index++, fe.getBalanceAmt());
+			ps.setBigDecimal(index, fe.getBalanceAmt());
 
 		});
 	}
@@ -122,7 +122,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, excess.getUtilisedAmt());
 			ps.setBigDecimal(index++, excess.getReservedAmt());
 			ps.setBigDecimal(index++, excess.getBalanceAmt());
-			ps.setLong(index++, excess.getExcessID());
+			ps.setLong(index, excess.getExcessID());
 		});
 	}
 
@@ -190,7 +190,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
 			ps.setLong(index++, excessID);
-			ps.setBigDecimal(index++, amount);
+			ps.setBigDecimal(index, amount);
 		});
 
 		if (recordCount <= 0) {
@@ -211,7 +211,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			int index = 1;
 			ps.setBigDecimal(index++, paidNow);
 			ps.setBigDecimal(index++, paidNow);
-			ps.setLong(index++, excessID);
+			ps.setLong(index, excessID);
 
 		});
 	}
@@ -228,7 +228,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
 
-			ps.setLong(index++, excessID);
+			ps.setLong(index, excessID);
 
 		});
 
@@ -249,7 +249,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
 			ps.setLong(index++, finID);
-			ps.setString(index++, amountType);
+			ps.setString(index, amountType);
 		});
 	}
 
@@ -276,7 +276,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				ps.setString(i++, fe.getTranType());
 				ps.setBigDecimal(i++, fe.getAmount());
 				ps.setString(i++, fe.getMovementFrom());
-				ps.setDate(i++, JdbcUtil.getDate(fe.getSchDate()));
+				ps.setDate(i, JdbcUtil.getDate(fe.getSchDate()));
 
 			}
 
@@ -308,7 +308,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setString(index++, fe.getTranType());
 			ps.setBigDecimal(index++, fe.getAmount());
 			ps.setString(index++, fe.getMovementFrom());
-			ps.setDate(index++, JdbcUtil.getDate(fe.getSchDate()));
+			ps.setDate(index, JdbcUtil.getDate(fe.getSchDate()));
 		});
 
 	}
@@ -327,7 +327,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, reserveAmt);
 			ps.setBigDecimal(index++, reserveAmt);
 			ps.setLong(index++, payAgainstID);
-			ps.setBigDecimal(index++, reserveAmt);
+			ps.setBigDecimal(index, reserveAmt);
 		});
 
 		if (recordCount <= 0) {
@@ -360,7 +360,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, receiptSeqID);
+			ps.setLong(index, receiptSeqID);
 		}, rowMapper);
 	}
 
@@ -378,7 +378,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setLong(index++, payAgainstID);
 			ps.setLong(index++, receiptSeqID);
 			ps.setBigDecimal(index++, reserveAmt);
-			ps.setString(index++, paymentType);
+			ps.setString(index, paymentType);
 		});
 	}
 
@@ -399,7 +399,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, diffInReserve);
 			ps.setLong(index++, receiptID);
 			ps.setLong(index++, payAgainstID);
-			ps.setString(index++, paymentType);
+			ps.setString(index, paymentType);
 		});
 
 		if (recordCount <= 0) {
@@ -422,7 +422,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setLong(index++, receiptID);
 			ps.setString(index++, paymentType);
 			if (payAgainstID != 0) {
-				ps.setLong(index++, payAgainstID);
+				ps.setLong(index, payAgainstID);
 			}
 		});
 	}
@@ -450,7 +450,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 				ps.setBigDecimal(index++, ex.getAmount());
 				ps.setBigDecimal(index++, ex.getAmount());
-				ps.setLong(index++, ex.getExcessID());
+				ps.setLong(index, ex.getExcessID());
 			}
 
 			@Override
@@ -479,7 +479,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
-			ps.setLong(index++, excessID);
+			ps.setLong(index, excessID);
 		});
 
 		if (recordCount <= 0) {
@@ -502,7 +502,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 				ps.setBigDecimal(index++, ex.getAmount());
 				ps.setBigDecimal(index++, ex.getAmount());
-				ps.setLong(index++, ex.getExcessID());
+				ps.setLong(index, ex.getExcessID());
 			}
 
 			@Override
@@ -523,7 +523,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			ps.setBigDecimal(index++, advanceAmount);
 			ps.setBigDecimal(index++, advanceAmount);
-			ps.setLong(index++, excessID);
+			ps.setLong(index, excessID);
 
 		});
 	}
@@ -564,7 +564,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			ps.setBigDecimal(index++, ea.getUtilisedAmt());
 			ps.setBigDecimal(index++, ea.getBalanceAmt());
-			ps.setLong(index++, ea.getExcessID());
+			ps.setLong(index, ea.getExcessID());
 		});
 	}
 
@@ -621,7 +621,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
-			ps.setLong(index++, excessID);
+			ps.setLong(index, excessID);
 
 		});
 
@@ -643,7 +643,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
 			ps.setLong(index++, finID);
-			ps.setString(index++, amountType);
+			ps.setString(index, amountType);
 
 		});
 
@@ -662,7 +662,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
 			ps.setLong(index++, finID);
-			ps.setString(index++, amountType);
+			ps.setString(index, amountType);
 
 		});
 	}
@@ -699,7 +699,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			ps.setBigDecimal(index++, em.getBalanceAmt());
 			ps.setBigDecimal(index++, em.getReservedAmt());
-			ps.setLong(index++, em.getExcessID());
+			ps.setLong(index, em.getExcessID());
 		});
 
 	}
@@ -716,7 +716,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, ea.getBalanceAmt());
 			ps.setBigDecimal(index++, ea.getReservedAmt());
 			ps.setBigDecimal(index++, ea.getUtilisedAmt());
-			ps.setLong(index++, ea.getExcessID());
+			ps.setLong(index, ea.getExcessID());
 		});
 
 		return recordCount;
@@ -804,7 +804,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			ps.setLong(index++, presentmentId);
 			ps.setString(index++, "I");
-			ps.setString(index++, "I");
+			ps.setString(index, "I");
 		});
 	}
 
@@ -827,7 +827,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				ps.setBigDecimal(index++, ea.getAmount());
 				ps.setBigDecimal(index++, ea.getUtilisedAmt());
 				ps.setBigDecimal(index++, ea.getReservedAmt());
-				ps.setBigDecimal(index++, ea.getBalanceAmt());
+				ps.setBigDecimal(index, ea.getBalanceAmt());
 
 			}
 
@@ -864,7 +864,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				ps.setString(index++, em.getTranType());
 				ps.setBigDecimal(index++, em.getAmount());
 				ps.setString(index++, em.getMovementFrom());
-				ps.setDate(index++, JdbcUtil.getDate(em.getSchDate()));
+				ps.setDate(index, JdbcUtil.getDate(em.getSchDate()));
 
 			}
 

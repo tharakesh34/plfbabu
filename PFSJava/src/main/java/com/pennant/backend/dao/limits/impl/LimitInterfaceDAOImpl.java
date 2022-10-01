@@ -55,7 +55,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 			ps.setString(index++, flp.getErrorCode());
 			ps.setString(index++, flp.getErrorMsg());
 			ps.setDate(index++, JdbcUtil.getDate(flp.getValueDate()));
-			ps.setBigDecimal(index++, flp.getDealAmount());
+			ps.setBigDecimal(index, flp.getDealAmount());
 		});
 	}
 
@@ -88,7 +88,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 			ps.setBigDecimal(index++, ld.getReservedAmt());
 			ps.setString(index++, ld.getAvailableAmtCcy());
 			ps.setBigDecimal(index++, ld.getAvailableAmt());
-			ps.setString(index++, ld.getNotes());
+			ps.setString(index, ld.getNotes());
 		});
 	}
 
@@ -198,7 +198,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 			ps.setBigDecimal(index++, ld.getAvailableAmt());
 			ps.setString(index++, ld.getNotes());
 			ps.setString(index++, ld.getLimitRef());
-			ps.setString(index++, ld.getCustCIF());
+			ps.setString(index, ld.getCustCIF());
 		});
 	}
 
@@ -223,7 +223,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 					ps.setString(index++, cfd.getFacilityStatus());
 					ps.setDate(index++, JdbcUtil.getDate(cfd.getClosedDate()));
 					ps.setBoolean(index++, cfd.isProcessed());
-					ps.setDate(index++, JdbcUtil.getDate(cfd.getProcessedDate()));
+					ps.setDate(index, JdbcUtil.getDate(cfd.getProcessedDate()));
 
 				}
 

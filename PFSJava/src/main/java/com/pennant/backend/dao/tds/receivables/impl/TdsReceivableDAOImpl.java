@@ -38,6 +38,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -104,7 +105,7 @@ public class TdsReceivableDAOImpl extends SequenceDao<TdsReceivable> implements 
 				return tdsReceivable;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -177,7 +178,7 @@ public class TdsReceivableDAOImpl extends SequenceDao<TdsReceivable> implements 
 				ps.setString(index++, tdsReceivable.getTaskId());
 				ps.setString(index++, tdsReceivable.getNextTaskId());
 				ps.setString(index++, tdsReceivable.getRecordType());
-				ps.setLong(index++, tdsReceivable.getWorkflowId());
+				ps.setLong(index, tdsReceivable.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -226,9 +227,9 @@ public class TdsReceivableDAOImpl extends SequenceDao<TdsReceivable> implements 
 
 			ps.setLong(index++, tdsReceivable.getId());
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, tdsReceivable.getPrevMntOn());
+				ps.setTimestamp(index, tdsReceivable.getPrevMntOn());
 			} else {
-				ps.setInt(index++, tdsReceivable.getVersion() - 1);
+				ps.setInt(index, tdsReceivable.getVersion() - 1);
 			}
 
 		});
@@ -275,7 +276,7 @@ public class TdsReceivableDAOImpl extends SequenceDao<TdsReceivable> implements 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, certificatenumber);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

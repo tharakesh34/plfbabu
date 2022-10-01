@@ -43,7 +43,7 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 			ps.setString(index++, entryDetail.getEventAction());
 			ps.setBoolean(index++, entryDetail.isSchdlRecal());
 			ps.setDate(index++, JdbcUtil.getDate(entryDetail.getPostDate()));
-			ps.setBoolean(index++, entryDetail.isReversalCompleted());
+			ps.setBoolean(index, entryDetail.isReversalCompleted());
 		});
 
 		return entryDetail.getLogKey();

@@ -87,7 +87,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, custId);
+			ps.setLong(index, custId);
 		}, rowMapper);
 
 	}
@@ -177,7 +177,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			ps.setString(index++, cd.getTaskId());
 			ps.setString(index++, cd.getNextTaskId());
 			ps.setString(index++, cd.getRecordType());
-			ps.setLong(index++, cd.getWorkflowId());
+			ps.setLong(index, cd.getWorkflowId());
 		});
 
 		return cd.getCustID();
@@ -212,7 +212,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			ps.setString(index++, ed.getPasswordProtected());
 			ps.setString(index++, ed.getPassword());
 			ps.setLong(index++, ed.getDocRefId());
-			ps.setString(index++, ed.getDocUri());
+			ps.setString(index, ed.getDocUri());
 		});
 
 		return ed.getId();
@@ -263,7 +263,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			ps.setString(index++, cd.getRecordType());
 			ps.setLong(index++, cd.getWorkflowId());
 
-			ps.setLong(index++, cd.getID());
+			ps.setLong(index, cd.getID());
 		});
 
 		if (recordCount <= 0) {
@@ -678,7 +678,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		public CustomerDocument mapRow(ResultSet rs, int rowNum) throws SQLException {
 			CustomerDocument cd = new CustomerDocument();
 
-			cd.setID(rs.getLong("Id"));
+			cd.setID(rs.getLong("ID"));
 			cd.setCustID(rs.getLong("CustID"));
 			cd.setCustDocType(rs.getString("CustDocType"));
 			cd.setCustDocTitle(rs.getString("CustDocTitle"));

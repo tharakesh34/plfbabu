@@ -1625,10 +1625,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-			ps.setLong(index++, custId);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			FinanceEnquiry fm = new FinanceEnquiry();
 
 			fm.setFinReference(rs.getString("FinReference"));
@@ -1646,7 +1643,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			fm.setMaxInstAmount(rs.getBigDecimal("MaxInstAmount"));
 
 			return fm;
-		});
+		}, custId);
 	}
 
 	@Override
@@ -1808,14 +1805,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-	}
-
-	@Override
-	public ArrayList<Customer> getCustomerByLimitRule(String queryCode, String sqlQuery) {
-		logger.debug("insertSql: " + queryCode);
-
-		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
-		return (ArrayList<Customer>) this.jdbcTemplate.query(queryCode, typeRowMapper);
 	}
 
 	/**
@@ -2749,7 +2738,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			ps.setString(index++, segmentType);
 
 			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
-				ps.setLong(index++, finID);
+				ps.setLong(index, finID);
 			}
 		}, (rs, rowNum) -> {
 			FinanceEnquiry finEnqy = new FinanceEnquiry();

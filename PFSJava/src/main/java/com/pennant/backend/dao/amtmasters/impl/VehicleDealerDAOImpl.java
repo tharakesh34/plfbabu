@@ -95,7 +95,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setString(index++, dealerType);
+				ps.setString(index, dealerType);
 			}
 		}, new RowMapper<VehicleDealer>() {
 			@Override

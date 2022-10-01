@@ -88,7 +88,7 @@ public class RisksAndMitigantsDAOImpl extends SequenceDao<RisksAndMitigants> imp
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
 				ps.setString(index++, finReference);
-				ps.setString(index++, finReference);
+				ps.setString(index, finReference);
 			}
 		}, new RowMapper<RisksAndMitigants>() {
 			@Override

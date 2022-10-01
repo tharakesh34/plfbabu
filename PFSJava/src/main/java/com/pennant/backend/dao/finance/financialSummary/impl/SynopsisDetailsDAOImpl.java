@@ -149,7 +149,7 @@ public class SynopsisDetailsDAOImpl extends SequenceDao<SynopsisDetails> impleme
 				ps.setString(index++, sd.getTaskId());
 				ps.setString(index++, sd.getNextTaskId());
 				ps.setString(index++, sd.getRecordType());
-				ps.setLong(index++, sd.getWorkflowId());
+				ps.setLong(index, sd.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -190,7 +190,7 @@ public class SynopsisDetailsDAOImpl extends SequenceDao<SynopsisDetails> impleme
 			ps.setString(index++, sd.getRecordType());
 			ps.setLong(index++, sd.getWorkflowId());
 
-			ps.setLong(index++, sd.getFinID());
+			ps.setLong(index, sd.getFinID());
 		});
 
 		if (recordCount == 0) {
@@ -210,7 +210,7 @@ public class SynopsisDetailsDAOImpl extends SequenceDao<SynopsisDetails> impleme
 			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, sd.getFinID());
+				ps.setLong(index, sd.getFinID());
 			});
 
 			if (recordCount == 0) {

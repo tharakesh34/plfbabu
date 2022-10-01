@@ -570,7 +570,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			dialogName = "WIFFinanceMainDialog";
 		}
 
-		getUserWorkspace().allocateAuthorities(dialogName, roleCode, menuItemRightName);
+		getUserWorkspace().allocateAuthorities(dialogName, roleCode);
 
 		// Schedule related buttons
 		this.btnAddReviewRate.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddRvwRate"));

@@ -82,8 +82,8 @@ import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.spreadsheet.SpreadSheet;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -180,7 +180,6 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private String moduleDefiner = "";
 	private boolean actionSave = false;
 	private boolean dataFetchComplete = false;
-	private String userAction;
 	private BigDecimal score = BigDecimal.ZERO;
 	private BigDecimal custPOS = BigDecimal.ZERO;
 	private Date valueDate;

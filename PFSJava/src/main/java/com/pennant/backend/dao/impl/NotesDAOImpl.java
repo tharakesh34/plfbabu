@@ -176,7 +176,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 				ps.setString(index++, module);
 			}
 
-			ps.setString(index++, "N");
+			ps.setString(index, "N");
 		}, (rs, rowNum) -> {
 			Notes item = new Notes();
 

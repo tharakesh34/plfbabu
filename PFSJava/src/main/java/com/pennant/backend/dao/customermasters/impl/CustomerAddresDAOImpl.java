@@ -162,7 +162,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, custId);
+			ps.setLong(index, custId);
 		}, (rs, rowNum) -> {
 			CustomerAddres ca = new CustomerAddres();
 

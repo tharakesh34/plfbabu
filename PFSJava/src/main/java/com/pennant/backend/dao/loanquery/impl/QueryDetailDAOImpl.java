@@ -108,7 +108,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 				ps.setLong(index++, qd.getWorkflowId());
 				ps.setString(index++, qd.getModule());
 				ps.setString(index++, qd.getReference());
-				ps.setString(index++, qd.getRaisedUsrRole());
+				ps.setString(index, qd.getRaisedUsrRole());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -143,7 +143,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 			ps.setString(index++, qd.getModule());
 			ps.setString(index++, qd.getReference());
 
-			ps.setLong(index++, qd.getId());
+			ps.setLong(index, qd.getId());
 		});
 	}
 
@@ -184,7 +184,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, reference);
+			ps.setString(index, reference);
 		}, (rs, rowNum) -> {
 			QueryDetail qd = new QueryDetail();
 
@@ -208,7 +208,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, reference);
+			ps.setString(index, reference);
 		}, (rs, rowNum) -> {
 			QueryDetail qd = new QueryDetail();
 
@@ -230,7 +230,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, reference);
+			ps.setString(index, reference);
 		}, rowMapper);
 
 	}
@@ -252,7 +252,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 			ps.setString(index++, reference);
 			ps.setString(index++, assignedRole);
 			ps.setString(index++, "Close");
-			ps.setString(index++, "Resolve");
+			ps.setString(index, "Resolve");
 		}, (rs, rowNum) -> {
 			QueryDetail qd = new QueryDetail();
 
@@ -290,7 +290,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, Reference);
+			ps.setString(index, Reference);
 		}, (rs, rowNum) -> {
 			QueryDetail qd = new QueryDetail();
 

@@ -496,7 +496,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	 * 
 	 * @param beneficiary The entity that need to be render.
 	 */
-	@SuppressWarnings("rawtypes")
 	public void doShowDialog(Beneficiary beneficiary) {
 		logger.debug("Entering");
 
@@ -559,7 +558,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		if (!this.accNumber.isReadonly()) {
 			this.accNumber
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_BeneficiaryDialog_AccNumber.value"),
-							null, true, minAccNoLength, maxAccNoLength));
+							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true, minAccNoLength, maxAccNoLength));
 		}
 		// Acc Holder Name
 		if (!this.accHolderName.isReadonly()) {

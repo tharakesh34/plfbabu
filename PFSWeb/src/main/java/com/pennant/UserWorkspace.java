@@ -152,15 +152,26 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	 * Checks if a right is in the <b>granted rights</b> that the logged in user have. <br>
 	 * 
 	 * @param rightName
+	 * @return false, if the right is in the granted user rights.<br>
+	 *         true, if the right is not granted to the user.<br>
+	 */
+	public boolean isNotAllowed(String rightName) {
+		return !isAllowed(rightName);
+	}
+
+	/**
+	 * Checks if a right is in the <b>granted rights</b> that the logged in user have. <br>
+	 * 
+	 * @param rightName
 	 * @return true, if the right is in the granted user rights.<br>
 	 *         false, if the right is not granted to the user.<br>
 	 */
 	public boolean isAllowed(String rightName) {
-		return getGrantedAuthoritySet().contains(rightName.toLowerCase());
+		return getGrantedAuthoritySet().contains(rightName);
 	}
 
 	public boolean isReadOnly(String rightName) {
-		return !isAllowed(rightName.toLowerCase());
+		return !isAllowed(rightName);
 
 	}
 
@@ -207,7 +218,6 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 
 		for (final SecurityRight right : rights) {
 			String rightName = right.getRightName();
-			rightName = rightName.toLowerCase();
 			if (!getGrantedAuthoritySet().contains(rightName)) {
 				this.grantedAuthoritySet.add(rightName);
 			}

@@ -159,7 +159,6 @@ import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
-import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
@@ -346,7 +345,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private ReceiptCalculator receiptCalculator;
 	private AccrualService accrualService;
 	private PartnerBankService partnerBankService;
-	private NotificationService notificationService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
 	private AccountingDetailDialogCtrl accountingDetailDialogCtrl = null;
 	private DocumentDetailDialogCtrl documentDetailDialogCtrl = null;
@@ -382,7 +380,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private int formatter = 0;
 	private String amountFormat = null;
 	private int receiptPurposeCtg = -1;
-	private boolean dateChange = true;
 
 	protected boolean recSave = false;
 	protected Component checkListChildWindow = null;
@@ -2332,7 +2329,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptData.getFinanceDetail().setFinTypeFeesList(finTypeFeesList);
 	}
 
-	@SuppressWarnings("deprecation")
 	private void setBalances() {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		ReceiptAllocationDetail xa = rch.getTotalXcess();
@@ -2460,10 +2456,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setAgreementDetailDialogCtrl(AgreementDetailDialogCtrl agreementDetailDialogCtrl) {
 		this.agreementDetailDialogCtrl = agreementDetailDialogCtrl;
-	}
-
-	public void setNotificationService(NotificationService notificationService) {
-		this.notificationService = notificationService;
 	}
 
 	public CustomerDialogCtrl getCustomerDialogCtrl() {

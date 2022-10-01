@@ -45,7 +45,6 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 	protected Radiogroup radiogroupCKYC;
 	protected Row rowUpload;
 	private CKYCService ckycService;
-	private String fileNameLead = null;
 	private File file;
 
 	public CKYCProcessCtrl() {
@@ -83,7 +82,7 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 		}
 		if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".txt"))) {
 			MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid Text file.");
-			media = null;
+
 			return;
 		}
 

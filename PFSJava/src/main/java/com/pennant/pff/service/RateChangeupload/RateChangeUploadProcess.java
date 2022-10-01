@@ -328,6 +328,13 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		String error = "Loan is Not Active.";
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
+			for (FinanceMain fm : fmList) {
+				if (rcu.getFinReference().equals(fm.getFinReference())) {
+					rcu.setFinID(fm.getFinID());
+					rcu.setFinanceMain(fm);
+				}
+			}
+
 			if (fmList.isEmpty()) {
 				error = "Not valid Loan.";
 				if (remarks.length() > 0) {

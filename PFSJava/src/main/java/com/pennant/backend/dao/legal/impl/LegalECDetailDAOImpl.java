@@ -109,7 +109,7 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setLong(index++, legalId);
+				ps.setLong(index, legalId);
 			}
 		}, new RowMapper<LegalECDetail>() {
 			@Override

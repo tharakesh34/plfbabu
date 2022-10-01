@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -51,8 +49,6 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 	private FinanceMainDAO financeMainDAO;
 	private FinanceMainService financeMainService;
 	private SOAReportGenerationService soaReportGenerationService;
-	private FinExcessAmountDAO finExcessAmountDAO;
-	private FeeTypeDAO feeTypeDAO;
 	private ForeClosureService foreClosureService;
 
 	/**
@@ -645,7 +641,6 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		Date fromDate = statementRequest.getFromDate();
 		String finReference = statementRequest.getFinReference();
 
-		Long finID = null;
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";
@@ -661,7 +656,6 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			return response;
 		}
 
-		finID = fm.getFinID();
 		if (fromDate != null) {
 			if (DateUtil.compare(fromDate, fm.getFinStartDate()) < 0
 					|| DateUtil.compare(fm.getMaturityDate(), fromDate) < 0) {
@@ -675,7 +669,6 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		}
 
 		// call controller to get fore-closure letter
-		FinStatementResponse finStatement = null;
 		try {
 			ForeClosureLetter letter = foreClosureService.getForeClosureAmt(statementRequest);
 
@@ -764,16 +757,6 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 	@Autowired
 	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
 		this.soaReportGenerationService = soaReportGenerationService;
-	}
-
-	@Autowired
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	@Autowired
-	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
-		this.feeTypeDAO = feeTypeDAO;
 	}
 
 	@Autowired

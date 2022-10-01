@@ -129,7 +129,7 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 			ps.setString(index++, fc.getTaskId());
 			ps.setString(index++, fc.getNextTaskId());
 			ps.setString(index++, fc.getRecordType());
-			ps.setLong(index++, fc.getWorkflowId());
+			ps.setLong(index, fc.getWorkflowId());
 		});
 
 		return fc.getId();
@@ -180,7 +180,7 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 			ps.setString(index++, fc.getRecordType());
 			ps.setLong(index++, fc.getWorkflowId());
 			ps.setLong(index++, fc.getFinID());
-			ps.setLong(index++, fc.getCollateralSeq());
+			ps.setLong(index, fc.getCollateralSeq());
 		});
 
 		if (recordCount <= 0) {
@@ -210,7 +210,7 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 			int index = 1;
 
 			ps.setLong(index++, fc.getFinID());
-			ps.setLong(index++, fc.getCollateralSeq());
+			ps.setLong(index, fc.getCollateralSeq());
 		});
 	}
 

@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -55,7 +54,6 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssignment> {
@@ -88,9 +86,6 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	private CollateralSetupService collateralSetupService;
 	private FinanceTypeService financeTypeService;
 	private Textbox hostReference;
-
-	@Autowired
-	private SearchProcessor searchProcessor;
 
 	private List<String> assignCollateralRef;
 

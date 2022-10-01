@@ -84,7 +84,7 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 
 			ps.setString(index++, instBasedSchd.getStatus());
 			ps.setString(index++, instBasedSchd.getErrorDesc());
-			ps.setLong(index++, instBasedSchd.getId());
+			ps.setLong(index, instBasedSchd.getId());
 		});
 	}
 
@@ -98,7 +98,7 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 			int index = 1;
 
 			ps.setLong(index++, instBasedSchd.getFinID());
-			ps.setLong(index++, instBasedSchd.getDisbId());
+			ps.setLong(index, instBasedSchd.getDisbId());
 		});
 
 	}

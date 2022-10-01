@@ -1938,7 +1938,6 @@ public class FinStatementController extends SummaryDetailService {
 			}
 			con = null;
 			reportDataSourceObj = null;
-			buf = null;
 		}
 		return buf;
 	}

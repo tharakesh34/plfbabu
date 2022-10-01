@@ -60,10 +60,10 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.pennant.app.constants.DataEngineConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ValidateRecord;
@@ -172,7 +172,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		try {
 			String configName = null;
 
-			if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+			if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 				Long partnerBankId = (Long) filterMap.get("PARTNERBANKID");
 				if (partnerBankId == null) {
 					partnerBankId = 0L;
@@ -492,7 +492,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		List<Mandate> mandates = jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, respBatchId);
+			ps.setLong(index, respBatchId);
 		}, (rs, rowNum) -> {
 			Mandate m = new Mandate();
 
@@ -636,7 +636,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 				ps.setString(index++, respmandate.getReason());
 				ps.setString(index++, respmandate.getStatus());
-				ps.setLong(index++, respmandate.getMandateID());
+				ps.setLong(index, respmandate.getMandateID());
 			});
 		} catch (Exception e) {
 			//
@@ -661,7 +661,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 					ps.setString(index++, "Y");
 				}
 
-				ps.setString(index++, respMandate.getReason());
+				ps.setString(index, respMandate.getReason());
 
 			});
 		} catch (Exception e) {
@@ -772,7 +772,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 			ps.setString(index++, respmandate.getReason());
 			ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
-			ps.setLong(index++, requestId);
+			ps.setLong(index, requestId);
 
 		});
 	}
@@ -788,7 +788,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			ps.setString(index++, respmandate.getStatus());
 			ps.setString(index++, respmandate.getReason());
 			ps.setLong(index++, id);
-			ps.setLong(index++, respmandate.getMandateID());
+			ps.setLong(index, respmandate.getMandateID());
 		});
 	}
 
@@ -812,7 +812,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 				ps.setString(index++, remarks.toString());
-				ps.setLong(index++, respBatchId);
+				ps.setLong(index, respBatchId);
 			});
 		} catch (Exception e) {
 			//
@@ -868,7 +868,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 				ps.setLong(index++, mandateId);
 				ps.setString(index++, repayMethod);
-				ps.setLong(index++, finID);
+				ps.setLong(index, finID);
 
 			});
 		} catch (EmptyResultDataAccessException e) {

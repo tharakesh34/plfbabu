@@ -278,7 +278,7 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		}, (rs, rowNum) -> {
 			CustomerEmploymentDetail emp = new CustomerEmploymentDetail();
 

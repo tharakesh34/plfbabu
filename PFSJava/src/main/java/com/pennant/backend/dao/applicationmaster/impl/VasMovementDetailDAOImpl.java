@@ -109,7 +109,7 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 				int index = 1;
 
 				ps.setLong(index++, vmd.getVasMovementDetailId());
-				ps.setString(index++, vmd.getVasReference());
+				ps.setString(index, vmd.getVasReference());
 			});
 
 			if (recordCount <= 0) {
@@ -132,7 +132,7 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, vasMovementDetailId);
+			ps.setLong(index, vasMovementDetailId);
 		});
 	}
 
@@ -171,7 +171,7 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 			ps.setString(index++, vmd.getTaskId());
 			ps.setString(index++, vmd.getNextTaskId());
 			ps.setString(index++, vmd.getRecordType());
-			ps.setLong(index++, vmd.getWorkflowId());
+			ps.setLong(index, vmd.getWorkflowId());
 		});
 
 		return vmd.getId();
@@ -213,7 +213,7 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 			ps.setLong(index++, vmd.getVasMovementId());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, vmd.getVersion() - 1);
+				ps.setInt(index, vmd.getVersion() - 1);
 			}
 		});
 

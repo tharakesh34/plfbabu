@@ -148,7 +148,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				ps.setString(index++, ph.getTaskId());
 				ps.setString(index++, ph.getNextTaskId());
 				ps.setString(index++, ph.getRecordType());
-				ps.setLong(index++, ph.getWorkflowId());
+				ps.setLong(index, ph.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -186,7 +186,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			ps.setString(index++, ph.getRecordType());
 			ps.setLong(index++, ph.getWorkflowId());
 
-			ps.setLong(index++, ph.getPaymentId());
+			ps.setLong(index, ph.getPaymentId());
 		});
 
 		if (recordCount == 0) {

@@ -119,7 +119,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 			}
 
 			if (approvedFinance) {
-				ps.setString(index++, "Saved");
+				ps.setString(index, "Saved");
 			}
 
 		}, (rs, rowNum) -> {
@@ -161,7 +161,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, custID);
+			ps.setLong(index, custID);
 		}, (rs, rowNum) -> {
 			CustomerFinanceDetail cfd = new CustomerFinanceDetail();
 

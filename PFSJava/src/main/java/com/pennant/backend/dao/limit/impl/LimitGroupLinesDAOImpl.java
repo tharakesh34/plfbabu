@@ -254,8 +254,6 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Limit line not available for limit group code {}", limitGroupCode);
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 		return new String();

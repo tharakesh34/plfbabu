@@ -126,7 +126,7 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 				ps.setString(index++, hd.getTaskId());
 				ps.setString(index++, hd.getNextTaskId());
 				ps.setString(index++, hd.getRecordType());
-				ps.setLong(index++, hd.getWorkflowId());
+				ps.setLong(index, hd.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -166,9 +166,9 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 			ps.setLong(index++, hd.getFinID());
 
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, hd.getPrevMntOn());
+				ps.setTimestamp(index, hd.getPrevMntOn());
 			} else {
-				ps.setInt(index++, hd.getVersion() - 1);
+				ps.setInt(index, hd.getVersion() - 1);
 			}
 		});
 
@@ -193,9 +193,9 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 				ps.setLong(index++, hd.getFinID());
 
 				if (tableType == TableType.TEMP_TAB) {
-					ps.setTimestamp(index++, hd.getPrevMntOn());
+					ps.setTimestamp(index, hd.getPrevMntOn());
 				} else {
-					ps.setInt(index++, hd.getVersion() - 1);
+					ps.setInt(index, hd.getVersion() - 1);
 				}
 			});
 

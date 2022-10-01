@@ -19,6 +19,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.npa.dao.AssetClassificationDAO;
 import com.pennanttech.pff.npa.model.AssetClassification;
@@ -160,14 +161,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		String sql = "Select Coalesce(count(ID), 0) From Asset_Classification_Queue where Progress = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
-		} catch (DataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
 	}
 
 	@Override
@@ -253,7 +247,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				return item;
 			}, finID, 0);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -394,7 +388,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setString(index++, finReference);
 			}
 
-			ps.setInt(index++, 0);
+			ps.setInt(index, 0);
 
 		}, (rs, rowNum) -> {
 			NpaProvisionStage nps = new NpaProvisionStage();
@@ -442,7 +436,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setBoolean(index++, true);
 
 				ps.setTimestamp(index++, ac.getCreatedOn());
-				ps.setTimestamp(index++, ac.getLastMntOn());
+				ps.setTimestamp(index, ac.getLastMntOn());
 			});
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -471,7 +465,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setBoolean(index++, ac.isNpaStage());
 				ps.setLong(index++, ac.getNpaClassID());
 
-				ps.setLong(index++, ac.getId());
+				ps.setLong(index, ac.getId());
 			});
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -549,7 +543,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				return ac;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}
@@ -628,7 +622,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			ps.setObject(index++, ac.getLinkedTranID());
 			ps.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
 
-			ps.setLong(index++, ac.getId());
+			ps.setLong(index, ac.getId());
 
 		});
 	}
@@ -687,7 +681,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				return npa;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return new AssetClassification();
@@ -718,7 +712,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				return item;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return new AssetClassification();
 	}
@@ -732,7 +726,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		try {
 			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return false;
@@ -757,7 +751,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				return repayHierarchy;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return "";

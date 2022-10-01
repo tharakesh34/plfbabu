@@ -118,7 +118,7 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		}, (rs, rowNum) -> {
 			CustomerEMail ce = new CustomerEMail();
 

@@ -592,15 +592,21 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			for (ExtendedFieldRender extRender : collateralSetup.getExtendedFieldRenderList()) {
 				String tableName = "";
 				String collateralType = collateralSetup.getCollateralType();
+
 				if (collateralType != null) {
 					tableName = getTableName(CollateralConstants.MODULE_NAME, collateralType);
 				}
 
 				String collateralRef = collateralSetup.getCollateralRef();
-				Date revDate = collateralSetupDAO.getExtendedFieldMap(collateralRef, tableName, extRender.getSeqNo());
-
 				Map<String, Object> extMap = extRender.getMapValues();
 				Date curDate = (Date) extMap.get("REVSECRTCRTNDATE");
+				Date revDate = null;
+
+				if (extMap.get("REVSECRTCRTNDATE") != null) {
+					revDate = collateralSetupDAO.getExtendedFieldMap(collateralRef, tableName, extRender.getSeqNo());
+
+				}
+
 				if (curDate != null && DateUtil.compare(curDate, revDate) != 0) {
 					boolean modified = true;
 					collateralSetupDAO.saveCollateralRevisedDate(collateralRef, curDate);

@@ -18,6 +18,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.cd.model.Manufacturer;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -88,7 +89,7 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 				return manf;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -141,7 +142,7 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 				ps.setString(index++, manufacturer.getTaskId());
 				ps.setString(index++, manufacturer.getNextTaskId());
 				ps.setString(index++, manufacturer.getRecordType());
-				ps.setLong(index++, manufacturer.getWorkflowId());
+				ps.setLong(index, manufacturer.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -196,9 +197,9 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 
 			ps.setLong(index++, manufacturer.getManufacturerId());
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, manufacturer.getPrevMntOn());
+				ps.setTimestamp(index, manufacturer.getPrevMntOn());
 			} else {
-				ps.setInt(index++, manufacturer.getVersion() - 1);
+				ps.setInt(index, manufacturer.getVersion() - 1);
 			}
 		});
 

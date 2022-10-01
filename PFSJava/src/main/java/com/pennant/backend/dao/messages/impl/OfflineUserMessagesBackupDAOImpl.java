@@ -74,7 +74,7 @@ public class OfflineUserMessagesBackupDAOImpl extends BasicDao<OfflineUsersMessa
 
 		List<OfflineUsersMessagesBackup> msgList = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, toUsrId);
+			ps.setString(index, toUsrId);
 		}, (rs, rowNum) -> {
 			OfflineUsersMessagesBackup msgBkp = new OfflineUsersMessagesBackup();
 
@@ -115,7 +115,7 @@ public class OfflineUserMessagesBackupDAOImpl extends BasicDao<OfflineUsersMessa
 				ps.setString(index++, offUsrMsgBkp.getToUsrID());
 				ps.setString(index++, offUsrMsgBkp.getFromUsrID());
 				ps.setDate(index++, JdbcUtil.getDate(offUsrMsgBkp.getSendTime()));
-				ps.setString(index++, offUsrMsgBkp.getMessage());
+				ps.setString(index, offUsrMsgBkp.getMessage());
 			}
 
 			@Override

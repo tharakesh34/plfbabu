@@ -60,7 +60,7 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 				ps.setString(index++, log.getLanguage());
 				ps.setInt(index++, log.getServiceVersion());
 				ps.setTimestamp(index++, log.getHeaderReqTime());
-				ps.setBoolean(index++, log.isProcessed());
+				ps.setBoolean(index, log.isProcessed());
 				return ps;
 			}
 		}, keyHolder);
@@ -117,7 +117,7 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 			ps.setString(index++, apiLog.getError());
 			ps.setString(index++, apiLog.getClientIP());
 			ps.setString(index++, apiLog.getKeyFields());
-			ps.setLong(index++, apiLog.getSeqId());
+			ps.setLong(index, apiLog.getSeqId());
 		});
 	}
 }

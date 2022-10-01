@@ -89,7 +89,6 @@ import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.ext.ExtTablesDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinCollateralsDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
@@ -255,7 +254,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected FinFeeDetailDAO finFeeDetailDAO;
 	protected FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	protected FinanceTaxDetailDAO financeTaxDetailDAO;
-	protected ExtTablesDAO extTablesDAO;
 	protected AccountEngineExecution engineExecution;
 	protected CustomerDAO customerDAO;
 	protected PostingsPreparationUtil postingsPreparationUtil;
@@ -2935,10 +2933,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
 		this.repaymentPostingsUtil = repaymentPostingsUtil;
-	}
-
-	public void setExtTablesDAO(ExtTablesDAO extTablesDAO) {
-		this.extTablesDAO = extTablesDAO;
 	}
 
 	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {

@@ -258,7 +258,7 @@ public class PartnerBank extends AbstractWorkflowEntity {
 	}
 
 	public long getId() {
-		return partnerBankId;
+		return getPartnerBankId();
 	}
 
 	public long getPartnerBankId() {

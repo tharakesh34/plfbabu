@@ -13,6 +13,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.npa.dao.AssetClassSetupDAO;
@@ -63,7 +64,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 				return acsh;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}
@@ -119,7 +120,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 				ps.setInt(index++, acsh.getVersion());
 				ps.setLong(index++, acsh.getCreatedBy());
 				ps.setTimestamp(index++, acsh.getCreatedOn());
-				ps.setLong(index++, JdbcUtil.setLong(acsh.getApprovedBy()));
+				ps.setLong(index++, JdbcUtil.getLong(acsh.getApprovedBy()));
 				ps.setTimestamp(index++, acsh.getApprovedOn());
 				ps.setLong(index++, acsh.getLastMntBy());
 				ps.setTimestamp(index++, acsh.getLastMntOn());
@@ -129,7 +130,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 				ps.setString(index++, acsh.getTaskId());
 				ps.setString(index++, acsh.getNextTaskId());
 				ps.setString(index++, acsh.getRecordType());
-				ps.setLong(index++, acsh.getWorkflowId());
+				ps.setLong(index, acsh.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
@@ -167,9 +168,8 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 			ps.setString(index++, asch.getRecordType());
 			ps.setLong(index++, asch.getWorkflowId());
 
-			ps.setLong(index++, asch.getId());
+			ps.setLong(index, asch.getId());
 		});
-
 	}
 
 	@Override
@@ -183,7 +183,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, AssetClassSetupHeader.getId());
+			ps.setLong(index, AssetClassSetupHeader.getId());
 
 		});
 	}
@@ -260,7 +260,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 				ps.setInt(index++, acsd.getVersion());
 				ps.setLong(index++, acsd.getCreatedBy());
 				ps.setTimestamp(index++, acsd.getCreatedOn());
-				ps.setLong(index++, JdbcUtil.setLong(acsd.getApprovedBy()));
+				ps.setLong(index++, JdbcUtil.getLong(acsd.getApprovedBy()));
 				ps.setTimestamp(index++, acsd.getApprovedOn());
 				ps.setLong(index++, acsd.getLastMntBy());
 				ps.setTimestamp(index++, acsd.getLastMntOn());
@@ -270,7 +270,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 				ps.setString(index++, acsd.getTaskId());
 				ps.setString(index++, acsd.getNextTaskId());
 				ps.setString(index++, acsd.getRecordType());
-				ps.setLong(index++, acsd.getWorkflowId());
+				ps.setLong(index, acsd.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
@@ -308,7 +308,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 			ps.setInt(index++, acsd.getVersion());
 			ps.setLong(index++, acsd.getCreatedBy());
 			ps.setTimestamp(index++, acsd.getCreatedOn());
-			ps.setLong(index++, JdbcUtil.setLong(acsd.getApprovedBy()));
+			ps.setLong(index++, JdbcUtil.getLong(acsd.getApprovedBy()));
 			ps.setTimestamp(index++, acsd.getApprovedOn());
 			ps.setLong(index++, acsd.getLastMntBy());
 			ps.setTimestamp(index++, acsd.getLastMntOn());
@@ -320,7 +320,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 			ps.setString(index++, acsd.getRecordType());
 			ps.setLong(index++, acsd.getWorkflowId());
 
-			ps.setLong(index++, acsd.getId());
+			ps.setLong(index, acsd.getId());
 		});
 	}
 
@@ -378,7 +378,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 				return item;
 			}, acsd.getId());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

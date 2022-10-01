@@ -1898,7 +1898,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		try {
 			financeCheckListReferenceDialogCtrl.doSetLabels(getHeaderBasicDetails());
-			Events.sendEvent("onChkListValidation", checkListChildWindow, map);
+			Events.sendEvent("onChange", checkListChildWindow, map);
 		} catch (Exception e) {
 			validationSuccess = false;
 			if (e instanceof WrongValuesException) {
@@ -3415,7 +3415,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 
 			vASRecording.setCalFeeAmt(PennantApplicationUtil.unFormateAmount(vasFee, getCcyFormat()));
-
 
 		} catch (Exception e) {
 			{

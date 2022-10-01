@@ -135,7 +135,7 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 				ps.setString(index++, spd.getTaskId());
 				ps.setString(index++, spd.getNextTaskId());
 				ps.setString(index++, spd.getRecordType());
-				ps.setLong(index++, spd.getWorkflowId());
+				ps.setLong(index, spd.getWorkflowId());
 			}
 
 			@Override
@@ -162,7 +162,7 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 

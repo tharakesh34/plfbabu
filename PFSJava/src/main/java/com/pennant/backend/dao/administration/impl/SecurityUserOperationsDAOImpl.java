@@ -345,7 +345,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 				ps.setString(index++, roleCodes[i]);
 			}
 			ps.setString(index++, division);
-			ps.setString(index++, branch);
+			ps.setString(index, branch);
 		}, (rs, rowNum) -> rs.getString("UsrLogin"));
 	}
 

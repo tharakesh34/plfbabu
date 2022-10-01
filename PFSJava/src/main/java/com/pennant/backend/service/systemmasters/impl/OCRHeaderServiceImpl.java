@@ -119,7 +119,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 			ocrDetail.setHeaderID(ocrHeader.getHeaderID());
 			if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(ocrDetail.getRecordType())) {
 				deleteRecord = true;
-			} else if (ocrDetail.isNewRecord()) {
+			} else if (ocrHeader.isNewRecord()) {
 				saveRecord = true;
 				if (PennantConstants.RCD_ADD.equalsIgnoreCase(ocrDetail.getRecordType())) {
 					ocrDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);

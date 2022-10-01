@@ -91,7 +91,7 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 				ps.setString(index++, fd.getStage());
 				ps.setString(index++, fd.getDedupeRule());
 				ps.setString(index++, fd.getOverrideUser());
-				ps.setString(index++, fd.getFinLimitRef());
+				ps.setString(index, fd.getFinLimitRef());
 			}
 
 			@Override
@@ -132,7 +132,7 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 				ps.setString(index++, fd.getFinLimitRef());
 
 				ps.setLong(index++, fd.getFinID());
-				ps.setString(index++, fd.getDupReference());
+				ps.setString(index, fd.getDupReference());
 			}
 
 			@Override

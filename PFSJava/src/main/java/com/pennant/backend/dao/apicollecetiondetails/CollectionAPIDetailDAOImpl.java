@@ -29,7 +29,7 @@ public class CollectionAPIDetailDAOImpl extends SequenceDao<CollectionAPIDetail>
 			ps.setLong(index++, ca.getReceiptID());
 			ps.setBigDecimal(index++, ca.getAmount());
 			ps.setString(index++, ca.getServiceName());
-			ps.setString(index++, ca.getModuleCode());
+			ps.setString(index, ca.getModuleCode());
 
 		});
 	}

@@ -18,6 +18,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.overdraft.dao.VariableOverdraftScheduleDAO;
 import com.pennanttech.pff.overdraft.model.VariableOverdraftSchdDetail;
@@ -73,7 +74,7 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 				ps.setString(index++, scheduleHeader.getFinEvent());
 				ps.setString(index++, scheduleHeader.getFinReference());
 				ps.setInt(index++, scheduleHeader.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(scheduleHeader.getLastMntBy()));
+				ps.setLong(index++, JdbcUtil.getLong(scheduleHeader.getLastMntBy()));
 				ps.setTimestamp(index++, scheduleHeader.getLastMntOn());
 				ps.setString(index++, scheduleHeader.getRecordStatus());
 				ps.setString(index++, scheduleHeader.getRoleCode());
@@ -81,7 +82,7 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 				ps.setString(index++, scheduleHeader.getTaskId());
 				ps.setString(index++, scheduleHeader.getNextTaskId());
 				ps.setString(index++, scheduleHeader.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(scheduleHeader.getWorkflowId()));
+				ps.setLong(index, JdbcUtil.getLong(scheduleHeader.getWorkflowId()));
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -109,28 +110,29 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, finEvent },
 					(rs, rowNum) -> {
-						VariableOverdraftSchdHeader VarODSchd = new VariableOverdraftSchdHeader();
+						VariableOverdraftSchdHeader varODSchd = new VariableOverdraftSchdHeader();
 
-						VarODSchd.setId(rs.getLong("Id"));
-						VarODSchd.setFileName(rs.getString("FileName"));
-						VarODSchd.setTransactionDate(rs.getDate("TransactionDate"));
-						VarODSchd.setTotalSchedules(rs.getInt("TotalSchedules"));
-						VarODSchd.setFinEvent(rs.getString("FinEvent"));
-						VarODSchd.setFinReference(rs.getString("FinReference"));
-						VarODSchd.setVersion(rs.getInt("Version"));
-						VarODSchd.setLastMntBy(rs.getLong("LastMntBy"));
-						VarODSchd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-						VarODSchd.setRecordStatus(rs.getString("RecordStatus"));
-						VarODSchd.setRoleCode(rs.getString("RoleCode"));
-						VarODSchd.setNextRoleCode(rs.getString("NextRoleCode"));
-						VarODSchd.setTaskId(rs.getString("TaskId"));
-						VarODSchd.setNextTaskId(rs.getString("NextTaskId"));
-						VarODSchd.setRecordType(rs.getString("RecordType"));
-						VarODSchd.setWorkflowId(rs.getLong("WorkflowId"));
+						varODSchd.setId(rs.getLong("Id"));
+						varODSchd.setFileName(rs.getString("FileName"));
+						varODSchd.setTransactionDate(rs.getDate("TransactionDate"));
+						varODSchd.setTotalSchedules(rs.getInt("TotalSchedules"));
+						varODSchd.setFinEvent(rs.getString("FinEvent"));
+						varODSchd.setFinReference(rs.getString("FinReference"));
+						varODSchd.setVersion(rs.getInt("Version"));
+						varODSchd.setLastMntBy(rs.getLong("LastMntBy"));
+						varODSchd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+						varODSchd.setRecordStatus(rs.getString("RecordStatus"));
+						varODSchd.setRoleCode(rs.getString("RoleCode"));
+						varODSchd.setNextRoleCode(rs.getString("NextRoleCode"));
+						varODSchd.setTaskId(rs.getString("TaskId"));
+						varODSchd.setNextTaskId(rs.getString("NextTaskId"));
+						varODSchd.setRecordType(rs.getString("RecordType"));
+						varODSchd.setWorkflowId(rs.getLong("WorkflowId"));
 
-						return VarODSchd;
+						return varODSchd;
 					});
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -150,25 +152,18 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new Object[] { headerId }, (rs, rowNum) -> {
-				VariableOverdraftSchdDetail varODSchdDtl = new VariableOverdraftSchdDetail();
+		return this.jdbcOperations.query(sql.toString(), new Object[] { headerId }, (rs, rowNum) -> {
+			VariableOverdraftSchdDetail varODSchdDtl = new VariableOverdraftSchdDetail();
 
-				varODSchdDtl.setId(rs.getLong("Id"));
-				varODSchdDtl.setHeaderId(rs.getLong("Header_Id"));
-				varODSchdDtl.setSchDate(rs.getDate("SchDate"));
-				varODSchdDtl.setDroplineAmount(rs.getBigDecimal("DroplineAmount"));
-				varODSchdDtl.setStatus(rs.getString("Status"));
-				varODSchdDtl.setReason(rs.getString("Reason"));
+			varODSchdDtl.setId(rs.getLong("Id"));
+			varODSchdDtl.setHeaderId(rs.getLong("Header_Id"));
+			varODSchdDtl.setSchDate(rs.getDate("SchDate"));
+			varODSchdDtl.setDroplineAmount(rs.getBigDecimal("DroplineAmount"));
+			varODSchdDtl.setStatus(rs.getString("Status"));
+			varODSchdDtl.setReason(rs.getString("Reason"));
 
-				return varODSchdDtl;
-			});
-		} catch (EmptyResultDataAccessException e) {
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return null;
+			return varODSchdDtl;
+		});
 	}
 
 	@Override
@@ -259,8 +254,6 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 		ps.setDate(index++, JdbcUtil.getDate(varODSchdDtl.getSchDate()));
 		ps.setBigDecimal(index++, varODSchdDtl.getDroplineAmount());
 		ps.setString(index++, varODSchdDtl.getStatus());
-		ps.setString(index++, varODSchdDtl.getReason());
-
+		ps.setString(index, varODSchdDtl.getReason());
 	}
-
 }

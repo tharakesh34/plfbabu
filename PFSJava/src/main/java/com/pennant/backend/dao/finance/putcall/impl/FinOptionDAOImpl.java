@@ -72,7 +72,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 				ps.setString(index++, fo.getTaskId());
 				ps.setString(index++, fo.getNextTaskId());
 				ps.setString(index++, fo.getRecordType());
-				ps.setLong(index++, fo.getWorkflowId());
+				ps.setLong(index, fo.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -116,7 +116,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 			ps.setString(index++, fo.getRecordType());
 			ps.setLong(index++, fo.getWorkflowId());
 
-			ps.setLong(index++, fo.getId());
+			ps.setLong(index, fo.getId());
 		});
 
 		if (recordCount == 0) {
@@ -136,7 +136,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, fo.getId());
+				ps.setLong(index, fo.getId());
 			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -229,7 +229,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 

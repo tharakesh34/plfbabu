@@ -3540,8 +3540,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
 
-		final String keyReference = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_FinanceMainDialog_FinReference.value") + " : "
+		final String keyReference = Labels.getLabel("label_FinanceMainDialog_FinReference.value") + " : "
 				+ afinanceMain.getFinReference();
 
 		doDelete(keyReference, afinanceDetail);

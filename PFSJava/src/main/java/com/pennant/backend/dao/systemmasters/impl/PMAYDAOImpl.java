@@ -168,7 +168,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 				ps.setString(index++, pmay.getTaskId());
 				ps.setString(index++, pmay.getNextTaskId());
 				ps.setString(index++, pmay.getRecordType());
-				ps.setLong(index++, pmay.getWorkflowId());
+				ps.setLong(index, pmay.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -225,9 +225,9 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 			ps.setLong(index++, pmay.getFinID());
 
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, pmay.getPrevMntOn());
+				ps.setTimestamp(index, pmay.getPrevMntOn());
 			} else {
-				ps.setInt(index++, pmay.getVersion() - 1);
+				ps.setInt(index, pmay.getVersion() - 1);
 			}
 
 		});
@@ -290,7 +290,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 				ps.setString(index++, pMaylog.getApplicantId());
 				ps.setString(index++, pMaylog.getRemarks());
 				ps.setString(index++, pMaylog.getReqJson());
-				ps.setString(index++, pMaylog.getRespJson());
+				ps.setString(index, pMaylog.getRespJson());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -318,7 +318,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 			ps.setString(index++, pMaylog.getApplicantId());
 			ps.setString(index++, pMaylog.getRemarks());
 			ps.setString(index++, pMaylog.getReqJson());
-			ps.setString(index++, pMaylog.getRespJson());
+			ps.setString(index, pMaylog.getRespJson());
 		});
 
 		if (recordCount == 0) {
@@ -411,7 +411,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 			int index = 1;
 			ps.setString(index++, "Rejected");
 			ps.setInt(index++, 1);
-			ps.setString(index++, "NA");
+			ps.setString(index, "NA");
 
 		}, (rs, rowNum) -> {
 			PmayEligibilityLog pel = new PmayEligibilityLog();
@@ -432,7 +432,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 			ps.setString(index++, pel.getPmayStatus());
 			ps.setString(index++, pel.getApplicantId());
 
-			ps.setLong(index++, pel.getRecordId());
+			ps.setLong(index, pel.getRecordId());
 		});
 
 		if (recordCount == 0) {

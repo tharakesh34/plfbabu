@@ -145,7 +145,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 				ps.setString(index++, pi.getTaskId());
 				ps.setString(index++, pi.getNextTaskId());
 				ps.setString(index++, pi.getRecordType());
-				ps.setLong(index++, pi.getWorkflowId());
+				ps.setLong(index, pi.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -202,7 +202,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 			ps.setString(index++, pi.getRecordType());
 			ps.setLong(index++, pi.getWorkflowId());
 
-			ps.setLong(index++, pi.getPaymentInstructionId());
+			ps.setLong(index, pi.getPaymentInstructionId());
 		});
 
 		if (recordCount == 0) {
@@ -269,7 +269,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 			ps.setString(index++, pi.getRejectReason());
 
 			ps.setLong(index++, pi.getPaymentInstructionId());
-			ps.setString(index++, DisbursementConstants.STATUS_AWAITCON);
+			ps.setString(index, DisbursementConstants.STATUS_AWAITCON);
 		});
 	}
 
@@ -297,7 +297,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 
 			ps.setString(index++, instruction.getStatus());
 
-			ps.setLong(index++, instruction.getPaymentInstructionId());
+			ps.setLong(index, instruction.getPaymentInstructionId());
 		});
 	}
 

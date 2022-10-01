@@ -80,7 +80,7 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 			ps.setString(index++, ed.getTaskId());
 			ps.setString(index++, ed.getNextTaskId());
 			ps.setString(index++, ed.getRecordType());
-			ps.setLong(index++, ed.getWorkflowId());
+			ps.setLong(index, ed.getWorkflowId());
 
 		});
 
@@ -140,7 +140,7 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 			ps.setBigDecimal(index++, fed.getAmount());
 			ps.setTimestamp(index++, fed.getLastMntOn());
 
-			ps.setLong(index++, fed.getFinExpenseId());
+			ps.setLong(index, fed.getFinExpenseId());
 		});
 
 		if (recordCount == 0) {

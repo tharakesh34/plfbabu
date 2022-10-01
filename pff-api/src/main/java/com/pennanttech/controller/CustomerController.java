@@ -510,6 +510,7 @@ public class CustomerController extends GenericService<Object> {
 						for (CustomerDocument prvCustomerDocuments : prvCustomerDocumentsList) {
 							if (StringUtils.equals(curCustDocument.getCustDocCategory(),
 									prvCustomerDocuments.getCustDocCategory())) {
+								curCustDocument.setID(prvCustomerDocuments.getID());
 								curCustDocument.setNewRecord(false);
 								curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 								curCustDocument.setVersion(prvCustomerDocuments.getVersion() + 1);

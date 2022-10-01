@@ -103,7 +103,7 @@ public class FinFeeConfigDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 					ps.setBoolean(index++, fc.isAlwPreIncomization());
 					ps.setString(index++, fc.getPercType());
 					ps.setString(index++, fc.getPercRule());
-					ps.setLong(index++, fc.getPercRuleId());
+					ps.setLong(index, fc.getPercRuleId());
 
 				}
 
@@ -155,7 +155,7 @@ public class FinFeeConfigDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 			ps.setLong(index++, finID);
 			ps.setString(index++, eventCode);
-			ps.setBoolean(index++, origination);
+			ps.setBoolean(index, origination);
 		}, (rs, rowNum) -> {
 			FinFeeConfig ffc = new FinFeeConfig();
 

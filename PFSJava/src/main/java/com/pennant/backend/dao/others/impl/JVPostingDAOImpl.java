@@ -177,7 +177,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, jvp.getBatchReference());
+				ps.setLong(index, jvp.getBatchReference());
 			});
 
 		} catch (DataAccessException e) {
@@ -243,7 +243,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 			ps.setString(index++, jvp.getTaskId());
 			ps.setString(index++, jvp.getNextTaskId());
 			ps.setString(index++, jvp.getRecordType());
-			ps.setLong(index++, jvp.getWorkflowId());
+			ps.setLong(index, jvp.getWorkflowId());
 		});
 
 		return jvp.getBatchReference();
@@ -305,7 +305,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 			ps.setLong(index++, jvp.getBatchReference());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, jvp.getVersion() - 1);
+				ps.setInt(index, jvp.getVersion() - 1);
 			}
 
 		});
@@ -328,7 +328,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 			int index = 1;
 
 			ps.setString(index++, jvp.getValidationStatus());
-			ps.setLong(index++, jvp.getBatchReference());
+			ps.setLong(index, jvp.getBatchReference());
 		});
 
 		if (recordCount <= 0) {
@@ -349,7 +349,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 			int index = 1;
 
 			ps.setString(index++, jvp.getBatchPostingStatus());
-			ps.setLong(index++, jvp.getBatchReference());
+			ps.setLong(index, jvp.getBatchReference());
 		});
 
 		if (recordCount <= 0) {

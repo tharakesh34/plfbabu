@@ -167,11 +167,6 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	}
 
 	@Override
-	protected void doShowDialog(FinanceDetail financeDetail) {
-		super.doShowDialog(financeDetail);
-	}
-
-	@Override
 	protected void doEdit() {
 		super.doEdit();
 	}

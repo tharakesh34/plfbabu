@@ -2996,10 +2996,10 @@
 			<column name="BillingInvoice" type="varchar(50)" />
 			<column name="TransactionStatus" type="varchar(50)" />
 			<column name="Reason" type="varchar(50)" />
-			<column name="ProductCategory" type="varchar2(100)" />
+			<column name="ProductCategory" type="varchar(100)" />
 			<column name="ProductSubCategory1" type="varchar(100)" />
 			<column name="ProductSubCategory2" type="varchar(100)" />
-			<column name="ModelName" type="varchar2(50)" />
+			<column name="ModelName" type="varchar(50)" />
 			<column name="MaxValueOfProduct" type="decimal(18,0)" />
 			<column name="MerchantName" type="varchar(50)" />
 		</createTable>
@@ -3799,5 +3799,73 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="PSD#204469_pre" author="alekhya.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'schememaster_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#204469" author="alekhya.t" dbms="postgresql,oracle">
+		<createView viewName="SCHEMEMASTER_VIEW" replaceIfExists="true">
+			<![CDATA[
+			  	SELECT PM.PROMOTIONCODE
+			  		, PM.PROMOTIONDESC
+			  		, PM.TENOR
+			  		, CONCAT(to_char(PM.ACTUALINTERESTRATE, '09.99'), '%') ACTUALINTERESTRATE
+			  		, PM.ADVEMITERMS
+			  		, CONCAT(to_char(CASE WHEN FP2.AMOUNT IS NULL THEN 0 WHEN FP2.AMOUNT > 0 THEN FP2.AMOUNT/100 ELSE FP2.PERCENTAGE  END, '09.99'),'%') DBDFEE
+			  		, PM.STARTDATE
+			  		, PM.ENDDATE
+			  		, PM.FINMINAMOUNT/100 FINMINAMOUNT
+			  		, PM.FINMAXAMOUNT/100 FINMAXAMOUNT
+	           		, CASE WHEN FP1.AMOUNT IS NULL THEN 0 WHEN FP1.AMOUNT > 0 THEN FP1.AMOUNT/100  WHEN FP1.PERCENTAGE IS NULL THEN 0 ELSE FP1.PERCENTAGE END PROSEEFEE
+	           		, SUBSTR(PM.REMARKS, 1, 20) REMARKS 
+	           		,'0' ACTIVE
+	           		, PM.SPECIALSCHEME
+	           		, '1' IS_PF_SCHEME
+	           		, PM.LASTMNTON 
+				FROM PROMOTIONS PM 
+				LEFT JOIN FINTYPEFEES_AVIEW FP1 ON PM.PROMOTIONCODE = FP1.FINTYPE AND FP1.MODULEID = 2 AND FP1.FEETYPEID IN(SELECT FEETYPEID FROM FEETYPES WHERE FEETYPECODE IN ('MMFLPROC'))
+				LEFT JOIN FINTYPEFEES_AVIEW FP2 ON PM.PROMOTIONCODE = FP2.FINTYPE AND FP2.MODULEID = 2 AND FP2.FEETYPEID IN(SELECT FEETYPEID FROM FEETYPES WHERE FEETYPECODE IN ('MMFLDBD'))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#204469" author="alekhya.t" dbms="mssql">
+		<createView viewName="SCHEMEMASTER_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT PM.PROMOTIONCODE
+			  		, PM.PROMOTIONDESC
+			  		, PM.TENOR
+			  		, CONCAT(FORMAT(ACTUALINTERESTRATE, 'N', 'en-us'), '%') ACTUALINTERESTRATE
+			  		, PM.ADVEMITERMS
+			  		, CONCAT(FORMAT(CASE WHEN FP2.AMOUNT IS NULL THEN 0 WHEN FP2.AMOUNT > 0 THEN FP2.AMOUNT/100 ELSE FP2.PERCENTAGE  END, 'N', 'en-us'),'%') DBDFEE
+			  		, PM.STARTDATE
+			  		, PM.ENDDATE
+			  		, PM.FINMINAMOUNT/100 FINMINAMOUNT
+			  		, PM.FINMAXAMOUNT/100 FINMAXAMOUNT
+	           		, CASE WHEN FP1.AMOUNT IS NULL THEN 0 WHEN FP1.AMOUNT > 0 THEN FP1.AMOUNT/100  WHEN FP1.PERCENTAGE IS NULL THEN 0 ELSE FP1.PERCENTAGE END PROSEEFEE
+	           		, SUBSTRing(PM.REMARKS, 1, 20) REMARKS 
+	           		,'0' ACTIVE
+	           		, PM.SPECIALSCHEME
+	           		, '1' IS_PF_SCHEME
+	           		, PM.LASTMNTON 
+				FROM PROMOTIONS PM 
+				LEFT JOIN FINTYPEFEES_AVIEW FP1 ON PM.PROMOTIONCODE = FP1.FINTYPE AND FP1.MODULEID = 2 AND FP1.FEETYPEID IN(SELECT FEETYPEID FROM FEETYPES WHERE FEETYPECODE IN ('MMFLPROC'))
+				LEFT JOIN FINTYPEFEES_AVIEW FP2 ON PM.PROMOTIONCODE = FP2.FINTYPE AND FP2.MODULEID = 2 AND FP2.FEETYPEID IN(SELECT FEETYPEID FROM FEETYPES WHERE FEETYPECODE IN ('MMFLDBD'))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#204469_post" author="alekhya.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'schememaster_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

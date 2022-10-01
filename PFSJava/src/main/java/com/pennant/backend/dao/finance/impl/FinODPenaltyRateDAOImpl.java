@@ -72,7 +72,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -109,7 +109,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			ps.setBoolean(index++, pr.isoDTDSReq());
 			ps.setInt(index++, pr.getOverDraftExtGraceDays());
 			ps.setLong(index++, pr.getOverDraftColChrgFeeType());
-			ps.setBigDecimal(index++, pr.getOverDraftColAmt());
+			ps.setBigDecimal(index, pr.getOverDraftColAmt());
 		});
 
 		return pr.getFinReference();
@@ -154,7 +154,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			ps.setBoolean(index++, pr.isoDTDSReq());
 			ps.setInt(index++, pr.getOverDraftExtGraceDays());
 			ps.setLong(index++, pr.getOverDraftColChrgFeeType());
-			ps.setBigDecimal(index++, pr.getOverDraftColAmt());
+			ps.setBigDecimal(index, pr.getOverDraftColAmt());
 		});
 	}
 
@@ -190,7 +190,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			ps.setLong(index++, odpr.getOverDraftColChrgFeeType());
 			ps.setBigDecimal(index++, odpr.getOverDraftColAmt());
 
-			ps.setLong(index++, odpr.getFinID());
+			ps.setLong(index, odpr.getFinID());
 		});
 
 		if (recordCount <= 0) {

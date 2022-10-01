@@ -47,7 +47,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.AddDatedScheduleService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -427,7 +426,6 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
 
-		Date curBussDate = SysParamUtil.getAppDate();
 		if (financeDetail.getFinanceScheduleDetails() != null) {
 			boolean checkForLastValidDate = true;
 			List<FinanceScheduleDetail> financeScheduleDetails = financeDetail.getFinanceScheduleDetails();
@@ -468,10 +466,8 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				comboitem.setValue(curSchd.getSchDate());
 				dateCombobox.appendChild(comboitem);
 			}
-			// Commented to Allowing BackDated Form Date.
-			/*
-			 * if(validateFromDate.compareTo(curBussDate) < 0){ validateFromDate = curBussDate; }
-			 */
+
+			// murthy.y on 21/04/2020: Removed condition to allow back dated Form Date.
 		}
 		logger.debug("Leaving");
 	}

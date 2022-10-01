@@ -82,7 +82,7 @@ public class FinAssetAmtMovementDAOImpl extends SequenceDao<FinAssetAmtMovement>
 			ps.setBigDecimal(index++, faam.getRevisedSanctionedAmt());
 			ps.setBigDecimal(index++, faam.getDisbursedAmt());
 			ps.setLong(index++, faam.getLastMntBy());
-			ps.setTimestamp(index++, faam.getLastMntOn());
+			ps.setTimestamp(index, faam.getLastMntOn());
 		});
 	}
 }

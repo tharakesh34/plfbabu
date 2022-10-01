@@ -161,7 +161,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setString(index++, vasR.getVasReference());
+				ps.setString(index, vasR.getVasReference());
 			});
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -182,7 +182,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, primaryLinkRef);
+			ps.setString(index, primaryLinkRef);
 		});
 	}
 
@@ -248,7 +248,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			ps.setBoolean(index++, vasR.isCancelAfterFLP());
 			ps.setString(index++, vasR.getOldVasReference());
 			ps.setLong(index++, vasR.getManualAdviseId());
-			ps.setLong(index++, vasR.getReceivableAdviseId());
+			ps.setLong(index, vasR.getReceivableAdviseId());
 
 		});
 
@@ -324,7 +324,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			ps.setString(index++, vasR.getVasReference());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, vasR.getVersion() - 1);
+				ps.setInt(index, vasR.getVersion() - 1);
 			}
 
 		});
@@ -382,7 +382,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			int index = 1;
 
 			ps.setString(index++, status);
-			ps.setString(index++, vasReference);
+			ps.setString(index, vasReference);
 		});
 	}
 
@@ -396,7 +396,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			int index = 1;
 
 			ps.setLong(index++, paymentInsId);
-			ps.setString(index++, reference);
+			ps.setString(index, reference);
 		});
 	}
 
@@ -419,7 +419,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, primaryLinkRef);
+			ps.setString(index, primaryLinkRef);
 		}, (rs, rowNum) -> {
 			VASRecording vas = new VASRecording();
 
@@ -504,7 +504,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 			ps.setBigDecimal(index++, paidAmt);
 			ps.setString(index++, vasReference);
-			ps.setString(index++, primaryLinkRef);
+			ps.setString(index, primaryLinkRef);
 		});
 
 		if (recordCount <= 0) {
@@ -525,7 +525,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, finReference);
+			ps.setString(index, finReference);
 		}, (rs, rowNum) -> {
 			VASRecording vr = new VASRecording();
 
@@ -581,7 +581,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			ps.setString(index++, DisbursementConstants.STATUS_PAID);
 			ps.setString(index++, DisbursementConstants.STATUS_REVERSED);
 
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		});
 	}
 

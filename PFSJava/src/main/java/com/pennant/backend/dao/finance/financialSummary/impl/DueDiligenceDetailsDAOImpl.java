@@ -72,7 +72,7 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 		List<DueDiligenceDetails> list = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, finID);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			DueDiligenceDetails ddd = new DueDiligenceDetails();
 
@@ -159,7 +159,7 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 				ps.setString(index++, diligenceDtls.getTaskId());
 				ps.setString(index++, diligenceDtls.getNextTaskId());
 				ps.setString(index++, diligenceDtls.getRecordType());
-				ps.setLong(index++, diligenceDtls.getWorkflowId());
+				ps.setLong(index, diligenceDtls.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -204,7 +204,7 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 			ps.setLong(index++, diligenceDtls.getFinID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, diligenceDtls.getVersion());
+				ps.setInt(index, diligenceDtls.getVersion());
 			}
 		});
 

@@ -36,7 +36,7 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 				ps.setDate(index++, JdbcUtil.getDate(sd.getValueDate()));
 				ps.setLong(index++, sd.getCustId());
 				ps.setString(index++, sd.getFinStatus());
-				ps.setInt(index++, sd.getODDays());
+				ps.setInt(index, sd.getODDays());
 			});
 		} catch (Exception e) {
 			throw e;
@@ -53,7 +53,7 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 			int index = 1;
 
 			ps.setLong(index++, sd.getFinID());
-			ps.setDate(index++, JdbcUtil.getDate(sd.getValueDate()));
+			ps.setDate(index, JdbcUtil.getDate(sd.getValueDate()));
 		});
 
 		save(sd);
@@ -73,7 +73,7 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 
 				ps.setString(index++, sd.getFinStatus());
 				ps.setDate(index++, JdbcUtil.getDate(sd.getValueDate()));
-				ps.setLong(index++, sd.getCustId());
+				ps.setLong(index, sd.getCustId());
 			}
 
 			@Override
@@ -91,7 +91,7 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 		return this.jdbcOperations.query(sql, ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, num) -> {
 			FinStatusDetail sd = new FinStatusDetail();
 

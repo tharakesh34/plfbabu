@@ -47,6 +47,10 @@
 	</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.51.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_AreaUnit" columnName="ID" columnDataType="bigint" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.51.2" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_AreaUnit" columnNames="ID" constraintName="pk_AreaUnit" />
 	</changeSet>
@@ -68,6 +72,10 @@
 			<constraints nullable="false"/>
 		</column>
 	</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.52.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_AreaUnit_Temp" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.52.2" author="saisandeep.b">
@@ -270,6 +278,10 @@
 	</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.101.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_AssetCategory" columnName="ID" columnDataType="bigint" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.101.2" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_AssetCategory" columnNames="ID" constraintName="pk_AseetCategory" />
 	</changeSet>
@@ -292,6 +304,10 @@
 			<constraints nullable="false" />
 		</column>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 	</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.102.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_AssetCategory_Temp" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.102.2" author="saisandeep.b">
@@ -495,6 +511,10 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.201.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_SIType" columnName="ID" columnDataType="bigint" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.201.2" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_SIType" columnNames="ID" constraintName="pk_SIType" />
 	</changeSet>
@@ -517,6 +537,10 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.202.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_SIType_temp" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.202.2" author="saisandeep.b">
@@ -734,6 +758,10 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.301.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_AssetSubType" columnName="ID" columnDataType="bigint" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.301.2" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_AssetsubType" columnNames="ID" constraintName="pk_AssetSubType" />
 	</changeSet>
@@ -756,6 +784,10 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.302.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_AssetSubType_Temp" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.302.2" author="saisandeep.b">
@@ -966,6 +998,10 @@
 	</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.401.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_AssetType" columnName="ID" columnDataType="bigint" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.401.2" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_AssetType" columnNames="ID" constraintName="pk_AssetType" />
 	</changeSet>
@@ -988,6 +1024,10 @@
 			<constraints nullable="false"/>
 		</column>
 	</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.402.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_AssetType_Temp" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.402.2" author="saisandeep.b">
@@ -1205,6 +1245,11 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="ST#222.601.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CityMapping" columnName="MappingType" columnDataType="varchar(20)" />	
+		<addNotNullConstraint tableName="CityMapping" columnName="CityCode" columnDataType="varchar(50)" />	
+	</changeSet>
 
 	<changeSet id="ST#222.601.2" author="saisandeep.b">
 		<addPrimaryKey tableName="CityMapping" columnNames="MappingType,CityCode" constraintName="pk_CityMapping" />
@@ -1228,6 +1273,11 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.602.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CityMapping_Temp" columnName="MappingType" columnDataType="varchar(20)" />	
+		<addNotNullConstraint tableName="CityMapping_Temp" columnName="CityCode" columnDataType="varchar(50)" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.602.2" author="saisandeep.b">
@@ -1443,6 +1493,11 @@
 	</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.701.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="DistrictMapping" columnName="MappingType" columnDataType="varchar(20)" />	
+		<addNotNullConstraint tableName="DistrictMapping" columnName="District" columnDataType="varchar(8)" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.701.2" author="saisandeep.b">
 		<addPrimaryKey tableName="DistrictMapping" columnNames="MappingType,District" constraintName="pk_DistrictMapping" />
 	</changeSet>
@@ -1465,6 +1520,11 @@
 			<constraints nullable="false"/>
 		</column>
 	</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.702.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="DistrictMapping_Temp" columnName="MappingType" columnDataType="varchar(20)" />	
+		<addNotNullConstraint tableName="DistrictMapping_Temp" columnName="District" columnDataType="varchar(8)" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.702.2" author="saisandeep.b">
@@ -1681,6 +1741,11 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.801.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="ProvinceMapping" columnName="MappingType" columnDataType="varchar(20)" />	
+		<addNotNullConstraint tableName="ProvinceMapping" columnName="Province" columnDataType="varchar(8)" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.801.2" author="saisandeep.b">
 		<addPrimaryKey tableName="ProvinceMapping" columnNames="MappingType,Province" constraintName="pk_ProvinceMapping" />
 	</changeSet>
@@ -1703,6 +1768,11 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.802.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="ProvinceMapping_Temp" columnName="MappingType" columnDataType="varchar(20)" />	
+		<addNotNullConstraint tableName="ProvinceMapping_Temp" columnName="Province" columnDataType="varchar(8)" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.802.2" author="saisandeep.b">
@@ -1909,6 +1979,10 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.901.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_Header" columnName="batchId" columnDataType="bigint" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.901.2" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_Header" columnNames="batchId" constraintName="pk_cersaiHeader" />
 	</changeSet>
@@ -1933,6 +2007,10 @@
 			<column name="BATCHREFNUMBER" type="varchar(20)" />
 			<column name="Batchid" type="bigInt" />
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.902.1_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_Collateraldetails" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.902.1" author="saisandeep.b">
@@ -1972,6 +2050,10 @@
 			<column name="Batchid" type="bigInt" />
 		</createTable>
 	</changeSet>
+		
+	<changeSet id="ST#222.903.1_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_ASSET_IMMOVABLE" columnName="ID" columnDataType="bigint" />	
+	</changeSet>
 	
 	<changeSet id="ST#222.903.1" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_ASSET_IMMOVABLE" columnNames="ID" constraintName="PK_CERSAI_ASSET_IMMOVABLE_ID"/>
@@ -2000,6 +2082,10 @@
 			<column name="COUNTRY" type="varchar(2)" />
 			<column name="Batchid" type="bigInt" />
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.904.1_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_ASSET_MOVABLE" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.904.1" author="saisandeep.b">
@@ -2031,6 +2117,10 @@
 			<column name="TRADEMARKAPPDATE" type="datetime" />
 			<column name="Batchid" type="bigInt" />
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.905.1_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_ASSET_INTANGIBLE" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.905.1" author="saisandeep.b">
@@ -2071,6 +2161,10 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.906.1_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_BORROWER" columnName="ID" columnDataType="bigint" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.906.1" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_BORROWER" columnNames="ID" constraintName="PK_CERSAI_BORROWER_ID"/>
 	</changeSet>
@@ -2108,6 +2202,10 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.907.1_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_ASSET_OWNER" columnName="ID" columnDataType="bigint" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.907.1" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_ASSET_OWNER" columnNames="ID" constraintName="PK_CERSAI_ASSET_OWNER_ID"/>
 	</changeSet>
@@ -2128,6 +2226,10 @@
 			<column name="END_TIME" type="datetime" />
 			<column name="SegmentType" type="varchar(20)" />
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.908.1_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_FILE_INFO" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.908.1" author="saisandeep.b">
@@ -2201,6 +2303,10 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.909.1_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_ModifyColldetails" columnName="ID" columnDataType="bigint" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.909.1" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_ModifyColldetails" columnNames="ID" constraintName="PK_CERSAI_ModifyColldtls_ID"/>
 	</changeSet>
@@ -2219,6 +2325,10 @@
 			<column name="REASONFORDELAY" type ="varchar(20)"/>
 			<column name="Batchid" type="bigInt" />
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.910.1_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_SatisfyColldetails" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.910.1" author="saisandeep.b">
@@ -2383,6 +2493,52 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.925.1" author="saisandeep.b" dbms ="postgresql,oracle">
+		<sql>
+			<![CDATA[
+				CREATE TABLE CERSAI_FILE_INFO_LOG_BKP AS(SELECT ID,COLLATERALREF,REASON,STATUS FROM CERSAI_FILE_INFO_LOG);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#222.925.1" author="saisandeep.b" dbms ="mssql">
+		<sql>
+			<![CDATA[
+				select * into CERSAI_FILE_INFO_LOG_BKP from CERSAI_FILE_INFO_LOG;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#222.925.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				TRUNCATE TABLE CERSAI_FILE_INFO_LOG;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#222.925.3" author="saisandeep.b">
+		<addColumn tableName="CERSAI_FILE_INFO_LOG">
+			<column name="LogId" type="bigint" autoIncrement="true"/>
+		</addColumn>
+	</changeSet> 
+	
+	<changeSet id="ST#222.925.4_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_FILE_INFO_LOG" columnName="LogId" columnDataType="bigint" />	
+	</changeSet>
+	
+	<changeSet id="ST#222.925.4" author="saisandeep.b">
+		<addPrimaryKey tableName="CERSAI_FILE_INFO_LOG" columnNames="LogId" constraintName="PK_Cersai_Filelog_logID"/>
+	</changeSet>
+	
+	<changeSet id="ST#222.925.5" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				INSERT INTO CERSAI_FILE_INFO_LOG (ID,COLLATERALREF,REASON,STATUS) SELECT ID,COLLATERALREF,REASON,STATUS FROM CERSAI_FILE_INFO_LOG_BKP;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#222.926" author="saisandeep.b">
 		<createTable tableName="CERSAI_RESPONSE">
 			<column name="ID" type="bigInt" autoIncrement="true"/>
@@ -2400,6 +2556,10 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.926.1_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CERSAI_RESPONSE" columnName="ID" columnDataType="bigint" />	
+	</changeSet>
+	
 	<changeSet id="ST#222.926.1" author="saisandeep.b">
 		<addPrimaryKey tableName="CERSAI_RESPONSE" columnNames="ID" constraintName="PK_Cersai_Resp_ID"/>
 	</changeSet>
@@ -2411,6 +2571,10 @@
 			<column name="Reference" type="varchar(20)" />
 			<column name="AssignmentDate" type="datetime"/>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.927_pre" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="CollateralAssgnHistory" columnName="ID" columnDataType="bigint" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.927.1" author="saisandeep.b">
@@ -3236,7 +3400,7 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="ST#222.942.1" author="saisandeep.b">
+	<changeSet id="ST#222.942.1" author="saisandeep.b" dbms="mssql">
 		<addPrimaryKey tableName="CollateralRevisedHistory" columnNames="ID" constraintName="PK_CollRevisedHistory_ID"/>
 	</changeSet>
 	
@@ -3487,5 +3651,22 @@
 				select deps_restore_dependencies ('plf', 'collateralsetup_view');
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#222.943" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM CERSAI_charge_holderDetails;
+				INSERT INTO CERSAI_charge_holderDetails values (null, 'AXIS FINANCE LIMITED', 'AXIS HOUSE C 2 GROUND FLOOR','WADIA INTERNATIONAL CENTER', 'PANDURANG BUDHKAR MARG WORLI', '4331', '355','21', '400025', 'IN', '/opt/Axis/PFF/Cersai');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#222.943.1_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="CERSAI_CHARGE_HOLDERDETAILS" columnName="OFFICENAME" columnDataType="varchar(100)" />	
+	</changeSet>
+	
+	<changeSet id="ST#222.943.1" author="saisandeep.b">
+		<addPrimaryKey tableName="CERSAI_CHARGE_HOLDERDETAILS" columnNames="OFFICENAME" constraintName="PK_Cersai_chg_hldr_ofcname"/>
 	</changeSet>
 </databaseChangeLog>

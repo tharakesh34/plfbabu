@@ -178,7 +178,7 @@ public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements 
 			ps.setString(index++, le.getTaskId());
 			ps.setString(index++, le.getNextTaskId());
 			ps.setString(index++, le.getRecordType());
-			ps.setLong(index++, le.getWorkflowId());
+			ps.setLong(index, le.getWorkflowId());
 
 		});
 
@@ -229,7 +229,7 @@ public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements 
 			ps.setString(index++, (le.getExpReference()));
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, le.getVersion() - 1);
+				ps.setInt(index, le.getVersion() - 1);
 			}
 		});
 

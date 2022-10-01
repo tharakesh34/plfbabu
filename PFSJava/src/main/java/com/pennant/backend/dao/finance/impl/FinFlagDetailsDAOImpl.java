@@ -108,7 +108,7 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, finReference);
-			ps.setString(index++, moduleName);
+			ps.setString(index, moduleName);
 		}, (rs, rowNum) -> {
 			FinFlagsDetail fd = new FinFlagsDetail();
 

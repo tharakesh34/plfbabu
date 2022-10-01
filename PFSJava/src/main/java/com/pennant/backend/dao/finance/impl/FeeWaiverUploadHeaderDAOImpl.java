@@ -67,7 +67,7 @@ public class FeeWaiverUploadHeaderDAOImpl extends SequenceDao<FeeWaiverUploadHea
 			ps.setLong(index++, uh.getWorkflowId());
 			ps.setDate(index++, JdbcUtil.getDate(uh.getApprovedDate()));
 			ps.setLong(index++, uh.getMakerId());
-			ps.setObject(index++, uh.getApproverId());
+			ps.setObject(index, uh.getApproverId());
 
 		});
 
@@ -120,7 +120,7 @@ public class FeeWaiverUploadHeaderDAOImpl extends SequenceDao<FeeWaiverUploadHea
 				ps.setInt(index++, uh.getVersion() - 1);
 			}
 
-			ps.setLong(index++, uh.getUploadId());
+			ps.setLong(index, uh.getUploadId());
 		});
 
 		if (recordCount == 0) {
@@ -143,9 +143,9 @@ public class FeeWaiverUploadHeaderDAOImpl extends SequenceDao<FeeWaiverUploadHea
 
 				ps.setLong(index++, uh.getUploadId());
 				if (tableType == TableType.TEMP_TAB) {
-					ps.setTimestamp(index++, uh.getPrevMntOn());
+					ps.setTimestamp(index, uh.getPrevMntOn());
 				} else {
-					ps.setInt(index++, uh.getVersion() - 1);
+					ps.setInt(index, uh.getVersion() - 1);
 				}
 			});
 		} catch (DataAccessException e) {

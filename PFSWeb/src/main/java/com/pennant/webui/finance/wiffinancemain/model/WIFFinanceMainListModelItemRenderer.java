@@ -26,6 +26,7 @@
 package com.pennant.webui.finance.wiffinancemain.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
@@ -33,8 +34,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.PennantApplicationUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -50,6 +53,8 @@ public class WIFFinanceMainListModelItemRenderer implements ListitemRenderer<Fin
 
 	@Override
 	public void render(Listitem item, FinanceMain wIFFinanceMain, int count) {
+
+		int format = CurrencyUtil.getFormat(wIFFinanceMain.getFinCcy());
 
 		Listcell lc;
 		lc = new Listcell(wIFFinanceMain.getFinReference());
@@ -73,6 +78,10 @@ public class WIFFinanceMainListModelItemRenderer implements ListitemRenderer<Fin
 			lc.setParent(item);
 		}
 
+		BigDecimal finAmount = wIFFinanceMain.getFinCurrAssetValue().add(wIFFinanceMain.getFeeChargeAmt());
+		lc = new Listcell(PennantApplicationUtil.amountFormate(finAmount, format));
+		lc.setStyle("text-align:right");
+		lc.setParent(item);
 		lc = new Listcell(wIFFinanceMain.getFinCcy());
 		lc.setParent(item);
 		lc = new Listcell(wIFFinanceMain.getScheduleMethod());

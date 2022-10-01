@@ -165,7 +165,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 			ps.setString(index++, lr.getNextTaskId());
 			ps.setString(index++, lr.getRecordType());
 			ps.setLong(index++, lr.getWorkflowId());
-			ps.setDate(index++, JdbcUtil.getDate(lr.getNocDate()));
+			ps.setDate(index, JdbcUtil.getDate(lr.getNocDate()));
 		});
 
 		return String.valueOf(lr.getId());
@@ -199,7 +199,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 			ps.setString(index++, lr.getNextTaskId());
 			ps.setString(index++, lr.getRecordType());
 			ps.setLong(index++, lr.getWorkflowId());
-			ps.setLong(index++, lr.getId());
+			ps.setLong(index, lr.getId());
 		});
 
 		if (recordCount <= 0) {

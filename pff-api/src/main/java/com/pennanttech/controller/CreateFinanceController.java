@@ -3719,7 +3719,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.ENTERING);
 
 		long finID = fd.getFinID();
-		String finReference = fd.getFinReference();
 
 		FinanceDetail findetail = financeDetailService.getFinanceDetailById(finID, false, "", false,
 				FinServiceEvent.ORG, "");
@@ -4297,6 +4296,15 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		String agreementType = agrReq.getAgreementType();
 		AgreementDefinition agrementDef = agreementDefinitionDAO.getAgreementDefinitionByCode(agreementType, "");
+
+		if (agrementDef == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = agreementType;
+			details.setReturnStatus((APIErrorHandlerService.getFailedStatus("RU0040", valueParm)));
+			agreements.add(details);
+			return agreements;
+		}
+
 		details.setAgreementName(agrementDef.getAggName());
 		String aggtype = agrementDef.getAggtype();
 		details.setAgreementType(aggtype);
@@ -4312,7 +4320,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			String finReference = fm.getFinReference();
 			String aggName = StringUtils.trimToEmpty(agrementDef.getAggReportName());
 			String reportName = "";
-			String aggPath = "", templateName = "";
+			String templateName = "";
 
 			templateName = agrementDef.getAggReportName();
 			AgreementEngine engine = new AgreementEngine();
@@ -4366,7 +4374,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.ENTERING);
 
 		long finID = deviation.getFinID();
-		long workflowId = deviation.getWorkflowId();
 		String finReference = deviation.getFinReference();
 		long deviationId = deviation.getDeviationId();
 

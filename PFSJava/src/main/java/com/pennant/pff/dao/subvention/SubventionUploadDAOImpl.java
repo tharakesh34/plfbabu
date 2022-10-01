@@ -60,7 +60,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 					ps.setString(index++, entityCode);
 					ps.setInt(index++, 0);
 					ps.setInt(index++, 0);
-					ps.setInt(index++, 0);
+					ps.setInt(index, 0);
 
 					return ps;
 				}
@@ -84,7 +84,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, batchId);
+			ps.setLong(index, batchId);
 		}, (rs, rowNum) -> {
 			Subvention sv = new Subvention();
 
@@ -123,7 +123,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, batchId);
+			ps.setLong(index, batchId);
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
@@ -236,7 +236,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 			ps.setBigDecimal(index++, fee.getRemTDS());
 
 			ps.setLong(index++, fee.getFeeID());
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 
 		});
 
@@ -267,7 +267,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 			ps.setBigDecimal(index++, subVention.getCessAmt());
 			ps.setObject(index++, subVention.getProcFeeAmt());
 
-			ps.setObject(index++, subVention.getId());
+			ps.setObject(index, subVention.getId());
 
 		});
 	}
@@ -302,7 +302,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 				ps.setObject(i++, id);
 				ps.setString(i++, err.getCode());
-				ps.setString(i++, err.getError());
+				ps.setString(i, err.getError());
 			}
 
 			public int getBatchSize() {
@@ -323,7 +323,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 			ps.setInt(index++, sh.getSucessRecords());
 			ps.setInt(index++, sh.getFailureRecords());
 			ps.setString(index++, sh.getStatus());
-			ps.setObject(index++, sh.getId());
+			ps.setObject(index, sh.getId());
 
 		});
 	}
@@ -355,7 +355,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 				ps.setDate(i++, JdbcUtil.getDate(subv.getValueDate()));
 				ps.setString(i++, subv.getTransref());
 				ps.setObject(i++, subv.getPartnerBankId());
-				ps.setString(i++, subv.getPartnerAccNo());
+				ps.setString(i, subv.getPartnerAccNo());
 			}
 
 			public int getBatchSize() {
@@ -384,7 +384,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 			ps.setString(index++, remarks.toString());
 			ps.setString(index++, deStatus.getStatus());
-			ps.setString(index++, header.getBatchRef());
+			ps.setString(index, header.getBatchRef());
 
 		});
 	}

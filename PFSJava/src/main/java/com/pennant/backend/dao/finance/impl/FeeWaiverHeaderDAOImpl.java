@@ -130,7 +130,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 				ps.setString(index++, fwh.getTaskId());
 				ps.setString(index++, fwh.getNextTaskId());
 				ps.setString(index++, fwh.getRecordType());
-				ps.setLong(index++, fwh.getWorkflowId());
+				ps.setLong(index, fwh.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -170,7 +170,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 			ps.setString(index++, fwh.getNextTaskId());
 			ps.setString(index++, fwh.getRecordType());
 			ps.setLong(index++, fwh.getWorkflowId());
-			ps.setLong(index++, fwh.getWaiverId());
+			ps.setLong(index, fwh.getWaiverId());
 
 		});
 
