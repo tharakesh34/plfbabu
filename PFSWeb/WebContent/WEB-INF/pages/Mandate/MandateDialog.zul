@@ -122,12 +122,6 @@
 									<checkbox id="defaultMandate" checked="false" />
 								</row>
 								<row>
-									<label value="${c:l('label_MandateDialog_SwapActive.value')}" />
-									<checkbox id="swapMandate" />
-									<label value="${c:l('label_MandateDialog_SwapEffectiveDate.value')}" />
-									<datebox id="swapEffectiveDate" width="200px" />
-								</row>
-								<row>
 									<label value="${c:l('label_MandateDialog_InputDate.value')}" />
 									<datebox id="inputDate" width="200px" />
 									<label value="${c:l('label_MandateDialog_StartDate.value')}" />
@@ -172,13 +166,32 @@
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_SecurityMandate.value')}" />
-									<checkbox id="securityMandate" checked="false" disabled="true"/>
+									<checkbox id="securityMandate" checked="false" disabled="true" />
 									<label value="${c:l('label_MandateDialog_MandateDoc.value')}" />
 									<hbox>
 										<textbox id="documentName" width="150px" maxlength="200" readonly="true" />
 										<button upload="true" label="${c:l('btBrowse_label')}" id="btnUploadDoc"
 											hflex="1" />
 									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="mandateSwapGroupbox" visible="false" sclass="gb-dialog">
+						<caption label="Mandate Swap" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:10px;">
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_MandateDialog_SwapActive.value')}" />
+									<checkbox id="swapMandate" />
+									<label value="${c:l('label_MandateDialog_SwapEffectiveDate.value')}" />
+									<datebox id="swapEffectiveDate" width="200px" />
 								</row>
 							</rows>
 						</grid>
@@ -283,7 +296,7 @@
 									<label value="${c:l('label_MandateDialog_EmployeeID.value')}" />
 									<extendedcombobox id="employeeID" width="200px" readonly="true" />
 									<label value="${c:l('label_MandateDialog_EmployerName.value')}" />
-									<textbox id="employerName" width="250px"/>
+									<textbox id="employerName" width="250px" />
 								</row>
 							</rows>
 						</grid>
