@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                                                                                
+                                                                                    
+    
     
     
     
@@ -19,7 +20,8 @@
     
     
     <wb-module deploy-name="PFSWeb">
-                                                                                                                                                                
+                                                                                                                                                                        
+        
         
         
         
@@ -39,7 +41,8 @@
         
         
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                                                                                                                                                                
+                                                                                                                                                                        
+        
         
         
         
@@ -59,7 +62,8 @@
         
         
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
-                                                                                                                                                                
+                                                                                                                                                                        
+        
         
         
         
@@ -79,7 +83,8 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-                                                                                                                                                                
+                                                                                                                                                                        
+        
         
         
         
@@ -117,19 +122,14 @@
         <dependent-module archiveName="PFSBatch-6.1.5.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/PFSBatch/PFSBatch">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pennapps-web-1.13.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pennapps-web/pennapps-web">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="pff-interface-core-6.1.5.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface-core/pff-interface-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="pff-extension-core-6.1.5.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension-core/pff-extension-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pennapps-core-1.14.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pennapps-core/pennapps-core">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-                                                                                                                                                                
+                                                                                                                                                                        
+        
         
         
         
@@ -149,7 +149,8 @@
         
         
         <property name="context-root" value="PFSWeb"/>
-                                                                                                                                                                
+                                                                                                                                                                        
+        
         
         
         
@@ -169,7 +170,8 @@
         
         
         <property name="java-output-path" value="/PFSWeb/target/classes"/>
-                                                                                                                                                            
+                                                                                                                                                                    
+    
     
     
     
@@ -189,7 +191,8 @@
     
     
     </wb-module>
-                                                                            
+                                                                                
+
 
 
 
