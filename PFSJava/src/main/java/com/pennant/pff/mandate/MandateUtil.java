@@ -9,7 +9,6 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.MandateConstants;
-import com.pennanttech.extension.FeatureExtension;
 
 public class MandateUtil {
 
@@ -127,15 +126,6 @@ public class MandateUtil {
 		chequeTypesList.add(new ValueLabel(InstrumentType.SPDC.name(), labelSPDC));
 
 		return chequeTypesList;
-	}
-
-	private static boolean isEanbled(InstrumentType mandateType) {
-		return FeatureExtension.getValueAsBoolean(mandateType.name() + "_ALLOWED", true);
-	}
-
-	public static List<ValueLabel> excludeRepayMethods(InstrumentType das, InstrumentType si) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public static List<ValueLabel> getAccountTypes() {

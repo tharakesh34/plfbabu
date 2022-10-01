@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.MandateProcesses;
@@ -53,7 +53,7 @@ public class ExternalInterfaceServiceImpl implements ExternalInterfaceService {
 		List<String> entityCodes = mandateProcessdao.getEntityCodes();
 
 		for (String entityCode : entityCodes) {
-			if (ImplementationConstants.MANDATE_PTNRBNK_IN_DWNLD) {
+			if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 				List<String> partnerBankCodes = mandateProcessdao.getPartnerBankCodeByEntity(entityCode);
 				for (String partnerBankCode : partnerBankCodes) {
 					mandates = mandateProcessdao.getMandateList(entityCode, partnerBankCode);

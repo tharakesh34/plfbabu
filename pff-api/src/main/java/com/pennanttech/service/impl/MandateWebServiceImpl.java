@@ -34,6 +34,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.api.service.AbstractService;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
@@ -246,7 +247,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 
 		if (mandate.isSwapIsActive()) {
 			TableType tableType = TableType.MAIN_TAB;
-			if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+			if (MandateExtension.APPROVE_ON_LOAN_ORG) {
 				tableType = TableType.TEMP_TAB;
 			}
 
@@ -743,7 +744,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 			mandate.setMandateType(aMandate.getMandateType());
 
 			TableType tableType = TableType.MAIN_TAB;
-			if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+			if (MandateExtension.APPROVE_ON_LOAN_ORG) {
 				tableType = TableType.TEMP_TAB;
 			}
 

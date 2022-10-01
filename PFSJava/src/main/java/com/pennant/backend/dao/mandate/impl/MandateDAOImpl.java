@@ -35,10 +35,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -751,7 +751,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	public Mandate getLoanInfo(String finReference) {
 		Mandate fm = getLoanInfo(finReference, TableType.MAIN_TAB);
 
-		if (fm == null && ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+		if (fm == null && MandateExtension.APPROVE_ON_LOAN_ORG) {
 			fm = getLoanInfo(finReference, TableType.TEMP_TAB);
 		}
 
@@ -762,7 +762,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	public Mandate getLoanInfo(String finReference, long custID) {
 		Mandate fm = getLoanInfo(finReference, TableType.MAIN_TAB);
 
-		if (fm == null && ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+		if (fm == null && MandateExtension.APPROVE_ON_LOAN_ORG) {
 			fm = getLoanInfo(finReference, TableType.TEMP_TAB);
 		}
 
@@ -772,7 +772,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	@Override
 	public List<Long> getFinanceMainbyCustId(long custId) {
 		StringBuilder sql = new StringBuilder("Select FinID From FinanceMain Where FinIsActive = ? and CustID = ?");
-		if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+		if (MandateExtension.APPROVE_ON_LOAN_ORG) {
 			sql.append(" Union All");
 			sql.append(" Select FinID From FinanceMain_Temp Where FinIsActive = ? and CustID = ?");
 		}
@@ -785,7 +785,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setInt(index++, 1);
 			ps.setLong(index++, custId);
 
-			if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+			if (MandateExtension.APPROVE_ON_LOAN_ORG) {
 				ps.setInt(index++, 1);
 				ps.setLong(index++, custId);
 			}

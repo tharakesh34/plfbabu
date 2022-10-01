@@ -88,6 +88,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.PennantAppUtil;
@@ -231,7 +232,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		registerField("maxLimit", listheader_Amount);
 		registerField("custShrtName", listheader_CustName, SortOrder.NONE);
 		registerField("entityCode", entityCode, SortOrder.NONE, sortOperator_entityCode, Operators.STRING);
-		if (ImplementationConstants.MANDATE_PTNRBNK_IN_DWNLD) {
+		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 			registerField("PartnerBankId");
 			registerField("PartnerBankCode", partnerBank, SortOrder.NONE, sortOperator_partnerBank, Operators.STRING);
 		}
@@ -278,7 +279,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			this.space_MandateType.setSclass("");
 		}
 
-		if (ImplementationConstants.MANDATE_PTNRBNK_IN_DWNLD) {
+		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 			this.row_partnerBank.setVisible(true);
 
 			this.partnerBank.setMaxlength(8);
@@ -656,7 +657,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 		try {
 			if (StringUtils.isNotEmpty(this.entityCode.getValidatedValue())) {
-				if (!this.partnerBank.isReadonly() && ImplementationConstants.MANDATE_PTNRBNK_IN_DWNLD) {
+				if (!this.partnerBank.isReadonly() && MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 					this.partnerBank.setConstraint(
 							new PTStringValidator(Labels.getLabel("label_DisbursementList_PartnerBank.value"),
 									PennantRegularExpressions.REGEX_DESCRIPTION, true));

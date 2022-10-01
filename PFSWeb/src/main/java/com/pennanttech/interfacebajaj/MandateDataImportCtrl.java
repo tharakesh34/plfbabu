@@ -32,6 +32,7 @@ import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.financemanagement.PartnerBankModeConfigService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -307,7 +308,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		if (StringUtils.equalsIgnoreCase(ConfigUtil.CLIENT_FILE_LOCATION, uploadLoc)) {
 			// Adding Entity
-			if (ImplementationConstants.ENTITYCODE_REQ_FOR_MANDATE_PROCESS) {
+			if (MandateExtension.UPLOAD_ENITITY_CODE_MANDATORY) {
 				this.entityCode.setMaxlength(8);
 				this.entityCode.setDisplayStyle(2);
 				this.entityCode.setMandatoryStyle(true);
@@ -386,7 +387,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		btnFileUpload.setVisible(isVisible);
 		fileName.setVisible(isVisible);
 		serverFileName.setVisible(!isVisible);
-		if (ImplementationConstants.ENTITYCODE_REQ_FOR_MANDATE_PROCESS) {
+		if (MandateExtension.UPLOAD_ENITITY_CODE_MANDATORY) {
 			this.label_EntityCode.setVisible(isVisible);
 			this.entityCode.setVisible(isVisible);
 		} else {
@@ -405,7 +406,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		if (ImplementationConstants.ENTITYCODE_REQ_FOR_MANDATE_PROCESS) {
+		if (MandateExtension.UPLOAD_ENITITY_CODE_MANDATORY) {
 			if (this.entityCode.getValue() == null || this.entityCode.getValue().isEmpty()) {
 				MessageUtil.showError("Entity Code is Mandatory.");
 				return;
@@ -473,7 +474,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		String prefix = config.getFilePrefixName();
 		String extension = config.getFileExtension();
 
-		if (ImplementationConstants.ENTITYCODE_REQ_FOR_MANDATE_PROCESS) {
+		if (MandateExtension.UPLOAD_ENITITY_CODE_MANDATORY) {
 			String entityCode = this.entityCode.getValue();
 			String fileName = entityCode.concat(prefix);
 			// validate the file name.

@@ -109,6 +109,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.util.ErrorControl;
@@ -3474,7 +3475,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// this change is to display co-applicant mandates along with primary customer
 		List<Long> custIds = new ArrayList<Long>(1);
 		custIds.add(custid);
-		if (ImplementationConstants.MANDATE_ALLOW_CO_APP && getFinanceDetail() != null) {
+		if (MandateExtension.ALLOW_CO_APP && getFinanceDetail() != null) {
 			for (JointAccountDetail accountDetail : getFinanceDetail().getJointAccountDetailList()) {
 				custIds.add(accountDetail.getCustID());
 			}

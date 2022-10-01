@@ -6229,13 +6229,7 @@
 		</property>
 	</bean>
 
-	<bean name="bankBranchServiceTarget" class="com.pennant.backend.service.bmtmasters.impl.BankBranchServiceImpl">
-		<property name="bankBranchDAO" ref="bankBranchDAO" />
-		<property name="mandateDAO" ref="mandateDAO" />
-		<property name="beneficiaryDAO" ref="beneficiaryDAO" />
-		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-	</bean>
+	<bean name="bankBranchServiceTarget" class="com.pennant.backend.service.bmtmasters.impl.BankBranchServiceImpl"/>
 
 	<!-- Mandate -->
 	<bean id="mandateDAO" class="com.pennant.backend.dao.mandate.impl.MandateDAOImpl" parent="sequenceDao" />

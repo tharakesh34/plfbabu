@@ -108,6 +108,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
@@ -1138,7 +1139,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (fromLoan) {
 			this.north_mandate.setVisible(false);
-			readOnlyComponent(!ImplementationConstants.MANDATE_ALLOW_CO_APP, this.custID);
+			readOnlyComponent(!MandateExtension.ALLOW_CO_APP, this.custID);
 			readOnlyComponent(!issecurityMandate, this.mandateType);
 
 			this.mandateStatus.setVisible(false);

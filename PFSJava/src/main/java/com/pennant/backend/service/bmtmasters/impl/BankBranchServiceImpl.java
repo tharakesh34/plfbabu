@@ -64,9 +64,6 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	private MandateDAO mandateDAO;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private BeneficiaryDAO beneficiaryDAO;
-
-	@Autowired(required = false)
-	@Qualifier("bankBranchPostValidationHook")
 	private PostValidationHook postValidationHook;
 
 	@Override
@@ -390,6 +387,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		return bankBranch;
 	}
 
+	@Override
 	public boolean validateBranchCode(BankBranch bankBranch, String mandateType) {
 		InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
 
@@ -420,33 +418,40 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		return true;
 	}
 
-	public MandateDAO getMandateDAO() {
-		return mandateDAO;
+	@Override
+	public int getAccNoLengthByIFSC(String ifscCode) {
+		return bankBranchDAO.getAccNoLengthByIFSC(ifscCode, "_View");
 	}
 
+	@Autowired
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Autowired
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	@Autowired
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
 	}
 
-	public FinAdvancePaymentsDAO getFinAdvancePaymentsDAO() {
-		return finAdvancePaymentsDAO;
-	}
-
+	@Autowired
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
 
-	public BeneficiaryDAO getBeneficiaryDAO() {
-		return beneficiaryDAO;
-	}
-
+	@Autowired
 	public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
 		this.beneficiaryDAO = beneficiaryDAO;
 	}
 
-	@Override
-	public int getAccNoLengthByIFSC(String ifscCode) {
-		return bankBranchDAO.getAccNoLengthByIFSC(ifscCode, "_View");
+	@Autowired(required = false)
+	@Qualifier("bankBranchPostValidationHook")
+	public void setPostValidationHook(PostValidationHook postValidationHook) {
+		this.postValidationHook = postValidationHook;
 	}
 
 }

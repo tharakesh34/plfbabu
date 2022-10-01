@@ -14,6 +14,8 @@ public class ImplementationConstants {
 		super();
 	}
 
+	private static final String MODULE = "DFT";
+
 	/**
 	 * The static block to initialise the implementation constants.
 	 */
@@ -87,7 +89,6 @@ public class ImplementationConstants {
 		DFT_CPZ_RESET_ON_RECAL_LOCK = getValueAsBoolean("DFT_CPZ_RESET_ON_RECAL_LOCK", false);
 		ALW_LPP_MIN_CAP_AMT = getValueAsBoolean("ALW_LPP_MIN_CAP_AMT", false);
 		SEND_NOTIFICATION_ON_CREATE_LOAN_API = getValueAsBoolean("SEND_NOTIFICATION_ON_CREATE_LOAN_API", false);
-		ALW_APPROVED_MANDATE_IN_ORG = getValueAsBoolean("ALW_APPROVED_MANDATE_IN_ORG", false);
 		ALW_PROFIT_SCHD_INVOICE = getValueAsBoolean("ALW_PROFIT_SCHD_INVOICE", true);
 		NEGATE_SIGN_TB = getValueAsBoolean("NEGATE_SIGN_TB", false);
 		ALLOW_ACCESS_CONTROL_TYPE = getValueAsBoolean("ALLOW_ACCESS_CONTROL_TYPE", true);
@@ -106,11 +107,8 @@ public class ImplementationConstants {
 		LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
 		INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean("INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS",
 				true);
-		ENTITYCODE_REQ_FOR_MANDATE_PROCESS = getValueAsBoolean("ENTITYCODE_REQ_FOR_MANDATE_PROCESS", false);
 		DISBURSEMENT_AUTO_DOWNLOAD = getValueAsBoolean("DISBURSEMENT_AUTO_DOWNLOAD", false);
 		DISBURSEMENT_AUTO_UPLOAD = getValueAsBoolean("DISBURSEMENT_AUTO_UPLOAD", false);
-		MANDATE_AUTO_DOWNLOAD = getValueAsBoolean("MANDATE_AUTO_DOWNLOAD", false);
-		MANDATE_AUTO_UPLOAD = getValueAsBoolean("MANDATE_AUTO_UPLOAD", false);
 		PRESENTMENT_AUTO_DOWNLOAD = getValueAsBoolean("PRESENTMENT_AUTO_DOWNLOAD", false);
 		PRESENTMENT_AUTO_UPLOAD = getValueAsBoolean("PRESENTMENT_AUTO_UPLOAD", false);
 		VALIDATE_BENFICIARY_ACCOUNT = getValueAsBoolean("VALIDATE_BENFICIARY_ACCOUNT", false);
@@ -167,7 +165,6 @@ public class ImplementationConstants {
 		DERIVED_EMI_REQ = getValueAsBoolean("DERIVED_EMI_REQ", false);
 		IS_DATA_SYNC_REQ_BY_APP_DATE = getValueAsBoolean("IS_DATA_SYNC_REQ_BY_APP_DATE", false);
 		CUSTOM_BLACKLIST_PARAMS = getValueAsBoolean("CUSTOM_BLACKLIST_PARAMS", false);
-		MANDATE_ALLOW_CO_APP = getValueAsBoolean("MANDATE_ALLOW_CO_APP", false);
 		DISBURSEMENT_ALLOW_CO_APP = getValueAsBoolean("DISBURSEMENT_ALLOW_CO_APP", false);
 		CHEQUE_ALLOW_CO_APP = getValueAsBoolean("CHEQUE_ALLOW_CO_APP", false);
 		FEE_SERVICEING_STAMPIN_ON_ORG = getValueAsBoolean("FEE_SERVICEING_STAMPIN_ON_ORG", false);
@@ -185,7 +182,6 @@ public class ImplementationConstants {
 		ALLOW_NEGATIVE_VALUES_EXTFIELDS = getValueAsBoolean("ALLOW_NEGATIVE_VALUES_EXTFIELDS", false);
 		FINREFERENCE_ALW_SWIFT_CODE = getValueAsBoolean("FINREFERENCE_ALW_SWIFT_CODE", false);
 		DISB_PAID_CANCELLATION_REQ = getValueAsBoolean("DISB_PAID_CANCELLATION_REQ", false);
-		MANDATE_PTNRBNK_IN_DWNLD = getValueAsBoolean("MANDATE_PTNRBNK_IN_DWNLD", false);
 		PRESENTMENT_STAGE_ACCOUNTING_REQ = getValueAsBoolean("PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
 		ALLOW_LOAN_VAS_RATIO_CALC = getValueAsBoolean("ALLOW_LOAN_VAS_RATIO_CALC", false);
 		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean("ALLOW_ED_FIELDS_IN_NPA", false);
@@ -270,7 +266,6 @@ public class ImplementationConstants {
 		GST_INCLUSIVE_SYMBOL = getValueAsString("GST_INCLUSIVE_SYMBOL", "");
 		GST_EXCLUSIVE_SYMBOL = getValueAsString("GST_EXCLUSIVE_SYMBOL", "");
 		ALW_RATE_CHANGE = getValueAsBoolean("ALW_RATE_CHANGE", false);
-		MANDATE_FRQ_DES_REQ = getValueAsBoolean("MANDATE_FRQ_DES_REQ", false);
 		IMD_EXT_REFERENCE = getValueAsBoolean("IMD_EXT_REFERENCE", false);
 		BOUNCE_CHARGE_ON_DPD_COUNT = getValueAsBoolean("BOUNCE_CHARGE_ON_DPD_COUNT", false);
 		RETAIL_CUST_PAN_MANDATORY = getValueAsBoolean("RETAIL_CUST_PAN_MANDATORY", true);
@@ -366,7 +361,6 @@ public class ImplementationConstants {
 	public static boolean DFT_CPZ_RESET_ON_RECAL_LOCK;
 	public static boolean ALW_LPP_MIN_CAP_AMT;
 	public static boolean SEND_NOTIFICATION_ON_CREATE_LOAN_API;
-	public static boolean ALW_APPROVED_MANDATE_IN_ORG;
 	public static boolean ALW_PROFIT_SCHD_INVOICE;
 	public static boolean NEGATE_SIGN_TB;
 	public static boolean ALLOW_ACCESS_CONTROL_TYPE;
@@ -384,7 +378,6 @@ public class ImplementationConstants {
 	public static boolean ALLOW_ALL_SERV_RCDS;
 	public static boolean LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS;
 	public static boolean INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS;
-	public static boolean ENTITYCODE_REQ_FOR_MANDATE_PROCESS;
 	public static boolean DISBURSEMENT_AUTO_DOWNLOAD;
 	public static boolean DISBURSEMENT_AUTO_UPLOAD;
 	public static boolean MANDATE_AUTO_DOWNLOAD;
@@ -438,7 +431,6 @@ public class ImplementationConstants {
 	public static boolean DERIVED_EMI_REQ;
 	public static boolean IS_DATA_SYNC_REQ_BY_APP_DATE;
 	public static boolean CUSTOM_BLACKLIST_PARAMS;
-	public static boolean MANDATE_ALLOW_CO_APP;
 	public static boolean DISBURSEMENT_ALLOW_CO_APP;
 	public static boolean CHEQUE_ALLOW_CO_APP;
 	public static boolean FEE_SERVICEING_STAMPIN_ON_ORG;
@@ -467,7 +459,6 @@ public class ImplementationConstants {
 	 */
 	public static boolean ALLOW_EOD_INTERVAL_VALIDATION;
 	public static boolean DISB_PAID_CANCELLATION_REQ;
-	public static boolean MANDATE_PTNRBNK_IN_DWNLD;
 	public static boolean ALLOW_LOAN_VAS_RATIO_CALC;
 	public static boolean ALLOW_ED_FIELDS_IN_NPA;
 	public static boolean PRESENTMENT_STAGE_ACCOUNTING_REQ;
@@ -567,7 +558,6 @@ public class ImplementationConstants {
 	public static String GST_INCLUSIVE_SYMBOL;
 	public static String GST_EXCLUSIVE_SYMBOL;
 	public static boolean ALW_RATE_CHANGE;
-	public static boolean MANDATE_FRQ_DES_REQ;
 	public static boolean IMD_EXT_REFERENCE;
 	public static boolean BOUNCE_CHARGE_ON_DPD_COUNT;
 	public static boolean RETAIL_CUST_PAN_MANDATORY;
@@ -667,19 +657,19 @@ public class ImplementationConstants {
 	}
 
 	public static boolean getValueAsBoolean(String key, boolean defaultValue) {
-		return FeatureExtension.getValueAsBoolean(key, defaultValue);
+		return FeatureExtension.getValueAsBoolean(MODULE, key, defaultValue);
 	}
 
 	public static String getValueAsString(String key, String defaultValue) {
-		return FeatureExtension.getValueAsString(key, defaultValue);
+		return FeatureExtension.getValueAsString(MODULE, key, defaultValue);
 	}
 
 	public static Object getValueAsObject(String key, Object defaultValue) {
-		return FeatureExtension.getValueAsObject(key, defaultValue);
+		return FeatureExtension.getValueAsObject(MODULE, key, defaultValue);
 	}
 
 	public static int getValueAsInt(String key, int defaultValue) {
-		return FeatureExtension.getValueAsInt(key, defaultValue);
+		return FeatureExtension.getValueAsInt(MODULE, key, defaultValue);
 	}
 
 }

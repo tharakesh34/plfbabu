@@ -305,6 +305,7 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.AgreementEngine;
@@ -3281,13 +3282,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			break;
 		case AssetConstants.UNIQUE_ID_MANDATE:
 			mandateDialogCtrl.doSetLabels(getFinBasicDetails());
-			if (ImplementationConstants.MANDATE_ALLOW_CO_APP) {
+			if (MandateExtension.ALLOW_CO_APP) {
 				mandateDialogCtrl.doSetCustomerFilters();
 			}
 			break;
 		case AssetConstants.UNIQUE_ID_SECURITYMANDATE:
 			securityMandateDialogCtrl.doSetLabels(getFinBasicDetails());
-			if (ImplementationConstants.MANDATE_ALLOW_CO_APP) {
+			if (MandateExtension.ALLOW_CO_APP) {
 				securityMandateDialogCtrl.doSetCustomerFilters();
 			}
 			break;

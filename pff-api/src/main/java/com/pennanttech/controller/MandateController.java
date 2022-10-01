@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
@@ -31,6 +30,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.api.controller.AbstractController;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -302,7 +302,7 @@ public class MandateController extends AbstractController {
 			if (mandate.isSwapIsActive()) {
 				String type = "";
 				Long finID = financeMainService.getFinID(mandate.getOrgReference(), TableType.MAIN_TAB);
-				if (finID != null && ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+				if (finID != null && MandateExtension.APPROVE_ON_LOAN_ORG) {
 					type = "_Temp";
 				}
 
@@ -347,7 +347,7 @@ public class MandateController extends AbstractController {
 				String type = "";
 				Long finID = financeMainService.getFinID(mandate.getOrgReference(), TableType.MAIN_TAB);
 
-				if (finID != null && ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+				if (finID != null && MandateExtension.APPROVE_ON_LOAN_ORG) {
 					type = "_Temp";
 				}
 
