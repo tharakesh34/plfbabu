@@ -12,8 +12,8 @@ public class LedgerDownload implements Serializable {
 	private String custCif;
 	private String custShrtName;
 	private long finID;
-	private String finReference;
-	private long linkedTranID;
+	private String attribute2;
+	private long attribute3;
 	private Long receiptId;
 	private String receiptMode;
 	private Date appDate;
@@ -26,17 +26,17 @@ public class LedgerDownload implements Serializable {
 	private String currencyCode;
 	private Date jeCreateDate;
 	private String actualFlag;
-	private String entity;
-	private String branchCode;
-	private String glAccount;
-	private String department;
-	private String lobCode;
+	private String segment1;
+	private String segment2;
+	private String segment3;
+	private String segment4;
+	private String segment5;
 	private String productCode;
-	private String partners;
-	private String interCompany;
-	private String future1;
-	private String future2;
-	private String future3;
+	private String segment6;
+	private String segment7;
+	private String segment8;
+	private String segment9;
+	private String segment10;
 	private String segment12;
 	private String segment13;
 	private String segment14;
@@ -60,8 +60,8 @@ public class LedgerDownload implements Serializable {
 	private BigDecimal debitAmount;
 	private String convertedDebitAmount;
 	private String convertedCreditAmount;
-	private String loadID;
-	private String systemName;
+	private String reference1;
+	private String reference2;
 	private String reference3;
 	private String reference4;
 	private String reference5;
@@ -69,7 +69,7 @@ public class LedgerDownload implements Serializable {
 	private String reference7;
 	private String reference8;
 	private String reference9;
-	private String lineDescription;
+	private String reference10;
 	private String referenceColumn1;
 	private String referenceColumn2;
 	private String referenceColumn3;
@@ -84,7 +84,7 @@ public class LedgerDownload implements Serializable {
 	private String currencyConversionType;
 	private String currencyConversionDate;
 	private String currencyConversionRate;
-	private Date extractionDate;
+	private Date interfaceGroupIdentifier;
 	private String contextField;
 	private String attribute1;
 	private String attribute4;
@@ -114,6 +114,62 @@ public class LedgerDownload implements Serializable {
 	private BigDecimal postAmount;
 	private String drorCr;
 	private String closingStatus;
+	private String reference18;
+	private String reference19;
+	private String reference20;
+	private String attributeDate1;
+	private String attributeDate2;
+	private String attributeDate3;
+	private String attributeDate4;
+	private String attributeDate5;
+	private String attributeDate6;
+	private String attributeDate7;
+	private String attributeDate8;
+	private String attributeDate9;
+	private String attributeDate10;
+	private String attributeNumber1;
+	private String attributeNumber2;
+	private String attributeNumber3;
+	private String attributeNumber4;
+	private String attributeNumber5;
+	private String attributeNumber6;
+	private String attributeNumber7;
+	private String attributeNumber8;
+	private String attributeNumber9;
+	private String attributeNumber10;
+	private String globalAttributeCategory;
+	private String globalAttribute1;
+	private String globalAttribute2;
+	private String globalAttribute3;
+	private String globalAttribute4;
+	private String globalAttribute5;
+	private String globalAttribute6;
+	private String globalAttribute7;
+	private String globalAttribute8;
+	private String globalAttribute9;
+	private String globalAttribute10;
+	private String globalAttribute11;
+	private String globalAttribute12;
+	private String globalAttribute13;
+	private String globalAttribute14;
+	private String globalAttribute15;
+	private String globalAttribute16;
+	private String globalAttribute17;
+	private String globalAttribute18;
+	private String globalAttribute19;
+	private String globalAttribute20;
+	private String globalAttributeDate1;
+	private String globalAttributeDate2;
+	private String globalAttributeDate3;
+	private String globalAttributeDate4;
+	private String globalAttributeDate5;
+	private String globalAttributeNumber1;
+	private String globalAttributeNumber2;
+	private String globalAttributeNumber3;
+	private String globalAttributeNumber4;
+	private String globalAttributeNumber5;
+	private String segment11;
+	private boolean finIsActive;
 
 	public LedgerDownload() {
 		super();
@@ -157,14 +213,6 @@ public class LedgerDownload implements Serializable {
 
 	public void setFinID(long finID) {
 		this.finID = finID;
-	}
-
-	public String getFinReference() {
-		return finReference;
-	}
-
-	public void setFinReference(String finReference) {
-		this.finReference = finReference;
 	}
 
 	public Long getReceiptId() {
@@ -263,92 +311,12 @@ public class LedgerDownload implements Serializable {
 		this.actualFlag = actualFlag;
 	}
 
-	public String getEntity() {
-		return entity;
-	}
-
-	public void setEntity(String entity) {
-		this.entity = entity;
-	}
-
-	public String getBranchCode() {
-		return branchCode;
-	}
-
-	public void setBranchCode(String branchCode) {
-		this.branchCode = branchCode;
-	}
-
-	public String getGlAccount() {
-		return glAccount;
-	}
-
-	public void setGlAccount(String glAccount) {
-		this.glAccount = glAccount;
-	}
-
-	public String getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(String department) {
-		this.department = department;
-	}
-
-	public String getLobCode() {
-		return lobCode;
-	}
-
-	public void setLobCode(String lobCode) {
-		this.lobCode = lobCode;
-	}
-
 	public String getProductCode() {
 		return productCode;
 	}
 
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
-	}
-
-	public String getPartners() {
-		return partners;
-	}
-
-	public void setPartners(String partners) {
-		this.partners = partners;
-	}
-
-	public String getInterCompany() {
-		return interCompany;
-	}
-
-	public void setInterCompany(String interCompany) {
-		this.interCompany = interCompany;
-	}
-
-	public String getFuture1() {
-		return future1;
-	}
-
-	public void setFuture1(String future1) {
-		this.future1 = future1;
-	}
-
-	public String getFuture2() {
-		return future2;
-	}
-
-	public void setFuture2(String future2) {
-		this.future2 = future2;
-	}
-
-	public String getFuture3() {
-		return future3;
-	}
-
-	public void setFuture3(String future3) {
-		this.future3 = future3;
 	}
 
 	public String getSegment12() {
@@ -535,22 +503,6 @@ public class LedgerDownload implements Serializable {
 		this.convertedCreditAmount = convertedCreditAmount;
 	}
 
-	public String getLoadID() {
-		return loadID;
-	}
-
-	public void setLoadID(String loadID) {
-		this.loadID = loadID;
-	}
-
-	public String getSystemName() {
-		return systemName;
-	}
-
-	public void setSystemName(String systemName) {
-		this.systemName = systemName;
-	}
-
 	public String getReference3() {
 		return reference3;
 	}
@@ -605,14 +557,6 @@ public class LedgerDownload implements Serializable {
 
 	public void setReference9(String reference9) {
 		this.reference9 = reference9;
-	}
-
-	public String getLineDescription() {
-		return lineDescription;
-	}
-
-	public void setLineDescription(String lineDescription) {
-		this.lineDescription = lineDescription;
 	}
 
 	public String getReferenceColumn1() {
@@ -727,14 +671,6 @@ public class LedgerDownload implements Serializable {
 		this.currencyConversionRate = currencyConversionRate;
 	}
 
-	public Date getExtractionDate() {
-		return extractionDate;
-	}
-
-	public void setExtractionDate(Date extractionDate) {
-		this.extractionDate = extractionDate;
-	}
-
 	public String getContextField() {
 		return contextField;
 	}
@@ -749,14 +685,6 @@ public class LedgerDownload implements Serializable {
 
 	public void setAttribute1(String attribute1) {
 		this.attribute1 = attribute1;
-	}
-
-	public long getLinkedTranID() {
-		return linkedTranID;
-	}
-
-	public void setLinkedTranID(long linkedTranID) {
-		this.linkedTranID = linkedTranID;
 	}
 
 	public String getAttribute4() {
@@ -973,6 +901,582 @@ public class LedgerDownload implements Serializable {
 
 	public void setClosingStatus(String closingStatus) {
 		this.closingStatus = closingStatus;
+	}
+
+	public String getSegment1() {
+		return segment1;
+	}
+
+	public void setSegment1(String segment1) {
+		this.segment1 = segment1;
+	}
+
+	public String getSegment2() {
+		return segment2;
+	}
+
+	public void setSegment2(String segment2) {
+		this.segment2 = segment2;
+	}
+
+	public String getSegment3() {
+		return segment3;
+	}
+
+	public void setSegment3(String segment3) {
+		this.segment3 = segment3;
+	}
+
+	public String getSegment4() {
+		return segment4;
+	}
+
+	public void setSegment4(String segment4) {
+		this.segment4 = segment4;
+	}
+
+	public String getSegment5() {
+		return segment5;
+	}
+
+	public void setSegment5(String segment5) {
+		this.segment5 = segment5;
+	}
+
+	public String getSegment6() {
+		return segment6;
+	}
+
+	public void setSegment6(String segment6) {
+		this.segment6 = segment6;
+	}
+
+	public String getSegment7() {
+		return segment7;
+	}
+
+	public void setSegment7(String segment7) {
+		this.segment7 = segment7;
+	}
+
+	public String getSegment8() {
+		return segment8;
+	}
+
+	public void setSegment8(String segment8) {
+		this.segment8 = segment8;
+	}
+
+	public String getSegment9() {
+		return segment9;
+	}
+
+	public void setSegment9(String segment9) {
+		this.segment9 = segment9;
+	}
+
+	public String getSegment10() {
+		return segment10;
+	}
+
+	public void setSegment10(String segment10) {
+		this.segment10 = segment10;
+	}
+
+	public Date getInterfaceGroupIdentifier() {
+		return interfaceGroupIdentifier;
+	}
+
+	public void setInterfaceGroupIdentifier(Date interfaceGroupIdentifier) {
+		this.interfaceGroupIdentifier = interfaceGroupIdentifier;
+	}
+
+	public String getReference1() {
+		return reference1;
+	}
+
+	public void setReference1(String reference1) {
+		this.reference1 = reference1;
+	}
+
+	public String getReference2() {
+		return reference2;
+	}
+
+	public void setReference2(String reference2) {
+		this.reference2 = reference2;
+	}
+
+	public String getReference10() {
+		return reference10;
+	}
+
+	public void setReference10(String reference10) {
+		this.reference10 = reference10;
+	}
+
+	public String getAttribute2() {
+		return attribute2;
+	}
+
+	public void setAttribute2(String attribute2) {
+		this.attribute2 = attribute2;
+	}
+
+	public long getAttribute3() {
+		return attribute3;
+	}
+
+	public void setAttribute3(long attribute3) {
+		this.attribute3 = attribute3;
+	}
+
+	public String getReference18() {
+		return reference18;
+	}
+
+	public void setReference18(String reference18) {
+		this.reference18 = reference18;
+	}
+
+	public String getReference19() {
+		return reference19;
+	}
+
+	public void setReference19(String reference19) {
+		this.reference19 = reference19;
+	}
+
+	public String getReference20() {
+		return reference20;
+	}
+
+	public void setReference20(String reference20) {
+		this.reference20 = reference20;
+	}
+
+	public String getAttributeDate1() {
+		return attributeDate1;
+	}
+
+	public void setAttributeDate1(String attributeDate1) {
+		this.attributeDate1 = attributeDate1;
+	}
+
+	public String getAttributeDate2() {
+		return attributeDate2;
+	}
+
+	public void setAttributeDate2(String attributeDate2) {
+		this.attributeDate2 = attributeDate2;
+	}
+
+	public String getAttributeDate3() {
+		return attributeDate3;
+	}
+
+	public void setAttributeDate3(String attributeDate3) {
+		this.attributeDate3 = attributeDate3;
+	}
+
+	public String getAttributeDate4() {
+		return attributeDate4;
+	}
+
+	public void setAttributeDate4(String attributeDate4) {
+		this.attributeDate4 = attributeDate4;
+	}
+
+	public String getAttributeDate5() {
+		return attributeDate5;
+	}
+
+	public void setAttributeDate5(String attributeDate5) {
+		this.attributeDate5 = attributeDate5;
+	}
+
+	public String getAttributeDate6() {
+		return attributeDate6;
+	}
+
+	public void setAttributeDate6(String attributeDate6) {
+		this.attributeDate6 = attributeDate6;
+	}
+
+	public String getAttributeDate7() {
+		return attributeDate7;
+	}
+
+	public void setAttributeDate7(String attributeDate7) {
+		this.attributeDate7 = attributeDate7;
+	}
+
+	public String getAttributeDate8() {
+		return attributeDate8;
+	}
+
+	public void setAttributeDate8(String attributeDate8) {
+		this.attributeDate8 = attributeDate8;
+	}
+
+	public String getAttributeDate9() {
+		return attributeDate9;
+	}
+
+	public void setAttributeDate9(String attributeDate9) {
+		this.attributeDate9 = attributeDate9;
+	}
+
+	public String getAttributeDate10() {
+		return attributeDate10;
+	}
+
+	public void setAttributeDate10(String attributeDate10) {
+		this.attributeDate10 = attributeDate10;
+	}
+
+	public String getAttributeNumber1() {
+		return attributeNumber1;
+	}
+
+	public void setAttributeNumber1(String attributeNumber1) {
+		this.attributeNumber1 = attributeNumber1;
+	}
+
+	public String getAttributeNumber2() {
+		return attributeNumber2;
+	}
+
+	public void setAttributeNumber2(String attributeNumber2) {
+		this.attributeNumber2 = attributeNumber2;
+	}
+
+	public String getAttributeNumber3() {
+		return attributeNumber3;
+	}
+
+	public void setAttributeNumber3(String attributeNumber3) {
+		this.attributeNumber3 = attributeNumber3;
+	}
+
+	public String getAttributeNumber4() {
+		return attributeNumber4;
+	}
+
+	public void setAttributeNumber4(String attributeNumber4) {
+		this.attributeNumber4 = attributeNumber4;
+	}
+
+	public String getAttributeNumber5() {
+		return attributeNumber5;
+	}
+
+	public void setAttributeNumber5(String attributeNumber5) {
+		this.attributeNumber5 = attributeNumber5;
+	}
+
+	public String getAttributeNumber6() {
+		return attributeNumber6;
+	}
+
+	public void setAttributeNumber6(String attributeNumber6) {
+		this.attributeNumber6 = attributeNumber6;
+	}
+
+	public String getAttributeNumber7() {
+		return attributeNumber7;
+	}
+
+	public void setAttributeNumber7(String attributeNumber7) {
+		this.attributeNumber7 = attributeNumber7;
+	}
+
+	public String getAttributeNumber8() {
+		return attributeNumber8;
+	}
+
+	public void setAttributeNumber8(String attributeNumber8) {
+		this.attributeNumber8 = attributeNumber8;
+	}
+
+	public String getAttributeNumber9() {
+		return attributeNumber9;
+	}
+
+	public void setAttributeNumber9(String attributeNumber9) {
+		this.attributeNumber9 = attributeNumber9;
+	}
+
+	public String getAttributeNumber10() {
+		return attributeNumber10;
+	}
+
+	public void setAttributeNumber10(String attributeNumber10) {
+		this.attributeNumber10 = attributeNumber10;
+	}
+
+	public String getGlobalAttributeCategory() {
+		return globalAttributeCategory;
+	}
+
+	public void setGlobalAttributeCategory(String globalAttributeCategory) {
+		this.globalAttributeCategory = globalAttributeCategory;
+	}
+
+	public String getGlobalAttribute1() {
+		return globalAttribute1;
+	}
+
+	public void setGlobalAttribute1(String globalAttribute1) {
+		this.globalAttribute1 = globalAttribute1;
+	}
+
+	public String getGlobalAttribute2() {
+		return globalAttribute2;
+	}
+
+	public void setGlobalAttribute2(String globalAttribute2) {
+		this.globalAttribute2 = globalAttribute2;
+	}
+
+	public String getGlobalAttribute3() {
+		return globalAttribute3;
+	}
+
+	public void setGlobalAttribute3(String globalAttribute3) {
+		this.globalAttribute3 = globalAttribute3;
+	}
+
+	public String getGlobalAttribute4() {
+		return globalAttribute4;
+	}
+
+	public void setGlobalAttribute4(String globalAttribute4) {
+		this.globalAttribute4 = globalAttribute4;
+	}
+
+	public String getGlobalAttribute5() {
+		return globalAttribute5;
+	}
+
+	public void setGlobalAttribute5(String globalAttribute5) {
+		this.globalAttribute5 = globalAttribute5;
+	}
+
+	public String getGlobalAttribute6() {
+		return globalAttribute6;
+	}
+
+	public void setGlobalAttribute6(String globalAttribute6) {
+		this.globalAttribute6 = globalAttribute6;
+	}
+
+	public String getGlobalAttribute7() {
+		return globalAttribute7;
+	}
+
+	public void setGlobalAttribute7(String globalAttribute7) {
+		this.globalAttribute7 = globalAttribute7;
+	}
+
+	public String getGlobalAttribute8() {
+		return globalAttribute8;
+	}
+
+	public void setGlobalAttribute8(String globalAttribute8) {
+		this.globalAttribute8 = globalAttribute8;
+	}
+
+	public String getGlobalAttribute9() {
+		return globalAttribute9;
+	}
+
+	public void setGlobalAttribute9(String globalAttribute9) {
+		this.globalAttribute9 = globalAttribute9;
+	}
+
+	public String getGlobalAttribute10() {
+		return globalAttribute10;
+	}
+
+	public void setGlobalAttribute10(String globalAttribute10) {
+		this.globalAttribute10 = globalAttribute10;
+	}
+
+	public String getGlobalAttribute11() {
+		return globalAttribute11;
+	}
+
+	public void setGlobalAttribute11(String globalAttribute11) {
+		this.globalAttribute11 = globalAttribute11;
+	}
+
+	public String getGlobalAttribute12() {
+		return globalAttribute12;
+	}
+
+	public void setGlobalAttribute12(String globalAttribute12) {
+		this.globalAttribute12 = globalAttribute12;
+	}
+
+	public String getGlobalAttribute13() {
+		return globalAttribute13;
+	}
+
+	public void setGlobalAttribute13(String globalAttribute13) {
+		this.globalAttribute13 = globalAttribute13;
+	}
+
+	public String getGlobalAttribute14() {
+		return globalAttribute14;
+	}
+
+	public void setGlobalAttribute14(String globalAttribute14) {
+		this.globalAttribute14 = globalAttribute14;
+	}
+
+	public String getGlobalAttribute15() {
+		return globalAttribute15;
+	}
+
+	public void setGlobalAttribute15(String globalAttribute15) {
+		this.globalAttribute15 = globalAttribute15;
+	}
+
+	public String getGlobalAttribute16() {
+		return globalAttribute16;
+	}
+
+	public void setGlobalAttribute16(String globalAttribute16) {
+		this.globalAttribute16 = globalAttribute16;
+	}
+
+	public String getGlobalAttribute17() {
+		return globalAttribute17;
+	}
+
+	public void setGlobalAttribute17(String globalAttribute17) {
+		this.globalAttribute17 = globalAttribute17;
+	}
+
+	public String getGlobalAttribute18() {
+		return globalAttribute18;
+	}
+
+	public void setGlobalAttribute18(String globalAttribute18) {
+		this.globalAttribute18 = globalAttribute18;
+	}
+
+	public String getGlobalAttribute19() {
+		return globalAttribute19;
+	}
+
+	public void setGlobalAttribute19(String globalAttribute19) {
+		this.globalAttribute19 = globalAttribute19;
+	}
+
+	public String getGlobalAttribute20() {
+		return globalAttribute20;
+	}
+
+	public void setGlobalAttribute20(String globalAttribute20) {
+		this.globalAttribute20 = globalAttribute20;
+	}
+
+	public String getGlobalAttributeDate1() {
+		return globalAttributeDate1;
+	}
+
+	public void setGlobalAttributeDate1(String globalAttributeDate1) {
+		this.globalAttributeDate1 = globalAttributeDate1;
+	}
+
+	public String getGlobalAttributeDate2() {
+		return globalAttributeDate2;
+	}
+
+	public void setGlobalAttributeDate2(String globalAttributeDate2) {
+		this.globalAttributeDate2 = globalAttributeDate2;
+	}
+
+	public String getGlobalAttributeDate3() {
+		return globalAttributeDate3;
+	}
+
+	public void setGlobalAttributeDate3(String globalAttributeDate3) {
+		this.globalAttributeDate3 = globalAttributeDate3;
+	}
+
+	public String getGlobalAttributeDate4() {
+		return globalAttributeDate4;
+	}
+
+	public void setGlobalAttributeDate4(String globalAttributeDate4) {
+		this.globalAttributeDate4 = globalAttributeDate4;
+	}
+
+	public String getGlobalAttributeDate5() {
+		return globalAttributeDate5;
+	}
+
+	public void setGlobalAttributeDate5(String globalAttributeDate5) {
+		this.globalAttributeDate5 = globalAttributeDate5;
+	}
+
+	public String getGlobalAttributeNumber1() {
+		return globalAttributeNumber1;
+	}
+
+	public void setGlobalAttributeNumber1(String globalAttributeNumber1) {
+		this.globalAttributeNumber1 = globalAttributeNumber1;
+	}
+
+	public String getGlobalAttributeNumber2() {
+		return globalAttributeNumber2;
+	}
+
+	public void setGlobalAttributeNumber2(String globalAttributeNumber2) {
+		this.globalAttributeNumber2 = globalAttributeNumber2;
+	}
+
+	public String getGlobalAttributeNumber3() {
+		return globalAttributeNumber3;
+	}
+
+	public void setGlobalAttributeNumber3(String globalAttributeNumber3) {
+		this.globalAttributeNumber3 = globalAttributeNumber3;
+	}
+
+	public String getGlobalAttributeNumber4() {
+		return globalAttributeNumber4;
+	}
+
+	public void setGlobalAttributeNumber4(String globalAttributeNumber4) {
+		this.globalAttributeNumber4 = globalAttributeNumber4;
+	}
+
+	public String getGlobalAttributeNumber5() {
+		return globalAttributeNumber5;
+	}
+
+	public void setGlobalAttributeNumber5(String globalAttributeNumber5) {
+		this.globalAttributeNumber5 = globalAttributeNumber5;
+	}
+
+	public String getSegment11() {
+		return segment11;
+	}
+
+	public void setSegment11(String segment11) {
+		this.segment11 = segment11;
+	}
+
+	public boolean isFinIsActive() {
+		return finIsActive;
+	}
+
+	public void setFinIsActive(boolean finIsActive) {
+		this.finIsActive = finIsActive;
 	}
 
 }

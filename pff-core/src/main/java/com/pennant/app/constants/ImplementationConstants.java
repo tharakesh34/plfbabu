@@ -333,6 +333,7 @@ public class ImplementationConstants {
 				"RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT", true);
 		RECEIPT_ALLOW_FULL_WAIVER = getValueAsBoolean(extensions, "RECEIPT_ALLOW_FULL_WAIVER", false);
 		ALLOW_CERSAI = getValueAsBoolean(extensions, "ALLOW_CERSAI", false);
+		DISB_STP = getValueAsBoolean(extensions, "DISB_STP", false);
 	}
 
 	public static boolean LIMIT_INTERNAL;
@@ -624,6 +625,7 @@ public class ImplementationConstants {
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT;
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER;
 	public static boolean ALLOW_CERSAI;
+	public static boolean DISB_STP;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;

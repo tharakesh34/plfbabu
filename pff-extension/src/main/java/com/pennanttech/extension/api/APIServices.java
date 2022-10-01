@@ -141,6 +141,8 @@ public class APIServices {
 		services.add("getVASRecordings");
 		services.add("recordVAS");
 		services.add("getCustomerDetails");
+		services.add("createWorkFlow");
+		services.add("updateWorkFlow");
 		services.add("getWorkFlowDetails");
 		services.add("getProcessView");
 		services.add("earlySettlement");

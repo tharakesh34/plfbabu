@@ -305,8 +305,13 @@ public class CustomizeFinanceDataValidation {
 					if (bankDetail != null) {
 						int maxAccNoLength = bankDetail.getAccNoLength();
 						int minAccNoLength = bankDetail.getMinAccNoLength();
-						if (mandate.getAccNumber().length() < minAccNoLength
-								|| mandate.getAccNumber().length() > maxAccNoLength) {
+						if (minAccNoLength == maxAccNoLength) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "AccountNumber(Mandate)";
+							valueParm[1] = String.valueOf(maxAccNoLength) + " characters";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+							return errorDetails;
+						} else {
 							String[] valueParm = new String[3];
 							valueParm[0] = "AccountNumber(Mandate)";
 							valueParm[1] = String.valueOf(minAccNoLength) + " characters";
@@ -314,6 +319,7 @@ public class CustomizeFinanceDataValidation {
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("BNK001", valueParm)));
 							return errorDetails;
 						}
+
 					}
 				}
 				// validate Phone number

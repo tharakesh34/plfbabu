@@ -224,7 +224,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				fap.setStatus(DisbursementConstants.STATUS_HOLD);
 			}
 
-			if (disbStp) {
+			if (disbStp || ImplementationConstants.DISB_STP) {
 				fap.setStatus(DisbursementConstants.STATUS_AWAITCON);
 			}
 

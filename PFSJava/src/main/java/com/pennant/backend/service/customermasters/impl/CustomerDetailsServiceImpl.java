@@ -2774,13 +2774,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						int minAccNoLength = bankDetail.getMinAccNoLength();
 						if (custBankInfo.getAccountNumber().length() < minAccNoLength
 								|| custBankInfo.getAccountNumber().length() > maxAccNoLength) {
-							String[] valueParm = new String[3];
-							valueParm[0] = "AccountNumber";
-							valueParm[1] = String.valueOf(minAccNoLength) + " characters";
-							valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("BNK001", "", valueParm));
-							auditDetail.setErrorDetail(errorDetail);
-							return auditDetail;
+							if (minAccNoLength == maxAccNoLength) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "AccountNumber";
+								valueParm[1] = String.valueOf(maxAccNoLength) + " characters";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30570", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							} else {
+								String[] valueParm = new String[3];
+								valueParm[0] = "AccountNumber";
+								valueParm[1] = String.valueOf(minAccNoLength) + " characters";
+								valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("BNK001", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
 						}
 					}
 				}

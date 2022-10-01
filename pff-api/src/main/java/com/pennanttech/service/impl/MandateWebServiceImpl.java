@@ -618,11 +618,18 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				int maxAccNoLength = bankDetails.getAccNoLength();
 				int minAccNolength = bankDetails.getMinAccNoLength();
 				if (length < minAccNolength || length > maxAccNoLength) {
-					String[] valueParm = new String[3];
-					valueParm[0] = "AccountNumber";
-					valueParm[1] = String.valueOf(minAccNolength) + " characters";
-					valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
-					return getErrorDetails("BNK001", valueParm);
+					if (minAccNolength == maxAccNoLength) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "AccountNumber";
+						valueParm[1] = String.valueOf(maxAccNoLength) + " characters";
+						return getErrorDetails("30570", valueParm);
+					} else {
+						String[] valueParm = new String[3];
+						valueParm[0] = "AccountNumber";
+						valueParm[1] = String.valueOf(minAccNolength) + " characters";
+						valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
+						return getErrorDetails("BNK001", valueParm);
+					}
 				}
 			}
 		}

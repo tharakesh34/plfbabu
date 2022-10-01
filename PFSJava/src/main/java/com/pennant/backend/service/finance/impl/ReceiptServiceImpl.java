@@ -2130,7 +2130,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			advancePaymentService.setAdvancePaymentDetails(scheduleData.getFinanceMain(), scheduleData);
 		}
 
-		if (ImplementationConstants.ALLOW_NPA && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+		if (ImplementationConstants.ALLOW_NPA && (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()))
+				|| !fm.isFinIsActive()) {
 			assetClassificationService.doProcessEarlySettlement(fm.getFinID());
 		}
 
