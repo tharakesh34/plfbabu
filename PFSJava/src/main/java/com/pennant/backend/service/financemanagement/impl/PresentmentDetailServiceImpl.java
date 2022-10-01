@@ -77,6 +77,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.mandate.InstrumentType;
@@ -131,6 +132,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private RepaymentProcessUtil repaymentProcessUtil;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private CustomerDataService customerDataService;
+	private FinMandateService finMandateService;
 
 	@Override
 	public PresentmentHeader getPresentmentHeader(long id) {
@@ -325,6 +327,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		pde.setReceiptCancellationService(receiptCancellationService);
 		pde.setPresentmentImportProcess(presentmentImportProcess);
 		pde.setEventPropertiesService(eventPropertiesService);
+		pde.setFinMandateService(finMandateService);
 	}
 
 	private void savePresentmentData(PresentmentHeader ph) {
@@ -1133,4 +1136,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.customerDataService = customerDataService;
 	}
 
+	@Autowired
+	public void setFinMandateService(FinMandateService finMandateService) {
+		this.finMandateService = finMandateService;
+	}
 }

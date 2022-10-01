@@ -49,6 +49,7 @@ import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
+import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -91,6 +92,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	private MandateProcesses defaultMandateProcess;
 	private MandateCheckDigitDAO mandateCheckDigitDAO;
 	private BankBranchDAO bankBranchDAO;
+	private ChequeDetailDAO chequeDetailDAO;
 
 	@Autowired(required = false)
 	private MandateProcesses mandateProcesses;
@@ -687,6 +689,63 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		return remainder;
 	}
 
+	@Override
+	public void autoSwaping(long custID) {
+		logger.debug(Literal.ENTERING);
+		List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForAutoSwap(custID, SysParamUtil.getAppDate());
+
+		for (Mandate mandate : mandatesForAutoSwap) {
+			long mandateID = mandate.getMandateID();
+			Long oldmandateID = mandate.getOldMandate();
+			String finRepayMethod = mandate.getFinRepayMethod();
+
+			if (oldmandateID == null || oldmandateID == mandateID) {
+				continue;
+			}
+
+			String mandateType = mandate.getMandateType();
+
+			if (InstrumentType.isPDC(finRepayMethod)) {
+				boolean relisedAllCheques = chequeDetailDAO.isRelisedAllCheques(mandate.getFinID());
+
+				if (relisedAllCheques) {
+					financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "");
+				}
+			} else {
+				financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "");
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void autoSwapingFromPDC(long finID) {
+		boolean relisedAllCheques = chequeDetailDAO.isRelisedAllCheques(finID);
+
+		if (!relisedAllCheques) {
+			return;
+		}
+
+		List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForAutoSwap(finID);
+
+		for (Mandate mandate : mandatesForAutoSwap) {
+			long mandateID = mandate.getMandateID();
+			Long oldmandateID = mandate.getOldMandate();
+			String finRepayMethod = mandate.getFinRepayMethod();
+
+			if (oldmandateID == null || oldmandateID == mandateID) {
+				continue;
+			}
+
+			String mandateType = mandate.getMandateType();
+
+			if (InstrumentType.isPDC(finRepayMethod)) {
+				financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "");
+			}
+		}
+	}
+
 	@Autowired(required = false)
 	@Qualifier(value = "mandateProcesses")
 	public void setMandateProces(MandateProcesses mandateProcesses) {
@@ -731,6 +790,11 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	@Autowired
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	@Autowired
+	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
+		this.chequeDetailDAO = chequeDetailDAO;
 	}
 
 	private MandateProcesses getMandateProcess() {

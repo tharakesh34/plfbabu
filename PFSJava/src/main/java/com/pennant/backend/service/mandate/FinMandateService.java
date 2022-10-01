@@ -51,4 +51,8 @@ public interface FinMandateService {
 
 	void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail);
 
+	public void autoSwaping(long custID);
+
+	void autoSwapingFromPDC(long finID);
+
 }

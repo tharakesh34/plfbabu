@@ -27,6 +27,7 @@ package com.pennant.backend.dao.mandate.impl;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -572,7 +573,6 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, barCode, mandateID);
 	}
 
-	// FIXME :: need to move into FINSCHEDULEDETAILS class
 	@Override
 	public BigDecimal getMaxRepayAmount(String finReference, String type) {
 		StringBuilder sql = new StringBuilder("Select max(RepayAmount) From FinScheduleDetails");
@@ -903,6 +903,57 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(StringUtils.trimToEmpty(type));
 
 		return sql;
+	}
+
+	@Override
+	public List<Mandate> getMandatesForAutoSwap(long custID, Date appDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, m.MandateId, m.MandateType, fm.MandateId OldMandateId");
+		sql.append(" From Mandates m");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference and fm.CustID = ?");
+		sql.append(" Where SwapIsActive = ? and SwapEffectivedate = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, custID);
+			ps.setBoolean(2, true);
+			ps.setDate(3, JdbcUtil.getDate(appDate));
+		}, (rs, rowNum) -> {
+			Mandate m = new Mandate();
+
+			m.setFinID(rs.getLong("FinID"));
+			m.setMandateID(rs.getLong("MandateId"));
+			m.setOldMandate(JdbcUtil.getLong(rs.getObject("OldMandateId")));
+			m.setMandateType(rs.getString("MandateType"));
+
+			return m;
+		});
+	}
+
+	@Override
+	public List<Mandate> getMandatesForAutoSwap(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, m.MandateId, m.MandateType, fm.MandateId OldMandateId");
+		sql.append(" From Mandates m");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference and fm.FinID = ?");
+		sql.append(" Where SwapIsActive = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+			ps.setBoolean(2, true);
+		}, (rs, rowNum) -> {
+			Mandate m = new Mandate();
+
+			m.setFinID(rs.getLong("FinID"));
+			m.setMandateID(rs.getLong("MandateId"));
+			m.setOldMandate(JdbcUtil.getLong(rs.getObject("OldMandateId")));
+			m.setMandateType(rs.getString("MandateType"));
+
+			return m;
+		});
 	}
 
 	private class MandateRowMapper implements RowMapper<Mandate> {

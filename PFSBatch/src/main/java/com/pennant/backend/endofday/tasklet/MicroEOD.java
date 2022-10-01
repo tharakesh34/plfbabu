@@ -59,6 +59,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.RuleConstants;
@@ -79,6 +80,7 @@ public class MicroEOD implements Tasklet {
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	private CustomerDAO customerDAO;
+	private FinMandateService finMandateService;
 
 	// ##_0.2
 	private static final String CUSTOMER_SQL = "Select CustID, LoanExist, LimitRebuild from CustomerQueuing  Where ThreadID = ? and Progress= ?";
@@ -207,6 +209,8 @@ public class MicroEOD implements Tasklet {
 					}
 				}
 
+				finMandateService.autoSwaping(custId);
+
 				logger.info("Updating the EOD status for the customer ID {}", custId);
 				customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_SUCCESS, appDate);
 
@@ -297,4 +301,10 @@ public class MicroEOD implements Tasklet {
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
+
+	@Autowired
+	public void setFinMandateService(FinMandateService finMandateService) {
+		this.finMandateService = finMandateService;
+	}
+
 }

@@ -53,6 +53,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -105,6 +106,7 @@ public class PresentmentResponseProcess implements Runnable {
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private ReceiptCalculator receiptCalculator;
 	private PresentmentImportProcess presentmentImportProcess;
+	private FinMandateService finMandateService;
 
 	private DataSourceTransactionManager transactionManager;
 	private DataEngineStatus deStatus;
@@ -292,6 +294,9 @@ public class PresentmentResponseProcess implements Runnable {
 			pd.setErrorDesc(errorCode);
 
 			updatePresentmentDetail(pd);
+
+			finMandateService.autoSwapingFromPDC(finID);
+
 			PresentmentDetailExtract.successCount.incrementAndGet();
 
 			transactionManager.commit(transactionStatus);
@@ -794,6 +799,10 @@ public class PresentmentResponseProcess implements Runnable {
 
 	public void setEventProperties(EventProperties eventProperties) {
 		this.eventProperties = eventProperties;
+	}
+
+	public void setFinMandateService(FinMandateService finMandateService) {
+		this.finMandateService = finMandateService;
 	}
 
 }

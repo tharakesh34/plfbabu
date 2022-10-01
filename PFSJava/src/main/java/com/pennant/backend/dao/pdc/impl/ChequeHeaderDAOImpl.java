@@ -57,7 +57,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where HeaderId = ?");
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), new ChequeHeaderRM(), headerID);
@@ -72,7 +72,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinID = ?");
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), new ChequeHeaderRM(), finID);
@@ -92,7 +92,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		sql.append(" Values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		if (ch.getId() == Long.MIN_VALUE || ch.getId() == 0) {
 			ch.setId(getNextValue("SeqChequeHeader"));
@@ -135,7 +135,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where HeaderID = ?");
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -169,7 +169,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		sql.append(type.getSuffix());
 		sql.append(" Where HeaderID = ?");
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			if (jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, ch.getHeaderID())) == 0) {
@@ -186,7 +186,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		sql.append(type.getSuffix());
 		sql.append(" Where FinID = ?");
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			if (jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, finID)) == 0) {

@@ -39,6 +39,7 @@ import com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceIm
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.presentment.PresentmentResponseProcess;
@@ -89,6 +90,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private ReceiptCalculator receiptCalculator;
 	private EventPropertiesService eventPropertiesService;
+	private FinMandateService finMandateService;
 
 	/* Objects */
 	private LoggedInUser userDetails;
@@ -296,6 +298,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			prp.setReceiptCancellationService(receiptCancellationService);
 			prp.setNotificationService(notificationService);
 			prp.setPresentmentImportProcess(presentmentImportProcess);
+			prp.setFinMandateService(finMandateService);
 			prp.setDeStatus(deStatus);
 
 			taskExecutor.execute(prp);
@@ -589,6 +592,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	public void setEventPropertiesService(EventPropertiesService eventPropertiesService) {
 		this.eventPropertiesService = eventPropertiesService;
+	}
+
+	public void setFinMandateService(FinMandateService finMandateService) {
+		this.finMandateService = finMandateService;
 	}
 
 }

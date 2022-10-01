@@ -52,4 +52,6 @@ public interface ChequeDetailDAO {
 	void updateChequeStatus(long detailID, String status);
 
 	boolean isChequeExists(long headerID, Date chequeDate);
+
+	boolean isRelisedAllCheques(long finId);
 }

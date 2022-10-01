@@ -66,7 +66,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where ChequeDetailsID = ?");
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), new ChequeDetailRM(type), chequeDetailsID);
@@ -81,7 +81,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where HeaderID = ?");
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		List<ChequeDetail> list = jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID),
 				new ChequeDetailRM(type));
@@ -134,7 +134,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			cheque.setId(getNextValue("SeqChequeDetail"));
 		}
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			jdbcOperations.update(sql.toString(), ps -> {
@@ -187,7 +187,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where chequeDetailsID = ?");
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -233,7 +233,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		sql.append(type.getSuffix());
 		sql.append(" Where ChequeDetailsID = ?");
 
-		log(sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, cheque.getChequeDetailsID()));
@@ -292,6 +292,19 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		log(sql);
 
 		return jdbcOperations.queryForObject(sql, Integer.class, headerID, JdbcUtil.getDate(chequeDate)) > 0;
+	}
+
+	@Override
+	public boolean isRelisedAllCheques(long finId) {
+		StringBuilder sql = new StringBuilder("Select count(ChequeDetailsId)");
+		sql.append(" From ChequeHeader ch");
+		sql.append(" Inner Join ChequeDetail cd on cd.ChequeDetailsId = ch.HeaderId");
+		sql.append(" Where ch.finID = ? and cd.ChequeStatus <> ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finId,
+				PennantConstants.CHEQUESTATUS_REALISED) > 0;
 	}
 
 	private StringBuilder getSqlQuery(String type) {

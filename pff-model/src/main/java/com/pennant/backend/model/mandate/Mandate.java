@@ -186,6 +186,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String employerName;
 	private String finRepayMethod;
 	private String alwdRpyMethods;
+	private Long oldMandate;
 
 	public Mandate() {
 		super();
@@ -242,6 +243,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("pennyDropStatus");
 		excludeFields.add("finRepayMethod");
 		excludeFields.add("alwdRpyMethods");
+		excludeFields.add("oldMandate");
 
 		return excludeFields;
 	}
@@ -959,6 +961,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setAlwdRpyMethods(String alwdRpyMethods) {
 		this.alwdRpyMethods = alwdRpyMethods;
+	}
+
+	public Long getOldMandate() {
+		return oldMandate;
+	}
+
+	public void setOldMandate(Long oldMandate) {
+		this.oldMandate = oldMandate;
 	}
 
 }

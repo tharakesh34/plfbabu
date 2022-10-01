@@ -25,6 +25,7 @@
 package com.pennant.backend.dao.mandate;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -108,5 +109,9 @@ public interface MandateDAO {
 	String getCustCIF(Long id);
 
 	Mandate getMandateDetail(long mandateID);
+
+	List<Mandate> getMandatesForAutoSwap(long custID, Date appDate);
+
+	List<Mandate> getMandatesForAutoSwap(long finID);
 
 }
