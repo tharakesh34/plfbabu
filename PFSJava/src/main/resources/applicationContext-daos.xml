@@ -12963,4 +12963,9 @@
 
 	<bean name="presentmentExcludeCodeServiceTarget" class="com.pennant.pff.presentment.service.impl.PresentmentExcludeCodeServiceImpl"/>
 	
+	<bean name="presentmentDueConfigService" class="com.pennant.pff.presentment.service.impl.PresentmentDueConfigServiceImpl" />
+
+	<bean id="dueExtractionConfigDAO" class="com.pennant.pff.presentment.dao.impl.DueExtractionConfigDAOImpl"
+		parent="sequenceDao" />
+	
 </beans>

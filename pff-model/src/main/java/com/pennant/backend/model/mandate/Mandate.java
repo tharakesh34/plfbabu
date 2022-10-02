@@ -187,6 +187,8 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String finRepayMethod;
 	private String alwdRpyMethods;
 	private Long oldMandate;
+	// API validation purpose only
+	private Mandate validateMandate;
 
 	public Mandate() {
 		super();
@@ -244,6 +246,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("finRepayMethod");
 		excludeFields.add("alwdRpyMethods");
 		excludeFields.add("oldMandate");
+		excludeFields.add("validateMandate");
 
 		return excludeFields;
 	}
@@ -969,6 +972,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setOldMandate(Long oldMandate) {
 		this.oldMandate = oldMandate;
+	}
+
+	public Mandate getValidateMandate() {
+		return validateMandate;
+	}
+
+	public void setValidateMandate(Mandate validateMandate) {
+		this.validateMandate = validateMandate;
 	}
 
 }
