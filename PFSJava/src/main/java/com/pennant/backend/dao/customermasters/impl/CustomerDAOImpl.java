@@ -1097,7 +1097,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	@Override
 	public BigDecimal getCustRepayProcBank(long custID, String curFinReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustId CustCif, TotalRepayAmt, MaturityDate, FinStartDate, FinCcy");
+		sql.append(" CustId, TotalRepayAmt, MaturityDate, FinStartDate, FinCcy");
 		sql.append(" From FinanceMain_Temp Where CustID = ? and RcdMaintainSts is null and FinReference <> ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
