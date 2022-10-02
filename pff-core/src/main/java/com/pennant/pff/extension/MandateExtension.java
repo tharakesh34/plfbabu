@@ -59,6 +59,11 @@ public class MandateExtension {
 	 */
 	public static boolean ACCOUNT_DETAILS_READONLY;
 
+	/**
+	 * Feature extension to do mark the mandate status as "AC" when the mandate registration is external.
+	 */
+	public static boolean EXTERNAL_REGISTRATION;
+
 	static {
 		APPROVE_ON_LOAN_ORG = getValueAsBoolean("APPROVE_ON_LOAN_ORG", false);
 		UPLOAD_ENITITY_CODE_MANDATORY = getValueAsBoolean("UPLOAD_ENITITY_CODE_MANDATORY", false);
@@ -70,6 +75,7 @@ public class MandateExtension {
 		PARTNER_BANK_REQ = getValueAsBoolean("PARTNER_BANK_REQ", false);
 		SWAP_EFFECTIVE_DATE_DEFAULT = getValueAsBoolean("SWAP_EFFECTIVE_DATE_DEFAULT", false);
 		ACCOUNT_DETAILS_READONLY = getValueAsBoolean("ACCOUNT_DETAILS_READONLY", false);
+		EXTERNAL_REGISTRATION = getValueAsBoolean("EXTERNAL_REGISTRATION", false);
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {

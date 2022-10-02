@@ -328,8 +328,10 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (issecurityMandate) {
 			fillComboBox(this.mandateType, mandate.getMandateType(), securityMandateTypeList, "");
+			this.mandateType.setDisabled(false);
 		} else {
 			fillComboBox(this.mandateType, mandate.getMandateType(), mandateTypeList, "");
+			this.mandateType.setDisabled(false);
 		}
 	}
 
@@ -930,7 +932,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateSwapGroupbox.setVisible(false);
 			this.mandateDetailsGroupbox.setVisible(false);
 			this.otherDetailsGroupbox.setVisible(false);
-		} else {
+		} else if (!enqModule) {
 			doEdit();
 		}
 
@@ -940,28 +942,34 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(false, this.eMandateSource);
 		}
 
-		if (instrumentType == InstrumentType.DAS || maintain) {
-			this.dasGroupbox.setVisible(true);
-			this.dasRow.setVisible(true);
-			this.mandateSwapGroupbox.setVisible(true);
+		if (!issecurityMandate) {
 
-			if (fromLoan) {
-				readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
-			} else {
-				readOnlyComponent(true, this.employeeID);
+			if (instrumentType == InstrumentType.DAS || maintain) {
+				this.dasGroupbox.setVisible(true);
+				this.dasRow.setVisible(true);
+				this.mandateSwapGroupbox.setVisible(true);
+
+				readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
+				readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
+
+				if (fromLoan) {
+					readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
+				} else {
+					readOnlyComponent(true, this.employeeID);
+				}
+				readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
+
 			}
-			readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
 
-		}
+			if (instrumentType == InstrumentType.SI) {
+				this.accDetailsGroupbox.setVisible(true);
 
-		if (instrumentType == InstrumentType.SI) {
-			this.accDetailsGroupbox.setVisible(true);
-
-			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
-			readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
-			readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
-			readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
-			readOnlyComponent(isReadOnly("MandateDialog_JointAccHolderName"), this.jointAccHolderName);
+				readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
+				readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
+				readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
+				readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
+				readOnlyComponent(isReadOnly("MandateDialog_JointAccHolderName"), this.jointAccHolderName);
+			}
 		}
 
 		switch (instrumentType) {
@@ -973,6 +981,10 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.accDetailsGroupbox.setVisible(true);
 			this.otherDetailsGroupbox.setVisible(true);
 			this.mandateSwapGroupbox.setVisible(true);
+			this.dasGroupbox.setVisible(false);
+			if (fromLoan) {
+				readOnlyComponent(true, this.mandateRef);
+			}
 
 			this.bankBranchID.setFilters(new Filter[] { new Filter(instrumentType.name(), 1, Filter.OP_EQUAL) });
 			break;
@@ -987,6 +999,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.otherDetailsGroupbox.setVisible(true);
 			this.useExisting.setVisible(true);
 			this.mandateSwapGroupbox.setVisible(true);
+			this.dasGroupbox.setVisible(false);
+			doEdit();
 		}
 	}
 
@@ -2548,9 +2562,14 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (!InstrumentType.isPDC(val)) {
 			for (ValueLabel valueLabel : mandateTypeList) {
-				if (val.equals(valueLabel.getValue())) {
+				if (val.equals(valueLabel.getValue())
+						|| (issecurityMandate && (InstrumentType.isDAS(val) || InstrumentType.isSI(val)))) {
 					this.parenttab.setVisible(true);
-					fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
+					if (issecurityMandate) {
+						fillComboBox(this.mandateType, mandateType, securityMandateTypeList, "");
+					} else {
+						fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
+					}
 					break;
 				}
 			}

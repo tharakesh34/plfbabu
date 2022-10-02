@@ -249,7 +249,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (employerDatails != null) {
 				this.mandate.setEmployeeID(employerDatails.getEmployeeID());
 				this.mandate.setEmployerName(employerDatails.getEmployerName());
-			} else {
+			} else if (InstrumentType.isDAS(mandateType)) {
 				MessageUtil.showError("Employer details are not available for this Customer");
 				return;
 			}

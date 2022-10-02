@@ -84,6 +84,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
@@ -256,6 +257,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 			default:
 				break;
+			}
+
+			if (MandateExtension.EXTERNAL_REGISTRATION) {
+				mandate.setStatus(MandateStatus.AWAITCON);
 			}
 
 			getDocument(mandate);
@@ -551,7 +556,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)
+		if (MandateExtension.PARTNER_BANK_REQ
 				&& !(InstrumentType.isDAS(mandate.getMandateType()) || InstrumentType.isSI(mandate.getMandateType()))) {
 			if (mandate.getPartnerBankId() == null || mandate.getPartnerBankId() <= 0) {
 				String[] valueParm1 = new String[1];
@@ -878,7 +883,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		String repaymentMethod = fm.getFinRepayMethod();
 
 		mandate.setMandateID(Long.MIN_VALUE);
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+		if (MandateExtension.PARTNER_BANK_REQ) {
 			if (mandate.getPartnerBankId() <= 0) {
 				return ErrorUtil.getError("90502", "partnerBankId");
 			}
@@ -1095,7 +1100,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				return ErrorUtil.getError("90122", "Document Extension available ext are:JPG,JPEG,PNG,PDF ");
 			}
 		}
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+		if (MandateExtension.PARTNER_BANK_REQ) {
 			if (mandate.getPartnerBankId() <= 0) {
 				return ErrorUtil.getError("90502", "partnerBankId");
 			} else {
