@@ -10,6 +10,8 @@ import com.pennanttech.pff.provision.ProvisionReversalStage;
 public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> defaultExtensions = new HashMap<>();
 	static Map<String, Object> mandateExtensions = new HashMap<>();
+	static Map<String, Object> presentmentExtensions = new HashMap<>();
+
 
 	/**
 	 * <p>
@@ -149,5 +151,11 @@ public class FeatureExtension implements IFeatureExtension {
 	@Override
 	public Map<String, Object> getMandateExtensions() {
 		return mandateExtensions;
+	}
+
+	@Override
+	public Map<String, Object> getPresentmentExtensions() {
+		return presentmentExtensions;
+
 	}
 }
