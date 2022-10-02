@@ -46,12 +46,16 @@ public class PresentmentEngine {
 
 	public void preparation(JobParameters jobParameters) {
 		Date appDate = jobParameters.getDate("AppDate");
+		String automation = jobParameters.getString("AUTOMATION");
+		String presentmentType = jobParameters.getString("PresentmentType");
 
 		Map<String, Date> dueDates = dueExtractionConfigDAO.getDueDates(appDate);
 
 		for (String code : dueDates.keySet()) {
 			PresentmentHeader ph = new PresentmentHeader();
 
+			ph.setPresentmentType(presentmentType);
+			ph.setMandateType(code);
 			ph.setAppDate(appDate);
 			ph.setDueDate(dueDates.get(code));
 
@@ -71,7 +75,7 @@ public class PresentmentEngine {
 		String instrumentType = StringUtils.trimToNull(ph.getMandateType());
 		Date fromDate = ph.getFromDate();
 		Date toDate = ph.getToDate();
-		Date dueDate = ph.getFromDate();
+		Date dueDate = ph.getDueDate();
 		String presentmentType = ph.getPresentmentType();
 
 		int count = 0;
@@ -90,11 +94,14 @@ public class PresentmentEngine {
 
 		count = count - presentmentDAO.clearByNoDues();
 
-		if (instrumentType != null) {
+		String automation = "Y";
+
+		if (instrumentType != null && "N".equals(automation)) {
 			count = count - presentmentDAO.clearByInstrumentType(instrumentType);
 		}
 
-		if (InstrumentType.isEMandate(instrumentType) && StringUtils.isNotEmpty(emandateSource)) {
+		if (InstrumentType.isEMandate(instrumentType) && StringUtils.isNotEmpty(emandateSource)
+				&& "N".equals(automation)) {
 			count = count - presentmentDAO.clearByInstrumentType(instrumentType, emandateSource);
 		}
 
@@ -143,18 +150,30 @@ public class PresentmentEngine {
 	}
 
 	private void setHeader(PresentmentHeader ph, List<PresentmentDetail> list) {
+		Date appDate = ph.getAppDate();
+
+		Map<String, Date> dueDates = dueExtractionConfigDAO.getDueDates(appDate);
+
 		list.stream().forEach(pd -> {
+
+			String instrumentType = pd.getInstrumentType();
+			String presentmentType = ph.getPresentmentType();
 
 			Date fromDate = ph.getFromDate();
 			Date toDate = ph.getToDate();
+			Date dueDate = dueDates.get(instrumentType);
 
 			if (fromDate == null) {
-				fromDate = ph.getDueDate();
+				fromDate = dueDate;
 			}
 
-			String instrumentType = ph.getMandateType();
-			String presentmentType = ph.getPresentmentType();
+			if (toDate == null) {
+				toDate = dueDate;
+			}
+
 			long headerId = saveHeader(pd, fromDate, toDate, instrumentType, presentmentType);
+
+			pd.setDueDate(dueDate);
 			pd.setHeaderId(headerId);
 		});
 	}
@@ -309,7 +328,7 @@ public class PresentmentEngine {
 			}
 		}
 
-		if (pd.getDefSchdDate().compareTo(ph.getToDate()) > 0) {
+		if (pd.getDefSchdDate().compareTo(pd.getDueDate()) > 0) {
 			pd.setExcludeReason(RepayConstants.PEXC_EMIHOLD);
 			return;
 		}

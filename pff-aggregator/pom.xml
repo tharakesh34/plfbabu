@@ -4,13 +4,13 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>6.1.9</version>
+	<version>PLF-Release-6.2.0-HDFC_R1.0</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
-		<client.code>core</client.code>
-		<pff.version>6.1.9</pff.version>
+		<client.code>hdfc</client.code>
+		<pff.version>PLF-Release-6.2.0-HDFC_R1.0</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>11</jdk.version>
 		<spring.version>5.3.20</spring.version>
