@@ -3422,10 +3422,28 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#99.0" author="saikrishna.b">
+		<createTable tableName="Presentment_Extraction_Job">
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="Name" type="varchar(10)" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="SuccessRecords" type="int" />
+			<column name="FailedRecords" type="int" />
+			<column name="TotalRecords" type="int" />
+			<column name="Remarks" type="varchar(100)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#99.0.1" author="saikrishna.b">
+		<addPrimaryKey tableName="Presentment_Extraction_Job" columnNames="ID" constraintName="pk_pej_ID" />
+	</changeSet>
 
 	<changeSet id="ST#99.1" author="saikrishna.b">
-		<createTable tableName="Presentment_Stage">
+		<createTable tableName="Presentment_Extraction_Stage">
 			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="JobID" type="bigint" />
 			<column name="FinID" type="bigint" />
 			<column name="FinReference" type="varchar(20)" />
 			<column name="FinType" type="varchar(8)" />
@@ -3472,17 +3490,17 @@
 	</changeSet>
 
 	<changeSet id="ST#99.2" author="saikrishna.b">
-		<addPrimaryKey tableName="Presentment_Stage" columnNames="ID" constraintName="pk_presentment_stage_ID" />
+		<addPrimaryKey tableName="Presentment_Extraction_Stage" columnNames="ID" constraintName="pk_pes_ID" />
 	</changeSet>
 
 	<changeSet id="ST#99.3" author="saikrishna.b" dbms="postgresql, oracle">
-		<addDefaultValue columnName="ProcessingFlag" tableName="Presentment_Stage" defaultValue="0" />
+		<addDefaultValue columnName="ProcessingFlag" tableName="Presentment_Extraction_Stage" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="ST#99.3" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE PRESENTMENT_STAGE ADD CONSTRAINT DF_PS_PROCESSINGFLAG DEFAULT 0 FOR PROCESSINGFLAG;
+				ALTER TABLE PRESENTMENT_EXTRACTION_STAGE ADD CONSTRAINT DF_PS_PROCESSINGFLAG DEFAULT 0 FOR PROCESSINGFLAG;
 			]]>
 		</sql>
 	</changeSet>
@@ -3521,10 +3539,9 @@
 			referencedColumnNames="BounceId" baseTableName="Presentment_consecutive_Bounce" baseColumnNames="BounceId" />
 	</changeSet>
 
-	<changeSet id="ST#99.7" author="saikrishna.b">
-		<createIndex tableName="Presentment_consecutive_Bounce" indexName="idx_pcb_mid_bid" unique="true">
+	<changeSet id="ST#99.7.0" author="saikrishna.b">
+		<createIndex tableName="Presentment_consecutive_Bounce" indexName="idx_pcb_mid" unique="true">
 			<column name="MandateId" type="bigint" />
-			<column name="BounceId" type="bigint" />
 		</createIndex>
 	</changeSet>
 
@@ -4238,9 +4255,20 @@
 			constraintName="PK_Due_Extraction_Config_Log" />
 	</changeSet>
 
-	<changeSet id="ST#90.30" author="Alekhya.T">
+	<changeSet id="ST#90.30.0" author="Alekhya.T">
 		<sql>
 			<![CDATA[
+			
+				DELETE FROM INSTRUMENT_TYPES WHERE CODE = 'ECS';
+				DELETE FROM INSTRUMENT_TYPES WHERE CODE = 'DDM';
+				DELETE FROM INSTRUMENT_TYPES WHERE CODE = 'NACH';
+				DELETE FROM INSTRUMENT_TYPES WHERE CODE = 'PDC';
+				DELETE FROM INSTRUMENT_TYPES WHERE CODE = 'EMNDT';
+				DELETE FROM INSTRUMENT_TYPES WHERE CODE = 'DAS';
+				DELETE FROM INSTRUMENT_TYPES WHERE CODE = 'SI';
+				DELETE FROM INSTRUMENT_TYPES WHERE CODE = 'E-NACH';
+				DELETE FROM INSTRUMENT_TYPES WHERE CODE = 'IPDC';
+				
 				INSERT INTO INSTRUMENT_TYPES (ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'ECS',    'ELECTRONIC CLEARING SERVICE', 					0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				INSERT INTO INSTRUMENT_TYPES (ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'DDM',    'Direct Debit', 									0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				INSERT INTO INSTRUMENT_TYPES (ID, CODE, DESCRIPTION, INTERNAL, ENABLED, AUTOEXTRACTION, EXTRACTIONDAYS, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, ACTIVE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM INSTRUMENT_TYPES), 'NACH',   'NATIONAL AUTOMATED CLEARING HOUSE', 				0, 1, 0, 5, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0);
@@ -4279,7 +4307,6 @@
 				
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'MANDATE_MAKER'),  (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'MandateDialog_UmrNumber'),   1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'MandateDialog_UmrNumber'),   1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-				
 			]]>
 		</sql>
 	</changeSet>
