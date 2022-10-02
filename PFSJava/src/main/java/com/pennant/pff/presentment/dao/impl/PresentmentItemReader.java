@@ -1,6 +1,6 @@
 package com.pennant.pff.presentment.dao.impl;
 
-import java.util.Collections;
+import java.util.HashMap;
 
 import javax.sql.DataSource;
 
@@ -18,10 +18,17 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 		super.selectClause(getSql());
 		super.fromClause("From Presentment_Stage");
 		super.whereClause("Where ProcessingFlag = 0");
+		super.saveState(false);
+
+		HashMap<String, Order> sortKeys = new HashMap<String, Order>();
+		sortKeys.put("ID", Order.ASCENDING);
+		super.sortKeys(sortKeys);
+
 		super.rowMapper((rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 
 			try {
+				pd.setId(rs.getLong("Id"));
 				pd.setFinID(rs.getLong("FinId"));
 				pd.setFinReference(rs.getString("FinReference"));
 				pd.setFinType(rs.getString("FinType"));
@@ -71,7 +78,7 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 
 	private String getSql() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
+		sql.append(" Id, FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
 		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage");
 		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
 		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
