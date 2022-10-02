@@ -39,31 +39,66 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#93" author="nagavamsi.p">
-		<addColumn tableName="ADTAccountMapping">
+	<changeSet id="ST#93.1" author="nagavamsi.p">
+		<addColumn tableName="AdtAccountMapping">
 			<column name="OpenedDate" type="datetime" />
-			<column name="ClosedDate" type="datetime" />
-			<column name="Status" type="varchar(8)" />
-			<column name="AllowedManualEntry" type="Char(1)" />
-			<column name="CreatedBy" type="bigint" />
-			<column name="CreatedOn" type="datetime" />
-			<column name="ApprovedBy" type="bigint" />
-			<column name="ApprovedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="ST#93.2" author="nagavamsi.p">
-		<sql>
-		<![CDATA[  
-			UPDATE ADTAccountMapping SET Status = 'O';
-		]]>
-		</sql>
+		<addColumn tableName="AdtAccountMapping">
+			<column name="ClosedDate" type="datetime" />
+		</addColumn>
 	</changeSet>
 
 	<changeSet id="ST#93.3" author="nagavamsi.p">
+		<addColumn tableName="AdtAccountMapping">
+			<column name="Status" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#93.4" author="nagavamsi.p">
+		<addColumn tableName="AdtAccountMapping">
+			<column name="AllowedManualEntry" type="Char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#93.5" author="nagavamsi.p">
+		<addColumn tableName="AdtAccountMapping">
+			<column name="CreatedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#93.6" author="nagavamsi.p">
+		<addColumn tableName="AdtAccountMapping">
+			<column name="CreatedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#93.7" author="nagavamsi.p">
+		<addColumn tableName="AdtAccountMapping">
+			<column name="ApprovedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#93.8" author="nagavamsi.p">
+		<addColumn tableName="AdtAccountMapping">
+			<column name="ApprovedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#93.9" author="nagavamsi.p">
 		<sql>
 			<![CDATA[  
-				UPDATE ADTAccountMapping SET AllowedManualEntry  = 'B';
+				UPDATE ADTACCOUNTMAPPING SET STATUS = 'O';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#93.10" author="nagavamsi.p">
+		<sql>
+			<![CDATA[  
+				UPDATE ADTACCOUNTMAPPING SET ALLOWEDMANUALENTRY  = 'B';
 			]]>
 		</sql>
 	</changeSet>
@@ -80,31 +115,31 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#85.1" author="saikrishna.b">
+	<changeSet id="ST#84.3" author="saikrishna.b">
 		<addColumn tableName="AdtSecusers">
 			<column name="CreatedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#85.2" author="saikrishna.b">
+	<changeSet id="ST#84.4" author="saikrishna.b">
 		<addColumn tableName="AdtSecusers">
 			<column name="CreatedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#85.3" author="saikrishna.b">
+	<changeSet id="ST#84.5" author="saikrishna.b">
 		<addColumn tableName="AdtSecusers">
 			<column name="ApprovedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#85.4" author="saikrishna.b">
+	<changeSet id="ST#84.6" author="saikrishna.b">
 		<addColumn tableName="AdtSecusers">
 			<column name="ApprovedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#85.5" author="saikrishna.b">
+	<changeSet id="ST#84.7" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				UPDATE ADTSECUSERS SET CREATEDBY = LASTMNTBY WHERE CREATEDBY IS NULL;
@@ -112,7 +147,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#85.6" author="saikrishna.b">
+	<changeSet id="ST#84.8" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				UPDATE ADTSECUSERS SET CREATEDON = LASTMNTON WHERE CREATEDON IS NULL;
@@ -120,7 +155,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#85.7" author="saikrishna.b">
+	<changeSet id="ST#84.9" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				UPDATE ADTSECUSERS SET APPROVEDBY = LASTMNTBY WHERE APPROVEDBY IS NULL;
@@ -128,7 +163,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#85.8" author="saikrishna.b">
+	<changeSet id="ST#84.10" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				UPDATE ADTSECUSERS SET APPROVEDON = LASTMNTON WHERE APPROVEDON IS NULL;
@@ -136,22 +171,27 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#85.9" author="saikrishna.b">
+	<changeSet id="ST#84.11" author="saikrishna.b">
 		<addNotNullConstraint tableName="AdtSecusers" columnName="CreatedBy" columnDataType="bigint" />
 	</changeSet>
 
-	<changeSet id="ST#85.10" author="saikrishna.b">
+	<changeSet id="ST#84.12" author="saikrishna.b">
 		<addNotNullConstraint tableName="AdtSecusers" columnName="CreatedOn" columnDataType="datetime" />
 	</changeSet>
 
-	<changeSet id="ST#103.01" author="vasudevarao.s">
+	<changeSet id="ST#103.1" author="vasudevarao.s">
 		<addColumn tableName="ADTFEETYPES">
 			<column name="PayableLinkTo" type="varchar(30)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#103.2" author="vasudevarao.s">
+		<addColumn tableName="ADTFEETYPES">
 			<column name="RecvFeeTypeId" type="Bigint" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#103.02" author="vasudevarao.s" dbms="mssql">
+	<changeSet id="ST#103.3" author="vasudevarao.s">
 		<sql>
 			<![CDATA[	
 				UPDATE ADTFEETYPES SET RECVFEETYPEID = 0;
@@ -159,7 +199,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#103.03" author="vasudevarao.s" dbms="mssql">
+	<changeSet id="ST#103.4" author="vasudevarao.s" dbms="mssql">
 		<sql>
 			<![CDATA[	
 				ALTER TABLE ADTFEETYPES ADD CONSTRAINT DF_FEETYPES_RFTI DEFAULT 0 FOR RECVFEETYPEID;
@@ -167,21 +207,41 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#103.04" author="vasudevarao.s" dbms="postgresql, oracle">
+	<changeSet id="ST#103.4" author="vasudevarao.s" dbms="postgresql, oracle">
 		<addDefaultValue columnName="RecvFeeTypeId" tableName="ADTFEETYPES" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="ST#76.1" author="saikiran.n">
 		<addColumn tableName="AdtMandates">
 			<column name="SwapEffectiveDate" type="datetime" />
-			<column name="HoldReason" type="bigint" />
-			<column name="SecurityMandate" type="boolean" />
-			<column name="EmployeeID" type="bigint" />
-			<column name="EmployerName" type="varchar(200)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="ST#76.2" author="saikiran.n">
+		<addColumn tableName="AdtMandates">
+			<column name="HoldReason" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.3" author="saikiran.n">
+		<addColumn tableName="AdtMandates">
+			<column name="SecurityMandate" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.4" author="saikiran.n">
+		<addColumn tableName="AdtMandates">
+			<column name="EmployeeID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.5" author="saikiran.n">
+		<addColumn tableName="AdtMandates">
+			<column name="EmployerName" type="varchar(200)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.6" author="saikiran.n">
 		<sql>
 			<![CDATA[
 				UPDATE ADTMANDATES SET SECURITYMANDATE = 0;
@@ -189,16 +249,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#76.3" author="saikiran.n">
-		<addNotNullConstraint tableName="ADTMANDATES" columnName="SECURITYMANDATE"
-			columnDataType="boolean" />
-	</changeSet>
-
-	<changeSet id="ST#76.4" author="saikiran.n" dbms="postgresql, oracle">
+	<changeSet id="ST#76.7" author="saikiran.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="SecurityMandate" tableName="ADTMANDATES" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="ST#76.4" author="saikiran.n" dbms="mssql">
+	<changeSet id="ST#76.7" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE ADTMANDATES ADD CONSTRAINT DF_ADTMANDATES_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
@@ -206,63 +261,131 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#81" author="nagavamsi.p">
+	<changeSet id="ST#76.8" author="saikiran.n">
+		<addNotNullConstraint tableName="ADTMANDATES" columnName="SECURITYMANDATE"
+			columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="ST#81.1" author="nagavamsi.p">
 		<addColumn tableName="ADTEMPLOYERDETAIL">
 			<column name="AllowDAS" type="boolean" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#81.1" author="nagavamsi.p">
+	<changeSet id="ST#81.2" author="nagavamsi.p">
 		<sql>
-		<![CDATA[  
-			UPDATE AdtEmployerDetail SET AllowDAS = 0 ;
-		]]>
+			<![CDATA[  
+				UPDATE ADTEMPLOYERDETAIL SET ALLOWDAS = 0;
+			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#98" author="nagavamsi.p">
+	<changeSet id="ST#98.1" author="nagavamsi.p">
 		<addColumn tableName="ADTRMTBaseRates">
 			<column name="CreatedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#98.2" author="nagavamsi.p">
+		<addColumn tableName="ADTRMTBaseRates">
 			<column name="CreatedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#98.3" author="nagavamsi.p">
+		<addColumn tableName="ADTRMTBaseRates">
 			<column name="ApprovedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#98.4" author="nagavamsi.p">
+		<addColumn tableName="ADTRMTBaseRates">
 			<column name="ApprovedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#79" author="nagavamsi.p">
+	<changeSet id="ST#79.1" author="nagavamsi.p">
 		<addColumn tableName="ADTBounceReasons">
 			<column name="InstrumentType" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#79.2" author="nagavamsi.p">
+		<addColumn tableName="ADTBounceReasons">
 			<column name="HoldMarkBounceCount" type="int" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#79.1" author="nagavamsi.p">
+	<changeSet id="ST#79.3" author="nagavamsi.p">
 		<sql>
-		<![CDATA[  
-			UPDATE AdtBounceReasons SET HoldMarkBounceCount = 0 ;
-		]]>
+			<![CDATA[  
+				UPDATE ADTBOUNCEREASONS SET HOLDMARKBOUNCECOUNT = 0;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#94.1" author="saikiran.n">
 		<addColumn tableName="Adtbmtbankdetail">
 			<column name="Nach" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#94.2" author="saikiran.n">
+		<addColumn tableName="Adtbmtbankdetail">
 			<column name="Dd" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#94.3" author="saikiran.n">
+		<addColumn tableName="Adtbmtbankdetail">
 			<column name="Dda" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#94.4" author="saikiran.n">
+		<addColumn tableName="Adtbmtbankdetail">
 			<column name="Ecs" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#94.5" author="saikiran.n">
+		<addColumn tableName="Adtbmtbankdetail">
 			<column name="Cheque" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#94.6" author="saikiran.n">
+		<addColumn tableName="Adtbmtbankdetail">
 			<column name="Emandate" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#94.7" author="saikiran.n">
+		<addColumn tableName="Adtbmtbankdetail">
 			<column name="AllowedSources" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#94.8" author="saikiran.n">
+		<addColumn tableName="Adtbmtbankdetail">
 			<column name="UpdateBranches" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="ST#112.11" author="sandeepkumar.m">
+
+	<changeSet id="ST#112.1" author="sandeepkumar.m">
 		<createTable tableName="AdtPresentment_Exclude_Codes">
-			<column name="AuditId" type="bigint"/>
-			<column name="AuditDate" type="datetime"/>
-			<column name="AuditSeq" type="int"/>
-			<column name="AuditImage" type="varchar(2)"/>
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" />
+			</column>
 			<column name="ID" type="bigint" />
 			<column name="Code" type="varchar(20)">
 				<constraints nullable="false" />
@@ -305,11 +428,11 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="ST#112.21" author="sandeepkumar.m">
+	<changeSet id="ST#112.2" author="sandeepkumar.m">
 		<addPrimaryKey tableName="AdtPresentment_Exclude_Codes" constraintName="pk_adt_pec"
 			columnNames="AuditId, AuditDate, AuditSeq, AuditImage" />
 	</changeSet>
-	
+
 	<changeSet id="ST#90.0" author="Alekhya.T">
 		<createTable tableName="ADTInstrumentTypes">
 			<column name="AuditID" type="bigint">
@@ -397,11 +520,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#90.3" author="Alekhya.T">
 		<createTable tableName="ADTDue_Extraction_Header">
 			<column name="ID" type="bigint" autoIncrement="true" />
-			<column name="ExtractionMonth" type="varchar(10)" >
+			<column name="ExtractionMonth" type="varchar(10)">
 				<constraints nullable="false" />
 			</column>
 			<column name="Version" type="int">
@@ -434,12 +557,12 @@
 			<column name="WorkFlowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#90.4" author="Alekhya.T">
 		<addPrimaryKey tableName="ADTDue_Extraction_Header" columnNames="ID"
 			constraintName="PK_ADTDue_Extraction_Header" />
 	</changeSet>
-	
+
 	<changeSet id="ST#90.5" author="Alekhya.T" dbms="posgres,oracle">
 		<addDefaultValue tableName="ADTDue_Extraction_Header" columnName="Version" defaultValue="0" />
 		<addDefaultValue tableName="ADTDue_Extraction_Header" columnName="Active" defaultValue="0" />
@@ -453,7 +576,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#90.6" author="Alekhya.T">
 		<createTable tableName="ADTDue_Extraction_Config">
 			<column name="AuditID" type="bigint">
@@ -478,7 +601,7 @@
 			<column name="ExtractionDate" type="datetime">
 				<constraints nullable="false" />
 			</column>
-			<column name ="Modified" type = "boolean"/>
+			<column name="Modified" type="boolean" />
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -510,8 +633,8 @@
 	</changeSet>
 
 	<changeSet id="ST#90.7" author="Alekhya.T">
-		<addPrimaryKey tableName="ADTDue_Extraction_Config"
-			columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="PK_ADTDue_Extraction_Config" />
+		<addPrimaryKey tableName="ADTDue_Extraction_Config" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_ADTDue_Extraction_Config" />
 	</changeSet>
 
 	<changeSet id="ST#90.8" author="Alekhya.T" dbms="posgres,oracle">
@@ -520,7 +643,7 @@
 		<addDefaultValue tableName="ADTDue_Extraction_Config" columnName="Modified" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="ST#90.8s" author="Alekhya.T" dbms="mssql">
+	<changeSet id="ST#90.8" author="Alekhya.T" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE ADTDUE_EXTRACTION_CONFIG ADD CONSTRAINT DF_APEC_VERSION  DEFAULT 0 FOR VERSION;
