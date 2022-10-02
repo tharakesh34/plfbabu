@@ -997,12 +997,17 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			BankDetail bankDetail = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
 			if (bankDetail != null) {
 				int maxAccNoLength = bankDetail.getAccNoLength();
-				int minAccNoLength = bankDetail.getMinAccNoLength();
-				if (mandate.getAccNumber().length() < minAccNoLength
-						|| mandate.getAccNumber().length() > maxAccNoLength) {
-					String minChar = String.valueOf(minAccNoLength) + " characters";
-					String maxChar = String.valueOf(maxAccNoLength) + " characters";
-					return ErrorUtil.getError("BNK001", "AccountNumber(Mandate)", minChar, maxChar);
+				int minAccNolength = bankDetail.getMinAccNoLength();
+				int length = mandate.getAccNumber().length();
+				if (length < minAccNolength || length > maxAccNoLength) {
+					String minMsg = String.valueOf(minAccNolength).concat(" characters");
+					String maxMsg = String.valueOf(maxAccNoLength).concat(" characters");
+
+					if (minAccNolength == maxAccNoLength) {
+						return ErrorUtil.getError("30570", "AccountNumber(Mandate)", minMsg, maxMsg);
+					} else {
+						return ErrorUtil.getError("BNK001", "AccountNumber(Mandate)", minMsg, maxMsg);
+					}
 				}
 			}
 		}
@@ -1217,28 +1222,16 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	@Autowired
-	public void setMandateProcesses(MandateProcesses mandateProcesses) {
-		this.mandateProcesses = mandateProcesses;
-	}
-
-	@Autowired
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
-
+	
 	@Autowired
-	public void setdMSService(DMSService dMSService) {
-		this.dMSService = dMSService;
-	}
-
-	private MandateProcesses getMandateProcess() {
-		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
-	}
-
 	public void setBankBranchService(BankBranchService bankBranchService) {
 		this.bankBranchService = bankBranchService;
 	}
-
+	
+	@Autowired
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
 	}
@@ -1247,5 +1240,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	public void setEntityDAO(EntityDAO entityDAO) {
 		this.entityDAO = entityDAO;
 	}
-
+	
+	private MandateProcesses getMandateProcess() {
+		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
+	}
 }
