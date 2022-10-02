@@ -777,7 +777,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	@Autowired
+	@Autowired(required = false)
 	public void setBankBranchService(BankBranchService bankBranchService) {
 		this.bankBranchService = bankBranchService;
 	}
@@ -787,7 +787,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
 	}
 
-	@Autowired
+	@Autowired(required = false)
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
 	}

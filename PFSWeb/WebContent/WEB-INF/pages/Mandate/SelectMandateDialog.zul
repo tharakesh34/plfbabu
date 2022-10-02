@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
-		<window id="window_SelectMandateDialog" apply="${selectMandateDialogCtrl}" width="55%" height="200px"
+		<window id="window_SelectMandateDialog" apply="${selectMandateDialogCtrl}" width="60%" height="200px"
 			style="align:start;" sizable="false" closable="true">
 
 			<borderlayout id="borderLayout_SelectMandate">
@@ -33,7 +33,7 @@
 						<grid sclass="GridLayoutNoBorder" sizedByContent="true" style="border:0px; padding:0px;">
 							<columns>
 								<column width="250px" />
-								<column />
+								<column width="500px"/>
 							</columns>
 							<rows>
 								<row>
@@ -45,7 +45,6 @@
 										<button id="btnSearchCustCIF"
 											tooltiptext="${c:l('label_SelectMandateDialog_CustID.tooltiptext')}" image="/images/icons/more.png"
 											autodisable="btnSearchCustCIF" />
-										<space spacing="4px" />
 										<label id="customerNameLabel"
 											style="margin-left:10px;display:inline-block;padding-top:3px;" />
 									</hbox>

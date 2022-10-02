@@ -63,7 +63,7 @@ public class MandateUtil {
 			case ENACH:
 			case EMANDATE:
 			case PDC:
-				instrumentTypes.add(new ValueLabel(item.name(), item.code()));
+				securityInstrumentTypes.add(new ValueLabel(item.name(), item.code()));
 				break;
 
 			default:
@@ -71,7 +71,7 @@ public class MandateUtil {
 			}
 		}
 
-		return instrumentTypes;
+		return securityInstrumentTypes;
 	}
 
 	public static List<ValueLabel> getRepayMethods() {

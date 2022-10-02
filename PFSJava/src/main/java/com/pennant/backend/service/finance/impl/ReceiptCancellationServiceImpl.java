@@ -3444,7 +3444,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		this.repaymentPostingsUtil = repaymentPostingsUtil;
 	}
 
-	@Autowired
+	@Autowired(required = false)
 	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
 		this.feeReceiptService = feeReceiptService;
 	}
@@ -3454,12 +3454,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
-	@Autowired
+	@Autowired(required = false)
 	public void setExtendedFieldExtensionService(ExtendedFieldExtensionService extendedFieldExtensionService) {
 		this.extendedFieldExtensionService = extendedFieldExtensionService;
 	}
 
-	@Autowired
+	@Autowired(required = false)
 	public void setTdsReceivablesTxnService(TdsReceivablesTxnService tdsReceivablesTxnService) {
 		this.tdsReceivablesTxnService = tdsReceivablesTxnService;
 	}
@@ -3549,7 +3549,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		this.customerDAO = customerDAO;
 	}
 
-	@Autowired
+	@Autowired(required = false)
 	public void setDepositDetailsDAO(DepositDetailsDAO depositDetailsDAO) {
 		this.depositDetailsDAO = depositDetailsDAO;
 	}
@@ -3599,7 +3599,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
 
-	@Autowired
+	@Autowired(required = false)
 	public void setDepositChequesDAO(DepositChequesDAO depositChequesDAO) {
 		this.depositChequesDAO = depositChequesDAO;
 	}

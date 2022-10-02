@@ -60,14 +60,14 @@
 								<label id="label_ReasonType" value="${c:l('label_BounceReasonDialog_ReasonType.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<combobox id="reasonType" width="130px" />
+									<combobox id="reasonType" width="200px" />
 								</hbox>
 							</row>
 							<row id="row1">
 								<label id="label_Category" value="${c:l('label_BounceReasonDialog_Category.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<combobox id="category" width="130px" />
+									<combobox id="category" width="200px"  />
 								</hbox>
 								<label id="label_Reason" value="${c:l('label_BounceReasonDialog_Reason.value')}" />
 								<hbox>
@@ -79,7 +79,7 @@
 								<label id="label_Action" value="${c:l('label_BounceReasonDialog_Action.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<combobox id="action" width="130px" />
+									<combobox id="action" width="200px"  />
 								</hbox>
 								<label id="label_RuleID" value="${c:l('label_BounceReasonDialog_RuleID.value')}" />
 								<extendedcombobox id="ruleID" />
