@@ -258,7 +258,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private boolean issecurityMandate = false;
 	private transient BankAccountValidation bankAccountValidations;
 
-	private List<FinanceMain> customerLoans = new ArrayList<>();
+	private List<Mandate> customerLoans = new ArrayList<>();
 	private List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 	private List<ValueLabel> securityMandateTypeList = MandateUtil.getSecurityInstrumentTypes();
 	private final List<ValueLabel> accTypeList = MandateUtil.getAccountTypes();
@@ -339,18 +339,18 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.mandateRegistrationListCtrl = ((MandateRegistrationListCtrl) arguments.get("mandateRegistrationListCtrl"));
 
 		if (arguments.containsKey("customerLoans")) {
-			customerLoans = (List<FinanceMain>) arguments.get("customerLoans");
+			customerLoans = (List<Mandate>) arguments.get("customerLoans");
 		}
 
 		if (customerLoans.size() == 1) {
-			FinanceMain fm = customerLoans.get(0);
-			this.finReference.setObject(fm);
-			this.finReference.setValue(fm.getFinReference());
+			Mandate mndt = customerLoans.get(0);
+			this.finReference.setObject(mndt);
+			this.finReference.setValue(mndt.getFinReference());
 
-			this.mandate.setOrgReference(fm.getFinReference());
+			this.mandate.setOrgReference(mndt.getFinReference());
 			readOnlyComponent(true, this.finReference);
 
-			this.finType = fm.getFinType();
+			this.finType = mndt.getFinType();
 
 			addPartenetBankFilter();
 		}

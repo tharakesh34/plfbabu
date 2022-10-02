@@ -638,10 +638,22 @@ public class CreateFinanceController extends SummaryDetailService {
 	private void validateChequeDetails(FinanceDetail fd) {
 		boolean date = true;
 		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 		ChequeHeader ch = fd.getChequeHeader();
 		List<ChequeDetail> cheques = ch.getChequeDetailList();
 
+		String repayMethod = fm.getFinRepayMethod();
+
 		for (ChequeDetail cheque : cheques) {
+
+			if (InstrumentType.isPDC(cheque.getChequeType()) && !InstrumentType.isPDC(repayMethod)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Cheques";
+				valueParm[1] = "finRepayMethod is " + repayMethod;
+
+				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+			}
+
 			if (!InstrumentType.isPDC(cheque.getChequeType())) {
 				continue;
 			}
