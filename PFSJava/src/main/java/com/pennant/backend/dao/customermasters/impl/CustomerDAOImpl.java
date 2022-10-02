@@ -920,7 +920,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public Customer getCustomer(String cif) {
-		String sql = "Select CustID, CustCIF From Customers Where CustCIF = ?";
+		String sql = "Select CustID, CustCIF, CustShrtName From Customers Where CustCIF = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -930,6 +930,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 				c.setCustID(rs.getLong("CustID"));
 				c.setCustCIF(rs.getString("CustCIF"));
+				c.setCustShrtName(rs.getString("CustShrtName"));
 
 				return c;
 			}, cif);
@@ -1097,7 +1098,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	@Override
 	public BigDecimal getCustRepayProcBank(long custID, String curFinReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustId CustCif, TotalRepayAmt, MaturityDate, FinStartDate, FinCcy");
+		sql.append(" CustId, TotalRepayAmt, MaturityDate, FinStartDate, FinCcy");
 		sql.append(" From FinanceMain_Temp Where CustID = ? and RcdMaintainSts is null and FinReference <> ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
