@@ -21,6 +21,10 @@ public class PresentmentExtractionService {
 	@Autowired
 	private static Job peExtractionJob;
 
+	public PresentmentExtractionService() {
+		super();
+	}
+
 	public static void extractPresentment() {
 		Thread thread = new Thread(new PresentmentExtractionThread());
 		thread.start();

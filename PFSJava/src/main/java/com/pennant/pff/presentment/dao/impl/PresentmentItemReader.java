@@ -1,19 +1,24 @@
 package com.pennant.pff.presentment.dao.impl;
 
+import java.util.Collections;
+
 import javax.sql.DataSource;
 
-import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.item.database.Order;
+import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
-public class PresentmentItemReader extends JdbcCursorItemReader<PresentmentDetail> {
+public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<PresentmentDetail> {
 
 	public PresentmentItemReader(DataSource dataSource) {
-		super.setDataSource(dataSource);
-		super.setSql(getSql());
-		// super.setVerifyCursorPosition(false);
-		super.setRowMapper((rs, rowNum) -> {
+		super.dataSource(dataSource);
+		super.fetchSize(100000);
+		super.selectClause(getSql());
+		super.fromClause("From Presentment_Stage");
+		super.whereClause("Where ProcessingFlag = 0");
+		super.rowMapper((rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 
 			try {
@@ -64,8 +69,7 @@ public class PresentmentItemReader extends JdbcCursorItemReader<PresentmentDetai
 		});
 	}
 
-	@Override
-	public String getSql() {
+	private String getSql() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
 		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage");
@@ -76,7 +80,6 @@ public class PresentmentItemReader extends JdbcCursorItemReader<PresentmentDetai
 		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
 		sql.append(", PartnerBankId, BranchCode, BankCode, HeaderID, InstrumentType");
 		sql.append(" From Presentment_Stage");
-		sql.append(" Where ProcessingFlag = 0");
 
 		return sql.toString();
 	}
