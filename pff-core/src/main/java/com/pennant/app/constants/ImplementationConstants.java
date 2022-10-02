@@ -189,7 +189,6 @@ public class ImplementationConstants {
 		NON_FRQ_CAPITALISATION = getValueAsBoolean("NON_FRQ_CAPITALISATION", false);
 		ALW_DOWNPAY_IN_LOANENQ_AND_SOA = getValueAsBoolean("ALW_DOWNPAY_IN_LOANENQ_AND_SOA", false);
 		FA_CANCEL_CHEQUE_AUTO_OPEN = getValueAsBoolean("FA_CANCEL_CHEQUE_AUTO_OPEN", false);
-		PRESENT_RECEIPTS_ON_RESP = getValueAsBoolean("PRESENT_RECEIPTS_ON_RESP", false);
 		ALLOW_SUBVENTION = getValueAsBoolean("ALLOW_SUBVENTION", false);
 		PRESENT_RESP_BOUNCE_REMARKS_MAN = getValueAsBoolean("PRESENT_RESP_BOUNCE_REMARKS_MAN", false);
 		VAS_VALIDATION_FOR_PREMIUM_CALC = getValueAsBoolean("VAS_VALIDATION_FOR_PREMIUM_CALC", false);
@@ -544,7 +543,6 @@ public class ImplementationConstants {
 	public static boolean ALLOW_NON_LAN_RECEIPTS;
 	public static boolean ALLOW_BUILDER_BENEFICIARY_DETAILS;
 	public static boolean COVENANT_ADTNL_REMARKS;
-	public static boolean PRESENT_RECEIPTS_ON_RESP;
 	public static boolean HOLD_DISB_INST_POST;
 	public static boolean VAS_INST_ON_DISB;
 	public static boolean ALLOW_SUBVENTION;

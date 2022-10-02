@@ -31,7 +31,7 @@ public class FinanceWorkflowRoleUtil {
 
 		String[] parmList = financeRoleKey.split("@");
 
-		List<String> rolesList = getFinanceWorkFlowDAO().getFinanceWorkFlowRoles(parmList[0], parmList[1]);
+		List<String> rolesList = financeWorkFlowDAO.getFinanceWorkFlowRoles(parmList[0], parmList[1]);
 		for (String roles : rolesList) {
 			String[] arrRoles = roles.split(";");
 			for (String role : arrRoles) {
@@ -47,31 +47,18 @@ public class FinanceWorkflowRoleUtil {
 
 		for (String module : moduleNames) {
 			String financeRoleKey = module + "@" + finEvent;
-			// FIXME: Cache disabled as found issue of not getting refreshed in QC. Also observed no invalidate method
-			// usage.
-			// try {
-			// finRolesSet.addAll(financeRoleCache.get(financeRoleKey));
 			finRolesSet.addAll(getfinanceRoles(financeRoleKey));
-			// } catch (ExecutionException e) {
-			// logger.warn("Unable to load data from cache: ", e);
-			// finRolesSet.addAll(getfinanceRoles(financeRoleKey));
-			// }
 		}
 
 		return finRolesSet;
 	}
 
-	// Clear errorCache data.
 	public static void clearRoleCache(String finEvent) {
 		try {
 			financeRoleCache.invalidate(finEvent);
 		} catch (Exception ex) {
 			logger.warn("Error clearing data from errorCache cache: ", ex);
 		}
-	}
-
-	public static FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
-		return financeWorkFlowDAO;
 	}
 
 	public static void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {

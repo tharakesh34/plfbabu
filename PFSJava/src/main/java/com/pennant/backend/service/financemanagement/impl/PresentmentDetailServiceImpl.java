@@ -80,6 +80,7 @@ import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
@@ -528,7 +529,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 						processAdvaceEMI(pd, false);
 						idExcludeEmiList.add(detailID);
 					} else {
-						if (!ImplementationConstants.PRESENT_RECEIPTS_ON_RESP
+						if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION
 								&& pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 							processReceipts(presentmentHeader, pd, false);
 						}
@@ -770,13 +771,13 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		rch.setReference(finReference);
 		rch.setPresentmentSchDate(pd.getSchDate());
 
-		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
+		if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
+			rch.setReceiptDate(pd.getSchDate());
+		} else {
 			rch.setReceiptDate(appDate);
 			if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
 				valueDate = appDate;
 			}
-		} else {
-			rch.setReceiptDate(pd.getSchDate());
 		}
 
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
@@ -816,7 +817,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			rch.setReceiptAmount(pd.getAdvanceAmt());
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 			rcd.setValueDate(pd.getSchDate());
-			if (!ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
+			if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
 				rcd.setValueDate(pd.getSchDate());
 			} else if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
 				rcd.setValueDate(appDate);
@@ -885,10 +886,10 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		rch.setReference(finReference);
 		rch.setPresentmentSchDate(pd.getSchDate());
 
-		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
-			rch.setReceiptDate(appDate);
-		} else {
+		if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
 			rch.setReceiptDate(pd.getSchDate());
+		} else {
+			rch.setReceiptDate(appDate);
 		}
 
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
@@ -927,11 +928,13 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			rcd.setAmount(pd.getPresentmentAmt());
 			rcd.setDueAmount(pd.getPresentmentAmt());
 			rcd.setValueDate(pd.getSchDate());
-			if (!ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
+
+			if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
 				rcd.setValueDate(pd.getSchDate());
 			} else if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
 				rcd.setValueDate(appDate);
 			}
+
 			rcd.setReceivedDate(rcd.getValueDate());
 			rcd.setPartnerBankAc(pd.getAccountNo());
 			rcd.setPartnerBankAcType(pd.getAcType());

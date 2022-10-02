@@ -261,10 +261,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Entering" + event.toString());
 
 		menuItemName = getMenuItemName(event, menuItemName);
-		if (StringUtils.isEmpty(menuItemName)) {
+		if (StringUtils.isNotEmpty(menuItemName)) {
 			if (getUserWorkspace().getHasMenuRights().containsKey(menuItemName)) {
 				menuItemRightName = getUserWorkspace().getHasMenuRights().get(menuItemName);
 			}
+			
+			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
 
 			/* set components visible dependent on the users rights */
 			doCheckRights();
@@ -272,8 +274,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			checkAndSetModDef(tabbox);
 		}
-
-		// Listbox Sorting
 
 		this.listheader_FinType.setSortAscending(new FieldComparator("finType", true));
 		this.listheader_FinType.setSortDescending(new FieldComparator("finType", false));

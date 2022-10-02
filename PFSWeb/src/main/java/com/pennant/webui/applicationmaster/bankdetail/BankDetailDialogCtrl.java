@@ -609,8 +609,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 
 		isNew = aBankDetail.isNewRecord();
 		if (this.userAction.getSelectedItem() != null) {
-			if ((PennantConstants.RCD_STATUS_SUBMITTED.equalsIgnoreCase(this.userAction.getSelectedItem().getValue())
-					|| PennantConstants.RCD_STATUS_SAVED
+			if ((!isNew) && (PennantConstants.RCD_STATUS_SUBMITTED.equalsIgnoreCase(this.userAction.getSelectedItem().getValue())
+					|| PennantConstants.RCD_STATUS_SAVED 
 							.equalsIgnoreCase(this.userAction.getSelectedItem().getValue()))) {
 				if (this.updateBranches.isChecked()) {
 					this.isSkip = false;

@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -32,6 +31,7 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.extension.PresentmentExtension;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -101,17 +101,12 @@ public class ReceiptPaymentService {
 
 		createReceiptAndBounce(receiptDTO);
 
-		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
-			logger.info("Stop creating presentment receipts on EOD.");
-			return;
-		}
-
-		if (pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+		if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION && pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 			logger.info("Creating Receipts for Presentment...");
 			createPresentmentReceipt(receiptDTO);
-		}
+		} else
 
-		logger.debug(Literal.LEAVING);
+			logger.debug(Literal.LEAVING);
 	}
 
 	private void createEMIInAdvReceipt(ReceiptDTO receiptDTO) {

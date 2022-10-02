@@ -386,13 +386,13 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		if (!bankDetail.isActive() && partnerBankDAO.getPartnerBankbyBank(code, "") != 0
+		if (!bankDetail.isActive() && (partnerBankDAO.getPartnerBankbyBank(code, "") != 0
 				|| finAdvancePaymentsDAO.getBankCode(code, "") != 0
 				|| finCollateralsDAO.getFinCollateralsByBank(code, "") != 0
 				|| finReceiptDetailDAO.getReceiptHeaderByBank(code, "") != 0
 				|| bankBranchDAO.getBankBrachByBank(code, "") != 0
 				|| customerBankInfoDAO.getCustomerBankInfoByBank(code, "") != 0
-				|| customerExtLiabilityDAO.getCustomerExtLiabilityByBank(code, "") != 0) {
+				|| customerExtLiabilityDAO.getCustomerExtLiabilityByBank(code, "") != 0)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_BankCode") + ": " + code;
 

@@ -60,6 +60,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.pff.eod.cache.BounceConfigCache;
+import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
@@ -209,10 +210,10 @@ public class PresentmentResponseProcess implements Runnable {
 		Long linkedTranId;
 
 		if (receiptID == 0) {
-			if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
-				createPresentmentReceipt(pd);
-			} else if (!finIsActive) {
+			if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
 				processReceipt = processInactiveLoan(custEODEvent, pd);
+			} else if (!finIsActive) {
+				createPresentmentReceipt(pd);
 			}
 
 			receiptID = pd.getReceiptID();

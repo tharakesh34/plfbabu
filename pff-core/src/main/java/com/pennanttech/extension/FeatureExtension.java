@@ -24,7 +24,8 @@ public final class FeatureExtension {
 	private static Map<String, Object> getFeatureExtension(String module) {
 		switch (module) {
 		case "MANDATE":
-
+			return extension.getMandateExtensions();
+		case "PRESENTMENT":
 			return extension.getMandateExtensions();
 
 		default:

@@ -6,4 +6,6 @@ public interface IFeatureExtension {
 	Map<String, Object> getCustomConstants();
 
 	Map<String, Object> getMandateExtensions();
+
+	Map<String, Object> getPresentmentExtensions();
 }
