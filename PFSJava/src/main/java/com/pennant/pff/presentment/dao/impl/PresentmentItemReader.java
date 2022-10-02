@@ -16,7 +16,7 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 		super.dataSource(dataSource);
 		super.fetchSize(100000);
 		super.selectClause(getSql());
-		super.fromClause("From Presentment_Stage");
+		super.fromClause("From Presentment_Extraction_Stage");
 		super.whereClause("Where ProcessingFlag = 0");
 		super.saveState(false);
 		super.sortKeys(Collections.singletonMap("ID", Order.ASCENDING));
@@ -26,6 +26,8 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 
 			try {
 				pd.setId(rs.getLong("Id"));
+				pd.setHeaderId(JdbcUtil.getLong(rs.getObject("HeaderID")));
+				pd.setDueDate(rs.getDate("DueDate"));
 				pd.setFinID(rs.getLong("FinId"));
 				pd.setFinReference(rs.getString("FinReference"));
 				pd.setFinType(rs.getString("FinType"));
@@ -62,9 +64,6 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 				pd.setPartnerBankId(JdbcUtil.getLong(rs.getObject("PartnerBankId")));
 				pd.setBranchCode(rs.getString("BranchCode"));
 				pd.setBankCode(rs.getString("BankCode"));
-
-				pd.setHeaderId(JdbcUtil.getLong(rs.getObject("HeaderID")));
-
 				pd.setInstrumentType(rs.getString("InstrumentType"));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -75,14 +74,14 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 
 	private String getSql() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
+		sql.append(" Id, HeaderID, DueDate, FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
 		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage");
 		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
 		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
 		sql.append(", SchdPftPaid, SchdPriPaid, SchdFeePaid, TdsPaid");
 		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
 		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
-		sql.append(", PartnerBankId, BranchCode, BankCode, HeaderID, InstrumentType");
+		sql.append(", PartnerBankId, BranchCode, BankCode, InstrumentType");
 
 		return sql.toString();
 	}
