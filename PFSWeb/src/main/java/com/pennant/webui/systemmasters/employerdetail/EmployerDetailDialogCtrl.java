@@ -1183,7 +1183,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		BeanUtils.copyProperties(getEmployerDetail(), aEmployerDetail);
 
 		String keyReference = Labels.getLabel("label_EmployerDetailDialog_EmpCategory.value") + " : "
-				+ aEmployerDetail.getEmpIndustry() + "," + Labels.getLabel("label_EmployerDetailDialog_EmpName.value")
+				+ aEmployerDetail.getEmpCategory() + "," + Labels.getLabel("label_EmployerDetailDialog_EmpName.value")
 				+ " : " + aEmployerDetail.getEmpName();
 		doDelete(keyReference, aEmployerDetail);
 

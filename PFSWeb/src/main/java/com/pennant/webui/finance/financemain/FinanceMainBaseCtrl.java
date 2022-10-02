@@ -8127,7 +8127,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// PDC
 		Tab pdcTab = getTab(AssetConstants.UNIQUE_ID_CHEQUE);
 		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()
-				&& (InstrumentType.isPDC(getFinanceMain().getFinRepayMethod()) || finType.isChequeCaptureReq())
+				&& (InstrumentType.isPDC(aFm.getFinRepayMethod()) || finType.isChequeCaptureReq())
 				&& (!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 						&& !this.userAction.getSelectedItem().getLabel().contains("Reject")
 						&& !this.userAction.getSelectedItem().getLabel().contains("Resubmit")
