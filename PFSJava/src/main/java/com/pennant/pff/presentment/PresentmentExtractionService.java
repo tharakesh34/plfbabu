@@ -8,7 +8,6 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -16,9 +15,8 @@ import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public class PresentmentExtractionService {
 
-	@Autowired
 	private static JobLauncher peJobLauncher;
-	@Autowired
+
 	private static Job peExtractionJob;
 
 	public PresentmentExtractionService() {
@@ -91,6 +89,14 @@ public class PresentmentExtractionService {
 			}
 		}
 
+	}
+
+	public static void setPeJobLauncher(JobLauncher peJobLauncher) {
+		PresentmentExtractionService.peJobLauncher = peJobLauncher;
+	}
+
+	public static void setPeExtractionJob(Job peExtractionJob) {
+		PresentmentExtractionService.peExtractionJob = peExtractionJob;
 	}
 
 }

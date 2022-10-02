@@ -4,7 +4,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-	<bean id="presentmentExtractionService" class="com.pennant.pff.presentment.PresentmentExtractionService" />
+	<bean id="presentmentExtractionService" class="com.pennant.pff.presentment.PresentmentExtractionService" >
+		<property name="peJobLauncher" ref="peJobLauncher"></property>
+		<property name="peExtractionJob" ref="peExtractionJob"></property>
+	</bean>
 	
 	<bean id="presentmentExtractionJob" class="com.pennant.pff.presentment.PresentmentExtractionJob"/>
 
