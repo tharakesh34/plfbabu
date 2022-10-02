@@ -857,4 +857,7 @@
 		
 	<bean name="receiptCancellationService"
 		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" />
+		
+	<bean id="presentmentExcludeCodeDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentExcludeCodeDAOImpl" parent="sequenceDao" />
+		
 </beans>
