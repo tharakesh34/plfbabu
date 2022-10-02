@@ -6,6 +6,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
@@ -56,7 +57,7 @@ public class PresentmentExtractionJob {
 	private TransactionManager peTransactionManager;
 
 	@Bean
-	public Job peExtractionJob() {
+	public Job peExtractionJob() throws Exception {
 		return this.peJobBuilderFactory.get("peExtractionJob").incrementer(peBatchJobParameterIncrementer)
 				.start(dueConfig())
 
@@ -89,17 +90,21 @@ public class PresentmentExtractionJob {
 	}
 
 	@Bean
-	public TaskletStep extraction() {
+	public TaskletStep extraction() throws Exception {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
 		return peStepBuilderFactory.get("EXTRACTION").<PresentmentDetail, PresentmentDetail>chunk(1)
-				.reader(new PresentmentItemReader(this.dataSource).build())
-				.processor(new PresentmentItemProcessor(this.presentmentEngine))
+				.reader(itemReader()).processor(new PresentmentItemProcessor(this.presentmentEngine))
 				.writer(new PresentmentItemWriter(this.peTransactionManager, this.presentmentEngine))
-				.taskExecutor(taskExecutor())
-				// .transactionAttribute(attribute)
-				.build();
+				.taskExecutor(taskExecutor()).transactionAttribute(attribute).build();
+	}
+
+	@Bean
+	public JdbcPagingItemReader<PresentmentDetail> itemReader() throws Exception {
+		JdbcPagingItemReader<PresentmentDetail> itemReader = new PresentmentItemReader(this.dataSource).build();
+		itemReader.afterPropertiesSet();
+		return itemReader;
 	}
 
 	@Bean
@@ -109,7 +114,7 @@ public class PresentmentExtractionJob {
 
 	public SimpleAsyncTaskExecutor taskExecutor() {
 		SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor("PRESENTMENT_EXTRACTION_JOB");
-		taskExecutor.setConcurrencyLimit(10);
+		taskExecutor.setConcurrencyLimit(100);
 		return taskExecutor;
 
 	}

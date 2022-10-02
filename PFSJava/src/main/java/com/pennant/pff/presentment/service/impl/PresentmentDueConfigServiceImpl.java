@@ -102,6 +102,7 @@ public class PresentmentDueConfigServiceImpl implements PresentmentDueConfigServ
 					header = extractHeader.get(DateUtil.format(dueDate, DateFormat.LONG_MONTH));
 				}
 
+				pec.setID(dueExtractionConfigDAO.getNextValue());
 				pec.setMonthID(header.getID());
 				pec.setDueDate(dueDate);
 				pec.setExtractionDate(DateUtil.addDays(pec.getDueDate(), -maxExtractionDay));

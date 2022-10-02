@@ -34,6 +34,7 @@
 package com.pennant.backend.endofday.main;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -173,15 +174,19 @@ public class BatchMonitor {
 	 * @return long(jobExecutionId)
 	 */
 	private static long getJobExecutionId() {
+		String sql = "SELECT COALESCE(MAX(JOB_EXECUTION_ID), 0) JOBID FROM BATCH_JOB_EXECUTION je Inner Join BATCH_JOB_INSTANCE ji on ji.JOB_INSTANCE_ID = je.JOB_INSTANCE_ID where JOB_NAME = ?";
+
 		Connection connection = null;
-		Statement statement = null;
+		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 
 		try {
 			connection = DataSourceUtils.doGetConnection(dataSource);
-			statement = connection.createStatement();
-			resultSet = statement
-					.executeQuery("SELECT COALESCE(MAX(JOB_EXECUTION_ID), 0) JOBID FROM BATCH_JOB_EXECUTION");
+			statement = connection.prepareStatement(sql);
+			statement.setString(1, "plfEodJob");
+
+			resultSet = statement.executeQuery();
+
 			if (resultSet.next()) {
 				jobExecutionId = resultSet.getLong(1);
 			}

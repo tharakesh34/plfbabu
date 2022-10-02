@@ -411,7 +411,9 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		detailHeader.setEmandateSource(emandateSource.getValidatedValue());
 		logger.debug(Literal.LEAVING);
 
-		presentmentExtractionService.extractPresentment(detailHeader);
+		// presentmentExtractionService.extractPresentment(detailHeader);
+
+		PresentmentExtractionService.extractPresentment();
 
 		return "";
 	}
@@ -481,7 +483,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			this.loanType.setMandatoryStyle(false);
 			Clients.clearWrongValue(loanType);
 		}
-		
+
 		if (PennantConstants.List_Select.equals(code)) {
 			return;
 		}

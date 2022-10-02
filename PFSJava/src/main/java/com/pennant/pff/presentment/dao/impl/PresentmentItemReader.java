@@ -1,6 +1,6 @@
 package com.pennant.pff.presentment.dao.impl;
 
-import java.util.HashMap;
+import java.util.Collections;
 
 import javax.sql.DataSource;
 
@@ -19,10 +19,7 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 		super.fromClause("From Presentment_Stage");
 		super.whereClause("Where ProcessingFlag = 0");
 		super.saveState(false);
-
-		HashMap<String, Order> sortKeys = new HashMap<String, Order>();
-		sortKeys.put("ID", Order.ASCENDING);
-		super.sortKeys(sortKeys);
+		super.sortKeys(Collections.singletonMap("ID", Order.ASCENDING));
 
 		super.rowMapper((rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
@@ -86,7 +83,6 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
 		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
 		sql.append(", PartnerBankId, BranchCode, BankCode, HeaderID, InstrumentType");
-		sql.append(" From Presentment_Stage");
 
 		return sql.toString();
 	}

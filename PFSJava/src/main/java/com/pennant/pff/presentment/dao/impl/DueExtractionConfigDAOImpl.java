@@ -92,7 +92,7 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 	public void saveHeader(List<DueExtractionHeader> list, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Insert into Due_Extraction_Header");
 		sql.append(tableType.getSuffix());
-		sql.append("( ID, ExtractinMonth, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+		sql.append("( ID, ExtractionMonth, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, Active, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkFlowId)");
 		sql.append(" Values(");
@@ -143,12 +143,12 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 	public void save(List<DueExtractionConfig> list, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Insert into Due_Extraction_Config");
 		sql.append(tableType.getSuffix());
-		sql.append("( MonthID, InstrumentID, DueDate, ExtractionDate, Modified");
+		sql.append("(Id, MonthID, InstrumentID, DueDate, ExtractionDate, Modified");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, Active, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkFlowId)");
 		sql.append(" Values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -160,7 +160,7 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 					DueExtractionConfig dec = list.get(i);
 
 					int index = 1;
-
+					ps.setLong(index++, dec.getID());
 					ps.setLong(index++, dec.getMonthID());
 					ps.setLong(index++, dec.getInstrumentID());
 					ps.setDate(index++, JdbcUtil.getDate(dec.getDueDate()));
@@ -374,6 +374,11 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1)) > 0;
+	}
+
+	@Override
+	public long getNextValue() {
+		return getNextValue("Seq_Due_Extraction_Config");
 	}
 
 }

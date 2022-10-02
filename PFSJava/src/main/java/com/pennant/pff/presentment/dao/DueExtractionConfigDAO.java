@@ -35,4 +35,6 @@ public interface DueExtractionConfigDAO {
 
 	Map<String, Date> getDueDates(Date extractionDate);
 
+	long getNextValue();
+
 }

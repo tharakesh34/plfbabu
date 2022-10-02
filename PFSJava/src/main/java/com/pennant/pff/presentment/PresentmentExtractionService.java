@@ -53,6 +53,7 @@ public class PresentmentExtractionService {
 		public void run() {
 			JobParametersBuilder builder = new JobParametersBuilder();
 
+			builder.addLong("JOB_ID", System.currentTimeMillis());
 			builder.addDate("AppDate", SysParamUtil.getAppDate());
 			if (ph != null) {
 				builder.addString("MandateType", ph.getMandateType());
