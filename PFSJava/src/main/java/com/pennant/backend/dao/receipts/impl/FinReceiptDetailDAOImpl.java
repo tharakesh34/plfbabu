@@ -169,7 +169,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			ps.setString(index++, receiptDetail.getPaymentRef());
 			ps.setString(index++, receiptDetail.getTransactionRef());
 			ps.setString(index++, receiptDetail.getChequeAcNo());
-			ps.setLong(index++, receiptDetail.getFundingAc());
+			ps.setObject(index++, receiptDetail.getFundingAc());
 			ps.setDate(index++, JdbcUtil.getDate(receiptDetail.getReceivedDate()));
 			ps.setString(index++, receiptDetail.getStatus());
 			ps.setInt(index++, receiptDetail.getPayOrder());

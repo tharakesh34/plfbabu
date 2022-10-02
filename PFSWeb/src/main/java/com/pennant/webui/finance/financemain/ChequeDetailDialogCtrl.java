@@ -420,7 +420,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		listSPDCHeaderCheckBoxComp = new Checkbox();
 
-		listSPDCHeaderCheckBoxComp.setDisabled(true);
+		listSPDCHeaderCheckBoxComp.setDisabled(!isDeleteVisible());
 
 		listcell.appendChild(listSPDCHeaderCheckBoxComp);
 		listitem.appendChild(listcell);
@@ -809,8 +809,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
-			Integer chequeNo = this.totNoOfCheques.getValue();
-			ch.setNoOfCheques(chequeNo == null ? 0 : chequeNo);
+			if(InstrumentType.isSPDC(chequeType.getSelectedItem().getValue())) {
+				Integer chequeNo = this.totNoOfCheques.getValue();
+				ch.setNoOfCheques(chequeNo == null ? 0 : chequeNo);
+			}else {
+				ch.setNoOfCheques(this.totNoOfCheques.getValue());
+			}
 		} catch (WrongValueException we) {
 			if (!isGenarate) {
 				wve.add(we);
@@ -1150,7 +1154,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		}
 
 		List<ChequeDetail> cheques = new ArrayList<>();
-
+		
 		int chequeSerialNum = this.chequeSerialNo.intValue();
 		int numberofCheques = this.noOfCheques.getValue();
 		int prvsNoOfCheques = this.totNoOfCheques.getValue() == null ? 0 : this.totNoOfCheques.getValue();
@@ -1658,14 +1662,16 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		boolean deletedCheques = false;
 		int count = 0;
-		for (Listitem listItem : listBoxChequeDetail.getItems()) {
+		for (Listitem listItem : getListItems()) {
 			Checkbox checkbox = (Checkbox) listItem.getFirstChild().getFirstChild();
 
 			ChequeDetail cheque = (ChequeDetail) listItem.getAttribute("data");
 
-			cheque.setChequeDate(getSchdDate(listItem));
-			cheque.setAmount(getEmiAmount(listItem));
-
+			if(InstrumentType.isPDC(cheque.getChequeType())) {
+				cheque.setChequeDate(getSchdDate(listItem));
+				cheque.setAmount(getEmiAmount(listItem));
+			}
+			
 			if (!checkbox.isChecked()) {
 				cheques.add(cheque);
 				continue;
@@ -1690,16 +1696,14 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		}
 
-		for (Listitem listItem : listBoxSPDCChequeDetail.getItems()) {
-			cheques.add((ChequeDetail) listItem.getAttribute("data"));
-		}
-
 		if (!deletedCheques) {
 			MessageUtil.showError(Labels.getLabel("Delete_DataList_NoEmpty"));
 			return;
 		}
 
 		this.deleteCheques.setDisabled(getListItems().size() == count);
+		listHeaderCheckBoxComp.setDisabled(listBoxChequeDetail.getItems().size() == count);
+		listSPDCHeaderCheckBoxComp.setDisabled(listBoxSPDCChequeDetail.getItems().size() == count);
 
 		listBoxChequeDetail.getItems().clear();
 		listBoxSPDCChequeDetail.getItems().clear();
