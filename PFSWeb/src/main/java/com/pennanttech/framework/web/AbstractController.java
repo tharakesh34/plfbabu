@@ -620,24 +620,30 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		logger.trace(Literal.LEAVING);
 	}
 
-	public void fillComboBox1(Combobox combobox, String value, List<ValueLabel> list) {
+	protected void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
+		fillComboBox(combobox, value, list, "");
+	}
+
+	public void fillList(Combobox combobox, String value, List<ValueLabel> list, String excludeFields) {
 		combobox.getChildren().clear();
 
 		for (ValueLabel valueLabel : list) {
-			Comboitem comboitem = new Comboitem();
-			comboitem.setValue(valueLabel.getValue());
-			comboitem.setLabel(valueLabel.getLabel());
+			if (!excludeFields.contains("," + valueLabel.getValue() + ",")) {
+				Comboitem comboitem = new Comboitem();
+				comboitem.setValue(valueLabel.getValue());
+				comboitem.setLabel(valueLabel.getLabel());
+				combobox.setReadonly(true);
+				combobox.appendChild(comboitem);
 
-			combobox.appendChild(comboitem);
-
-			if (StringUtils.trimToEmpty(value).equals(StringUtils.trim(valueLabel.getValue()))) {
-				combobox.setSelectedItem(comboitem);
+				if (StringUtils.trimToEmpty(value).equals(StringUtils.trim(valueLabel.getValue()))) {
+					combobox.setSelectedItem(comboitem);
+				}
 			}
 		}
 	}
 
-	protected void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
-		fillComboBox(combobox, value, list, "");
+	public void fillList(Combobox combobox, String value, List<ValueLabel> list) {
+		fillList(combobox, value, list, "");
 	}
 
 	public void fillList(Combobox component, List<Property> properties, Object selectedKey) {

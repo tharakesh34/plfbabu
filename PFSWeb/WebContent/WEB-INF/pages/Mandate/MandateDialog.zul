@@ -67,6 +67,8 @@
 									<hbox>
 										<extendedcombobox id="custID" readonly="true" />
 										<button id="btnSearchCustCIF" image="/images/icons/more.png" />
+										<label id="custNameLabel"
+											style="margin-left:10px;display:inline-block;padding-top:3px;" />
 									</hbox>
 								</row>
 								<row>

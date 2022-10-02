@@ -738,9 +738,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		FinScheduleData schdData = financeDetail.getFinScheduleData();
 
 		if (pdcReqFlag && fromLoan) {
-			fillComboBox(this.chequeType, "", chequeTypeList);
+			fillList(this.chequeType, InstrumentType.PDC.code(), chequeTypeList);
 		} else {
-			fillComboBox(this.chequeType, "", chequeTypeList, ", PDC");
+			fillList(this.chequeType, InstrumentType.SPDC.code(), chequeTypeList, ",PDC,");
 		}
 
 		fillComboBox(this.chequeStatus, PennantConstants.CHEQUESTATUS_NEW, chequeStatusList);
@@ -809,10 +809,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
-			if(InstrumentType.isSPDC(chequeType.getSelectedItem().getValue())) {
+			if (InstrumentType.isSPDC(chequeType.getSelectedItem().getValue())) {
 				Integer chequeNo = this.totNoOfCheques.getValue();
 				ch.setNoOfCheques(chequeNo == null ? 0 : chequeNo);
-			}else {
+			} else {
 				ch.setNoOfCheques(this.totNoOfCheques.getValue());
 			}
 		} catch (WrongValueException we) {
@@ -1086,7 +1086,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		ch.setNextRoleCode(getNextRoleCode());
 
 		if ((CollectionUtils.isEmpty(ch.getChequeDetailList())) && fd.getChequeHeader() == null) {
-			fd.setChequeHeader(null);
+			fd.setChequeHeader(ch);
 			return;
 		}
 
@@ -1154,7 +1154,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		}
 
 		List<ChequeDetail> cheques = new ArrayList<>();
-		
+
 		int chequeSerialNum = this.chequeSerialNo.intValue();
 		int numberofCheques = this.noOfCheques.getValue();
 		int prvsNoOfCheques = this.totNoOfCheques.getValue() == null ? 0 : this.totNoOfCheques.getValue();
@@ -1331,7 +1331,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.city.setValue(cd.getCity());
 
 		fillComboBox(this.accountType, cd.getAccountType(), accTypeList);
-		fillComboBox(this.chequeType, cd.getChequeType(), chequeTypeList);
+		fillList(this.chequeType, cd.getChequeType(), chequeTypeList);
 	}
 
 	private void doFillChequeDetails(List<ChequeDetail> details) {
@@ -1667,11 +1667,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			ChequeDetail cheque = (ChequeDetail) listItem.getAttribute("data");
 
-			if(InstrumentType.isPDC(cheque.getChequeType())) {
+			if (InstrumentType.isPDC(cheque.getChequeType())) {
 				cheque.setChequeDate(getSchdDate(listItem));
 				cheque.setAmount(getEmiAmount(listItem));
 			}
-			
+
 			if (!checkbox.isChecked()) {
 				cheques.add(cheque);
 				continue;
@@ -1889,11 +1889,27 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			this.parenttab.setVisible(true);
 
 			if (InstrumentType.isPDC(mandateType)) {
-				fillComboBox(this.chequeType, mandateType, chequeTypeList);
+				fillList(this.chequeType, InstrumentType.PDC.name(), chequeTypeList);
 				this.pdcReqFlag = true;
 			} else {
-				fillComboBox(this.chequeType, InstrumentType.UDC.name(), chequeTypeList);
+				fillList(this.chequeType, InstrumentType.SPDC.code(), chequeTypeList, ",PDC,");
 				this.pdcReqFlag = false;
+
+				List<ChequeDetail> list = new ArrayList<>();
+				for (ChequeDetail cd : chequeDetailList) {
+					if (!InstrumentType.isPDC(cd.getChequeType())) {
+						list.add(cd);
+					}
+				}
+
+				chequeDetailList.clear();
+				listBoxChequeDetail.getItems().clear();
+				this.deleteCheques.setDisabled(getListItems().isEmpty());
+				listHeaderCheckBoxComp.setDisabled(true);
+
+				setChequeDetailList(list);
+
+				doFillCheques(chequeDetailList);
 			}
 		}
 
