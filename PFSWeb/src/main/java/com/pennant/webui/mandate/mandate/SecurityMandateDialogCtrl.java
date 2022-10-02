@@ -721,7 +721,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		checkOpenMandate();
 	}
 
-	public void onCheck$swapIsActive(Event event) {
+	public void onCheck$swapMandate(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (this.swapMandate.isChecked()) {
@@ -1816,6 +1816,15 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			aMandate.setSwapIsActive(this.swapMandate.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (aMandate.isSwapIsActive()) {
+				aMandate.setSwapEffectiveDate(
+						DateUtility.getDate(DateUtil.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

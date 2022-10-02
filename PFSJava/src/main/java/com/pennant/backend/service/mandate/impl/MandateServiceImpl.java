@@ -92,7 +92,6 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.external.MandateProcesses;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
@@ -549,7 +548,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		if (mandate.isSwapIsActive()
 				&& (StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED, mandate.getRecordStatus()))) {
-			BigDecimal repayAmount = mandateDAO.getMaxRepayAmount(mandate.getOrgReference(), "_View");
+			BigDecimal repayAmount = mandateDAO.getMaxRepayAmount(mandate.getMandateID());
 			if (repayAmount != null && mandate.getMaxLimit().compareTo(repayAmount) < 0) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90320", null)));
 			}
@@ -1225,12 +1224,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
-	
+
 	@Autowired
 	public void setBankBranchService(BankBranchService bankBranchService) {
 		this.bankBranchService = bankBranchService;
 	}
-	
+
 	@Autowired
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
@@ -1240,7 +1239,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	public void setEntityDAO(EntityDAO entityDAO) {
 		this.entityDAO = entityDAO;
 	}
-	
+
 	private MandateProcesses getMandateProcess() {
 		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
 	}

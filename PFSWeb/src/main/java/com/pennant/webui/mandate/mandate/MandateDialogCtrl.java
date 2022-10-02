@@ -158,6 +158,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected ExtendedCombobox mandateRef;
 	protected ExtendedCombobox custID;
 	protected Button btnSearchCustCIF;
+	protected Label custNameLabel;
 	private ExtendedCombobox entityCode;
 	protected ExtendedCombobox finReference;
 	protected Combobox mandateType;
@@ -461,6 +462,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(130);
+		this.finReference.setMandatoryStyle(true);
 		this.finReference.setModuleName("FinanceManagement");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
@@ -1420,6 +1422,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (aMandate.getCustID() != Long.MIN_VALUE && aMandate.getCustID() != 0) {
 			this.custID.setAttribute("custID", aMandate.getCustID());
 			this.custID.setValue(aMandate.getCustCIF());
+			this.custNameLabel.setValue(aMandate.getCustShrtName());
 			this.btnFetchAccountDetails.setDisabled(false);
 		}
 		this.btnFetchAccountDetails.setDisabled(false);
@@ -1814,6 +1817,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			aMandate.setSwapIsActive(this.swapMandate.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (aMandate.isSwapIsActive()) {
+				aMandate.setSwapEffectiveDate(
+						DateUtility.getDate(DateUtil.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

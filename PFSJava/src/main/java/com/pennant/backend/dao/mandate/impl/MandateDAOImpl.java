@@ -574,15 +574,17 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public BigDecimal getMaxRepayAmount(String finReference, String type) {
-		StringBuilder sql = new StringBuilder("Select max(RepayAmount) From FinScheduleDetails");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
-		sql.append(" and InstNumber <> ? and PartialPaidAmt = ?");
+	public BigDecimal getMaxRepayAmount(Long mandateID) {
+		StringBuilder sql = new StringBuilder("Select max(RepayAmount) From (");
+		sql.append(" Select RepayAmount From FinScheduleDetails_Temp schd");
+		sql.append(" Inner Join FinanceMain_Temp fm on fm.FinId = schd.FinId and MandateId = ?");
+		sql.append(" Union all");
+		sql.append(" Select RepayAmount From FinScheduleDetails schd");
+		sql.append(" Inner Join FinanceMain fm on fm.FinId = schd.FinId and MandateId = ?) T");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference, 0, 0);
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, mandateID, mandateID);
 
 	}
 
