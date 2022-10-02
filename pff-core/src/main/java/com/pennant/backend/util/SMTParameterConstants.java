@@ -128,9 +128,6 @@ public class SMTParameterConstants {
 	// On Advance Interest TDS Incomize Required Upfront
 	public static final String ADVANCE_TDS_INCZ_UPF = "ADVINT_TDS_INCZ_UPF";
 
-	// Allow Partner Bank in Mandate based on this flag variable
-	public static final String MANDATE_ALW_PARTNER_BANK = "MANDATE_ALW_PARTNER_BANK";
-
 	// Auto Build Schedule after Loan Start Date has changed
 	public static final String ALW_AUTO_SCHD_BUILD = "ALW_AUTO_SCHD_BUILD";
 

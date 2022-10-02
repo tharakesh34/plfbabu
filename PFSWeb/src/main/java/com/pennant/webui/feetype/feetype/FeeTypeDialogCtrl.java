@@ -885,23 +885,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	}
 
 	private void doDisplayAccountingSet(String feeTypeCode) {
-		boolean displayAccountingSet = true;
-		if (feeTypeCode.equals(pftInvFeeCode) || feeTypeCode.equals(priInvFeeCode)
-				|| feeTypeCode.equals(restructFeeCode)) {
-			displayAccountingSet = false;
-		} else {
-			switch (feeTypeCode) {
-			case Allocation.ODC:
-			case Allocation.PFT:
-				displayAccountingSet = false;
-				break;
-
-			default:
-				break;
-			}
-		}
-
-		this.accountingSetIdRow.setVisible(displayAccountingSet);
+		this.accountingSetIdRow.setVisible(Allocation.BOUNCE.equals(feeTypeCode));
 	}
 
 	private void doDisplayAmortz(String feeTypeCode) {
