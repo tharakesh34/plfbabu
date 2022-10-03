@@ -104,7 +104,7 @@ public class ProcessINDASForInActiveFinances implements Tasklet {
 		return sql.toString();
 	}
 
-	public void processAmzPstngsForInactiveLoans(FinanceMain fm) throws Exception {
+	public void processAmzPstngsForInactiveLoans(FinanceMain fm) {
 		EventProperties ep = fm.getEventProperties();
 
 		Date appDate = null;

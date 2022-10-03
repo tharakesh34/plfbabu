@@ -59,7 +59,7 @@ public class FinSamplingDAOImpl extends SequenceDao<Sampling> implements FinSamp
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		sql = new StringBuilder();

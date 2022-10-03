@@ -151,7 +151,6 @@ public class ProjectedAmortizationService {
 	private void processMonthEndAccruals(FinEODEvent finEODEvent, Date amzMonth) throws Exception {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		EventProperties eventProperties = fm.getEventProperties();
 
@@ -827,7 +826,7 @@ public class ProjectedAmortizationService {
 	 * @param finEODEvent
 	 * @throws Exception
 	 */
-	public void processMonthEndIncomeAMZ(FinEODEvent finEODEvent) throws Exception {
+	public void processMonthEndIncomeAMZ(FinEODEvent finEODEvent) {
 		List<ProjectedAmortization> calProjIncomeAMZList = new ArrayList<>(1);
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
@@ -1004,7 +1003,7 @@ public class ProjectedAmortizationService {
 		return projIncomeAMZList;
 	}
 
-	private List<ProjectedAmortization> calculateMonthEndIncomeAMZ(FinEODEvent finEODEvent) throws Exception {
+	private List<ProjectedAmortization> calculateMonthEndIncomeAMZ(FinEODEvent finEODEvent) {
 		Date curMonthEnd = null;
 		Date prvMonthEnd = null;
 		ProjectedAccrual projAccrual = null;
@@ -1141,7 +1140,7 @@ public class ProjectedAmortizationService {
 	}
 
 	private List<ProjectedAmortization> doSetIncomeAMZAmounts(FinEODEvent finEODEvent,
-			List<ProjectedAmortization> calProjIncomeAMZList) throws Exception {
+			List<ProjectedAmortization> calProjIncomeAMZList) {
 		Date appDate = finEODEvent.getAppDate();
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<ProjectedAmortization> finIncomeAMZList = finEODEvent.getIncomeAMZList();

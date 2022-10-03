@@ -34,9 +34,6 @@
 package com.pennant.backend.endofday.tasklet;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
@@ -49,12 +46,10 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.core.StatusMovementService;
-import com.pennant.app.util.DateUtility;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class FinanceMovement extends ServiceHelper implements Tasklet {
-	private static final long serialVersionUID = 6169223754136126786L;
 	private Logger logger = LogManager.getLogger(FinanceMovement.class);
 
 	int processed = 0;
@@ -91,95 +86,6 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 		}
 		logger.debug("COMPLETE: Amortization Caluclation for Value Date: " + valueDate);
 		return RepeatStatus.FINISHED;
-	}
-
-	private int getCount(Connection connection, Date valueDate) throws SQLException {
-		int total = 0;
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
-		try {
-			statement = connection.prepareStatement(queryNormalToPDCount());
-			statement.setDate(1, DateUtility.getDBDate(valueDate.toString()));
-			resultSet = statement.executeQuery();
-			if (resultSet.next()) {
-				total = total + resultSet.getInt(1);
-			}
-			resultSet.close();
-			statement.close();
-
-			statement = connection.prepareStatement(queryPDToNormalCount());
-			statement.setDate(1, DateUtility.getDBDate(valueDate.toString()));
-			resultSet = statement.executeQuery();
-			if (resultSet.next()) {
-				total = total + resultSet.getInt(1);
-			}
-			resultSet.close();
-			statement.close();
-
-			statement = connection.prepareStatement(queryPDToPISCount());
-			statement.setDate(1, DateUtility.getDBDate(valueDate.toString()));
-			resultSet = statement.executeQuery();
-			if (resultSet.next()) {
-				total = total + resultSet.getInt(1);
-			}
-			resultSet.close();
-			statement.close();
-
-			statement = connection.prepareStatement(queryPSIToNormalCount());
-			statement.setDate(1, DateUtility.getDBDate(valueDate.toString()));
-			resultSet = statement.executeQuery();
-			if (resultSet.next()) {
-				total = total + resultSet.getInt(1);
-			}
-
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} finally {
-
-			if (resultSet != null) {
-				resultSet.close();
-			}
-
-			if (statement != null) {
-				statement.close();
-			}
-		}
-
-		return total;
-	}
-
-	/* Count Query */
-	private String queryNormalToPDCount() {
-		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(" select count(*) from FinPftDetails where CurODDays=1 and PrvODDate=? ");
-		return sqlQuery.toString();
-	}
-
-	private String queryPDToNormalCount() {
-		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(
-				"select count(*) from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate   ");
-		sqlQuery.append(
-				" from FInODDetails group by FinReference)t inner join FinPftDetails fpd on fpd.FinReference=t.FinReference   ");
-		sqlQuery.append(" where FinODTillDate=? and fpd.CurODDays=0  ");
-		return sqlQuery.toString();
-	}
-
-	private String queryPDToPISCount() {
-		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(
-				" select count(*) from (select FinReference from FinSuspHead where FinIsInSusp=1 and FinSuspTrfDate= ?) t  ");
-		sqlQuery.append(" inner join FinPftDetails fpd on fpd.FinReference=t.FinReference  ");
-		return sqlQuery.toString();
-	}
-
-	private String queryPSIToNormalCount() {
-		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(
-				" select count(*) from (select FinReference from FinSuspHead where FinIsInSusp=0 and FinSuspTrfDate= ?) t  ");
-		sqlQuery.append(" inner join FinPftDetails fpd on fpd.FinReference=t.FinReference  ");
-		return sqlQuery.toString();
 	}
 
 	/* Process Query */
