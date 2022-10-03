@@ -62,7 +62,6 @@ public class MandateUtil {
 			case ECS:
 			case ENACH:
 			case EMANDATE:
-			case PDC:
 				securityInstrumentTypes.add(new ValueLabel(item.name(), item.code()));
 				break;
 

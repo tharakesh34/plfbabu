@@ -211,6 +211,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	protected Groupbox otherDetailsGroupbox;
 	protected Datebox inputDate;
+
+	protected Row partnerBankRow;
 	protected ExtendedCombobox partnerBank;
 	protected Checkbox active;
 
@@ -295,7 +297,10 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandate.setNewRecord(true);
 			this.mandate.setCustID(fm.getCustID());
 			this.mandate.setCustCIF(getCIFForCustomer(fd));
-			this.mandate.setMandateType(fm.getFinRepayMethod());
+
+			if (!issecurityMandate) {
+				this.mandate.setMandateType(fm.getFinRepayMethod());
+			}
 
 			FinanceType ft = fd.getFinScheduleData().getFinanceType();
 			this.mandate.setEntityCode(ft.getLovDescEntityCode());
@@ -523,7 +528,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.entityCode.setDisplayStyle(2);
 		this.entityCode.setTextBoxWidth(150);
 
-		this.partnerBank.setVisible(MandateExtension.PARTNER_BANK_REQ);
+		this.partnerBankRow.setVisible(MandateExtension.PARTNER_BANK_REQ);
 		this.partnerBank.setMaxlength(8);
 		this.partnerBank.setDisplayStyle(2);
 		this.partnerBank.setMandatoryStyle(true);
@@ -558,6 +563,11 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.employeeID.setFilters(new Filter[] { new Filter("AllowDAS", 1, Filter.OP_EQUAL) });
 		this.employeeID.setValidateColumns(new String[] { "EmployerId" });
 		this.employerName.setValue("EmpName");
+
+		if (fromLoan) {
+			this.reasonRow.setVisible(false);
+			this.mandateStatusRow.setVisible(false);
+		}
 
 		setStatusDetails();
 
@@ -860,7 +870,10 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), eMandateSource);
 		readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), eMandateReferenceNo);
-		clearMandatedata();
+
+		if (this.useExisting.isChecked()) {
+			clearMandatedata();
+		}
 	}
 
 	private void clearMandatedata() {
@@ -1154,11 +1167,12 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (registration) {
-			this.mandateStatus.setVisible(true);
-			this.btnReason.setVisible(true);
-			this.reason.setVisible(true);
+			this.reasonRow.setVisible(true);
+			this.mandateStatusRow.setVisible(true);
+
 			readOnlyComponent(false, this.mandateStatus);
 			readOnlyComponent(false, this.reason);
+
 			this.btnCancel.setVisible(false);
 			this.btnEdit.setVisible(false);
 			this.btnSave.setVisible(false);
@@ -1171,10 +1185,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.north_mandate.setVisible(false);
 			readOnlyComponent(!MandateExtension.ALLOW_CO_APP, this.custID);
 
-			this.mandateStatus.setVisible(false);
-			this.btnReason.setVisible(false);
-
-			this.reason.setVisible(false);
+			this.reasonRow.setVisible(false);
+			this.mandateStatusRow.setVisible(false);
 
 			readOnlyComponent(true, this.finReference);
 		}
@@ -2604,7 +2616,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
 		}
 
-		clearMandatedata();
+		// clearMandatedata();
 	}
 
 	private void addMandateFiletrs(String repaymethod) {
@@ -2741,6 +2753,10 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.holdReason.setValue("");
 			this.holdReason.setReadonly(true);
 		}
+	}
+
+	public void onChange$maxLimit(Event event) {
+		this.amountInWords.setValue(AmtInitialCap());
 	}
 
 	public void doSetCustomerFilters() {

@@ -1010,7 +1010,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			mndts.setSwapIsActive(rs.getBoolean("SwapIsActive"));
 			mndts.setPrimaryMandateId(rs.getLong("PrimaryMandateId"));
 			mndts.setEntityCode(rs.getString("EntityCode"));
-			mndts.setPartnerBankId(rs.getLong("PartnerBankId"));
+			mndts.setPartnerBankId(JdbcUtil.getLong(rs.getObject("PartnerBankId")));
 			mndts.setDefaultMandate(rs.getBoolean("DefaultMandate"));
 			mndts.seteMandateSource(rs.getString("EMandateSource"));
 			mndts.seteMandateReferenceNo(rs.getString("EMandateReferenceNo"));
