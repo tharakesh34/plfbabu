@@ -548,7 +548,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	private void doCheckMandate(String finRepayMethod, long CustID, boolean onChange) {
-		if (MandateUtil.isValidInstrumentType(finRepayMethod)) {
+		if (MandateUtil.isValidInstrunment(finRepayMethod)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_mandateId"), this.mandateRef);
 			if (onChange) {
 				this.row_Escrow.setVisible(false);
