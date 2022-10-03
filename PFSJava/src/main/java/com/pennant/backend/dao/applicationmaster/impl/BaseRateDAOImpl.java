@@ -212,13 +212,13 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 		StringBuilder sql = new StringBuilder("Update RMTBaseRates");
 		sql.append(tableType.getSuffix());
 		sql.append(" Set BRRate = ?, DelExistingRates = ?, BRTypeIsActive = ?, CreatedBy = ?");
-		sql.append(", CreatedOn = ? ApprovedBy = ?, ApprovedOn = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(", CreatedOn = ?, ApprovedBy = ?, ApprovedOn = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
 		sql.append(", RecordStatus= ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
 		sql.append(", RecordType = ?, WorkflowId = ?, LastMdfDate = ?");
 		sql.append(" Where BRType = ? and BREffDate = ? and Currency = ?");
 		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;

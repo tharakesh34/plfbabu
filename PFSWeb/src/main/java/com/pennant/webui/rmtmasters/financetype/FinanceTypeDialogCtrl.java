@@ -2284,6 +2284,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 
+		try {
+			if (ImplementationConstants.ALLOW_IRRCODES && !isOverdraft) {
+				this.alwdIRRDetails.getValue();
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		if (!isOverdraft && !consumerDurable) {
 			showErrorDetails(wve, basicDetails);
 		}
@@ -3754,14 +3762,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (isOverdraft) {
 			aFinanceType.setProductCategory(FinanceConstants.PRODUCT_ODFACILITY);
-		}
-
-		try {
-			if (ImplementationConstants.ALLOW_IRRCODES && !isOverdraft) {
-				this.alwdIRRDetails.getValue();
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
 		}
 
 		if (gb_ProvisionRules.isVisible()) {

@@ -49,9 +49,9 @@
 								<groupbox id="gb_basicDetails" closable="false">
 									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
-											<column width="260px" />
+											<column width="300px" />
 											<column />
-											<column width="260px" />
+											<column width="300px" />
 											<column />
 										</columns>
 										<rows>
@@ -483,9 +483,9 @@
 										<caption label="${c:l('label_FinanceTypeDialog_VasDetails')}" />
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
-												<column width="260px" />
+												<column width="300px" />
 												<column />
-												<column width="260px" />
+												<column width="300px" />
 												<column />
 											</columns>
 											<rows>
@@ -508,9 +508,9 @@
 										<caption label="${c:l('label_gp_FinanceTypeDialog_ReceiptModes')}" />
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
-												<column width="260px" />
+												<column width="300px" />
 												<column />
-												<column width="260px" />
+												<column width="300px" />
 												<column />
 											</columns>
 											<rows>
@@ -528,9 +528,9 @@
 										<caption label="${c:l('label_gp_FinanceTypeDialog_odDetails')}" />
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
-												<column width="260px" />
+												<column width="300px" />
 												<column />
-												<column width="260px" />
+												<column width="300px" />
 												<column />
 											</columns>
 											<rows>
@@ -612,9 +612,9 @@
 										<caption label="${c:l('label_FinanceTypeDialog_PutCallDetails')}" />
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
-												<column width="260px" />
+												<column width="300px" />
 												<column />
-												<column width="260px" />
+												<column width="300px" />
 												<column />
 											</columns>
 											<rows>
@@ -637,9 +637,9 @@
 								<groupbox id="gb_GracePeriod" closable="false">
 									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
-											<column width="260px" />
+											<column width="300px" />
 											<column />
-											<column width="260px" />
+											<column width="300px" />
 											<column />
 										</columns>
 										<rows>
@@ -762,9 +762,9 @@
 									<caption label="${c:l('label_FinanceTypeDialog_AutoGraceIncrement')}" />
 									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
-											<column width="260px" />
+											<column width="300px" />
 											<column />
-											<column width="260px" />
+											<column width="300px" />
 											<column />
 										</columns>
 										<rows>
@@ -821,9 +821,9 @@
 								<groupbox id="gb_Repayment" closable="false">
 									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
-											<column width="260px" />
+											<column width="300px" />
 											<column />
-											<column width="260px" />
+											<column width="300px" />
 											<column />
 										</columns>
 										<rows>
@@ -1113,9 +1113,9 @@
 									<caption label="${c:l('label_FinanceTypeDialog_Subvention')}" />
 									<grid sclass="GridLayoutNoBorder">
 										<columns>
-											<column width="260px" />
+											<column width="300px" />
 											<column />
-											<column width="260px" />
+											<column width="300px" />
 											<column />
 										</columns>
 										<rows>
@@ -1135,9 +1135,9 @@
 							<groupbox id="gb_ScheduleProfit" closable="false">
 								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 									<columns>
-										<column width="260px" />
+										<column width="300px" />
 										<column />
-										<column width="260px" />
+										<column width="300px" />
 										<column />
 									</columns>
 									<rows>
@@ -1329,9 +1329,9 @@
 								<caption label="${c:l('label_OverDraftFinanceTypeDialog_SteppingDetails')}" />
 								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 									<columns>
-										<column width="260px" />
+										<column width="300px" />
 										<column />
-										<column width="260px" />
+										<column width="300px" />
 										<column />
 									</columns>
 									<rows>
@@ -1390,9 +1390,9 @@
 								<caption label="${c:l('label_FinanceTypeDialog_ProfitOnPastDue')}" />
 								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 									<columns>
-										<column width="260px" />
+										<column width="300px" />
 										<column />
-										<column width="260px" />
+										<column width="300px" />
 										<column />
 									</columns>
 									<rows>
@@ -1415,9 +1415,9 @@
 								<caption label="${c:l('label_OverDraftFinanceTypeDialog_SuspendedDetails')}" />
 								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 									<columns>
-										<column width="260px" />
+										<column width="300px" />
 										<column />
-										<column width="260px" />
+										<column width="300px" />
 										<column />
 									</columns>
 									<rows>
@@ -1440,9 +1440,9 @@
 									<caption label="${c:l('label_FinanceTypeDialog_ProvisionRules')}" />
 									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
-											<column width="260px" />
+											<column width="300px" />
 											<column />
-											<column width="260px" />
+											<column width="300px" />
 											<column />
 										</columns>
 										<rows>

@@ -651,7 +651,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				valueParm[0] = "Cheques";
 				valueParm[1] = "finRepayMethod is " + repayMethod;
 
-				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
 			}
 
 			if (!InstrumentType.isPDC(cheque.getChequeType())) {
