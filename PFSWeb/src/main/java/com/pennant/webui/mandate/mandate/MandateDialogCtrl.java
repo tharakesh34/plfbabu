@@ -328,10 +328,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (issecurityMandate) {
 			fillComboBox(this.mandateType, mandate.getMandateType(), securityMandateTypeList, "");
-			this.mandateType.setDisabled(false);
 		} else {
 			fillComboBox(this.mandateType, mandate.getMandateType(), mandateTypeList, "");
-			this.mandateType.setDisabled(false);
 		}
 	}
 
@@ -430,11 +428,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
 
-			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
+				getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
 
-			doCheckRights();
+				doCheckRights();
 
-			ccyFormatter = CurrencyUtil.getFormat(this.mandate.getMandateCcy());
+				ccyFormatter = CurrencyUtil.getFormat(this.mandate.getMandateCcy());
 
 			}
 
@@ -822,6 +820,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		boolean checked = this.useExisting.isChecked();
 		if (checked) {
 			readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.mandateRef);
+			this.mandateRef.setButtonDisabled(isReadOnly("MandateDialog_MandateRef"));
 			readOnlyComponent(true, this.bankBranchID);
 			readOnlyComponent(true, this.accNumber);
 			readOnlyComponent(true, this.accHolderName);
@@ -843,6 +842,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		} else {
 			readOnlyComponent(true, this.mandateRef);
+			this.mandateRef.setButtonDisabled(true);
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
 			readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
 			readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
@@ -901,7 +901,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	public void onChange$mandateType(Event event) {
-		String str = this.mandateType.getSelectedItem().getValue().toString();
+		String mandateType = this.mandateType.getSelectedItem().getValue().toString();
 		this.bankBranchID.setValue("");
 		this.bankBranchID.setDescription("");
 		this.bank.setValue("");
@@ -911,12 +911,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.cityName.setValue("");
 		this.accNumber.setValue("");
 
-		onChangeMandateType(str);
+		onChangeMandateType(mandateType);
 
 	}
 
-	private void onChangeMandateType(String str) {
-		InstrumentType instrumentType = InstrumentType.valueOf(str);
+	private void onChangeMandateType(String mandateType) {
+		InstrumentType instrumentType = InstrumentType.getType(mandateType);
 
 		if (instrumentType == null) {
 			return;
@@ -1054,8 +1054,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (fromLoan) {
 				financeMainDialogCtrl.setMandateDialogCtrl(this);
 
-				if (parenttab != null) {
+				if (parenttab != null && !issecurityMandate) {
 					checkTabDisplay(aMandate.getMandateType(), false);
+				}
+
+				if (issecurityMandate) {
+					checkTabDisplaySecurityTab(aMandate.getMandateType());
 				}
 
 			} else if (fromLoanEnquiry) {
@@ -1139,7 +1143,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void doDesignByMode() {
-
 		if (fromLoanEnquiry) {
 			this.north_mandate.setVisible(false);
 		}
@@ -1170,7 +1173,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (fromLoan) {
 			this.north_mandate.setVisible(false);
 			readOnlyComponent(!MandateExtension.ALLOW_CO_APP, this.custID);
-			readOnlyComponent(!issecurityMandate, this.mandateType);
 
 			this.mandateStatus.setVisible(false);
 			this.btnReason.setVisible(false);
@@ -1211,14 +1213,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.labelUseExisting.setVisible(false);
 		}
 
-		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())) {
-			readOnlyComponent(true, this.finReference);
+		if (fromLoan) {
+			readOnlyComponent(true, this.mandateType);
+		} else {
+			readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType);
 		}
 
-		if (fromLoan || issecurityMandate) {
-			readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType);
-		} else {
-			readOnlyComponent(true, this.mandateType);
+		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())) {
+			readOnlyComponent(true, this.finReference);
 		}
 
 		if (MandateExtension.ACCOUNT_DETAILS_READONLY) {
@@ -1229,8 +1231,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
 		}
 
+		if (fromLoan || issecurityMandate) {
+			readOnlyComponent(true, this.mandateRef);
+			this.mandateRef.setButtonDisabled(true);
+		} else {
+			readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.mandateRef);
+			this.mandateRef.setButtonDisabled(isReadOnly("MandateDialog_MandateRef"));
+		}
+
 		readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.useExisting);
-		readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.mandateRef);
 		readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
 		readOnlyComponent(isReadOnly("MandateDialog_JointAccHolderName"), this.jointAccHolderName);
 		readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
@@ -1746,7 +1755,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
-			if (this.periodicity.isValidComboValue()) {
+			if (issecurityMandate && PennantConstants.List_Select.equals(getComboboxValue(this.mandateType))) {
+				//
+			} else if (this.periodicity.isValidComboValue()) {
 				aMandate.setPeriodicity(this.periodicity.getValue() == null ? "" : this.periodicity.getValue());
 			}
 		} catch (WrongValueException we) {
@@ -1974,7 +1985,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateType.setConstraint(
 					new StaticListValidator(mandateTypeList, Labels.getLabel("label_MandateDialog_MandateType.value")));
 		} else {
-			if (!this.mandateType.isDisabled()) {
+			if (!this.mandateType.isDisabled() && !issecurityMandate) {
 				this.mandateType.setConstraint(new StaticListValidator(mandateTypeList,
 						Labels.getLabel("label_MandateDialog_MandateType.value")));
 			}
@@ -2080,7 +2091,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void dosetOtherDetValidaion(boolean validate) {
-		if (!this.partnerBank.isReadonly()) {
+		if (!this.partnerBank.isReadonly() && MandateExtension.PARTNER_BANK_REQ) {
 			this.partnerBank.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_MandateDialog_PartnerBank.value"), null, true, false));
 		}
@@ -2096,6 +2107,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	private void doSetValidation(boolean validate) {
 		logger.debug(Literal.ENTERING);
+
+		if (issecurityMandate && PennantConstants.List_Select.equals(getComboboxValue(this.mandateType))) {
+			return;
+		}
 
 		if (this.basicDetailsGroupbox.isVisible()) {
 			doSetBasicDetailValidation(validate);
@@ -2563,32 +2578,46 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	public void checkTabDisplay(String mandateType, boolean onchange) {
-		this.parenttab.setVisible(false);
-		String val = StringUtils.trimToEmpty(mandateType);
+		mandateType = StringUtils.trimToEmpty(mandateType);
 
 		InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
-		doEditFieldByInstrument(instrumentType);
 
-		if (!InstrumentType.isPDC(val)) {
-			for (ValueLabel valueLabel : mandateTypeList) {
-				if (val.equals(valueLabel.getValue())
-						|| (issecurityMandate && (InstrumentType.isDAS(val) || InstrumentType.isSI(val)))) {
-					this.parenttab.setVisible(true);
-					if (issecurityMandate) {
-						fillComboBox(this.mandateType, mandateType, securityMandateTypeList, "");
-					} else {
-						fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
-					}
-					break;
-				}
-			}
+		if (instrumentType == null) {
+			this.parenttab.setVisible(false);
+			return;
 		}
 
-		// addMandateFiletrs(mandateType);
+		doEditFieldByInstrument(instrumentType);
+
+		if (instrumentType == InstrumentType.PDC || instrumentType == InstrumentType.MANUAL) {
+			this.parenttab.setVisible(false);
+		} else {
+			this.parenttab.setVisible(true);
+		}
+
+		fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
 
 		if (this.useExisting.isChecked() && onchange) {
 			clearMandatedata();
 		}
+	}
+
+	public void checkTabDisplaySecurityTab(String mandateType) {
+		InstrumentType instrumentType = InstrumentType.getType(mandateType);
+
+		if (instrumentType != null) {
+			doEditFieldByInstrument(instrumentType);
+		} else {
+			clearMandatedata();
+		}
+
+		if (issecurityMandate) {
+			fillComboBox(this.mandateType, mandateType, securityMandateTypeList, "");
+		} else {
+			fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
+		}
+
+		clearMandatedata();
 	}
 
 	private void addMandateFiletrs(String repaymethod) {
@@ -2623,6 +2652,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		doSetValidation(validate);
 
 		List<WrongValueException> wve = doWriteComponentsToBean(this.mandate, tab);
+
+		String instrumentType = getComboboxValue(this.mandateType);
+
+		if (issecurityMandate && PennantConstants.List_Select.equals(instrumentType)) {
+			fd.setSecurityMandate(null);
+			return;
+		}
 
 		if (!wve.isEmpty() && parenttab != null) {
 			parenttab.setSelected(true);

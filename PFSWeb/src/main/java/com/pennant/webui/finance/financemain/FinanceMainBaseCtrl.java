@@ -3053,7 +3053,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 
 		if (onLoad) {
-			createTab(AssetConstants.UNIQUE_ID_SECURITYMANDATE, false);
+			createTab(AssetConstants.UNIQUE_ID_SECURITYMANDATE, true);
 		} else {
 			final Map<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_SECURITYMANDATE));
@@ -18176,7 +18176,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (securityMandateDialogCtrl != null) {
-			securityMandateDialogCtrl.checkTabDisplay(repymethod, true);
+			// securityMandateDialogCtrl.checkTabDisplay(repymethod, true);
 		}
 
 		if (chequeDetailDialogCtrl != null) {
