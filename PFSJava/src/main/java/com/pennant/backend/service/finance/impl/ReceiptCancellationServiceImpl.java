@@ -3232,8 +3232,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				errorCode = "41005";
 			}
 		}
+		
+		if(!errorCode.isBlank()){
+			setError(ad, usrLanguage, errorCode, rch.getReceiptID());
+		}
 
-		setError(ad, usrLanguage, errorCode, rch.getReceiptID());
 	}
 
 	private String validateTranType(String tranType, FinReceiptHeader befRCH, FinReceiptHeader oldRCH) {
