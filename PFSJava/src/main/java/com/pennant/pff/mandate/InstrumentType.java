@@ -140,5 +140,4 @@ public enum InstrumentType {
 			return false;
 		}
 	}
-
 }

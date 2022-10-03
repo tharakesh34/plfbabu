@@ -31,13 +31,13 @@ public class MandateUtil {
 
 		for (InstrumentType item : InstrumentType.values()) {
 			switch (item) {
-			case NACH:
 			case ECS:
-			case ENACH:
-			case EMANDATE:
+			case NACH:
 			case PDC:
 			case SI:
 			case DAS:
+			case ENACH:
+			case EMANDATE:
 				instrumentTypes.add(new ValueLabel(item.name(), item.code()));
 				break;
 
@@ -58,8 +58,8 @@ public class MandateUtil {
 
 		for (InstrumentType item : InstrumentType.values()) {
 			switch (item) {
-			case NACH:
 			case ECS:
+			case NACH:
 			case ENACH:
 			case EMANDATE:
 				securityInstrumentTypes.add(new ValueLabel(item.name(), item.code()));
@@ -82,17 +82,17 @@ public class MandateUtil {
 
 		for (InstrumentType item : InstrumentType.values()) {
 			switch (item) {
-			case NACH:
+			case MANUAL:
+				repaymentMethods.add(new ValueLabel(item.name(), item.description()));
+				break;
 			case ECS:
-			case ENACH:
-			case EMANDATE:
+			case NACH:
 			case PDC:
 			case SI:
 			case DAS:
+			case EMANDATE:
+			case ENACH:
 				repaymentMethods.add(new ValueLabel(item.name(), item.code()));
-				break;
-			case MANUAL:
-				repaymentMethods.add(new ValueLabel(item.name(), item.description()));
 				break;
 			default:
 				continue;
@@ -100,6 +100,27 @@ public class MandateUtil {
 		}
 
 		return repaymentMethods;
+	}
+
+	public static boolean isValidInstrunment(String instrumentType) {
+		InstrumentType object = InstrumentType.getType(instrumentType);
+
+		if (object == null || object == InstrumentType.MANUAL) {
+			return false;
+		}
+
+		switch (object) {
+		case NACH:
+		case ECS:
+		case EMANDATE:
+		case ENACH:
+		case SI:
+		case DAS:
+			return true;
+
+		default:
+			return false;
+		}
 	}
 
 	public static List<ValueLabel> getMandateStatus() {
