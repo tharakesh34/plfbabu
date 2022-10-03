@@ -2956,7 +2956,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="EP#3496.90" author="Gopal.p">
+	<changeSet id="EP#3496.90.1" author="Gopal.p">
 		<createTable tableName="Settlement_Request">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />

@@ -378,7 +378,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="01" author="saisandeep.b">
+	<changeSet id="12" author="saisandeep.b">
 		<dropNotNullConstraint tableName="COVENANT_TYPES_TEMP" columnName="DOCTYPE" columnDataType="varchar(100)" />
 		<dropNotNullConstraint tableName="COVENANT_TYPES" columnName="DOCTYPE" columnDataType="varchar(100)" />
     </changeSet>
