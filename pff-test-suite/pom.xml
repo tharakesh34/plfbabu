@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>PLF-Release-6.2.0-HDFC_R1.0</version>
+		<version>6.2.0-HDFC_R1.0</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
