@@ -430,11 +430,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
 
-			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
+				getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
 
-			doCheckRights();
+				doCheckRights();
 
-			ccyFormatter = CurrencyUtil.getFormat(this.mandate.getMandateCcy());
+				ccyFormatter = CurrencyUtil.getFormat(this.mandate.getMandateCcy());
 
 			}
 
@@ -822,6 +822,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		boolean checked = this.useExisting.isChecked();
 		if (checked) {
 			readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.mandateRef);
+			this.mandateRef.setButtonDisabled(isReadOnly("MandateDialog_MandateRef"));
 			readOnlyComponent(true, this.bankBranchID);
 			readOnlyComponent(true, this.accNumber);
 			readOnlyComponent(true, this.accHolderName);
@@ -843,6 +844,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		} else {
 			readOnlyComponent(true, this.mandateRef);
+			this.mandateRef.setButtonDisabled(true);
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
 			readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
 			readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
@@ -1054,8 +1056,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (fromLoan) {
 				financeMainDialogCtrl.setMandateDialogCtrl(this);
 
-				if (parenttab != null) {
+				if (parenttab != null && !issecurityMandate) {
 					checkTabDisplay(aMandate.getMandateType(), false);
+				}
+
+				if (issecurityMandate) {
+					checkTabDisplaySecurityTab(aMandate.getMandateType());
 				}
 
 			} else if (fromLoanEnquiry) {
@@ -1211,14 +1217,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.labelUseExisting.setVisible(false);
 		}
 
-		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())) {
-			readOnlyComponent(true, this.finReference);
+		if (fromLoan) {
+			readOnlyComponent(true, this.mandateType);
+		} else {
+			readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType);
 		}
 
-		if (fromLoan || issecurityMandate) {
-			readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType);
-		} else {
-			readOnlyComponent(true, this.mandateType);
+		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())) {
+			readOnlyComponent(true, this.finReference);
 		}
 
 		if (MandateExtension.ACCOUNT_DETAILS_READONLY) {
@@ -1229,8 +1235,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
 		}
 
+		if (fromLoan || issecurityMandate) {
+			readOnlyComponent(true, this.mandateRef);
+			this.mandateRef.setButtonDisabled(true);
+		} else {
+			readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.mandateRef);
+			this.mandateRef.setButtonDisabled(isReadOnly("MandateDialog_MandateRef"));
+		}
+
 		readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.useExisting);
-		readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.mandateRef);
 		readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
 		readOnlyComponent(isReadOnly("MandateDialog_JointAccHolderName"), this.jointAccHolderName);
 		readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
@@ -2570,24 +2583,23 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		doEditFieldByInstrument(instrumentType);
 
 		if (!InstrumentType.isPDC(val)) {
-			for (ValueLabel valueLabel : mandateTypeList) {
-				if (val.equals(valueLabel.getValue())
-						|| (issecurityMandate && (InstrumentType.isDAS(val) || InstrumentType.isSI(val)))) {
-					this.parenttab.setVisible(true);
-					if (issecurityMandate) {
-						fillComboBox(this.mandateType, mandateType, securityMandateTypeList, "");
-					} else {
-						fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
-					}
-					break;
-				}
-			}
+			this.parenttab.setVisible(true);
+			fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
 		}
-
-		// addMandateFiletrs(mandateType);
 
 		if (this.useExisting.isChecked() && onchange) {
 			clearMandatedata();
+		}
+	}
+
+	public void checkTabDisplaySecurityTab(String mandateType) {
+		InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
+		doEditFieldByInstrument(instrumentType);
+
+		if (issecurityMandate) {
+			fillComboBox(this.mandateType, mandateType, securityMandateTypeList, "");
+		} else {
+			fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
 		}
 	}
 
