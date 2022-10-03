@@ -267,7 +267,7 @@
 								<column />
 							</columns>
 							<rows>
-								<row>
+								<row id="partnerBankRow" visible="false">
 									<label value="${c:l('label_MandateDialog_PartnerBank.value')}" />
 									<extendedcombobox id="partnerBank" />
 								</row>
@@ -277,10 +277,6 @@
 									<label value="${c:l('label_MandateDialog_TransactionDetails.value')}" />
 									<textbox id="txnDetails" maxlength="50" width="200px" readonly="true" />
 								</row>
-								<!-- <row>
-									<label value="${c:l('label_MandateDialog_Active.value')}" />
-									<checkbox id="active" checked="true" />
-									</row> -->
 							</rows>
 						</grid>
 					</groupbox>
