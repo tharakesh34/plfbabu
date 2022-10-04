@@ -5983,24 +5983,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		calcuateDues(rd);
 
-		if (ReceiptPurpose.EARLYRPY == receiptPurpose) {
-			validateEarlyPay(rd);
-			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-				logger.info(Literal.LEAVING);
-				return fd;
-			}
-		}
-
-		Date valueDate = fsi.getValueDate();
-
-		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose) {
-			validateEarlySettlement(schdData, rd, valueDate);
-
-			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-				return fd;
-			}
-		}
-
 		if (RequestSource.UPLOAD != requestSource) {
 			FinServiceInstruction tempFsi = schdData.getFinServiceInstruction().copyEntity();
 			FinReceiptHeader rch = rd.getReceiptHeader().copyEntity();
@@ -6020,6 +6002,24 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String allocateMthd = rd.getReceiptHeader().getAllocationType();
 		if (AllocationType.AUTO.equals(allocateMthd)) {
 			rd = receiptCalculator.recalAutoAllocation(rd, false);
+		}
+
+		if (ReceiptPurpose.EARLYRPY == receiptPurpose) {
+			validateEarlyPay(rd);
+			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
+				logger.info(Literal.LEAVING);
+				return fd;
+			}
+		}
+
+		Date valueDate = fsi.getValueDate();
+
+		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose) {
+			validateEarlySettlement(schdData, rd, valueDate);
+
+			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
+				return fd;
+			}
 		}
 
 		if (RequestSource.UPLOAD != requestSource) {
