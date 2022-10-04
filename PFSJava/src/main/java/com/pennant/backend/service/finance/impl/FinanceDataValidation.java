@@ -1784,6 +1784,13 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90129", valueParm)));
 			}
 		}
+
+		if (!StringUtils.contains(financeType.getAlwdRpyMethods(), finMain.getFinRepayMethod())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finMain.getFinRepayMethod();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+		}
+
 		schdData.setErrorDetails(errorDetails);
 
 		// Validate Repayment Method
