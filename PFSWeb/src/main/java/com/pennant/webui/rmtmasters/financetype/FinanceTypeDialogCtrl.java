@@ -507,13 +507,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private Tab gracePeriod; // autoWired
 	private Tab repayment; // autoWired
 	// private Tab accountingEvent; // autoWired
-	private Tab finTypeAccountDetails; // autoWired
+	private Tab scheduleProfit; // autoWired
 	private Tab extendedDetails; // autoWired
 
 	private boolean isCompReadonly = false;
 	protected boolean alwCopyOption = false;
 
-	private Map<String, String> eventDetailMap = new HashMap<String, String>();
+	private Map<String, String> eventDetailMap = new HashMap<>();
 	private Row row_ManualSchedule;
 
 	protected Groupbox gb_ProfitOnPastDue;
@@ -3437,7 +3437,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// To check whether the margin entered without base rate
 
 		if (!isOverdraft && !consumerDurable) {
-			showErrorDetails(wve, finTypeAccountDetails);
+			showErrorDetails(wve, scheduleProfit);
 		}
 		// ************** End of Tab 5 *****************//
 

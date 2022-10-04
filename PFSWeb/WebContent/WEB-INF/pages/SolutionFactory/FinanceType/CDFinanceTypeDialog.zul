@@ -55,8 +55,6 @@
 							visible="false" />
 						<tab label="${c:l('tab_CDFinanceTypeDialog_ScheduleDetails.value')}" id="scheduleProfit"
 							visible="false" />
-						<tab label="${c:l('tab_CDFinanceTypeDialog_FinTypeAccountDetails.value')}"
-							id="finTypeAccountDetails" visible="false" />
 						<tab label="${c:l('tab_CDFinanceTypeDialog_ExtendedDetails.value')}" id="extendedDetails"
 							visible="false" />
 						<tab label="${c:l('tab_CDFinanceTypeDialog_FeaturDetails.value')}" id="featureDetails"
@@ -1582,9 +1580,7 @@
 								</listbox>
 							</groupbox>
 						</tabpanel>
-
 						<tabpanel style="overflow:auto" ca:data-scrollable="true">
-
 							<groupbox id="gb_SteppingDetails" visible="false">
 								<caption label="${c:l('label_CDFinanceTypeDialog_SteppingDetails')}" />
 								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
@@ -1808,7 +1804,6 @@
 								</grid>
 							</groupbox>
 						</tabpanel>
-
 						<tabpanel>
 							<groupbox>
 								<ptCKeditor id="remarks" width="99%" height="75px" />
