@@ -246,9 +246,9 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 
 	@Override
 	public int getBounceReasonByRuleCode(long ruleId) {
-		String sql = "Select Count(Code) From BounceReasons_View Where RuleID = ?";
+		String sql = "Select Count(RuleID) From BounceReasons_View Where RuleID = ?";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, ruleId);
 	}
