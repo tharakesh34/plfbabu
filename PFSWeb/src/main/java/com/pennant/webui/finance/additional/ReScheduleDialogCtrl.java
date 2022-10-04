@@ -1359,7 +1359,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering" + event.toString());
 		this.nextGrcRepayDate.setText("");
 		this.nextRepayDate.setText("");
-		this.grcPeriodEndDate.setText("");
+		/* this.grcPeriodEndDate.setText(""); */
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1367,7 +1367,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering" + event.toString());
 		this.nextGrcRepayDate.setText("");
 		this.nextRepayDate.setText("");
-		this.grcPeriodEndDate.setText("");
+		/* this.grcPeriodEndDate.setText(""); */
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1375,7 +1375,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering" + event.toString());
 		this.nextGrcRepayDate.setText("");
 		this.nextRepayDate.setText("");
-		this.grcPeriodEndDate.setText("");
+		/* this.grcPeriodEndDate.setText(""); */
 		logger.debug("Leaving" + event.toString());
 	}
 
