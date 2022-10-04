@@ -39,7 +39,6 @@
 						<tab label="${c:l('tab_OverDraftFinanceTypeDialog_GraceDetails.value')}" id="gracePeriod" visible="false" />
 						<tab label="${c:l('tab_OverDraftFinanceTypeDialog_RepaymentDetails.value')}" id="repayment" visible="false" />
 						<tab label="${c:l('tab_OverDraftFinanceTypeDialog_ScheduleDetails.value')}" id="scheduleProfit" visible="false" />
-						<tab label="${c:l('tab_OverDraftFinanceTypeDialog_FinTypeAccountDetails.value')}" id="finTypeAccountDetails" visible="false" />
 						<tab label="${c:l('tab_OverDraftFinanceTypeDialog_ExtendedDetails.value')}" id="extendedDetails" visible="false" />
 						<tab label="${c:l('tab_OverDraftFinanceTypeDialog_FeaturDetails.value')}" id="featureDetails" />
 					</tabs>
