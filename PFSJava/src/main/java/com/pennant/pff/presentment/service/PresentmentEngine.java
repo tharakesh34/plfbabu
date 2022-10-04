@@ -21,6 +21,7 @@ import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
@@ -250,6 +251,12 @@ public class PresentmentEngine {
 			if (!dueExists) {
 				return;
 			}
+		}
+
+		if (PresentmentExtension.AUTO_APPROVAL) {
+			pd.setStatus(RepayConstants.PEXC_APPROV);
+		} else {
+			pd.setStatus(RepayConstants.PEXC_IMPORT);
 		}
 
 		pd.setStatus(RepayConstants.PEXC_IMPORT);

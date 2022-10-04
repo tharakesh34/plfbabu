@@ -14,8 +14,20 @@ public class PresentmentExtension {
 	 */
 	public static boolean DUE_DATE_RECEIPT_CREATION;
 
+	/**
+	 * Feature extension to enable or disable auto extraction.
+	 */
+	public static boolean AUTO_EXTRACTION;
+
+	/**
+	 * Feature extension to enable or disable auto approval.
+	 */
+	public static boolean AUTO_APPROVAL;
+
 	static {
 		DUE_DATE_RECEIPT_CREATION = getValueAsBoolean("DUE_DATE_RECEIPT_CREATION", true);
+		AUTO_EXTRACTION = getValueAsBoolean("AUTO_EXTRACTION", false);
+		AUTO_APPROVAL = getValueAsBoolean("AUTO_APPROVAL", false);
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
