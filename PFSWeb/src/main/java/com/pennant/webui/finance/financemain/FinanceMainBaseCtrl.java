@@ -20911,7 +20911,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// planned EMI
-		onCheckPlannedEmiholiday(null, true);
+		onCheckPlannedEmiholiday(fm.getPlanEMIHMethod(), true);
 
 		logger.debug(Literal.LEAVING);
 	}
