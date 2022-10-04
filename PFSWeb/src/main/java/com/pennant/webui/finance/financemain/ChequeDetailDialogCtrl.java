@@ -83,8 +83,9 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.AccountTypes;
+import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
@@ -177,8 +178,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private ChequeHeaderListCtrl chequeHeaderListCtrl;
 
 	private final List<ValueLabel> chequeTypeList = MandateUtil.getChequeTypes();
-	private final List<ValueLabel> chequeStatusList = PennantStaticListUtil.getChequeStatusList();
-	private final List<ValueLabel> accTypeList = PennantStaticListUtil.getChequeAccTypeList();
+	private final List<ValueLabel> chequeStatusList = ChequeSatus.getList();
+	private final List<ValueLabel> accTypeList = AccountTypes.getList();
 
 	private enum Field {
 		CHECK_BOX(0),
@@ -743,7 +744,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			fillList(this.chequeType, InstrumentType.SPDC.code(), chequeTypeList, ",PDC,");
 		}
 
-		fillComboBox(this.chequeStatus, PennantConstants.CHEQUESTATUS_NEW, chequeStatusList);
+		fillComboBox(this.chequeStatus, ChequeSatus.NEW, chequeStatusList);
 		fillComboBox(this.accountType, "", accTypeList);
 
 		List<ChequeDetail> chequeDetails = ch.getChequeDetailList();
@@ -763,7 +764,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			setRepayAmount();
 		} else {
 			for (ChequeDetail cd : chequeDetails) {
-				if (!PennantConstants.CHEQUESTATUS_REALISED.equals(cd.getChequeStatus())) {
+				if (!ChequeSatus.REALISED.equals(cd.getChequeStatus())) {
 					this.amount.setValue(PennantApplicationUtil.formateAmount(cd.getAmount(), ccyEditField));
 					break;
 				}
@@ -1390,13 +1391,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		String chequeSts = cd.getChequeStatus();
 		boolean isReadOnly = this.btnGen.isDisabled();
 
-		if (PennantConstants.CHEQUESTATUS_CANCELLED.equals(chequeSts) && !cd.isNewRecord()
+		if (ChequeSatus.CANCELLED.equals(chequeSts) && !cd.isNewRecord()
 				&& PennantConstants.RECORD_TYPE_UPD.equals(cd.getRecordType())) {
 			isReadOnly = true;
 		}
 
-		if (!fromLoan && !((PennantConstants.CHEQUESTATUS_NEW.equals(chequeSts))
-				|| (PennantConstants.List_Select.equals(chequeSts)))) {
+		if (!fromLoan && !((ChequeSatus.NEW.equals(chequeSts)) || (PennantConstants.List_Select.equals(chequeSts)))) {
 			isReadOnly = true;
 		}
 
@@ -1680,12 +1680,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			deletedCheques = true;
 			count++;
 
-			if (checkbox.isChecked() && PennantConstants.CHEQUESTATUS_CANCELLED.equals(cheque.getChequeStatus())) {
+			if (checkbox.isChecked() && ChequeSatus.CANCELLED.equals(cheque.getChequeStatus())) {
 				cheques.add(cheque);
 				continue;
 			}
 
-			cheque.setChequeStatus(PennantConstants.CHEQUESTATUS_CANCELLED);
+			cheque.setChequeStatus(ChequeSatus.CANCELLED);
 
 			setWorkflowDetailsOnDelete(cheque);
 
@@ -1741,7 +1741,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		if (!cd.isNewRecord()) {
 			cd.setActive(false);
 			cd.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
-			cd.setStatus(PennantConstants.CHEQUESTATUS_CANCELLED);
+			cd.setStatus(ChequeSatus.CANCELLED);
 
 			if (fromLoan) {
 				cd.setRecordType(PennantConstants.RCD_DEL);
@@ -2208,7 +2208,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			combobox.clearErrorMessage();
 
 			if (!(DateUtil.compare(emiDate, schedule.getSchDate()) != 0
-					|| !PennantConstants.CHEQUESTATUS_NEW.equals(getComboboxValue(combobox)))) {
+					|| !ChequeSatus.NEW.equals(getComboboxValue(combobox)))) {
 
 				if ("B".equals(schedule.getBpiOrHoliday()) && FinanceConstants.BPI_DISBURSMENT.equals(bpiTreatment)) {
 					String label = Labels.getLabel("ChequeDetailDialog_ChkEMIRef_BPI_DeductDisb");
@@ -2322,7 +2322,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	private void appendSelectBox(Listitem listitem, boolean isReadOnly, ChequeDetail cd) {
 		Checkbox checkBox = new Checkbox();
-		checkBox.setChecked(PennantConstants.CHEQUESTATUS_CANCELLED.equals(cd.getChequeStatus()));
+		checkBox.setChecked(ChequeSatus.CANCELLED.equals(cd.getChequeStatus()));
 		checkBox.setDisabled(!isDeleteVisible() || isReadOnly);
 		checkBox.addForward(Events.ON_CLICK, this.window, "onClickCheckBox");
 
@@ -2723,7 +2723,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		int chequeCount = 0;
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
 			ChequeDetail cd = (ChequeDetail) listitem.getAttribute("data");
-			if (!PennantConstants.CHEQUESTATUS_CANCELLED.equals(cd.getChequeStatus())) {
+			if (!ChequeSatus.CANCELLED.equals(cd.getChequeStatus())) {
 				chequeCount++;
 			}
 		}

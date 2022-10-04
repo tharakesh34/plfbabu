@@ -52,6 +52,7 @@ import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.StageTabConstants;
+import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -562,7 +563,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			if (chequeDetailList != null && !chequeDetailList.isEmpty()) {
 				for (ChequeDetail chequeDetail : chequeDetailList) {
 					if (InstrumentType.isPDC(chequeDetail.getChequeType())
-							&& !PennantConstants.CHEQUESTATUS_CANCELLED.equals(chequeDetail.getChequeStatus())) {
+							&& !ChequeSatus.CANCELLED.equals(chequeDetail.getChequeStatus())) {
 						isListContainsPDC = true;
 					}
 					if (chequeDetail.isNewRecord() && chequeDetailDAO.isDuplicateKey(chequeDetail.getChequeDetailsID(),

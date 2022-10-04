@@ -82,7 +82,8 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.AccountTypes;
+import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.model.dms.DMSModule;
@@ -925,7 +926,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		for (ChequeDetail cd : existingCheques) {
 			for (ChequeDetail cheque : ch.getChequeDetailList()) {
-				if (cheque.isDelete() && !PennantConstants.CHEQUESTATUS_NEW.equals(cd.getChequeStatus())) {
+				if (cheque.isDelete() && !ChequeSatus.NEW.equals(cd.getChequeStatus())) {
 					return getError("49002", "For " + cd.getChequeDetailsID(), cd.getChequeStatus() + "Status");
 				}
 			}
@@ -1014,7 +1015,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		}
 
 		List<String> accType = new ArrayList<>();
-		PennantStaticListUtil.getChequeAccTypeList().forEach(c1 -> accType.add(c1.getValue()));
+		AccountTypes.getList().forEach(c1 -> accType.add(c1.getValue()));
 
 		if (!(accType.contains(cheque.getAccountType()))) {
 			return getError("RU0040", "accountType");

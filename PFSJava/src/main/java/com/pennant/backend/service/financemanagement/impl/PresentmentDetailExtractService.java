@@ -28,6 +28,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -494,23 +495,23 @@ public class PresentmentDetailExtractService {
 	private void doPDCCalculations(PresentmentHeader ph, PresentmentDetail pd) {
 		logger.debug(Literal.ENTERING);
 
-		if (!PennantConstants.CHEQUESTATUS_NEW.equals(pd.getMandateStatus())) {
-			if (PennantConstants.CHEQUESTATUS_PRESENT.equals(pd.getMandateStatus())) {
+		if (!ChequeSatus.NEW.equals(pd.getMandateStatus())) {
+			if (ChequeSatus.PRESENT.equals(pd.getMandateStatus())) {
 				pd.setExcludeReason(RepayConstants.CHEQUESTATUS_PRESENT);
 				return;
 			}
-			if (PennantConstants.CHEQUESTATUS_REALISE.equals(pd.getMandateStatus())) {
+			if (ChequeSatus.REALISE.equals(pd.getMandateStatus())) {
 				pd.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISE);
 				return;
 			}
-			if (PennantConstants.CHEQUESTATUS_REALISED.equals(pd.getMandateStatus())) {
+			if (ChequeSatus.REALISED.equals(pd.getMandateStatus())) {
 				pd.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISED);
 				return;
 			}
 			// COMMENTED THIS CODE FOR REPRESENTMENT PROCESS i.e, if Check got bounced also it shouldbe allowed for
 			// Representment
 			/*
-			 * if (PennantConstants.CHEQUESTATUS_BOUNCE.equals(presentmentDetail.getMandateStatus())) {
+			 * if (ChequesSatus.BOUNCE.equals(presentmentDetail.getMandateStatus())) {
 			 * presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_BOUNCE); }
 			 */
 		}

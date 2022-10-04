@@ -53,7 +53,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 	@Override
 	public long getQueueCount() {
-		String sql = "Select Coalesce(count(ID), 0) From Provision_Calc_Queue where Progress = ?";
+		String sql = "Select count(ID) From Provision_Calc_Queue where Progress = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -281,7 +281,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 	@Override
 	public BigDecimal getCollateralValue(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" coalesce(sum(cs.collateralValue), 0) CollateralValue");
+		sql.append(" Sum(cs.collateralValue) CollateralValue");
 		sql.append(" From CollateralAssignment ca");
 		sql.append(" Inner Join CollateralSetup cs ON ca.CollateralRef = cs.CollateralRef");
 		sql.append(" Where ca.Reference = ?");
@@ -289,16 +289,28 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+
+		return BigDecimal.ZERO;
 	}
 
 	@Override
 	public BigDecimal getVasFee(String finReference) {
-		String sql = "Select coalesce(sum(Fee), 0) Fee From VASRecording Where PrimaryLinkRef = ?";
+		String sql = "Selec Sum(Fee, 0) Fee From VASRecording Where PrimaryLinkRef = ?";
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finReference);
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finReference);
+		} catch (Exception e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+
+		return BigDecimal.ZERO;
 	}
 
 	@Override
@@ -648,7 +660,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new ProvisionRowMapper());
+			return this.jdbcOperations.queryForObject(sql.toString(), new ProvisionRowMapper(), id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}

@@ -166,6 +166,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.AgreementGeneration;
@@ -4479,8 +4480,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			cheque.setBankBranchID(ch.getBankBranchID());
 			cheque.setAccHolderName(ch.getAccHolderName());
 			cheque.setAccountNo(ch.getAccountNo());
-			cheque.setStatus(PennantConstants.CHEQUESTATUS_NEW);
-			cheque.setChequeStatus(PennantConstants.CHEQUESTATUS_NEW);
+			cheque.setStatus(ChequeSatus.NEW);
+			cheque.setChequeStatus(ChequeSatus.NEW);
 			cheque.setChequeCcy(ccy);
 			cheque.setActive(true);
 			cheque.setRecordType(PennantConstants.RECORD_TYPE_NEW);

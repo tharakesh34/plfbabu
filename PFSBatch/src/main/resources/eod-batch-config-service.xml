@@ -663,13 +663,23 @@
 		<property name="notificationService" ref="notificationService" />
 		<property name="notificationsDAO" ref="notificationsDAO" />
 	</bean>
-	
-	<bean name="paymentsProcessService" class="com.pennant.backend.service.payment.PaymentsProcessService"/>
-	
+
+	<bean name="paymentsProcessService" class="com.pennant.backend.service.payment.PaymentsProcessService" />
+
 	<bean id="pennyDropDAO" class="com.pennant.backend.dao.pennydrop.PennyDropDAOImpl" parent="sequenceDao" />
-	
+
 	<bean name="pennyDropService" class="com.pennant.backend.service.pennydrop.PennyDropServiceImpl">
 		<property name="pennyDropDAO" ref="pennyDropDAO" />
 	</bean>
-	
+
+	<bean id="tdsReceivablesTxnDAO" class="com.pennant.backend.dao.tds.receivables.impl.TdsReceivablesTxnDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="tdsReceivableDAO" class="com.pennant.backend.dao.tds.receivables.impl.TdsReceivableDAOImpl"
+		parent="sequenceDao" />
+
+
+	<bean name="tdsReceivablesTxnService"
+		class="com.pennant.backend.service.tds.receivables.impl.TdsReceivablesTxnServiceImpl" />
+
 </beans>

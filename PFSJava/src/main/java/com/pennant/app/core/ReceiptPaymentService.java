@@ -94,6 +94,8 @@ public class ReceiptPaymentService {
 
 		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 
+		pd.setAppDate(receiptDTO.getValuedate());
+
 		if (pd.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0 && pd.getExcessID() != 0) {
 			logger.info("Creating Receipts for EMI In Advance...");
 			createEMIInAdvReceipt(receiptDTO);

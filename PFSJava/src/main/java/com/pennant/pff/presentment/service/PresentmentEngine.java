@@ -22,6 +22,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.extension.PresentmentExtension;
+import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
@@ -286,7 +287,6 @@ public class PresentmentEngine {
 		}
 
 		doCalculations(ph, pd);
-
 	}
 
 	private void doCalculations(PresentmentHeader ph, PresentmentDetail pd) {
@@ -296,16 +296,16 @@ public class PresentmentEngine {
 			pd.setMandateId(pd.getChequeId());
 
 			String chequeStatus = pd.getChequeStatus();
-			if (!PennantConstants.CHEQUESTATUS_NEW.equals(chequeStatus)) {
-				if (PennantConstants.CHEQUESTATUS_PRESENT.equals(chequeStatus)) {
+			if (!ChequeSatus.NEW.equals(chequeStatus)) {
+				if (ChequeSatus.PRESENT.equals(chequeStatus)) {
 					pd.setExcludeReason(RepayConstants.CHEQUESTATUS_PRESENT);
 					return;
 				}
-				if (PennantConstants.CHEQUESTATUS_REALISE.equals(chequeStatus)) {
+				if (ChequeSatus.REALISE.equals(chequeStatus)) {
 					pd.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISE);
 					return;
 				}
-				if (PennantConstants.CHEQUESTATUS_REALISED.equals(chequeStatus)) {
+				if (ChequeSatus.REALISED.equals(chequeStatus)) {
 					pd.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISED);
 					return;
 				}

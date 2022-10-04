@@ -37,7 +37,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
- * This stores all constants required for running the application
+ * This stores all constants required for running the applicationcheque
  */
 public class PennantConstants {
 	private PennantConstants() {
@@ -510,9 +510,6 @@ public class PennantConstants {
 	public static final String FIXED_DEPOSIT = "FD";
 	public static final String SECURITY_CHEQUE = "SC";
 
-	// ManagerCheques
-	public static final String FIN_MGRCHQ__CHQPURPOSECODE = "FINDISB";
-
 	// FinSource Id
 	public static final String FINSOURCE_ID_API = "API";
 
@@ -612,18 +609,6 @@ public class PennantConstants {
 	public static final String WORKFLOW_NEXTTASKID = "NEXTTASKID";
 	public static final String WORKFLOW_TASKID = "TASKID";
 	public static final String WORKFLOW_WORKFLOWID = "WORKFLOWID";
-
-	// Cheque Module Status
-	public static final String CHEQUESTATUS_NEW = "NEW";
-	public static final String CHEQUESTATUS_PRESENT = "PRESENT";
-	public static final String CHEQUESTATUS_BOUNCE = "BOUNCE";
-	public static final String CHEQUESTATUS_REALISE = "REALISE";
-	public static final String CHEQUESTATUS_REALISED = "REALISED";
-	public static final String CHEQUESTATUS_FAILED = "FAILED";
-	public static final String CHEQUESTATUS_CANCELLED = "CANCELLED";
-	public static final String CHEQUE_AC_TYPE_CA = "11";
-	public static final String CHEQUE_AC_TYPE_SA = "10";
-	public static final String CHEQUE_AC_TYPE_CC = "12";
 
 	// Sampling Fields
 	public static final String SAMPLING_RESUBMIT_REASON = "SAMPLINGRR";
@@ -782,9 +767,6 @@ public class PennantConstants {
 	public static final String BALANCE_SHEET = "Balance Sheet";
 	public static final String PROFIT_AND_LOSS = "Profit and Loss";
 	public static final String SUMMARY_AND_RATIOS = "Summary and Ratios";
-
-	public static final String CHEQUE_AC_TYPE_NRE = "13";
-	public static final String CHEQUE_AC_TYPE_NRO = "14";
 
 	public static final String FIN_CLOSE_STATUS_WRITEOFF = "W";
 	// CD Schemes

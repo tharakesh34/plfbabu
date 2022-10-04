@@ -81,6 +81,7 @@ import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.extension.PresentmentExtension;
+import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
@@ -413,7 +414,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 					chequeStatusList.add(item.getMandateId());
 
 					if (chequeStatusList.size() == PennantConstants.CHUNK_SIZE) {
-						chequeDetailDAO.batchUpdateChequeStatus(chequeStatusList, PennantConstants.CHEQUESTATUS_NEW);
+						chequeDetailDAO.batchUpdateChequeStatus(chequeStatusList, ChequeSatus.NEW);
 						chequeStatusList = new ArrayList<>();
 					}
 				}
@@ -424,7 +425,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			}
 
 			if (!chequeStatusList.isEmpty()) {
-				chequeDetailDAO.batchUpdateChequeStatus(chequeStatusList, PennantConstants.CHEQUESTATUS_NEW);
+				chequeDetailDAO.batchUpdateChequeStatus(chequeStatusList, ChequeSatus.NEW);
 			}
 
 			processDetails(ph);
@@ -445,7 +446,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 			String paymentMode = this.presentmentDetailDAO.getPaymenyMode(pd.getPresentmentRef());
 			if (InstrumentType.isPDC(paymentMode)) {
-				updateChequeStatus(pd.getMandateId(), PennantConstants.CHEQUESTATUS_NEW);
+				updateChequeStatus(pd.getMandateId(), ChequeSatus.NEW);
 			}
 
 			if (ImplementationConstants.OVERDRAFT_REPRESENTMENT_CHARGES_INCLUDE) {

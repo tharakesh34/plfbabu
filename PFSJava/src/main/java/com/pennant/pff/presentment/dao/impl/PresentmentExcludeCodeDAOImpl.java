@@ -489,7 +489,7 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 	@Override
 	public Map<Integer, String> getBounceForPD() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" pec.ExcludeID, br.BounceCode");
+		sql.append(" pec.ExcludeID, br.ReturnCode");
 		sql.append(" From Presentment_Exclude_Codes pec");
 		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
 		sql.append(" Where CreateBounceOnDueDate = ?");

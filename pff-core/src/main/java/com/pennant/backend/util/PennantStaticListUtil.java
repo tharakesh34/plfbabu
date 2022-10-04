@@ -233,8 +233,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> statusCodes;
 	private static List<ValueLabel> sourceInfoList;
 	private static List<ValueLabel> trackCheckList;
-	private static List<ValueLabel> chequeStatusList;
-	private static List<ValueLabel> ChequeAccTypeList;
 	private static List<ValueLabel> eligibilityMethod;
 	private static List<ValueLabel> financeClosingStatusList;
 	private static List<Property> manualDeviationSeverities;
@@ -3702,41 +3700,6 @@ public class PennantStaticListUtil {
 			}
 		}
 		return trackCheckList;
-	}
-
-	public static List<ValueLabel> getChequeStatusList() {
-		if (chequeStatusList == null) {
-			chequeStatusList = new ArrayList<ValueLabel>(4);
-			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_NEW,
-					Labels.getLabel("label_Finance_Cheque_Status_New")));
-			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_PRESENT,
-					Labels.getLabel("label_Finance_Cheque_Status_Presented")));
-			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_BOUNCE,
-					Labels.getLabel("label_Finance_Cheque_Status_Bounced")));
-			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_REALISED,
-					Labels.getLabel("label_Finance_Cheque_Status_Realised")));
-			chequeStatusList.add(new ValueLabel(PennantConstants.CHEQUESTATUS_CANCELLED,
-					Labels.getLabel("label_Finance_Cheque_Status_Cancelled")));
-		}
-		return chequeStatusList;
-	}
-
-	public static List<ValueLabel> getChequeAccTypeList() {
-		if (ChequeAccTypeList == null) {
-			ChequeAccTypeList = new ArrayList<ValueLabel>(3);
-			ChequeAccTypeList
-					.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_CA, Labels.getLabel("label_Cheque_CA")));
-			ChequeAccTypeList
-					.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_SA, Labels.getLabel("label_Cheque_SA")));
-			ChequeAccTypeList
-					.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_CC, Labels.getLabel("label_Cheque_CC")));
-			ChequeAccTypeList
-					.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_NRE, Labels.getLabel("label_Cheque_NRE")));
-			ChequeAccTypeList
-					.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_NRO, Labels.getLabel("label_Cheque_NRO")));
-
-		}
-		return ChequeAccTypeList;
 	}
 
 	public static List<ValueLabel> getEligibilityMethodList() {

@@ -41,7 +41,7 @@ import org.springframework.jdbc.core.RowMapper;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.mandate.Mandate;
-import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.mandate.ChequeSatus;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -272,7 +272,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		List<Long> detailIDs = new ArrayList<>();
 		presentments.forEach(pd -> detailIDs.add(pd.getMandateId()));
 
-		batchUpdateChequeStatus(detailIDs, PennantConstants.CHEQUESTATUS_PRESENT);
+		batchUpdateChequeStatus(detailIDs, ChequeSatus.PRESENT);
 
 		return detailIDs.size();
 	}
@@ -303,8 +303,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finId,
-				PennantConstants.CHEQUESTATUS_REALISED) > 0;
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finId, ChequeSatus.REALISED) > 0;
 	}
 
 	private StringBuilder getSqlQuery(String type) {

@@ -61,6 +61,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.pff.eod.cache.BounceConfigCache;
 import com.pennant.pff.extension.PresentmentExtension;
+import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
@@ -237,14 +238,14 @@ public class PresentmentResponseProcess implements Runnable {
 			}
 
 			if (InstrumentType.isPDC(mandateType)) {
-				checkStatus = PennantConstants.CHEQUESTATUS_REALISED;
+				checkStatus = ChequeSatus.REALISED;
 			}
 		} else {
 			if (InstrumentType.isPDC(mandateType)) {
 				if (StringUtils.trimToNull(pd.getErrorDesc()) == null) {
-					checkStatus = PennantConstants.CHEQUESTATUS_BOUNCE;
+					checkStatus = ChequeSatus.BOUNCE;
 				} else {
-					checkStatus = PennantConstants.CHEQUESTATUS_FAILED;
+					checkStatus = ChequeSatus.FAILED;
 				}
 			}
 		}

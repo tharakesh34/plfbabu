@@ -19,7 +19,6 @@ public class BatchProcessStatusServiceImpl implements BatchProcessStatusService 
 
 	@Override
 	public BatchProcessStatus getBatchStatus(BatchProcessStatus batchProcessStatus) {
-		logger.debug(Literal.ENTERING);
 		return bpsDAO.getBatchStatus(batchProcessStatus);
 	}
 

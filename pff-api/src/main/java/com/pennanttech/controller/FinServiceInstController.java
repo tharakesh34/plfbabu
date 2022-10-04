@@ -153,6 +153,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.mandate.ChequeSatus;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -3125,10 +3126,9 @@ public class FinServiceInstController extends SummaryDetailService {
 		cheque.setBankBranchID(ch.getBankBranchID());
 		cheque.setAccHolderName(ch.getAccHolderName());
 		cheque.setAccountNo(ch.getAccountNo());
-		;
 
-		cheque.setStatus(PennantConstants.CHEQUESTATUS_NEW);
-		cheque.setChequeStatus(PennantConstants.CHEQUESTATUS_NEW);
+		cheque.setStatus(ChequeSatus.NEW);
+		cheque.setChequeStatus(ChequeSatus.NEW);
 		cheque.setChequeCcy(ccy);
 		cheque.setActive(true);
 	}
@@ -3142,7 +3142,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		cheque.setNewRecord(false);
 		cheque.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
 		cheque.setChequeCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
-		cheque.setStatus(PennantConstants.CHEQUESTATUS_NEW);
+		cheque.setStatus(ChequeSatus.NEW);
 
 		chequeHeaderService.doApprove(getAuditHeader(ch, PennantConstants.TRAN_WF));
 	}

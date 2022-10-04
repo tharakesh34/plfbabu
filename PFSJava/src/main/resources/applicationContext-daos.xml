@@ -12414,11 +12414,7 @@
 	</bean>
 
 	<bean name="tdsReceivablesTxnServiceTarget"
-		class="com.pennant.backend.service.tds.receivables.impl.TdsReceivablesTxnServiceImpl">
-		<property name="tdsReceivablesTxnDAO" ref="tdsReceivablesTxnDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="tdsReceivableDAO" ref="tdsReceivableDAO" />
-	</bean>
+		class="com.pennant.backend.service.tds.receivables.impl.TdsReceivablesTxnServiceImpl" />
 
 	<bean id="manualScheduleFileImport" class="com.pennanttech.pff.upload.impl.ManualScheduleFileImport">
 		<property name="manualScheduleService" ref="manualScheduleService" />
