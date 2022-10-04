@@ -17,6 +17,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class OTPDataAccess extends BasicDao<OTPMessage> {
 	private static Logger logger = LogManager.getLogger(OTPDataAccess.class);
@@ -45,7 +46,7 @@ public class OTPDataAccess extends BasicDao<OTPMessage> {
 					ps.setString(index++, message.getSessionID());
 					ps.setString(index++, message.getOtp());
 					ps.setString(index++, message.getMobileNo());
-					ps.setString(index++, message.getEmailID());
+					ps.setString(index, message.getEmailID());
 
 					return ps;
 				}
@@ -75,7 +76,7 @@ public class OTPDataAccess extends BasicDao<OTPMessage> {
 
 			}, module.getKey(), otp, sessionID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -99,7 +100,7 @@ public class OTPDataAccess extends BasicDao<OTPMessage> {
 
 			}, module.getKey(), otp);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

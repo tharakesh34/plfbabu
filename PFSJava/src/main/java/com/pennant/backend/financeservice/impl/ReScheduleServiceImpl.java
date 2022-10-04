@@ -208,23 +208,15 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				startRepayCalDate = DateUtility.getDBDate(
 						DateUtility.format(finServiceInstruction.getNextRepayDate(), PennantConstants.DBDateFormat));
 			} else {
-				if (isMonthlyFrq) {
-					startRepayCalDate = FrequencyUtil
-							.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 30)
-							.getNextFrequencyDate();
-				} else {
-					startRepayCalDate = FrequencyUtil
-							.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)
-							.getNextFrequencyDate();
+				startRepayCalDate = FrequencyUtil
+						.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)
+						.getNextFrequencyDate();
 
-					if (!StringUtils.equals(frqCode, FrequencyCodeTypes.FRQ_DAILY)
-							&& DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
-						startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
-								.getNextFrequencyDate();
-					}
+				if (!StringUtils.equals(frqCode, FrequencyCodeTypes.FRQ_DAILY)
+						&& DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
+					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
+							.getNextFrequencyDate();
 				}
-				startRepayCalDate = DateUtility
-						.getDBDate(DateUtility.format(startRepayCalDate, PennantConstants.DBDateFormat));
 			}
 
 			if (maturityDate != null) {

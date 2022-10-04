@@ -48,6 +48,8 @@ public class ReceiptDataValidator {
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 
 	public void validate(ReceiptUploadDetail rud) {
+		String reference = rud.getReference();
+		rud.setFinID(financeMainDAO.getFinIDByFinReference(reference, "", false));
 
 		isFileExists(rud);
 
@@ -67,7 +69,6 @@ public class ReceiptDataValidator {
 			}
 		}
 
-		String reference = rud.getReference();
 		if (StringUtils.isBlank(reference)) {
 			String msg = "Blanks/Nulls in [REFERENCE] ";
 			if (!rud.isNewReceipt()) {
@@ -346,9 +347,6 @@ public class ReceiptDataValidator {
 		if (rud.isDedupCheck()) {
 			checkDedup(rud);
 		}
-
-		Long finID = financeMainDAO.getFinIDByFinReference(reference, "", false);
-		rud.setFinID(finID);
 
 		receiptService = (ReceiptService) SpringBeanUtil.getBean("receiptService");
 
