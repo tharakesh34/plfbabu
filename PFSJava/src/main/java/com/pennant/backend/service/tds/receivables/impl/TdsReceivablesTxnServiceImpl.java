@@ -38,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.google.common.collect.ComparisonChain;
@@ -73,36 +74,6 @@ public class TdsReceivablesTxnServiceImpl extends GenericService<TdsReceivablesT
 	private TdsReceivablesTxnDAO tdsReceivablesTxnDAO;
 	private TdsReceivableDAO tdsReceivableDAO;
 
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @param tdsReceivablesTxnDAO the tdsReceivablesTxnDAO to set
-	 */
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * TDS_RECEIVABLE_DETAILS/TDS_RECEIVABLE_DETAILS_Temp by using TDS_RECEIVABLE_DETAILSDAO's save method b) Update the
-	 * Record in the table. based on the module workFlow Configuration. by using TDS_RECEIVABLE_DETAILSDAO's update
-	 * method 3) Audit the record in to AuditHeader and AdtTDS_RECEIVABLE_DETAILS by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
@@ -179,15 +150,6 @@ public class TdsReceivablesTxnServiceImpl extends GenericService<TdsReceivablesT
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * TDS_RECEIVABLE_DETAILS by using TDS_RECEIVABLE_DETAILSDAO's delete method with type as Blank 3) Audit the record
-	 * in to AuditHeader and AdtTDS_RECEIVABLE_DETAILS by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -207,21 +169,6 @@ public class TdsReceivablesTxnServiceImpl extends GenericService<TdsReceivablesT
 		return auditHeader;
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getTDSReceivablesTxnDAO().delete with
-	 * parameters TdsReceivablesTxn,"" b) NEW Add new record in to main table by using getTDSReceivablesTxnDAO().save
-	 * with parameters TdsReceivablesTxn,"" c) EDIT Update record in the main table by using
-	 * getTDSReceivablesTxnDAO().update with parameters TdsReceivablesTxn,"" 3) Delete the record from the workFlow
-	 * table by using getTDSReceivablesTxnDAO().delete with parameters TdsReceivablesTxn,"_Temp" 4) Audit the record in
-	 * to AuditHeader and AdtTDS_RECEIVABLE_DETAILS by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
-	 * the record in to AuditHeader and AdtTDS_RECEIVABLE_DETAILS by using auditHeaderDAO.addAudit(auditHeader) based on
-	 * the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 
@@ -287,16 +234,6 @@ public class TdsReceivablesTxnServiceImpl extends GenericService<TdsReceivablesT
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getTDSReceivablesTxnDAO().delete with parameters TdsReceivablesTxn,"_Temp" 3) Audit the
-	 * record in to AuditHeader and AdtTDS_RECEIVABLE_DETAILS by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -374,13 +311,6 @@ public class TdsReceivablesTxnServiceImpl extends GenericService<TdsReceivablesT
 		return auditDetails;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -480,16 +410,6 @@ public class TdsReceivablesTxnServiceImpl extends GenericService<TdsReceivablesT
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
-
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getTDSReceivablesTxnDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
-	 * then assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 
 	public List<TdsReceivablesTxn> getTdsReceivablesTxnsByTanId(long tANId, Date fromDate, Date toDate) {
 		logger.debug(Literal.ENTERING);
@@ -683,10 +603,17 @@ public class TdsReceivablesTxnServiceImpl extends GenericService<TdsReceivablesT
 		return recTdsReceivablestxn;
 	}
 
+	@Autowired
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Autowired
 	public void setTdsReceivablesTxnDAO(TdsReceivablesTxnDAO tdsReceivablesTxnDAO) {
 		this.tdsReceivablesTxnDAO = tdsReceivablesTxnDAO;
 	}
 
+	@Autowired
 	public void setTdsReceivableDAO(TdsReceivableDAO tdsReceivableDAO) {
 		this.tdsReceivableDAO = tdsReceivableDAO;
 	}

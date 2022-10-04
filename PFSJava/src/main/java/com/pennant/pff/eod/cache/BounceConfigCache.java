@@ -20,7 +20,6 @@ public class BounceConfigCache {
 		try {
 			bounceReason = bounceCache.get(bounceCode);
 		} catch (Exception e) {
-			logger.warn("Unable to load data from Bounce cache: ", e);
 			bounceReason = getBounceReason(bounceCode);
 		}
 		return bounceReason;

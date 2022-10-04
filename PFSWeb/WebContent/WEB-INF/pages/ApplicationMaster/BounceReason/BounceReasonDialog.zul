@@ -72,7 +72,7 @@
 								<label id="label_Reason" value="${c:l('label_BounceReasonDialog_Reason.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<textbox id="reason" maxlength="50" width="130px" />
+									<textbox id="reason" maxlength="50" width="200px" />
 								</hbox>
 							</row>
 							<row id="row2">
@@ -100,7 +100,7 @@
 								<label value="${c:l('label_BounceReasonDialog_HoldMarkCount.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<intbox id="holdMarkBounceCount" />
+									<intbox id="holdMarkBounceCount" style="text-align:right"  maxlength="1"/>
 								</hbox>
 								<label value="${c:l('label_BounceReasonDialog_Active.value')}" />
 								<hbox>
