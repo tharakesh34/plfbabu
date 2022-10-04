@@ -217,8 +217,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 	protected Row row_AssignEntry;
 	protected Label label_TransactionEntryDialog_AssignEntry;
-	protected Checkbox assignmentEntry;
-	protected Hbox hbox_assignmentEntry;
+	// protected Checkbox assignmentEntry;
+	// protected Hbox hbox_assignmentEntry;
 
 	protected Label label_TransactionEntryDialog_Bulking;
 	protected Checkbox bulking;
@@ -337,7 +337,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.row_AssignEntry.setVisible(false);
 			this.feeRepeat.setChecked(false);
 			this.receivableOrPayable.setVisible(false);
-			this.assignmentEntry.setChecked(false);
+			// this.assignmentEntry.setChecked(false);
 			this.bulking.setChecked(false);
 		}
 		// ### END SFA_20210405 <--

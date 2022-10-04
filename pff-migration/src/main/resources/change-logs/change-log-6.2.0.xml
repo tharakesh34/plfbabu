@@ -148,6 +148,27 @@
 		<addNotNullConstraint tableName="AccountMapping_Temp" columnName="CreatedOn"
 			columnDataType="datetime" />
 	</changeSet>
+	
+	<changeSet id="ST#93.14.1" author="nagavamsi.p">
+		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="OpenedDate" columnDataType="datetime"/>
+	</changeSet>
+
+	<changeSet id="ST#93.15.1" author="nagavamsi.p">
+		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="Status" columnDataType="varchar(8)"/>
+	</changeSet>
+
+	<changeSet id="ST#93.16.1" author="nagavamsi.p">
+		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="AllowedManualEntry"
+			columnDataType="Char(1)" />
+	</changeSet>
+	
+	<changeSet id="ST#93.17.1" author="nagavamsi.p">
+		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="CreatedBy" columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="ST#93.18.1" author="nagavamsi.p">
+		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="CreatedOn" columnDataType="datetime" />
+	</changeSet>
 
 	<changeSet id="ST#93.19" author="nagavamsi.p">
 		<addColumn tableName="AccountMapping">
@@ -266,6 +287,29 @@
 	<changeSet id="ST#93.36" author="nagavamsi.p">
 		<addNotNullConstraint tableName="AccountMapping" columnName="CreatedOn" columnDataType="datetime" />
 	</changeSet>
+	
+	<changeSet id="ST#93.32.1" author="nagavamsi.p">
+		<dropNotNullConstraint tableName="AccountMapping" columnName="OpenedDate"
+			columnDataType="datetime" />
+	</changeSet>
+
+	<changeSet id="ST#93.33.1" author="nagavamsi.p">
+		<dropNotNullConstraint tableName="AccountMapping" columnName="Status" columnDataType="varchar(8)" />
+	</changeSet>
+
+	<changeSet id="ST#93.34.1" author="nagavamsi.p">
+		<dropNotNullConstraint tableName="AccountMapping" columnName="AllowedManualEntry"
+			columnDataType="Char(1)" />
+	</changeSet>
+	
+	<changeSet id="ST#93.35.1" author="nagavamsi.p">
+		<dropNotNullConstraint tableName="AccountMapping" columnName="CreatedBy" columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="ST#93.36.1" author="nagavamsi.p">
+		<dropNotNullConstraint tableName="AccountMapping" columnName="CreatedOn" columnDataType="datetime" />
+	</changeSet>
+
 
 	<changeSet id="ST#93.37_pre" author="nagavamsi.p" dbms="postgresql">
 		<sql>

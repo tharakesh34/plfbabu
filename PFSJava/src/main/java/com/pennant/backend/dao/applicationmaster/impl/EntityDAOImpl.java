@@ -172,13 +172,13 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 	public void update(Entity entity, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update Entity");
 		sql.append(tableType.getSuffix());
-		sql.append(" set EntityDesc = ?, PANNumber = ?, Country = ?, ");
-		sql.append(" StateCode = ?, CityCode = ?, PinCode = ?, EntityAddrLine1 = ?, EntityAddrLine2 = ?,");
-		sql.append("entityAddrHNbr = ?, entityFlatNbr = ?, entityAddrStreet = ?, entityPOBox = ?,");
-		sql.append(" active = ?, gstinAvailable = ?, PinCodeId = ?, CINNumber = ?,");
-		sql.append(" Version = ?, LastMntOn = ?, LastMntBy = ?, RecordStatus = ?, RoleCode = ?,");
-		sql.append(" NextRoleCode = ?, TaskId = ?, NextTaskId = ?,");
-		sql.append(" RecordType = ?, WorkflowId = ?");
+		sql.append(" Set EntityDesc = ?, PANNumber = ?, Country = ?");
+		sql.append(", StateCode = ?, CityCode = ?, PinCode = ?, EntityAddrLine1 = ?, EntityAddrLine2 = ?");
+		sql.append(", EntityAddrHNbr = ?, EntityFlatNbr = ?, EntityAddrStreet = ?, EntityPOBox = ?");
+		sql.append(", GSTINAvailable = ?, PinCodeId = ?, CINNumber = ?");
+		sql.append(", Active = ?, Version = ?, LastMntOn = ?, LastMntBy = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?");
 		sql.append(" Where EntityCode = ?");
 		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
@@ -199,13 +199,13 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 			ps.setString(index++, entity.getEntityFlatNbr());
 			ps.setString(index++, entity.getEntityAddrStreet());
 			ps.setString(index++, entity.getEntityPOBox());
-			ps.setBoolean(index++, entity.isActive());
 			ps.setBoolean(index++, entity.isGstinAvailable());
 			ps.setLong(index++, entity.getPinCodeId());
 			ps.setString(index++, entity.getcINNumber());
+			ps.setBoolean(index++, entity.isActive());
 			ps.setInt(index++, entity.getVersion());
-			ps.setLong(index++, entity.getLastMntBy());
 			ps.setTimestamp(index++, entity.getLastMntOn());
+			ps.setLong(index++, entity.getLastMntBy());
 			ps.setString(index++, entity.getRecordStatus());
 			ps.setString(index++, entity.getRoleCode());
 			ps.setString(index++, entity.getNextRoleCode());
