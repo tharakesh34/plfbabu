@@ -4310,5 +4310,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#206624" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'CUSTOMIZED_SOAREPORT';
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

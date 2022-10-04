@@ -634,6 +634,8 @@ public class ImplementationConstants {
 
 	public static boolean VER_RCU_INITATE_BY_AGENCY;
 
+	public static boolean CUSTOMIZED_SOAREPORT;
+
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);
 		VER_INIT_AGENT_MANDATORY = getValueAsBoolean("VER_INIT_AGENT_MANDATORY", false);
@@ -653,6 +655,7 @@ public class ImplementationConstants {
 		VER_REASON_CODE_FILTER_BY_REASONTYPE = getValueAsBoolean("VER_REASON_CODES_REASONTYPE_FILTER", false);
 		VER_INITATE_DURING_SAVE = getValueAsBoolean("VER_INITATE_DURING_SAVE", true);
 		VER_RCU_INITATE_BY_AGENCY = getValueAsBoolean("VER_RCU_INITATE_BY_AGENCY", true);
+		CUSTOMIZED_SOAREPORT = getValueAsBoolean("CUSTOMIZED_SOAREPORT", false);
 	}
 
 	public static boolean getValueAsBoolean(String key, boolean defaultValue) {

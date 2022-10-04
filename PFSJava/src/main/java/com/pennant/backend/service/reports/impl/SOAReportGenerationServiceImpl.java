@@ -464,12 +464,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				logger.error(Literal.EXCEPTION, e);
 			}
 
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))
-					&& !finMain.isFinIsActive()
-					|| StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
+			if (ImplementationConstants.CUSTOMIZED_SOAREPORT && !finMain.isFinIsActive()
+					|| FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())) {
 				statementOfAccount.setTotalPriBal(BigDecimal.ZERO);
 				statementOfAccount.setCurApplicableEMI(BigDecimal.ZERO);
-			} else if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			} else if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				statementOfAccount.setTotalPriBal(PennantApplicationUtil.formateAmount(priOutStanding, ccyEditField));
 				try {
 					statementOfAccount.setTotalPriBalInwords(priOutStanding == BigDecimal.ZERO ? ""
@@ -510,7 +509,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					.setTotalOutStanding(PennantApplicationUtil.formateAmount(totalOutStanding, ccyEditField));
 
 			int futureInst = finMain.getCalTerms() - financeProfitDetail.getNOPaidInst();
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				futureInst = futureInst + finMain.getGraceTerms() - cpzTerms - emiHoliday - odTerm;
 				statementOfAccount.setFutureInstNo(futureInst);
 			}
@@ -518,7 +517,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setFinCurrAssetValue(
 					PennantApplicationUtil.formateAmount(finMain.getFinCurrAssetValue(), ccyEditField));
 
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))
+			if (ImplementationConstants.CUSTOMIZED_SOAREPORT
 					&& ((DateUtility.compare(finMain.getMaturityDate(), SysParamUtil.getAppDate()) < 0)
 							|| (!finMain.isFinIsActive() && StringUtils.equals(finMain.getClosingStatus(),
 									FinanceConstants.CLOSE_STATUS_CANCELLED)))) {
@@ -563,7 +562,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			String frequency = FrequencyUtil.getFrequencyCode(finMain.getRepayFrq());
 			statementOfAccount.setTenureLabel(FrequencyUtil.getRepayFrequencyLabel(frequency));
 
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				statementOfAccount.setTenure(finMain.getAdvTerms() + finMain.getGraceTerms());
 			} else {
 				if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
@@ -725,7 +724,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setFinBranch(statementOfAccountProductDetails.getFinBranch());
 			}
 
-			if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			if (!ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				// Next schedule details
 				statementOfAccount.setNoOfEmiOverDue(financeProfitDetail.getNOODInst());
 				// EmiAmtOverdue
@@ -763,7 +762,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		if (endDate == null) {
 			endDate = SysParamUtil.getAppDate();
 		} else { // endDate should be grater than app date then set to the Application date
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				// nothing to do
 			} else if (DateUtility.compare(endDate, SysParamUtil.getAppDate()) > 0) {
 				endDate = SysParamUtil.getAppDate();
@@ -799,7 +798,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		// Formatting the amounts
 		// Formatting the amounts
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+		if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 			statementOfAccount
 					.setLoanAmount(PennantApplicationUtil.formateAmount(finMain.getFinAssetValue(), ccyEditField));
 			try {
@@ -1031,7 +1030,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			interestRateDetails.add(floatDetail);
 		} else {
 			if (StringUtils.equals(CalculationConstants.RATE_BASIS_F, finMain.getRepayRateBasis())) {
-				if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+				if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 					statementOfAccount.setIntRateType("Flat");
 				} else {
 					statementOfAccount.setIntRateType("Fixed");
@@ -1418,7 +1417,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			overDue = due.subtract(receipt).subtract(totalschdPftWaiver).subtract(principalWaived)
 					.subtract(profitWaived);
 
-			if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			if (!ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Installment Amount");
 				soaSummaryReport.setDue(due);
@@ -1515,7 +1514,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 
 		String narration = Labels.getLabel("label_SOA_Late_Payment_Penalty.value");// Late Payment Penalty
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+		if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 			narration = "Penal Charges";
 		}
 		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("LATE_PAYMENT_INTEREST_CLIX"))) {
@@ -1534,7 +1533,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			soaSummaryReport.setWaiver(lpiWaived);
 			soaSummaryReport.setOverDue(overDue);
 
-			if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			if (!ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				soaSummaryReportsList.add(soaSummaryReport);
 			}
 
@@ -1549,7 +1548,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			overDue = due.subtract(receipt);
 		}
 
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+		if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 			due = due.subtract(receipt);
 			totalCharges = totalCharges.add(due);
 		}
@@ -1570,7 +1569,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		soaSummaryReport.setComponent("Bounce Charges");
 		soaSummaryReport.setDue(bounceDue);
 
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+		if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 			bounceDue = overDue;
 			if (!fm.isFinIsActive()
 					&& !StringUtils.equals(fm.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
@@ -1612,8 +1611,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		// Other Receivables duplicate row removed
 		/*
-		 * if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-		 * soaSummaryReportsList.add(soaSummaryReport); }
+		 * if (!ImplementationConstants.CUSTOMIZED_SOAREPORT) { soaSummaryReportsList.add(soaSummaryReport); }
 		 */
 
 		receipt = BigDecimal.ZERO;
@@ -1622,7 +1620,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		soaSummaryReport = new SOASummaryReport();
 		soaSummaryReport.setComponent("Other Payables");
 
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+		if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 			soaSummaryReport.setComponent("Other Charges");
 			totalCharges = totalCharges.add(otherReceivableDue.subtract(otherReceivableReceipt));
 			soaSummaryReport.setDue(otherReceivableDue.subtract(otherReceivableReceipt));
@@ -1656,7 +1654,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			due = balanceAmt;
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				unAdjustedAmt = balanceAmt;
 				due = balanceAmt;
 				statementOfAccount.setUnAdjAmt(due.divide(new BigDecimal(100)));
@@ -1678,7 +1676,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			soaSummaryReport.setWaiver(BigDecimal.ZERO);
 			soaSummaryReport.setOverDue(overDue.negate());
 			netDue = netDue.subtract(due);
-			if ("N".equalsIgnoreCase(SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			if (!ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				soaSummaryReportsList.add(soaSummaryReport);
 			}
 		} else {
@@ -1690,14 +1688,14 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			soaSummaryReport.setWaiver(BigDecimal.ZERO);
 			soaSummaryReport.setOverDue(BigDecimal.ZERO);
 			statementOfAccount.setUnAdjAmt(BigDecimal.ZERO);
-			if ("N".equalsIgnoreCase(SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+			if (!ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				soaSummaryReportsList.add(soaSummaryReport);
 			}
 		}
 
 		soaSummaryReport = new SOASummaryReport();
 		soaSummaryReport.setComponent("Net Receivable");
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+		if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 			if (!fm.isFinIsActive()
 					&& StringUtils.equals(fm.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
 				soaSummaryReport.setDue(BigDecimal.ZERO);
@@ -1724,7 +1722,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		soaSummaryReport.setOverDue(netDue);
 		netDue = overDue;
 
-		if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+		if (!ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 			soaSummaryReportsList.add(soaSummaryReport);
 		}
 
@@ -2369,7 +2367,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									status = " - Subject to realization";
 								}
 
-								if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+								if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 									if (("P".equals(pd.getPresentmentType()))) {
 										soaTranReport.setTransactionDate(receivedDate);
 									}
@@ -2399,7 +2397,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						if (StringUtils.isNotBlank(rpaymentType)) {
 							if (ReceiptMode.CHEQUE.equals(rpaymentType) || ReceiptMode.DD.equals(rpaymentType)) {
 								paymentType = WordUtils.capitalize(rpaymentType) + " No.:";
-								if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+								if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 									soaTranReport.setTransactionDate(receivedDate);
 								}
 							} else if (!StringUtils.equals(rpaymentType, ReceiptMode.PRESENTMENT)
@@ -2437,8 +2435,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						} else if (StringUtils.isNotBlank(rd.getPaymentRef())) {
 							rHEventExcess = rHEventExcess.concat(rd.getPaymentRef() + finRef);
 						} else {
-							if (StringUtils.equalsIgnoreCase("Y",
-									SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+							if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 								rHEventExcess = rHEventExcess.concat(String.valueOf(receiptID));
 							}
 						}
@@ -2595,7 +2592,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									}
 									soaTranReport.setEvent(rHPaymentBouncedFor);
 									soaTranReport.setTransactionDate(manualAdvise.getPostDate());
-									if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+									if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 										if ("P".equals(presentmentType)) {
 											soaTranReport.setTransactionDate(receivedDate);
 										}
@@ -2961,7 +2958,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 			}
 
-			if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMIZED_SOAREPORT) && !finMain.isFinIsActive()
+			if (ImplementationConstants.CUSTOMIZED_SOAREPORT && !finMain.isFinIsActive()
 					&& StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
 				getCancelLoanTransactionDetails(finReference, soaTransactionReports, paymentInstructionsList,
 						manualAdviseList, finReceiptHeadersList, finFeedetailsList, feeWaiverDetailList,

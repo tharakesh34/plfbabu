@@ -12,7 +12,6 @@ public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> mandateExtensions = new HashMap<>();
 	static Map<String, Object> presentmentExtensions = new HashMap<>();
 
-
 	/**
 	 * <p>
 	 * Override the implementation constants. Here the constant name should match with implementation constant variable
@@ -86,14 +85,20 @@ public class FeatureExtension implements IFeatureExtension {
 
 		defaultExtensions.put("DISBURSEMENT_AUTO_DOWNLOAD", false);
 
-		// Temporary Enabled, need to disable once the testing is done
 		defaultExtensions.put("DISBURSEMENT_ALLOW_CO_APP", true);
+
 		defaultExtensions.put("CHEQUE_ALLOW_CO_APP", true);
+
 		defaultExtensions.put("CUST_ADDR_AUTO_FILL", true);
+
 		defaultExtensions.put("HOLD_DISB_INST_POST", true);
+
 		defaultExtensions.put("VAS_INST_ON_DISB", true);
+
 		defaultExtensions.put("ALLOW_BUILDER_BENEFICIARY_DETAILS", true);
+
 		defaultExtensions.put("POPULATE_DFT_INCOME_DETAILS", true);
+
 		defaultExtensions.put("ALLOW_SINGLE_FEE_CONFIG", true);
 
 		defaultExtensions.put("RESTRUCTURE_DFT_APP_DATE", true);
@@ -121,8 +126,6 @@ public class FeatureExtension implements IFeatureExtension {
 		defaultExtensions.put("PROVISION_BOOKS", ProvisionBook.REGULATORY);
 
 		defaultExtensions.put("ALLOW_MANUAL_SCHEDULE", true);
-
-		///////// For Enhancements from Axis and Clix///////////////
 
 		defaultExtensions.put("RETAIL_CUST_PAN_MANDATORY", false);
 
