@@ -2489,7 +2489,7 @@ public class ExtendedFieldDetailsService {
 			mapValues.put("RecordStatus", efr.getRecordStatus());
 			mapValues.put("RecordType", efr.getRecordType());
 			mapValues.put("WorkflowId", efr.getWorkflowId());
-			mapValues.put("InstructionUID", efr.getInstructionUID());
+			mapValues.put("instructionuid", efr.getInstructionUID());
 		}
 
 		if (saveRecord) {
