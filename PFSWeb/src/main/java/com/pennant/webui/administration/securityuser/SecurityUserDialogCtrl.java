@@ -853,7 +853,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 
 		try {
-			if (!aSecurityUser.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
+			if (!aSecurityUser.isNewRecord()
+					&& !aSecurityUser.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
 				if (!this.usrEnabled.isChecked() && !disableReasonList.isEmpty()) {
 					if (this.disableReason.getSelectedItem() != null
 							&& !StringUtils.trimToEmpty(this.disableReason.getSelectedItem().getValue().toString())
@@ -1011,7 +1012,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		try {
 
-			if (!aSecurityUser.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
+			if (!aSecurityUser.isNewRecord()
+					&& !aSecurityUser.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
 				if (!employeeTypeList.isEmpty()) {
 					Comboitem empType = this.employeeType.getSelectedItem();
 					if (empType != null && !PennantConstants.List_Select.equals(empType.getValue().toString())) {
