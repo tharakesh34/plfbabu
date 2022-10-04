@@ -181,6 +181,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	// TDS details
 	protected Groupbox gb_TDSDetails;
 	protected Decimalbox tds;
+
+	protected Label eligibleAmountLabel;
 	protected CurrencyBox eligibleAmount;
 
 	private FinanceMain financeMain;
@@ -451,15 +453,51 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				this.feeTypeID.setAttribute("TaxComponent", "");
 			}
 
-			if (details != null) {
+			if (details != null && dataObject instanceof FeeType) {
 				setEligibleAmount(details);
 			}
 		}
 
 		calculateGST();
+
 		calculateTDS();
 
+		doDisplayEligibleAmount();
+
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doDisplayEligibleAmount() {
+		String adviseTypeValue = getComboboxValue(this.adviseType);
+		Object object = (Object) this.feeTypeID.getObject();
+
+		if (StringUtils.equals(adviseTypeValue, PennantConstants.List_Select)) {
+			this.eligibleAmountLabel.setVisible(false);
+			this.eligibleAmount.setVisible(false);
+			return;
+		}
+
+		FeeType feeType = null;
+
+		if (object instanceof FeeType) {
+			feeType = (FeeType) object;
+		}
+
+		int adviseType = Integer.parseInt(adviseTypeValue);
+
+		boolean validPayableLink = false;
+
+		if (feeType != null) {
+			validPayableLink = isValidPayableLink(feeType.getPayableLinkTo(), adviseType);
+		}
+
+		if (adviseType == AdviseType.PAYABLE.id() && validPayableLink) {
+			this.eligibleAmountLabel.setVisible(true);
+			this.eligibleAmount.setVisible(true);
+		} else {
+			this.eligibleAmountLabel.setVisible(false);
+			this.eligibleAmount.setVisible(false);
+		}
 	}
 
 	public void onChange$adviseType(Event event) {
@@ -470,6 +508,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		calculateGST();
 
 		calculateTDS();
+
+		doDisplayEligibleAmount();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -710,6 +750,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				.setValue(DateUtility.format(financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 
 		fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType, "");
+
 		setFeeTypeFilters();
 
 		// this.finReference.setValue(aManualAdvise.getFinReference());
@@ -717,8 +758,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.feeTypeID.setAttribute("TaxApplicable", aManualAdvise.isTaxApplicable());
 		this.feeTypeID.setAttribute("TDSApplicable", aManualAdvise.isTdsReq());
 		this.feeTypeID.setAttribute("TaxComponent", aManualAdvise.getTaxComponent());
-
 		this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
+
 		this.sequence.setValue(aManualAdvise.getSequence());
 		this.adviseAmount.setValue(PennantApplicationUtil.formateAmount(aManualAdvise.getAdviseAmount(),
 				PennantConstants.defaultCCYDecPos));
@@ -733,11 +774,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.feeTypeID.setDescription("");
 			this.valueDate.setValue(appDate);
 			this.postDate.setValue(appDate);
-
 		} else {
 			if (aManualAdvise.getFeeTypeCode() != null) {
 				this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
-				this.feeTypeID.setObject(new FeeType(aManualAdvise.getFeeTypeID()));
+				FeeType feeType = new FeeType(aManualAdvise.getFeeTypeID());
+				feeType.setPayableLinkTo(aManualAdvise.getPayableLinkTo());
+				this.feeTypeID.setObject(feeType);
 			} else {
 				this.label_FeeTypeID.setValue(Labels.getLabel("label_ManualAdviseDialog_BounceID.value"));
 				this.feeTypeID.setAttribute("BounceID", aManualAdvise.getBounceID());
@@ -752,6 +794,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				setEligibleAmount(feeType);
 			}
 		}
+
 		if (enqiryModule) {
 			this.adviseMovements.setVisible(true);
 			List<ManualAdviseMovements> advisemovementList = manualAdviseService
@@ -765,7 +808,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		this.recordStatus.setValue(manualAdvise.getRecordStatus());
 
+		doDisplayEligibleAmount();
+
 		calculateGST();
+
 		calculateTDS();
 
 		// Accounting Details Tab Addition

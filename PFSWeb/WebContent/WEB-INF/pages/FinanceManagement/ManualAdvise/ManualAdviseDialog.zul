@@ -120,9 +120,9 @@
 														<space spacing="2px" sclass="mandatory" />
 														<combobox id="adviseType" width="120px" />
 													</hbox>
-													<label
-														value="${c:l('label_ManualAdviseDialog_Eligible_Amount.value')}" />
-													<currencyBox id="eligibleAmount" width="162px" />
+													<label id="eligibleAmountLabel"
+														value="${c:l('label_ManualAdviseDialog_Eligible_Amount.value')}" visible="false"/>
+													<currencyBox id="eligibleAmount" width="162px" visible="false"/>
 												</row>
 												<row>
 													<label value="${c:l('label_ManualAdviseDialog_FinReference.value')}"
@@ -159,7 +159,8 @@
 													<label value="${c:l('label_ManualAdviseDialog_PaidAmount.value')}" />
 													<currencyBox id="paidAmount" width="162px" />
 
-													<label value="${c:l('label_ManualAdviseDialog_WaivedAmount.value')}" />
+													<label
+														value="${c:l('label_ManualAdviseDialog_WaivedAmount.value')}" />
 													<currencyBox id="waivedAmount" width="162px" />
 												</row>
 												<row id="reasonRow">
