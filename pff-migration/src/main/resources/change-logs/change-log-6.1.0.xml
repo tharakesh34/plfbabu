@@ -88,4 +88,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#205801" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTLIST SET FIELDVALUES = 'FinType, LovDescProductCodeName, LovDescCustCIF, FinReference, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinancingAmount, CurFinAmount, FinCurrAssetValue, FeeChargeAmt, TotalCpz, FinRepaymentAmount, SvAmount, DownPayment, ClosingStatus' WHERE CODE ='SCHENQ';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
