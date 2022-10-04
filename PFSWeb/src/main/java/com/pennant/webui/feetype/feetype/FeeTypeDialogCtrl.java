@@ -121,6 +121,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Row tdsRow;
 	protected Checkbox tdsReq;
 
+	protected Row feeIncomeOrExpenseRow;
 	protected ExtendedCombobox feeIncomeOrExpense;
 
 	protected Checkbox active;
@@ -438,6 +439,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.groupboxWf.setVisible(false);
 		}
 
+		this.feeIncomeOrExpenseRow.setVisible(ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG);
 		this.feeIncomeOrExpense.setWidth("200px");
 		this.feeIncomeOrExpense.setModuleName("AccountType");
 		this.feeIncomeOrExpense.setValueColumn("AcType");
@@ -943,6 +945,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			fillComboBox(this.adviseType, null, listAdviseType, "");
 			doSetAdviceType(PennantConstants.List_Select);
 		}
+
+		doSetDueAccReq(this.dueAccReq.isChecked());
 	}
 
 	public void onCheck$manualAdvice(Event event) {
@@ -969,6 +973,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			}
 
 			fillComboBox(this.payableLinkTo, payableLinkTo, listAdviseCategory);
+			doSetPayableLinkTo(payableLinkTo);
+
 		} else {
 			this.payableLinkToRow.setVisible(false);
 			this.payableLinkTo.setValue(null);
