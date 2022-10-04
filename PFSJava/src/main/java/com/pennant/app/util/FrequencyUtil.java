@@ -859,7 +859,7 @@ public class FrequencyUtil implements Serializable {
 			days = DateUtility.getDaysBetween(baseDate, frequencyDetails.getNextFrequencyDate());
 			startDate = frequencyDetails.getNextFrequencyDate();
 			count = count + 1;
-		} while (days <= requestedMinDays && requestedMinDays != 0);
+		} while (days < requestedMinDays && requestedMinDays != 0);
 
 		return frequencyDetails;
 	}
