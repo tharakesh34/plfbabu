@@ -264,6 +264,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	}
 
 	public void setUpdateBranches(boolean updateBranches) {
-		updateBranches = updateBranches;
+		this.updateBranches = updateBranches;
 	}
+
 }
