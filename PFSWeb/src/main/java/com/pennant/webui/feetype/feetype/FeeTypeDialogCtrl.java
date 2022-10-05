@@ -451,6 +451,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.receivableType.setValueColumn("FeeTypeCode");
 		this.receivableType.setDescColumn("FeeTypeDesc");
 		this.receivableType.setValidateColumns(new String[] { "FeeTypeCode" });
+		this.receivableType.setMandatoryStyle(true);
 
 		Filter recvfilters[] = new Filter[3];
 		recvfilters[0] = new Filter("ACTIVE", 1, Filter.OP_EQUAL);
@@ -713,8 +714,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			}
 
 			if (!this.receivableType.isReadonly()
-					&& (Allocation.MANADV.equals(aFeeType.getPayableLinkTo()) && aFeeType.getRecvFeeTypeId() == null
-							|| aFeeType.getRecvFeeTypeId() == 0)) {
+					&& (Allocation.MANADV.equals(aFeeType.getPayableLinkTo()) && aFeeType.getRecvFeeTypeId() == null)) {
 
 				throw new WrongValueException(this.receivableType, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_FeeTypeDialog_ReceivableType.value") }));
@@ -783,7 +783,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		if (this.payableLinkToRow.isVisible() && !this.payableLinkTo.isDisabled()) {
 			this.payableLinkTo.setConstraint(new StaticListValidator(listAdviseCategory,
-					Labels.getLabel("label_FeeTypeDialog_AdviseCategory.value")));
+					Labels.getLabel("label_FeeTypeDialog_PayableLinkTo.value")));
 		}
 
 		logger.debug(Literal.LEAVING);
