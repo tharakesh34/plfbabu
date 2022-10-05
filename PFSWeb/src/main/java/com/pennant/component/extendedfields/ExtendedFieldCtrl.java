@@ -87,7 +87,7 @@ public class ExtendedFieldCtrl {
 	private static String NEXTTASKID = "NextTaskId";
 	private static String RECORDTYPE = "RecordType";
 	private static String WORKFLOWID = "WorkflowId";
-	private static String instructionuid = "instructionUID";
+	private static String INSTRUCTIONUID = "InstructionUID";
 	private UserWorkspace userWorkspace;
 	private String userRole;
 	private boolean overflow;
@@ -760,8 +760,8 @@ public class ExtendedFieldCtrl {
 
 		extendedFieldRender.setVersion(getIntVal(extFieldMap, VERSION));
 
-		if (extFieldMap.containsKey(instructionuid)) {
-			extendedFieldRender.setInstructionUID(getLongVal(extFieldMap, instructionuid));
+		if (extFieldMap.containsKey(INSTRUCTIONUID)) {
+			extendedFieldRender.setInstructionUID(getLongVal(extFieldMap, INSTRUCTIONUID));
 		}
 
 		extendedFieldRender.setLastMntOn(getTimeStampVal(extFieldMap, LASTMNTON));
