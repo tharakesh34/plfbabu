@@ -327,7 +327,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setBigDecimal(index++, ma.getWaivedUGST());
 			ps.setBigDecimal(index++, ma.getWaivedIGST());
 			ps.setBigDecimal(index++, ma.getWaivedCESS());
-			ps.setBigDecimal(index, ma.getTdsPaid());
+			ps.setBigDecimal(index++, ma.getTdsPaid());
 
 			ps.setLong(index, ma.getAdviseID());
 		});
