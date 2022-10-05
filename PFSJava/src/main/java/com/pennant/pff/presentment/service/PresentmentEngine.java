@@ -48,13 +48,13 @@ public class PresentmentEngine {
 
 	public void preparation(JobParameters jobParameters) {
 		Date appDate = jobParameters.getDate("AppDate");
-		String automation = jobParameters.getString("AUTOMATION");
 		String presentmentType = jobParameters.getString("PresentmentType");
 
 		Map<String, Date> dueDates = dueExtractionConfigDAO.getDueDates(appDate);
 
 		for (String code : dueDates.keySet()) {
 			PresentmentHeader ph = new PresentmentHeader();
+			ph.setAutoExtract(true);
 
 			ph.setPresentmentType(presentmentType);
 			ph.setMandateType(code);
@@ -96,14 +96,12 @@ public class PresentmentEngine {
 
 		count = count - presentmentDAO.clearByNoDues();
 
-		String automation = "Y";
-
-		if (instrumentType != null && "N".equals(automation)) {
+		if (instrumentType != null && !ph.isAutoExtract()) {
 			count = count - presentmentDAO.clearByInstrumentType(instrumentType);
 		}
 
 		if (InstrumentType.isEMandate(instrumentType) && StringUtils.isNotEmpty(emandateSource)
-				&& "N".equals(automation)) {
+				&& !ph.isAutoExtract()) {
 			count = count - presentmentDAO.clearByInstrumentType(instrumentType, emandateSource);
 		}
 
@@ -260,7 +258,6 @@ public class PresentmentEngine {
 			pd.setStatus(RepayConstants.PEXC_IMPORT);
 		}
 
-		pd.setStatus(RepayConstants.PEXC_IMPORT);
 		pd.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
 
 		pd.setPresentmentAmt(BigDecimal.ZERO);
@@ -269,9 +266,10 @@ public class PresentmentEngine {
 		pd.setSchPftDue(schPftDue);
 		pd.setSchFeeDue(schFeeDue);
 		pd.settDSAmount(tDSAmount);
+		
 		pd.setSchInsDue(BigDecimal.ZERO);
 		pd.setSchPenaltyDue(BigDecimal.ZERO);
-		pd.setAdvanceAmt(schAmtDue);
+		pd.setAdvanceAmt(BigDecimal.ZERO);
 		pd.setAdviseAmt(BigDecimal.ZERO);
 		pd.setExcessID(0);
 		pd.setReceiptID(0);
@@ -286,7 +284,9 @@ public class PresentmentEngine {
 			pd.setSchDate(pd.getDefSchdDate());
 		}
 
-		doCalculations(ph, pd);
+		if (pd.getSchAmtDue().compareTo(BigDecimal.ZERO) > 0) {
+			doCalculations(ph, pd);
+		}
 	}
 
 	private void doCalculations(PresentmentHeader ph, PresentmentDetail pd) {
@@ -294,43 +294,41 @@ public class PresentmentEngine {
 
 		if (InstrumentType.isPDC(pd.getInstrumentType())) {
 			pd.setMandateId(pd.getChequeId());
-
 			String chequeStatus = pd.getChequeStatus();
 			if (!ChequeSatus.NEW.equals(chequeStatus)) {
-				if (ChequeSatus.PRESENT.equals(chequeStatus)) {
-					pd.setExcludeReason(RepayConstants.CHEQUESTATUS_PRESENT);
-					return;
+				int excludeReason = 0;
+				switch (chequeStatus) {
+				case ChequeSatus.PRESENT:
+					excludeReason = RepayConstants.CHEQUESTATUS_PRESENT;
+					break;
+				case ChequeSatus.REALISE:
+					excludeReason = RepayConstants.CHEQUESTATUS_REALISE;
+					break;
+				case ChequeSatus.REALISED:
+					excludeReason = RepayConstants.CHEQUESTATUS_REALISED;
+					break;
+				default:
+					break;
 				}
-				if (ChequeSatus.REALISE.equals(chequeStatus)) {
-					pd.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISE);
-					return;
-				}
-				if (ChequeSatus.REALISED.equals(chequeStatus)) {
-					pd.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISED);
-					return;
-				}
+				pd.setExcludeReason(excludeReason);
 			}
 		} else {
 			if (MandateStatus.isRejected(mandateStatus)) {
 				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_REJECTED);
-				return;
 			}
 
 			if (MandateStatus.isHold(mandateStatus)) {
 				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
-				return;
 			}
 
 			if (!InstrumentType.isECS(pd.getMandateType())) {
 				if (!MandateStatus.isApproved(mandateStatus)) {
 					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
-					return;
 				}
 
 				if (pd.getMandateExpiryDate() != null
 						&& DateUtil.compare(pd.getDefSchdDate(), pd.getMandateExpiryDate()) > 0) {
 					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
-					return;
 				}
 			}
 		}
@@ -344,11 +342,10 @@ public class PresentmentEngine {
 			processAdvAmounts(ph, pd);
 		}
 
-		if (pd.getSchAmtDue().compareTo(BigDecimal.ZERO) <= 0) {
-			return;
-		}
-
 		processEMIInAdvance(pd);
+
+		BigDecimal advAmount = pd.getAdvAdjusted();
+		pd.setPresentmentAmt(pd.getPresentmentAmt().subtract(advAmount));
 	}
 
 	private void processAdvAmounts(PresentmentHeader ph, PresentmentDetail pd) {
@@ -472,7 +469,6 @@ public class PresentmentEngine {
 		}
 
 		BigDecimal advAmount = pd.getAdvAdjusted();
-		pd.setPresentmentAmt(pd.getPresentmentAmt().subtract(advAmount));
 		pd.setAdvanceAmt(advanceAmt.add(advAmount));
 	}
 

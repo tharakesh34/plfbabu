@@ -848,7 +848,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		BigDecimal bounceAmt = BigDecimal.ZERO;
 		if (rule != null) {
-			bounceAmt = getBounceAmount(rch, rcd, pd, rule);
+			bounceAmt = getBounceAmount(rch, rcd, pd, rule, br);
 		}
 
 		int finCcy = CurrencyUtil.getFormat(rch.getFinCcy());
@@ -876,7 +876,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		logger.debug(Literal.LEAVING);
 	}
 
-	private BigDecimal getBounceAmount(FinReceiptHeader rch, FinReceiptDetail rcd, PresentmentDetail pd, Rule rule) {
+	private BigDecimal getBounceAmount(FinReceiptHeader rch, FinReceiptDetail rcd, PresentmentDetail pd, Rule rule,
+			BounceReason br) {
 		String presentmentType = pd.getPresentmentType();
 		Date appDate = pd.getAppDate();
 
@@ -885,6 +886,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		map.put("br_finType", rch.getFinType());
 		map.put("br_dpdcount", DateUtil.getDaysBetween(rch.getReceiptDate(), appDate));
 		map.put("br_presentmentType", presentmentType);
+		map.put("br_bounceCode", br.getBounceCode());
 
 		String sqlRule = StringUtils.trimToEmpty(rule.getSQLRule());
 		Map<String, Object> eventMapping = getEventMapping(rch.getFinID(), sqlRule);
@@ -3232,8 +3234,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				errorCode = "41005";
 			}
 		}
-		
-		if(!errorCode.isBlank()){
+
+		if (!errorCode.isBlank()) {
 			setError(ad, usrLanguage, errorCode, rch.getReceiptID());
 		}
 

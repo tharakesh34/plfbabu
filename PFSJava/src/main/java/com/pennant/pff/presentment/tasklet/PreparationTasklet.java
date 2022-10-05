@@ -23,8 +23,10 @@ public class PreparationTasklet implements Tasklet {
 		String automation = jobParameters.getString("AUTOMATION");
 
 		if (automation.equals("Y")) {
+			ph.setAutoExtract(true);
 			presentmentEngine.preparation(jobParameters);
 		} else {
+			ph.setAutoExtract(false);
 			ph.setAppDate(jobParameters.getDate("AppDate"));
 			ph.setMandateType(jobParameters.getString("MandateType"));
 			ph.setEmandateSource(jobParameters.getString("EmandateSource"));

@@ -118,6 +118,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	private Date appDate;
 	private Date dueDate;
+	private boolean autoExtract;
 
 	public PresentmentHeader(long id) {
 		super();
@@ -516,6 +517,14 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
+	}
+
+	public boolean isAutoExtract() {
+		return autoExtract;
+	}
+
+	public void setAutoExtract(boolean autoExtract) {
+		this.autoExtract = autoExtract;
 	}
 
 }
