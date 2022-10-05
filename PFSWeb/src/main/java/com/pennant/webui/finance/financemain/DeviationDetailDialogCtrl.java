@@ -173,7 +173,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 				doCheckRight();
 			}
 			if (loanEnquiry || enquiry) {
-				this.btnNew_ManualDeviation.setVisible(true);
+				this.btnNew_ManualDeviation.setVisible(false);
 			}
 
 			doShowDialog();
@@ -188,6 +188,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		boolean alloowd = deviationHelper.checkInputAllowed(financeMain.getFinType(), roleCode);
+
 		this.btnNew_ManualDeviation.setVisible(true);
 		this.btnApprove.setVisible(getUserWorkspace().isAllowed("btn_DeviationDetailDialog_btnApprove"));
 		this.btnReject.setVisible(getUserWorkspace().isAllowed("btn_DeviationDetailDialog_btnReject"));
