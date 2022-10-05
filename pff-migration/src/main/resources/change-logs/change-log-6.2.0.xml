@@ -310,7 +310,6 @@
 		<dropNotNullConstraint tableName="AccountMapping" columnName="CreatedOn" columnDataType="datetime" />
 	</changeSet>
 
-
 	<changeSet id="ST#93.37_pre" author="nagavamsi.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1874,6 +1873,26 @@
 			<column name="SecurityMandate" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#76.3.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE Mandates_Temp SET SecurityMandate = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#76.3_post" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SecurityMandate" tableName="Mandates_Temp" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#76.3_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE MANDATES_TEMP ADD CONSTRAINT DF_MANDATES_TEMP_SECMANDATE DEFAULT 0 FOR SecurityMandate;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#76.4" author="saikiran.n">
 		<addColumn tableName="Mandates_Temp">
@@ -1914,7 +1933,7 @@
 	<changeSet id="ST#76.10" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE Mandates_Temp ADD CONSTRAINT DF_MANDATES_TEMP_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
+				ALTER TABLE Mandates_Temp ADD CONSTRAINT DF_MANDATES_T_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
 			]]>
 		</sql>
 	</changeSet>
@@ -1940,6 +1959,26 @@
 		<addColumn tableName="Mandates">
 			<column name="SecurityMandate" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#76.14.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE Mandates SET SecurityMandate = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#76.14_post" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SecurityMandate" tableName="Mandates" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#76.14_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Mandates ADD CONSTRAINT DF_MANDATES_SECMANDATE DEFAULT 0 FOR SecurityMandate;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#76.15" author="saikiran.n">
@@ -2422,7 +2461,7 @@
 		<sql>
             <![CDATA[
             	DELETE FROM STAGETABDETAIL WHERE TABCODE = 'SECMAN';
-				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, ACTIVE) VALUES (22, 'SECMAN', 'Security Mandates', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, ACTIVE) VALUES ((select max(TABID)+1 from STAGETABDETAIL), 'SECMAN', 'Security Mandates', 1);
             ]]>
 		</sql>
 	</changeSet>
@@ -2448,7 +2487,7 @@
 	<changeSet id="ST#76.3" author="nagavamsi.p" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE EMPLOYERDETAIL_TEMP ADD CONSTRAINT DF_EMPLOYERDETAIL_TEMP_ALLOWDAS DEFAULT 0 FOR ALLOWDAS;
+				ALTER TABLE EMPLOYERDETAIL_TEMP ADD CONSTRAINT DF_EMPLOYERDET_TEMP_ALLOWDAS DEFAULT 0 FOR ALLOWDAS;
 			]]>
 		</sql>
 	</changeSet>
@@ -2906,7 +2945,7 @@
 	<changeSet id="ST#79.4" author="nagavamsi.p" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE BOUNCEREASONS_TEMP ADD CONSTRAINT DF_BOUNCEREASONS_TEMP_HOLDMARKBOUNCECOUNT DEFAULT 0 FOR HOLDMARKBOUNCECOUNT;
+				ALTER TABLE BOUNCEREASONS_TEMP ADD CONSTRAINT DF_BR_TEMP_HOLDMARKBOUNCECNT DEFAULT 0 FOR HOLDMARKBOUNCECOUNT;
 			]]>
 		</sql>
 	</changeSet>
@@ -2943,7 +2982,7 @@
 	<changeSet id="ST#79.9" author="nagavamsi.p" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE BOUNCEREASONS ADD CONSTRAINT DF_BOUNCEREASONS_HOLDMARKBOUNCECOUNT DEFAULT 0 FOR HOLDMARKBOUNCECOUNT;
+				ALTER TABLE BOUNCEREASONS ADD CONSTRAINT DF_BR_HOLDMARKBOUNCECOUNT DEFAULT 0 FOR HOLDMARKBOUNCECOUNT;
 			]]>
 		</sql>
 	</changeSet>
@@ -3128,11 +3167,51 @@
 			<column name="Nach" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#94.2.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail_Temp SET Nach = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.2_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Nach" tableName="BMTBankDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.2_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBankDetail_Temp_Nach DEFAULT 0 FOR Nach;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#94.3" author="saikiran.n">
 		<addColumn tableName="BMTBankDetail_Temp">
 			<column name="Dd" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.3.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail_Temp SET Dd = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.3_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Dd" tableName="BMTBankDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.3_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBankDetail_Temp_Dd DEFAULT 0 FOR Dd;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#94.4" author="saikiran.n">
@@ -3140,11 +3219,51 @@
 			<column name="Dda" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#94.4.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail_Temp SET Dda = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.4_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Dda" tableName="BMTBankDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.4_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBankDetail_Temp_Dda DEFAULT 0 FOR Dda;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#94.5" author="saikiran.n">
 		<addColumn tableName="BMTBankDetail_Temp">
 			<column name="Ecs" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.5.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail_Temp SET Ecs = 0;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#94.5_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Ecs" tableName="BMTBankDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.5_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBankDetail_Temp_Ecs DEFAULT 0 FOR Ecs;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#94.6" author="saikiran.n">
@@ -3152,11 +3271,51 @@
 			<column name="Cheque" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#94.6.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail_Temp SET Cheque = 0;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#94.6_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Cheque" tableName="BMTBankDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.6_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBankDetail_Temp_Cheque DEFAULT 0 FOR Cheque;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#94.7" author="saikiran.n">
 		<addColumn tableName="BMTBankDetail_Temp">
 			<column name="Emandate" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.7.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail_Temp SET Emandate = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.7_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Emandate" tableName="BMTBankDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.7_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBankDetail_T_Emandate DEFAULT 0 FOR Emandate;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#94.8" author="saikiran.n">
@@ -3164,11 +3323,51 @@
 			<column name="AllowedSources" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#94.8.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail_Temp SET AllowedSources = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.8_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="AllowedSources" tableName="BMTBankDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.8_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBankDet_T_AllowedSources DEFAULT 0 FOR AllowedSources;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#94.9" author="saikiran.n">
 		<addColumn tableName="BMTBankDetail_Temp">
 			<column name="UpdateBranches" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.9.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail_Temp SET UpdateBranches = 0;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#94.9_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="UpdateBranches" tableName="BMTBankDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.9_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBankDet_T_UpdateBranches DEFAULT 0 FOR UpdateBranches;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#94.10" author="saikiran.n">
@@ -3176,11 +3375,51 @@
 			<column name="Nach" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#94.10.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail SET Nach = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.10_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Nach" tableName="BMTBankDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.10_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBankDetail_Nach DEFAULT 0 FOR Nach;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#94.11" author="saikiran.n">
 		<addColumn tableName="BMTBankDetail">
 			<column name="Dd" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.11.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail SET Dd = 0;
+			]]>
+		</sql>
+	</changeSet>
+			
+	<changeSet id="ST#94.11_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Dd" tableName="BMTBankDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.11_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBankDetail_Dd DEFAULT 0 FOR Dd;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#94.12" author="saikiran.n">
@@ -3188,11 +3427,51 @@
 			<column name="Dda" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#94.12.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail SET Dda = 0;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#94.12_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Dda" tableName="BMTBankDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.12_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBankDetail_Dda DEFAULT 0 FOR Dda;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#94.13" author="saikiran.n">
 		<addColumn tableName="BMTBankDetail">
 			<column name="Ecs" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.13.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail SET Ecs = 0;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#94.13_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Ecs" tableName="BMTBankDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.13_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBankDetail_Ecs DEFAULT 0 FOR Ecs;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#94.14" author="saikiran.n">
@@ -3200,11 +3479,51 @@
 			<column name="Cheque" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#94.14.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail SET Cheque = 0;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#94.14_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Cheque" tableName="BMTBankDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.14_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBankDetail_Cheque DEFAULT 0 FOR Cheque;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#94.15" author="saikiran.n">
 		<addColumn tableName="BMTBankDetail">
 			<column name="Emandate" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.15.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail SET Emandate = 0;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#94.15_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="Emandate" tableName="BMTBankDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.15_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBankDetail_Emandate DEFAULT 0 FOR Emandate;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#94.16" author="saikiran.n">
@@ -3217,6 +3536,34 @@
 		<addColumn tableName="BMTBankDetail">
 			<column name="UpdateBranches" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.17.1_post" author="saikiran.n">
+		<sql>
+			<![CDATA[  
+				UPDATE BMTBankDetail SET UpdateBranches = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.17_post" author="saikiran.n" dbms="oracle, postgresql">
+		<addDefaultValue columnName="UpdateBranches" tableName="BMTBankDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.17_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBankDet_UpdateBranches DEFAULT 0 FOR UpdateBranches;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.18_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'bank_instrument_mapping');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#94.18" author="saikiran.n">
@@ -3236,6 +3583,14 @@
 				) T GROUP BY BANKCODE
 			]]>
 		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#94.18_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'bank_instrument_mapping');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#94.19" author="saikiran.n">
@@ -3469,7 +3824,9 @@
 	
 	<changeSet id="ST#99.0" author="saikrishna.b">
 		<createTable tableName="Presentment_Extraction_Job">
-			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="ID" type="bigint" autoIncrement="true" >
+				<constraints nullable="false" />
+			</column>
 			<column name="Name" type="varchar(10)" />
 			<column name="StartTime" type="datetime" />
 			<column name="EndTime" type="datetime" />
@@ -3479,14 +3836,16 @@
 			<column name="Remarks" type="varchar(100)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.0.1" author="saikrishna.b">
 		<addPrimaryKey tableName="Presentment_Extraction_Job" columnNames="ID" constraintName="pk_pej_ID" />
 	</changeSet>
 
 	<changeSet id="ST#99.1" author="saikrishna.b">
 		<createTable tableName="Presentment_Extraction_Stage">
-			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="ID" type="bigint" autoIncrement="true" >
+				<constraints nullable="false" />
+			</column>
 			<column name="JobID" type="bigint" />
 			<column name="FinID" type="bigint" />
 			<column name="FinReference" type="varchar(20)" />
@@ -3591,7 +3950,9 @@
 
 	<changeSet id="ST#112.1" author="sandeepkumar.m">
 		<createTable tableName="Presentment_Exclude_Codes">
-			<column name="ID" type="bigint" />
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
 			<column name="Code" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
@@ -3682,7 +4043,9 @@
 
 	<changeSet id="ST#112.7" author="sandeepkumar.m">
 		<createTable tableName="Presentment_Exclude_Codes_temp">
-			<column name="ID" type="bigint" />
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
 			<column name="Code" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
@@ -3743,9 +4106,9 @@
 	<changeSet id="ST#112.10" author="sandeepkumar.m" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE PRESENTMENT_EXCLUDE_CODES_TEMP ADD CONSTRAINT DF_PEC_VERSION DEFAULT 0 FOR VERSION;
-				ALTER TABLE PRESENTMENT_EXCLUDE_CODES_TEMP ADD CONSTRAINT DF_PEC_ACTIVE DEFAULT 0 FOR ACTIVE;
-				ALTER TABLE PRESENTMENT_EXCLUDE_CODES_TEMP ADD CONSTRAINT DF_PEC_CREATEBOUNCEONDUEDATE DEFAULT 0 FOR CREATEBOUNCEONDUEDATE;
+				ALTER TABLE PRESENTMENT_EXCLUDE_CODES_TEMP ADD CONSTRAINT DF_PECT_VERSION DEFAULT 0 FOR VERSION;
+				ALTER TABLE PRESENTMENT_EXCLUDE_CODES_TEMP ADD CONSTRAINT DF_PECT_ACTIVE DEFAULT 0 FOR ACTIVE;
+				ALTER TABLE PRESENTMENT_EXCLUDE_CODES_TEMP ADD CONSTRAINT DF_PECT_CREATEBOUNCEONDUEDATE DEFAULT 0 FOR CREATEBOUNCEONDUEDATE;
 			]]>
 		</sql>
 	</changeSet>
@@ -3800,7 +4163,9 @@
 
 	<changeSet id="ST#90.0" author="Alekhya.T">
 		<createTable tableName="Instrument_Types">
-			<column name="ID" type="bigint" />
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
 			<column name="Code" type="varchar(8)" />
 			<column name="Description" type="varchar(100)">
 				<constraints nullable="false" />
@@ -3879,7 +4244,9 @@
 
 	<changeSet id="ST#90.4" author="Alekhya.T">
 		<createTable tableName="Instrument_Types_Temp">
-			<column name="ID" type="bigint" />
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
 			<column name="Code" type="varchar(8)" />
 			<column name="Description" type="varchar(100)">
 				<constraints nullable="false" />
@@ -3964,7 +4331,9 @@
 
 	<changeSet id="ST#90.9" author="Alekhya.T">
 		<createTable tableName="Due_Extraction_Header">
-			<column name="ID" type="bigint" />
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
 			<column name="ExtractionMonth" type="varchar(10)">
 				<constraints nullable="false" />
 			</column>
@@ -4020,7 +4389,9 @@
 
 	<changeSet id="ST#90.12" author="Alekhya.T">
 		<createTable tableName="Due_Extraction_Header_Temp">
-			<column name="ID" type="bigint" />
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
 			<column name="ExtractionMonth" type="varchar(10)">
 				<constraints nullable="false" />
 			</column>
@@ -4081,7 +4452,9 @@
 
 	<changeSet id="ST#90.16" author="Alekhya.T">
 		<createTable tableName="Due_Extraction_Config">
-			<column name="ID" type="bigint" />
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
 			<column name="MonthID" type="bigint">
 				<constraints nullable="false" />
 			</column>
@@ -4165,7 +4538,9 @@
 
 	<changeSet id="ST#90.22" author="Alekhya.T">
 		<createTable tableName="Due_Extraction_Config_Temp">
-			<column name="ID" type="bigint" />
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
 			<column name="MonthID" type="bigint">
 				<constraints nullable="false" />
 			</column>
@@ -4250,7 +4625,9 @@
 
 	<changeSet id="ST#90.28" author="Alekhya.T">
 		<createTable tableName="Due_Extraction_Config_Log">
-			<column name="ID" type="bigint" />
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
 			<column name="MonthID" type="bigint">
 				<constraints nullable="false" />
 			</column>
@@ -4358,7 +4735,7 @@
 	<changeSet id="PSD#206624" author="saikiran.n">
 		<sql>
 			<![CDATA[
-				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'CUSTOMIZED_SOAREPORT';
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'CUSTOMIZED_SOAREPORT';			
 			]]>
 		</sql>
 	</changeSet>
