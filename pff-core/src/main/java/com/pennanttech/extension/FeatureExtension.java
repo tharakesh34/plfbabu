@@ -26,7 +26,7 @@ public final class FeatureExtension {
 		case "MANDATE":
 			return extension.getMandateExtensions();
 		case "PRESENTMENT":
-			return extension.getMandateExtensions();
+			return extension.getPresentmentExtensions();
 
 		default:
 			return extension.getCustomConstants();

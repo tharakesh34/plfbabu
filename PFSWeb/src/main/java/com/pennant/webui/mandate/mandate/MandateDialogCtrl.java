@@ -355,8 +355,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 			this.finType = mndt.getFinType();
 
-			addPartenetBankFilter();
 		}
+
+		addPartnerBankFilter();
 
 		fillComboBox(this.mandateType, mandate.getMandateType(), mandateTypeList, "");
 
@@ -2265,7 +2266,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void addPartenetBankFilter() {
+	private void addPartnerBankFilter() {
 		Filter[] filter = new Filter[4];
 		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		filter[1] = new Filter("Purpose", "R", Filter.OP_EQUAL);
@@ -2292,7 +2293,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (fm != null) {
 			this.finReference.setValue(fm.getFinReference());
 			this.finType = fm.getFinType();
-			addPartenetBankFilter();
+			addPartnerBankFilter();
 		}
 
 		logger.debug(Literal.LEAVING);
