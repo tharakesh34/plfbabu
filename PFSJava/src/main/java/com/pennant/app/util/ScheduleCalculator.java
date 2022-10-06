@@ -5246,7 +5246,8 @@ public class ScheduleCalculator {
 			}
 
 			Date recalToDate = fm.getRecalToDate();
-			boolean flag = !PROC_CHANGEREPAY.equals(module) && !PROC_ADDDISBURSEMENT.equals(module);
+			boolean flag = !PROC_CHANGEREPAY.equals(module) && !PROC_ADDDISBURSEMENT.equals(module)
+					&& !PROC_CHANGERATE.equals(module) && !PROC_RECALSCHD.equals(module);
 			if (flag && CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())
 					&& DateUtil.compare(recalToDate, derivedMDT) != 0
 					&& DateUtil.compare(curSchDate, recalToDate) == 0) {
