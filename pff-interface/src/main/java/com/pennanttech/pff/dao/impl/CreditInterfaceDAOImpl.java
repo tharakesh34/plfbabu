@@ -514,18 +514,22 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 
 			for (int i = 0; i < list.size(); i++) {
 				if (i == 0) {
-					query.append(" set ").append(list.get(i)).append("=:").append(list.get(i));
+					query.append(" set ").append(list.get(i)).append(" = :").append(list.get(i));
 				} else {
-					query.append(",").append(list.get(i)).append("=:").append(list.get(i));
+					query.append(", ").append(list.get(i)).append(" = :").append(list.get(i));
 				}
 			}
 			updateSql.append(query);
-			updateSql.append(" where Reference ='").append(reference).append("' AND SeqNo = '").append(seqNo)
-					.append("'");
+			updateSql.append(" where Reference = :CREDIT_INT_EXT_DETAIL_REFERENCE");
+			updateSql.append(" and SeqNo = :CREDIT_INT_EXT_DETAIL_SEQ_NO");
 
-			logger.debug("updateSql: " + updateSql.toString());
+			// Execute the SQL, binding the arguments.
+			logger.debug(Literal.SQL + updateSql.toString());
+			MapSqlParameterSource paramSource = new MapSqlParameterSource(mappedValues);
+			paramSource.addValue("CREDIT_INT_EXT_DETAIL_REFERENCE", reference);
+			paramSource.addValue("CREDIT_INT_EXT_DETAIL_SEQ_NO", seqNo);
 
-			this.jdbcTemplate.update(updateSql.toString(), mappedValues);
+			this.jdbcTemplate.update(updateSql.toString(), paramSource);
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
 			logger.error("Exception", e);

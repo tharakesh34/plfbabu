@@ -1502,9 +1502,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							" WHEN NextRoleCode like '%,%' AND NOT COALESCE(NextUserId, ' ') LIKE (' ') THEN NextUserId||','||:NEW_USER_ID END) ");
 				} else {
 					sql.append(
-							" WHEN NextRoleCode like '%,%' AND NOT COALESCE(NextUserId, ' ') LIKE (' ') THEN NextUserId+',");
-					sql.append(StringUtils.trimToEmpty(newUserId));
-					sql.append("' END) ");
+							" WHEN NextRoleCode like '%,%' AND NOT COALESCE(NextUserId, ' ') LIKE (' ') THEN NextUserId+','+:NEW_USER_ID END) ");
 				}
 			} else {
 				sql.append(" SET NextUserId = REPLACE(NextUserId, :USER_ID, :NEW_USER_ID)");

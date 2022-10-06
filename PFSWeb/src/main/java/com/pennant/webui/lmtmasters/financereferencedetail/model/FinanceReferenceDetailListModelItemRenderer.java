@@ -36,8 +36,8 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -78,7 +78,7 @@ public class FinanceReferenceDetailListModelItemRenderer implements ListitemRend
 
 		lc = new Listcell(desc);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(financeWorkflow.getFinEvent(), eventList));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(financeWorkflow.getFinEvent(), eventList));
 		lc.setParent(item);
 		item.setAttribute("data", financeWorkflow);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onFinanceReferenceDetailItemDoubleClicked");
