@@ -161,6 +161,12 @@ public class LatePayInterestService extends ServiceHelper {
 					profitDaysBasis, penaltyRate);
 			penalty = CalculationUtil.roundAmount(penalty, roundingMode, roundingTarget);
 
+			odcrNext.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
+			odcrNext.setPenaltyAmtPerc(penaltyRate);
+			odcrNext.setPenalty(penalty);
+			odcrNext.setPenaltyBal(
+					odcrCur.getPenalty().subtract(odcrCur.getPenaltyPaid().subtract(odcrCur.getWaivedAmt())));
+
 			odcrCur.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
 			odcrCur.setPenaltyAmtPerc(penaltyRate);
 			odcrCur.setPenalty(penalty);
