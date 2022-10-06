@@ -227,7 +227,11 @@ public class ChangeGraceEndService extends ServiceHelper {
 
 		// GraceEndDate AND GraceTerms
 		if (isFullDisb) {
+
+			if (fm.isEndGrcPeriodAftrFullDisb()) {
 			fm.setGrcPeriodEndDate(formatDate(newGrcEndDate));
+			}
+			
 			int prvGrcTerms = fm.getGraceTerms();
 			fm.setGraceTerms(FrequencyUtil
 					.getTerms(fm.getGrcPftFrq(), nextGrcPftDate, newGrcEndDate, includeStartDate, false).getTerms());
