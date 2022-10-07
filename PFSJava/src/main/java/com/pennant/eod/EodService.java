@@ -103,19 +103,6 @@ public class EodService {
 	private void createPresentmentReceipts(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
-		boolean presentment = false;
-
-		for (FinEODEvent finEODEvent : finEODEvents) {
-			if (finEODEvent.getIdxPresentment() >= 0) {
-				presentment = true;
-				break;
-			}
-		}
-
-		if (!presentment) {
-			return;
-		}
-
 		Date businessDate = custEODEvent.getEodValueDate();
 		Customer customer = custEODEvent.getCustomer();
 		long custID = customer.getCustID();
@@ -126,6 +113,10 @@ public class EodService {
 			FinanceMain fm = finEODEvent.getFinanceMain();
 			String finReference = fm.getFinReference();
 			FinExcessAmount emiInAdvance = null;
+
+			if (finEODEvent.getIdxPresentment() < 0) {
+				continue;
+			}
 
 			List<FinExcessAmount> finExcessAmounts = finEODEvent.getFinExcessAmounts();
 			for (FinExcessAmount fea : finExcessAmounts) {
