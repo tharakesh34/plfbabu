@@ -4739,5 +4739,36 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#206193_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'cluster_hierarchy_lview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#206193" author="saikrishna.b">
+		<createView viewName="CLUSTER_HIERARCHY_LVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT DISTINCT T1.ENTITY
+	 				, T1.RECORDSTATUS
+	 			FROM CLUSTER_HIERARCHY_TEMP T1
+	 			UNION ALL
+				SELECT T1.ENTITY
+					, T1.RECORDSTATUS
+				FROM CLUSTER_HIERARCHY T1
+			    WHERE NOT EXISTS (SELECT 1 FROM CLUSTER_HIERARCHY_TEMP WHERE ENTITY = T1.ENTITY)
+			 ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#206193_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'cluster_hierarchy_lview');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

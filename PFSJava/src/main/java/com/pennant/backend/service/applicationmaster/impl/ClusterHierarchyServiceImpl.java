@@ -24,6 +24,7 @@
  */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -241,6 +242,7 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 			clusterHierarchey.setNextTaskId("");
 			clusterHierarchey.setWorkflowId(0);
 
+			List<ClusterHierarchy> newClusters = new ArrayList<>(0);
 			for (ClusterHierarchy aClusterhierarchy : clusterHierarchey.getClusterTypes()) {
 				aClusterhierarchy.setTaskId("");
 				aClusterhierarchy.setNextTaskId("");
@@ -248,6 +250,10 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 				aClusterhierarchy.setNextRoleCode("");
 				aClusterhierarchy.setRecordType("");
 				aClusterhierarchy.setWorkflowId(0);
+
+				if (aClusterhierarchy.getVersion() <= 2) {
+					newClusters.add(aClusterhierarchy);
+				}
 			}
 
 			if (PennantConstants.RECORD_TYPE_NEW.equals(recordType)) {
@@ -257,7 +263,16 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				clusterHierarchey.setRecordType("");
-				clusterHierarchyDAO.update(clusterHierarchey, TableType.MAIN_TAB);
+				if (clusterHierarchey.getClusterTypes().size() == newClusters.size()) {
+					clusterHierarchey.setClusterTypes(newClusters);
+					clusterHierarchyDAO.save(clusterHierarchey, TableType.MAIN_TAB);
+				} else {
+					clusterHierarchyDAO.update(clusterHierarchey, TableType.MAIN_TAB);
+					if (newClusters.size() > 0) {
+						clusterHierarchey.setClusterTypes(newClusters);
+						clusterHierarchyDAO.save(clusterHierarchey, TableType.MAIN_TAB);
+					}
+				}
 			}
 
 		}
