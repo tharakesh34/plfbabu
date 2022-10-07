@@ -1902,15 +1902,16 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public BigDecimal getPaidAmountsbyAllocation(String reference, String payableLinkTo) {
+	public BigDecimal getPaidAmountsbyAllocation(String reference, String payableLinkTo, Date valueDate) {
 		StringBuilder sql = new StringBuilder("Select coalesce(Sum(rad.PaidAmount), 0)");
 		sql.append(" From FinReceiptHeader rh");
-		sql.append(" Inner Join ReceiptAllocationDetail rad on rad.ReceiptID = rh.ReceiptID");
-		sql.append(" Where rh.Reference = ? and rh.ReceiptModeStatus not in (?, ?) and rad.AllocationType = ?");
+		sql.append(" Inner Join ReceiptAllocationDetail rad on rad.ReceiptID = rh.ReceiptID and rh.ValueDate <= ?");
+		sql.append(" Where rh.Reference = ? and rh.ReceiptModeStatus not in (?, ?)");
+		sql.append(" and rad.AllocationType = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, reference,
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, valueDate, reference,
 				RepayConstants.PAYSTATUS_BOUNCE, RepayConstants.PAYSTATUS_CANCEL, payableLinkTo);
 	}
 

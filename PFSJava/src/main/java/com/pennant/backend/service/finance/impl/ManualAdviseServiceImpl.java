@@ -993,7 +993,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		if (Allocation.MANADV.equals(linkTo) && recvId != null) {
 			eligibleAmt = manualAdviseDAO.getPaidAmountsByFeeType(reference, recvId, valueDate);
 		} else {
-			eligibleAmt = manualAdviseDAO.getPaidAmountsbyAllocation(reference, linkTo);
+			eligibleAmt = manualAdviseDAO.getPaidAmountsbyAllocation(reference, linkTo, valueDate);
 		}
 
 		eligibleAmt = eligibleAmt.subtract(manualAdviseDAO.getExistingPayableAmount(reference, feeTypeID));

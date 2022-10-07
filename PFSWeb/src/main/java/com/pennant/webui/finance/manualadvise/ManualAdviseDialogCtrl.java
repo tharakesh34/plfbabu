@@ -433,29 +433,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	public void onFulfill$feeTypeID(Event event) {
 		logger.debug(Literal.ENTERING);
-		Object dataObject = feeTypeID.getObject();
-		if (dataObject instanceof String) {
-			this.feeTypeID.setValue(dataObject.toString());
-			this.feeTypeID.setDescription("");
-			this.feeTypeID.setAttribute("TaxApplicable", false);
-			this.feeTypeID.setAttribute("TDSApplicable", false);
-			this.feeTypeID.setAttribute("TaxComponent", "");
-		} else {
-			FeeType details = (FeeType) dataObject;
-			if (details != null) {
-				this.feeTypeID.setAttribute("FeeTypeID", details.getFeeTypeID());
-				this.feeTypeID.setAttribute("TaxApplicable", details.isTaxApplicable());
-				this.feeTypeID.setAttribute("TDSApplicable", details.isTdsReq());
-				this.feeTypeID.setAttribute("TaxComponent", details.getTaxComponent());
-			} else {
-				this.feeTypeID.setAttribute("TaxApplicable", false);
-				this.feeTypeID.setAttribute("TDSApplicable", false);
-				this.feeTypeID.setAttribute("TaxComponent", "");
-			}
 
-			if (details != null && dataObject instanceof FeeType) {
-				setEligibleAmount(details);
-			}
+		FeeType feeType = getFeeType();
+
+		if (feeType != null && feeType instanceof FeeType) {
+			setEligibleAmount(feeType);
 		}
 
 		calculateGST();
@@ -465,6 +447,32 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		doDisplayEligibleAmount();
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private FeeType getFeeType() {
+		FeeType feeType = null;
+		Object dataObject = feeTypeID.getObject();
+		if (dataObject instanceof String) {
+			this.feeTypeID.setValue(dataObject.toString());
+			this.feeTypeID.setDescription("");
+			this.feeTypeID.setAttribute("TaxApplicable", false);
+			this.feeTypeID.setAttribute("TDSApplicable", false);
+			this.feeTypeID.setAttribute("TaxComponent", "");
+		} else {
+			feeType = (FeeType) dataObject;
+			if (feeType != null) {
+				this.feeTypeID.setAttribute("FeeTypeID", feeType.getFeeTypeID());
+				this.feeTypeID.setAttribute("TaxApplicable", feeType.isTaxApplicable());
+				this.feeTypeID.setAttribute("TDSApplicable", feeType.isTdsReq());
+				this.feeTypeID.setAttribute("TaxComponent", feeType.getTaxComponent());
+			} else {
+				this.feeTypeID.setAttribute("TaxApplicable", false);
+				this.feeTypeID.setAttribute("TDSApplicable", false);
+				this.feeTypeID.setAttribute("TaxComponent", "");
+			}
+		}
+
+		return feeType;
 	}
 
 	private void doDisplayEligibleAmount() {
@@ -517,6 +525,14 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		doDisplayEligibleAmount();
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChange$valueDate(Event event) {
+		FeeType feeType = getFeeType();
+
+		if (feeType != null && feeType instanceof FeeType) {
+			setEligibleAmount(feeType);
+		}
 	}
 
 	/**
@@ -1900,7 +1916,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		if (Allocation.ADHOC.equals(linkTo)) {
 			amount = BigDecimal.ZERO;
 		} else if (isValidPayableLink(linkTo, ft.getAdviseType())) {
-			amount = manualAdviseService.getEligibleAmount(manualAdvise, ft);
+			ManualAdvise ma = new ManualAdvise();
+
+			ma.setFinReference(manualAdvise.getFinReference());
+			ma.setValueDate(this.valueDate.getValue());
+
+			amount = manualAdviseService.getEligibleAmount(ma, ft);
 			amount = PennantApplicationUtil.formateAmount(amount, PennantConstants.defaultCCYDecPos);
 		}
 
