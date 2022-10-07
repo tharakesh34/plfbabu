@@ -35,9 +35,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.amtmasters.VehicleDealer;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -54,7 +54,7 @@ public class VehicleDealerListModelItemRenderer implements ListitemRenderer<Vehi
 	@Override
 	public void render(Listitem item, VehicleDealer vehicleDealer, int count) {
 		Listcell lc;
-		lc = new Listcell(PennantAppUtil.getlabelDesc(StringUtils.trimToEmpty(vehicleDealer.getDealerType()),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(StringUtils.trimToEmpty(vehicleDealer.getDealerType()),
 				PennantStaticListUtil.getDealerType()));
 		lc.setParent(item);
 		lc = new Listcell(vehicleDealer.getDealerName());

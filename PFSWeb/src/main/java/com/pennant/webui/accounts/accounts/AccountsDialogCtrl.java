@@ -427,8 +427,8 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.acFullName.setValue(aAccounts.getAcFullName());
 		this.acShortName.setValue(aAccounts.getAcShortName());
 		this.acPurpose.setValue(aAccounts.getAcPurpose());
-		this.lovDescAcPurpose.setValue(
-				PennantAppUtil.getlabelDesc(aAccounts.getAcPurpose(), PennantStaticListUtil.getAccountPurpose()));
+		this.lovDescAcPurpose.setValue(PennantApplicationUtil.getLabelDesc(aAccounts.getAcPurpose(),
+				PennantStaticListUtil.getAccountPurpose()));
 		this.internalAc.setChecked(aAccounts.isInternalAc());
 		this.custSysAc.setChecked(aAccounts.isCustSysAc());
 		if (this.custSysAc.isChecked()) {

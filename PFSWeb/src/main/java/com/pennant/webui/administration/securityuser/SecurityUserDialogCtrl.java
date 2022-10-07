@@ -99,6 +99,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.ClusterService;
 import com.pennant.backend.service.applicationmaster.ReportingManagerService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -591,7 +592,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		if (securityUser.isNewRecord()) {
 			this.usrDftAppId.setSelectedIndex(0);
 		} else {
-			this.usrDftAppId.setValue(PennantAppUtil.getlabelDesc(String.valueOf(securityUser.getUsrDftAppId()),
+			this.usrDftAppId.setValue(PennantApplicationUtil.getLabelDesc(String.valueOf(securityUser.getUsrDftAppId()),
 					PennantStaticListUtil.getAppCodes()));
 		}
 		fillComboBox(authType, securityUser.getAuthType(), authTypesList, "");

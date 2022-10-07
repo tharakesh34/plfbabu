@@ -711,7 +711,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		FinanceMain main = detail.getFinScheduleData().getFinanceMain();
 
 		String rate = PennantApplicationUtil.formatRate(main.getRepayProfitRate().doubleValue(), 2);
-		String[] rateFields = new String[] { rate, PennantAppUtil.getlabelDesc(main.getRepayRateBasis(),
+		String[] rateFields = new String[] { rate, PennantApplicationUtil.getLabelDesc(main.getRepayRateBasis(),
 				PennantStaticListUtil.getInterestRateType(true)) };
 		this.pricing.setValue(Labels.getLabel("label_IndTermDetailDialog_Pricing", rateFields));
 

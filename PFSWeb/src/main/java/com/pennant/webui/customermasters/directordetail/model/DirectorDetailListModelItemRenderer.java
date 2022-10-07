@@ -39,8 +39,8 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -82,7 +82,7 @@ public class DirectorDetailListModelItemRenderer implements ListitemRenderer<Dir
 			}
 			if (StringUtils.trimToEmpty(directorDetail.getCustAddrCountry())
 					.equals(StringUtils.trimToEmpty(directorDetail.getLovDescCustAddrCountryName()))) {
-				String desc = PennantAppUtil.getlabelDesc(directorDetail.getCustAddrCountry(), countryList);
+				String desc = PennantApplicationUtil.getLabelDesc(directorDetail.getCustAddrCountry(), countryList);
 				directorDetail.setLovDescCustAddrCountryName(desc);
 			}
 			Listcell lc = new Listcell(name);
@@ -100,12 +100,12 @@ public class DirectorDetailListModelItemRenderer implements ListitemRenderer<Dir
 			}
 			if (StringUtils.trimToEmpty(directorDetail.getIdType())
 					.equals(StringUtils.trimToEmpty(directorDetail.getLovDescCustDocCategoryName()))) {
-				String desc = PennantAppUtil.getlabelDesc(directorDetail.getIdType(), docTypeList);
+				String desc = PennantApplicationUtil.getLabelDesc(directorDetail.getIdType(), docTypeList);
 				directorDetail.setLovDescCustDocCategoryName(desc);
 			}
 			if (StringUtils.trimToEmpty(directorDetail.getNationality())
 					.equals(StringUtils.trimToEmpty(directorDetail.getLovDescNationalityName()))) {
-				String desc = PennantAppUtil.getlabelDesc(directorDetail.getNationality(), countryList);
+				String desc = PennantApplicationUtil.getLabelDesc(directorDetail.getNationality(), countryList);
 				directorDetail.setLovDescNationalityName(desc);
 			}
 			if (StringUtils.isNotBlank(directorDetail.getLovDescCustDocCategoryName())) {

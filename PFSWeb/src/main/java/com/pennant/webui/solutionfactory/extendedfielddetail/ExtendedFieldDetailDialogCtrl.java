@@ -69,13 +69,13 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.solutionfactory.ExtendedFieldDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -446,12 +446,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		if (isTextType()) {
 			fillComboBox(this.fieldConstraint, aExtendedFieldDetail.getFieldConstraint(),
 					PennantStaticListUtil.getRegexType(), "");
-			this.fieldConstraint.setValue(PennantAppUtil.getlabelDesc(aExtendedFieldDetail.getFieldConstraint(),
+			this.fieldConstraint.setValue(PennantApplicationUtil.getLabelDesc(aExtendedFieldDetail.getFieldConstraint(),
 					PennantStaticListUtil.getRegexType()));
 		} else if (isDateType()) {
 			fillComboBox(this.fieldConstraint, aExtendedFieldDetail.getFieldConstraint().split(",")[0],
 					PennantStaticListUtil.getDateType(), "");
-			this.fieldConstraint.setValue(PennantAppUtil.getlabelDesc(
+			this.fieldConstraint.setValue(PennantApplicationUtil.getLabelDesc(
 					aExtendedFieldDetail.getFieldConstraint().split(",")[0], PennantStaticListUtil.getDateType()));
 		}
 

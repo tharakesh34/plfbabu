@@ -1417,7 +1417,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		valueParm[0] = String.valueOf(aJVPostingEntry.getAccount());
 		valueParm[1] = PennantApplicationUtil.amountFormate(aJVPostingEntry.getTxnAmount(),
 				CurrencyUtil.getFormat(getJVPostingEntry().getTxnCCy()));
-		valueParm[2] = PennantAppUtil.getlabelDesc(aJVPostingEntry.getTxnEntry(), listTxnType);
+		valueParm[2] = PennantApplicationUtil.getLabelDesc(aJVPostingEntry.getTxnEntry(), listTxnType);
 
 		errParm[0] = PennantJavaUtil.getLabel("label_Account") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_TxnAmount") + ":" + valueParm[1];

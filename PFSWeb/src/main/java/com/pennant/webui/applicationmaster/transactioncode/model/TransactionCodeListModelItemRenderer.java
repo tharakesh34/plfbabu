@@ -34,9 +34,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.applicationmaster.TransactionCode;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -58,8 +58,8 @@ public class TransactionCodeListModelItemRenderer implements ListitemRenderer<Tr
 		lc.setParent(item);
 		lc = new Listcell(transactionCode.getTranDesc());
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(transactionCode.getTranType(), PennantStaticListUtil.getTranTypeBoth()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(transactionCode.getTranType(),
+				PennantStaticListUtil.getTranTypeBoth()));
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbTranIsActive = new Checkbox();

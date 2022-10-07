@@ -33,9 +33,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -58,7 +58,7 @@ public class DashboardConfigurationListModelItemRenderer
 		lc.setParent(item);
 		lc = new Listcell(dashboardConfig.getDashboardDesc());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(dashboardConfig.getDashboardType(),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(dashboardConfig.getDashboardType(),
 				PennantStaticListUtil.getDashBoardType()));
 		lc.setParent(item);
 		lc = new Listcell(dashboardConfig.getRecordStatus());

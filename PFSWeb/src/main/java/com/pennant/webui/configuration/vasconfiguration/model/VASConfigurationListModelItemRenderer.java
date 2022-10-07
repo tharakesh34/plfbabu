@@ -33,9 +33,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -61,7 +61,7 @@ public class VASConfigurationListModelItemRenderer implements ListitemRenderer<V
 		lc = new Listcell(vASConfiguration.getProductCategory());
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.getlabelDesc(vASConfiguration.getRecAgainst(),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(vASConfiguration.getRecAgainst(),
 				PennantStaticListUtil.getRecAgainstTypes()));
 		lc.setParent(item);
 

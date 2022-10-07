@@ -37,6 +37,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
@@ -110,7 +111,7 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 		lc = new Listcell(financeMain.getLovDescRequestStage());
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(financeMain.getPriority()),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(String.valueOf(financeMain.getPriority()),
 				PennantStaticListUtil.getQueuePriority()));
 		switch (financeMain.getPriority()) {
 		case 0:

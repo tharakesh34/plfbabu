@@ -34,6 +34,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.systemmasters.CustTypePANMapping;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
@@ -52,8 +53,8 @@ public class PANMappingListModelItemRenderer implements ListitemRenderer<CustTyp
 	public void render(Listitem item, CustTypePANMapping custTypePANMapping, int count) {
 
 		Listcell lc;
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(custTypePANMapping.getCustCategory(), PennantAppUtil.getcustCtgCodeList()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(custTypePANMapping.getCustCategory(),
+				PennantAppUtil.getcustCtgCodeList()));
 		lc.setParent(item);
 		lc = new Listcell(custTypePANMapping.getCustTypeDesc());
 		lc.setParent(item);

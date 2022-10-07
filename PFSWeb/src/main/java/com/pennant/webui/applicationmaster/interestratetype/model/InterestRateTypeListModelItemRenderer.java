@@ -34,9 +34,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.applicationmaster.InterestRateType;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for list items in the list box.
@@ -54,7 +54,7 @@ public class InterestRateTypeListModelItemRenderer implements ListitemRenderer<I
 	public void render(Listitem item, InterestRateType interestRateType, int count) {
 
 		Listcell lc;
-		lc = new Listcell(PennantAppUtil.getlabelDesc(interestRateType.getIntRateTypeCode(),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(interestRateType.getIntRateTypeCode(),
 				PennantStaticListUtil.getInterestRateType(false)));
 		lc.setParent(item);
 		lc = new Listcell(interestRateType.getIntRateTypeDesc());

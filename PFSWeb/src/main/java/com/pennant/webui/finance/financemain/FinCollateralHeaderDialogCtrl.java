@@ -249,7 +249,7 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 				Listitem listitem = new Listitem();
 				Listcell listcell;
 				listcell = new Listcell(
-						PennantAppUtil.getlabelDesc(finCollateral.getCollateralType(), collateralTypes));
+						PennantApplicationUtil.getLabelDesc(finCollateral.getCollateralType(), collateralTypes));
 				listitem.appendChild(listcell);
 				listcell = new Listcell(finCollateral.getReference());
 				listitem.appendChild(listcell);

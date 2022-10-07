@@ -44,7 +44,8 @@ public class LoanEnquiryPostingsListItemRenderer implements ListitemRenderer<Obj
 			ReturnDataSet entry = (ReturnDataSet) data;
 			lc = new Listcell(DateUtility.getDBDate(entry.getValueDate().toString()).toString());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.getlabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
+			lc = new Listcell(
+					PennantApplicationUtil.getLabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
 			lc.setParent(item);
 			lc = new Listcell(entry.getTranCode());
 			lc.setParent(item);

@@ -65,11 +65,11 @@ import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.reports.ReportConfigurationService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
@@ -429,8 +429,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 			} else {
 				this.alwMultiFormat.setDisabled(true);
 			}
-			this.dataSourceName
-					.setValue(PennantAppUtil.getlabelDesc(String.valueOf(aReportConfiguration.getDataSourceName()),
+			this.dataSourceName.setValue(
+					PennantApplicationUtil.getLabelDesc(String.valueOf(aReportConfiguration.getDataSourceName()),
 							PennantStaticListUtil.getDataSourceNames()));
 		}
 		this.reportJasperName.setValue(aReportConfiguration.getReportJasperName());

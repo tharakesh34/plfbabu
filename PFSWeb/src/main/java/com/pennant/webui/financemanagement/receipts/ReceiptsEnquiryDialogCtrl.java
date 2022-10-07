@@ -983,7 +983,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Validation against Future Disbursements, if Closing balance is
 		// becoming BigDecimal.ZERO before future disbursement date
 		List<FinanceDisbursement> disbList = fsd.getDisbursementDetails();
-		String eventDesc = PennantAppUtil.getlabelDesc(receiptData.getReceiptHeader().getReceiptPurpose(),
+		String eventDesc = PennantApplicationUtil.getLabelDesc(receiptData.getReceiptHeader().getReceiptPurpose(),
 				PennantStaticListUtil.getReceiptPurpose());
 		for (int i = 0; i < disbList.size(); i++) {
 			FinanceDisbursement curDisb = disbList.get(i);
@@ -1007,7 +1007,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.finSchType.setValue(aFinanceMain.getFinType());
 			this.finSchCcy.setValue(aFinanceMain.getFinCcy());
 			this.finSchMethod.setValue(aFinanceMain.getScheduleMethod());
-			this.finSchProfitDaysBasis.setValue(PennantAppUtil.getlabelDesc(aFinanceMain.getProfitDaysBasis(),
+			this.finSchProfitDaysBasis.setValue(PennantApplicationUtil.getLabelDesc(aFinanceMain.getProfitDaysBasis(),
 					PennantStaticListUtil.getProfitDaysBasis()));
 			this.finSchReference.setValue(aFinanceMain.getFinReference());
 			this.finSchGracePeriodEndDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));

@@ -35,8 +35,8 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -54,7 +54,7 @@ public class ExtendedFieldDetailListModelItemRenderer implements ListitemRendere
 	public void render(Listitem item, ExtendedFieldHeader extendedFieldDetail, int count) {
 
 		Listcell lc;
-		lc = new Listcell(PennantAppUtil.getlabelDesc(extendedFieldDetail.getModuleName(), this.modulesList));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(extendedFieldDetail.getModuleName(), this.modulesList));
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel("label_ExtendedField_" + extendedFieldDetail.getSubModuleName()));
 		lc.setParent(item);

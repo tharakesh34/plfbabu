@@ -34,8 +34,8 @@ public class CustomerAccountListModelItemRender implements ListitemRenderer<Acco
 		lc.setParent(item);
 		lc = new Listcell(accounts.getAcCcy());
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(accounts.getAcPurpose(), PennantStaticListUtil.getAccountPurpose()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(accounts.getAcPurpose(),
+				PennantStaticListUtil.getAccountPurpose()));
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbIsInternalAc = new Checkbox();

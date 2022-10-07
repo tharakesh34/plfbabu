@@ -24,6 +24,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.customermasters.CustomerIncome;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -46,10 +47,11 @@ public class CustomerIncomeListItemRenderer implements ListitemRenderer<Customer
 
 		int format = CurrencyUtil.getFormat(income.getToCcy());
 		Listcell lc;
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(income.getIncomeExpense(), PennantStaticListUtil.getIncomeExpense()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(income.getIncomeExpense(),
+				PennantStaticListUtil.getIncomeExpense()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(income.getCategory(), PennantAppUtil.getIncomeExpenseCategory()));
+		lc = new Listcell(
+				PennantApplicationUtil.getLabelDesc(income.getCategory(), PennantAppUtil.getIncomeExpenseCategory()));
 		lc.setParent(item);
 		if (income.getRecordType().equals(PennantConstants.RCD_ADD)
 				|| income.getRecordType().equals(PennantConstants.RCD_UPD)) {

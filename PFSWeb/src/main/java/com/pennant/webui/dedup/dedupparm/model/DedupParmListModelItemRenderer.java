@@ -34,6 +34,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
@@ -58,12 +59,12 @@ public class DedupParmListModelItemRenderer implements ListitemRenderer<DedupPar
 		lc = new Listcell(dedupParm.getQueryDesc());
 		lc.setParent(item);
 		if (dedupParm.getQueryModule().equals(FinanceConstants.DEDUP_CUSTOMER)) {
-			lc = new Listcell(
-					PennantAppUtil.getlabelDesc(dedupParm.getQuerySubCode(), PennantAppUtil.getcustCtgCodeList()));
+			lc = new Listcell(PennantApplicationUtil.getLabelDesc(dedupParm.getQuerySubCode(),
+					PennantAppUtil.getcustCtgCodeList()));
 			lc.setParent(item);
 		} else if (dedupParm.getQueryModule().equals(FinanceConstants.DEDUP_COLLATERAL)) {
-			lc = new Listcell(
-					PennantAppUtil.getlabelDesc(dedupParm.getQuerySubCode(), PennantAppUtil.getCollateralTypesList()));
+			lc = new Listcell(PennantApplicationUtil.getLabelDesc(dedupParm.getQuerySubCode(),
+					PennantAppUtil.getCollateralTypesList()));
 			lc.setParent(item);
 		} else {
 			lc = new Listcell();

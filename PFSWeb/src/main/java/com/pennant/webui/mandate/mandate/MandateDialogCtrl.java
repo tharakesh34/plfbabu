@@ -1535,7 +1535,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (!StringUtils.equals(aMandate.getStatus(), PennantConstants.List_Select)) {
-			this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), PennantStaticListUtil
+			this.regStatus.setValue(PennantApplicationUtil.getLabelDesc(aMandate.getStatus(), PennantStaticListUtil
 					.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
 		}
 

@@ -1184,7 +1184,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.finSchCcy.setValue(aFinanceMain.getFinCcy());
 			this.finSchMethod.setValue(aFinanceMain.getScheduleMethod());
 			this.finSchProfitDaysBasis
-					.setValue(PennantAppUtil.getlabelDesc(aFinanceMain.getProfitDaysBasis(), profitDayList));
+					.setValue(PennantApplicationUtil.getLabelDesc(aFinanceMain.getProfitDaysBasis(), profitDayList));
 			this.finSchReference.setValue(aFinanceMain.getFinReference());
 			this.finSchGracePeriodEndDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
 			this.effectiveRateOfReturn.setValue(aFinanceMain.getEffectiveRateOfReturn().toString() + "%");

@@ -381,10 +381,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 				: aCustomerBalanceSheet.getLovDescCustCIF().trim());
 		this.custShrtName.setValue(aCustomerBalanceSheet.getLovDescCustShrtName() == null ? ""
 				: aCustomerBalanceSheet.getLovDescCustShrtName().trim());
-		/*
-		 * this.financialYear.setValue(PennantAppUtil.getlabelDesc(
-		 * aCustomerBalanceSheet.getFinancialYear(),listFinancialYear));
-		 */
+
 		this.totalAssets.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getTotalAssets(), 0));
 		this.totalLiabilities.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getTotalLiabilities(), 0));
 		this.netProfit.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetProfit(), 0));

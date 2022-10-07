@@ -48,6 +48,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -169,7 +170,7 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			lc = new Listcell(String.valueOf(doc.getDocId()));
 			listitem.appendChild(lc);
 
-			lc = new Listcell(PennantAppUtil.getlabelDesc(doc.getDocCategory(), list));
+			lc = new Listcell(PennantApplicationUtil.getLabelDesc(doc.getDocCategory(), list));
 			listitem.appendChild(lc);
 
 			lc = new Listcell(doc.getDoctype());

@@ -265,22 +265,6 @@ public class PennantAppUtil {
 
 	/**
 	 * 
-	 * @deprecated use {@link PennantApplicationUtil#getLabelDesc} instead.
-	 */
-	public static String getlabelDesc(String value, List<ValueLabel> list) {
-		return PennantApplicationUtil.getLabelDesc(value, list);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#getValueDesc} instead.
-	 */
-	public static String getValueDesc(String label, List<ValueLabel> list) {
-		return PennantApplicationUtil.getValueDesc(label, list);
-	}
-
-	/**
-	 * 
 	 * @deprecated use {@link PennantApplicationUtil#amountFormate} instead.
 	 */
 	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
@@ -2180,8 +2164,9 @@ public class PennantAppUtil {
 
 		List<FinTypeReceiptModes> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
-			ValueLabel receiptMode = new ValueLabel(String.valueOf(appList.get(i).getReceiptMode()), PennantAppUtil
-					.getlabelDesc(appList.get(i).getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
+			ValueLabel receiptMode = new ValueLabel(String.valueOf(appList.get(i).getReceiptMode()),
+					PennantApplicationUtil.getLabelDesc(appList.get(i).getReceiptMode(),
+							PennantStaticListUtil.getReceiptModes()));
 			receiptModesList.add(receiptMode);
 		}
 		return receiptModesList;

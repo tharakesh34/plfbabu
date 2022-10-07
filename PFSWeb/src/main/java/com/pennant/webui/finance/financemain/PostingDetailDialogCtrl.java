@@ -154,8 +154,8 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					}
 				}
 				item = new Listitem();
-				Listcell lc = new Listcell(
-						PennantAppUtil.getlabelDesc(returnDataSet.getDrOrCr(), PennantStaticListUtil.getTranType()));
+				Listcell lc = new Listcell(PennantApplicationUtil.getLabelDesc(returnDataSet.getDrOrCr(),
+						PennantStaticListUtil.getTranType()));
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getTranDesc());
 				lc.setParent(item);

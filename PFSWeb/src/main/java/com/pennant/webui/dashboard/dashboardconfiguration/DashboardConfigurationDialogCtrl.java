@@ -60,6 +60,7 @@ import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.dashboard.DashboardConfigurationService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.fusioncharts.ChartSetElement;
@@ -463,17 +464,17 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		this.remarks.setValue(aDashboardConfiguration.getRemarks());
 		this.isMultiSeries.setChecked(aDashboardConfiguration.isMultiSeries());
 		if (aDashboardConfiguration.isNewRecord()) {
-			this.dashboardType.setValue(PennantAppUtil.getlabelDesc("", PennantAppUtil.getDashBoardType()));
+			this.dashboardType.setValue(PennantApplicationUtil.getLabelDesc("", PennantAppUtil.getDashBoardType()));
 		} else {
-			this.dashboardType.setValue(PennantAppUtil.getlabelDesc(
+			this.dashboardType.setValue(PennantApplicationUtil.getLabelDesc(
 					String.valueOf(aDashboardConfiguration.getDashboardType()), PennantAppUtil.getDashBoardType()));
 		}
 		if (aDashboardConfiguration.isNewRecord()) {
-			this.cbDimension.setValue(PennantAppUtil.getlabelDesc(String.valueOf(Labels.getLabel("label_Select_2D")),
-					PennantAppUtil.getChartDimensions()));
+			this.cbDimension.setValue(PennantApplicationUtil.getLabelDesc(
+					String.valueOf(Labels.getLabel("label_Select_2D")), PennantAppUtil.getChartDimensions()));
 
 		} else {
-			this.cbDimension.setValue(PennantAppUtil.getlabelDesc(
+			this.cbDimension.setValue(PennantApplicationUtil.getLabelDesc(
 					String.valueOf(aDashboardConfiguration.getDimension()), PennantAppUtil.getChartDimensions()));
 
 		}

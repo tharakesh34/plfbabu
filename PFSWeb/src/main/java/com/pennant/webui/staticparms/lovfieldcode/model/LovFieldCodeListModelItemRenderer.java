@@ -34,9 +34,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.staticparms.LovFieldCode;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -58,7 +58,7 @@ public class LovFieldCodeListModelItemRenderer implements ListitemRenderer<LovFi
 		lc.setParent(item);
 		lc = new Listcell(lovFieldCode.getFieldCodeDesc());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(lovFieldCode.getFieldCodeType().trim(),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(lovFieldCode.getFieldCodeType().trim(),
 				PennantStaticListUtil.getLovFieldType()));
 		lc.setParent(item);
 		lc = new Listcell();
