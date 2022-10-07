@@ -63,6 +63,7 @@ import org.zkoss.zul.Treeitem;
 import org.zkoss.zul.Treerow;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -1719,7 +1720,7 @@ public class QueryBuilder extends Groupbox {
 					// AC == Account Number
 					// CD == Date with Century
 					if ("A".equalsIgnoreCase(type)) {
-						listCell = new Listcell(PennantAppUtil.formatAmount(new BigDecimal(data), 2));
+						listCell = new Listcell(CurrencyUtil.format(new BigDecimal(data), 2));
 						listCell.setParent(item);
 						listCell.setStyle("text-align:right;");
 					} else if ("D".equalsIgnoreCase(type)) {
