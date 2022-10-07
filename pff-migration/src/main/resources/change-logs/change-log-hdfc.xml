@@ -404,4 +404,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="03" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'N' WHERE SYSPARMCODE = 'EOM_ON_EOD';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
