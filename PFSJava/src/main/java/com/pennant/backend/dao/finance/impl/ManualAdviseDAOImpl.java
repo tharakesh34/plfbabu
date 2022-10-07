@@ -1916,7 +1916,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public BigDecimal getPaidAmountsByFeeType(String reference, Long feeTypeId, Date valueDate) {
-		StringBuilder sql = new StringBuilder("Select coalesce((rad.PaidAmount - rad.TdsPaid), 0)");
+		StringBuilder sql = new StringBuilder("Select coalesce(sum(rad.PaidAmount - rad.TdsPaid), 0)");
 		sql.append(" From ReceiptAllocationDetail rad");
 		sql.append(" Inner Join FinReceiptHeader rh on rh.ReceiptID = rad.ReceiptID");
 		sql.append(" Inner Join ManualAdvise ma on ma.AdviseID = rad.AllocationTO");
