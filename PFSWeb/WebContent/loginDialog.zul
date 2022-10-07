@@ -155,7 +155,11 @@
 														w:onClick="encryptPassword()" />
 												</div>
 											</row>
-
+											<row>
+												<div>
+													<space spacing="2px"/>
+												</div>
+											</row>
 											<row>
 												<cell colspan="2"></cell>
 											</row>
