@@ -33,8 +33,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.staticparms.Language;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for list items in the list box.
@@ -56,7 +56,7 @@ public class LanguageListModelItemRenderer implements ListitemRenderer<Language>
 		lc.setParent(item);
 		lc = new Listcell(language.getLngDesc());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(language.getLngNumber()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(language.getLngNumber()));
 		lc.setParent(item);
 		lc = new Listcell(language.getRecordStatus());
 		lc.setParent(item);

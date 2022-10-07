@@ -4787,7 +4787,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			} else if (this.row_downPayBank.isVisible() && !this.downPayBank.isReadonly()) {
 
 				this.downPayBank.clearErrorMessage();
-				BigDecimal reqDwnPay = PennantAppUtil.getPercentageValue(this.finAmount.getActualValue(),
+				BigDecimal reqDwnPay = PennantApplicationUtil.getPercentageValue(this.finAmount.getActualValue(),
 						aFinanceMain.getMinDownPayPerc());
 
 				BigDecimal downPayment = this.downPayBank.getActualValue() == null ? BigDecimal.ZERO

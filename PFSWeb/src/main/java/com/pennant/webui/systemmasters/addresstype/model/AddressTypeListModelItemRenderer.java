@@ -34,8 +34,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.systemmasters.AddressType;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for list items in the list box.
@@ -57,7 +57,7 @@ public class AddressTypeListModelItemRenderer implements ListitemRenderer<Addres
 		lc.setParent(item);
 		lc = new Listcell(addressType.getAddrTypeDesc());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(addressType.getAddrTypePriority()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(addressType.getAddrTypePriority()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 

@@ -40,7 +40,6 @@ import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -58,7 +57,7 @@ public class TransactionEntryListModelItemRenderer implements ListitemRenderer<T
 	public void render(Listitem item, TransactionEntry transactionEntry, int count) {
 
 		Listcell lc;
-		lc = new Listcell(PennantAppUtil.formateInt(transactionEntry.getTransOrder()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(transactionEntry.getTransOrder()));
 		lc.setParent(item);
 		lc = new Listcell(transactionEntry.getTransDesc());
 		lc.setParent(item);

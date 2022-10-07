@@ -47,10 +47,10 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.service.systemmasters.AddressTypeService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -156,7 +156,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 		// Empty sent any required attributes
 		this.addrTypeCode.setMaxlength(8);
 		this.addrTypeDesc.setMaxlength(50);
-		this.addrTypePriority.setFormat(PennantAppUtil.formateInt(0));
+		this.addrTypePriority.setFormat(PennantApplicationUtil.formateInt(0));
 		this.addrTypePriority.setMaxlength(4);
 
 		if (isWorkFlowEnabled()) {

@@ -61,7 +61,7 @@ public class ScoringGroupListModelItemRenderer implements ListitemRenderer<Scori
 		lc = new Listcell(PennantApplicationUtil.getLabelDesc(scoringGroup.getCategoryType(),
 				PennantAppUtil.getcustCtgCodeList()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(scoringGroup.getMinScore()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(scoringGroup.getMinScore()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell();
@@ -70,7 +70,7 @@ public class ScoringGroupListModelItemRenderer implements ListitemRenderer<Scori
 		cbIsoverride.setChecked(scoringGroup.isIsOverride());
 		lc.appendChild(cbIsoverride);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(scoringGroup.getOverrideScore()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(scoringGroup.getOverrideScore()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(scoringGroup.getRecordStatus());

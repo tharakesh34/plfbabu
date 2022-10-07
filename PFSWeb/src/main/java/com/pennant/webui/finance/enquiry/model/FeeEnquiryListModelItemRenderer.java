@@ -10,6 +10,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
@@ -79,7 +80,7 @@ public class FeeEnquiryListModelItemRenderer implements ListitemRenderer<FinFeeD
 			}
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.formateInt(finFeeDetail.getTerms()));
+			lc = new Listcell(PennantApplicationUtil.formateInt(finFeeDetail.getTerms()));
 			lc.setParent(item);
 
 		}

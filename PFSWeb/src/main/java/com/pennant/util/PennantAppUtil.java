@@ -303,30 +303,6 @@ public class PennantAppUtil {
 		return CurrencyUtil.format(value, decPos);
 	}
 
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#formateLong} instead.
-	 */
-	public static String formateLong(long longValue) {
-		return PennantApplicationUtil.formateLong(longValue);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#formateInt} instead.
-	 */
-	public static String formateInt(int intValue) {
-		return PennantApplicationUtil.formateInt(intValue);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#getPercentageValue} instead.
-	 */
-	public static BigDecimal getPercentageValue(BigDecimal amount, BigDecimal percent) {
-		return PennantApplicationUtil.getPercentageValue(amount, percent);
-	}
-
 	public static String formateDate(Date date, String dateFormate) {
 		String formatedDate = null;
 		if (StringUtils.isBlank(dateFormate)) {

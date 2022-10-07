@@ -34,8 +34,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.bmtmasters.RatingType;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -63,7 +63,7 @@ public class RatingTypeListModelItemRenderer implements ListitemRenderer<RatingT
 		cbValueType.setChecked(ratingType.isValueType());
 		lc.appendChild(cbValueType);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(ratingType.getValueLen()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(ratingType.getValueLen()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell();

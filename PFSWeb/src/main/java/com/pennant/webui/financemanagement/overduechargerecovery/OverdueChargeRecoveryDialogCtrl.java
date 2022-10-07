@@ -608,7 +608,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		 */
 		try {
 			if (this.finODCWaived.getValue() != null) {
-				BigDecimal reqWaiver = PennantAppUtil.getPercentageValue(this.finODCPenalty.getValue(),
+				BigDecimal reqWaiver = PennantApplicationUtil.getPercentageValue(this.finODCPenalty.getValue(),
 						getOverdueChargeRecovery().getFinODCMaxWaiver());
 				if (!this.finODCWaived.isDisabled() && this.finODCWaived.getValue() != null) {
 					if (this.finODCWaived.getValue()
@@ -1261,7 +1261,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 
 		int format = CurrencyUtil.getFormat(getOverdueChargeRecovery().getFinCcy());
 		this.finODCWaived.clearErrorMessage();
-		BigDecimal reqWaiver = PennantAppUtil.getPercentageValue(this.finODCPenalty.getValue(),
+		BigDecimal reqWaiver = PennantApplicationUtil.getPercentageValue(this.finODCPenalty.getValue(),
 				getOverdueChargeRecovery().getFinODCMaxWaiver());
 		if (!this.finODCWaived.isDisabled() && this.finODCWaived.getValue() != null) {
 			if (this.finODCWaived.getValue()

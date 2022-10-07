@@ -33,8 +33,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.finance.FinanceRepayPriority;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -54,7 +54,7 @@ public class FinanceRepayPriorityListModelItemRenderer implements ListitemRender
 		Listcell lc;
 		lc = new Listcell(financeRepayPriority.getFinType() + "-" + financeRepayPriority.getLovDescFinTypeName());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(financeRepayPriority.getFinPriority()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(financeRepayPriority.getFinPriority()));
 		lc.setParent(item);
 		lc = new Listcell(financeRepayPriority.getRecordStatus());
 		lc.setParent(item);

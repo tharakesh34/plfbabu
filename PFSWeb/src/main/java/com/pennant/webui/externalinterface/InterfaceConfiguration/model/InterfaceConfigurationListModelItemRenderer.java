@@ -33,8 +33,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -59,7 +59,7 @@ public class InterfaceConfigurationListModelItemRenderer
 		lc.setParent(item);
 		lc = new Listcell(interfaceConfiguration.getType());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(interfaceConfiguration.getNotificationType()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(interfaceConfiguration.getNotificationType()));
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbactive = new Checkbox();
