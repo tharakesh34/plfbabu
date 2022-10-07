@@ -3641,9 +3641,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			scheduleLabel.setValue(Labels.getLabel("label_ReceiptDialog_EffecScheduleMethod.value"));
 			List<ValueLabel> epyMethodList = getEffectiveSchdMethods();
 			String defaultMethod = "";
-
-			if (!epyMethodList.isEmpty() && rch.getEffectSchdMethod() != null) {
-				defaultMethod = StringUtils.isEmpty(rch.getEffectSchdMethod()) ? epyMethodList.get(0).getValue()
+			String effschmethod = getFinanceDetail().getFinScheduleData().getFinanceType().getFinScheduleOn();
+			
+			if (!epyMethodList.isEmpty() && StringUtils.isNotEmpty(effschmethod)) {
+				defaultMethod = StringUtils.isEmpty(rch.getEffectSchdMethod()) ? effschmethod
 						: rch.getEffectSchdMethod();
 			}
 

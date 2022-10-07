@@ -401,7 +401,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 			sql.append(", DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName, LovDescPromoFinTypeDesc");
 			sql.append(", LovDescDftStepPolicyName, GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType");
-			sql.append(", RpyHierarchy, LovDescEntityCode, LovDescEntityDesc, AlwEarlyPayMethods");
+			sql.append(", RpyHierarchy, LovDescEntityCode, LovDescEntityDesc, AlwEarlyPayMethods, FinScheduleOn");
 		}
 
 		sql.append(" from RMTFinanceTypes");
@@ -607,6 +607,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 						ft.setLovDescEntityCode(rs.getString("LovDescEntityCode"));
 						ft.setLovDescEntityDesc(rs.getString("LovDescEntityDesc"));
 						ft.setAlwEarlyPayMethods(rs.getString("AlwEarlyPayMethods"));
+						ft.setFinScheduleOn(rs.getString("FinScheduleOn"));
 					}
 
 					return ft;
