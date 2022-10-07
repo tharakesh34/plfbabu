@@ -41,9 +41,11 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * Service implementation for methods that depends on <b>FeeType</b>.<br>
@@ -245,12 +247,28 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 
 		FeeType feeType = (FeeType) auditDetail.getModelData();
 
-		if (feeType.isNewRecord() && feeTypeDAO.isDuplicateKey(feeType.getFeeTypeID(), feeType.getFeeTypeCode(),
+		String feeTypeCode = feeType.getFeeTypeCode();
+		if (feeType.isNewRecord() && feeTypeDAO.isDuplicateKey(feeType.getFeeTypeID(), feeTypeCode,
 				feeType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ": " + feeType.getFeeTypeCode();
+			parameters[0] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ": " + feeTypeCode;
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+		}
+
+		int adviseType = feeType.getAdviseType();
+		String payableLinkTo = feeType.getPayableLinkTo();
+
+		if (AdviseType.PAYABLE.id() == adviseType
+				&& !(Allocation.MANADV.equals(payableLinkTo) || Allocation.ADHOC.equals(payableLinkTo))) {
+			String otherFeeTypeCode = feeTypeDAO.getFeeTypeCode(feeTypeCode, payableLinkTo);
+			if (otherFeeTypeCode != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = PennantJavaUtil.getLabel("label_FeeTypeDialog_PayableLinkTo.value").concat(": ")
+						.concat(payableLinkTo);
+				valueParm[1] = PennantJavaUtil.getLabel("label_FeeTypeCode").concat(": ").concat(otherFeeTypeCode);
+				auditDetail.setErrorDetail(new ErrorDetail("41018", valueParm));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -266,4 +284,5 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
 	}
+
 }

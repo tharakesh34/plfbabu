@@ -618,4 +618,25 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			return ft;
 		}
 	}
+
+	@Override
+	public String getFeeTypeCode(String feeTypeCode, String payableLinkTo) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select Min(FeeTypeCode) From (");
+		sql.append(" Select FeeTypeCode From FeeTypes_Temp Where PayableLinkTo  = ? and FeeTypeCode != ?");
+		sql.append(" Union all");
+		sql.append(" Select FeeTypeCode From  FeeTypes Where PayableLinkTo  = ? and FeeTypeCode != ?");
+		sql.append(") T");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, payableLinkTo, feeTypeCode,
+					payableLinkTo, feeTypeCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }

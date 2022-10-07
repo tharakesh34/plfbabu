@@ -66,4 +66,6 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 
 	boolean isValidFee(String feeTypeCode, int adviseType);
 
+	String getFeeTypeCode(String feeTypeCode, String payableLinkTo);
+
 }
