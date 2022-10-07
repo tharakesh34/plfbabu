@@ -474,7 +474,14 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		if (StringUtils.equals(adviseTypeValue, PennantConstants.List_Select)) {
 			this.eligibleAmountLabel.setVisible(false);
 			this.eligibleAmount.setVisible(false);
+			this.feeTypeID.setObject(null);
 			return;
+		}
+
+		int adviseType = Integer.parseInt(adviseTypeValue);
+
+		if (adviseType == AdviseType.RECEIVABLE.id()) {
+			this.feeTypeID.setObject(null);
 		}
 
 		FeeType feeType = null;
@@ -482,8 +489,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		if (object instanceof FeeType) {
 			feeType = (FeeType) object;
 		}
-
-		int adviseType = Integer.parseInt(adviseTypeValue);
 
 		boolean validPayableLink = false;
 
