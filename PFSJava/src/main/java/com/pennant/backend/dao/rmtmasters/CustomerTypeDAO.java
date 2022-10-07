@@ -48,4 +48,6 @@ public interface CustomerTypeDAO extends BasicCrudDao<CustomerType> {
 	 */
 	boolean isDuplicateKey(String customerTypeCode, TableType tableType);
 
+	boolean isExistCustTypeCode(String custTypeCode);
+
 }

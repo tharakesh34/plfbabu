@@ -300,6 +300,17 @@ public class SubSectorServiceImpl extends GenericService<SubSector> implements S
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(subSector.getRecordType())) {
+			boolean sectorcount = subSectorDAO.isExistSectorCode(subSector.getSectorCode(),
+					subSector.getSubSectorCode());
+			if (sectorcount) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_Industry_SubSectorCode") + ": "
+						+ subSector.getSubSectorCode() + " having child Records in Customer Master.It can't be Deleted";
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);

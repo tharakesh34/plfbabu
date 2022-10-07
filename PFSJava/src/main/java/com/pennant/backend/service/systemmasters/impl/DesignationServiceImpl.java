@@ -28,8 +28,10 @@ package com.pennant.backend.service.systemmasters.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.DesignationDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -52,6 +54,7 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DesignationDAO designationDAO;
+	private SecurityUserDAO securityUserDAO;
 
 	public DesignationServiceImpl() {
 		super();
@@ -306,10 +309,25 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(designation.getRecordType())) {
+			boolean isdesignationExsist = securityUserDAO.getDesignationCount(designation.getDesgCode());
+
+			if (isdesignationExsist) {
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_DesgCode") + ": " + designation.getDesgCode();
+
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
 		return auditDetail;
 	}
 
+	@Autowired
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
+	}
 }

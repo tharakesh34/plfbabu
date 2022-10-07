@@ -46,4 +46,6 @@ public interface SectorDAO extends BasicCrudDao<Sector> {
 	 */
 	boolean isDuplicateKey(String sectorCode, TableType tableType);
 
+	boolean isExistSectorCode(String code);
+
 }

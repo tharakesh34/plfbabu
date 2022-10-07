@@ -314,6 +314,16 @@ public class CountryServiceImpl extends GenericService<Country> implements Count
 			}
 		}
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(country.getRecordType())) {
+			boolean countrycount = countryDAO.isExistCountryCode(code);
+			if (countrycount) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_CountryCode") + ": " + code
+						+ " having child Records. so, It can't be Deleted";
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");

@@ -73,4 +73,12 @@ public interface SecurityUserDAO {
 	void lockUserAccounts();
 
 	void markAsDelete(SecurityUser securityUser, String type);
+
+	boolean isexisitvertical(long code);
+
+	boolean isexisitBranchCode(String branchCode);
+
+	boolean isDepartmentExsist(String deptCode);
+
+	boolean getDesignationCount(String usrDesg);
 }

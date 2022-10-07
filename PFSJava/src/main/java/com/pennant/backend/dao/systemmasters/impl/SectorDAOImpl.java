@@ -208,4 +208,13 @@ public class SectorDAOImpl extends BasicDao<Sector> implements SectorDAO {
 
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public boolean isExistSectorCode(String code) {
+		String sql = "Select Count(CustSector) From Customers Where CustSector = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, code) > 0;
+	}
 }

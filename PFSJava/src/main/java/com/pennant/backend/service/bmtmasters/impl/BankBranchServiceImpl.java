@@ -39,6 +39,7 @@ import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -64,6 +65,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	private MandateDAO mandateDAO;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private BeneficiaryDAO beneficiaryDAO;
+	private PartnerBankDAO partnerBankDAO;
 
 	@Autowired(required = false)
 	@Qualifier("bankBranchPostValidationHook")
@@ -364,8 +366,9 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 			int mandateCount = mandateDAO.getBranch(bankBranchID, "");
 			int disbCount = finAdvancePaymentsDAO.getBranch(bankBranchID, "");
 			int beneficiaryCount = beneficiaryDAO.getBranch(bankBranchID, "");
+			boolean bankBnkcount = partnerBankDAO.getPartnerBankbyBankBranch(bankBranch.getBranchCode());
 
-			if (mandateCount != 0 || beneficiaryCount != 0 || disbCount != 0) {
+			if (mandateCount != 0 || beneficiaryCount != 0 || disbCount != 0 || bankBnkcount) {
 				String[] errParm = new String[1];
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(bankBranch.getBranchCode());
@@ -616,6 +619,11 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 
 	public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
 		this.beneficiaryDAO = beneficiaryDAO;
+	}
+
+	@Autowired
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
 	}
 
 	@Override

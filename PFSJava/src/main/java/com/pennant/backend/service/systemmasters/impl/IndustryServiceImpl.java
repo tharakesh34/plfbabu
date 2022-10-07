@@ -309,6 +309,17 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(industry.getRecordType())) {
+			boolean industrycount = industryDAO.isExistIndustryCode(code);
+
+			if (industrycount) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_IndustryCode") + ": " + code
+						+ " having child Records.It can't be Deleted";
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");

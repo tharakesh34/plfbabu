@@ -28,8 +28,10 @@ package com.pennant.backend.service.systemmasters.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.DepartmentDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -52,6 +54,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DepartmentDAO departmentDAO;
+	private SecurityUserDAO securityUserDAO;
 
 	public DepartmentServiceImpl() {
 		super();
@@ -303,8 +306,25 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(department.getRecordType())) {
+			boolean isdepartexsi = securityUserDAO.isDepartmentExsist(department.getDeptCode());
+
+			if (isdepartexsi) {
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_DeptCode") + ": " + department.getDeptCode();
+
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+
+	@Autowired
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
+	}
+
 }

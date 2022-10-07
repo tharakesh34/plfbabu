@@ -16,4 +16,6 @@ public interface DistrictDAO extends BasicCrudDao<District> {
 
 	District getDistrictByCity(String cityCode);
 
+	boolean isExistDistrictCode(long id);
+
 }

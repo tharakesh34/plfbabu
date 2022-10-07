@@ -764,4 +764,40 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 			ps.setLong(index, seu.getUsrID());
 		});
 	}
+
+	@Override
+	public boolean isexisitvertical(long id) {
+		String sql = "Select Count(UsrID) From SecUsers Where BusinessVertical = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, id) > 0;
+	}
+
+	@Override
+	public boolean isexisitBranchCode(String branchCode) {
+		String sql = "Select Count(UsrID) From SecUsers Where UsrBranchCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, branchCode) > 0;
+	}
+
+	@Override
+	public boolean isDepartmentExsist(String deptCode) {
+		String sql = "Select Count(UsrID) From SecUsers Where UsrDeptCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, deptCode) > 0;
+	}
+
+	@Override
+	public boolean getDesignationCount(String usrDesg) {
+		String sql = "Select Count(UsrID) From SecUsers Where usrDesg = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, usrDesg) > 0;
+	}
 }

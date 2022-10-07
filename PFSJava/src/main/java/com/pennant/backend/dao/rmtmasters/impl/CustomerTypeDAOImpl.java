@@ -258,4 +258,13 @@ public class CustomerTypeDAOImpl extends BasicDao<CustomerType> implements Custo
 		return exists;
 	}
 
+	@Override
+	public boolean isExistCustTypeCode(String custTypeCode) {
+		String sql = "Select Count(CustTypeCode) From Customers Where CustTypeCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, custTypeCode) > 0;
+	}
+
 }

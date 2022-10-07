@@ -271,6 +271,16 @@ public class DistrictServiceImpl extends GenericService<District> implements Dis
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
+
+		if (PennantConstants.RECORD_TYPE_DEL.equals(district.getRecordType())) {
+			boolean districtcount = getDistrictDAO().isExistDistrictCode(district.getId());
+			if (districtcount) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_District") + ": " + district.getCode()
+						+ " having child Records in Cities Master.It can't be Deleted";
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");

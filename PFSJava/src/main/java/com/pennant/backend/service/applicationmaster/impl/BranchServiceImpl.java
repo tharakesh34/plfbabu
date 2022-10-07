@@ -547,6 +547,17 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(branch.getRecordType())) {
+			boolean branchexsist = securityUserDAO.isexisitBranchCode(branch.getBranchCode());
+
+			if (branchexsist) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + branch.getBranchCode()
+						+ " having child Records .It can't be Deleted";
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);

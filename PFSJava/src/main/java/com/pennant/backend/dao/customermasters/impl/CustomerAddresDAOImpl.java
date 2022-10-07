@@ -539,4 +539,13 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		}
 	}
 
+	@Override
+	public boolean isExisiCustPincode(long id) {
+		String sql = "Select Count(PinCodeId) From CustomerAddresses Where PinCodeId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, id) > 0;
+	}
+
 }
