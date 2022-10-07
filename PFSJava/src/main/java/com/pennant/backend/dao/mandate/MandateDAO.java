@@ -106,7 +106,7 @@ public interface MandateDAO {
 
 	boolean isValidMandate(Long id);
 
-	String getCustCIF(Long id);
+	long getCustID(Long id);
 
 	Mandate getMandateDetail(long mandateID);
 

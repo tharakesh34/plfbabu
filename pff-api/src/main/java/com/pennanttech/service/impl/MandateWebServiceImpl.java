@@ -368,6 +368,13 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 			if (mandate.getEmployeeID() == null) {
 				returnStatus = getFailedStatus("90502", "employeeID");
 			}
+
+			Mandate employerDetails = mandateService.getEmployerDetails(mandate.getCustID());
+
+			if (employerDetails == null || employerDetails.getEmployeeID() != mandate.getEmployeeID()) {
+				returnStatus = getFailedStatus("MNDT01", String.valueOf(mandate.getEmployeeID()), "Selected Customer");
+			}
+
 			break;
 		default:
 			break;
@@ -598,14 +605,17 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		mndt.setOrgReference(mandate.getOrgReference());
 		mndt.setEntityCode(mandate.getEntityCode());
 		mndt.setCustCIF(mandate.getCustCIF());
+		mndt.setSourceId(PennantConstants.FINSOURCE_ID_API);
 
 		if (InstrumentType.isDAS(mandate.getMandateType())) {
-			mndt.setSourceId(PennantConstants.FINSOURCE_ID_API);
 			mndt.setEmployeeID(mandate.getEmployeeID());
 			mndt.setEmployerName(mandate.getEmployerName());
 		} else if (InstrumentType.isSI(mandate.getMandateType())) {
 			mndt.setBankBranchID(mandate.getBankBranchID());
-			mndt.setCity(mandate.getCity());
+			mndt.setAccNumber(mandate.getAccNumber());
+			mndt.setAccHolderName(mandate.getAccHolderName());
+			mndt.setJointAccHolderName(mandate.getJointAccHolderName());
+			mndt.setAccType(mandate.getAccType());
 		}
 
 		return mndt;
@@ -630,8 +640,9 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 			return getFailedStatus("90502", "NewMandateId");
 		}
 
-		String custCIF = mandateDAO.getCustCIF(oldMandateId);
-		if (custCIF == null) {
+		long custID = mandateDAO.getCustID(oldMandateId);
+
+		if (custID <= 0) {
 			return getFailedStatus("90303", String.valueOf(oldMandateId));
 		}
 
@@ -645,7 +656,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 			return getFailedStatus("90303", String.valueOf(newMandateId));
 		}
 
-		if (!StringUtils.equals(custCIF, newMandate.getCustCIF())) {
+		if (custID != newMandate.getCustID()) {
 			return getFailedStatus("90342");
 		}
 

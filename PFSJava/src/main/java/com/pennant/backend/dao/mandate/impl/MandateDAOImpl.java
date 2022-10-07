@@ -725,7 +725,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(" EmployerID, EmpName ");
 		sql.append(" From CustomerEmpDetails ced");
 		sql.append(" Inner Join EmployerDetail ed on ed.EmployerID = ced.CustEmpName ");
-		sql.append(" Where EmpIsActive = ?  and AllowDas = ? and CustID = ? ");
+		sql.append(" Where EmpIsActive = ?  and AllowDas = ? and CustID = ? and CurrentEmployer = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -737,13 +737,12 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				mdt.setEmployerName(rs.getString("EmpName"));
 
 				return mdt;
-			}, 1, 1, custID);
+			}, 1, 1, custID, 1);
 
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-
 	}
 
 	@Override
@@ -849,16 +848,16 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public String getCustCIF(Long id) {
-		String sql = "Select CustCIF From Mandates Where MandateID = ?";
+	public long getCustID(Long id) {
+		String sql = "Select CustId From Mandates Where MandateID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, String.class, id);
+			return this.jdbcOperations.queryForObject(sql, Long.class, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
+			return 0;
 		}
 	}
 

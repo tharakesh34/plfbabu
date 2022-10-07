@@ -188,7 +188,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String alwdRpyMethods;
 	private Long oldMandate;
 	// API validation purpose only
-	private Mandate validateMandate;
+	private Mandate validateMandate = this;
 
 	public Mandate() {
 		super();
