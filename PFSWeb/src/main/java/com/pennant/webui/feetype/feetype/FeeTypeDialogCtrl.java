@@ -645,14 +645,14 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				if (this.dueAccReq.isChecked()) {
 					this.dueAccSet.getValidatedValue();
 					AccountingSet accountingSet = (AccountingSet) this.dueAccSet.getObject();
-					if (accountingSet != null && accountingSet.getAccountSetid() != 0) {
+					if (accountingSet != null) {
 						aFeeType.setDueAccSet(accountingSet.getAccountSetid());
 					}
 				} else {
-					aFeeType.setDueAccSet(Long.valueOf(0));
+					aFeeType.setDueAccSet(null);
 				}
 			} else {
-				aFeeType.setDueAccSet(Long.valueOf(0));
+				aFeeType.setDueAccSet(null);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -702,23 +702,19 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		}
 
 		try {
-			if (this.receivableType.getObject() instanceof FeeType) {
-				FeeType feeType = (FeeType) this.receivableType.getObject();
-				if (feeType != null && feeType.getFeeTypeID() != Long.MIN_VALUE) {
-					aFeeType.setRecvFeeTypeId(feeType.getFeeTypeID());
-				} else {
-					aFeeType.setRecvFeeTypeId(null);
+			if (!this.receivableType.isReadonly() && Allocation.MANADV.equals(getComboboxValue(this.payableLinkTo))) {
+				Long recvFeeTypeId = null;
+				Object object = this.receivableType.getObject();
+				if (object != null && object instanceof FeeType) {
+					recvFeeTypeId = ((FeeType) object).getFeeTypeID();
 				}
-			} else {
-				aFeeType.setRecvFeeTypeId(null);
-			}
 
-			if (!this.receivableType.isReadonly()
-					&& (Allocation.MANADV.equals(aFeeType.getPayableLinkTo()) && aFeeType.getRecvFeeTypeId() == null)) {
+				if (recvFeeTypeId == null || recvFeeTypeId <= 0) {
+					wve.add(new WrongValueException(this.receivableType, Labels.getLabel("FIELD_IS_MAND",
+							new String[] { Labels.getLabel("label_FeeTypeDialog_ReceivableType.value") })));
+				}
 
-				throw new WrongValueException(this.receivableType, Labels.getLabel("FIELD_IS_MAND",
-						new String[] { Labels.getLabel("label_FeeTypeDialog_ReceivableType.value") }));
-
+				aFeeType.setRecvFeeTypeId(recvFeeTypeId);
 			}
 
 			if (!Allocation.MANADV.equals(aFeeType.getPayableLinkTo())) {
@@ -931,10 +927,15 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.dueAccRow.setVisible(false);
 
 			this.adviseType.setValue(null);
+
 			this.dueAccReq.setChecked(false);
 			this.dueAccSet.setValue(null);
+			this.dueAccSet.setObject(null);
+
 			this.payableLinkTo.setValue(null);
+
 			this.receivableType.setValue(null);
+			this.receivableType.setObject(null);
 
 			this.adviseType.setDisabled(true);
 			this.dueAccReq.setDisabled(true);
@@ -992,6 +993,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} else {
 			this.receivableType.setReadonly(true);
 			this.receivableType.setValue(null);
+			this.receivableType.setObject(null);
 		}
 	}
 
@@ -1005,6 +1007,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} else {
 			this.dueAccSet.setValue(null);
 			this.dueAccSet.setReadonly(true);
+			this.dueAccSet.setObject(null);
 		}
 	}
 
