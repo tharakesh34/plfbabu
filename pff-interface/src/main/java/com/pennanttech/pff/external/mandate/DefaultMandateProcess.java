@@ -79,6 +79,7 @@ import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.AbstractInterface;
@@ -200,7 +201,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			return namedJdbcTemplate.getJdbcOperations().queryForObject(sql, String.class, mode, partnerBank,
 					DataEngineConstants.MANDATE, DataEngineConstants.EXPORT);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -623,7 +624,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				return m;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -633,18 +634,13 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		String sql = "Update MANDATE_RESPONSE  set REMARKS = ?, STATUS = ? Where MANDATEID = ?";
 
 		logger.debug(Literal.SQL + sql);
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
-
-				ps.setString(index++, respmandate.getReason());
-				ps.setString(index++, respmandate.getStatus());
-				ps.setLong(index, respmandate.getMandateID());
-			});
-		} catch (Exception e) {
-			//
-		}
+			ps.setString(index++, respmandate.getReason());
+			ps.setString(index++, respmandate.getStatus());
+			ps.setLong(index, respmandate.getMandateID());
+		});
 	}
 
 	protected void logMandate(long respBatchId, Mandate respMandate) {
@@ -810,17 +806,13 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 		String sql = "UPDATE DATA_ENGINE_STATUS set EndTime = ?, Remarks = ? WHERE Id = ?";
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
-				ps.setString(index++, remarks.toString());
-				ps.setLong(index, respBatchId);
-			});
-		} catch (Exception e) {
-			//
-		}
+			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+			ps.setString(index++, remarks.toString());
+			ps.setLong(index, respBatchId);
+		});
 	}
 
 	protected void processSecondaryMandate(Mandate respMandate) {
@@ -865,34 +857,24 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		String sql = "Update FinanceMain Set MandateID = ?, FinRepayMethod = ? Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
+		jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		try {
-			jdbcOperations.update(sql, ps -> {
-				int index = 1;
+			ps.setLong(index++, mandateId);
+			ps.setString(index++, repayMethod);
+			ps.setLong(index, finID);
 
-				ps.setLong(index++, mandateId);
-				ps.setString(index++, repayMethod);
-				ps.setLong(index, finID);
-
-			});
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
+		});
 	}
 
 	private void makeSecondaryMandateInActive(long mandateID) {
 		String sql = "UPDATE MANDATES SET ACTIVE = ? WHERE PRIMARYMANDATEID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			jdbcOperations.update(sql, ps -> {
-				ps.setInt(1, 0);
-				ps.setLong(2, mandateID);
-			});
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
+		jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, 0);
+			ps.setLong(2, mandateID);
+		});
 	}
 
 	@Override

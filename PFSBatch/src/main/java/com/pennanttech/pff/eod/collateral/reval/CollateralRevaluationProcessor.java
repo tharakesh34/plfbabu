@@ -2,11 +2,9 @@ package com.pennanttech.pff.eod.collateral.reval;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -57,8 +55,6 @@ public class CollateralRevaluationProcessor extends BasicDao<CollateralRevaluati
 	}
 
 	public List<CollateralRevaluation> getCurrentValue(final CollateralRevaluation collateralDetails) {
-		List<CollateralRevaluation> collData = new ArrayList<>();
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("select ce.NoOfUnits, ce.UnitPrice, ce.HSNCode, co.currentValue, ce.reference As CollateralRef");
 		sql.append(", ut.TemplateCode userTemplateCode, cust.TemplateCode customerTemplateCode");
@@ -75,12 +71,7 @@ public class CollateralRevaluationProcessor extends BasicDao<CollateralRevaluati
 		source.addValue("reference", collateralDetails.getCollateralRef());
 
 		RowMapper<CollateralRevaluation> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralRevaluation.class);
-		try {
-			collData = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
 
-		}
-
-		return collData;
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 }

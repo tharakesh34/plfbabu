@@ -282,7 +282,7 @@ public class PresentmentJobService extends AbstractInterface {
 		JSch jsch = new JSch();
 		Session session = null;
 		Channel channel = null;
-		ChannelSftp channelSftp = null;
+
 		try {
 			session = jsch.getSession(accessKey, hostName, port);
 			session.setPassword(secretKey);
@@ -295,7 +295,7 @@ public class PresentmentJobService extends AbstractInterface {
 		} catch (JSchException e1) {
 			logger.error(Literal.EXCEPTION, e1);
 		}
-		channelSftp = (ChannelSftp) channel;
+
 		LsEntry entry = null;
 		List<String> fileName = new ArrayList<String>();
 		Vector filelist = null;
@@ -398,14 +398,7 @@ public class PresentmentJobService extends AbstractInterface {
 		String sql = "Select EntityCode From SMTDivisionDetail";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return jdbcOperations.queryForList(sql, String.class);
-		} catch (Exception e) {
-			//
-		}
-
-		return null;
+		return jdbcOperations.queryForList(sql, String.class);
 	}
 
 	public Presentment getPartnerBankId(String finType, String mandateType) {

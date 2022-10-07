@@ -407,22 +407,14 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 	// Getting the exception log
 	public List<DataEngineLog> getExceptions(long batchId) {
-		RowMapper<DataEngineLog> rowMapper = null;
-		MapSqlParameterSource parameterMap = null;
-		StringBuilder sql = null;
+		StringBuilder sql = new StringBuilder("Select * from DATA_ENGINE_LOG where StatusId = :ID");
 
-		try {
-			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where StatusId = :ID");
-			parameterMap = new MapSqlParameterSource();
-			parameterMap.addValue("ID", batchId);
-			rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
-			return jdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
-		} catch (Exception e) {
-		} finally {
-			rowMapper = null;
-			sql = null;
-		}
-		return null;
+		MapSqlParameterSource parameterMap = new MapSqlParameterSource();
+		parameterMap.addValue("ID", batchId);
+
+		RowMapper<DataEngineLog> rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
+
+		return jdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
 	}
 
 	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
