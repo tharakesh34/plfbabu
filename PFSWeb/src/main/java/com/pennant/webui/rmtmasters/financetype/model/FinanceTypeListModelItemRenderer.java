@@ -37,10 +37,10 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -87,7 +87,7 @@ public class FinanceTypeListModelItemRenderer implements ListitemRenderer<Financ
 			lc = new Listcell(StringUtils.equals(financeType.getFinDaysCalType(), PennantConstants.List_Select) ? ""
 					: financeType.getFinDaysCalType());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.getlabelDesc(financeType.getFinSchdMthd(),
+			lc = new Listcell(PennantApplicationUtil.getLabelDesc(financeType.getFinSchdMthd(),
 					PennantStaticListUtil.getScheduleMethods()));
 			lc.setParent(item);
 

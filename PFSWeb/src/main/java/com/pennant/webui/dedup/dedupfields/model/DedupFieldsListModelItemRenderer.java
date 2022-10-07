@@ -33,9 +33,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.dedup.DedupFields;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -55,8 +55,8 @@ public class DedupFieldsListModelItemRenderer implements ListitemRenderer<DedupF
 		Listcell lc;
 		lc = new Listcell(dedupFields.getFieldName());
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(dedupFields.getFieldControl(), PennantStaticListUtil.getFieldTypeList()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(dedupFields.getFieldControl(),
+				PennantStaticListUtil.getFieldTypeList()));
 		lc.setParent(item);
 		lc = new Listcell(dedupFields.getRecordStatus());
 		lc.setParent(item);

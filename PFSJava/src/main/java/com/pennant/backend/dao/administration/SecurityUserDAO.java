@@ -83,4 +83,12 @@ public interface SecurityUserDAO {
 	void updateUserStatus(SecurityUser user);
 
 	List<String> getLovFieldCodeValues(String lovFieldCode);
+
+	boolean isexisitvertical(long code);
+
+	boolean isexisitBranchCode(String branchCode);
+
+	boolean isDepartmentExsist(String deptCode);
+
+	boolean getDesignationCount(String usrDesg);
 }

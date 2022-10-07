@@ -121,7 +121,6 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
@@ -1285,11 +1284,11 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		ArrayList<Object> arrayList = new ArrayList<Object>();
 		arrayList.add(0, fm.getFinType());
 		arrayList.add(1, fm.getFinCcy());
-		arrayList.add(2,
-				PennantAppUtil.getlabelDesc(fm.getScheduleMethod(), PennantStaticListUtil.getScheduleMethods()));
+		arrayList.add(2, PennantApplicationUtil.getLabelDesc(fm.getScheduleMethod(),
+				PennantStaticListUtil.getScheduleMethods()));
 		arrayList.add(3, fm.getFinReference());
-		arrayList.add(4,
-				PennantAppUtil.getlabelDesc(fm.getProfitDaysBasis(), PennantStaticListUtil.getProfitDaysBasis()));
+		arrayList.add(4, PennantApplicationUtil.getLabelDesc(fm.getProfitDaysBasis(),
+				PennantStaticListUtil.getProfitDaysBasis()));
 		arrayList.add(5, null);
 		arrayList.add(6, false);
 		arrayList.add(7, false);

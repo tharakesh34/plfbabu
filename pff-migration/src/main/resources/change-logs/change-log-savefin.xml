@@ -182,6 +182,5 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
-	
-	</databaseChangeLog>
+		
+</databaseChangeLog>

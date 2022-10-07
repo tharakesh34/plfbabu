@@ -237,4 +237,13 @@ public class DistrictDAOImpl extends SequenceDao<District> implements DistrictDA
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isExistDistrictCode(long id) {
+		String sql = "Select Count(DistrictId) From RMTProvinceVSCity Where DistrictId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, id) > 0;
+	}
 }

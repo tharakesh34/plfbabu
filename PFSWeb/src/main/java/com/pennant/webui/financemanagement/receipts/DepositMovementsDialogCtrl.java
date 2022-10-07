@@ -507,7 +507,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				// Receipt Purpose
-				lc = new Listcell(PennantAppUtil.getlabelDesc(depositCheque.getReceiptpurpose(),
+				lc = new Listcell(PennantApplicationUtil.getLabelDesc(depositCheque.getReceiptpurpose(),
 						PennantStaticListUtil.getReceiptPurpose()));
 				lc.setParent(item);
 				lc = new Listcell(depositCheque.getRemarks());

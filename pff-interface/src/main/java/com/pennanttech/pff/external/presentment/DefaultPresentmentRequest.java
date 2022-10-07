@@ -33,6 +33,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.AbstractInterface;
@@ -631,7 +632,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			return namedJdbcTemplate.getJdbcOperations().queryForObject(sql, String.class, mode, partnerBank,
 					DataEngineConstants.PRESENTMENT, DataEngineConstants.EXPORT);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}

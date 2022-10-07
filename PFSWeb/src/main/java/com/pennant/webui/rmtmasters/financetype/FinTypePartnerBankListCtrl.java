@@ -48,9 +48,9 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -217,10 +217,11 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 			Listitem item = new Listitem();
 			Listcell lc;
 
-			lc = new Listcell(PennantAppUtil.getlabelDesc(finTypePartnerBank.getPurpose(), purposeList));
+			lc = new Listcell(PennantApplicationUtil.getLabelDesc(finTypePartnerBank.getPurpose(), purposeList));
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.getlabelDesc(finTypePartnerBank.getPaymentMode(), paymentModesList));
+			lc = new Listcell(
+					PennantApplicationUtil.getLabelDesc(finTypePartnerBank.getPaymentMode(), paymentModesList));
 			lc.setParent(item);
 
 			lc = new Listcell(String.valueOf(finTypePartnerBank.getPartnerBankName()));

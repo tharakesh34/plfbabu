@@ -67,6 +67,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -507,7 +508,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 		this.filterRequired.setChecked(aReportFilterFields.isFilterRequired());
 		if (!aReportFilterFields.isNewRecord()) {
 			setFieldType(aReportFilterFields.getFieldType());
-			this.fieldType.setValue(PennantAppUtil.getlabelDesc(aReportFilterFields.getFieldType(), fieldTypeList));
+			this.fieldType
+					.setValue(PennantApplicationUtil.getLabelDesc(aReportFilterFields.getFieldType(), fieldTypeList));
 			this.moduleName.setValue(aReportFilterFields.getModuleName());
 			this.defaultFilter.setValue(aReportFilterFields.getDefaultFilter());
 			this.appUtilMethodName.setValue(aReportFilterFields.getAppUtilMethodName());

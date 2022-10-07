@@ -1068,7 +1068,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		this.listBoxFinanceFlags.getItems().clear();
 		for (String flagCode : finFlagList) {
 
-			String flagDesc = PennantAppUtil.getlabelDesc(flagCode, finFlagsCompList);
+			String flagDesc = PennantApplicationUtil.getLabelDesc(flagCode, finFlagsCompList);
 			Listitem item = new Listitem();
 			Listcell lc;
 			lc = new Listcell(flagCode);

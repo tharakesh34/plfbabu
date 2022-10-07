@@ -111,27 +111,33 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		if (StringUtils.equals(moduleType, "Matured")) {
 			isMatured = true;
 		}
-		this.finReference.setMandatoryStyle(true);
-		this.finReference.setModuleName("FinanceDetail");
-		this.finReference.setValueColumn("FinReference");
-		this.finReference.setDescColumn("FinType");
-		this.finReference.setValidateColumns(new String[] { "FinReference" });
 
-		if (isMatured) {
-			windowTitle.setValue(App.getLabel("window_SelectMaturedLoanClosureEnquiryList.title"));
-			Filter[] filter = new Filter[3];
-			filter[0] = new Filter("FinStartDate", SysParamUtil.getAppDate(), Filter.OP_LESS_OR_EQUAL);
-			filter[1] = new Filter("MaturityDate", SysParamUtil.getAppDate(), Filter.OP_LESS_THAN);
-			filter[2] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
-			this.finReference.setFilters(filter);
+		if (StringUtils.isNotEmpty(finRefValue)) {
+			this.finReference.setValue(finRefValue);
+			this.finReference.setReadonly(true);
 		} else {
-			Filter[] filter = new Filter[3];
-			filter[0] = new Filter("FinStartDate", SysParamUtil.getAppDate(), Filter.OP_LESS_OR_EQUAL);
-			filter[1] = new Filter("MaturityDate", SysParamUtil.getAppDate(), Filter.OP_GREATER_OR_EQUAL);
-			filter[2] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
-			this.finReference.setFilters(filter);
+			this.finReference.setMandatoryStyle(true);
+			this.finReference.setModuleName("FinanceDetail");
+			this.finReference.setValueColumn("FinReference");
+			this.finReference.setDescColumn("FinType");
+			this.finReference.setValidateColumns(new String[] { "FinReference" });
+
+			if (isMatured) {
+				windowTitle.setValue(App.getLabel("window_SelectMaturedLoanClosureEnquiryList.title"));
+				Filter[] filter = new Filter[3];
+				filter[0] = new Filter("FinStartDate", SysParamUtil.getAppDate(), Filter.OP_LESS_OR_EQUAL);
+				filter[1] = new Filter("MaturityDate", SysParamUtil.getAppDate(), Filter.OP_LESS_THAN);
+				filter[2] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+				this.finReference.setFilters(filter);
+			} else {
+				Filter[] filter = new Filter[3];
+				filter[0] = new Filter("FinStartDate", SysParamUtil.getAppDate(), Filter.OP_LESS_OR_EQUAL);
+				filter[1] = new Filter("MaturityDate", SysParamUtil.getAppDate(), Filter.OP_GREATER_OR_EQUAL);
+				filter[2] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+				this.finReference.setFilters(filter);
+			}
+			logger.debug(Literal.LEAVING);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**

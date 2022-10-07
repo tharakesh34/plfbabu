@@ -520,7 +520,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 				this.downPayBank.clearErrorMessage();
 				this.downPaySupl.clearErrorMessage();
-				BigDecimal reqDwnPay = PennantAppUtil.getPercentageValue(this.finAmount.getActualValue(),
+				BigDecimal reqDwnPay = PennantApplicationUtil.getPercentageValue(this.finAmount.getActualValue(),
 						aFinanceMain.getMinDownPayPerc());
 
 				BigDecimal downPayment = this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue());
@@ -530,14 +530,14 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 							Labels.getLabel("MAND_FIELD_MIN",
 									new String[] { Labels.getLabel("label_FinanceMainDialog_DownPayment.value"),
 											reqDwnPay.toString(),
-											PennantAppUtil.formatAmount(this.finAmount.getActualValue(), formatter) }));
+											CurrencyUtil.format(this.finAmount.getActualValue(), formatter) }));
 				}
 
 				if (downPayment.compareTo(reqDwnPay) == -1) {
 					throw new WrongValueException(this.downPayBank, Labels.getLabel("PERC_MIN",
 							new String[] {
 									Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_DownPayBS.value"),
-									PennantAppUtil.formatAmount(reqDwnPay, formatter) }));
+									CurrencyUtil.format(reqDwnPay, formatter) }));
 				}
 			}
 			aFinanceMain.setDownPayBank(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));

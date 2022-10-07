@@ -37,7 +37,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -77,7 +76,7 @@ public class CustomerSelectItemRenderer implements ListitemRenderer<Customer>, S
 		lc.setParent(item);
 		lc = new Listcell(customer.getCustNationality());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(customer.getCustAddlVar82(), custTargetList));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(customer.getCustAddlVar82(), custTargetList));
 		lc.setParent(item);
 		lc = new Listcell(customer.getLovDescCustCtgCodeName());
 		lc.setParent(item);

@@ -226,7 +226,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 		this.schdl_finType.setValue(financeMain.getFinType() + " - " + financeMain.getLovDescFinTypeName());
 		this.schdl_finCcy.setValue(financeMain.getFinCcy());
-		this.schdl_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(financeMain.getProfitDaysBasis(),
+		this.schdl_profitDaysBasis.setValue(PennantApplicationUtil.getLabelDesc(financeMain.getProfitDaysBasis(),
 				PennantStaticListUtil.getProfitDaysBasis()));
 
 		label_ScheduleDetailDialog_FinType.setValue(Labels.getLabel("label_ScheduleDetailDialog_FinType.value"));

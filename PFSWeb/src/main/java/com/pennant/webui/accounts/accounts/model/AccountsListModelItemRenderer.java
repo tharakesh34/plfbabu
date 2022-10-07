@@ -34,9 +34,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.accounts.Accounts;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for list items in the list box.
@@ -69,7 +69,7 @@ public class AccountsListModelItemRenderer implements ListitemRenderer<Accounts>
 		lc = new Listcell(acounts.getAcShortName());
 		lc.setParent(item);
 		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(acounts.getAcPurpose(), PennantStaticListUtil.getAccountPurpose()));
+				PennantApplicationUtil.getLabelDesc(acounts.getAcPurpose(), PennantStaticListUtil.getAccountPurpose()));
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbInternalAc = new Checkbox();

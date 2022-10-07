@@ -34,6 +34,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
@@ -57,10 +58,10 @@ public class ScoringGroupListModelItemRenderer implements ListitemRenderer<Scori
 		lc.setParent(item);
 		lc = new Listcell(scoringGroup.getScoreGroupName());
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(scoringGroup.getCategoryType(), PennantAppUtil.getcustCtgCodeList()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(scoringGroup.getCategoryType(),
+				PennantAppUtil.getcustCtgCodeList()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(scoringGroup.getMinScore()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(scoringGroup.getMinScore()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell();
@@ -69,7 +70,7 @@ public class ScoringGroupListModelItemRenderer implements ListitemRenderer<Scori
 		cbIsoverride.setChecked(scoringGroup.isIsOverride());
 		lc.appendChild(cbIsoverride);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(scoringGroup.getOverrideScore()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(scoringGroup.getOverrideScore()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(scoringGroup.getRecordStatus());

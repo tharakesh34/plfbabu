@@ -34,6 +34,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.DepositMovements;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -56,7 +57,7 @@ public class DepositMovementsListModelItemRenderer implements ListitemRenderer<D
 		Listcell lc;
 
 		// Deposit Type
-		lc = new Listcell(PennantAppUtil.getlabelDesc(depositMovements.getDepositType(),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(depositMovements.getDepositType(),
 				PennantStaticListUtil.getDepositTypesListList()));
 		lc.setParent(item);
 

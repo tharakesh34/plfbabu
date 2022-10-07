@@ -36,8 +36,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.customermasters.CustomerPRelation;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -65,7 +65,7 @@ public class CustomerPRelationListModelItemRenderer implements ListitemRenderer<
 			Listcell lc;
 			lc = new Listcell(String.valueOf(customerPRelation.getPRCustID()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.formateInt(customerPRelation.getPRCustPRSNo()));
+			lc = new Listcell(PennantApplicationUtil.formateInt(customerPRelation.getPRCustPRSNo()));
 			lc.setParent(item);
 			lc = new Listcell(
 					customerPRelation.getPRRelationCode() + "-" + customerPRelation.getLovDescPRRelationCodeName());

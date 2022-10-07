@@ -298,6 +298,16 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(customerType.getRecordType())) {
+			boolean custtypecount = customerTypeDAO.isExistCustTypeCode(customerType.getCustTypeCode());
+			if (custtypecount) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_CustomerTypeDialog_CustTypeCode.value") + ": "
+						+ customerType.getCustTypeCode() + " having child Records. so, It can't be Deleted";
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");

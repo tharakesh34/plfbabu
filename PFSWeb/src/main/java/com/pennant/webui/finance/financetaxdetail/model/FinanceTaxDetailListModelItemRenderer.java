@@ -33,9 +33,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -55,7 +55,7 @@ public class FinanceTaxDetailListModelItemRenderer implements ListitemRenderer<F
 		Listcell lc;
 		lc = new Listcell(financeTaxDetail.getFinReference());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(financeTaxDetail.getApplicableFor(),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(financeTaxDetail.getApplicableFor(),
 				PennantStaticListUtil.getTaxApplicableFor()));
 		lc.setParent(item);
 		lc = new Listcell();

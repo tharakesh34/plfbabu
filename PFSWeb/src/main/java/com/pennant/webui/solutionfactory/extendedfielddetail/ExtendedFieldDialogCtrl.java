@@ -67,10 +67,10 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -802,7 +802,8 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			lc.setParent(item);
 			lc = new Listcell(detail.getFieldLabel());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.getlabelDesc(detail.getFieldType(), PennantStaticListUtil.getFieldType()));
+			lc = new Listcell(
+					PennantApplicationUtil.getLabelDesc(detail.getFieldType(), PennantStaticListUtil.getFieldType()));
 			lc.setParent(item);
 			lc = new Listcell(String.valueOf(detail.getFieldSeqOrder()));
 			lc.setParent(item);

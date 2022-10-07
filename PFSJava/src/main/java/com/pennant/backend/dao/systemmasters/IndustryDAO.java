@@ -46,4 +46,5 @@ public interface IndustryDAO extends BasicCrudDao<Industry> {
 	 */
 	boolean isDuplicateKey(String industryCode, TableType tableType);
 
+	boolean isExistIndustryCode(String code);
 }

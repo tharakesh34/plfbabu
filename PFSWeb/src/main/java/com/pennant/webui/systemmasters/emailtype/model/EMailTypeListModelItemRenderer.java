@@ -34,8 +34,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.systemmasters.EMailType;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for list items in the list box.
@@ -57,7 +57,7 @@ public class EMailTypeListModelItemRenderer implements ListitemRenderer<EMailTyp
 		lc.setParent(item);
 		lc = new Listcell(eMailType.getEmailTypeDesc());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(eMailType.getEmailTypePriority()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(eMailType.getEmailTypePriority()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell();

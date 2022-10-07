@@ -517,7 +517,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.finReference.setValue(aMandate.getOrgReference());
 		this.swapIsActive.setChecked(aMandate.isSwapIsActive());
 		this.amountInWords.setValue(AmtInitialCap());
-		this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), MandateUtil.getMandateStatus()));
+		this.regStatus
+				.setValue(PennantApplicationUtil.getLabelDesc(aMandate.getStatus(), MandateUtil.getMandateStatus()));
 
 		// Entity
 		this.entityCode.setValue(aMandate.getEntityCode(), aMandate.getEntityDesc());

@@ -23,6 +23,7 @@ import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 public class SpreadSheetDataAccess extends BasicDao<FinCreditReviewDetails> {
@@ -115,30 +116,23 @@ public class SpreadSheetDataAccess extends BasicDao<FinCreditReviewDetails> {
 		sql.append("Select DetailId, AuditYear");
 		sql.append(" FROM FinCreditReviewDetails_view Where CustomerId= ?");
 
-		List<FinCreditReviewDetails> list = new ArrayList<>();
-		try {
-			list = jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+		return jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setLong(1, customerId);
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setLong(1, customerId);
 
-				}
-			}, new RowMapper<FinCreditReviewDetails>() {
+			}
+		}, new RowMapper<FinCreditReviewDetails>() {
 
-				@Override
-				public FinCreditReviewDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinCreditReviewDetails crd = new FinCreditReviewDetails();
-					crd.setDetailId(rs.getLong("DetailId"));
-					crd.setAuditYear(rs.getString("AuditYear"));
-					return crd;
-				}
-			});
-		} catch (Exception e) {
-
-		}
-
-		return list;
+			@Override
+			public FinCreditReviewDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+				FinCreditReviewDetails crd = new FinCreditReviewDetails();
+				crd.setDetailId(rs.getLong("DetailId"));
+				crd.setAuditYear(rs.getString("AuditYear"));
+				return crd;
+			}
+		});
 	}
 
 	public String getMaxAuditYearByCustomerId(long customerId, String type) {
@@ -230,6 +224,7 @@ public class SpreadSheetDataAccess extends BasicDao<FinCreditReviewDetails> {
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}
@@ -245,6 +240,7 @@ public class SpreadSheetDataAccess extends BasicDao<FinCreditReviewDetails> {
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}

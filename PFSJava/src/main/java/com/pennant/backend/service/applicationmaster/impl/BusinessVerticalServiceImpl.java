@@ -27,8 +27,10 @@ package com.pennant.backend.service.applicationmaster.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.applicationmaster.BusinessVerticalDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.applicationmaster.BusinessVertical;
@@ -50,6 +52,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BusinessVerticalDAO businessVerticalDAO;
+	private SecurityUserDAO securityUserDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -320,10 +323,26 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(businessVertical.getRecordType())) {
+			boolean verticalexsist = securityUserDAO.isexisitvertical(businessVertical.getId());
+
+			if (verticalexsist) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_code") + ": " + businessVertical.getCode()
+						+ " having child Records .It can't be Deleted";
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	@Autowired
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
 	}
 
 }

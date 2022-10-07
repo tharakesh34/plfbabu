@@ -1088,7 +1088,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 
 			Hbox hbox = new Hbox();
 			Label label = new Label(
-					PennantAppUtil.getlabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
+					PennantApplicationUtil.getLabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
 			label.setStyle(sClassStyle);
 			hbox.appendChild(label);
 			if (StringUtils.isNotBlank(entry.getPostStatus())) {

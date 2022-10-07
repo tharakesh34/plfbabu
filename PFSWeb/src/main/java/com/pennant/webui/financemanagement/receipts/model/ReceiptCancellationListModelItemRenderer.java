@@ -39,7 +39,6 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
@@ -68,10 +67,10 @@ public class ReceiptCancellationListModelItemRenderer implements ListitemRendere
 		lc.setParent(item);
 		lc = new Listcell(header.getPromotionCode());
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(header.getReceiptPurpose(),
+				PennantStaticListUtil.getReceiptPurpose()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getReceiptMode(),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(header.getReceiptMode(),
 				PennantStaticListUtil.getReceiptModesByFeePayment()));
 		lc.setParent(item);
 		lc = new Listcell(header.getTransactionRef());
@@ -82,8 +81,8 @@ public class ReceiptCancellationListModelItemRenderer implements ListitemRendere
 				CurrencyUtil.getFormat(header.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(header.getAllocationType(), PennantStaticListUtil.getAllocationMethods()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(header.getAllocationType(),
+				PennantStaticListUtil.getAllocationMethods()));
 		lc.setParent(item);
 		lc = new Listcell(header.getFinType());
 		lc.setParent(item);

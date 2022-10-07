@@ -1584,7 +1584,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.finReference.setValue(aMandate.getOrgReference());
 
 		if (!StringUtils.equals(aMandate.getStatus(), PennantConstants.List_Select)) {
-			this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), MandateUtil.getMandateStatus()));
+			this.regStatus.setValue(
+					PennantApplicationUtil.getLabelDesc(aMandate.getStatus(), MandateUtil.getMandateStatus()));
 		}
 
 		this.amountInWords.setValue(AmtInitialCap());

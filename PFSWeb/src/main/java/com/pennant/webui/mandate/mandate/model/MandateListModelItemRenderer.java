@@ -39,7 +39,6 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.mandate.MandateUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -77,7 +76,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		lc.setParent(item);
 		lc = new Listcell(mandate.getAccNumber());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getAccType(), MandateUtil.getAccountTypes()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(mandate.getAccType(), MandateUtil.getAccountTypes()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
 				CurrencyUtil.getFormat(mandate.getMandateCcy())));
@@ -85,7 +84,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 		lc.setParent(item);
 
-		String status = PennantAppUtil.getlabelDesc(mandate.getStatus(), MandateUtil.getMandateStatus());
+		String status = PennantApplicationUtil.getLabelDesc(mandate.getStatus(), MandateUtil.getMandateStatus());
 
 		// FIXME: Showing Custom Mandate status when Status is not there. Have To check with respective module Owner.
 		/*

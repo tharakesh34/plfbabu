@@ -50,12 +50,12 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.staticparms.LovFieldCode;
 import com.pennant.backend.service.staticparms.LovFieldCodeService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -297,7 +297,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl<LovFieldCode> {
 		logger.debug("Entering");
 		this.fieldCode.setValue(aLovFieldCode.getFieldCode());
 		this.fieldCodeDesc.setValue(aLovFieldCode.getFieldCodeDesc());
-		this.fieldCodeType.setValue(PennantAppUtil.getlabelDesc(
+		this.fieldCodeType.setValue(PennantApplicationUtil.getLabelDesc(
 				aLovFieldCode.getFieldCodeType() == null ? "" : aLovFieldCode.getFieldCodeType().trim(),
 				listFieldCodeType));
 		this.isActive.setChecked(aLovFieldCode.isIsActive());

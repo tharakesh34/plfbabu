@@ -19,6 +19,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.util.Log;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -33,8 +35,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CacheAdmin {
+	private static Logger logger = LogManager.getLogger(CacheAdmin.class);
+
 	private NamedParameterJdbcTemplate jdbcTemplate;
 	private JdbcOperations jdbcOperations;
 
@@ -138,7 +143,7 @@ public class CacheAdmin {
 				return cs;
 			}, clusterName, currentNode + "%");
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

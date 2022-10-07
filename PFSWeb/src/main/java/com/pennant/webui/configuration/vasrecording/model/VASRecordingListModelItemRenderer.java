@@ -36,10 +36,10 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -55,7 +55,7 @@ public class VASRecordingListModelItemRenderer implements ListitemRenderer<VASRe
 		Listcell lc;
 		lc = new Listcell(vASRecording.getProductCode());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(vASRecording.getPostingAgainst(),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(vASRecording.getPostingAgainst(),
 				PennantStaticListUtil.getRecAgainstTypes()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(vASRecording.getPrimaryLinkRef()));
@@ -64,8 +64,8 @@ public class VASRecordingListModelItemRenderer implements ListitemRenderer<VASRe
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(vASRecording.getFee()));
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(vASRecording.getFeePaymentMode(), PennantStaticListUtil.getFeeTypes()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(vASRecording.getFeePaymentMode(),
+				PennantStaticListUtil.getFeeTypes()));
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.format(vASRecording.getValueDate(), PennantConstants.dateFormat));
 		lc.setParent(item);

@@ -35,6 +35,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
 
 /**
@@ -55,7 +56,7 @@ public class ProvisionMovementListModelItemRenderer implements ListitemRenderer<
 		Listcell lc;
 		lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getProvMovementDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(provisionMovement.getProvMovementSeq()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(provisionMovement.getProvMovementSeq()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.amountFormate(provisionMovement.getNonFormulaProv(), 3));

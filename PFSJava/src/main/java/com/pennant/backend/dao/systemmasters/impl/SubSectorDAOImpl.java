@@ -248,4 +248,12 @@ public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDA
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public boolean isExistSectorCode(String secCode, String SuSeCode) {
+		String sql = "Select Count(CustSubSector) From Customers Where CustSector = ? and CustSubSector = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, secCode, SuSeCode) > 0;
+	}
 }

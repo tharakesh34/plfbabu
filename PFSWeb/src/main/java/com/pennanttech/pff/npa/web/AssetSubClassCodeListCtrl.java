@@ -90,7 +90,7 @@ public class AssetSubClassCodeListCtrl extends GFCBaseListCtrl<AssetSubClassCode
 		registerField("Id");
 		registerField("ClassCode", listheader_Classification_Code, SortOrder.NONE, code, sortOperator_Code,
 				Operators.STRING);
-		registerField("Code", listheader_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
+		registerField("Code", listheader_Code);
 		registerField("ClassDescription", listheader_Classification_Description);
 		registerField("Description", listheader_Description);
 		registerField("Active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);

@@ -365,7 +365,7 @@ public class ExtendedFieldDetailsService {
 		if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, module)) {
 			String tableName = StringUtils.trimToEmpty(efr.getTableName()).toUpperCase();
 			if (tableName.startsWith("LOAN_") && tableName.endsWith("_ED")) {
-				auditMapValues.put("instructionuid", efr.getInstructionUID());
+				auditMapValues.put("InstructionUID", efr.getInstructionUID());
 			}
 		}
 
@@ -782,7 +782,7 @@ public class ExtendedFieldDetailsService {
 					mapValues.put("WorkflowId", efr.getWorkflowId());
 					if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, module)) {
 						efr.setInstructionUID(instructionUID);
-						mapValues.put("instructionuid", efr.getInstructionUID());
+						mapValues.put("InstructionUID", efr.getInstructionUID());
 					}
 				}
 

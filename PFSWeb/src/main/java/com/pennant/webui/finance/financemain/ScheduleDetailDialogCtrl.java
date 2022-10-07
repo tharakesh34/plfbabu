@@ -396,7 +396,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 		this.schdl_finType.setValue(financeMain.getFinType());
 		this.schdl_finCcy.setValue(financeMain.getFinCcy());
-		this.schdl_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(financeMain.getProfitDaysBasis(),
+		this.schdl_profitDaysBasis.setValue(PennantApplicationUtil.getLabelDesc(financeMain.getProfitDaysBasis(),
 				PennantStaticListUtil.getProfitDaysBasis()));
 
 		boolean isOverdraft = false;
@@ -800,7 +800,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		}
 		this.effectiveRateOfReturn.setValue(PennantApplicationUtil
 				.formatRate(financeMain.getEffectiveRateOfReturn().doubleValue(), PennantConstants.rateFormate) + "%");
-		this.schdl_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(financeMain.getProfitDaysBasis(),
+		this.schdl_profitDaysBasis.setValue(PennantApplicationUtil.getLabelDesc(financeMain.getProfitDaysBasis(),
 				PennantStaticListUtil.getProfitDaysBasis()));
 
 		if (isOverdraft) {

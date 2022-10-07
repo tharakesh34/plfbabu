@@ -34,8 +34,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -64,7 +64,7 @@ public class CustomerEMailListModelItemRenderer implements ListitemRenderer<Cust
 			lc.setParent(item);
 			lc = new Listcell(customerEMail.getCustEMailTypeCode());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.formateInt(customerEMail.getCustEMailPriority()));
+			lc = new Listcell(PennantApplicationUtil.formateInt(customerEMail.getCustEMailPriority()));
 			lc.setParent(item);
 			lc = new Listcell(customerEMail.getCustEMail());
 			lc.setParent(item);

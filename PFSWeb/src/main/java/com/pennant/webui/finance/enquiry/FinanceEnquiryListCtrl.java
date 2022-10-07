@@ -68,10 +68,10 @@ import com.pennant.backend.service.finance.ReinstateFinanceService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.mandate.MandateUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
@@ -806,10 +806,10 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		} else {
 			String value = "";
 			if (!"FINENQ".equals(this.enquiryType.getValue())) {
-				value = PennantAppUtil.getValueDesc(this.menu_filter.getLabel(),
+				value = PennantApplicationUtil.getValueDesc(this.menu_filter.getLabel(),
 						PennantStaticListUtil.getEnquiryFilters(false));
 			} else {
-				value = PennantAppUtil.getValueDesc(this.menu_filter.getLabel(), enquiryList);
+				value = PennantApplicationUtil.getValueDesc(this.menu_filter.getLabel(), enquiryList);
 			}
 			if ("ALLFIN".equals(value)) {
 				// Nothing to do
@@ -1122,8 +1122,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		final FinanceEnquiry aFinanceEnquiry = (FinanceEnquiry) item.getAttribute("data");
 		if (!rejectedList) {
 
-			logUserAccess(menuItemName, aFinanceEnquiry.getFinReference(),
-					this.enquiryType.getValue());
+			logUserAccess(menuItemName, aFinanceEnquiry.getFinReference(), this.enquiryType.getValue());
 
 			Map<String, Object> map = getDefaultArguments();
 			map.put("financeEnquiry", aFinanceEnquiry);
@@ -1149,8 +1148,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				return;
 			}
 
-			logUserAccess(menuItemName, aFinanceEnquiry.getFinReference(),
-					this.enquiryType.getValue());
+			logUserAccess(menuItemName, aFinanceEnquiry.getFinReference(), this.enquiryType.getValue());
 
 			Map<String, Object> arg = getDefaultArguments();
 			arg.put("reinstateFinance", aReinstateFinance);

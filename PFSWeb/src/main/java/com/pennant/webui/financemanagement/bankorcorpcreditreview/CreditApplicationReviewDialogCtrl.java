@@ -2330,7 +2330,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 							+ finCreditRevSubCategory.getSubCategoryCode()) == null ? BigDecimal.ZERO
 									: curYearValuesMap.get(FacilityConstants.CREDITREVIEW_REMARKS
 											+ finCreditRevSubCategory.getSubCategoryCode()));
-					label_BreakDown.setValue(PennantAppUtil.formatAmount(breakDown, 2));
+					label_BreakDown.setValue(CurrencyUtil.format(breakDown, 2));
 				}
 
 				/***************************
@@ -2364,15 +2364,14 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 								.equalsIgnoreCase(finCreditRevSubCategory.getSubCategoryDesc())) {
 							// Current Year Audit Value
 							creditReviewSubCtgDetails.setCurYearAuditValue(
-									PennantAppUtil.formatAmount(db_Amount.getValue(), this.currFormatter));
+									CurrencyUtil.format(db_Amount.getValue(), this.currFormatter));
 							// Current Year Conversation Price
 							// creditReviewSubCtgDetails.setCurYearUSDConvstn(PennantAppUtil.formatAmount(convrsnPrice,
 							// 2,false));
 							// Current Year Break Down
-							creditReviewSubCtgDetails.setCurYearBreakDown(PennantAppUtil.formatAmount(breakDown, 2));
+							creditReviewSubCtgDetails.setCurYearBreakDown(CurrencyUtil.format(breakDown, 2));
 							// Current Year Percentage Change
-							creditReviewSubCtgDetails
-									.setCurYearPercentage(PennantAppUtil.formatAmount(percentChange, 2));
+							creditReviewSubCtgDetails.setCurYearPercentage(CurrencyUtil.format(percentChange, 2));
 						}
 					}
 				}
@@ -2714,7 +2713,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				? curYearValuesMap.get(finCreditRevSubCategory.getSubCategoryCode())
 				: BigDecimal.ZERO;
 		db_Amount.setValue(curAmt);
-		creditReviewSubCtgDetails.setCurYearAuditValue(PennantAppUtil.formatAmount(curAmt, this.currFormatter));
+		creditReviewSubCtgDetails.setCurYearAuditValue(CurrencyUtil.format(curAmt, this.currFormatter));
 
 		if (!getUserWorkspace().isAllowed("btn_CreditApplicationReviewDialog_newSubCategory")) {
 			db_Amount.setReadonly(true);
@@ -2754,9 +2753,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 						? BigDecimal.ZERO
 						: curYearValuesMap.get(
 								FacilityConstants.CREDITREVIEW_REMARKS + finCreditRevSubCategory.getSubCategoryCode()));
-		label_BreakDown.setValue(PennantAppUtil.formatAmount(curYrbreakDown, 2));
+		label_BreakDown.setValue(CurrencyUtil.format(curYrbreakDown, 2));
 
-		creditReviewSubCtgDetails.setCurYearBreakDown(PennantAppUtil.formatAmount(curYrbreakDown, 2));
+		creditReviewSubCtgDetails.setCurYearBreakDown(CurrencyUtil.format(curYrbreakDown, 2));
 		label_BreakDown.setStyle("font-size: 12px;");
 		label_BreakDown.setParent(lc);
 
@@ -2803,8 +2802,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		prvAmt = prvYearValuesMap.get(finCreditRevSubCategory.getSubCategoryCode()) != null
 				? prvYearValuesMap.get(finCreditRevSubCategory.getSubCategoryCode())
 				: new BigDecimal(BigInteger.ZERO, this.currFormatter);
-		label_PrevAmt.setValue(PennantAppUtil.formatAmount(prvAmt, this.currFormatter));
-		creditReviewSubCtgDetails.setPreYearAuditValue(PennantAppUtil.formatAmount(prvAmt, this.currFormatter));
+		label_PrevAmt.setValue(CurrencyUtil.format(prvAmt, this.currFormatter));
+		creditReviewSubCtgDetails.setPreYearAuditValue(CurrencyUtil.format(prvAmt, this.currFormatter));
 		label_PrevAmt.setStyle("font-size: 12px;");
 		label_PrevAmt.setParent(lc);
 		lc.setStyle("text-align:right; border-width: 2; font-size: 2px;");
@@ -2842,8 +2841,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 						? BigDecimal.ZERO
 						: prvYearValuesMap.get(
 								FacilityConstants.CREDITREVIEW_REMARKS + finCreditRevSubCategory.getSubCategoryCode()));
-		label_PrevBreakDown.setValue(PennantAppUtil.formatAmount(prevYrbreakDown, 2));
-		creditReviewSubCtgDetails.setPreYearBreakDown(PennantAppUtil.formatAmount(prevYrbreakDown, 2));
+		label_PrevBreakDown.setValue(CurrencyUtil.format(prevYrbreakDown, 2));
+		creditReviewSubCtgDetails.setPreYearBreakDown(CurrencyUtil.format(prevYrbreakDown, 2));
 		label_PrevBreakDown.setStyle("font-size: 12px;");
 		label_PrevBreakDown.setParent(lc);
 		lc.setStyle("text-align:right; border-width: 2;");
@@ -3253,8 +3252,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 		try {
 			if (this.conversionRate.getValue() != null) {
-				creditReviewMainCtgDetails.setConversionRate(
-						PennantAppUtil.formatAmount(this.conversionRate.getValue(), this.currFormatter));
+				creditReviewMainCtgDetails
+						.setConversionRate(CurrencyUtil.format(this.conversionRate.getValue(), this.currFormatter));
 			} else {
 				throw new WrongValueException(this.conversionRate,
 						Labels.getLabel("FIELD_NO_EMPTY",
@@ -3446,12 +3445,12 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 					|| FacilityConstants.CORP_CRDTRVW_RATIOS_EBITDA4
 							.equals(finCreditRevSubCategory.getSubCategoryCode())
 					|| FacilityConstants.CORP_CRDTRVW_RATIOS_FCF.equals(finCreditRevSubCategory.getSubCategoryCode())) {
-				return PennantAppUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE);
+				return CurrencyUtil.format(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE);
 			} else {
 				return "";
 			}
 		} else {
-			return PennantAppUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE);
+			return CurrencyUtil.format(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE);
 		}
 	}
 

@@ -22,7 +22,6 @@
  * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
-
 package com.pennant.webui.customermasters.customeradditionaldetail.model;
 
 import java.io.Serializable;
@@ -33,8 +32,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.customermasters.CustomerAdditionalDetail;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -42,9 +41,8 @@ import com.pennant.util.PennantAppUtil;
  */
 public class CustomerAdditionalDetailListModelItemRenderer
 		implements ListitemRenderer<CustomerAdditionalDetail>, Serializable {
-
 	public CustomerAdditionalDetailListModelItemRenderer() {
-
+		super();
 	}
 
 	private static final long serialVersionUID = -8502084612633186032L;
@@ -61,7 +59,7 @@ public class CustomerAdditionalDetailListModelItemRenderer
 		lc = new Listcell(customerAdditionalDetail.getAcademicDecipline() + "-"
 				+ customerAdditionalDetail.getLovDescAcademicDeciplineName());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateLong(customerAdditionalDetail.getCustRefCustID()));
+		lc = new Listcell(PennantApplicationUtil.formateLong(customerAdditionalDetail.getCustRefCustID()));
 		lc.setParent(item);
 		lc = new Listcell(customerAdditionalDetail.getCustRefStaffID());
 		lc.setParent(item);

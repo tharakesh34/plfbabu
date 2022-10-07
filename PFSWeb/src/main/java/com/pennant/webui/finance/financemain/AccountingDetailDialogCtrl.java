@@ -371,7 +371,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						 * this.listBoxFinAccountings.appendChild(listgroup); }
 						 */
 
-						lc = new Listcell(PennantAppUtil.getlabelDesc(entry.getDebitcredit(),
+						lc = new Listcell(PennantApplicationUtil.getLabelDesc(entry.getDebitcredit(),
 								PennantStaticListUtil.getTranType()));
 						lc.setParent(item);
 						lc = new Listcell(entry.getTransDesc());
@@ -414,7 +414,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 							 */
 
 							Hbox hbox = new Hbox();
-							Label label = new Label(PennantAppUtil.getlabelDesc(entry.getDrOrCr(),
+							Label label = new Label(PennantApplicationUtil.getLabelDesc(entry.getDrOrCr(),
 									PennantStaticListUtil.getTranType()));
 							label.setStyle(sClassStyle);
 							hbox.appendChild(label);
@@ -540,8 +540,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					sClassStyle = "color:#FF0000;";
 				}
 				Hbox hbox = new Hbox();
-				Label label = new Label(
-						PennantAppUtil.getlabelDesc(postAccountSet.getDrOrCr(), PennantStaticListUtil.getTranType()));
+				Label label = new Label(PennantApplicationUtil.getLabelDesc(postAccountSet.getDrOrCr(),
+						PennantStaticListUtil.getTranType()));
 				label.setStyle(sClassStyle);
 				hbox.appendChild(label);
 				lc = new Listcell();
@@ -644,8 +644,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						listBoxFinAccountings.appendChild(listgroup);
 					}
 
-					lc = new Listcell(
-							PennantAppUtil.getlabelDesc(entry.getDebitcredit(), PennantStaticListUtil.getTranType()));
+					lc = new Listcell(PennantApplicationUtil.getLabelDesc(entry.getDebitcredit(),
+							PennantStaticListUtil.getTranType()));
 					lc.setParent(item);
 					lc = new Listcell(entry.getTransDesc());
 					lc.setParent(item);
@@ -674,8 +674,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					}
 
 					Hbox hbox = new Hbox();
-					Label label = new Label(
-							PennantAppUtil.getlabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
+					Label label = new Label(PennantApplicationUtil.getLabelDesc(entry.getDrOrCr(),
+							PennantStaticListUtil.getTranType()));
 					hbox.appendChild(label);
 					if (StringUtils.isNotBlank(entry.getPostStatus())) {
 						Label la = new Label("*");
@@ -762,8 +762,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						listBoxFinAccountings.appendChild(listgroup);
 					}
 
-					lc = new Listcell(
-							PennantAppUtil.getlabelDesc(entry.getDebitcredit(), PennantStaticListUtil.getTranType()));
+					lc = new Listcell(PennantApplicationUtil.getLabelDesc(entry.getDebitcredit(),
+							PennantStaticListUtil.getTranType()));
 					lc.setParent(item);
 					lc = new Listcell(entry.getTransDesc());
 					lc.setParent(item);
@@ -792,8 +792,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					}
 
 					Hbox hbox = new Hbox();
-					Label label = new Label(
-							PennantAppUtil.getlabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
+					Label label = new Label(PennantApplicationUtil.getLabelDesc(entry.getDrOrCr(),
+							PennantStaticListUtil.getTranType()));
 					hbox.appendChild(label);
 					if (StringUtils.isNotEmpty(entry.getPostStatus())) {
 						Label la = new Label("*");

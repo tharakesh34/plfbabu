@@ -52,10 +52,10 @@ import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.dedup.DedupFieldsService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -285,7 +285,8 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	public void doWriteBeanToComponents(DedupFields aDedupFields) {
 		logger.debug("Entering");
 		this.fieldName.setValue(aDedupFields.getFieldName());
-		this.fieldControl.setValue(PennantAppUtil.getlabelDesc(aDedupFields.getFieldControl(), listFieldControl));
+		this.fieldControl
+				.setValue(PennantApplicationUtil.getLabelDesc(aDedupFields.getFieldControl(), listFieldControl));
 
 		this.recordStatus.setValue(aDedupFields.getRecordStatus());
 		logger.debug("Leaving");

@@ -28,11 +28,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -53,6 +55,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 	private AuditHeaderDAO auditHeaderDAO;
 	private PinCodeDAO pinCodeDAO;
 	private BranchDAO branchDAO;
+	private CustomerAddresDAO customerAddresDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -326,9 +329,11 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 		}
 
 		// If PIN Code is already utilized in Branches
-		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, pinCode.getRecordType())) {
+		if (PennantConstants.RECORD_TYPE_DEL.equals(pinCode.getRecordType())) {
 			boolean workflowExists = getBranchDAO().isPinCodeExists(pinCode.getPinCode());
-			if (workflowExists) {
+			boolean pincount = customerAddresDAO.isExisiCustPincode(pinCode.getId());
+
+			if (workflowExists || pincount) {
 
 				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("label_PinCode") + ": " + pinCode.getPinCode();
@@ -349,6 +354,11 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 
 	public void setBranchDAO(BranchDAO branchDAO) {
 		this.branchDAO = branchDAO;
+	}
+
+	@Autowired
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
 	}
 
 }

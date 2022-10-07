@@ -608,7 +608,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		 */
 		try {
 			if (this.finODCWaived.getValue() != null) {
-				BigDecimal reqWaiver = PennantAppUtil.getPercentageValue(this.finODCPenalty.getValue(),
+				BigDecimal reqWaiver = PennantApplicationUtil.getPercentageValue(this.finODCPenalty.getValue(),
 						getOverdueChargeRecovery().getFinODCMaxWaiver());
 				if (!this.finODCWaived.isDisabled() && this.finODCWaived.getValue() != null) {
 					if (this.finODCWaived.getValue()
@@ -618,7 +618,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 								Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
 										new String[] {
 												Labels.getLabel("label_OverdueChargeRecoveryDialog_FinODCWaived.value"),
-												PennantAppUtil.formatAmount(reqWaiver, format) }));
+												CurrencyUtil.format(reqWaiver, format) }));
 					}
 				} else if (this.finODCWaived.getValue() == null) {
 					this.finODCWaived.setValue(new BigDecimal(0));
@@ -1261,7 +1261,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 
 		int format = CurrencyUtil.getFormat(getOverdueChargeRecovery().getFinCcy());
 		this.finODCWaived.clearErrorMessage();
-		BigDecimal reqWaiver = PennantAppUtil.getPercentageValue(this.finODCPenalty.getValue(),
+		BigDecimal reqWaiver = PennantApplicationUtil.getPercentageValue(this.finODCPenalty.getValue(),
 				getOverdueChargeRecovery().getFinODCMaxWaiver());
 		if (!this.finODCWaived.isDisabled() && this.finODCWaived.getValue() != null) {
 			if (this.finODCWaived.getValue()
@@ -1270,7 +1270,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 				throw new WrongValueException(this.finODCWaived,
 						Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
 								new String[] { Labels.getLabel("label_OverdueChargeRecoveryDialog_FinODCWaived.value"),
-										PennantAppUtil.formatAmount(reqWaiver, format) }));
+										CurrencyUtil.format(reqWaiver, format) }));
 			}
 		} else if (this.finODCWaived.getValue() == null) {
 			this.finODCWaived.setValue(new BigDecimal(0));

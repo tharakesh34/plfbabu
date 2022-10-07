@@ -528,11 +528,11 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				listcell.setParent(listitem);
 
 				totScore = totScore.add(financeScoreDetail.getMaxScore());
-				listcell = new Listcell(PennantAppUtil.formatAmount(financeScoreDetail.getMaxScore(), 0));
+				listcell = new Listcell(CurrencyUtil.format(financeScoreDetail.getMaxScore(), 0));
 				listcell.setParent(listitem);
 
 				totExeScore = totExeScore.add(financeScoreDetail.getExecScore());
-				listcell = new Listcell(PennantAppUtil.formatAmount(financeScoreDetail.getExecScore(), 0));
+				listcell = new Listcell(CurrencyUtil.format(financeScoreDetail.getExecScore(), 0));
 				listcell.setParent(listitem);
 				this.listBoxRetailScoRef.appendChild(listitem);
 			}
@@ -547,11 +547,11 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			listcell.setStyle(BOLD);
 			listcell.setParent(listfoot);
 
-			listcell = new Listcell(PennantAppUtil.formatAmount(totScore, 0));
+			listcell = new Listcell(CurrencyUtil.format(totScore, 0));
 			listcell.setStyle(BOLD);
 			listcell.setParent(listfoot);
 
-			listcell = new Listcell(PennantAppUtil.formatAmount(totExeScore, 0));
+			listcell = new Listcell(CurrencyUtil.format(totExeScore, 0));
 			listcell.setStyle(BOLD);
 			listcell.setParent(listfoot);
 			this.listBoxRetailScoRef.appendChild(listfoot);

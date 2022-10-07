@@ -32,10 +32,10 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
@@ -57,7 +57,7 @@ public class PaymentHeaderListModelItemRenderer implements ListitemRenderer<Paym
 		lc = new Listcell(paymentHeader.getFinReference());
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.getlabelDesc(paymentHeader.getPaymentInstrType(),
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(paymentHeader.getPaymentInstrType(),
 				PennantStaticListUtil.getPaymentTypesWithIST()));
 		lc.setParent(item);
 

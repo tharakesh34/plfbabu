@@ -48,4 +48,5 @@ public interface CountryDAO extends BasicCrudDao<Country> {
 	 */
 	boolean isDuplicateKey(String countryCode, TableType tableType);
 
+	boolean isExistCountryCode(String code);
 }

@@ -2401,7 +2401,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			lc = new Listcell(String.valueOf(doc.getDocId()));
 			listitem.appendChild(lc);
 
-			lc = new Listcell(PennantAppUtil.getlabelDesc(doc.getDocCategory(), list));
+			lc = new Listcell(PennantApplicationUtil.getLabelDesc(doc.getDocCategory(), list));
 			listitem.appendChild(lc);
 
 			lc = new Listcell(doc.getDoctype());

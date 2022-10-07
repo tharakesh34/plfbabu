@@ -34,9 +34,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.collateral.CollateralStructure;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 public class CollateralStructureListModelItemRenderer implements ListitemRenderer<CollateralStructure>, Serializable {
 
@@ -53,7 +53,8 @@ public class CollateralStructureListModelItemRenderer implements ListitemRendere
 		lc = new Listcell(cs.getCollateralDesc());
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.getlabelDesc(cs.getLtvType(), PennantStaticListUtil.getListLtvTypes()));
+		lc = new Listcell(
+				PennantApplicationUtil.getLabelDesc(cs.getLtvType(), PennantStaticListUtil.getListLtvTypes()));
 		lc.setParent(item);
 
 		lc = new Listcell();

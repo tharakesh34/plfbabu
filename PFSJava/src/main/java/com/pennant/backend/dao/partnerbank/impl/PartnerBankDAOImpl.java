@@ -620,4 +620,12 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		}
 	}
 
+	@Override
+	public boolean getPartnerBankbyBankBranch(String bankCode) {
+		String sql = "Select Count(BankBranchCode) From PartnerBanks Where BankBranchCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, bankCode) > 0;
+	}
 }

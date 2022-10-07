@@ -460,7 +460,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(), MandateUtil.getMandateStatus()));
+			lc = new Listcell(PennantApplicationUtil.getLabelDesc(mandate.getStatus(), MandateUtil.getMandateStatus()));
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
 			lc.setParent(item);

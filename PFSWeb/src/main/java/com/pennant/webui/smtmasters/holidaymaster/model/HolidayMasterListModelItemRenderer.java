@@ -33,9 +33,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.smtmasters.HolidayMaster;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -57,8 +57,8 @@ public class HolidayMasterListModelItemRenderer implements ListitemRenderer<Holi
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(holidayMaster.getHolidayYear()));
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(holidayMaster.getHolidayType(), PennantStaticListUtil.getHolidayType()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(holidayMaster.getHolidayType(),
+				PennantStaticListUtil.getHolidayType()));
 		lc.setParent(item);
 		lc = new Listcell(holidayMaster.getRecordStatus());
 		lc.setParent(item);

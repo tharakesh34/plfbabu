@@ -24,6 +24,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.model.CollectionCustomerDetail;
@@ -269,7 +270,7 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		logger.debug(Literal.LEAVING);
 		return null;

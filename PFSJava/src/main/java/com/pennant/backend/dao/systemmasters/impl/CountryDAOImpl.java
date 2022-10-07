@@ -245,4 +245,13 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 			return "";
 		}
 	}
+
+	@Override
+	public boolean isExistCountryCode(String code) {
+		String sql = "Select Count(CPCountry) From RMTCountryVsProvince  Where CPCountry = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, code) > 0;
+	}
 }

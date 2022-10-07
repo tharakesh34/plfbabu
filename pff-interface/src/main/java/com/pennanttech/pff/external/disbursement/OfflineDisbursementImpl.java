@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,10 +17,13 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.disbursement.PaymentType;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 
 public class OfflineDisbursementImpl implements OfflineDisbursement {
+	private static Logger logger = LogManager.getLogger(OfflineDisbursementImpl.class);
+
 	private DataSource dataSource;
 	private JdbcOperations jdbcOperations;
 
@@ -86,7 +91,7 @@ public class OfflineDisbursementImpl implements OfflineDisbursement {
 			return jdbcOperations.queryForObject(sql, String.class, paymentType, partnerBankId,
 					DataEngineConstants.DISBURSEMENT, DataEngineConstants.EXPORT);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}

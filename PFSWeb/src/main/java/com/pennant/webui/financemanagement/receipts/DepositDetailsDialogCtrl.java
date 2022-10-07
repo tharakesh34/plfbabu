@@ -666,7 +666,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				lc.setParent(item);
 
 				// Receipt Purpose
-				lc = new Listcell(PennantAppUtil.getlabelDesc(depositCheque.getReceiptpurpose(),
+				lc = new Listcell(PennantApplicationUtil.getLabelDesc(depositCheque.getReceiptpurpose(),
 						PennantStaticListUtil.getReceiptPurpose()));
 				lc.setParent(item);
 				lc = new Listcell(depositCheque.getRemarks());

@@ -34,8 +34,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.systemmasters.PhoneType;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for list items in the list box.
@@ -57,7 +57,7 @@ public class PhoneTypeListModelItemRenderer implements ListitemRenderer<PhoneTyp
 		lc.setParent(item);
 		lc = new Listcell(phoneType.getPhoneTypeDesc());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.formateInt(phoneType.getPhoneTypePriority()));
+		lc = new Listcell(PennantApplicationUtil.formateInt(phoneType.getPhoneTypePriority()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell();

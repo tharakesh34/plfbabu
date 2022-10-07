@@ -35,9 +35,9 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -59,8 +59,8 @@ public class ManualDeviationListModelItemRenderer implements ListitemRenderer<Ma
 		lc.setParent(item);
 		lc = new Listcell(manualDeviation.getDescription());
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(manualDeviation.getModule(), PennantStaticListUtil.getWorkFlowModules()));
+		lc = new Listcell(PennantApplicationUtil.getLabelDesc(manualDeviation.getModule(),
+				PennantStaticListUtil.getWorkFlowModules()));
 		lc.setParent(item);
 		lc = new Listcell(manualDeviation.getCategorizationName());
 		lc.setParent(item);

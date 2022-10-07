@@ -297,6 +297,16 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(sector.getRecordType())) {
+			boolean sectorcount = sectorDAO.isExistSectorCode(code);
+			if (sectorcount) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_Sector_Code") + ": " + code
+						+ " having child Records.It can't be Deleted";
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");

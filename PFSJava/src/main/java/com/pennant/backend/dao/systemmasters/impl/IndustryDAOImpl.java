@@ -216,4 +216,13 @@ public class IndustryDAOImpl extends BasicDao<Industry> implements IndustryDAO {
 
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public boolean isExistIndustryCode(String code) {
+		String sql = "Select Count(CustIndustry) From Customers Where CustIndustry = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, code) > 0;
+	}
 }

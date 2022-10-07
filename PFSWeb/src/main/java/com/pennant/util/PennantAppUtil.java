@@ -266,22 +266,6 @@ public class PennantAppUtil {
 
 	/**
 	 * 
-	 * @deprecated use {@link PennantApplicationUtil#getLabelDesc} instead.
-	 */
-	public static String getlabelDesc(String value, List<ValueLabel> list) {
-		return PennantApplicationUtil.getLabelDesc(value, list);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#getValueDesc} instead.
-	 */
-	public static String getValueDesc(String label, List<ValueLabel> list) {
-		return PennantApplicationUtil.getValueDesc(label, list);
-	}
-
-	/**
-	 * 
 	 * @deprecated use {@link PennantApplicationUtil#amountFormate} instead.
 	 */
 	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
@@ -310,38 +294,6 @@ public class PennantAppUtil {
 	 */
 	public static BigDecimal unFormateAmount(String amount, int dec) {
 		return CurrencyUtil.unFormat(amount, dec);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link CurrencyUtil#format} instead.
-	 */
-	public static String formatAmount(BigDecimal value, int decPos) {
-		return CurrencyUtil.format(value, decPos);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#formateLong} instead.
-	 */
-	public static String formateLong(long longValue) {
-		return PennantApplicationUtil.formateLong(longValue);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#formateInt} instead.
-	 */
-	public static String formateInt(int intValue) {
-		return PennantApplicationUtil.formateInt(intValue);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#getPercentageValue} instead.
-	 */
-	public static BigDecimal getPercentageValue(BigDecimal amount, BigDecimal percent) {
-		return PennantApplicationUtil.getPercentageValue(amount, percent);
 	}
 
 	public static String formateDate(Date date, String dateFormate) {
@@ -2181,8 +2133,9 @@ public class PennantAppUtil {
 
 		List<FinTypeReceiptModes> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
-			ValueLabel receiptMode = new ValueLabel(String.valueOf(appList.get(i).getReceiptMode()), PennantAppUtil
-					.getlabelDesc(appList.get(i).getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
+			ValueLabel receiptMode = new ValueLabel(String.valueOf(appList.get(i).getReceiptMode()),
+					PennantApplicationUtil.getLabelDesc(appList.get(i).getReceiptMode(),
+							PennantStaticListUtil.getReceiptModes()));
 			receiptModesList.add(receiptMode);
 		}
 		return receiptModesList;

@@ -288,8 +288,8 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		for (DocumentDetails documentDetail : documentDetails) {
 			Listitem listitem = new Listitem();
 			Listcell listcell;
-			listcell = new Listcell(
-					PennantAppUtil.getlabelDesc(documentDetail.getDocCategory(), PennantAppUtil.getDocumentTypes()));
+			listcell = new Listcell(PennantApplicationUtil.getLabelDesc(documentDetail.getDocCategory(),
+					PennantAppUtil.getDocumentTypes()));
 			listitem.appendChild(listcell);
 			listcell = new Listcell(documentDetail.getDocName());
 			listitem.appendChild(listcell);
