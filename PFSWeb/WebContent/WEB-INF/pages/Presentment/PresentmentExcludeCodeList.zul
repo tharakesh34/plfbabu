@@ -7,7 +7,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
-		<window id="window_BounceCodeList" apply="${presentmentExcludeCodeListCtrl}" border="none" width="100%">
+		<window id="windowPresentmentExcludeCode" apply="${presentmentExcludeCodeList}" border="none" width="100%">
 
 			<div sclass="z-toolbar" style="padding:0px" height="28px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
@@ -17,28 +17,23 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center" style="border-style: none;">
-						<button id="button_BounceCodeList_BounceCodeListSearchDialog" label="${c:l('label_Filter')}"
-							autodisable="button_BounceCodeList_BounceCodeListSearchDialog,print,btnRefresh,help"
-							tooltiptext="${c:l('button_BounceCodeList_BounceCodeListSearchDialog.tooltiptext')}" />
-						<button id="print" label="${c:l('label_Print')}"
-							autodisable="button_BounceCodeList_BounceCodeListSearchDialog,print,btnRefresh,help"
-							tooltiptext="${c:l('button_BounceCodeList_PrintList.tooltiptext')}" />
+						<button id="buttonSearchDialog" label="${c:l('label_Filter')}" autodisable="buttonSearchDialog"
+							tooltiptext="Search Presentment Exclude Codes" />
+						<button id="print" label="${c:l('label_Print')}" autodisable="buttonSearchDialog"
+							tooltiptext="Print Presentment Exclude Codes" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
-
 						<button id="btnRefresh" label="${c:l('label_Refresh')}"
-							autodisable="button_BounceCodeList_BounceCodeListSearchDialog,print,btnRefresh,help"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							autodisable="buttonSearchDialog,print,btnRefresh,help" tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 						<button id="help" visible="false" label="${c:l('label_Help')}"
-							autodisable="button_BounceCodeList_BounceCodeListSearchDialog,print,btnRefresh,help"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							autodisable="buttonSearchDialog,print,btnRefresh,help" tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 					</toolbar>
 				</hbox>
 			</div>
 
-			<borderlayout id="borderLayout_BounceCodeList">
+			<borderlayout id="borderLayoutPresentmentExcludeCodeList">
 				<north border="none" />
 				<center border="none">
 					<div>
@@ -52,70 +47,55 @@
 								<column width="50px" />
 								<column />
 							</columns>
-
 							<rows>
 								<row>
-									<label id="label_BounceCodeList" value="${c:l('label_BounceCodeList.value')}" />
-									<listbox id="sortOperator_bounceCodeList" width="43px" mold="select" rows="1" />
-									<textbox id="bounceCode" width="100px" maxlength="8" />
-									<label id="label_BounceCodeListDesc"
-										value="${c:l('label_BounceCodeListDesc.value')}" />
-									<listbox id="sortOperator_bounceCodeListDesc" width="43px" mold="select" rows="1" />
-									<textbox id="bounceCodeDesc" width="300px" maxlength="50" />
+									<label value="Code" />
+									<listbox id="codeSort" width="43px" mold="select" rows="1" />
+									<textbox id="code" width="200px" maxlength="20" />
+									<label value="Description" />
+									<listbox id="codeDescSort" width="43px" mold="select" rows="1" />
+									<textbox id="codeDesc" width="300px" maxlength="100" />
 								</row>
 								<row visible="false">
-									<label id="label_CodeList" value="${c:l('label_CodeList.value')}" />
-									<listbox id="sortOperator_CodeList" width="43px" mold="select" rows="1" />
-									<uppercasebox id="Code" width="100px" maxlength="8" />
-									<label id="label_CreateBounceOnDueDate"
-										value="${c:l('label_CreateBounceOnDueDate.value')}" />
-									<listbox id="sortOperator_CreateBounceOnDueDate" width="43px" mold="select"
-										rows="1" />
-									<checkbox id="createbounceonduedate" checked="false" />
+									<label value="Create Bounce On DueDate" />
+									<listbox id="createBounceOnDueDateSort" width="43px" mold="select" rows="1" />
+									<checkbox id="createBounceOnDueDate" checked="false" />
+									<label value="Bounce Code" />
+									<listbox id="bounceCodeSort" width="43px" mold="select" rows="1" />
+									<uppercasebox id="bounceCode" width="100px"  />
 								</row>
-								 <row id="row_AlwWorkflow">
-									<label id="label_BounceSearch_RecordStatus" value="${c:l('label_BounceSearch_RecordStatus.value')}" />
+								<row id="row_AlwWorkflow">
+									<label id="label_BounceSearch_RecordStatus"
+										value="${c:l('label_BounceSearch_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
-									<label id="label_BounceSearch_RecordType" value="${c:l('label_BounceSearch_RecordType.value')}" />
+									<label id="label_BounceSearch_RecordType"
+										value="${c:l('label_BounceSearch_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
-								</row> 
-								<row id="workFlowFrom">
-									<label value="${c:l('common.fetch.selectfrom')}" />
-									<cell colspan="5">
-										<radiogroup>
-											<radio id="fromApproved" selected="true"
-												label="${c:l('common.fetch.fromapproved')}">
-											</radio>
-											<radio id="fromWorkFlow" label="${c:l('common.fetch.fromWorkFlow')}">
-											</radio>
-										</radiogroup>
-									</cell>
 								</row>
 							</rows>
 						</grid>
-						<listbox id="listBoxBounceCode" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-							height="100%" multiple="false" sizedByContent="true" emptyMessage="${c:l('listbox.emptyMessage')}" span="true">
+						<listbox id="listBoxPresentmentExcludeCode" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" sizedByContent="true" emptyMessage="${c:l('listbox.emptyMessage')}"
+							span="true">
 							<listhead sizable="true">
-								<listheader id="listheader_Code" label="${c:l('listheader_Code.label')}" sort="auto"
-									hflex="min" />
-								<listheader id="listheader_BounceCodeDesc"
-									label="${c:l('listheader_BounceCodeDesc.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_CreateBounceOnDueDate"
-									label="${c:l('listheader_CreateBounceOnDueDate.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_BounceCode" label="${c:l('listheader_BounceCode.label')}"
+								<listheader id="codeHeader" label="Code" sort="auto" hflex="min" />
+								<listheader id="codeDescHeader" label="Description" sort="auto" hflex="min" />
+								<listheader id="createBounceOnDueDateHeader" label="Create Bounce On DueDate"
 									sort="auto" hflex="min" />
-								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-									hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
-									hflex="min" />
+								<listheader id="bounceCodeHeader" label="Bounce Code" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}"
+									sort="auto" hflex="min" />
 							</listhead>
 						</listbox>
 					</div>
 				</center>
+
 				<south border="none">
-					<paging id="pagingBounceCodeList" />
+					<paging id="pagingPresentmentExcludeCodeList" />
 				</south>
 			</borderlayout>
 		</window>

@@ -18,18 +18,19 @@ import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
 import com.pennant.pff.presentment.model.DueExtractionConfig;
 import com.pennant.pff.presentment.model.DueExtractionHeader;
 import com.pennant.pff.presentment.model.InstrumentTypes;
-import com.pennant.pff.presentment.service.PresentmentDueConfigService;
+import com.pennant.pff.presentment.service.DueExtractionConfigService;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.core.TableType;
 
-public class PresentmentDueConfigServiceImpl implements PresentmentDueConfigService {
-	private static final Logger logger = LogManager.getLogger(PresentmentDueConfigServiceImpl.class);
+public class DueExtractionConfigServiceImpl implements DueExtractionConfigService {
+	private static final Logger logger = LogManager.getLogger(DueExtractionConfigServiceImpl.class);
+
 	@Autowired
 	private DueExtractionConfigDAO dueExtractionConfigDAO;
 
-	public PresentmentDueConfigServiceImpl() {
+	public DueExtractionConfigServiceImpl() {
 		super();
 	}
 
@@ -146,8 +147,8 @@ public class PresentmentDueConfigServiceImpl implements PresentmentDueConfigServ
 		return types;
 	}
 
-	public List<InstrumentTypes> getCode() {
-		return dueExtractionConfigDAO.getInstrumentHeader();
+	public List<DueExtractionHeader> getDueExtractionHeaders() {
+		return dueExtractionConfigDAO.getDueExtractionHeaders();
 	}
 
 	@Override
@@ -189,5 +190,15 @@ public class PresentmentDueConfigServiceImpl implements PresentmentDueConfigServ
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<DueExtractionConfig> getDueExtractionConfig(long monthID) {
+		return dueExtractionConfigDAO.getDueExtractionConfig(monthID);
+	}
+
+	@Override
+	public Map<Long, InstrumentTypes> getInstrumentTypesMap() {
+		return dueExtractionConfigDAO.getInstrumentTypesMap();
 	}
 }

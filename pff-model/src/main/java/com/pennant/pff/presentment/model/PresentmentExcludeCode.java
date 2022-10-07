@@ -12,11 +12,10 @@ public class PresentmentExcludeCode extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private String code;
-	private long bounceId;
+	private Long bounceId;
 	private String description;
 	private boolean createBounceOnDueDate;
 	private int excludeId;
-	private String bounceCode;
 	private long createdBy;
 	private Timestamp createdOn;
 	private Timestamp approvedOn;
@@ -24,6 +23,8 @@ public class PresentmentExcludeCode extends AbstractWorkflowEntity {
 	private boolean active;
 	private LoggedInUser userDetails;
 	private PresentmentExcludeCode befImage;
+	private String bounceCode;
+	private String returnCode;
 
 	public PresentmentExcludeCode() {
 		super();
@@ -33,8 +34,7 @@ public class PresentmentExcludeCode extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<>();
 
 		excludeFields.add("bounceCode");
-		excludeFields.add("lovdesccategory");
-		excludeFields.add("bounceId");
+		excludeFields.add("returnCode");
 
 		return excludeFields;
 	}
@@ -55,11 +55,11 @@ public class PresentmentExcludeCode extends AbstractWorkflowEntity {
 		this.code = code;
 	}
 
-	public long getBounceId() {
+	public Long getBounceId() {
 		return bounceId;
 	}
 
-	public void setBounceId(long bounceId) {
+	public void setBounceId(Long bounceId) {
 		this.bounceId = bounceId;
 	}
 
@@ -85,14 +85,6 @@ public class PresentmentExcludeCode extends AbstractWorkflowEntity {
 
 	public void setExcludeId(int excludeId) {
 		this.excludeId = excludeId;
-	}
-
-	public String getBounceCode() {
-		return bounceCode;
-	}
-
-	public void setBounceCode(String bounceCode) {
-		this.bounceCode = bounceCode;
 	}
 
 	public long getCreatedBy() {
@@ -149,6 +141,22 @@ public class PresentmentExcludeCode extends AbstractWorkflowEntity {
 
 	public void setCreatedOn(Timestamp createdOn) {
 		this.createdOn = createdOn;
+	}
+
+	public String getBounceCode() {
+		return bounceCode;
+	}
+
+	public void setBounceCode(String bounceCode) {
+		this.bounceCode = bounceCode;
+	}
+
+	public String getReturnCode() {
+		return returnCode;
+	}
+
+	public void setReturnCode(String returnCode) {
+		this.returnCode = returnCode;
 	}
 
 }

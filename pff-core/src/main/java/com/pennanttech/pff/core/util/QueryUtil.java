@@ -11,10 +11,14 @@
  */
 package com.pennanttech.pff.core.util;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -113,5 +117,148 @@ public final class QueryUtil {
 		}
 
 		return "+";
+	}
+
+	public static String buildWhereClause(ISearch search, List<Object> psList) {
+		StringBuilder sql = new StringBuilder();
+
+		for (Filter filter : search.getFilters()) {
+			String condition = filter.getProperty();
+
+			if ("AND".equals(condition) || "OR".equals(condition)) {
+				if (!(filter.getValue() instanceof List<?>)) {
+					continue;
+				}
+
+				List<?> list = (List<?>) filter.getValue();
+
+				for (Object object : list) {
+					if (object instanceof Filter) {
+						try {
+							if (sql.length() > 0) {
+								sql.append(condition).append(" ");
+							}
+
+							buildQueryByOperator((Filter) object, psList, sql);
+						} catch (Exception e) {
+							//
+						}
+
+					}
+				}
+			} else {
+				try {
+					if (sql.length() > 0) {
+						sql.append(" AND ");
+					}
+					buildQueryByOperator(filter, psList, sql);
+				} catch (Exception e) {
+					//
+				}
+			}
+		}
+
+		if (sql.length() > 0) {
+			return " Where ".concat(sql.toString());
+		}
+
+		return "";
+	}
+
+	public static void buildQueryByOperator(Filter filter, List<Object> psList, StringBuilder sql) throws Exception {
+
+		String property = filter.getProperty();
+		sql.append(property);
+
+		switch (filter.getOperator()) {
+		case 0:
+			sql.append(" = ");
+			sql.append("? ");
+
+			psList.add(filter.getValue());
+			break;
+		case 1:
+			sql.append(" <> ");
+			sql.append("? ");
+
+			psList.add(filter.getValue());
+			break;
+		case 2:
+			String sql2 = "";
+			sql.append(" like ? ");
+			if (App.DATABASE == Database.POSTGRES) {
+				sql2 = sql.toString().replaceAll("(?i)like", "ilike");
+			}
+
+			sql = new StringBuilder(sql2);
+
+			psList.add("%" + filter.getValue() + "%");
+			break;
+		case 3:
+			sql.append(" > ");
+			sql.append("? ");
+
+			psList.add(filter.getValue());
+			break;
+		case 4:
+			sql.append(" <= ");
+			sql.append("? ");
+
+			psList.add(filter.getValue());
+			break;
+		case 5:
+			sql.append(" >= ");
+			sql.append("? ");
+
+			psList.add(filter.getValue());
+			break;
+		case 6:
+			sql.append(" LIKE ");
+			sql.append("%?% ");
+
+			psList.add(filter.getValue());
+			break;
+		case 10:
+			sql.append(" IS NULL ");
+
+			break;
+		case 11:
+			sql.append(" IS NOT NULL ");
+			break;
+		case 8:
+			sql.append(" IN (");
+			commaJoin(sql, filter.getValue(), psList);
+
+			break;
+		case 9:
+			sql.append(" NOT IN (");
+			commaJoin(sql, filter.getValue(), psList);
+
+			break;
+		default:
+			break;
+		}
+	}
+
+	private static void commaJoin(StringBuilder sql, Object value, List<Object> psList) throws Exception {
+		List<Object> inList = Arrays.asList(value);
+		for (Object object : inList) {
+			String valu = String.valueOf(object);
+			String[] split = new String[] {};
+			if (valu.contains(",")) {
+				split = valu.split(",");
+
+			} else {
+				split[0] = valu;
+			}
+
+			for (String s1 : split) {
+				sql.append(" ?,");
+				psList.add(s1);
+			}
+
+		}
+		sql.deleteCharAt(sql.length() - 1);
+		sql.append(") ");
 	}
 }

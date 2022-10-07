@@ -2,6 +2,7 @@ package com.pennant.pff.presentment.web;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +28,7 @@ import com.pennant.pff.presentment.service.PresentmentExcludeCodeService;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -35,18 +37,15 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 	private static final long serialVersionUID = -6945930303723518608L;
 	private static final Logger logger = LogManager.getLogger(PresentmentExcludeCodeDialogCtrl.class);
 
-	protected Window windowBounceCodeDialog;
+	protected Window windowPresentmentExcludeCodeDialog;
 
 	protected Textbox code;
 	protected Textbox description;
 	protected Checkbox createBounceOnDueDate;
-	protected ExtendedCombobox bounceid;
+	protected ExtendedCombobox bounceId;
 
-	private PresentmentExcludeCode bounceCode;
-	private transient PresentmentExcludeCodeListCtrl bounceCodeListCtrl;
-
-	private transient boolean validationOn;
-
+	private PresentmentExcludeCode excludeCode;
+	private transient PresentmentExcludeCodeListCtrl presentmentExcludeCodeList;
 	private transient PresentmentExcludeCodeService presentmentExcludeCodeService;
 
 	public PresentmentExcludeCodeDialogCtrl() {
@@ -58,150 +57,190 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		super.pageRightName = "PresentmentExcludeCodeDialog";
 	}
 
-	public void onCreate$windowBounceCodeDialog(Event event) throws Exception {
-		logger.debug("Entering");
+	public void onCreate$windowPresentmentExcludeCodeDialog(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		setPageComponents(windowBounceCodeDialog);
+		setPageComponents(windowPresentmentExcludeCodeDialog);
 
 		try {
 
-			this.bounceCode = (PresentmentExcludeCode) arguments.get("bounceCode");
-			this.bounceCodeListCtrl = (PresentmentExcludeCodeListCtrl) arguments.get("bounceCodeListCtrl");
+			this.excludeCode = (PresentmentExcludeCode) arguments.get("PresentmentExcludeCode");
 
-			if (this.bounceCode == null) {
-				throw new Exception(Labels.getLabel("error.unhandled"));
+			if (this.excludeCode == null) {
+				throw new AppException(Labels.getLabel("error.unhandled"));
 			}
 
-			PresentmentExcludeCode bounceCode = new PresentmentExcludeCode();
-			BeanUtils.copyProperties(this.bounceCode, bounceCode);
-			this.bounceCode.setBefImage(bounceCode);
+			this.presentmentExcludeCodeList = (PresentmentExcludeCodeListCtrl) arguments
+					.get("PresentmentExcludeCodeList");
 
-			doLoadWorkFlow(this.bounceCode.isWorkflow(), this.bounceCode.getWorkflowId(),
-					this.bounceCode.getNextTaskId());
+			PresentmentExcludeCode exlcudeCode = new PresentmentExcludeCode();
+			BeanUtils.copyProperties(this.excludeCode, exlcudeCode);
 
-			if (isWorkFlowEnabled() && !enqiryModule) {
+			this.excludeCode.setBefImage(exlcudeCode);
+
+			doLoadWorkFlow(this.excludeCode.isWorkflow(), this.excludeCode.getWorkflowId(),
+					this.excludeCode.getNextTaskId());
+
+			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
 
 			doSetFieldProperties();
 			doCheckRights();
-			doShowDialog(this.bounceCode);
+			doShowDialog(this.excludeCode);
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
 		}
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		this.code.setMaxlength(16);
-		this.description.setMaxlength(50);
-		this.bounceid.setMaxlength(8);
+		this.bounceId.setModuleName("BounceReason");
+		this.bounceId.setValueColumn("BounceCode");
+		this.bounceId.setValidateColumns(new String[] { "BounceCode" });
 
-		this.bounceid.setModuleName("BounceReason");
-		this.bounceid.setValueColumn("BounceCode");
-		this.bounceid.setDescColumn("Lovdesccategory");
-		this.bounceid.setValidateColumns(new String[] { "BounceCode" });
+		this.groupboxWf.setVisible(isWorkFlowEnabled());
 
-		if (this.createBounceOnDueDate.isChecked()) {
-			this.bounceid.setMandatoryStyle(true);
-		} else {
-			this.bounceid.setMandatoryStyle(false);
-		}
-
-		if (isWorkFlowEnabled()) {
-			this.groupboxWf.setVisible(true);
-		} else {
-			this.groupboxWf.setVisible(false);
-		}
-
-		if (enqiryModule) {
-			if (south != null) {
-				south.setVisible(false);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doCheckRights() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 		this.btnSave.setVisible(true);
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		doSave();
-		logger.debug("Leaving" + event.toString());
+	public void onFulfill$bounceId(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
+		Object dataObject = bounceId.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.bounceId.setValue("");
+			this.bounceId.setDescription("");
+			this.bounceId.setAttribute("BounceCode", null);
+		} else {
+			BounceReason details = (BounceReason) dataObject;
+			this.bounceId.setAttribute("BounceCode", details.getBounceID());
+			this.bounceId.setValue(details.getBounceCode(), details.getReturnCode());
+		}
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
+	}
+
+	public void onClick$btnSave(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
+		PresentmentExcludeCode excludeCode = new PresentmentExcludeCode();
+		BeanUtils.copyProperties(this.excludeCode, excludeCode);
+
+		boolean isNew = false;
+
+		doSetValidation();
+		doWriteComponentsToBean(excludeCode);
+
+		isNew = excludeCode.isNewRecord();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+
+			if (StringUtils.isBlank(excludeCode.getRecordType())) {
+				excludeCode.setVersion(excludeCode.getVersion() + 1);
+
+				if (isNew) {
+					excludeCode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					excludeCode.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					excludeCode.setNewRecord(true);
+				}
+			}
+		} else {
+			excludeCode.setVersion(excludeCode.getVersion() + 1);
+
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+
+		try {
+			if (doProcess(excludeCode, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
 		doEdit();
-		logger.debug("Leaving" + event.toString());
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		MessageUtil.showHelpWindow(event, windowBounceCodeDialog);
-		logger.debug("Leaving" + event.toString());
-	}
+	public void onClick$btnHelp(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		doDelete();
-		logger.debug("Leaving" + event.toString());
+		MessageUtil.showHelpWindow(event, windowPresentmentExcludeCodeDialog);
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" + event.toString());
-		doCancel();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
+		doWriteBeanToComponents(this.excludeCode.getBefImage());
+		doReadOnly();
+
+		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(true);
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$btnClose(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
 		doClose(this.btnSave.isVisible());
-	}
 
-	private void doCancel() {
-		logger.debug("Entering");
-
-		doWriteBeanToComponents(this.bounceCode.getBefImage());
-		doReadOnly();
-		this.btnCtrl.setInitEdit();
-		this.btnCancel.setVisible(true);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void doWriteBeanToComponents(PresentmentExcludeCode aBounceCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.code.setValue(aBounceCode.getCode());
 		this.description.setValue(aBounceCode.getDescription());
 		this.createBounceOnDueDate.setChecked(aBounceCode.isCreateBounceOnDueDate());
-
-		if (this.createBounceOnDueDate.isChecked()) {
-			this.bounceid.setValue(String.valueOf(aBounceCode.getBounceCode()));
-			this.bounceid.setAttribute("BounceCode", aBounceCode.getBounceId());
-			// this.bounceid.setValue("");
-		}
+		this.bounceId.setValue(StringUtils.trimToEmpty(aBounceCode.getBounceCode()),
+				StringUtils.trimToEmpty(aBounceCode.getReturnCode()));
+		this.bounceId.setAttribute("BounceCode", aBounceCode.getBounceId());
 
 		this.recordStatus.setValue(aBounceCode.getRecordStatus());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doWriteComponentsToBean(PresentmentExcludeCode aBounceCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		doSetLOVValidation();
-
-		ArrayList<WrongValueException> wve = new ArrayList<>();
+		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
 			aBounceCode.setCode(this.code.getValue());
@@ -220,22 +259,25 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		try {
-			if (StringUtils.isNotBlank(this.bounceid.getValue())) {
-				Object object = this.bounceid.getObject();
-				if (object != null) {
-					BounceReason bc = (BounceReason) object;
-					aBounceCode.setBounceId(bc.getBounceID());
-				} else {
-					aBounceCode.setBounceCode(String.valueOf(this.bounceid.getValue()));
-				}
+
+			aBounceCode.setBounceCode(this.bounceId.getValue());
+			aBounceCode.setReturnCode(this.bounceId.getDescription());
+			Object object = this.bounceId.getAttribute("BounceCode");
+			if (object != null) {
+				aBounceCode.setBounceId(Long.parseLong(object.toString()));
+			} else {
+				aBounceCode.setBounceId(null);
 			}
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
+		aBounceCode.setRecordStatus(this.recordStatus.getValue());
+
 		doRemoveValidation();
-		doRemoveLOVValidation();
 
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -245,22 +287,17 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 			throw new WrongValuesException(wvea);
 		}
 
-		aBounceCode.setRecordStatus(this.recordStatus.getValue());
-
-		logger.debug("Leaving");
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doShowDialog(PresentmentExcludeCode aBounceCode) {
 		if (aBounceCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
-			this.bounceid.focus();
 		} else {
 			if (isWorkFlowEnabled()) {
-				this.bounceid.focus();
-				this.bounceid.setValue(String.valueOf(aBounceCode.getBounceCode()));
-				this.bounceid.setAttribute("BounceCode", aBounceCode.getBounceId());
+				this.bounceId.setValue(String.valueOf(aBounceCode.getBounceCode()));
+				this.bounceId.setAttribute("BounceCode", aBounceCode.getBounceId());
 				if (StringUtils.isNotBlank(aBounceCode.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
@@ -279,13 +316,11 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		doWriteBeanToComponents(aBounceCode);
 		setDialog(DialogType.EMBEDDED);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSetValidation() {
-		logger.debug("Entering");
-
-		setValidationOn(true);
+		logger.debug(Literal.ENTERING);
 
 		if (!this.code.isReadonly()) {
 			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceCodeDialog_Code.value"),
@@ -298,54 +333,37 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
-		if (this.createBounceOnDueDate.isChecked() && !this.bounceid.isReadonly()) {
-			this.bounceid.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceCodeDialog_BounceId.value"),
+		if (this.createBounceOnDueDate.isChecked() && !this.bounceId.isReadonly()) {
+			this.bounceId.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceCodeDialog_BounceId.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doRemoveValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		setValidationOn(false);
 		this.code.setConstraint("");
 		this.description.setConstraint("");
-		this.bounceid.setConstraint("");
-		logger.debug("Leaving");
-	}
+		this.bounceId.setConstraint("");
 
-	private void doSetLOVValidation() {
-	}
-
-	private void doRemoveLOVValidation() {
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	protected void doClearMessage() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.code.setErrorMessage("");
 		this.description.setErrorMessage("");
-		this.bounceid.setErrorMessage("");
-
-		logger.debug("Leaving");
-	}
-
-	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.ENTERING);
-
-		final PresentmentExcludeCode aBounceCode = new PresentmentExcludeCode();
-		BeanUtils.copyProperties(getBounceCode(), aBounceCode);
-
-		doDelete(Labels.getLabel("label_BounceCodeDialog_Code.value") + " : " + aBounceCode.getCode(), aBounceCode);
+		this.bounceId.setErrorMessage("");
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void doEdit() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.code.setReadonly(true);
 		this.description.setReadonly(true);
@@ -358,7 +376,7 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.bounceCode.isNewRecord()) {
+			if (this.excludeCode.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
 			} else {
@@ -369,29 +387,16 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		logger.debug("Leaving ");
-	}
-
-	public void onCheck$createBounceOnDueDate(Event event) {
-		logger.debug("Entering");
-
-		if (this.createBounceOnDueDate.isChecked()) {
-			this.bounceid.setMandatoryStyle(true);
-			// this.bounceid.setValue(String.valueOf(bounceCode.getBounceCode()));
-			this.bounceid.setValue("");
-		} else {
-			this.bounceid.setMandatoryStyle(false);
-			this.bounceid.setValue("");
-		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doReadOnly() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.code.setReadonly(true);
 		this.description.setReadonly(true);
 		this.createBounceOnDueDate.setDisabled(true);
-		this.bounceid.setReadonly(true);
+		this.bounceId.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -404,71 +409,23 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 			this.userAction.setSelectedIndex(0);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doClear() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.code.setValue("");
 		this.description.setValue("");
 		this.createBounceOnDueDate.setChecked(false);
-		this.bounceid.setValue("");
+		this.bounceId.setValue("");
 		this.btnCancel.setVisible(true);
-		logger.debug("Leaving");
-	}
 
-	public void doSave() throws InterruptedException {
-		logger.debug("Entering");
-
-		final PresentmentExcludeCode aBounceCode = new PresentmentExcludeCode();
-		BeanUtils.copyProperties(getBounceCode(), aBounceCode);
-		boolean isNew = false;
-
-		doSetValidation();
-		doWriteComponentsToBean(aBounceCode);
-
-		isNew = aBounceCode.isNewRecord();
-		String tranType = "";
-
-		if (isWorkFlowEnabled()) {
-			tranType = PennantConstants.TRAN_WF;
-
-			if (StringUtils.isBlank(aBounceCode.getRecordType())) {
-				aBounceCode.setVersion(aBounceCode.getVersion() + 1);
-
-				if (isNew) {
-					aBounceCode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else {
-					aBounceCode.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					aBounceCode.setNewRecord(true);
-				}
-			}
-		} else {
-			aBounceCode.setVersion(aBounceCode.getVersion() + 1);
-
-			if (isNew) {
-				tranType = PennantConstants.TRAN_ADD;
-			} else {
-				tranType = PennantConstants.TRAN_UPD;
-			}
-		}
-
-		try {
-
-			if (doProcess(aBounceCode, tranType)) {
-				refreshList();
-				closeDialog();
-			}
-
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	protected boolean doProcess(PresentmentExcludeCode aBounceCode, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -493,11 +450,9 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 					nextTaskId = getNextTaskIds(taskId, aBounceCode);
 				}
 
-				if (isNotesMandatory(taskId, aBounceCode)) {
-					if (!notesEntered) {
-						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
+				if (isNotesMandatory(taskId, aBounceCode) && !notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 
@@ -543,12 +498,13 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 			auditHeader = getAuditHeader(aBounceCode, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -584,19 +540,18 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 				} else {
 					auditHeader.setErrorDetails(
 							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
-					retValue = ErrorControl.showErrorControl(this.windowBounceCodeDialog, auditHeader);
 					return processCompleted;
 				}
 			}
 
-			auditHeader = ErrorControl.showErrorDetails(this.windowBounceCodeDialog, auditHeader);
+			auditHeader = ErrorControl.showErrorDetails(this.windowPresentmentExcludeCodeDialog, auditHeader);
 			retValue = auditHeader.getProcessStatus();
 
 			if (retValue == PennantConstants.porcessCONTINUE) {
 				processCompleted = true;
 
 				if (deleteNotes) {
-					deleteNotes(getNotes(this.bounceCode), true);
+					deleteNotes(getNotes(this.excludeCode), true);
 				}
 			}
 
@@ -607,7 +562,8 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 				auditHeader.setOverideMessage(null);
 			}
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -618,36 +574,24 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 	}
 
 	public void onClick$btnNotes(Event event) {
-		doShowNotes(this.bounceCode);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
+		doShowNotes(this.excludeCode);
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	protected void refreshList() {
-		bounceCodeListCtrl.onClick$btnRefresh(null);
+		presentmentExcludeCodeList.fillListData();
 	}
 
 	@Override
 	protected String getReference() {
-		return String.valueOf(this.bounceCode.getId());
+		return String.valueOf(this.excludeCode.getId());
 	}
 
-	public void setBounceCode(PresentmentExcludeCode bounceCode) {
-		this.bounceCode = bounceCode;
-	}
-
-	public PresentmentExcludeCode getBounceCode() {
-		return bounceCode;
-	}
-
-	public void setBounceCodeListCtrl(PresentmentExcludeCodeListCtrl bounceCodeListCtrl) {
-		this.bounceCodeListCtrl = bounceCodeListCtrl;
-	}
-
-	public boolean isValidationOn() {
-		return validationOn;
-	}
-
-	public void setValidationOn(boolean validationOn) {
-		this.validationOn = validationOn;
+	public void setPresentmentExcludeCodeList(PresentmentExcludeCodeListCtrl presentmentExcludeCodeList) {
+		this.presentmentExcludeCodeList = presentmentExcludeCodeList;
 	}
 
 	@Autowired

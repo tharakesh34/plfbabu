@@ -27,15 +27,15 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 	private static Logger logger = LogManager.getLogger(PresentmentExcludeCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
-	private PresentmentExcludeCodeDAO bounceCodeDao;
+	private PresentmentExcludeCodeDAO presentmentExcludeCodeDAO;
 
 	public PresentmentExcludeCodeServiceImpl() {
 		super();
 	}
 
 	@Override
-	public PresentmentExcludeCode getCode(String code) {
-		return this.bounceCodeDao.getCode(code);
+	public PresentmentExcludeCode getExcludeCode(String code) {
+		return this.presentmentExcludeCodeDAO.getExcludeCode(code);
 	}
 
 	@Override
@@ -57,11 +57,11 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 		}
 
 		if (code.isNewRecord()) {
-			code.setCode(String.valueOf(this.bounceCodeDao.save(code, type)));
+			code.setCode(String.valueOf(this.presentmentExcludeCodeDAO.save(code, type)));
 			ah.getAuditDetail().setModelData(code);
 			ah.setAuditReference(String.valueOf(code.getCode()));
 		} else {
-			this.bounceCodeDao.update(code, type);
+			this.presentmentExcludeCodeDAO.update(code, type);
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new PresentmentExcludeCode(), code.getExcludeFields());
@@ -86,17 +86,17 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 		}
 
 		PresentmentExcludeCode code = new PresentmentExcludeCode();
-		BeanUtils.copyProperties((PresentmentExcludeCode) ah.getAuditDetail().getModelData(), code);
+		BeanUtils.copyProperties(ah.getAuditDetail().getModelData(), code);
 
-		this.bounceCodeDao.delete(code, TableType.TEMP_TAB);
+		this.presentmentExcludeCodeDAO.delete(code, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(code.getRecordType())) {
-			ah.getAuditDetail().setBefImage(bounceCodeDao.getCode(code.getCode()));
+			ah.getAuditDetail().setBefImage(presentmentExcludeCodeDAO.getExcludeCode(code.getCode()));
 		}
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(code.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
-			this.bounceCodeDao.delete(code, TableType.MAIN_TAB);
+			this.presentmentExcludeCodeDAO.delete(code, TableType.MAIN_TAB);
 		} else {
 			code.setRoleCode("");
 			code.setNextRoleCode("");
@@ -107,11 +107,11 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 			if (PennantConstants.RECORD_TYPE_NEW.equals(code.getRecordType())) {
 				tranType = PennantConstants.TRAN_ADD;
 				code.setRecordType("");
-				this.bounceCodeDao.save(code, TableType.MAIN_TAB);
+				this.presentmentExcludeCodeDAO.save(code, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				code.setRecordType("");
-				this.bounceCodeDao.update(code, TableType.MAIN_TAB);
+				this.presentmentExcludeCodeDAO.update(code, TableType.MAIN_TAB);
 			}
 		}
 
@@ -138,7 +138,7 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 		}
 
 		PresentmentExcludeCode code = (PresentmentExcludeCode) auditHeader.getAuditDetail().getModelData();
-		bounceCodeDao.delete(code, TableType.MAIN_TAB);
+		presentmentExcludeCodeDAO.delete(code, TableType.MAIN_TAB);
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
@@ -158,7 +158,7 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 		PresentmentExcludeCode code = (PresentmentExcludeCode) ah.getAuditDetail().getModelData();
 
 		ah.setAuditTranType(PennantConstants.TRAN_WF);
-		bounceCodeDao.delete(code, TableType.TEMP_TAB);
+		presentmentExcludeCodeDAO.delete(code, TableType.TEMP_TAB);
 
 		auditHeaderDAO.addAudit(ah);
 		logger.debug(Literal.LEAVING);
@@ -184,8 +184,9 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 
 		long id = code.getId();
 
-		if (code.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(code.getRecordType()) && bounceCodeDao
-				.isDuplicateKey(code.getId(), code.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (code.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(code.getRecordType())
+				&& presentmentExcludeCodeDAO.isDuplicateKey(code.getId(),
+						code.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_Id") + ": " + id;
 			ah.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
@@ -198,13 +199,13 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 	}
 
 	@Override
-	public List<PresentmentExcludeCode> getBounceCodeById(Long Id) {
-		return this.bounceCodeDao.getBounceCodeById(Id);
+	public List<PresentmentExcludeCode> getPresentmentExcludeCodes(List<String> roleCodes) {
+		return this.presentmentExcludeCodeDAO.getPresentmentExcludeCodes(roleCodes);
 	}
 
 	@Override
 	public List<PresentmentExcludeCode> getResult(ISearch search) {
-		return this.bounceCodeDao.getResult(search);
+		return this.presentmentExcludeCodeDAO.getResult(search);
 	}
 
 	@Autowired
@@ -213,8 +214,8 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 	}
 
 	@Autowired
-	public void setBounceCodeDao(PresentmentExcludeCodeDAO bounceCodeDao) {
-		this.bounceCodeDao = bounceCodeDao;
+	public void setPresentmentExcludeCodeDAO(PresentmentExcludeCodeDAO presentmentExcludeCodeDAO) {
+		this.presentmentExcludeCodeDAO = presentmentExcludeCodeDAO;
 	}
 
 }

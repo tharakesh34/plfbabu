@@ -1,5 +1,6 @@
 package com.pennant.pff.presentment.web;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -10,22 +11,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennant.pff.presentment.service.PresentmentExcludeCodeService;
-import com.pennant.webui.applicationmaster.bouncecode.model.PresentmentExcludeCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pennapps.jdbc.search.Search;
@@ -36,26 +41,26 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 	private static final long serialVersionUID = -3571720185247491921L;
 	private static final Logger logger = LogManager.getLogger(PresentmentExcludeCodeListCtrl.class);
 
-	protected Window window_BounceCodeList;
-	protected Borderlayout borderLayout_BounceCodeList;
-	protected Paging pagingBounceCodeList;
-	protected Listbox listBoxBounceCode;
+	protected Window windowPresentmentExcludeCode;
+	protected Borderlayout borderLayoutPresentmentExcludeCodeList;
+	protected Paging pagingPresentmentExcludeCodeList;
+	protected Listbox listBoxPresentmentExcludeCode;
+	protected Button buttonSearchDialog;
 
+	protected Textbox code;
+	protected Textbox codeDesc;
+	protected Checkbox createBounceOnDueDate;
 	protected Textbox bounceCode;
-	protected Textbox bounceCodeDesc;
-	protected Checkbox createbounceonduedate;
 
-	protected Listbox sortOperator_bounceCodeList;
-	protected Listbox sortOperator_bounceCodeListDesc;
-	protected Listbox sortOperator_CreateBounceOnDueDate;
-	protected Listbox sortOperator_CodeList;
+	protected Listbox codeSort;
+	protected Listbox codeDescSort;
+	protected Listbox bounceCodeSort;
+	protected Listbox createBounceOnDueDateSort;
 
-	protected Listheader listheader_Code;
-	protected Listheader listheader_BounceCodeDesc;
-	protected Listheader listheader_BounceCode;
-	protected Listheader listheader_CreateBounceOnDueDate;
-
-	protected Button button_BounceCodeList_BounceCodeListSearchDialog;
+	protected Listheader codeHeader;
+	protected Listheader codeDescHeader;
+	protected Listheader createBounceOnDueDateHeader;
+	protected Listheader bounceCodeHeader;
 
 	private transient PresentmentExcludeCodeService presentmentExcludeCodeService;
 
@@ -72,74 +77,91 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 		super.enquiryTableName = "Presentment_Exclude_Codes_temp";
 	}
 
-	public void onCreate$window_BounceCodeList(Event event) {
+	public void onCreate$windowPresentmentExcludeCode(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		setPageComponents(window_BounceCodeList, borderLayout_BounceCodeList, listBoxBounceCode, pagingBounceCodeList);
-		setItemRender(new PresentmentExcludeCodeListModelItemRenderer());
+		setPageComponents(windowPresentmentExcludeCode, borderLayoutPresentmentExcludeCodeList,
+				listBoxPresentmentExcludeCode, pagingPresentmentExcludeCodeList);
 
-		registerButton(button_BounceCodeList_BounceCodeListSearchDialog);
-		registerField("code", listheader_Code, SortOrder.NONE, new Textbox(), new Listbox(), Operators.STRING);
+		registerButton(buttonSearchDialog);
+		registerField("code", codeHeader, SortOrder.NONE, code, codeSort, Operators.STRING);
+		registerField("description", codeDescHeader, SortOrder.NONE, codeDesc, codeDescSort, Operators.STRING);
+		registerField("createBounceOnDueDate", createBounceOnDueDateHeader, SortOrder.NONE, createBounceOnDueDate,
+				createBounceOnDueDateSort, Operators.BOOLEAN);
+		registerField("bounceCode", bounceCodeHeader, SortOrder.NONE, bounceCode, bounceCodeSort, Operators.STRING);
 
-		registerField("bouncecode", listheader_BounceCode, SortOrder.ASC, bounceCode, sortOperator_bounceCodeList,
-				Operators.STRING);
+		fillListData();
 
-		registerField("description", listheader_BounceCodeDesc, SortOrder.NONE, bounceCodeDesc,
-				sortOperator_bounceCodeListDesc, Operators.STRING);
-		registerField("createbounceonduedate", listheader_CreateBounceOnDueDate, SortOrder.ASC, createbounceonduedate,
-				sortOperator_CreateBounceOnDueDate, Operators.BOOLEAN);
-
-		List<PresentmentExcludeCode> bounceCode = presentmentExcludeCodeService.getBounceCodeById(null);
-		listBoxBounceCode.setItemRenderer(new PresentmentExcludeCodeListModelItemRenderer());
-		getPagedListWrapper().initList(bounceCode, listBoxBounceCode, pagingBounceCodeList);
 		doRenderPage();
 
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void onClick$button_BounceCodeList_BounceCodeListSearchDialog(Event event) {
-		getfilter();
+	public void fillListData() {
+		List<String> roleCodes = getWorkFlowRoles();
+
+		List<PresentmentExcludeCode> excludeCodes = presentmentExcludeCodeService.getPresentmentExcludeCodes(roleCodes);
+
+		listBoxPresentmentExcludeCode.setItemRenderer(new PECListItemListRenderer());
+
+		pagedListWrapper.initList(excludeCodes, listBoxPresentmentExcludeCode, pagingPresentmentExcludeCodeList);
+	}
+
+	public void onClick$buttonSearchDialog(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
+		List<PresentmentExcludeCode> excludeCodes = presentmentExcludeCodeService.getResult(getSearchFilters());
+
+		listBoxPresentmentExcludeCode.setItemRenderer(new PECListItemListRenderer());
+
+		pagedListWrapper.initList(excludeCodes, listBoxPresentmentExcludeCode, pagingPresentmentExcludeCodeList);
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$btnRefresh(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
 		doReset();
-		List<PresentmentExcludeCode> bounceCode = presentmentExcludeCodeService.getBounceCodeById(null);
-		listBoxBounceCode.setItemRenderer(new PresentmentExcludeCodeListModelItemRenderer());
-		getPagedListWrapper().initList(bounceCode, listBoxBounceCode, pagingBounceCodeList);
+
+		fillListData();
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void onBounceCodeItemDoubleClicked(Event event) {
-		logger.debug("Entering");
+	public void onItemDoubleClicked(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		Listitem selectedItem = this.listBoxBounceCode.getSelectedItem();
+		Listitem item = this.listBoxPresentmentExcludeCode.getSelectedItem();
 
-		String code = (String) selectedItem.getAttribute("code");
-		PresentmentExcludeCode bounceCode = presentmentExcludeCodeService.getCode(code);
+		PresentmentExcludeCode excludeCode = presentmentExcludeCodeService.getExcludeCode((String) item.getAttribute("Code"));
 
-		if (bounceCode == null) {
+		if (excludeCode == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
-		String whereCond = " where code=?";
+		String whereCond = "Where Code = ?";
 
-		if (doCheckAuthority(bounceCode, whereCond, new Object[] { bounceCode.getCode() })) {
-			if (isWorkFlowEnabled() && bounceCode.getWorkflowId() == 0) {
-				bounceCode.setWorkflowId(getWorkFlowId());
+		if (doCheckAuthority(excludeCode, whereCond, new Object[] { excludeCode.getCode() })) {
+			if (isWorkFlowEnabled() && excludeCode.getWorkflowId() == 0) {
+				excludeCode.setWorkflowId(getWorkFlowId());
 			}
 
-			doShowDialogPage(bounceCode);
+			doShowDialogPage(excludeCode);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void doShowDialogPage(PresentmentExcludeCode aBounceCode) {
-		logger.debug("Entering");
+	public void doShowDialogPage(PresentmentExcludeCode excludeCode) {
+		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("bounceCode", aBounceCode);
-		arg.put("bounceCodeListCtrl", this);
+		arg.put("PresentmentExcludeCode", excludeCode);
+		arg.put("PresentmentExcludeCodeList", this);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Presentment/PresentmentExcludeCodeDialog.zul", null, arg);
@@ -147,55 +169,80 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
-	}
-
-	public List<PresentmentExcludeCode> getfilter() {
-		logger.debug("Entering");
-		ISearch search = new Search();
-		Filter bounceCode = getFilter("pec.code", this.bounceCode, this.sortOperator_bounceCodeList);
-		Filter bounceCodeDesc = getFilter("pec.description", this.bounceCodeDesc, this.sortOperator_bounceCodeListDesc);
-		Filter recordStatus = getFilter("pec.recordStatus", this.recordStatus, this.sortOperator_RecordStatus);
-		Filter recordType = getFilter("pec.recordType", this.recordType, this.sortOperator_RecordType);
-
-		if (bounceCode != null) {
-			search.getFilters().add(bounceCode);
-		}
-		if (bounceCodeDesc != null) {
-			search.getFilters().add(bounceCodeDesc);
-		}
-		if (recordStatus != null) {
-			search.getFilters().add(recordStatus);
-		}
-		if (recordType != null) {
-			search.getFilters().add(recordType);
-		}
-
-		List<PresentmentExcludeCode> data = presentmentExcludeCodeService.getResult(search);
-		listBoxBounceCode.setItemRenderer(new PresentmentExcludeCodeListModelItemRenderer());
-		getPagedListWrapper().initList(data, listBoxBounceCode, pagingBounceCodeList);
-		return null;
-	}
-
-	private Filter getFilter(String property, Textbox component, Listbox operator) {
-		String value = component.getValue();
-		if (StringUtils.isNotBlank(value)) {
-			return new Filter(property, value, operator.getSelectedIndex());
-		}
-		return null;
-	}
-
-	private Filter getFilter(String property, Listbox component, Listbox operator) {
-		String value = component.getSelectedItem().getValue();
-		if (StringUtils.isNotBlank(value)) {
-			return new Filter(property, value, operator.getSelectedIndex());
-		}
-		return null;
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$print(Event event) {
-		List<PresentmentExcludeCode> bounceCode = presentmentExcludeCodeService.getBounceCodeById(null);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+		/*
+		 * List<PresentmentExcludeCode> excludeCodes = presentmentExcludeCodeService
+		 * .getPresentmentExcludeCodes(getWorkFlowRoles());
+		 */
 		doPrintResults();
+		logger.debug(Literal.LEAVING.concat(event.toString()));
+	}
+
+	private ISearch getSearchFilters() {
+		ISearch search = new Search();
+
+		String code = this.code.getValue();
+		if (StringUtils.isNotEmpty(code)) {
+			search.getFilters().add(new Filter("pec.Code", code, this.codeSort.getSelectedIndex()));
+		}
+
+		String description = this.codeDesc.getValue();
+		if (StringUtils.isNotEmpty(description)) {
+			search.getFilters().add(new Filter("pec.Description", description, this.codeDescSort.getSelectedIndex()));
+		}
+
+		String status = this.recordStatus.getValue();
+		if (StringUtils.isNotEmpty(status)) {
+			search.getFilters()
+					.add(new Filter("pec.RecordStatus", status, this.sortOperator_RecordStatus.getSelectedIndex()));
+		}
+
+		String recordType = this.recordType.getSelectedItem().getValue();
+		if (StringUtils.isNotEmpty(recordType)) {
+			search.getFilters()
+					.add(new Filter("pec.RecordType", recordType, this.sortOperator_RecordType.getSelectedIndex()));
+		}
+
+		return search;
+	}
+
+	private class PECListItemListRenderer implements ListitemRenderer<PresentmentExcludeCode>, Serializable {
+		private static final long serialVersionUID = -3817100983277888318L;
+
+		public PECListItemListRenderer() {
+			super();
+		}
+
+		@Override
+		public void render(Listitem item, PresentmentExcludeCode excludeCode, int index) throws Exception {
+			Listcell lc;
+
+			lc = new Listcell(excludeCode.getCode());
+			lc.setParent(item);
+			lc = new Listcell(excludeCode.getDescription());
+			lc.setParent(item);
+			lc = new Listcell();
+
+			final Checkbox dueDate = new Checkbox();
+			dueDate.setDisabled(true);
+			dueDate.setChecked(excludeCode.isCreateBounceOnDueDate());
+			lc.appendChild(dueDate);
+			lc.setParent(item);
+
+			lc = new Listcell(StringUtils.trimToEmpty(excludeCode.getBounceCode()));
+			lc.setParent(item);
+			lc = new Listcell(excludeCode.getRecordStatus());
+			lc.setParent(item);
+			lc = new Listcell(PennantJavaUtil.getLabel(excludeCode.getRecordType()));
+			lc.setParent(item);
+
+			item.setAttribute("Code", excludeCode.getCode());
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onItemDoubleClicked");
+		}
 	}
 
 	@Autowired

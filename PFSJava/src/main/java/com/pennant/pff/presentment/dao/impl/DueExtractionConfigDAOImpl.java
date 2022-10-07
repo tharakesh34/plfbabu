@@ -381,4 +381,111 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 		return getNextValue("Seq_Due_Extraction_Config");
 	}
 
+	@Override
+	public List<DueExtractionHeader> getDueExtractionHeaders() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ID, ExtractionMonth, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
+		sql.append(", Active, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkFlowId");
+		sql.append(" From Due_Extraction_Header_Temp");
+		sql.append(" Union All");
+		sql.append(" Select");
+		sql.append(" ID, ExtractionMonth, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
+		sql.append(", Active, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkFlowId");
+		sql.append(" From Due_Extraction_Header");
+		sql.append(" Where not exists (Select 1 From Due_Extraction_Header_Temp");
+		sql.append(" Where ID = Due_Extraction_Header.ID)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			DueExtractionHeader header = new DueExtractionHeader();
+
+			header.setID(rs.getLong("ID"));
+			header.setExtractionMonth(rs.getString("ExtractionMonth"));
+			header.setVersion(rs.getInt("Version"));
+			header.setCreatedBy(rs.getLong("CreatedBy"));
+			header.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			header.setApprovedBy(rs.getLong("ApprovedBy"));
+			header.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			header.setLastMntBy(rs.getLong("LastMntBy"));
+			header.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			header.setActive(rs.getBoolean("Active"));
+			header.setRecordStatus(rs.getString("RecordStatus"));
+			header.setRoleCode(rs.getString("RoleCode"));
+			header.setNextRoleCode(rs.getString("NextRoleCode"));
+			header.setTaskId(rs.getString("TaskId"));
+			header.setNextTaskId(rs.getString("NextTaskId"));
+			header.setRecordType(rs.getString("RecordType"));
+			header.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return header;
+		});
+	}
+
+	@Override
+	public List<DueExtractionConfig> getDueExtractionConfig(long monthID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" c.ID, c.MonthID, c.InstrumentID, c.DueDate, c.ExtractionDate, c.Modified, c.Version");
+		sql.append(", c.CreatedBy, c.CreatedOn, c.ApprovedBy, c.ApprovedOn, c.LastMntBy, c.LastMntOn");
+		sql.append(", c.Active, c.RecordStatus, c.RoleCode, c.NextRoleCode, c.TaskId, c.NextTaskId");
+		sql.append(", c.RecordType, c.WorkFlowId, it.Code, it.ExtractionDays");
+		sql.append(" From Due_Extraction_Config c");
+		sql.append(" Inner Join Instrument_Types it on it.ID = c.InstrumentID");
+		sql.append(" Where c.MonthID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			DueExtractionConfig config = new DueExtractionConfig();
+
+			config.setID(rs.getLong("Id"));
+			config.setMonthID(rs.getLong("MonthID"));
+			config.setInstrumentID(rs.getLong("InstrumentID"));
+			config.setDueDate(rs.getDate("DueDate"));
+			config.setExtractionDate(rs.getDate("ExtractionDate"));
+			config.setModified(rs.getBoolean("Modified"));
+			config.setVersion(rs.getInt("Version"));
+			config.setCreatedBy(rs.getLong("CreatedBy"));
+			config.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			config.setApprovedBy(rs.getLong("ApprovedBy"));
+			config.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			config.setLastMntBy(rs.getLong("LastMntBy"));
+			config.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			config.setActive(rs.getBoolean("Active"));
+			config.setRecordStatus(rs.getString("RecordStatus"));
+			config.setRoleCode(rs.getString("RoleCode"));
+			config.setNextRoleCode(rs.getString("NextRoleCode"));
+			config.setTaskId(rs.getString("TaskId"));
+			config.setNextTaskId(rs.getString("NextTaskId"));
+			config.setRecordType(rs.getString("RecordType"));
+			config.setWorkflowId(rs.getLong("WorkflowId"));
+			config.setInstrumentCode(rs.getString("Code"));
+			config.setConfigureDays(rs.getInt("ExtractionDays"));
+
+			return config;
+		}, monthID);
+	}
+
+	@Override
+	public Map<Long, InstrumentTypes> getInstrumentTypesMap() {
+		String sql = "Select ID, Code, ExtractionDays From Instrument_Types Where AutoExtraction = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		Map<Long, InstrumentTypes> map = new HashMap<>();
+
+		return this.jdbcOperations.query(sql, (ResultSet rs) -> {
+			while (rs.next()) {
+				InstrumentTypes it = new InstrumentTypes();
+				it.setID(rs.getLong("ID"));
+				it.setCode(rs.getString("Code"));
+				it.setExtractionDays(rs.getInt("ExtractionDays"));
+
+				map.put(it.getID(), it);
+
+			}
+			return map;
+		}, 1);
+	}
+
 }

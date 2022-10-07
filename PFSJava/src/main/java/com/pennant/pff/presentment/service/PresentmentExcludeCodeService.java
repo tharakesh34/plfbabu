@@ -8,9 +8,9 @@ import com.pennanttech.pennapps.jdbc.search.ISearch;
 
 public interface PresentmentExcludeCodeService {
 
-	PresentmentExcludeCode getCode(String code);
+	PresentmentExcludeCode getExcludeCode(String code);
 
-	List<PresentmentExcludeCode> getBounceCodeById(Long Id);
+	List<PresentmentExcludeCode> getPresentmentExcludeCodes(List<String> roleCodes);
 
 	List<PresentmentExcludeCode> getResult(ISearch search);
 

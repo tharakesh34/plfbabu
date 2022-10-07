@@ -443,6 +443,7 @@ import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennant.pff.model.subvention.SubventionHeader;
+import com.pennant.pff.presentment.model.DueExtractionHeader;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
@@ -2617,7 +2618,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("BounceReason",
 				new ModuleMapping("BounceReason", BounceReason.class,
 						new String[] { "BounceReasons", "BounceReasons_AView" }, masterWF,
-						new String[] { "BounceCode", "Lovdesccategory", "Reason" },
+						new String[] { "BounceCode", "Lovdesccategory", "Reason", "ReturnCode" },
 						new Object[][] { { "Active", "0", 1 } }, 600));
 
 		ModuleUtil.register("ProfitCenter", new ModuleMapping("ProfitCenter", ProfitCenter.class,
@@ -3800,6 +3801,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("PresentmentExcludeCode", PresentmentExcludeCode.class,
 						new String[] { "Presentment_Exclude_Codes", "Presentment_Exclude_Codes" }, masterWF,
 						new String[] { "Code", "BounceCode", "BounceCodeDesc" }, null, 700));
+
+		ModuleUtil.register("DueExtractionConfig",
+				new ModuleMapping("DueExtractionConfig", DueExtractionHeader.class,
+						new String[] { "Due_Extraction_Header", "Due_Extraction_Header" }, masterWF,
+						new String[] { "ExtractionMonth" }, null, 360));
 
 		registerCustomModules();
 	}

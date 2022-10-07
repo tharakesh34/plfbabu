@@ -9,7 +9,11 @@ import com.pennanttech.pff.core.TableType;
 
 public interface PresentmentExcludeCodeDAO {
 
-	PresentmentExcludeCode getCode(String code);
+	PresentmentExcludeCode getExcludeCode(String code);
+
+	List<PresentmentExcludeCode> getPresentmentExcludeCodes(List<String> roleCodes);
+
+	List<PresentmentExcludeCode> getResult(ISearch search);
 
 	String save(PresentmentExcludeCode code, TableType type);
 
@@ -18,10 +22,6 @@ public interface PresentmentExcludeCodeDAO {
 	void delete(PresentmentExcludeCode code, TableType type);
 
 	boolean isDuplicateKey(long id, TableType type);
-
-	List<PresentmentExcludeCode> getBounceCodeById(Long id);
-
-	List<PresentmentExcludeCode> getResult(ISearch search);
 
 	Map<Integer, String> getBounceForPD();
 }

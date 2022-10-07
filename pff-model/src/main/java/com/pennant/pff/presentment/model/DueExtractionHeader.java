@@ -1,6 +1,10 @@
 package com.pennant.pff.presentment.model;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
@@ -14,6 +18,8 @@ public class DueExtractionHeader extends AbstractWorkflowEntity {
 	private long approvedBy;
 	private Timestamp approvedOn;
 	private boolean active;
+	private Map<Long, InstrumentTypes> instruments = new HashMap<>();
+	private List<DueExtractionConfig> config = new ArrayList<>();
 
 	public DueExtractionHeader() {
 		super();
@@ -73,6 +79,22 @@ public class DueExtractionHeader extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public Map<Long, InstrumentTypes> getInstruments() {
+		return instruments;
+	}
+
+	public void setInstruments(Map<Long, InstrumentTypes> instruments) {
+		this.instruments = instruments;
+	}
+
+	public List<DueExtractionConfig> getConfig() {
+		return config;
+	}
+
+	public void setConfig(List<DueExtractionConfig> config) {
+		this.config = config;
 	}
 
 }

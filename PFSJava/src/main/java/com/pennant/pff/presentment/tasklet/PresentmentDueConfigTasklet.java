@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
-import com.pennant.pff.presentment.service.PresentmentDueConfigService;
+import com.pennant.pff.presentment.service.DueExtractionConfigService;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class PresentmentDueConfigTasklet implements Tasklet {
 	@Autowired
-	private PresentmentDueConfigService presentmentDueConfigService;
+	private DueExtractionConfigService presentmentDueConfigService;
 
 	@Autowired
 	private DueExtractionConfigDAO dueExtractionConfigDAO;

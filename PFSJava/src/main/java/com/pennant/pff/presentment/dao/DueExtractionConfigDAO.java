@@ -37,4 +37,10 @@ public interface DueExtractionConfigDAO {
 
 	long getNextValue();
 
+	List<DueExtractionHeader> getDueExtractionHeaders();
+
+	List<DueExtractionConfig> getDueExtractionConfig(long monthID);
+
+	Map<Long, InstrumentTypes> getInstrumentTypesMap();
+
 }

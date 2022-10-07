@@ -1,7 +1,8 @@
 package com.pennant.pff.presentment.dao.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,17 +10,16 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.pff.presentment.dao.PresentmentExcludeCodeDAO;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
-import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -32,60 +32,78 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 	}
 
 	@Override
-	public PresentmentExcludeCode getCode(String code) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" pec.Id, pec.Code, pec.Description, pec.ExcludeId, pec.BounceId, pec.CreateBounceOnDueDate");
-		sql.append(", BR.BounceCode, pec.Version, pec.CreatedBy, pec.CreatedOn, pec.ApprovedBy, pec.ApprovedOn");
-		sql.append(", pec.LastMntBy, pec.LastMntOn, pec.Active, pec.RecordStatus, pec.RoleCode");
-		sql.append(", pec.NextRoleCode, pec.TaskId, pec.NextTaskId, pec.RecordType, pec.WorkflowId");
-		sql.append(" From Presentment_Exclude_Codes_Temp pec");
-		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
+	public PresentmentExcludeCode getExcludeCode(String code) {
+		StringBuilder sql = getSqlQuery(TableType.TEMP_TAB);
 		sql.append(" Where pec.Code = ?");
-		sql.append(" Union All");
-		sql.append(" Select pec.Id, pec.Code, pec.Description, pec.ExcludeId, pec.BounceId, pec.CreateBounceOnDueDate");
-		sql.append(", BR.BounceCode, pec.Version, pec.CreatedBy, pec.CreatedOn, pec.ApprovedBy, pec.ApprovedOn");
-		sql.append(", pec.LastMntBy, pec.LastMntOn, pec.Active, pec.RecordStatus, pec.RoleCode");
-		sql.append(", pec.NextRoleCode, pec.TaskId, pec.NextTaskId, pec.RecordType, pec.WorkflowId");
-		sql.append(" From Presentment_Exclude_Codes pec");
-		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
+		sql.append(" Union all ");
+		sql.append(getSqlQuery(TableType.MAIN_TAB));
 		sql.append(" Where pec.Code = ?");
 		sql.append(" and not exists (Select 1 From Presentment_Exclude_Codes_Temp Where Id = pec.Id)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
-				PresentmentExcludeCode bc = new PresentmentExcludeCode();
-
-				bc.setId(rs.getLong("Id"));
-				bc.setCode(rs.getString("Code"));
-				bc.setDescription(rs.getString("Description"));
-				bc.setExcludeId(rs.getInt("ExcludeId"));
-				bc.setBounceId(rs.getLong("BounceId"));
-				bc.setCreateBounceOnDueDate(rs.getBoolean("CreateBounceOnDueDate"));
-				bc.setBounceCode(rs.getString("BounceCode"));
-				bc.setVersion(rs.getInt("Version"));
-				bc.setCreatedBy(rs.getLong("CreatedBy"));
-				bc.setCreatedOn(rs.getTimestamp("CreatedOn"));
-				bc.setApprovedBy(rs.getLong("ApprovedBy"));
-				bc.setApprovedOn(rs.getTimestamp("ApprovedOn"));
-				bc.setLastMntBy(rs.getLong("LastMntBy"));
-				bc.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				bc.setActive(rs.getBoolean("Active"));
-				bc.setRecordStatus(rs.getString("RecordStatus"));
-				bc.setRoleCode(rs.getString("RoleCode"));
-				bc.setNextRoleCode(rs.getString("NextRoleCode"));
-				bc.setTaskId(rs.getString("TaskId"));
-				bc.setNextTaskId(rs.getString("NextTaskId"));
-				bc.setRecordType(rs.getString("RecordType"));
-				bc.setWorkflowId(rs.getLong("WorkflowId"));
-
-				return bc;
-			}, code, code);
+			return this.jdbcOperations.queryForObject(sql.toString(), new PresentmentExcludeCodesRM(), code, code);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public List<PresentmentExcludeCode> getPresentmentExcludeCodes(List<String> roleCodes) {
+		StringBuilder sql = new StringBuilder("select");
+		sql.append(" Id, Code, Description, ExcludeId, BounceId, CreateBounceOnDueDate");
+		sql.append(", BounceCode, ReturnCode, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+		sql.append(", LastMntBy, LastMntOn, Active, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From (");
+		sql.append(getSqlQuery(TableType.TEMP_TAB));
+		sql.append(" Union All ");
+		sql.append(getSqlQuery(TableType.MAIN_TAB));
+		sql.append(" Where not exists (Select 1 From Presentment_Exclude_Codes_Temp Where Id = pec.Id)) p");
+		sql.append(" Where NextRoleCode is null or NextRoleCode = ? or NextRoleCode in (");
+		sql.append(JdbcUtil.getInCondition(roleCodes));
+		sql.append(") Order By Code");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, "");
+			for (String roleCode : roleCodes) {
+				ps.setString(index++, roleCode);
+			}
+		}, new PresentmentExcludeCodesRM());
+	}
+
+	@Override
+	public List<PresentmentExcludeCode> getResult(ISearch search) {
+		List<Object> value = new ArrayList<>();
+
+		StringBuilder sql = new StringBuilder("select");
+		sql.append(" Id, Code, Description, ExcludeId, BounceId, CreateBounceOnDueDate");
+		sql.append(", BounceCode, ReturnCode, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+		sql.append(", LastMntBy, LastMntOn, Active, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From (");
+		sql.append(getSqlQuery(TableType.TEMP_TAB));
+		sql.append(" Union All ");
+		sql.append(getSqlQuery(TableType.MAIN_TAB));
+		sql.append(" Where not exists (Select 1 From Presentment_Exclude_Codes_Temp Where Id = pec.Id)) pec");
+		sql.append(QueryUtil.buildWhereClause(search, value));
+		sql.append(" Order By Code");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (Object object : value) {
+				ps.setObject(index++, object);
+			}
+
+		}, new PresentmentExcludeCodesRM());
 	}
 
 	@Override
@@ -96,8 +114,7 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
 		sql.append(", LastMntOn, Active, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId)");
-		sql.append(" values (?, ?, ?, ?, ?, ?, ?,");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -109,7 +126,7 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 				ps.setString(index++, bc.getCode());
 				ps.setString(index++, bc.getDescription());
 				ps.setInt(index++, bc.getExcludeId());
-				ps.setLong(index++, bc.getBounceId());
+				ps.setObject(index++, bc.getBounceId());
 				ps.setBoolean(index++, bc.isCreateBounceOnDueDate());
 				ps.setInt(index++, bc.getVersion());
 				ps.setLong(index++, bc.getCreatedBy());
@@ -152,7 +169,7 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 				ps.setString(index++, bc.getCode());
 				ps.setString(index++, bc.getDescription());
 				ps.setInt(index++, bc.getExcludeId());
-				ps.setLong(index++, bc.getBounceId());
+				ps.setObject(index++, bc.getBounceId());
 				ps.setBoolean(index++, bc.isCreateBounceOnDueDate());
 				ps.setInt(index++, bc.getVersion());
 				ps.setLong(index++, bc.getLastMntBy());
@@ -216,277 +233,6 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 	}
 
 	@Override
-	public List<PresentmentExcludeCode> getBounceCodeById(Long Id) {
-		StringBuilder sql = new StringBuilder("select * from (Select ");
-
-		sql.append(" pec.Id, pec.Code, pec.Description, pec.ExcludeId, pec.BounceId, pec.CreateBounceOnDueDate");
-		sql.append(", BR.BounceCode, pec.Version, pec.CreatedBy, pec.CreatedOn, pec.ApprovedBy, pec.ApprovedOn");
-		sql.append(", pec.LastMntBy, pec.LastMntOn, pec.Active, pec.RecordStatus, pec.RoleCode");
-		sql.append(", pec.NextRoleCode, pec.TaskId, pec.NextTaskId, pec.RecordType, pec.WorkflowId");
-		sql.append(" From Presentment_Exclude_Codes_Temp pec");
-		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
-		sql.append(" Union All");
-		sql.append(" Select pec.Id, pec.Code, pec.Description, pec.ExcludeId, pec.BounceId, pec.CreateBounceOnDueDate");
-		sql.append(", BR.BounceCode, pec.Version, pec.CreatedBy, pec.CreatedOn, pec.ApprovedBy, pec.ApprovedOn");
-		sql.append(", pec.LastMntBy, pec.LastMntOn, pec.Active, pec.RecordStatus, pec.RoleCode");
-		sql.append(", pec.NextRoleCode, pec.TaskId, pec.NextTaskId, pec.RecordType, pec.WorkflowId");
-		sql.append(" From Presentment_Exclude_Codes pec");
-		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
-		sql.append(" where not exists (Select 1 From Presentment_Exclude_Codes_Temp Where Id = pec.Id)) p");
-		if (Id != null) {
-			sql.append(" Where p.Code = ?");
-		}
-		sql.append(" WHERE ((nextRoleCode IS NULL) OR (nextRoleCode = nextRoleCode) OR ");
-		sql.append("(nextRoleCode in (nextRoleCode))) ORDER BY code ASC,createbounceonduedate ASC LIMIT 19");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), ps -> {
-				int index = 1;
-				if (Id != null) {
-					ps.setLong(index++, Id);
-				}
-			}, (rs, rowNum) -> {
-				PresentmentExcludeCode bc = new PresentmentExcludeCode();
-
-				bc.setId(rs.getLong("Id"));
-				bc.setCode(rs.getString("Code"));
-				bc.setDescription(rs.getString("Description"));
-				bc.setExcludeId(rs.getInt("ExcludeId"));
-				bc.setBounceId(rs.getLong("BounceId"));
-				bc.setCreateBounceOnDueDate(rs.getBoolean("CreateBounceOnDueDate"));
-				bc.setBounceCode(rs.getString("BounceCode"));
-				bc.setVersion(rs.getInt("Version"));
-				bc.setCreatedBy(rs.getLong("CreatedBy"));
-				bc.setCreatedOn(rs.getTimestamp("CreatedOn"));
-				bc.setApprovedBy(rs.getLong("ApprovedBy"));
-				bc.setApprovedOn(rs.getTimestamp("ApprovedOn"));
-				bc.setLastMntBy(rs.getLong("LastMntBy"));
-				bc.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				bc.setActive(rs.getBoolean("Active"));
-				bc.setRecordStatus(rs.getString("RecordStatus"));
-				bc.setRoleCode(rs.getString("RoleCode"));
-				bc.setNextRoleCode(rs.getString("NextRoleCode"));
-				bc.setTaskId(rs.getString("TaskId"));
-				bc.setNextTaskId(rs.getString("NextTaskId"));
-				bc.setRecordType(rs.getString("RecordType"));
-				bc.setWorkflowId(rs.getLong("WorkflowId"));
-
-				return bc;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
-	}
-
-	@Override
-	public List<PresentmentExcludeCode> getResult(ISearch search) {
-		List<Object> value = new ArrayList<>();
-
-		StringBuilder sql = new StringBuilder("select * from (Select ");
-
-		sql.append(" pec.Id, pec.Code, pec.Description, pec.ExcludeId, pec.BounceId, pec.CreateBounceOnDueDate");
-		sql.append(", BR.BounceCode, pec.Version, pec.CreatedBy, pec.CreatedOn, pec.ApprovedBy, pec.ApprovedOn");
-		sql.append(", pec.LastMntBy, pec.LastMntOn, pec.Active, pec.RecordStatus, pec.RoleCode");
-		sql.append(", pec.NextRoleCode, pec.TaskId, pec.NextTaskId, pec.RecordType, pec.WorkflowId");
-		sql.append(" From Presentment_Exclude_Codes_Temp pec");
-		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
-		sql.append(" Union All");
-		sql.append(" Select pec.Id, pec.Code, pec.Description, pec.ExcludeId, pec.BounceId, pec.CreateBounceOnDueDate");
-		sql.append(", BR.BounceCode, pec.Version, pec.CreatedBy, pec.CreatedOn, pec.ApprovedBy, pec.ApprovedOn");
-		sql.append(", pec.LastMntBy, pec.LastMntOn, pec.Active, pec.RecordStatus, pec.RoleCode");
-		sql.append(", pec.NextRoleCode, pec.TaskId, pec.NextTaskId, pec.RecordType, pec.WorkflowId");
-		sql.append(" From Presentment_Exclude_Codes pec");
-		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
-		sql.append(" where not exists (Select 1 From Presentment_Exclude_Codes_Temp Where Id = pec.Id)) pec");
-		sql.append(buildWhereClause(search, value));
-		{
-
-			logger.debug(Literal.SQL + sql.toString());
-
-			return this.jdbcOperations.query(sql.toString(), ps -> {
-				int index = 1;
-				for (Object object : value) {
-					ps.setObject(index++, object);
-				}
-
-			}, (rs, rowNum) -> {
-				PresentmentExcludeCode bc = new PresentmentExcludeCode();
-
-				bc.setId(rs.getLong("Id"));
-				bc.setCode(rs.getString("Code"));
-				bc.setDescription(rs.getString("Description"));
-				bc.setExcludeId(rs.getInt("ExcludeId"));
-				bc.setBounceId(rs.getLong("BounceId"));
-				bc.setCreateBounceOnDueDate(rs.getBoolean("CreateBounceOnDueDate"));
-				bc.setBounceCode(rs.getString("BounceCode"));
-				bc.setVersion(rs.getInt("Version"));
-				bc.setCreatedBy(rs.getLong("CreatedBy"));
-				bc.setCreatedOn(rs.getTimestamp("CreatedOn"));
-				bc.setApprovedBy(rs.getLong("ApprovedBy"));
-				bc.setApprovedOn(rs.getTimestamp("ApprovedOn"));
-				bc.setLastMntBy(rs.getLong("LastMntBy"));
-				bc.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				bc.setActive(rs.getBoolean("Active"));
-				bc.setRecordStatus(rs.getString("RecordStatus"));
-				bc.setRoleCode(rs.getString("RoleCode"));
-				bc.setNextRoleCode(rs.getString("NextRoleCode"));
-				bc.setTaskId(rs.getString("TaskId"));
-				bc.setNextTaskId(rs.getString("NextTaskId"));
-				bc.setRecordType(rs.getString("RecordType"));
-				bc.setWorkflowId(rs.getLong("WorkflowId"));
-				return bc;
-			});
-		}
-	}
-
-	public static String buildWhereClause(ISearch search, List<Object> psList) {
-		StringBuilder sql = new StringBuilder();
-
-		for (Filter filter : search.getFilters()) {
-			String condition = filter.getProperty();
-
-			if ("AND".equals(condition) || "OR".equals(condition)) {
-				if (!(filter.getValue() instanceof List<?>)) {
-					continue;
-				}
-
-				List<?> list = (List<?>) filter.getValue();
-
-				for (Object object : list) {
-					if (object instanceof Filter) {
-						try {
-							if (sql.length() > 0) {
-								sql.append(condition).append(" ");
-							}
-
-							buildQueryByOperator((Filter) object, psList, sql);
-						} catch (Exception e) {
-							//
-						}
-
-					}
-				}
-			} else {
-				try {
-					if (sql.length() > 0) {
-						sql.append(" AND ");
-					}
-					buildQueryByOperator(filter, psList, sql);
-				} catch (Exception e) {
-					//
-				}
-			}
-		}
-
-		if (sql.length() > 0) {
-			return " Where ".concat(sql.toString());
-		}
-
-		return "";
-	}
-
-	private static void buildQueryByOperator(Filter filter, List<Object> psList, StringBuilder sql) throws Exception {
-
-		String property = filter.getProperty();
-		sql.append(property);
-
-		switch (filter.getOperator()) {
-		case 0:
-			sql.append(" = ");
-			sql.append("? ");
-
-			psList.add(filter.getValue());
-			break;
-		case 1:
-			sql.append(" <> ");
-			sql.append("? ");
-
-			psList.add(filter.getValue());
-			break;
-		case 2:
-			String sql2 = "";
-			sql.append(" like ? ");
-			if (App.DATABASE == Database.POSTGRES) {
-				sql2 = sql.toString().replaceAll("(?i)like", "ilike");
-			}
-
-			sql = new StringBuilder(sql2);
-
-			psList.add("%" + filter.getValue() + "%");
-			break;
-		case 3:
-			sql.append(" > ");
-			sql.append("? ");
-
-			psList.add(filter.getValue());
-			break;
-		case 4:
-			sql.append(" <= ");
-			sql.append("? ");
-
-			psList.add(filter.getValue());
-			break;
-		case 5:
-			sql.append(" >= ");
-			sql.append("? ");
-
-			psList.add(filter.getValue());
-			break;
-		case 6:
-			sql.append(" LIKE ");
-			sql.append("%?% ");
-
-			psList.add(filter.getValue());
-			break;
-		case 10:
-			sql.append(" IS NULL ");
-
-			break;
-		case 11:
-			sql.append(" IS NOT NULL ");
-			break;
-		case 8:
-			sql.append(" IN (");
-			commaJoin(sql, filter.getValue(), psList);
-
-			break;
-		case 9:
-			sql.append(" NOT IN (");
-			commaJoin(sql, filter.getValue(), psList);
-
-			break;
-		default:
-			break;
-		}
-
-	}
-
-	private static void commaJoin(StringBuilder sql, Object value, List<Object> psList) throws Exception {
-		List<Object> inList = Arrays.asList(value);
-		for (Object object : inList) {
-			String valu = String.valueOf(object);
-			String[] split = new String[] {};
-			if (valu.contains(",")) {
-				split = valu.split(",");
-
-			} else {
-				split[0] = valu;
-			}
-
-			for (String s1 : split) {
-				sql.append(" ?,");
-				psList.add(s1);
-			}
-
-		}
-		sql.deleteCharAt(sql.length() - 1);
-		sql.append(") ");
-	}
-
-	@Override
 	public Map<Integer, String> getBounceForPD() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" pec.ExcludeID, br.ReturnCode");
@@ -498,11 +244,60 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 
 		Map<Integer, String> map = new HashMap<>();
 
-		return jdbcOperations.query(sql.toString(), (rs) -> {
+		return jdbcOperations.query(sql.toString(), rs -> {
 			while (rs.next()) {
 				map.put(rs.getInt(1), rs.getString(2));
 			}
+
 			return map;
 		}, 1);
+	}
+
+	private StringBuilder getSqlQuery(TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" pec.Id, pec.Code, pec.Description, pec.ExcludeId, pec.BounceId, pec.CreateBounceOnDueDate");
+		sql.append(", br.BounceCode, br.ReturnCode, pec.Version");
+		sql.append(", pec.CreatedBy, pec.CreatedOn, pec.ApprovedBy, pec.ApprovedOn");
+		sql.append(", pec.LastMntBy, pec.LastMntOn, pec.Active, pec.RecordStatus, pec.RoleCode");
+		sql.append(", pec.NextRoleCode, pec.TaskId, pec.NextTaskId, pec.RecordType, pec.WorkflowId");
+		sql.append(" From Presentment_Exclude_Codes").append(tableType.getSuffix()).append(" pec");
+		sql.append(" Left Join BounceReasons br on br.BounceID = pec.BounceID");
+
+		return sql;
+	}
+
+	private class PresentmentExcludeCodesRM implements RowMapper<PresentmentExcludeCode> {
+
+		@Override
+		public PresentmentExcludeCode mapRow(ResultSet rs, int rowNum) throws SQLException {
+			PresentmentExcludeCode bc = new PresentmentExcludeCode();
+
+			bc.setId(rs.getLong("Id"));
+			bc.setCode(rs.getString("Code"));
+			bc.setDescription(rs.getString("Description"));
+			bc.setExcludeId(rs.getInt("ExcludeId"));
+			bc.setBounceId(JdbcUtil.getLong(rs.getObject("BounceId")));
+			bc.setCreateBounceOnDueDate(rs.getBoolean("CreateBounceOnDueDate"));
+			bc.setBounceCode(rs.getString("BounceCode"));
+			bc.setReturnCode(rs.getString("ReturnCode"));
+			bc.setVersion(rs.getInt("Version"));
+			bc.setCreatedBy(rs.getLong("CreatedBy"));
+			bc.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			bc.setApprovedBy(rs.getLong("ApprovedBy"));
+			bc.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			bc.setLastMntBy(rs.getLong("LastMntBy"));
+			bc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			bc.setActive(rs.getBoolean("Active"));
+			bc.setRecordStatus(rs.getString("RecordStatus"));
+			bc.setRoleCode(rs.getString("RoleCode"));
+			bc.setNextRoleCode(rs.getString("NextRoleCode"));
+			bc.setTaskId(rs.getString("TaskId"));
+			bc.setNextTaskId(rs.getString("NextTaskId"));
+			bc.setRecordType(rs.getString("RecordType"));
+			bc.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return bc;
+		}
+
 	}
 }

@@ -6054,10 +6054,13 @@
 		<property name="financeMainService" ref="financeMainService" />
 	</bean>
 	
-	<bean id="presentmentExcludeCodeListCtrl" class="com.pennant.pff.presentment.web.PresentmentExcludeCodeListCtrl"
+	<bean id="presentmentExcludeCodeList" class="com.pennant.pff.presentment.web.PresentmentExcludeCodeListCtrl"
 		parent="basisListCtrl" scope="prototype" />
 		
-	<bean id="presentmentExcludeCodeDialogCtrl"
+	<bean id="presentmentExcludeCodeDialog"
 	class="com.pennant.pff.presentment.web.PresentmentExcludeCodeDialogCtrl" parent="basisCtrl" scope="prototype" />
-
+	
+	<bean id="dueExtractionConfigList" class ="com.pennant.pff.presentment.web.DueExtractionConfigListCtrl" parent="basisListCtrl" scope="prototype" />
+	
+	<bean id="dueExtractionConfigDialog" class="com.pennant.pff.presentment.web.DueExtractionConfigDialogCtrl" parent="basisCtrl" scope="prototype"/>
 </beans>

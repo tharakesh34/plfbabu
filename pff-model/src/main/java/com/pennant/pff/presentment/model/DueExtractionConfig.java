@@ -20,6 +20,9 @@ public class DueExtractionConfig extends AbstractWorkflowEntity {
 	private Timestamp approvedOn;
 	private boolean active;
 
+	private String instrumentCode;
+	private int configureDays;
+
 	public DueExtractionConfig() {
 		super();
 	}
@@ -110,6 +113,22 @@ public class DueExtractionConfig extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public String getInstrumentCode() {
+		return instrumentCode;
+	}
+
+	public void setInstrumentCode(String instrumentCode) {
+		this.instrumentCode = instrumentCode;
+	}
+
+	public int getConfigureDays() {
+		return configureDays;
+	}
+
+	public void setConfigureDays(int configureDays) {
+		this.configureDays = configureDays;
 	}
 
 }
