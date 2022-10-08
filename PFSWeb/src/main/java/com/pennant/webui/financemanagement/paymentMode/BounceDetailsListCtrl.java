@@ -16,10 +16,10 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -158,42 +158,42 @@ public class BounceDetailsListCtrl extends GFCBaseCtrl<ReceiptAllocationDetail> 
 		lc.setParent(item);
 
 		lc = new Listcell();
-		Label label = new Label(PennantAppUtil.amountFormate(rcdAmount, formatter));
+		Label label = new Label(CurrencyUtil.format(rcdAmount, formatter));
 		label.setId("AllocateAmount_rcdAmount");
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
 
 		lc = new Listcell();
-		label = new Label(PennantAppUtil.amountFormate(inProgressAmt, formatter));
+		label = new Label(CurrencyUtil.format(inProgressAmt, formatter));
 		label.setId("AllocateAmount_inProgressAmt");
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
 
 		lc = new Listcell();
-		label = new Label(PennantAppUtil.amountFormate(curDueAmt, formatter));
+		label = new Label(CurrencyUtil.format(curDueAmt, formatter));
 		label.setId("AllocateAmount_curDueAmt");
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
 
 		lc = new Listcell();
-		label = new Label(PennantAppUtil.amountFormate(curPaidAmt, formatter));
+		label = new Label(CurrencyUtil.format(curPaidAmt, formatter));
 		label.setId("AllocateAmount_curPaidAmt");
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
 
 		lc = new Listcell();
-		label = new Label(PennantAppUtil.amountFormate(curWaiverAmt, formatter));
+		label = new Label(CurrencyUtil.format(curWaiverAmt, formatter));
 		label.setId("AllocateAmount_curWaiverAmt");
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
 
 		lc = new Listcell();
-		label = new Label(PennantAppUtil.amountFormate(remainingAmt, formatter));
+		label = new Label(CurrencyUtil.format(remainingAmt, formatter));
 		label.setId("AllocateAmount_remainingAmt");
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);

@@ -2297,29 +2297,29 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdBal(), finFormatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getProfitSchdBal(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPrincipalSchdBal(), finFormatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getPrincipalSchdBal(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdPayNow(), finFormatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getProfitSchdPayNow(), finFormatter));
 				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPrincipalSchdPayNow(), finFormatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getPrincipalSchdPayNow(), finFormatter));
 				totalPri = totalPri.add(repaySchd.getPrincipalSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPenaltyPayNow(), finFormatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getPenaltyPayNow(), finFormatter));
 				totalCharge = totalCharge.add(repaySchd.getPenaltyPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
 				if (repaySchd.getDaysLate() > 0) {
-					lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getMaxWaiver(), finFormatter));
+					lc = new Listcell(CurrencyUtil.format(repaySchd.getMaxWaiver(), finFormatter));
 				} else {
-					lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getRefundMax(), finFormatter));
+					lc = new Listcell(CurrencyUtil.format(repaySchd.getRefundMax(), finFormatter));
 				}
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -2362,22 +2362,22 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 
-				lc = new Listcell(PennantAppUtil.amountFormate(refundPft, finFormatter));
+				lc = new Listcell(CurrencyUtil.format(refundPft, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
 				// Fee Details
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdFeePayNow(), finFormatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getSchdFeePayNow(), finFormatter));
 				lc.setStyle("text-align:right;");
 				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
 				lc.setParent(item);
 
 				BigDecimal netPay = repaySchd.getProfitSchdPayNow().add(repaySchd.getPrincipalSchdPayNow())
 						.add(repaySchd.getSchdFeePayNow()).subtract(refundPft);
-				lc = new Listcell(PennantAppUtil.amountFormate(netPay, finFormatter));
+				lc = new Listcell(CurrencyUtil.format(netPay, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getRepayBalance(), finFormatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getRepayBalance(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				item.setAttribute("data", repaySchd);
@@ -2468,7 +2468,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		lc.setStyle("font-weight:bold;");
 		lc.setSpan(2);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(fieldValue, getRepayMain().getLovDescFinFormatter()));
+		lc = new Listcell(CurrencyUtil.format(fieldValue, getRepayMain().getLovDescFinFormatter()));
 		lc.setStyle("text-align:right;color:#f36800;");
 		lc.setParent(item);
 		lc = new Listcell();
@@ -2736,9 +2736,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		List<ChartSetElement> listChartSetElement = getReportDataForFinVsAmount(finScheduleData, formatter);
 
 		ChartsConfig chartsConfig = new ChartsConfig("Loan Vs Amounts",
-				"Loan Amount ="
-						+ PennantAppUtil.amountFormate(CurrencyUtil.unFormat(financeAmount, formatter), formatter),
-				"", "");
+				"Loan Amount =" + CurrencyUtil.format(CurrencyUtil.unFormat(financeAmount, formatter), formatter), "",
+				"");
 		aDashboardConfiguration = new DashboardConfiguration();
 		chartsConfig.setSetElements(listChartSetElement);
 		chartsConfig.setRemarks("");

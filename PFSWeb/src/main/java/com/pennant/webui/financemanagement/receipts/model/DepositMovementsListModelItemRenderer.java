@@ -32,13 +32,13 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -78,8 +78,7 @@ public class DepositMovementsListModelItemRenderer implements ListitemRenderer<D
 		lc.setParent(item);
 
 		// Amount
-		lc = new Listcell(
-				PennantAppUtil.amountFormate(depositMovements.getReservedAmount(), PennantConstants.defaultCCYDecPos));
+		lc = new Listcell(CurrencyUtil.format(depositMovements.getReservedAmount(), PennantConstants.defaultCCYDecPos));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 

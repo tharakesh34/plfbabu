@@ -14,7 +14,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 
 public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<FinanceEnquiry>, Serializable {
 
@@ -56,7 +55,7 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 			finAmount = finAmount.add(enquiry.getFeeChargeAmt());
 		}
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, CurrencyUtil.getFormat(enquiry.getFinCcy())));
+		lc = new Listcell(CurrencyUtil.format(finAmount, CurrencyUtil.getFormat(enquiry.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		if (enquiry.getFinRepaymentAmount() != null) {
@@ -75,8 +74,7 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 							.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
 				}
 			}
-			lc = new Listcell(
-					PennantAppUtil.amountFormate(curFinAmountValue, CurrencyUtil.getFormat(enquiry.getFinCcy())));
+			lc = new Listcell(CurrencyUtil.format(curFinAmountValue, CurrencyUtil.getFormat(enquiry.getFinCcy())));
 			lc.setStyle("text-align:right");
 		} else {
 			lc = new Listcell("");

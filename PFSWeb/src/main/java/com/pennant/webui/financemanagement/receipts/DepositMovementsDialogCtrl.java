@@ -502,8 +502,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				// lc = new Listcell(depositCheque.getPartnerBankCode());
 				// lc.setParent(item);
 				// Amount
-				lc = new Listcell(
-						PennantAppUtil.amountFormate(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));
+				lc = new Listcell(CurrencyUtil.format(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				// Receipt Purpose
@@ -583,7 +582,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getAcCcy());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(),
+				lc = new Listcell(CurrencyUtil.format(returnDataSet.getPostAmount(),
 						CurrencyUtil.getFormat(returnDataSet.getAcCcy())));
 				lc.setStyle("font-weight:bold;text-align:right;");
 				lc.setParent(item);

@@ -63,10 +63,10 @@ public class ProvisionListModelItemRenderer implements ListitemRenderer<Provisio
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.formateDate(provision.getProvisionDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(provision.getProvisionedAmt(), format));
+		lc = new Listcell(CurrencyUtil.format(provision.getProvisionedAmt(), format));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(provision.getProvisionedAmt(), format));
+		lc = new Listcell(CurrencyUtil.format(provision.getProvisionedAmt(), format));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		lc = new Listcell();

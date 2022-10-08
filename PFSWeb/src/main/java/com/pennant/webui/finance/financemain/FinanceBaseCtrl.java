@@ -3514,9 +3514,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 					errorList
 							.add(new ErrorDetail(Labels.getLabel("label_FinAmount"), "30507",
-									new String[] { Labels.getLabel("label_FinAmount"),
-											PennantAppUtil.amountFormate(getFinanceDetail().getFinScheduleData()
-													.getFinanceType().getFinMinAmount(), formatter) },
+									new String[] { Labels.getLabel("label_FinAmount"), CurrencyUtil.format(
+											getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinAmount(),
+											formatter) },
 									new String[] {}));
 				}
 			}
@@ -3526,9 +3526,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 					errorList
 							.add(new ErrorDetail(Labels.getLabel("label_FinAmount"), "30508",
-									new String[] { Labels.getLabel("label_FinAmount"),
-											PennantAppUtil.amountFormate(getFinanceDetail().getFinScheduleData()
-													.getFinanceType().getFinMaxAmount(), formatter) },
+									new String[] { Labels.getLabel("label_FinAmount"), CurrencyUtil.format(
+											getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxAmount(),
+											formatter) },
 									new String[] {}));
 				}
 			}

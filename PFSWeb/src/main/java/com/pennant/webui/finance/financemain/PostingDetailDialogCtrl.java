@@ -45,7 +45,6 @@ import com.pennant.backend.model.rmtmasters.TransactionDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -169,7 +168,7 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getAcCcy());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(),
+				lc = new Listcell(CurrencyUtil.format(returnDataSet.getPostAmount(),
 						CurrencyUtil.getFormat(returnDataSet.getAcCcy())));
 				lc.setStyle("font-weight:bold;text-align:right;");
 				lc.setParent(item);
@@ -203,7 +202,7 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			detail.setCcy(dataSet.getAcCcy());
 			detail.setAccount(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
 			detail.setPostAmount(
-					PennantAppUtil.amountFormate(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));
+					CurrencyUtil.format(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));
 			detail.setRevTranCode(dataSet.getRevTranCode());
 			detail.setPostDate(DateUtility.format(dataSet.getPostDate(), DateFormat.LONG_DATE.getPattern()));
 			detail.setValueDate(DateUtility.format(dataSet.getValueDate(), DateFormat.LONG_DATE.getPattern()));

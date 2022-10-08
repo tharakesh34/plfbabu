@@ -17,7 +17,6 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<ReturnDataSet>, Serializable {
 
@@ -91,11 +90,9 @@ public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<
 			lc = new Listcell(dataSet.getAcCcy());
 			lc.setParent(item);
 			BigDecimal amt = new BigDecimal(dataSet.getPostAmount().toString()).setScale(0, RoundingMode.HALF_DOWN);
-			lc = new Listcell(PennantAppUtil.amountFormate(amt, CurrencyUtil.getFormat(dataSet.getAcCcy())));
+			lc = new Listcell(CurrencyUtil.format(amt, CurrencyUtil.getFormat(dataSet.getAcCcy())));
 			lc.setStyle("font-weight:bold;text-align:right;");
 			lc.setParent(item);
 		}
-
 	}
-
 }

@@ -70,7 +70,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -302,7 +301,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 					lc.setStyle("font-weight:bold;");
 					lc.setParent(item);
 					BigDecimal amt = new BigDecimal(entry.getPostAmount().toString()).setScale(0, RoundingMode.FLOOR);
-					lc = new Listcell(PennantAppUtil.amountFormate(amt, formatter));
+					lc = new Listcell(CurrencyUtil.format(amt, formatter));
 
 					if (entry.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
 						stageDisbCrSum = stageDisbCrSum.add(amt);
@@ -322,8 +321,8 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 				this.listBoxFinStageAccountings.appendChild(item);
 			}
 
-			this.label_StageAccountingDisbCrVal.setValue(PennantAppUtil.amountFormate(stageDisbCrSum, formatter));
-			this.label_StageAccountingDisbDrVal.setValue(PennantAppUtil.amountFormate(stageDisbDrSum, formatter));
+			this.label_StageAccountingDisbCrVal.setValue(CurrencyUtil.format(stageDisbCrSum, formatter));
+			this.label_StageAccountingDisbDrVal.setValue(CurrencyUtil.format(stageDisbDrSum, formatter));
 		}
 		logger.debug("Leaving");
 	}
@@ -418,7 +417,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 				detail.setTransDesc(dataSet.getTranDesc());
 				detail.setCcy(dataSet.getAcCcy());
 				detail.setAccount(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
-				detail.setPostAmount(PennantAppUtil.amountFormate(dataSet.getPostAmount(),
+				detail.setPostAmount(CurrencyUtil.format(dataSet.getPostAmount(),
 						dataSet.getFormatter() == 0 ? CurrencyUtil.getFormat(getFinanceMain().getFinCcy())
 								: dataSet.getFormatter()));
 				accountingDetails.add(detail);
@@ -550,7 +549,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 
 			this.getLabel_PostAccountingDisbCrVal()
 					.setValue(PennantApplicationUtil.amountFormate(getDisbCrSum(), formatter));
-			this.getLabel_PostAccountingDisbDrVal().setValue(PennantAppUtil.amountFormate(getDisbDrSum(), formatter));
+			this.getLabel_PostAccountingDisbDrVal().setValue(CurrencyUtil.format(getDisbDrSum(), formatter));
 		}
 		logger.debug("Leaving");
 	}

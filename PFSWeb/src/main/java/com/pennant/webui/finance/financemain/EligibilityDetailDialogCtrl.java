@@ -65,7 +65,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -286,7 +285,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 							val = val.setScale(2, RoundingMode.HALF_DOWN);
 							labelCode = String.valueOf(val) + "%";
 						} else {
-							labelCode = PennantAppUtil.amountFormate(new BigDecimal(detail.getRuleResult()),
+							labelCode = CurrencyUtil.format(new BigDecimal(detail.getRuleResult()),
 									CurrencyUtil.getFormat(getFinanceMain().getFinCcy()));
 						}
 
@@ -734,12 +733,12 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 
 						} else {
 
-							lc = new Listcell(PennantAppUtil.amountFormate(new BigDecimal(detail.getRuleResult()),
+							lc = new Listcell(CurrencyUtil.format(new BigDecimal(detail.getRuleResult()),
 									CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 							lc.setStyle("text-align:right;");
 							lc.setParent(item);
 
-							lc = new Listcell(PennantAppUtil.amountFormate(detail.getOverrideResult(),
+							lc = new Listcell(CurrencyUtil.format(detail.getOverrideResult(),
 									CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 							lc.setStyle("text-align:right;");
 							lc.setParent(item);

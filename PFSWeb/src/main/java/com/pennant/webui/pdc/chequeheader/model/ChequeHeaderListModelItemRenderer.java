@@ -35,7 +35,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -57,7 +56,7 @@ public class ChequeHeaderListModelItemRenderer implements ListitemRenderer<Chequ
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.formateInt(chequeHeader.getNoOfCheques()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(chequeHeader.getTotalAmount(), CurrencyUtil.getFormat("INR")));
+		lc = new Listcell(CurrencyUtil.format(chequeHeader.getTotalAmount(), CurrencyUtil.getFormat("INR")));
 		lc.setParent(item);
 		lc = new Listcell(chequeHeader.getRecordStatus());
 		lc.setParent(item);

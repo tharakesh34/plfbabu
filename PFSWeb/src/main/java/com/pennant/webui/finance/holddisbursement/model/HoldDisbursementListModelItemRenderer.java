@@ -32,10 +32,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.HoldDisbursement;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -61,14 +61,13 @@ public class HoldDisbursementListModelItemRenderer implements ListitemRenderer<H
 		cbHold.setChecked(holdDisbursement.isHold());
 		lc.appendChild(cbHold);
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.amountFormate(holdDisbursement.getTotalLoanAmt(), PennantConstants.defaultCCYDecPos));
+		lc = new Listcell(CurrencyUtil.format(holdDisbursement.getTotalLoanAmt(), PennantConstants.defaultCCYDecPos));
 		lc.setParent(item);
 		lc = new Listcell(
-				PennantAppUtil.amountFormate(holdDisbursement.getDisbursedAmount(), PennantConstants.defaultCCYDecPos));
+				CurrencyUtil.format(holdDisbursement.getDisbursedAmount(), PennantConstants.defaultCCYDecPos));
 		lc.setParent(item);
 		lc = new Listcell(
-				PennantAppUtil.amountFormate(holdDisbursement.getHoldLimitAmount(), PennantConstants.defaultCCYDecPos));
+				CurrencyUtil.format(holdDisbursement.getHoldLimitAmount(), PennantConstants.defaultCCYDecPos));
 		lc.setParent(item);
 		lc = new Listcell(holdDisbursement.getRecordStatus());
 		lc.setParent(item);

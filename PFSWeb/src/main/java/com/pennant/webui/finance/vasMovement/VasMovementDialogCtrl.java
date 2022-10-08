@@ -56,6 +56,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -64,7 +65,6 @@ import com.pennant.backend.model.finance.VasMovementDetail;
 import com.pennant.backend.service.applicationmaster.VasMovementService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -339,7 +339,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		this.lbl_CustCIF.setValue(String.valueOf(aVasMovement.getCustCif()));
 		this.lbl_LoanType.setValue(aVasMovement.getFinType());
 		this.lbl_FinAmount
-				.setValue(PennantAppUtil.amountFormate(aVasMovement.getFinAmount(), PennantConstants.defaultCCYDecPos));
+				.setValue(CurrencyUtil.format(aVasMovement.getFinAmount(), PennantConstants.defaultCCYDecPos));
 		this.lbl_startDate
 				.setValue(DateUtility.format(aVasMovement.getFinStartdate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate

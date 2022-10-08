@@ -36,7 +36,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.VasMovement;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -71,8 +70,7 @@ public class VasMovementListModelItemRenderer implements ListitemRenderer<VasMov
 		lc.setParent(item);
 		lc = new Listcell(vasMoment.getFinCcy());
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.amountFormate(vasMoment.getFinAmount(), CurrencyUtil.getFormat(vasMoment.getFinCcy())));
+		lc = new Listcell(CurrencyUtil.format(vasMoment.getFinAmount(), CurrencyUtil.getFormat(vasMoment.getFinCcy())));
 
 		lc.setParent(item);
 		lc = new Listcell(vasMoment.getRecordStatus());

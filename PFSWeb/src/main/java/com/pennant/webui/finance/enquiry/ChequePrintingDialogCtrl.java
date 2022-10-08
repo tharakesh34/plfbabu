@@ -257,7 +257,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				chequeDetailsList.add(null);
 				chequeDetails = prepareReportObject(getFinScheduleData());
 				BigDecimal repayAmt = getRepayDetails(repayDetailMap, startIndex, repayDetailMap.size());
-				chequeDetails.setRepayAmount(PennantAppUtil.amountFormate(repayAmt, format));
+				chequeDetails.setRepayAmount(CurrencyUtil.format(repayAmt, format));
 				chequeDetails.setRepayAmountinWords(
 						NumberToEnglishWords.getAmountInText(PennantAppUtil.formateAmount(repayAmt, format),
 								getFinScheduleData().getFinanceMain().getFinCcy()).toUpperCase());
@@ -309,7 +309,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					repaymentAmount = getRepayDetails(repayDetailMap, j - pDCPeriod + 1, j);
 				}
 				int format = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
-				chequeDetails.setRepayAmount(PennantAppUtil.amountFormate(repaymentAmount, format));
+				chequeDetails.setRepayAmount(CurrencyUtil.format(repaymentAmount, format));
 				chequeDetails.setRepayAmountinWords(
 						NumberToEnglishWords.getAmountInText(PennantAppUtil.formateAmount(repaymentAmount, format),
 								getFinScheduleData().getFinanceMain().getFinCcy()).toUpperCase());

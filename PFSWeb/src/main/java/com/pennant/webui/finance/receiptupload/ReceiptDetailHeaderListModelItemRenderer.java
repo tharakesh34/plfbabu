@@ -33,11 +33,11 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -81,7 +81,7 @@ public class ReceiptDetailHeaderListModelItemRenderer implements ListitemRendere
 		lc.setLabel(receiptPurpose);
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(rcptDtl.getReceiptAmount(), PennantConstants.defaultCCYDecPos));
+		lc = new Listcell(CurrencyUtil.format(rcptDtl.getReceiptAmount(), PennantConstants.defaultCCYDecPos));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 

@@ -32,9 +32,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -64,31 +64,31 @@ public class OverdueDetailListModelItemRenderer implements ListitemRenderer<FinO
 		lc = new Listcell(String.valueOf(finODDetail.getFinCurODDays()));
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getFinCurODPri(), ccyFormatter));
+		lc = new Listcell(CurrencyUtil.format(finODDetail.getFinCurODPri(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getFinCurODPft(), ccyFormatter));
+		lc = new Listcell(CurrencyUtil.format(finODDetail.getFinCurODPft(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getFinCurODAmt(), ccyFormatter));
+		lc = new Listcell(CurrencyUtil.format(finODDetail.getFinCurODAmt(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotPenaltyAmt(), ccyFormatter));
+		lc = new Listcell(CurrencyUtil.format(finODDetail.getTotPenaltyAmt(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotWaived(), ccyFormatter));
+		lc = new Listcell(CurrencyUtil.format(finODDetail.getTotWaived(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotPenaltyPaid(), ccyFormatter));
+		lc = new Listcell(CurrencyUtil.format(finODDetail.getTotPenaltyPaid(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotPenaltyBal(), ccyFormatter));
+		lc = new Listcell(CurrencyUtil.format(finODDetail.getTotPenaltyBal(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 

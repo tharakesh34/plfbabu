@@ -26,7 +26,6 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -213,7 +212,7 @@ public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> 
 	}
 
 	private String format(BigDecimal decimal, String ccy) {
-		return PennantAppUtil.amountFormate(decimal, CurrencyUtil.getFormat(ccy));
+		return CurrencyUtil.format(decimal, CurrencyUtil.getFormat(ccy));
 	}
 
 	public void onClick$btnClose(Event event) {

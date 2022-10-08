@@ -1731,13 +1731,13 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getTxnCCy());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(accountingEntry.getTxnAmount(),
+			lc = new Listcell(CurrencyUtil.format(accountingEntry.getTxnAmount(),
 					CurrencyUtil.getFormat(accountingEntry.getAccCCy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getAccCCy());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(accountingEntry.getTxnAmount(),
+			lc = new Listcell(CurrencyUtil.format(accountingEntry.getTxnAmount(),
 					CurrencyUtil.getFormat(accountingEntry.getAccCCy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
@@ -1785,7 +1785,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				lc.setParent(item);
 				lc = new Listcell(jvPostingEntry.getTxnCCy());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(jvPostingEntry.getTxnAmount(),
+				lc = new Listcell(CurrencyUtil.format(jvPostingEntry.getTxnAmount(),
 						CurrencyUtil.getFormat(jvPostingEntry.getAccCCy())));
 				lc.setParent(item);
 				lc = new Listcell(jvPostingEntry.getNarrLine1());

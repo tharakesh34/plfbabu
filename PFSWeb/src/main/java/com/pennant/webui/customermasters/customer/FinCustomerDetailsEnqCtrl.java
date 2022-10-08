@@ -54,7 +54,6 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 
 /**
@@ -325,7 +324,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 						cell = new Listcell(customerIncome.getIncomeTypeDesc());
 						cell.setParent(item);
 						total = total.add(customerIncome.getIncome());
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(),
+						cell = new Listcell(CurrencyUtil.format(customerIncome.getIncome(),
 								CurrencyUtil.getFormat(customerIncome.getToCcy())));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
@@ -336,7 +335,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 					cell = new Listcell("Total");
 					cell.setStyle("font-weight:bold;cursor:default");
 					cell.setParent(item);
-					cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
+					cell = new Listcell(CurrencyUtil.format(total, ccyFormatter));
 					cell.setSpan(2);
 					cell.setStyle("font-weight:bold; text-align:right;cursor:default");
 					cell.setParent(item);
@@ -347,7 +346,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 			cell = new Listcell("Gross Income");
 			cell.setStyle("font-weight:bold;cursor:default");
 			cell.setParent(item);
-			cell = new Listcell(PennantAppUtil.amountFormate(totIncome, ccyFormatter));
+			cell = new Listcell(CurrencyUtil.format(totIncome, ccyFormatter));
 			cell.setSpan(2);
 			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
 			cell.setParent(item);
@@ -369,7 +368,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 						cell = new Listcell(customerIncome.getIncomeTypeDesc());
 						cell.setParent(item);
 						total = total.add(customerIncome.getIncome());
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(),
+						cell = new Listcell(CurrencyUtil.format(customerIncome.getIncome(),
 								CurrencyUtil.getFormat(customerIncome.getToCcy())));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
@@ -380,7 +379,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 					cell = new Listcell("Total");
 					cell.setStyle("font-weight:bold;cursor:default");
 					cell.setParent(item);
-					cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
+					cell = new Listcell(CurrencyUtil.format(total, ccyFormatter));
 					cell.setSpan(2);
 					cell.setStyle("font-weight:bold; text-align:right;cursor:default");
 					cell.setParent(item);
@@ -394,7 +393,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 			cell = new Listcell("Gross Expense");
 			cell.setStyle("font-weight:bold;cursor:default");
 			cell.setParent(item);
-			cell = new Listcell(PennantAppUtil.amountFormate(totExpense, ccyFormatter));
+			cell = new Listcell(CurrencyUtil.format(totExpense, ccyFormatter));
 			cell.setSpan(2);
 			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
 			cell.setParent(item);
@@ -404,7 +403,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 		cell = new Listcell("Net Income");
 		cell.setStyle("font-weight:bold;");
 		cell.setParent(item);
-		cell = new Listcell(PennantAppUtil.amountFormate(totIncome.subtract(totExpense), ccyFormatter));
+		cell = new Listcell(CurrencyUtil.format(totIncome.subtract(totExpense), ccyFormatter));
 		cell.setSpan(2);
 		cell.setStyle("font-weight:bold; text-align:right;");
 		cell.setParent(item);

@@ -37,7 +37,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -75,12 +74,11 @@ public class ReinstateFinanceListModelItemRenderer implements ListitemRenderer<R
 				&& reinstateFinance.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.add(reinstateFinance.getFeeChargeAmt());
 		}
-		lc = new Listcell(
-				PennantAppUtil.amountFormate(finAmount, CurrencyUtil.getFormat(reinstateFinance.getFinCcy())));
+		lc = new Listcell(CurrencyUtil.format(finAmount, CurrencyUtil.getFormat(reinstateFinance.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		if (reinstateFinance.getFinRepaymentAmount() != null) {
-			lc = new Listcell(PennantAppUtil.amountFormate(finAmount.subtract(reinstateFinance.getFinRepaymentAmount()),
+			lc = new Listcell(CurrencyUtil.format(finAmount.subtract(reinstateFinance.getFinRepaymentAmount()),
 					CurrencyUtil.getFormat(reinstateFinance.getFinCcy())));
 			lc.setStyle("text-align:right");
 		} else {

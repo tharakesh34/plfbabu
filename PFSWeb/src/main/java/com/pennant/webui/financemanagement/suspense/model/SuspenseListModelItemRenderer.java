@@ -36,7 +36,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -71,10 +70,10 @@ public class SuspenseListModelItemRenderer implements ListitemRenderer<FinanceSu
 		manualSusp.setChecked(suspHead.isManualSusp());
 		lc.appendChild(manualSusp);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(suspHead.getFinSuspAmt(), format));
+		lc = new Listcell(CurrencyUtil.format(suspHead.getFinSuspAmt(), format));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(suspHead.getFinCurSuspAmt(), format));
+		lc = new Listcell(CurrencyUtil.format(suspHead.getFinCurSuspAmt(), format));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(suspHead.getRecordStatus());

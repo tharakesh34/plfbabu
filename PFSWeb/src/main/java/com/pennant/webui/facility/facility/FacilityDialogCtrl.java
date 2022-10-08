@@ -1893,15 +1893,15 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					lc.setParent(item);
 					lc = new Listcell(category.getLimitCategoryDesc());
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.amountFormate(category.getRiskAmount().divide(
+					lc = new Listcell(CurrencyUtil.format(category.getRiskAmount().divide(
 							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP),
 							0));
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.amountFormate(category.getLimitAmount().divide(
+					lc = new Listcell(CurrencyUtil.format(category.getLimitAmount().divide(
 							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP),
 							0));
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.amountFormate(category.getAvailAmount().divide(
+					lc = new Listcell(CurrencyUtil.format(category.getAvailAmount().divide(
 							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP),
 							0));
 					lc.setParent(item);
@@ -1944,14 +1944,12 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				cell.setParent(item);
 				cell = new Listcell(customerCollateral.getCollCcy());
 				cell.setParent(item);
-				cell = new Listcell(
-						PennantAppUtil.amountFormate(new BigDecimal(customerCollateral.getCollValue().toString())
-								.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
+				cell = new Listcell(CurrencyUtil.format(new BigDecimal(customerCollateral.getCollValue().toString())
+						.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
-				cell = new Listcell(
-						PennantAppUtil.amountFormate(new BigDecimal(customerCollateral.getCollBankVal().toString())
-								.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
+				cell = new Listcell(CurrencyUtil.format(new BigDecimal(customerCollateral.getCollBankVal().toString())
+						.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
 				BigDecimal per = new BigDecimal(customerCollateral.getCollBankValMar().toString())

@@ -31,9 +31,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceSuspDetails;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -64,7 +64,7 @@ public class SuspenseDetailListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(suspDetails.getFinSuspSeq()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(suspDetails.getFinTrfAmt(), formatter));
+		lc = new Listcell(CurrencyUtil.format(suspDetails.getFinTrfAmt(), formatter));
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(suspDetails.getFinODDate()));
 		lc.setParent(item);

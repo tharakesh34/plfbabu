@@ -12,14 +12,13 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceEnquiry;
-import com.pennant.util.PennantAppUtil;
 
 public class CustomerEnquiryListModelItemRender implements ListitemRenderer<FinanceEnquiry>, Serializable {
 
 	private static final long serialVersionUID = -6954091801433341494L;
 
 	public CustomerEnquiryListModelItemRender() {
-
+		super();
 	}
 
 	@Override
@@ -35,7 +34,7 @@ public class CustomerEnquiryListModelItemRender implements ListitemRenderer<Fina
 			item.appendChild(cell);
 		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell(
-					PennantAppUtil.amountFormate(
+					CurrencyUtil.format(
 							aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt())
 									.subtract(aFinanceEnq.getFinRepaymentAmount()),
 							CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
@@ -55,17 +54,17 @@ public class CustomerEnquiryListModelItemRender implements ListitemRenderer<Fina
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getMaturityDate()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getFinAmount(),
-					CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
+			lc = new Listcell(
+					CurrencyUtil.format(aFinanceEnq.getFinAmount(), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt())
+			lc = new Listcell(CurrencyUtil.format(aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt())
 					.subtract(aFinanceEnq.getFinRepaymentAmount()), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getNextDueDate()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getNextDueAmount(),
+			lc = new Listcell(CurrencyUtil.format(aFinanceEnq.getNextDueAmount(),
 					CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);

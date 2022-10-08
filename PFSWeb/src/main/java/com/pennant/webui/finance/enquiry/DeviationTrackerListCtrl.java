@@ -46,6 +46,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
@@ -365,7 +366,7 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 		} else if (DeviationConstants.DT_DECIMAL.equals(devType)) {
 
 			BigDecimal amount = new BigDecimal(devValue);
-			return PennantAppUtil.amountFormate(amount, 2);
+			return CurrencyUtil.format(amount, 2);
 
 		} else if (DeviationConstants.DT_INTEGER.equals(devType)) {
 

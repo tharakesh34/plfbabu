@@ -33,9 +33,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for list items in the list box.
@@ -57,13 +57,13 @@ public class CountryListModelItemRenderer implements ListitemRenderer<Country>, 
 		lc.setParent(item);
 		lc = new Listcell(country.getCountryDesc());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(country.getCountryParentLimit(), 0));
+		lc = new Listcell(CurrencyUtil.format(country.getCountryParentLimit(), 0));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(country.getCountryResidenceLimit(), 0));
+		lc = new Listcell(CurrencyUtil.format(country.getCountryResidenceLimit(), 0));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(country.getCountryRiskLimit(), 0));
+		lc = new Listcell(CurrencyUtil.format(country.getCountryRiskLimit(), 0));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell();

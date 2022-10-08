@@ -8,8 +8,8 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.financemanagement.Provision;
-import com.pennant.util.PennantAppUtil;
 
 public class CoreProvisionListModelItemRender implements ListitemRenderer<Provision>, Serializable {
 
@@ -27,7 +27,7 @@ public class CoreProvisionListModelItemRender implements ListitemRenderer<Provis
 		lc.setParent(item);
 		// lc = new Listcell(DateUtility.formatToLongDate(provisions.getProvisionCalDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(provisions.getProvisionedAmt(), 2));
+		lc = new Listcell(CurrencyUtil.format(provisions.getProvisionedAmt(), 2));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		// lc = new Listcell(PennantAppUtil.amountFormate(provisions.getProvisionAmtCal(), 2));

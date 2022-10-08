@@ -30,6 +30,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -40,7 +41,6 @@ import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.JvPostingConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -293,7 +293,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				lc = new Listcell(txnEntry);
 				lc.setParent(item);
 
-				lc = new Listcell(PennantAppUtil.amountFormate(miscPosting.getTxnAmount(), 2));
+				lc = new Listcell(CurrencyUtil.format(miscPosting.getTxnAmount(), 2));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -1108,7 +1108,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			lc = new Listcell(txnEntry);
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(miscPosting.getTxnAmount(), 2));
+			lc = new Listcell(CurrencyUtil.format(miscPosting.getTxnAmount(), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
@@ -1175,7 +1175,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			lc = new Listcell(txnEntry);
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(miscPosting.getTxnAmount(), 2));
+			lc = new Listcell(CurrencyUtil.format(miscPosting.getTxnAmount(), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 

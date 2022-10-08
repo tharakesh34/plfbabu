@@ -87,7 +87,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.util.AgreementEngine;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -606,10 +605,10 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			if (finalMaturity != null) {
 				agreement.setFinalMaturityDate(DateUtility.formatToLongDate(finalMaturity));
 			}
-			agreement.setTotFacilityAmt(PennantAppUtil.amountFormate(amountBD, 3));
-			agreement.setTotFacilityAmtinUSD(PennantAppUtil.amountFormate(amountUSD, 2));
-			agreement.setTotExposure(PennantAppUtil.amountFormate(totExposure, 2));
-			agreement.setTotExsisting(PennantAppUtil.amountFormate(totExsisting, 2));
+			agreement.setTotFacilityAmt(CurrencyUtil.format(amountBD, 3));
+			agreement.setTotFacilityAmtinUSD(CurrencyUtil.format(amountUSD, 2));
+			agreement.setTotExposure(CurrencyUtil.format(totExposure, 2));
+			agreement.setTotExsisting(CurrencyUtil.format(totExsisting, 2));
 			if (agreement.getProposedFacilities().isEmpty()) {
 				agreement.getProposedFacilities().add(agreement.new ProposedFacility());
 			}
@@ -709,7 +708,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 
 		if (facilityDetail.getTotalFacility() != null
 				&& facilityDetail.getTotalFacility().compareTo(BigDecimal.ZERO) != 0) {
-			proposedFacility.setTotalFacilityAmount(PennantAppUtil.amountFormate(facilityDetail.getTotalFacility(),
+			proposedFacility.setTotalFacilityAmount(CurrencyUtil.format(facilityDetail.getTotalFacility(),
 					CurrencyUtil.getFormat(facilityDetail.getTotalFacilityCcy())));
 			proposedFacility.setTotalFacilityAmountUSD(
 					CalculationUtil.getConvertedAmountASString(facilityDetail.getTotalFacilityCcy(),
@@ -718,7 +717,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 
 		if (facilityDetail.getUnderWriting() != null
 				&& facilityDetail.getUnderWriting().compareTo(BigDecimal.ZERO) != 0) {
-			proposedFacility.setUnderWritingAmount(PennantAppUtil.amountFormate(facilityDetail.getUnderWriting(),
+			proposedFacility.setUnderWritingAmount(CurrencyUtil.format(facilityDetail.getUnderWriting(),
 					CurrencyUtil.getFormat(facilityDetail.getUnderWritingCcy())));
 			proposedFacility.setUnderWritingAmountUSD(
 					CalculationUtil.getConvertedAmountASString(facilityDetail.getUnderWritingCcy(),
@@ -727,7 +726,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 
 		if (facilityDetail.getPropFinalTake() != null
 				&& facilityDetail.getPropFinalTake().compareTo(BigDecimal.ZERO) != 0) {
-			proposedFacility.setPropFinalTakeAmount(PennantAppUtil.amountFormate(facilityDetail.getPropFinalTake(),
+			proposedFacility.setPropFinalTakeAmount(CurrencyUtil.format(facilityDetail.getPropFinalTake(),
 					CurrencyUtil.getFormat(facilityDetail.getPropFinalTakeCcy())));
 			proposedFacility.setPropFinalTakeAmountUSD(
 					CalculationUtil.getConvertedAmountASString(facilityDetail.getPropFinalTakeCcy(),
@@ -805,8 +804,8 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			agreement.setReviewCenter(detail.getReviewCenter());
 			agreement.setCustGroupCode(detail.getCustGrpCodeName());
 			agreement.setCustGroupName(detail.getCustomerGroupName());
-			agreement.setRiskLimit(PennantAppUtil.amountFormate(detail.getCountryLimit(), 0));
-			agreement.setRiskExposure(PennantAppUtil.amountFormate(detail.getCountryExposure(), 0));
+			agreement.setRiskLimit(CurrencyUtil.format(detail.getCountryLimit(), 0));
+			agreement.setRiskExposure(CurrencyUtil.format(detail.getCountryExposure(), 0));
 
 			if (StringUtils.trimToEmpty(detail.getCustRelation()).equals(FacilityConstants.CUSTRELATION_CONNECTED)) {
 				agreement.setConnectedCustomer("Yes");

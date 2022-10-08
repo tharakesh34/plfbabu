@@ -43,7 +43,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -146,20 +145,20 @@ public class LinkedLoansDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 						// Original Amount
 						BigDecimal finAmount = finMain.getFinCurrAssetValue().add(finMain.getFeeChargeAmt());
-						lc = new Listcell(PennantAppUtil.amountFormate(finAmount, format));
+						lc = new Listcell(CurrencyUtil.format(finAmount, format));
 						lc.setStyle("text-align:right");
 						lc.setParent(item);
 
 						// Installment Amount
 						BigDecimal instllmentAmount = finPftDetail.getNSchdPft().add(finPftDetail.getNSchdPri());
-						lc = new Listcell(PennantAppUtil.amountFormate(instllmentAmount, format));
+						lc = new Listcell(CurrencyUtil.format(instllmentAmount, format));
 						lc.setStyle("text-align:right");
 						lc.setParent(item);
 
 						// Outstanding Balance
 						if (finMain.getFinRepaymentAmount() != null) {
-							lc = new Listcell(PennantAppUtil
-									.amountFormate(finAmount.subtract(finMain.getFinRepaymentAmount()), format));
+							lc = new Listcell(
+									CurrencyUtil.format(finAmount.subtract(finMain.getFinRepaymentAmount()), format));
 							lc.setStyle("text-align:right");
 						} else {
 							lc = new Listcell("");

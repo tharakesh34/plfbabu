@@ -47,7 +47,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -302,7 +301,7 @@ public class AccountSelectionBox extends Hbox {
 
 		this.decimalbox.setFormat(
 				PennantApplicationUtil.getAmountFormate(CurrencyUtil.getFormat(this.selectedAccount.getAcCcy())));
-		this.decimalbox.setText(PennantAppUtil.amountFormate(this.selectedAccount.getAcAvailableBal(),
+		this.decimalbox.setText(CurrencyUtil.format(this.selectedAccount.getAcAvailableBal(),
 				CurrencyUtil.getFormat(this.selectedAccount.getAcCcy())));
 		setFormatter(CurrencyUtil.getFormat(this.selectedAccount.getAcCcy()));
 		logger.debug("Leaving");

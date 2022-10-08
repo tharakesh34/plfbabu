@@ -360,7 +360,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		this.loanNo.setValue(sampling.getKeyReference());
 		this.loanType.setValue(sampling.getFinType().concat(" - ").concat(sampling.getFinTypeDesc()));
 		this.branch.setValue(sampling.getBranchCode().concat(" - ").concat(sampling.getBranchDesc()));
-		this.loanAmtReq.setValue(PennantAppUtil.amountFormate(sampling.getLoanAmountRequested(), ccyFormatter));
+		this.loanAmtReq.setValue(CurrencyUtil.format(sampling.getLoanAmountRequested(), ccyFormatter));
 		this.tenure.setValue(String.valueOf(sampling.getNumberOfTerms()));
 		this.samplingDate.setValue(DateUtil.format(sampling.getCreatedOn(), DateFormat.SHORT_DATE));
 
@@ -899,7 +899,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		arrayList.add(2, this.sampling.getFinTypeDesc());
 		arrayList.add(3, this.sampling.getBranchCode());
 		arrayList.add(4, this.sampling.getBranchDesc());
-		arrayList.add(5, PennantAppUtil.amountFormate(sampling.getLoanAmountRequested(), ccyFormatter));
+		arrayList.add(5, CurrencyUtil.format(sampling.getLoanAmountRequested(), ccyFormatter));
 		arrayList.add(6, this.sampling.getNumberOfTerms());
 		arrayList.add(7, DateUtil.format(this.sampling.getCreatedOn(), DateFormat.SHORT_DATE));
 
@@ -1126,7 +1126,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 					originalAmount = BigDecimal.ZERO;
 				}
 				totalOriginalAmount = totalOriginalAmount.add(originalAmount);
-				lc = new Listcell(PennantAppUtil.amountFormate(originalAmount, ccyFormatter));
+				lc = new Listcell(CurrencyUtil.format(originalAmount, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -1135,7 +1135,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 					instalmentAmount = BigDecimal.ZERO;
 				}
 				totalInstalmentAmount = totalInstalmentAmount.add(instalmentAmount);
-				lc = new Listcell(PennantAppUtil.amountFormate(instalmentAmount, ccyFormatter));
+				lc = new Listcell(CurrencyUtil.format(instalmentAmount, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -1144,7 +1144,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 					outStandingBal = BigDecimal.ZERO;
 				}
 				totalOutStandingBal = totalOutStandingBal.add(outStandingBal);
-				lc = new Listcell(PennantAppUtil.amountFormate(outStandingBal, ccyFormatter));
+				lc = new Listcell(CurrencyUtil.format(outStandingBal, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -1174,13 +1174,13 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				lc.setParent(item);
 				lc = new Listcell("");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(totalOriginalAmount, ccyFormatter));
+				lc = new Listcell(CurrencyUtil.format(totalOriginalAmount, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(totalInstalmentAmount, ccyFormatter));
+				lc = new Listcell(CurrencyUtil.format(totalInstalmentAmount, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(totalOutStandingBal, ccyFormatter));
+				lc = new Listcell(CurrencyUtil.format(totalOutStandingBal, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell("");
@@ -1260,17 +1260,17 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 						cell = new Listcell(customerIncome.getCategoryDesc());
 						cell.setParent(item);
 
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
+						cell = new Listcell(CurrencyUtil.format(customerIncome.getIncome(), ccyFormatter));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
 
 						totalIncome = totalIncome.add(customerIncome.getIncome());
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getMargin(), ccyFormatter));
+						cell = new Listcell(CurrencyUtil.format(customerIncome.getMargin(), ccyFormatter));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
 
 						BigDecimal calculatedAmount = customerIncome.getCalculatedAmount();
-						cell = new Listcell(PennantAppUtil.amountFormate(calculatedAmount, ccyFormatter));
+						cell = new Listcell(CurrencyUtil.format(calculatedAmount, ccyFormatter));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
 
@@ -1290,12 +1290,12 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			cell = new Listcell("Total");
 			cell.setStyle("font-weight:bold;cursor:default");
 			cell.setParent(item);
-			cell = new Listcell(PennantAppUtil.amountFormate(totalIncome, ccyFormatter));
+			cell = new Listcell(CurrencyUtil.format(totalIncome, ccyFormatter));
 			cell.setSpan(5);
 			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
 			cell.setParent(item);
 
-			cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
+			cell = new Listcell(CurrencyUtil.format(total, ccyFormatter));
 			cell.setSpan(2);
 			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
 			cell.setParent(item);
@@ -1308,12 +1308,12 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			cell = new Listcell("Net Income");
 			cell.setStyle("font-weight:bold;");
 			cell.setParent(item);
-			cell = new Listcell(PennantAppUtil.amountFormate(totalIncome, ccyFormatter));
+			cell = new Listcell(CurrencyUtil.format(totalIncome, ccyFormatter));
 			cell.setSpan(5);
 			cell.setStyle("font-weight:bold; text-align:right;");
 			cell.setParent(item);
 
-			cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
+			cell = new Listcell(CurrencyUtil.format(total, ccyFormatter));
 			cell.setSpan(2);
 			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
 			cell.setParent(item);

@@ -37,7 +37,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -73,15 +72,15 @@ public class LatepayProfitRecoveryListModelItemRenderer
 			lc = new Listcell(String.valueOf(overdueChargeRecovery.getODDays()));
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinCurODPri(), format));
+			lc = new Listcell(CurrencyUtil.format(overdueChargeRecovery.getFinCurODPri(), format));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinCurODPft(), format));
+			lc = new Listcell(CurrencyUtil.format(overdueChargeRecovery.getFinCurODPft(), format));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinCurODAmt(), format));
+			lc = new Listcell(CurrencyUtil.format(overdueChargeRecovery.getFinCurODAmt(), format));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
@@ -89,19 +88,19 @@ public class LatepayProfitRecoveryListModelItemRenderer
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getPenalty(), format));
+			lc = new Listcell(CurrencyUtil.format(overdueChargeRecovery.getPenalty(), format));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getWaivedAmt(), format));
+			lc = new Listcell(CurrencyUtil.format(overdueChargeRecovery.getWaivedAmt(), format));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getPenaltyPaid(), format));
+			lc = new Listcell(CurrencyUtil.format(overdueChargeRecovery.getPenaltyPaid(), format));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getPenaltyBal(), format));
+			lc = new Listcell(CurrencyUtil.format(overdueChargeRecovery.getPenaltyBal(), format));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 

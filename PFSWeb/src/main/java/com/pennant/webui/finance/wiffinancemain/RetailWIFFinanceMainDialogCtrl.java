@@ -6291,7 +6291,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					errorList
 							.add(new ErrorDetail(Labels.getLabel("label_FinAmount"), "30507",
-									new String[] { Labels.getLabel("label_FinAmount"), PennantAppUtil.amountFormate(
+									new String[] { Labels.getLabel("label_FinAmount"), CurrencyUtil.format(
 											getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinAmount(),
 											format) },
 									new String[] {}));
@@ -6304,7 +6304,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					errorList
 							.add(new ErrorDetail(Labels.getLabel("label_FinAmount"), "30508",
-									new String[] { Labels.getLabel("label_FinAmount"), PennantAppUtil.amountFormate(
+									new String[] { Labels.getLabel("label_FinAmount"), CurrencyUtil.format(
 											getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxAmount(),
 											format) },
 									new String[] {}));
@@ -7135,7 +7135,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			cell.setParent(item);
 
 			cell = new Listcell();
-			Label totPriInclabel = new Label(PennantAppUtil.amountFormate(totPriInc, ccyFormatter));
+			Label totPriInclabel = new Label(CurrencyUtil.format(totPriInc, ccyFormatter));
 			totPriInclabel.setId("totPriIncomeLabel");
 			totPriInclabel.setWidth("120px");
 			totPriInclabel.setStyle("font-weight:bold;	float:right;");
@@ -7143,7 +7143,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			cell.setParent(item);
 
 			cell = new Listcell();
-			Label totSecInclabel = new Label(PennantAppUtil.amountFormate(totSecInc, ccyFormatter));
+			Label totSecInclabel = new Label(CurrencyUtil.format(totSecInc, ccyFormatter));
 			totSecInclabel.setId("totSecIncomeLabel");
 			totSecInclabel.setStyle("font-weight:bold;	float:right;");
 			totSecInclabel.setWidth("120px");
@@ -7245,7 +7245,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			cell.setParent(item);
 
 			cell = new Listcell();
-			Label totPriExpLabel = new Label(PennantAppUtil.amountFormate(totPriExp, ccyFormatter));
+			Label totPriExpLabel = new Label(CurrencyUtil.format(totPriExp, ccyFormatter));
 			totPriExpLabel.setId("totPriExpenseLabel");
 			totPriExpLabel.setStyle("font-weight:bold;	float:right;");
 			totPriExpLabel.setWidth("120px");
@@ -7253,7 +7253,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			cell.setParent(item);
 
 			cell = new Listcell();
-			Label totSecExpLabel = new Label(PennantAppUtil.amountFormate(totSecExp, ccyFormatter));
+			Label totSecExpLabel = new Label(CurrencyUtil.format(totSecExp, ccyFormatter));
 			totSecExpLabel.setId("totSecExpenseLabel");
 			totSecExpLabel.setStyle("font-weight:bold;	float:right;");
 			totSecExpLabel.setWidth("120px");
@@ -7333,19 +7333,19 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Reset Total income & Expense Details
 		if (listBoxIncomeDetails.getFellowIfAny("totPriIncomeLabel") != null) {
 			Label totPriIncLabel = (Label) listBoxIncomeDetails.getFellowIfAny("totPriIncomeLabel");
-			totPriIncLabel.setValue(PennantAppUtil.amountFormate(totPriInc, format));
+			totPriIncLabel.setValue(CurrencyUtil.format(totPriInc, format));
 		}
 		if (listBoxIncomeDetails.getFellowIfAny("totSecIncomeLabel") != null) {
 			Label totSecIncLabel = (Label) listBoxIncomeDetails.getFellowIfAny("totSecIncomeLabel");
-			totSecIncLabel.setValue(PennantAppUtil.amountFormate(totSecInc, format));
+			totSecIncLabel.setValue(CurrencyUtil.format(totSecInc, format));
 		}
 		if (listBoxExpenseDetails.getFellowIfAny("totPriExpenseLabel") != null) {
 			Label totPriExpLabel = (Label) listBoxExpenseDetails.getFellowIfAny("totPriExpenseLabel");
-			totPriExpLabel.setValue(PennantAppUtil.amountFormate(totPriExp, format));
+			totPriExpLabel.setValue(CurrencyUtil.format(totPriExp, format));
 		}
 		if (listBoxExpenseDetails.getFellowIfAny("totSecExpenseLabel") != null) {
 			Label totSecExpLabel = (Label) listBoxExpenseDetails.getFellowIfAny("totSecExpenseLabel");
-			totSecExpLabel.setValue(PennantAppUtil.amountFormate(totSecExp, format));
+			totSecExpLabel.setValue(CurrencyUtil.format(totSecExp, format));
 		}
 
 	}

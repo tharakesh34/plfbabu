@@ -33,9 +33,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -57,7 +57,7 @@ public class SectorListModelItemRenderer implements ListitemRenderer<Sector>, Se
 		lc.setParent(item);
 		lc = new Listcell(sector.getSectorDesc());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(sector.getSectorLimit(), 0));
+		lc = new Listcell(CurrencyUtil.format(sector.getSectorLimit(), 0));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell();

@@ -177,11 +177,11 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 					PennantApplicationUtil.formatRate(curSchd.getDroplineRate().doubleValue(), formatter) + "%");
 			item.appendChild(lc);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(curSchd.getLimitDrop(), formatter));
+			lc = new Listcell(CurrencyUtil.format(curSchd.getLimitDrop(), formatter));
 			lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
 			item.appendChild(lc);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(curSchd.getODLimit(), formatter));
+			lc = new Listcell(CurrencyUtil.format(curSchd.getODLimit(), formatter));
 			item.appendChild(lc);
 			listBoxSchedule.appendChild(item);
 		}

@@ -36,10 +36,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.CustLimitCategoryBreakdown;
 import com.pennant.backend.model.customermasters.CustomerLimit;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -188,7 +188,7 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 				lc.setParent(item);
 				lc = new Listcell(breakdown.getCurrency());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(breakdown.getEquivalent(), 3));
+				lc = new Listcell(CurrencyUtil.format(breakdown.getEquivalent(), 3));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(

@@ -6040,7 +6040,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 										getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()))) < 0) {
 
 					errorList.add(new ErrorDetail(Labels.getLabel("label_FinAmount"), "30507",
-							new String[] { Labels.getLabel("label_FinAmount"), PennantAppUtil.amountFormate(
+							new String[] { Labels.getLabel("label_FinAmount"), CurrencyUtil.format(
 									getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinAmount(),
 									CurrencyUtil.getFormat(
 											getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())) },
@@ -6056,7 +6056,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 										getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()))) > 0) {
 
 					errorList.add(new ErrorDetail(Labels.getLabel("label_FinAmount"), "30508",
-							new String[] { Labels.getLabel("label_FinAmount"), PennantAppUtil.amountFormate(
+							new String[] { Labels.getLabel("label_FinAmount"), CurrencyUtil.format(
 									getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxAmount(),
 									CurrencyUtil.getFormat(
 											getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())) },

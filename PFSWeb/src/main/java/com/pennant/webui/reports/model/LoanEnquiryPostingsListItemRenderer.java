@@ -10,11 +10,11 @@ import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 public class LoanEnquiryPostingsListItemRenderer implements ListitemRenderer<Object>, Serializable {
 
@@ -55,7 +55,7 @@ public class LoanEnquiryPostingsListItemRenderer implements ListitemRenderer<Obj
 			lc.setStyle("font-weight:bold;");
 			lc.setParent(item);
 			BigDecimal amt = new BigDecimal(entry.getPostAmount().toString()).setScale(0, RoundingMode.HALF_DOWN);
-			lc = new Listcell(PennantAppUtil.amountFormate(amt, this.formatter));
+			lc = new Listcell(CurrencyUtil.format(amt, this.formatter));
 			lc.setStyle("font-weight:bold;text-align:right;");
 			lc.setParent(item);
 		}

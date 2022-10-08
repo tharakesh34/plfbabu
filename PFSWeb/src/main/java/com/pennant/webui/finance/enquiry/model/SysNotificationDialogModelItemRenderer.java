@@ -9,7 +9,6 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.applicationmaster.SysNotificationDetails;
-import com.pennant.util.PennantAppUtil;
 
 public class SysNotificationDialogModelItemRenderer implements ListitemRenderer<SysNotificationDetails>, Serializable {
 
@@ -36,8 +35,7 @@ public class SysNotificationDialogModelItemRenderer implements ListitemRenderer<
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(details.getFinCurODDays()));
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.amountFormate(details.getFinCurODAmt(), CurrencyUtil.getFormat(details.getFinCcy())));
+		lc = new Listcell(CurrencyUtil.format(details.getFinCurODAmt(), CurrencyUtil.getFormat(details.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 

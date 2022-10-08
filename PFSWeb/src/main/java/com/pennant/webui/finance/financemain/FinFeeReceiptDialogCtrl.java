@@ -324,9 +324,9 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 		this.label_FeeType.setValue(this.feeTypeDesc);
 
 		int formatter = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
-		String feeAmt = PennantAppUtil.amountFormate(this.feeAmount, formatter);
-		String paidAmt = PennantAppUtil.amountFormate(paidAmount, formatter);
-		String waiverAmt = PennantAppUtil.amountFormate(waiverAmount, formatter);
+		String feeAmt = CurrencyUtil.format(this.feeAmount, formatter);
+		String paidAmt = CurrencyUtil.format(paidAmount, formatter);
+		String waiverAmt = CurrencyUtil.format(waiverAmount, formatter);
 
 		this.label_FeeAmount.setValue(feeAmt);
 		this.label_PaidAmount.setValue(paidAmt);

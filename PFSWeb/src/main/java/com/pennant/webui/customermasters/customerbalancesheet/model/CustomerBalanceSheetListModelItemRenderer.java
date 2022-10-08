@@ -34,9 +34,9 @@ import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.customermasters.CustomerBalanceSheet;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -63,11 +63,11 @@ public class CustomerBalanceSheetListModelItemRenderer implements ListitemRender
 			Listcell lc;
 			lc = new Listcell("");
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(data.getTotalAssets(), 0));
+			lc = new Listcell(CurrencyUtil.format(data.getTotalAssets(), 0));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(data.getTotalLiabilities(), 0));
+			lc = new Listcell(CurrencyUtil.format(data.getTotalLiabilities(), 0));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(data.getNetProfit(), 0));
+			lc = new Listcell(CurrencyUtil.format(data.getNetProfit(), 0));
 			lc.setParent(item);
 			lc = new Listcell(data.getRecordStatus());
 			lc.setParent(item);

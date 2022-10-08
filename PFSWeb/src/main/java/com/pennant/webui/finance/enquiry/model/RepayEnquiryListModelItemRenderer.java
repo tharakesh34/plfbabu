@@ -8,9 +8,9 @@ import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.util.PennantAppUtil;
 
 public class RepayEnquiryListModelItemRenderer implements ListitemRenderer<FinanceRepayments>, Serializable {
 
@@ -39,13 +39,12 @@ public class RepayEnquiryListModelItemRenderer implements ListitemRenderer<Finan
 			lc.setParent(item);
 			lc = new Listcell(String.valueOf(repayment.getLinkedTranId()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(repayment.getFinSchdPftPaid(), this.formatter));
+			lc = new Listcell(CurrencyUtil.format(repayment.getFinSchdPftPaid(), this.formatter));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(repayment.getFinSchdPriPaid(), this.formatter));
+			lc = new Listcell(CurrencyUtil.format(repayment.getFinSchdPriPaid(), this.formatter));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(repayment.getFinTotSchdPaid(), this.formatter));
+			lc = new Listcell(CurrencyUtil.format(repayment.getFinTotSchdPaid(), this.formatter));
 			lc.setParent(item);
 		}
 	}
-
 }

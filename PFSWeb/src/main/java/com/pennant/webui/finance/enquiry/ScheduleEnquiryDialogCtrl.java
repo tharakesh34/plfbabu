@@ -423,8 +423,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 		List<ChartSetElement> listChartSetElement = getReportDataForFinVsAmount();
 
 		ChartsConfig chartsConfig = new ChartsConfig("Loan Vs Amounts",
-				"Loan Amount ="
-						+ PennantAppUtil.amountFormate(getFinScheduleData().getFinanceMain().getFinAmount(), formatter),
+				"Loan Amount =" + CurrencyUtil.format(getFinScheduleData().getFinanceMain().getFinAmount(), formatter),
 				"", "");
 		aDashboardConfiguration = new DashboardConfiguration();
 		chartsConfig.setSetElements(listChartSetElement);

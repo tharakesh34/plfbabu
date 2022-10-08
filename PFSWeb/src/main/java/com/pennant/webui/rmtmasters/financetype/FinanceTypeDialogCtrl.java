@@ -8189,7 +8189,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (cofRateDetail.getErrorDetails() == null) {
 			this.costOfFunds.setDescription(
-					PennantAppUtil.amountFormate(cofRateDetail.getNetRefRateLoan(), PennantConstants.defaultCCYDecPos));
+					CurrencyUtil.format(cofRateDetail.getNetRefRateLoan(), PennantConstants.defaultCCYDecPos));
 		} else {
 			MessageUtil.showError(ErrorUtil
 					.getErrorDetail(cofRateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());

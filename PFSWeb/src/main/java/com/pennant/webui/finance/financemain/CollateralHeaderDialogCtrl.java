@@ -572,7 +572,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 						.multiply(collateralAssignment.getAssignPerc())).divide(BigDecimal.valueOf(100), 0,
 								RoundingMode.HALF_DOWN);
 
-				listcell = new Listcell(PennantAppUtil.amountFormate(curAssignValue, ccyFormat));
+				listcell = new Listcell(CurrencyUtil.format(curAssignValue, ccyFormat));
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 
@@ -586,7 +586,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 					availAssignValue = BigDecimal.ZERO;
 				}
 
-				listcell = new Listcell(PennantAppUtil.amountFormate(availAssignValue, ccyFormat));
+				listcell = new Listcell(CurrencyUtil.format(availAssignValue, ccyFormat));
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 
@@ -595,7 +595,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 					utlzedAmt = (curAssignValue.multiply(utilizedAmount)).divide(loanAssignedValue, 0,
 							RoundingMode.HALF_DOWN);
 				}
-				listcell = new Listcell(PennantAppUtil.amountFormate(utlzedAmt, ccyFormat));
+				listcell = new Listcell(CurrencyUtil.format(utlzedAmt, ccyFormat));
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 

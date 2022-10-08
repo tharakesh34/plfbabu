@@ -38,6 +38,7 @@ import org.zkoss.zul.Listitem;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
@@ -51,7 +52,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -116,7 +116,7 @@ public class ApprovalScreenEventHistory {
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.amountFormate(finServiceInstruction.getAmount(), 2));
+					lc = new Listcell(CurrencyUtil.format(finServiceInstruction.getAmount(), 2));
 					lc.setParent(item);
 					lc = new Listcell(PennantStaticListUtil.getlabelDesc(finServiceInstruction.getRecalType(),
 							PennantStaticListUtil.getSchCalCodes()));
@@ -135,13 +135,11 @@ public class ApprovalScreenEventHistory {
 				if (FinServiceEvent.CANCELDISB.equals(finEvent)) {
 					Listcell lc;
 					Listitem item = new Listitem();
-					lc = new Listcell(
-							PennantAppUtil.amountFormate(finScheduleData.getFinanceMain().getFinCurrAssetValue(), 2));
+					lc = new Listcell(CurrencyUtil.format(finScheduleData.getFinanceMain().getFinCurrAssetValue(), 2));
 					lc.setParent(item);
 					lc = new Listcell(DateUtil.formatToLongDate(finScheduleData.getFinanceMain().getFirstDisbDate()));
 					lc.setParent(item);
-					lc = new Listcell(
-							PennantAppUtil.amountFormate(finScheduleData.getFinanceMain().getCurDisbursementAmt(), 2));
+					lc = new Listcell(CurrencyUtil.format(finScheduleData.getFinanceMain().getCurDisbursementAmt(), 2));
 					lc.setParent(item);
 					BigDecimal totalAmount = finScheduleData.getFinanceMain().getFinCurrAssetValue()
 							.subtract(finScheduleData.getFinanceMain().getCurDisbursementAmt());
@@ -334,7 +332,7 @@ public class ApprovalScreenEventHistory {
 					lc.setParent(item);
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getToDate()));
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.amountFormate(finServiceInstruction.getAmount(), 2));
+					lc = new Listcell(CurrencyUtil.format(finServiceInstruction.getAmount(), 2));
 					lc.setParent(item);
 					lc = new Listcell(PennantStaticListUtil.getlabelDesc(finServiceInstruction.getRecalType(),
 							PennantStaticListUtil.getSchCalCodes()));
@@ -376,7 +374,7 @@ public class ApprovalScreenEventHistory {
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.amountFormate(finServiceInstruction.getAmount(), 2));
+					lc = new Listcell(CurrencyUtil.format(finServiceInstruction.getAmount(), 2));
 					lc.setParent(item);
 					lc = new Listcell(PennantStaticListUtil.getlabelDesc(finServiceInstruction.getRecalType(),
 							PennantStaticListUtil.getSchCalCodes()));
