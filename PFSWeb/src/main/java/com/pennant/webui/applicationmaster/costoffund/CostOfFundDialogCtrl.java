@@ -45,6 +45,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.CostOfFund;
@@ -364,8 +365,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 			wve.add(we);
 		}
 		try {
-			aCostOfFund.setCofRate(
-					PennantAppUtil.unFormateAmount(this.cofRate.getValue(), PennantConstants.defaultCCYDecPos));
+			aCostOfFund.setCofRate(CurrencyUtil.unFormat(this.cofRate.getValue(), PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

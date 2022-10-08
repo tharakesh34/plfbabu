@@ -437,12 +437,12 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			wve.add(we);
 		}
 		try {
-			aSuspHead.setFinSuspAmt(PennantAppUtil.unFormateAmount(this.finSuspAmt.getValue(), format));
+			aSuspHead.setFinSuspAmt(CurrencyUtil.unFormat(this.finSuspAmt.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aSuspHead.setFinCurSuspAmt(PennantAppUtil.unFormateAmount(this.finCurSuspAmt.getValue(), format));
+			aSuspHead.setFinCurSuspAmt(CurrencyUtil.unFormat(this.finCurSuspAmt.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

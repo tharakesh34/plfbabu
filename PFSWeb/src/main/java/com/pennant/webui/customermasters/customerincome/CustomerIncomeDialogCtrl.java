@@ -55,6 +55,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -486,7 +487,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			wve.add(we);
 		}
 		try {
-			aCustomerIncome.setMargin(PennantAppUtil.unFormateAmount(this.margin.getValue(), ccyFormatter));
+			aCustomerIncome.setMargin(CurrencyUtil.unFormat(this.margin.getValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -498,7 +499,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		}
 
 		try {
-			aCustomerIncome.setIncome(PennantAppUtil.unFormateAmount(this.custIncome.getActualValue(), ccyFormatter));
+			aCustomerIncome.setIncome(CurrencyUtil.unFormat(this.custIncome.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

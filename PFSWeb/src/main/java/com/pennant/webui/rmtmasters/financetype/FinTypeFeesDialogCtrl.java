@@ -49,6 +49,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -588,7 +589,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			wve.add(we);
 		}
 		try {
-			aFinTypeFees.setAmount(PennantAppUtil.unFormateAmount(
+			aFinTypeFees.setAmount(CurrencyUtil.unFormat(
 					this.amount.isReadonly() ? this.amount.getActualValue() : this.amount.getValidateValue(),
 					ccyFormat));
 

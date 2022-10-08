@@ -623,8 +623,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 				} else if (this.finODCWaived.getValue() == null) {
 					this.finODCWaived.setValue(new BigDecimal(0));
 				}
-				aOverdueChargeRecovery
-						.setFinODCWaived(PennantAppUtil.unFormateAmount(this.finODCWaived.getValue(), format));
+				aOverdueChargeRecovery.setFinODCWaived(CurrencyUtil.unFormat(this.finODCWaived.getValue(), format));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1276,8 +1275,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 			this.finODCWaived.setValue(new BigDecimal(0));
 		}
 
-		getOverdueChargeRecovery()
-				.setFinODCWaived(PennantAppUtil.unFormateAmount(this.finODCWaived.getValue(), format));
+		getOverdueChargeRecovery().setFinODCWaived(CurrencyUtil.unFormat(this.finODCWaived.getValue(), format));
 
 		try {
 

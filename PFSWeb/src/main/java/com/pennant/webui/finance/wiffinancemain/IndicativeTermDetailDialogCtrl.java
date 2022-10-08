@@ -877,9 +877,8 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		}
 		try {
 			if (this.row_totalFacility.isVisible()) {
-				aIndicativeTermDetail
-						.setTotalFacility(PennantAppUtil.unFormateAmount(this.totalFacility.getValidateValue(),
-								CurrencyUtil.getFormat(getIndicativeTermDetail().getTotalFacilityCCY())));
+				aIndicativeTermDetail.setTotalFacility(CurrencyUtil.unFormat(this.totalFacility.getValidateValue(),
+						CurrencyUtil.getFormat(getIndicativeTermDetail().getTotalFacilityCCY())));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -894,9 +893,8 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		}
 		try {
 			if (this.row_underWriting.isVisible()) {
-				aIndicativeTermDetail
-						.setUnderWriting(PennantAppUtil.unFormateAmount(this.underWriting.getValidateValue(),
-								CurrencyUtil.getFormat(getIndicativeTermDetail().getUnderWritingCCY())));
+				aIndicativeTermDetail.setUnderWriting(CurrencyUtil.unFormat(this.underWriting.getValidateValue(),
+						CurrencyUtil.getFormat(getIndicativeTermDetail().getUnderWritingCCY())));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -912,9 +910,8 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 
 		try {
 			if (this.row_propFinalTake.isVisible()) {
-				aIndicativeTermDetail
-						.setPropFinalTake(PennantAppUtil.unFormateAmount(this.propFinalTake.getValidateValue(),
-								CurrencyUtil.getFormat(getIndicativeTermDetail().getPropFinalTakeCCY())));
+				aIndicativeTermDetail.setPropFinalTake(CurrencyUtil.unFormat(this.propFinalTake.getValidateValue(),
+						CurrencyUtil.getFormat(getIndicativeTermDetail().getPropFinalTakeCCY())));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

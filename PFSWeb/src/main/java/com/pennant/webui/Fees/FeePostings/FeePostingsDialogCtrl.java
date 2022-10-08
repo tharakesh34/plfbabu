@@ -61,6 +61,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountEngineExecution;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -419,7 +420,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 
 		getFeePostings().setPostingAmount(
-				PennantAppUtil.unFormateAmount(this.postingAmount.getActualValue(), aCurrency.getCcyEditField()));
+				CurrencyUtil.unFormat(this.postingAmount.getActualValue(), aCurrency.getCcyEditField()));
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.MANFEE);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -728,7 +729,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		try {
 			aFeePostings.setPostingAmount(
-					PennantAppUtil.unFormateAmount(this.postingAmount.getActualValue(), aCurrency.getCcyEditField()));
+					CurrencyUtil.unFormat(this.postingAmount.getActualValue(), aCurrency.getCcyEditField()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

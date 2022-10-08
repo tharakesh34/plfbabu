@@ -48,7 +48,6 @@ import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.AppException;
@@ -410,7 +409,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 					throw new Exception("Length is exceeded, it should be lessthan or equal to 19.");
 				}
 				int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-				uploadDetail.setAmountValue(PennantAppUtil.unFormateAmount(amountValue, formatter));
+				uploadDetail.setAmountValue(CurrencyUtil.unFormat(amountValue, formatter));
 			}
 		} catch (NumberFormatException e) {
 			if (valid) {

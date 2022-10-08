@@ -2046,12 +2046,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setFinMaxAmount(PennantAppUtil.unFormateAmount(this.finMaxAmount.getValidateValue(), format));
+			aFinanceType.setFinMaxAmount(CurrencyUtil.unFormat(this.finMaxAmount.getValidateValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setFinMinAmount(PennantAppUtil.unFormateAmount(this.finMinAmount.getValidateValue(), format));
+			aFinanceType.setFinMinAmount(CurrencyUtil.unFormat(this.finMinAmount.getValidateValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3476,12 +3476,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT)
 					|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-				aFinanceType.setODChargeAmtOrPerc(
-						PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), format));
+				aFinanceType.setODChargeAmtOrPerc(CurrencyUtil.unFormat(this.oDChargeAmtOrPerc.getValue(), format));
 			} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-				aFinanceType.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), 2));
+				aFinanceType.setODChargeAmtOrPerc(CurrencyUtil.unFormat(this.oDChargeAmtOrPerc.getValue(), 2));
 			}
 
 		} catch (WrongValueException we) {

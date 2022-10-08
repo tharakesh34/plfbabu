@@ -73,6 +73,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
@@ -784,7 +785,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				} else {
 					ammount = new BigDecimal(0);
 				}
-				ammount = PennantAppUtil.unFormateAmount(ammount, 2);
+				ammount = CurrencyUtil.unFormat(ammount, 2);
 				dataArray[0] = id;
 				dataArray[1] = ammount;
 				dataArray[2] = description;

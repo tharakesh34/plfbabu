@@ -34,6 +34,7 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -47,7 +48,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.gst.CustomerGSTListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -623,7 +623,6 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	@SuppressWarnings({ "deprecation" })
 	private void getCompValuetoBean(Listitem listitem, String comonentId) {
 		CustomerGSTDetails customerGSTDetails = null;
 		customerGSTDetails = (CustomerGSTDetails) listitem.getAttribute("data");
@@ -666,7 +665,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 				throw new WrongValueException(salAmountValue,
 						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Sale Amount" }));
 			}
-			customerGSTDetails.setSalAmount(PennantAppUtil.unFormateAmount(gstAmt, 2));
+			customerGSTDetails.setSalAmount(CurrencyUtil.unFormat(gstAmt, 2));
 			break;
 		default:
 			break;

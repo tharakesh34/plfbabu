@@ -383,7 +383,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
 			this.wIAmount.getValidateValue();
-			finServiceInstruction.setAmount(PennantAppUtil.unFormateAmount(this.wIAmount.getValidateValue(),
+			finServiceInstruction.setAmount(CurrencyUtil.unFormat(this.wIAmount.getValidateValue(),
 					CurrencyUtil.getFormat(finMain.getFinCcy())));
 		} catch (WrongValueException we) {
 			wve.add(we);

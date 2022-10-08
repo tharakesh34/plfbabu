@@ -1081,14 +1081,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		// Tot Debits By Batch Ccy
 		try {
-			aJVPosting.setTotDebitsByBatchCcy(PennantAppUtil.unFormateAmount(this.totDebitsByBatchCcy.getValue(),
+			aJVPosting.setTotDebitsByBatchCcy(CurrencyUtil.unFormat(this.totDebitsByBatchCcy.getValue(),
 					CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Tot Credits By Batch Ccy
 		try {
-			aJVPosting.setTotCreditsByBatchCcy(PennantAppUtil.unFormateAmount(this.totCreditsByBatchCcy.getValue(),
+			aJVPosting.setTotCreditsByBatchCcy(CurrencyUtil.unFormat(this.totCreditsByBatchCcy.getValue(),
 					CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1803,14 +1803,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 					if (jvPostingEntry.getTxnEntry().equalsIgnoreCase(AccountConstants.TRANTYPE_CREDIT)) {
 						creditAmount = creditAmount
-								.add(PennantAppUtil.unFormateAmount(PennantAppUtil.formateAmount(
+								.add(CurrencyUtil.unFormat(PennantAppUtil.formateAmount(
 										CalculationUtil.getConvertedAmount(jvPostingEntry.getTxnCCy(),
 												getJVPosting().getCurrency(), jvPostingEntry.getTxnAmount()),
 										formatter), formatter));
 						creditCount = creditCount + 1;
 					} else {
 						debitAmount = debitAmount
-								.add(PennantAppUtil.unFormateAmount(PennantAppUtil.formateAmount(
+								.add(CurrencyUtil.unFormat(PennantAppUtil.formateAmount(
 										CalculationUtil.getConvertedAmount(jvPostingEntry.getTxnCCy(),
 												getJVPosting().getCurrency(), jvPostingEntry.getTxnAmount()),
 										formatter), formatter));

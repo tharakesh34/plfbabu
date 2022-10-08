@@ -1949,8 +1949,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		ChartsConfig chartsConfig = new ChartsConfig("Loan Vs Amounts",
 				"Loan Amount =" + PennantAppUtil.amountFormate(
-						PennantAppUtil.unFormateAmount(finScheduleData.getFinanceMain().getFinAmount(), formatter),
-						formatter),
+						CurrencyUtil.unFormat(finScheduleData.getFinanceMain().getFinAmount(), formatter), formatter),
 				"", "");
 		aDashboardConfiguration = new DashboardConfiguration();
 		chartsConfig.setSetElements(listChartSetElement);

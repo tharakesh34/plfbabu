@@ -710,7 +710,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 
 				int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-				uploadFinExpenses.setAmountValue(PennantAppUtil.unFormateAmount(amountValue, formatter));
+				uploadFinExpenses.setAmountValue(CurrencyUtil.unFormat(amountValue, formatter));
 			} catch (Exception exception) {
 
 				uploadFinExpenses.setAmountValue(BigDecimal.ZERO);
@@ -1033,7 +1033,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 				// calculating percentage
 				txnAmount = (percentage.multiply(txnAmount)).divide(new BigDecimal(100));
 				// un-formatting the amount
-				txnAmount = PennantAppUtil.unFormateAmount(txnAmount, formatter);
+				txnAmount = CurrencyUtil.unFormat(txnAmount, formatter);
 			} else {
 				return;
 			}

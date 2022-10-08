@@ -37,6 +37,7 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -50,7 +51,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -887,7 +887,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 				throw new WrongValueException(saleAmtValue,
 						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Sale Amount" }));
 			}
-			custCardMonthSales.setSalesAmount(PennantAppUtil.unFormateAmount(saleAmount, 2));
+			custCardMonthSales.setSalesAmount(CurrencyUtil.unFormat(saleAmount, 2));
 			break;
 		case "NoOfSettlements":
 			Hbox hbox3 = (Hbox) getComponent(listitem, "NoOfSettlements");
@@ -941,7 +941,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			 * WrongValueException(totalCreditAmtValue, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] {
 			 * "Total Credit Value" })); }
 			 */
-			custCardMonthSales.setTotalCreditValue(PennantAppUtil.unFormateAmount(totalCreditValue, 2));
+			custCardMonthSales.setTotalCreditValue(CurrencyUtil.unFormat(totalCreditValue, 2));
 			break;
 		case "totalDebitValue":
 			BigDecimal totalDebitValue = BigDecimal.ZERO;
@@ -956,7 +956,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			 * WrongValueException(totalDebitAmtValue, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] {
 			 * "Total Debit Value" })); }
 			 */
-			custCardMonthSales.setTotalDebitValue(PennantAppUtil.unFormateAmount(totalDebitValue, 2));
+			custCardMonthSales.setTotalDebitValue(CurrencyUtil.unFormat(totalDebitValue, 2));
 			break;
 		case "inwardBounce":
 			BigDecimal inwardBounce = BigDecimal.ZERO;
@@ -970,7 +970,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			 * if (!(bounceIn.isReadonly()) && (inwardBounce.intValue() <= 0)) { throw new WrongValueException(bounceIn,
 			 * Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Inward Bounce" })); }
 			 */
-			custCardMonthSales.setInwardBounce(PennantAppUtil.unFormateAmount(inwardBounce, 2));
+			custCardMonthSales.setInwardBounce(CurrencyUtil.unFormat(inwardBounce, 2));
 			break;
 		case "outwardBounce":
 			BigDecimal bounceInOut = BigDecimal.ZERO;
@@ -985,7 +985,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			 * WrongValueException(bounceOut, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] {
 			 * "Outward Bounce" })); }
 			 */
-			custCardMonthSales.setOutwardBounce(PennantAppUtil.unFormateAmount(bounceInOut, 2));
+			custCardMonthSales.setOutwardBounce(CurrencyUtil.unFormat(bounceInOut, 2));
 			break;
 		default:
 			break;

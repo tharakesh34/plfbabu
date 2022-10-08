@@ -190,9 +190,8 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 		for (Listitem listItem : listItems) {
 			paidBox = (Decimalbox) listItem.getChildren().get(4).getFirstChild();
 			remReceiptFeeBox = (Decimalbox) listItem.getChildren().get(5).getFirstChild();
-			paidAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()), formatter);
-			remReceiptAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(remReceiptFeeBox.doubleValue()),
-					formatter);
+			paidAmount = CurrencyUtil.unFormat(BigDecimal.valueOf(paidBox.doubleValue()), formatter);
+			remReceiptAmount = CurrencyUtil.unFormat(BigDecimal.valueOf(remReceiptFeeBox.doubleValue()), formatter);
 			totalPaidAmount = totalPaidAmount.add(BigDecimal.valueOf(paidBox.doubleValue()));
 
 			try {
@@ -217,7 +216,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 		} else {
 			for (Listitem listItem : listItems) {
 				paidBox = (Decimalbox) listItem.getChildren().get(4).getFirstChild();
-				paidAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()), formatter);
+				paidAmount = CurrencyUtil.unFormat(BigDecimal.valueOf(paidBox.doubleValue()), formatter);
 
 				FinFeeReceipt finFeeReceipt = (FinFeeReceipt) listItem.getAttribute("finFeeReceipt");
 				List<FinFeeReceipt> finFeeReceiptsList = this.finFeeReceiptMap.get(finFeeReceipt.getReceiptID());

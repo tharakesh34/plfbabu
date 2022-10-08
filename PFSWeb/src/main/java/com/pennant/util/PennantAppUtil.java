@@ -265,14 +265,6 @@ public class PennantAppUtil {
 
 	/**
 	 * 
-	 * @deprecated use {@link PennantApplicationUtil#amountFormate} instead.
-	 */
-	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
-		return CurrencyUtil.unFormat(amount, dec);
-	}
-
-	/**
-	 * 
 	 * @deprecated use {@link PennantApplicationUtil#formateAmount} instead.
 	 */
 	public static BigDecimal formateAmount(BigDecimal amount, int dec) {

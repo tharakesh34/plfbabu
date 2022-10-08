@@ -59,6 +59,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -375,7 +376,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 
 				FinanceMain main = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				main.setNumberOfTerms(this.installment.intValue());
-				main.setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
+				main.setFinAmount(CurrencyUtil.unFormat(this.finAmount.getActualValue(), formatter));
 
 				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("formatter", formatter);

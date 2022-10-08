@@ -48,6 +48,7 @@ import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -522,121 +523,112 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setPaidUpCapital(PennantAppUtil.unFormateAmount(this.paidUpCapital.getValue(), 0));
+			aCorporateCustomerDetail.setPaidUpCapital(CurrencyUtil.unFormat(this.paidUpCapital.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setAuthorizedCapital(CurrencyUtil.unFormat(this.authorizedCapital.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCorporateCustomerDetail
-					.setAuthorizedCapital(PennantAppUtil.unFormateAmount(this.authorizedCapital.getValue(), 0));
+					.setReservesAndSurPlus(CurrencyUtil.unFormat(this.reservesAndSurPlus.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setIntangibleAssets(CurrencyUtil.unFormat(this.intangibleAssets.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setTangibleNetWorth(CurrencyUtil.unFormat(this.tangibleNetWorth.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCorporateCustomerDetail
-					.setReservesAndSurPlus(PennantAppUtil.unFormateAmount(this.reservesAndSurPlus.getValue(), 0));
+					.setLongTermLiabilities(CurrencyUtil.unFormat(this.longTermLiabilities.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setCapitalEmployed(CurrencyUtil.unFormat(this.capitalEmployed.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setInvestments(CurrencyUtil.unFormat(this.investments.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setNonCurrentAssets(CurrencyUtil.unFormat(this.nonCurrentAssets.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setNetWorkingCapital(CurrencyUtil.unFormat(this.netWorkingCapital.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setNetSales(CurrencyUtil.unFormat(this.netSales.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setOtherIncome(CurrencyUtil.unFormat(this.otherIncome.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setNetProfitAfterTax(CurrencyUtil.unFormat(this.netProfitAfterTax.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setDepreciation(CurrencyUtil.unFormat(this.depreciation.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setCashAccurals(CurrencyUtil.unFormat(this.cashAccurals.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setAnnualTurnover(CurrencyUtil.unFormat(this.annualTurnover.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCorporateCustomerDetail
-					.setIntangibleAssets(PennantAppUtil.unFormateAmount(this.intangibleAssets.getValue(), 0));
+					.setReturnOnCapitalEmp(CurrencyUtil.unFormat(this.returnOnCapitalEmp.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setCurrentAssets(CurrencyUtil.unFormat(this.currentAssets.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCorporateCustomerDetail
-					.setTangibleNetWorth(PennantAppUtil.unFormateAmount(this.tangibleNetWorth.getValue(), 0));
+					.setCurrentLiabilities(CurrencyUtil.unFormat(this.currentLiabilities.getValue(), 0));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCorporateCustomerDetail.setCurrentBookValue(CurrencyUtil.unFormat(this.currentBookValue.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCorporateCustomerDetail
-					.setLongTermLiabilities(PennantAppUtil.unFormateAmount(this.longTermLiabilities.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail
-					.setCapitalEmployed(PennantAppUtil.unFormateAmount(this.capitalEmployed.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail.setInvestments(PennantAppUtil.unFormateAmount(this.investments.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail
-					.setNonCurrentAssets(PennantAppUtil.unFormateAmount(this.nonCurrentAssets.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail
-					.setNetWorkingCapital(PennantAppUtil.unFormateAmount(this.netWorkingCapital.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail.setNetSales(PennantAppUtil.unFormateAmount(this.netSales.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail.setOtherIncome(PennantAppUtil.unFormateAmount(this.otherIncome.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail
-					.setNetProfitAfterTax(PennantAppUtil.unFormateAmount(this.netProfitAfterTax.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail.setDepreciation(PennantAppUtil.unFormateAmount(this.depreciation.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail.setCashAccurals(PennantAppUtil.unFormateAmount(this.cashAccurals.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail
-					.setAnnualTurnover(PennantAppUtil.unFormateAmount(this.annualTurnover.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail
-					.setReturnOnCapitalEmp(PennantAppUtil.unFormateAmount(this.returnOnCapitalEmp.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail.setCurrentAssets(PennantAppUtil.unFormateAmount(this.currentAssets.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail
-					.setCurrentLiabilities(PennantAppUtil.unFormateAmount(this.currentLiabilities.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail
-					.setCurrentBookValue(PennantAppUtil.unFormateAmount(this.currentBookValue.getValue(), 0));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCorporateCustomerDetail
-					.setCurrentMarketValue(PennantAppUtil.unFormateAmount(this.currentMarketValue.getValue(), 0));
+					.setCurrentMarketValue(CurrencyUtil.unFormat(this.currentMarketValue.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
