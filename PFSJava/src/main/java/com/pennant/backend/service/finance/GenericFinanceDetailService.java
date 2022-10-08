@@ -1363,6 +1363,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		amountCodes.setDeductFeeDisb(deductFeeDisb);
+		amountCodes.setDeductVasDisb(deductVasDisb);
 		amountCodes.setAddFeeToFinance(addFeeToFinance);
 		amountCodes.setFeeWaived(feeWaived);
 		amountCodes.setPaidFee(paidFee);
