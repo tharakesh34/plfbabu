@@ -191,8 +191,6 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	private List<String> myLableList = new ArrayList<String>();
 	private Map<Long, List<String>> myOrderedLableMap = new HashMap<>();
 
-	private String moduleType;
-
 	private boolean isEntity = false;
 	private String entityValue = "";
 	private CollateralAssignmentDAO collateralAssignmentDAO;
@@ -204,7 +202,6 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "";
-		this.moduleType = getArgument("module");
 	}
 
 	/**

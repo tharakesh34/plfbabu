@@ -287,14 +287,6 @@ public class PennantAppUtil {
 		return CurrencyUtil.format(amount, dec);
 	}
 
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#unFormateAmount} instead.
-	 */
-	public static BigDecimal unFormateAmount(String amount, int dec) {
-		return CurrencyUtil.unFormat(amount, dec);
-	}
-
 	public static String formateDate(Date date, String dateFormate) {
 		String formatedDate = null;
 		if (StringUtils.isBlank(dateFormate)) {

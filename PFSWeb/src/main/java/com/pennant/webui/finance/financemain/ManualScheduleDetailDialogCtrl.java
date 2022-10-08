@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2011 - Pennant Technologies
  * 
@@ -373,7 +372,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 				// Finding End Balance Component for Disbursement
 				Label endBal = (Label) li.getFellowIfAny("endBal_" + liSeq);
-				endBalance = PennantAppUtil.unFormateAmount(endBal.getValue(), formatter);
+				endBalance = CurrencyUtil.unFormat(endBal.getValue(), formatter);
 				BigDecimal disbAmount = finMain.getFinAmount().subtract(finMain.getDownPayment())
 						.add(finMain.getFeeChargeAmt());
 
@@ -497,8 +496,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 		// Calculated Profit
 		if (schdTerm.getFellowIfAny("calPft_" + seqId) != null) {
-			calPft = PennantAppUtil.unFormateAmount(((Label) schdTerm.getFellowIfAny("calPft_" + seqId)).getValue(),
-					formatter);
+			calPft = CurrencyUtil.unFormat(((Label) schdTerm.getFellowIfAny("calPft_" + seqId)).getValue(), formatter);
 		}
 
 		// Schedule Profit
@@ -507,8 +505,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				schPft = PennantAppUtil.unFormateAmount(
 						((CurrencyBox) schdTerm.getFellowIfAny("pft_" + seqId)).getValidateValue(), formatter);
 			} else {
-				schPft = PennantAppUtil.unFormateAmount(((Label) schdTerm.getFellowIfAny("pft_" + seqId)).getValue(),
-						formatter);
+				schPft = CurrencyUtil.unFormat(((Label) schdTerm.getFellowIfAny("pft_" + seqId)).getValue(), formatter);
 			}
 		}
 
@@ -549,17 +546,17 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		int prvListItemSeq = Integer.parseInt(prvListItem.getId().substring(prvListItem.getId().indexOf("_") + 1));
 
 		if (curListItem.getFellowIfAny("pft_" + curListItemSeq) != null) {
-			curPft = PennantAppUtil.unFormateAmount(
-					((Label) curListItem.getFellowIfAny("pft_" + curListItemSeq)).getValue(), formatter);
+			curPft = CurrencyUtil.unFormat(((Label) curListItem.getFellowIfAny("pft_" + curListItemSeq)).getValue(),
+					formatter);
 		}
 
 		if (curListItem.getFellowIfAny("feeSchd_" + curListItemSeq) != null) {
-			curFee = PennantAppUtil.unFormateAmount(
-					((Label) curListItem.getFellowIfAny("feeSchd_" + curListItemSeq)).getValue(), formatter);
+			curFee = CurrencyUtil.unFormat(((Label) curListItem.getFellowIfAny("feeSchd_" + curListItemSeq)).getValue(),
+					formatter);
 		}
 
-		BigDecimal prvListItemEndBal = PennantAppUtil.unFormateAmount(
-				((Label) prvListItem.getFellowIfAny("endBal_" + prvListItemSeq)).getValue(), formatter);
+		BigDecimal prvListItemEndBal = CurrencyUtil
+				.unFormat(((Label) prvListItem.getFellowIfAny("endBal_" + prvListItemSeq)).getValue(), formatter);
 
 		if (curListItem.getFellowIfAny("emi_" + curListItemSeq) != null) {
 
@@ -651,8 +648,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		if (StringUtils.equals(CalculationConstants.RATE_BASIS_F, finMain.getRepayRateBasis())) {
 			prvEndBal = finMain.getFinAmount().subtract(finMain.getDownPayment()).add(finMain.getFeeChargeAmt());
 		} else if (StringUtils.equals(CalculationConstants.RATE_BASIS_R, finMain.getRepayRateBasis())) {
-			prvEndBal = PennantAppUtil.unFormateAmount(
-					((Label) prvListItem.getFellowIfAny("endBal_" + prvListItemSeq)).getValue(), formatter);
+			prvEndBal = CurrencyUtil
+					.unFormat(((Label) prvListItem.getFellowIfAny("endBal_" + prvListItemSeq)).getValue(), formatter);
 		}
 
 		// Profit amount calculation based on Days basis
@@ -761,7 +758,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		validateAndRecalSchd();
 		BigDecimal endingBal = BigDecimal.ZERO;
 		if (maturityListItem.getFellowIfAny("endBal_" + maturityListItemSeq) != null) {
-			endingBal = PennantAppUtil.unFormateAmount(
+			endingBal = CurrencyUtil.unFormat(
 					((Label) maturityListItem.getFellowIfAny("endBal_" + maturityListItemSeq)).getValue(), formatter);
 		}
 		if (endingBal.compareTo(BigDecimal.ZERO) != 0) {
@@ -851,14 +848,14 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 			// Calculated Profit Amount
 			if (this.listBoxSchedule.getFellowIfAny("calPft_" + curListItemSeq) != null) {
-				BigDecimal profitcal = PennantAppUtil.unFormateAmount(
+				BigDecimal profitcal = CurrencyUtil.unFormat(
 						((Label) listBoxSchedule.getFellowIfAny("calPft_" + curListItemSeq)).getValue(), format);
 				fsd.setProfitCalc(profitcal);
 			}
 
 			// CalFee
 			if (this.listBoxSchedule.getFellowIfAny("feeSchd_" + curListItemSeq) != null && !isBuildSchd) {
-				BigDecimal feeSchd = PennantAppUtil.unFormateAmount(
+				BigDecimal feeSchd = CurrencyUtil.unFormat(
 						((Label) listBoxSchedule.getFellowIfAny("feeSchd_" + curListItemSeq)).getValue(), format);
 				fsd.setFeeSchd(feeSchd);
 			}
@@ -870,7 +867,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					fsd.setProfitSchd(PennantAppUtil.unFormateAmount(profitSchd.getValidateValue(), format));
 				} else {
 					Label profitSchd = (Label) listBoxSchedule.getFellowIfAny("pft_" + curListItemSeq);
-					fsd.setProfitSchd(PennantAppUtil.unFormateAmount(profitSchd.getValue(), format));
+					fsd.setProfitSchd(CurrencyUtil.unFormat(profitSchd.getValue(), format));
 				}
 			}
 
@@ -881,7 +878,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					fsd.setPrincipalSchd(PennantAppUtil.unFormateAmount(principalSchd.getValidateValue(), format));
 				} else {
 					Label principalSchd = (Label) listBoxSchedule.getFellowIfAny("pri_" + curListItemSeq);
-					fsd.setPrincipalSchd(PennantAppUtil.unFormateAmount(principalSchd.getValue(), format));
+					fsd.setPrincipalSchd(CurrencyUtil.unFormat(principalSchd.getValue(), format));
 				}
 			}
 
@@ -892,14 +889,14 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					fsd.setRepayAmount(PennantAppUtil.unFormateAmount(repayAmount.getValidateValue(), format));
 				} else {
 					Label repayAmount = (Label) listBoxSchedule.getFellowIfAny("emi_" + curListItemSeq);
-					fsd.setRepayAmount(PennantAppUtil.unFormateAmount(repayAmount.getValue(), format));
+					fsd.setRepayAmount(CurrencyUtil.unFormat(repayAmount.getValue(), format));
 				}
 			}
 
 			// Ending Balance
 			if (this.listBoxSchedule.getFellowIfAny("endBal_" + curListItemSeq) != null) {
 				Label closingBal = (Label) listBoxSchedule.getFellowIfAny("endBal_" + curListItemSeq);
-				fsd.setClosingBalance(PennantAppUtil.unFormateAmount(closingBal.getValue(), format));
+				fsd.setClosingBalance(CurrencyUtil.unFormat(closingBal.getValue(), format));
 			}
 
 			if (i == 0) {
@@ -1662,7 +1659,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					pft.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
 				}
 				if (curListItem.getFellowIfAny("calPft_" + curListItemSeq) != null) {
-					calProfit = PennantAppUtil.unFormateAmount(
+					calProfit = CurrencyUtil.unFormat(
 							((Label) curListItem.getFellowIfAny("calPft_" + curListItemSeq)).getValue(), formatter);
 				}
 				if (profit.compareTo(calProfit) > 0) {
@@ -1681,7 +1678,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			if (curListItem.getFellowIfAny("calPft_" + curListItemSeq) != null) {
 				Label calPft = (Label) curListItem.getFellowIfAny("calPft_" + curListItemSeq);
 				if (calPft.getValue() != null) {
-					curCalPft = PennantAppUtil.unFormateAmount(calPft.getValue(), formatter);
+					curCalPft = CurrencyUtil.unFormat(calPft.getValue(), formatter);
 				}
 				calPft.setValue(PennantAppUtil.amountFormate(calInt, formatter));
 			}
@@ -1690,7 +1687,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			if (curListItem.getFellowIfAny("feeSchd_" + curListItemSeq) != null) {
 				Label feeSchd = (Label) curListItem.getFellowIfAny("feeSchd_" + curListItemSeq);
 
-				curFee = PennantAppUtil.unFormateAmount(feeSchd.getValue(), formatter);
+				curFee = CurrencyUtil.unFormat(feeSchd.getValue(), formatter);
 
 				if (getFinScheduleData().getFinanceScheduleDetails().size() < 1) {// TODO
 					feeSchd.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
@@ -1784,8 +1781,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			}
 
 			// Set the fields with the calculated values
-			BigDecimal prvEndBal = PennantAppUtil.unFormateAmount(
-					((Label) prvListItem.getFellowIfAny("endBal_" + prvListItemSeq)).getValue(), formatter);
+			BigDecimal prvEndBal = CurrencyUtil
+					.unFormat(((Label) prvListItem.getFellowIfAny("endBal_" + prvListItemSeq)).getValue(), formatter);
 
 			// Schedule Principal amount re-adjustment
 			if (curListItem.getFellowIfAny("pri_" + curListItemSeq) != null) {
@@ -1807,7 +1804,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 				} else {
 					Label pri = (Label) curListItem.getFellowIfAny("pri_" + curListItemSeq);
-					curPri = PennantAppUtil.unFormateAmount(pri.getValue(), formatter);
+					curPri = CurrencyUtil.unFormat(pri.getValue(), formatter);
 					if (curPri.compareTo(prvEndBal) > 0) {
 						curPri = prvEndBal;
 						pri.setValue(PennantAppUtil.amountFormate(curPri, formatter));
