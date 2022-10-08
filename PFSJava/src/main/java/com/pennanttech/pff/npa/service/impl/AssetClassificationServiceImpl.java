@@ -286,7 +286,6 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 	@Override
 	public AssetClassification setEffClassification(AssetClassification npa) {
-		String finReference = npa.getFinReference();
 		Long finID = npa.getFinID();
 		List<AssetClassification> list = assetClassificationDAO.getClassifications(finID);
 

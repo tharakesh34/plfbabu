@@ -959,7 +959,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param receiptData
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("deprecation")
 	public boolean recalEarlyPaySchd(boolean isRecal) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		// Schedule Recalculation Depends on Earlypay Effective Schedule method

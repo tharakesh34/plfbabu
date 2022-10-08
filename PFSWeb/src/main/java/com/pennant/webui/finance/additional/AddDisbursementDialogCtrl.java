@@ -1300,7 +1300,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		List<FinanceScheduleDetail> fsd = finScheduleData.getFinanceScheduleDetails();
 		int schdDetailsSize = fsd.size();
-		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
+		FinanceScheduleDetail curSchd;
 		boolean priRecalFromDate = false;
 		boolean priRecalToDate = false;
 
