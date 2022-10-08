@@ -46,6 +46,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -391,7 +392,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		}
 		// Amount
 		try {
-			aFinTypeExpense.setAmount(PennantAppUtil.unFormateAmount(
+			aFinTypeExpense.setAmount(CurrencyUtil.unFormat(
 					this.amount.isReadonly() ? this.amount.getActualValue() : this.amount.getValidateValue(),
 					ccyFormat));
 

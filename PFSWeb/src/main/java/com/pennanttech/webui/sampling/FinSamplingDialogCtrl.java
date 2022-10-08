@@ -38,6 +38,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -527,8 +528,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			wve.add(we);
 		}
 		try {
-			sampling.setRecommendedAmount(PennantAppUtil.unFormateAmount(this.samplingFinalRcmdAmt.getActualValue(),
-					sampling.getCcyeditfield()));
+			sampling.setRecommendedAmount(
+					CurrencyUtil.unFormat(this.samplingFinalRcmdAmt.getActualValue(), sampling.getCcyeditfield()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

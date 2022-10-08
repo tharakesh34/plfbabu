@@ -292,8 +292,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		try {
 			this.disbAmount.getValidateValue();
-			finServiceInstruction
-					.setAmount(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter));
+			finServiceInstruction.setAmount(CurrencyUtil.unFormat(this.disbAmount.getValidateValue(), formatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

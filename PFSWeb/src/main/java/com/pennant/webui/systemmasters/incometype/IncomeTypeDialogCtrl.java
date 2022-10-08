@@ -42,6 +42,7 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.IncomeType;
@@ -343,7 +344,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 			wve.add(we);
 		}
 		try {
-			aIncomeType.setMargin(PennantAppUtil.unFormateAmount(this.margin.getValue(), 2));
+			aIncomeType.setMargin(CurrencyUtil.unFormat(this.margin.getValue(), 2));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

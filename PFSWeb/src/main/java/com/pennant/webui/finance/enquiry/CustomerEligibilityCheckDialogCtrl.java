@@ -56,6 +56,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -493,7 +494,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 								decimalbox.getValue() == null ? BigDecimal.ZERO : decimalbox.getValue());
 					} else {
 						fieldsAndValues.put(decimalbox.getId().trim(), decimalbox.getValue() == null ? BigDecimal.ZERO
-								: PennantAppUtil.unFormateAmount(decimalbox.getValue(), formatter));
+								: CurrencyUtil.unFormat(decimalbox.getValue(), formatter));
 					}
 				} else if (rows_KeyDetails.getFellowIfAny(resultList.get(i)) instanceof Datebox) {
 					datebox = (Datebox) rows_KeyDetails.getFellowIfAny(resultList.get(i));

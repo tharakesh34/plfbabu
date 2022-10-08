@@ -3957,9 +3957,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		financeMain.setLovDescCustShrtName(this.custShrtName.getValue());
 		financeMain.setFinCcy(this.finCcy.getValue());
 		financeMain.setFinBranch(this.finBranch.getValue());
-		financeMain.setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
+		financeMain.setFinAmount(CurrencyUtil.unFormat(this.finAmount.getActualValue(), formatter));
 		financeMain.setFinStartDate(this.finStartDate.getValue());
-		financeMain.setDownPayment(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));
+		financeMain.setDownPayment(CurrencyUtil.unFormat(this.downPayBank.getActualValue(), formatter));
 		return financeMain;
 	}
 
@@ -4100,9 +4100,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		try {
 			if (!isOverdraft) {
-				aFinanceMain.setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getValidateValue(), formatter));
-				aFinanceMain.setCurDisbursementAmt(
-						PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
+				aFinanceMain.setFinAmount(CurrencyUtil.unFormat(this.finAmount.getValidateValue(), formatter));
+				aFinanceMain.setCurDisbursementAmt(CurrencyUtil.unFormat(this.finAmount.getActualValue(), formatter));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4781,8 +4780,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 			if (recSave) {
 
-				aFinanceMain
-						.setDownPayBank(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));
+				aFinanceMain.setDownPayBank(CurrencyUtil.unFormat(this.downPayBank.getActualValue(), formatter));
 
 			} else if (this.row_downPayBank.isVisible() && !this.downPayBank.isReadonly()) {
 
@@ -4808,8 +4806,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 											CurrencyUtil.format(reqDwnPay, formatter) }));
 				}
 			}
-			aFinanceMain.setDownPayBank(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));
-			aFinanceMain.setDownPayment(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));
+			aFinanceMain.setDownPayBank(CurrencyUtil.unFormat(this.downPayBank.getActualValue(), formatter));
+			aFinanceMain.setDownPayment(CurrencyUtil.unFormat(this.downPayBank.getActualValue(), formatter));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4978,14 +4976,13 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 				if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-					penaltyRate.setODChargeAmtOrPerc(
-							PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), CurrencyUtil
+					penaltyRate
+							.setODChargeAmtOrPerc(CurrencyUtil.unFormat(this.oDChargeAmtOrPerc.getValue(), CurrencyUtil
 									.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
 				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-					penaltyRate
-							.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), 2));
+					penaltyRate.setODChargeAmtOrPerc(CurrencyUtil.unFormat(this.oDChargeAmtOrPerc.getValue(), 2));
 				}
 
 			} catch (WrongValueException we) {
@@ -5049,8 +5046,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			if (this.finRepaymentAmount.getValue() != null) {
 				if (this.finRepaymentAmount.getValue().compareTo(BigDecimal.ZERO) == 1) {
 					aFinanceMain.setCalculateRepay(false);
-					aFinanceMain.setReqRepayAmount(
-							PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter));
+					aFinanceMain
+							.setReqRepayAmount(CurrencyUtil.unFormat(this.finRepaymentAmount.getValue(), formatter));
 				}
 			}
 
@@ -5228,14 +5225,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy());
 
-		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
-		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter);
+		BigDecimal oldFinAmount = CurrencyUtil.unFormat(this.oldVar_finAmount, formatter);
+		BigDecimal newFinAmount = CurrencyUtil.unFormat(this.finAmount.getActualValue(), formatter);
 		if (oldFinAmount.compareTo(newFinAmount) != 0) {
 			return true;
 		}
 
-		BigDecimal oldDwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
-		BigDecimal newDwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter);
+		BigDecimal oldDwnPayBank = CurrencyUtil.unFormat(this.oldVar_downPayBank, formatter);
+		BigDecimal newDwnPayBank = CurrencyUtil.unFormat(this.downPayBank.getActualValue(), formatter);
 		if (oldDwnPayBank.compareTo(newDwnPayBank) != 0) {
 			return true;
 		}
@@ -5371,8 +5368,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 
-		BigDecimal oldFinRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount, formatter);
-		BigDecimal newFinRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
+		BigDecimal oldFinRepayAmount = CurrencyUtil.unFormat(this.oldVar_finRepaymentAmount, formatter);
+		BigDecimal newFinRepayAmount = CurrencyUtil.unFormat(this.finRepaymentAmount.getValue(), formatter);
 		if (oldFinRepayAmount.compareTo(newFinRepayAmount) != 0) {
 			return true;
 		}
@@ -6505,7 +6502,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering " + event.toString());
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		getFinanceDetail().getFinScheduleData().getFinanceMain()
-				.setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
+				.setFinAmount(CurrencyUtil.unFormat(this.finAmount.getActualValue(), formatter));
 
 		logger.debug("Leaving " + event.toString());
 	}

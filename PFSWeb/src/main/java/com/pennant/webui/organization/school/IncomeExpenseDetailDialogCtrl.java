@@ -35,6 +35,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -895,7 +896,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				throw new WrongValueException(textBox1,
 						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Fee Charged" }));
 			}
-			incomeExpenseDetail.setUnitPrice(PennantAppUtil.unFormateAmount(feeCharged, 2));
+			incomeExpenseDetail.setUnitPrice(CurrencyUtil.unFormat(feeCharged, 2));
 			break;
 		case "frqOfCollection":
 			Hbox hbox4 = (Hbox) getComponent(listitem, "frqOfCollection");
@@ -913,7 +914,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			if (decimalbox.getValidateValue() != null) {
 				totalCore = decimalbox.getValidateValue();
 			}
-			incomeExpenseDetail.setTotal(PennantAppUtil.unFormateAmount(totalCore, 2));
+			incomeExpenseDetail.setTotal(CurrencyUtil.unFormat(totalCore, 2));
 			break;
 		case "considered":
 			Checkbox checkbox = (Checkbox) getComponent(listitem, "considered");
@@ -958,12 +959,12 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				throw new WrongValueException(decimalbox1, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO",
 						new String[] { "Average Collection Per Unit" }));
 			}
-			incomeExpenseDetail.setUnitPrice(PennantAppUtil.unFormateAmount(avgCollPerUnit, 2));
+			incomeExpenseDetail.setUnitPrice(CurrencyUtil.unFormat(avgCollPerUnit, 2));
 			break;
 		case "totalNonCore":
 			CurrencyBox decimalbox3 = (CurrencyBox) getComponent(listitem, "totalNonCore");
 			BigDecimal totalNonCore = decimalbox3.getValidateValue();
-			incomeExpenseDetail.setTotal(PennantAppUtil.unFormateAmount(totalNonCore, 2));
+			incomeExpenseDetail.setTotal(CurrencyUtil.unFormat(totalNonCore, 2));
 			break;
 		case "nonCoreconsidered":
 			Checkbox checkbox1 = (Checkbox) getComponent(listitem, "nonCoreconsidered");
@@ -990,8 +991,8 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				throw new WrongValueException(decimalbox2,
 						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Expense Incurred" }));
 			}
-			incomeExpenseDetail.setUnitPrice(PennantAppUtil.unFormateAmount(expenseIncurred, 2));
-			incomeExpenseDetail.setTotal(PennantAppUtil.unFormateAmount(expenseIncurred, 2));
+			incomeExpenseDetail.setUnitPrice(CurrencyUtil.unFormat(expenseIncurred, 2));
+			incomeExpenseDetail.setTotal(CurrencyUtil.unFormat(expenseIncurred, 2));
 			break;
 		case "expenseConsidered":
 			Checkbox checkbox2 = (Checkbox) getComponent(listitem, "expenseConsidered");
@@ -1244,7 +1245,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			int multiply = 0;
 			if (feeCharged.getValidateValue().intValue() != 0 && multiplier.getValue() != null
 					&& multiplier.getValue().intValue() != 0) {
-				feeCharge = PennantAppUtil.unFormateAmount(feeCharged.getValidateValue(), 2);
+				feeCharge = CurrencyUtil.unFormat(feeCharged.getValidateValue(), 2);
 				multiply = multiplier.getValue();
 				feeRecBasisFrq.setValue(PennantAppUtil
 						.formateAmount(feeCharge.divide(new BigDecimal(multiply), BigDecimal.ROUND_HALF_DOWN), 2));

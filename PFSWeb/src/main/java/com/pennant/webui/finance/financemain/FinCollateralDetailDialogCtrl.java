@@ -416,14 +416,14 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			}
 
 			try {
-				finCollaterals.setValue(PennantAppUtil.unFormateAmount(this.FDAmount.getValue(),
+				finCollaterals.setValue(CurrencyUtil.unFormat(this.FDAmount.getValue(),
 						CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				finCollaterals.setCoverage(PennantAppUtil.unFormateAmount(this.FDAmount.getValue(),
+				finCollaterals.setCoverage(CurrencyUtil.unFormat(this.FDAmount.getValue(),
 						CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 			} catch (WrongValueException we) {
 				wve.add(we);

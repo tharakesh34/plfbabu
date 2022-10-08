@@ -756,7 +756,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				interestRate = BigDecimal.ZERO;
 			}
 
-			interestRate = PennantAppUtil.unFormateAmount(interestRate, ccyFormatter);
+			interestRate = CurrencyUtil.unFormat(interestRate, ccyFormatter);
 
 			sampling.setInterestRate(this.interestRate.getValue());
 		} catch (WrongValueException we) {
@@ -769,7 +769,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				loanEligibility = BigDecimal.ZERO;
 			}
 
-			loanEligibility = PennantAppUtil.unFormateAmount(loanEligibility, ccyFormatter);
+			loanEligibility = CurrencyUtil.unFormat(loanEligibility, ccyFormatter);
 			sampling.setLoanEligibility(loanEligibility);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -781,7 +781,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				foirEligiblity = BigDecimal.ZERO;
 			}
 
-			foirEligiblity = PennantAppUtil.unFormateAmount(foirEligiblity, ccyFormatter);
+			foirEligiblity = CurrencyUtil.unFormat(foirEligiblity, ccyFormatter);
 			sampling.setFoirEligibility(foirEligiblity);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -793,7 +793,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				iirEligibility = BigDecimal.ZERO;
 			}
 
-			iirEligibility = PennantAppUtil.unFormateAmount(iirEligibility, ccyFormatter);
+			iirEligibility = CurrencyUtil.unFormat(iirEligibility, ccyFormatter);
 
 			sampling.setIrrEligibility(iirEligibility);
 		} catch (WrongValueException we) {
@@ -806,7 +806,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				lcrEligibility = BigDecimal.ZERO;
 			}
 
-			lcrEligibility = PennantAppUtil.unFormateAmount(lcrEligibility, ccyFormatter);
+			lcrEligibility = CurrencyUtil.unFormat(lcrEligibility, ccyFormatter);
 
 			sampling.setLcrEligibility(lcrEligibility);
 		} catch (WrongValueException we) {
@@ -819,7 +819,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				ltvEligibility = BigDecimal.ZERO;
 			}
 
-			ltvEligibility = PennantAppUtil.unFormateAmount(ltvEligibility, ccyFormatter);
+			ltvEligibility = CurrencyUtil.unFormat(ltvEligibility, ccyFormatter);
 			sampling.setLtvEligibility(ltvEligibility);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -831,7 +831,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				emiPerLakh = BigDecimal.ZERO;
 			}
 
-			emiPerLakh = PennantAppUtil.unFormateAmount(emiPerLakh, ccyFormatter);
+			emiPerLakh = CurrencyUtil.unFormat(emiPerLakh, ccyFormatter);
 
 			sampling.setEmi(emiPerLakh);
 		} catch (WrongValueException we) {

@@ -1455,9 +1455,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		try {
-			aFinanceMain.setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getValidateValue(), formatter));
-			aFinanceMain
-					.setCurDisbursementAmt(PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
+			aFinanceMain.setFinAmount(CurrencyUtil.unFormat(this.finAmount.getValidateValue(), formatter));
+			aFinanceMain.setCurDisbursementAmt(CurrencyUtil.unFormat(this.finAmount.getActualValue(), formatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1743,8 +1742,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 
 			try {
-				aFinanceMain
-						.setGrcMaxAmount(PennantAppUtil.unFormateAmount(this.grcMaxAmount.getActualValue(), formatter));
+				aFinanceMain.setGrcMaxAmount(CurrencyUtil.unFormat(this.grcMaxAmount.getActualValue(), formatter));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -1828,8 +1826,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 												String.valueOf(label_FinanceMainDialog_FinAssetValue.getValue()) }));
 					}
 				}
-				aFinanceMain.setFinAssetValue(PennantAppUtil
-						.unFormateAmount(this.finAssetValue.isReadonly() ? this.finAssetValue.getActualValue()
+				aFinanceMain.setFinAssetValue(
+						CurrencyUtil.unFormat(this.finAssetValue.isReadonly() ? this.finAssetValue.getActualValue()
 								: this.finAssetValue.getValidateValue(), formatter));
 			}
 			// Validation on finAsset And fin Current Asset value based on field visibility
@@ -1856,8 +1854,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 						}
 					}
 
-					aFinanceMain.setFinAssetValue(
-							PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter));
+					aFinanceMain
+							.setFinAssetValue(CurrencyUtil.unFormat(this.finAssetValue.getActualValue(), formatter));
 
 				} else {
 					if (StringUtils.isEmpty(moduleDefiner)) {
@@ -1866,21 +1864,20 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 						validateFinAssetvalue(this.finAmount, financeType, formatter);
 					}
 					aFinanceMain.setFinAssetValue(
-							PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
+							CurrencyUtil.unFormat(this.finCurrentAssetValue.getActualValue(), formatter));
 
 				}
 			}
 
-			aFinanceMain.setFinCurrAssetValue(
-					PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
+			aFinanceMain
+					.setFinCurrAssetValue(CurrencyUtil.unFormat(this.finCurrentAssetValue.getActualValue(), formatter));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aFinanceMain
-					.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter));
+			aFinanceMain.setFinAssetValue(CurrencyUtil.unFormat(this.finAssetValue.getActualValue(), formatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2215,10 +2212,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 											CurrencyUtil.format(reqDwnPay, formatter) }));
 				}
 			}
-			aFinanceMain.setDownPayBank(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));
-			aFinanceMain.setDownPaySupl(PennantAppUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter));
-			aFinanceMain.setDownPayment(PennantAppUtil.unFormateAmount(
-					this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue()), formatter));
+			aFinanceMain.setDownPayBank(CurrencyUtil.unFormat(this.downPayBank.getActualValue(), formatter));
+			aFinanceMain.setDownPaySupl(CurrencyUtil.unFormat(this.downPaySupl.getActualValue(), formatter));
+			aFinanceMain.setDownPayment(CurrencyUtil
+					.unFormat(this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue()), formatter));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2319,8 +2316,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (this.finRepaymentAmount.getValue() != null) {
 			if (this.finRepaymentAmount.getValue().compareTo(BigDecimal.ZERO) == 1) {
 				aFinanceMain.setCalculateRepay(false);
-				aFinanceMain.setReqRepayAmount(
-						PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter));
+				aFinanceMain.setReqRepayAmount(CurrencyUtil.unFormat(this.finRepaymentAmount.getValue(), formatter));
 			}
 		}
 
@@ -2359,7 +2355,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					logger.error("Exception: ", e);
 				}
 
-				aFinanceMain.setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(),
+				aFinanceMain.setFinAmount(CurrencyUtil.unFormat(this.finAmount.getActualValue(),
 						CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
 
 				aFinanceMain.setRepayFrq(aFinanceMain.getRepayPftFrq());
@@ -2920,14 +2916,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			return true;
 		}
 
-		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
-		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter);
+		BigDecimal oldFinAmount = CurrencyUtil.unFormat(this.oldVar_finAmount, formatter);
+		BigDecimal newFinAmount = CurrencyUtil.unFormat(this.finAmount.getActualValue(), formatter);
 		if (oldFinAmount.compareTo(newFinAmount) != 0) {
 			return true;
 		}
 
-		BigDecimal oldFinAssetAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAssetValue, formatter);
-		BigDecimal newFinAssetAmount = PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter);
+		BigDecimal oldFinAssetAmount = CurrencyUtil.unFormat(this.oldVar_finAssetValue, formatter);
+		BigDecimal newFinAssetAmount = CurrencyUtil.unFormat(this.finAssetValue.getActualValue(), formatter);
 		if (oldFinAssetAmount.compareTo(newFinAssetAmount) != 0) {
 			return true;
 		}
@@ -3054,8 +3050,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			return true;
 		}
 
-		BigDecimal oldFinRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount, formatter);
-		BigDecimal newFinRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
+		BigDecimal oldFinRepayAmount = CurrencyUtil.unFormat(this.oldVar_finRepaymentAmount, formatter);
+		BigDecimal newFinRepayAmount = CurrencyUtil.unFormat(this.finRepaymentAmount.getValue(), formatter);
 		if (oldFinRepayAmount.compareTo(newFinRepayAmount) != 0) {
 			return true;
 		}
@@ -3080,14 +3076,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			return true;
 		}
 
-		BigDecimal oldDwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
-		BigDecimal newDwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter);
+		BigDecimal oldDwnPayBank = CurrencyUtil.unFormat(this.oldVar_downPayBank, formatter);
+		BigDecimal newDwnPayBank = CurrencyUtil.unFormat(this.downPayBank.getActualValue(), formatter);
 		if (oldDwnPayBank.compareTo(newDwnPayBank) != 0) {
 			return true;
 		}
 
-		BigDecimal oldDwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
-		BigDecimal newDwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter);
+		BigDecimal oldDwnPaySupl = CurrencyUtil.unFormat(this.oldVar_downPaySupl, formatter);
+		BigDecimal newDwnPaySupl = CurrencyUtil.unFormat(this.downPaySupl.getActualValue(), formatter);
 		if (oldDwnPaySupl.compareTo(newDwnPaySupl) != 0) {
 			return true;
 		}
@@ -5451,20 +5447,20 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		isFeeReExecute = false;
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy());
 
-		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
-		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter);
+		BigDecimal oldFinAmount = CurrencyUtil.unFormat(this.oldVar_finAmount, formatter);
+		BigDecimal newFinAmount = CurrencyUtil.unFormat(this.finAmount.getActualValue(), formatter);
 		if (oldFinAmount.compareTo(newFinAmount) != 0) {
 			isFeeReExecute = true;
 		}
 
-		BigDecimal oldDwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
-		BigDecimal newDwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter);
+		BigDecimal oldDwnPayBank = CurrencyUtil.unFormat(this.oldVar_downPayBank, formatter);
+		BigDecimal newDwnPayBank = CurrencyUtil.unFormat(this.downPayBank.getActualValue(), formatter);
 		if (oldDwnPayBank.compareTo(newDwnPayBank) != 0) {
 			isFeeReExecute = true;
 		}
 
-		BigDecimal oldDwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
-		BigDecimal newDwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter);
+		BigDecimal oldDwnPaySupl = CurrencyUtil.unFormat(this.oldVar_downPaySupl, formatter);
+		BigDecimal newDwnPaySupl = CurrencyUtil.unFormat(this.downPaySupl.getActualValue(), formatter);
 		if (oldDwnPaySupl.compareTo(newDwnPaySupl) != 0) {
 			isFeeReExecute = true;
 		}
@@ -6761,7 +6757,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		FinanceMain financeMain = afinanceDetail.getFinScheduleData().getFinanceMain();
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
-		BigDecimal facevalue = PennantAppUtil.unFormateAmount(this.faceValue.getValidateValue(), formatter);
+		BigDecimal facevalue = CurrencyUtil.unFormat(this.faceValue.getValidateValue(), formatter);
 		int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate());
 		BigDecimal timeInYears = BigDecimal.valueOf(months).divide(BigDecimal.valueOf(12), 0, RoundingMode.HALF_DOWN);
 		BigDecimal rate = financeMain.getRepayProfitRate().divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
@@ -6771,10 +6767,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				.setValue(PennantAppUtil.formateAmount(facevalue.multiply(timeInYears).multiply(rate), formatter));
 		this.presentValue.setValue(
 				PennantAppUtil.formateAmount(facevalue.divide(pwDivisor, 0, RoundingMode.HALF_DOWN), formatter));
-		BigDecimal td = PennantAppUtil.unFormateAmount(
-				this.faceValue.getValidateValue().subtract(this.presentValue.getActualValue()), formatter);
+		BigDecimal td = CurrencyUtil
+				.unFormat(this.faceValue.getValidateValue().subtract(this.presentValue.getActualValue()), formatter);
 		this.trueDiscount.setValue(PennantAppUtil.formateAmount(td, formatter));
-		BigDecimal tg = PennantAppUtil.unFormateAmount(
+		BigDecimal tg = CurrencyUtil.unFormat(
 				this.bankDiscount.getValidateValue().subtract(this.trueDiscount.getValidateValue()), formatter);
 		this.trueGain.setValue(PennantAppUtil.formateAmount(tg, formatter));
 		this.finAmount.setValue(this.presentValue.getActualValue());
@@ -6799,8 +6795,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 			utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount());
 		}
-		utilizedAmt = utilizedAmt.subtract(PennantAppUtil.unFormateAmount(
-				this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()), formatter));
+		utilizedAmt = utilizedAmt.subtract(CurrencyUtil
+				.unFormat(this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()), formatter));
 		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(utilizedAmt, formatter));
 		getFinanceDetail().getFinScheduleData().getFinanceMain().setFinCurrAssetValue(utilizedAmt);
 	}

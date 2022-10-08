@@ -916,7 +916,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		BigDecimal allocatedAmtGST = BigDecimal.ZERO;
 		BigDecimal allocatedAmtTDS = BigDecimal.ZERO;
 		BigDecimal allocatedAmt = BigDecimal.ZERO;
-		BigDecimal allocatedAmtTOT = PennantAppUtil.unFormateAmount(totAllocAmtTotBox.getValue(), formatter);
+		BigDecimal allocatedAmtTOT = CurrencyUtil.unFormat(totAllocAmtTotBox.getValue(), formatter);
 		BigDecimal fraction = BigDecimal.ONE;
 		BigDecimal totPerc = BigDecimal.ZERO;
 

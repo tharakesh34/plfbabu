@@ -42,6 +42,7 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.Country;
@@ -339,17 +340,17 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 			wve.add(we);
 		}
 		try {
-			aCountry.setCountryParentLimit(PennantAppUtil.unFormateAmount(this.countryParentLimit.getValue(), 0));
+			aCountry.setCountryParentLimit(CurrencyUtil.unFormat(this.countryParentLimit.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCountry.setCountryResidenceLimit(PennantAppUtil.unFormateAmount(this.countryResidenceLimit.getValue(), 0));
+			aCountry.setCountryResidenceLimit(CurrencyUtil.unFormat(this.countryResidenceLimit.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCountry.setCountryRiskLimit(PennantAppUtil.unFormateAmount(this.countryRiskLimit.getValue(), 0));
+			aCountry.setCountryRiskLimit(CurrencyUtil.unFormat(this.countryRiskLimit.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

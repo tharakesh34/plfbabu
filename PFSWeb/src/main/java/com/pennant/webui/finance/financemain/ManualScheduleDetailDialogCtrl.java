@@ -502,7 +502,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		// Schedule Profit
 		if (schdTerm.getFellowIfAny("pft_" + seqId) != null) {
 			if (schdTerm.getFellowIfAny("pft_" + seqId) instanceof CurrencyBox) {
-				schPft = PennantAppUtil.unFormateAmount(
+				schPft = CurrencyUtil.unFormat(
 						((CurrencyBox) schdTerm.getFellowIfAny("pft_" + seqId)).getValidateValue(), formatter);
 			} else {
 				schPft = CurrencyUtil.unFormat(((Label) schdTerm.getFellowIfAny("pft_" + seqId)).getValue(), formatter);
@@ -564,7 +564,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 				CurrencyBox emi = (CurrencyBox) curListItem.getFellowIfAny("emi_" + curListItemSeq);
 				Clients.clearWrongValue(emi);
-				curEmi = PennantAppUtil.unFormateAmount(emi.getValidateValue(), formatter);
+				curEmi = CurrencyUtil.unFormat(emi.getValidateValue(), formatter);
 
 				if (islastItem) {
 
@@ -864,7 +864,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			if (this.listBoxSchedule.getFellowIfAny("pft_" + curListItemSeq) != null) {
 				if (this.listBoxSchedule.getFellowIfAny("pft_" + curListItemSeq) instanceof CurrencyBox) {
 					CurrencyBox profitSchd = (CurrencyBox) listBoxSchedule.getFellowIfAny("pft_" + curListItemSeq);
-					fsd.setProfitSchd(PennantAppUtil.unFormateAmount(profitSchd.getValidateValue(), format));
+					fsd.setProfitSchd(CurrencyUtil.unFormat(profitSchd.getValidateValue(), format));
 				} else {
 					Label profitSchd = (Label) listBoxSchedule.getFellowIfAny("pft_" + curListItemSeq);
 					fsd.setProfitSchd(CurrencyUtil.unFormat(profitSchd.getValue(), format));
@@ -875,7 +875,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			if (this.listBoxSchedule.getFellowIfAny("pri_" + curListItemSeq) != null) {
 				if (this.listBoxSchedule.getFellowIfAny("pri_" + curListItemSeq) instanceof CurrencyBox) {
 					CurrencyBox principalSchd = (CurrencyBox) listBoxSchedule.getFellowIfAny("pri_" + curListItemSeq);
-					fsd.setPrincipalSchd(PennantAppUtil.unFormateAmount(principalSchd.getValidateValue(), format));
+					fsd.setPrincipalSchd(CurrencyUtil.unFormat(principalSchd.getValidateValue(), format));
 				} else {
 					Label principalSchd = (Label) listBoxSchedule.getFellowIfAny("pri_" + curListItemSeq);
 					fsd.setPrincipalSchd(CurrencyUtil.unFormat(principalSchd.getValue(), format));
@@ -886,7 +886,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			if (this.listBoxSchedule.getFellowIfAny("emi_" + curListItemSeq) != null) {
 				if (this.listBoxSchedule.getFellowIfAny("emi_" + curListItemSeq) instanceof CurrencyBox) {
 					CurrencyBox repayAmount = (CurrencyBox) listBoxSchedule.getFellowIfAny("emi_" + curListItemSeq);
-					fsd.setRepayAmount(PennantAppUtil.unFormateAmount(repayAmount.getValidateValue(), format));
+					fsd.setRepayAmount(CurrencyUtil.unFormat(repayAmount.getValidateValue(), format));
 				} else {
 					Label repayAmount = (Label) listBoxSchedule.getFellowIfAny("emi_" + curListItemSeq);
 					fsd.setRepayAmount(CurrencyUtil.unFormat(repayAmount.getValue(), format));
@@ -1654,7 +1654,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				Clients.clearWrongValue(pft);
 				pft.setErrorMessage("");
 
-				profit = PennantAppUtil.unFormateAmount(pft.getValidateValue(), formatter);
+				profit = CurrencyUtil.unFormat(pft.getValidateValue(), formatter);
 				if (profit.compareTo(BigDecimal.ZERO) < 0) {
 					pft.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
 				}
@@ -1712,7 +1712,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			if (curListItem.getFellowIfAny("pft_" + curListItemSeq) != null) {
 				if (curListItem.getFellowIfAny("pft_" + curListItemSeq) instanceof CurrencyBox) {
 					CurrencyBox pft = (CurrencyBox) curListItem.getFellowIfAny("pft_" + curListItemSeq);
-					curPft = PennantAppUtil.unFormateAmount(pft.getValidateValue(), formatter);
+					curPft = CurrencyUtil.unFormat(pft.getValidateValue(), formatter);
 					if (curPft.compareTo(BigDecimal.ZERO) == 0 || curPft.compareTo(curCalPft) == 0
 							|| curPft.compareTo(calInt) > 0) {
 						pft.setValue(PennantAppUtil.formateAmount(calInt, formatter));
@@ -1791,7 +1791,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 					Clients.clearWrongValue(pri);
 
-					curPri = PennantAppUtil.unFormateAmount(pri.getValidateValue(), formatter);
+					curPri = CurrencyUtil.unFormat(pri.getValidateValue(), formatter);
 					if (curPri.compareTo(prvEndBal) >= 0 && !islastitem) {
 						throw new WrongValueException(pri, "Prinicpal amount cannot be greater than or equal to "
 								+ PennantAppUtil.amountFormate(prvEndBal, formatter));
@@ -1838,13 +1838,13 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 								+ PennantAppUtil.amountFormate(prvEndBal, formatter));
 					}
 
-					if (PennantAppUtil.unFormateAmount(emi.getValidateValue(), formatter).compareTo(calInt) > 0
+					if (CurrencyUtil.unFormat(emi.getValidateValue(), formatter).compareTo(calInt) > 0
 							&& curListItem.getFellowIfAny("pri_" + curListItemSeq) instanceof Label
 							&& i != listBoxSchedule.getItemCount() - 1) {
 						Label pri = (Label) curListItem.getFellowIfAny("pri_" + curListItemSeq);
 						Clients.clearWrongValue(pri);
 
-						curPri = PennantAppUtil.unFormateAmount(emi.getValidateValue(), formatter).subtract(calInt);
+						curPri = CurrencyUtil.unFormat(emi.getValidateValue(), formatter).subtract(calInt);
 						pri.setValue(PennantAppUtil.amountFormate(curPri, formatter));
 
 						if (curPri.compareTo(BigDecimal.ZERO) > 0 && curPri.compareTo(prvEndBal) >= 0) {

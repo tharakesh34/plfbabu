@@ -1280,7 +1280,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 					creditReviewSummary
 							.setItemValue(this.curYearValuesMap.get(creditReviewSummary.getSubCategoryCode()) == null
 									? BigDecimal.ZERO
-									: PennantAppUtil.unFormateAmount(
+									: CurrencyUtil.unFormat(
 											this.curYearValuesMap.get(creditReviewSummary.getSubCategoryCode()),
 											this.currFormatter));
 

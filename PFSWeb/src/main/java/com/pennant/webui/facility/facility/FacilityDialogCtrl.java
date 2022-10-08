@@ -73,6 +73,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -1044,13 +1045,13 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		// Country Exposure
 		try {
-			aFacility.setCountryExposure(PennantAppUtil.unFormateAmount(this.countryExposure.getValue(), ccyFormat));
+			aFacility.setCountryExposure(CurrencyUtil.unFormat(this.countryExposure.getValue(), ccyFormat));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Country Limit
 		try {
-			aFacility.setCountryLimit(PennantAppUtil.unFormateAmount(this.countryLimit.getValue(), ccyFormat));
+			aFacility.setCountryLimit(CurrencyUtil.unFormat(this.countryLimit.getValue(), ccyFormat));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

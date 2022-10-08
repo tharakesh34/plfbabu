@@ -43,6 +43,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -644,8 +645,8 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		}
 		// Exposure Limit on Amount
 		try {
-			aBuilderGroup.setExpLmtOnAmt(PennantAppUtil.unFormateAmount(this.expLimitOnAmt.getActualValue(),
-					PennantConstants.defaultCCYDecPos));
+			aBuilderGroup.setExpLmtOnAmt(
+					CurrencyUtil.unFormat(this.expLimitOnAmt.getActualValue(), PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -663,8 +664,8 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		}
 		// Exposure Limit On Number Of Units
 		try {
-			aBuilderGroup.setCurrExpAmt(PennantAppUtil.unFormateAmount(this.currentExpAmt.getActualValue(),
-					PennantConstants.defaultCCYDecPos));
+			aBuilderGroup.setCurrExpAmt(
+					CurrencyUtil.unFormat(this.currentExpAmt.getActualValue(), PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

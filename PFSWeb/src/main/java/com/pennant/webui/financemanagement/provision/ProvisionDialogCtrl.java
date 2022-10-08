@@ -566,7 +566,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 			wve.add(we);
 		}
 		try {
-			aProvision.setProvisionedAmt(PennantAppUtil.unFormateAmount(this.provisionedAmt.getValue(), format));
+			aProvision.setProvisionedAmt(CurrencyUtil.unFormat(this.provisionedAmt.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

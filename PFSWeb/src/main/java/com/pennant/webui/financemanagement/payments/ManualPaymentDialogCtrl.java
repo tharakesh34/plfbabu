@@ -1321,7 +1321,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		getRepayData().setBuildProcess("R");
-		getRepayData().getRepayMain().setRepayAmountNow(PennantAppUtil.unFormateAmount(this.rpyAmount.getActualValue(),
+		getRepayData().getRepayMain().setRepayAmountNow(CurrencyUtil.unFormat(this.rpyAmount.getActualValue(),
 				getRepayData().getRepayMain().getLovDescFinFormatter()));
 
 		if (moduleDefiner.equals(FinServiceEvent.EARLYRPY) || moduleDefiner.equals(FinServiceEvent.SCHDRPY)) {
@@ -1411,8 +1411,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.btnCalcRepayments.setDisabled(true);
 		} else {
 			BigDecimal paidNow = getRepayMain().getPrincipalPayNow().add(getRepayMain().getProfitPayNow());
-			BigDecimal settlementBal = PennantAppUtil
-					.unFormateAmount(this.rpyAmount.getActualValue(), getRepayMain().getLovDescFinFormatter())
+			BigDecimal settlementBal = CurrencyUtil
+					.unFormat(this.rpyAmount.getActualValue(), getRepayMain().getLovDescFinFormatter())
 					.subtract(paidNow);
 			this.earlySettlementBal
 					.setValue(PennantAppUtil.formateAmount(settlementBal, getRepayMain().getLovDescFinFormatter()));
@@ -1534,8 +1534,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 							if (!accountTypeFound && iAccount != null) {
 
-								if (PennantAppUtil
-										.unFormateAmount(
+								if (CurrencyUtil
+										.unFormat(
 												this.rpyAmount.getActualValue().subtract(this.totRefundAmt.getValue()),
 												getRepayData().getRepayMain().getLovDescFinFormatter())
 										.compareTo(iAccount.getAcAvailableBal()) > 0) {
@@ -2498,20 +2498,20 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			if (repaySchd.isAllowRefund()) {
 				if (repaySchd.getRefundMax()
-						.compareTo(PennantAppUtil.unFormateAmount(refundProfit.getValue(), finFormatter)) < 0) {
+						.compareTo(CurrencyUtil.unFormat(refundProfit.getValue(), finFormatter)) < 0) {
 					MessageUtil.showError("Refund amount exceeded ... ");
 					isRefundExceeded = true;
 					return;
 				}
-				repaySchd.setRefundReq(PennantAppUtil.unFormateAmount(refundProfit.getValue(), finFormatter));
+				repaySchd.setRefundReq(CurrencyUtil.unFormat(refundProfit.getValue(), finFormatter));
 			} else if (repaySchd.isAllowWaiver()) {
 				if (repaySchd.getMaxWaiver()
-						.compareTo(PennantAppUtil.unFormateAmount(refundProfit.getValue(), finFormatter)) < 0) {
+						.compareTo(CurrencyUtil.unFormat(refundProfit.getValue(), finFormatter)) < 0) {
 					MessageUtil.showError("Waiver Amount exceeded ... ");
 					isRefundExceeded = true;
 					return;
 				}
-				repaySchd.setWaivedAmt(PennantAppUtil.unFormateAmount(refundProfit.getValue(), finFormatter));
+				repaySchd.setWaivedAmt(CurrencyUtil.unFormat(refundProfit.getValue(), finFormatter));
 			}
 			refundMap.remove(schDate);
 			refundMap.put(schDate, repaySchd);
@@ -2735,9 +2735,10 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// For Finance Vs Amounts Chart z
 		List<ChartSetElement> listChartSetElement = getReportDataForFinVsAmount(finScheduleData, formatter);
 
-		ChartsConfig chartsConfig = new ChartsConfig("Loan Vs Amounts", "Loan Amount ="
-				+ PennantAppUtil.amountFormate(PennantAppUtil.unFormateAmount(financeAmount, formatter), formatter), "",
-				"");
+		ChartsConfig chartsConfig = new ChartsConfig("Loan Vs Amounts",
+				"Loan Amount ="
+						+ PennantAppUtil.amountFormate(CurrencyUtil.unFormat(financeAmount, formatter), formatter),
+				"", "");
 		aDashboardConfiguration = new DashboardConfiguration();
 		chartsConfig.setSetElements(listChartSetElement);
 		chartsConfig.setRemarks("");

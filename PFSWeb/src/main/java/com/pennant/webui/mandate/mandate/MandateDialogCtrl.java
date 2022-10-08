@@ -1719,7 +1719,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		// Max Limit
 		try {
-			aMandate.setMaxLimit(PennantAppUtil.unFormateAmount(this.maxLimit.getActualValue(), ccyFormatter));
+			aMandate.setMaxLimit(CurrencyUtil.unFormat(this.maxLimit.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

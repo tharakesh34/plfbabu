@@ -48,6 +48,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -418,7 +419,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 				aCustomerChequeInfo.setTotChequePayment(BigDecimal.ZERO);
 			} else {
 				aCustomerChequeInfo.setTotChequePayment(
-						PennantAppUtil.unFormateAmount(this.totChequePayment.getValidateValue(), finFormatter));
+						CurrencyUtil.unFormat(this.totChequePayment.getValidateValue(), finFormatter));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -428,8 +429,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 			if (this.salary.getActualValue().compareTo(BigDecimal.ZERO) == 0) {
 				aCustomerChequeInfo.setSalary(BigDecimal.ZERO);
 			} else {
-				aCustomerChequeInfo
-						.setSalary(PennantAppUtil.unFormateAmount(this.salary.getValidateValue(), finFormatter));
+				aCustomerChequeInfo.setSalary(CurrencyUtil.unFormat(this.salary.getValidateValue(), finFormatter));
 			}
 
 		} catch (WrongValueException we) {
@@ -440,8 +440,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 			if (this.debits.getActualValue().compareTo(BigDecimal.ZERO) == 0) {
 				aCustomerChequeInfo.setDebits(BigDecimal.ZERO);
 			} else {
-				aCustomerChequeInfo
-						.setDebits(PennantAppUtil.unFormateAmount(this.debits.getValidateValue(), finFormatter));
+				aCustomerChequeInfo.setDebits(CurrencyUtil.unFormat(this.debits.getValidateValue(), finFormatter));
 			}
 
 		} catch (WrongValueException we) {
@@ -453,7 +452,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 				aCustomerChequeInfo.setReturnChequeAmt(BigDecimal.ZERO);
 			} else {
 				aCustomerChequeInfo.setReturnChequeAmt(
-						PennantAppUtil.unFormateAmount(this.returnChequeAmt.getValidateValue(), finFormatter));
+						CurrencyUtil.unFormat(this.returnChequeAmt.getValidateValue(), finFormatter));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

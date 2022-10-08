@@ -679,9 +679,9 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		Cloner cloner = new Cloner();
 		effectFinScheduleData = cloner.deepClone(financeWriteoffHeader);
 
-		BigDecimal woPriAmt = PennantAppUtil.unFormateAmount(this.writeoffPriAmt.getValue(), format);
-		BigDecimal woPftAmt = PennantAppUtil.unFormateAmount(this.writeoffPftAmt.getValue(), format);
-		BigDecimal woSchFee = PennantAppUtil.unFormateAmount(this.writeoffSchFee.getValue(), format);
+		BigDecimal woPriAmt = CurrencyUtil.unFormat(this.writeoffPriAmt.getValue(), format);
+		BigDecimal woPftAmt = CurrencyUtil.unFormat(this.writeoffPftAmt.getValue(), format);
+		BigDecimal woSchFee = CurrencyUtil.unFormat(this.writeoffSchFee.getValue(), format);
 
 		List<FinanceScheduleDetail> effectedFinSchDetails = effectFinScheduleData.getFinanceDetail()
 				.getFinScheduleData().getFinanceScheduleDetails();
@@ -892,9 +892,9 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return false;
 		}
 
-		BigDecimal woPriAmt = PennantAppUtil.unFormateAmount(this.writeoffPriAmt.getValue(), format);
-		BigDecimal woPftAmt = PennantAppUtil.unFormateAmount(this.writeoffPftAmt.getValue(), format);
-		BigDecimal woSchFee = PennantAppUtil.unFormateAmount(this.writeoffSchFee.getValue(), format);
+		BigDecimal woPriAmt = CurrencyUtil.unFormat(this.writeoffPriAmt.getValue(), format);
+		BigDecimal woPftAmt = CurrencyUtil.unFormat(this.writeoffPftAmt.getValue(), format);
+		BigDecimal woSchFee = CurrencyUtil.unFormat(this.writeoffSchFee.getValue(), format);
 
 		if (woPriAmt.compareTo(financeWriteoff.getUnPaidSchdPri()) > 0
 				|| woPftAmt.compareTo(financeWriteoff.getUnPaidSchdPft()) > 0
