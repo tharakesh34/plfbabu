@@ -4790,7 +4790,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#76.31" author="saikiran.n">
+	<changeSet id="ST#76.31.1" author="saikiran.n">
 		<sql>
 			<![CDATA[
 				DELETE FROM ERRORDETAILS WHERE CODE = 'MNDT02';
