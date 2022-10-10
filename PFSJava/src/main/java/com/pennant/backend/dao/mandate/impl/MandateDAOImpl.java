@@ -722,10 +722,10 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	@Override
 	public Mandate getEmployerDetails(long custID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" EmployerID, EmpName ");
+		sql.append(" EmployerID, EmpName, AllowDas");
 		sql.append(" From CustomerEmpDetails ced");
 		sql.append(" Inner Join EmployerDetail ed on ed.EmployerID = ced.CustEmpName ");
-		sql.append(" Where EmpIsActive = ?  and AllowDas = ? and CustID = ? and CurrentEmployer = ?");
+		sql.append(" Where EmpIsActive = ? and CustID = ? and CurrentEmployer = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -737,7 +737,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				mdt.setEmployerName(rs.getString("EmpName"));
 
 				return mdt;
-			}, 1, 1, custID, 1);
+			}, 1, custID, 1);
 
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);

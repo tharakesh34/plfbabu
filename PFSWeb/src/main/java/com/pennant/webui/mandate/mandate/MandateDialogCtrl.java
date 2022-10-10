@@ -956,6 +956,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (instrumentType == InstrumentType.DAS || maintain) {
+			if (!fromLoan) {
+				readOnlyComponent(false, this.finReference);
+			}
 			this.dasGroupbox.setVisible(true);
 			this.dasRow.setVisible(true);
 			this.mandateSwapGroupbox.setVisible(true);
@@ -965,10 +968,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 			if (fromLoan) {
 				readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
+				readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
 			} else {
 				readOnlyComponent(true, this.employeeID);
+				readOnlyComponent(true, this.employerName);
 			}
-			readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
 
 		}
 
@@ -1225,9 +1229,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (fromLoan) {
 			readOnlyComponent(true, this.mandateType);
-		} else {
-			readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType);
-		}
+		} /*
+			 * else { readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType); }
+			 */
 
 		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())) {
 			readOnlyComponent(true, this.finReference);
@@ -1571,7 +1575,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.openMandate.setChecked(aMandate.isOpenMandate());
 		this.startDate.setValue(aMandate.getStartDate());
 		this.expiryDate.setValue(aMandate.getExpiryDate());
-		this.maxLimit.setValue(CurrencyUtil.parse(aMandate.getMaxLimit(), ccyFormatter));
+		this.maxLimit.setValue(PennantApplicationUtil.formateAmount(aMandate.getMaxLimit(), ccyFormatter));
 		this.periodicity.setValue(aMandate.getPeriodicity());
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
 		this.reason.setValue(aMandate.getReason());
@@ -1760,7 +1764,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
-			aMandate.setMaxLimit(CurrencyUtil.unFormat(this.maxLimit.getActualValue(), ccyFormatter));
+			aMandate.setMaxLimit(PennantApplicationUtil.unFormateAmount(this.maxLimit.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2844,14 +2848,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				lc.setParent(item);
 
 				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue().add(finEnquiry.getFeeChargeAmt());
-				lc = new Listcell(CurrencyUtil.format(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(finEnquiry.getMaxInstAmount(),
 						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(CurrencyUtil.format(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
+				lc = new Listcell(PennantApplicationUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
 						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);

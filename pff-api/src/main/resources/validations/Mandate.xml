@@ -124,13 +124,6 @@
 		</field>
 
 		<field name="accType">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-				<message>accType is Mandatory</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>accType should have maximum 8 characters</message>
 				<groups>
@@ -142,13 +135,6 @@
 		</field>
 
 		<field name="accNumber">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-				<message>accNumber is Mandatory</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>accNumber should have maximum 50 characters</message>
 				<groups>
@@ -206,7 +192,7 @@
 			</constraint>
 		</field> -->
 
-		<field name="startDate">
+		<!-- <field name="startDate">
 			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>startDate is Mandatory</message>
 				<groups>
@@ -214,7 +200,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 			</constraint>
-		</field>
+		</field> -->
 
 		<!-- <field name="expiryDate"> <constraint annotation="javax.validation.constraints.NotNull"> <message>expiryDate is Mandatory</message> 
 			<groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
@@ -284,7 +270,7 @@
 			</constraint>
 		</field>
 		<field name="validateMandate">
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+			<!-- <constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>specify any one of BankCode and BranchName Or ifsc code </message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -302,7 +288,7 @@
 					false;
 					}
 				</element>
-			</constraint>
+			</constraint> -->
 			<!-- <constraint annotation="org.hibernate.validator.constraints.ScriptAssert"> <message>phoneAreaCode is Applicable only 
 				if phoneCountryCode specified</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
 				</groups> <element name="lang">javascript</element> <element name="script"> if(_this.phoneCountryCode != null &amp;&amp; 

@@ -244,14 +244,20 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			List<Mandate> customerLoans = mandateService.getLoans(this.mandate.getCustID(), mandateType);
 
-			Mandate employerDatails = mandateService.getEmployerDetails(this.mandate.getCustID());
+			Mandate employerDetails = mandateService.getEmployerDetails(this.mandate.getCustID());
 
-			if (employerDatails != null) {
-				this.mandate.setEmployeeID(employerDatails.getEmployeeID());
-				this.mandate.setEmployerName(employerDatails.getEmployerName());
-			} else if (InstrumentType.isDAS(mandateType)) {
-				MessageUtil.showError("Employer details are not available for this Customer");
-				return;
+			if (InstrumentType.isDAS(mandateType)) {
+				if (employerDetails == null) {
+					MessageUtil.showError("Employer details are not available for this Customer");
+					return;
+				} else {
+					if (!employerDetails.isAllowDas()) {
+						MessageUtil.showError("Allow Das is not applicable for this employer");
+						return;
+					}
+					this.mandate.setEmployeeID(employerDetails.getEmployeeID());
+					this.mandate.setEmployerName(employerDetails.getEmployerName());
+				}
 			}
 
 			if (customerLoans.isEmpty()) {

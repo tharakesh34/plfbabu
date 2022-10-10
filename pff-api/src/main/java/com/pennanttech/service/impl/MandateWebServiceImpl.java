@@ -362,17 +362,20 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		case DD:
 		case NACH:
 		case EMANDATE:
+		case SI:
 			returnStatus = validateBankDetail(mandate);
 			break;
 		case DAS:
 			if (mandate.getEmployeeID() == null) {
-				returnStatus = getFailedStatus("90502", "employeeID");
+				return returnStatus = getFailedStatus("90502", "employeeID");
 			}
 
 			Mandate employerDetails = mandateService.getEmployerDetails(mandate.getCustID());
 
 			if (employerDetails == null || employerDetails.getEmployeeID() != mandate.getEmployeeID()) {
-				returnStatus = getFailedStatus("MNDT01", String.valueOf(mandate.getEmployeeID()), "Selected Customer");
+				returnStatus = getFailedStatus("MNDT01", String.valueOf(mandate.getEmployeeID()));
+			} else if (!employerDetails.isAllowDas()) {
+				returnStatus = getFailedStatus("MNDT02", String.valueOf(mandate.getEmployeeID()));
 			}
 
 			break;
@@ -443,7 +446,10 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 	}
 
 	private WSReturnStatus validateBankDetail(Mandate mandate) {
-		if (StringUtils.isNotBlank(mandate.getAccType())) {
+
+		if (StringUtils.isBlank(mandate.getAccType())) {
+			return getFailedStatus("90502", "accType");
+		} else {
 			List<ValueLabel> accType = MandateUtil.getAccountTypes();
 
 			if (accType.stream().noneMatch(ac -> ac.getValue().equals(mandate.getAccType()))) {
@@ -475,6 +481,10 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 			return getFailedStatus("90333", mandate.getMandateType());
 		}
 
+		if (StringUtils.isBlank(mandate.getAccNumber())) {
+			return getFailedStatus("90502", "accNumber");
+		}
+
 		if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
 			BankDetail bankDetails = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
 			int length = mandate.getAccNumber().length();
@@ -495,7 +505,17 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 			}
 		}
 
-		return mandateDetailValidation(mandate);
+		if (StringUtils.isBlank(mandate.getAccHolderName())) {
+			return getFailedStatus("90502", "accHolderName");
+		}
+
+		if (!InstrumentType.isSI(mandate.getMandateType())) {
+
+			return mandateDetailValidation(mandate);
+		}
+
+		return null;
+
 	}
 
 	private WSReturnStatus mandateDetailValidation(Mandate mandate) {
@@ -616,6 +636,11 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 			mndt.setAccHolderName(mandate.getAccHolderName());
 			mndt.setJointAccHolderName(mandate.getJointAccHolderName());
 			mndt.setAccType(mandate.getAccType());
+			mndt.setIFSC(mandate.getIFSC());
+			mndt.setMICR(mandate.getMICR());
+			mndt.setBankCode(mandate.getBankCode());
+			mndt.setBranchCode(mandate.getBranchCode());
+
 		}
 
 		return mndt;

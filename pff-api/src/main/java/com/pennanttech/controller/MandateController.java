@@ -31,6 +31,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.api.controller.AbstractController;
 import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -396,24 +397,27 @@ public class MandateController extends AbstractController {
 		mandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		mandate.setSourceId(APIConstants.FINSOURCE_ID_API);
 
-		String ifsc = mandate.getIFSC();
-		String micr = mandate.getMICR();
-		String bankCode = mandate.getBankCode();
-		String branchCode = mandate.getBranchCode();
+		if (!InstrumentType.isDAS(mandate.getMandateType())) {
+			String ifsc = mandate.getIFSC();
+			String micr = mandate.getMICR();
+			String bankCode = mandate.getBankCode();
+			String branchCode = mandate.getBranchCode();
 
-		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+			BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
 
-		ErrorDetail error = bankBranch.getError();
-		if (error != null) {
-			mandate.setReturnStatus(getFailedStatus(error.getCode(), error.getError()));
+			ErrorDetail error = bankBranch.getError();
+			if (error != null) {
+				mandate.setReturnStatus(getFailedStatus(error.getCode(), error.getError()));
+			}
+
+			mandate.setIFSC(bankBranch.getIFSC());
+			mandate.setBankBranchID(bankBranch.getBankBranchID());
+
+			if (StringUtils.isBlank(mandate.getPeriodicity())) {
+				mandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
+			}
 		}
 
-		mandate.setIFSC(bankBranch.getIFSC());
-		mandate.setBankBranchID(bankBranch.getBankBranchID());
-
-		if (StringUtils.isBlank(mandate.getPeriodicity())) {
-			mandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
-		}
 	}
 
 	private void doEmptyResponseObject(Mandate response) {
