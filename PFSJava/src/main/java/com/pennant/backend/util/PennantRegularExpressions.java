@@ -295,7 +295,7 @@ public class PennantRegularExpressions {
 
 			put(REGEX_TAN_NUMBER, "[A-Za-z]{4}\\d{5}[A-Za-z]{1}");
 			put(REGEX_CERTIFICATE_NUMBER, "[A-Za-z]{6,8}");
-			put(REGEX_REPAY_HIERARCHY, "[[ , | ] [OPIMBLF]*]");
+			put(REGEX_REPAY_HIERARCHY, "^(?!.*?([OPIMBLF]).*?\\1)[OPIMBLF](?:[,|][OPIMBLF])*$");
 		}
 	};
 
