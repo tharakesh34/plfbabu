@@ -44,6 +44,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
+import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -282,6 +283,10 @@ public class AbstractListController<T> extends AbstractController<T> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	protected void doPrintResults(List<ReportListDetail> prcode) {
+		new PTListReportUtils(prcode, this.moduleCode);
 	}
 
 	protected void doShowHelp(Event event) {

@@ -174,11 +174,11 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 
 	public void onClick$print(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
-		/*
-		 * List<PresentmentExcludeCode> excludeCodes = presentmentExcludeCodeService
-		 * .getPresentmentExcludeCodes(getWorkFlowRoles());
-		 */
-		doPrintResults();
+
+		List<String> roleCodes = getWorkFlowRoles();
+
+		doPrintResults(presentmentExcludeCodeService.getPrintCodes(roleCodes));
+
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 

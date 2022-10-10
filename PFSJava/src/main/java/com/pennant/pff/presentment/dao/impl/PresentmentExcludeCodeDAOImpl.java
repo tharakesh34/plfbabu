@@ -12,6 +12,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 
+import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.pff.presentment.dao.PresentmentExcludeCodeDAO;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -266,6 +267,30 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 		return sql;
 	}
 
+	public List<ReportListDetail> getPrintCodes(List<String> roleCodes) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Code, Description, BounceCode, CreateBounceOnDueDate");
+		sql.append(" From (Select Code, Description, BounceCode, CreateBounceOnDueDate");
+		sql.append(" From Presentment_Exclude_Codes_temp pec");
+		sql.append(" Left Join BounceReasons br on br.BounceID = pec.BounceID");
+		sql.append(" Union All ");
+		sql.append(" Select Code, Description, BounceCode, CreateBounceOnDueDate");
+		sql.append(" From Presentment_Exclude_Codes pec");
+		sql.append(" Left Join BounceReasons br on br.BounceID = pec.BounceID");
+		sql.append(" Where pec.NextRoleCode is null or pec.NextRoleCode = ? or pec.NextRoleCode in (");
+		sql.append(JdbcUtil.getInCondition(roleCodes));
+		sql.append(") Order By Code)");
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, "");
+			for (String roleCode : roleCodes) {
+				ps.setString(index++, roleCode);
+			}
+		}, new ReportListRM());
+	}
+
 	private class PresentmentExcludeCodesRM implements RowMapper<PresentmentExcludeCode> {
 
 		@Override
@@ -295,6 +320,22 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 			bc.setNextTaskId(rs.getString("NextTaskId"));
 			bc.setRecordType(rs.getString("RecordType"));
 			bc.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return bc;
+		}
+
+	}
+
+	private class ReportListRM implements RowMapper<ReportListDetail> {
+
+		@Override
+		public ReportListDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+			ReportListDetail bc = new ReportListDetail();
+
+			bc.setfieldString01(rs.getString("Code"));
+			bc.setfieldString02(rs.getString("Description"));
+			bc.setFieldBoolean04(rs.getInt("CreateBounceOnDueDate"));
+			bc.setfieldString03(rs.getString("BounceCode"));
 
 			return bc;
 		}

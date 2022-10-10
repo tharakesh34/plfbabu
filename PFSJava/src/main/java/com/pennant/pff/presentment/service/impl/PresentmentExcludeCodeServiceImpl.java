@@ -11,6 +11,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -216,6 +217,11 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 	@Autowired
 	public void setPresentmentExcludeCodeDAO(PresentmentExcludeCodeDAO presentmentExcludeCodeDAO) {
 		this.presentmentExcludeCodeDAO = presentmentExcludeCodeDAO;
+	}
+
+	@Override
+	public List<ReportListDetail> getPrintCodes(List<String> roleCodes) {
+		return this.presentmentExcludeCodeDAO.getPrintCodes(roleCodes);
 	}
 
 }

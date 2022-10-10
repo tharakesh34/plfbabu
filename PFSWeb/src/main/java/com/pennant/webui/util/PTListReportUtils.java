@@ -80,10 +80,13 @@ public class PTListReportUtils implements Serializable {
 
 		logger.debug(Literal.ENTERING);
 
+		if (reportListService == null) {
+			setReportListService();
+		}
+
 		ReportListHeader header = new ReportListHeader();
 		JdbcSearchObject<ReportListDetail> searchObject = new JdbcSearchObject<ReportListDetail>(
 				ReportListDetail.class);
-		setReportListService();
 
 		searchObject.setSorts(searchObj.getSorts());
 		searchObject.setFilters(searchObj.getFilters());
@@ -93,7 +96,7 @@ public class PTListReportUtils implements Serializable {
 		}
 
 		// Report List Details Fetching
-		ReportList reportList = getReportListService().getApprovedReportListById(code);
+		ReportList reportList = reportListService.getApprovedReportListById(code);
 		searchObject.setMaxResults(size + 1);
 
 		if (reportList == null) {
@@ -124,7 +127,6 @@ public class PTListReportUtils implements Serializable {
 		Map<String, Object> parameters = header.getReportListHeader(header);
 		parameters = reportList.getMainHeaderDetails(parameters);
 
-		// Set Report Images to parameter Fields
 		parameters.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
 		parameters.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
 		parameters.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
@@ -184,7 +186,6 @@ public class PTListReportUtils implements Serializable {
 				map.put("reportBuffer", buf);
 				map.put("reportName", reportList.getReportHeading());
 
-				// call the ZUL-file with the parameters packed in a map
 				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, map);
 			} else {
 				MessageUtil.showError(Labels.getLabel("message.error.reportNotImpl"));
@@ -201,6 +202,65 @@ public class PTListReportUtils implements Serializable {
 			parameters = null;
 			pagedListService = null;
 			searchObject = null;
+			header = null;
+			listDetailsDS = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public PTListReportUtils(List<ReportListDetail> prcode, String code) {
+		logger.debug(Literal.ENTERING);
+
+		if (reportListService == null) {
+			setReportListService();
+		}
+
+		ReportListHeader header = new ReportListHeader();
+
+		ReportList reportList = reportListService.getApprovedReportListById(code);
+
+		if (reportList == null) {
+			MessageUtil.showError(Labels.getLabel("message.error.reportNotFound"));
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
+		header.setFiledLabel(reportList.getLabels());
+
+		@SuppressWarnings("static-access")
+		Map<String, Object> parameters = header.getReportListHeader(header);
+		parameters = reportList.getMainHeaderDetails(parameters);
+		parameters.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+		parameters.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
+		parameters.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+
+		JRBeanCollectionDataSource listDetailsDS = new JRBeanCollectionDataSource(prcode);
+
+		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_LIST) + "/" + reportList.getReportFileName() + ".jasper";
+
+		File file = null;
+
+		try {
+			file = new File(reportSrc);
+			if (file.exists()) {
+				byte[] buf = null;
+				buf = JasperRunManager.runReportToPdf(reportSrc, parameters, listDetailsDS);
+				final Map<String, Object> map = new HashMap<String, Object>();
+				map.put("reportBuffer", buf);
+				map.put("reportName", reportList.getReportHeading());
+
+				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, map);
+			} else {
+				MessageUtil.showError(Labels.getLabel("message.error.reportNotImpl"));
+			}
+		} catch (JRException e) {
+			MessageUtil.showError(e);
+		} finally {
+			file = null;
+			reportSrc = null;
+			reportList = null;
+			parameters = null;
 			header = null;
 			listDetailsDS = null;
 		}
