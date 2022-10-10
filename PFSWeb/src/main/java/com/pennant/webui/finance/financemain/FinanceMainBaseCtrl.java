@@ -2193,13 +2193,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Stage Accounting details Tab Addition
 		appendStageAccountingDetailsTab(onLoad);
 
-		String CREDIT_REVIEW_TAB = SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB);
+		String creditReviewTabVersion = SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB);
 		boolean tabVisible = isTabVisible(StageTabConstants.CreditReviewDetails);
 		boolean restructure = FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner);
 
-		if (PennantConstants.OLD_CREDITREVIEWTAB.equals(CREDIT_REVIEW_TAB) && tabVisible && !restructure) {
+		if (PennantConstants.OLD_CREDITREVIEWTAB.equals(creditReviewTabVersion) && tabVisible && !restructure) {
 			appendCreditReviewDetailTab(false);
-		} else if (PennantConstants.NEW_CREDITREVIEWTAB.equals(CREDIT_REVIEW_TAB) && tabVisible && !restructure) {
+		} else if (PennantConstants.NEW_CREDITREVIEWTAB.equals(creditReviewTabVersion) && tabVisible && !restructure) {
 			appendCreditReviewDetailSummaryTab(false);
 		}
 
@@ -11024,7 +11024,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onFulfill$eligibilityMethod(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = eligibilityMethod.getObject();
-		String eligibilityMethod = "";
+		String eligibilityMethodValue = "";
 		if (dataObject == null || dataObject instanceof String) {
 			this.eligibilityMethod.setValue("");
 			this.eligibilityMethod.setDescription("");
@@ -11033,23 +11033,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
 				this.eligibilityMethod.setAttribute("FieldCodeId", details.getFieldCodeId());
-				eligibilityMethod = details.getFieldCodeValue();
+				eligibilityMethodValue = details.getFieldCodeValue();
 			}
 		}
 
-		String CREDIT_REVIEW_TAB = SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB);
+		String creditReviewTabVersion = SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB);
 		boolean tabVisible = isTabVisible(StageTabConstants.CreditReviewDetails);
 
-		if (PennantConstants.OLD_CREDITREVIEWTAB.equals(CREDIT_REVIEW_TAB) && tabVisible) {
+		if (PennantConstants.OLD_CREDITREVIEWTAB.equals(creditReviewTabVersion) && tabVisible) {
 			appendCreditReviewDetailTab(true);
-		} else if (PennantConstants.NEW_CREDITREVIEWTAB.equals(CREDIT_REVIEW_TAB) && tabVisible) {
+		} else if (PennantConstants.NEW_CREDITREVIEWTAB.equals(creditReviewTabVersion) && tabVisible) {
 			appendCreditReviewDetailSummaryTab(true);
 		}
 
-		setEligibilityMethod(eligibilityMethod);
+		setEligibilityMethod(eligibilityMethodValue);
 
 		if (financeSpreadSheetCtrl != null) {
-			financeSpreadSheetCtrl.doDisplayTab(eligibilityMethod);
+			financeSpreadSheetCtrl.doDisplayTab(eligibilityMethodValue);
 		}
 
 		logger.debug(Literal.LEAVING);

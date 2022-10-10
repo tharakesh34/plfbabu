@@ -57,7 +57,7 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 	}
 
 	public void onCreate$windowDueExtractionConfigList(Event event) {
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		setPageComponents(windowDueExtractionConfigList, borderLayoutDueExtractionConfigList,
 				listBoxDueExtractionConfig, pagingDueExtractionConfigList);
@@ -72,21 +72,30 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 		getPagedListWrapper().initList(headers, listBoxDueExtractionConfig, pagingDueExtractionConfigList);
 
 		doRenderPage();
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$buttonDueExtractionConfigSearch(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
 		headers = new ArrayList<>();
 		headers.addAll(dueExtractionConfigService.getDueExtractionHeaders());
 
 		getPagedListWrapper().initList(headers, listBoxDueExtractionConfig, pagingDueExtractionConfigList);
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$btnRefresh(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
 		headers = new ArrayList<>();
 		headers.addAll(dueExtractionConfigService.getDueExtractionHeaders());
 
 		getPagedListWrapper().initList(headers, listBoxDueExtractionConfig, pagingDueExtractionConfigList);
 
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	/**
@@ -97,7 +106,7 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 	 */
 
 	public void onItemDoubleClicked(Event event) {
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		Listitem selectedItem = this.listBoxDueExtractionConfig.getSelectedItem();
 		if (selectedItem == null) {
@@ -109,8 +118,7 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 		header.setWorkflowId(getWorkFlowId());
 		doShowDialogPage(header);
 
-		logger.debug(Literal.LEAVING);
-
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	/**
@@ -150,11 +158,11 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 			lc.setParent(item);
 			lc = new Listcell(DateUtil.format(data.getCreatedOn(), DateFormat.SHORT_DATE));
 			lc.setParent(item);
-			lc = new Listcell("ADMIN");
+			lc = new Listcell(data.getUsrName());
 			lc.setParent(item);
 			lc = new Listcell(DateUtil.format(data.getLastMntOn(), DateFormat.SHORT_DATE));
 			lc.setParent(item);
-			lc = new Listcell("Approved");
+			lc = new Listcell(data.getRecordStatus());
 			lc.setParent(item);
 			lc = new Listcell(data.getRecordType());
 			lc.setParent(item);

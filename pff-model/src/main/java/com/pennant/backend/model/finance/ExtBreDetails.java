@@ -3,10 +3,6 @@ package com.pennant.backend.model.finance;
 import java.sql.Timestamp;
 
 public class ExtBreDetails {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5260030121706927931L;
 	private String finReference;
 	private String request;
 	private String response;

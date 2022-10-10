@@ -19,11 +19,17 @@ public interface DueExtractionConfigDAO {
 
 	void saveHeader(List<DueExtractionHeader> list, TableType tableType);
 
+	void updateHeader(List<DueExtractionHeader> list, TableType tableType);
+
 	void save(List<DueExtractionConfig> preExtCon, TableType tableType);
+
+	void update(List<DueExtractionConfig> preExtCon, TableType tableType);
 
 	void delete(InstrumentTypes instrType, TableType tableType);
 
 	void deleteConfig();
+
+	void delete(DueExtractionHeader header, TableType tableType);
 
 	List<InstrumentTypes> getInstrumentTypes();
 

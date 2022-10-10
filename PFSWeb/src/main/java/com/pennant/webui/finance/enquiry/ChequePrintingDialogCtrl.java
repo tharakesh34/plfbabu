@@ -239,8 +239,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			throw new WrongValuesException(wvea);
 		}
 		ChequeDetails chequeDetails = null;
-		ArrayList<ChequeDetails> chequeDetailsList = null;
-		chequeDetailsList = new ArrayList<ChequeDetails>();
+		List<ChequeDetails> chequeDetailsList = new ArrayList<ChequeDetails>();
 
 		endIndex = startIndex + (this.noOfCheques.getValue()
 				* (Integer.parseInt(this.cbPDCPeriod.getSelectedItem().getValue().toString()))) - 1;
@@ -289,7 +288,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * @param endIndex
 	 * @return
 	 */
-	public ArrayList<ChequeDetails> getChequeDetailsList(ChequeDetails chequeDetails, int startIndex, int endIndex) {
+	public List<ChequeDetails> getChequeDetailsList(ChequeDetails chequeDetails, int startIndex, int endIndex) {
 		ArrayList<ChequeDetails> chequeDetailsList = new ArrayList<ChequeDetails>();
 		chequeDetailsList.add(null);
 		BigDecimal repaymentAmount = null;

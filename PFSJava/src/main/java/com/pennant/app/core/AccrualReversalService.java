@@ -41,7 +41,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class AccrualReversalService extends ServiceHelper {
-	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = LogManager.getLogger(AccrualReversalService.class);
 
 	public void processAccrual(CustEODEvent custEODEvent) {

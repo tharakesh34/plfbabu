@@ -31,6 +31,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.tandetails.TanAssignmentDAO;
@@ -425,9 +426,8 @@ public class TanAssignmentServiceImpl extends GenericService<TanAssignment> impl
 			try {
 				tanAssignmentDAO.delete(aTanAssignment, tableType);
 				tanDetailDAO.delete(aTanAssignment.getTanDetail(), tableType);
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				logger.error(Literal.EXCEPTION);
+			} catch (DataAccessException e) {
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 

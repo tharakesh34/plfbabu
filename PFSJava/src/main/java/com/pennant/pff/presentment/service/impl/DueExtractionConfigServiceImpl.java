@@ -2,7 +2,6 @@ package com.pennant.pff.presentment.service.impl;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +62,7 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 			header.setTaskId("");
 			header.setNextTaskId("");
 			header.setRecordType("");
+			header.setRecordStatus("Aprroved");
 			header.setWorkflowId(0);
 
 			map.put(extractionMonth, header);
@@ -84,9 +84,6 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 
 		List<InstrumentTypes> instruments = dueExtractionConfigDAO.getInstrumentTypes();
 
-		int maxExtractionDay = instruments.stream().max(Comparator.comparingInt(InstrumentTypes::getExtractionDays))
-				.get().getExtractionDays();
-
 		List<DueExtractionConfig> presentmentExtractConfig = new ArrayList<>();
 
 		Timestamp cuurentTime = new Timestamp(System.currentTimeMillis());
@@ -106,7 +103,7 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 				pec.setID(dueExtractionConfigDAO.getNextValue());
 				pec.setMonthID(header.getID());
 				pec.setDueDate(dueDate);
-				pec.setExtractionDate(DateUtil.addDays(pec.getDueDate(), -maxExtractionDay));
+				pec.setExtractionDate(DateUtil.addDays(pec.getDueDate(), -it.getExtractionDays()));
 				pec.setVersion(1);
 				pec.setCreatedBy(it.getCreatedBy());
 				pec.setCreatedOn(cuurentTime);
@@ -121,6 +118,7 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 				pec.setTaskId("");
 				pec.setNextTaskId("");
 				pec.setRecordType("");
+				pec.setRecordStatus("Aprroved");
 				pec.setWorkflowId(0);
 
 				presentmentExtractConfig.add(pec);
@@ -153,28 +151,23 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		List<InstrumentTypes> instrumentTypes = (List<InstrumentTypes>) auditHeader.getAuditDetail().getModelData();
-
-		List<InstrumentTypes> saveList = new ArrayList<>();
-		List<InstrumentTypes> updateList = new ArrayList<>();
+		DueExtractionHeader header = (DueExtractionHeader) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
-		for (InstrumentTypes it : instrumentTypes) {
-			if (instrumentTypes.get(0).isWorkflow()) {
-				tableType = TableType.TEMP_TAB;
-			}
 
-			if (it.isNewRecord()) {
-				saveList.add(it);
-				auditHeader.getAuditDetail().setModelData(it);
-			} else {
-				updateList.add(it);
-			}
+		if (header.isWorkflow()) {
+			tableType = TableType.TEMP_TAB;
 		}
 
-		for (InstrumentTypes it : saveList) {
-			dueExtractionConfigDAO.save(it, tableType);
-			dueExtractionConfigDAO.save(it.getMapping(), tableType);
+		List<DueExtractionHeader> headList = new ArrayList<>();
+		headList.add(header);
+
+		if (header.isNewRecord()) {
+			dueExtractionConfigDAO.saveHeader(headList, tableType);
+			dueExtractionConfigDAO.save(header.getConfig(), tableType);
+		} else {
+			dueExtractionConfigDAO.updateHeader(headList, tableType);
+			dueExtractionConfigDAO.update(header.getConfig(), tableType);
 		}
 
 		return null;
@@ -182,14 +175,38 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		// TODO Auto-generated method stub
-		return null;
+		DueExtractionHeader header = (DueExtractionHeader) auditHeader.getAuditDetail().getModelData();
+
+		dueExtractionConfigDAO.delete(header, TableType.TEMP_TAB);
+
+		header.setRoleCode("");
+		header.setNextRoleCode("");
+		header.setTaskId("");
+		header.setNextTaskId("");
+		header.setWorkflowId(0);
+		header.setRecordType("");
+
+		List<DueExtractionHeader> headList = new ArrayList<>();
+		headList.add(header);
+
+		if (header.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			dueExtractionConfigDAO.saveHeader(headList, TableType.MAIN_TAB);
+			dueExtractionConfigDAO.save(header.getConfig(), TableType.MAIN_TAB);
+		} else {
+			dueExtractionConfigDAO.updateHeader(headList, TableType.MAIN_TAB);
+			dueExtractionConfigDAO.update(header.getConfig(), TableType.MAIN_TAB);
+		}
+
+		return auditHeader;
 	}
 
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		// TODO Auto-generated method stub
-		return null;
+		DueExtractionHeader header = (DueExtractionHeader) auditHeader.getAuditDetail().getModelData();
+
+		dueExtractionConfigDAO.delete(header, TableType.TEMP_TAB);
+
+		return auditHeader;
 	}
 
 	@Override

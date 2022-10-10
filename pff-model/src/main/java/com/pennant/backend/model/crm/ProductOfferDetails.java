@@ -94,7 +94,6 @@ public class ProductOfferDetails {
 	private Date enquiryDateAndTime;
 	private String enquiryProduct;
 	private String enquiryCity;
-	private BigDecimal enquiryLoanAmount;
 	private String source;
 	private String latestCIBILMobile;
 	private String cibilNotes;

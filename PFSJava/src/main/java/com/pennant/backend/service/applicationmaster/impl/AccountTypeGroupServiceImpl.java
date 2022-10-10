@@ -3,10 +3,12 @@ package com.pennant.backend.service.applicationmaster.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.AccountTypeGroupDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -23,6 +25,7 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AccountTypeGroupDAO accountTypeGroupDAO;
+	private AccountTypeDAO accountTypeDAO;
 
 	public AccountTypeGroupServiceImpl() {
 		super();
@@ -274,9 +277,25 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
+		if (PennantConstants.RECORD_TYPE_DEL.equals(accountTypeGroup.getRecordType())) {
+			boolean accountTypeExsist = accountTypeDAO.isExsistAccountGroup(accountTypeGroup.getGroupId());
+
+			if (accountTypeExsist) {
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_AccountTypeGroupSearch_GroupCode") + ": "
+						+ accountTypeGroup.getGroupCode();
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+
+	@Autowired
+	public void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
+		this.accountTypeDAO = accountTypeDAO;
+	}
+
 }

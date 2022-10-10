@@ -140,6 +140,47 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 	}
 
 	@Override
+	public void updateHeader(List<DueExtractionHeader> list, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update Due_Extraction_Header");
+		sql.append(tableType.getSuffix());
+		sql.append(" set Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(", Active = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkFlowId = ?");
+		sql.append(" Where ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				DueExtractionHeader header = list.get(i);
+
+				int index = 1;
+
+				ps.setInt(index++, header.getVersion());
+				ps.setLong(index++, header.getLastMntBy());
+				ps.setTimestamp(index++, header.getLastMntOn());
+				ps.setBoolean(index++, header.getActive());
+				ps.setString(index++, header.getRecordStatus());
+				ps.setString(index++, header.getRoleCode());
+				ps.setString(index++, header.getNextRoleCode());
+				ps.setString(index++, header.getTaskId());
+				ps.setString(index++, header.getNextTaskId());
+				ps.setString(index++, header.getRecordType());
+				ps.setLong(index++, header.getWorkflowId());
+
+				ps.setLong(index, header.getID());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
+	}
+
+	@Override
 	public void save(List<DueExtractionConfig> list, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Insert into Due_Extraction_Config");
 		sql.append(tableType.getSuffix());
@@ -180,7 +221,7 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 					ps.setString(index++, dec.getTaskId());
 					ps.setString(index++, dec.getNextTaskId());
 					ps.setString(index++, dec.getRecordType());
-					ps.setLong(index++, dec.getWorkflowId());
+					ps.setLong(index, dec.getWorkflowId());
 				}
 
 				@Override
@@ -192,6 +233,51 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
+	}
+
+	@Override
+	public void update(List<DueExtractionConfig> list, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update Due_Extraction_Config");
+		sql.append(tableType.getSuffix());
+		sql.append(" set DueDate = ?, ExtractionDate = ?, Modified = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, Active = ?");
+		sql.append(", RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkFlowId = ?");
+		sql.append(" Where ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				DueExtractionConfig dec = list.get(i);
+
+				int index = 1;
+
+				ps.setDate(index++, JdbcUtil.getDate(dec.getDueDate()));
+				ps.setDate(index++, JdbcUtil.getDate(dec.getExtractionDate()));
+				ps.setBoolean(index++, dec.isModified());
+				ps.setInt(index++, dec.getVersion());
+				ps.setLong(index++, dec.getLastMntBy());
+				ps.setTimestamp(index++, dec.getLastMntOn());
+				ps.setBoolean(index++, dec.getActive());
+				ps.setString(index++, dec.getRecordStatus());
+				ps.setString(index++, dec.getRoleCode());
+				ps.setString(index++, dec.getNextRoleCode());
+				ps.setString(index++, dec.getTaskId());
+				ps.setString(index++, dec.getNextTaskId());
+				ps.setString(index++, dec.getRecordType());
+				ps.setLong(index++, dec.getWorkflowId());
+
+				ps.setLong(index, dec.getID());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
 	}
 
 	@Override
@@ -215,6 +301,25 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		jdbcOperations.update(sql.toString());
+	}
+
+	@Override
+	public void delete(DueExtractionHeader header, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete from Due_Extraction_Config");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where MonthID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.update(sql.toString(), header.getID());
+
+		sql = new StringBuilder("Delete from Due_Extraction_Header");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.update(sql.toString(), header.getID());
 	}
 
 	@Override
@@ -384,16 +489,20 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 	@Override
 	public List<DueExtractionHeader> getDueExtractionHeaders() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, ExtractionMonth, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
-		sql.append(", Active, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkFlowId");
-		sql.append(" From Due_Extraction_Header_Temp");
+		sql.append(" deh.ID, deh.ExtractionMonth, deh.Version, deh.CreatedBy, deh.CreatedOn, deh.ApprovedBy");
+		sql.append(", deh.ApprovedOn, deh.LastMntBy, deh.LastMntOn, deh.Active, deh.RecordStatus, deh.RoleCode");
+		sql.append(", deh.NextRoleCode, deh.TaskId, deh.NextTaskId, deh.RecordType, deh.WorkFlowId, su.UsrLogin");
+		sql.append(" From Due_Extraction_Header_Temp deh");
+		sql.append(" Left Join SecUsers su on su.UsrID = deh.LastMntBy");
 		sql.append(" Union All");
 		sql.append(" Select");
-		sql.append(" ID, ExtractionMonth, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
-		sql.append(", Active, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkFlowId");
-		sql.append(" From Due_Extraction_Header");
+		sql.append(" deh.ID, deh.ExtractionMonth, deh.Version, deh.CreatedBy, deh.CreatedOn, deh.ApprovedBy");
+		sql.append(", deh.ApprovedOn, deh.LastMntBy, deh.LastMntOn, deh.Active, deh.RecordStatus, deh.RoleCode");
+		sql.append(", deh.NextRoleCode, deh.TaskId, deh.NextTaskId, deh.RecordType, deh.WorkFlowId, su.UsrLogin");
+		sql.append(" From Due_Extraction_Header deh");
+		sql.append(" Left Join SecUsers su on su.UsrID = deh.LastMntBy");
 		sql.append(" Where not exists (Select 1 From Due_Extraction_Header_Temp");
-		sql.append(" Where ID = Due_Extraction_Header.ID)");
+		sql.append(" Where ID = deh.ID)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -417,6 +526,7 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 			header.setNextTaskId(rs.getString("NextTaskId"));
 			header.setRecordType(rs.getString("RecordType"));
 			header.setWorkflowId(rs.getLong("WorkflowId"));
+			header.setUsrName(rs.getString("UsrLogin"));
 
 			return header;
 		});
@@ -432,6 +542,7 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 		sql.append(" From Due_Extraction_Config c");
 		sql.append(" Inner Join Instrument_Types it on it.ID = c.InstrumentID");
 		sql.append(" Where c.MonthID = ?");
+		sql.append(" Order by c.DueDate");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

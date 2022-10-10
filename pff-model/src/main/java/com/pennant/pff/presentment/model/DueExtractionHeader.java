@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class DueExtractionHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 2198471029043076055L;
@@ -18,8 +19,12 @@ public class DueExtractionHeader extends AbstractWorkflowEntity {
 	private long approvedBy;
 	private Timestamp approvedOn;
 	private boolean active;
+	private DueExtractionHeader befImage;
+	private LoggedInUser userDetails;
 	private Map<Long, InstrumentTypes> instruments = new HashMap<>();
 	private List<DueExtractionConfig> config = new ArrayList<>();
+
+	private String usrName;
 
 	public DueExtractionHeader() {
 		super();
@@ -81,6 +86,22 @@ public class DueExtractionHeader extends AbstractWorkflowEntity {
 		this.active = active;
 	}
 
+	public DueExtractionHeader getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(DueExtractionHeader befImage) {
+		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
 	public Map<Long, InstrumentTypes> getInstruments() {
 		return instruments;
 	}
@@ -95,6 +116,14 @@ public class DueExtractionHeader extends AbstractWorkflowEntity {
 
 	public void setConfig(List<DueExtractionConfig> config) {
 		this.config = config;
+	}
+
+	public String getUsrName() {
+		return usrName;
+	}
+
+	public void setUsrName(String usrName) {
+		this.usrName = usrName;
 	}
 
 }
