@@ -956,7 +956,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (instrumentType == InstrumentType.DAS || maintain) {
-			if (!fromLoan) {
+			if (!fromLoan && customerLoans.size() > 1) {
 				readOnlyComponent(false, this.finReference);
 			}
 			this.dasGroupbox.setVisible(true);
