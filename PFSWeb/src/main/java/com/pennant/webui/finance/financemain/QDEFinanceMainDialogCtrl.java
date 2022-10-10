@@ -486,8 +486,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finType.setValue(aFinanceMain.getFinType());
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 		this.finReference.setValue(aFinanceMain.getFinReference());
-		this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), format));
-		this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(), format));
+		this.finAmount.setValue(CurrencyUtil.parse(aFinanceMain.getFinAmount(), format));
+		this.downPaySupl.setValue(CurrencyUtil.parse(aFinanceMain.getDownPaySupl(), format));
 		this.numberOfTerms.setValue(aFinanceMain.getNumberOfTerms());
 		this.finCcy.setValue(aFinanceMain.getFinCcy());
 		this.finBranch.setValue(aFinanceMain.getFinBranch());

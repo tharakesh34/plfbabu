@@ -52,7 +52,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.component.Uppercasebox;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -264,10 +263,10 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// If schedule detail is not null i.e. existing one
 		if (getFinanceScheduleDetail() != null) {
 			if (getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE)) {
-				this.wIAmount.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getPrincipalSchd(),
+				this.wIAmount.setValue(CurrencyUtil.parse(getFinanceScheduleDetail().getPrincipalSchd(),
 						CurrencyUtil.getFormat(aFinSchData.getFinanceMain().getFinCcy())));
 			} else {
-				this.wIAmount.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getRepayAmount(),
+				this.wIAmount.setValue(CurrencyUtil.parse(getFinanceScheduleDetail().getRepayAmount(),
 						CurrencyUtil.getFormat(aFinSchData.getFinanceMain().getFinCcy())));
 			}
 		}

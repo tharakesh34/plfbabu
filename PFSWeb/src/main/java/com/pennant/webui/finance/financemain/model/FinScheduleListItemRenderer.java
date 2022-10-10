@@ -81,7 +81,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
@@ -3377,9 +3376,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 				data.setPrincipalBal(BigDecimal.ZERO);
 				data.setFinanceBal(BigDecimal.ZERO);
 			} else {
-				data.setFinanceBal(PennantAppUtil.formateAmount(financeBal, formatter));
-				data.setPrincipalBal(PennantAppUtil.formateAmount(principalBal, formatter));
-				data.setProfitBal(PennantAppUtil.formateAmount(profitBal, formatter));
+				data.setFinanceBal(CurrencyUtil.parse(financeBal, formatter));
+				data.setPrincipalBal(CurrencyUtil.parse(principalBal, formatter));
+				data.setProfitBal(CurrencyUtil.parse(profitBal, formatter));
 			}
 
 			profitBal = profitBal.add(aScheduleDetail.getProfitCalc());

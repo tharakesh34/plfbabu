@@ -65,7 +65,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -380,8 +379,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			lc.setParent(item);
 
 			// Total Amount
-			BigDecimal amount = PennantAppUtil.formateAmount(cashDenomination.getAmount(),
-					PennantConstants.defaultCCYDecPos);
+			BigDecimal amount = CurrencyUtil.parse(cashDenomination.getAmount(), PennantConstants.defaultCCYDecPos);
 			Decimalbox amountBox = new Decimalbox();
 			amountBox.setMaxlength(18);
 			amountBox.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));

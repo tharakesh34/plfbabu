@@ -51,7 +51,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -302,9 +301,9 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 
 		this.countryCode.setValue(aCountry.getCountryCode());
 		this.countryDesc.setValue(aCountry.getCountryDesc());
-		this.countryParentLimit.setValue(PennantAppUtil.formateAmount(aCountry.getCountryParentLimit(), 0));
-		this.countryResidenceLimit.setValue(PennantAppUtil.formateAmount(aCountry.getCountryResidenceLimit(), 0));
-		this.countryRiskLimit.setValue(PennantAppUtil.formateAmount(aCountry.getCountryRiskLimit(), 0));
+		this.countryParentLimit.setValue(CurrencyUtil.parse(aCountry.getCountryParentLimit(), 0));
+		this.countryResidenceLimit.setValue(CurrencyUtil.parse(aCountry.getCountryResidenceLimit(), 0));
+		this.countryRiskLimit.setValue(CurrencyUtil.parse(aCountry.getCountryRiskLimit(), 0));
 		this.countryIsActive.setChecked(aCountry.isCountryIsActive());
 		this.systemDefault.setChecked(aCountry.isSystemDefault());
 		this.recordStatus.setValue(aCountry.getRecordStatus());

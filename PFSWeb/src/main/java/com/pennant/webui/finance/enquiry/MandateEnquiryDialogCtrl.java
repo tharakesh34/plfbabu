@@ -69,7 +69,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.mandate.mandate.MandateListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -493,7 +492,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.active.setChecked(aMandate.isActive());
 		this.startDate.setValue(aMandate.getStartDate());
 		this.expiryDate.setValue(aMandate.getExpiryDate());
-		this.maxLimit.setValue(PennantAppUtil.formateAmount(aMandate.getMaxLimit(), ccyFormatter));
+		this.maxLimit.setValue(CurrencyUtil.parse(aMandate.getMaxLimit(), ccyFormatter));
 		this.periodicity.setValue(aMandate.getPeriodicity());
 		this.phoneCountryCode.setValue(aMandate.getPhoneCountryCode());
 		this.phoneAreaCode.setValue(aMandate.getPhoneAreaCode());

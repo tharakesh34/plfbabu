@@ -46,7 +46,6 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1199,7 +1198,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			feeCharged.setFormat(PennantApplicationUtil.getAmountFormate(2));
 			feeCharged.setScale(2);
 			feeCharged.addForward("onValueChange", self, "onChangeCalculateFeeReceiptFrq", item);
-			feeCharged.setValue(PennantAppUtil.formateAmount(schIncome.getUnitPrice(), 2));
+			feeCharged.setValue(CurrencyUtil.parse(schIncome.getUnitPrice(), 2));
 			feeCharged.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_UnitPrice"));
 			hbox.appendChild(space);
 			hbox.appendChild(feeCharged);
@@ -1247,8 +1246,8 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 					&& multiplier.getValue().intValue() != 0) {
 				feeCharge = CurrencyUtil.unFormat(feeCharged.getValidateValue(), 2);
 				multiply = multiplier.getValue();
-				feeRecBasisFrq.setValue(PennantAppUtil
-						.formateAmount(feeCharge.divide(new BigDecimal(multiply), BigDecimal.ROUND_HALF_DOWN), 2));
+				feeRecBasisFrq.setValue(
+						CurrencyUtil.parse(feeCharge.divide(new BigDecimal(multiply), BigDecimal.ROUND_HALF_DOWN), 2));
 			}
 			listCell.appendChild(feeRecBasisFrq);
 			listCell.setParent(item);
@@ -1260,7 +1259,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			totalCore.setFormat(PennantApplicationUtil.getAmountFormate(2));
 			totalCore.setScale(2);
 			totalCore.setReadonly(true);
-			totalCore.setValue(PennantAppUtil.formateAmount(schIncome.getTotal(), 2));
+			totalCore.setValue(CurrencyUtil.parse(schIncome.getTotal(), 2));
 			listCell.appendChild(totalCore);
 			listCell.setParent(item);
 
@@ -1518,7 +1517,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			CurrencyBox avgCollectionPerUnit = new CurrencyBox();
 			avgCollectionPerUnit.setFormat(PennantApplicationUtil.getAmountFormate(2));
 			avgCollectionPerUnit.setScale(2);
-			avgCollectionPerUnit.setValue(PennantAppUtil.formateAmount(schNonCoreIncome.getUnitPrice(), 2));
+			avgCollectionPerUnit.setValue(CurrencyUtil.parse(schNonCoreIncome.getUnitPrice(), 2));
 			avgCollectionPerUnit.addForward("onValueChange", self, "onChangeCalculateNonCoreTotal", item);
 			avgCollectionPerUnit.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_AvgCollection"));
 			hbox.appendChild(space);
@@ -1533,7 +1532,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			totalNonCore.setFormat(PennantApplicationUtil.getAmountFormate(2));
 			totalNonCore.setScale(2);
 			totalNonCore.setReadonly(true);
-			totalNonCore.setValue(PennantAppUtil.formateAmount(schNonCoreIncome.getTotal(), 2));
+			totalNonCore.setValue(CurrencyUtil.parse(schNonCoreIncome.getTotal(), 2));
 			listCell.appendChild(totalNonCore);
 			listCell.setParent(item);
 
@@ -1700,7 +1699,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			CurrencyBox expenseIncurred = new CurrencyBox();
 			expenseIncurred.setFormat(PennantApplicationUtil.getAmountFormate(2));
 			expenseIncurred.setScale(2);
-			expenseIncurred.setValue(PennantAppUtil.formateAmount(schExpense.getUnitPrice(), 2));
+			expenseIncurred.setValue(CurrencyUtil.parse(schExpense.getUnitPrice(), 2));
 			expenseIncurred.setReadonly(isReadOnly("OrganizationIncomeExpenseDialog_ExpenseIncurred"));
 			hbox.appendChild(space);
 			hbox.appendChild(expenseIncurred);

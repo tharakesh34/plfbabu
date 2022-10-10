@@ -70,7 +70,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -453,12 +452,12 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		}
 
 		this.custIncomeType.setValue(aCustomerIncome.getIncomeType() == null ? "" : aCustomerIncome.getIncomeType());
-		this.custIncome.setValue(PennantAppUtil.formateAmount(aCustomerIncome.getIncome(), ccyFormatter));
+		this.custIncome.setValue(CurrencyUtil.parse(aCustomerIncome.getIncome(), ccyFormatter));
 		this.custCIF.setValue(aCustomerIncome.getCustCif() == null ? "" : aCustomerIncome.getCustCif().trim());
 		this.custShrtName
 				.setValue(aCustomerIncome.getCustShrtName() == null ? "" : aCustomerIncome.getCustShrtName().trim());
 		this.jointCust.setChecked(aCustomerIncome.isJointCust());
-		this.margin.setValue(PennantAppUtil.formateAmount(aCustomerIncome.getMargin(), 2));
+		this.margin.setValue(CurrencyUtil.parse(aCustomerIncome.getMargin(), 2));
 
 		if (isNewRecord()) {
 			this.custIncomeType.setDescription("");
@@ -1255,7 +1254,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				getCustomerIncome().setCategory(details.getCategory().trim());
 				getCustomerIncome().setCategoryDesc(details.getLovDescCategoryName());
 				getCustomerIncome().setMargin(details.getMargin());
-				this.margin.setValue(PennantAppUtil.formateAmount(details.getMargin(), 2));
+				this.margin.setValue(CurrencyUtil.parse(details.getMargin(), 2));
 			}
 		}
 		logger.debug("Leaving" + event.toString());

@@ -569,11 +569,11 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 					curPri = prvListItemEndBal;
 					curEmi = curPri.add(curPft).add(curFee);
-					emi.setValue(PennantAppUtil.formateAmount(curEmi, formatter));
+					emi.setValue(CurrencyUtil.parse(curEmi, formatter));
 
 				} else if (curEmi.compareTo(curPft) < 0 || curEmi.compareTo(curFee) < 0) {
 
-					emi.setValue(PennantAppUtil.formateAmount(curPft.add(curFee), formatter));
+					emi.setValue(CurrencyUtil.parse(curPft.add(curFee), formatter));
 
 				} else if (curEmi.compareTo(curPft) > 0) {
 
@@ -587,7 +587,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					} else if (curPri.compareTo(prvListItemEndBal) >= 0) {
 						curPri = prvListItemEndBal;
 						curEmi = curPri.add(curPft).add(curFee);
-						emi.setValue(PennantAppUtil.formateAmount(curEmi, formatter));
+						emi.setValue(CurrencyUtil.parse(curEmi, formatter));
 					}
 				}
 			} else {
@@ -1035,12 +1035,12 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		this.schdl_grcEndDate.setValue(DateUtility.formatToLongDate(financeMain.getGrcPeriodEndDate()));
 		this.schdl_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 		this.schdl_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
-		this.schdl_purchasePrice.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount(), ccyFormatter));
-		this.schdl_otherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
-		this.schdl_totalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalProfit(), ccyFormatter));
+		this.schdl_purchasePrice.setValue(CurrencyUtil.parse(financeMain.getFinAmount(), ccyFormatter));
+		this.schdl_otherExp.setValue(CurrencyUtil.parse(financeMain.getFeeChargeAmt(), ccyFormatter));
+		this.schdl_totalPft.setValue(CurrencyUtil.parse(financeMain.getTotalProfit(), ccyFormatter));
 		this.schdl_contractPrice
-				.setValue(PennantAppUtil.formateAmount(totalCost.add(financeMain.getTotalProfit()), ccyFormatter));
-		this.schdl_totalCost.setValue(PennantAppUtil.formateAmount(totalCost, ccyFormatter));
+				.setValue(CurrencyUtil.parse(totalCost.add(financeMain.getTotalProfit()), ccyFormatter));
+		this.schdl_totalCost.setValue(CurrencyUtil.parse(totalCost, ccyFormatter));
 		this.effectiveRateOfReturn.setValue(PennantApplicationUtil
 				.formatRate(financeMain.getEffectiveRateOfReturn().doubleValue(), PennantConstants.rateFormate) + "%");
 		financeMain.setTotalPriAmt(this.schdl_contractPrice.getValue());
@@ -1311,10 +1311,10 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				pft.addForward("onValueChange", this.window_ScheduleDetailDialog, "onSchPftChange");
 				if (newRecord) {
 					if (i != 0) {
-						pft.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
+						pft.setValue(CurrencyUtil.parse(BigDecimal.ZERO, formatter));
 					}
 				} else {
-					pft.setValue(PennantAppUtil.formateAmount(curSchd.getProfitSchd(), formatter));
+					pft.setValue(CurrencyUtil.parse(curSchd.getProfitSchd(), formatter));
 				}
 				lc.appendChild(pft);
 			} else {
@@ -1353,10 +1353,10 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				pri.setReadonly(true);
 
 				if (!isAddBtnClicked && isMaturityDate && newRecord) {
-					pri.setValue(PennantAppUtil.formateAmount(disbAmount, formatter));
+					pri.setValue(CurrencyUtil.parse(disbAmount, formatter));
 				} else {
 					pri.setReadonly(false);
-					pri.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
+					pri.setValue(CurrencyUtil.parse(BigDecimal.ZERO, formatter));
 				}
 
 				if (lastTermPriEditable) {
@@ -1365,7 +1365,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				if (!newRecord) {
 					if (lastTermPriEditable) {
 						if (isMaturityDate) {
-							pri.setValue(PennantAppUtil.formateAmount(disbAmount, formatter));
+							pri.setValue(CurrencyUtil.parse(disbAmount, formatter));
 						} else {
 							pri.setValue(CurrencyUtil.format(BigDecimal.ZERO, formatter));
 						}
@@ -1373,7 +1373,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 						if (isMaturityDate) {
 							pri.setReadonly(true);
 						}
-						pri.setValue(PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(), formatter));
+						pri.setValue(CurrencyUtil.parse(curSchd.getPrincipalSchd(), formatter));
 					}
 				}
 				pri.addForward("onValueChange", this.window_ScheduleDetailDialog, "onSchPriChange", scheduleMethod);
@@ -1411,17 +1411,17 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 					if (i == 1 && !isAddBtnClicked) {
 						emi.setReadonly(true);
-						emi.setValue(PennantAppUtil.formateAmount(disbAmount, formatter));
+						emi.setValue(CurrencyUtil.parse(disbAmount, formatter));
 					} else if (!isStartDate) {
-						emi.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
+						emi.setValue(CurrencyUtil.parse(BigDecimal.ZERO, formatter));
 					}
 				} else {
-					emi.setValue(PennantAppUtil.formateAmount(curSchd.getRepayAmount(), formatter));
+					emi.setValue(CurrencyUtil.parse(curSchd.getRepayAmount(), formatter));
 
 					if (isMaturityDate) {
 						emi.setReadonly(true);
 						if (emi.getValidateValue().compareTo(BigDecimal.ZERO) == 0) {
-							emi.setValue(PennantAppUtil.formateAmount(disbAmount, formatter));
+							emi.setValue(CurrencyUtil.parse(disbAmount, formatter));
 						}
 					}
 				}
@@ -1655,7 +1655,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 				profit = CurrencyUtil.unFormat(pft.getValidateValue(), formatter);
 				if (profit.compareTo(BigDecimal.ZERO) < 0) {
-					pft.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
+					pft.setValue(CurrencyUtil.parse(BigDecimal.ZERO, formatter));
 				}
 				if (curListItem.getFellowIfAny("calPft_" + curListItemSeq) != null) {
 					calProfit = CurrencyUtil.unFormat(
@@ -1671,7 +1671,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			calInt = getCalInterest(curListItem, main.getScheduleMethod(), grcAlwdWithoutPftPay, main);
 
 			totProfit = totProfit.add(calInt);
-			this.schdl_totalPft.setValue(PennantAppUtil.formateAmount(totProfit, formatter));
+			this.schdl_totalPft.setValue(CurrencyUtil.parse(totProfit, formatter));
 
 			// Resetting Profit amount as per calculation
 			if (curListItem.getFellowIfAny("calPft_" + curListItemSeq) != null) {
@@ -1714,7 +1714,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					curPft = CurrencyUtil.unFormat(pft.getValidateValue(), formatter);
 					if (curPft.compareTo(BigDecimal.ZERO) == 0 || curPft.compareTo(curCalPft) == 0
 							|| curPft.compareTo(calInt) > 0) {
-						pft.setValue(PennantAppUtil.formateAmount(calInt, formatter));
+						pft.setValue(CurrencyUtil.parse(calInt, formatter));
 					}
 				} else {
 					// Calculating Total Grace period Profit amount based on selection Grace Schedule method
@@ -1798,7 +1798,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					// set the principal amount for the maturity date
 					if (islastitem) {
 						curPri = prvEndBal;
-						pri.setValue(PennantAppUtil.formateAmount(curPri, formatter));
+						pri.setValue(CurrencyUtil.parse(curPri, formatter));
 					}
 
 				} else {
@@ -1829,7 +1829,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					CurrencyBox emi = (CurrencyBox) curListItem.getFellowIfAny("emi_" + curListItemSeq);
 					if (calInt.compareTo(BigDecimal.ZERO) == 0
 							|| emi.getValidateValue().compareTo(BigDecimal.ZERO) <= 0) {
-						emi.setValue(PennantAppUtil.formateAmount(calEmi, formatter));
+						emi.setValue(CurrencyUtil.parse(calEmi, formatter));
 					}
 
 					if (calEmi.compareTo(prvEndBal) >= 0 && !islastitem) {

@@ -88,7 +88,6 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -425,7 +424,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		 */
 		// this.nonFormulaProv.setValue(PennantAppUtil.formateAmount(aProvision.getNonFormulaProv(), format));
 		// this.calProvisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionAmtCal(), format));
-		this.provisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionedAmt(), format));
+		this.provisionedAmt.setValue(CurrencyUtil.parse(aProvision.getProvisionedAmt(), format));
 
 		this.dueFromDate.setValue(aProvision.getDueFromDate());
 		this.lastFullyPaidDate.setValue(aProvision.getLastFullyPaidDate());

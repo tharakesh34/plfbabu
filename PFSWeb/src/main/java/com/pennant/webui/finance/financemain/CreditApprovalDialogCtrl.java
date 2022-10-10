@@ -218,9 +218,9 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.finCcy.setValue(finMain.getFinCcy());
 		// this.finCcyDesc.setValue(main.getLovDescFinCcyName());
 		this.finDivison.setValue(type.getFinDivision() + " - " + type.getLovDescFinDivisionName());
-		this.finAmount.setValue(PennantAppUtil.formateAmount(finMain.getFinAmount(), ccyFormatter));
-		this.finDownPayBank.setValue(PennantAppUtil.formateAmount(finMain.getDownPayBank(), ccyFormatter));
-		this.finDownPaySupp.setValue(PennantAppUtil.formateAmount(finMain.getDownPaySupl(), ccyFormatter));
+		this.finAmount.setValue(CurrencyUtil.parse(finMain.getFinAmount(), ccyFormatter));
+		this.finDownPayBank.setValue(CurrencyUtil.parse(finMain.getDownPayBank(), ccyFormatter));
+		this.finDownPaySupp.setValue(CurrencyUtil.parse(finMain.getDownPaySupl(), ccyFormatter));
 		this.finProfitRate.setValue(finMain.getRepayProfitRate());
 		this.numberOfterms.setValue(finMain.getNumberOfTerms());
 		this.finPurpose.setValue(finMain.getFinPurpose());

@@ -44,6 +44,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -51,7 +52,6 @@ import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -339,7 +339,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 		this.ccyDesc.setValue(aCurrency.getCcyDesc());
 		this.ccySwiftCode.setValue(aCurrency.getCcySwiftCode());
 		this.ccyEditField.setValue(aCurrency.getCcyEditField());
-		this.ccyMinorCcyUnits.setValue(PennantAppUtil.formateAmount(aCurrency.getCcyMinorCcyUnits(), 0));
+		this.ccyMinorCcyUnits.setValue(CurrencyUtil.parse(aCurrency.getCcyMinorCcyUnits(), 0));
 		this.ccyDrRateBasisCode.setValue(aCurrency.getCcyDrRateBasisCode());
 		this.ccyCrRateBasisCode.setValue(aCurrency.getCcyCrRateBasisCode());
 		this.ccySymbol.setValue(aCurrency.getCcySymbol());
@@ -421,7 +421,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 				throw new WrongValueException(ccyMinorCcyUnits, Labels.getLabel("FIELD_MINORCCYUNITS",
 						new String[] { Labels.getLabel("label_CurrencyDialog_CcyMinorCcyUnits.value") }));
 			}
-			aCurrency.setCcyMinorCcyUnits(PennantAppUtil.formateAmount(this.ccyMinorCcyUnits.getValue(), 0));
+			aCurrency.setCcyMinorCcyUnits(CurrencyUtil.parse(this.ccyMinorCcyUnits.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -61,7 +61,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -368,12 +367,10 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		}
 		this.chequeSeq.setValue(aCustomerChequeInfo.getChequeSeq());
 		this.monthYear.setValue(aCustomerChequeInfo.getMonthYear());
-		this.totChequePayment
-				.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getTotChequePayment(), finFormatter));
-		this.salary.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getSalary(), finFormatter));
-		this.debits.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getDebits(), finFormatter));
-		this.returnChequeAmt
-				.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getReturnChequeAmt(), finFormatter));
+		this.totChequePayment.setValue(CurrencyUtil.parse(aCustomerChequeInfo.getTotChequePayment(), finFormatter));
+		this.salary.setValue(CurrencyUtil.parse(aCustomerChequeInfo.getSalary(), finFormatter));
+		this.debits.setValue(CurrencyUtil.parse(aCustomerChequeInfo.getDebits(), finFormatter));
+		this.returnChequeAmt.setValue(CurrencyUtil.parse(aCustomerChequeInfo.getReturnChequeAmt(), finFormatter));
 		this.returnChequeCount.setValue(aCustomerChequeInfo.getReturnChequeCount());
 		this.remarks.setValue(aCustomerChequeInfo.getRemarks());
 

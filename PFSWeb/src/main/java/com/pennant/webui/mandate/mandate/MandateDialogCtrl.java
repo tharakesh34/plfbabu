@@ -105,7 +105,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
@@ -1502,7 +1501,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.openMandate.setChecked(aMandate.isOpenMandate());
 		this.startDate.setValue(aMandate.getStartDate());
 		this.expiryDate.setValue(aMandate.getExpiryDate());
-		this.maxLimit.setValue(PennantAppUtil.formateAmount(aMandate.getMaxLimit(), ccyFormatter));
+		this.maxLimit.setValue(CurrencyUtil.parse(aMandate.getMaxLimit(), ccyFormatter));
 		this.periodicity.setValue(aMandate.getPeriodicity());
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
 		this.reason.setValue(aMandate.getReason());

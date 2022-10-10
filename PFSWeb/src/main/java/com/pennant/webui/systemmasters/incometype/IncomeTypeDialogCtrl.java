@@ -287,7 +287,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 		fillComboBox(category, aIncomeType.getCategory(), PennantAppUtil.getIncomeExpenseCategory(), "");
 		this.incomeTypeCode.setValue(aIncomeType.getIncomeTypeCode());
 		this.incomeTypeDesc.setValue(aIncomeType.getIncomeTypeDesc());
-		this.margin.setValue(PennantAppUtil.formateAmount(aIncomeType.getMargin(), 2));
+		this.margin.setValue(CurrencyUtil.parse(aIncomeType.getMargin(), 2));
 		this.incomeTypeIsActive.setChecked(aIncomeType.isIncomeTypeIsActive());
 		this.recordStatus.setValue(aIncomeType.getRecordStatus());
 

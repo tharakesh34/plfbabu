@@ -48,7 +48,6 @@ import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.provisionmovement.model.ProvisionPostingsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -208,12 +207,12 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 		this.useNFProv.setChecked(aProvisionMovement.isUseNFProv());
 		this.autoReleaseNFP.setChecked(aProvisionMovement.isAutoReleaseNFP());
 		this.provisionedAmt.setValue(aProvisionMovement.getProvisionedAmt());
-		this.principalDue.setValue(PennantAppUtil.formateAmount(aProvisionMovement.getPrincipalDue(), format));
-		this.profitDue.setValue(PennantAppUtil.formateAmount(aProvisionMovement.getProfitDue(), format));
-		this.dueTotal.setValue(PennantAppUtil
-				.formateAmount(aProvisionMovement.getPrincipalDue().add(aProvisionMovement.getProfitDue()), format));
-		this.nonFormulaProv.setValue(PennantAppUtil
-				.formateAmount(aProvisionMovement.getNonFormulaProv().add(aProvisionMovement.getProfitDue()), format));
+		this.principalDue.setValue(CurrencyUtil.parse(aProvisionMovement.getPrincipalDue(), format));
+		this.profitDue.setValue(CurrencyUtil.parse(aProvisionMovement.getProfitDue(), format));
+		this.dueTotal.setValue(CurrencyUtil
+				.parse(aProvisionMovement.getPrincipalDue().add(aProvisionMovement.getProfitDue()), format));
+		this.nonFormulaProv.setValue(CurrencyUtil
+				.parse(aProvisionMovement.getNonFormulaProv().add(aProvisionMovement.getProfitDue()), format));
 		this.dueFromDate.setValue(aProvisionMovement.getDueFromDate());
 		this.lastFullyPaidDate.setValue(aProvisionMovement.getLastFullyPaidDate());
 

@@ -77,6 +77,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -120,7 +121,6 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
@@ -1236,8 +1236,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		fillComboBox(this.vasReference, aFinAdvnancePayments.getVasReference(), vasReferenceList, "");
 		doChangePaymentDetails(aFinAdvnancePayments.getPaymentDetail());
 		if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(aFinAdvnancePayments.getPaymentDetail())) {
-			this.vasAmount.setValue(PennantAppUtil
-					.formateAmount(vasAmountsMAP.get(aFinAdvnancePayments.getVasReference()), ccyFormatter));
+			this.vasAmount.setValue(
+					CurrencyUtil.parse(vasAmountsMAP.get(aFinAdvnancePayments.getVasReference()), ccyFormatter));
 		}
 
 		logger.debug("Leaving");
@@ -2794,7 +2794,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		logger.debug(Literal.ENTERING);
 		String vasReference = this.vasReference.getSelectedItem().getValue().toString();
 		if (StringUtils.isNotBlank(vasReference) && !PennantConstants.List_Select.equals(vasReference)) {
-			vasAmount.setValue(PennantAppUtil.formateAmount(vasAmountsMAP.get(vasReference), ccyFormatter));
+			vasAmount.setValue(CurrencyUtil.parse(vasAmountsMAP.get(vasReference), ccyFormatter));
 		} else {
 			vasAmount.setValue(BigDecimal.ZERO);
 		}

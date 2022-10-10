@@ -57,7 +57,6 @@ import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.component.Uppercasebox;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -484,7 +483,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				int sequence = (Integer) this.fromDate.getSelectedItem().getAttribute("Seq");
 				if (finDisbursement.getDisbDate().compareTo((Date) this.fromDate.getSelectedItem().getValue()) == 0
 						&& sequence == finDisbursement.getDisbSeq()) {
-					this.disbAmount.setValue(PennantAppUtil.formateAmount(finDisbursement.getDisbAmount(),
+					this.disbAmount.setValue(CurrencyUtil.parse(finDisbursement.getDisbAmount(),
 							CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
 					break;
 				}

@@ -383,15 +383,15 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		this.custShrtName.setValue(aCustomerBalanceSheet.getLovDescCustShrtName() == null ? ""
 				: aCustomerBalanceSheet.getLovDescCustShrtName().trim());
 
-		this.totalAssets.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getTotalAssets(), 0));
-		this.totalLiabilities.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getTotalLiabilities(), 0));
-		this.netProfit.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetProfit(), 0));
-		this.netSales.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetSales(), 0));
-		this.netIncome.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetIncome(), 0));
-		this.operatingProfit.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getOperatingProfit(), 0));
-		this.cashFlow.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getCashFlow(), 0));
-		this.bookValue.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getBookValue(), 0));
-		this.marketValue.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getMarketValue(), 0));
+		this.totalAssets.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getTotalAssets(), 0));
+		this.totalLiabilities.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getTotalLiabilities(), 0));
+		this.netProfit.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getNetProfit(), 0));
+		this.netSales.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getNetSales(), 0));
+		this.netIncome.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getNetIncome(), 0));
+		this.operatingProfit.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getOperatingProfit(), 0));
+		this.cashFlow.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getCashFlow(), 0));
+		this.bookValue.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getBookValue(), 0));
+		this.marketValue.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getMarketValue(), 0));
 
 		this.recordStatus.setValue(aCustomerBalanceSheet.getRecordStatus());
 		logger.debug("Leaving");

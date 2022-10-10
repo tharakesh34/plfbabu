@@ -1924,8 +1924,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		this.custID.setValue(aFinanceMain.getCustID());
-		this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(),
-				CurrencyUtil.getFormat(aFinanceMain.getFinCcy())));
+		this.finAmount.setValue(
+				CurrencyUtil.parse(aFinanceMain.getFinAmount(), CurrencyUtil.getFormat(aFinanceMain.getFinCcy())));
 
 		this.commitmentRef.setValue(aFinanceMain.getFinCommitmentRef(),
 				StringUtils.trimToEmpty(aFinanceMain.getFinCommitmentRef()));
@@ -2010,7 +2010,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				|| StringUtils.equals(FinanceConstants.PRODUCT_CD, aFinanceMain.getProductCategory())) {
 
 			this.row_downPayBank.setVisible(true);
-			this.downPayBank.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayBank(),
+			this.downPayBank.setValue(CurrencyUtil.parse(aFinanceMain.getDownPayBank(),
 					CurrencyUtil.getFormat(aFinanceMain.getFinCcy())));
 
 			if (this.downPayBank.isDisabled() && aFinanceMain.getDownPayBank().compareTo(BigDecimal.ZERO) == 0) {
@@ -2243,8 +2243,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
 				PennantStaticListUtil.getInterestRateType(!aFinanceMain.isMigratedFinance()), "");
-		this.finRepaymentAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getReqRepayAmount(),
-				CurrencyUtil.getFormat(aFinanceMain.getFinCcy())));
+		this.finRepaymentAmount.setValue(
+				CurrencyUtil.parse(aFinanceMain.getReqRepayAmount(), CurrencyUtil.getFormat(aFinanceMain.getFinCcy())));
 
 		if ("PFT".equals(aFinanceMain.getScheduleMethod())) {
 			this.finRepaymentAmount.setReadonly(true);
@@ -2519,13 +2519,12 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						"");
 				if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-					this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(),
+					this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(penaltyRate.getODChargeAmtOrPerc(),
 							CurrencyUtil.getFormat(aFinanceMain.getFinCcy())));
 				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-					this.oDChargeAmtOrPerc
-							.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), 2));
+					this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(penaltyRate.getODChargeAmtOrPerc(), 2));
 				}
 				this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
 				this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
@@ -3510,7 +3509,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			if (!this.finAmount.isReadonly() && financeType.getFinMinAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 				if (this.finAmount.getActualValue()
-						.compareTo(PennantAppUtil.formateAmount(financeType.getFinMinAmount(), formatter)) < 0) {
+						.compareTo(CurrencyUtil.parse(financeType.getFinMinAmount(), formatter)) < 0) {
 
 					errorList
 							.add(new ErrorDetail(Labels.getLabel("label_FinAmount"), "30507",
@@ -3522,7 +3521,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 			if (!this.finAmount.isReadonly() && financeType.getFinMaxAmount().compareTo(BigDecimal.ZERO) > 0) {
 				if (this.finAmount.getActualValue()
-						.compareTo(PennantAppUtil.formateAmount(financeType.getFinMaxAmount(), formatter)) > 0) {
+						.compareTo(CurrencyUtil.parse(financeType.getFinMaxAmount(), formatter)) > 0) {
 
 					errorList
 							.add(new ErrorDetail(Labels.getLabel("label_FinAmount"), "30508",

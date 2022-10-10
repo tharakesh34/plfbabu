@@ -54,6 +54,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountNumberGeneration;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -65,7 +66,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -438,8 +438,8 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		} else if (!this.internalAc.isChecked() && !this.custSysAc.isChecked()) {
 			label_accTypeDesc.setValue(Labels.getLabel("label_CustAc"));
 		}
-		this.acAccrualBal.setValue(PennantAppUtil.formateAmount(aAccounts.getShadowBal(), 0));
-		this.acTodayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcBalance(), 0));
+		this.acAccrualBal.setValue(CurrencyUtil.parse(aAccounts.getShadowBal(), 0));
+		this.acTodayBal.setValue(CurrencyUtil.parse(aAccounts.getAcBalance(), 0));
 
 		// FIXME: PV: 07MAY17: To be fixed when screen used
 		/*

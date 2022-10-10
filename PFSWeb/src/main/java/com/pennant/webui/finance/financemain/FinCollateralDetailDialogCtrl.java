@@ -65,7 +65,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -359,8 +358,8 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		showDetails();
 
 		this.FDCurrency.setValue(finCollaterals.getCcy());
-		this.FDAmount.setValue(PennantAppUtil.formateAmount(finCollaterals.getCoverage(),
-				CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
+		this.FDAmount.setValue(
+				CurrencyUtil.parse(finCollaterals.getCoverage(), CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 		this.FDTenor.setValue(finCollaterals.getTenor());
 		this.FDRate.setValue(finCollaterals.getRate());
 		this.FDStartDate.setValue(finCollaterals.getStartDate());

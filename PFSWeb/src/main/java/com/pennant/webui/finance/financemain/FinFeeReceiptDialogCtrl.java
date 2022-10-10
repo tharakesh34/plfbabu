@@ -50,7 +50,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -431,7 +430,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				receiptAmountBox.setMaxlength(18);
 				receiptAmountBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				receiptAmountBox.setDisabled(true);
-				receiptAmountBox.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getReceiptAmount(), formatter));
+				receiptAmountBox.setValue(CurrencyUtil.parse(finFeeReceipt.getReceiptAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(receiptAmountBox);
 				lc.setStyle("text-align:right;");
@@ -442,8 +441,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				availableAmountBox.setMaxlength(18);
 				availableAmountBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				availableAmountBox.setDisabled(true);
-				availableAmountBox
-						.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getAvailableAmount(), formatter));
+				availableAmountBox.setValue(CurrencyUtil.parse(finFeeReceipt.getAvailableAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(availableAmountBox);
 				lc.setStyle("text-align:right;");
@@ -454,7 +452,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				paidBox.setMaxlength(18);
 				paidBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				paidBox.setDisabled(readOnly);
-				paidBox.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getPaidAmount(), formatter));
+				paidBox.setValue(CurrencyUtil.parse(finFeeReceipt.getPaidAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(paidBox);
 				lc.setStyle("text-align:right;");
@@ -465,8 +463,8 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				remReceiptAmountBox.setMaxlength(18);
 				remReceiptAmountBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				remReceiptAmountBox.setDisabled(true);
-				remReceiptAmountBox.setValue(PennantAppUtil.formateAmount(
-						finFeeReceipt.getAvailableAmount().subtract(finFeeReceipt.getPaidAmount()), formatter));
+				remReceiptAmountBox.setValue(CurrencyUtil
+						.parse(finFeeReceipt.getAvailableAmount().subtract(finFeeReceipt.getPaidAmount()), formatter));
 				lc = new Listcell();
 				lc.appendChild(remReceiptAmountBox);
 				lc.setStyle("text-align:right;");

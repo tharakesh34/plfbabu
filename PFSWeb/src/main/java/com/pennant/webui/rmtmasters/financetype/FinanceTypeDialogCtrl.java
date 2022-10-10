@@ -1146,8 +1146,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		fillComboBox(this.cbfinDaysCalType, aFinanceType.getFinDaysCalType(),
 				PennantStaticListUtil.getProfitDaysBasis(), "");
 		this.finDivision.setValue(aFinanceType.getFinDivision());
-		this.finMinAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMinAmount(), format));
-		this.finMaxAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMaxAmount(), format));
+		this.finMinAmount.setValue(CurrencyUtil.parse(aFinanceType.getFinMinAmount(), format));
+		this.finMaxAmount.setValue(CurrencyUtil.parse(aFinanceType.getFinMaxAmount(), format));
 		Filter[] filters = null;
 
 		filters = new Filter[1];
@@ -1572,12 +1572,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 			onChangeODChargeType(true);
-			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(aFinanceType.getODChargeAmtOrPerc(), format));
+			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(aFinanceType.getODChargeAmtOrPerc(), format));
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))
 						&& !FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
-			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(aFinanceType.getODChargeAmtOrPerc(), 2));
+			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(aFinanceType.getODChargeAmtOrPerc(), 2));
 		} else if (FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
 			if (isOverdraft) {
 				this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(false);

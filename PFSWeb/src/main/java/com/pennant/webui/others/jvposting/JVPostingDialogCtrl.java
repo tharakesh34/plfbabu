@@ -538,7 +538,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		} else {
 			LegalExpenses details = (LegalExpenses) dataObject;
 			if (details != null) {
-				expAmount.setValue(PennantAppUtil.formateAmount(details.getAmountdue(),
+				expAmount.setValue(CurrencyUtil.parse(details.getAmountdue(),
 						CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 				expAmount.setVisible(true);
 				this.expReference.appendChild(expAmount);
@@ -926,8 +926,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			expenses = getLegalExpensesService().getLegalExpensesById(aJVPosting.getExpReference());
 			if (expenses != null) {
 				expAmount.setVisible(true);
-				expAmount.setValue(PennantAppUtil.formateAmount(expenses.getAmount(),
-						CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+				expAmount.setValue(
+						CurrencyUtil.parse(expenses.getAmount(), CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 				this.expReference.appendChild(expAmount);
 			}
 
@@ -937,9 +937,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.exchangeRateType.setDescription(aJVPosting.getRateTypeDescription());
 		this.debitCount.setValue(aJVPosting.getDebitCount());
 		this.creditsCount.setValue(aJVPosting.getCreditsCount());
-		this.totDebitsByBatchCcy.setValue(PennantAppUtil.formateAmount(getJVPosting().getTotDebitsByBatchCcy(),
+		this.totDebitsByBatchCcy.setValue(CurrencyUtil.parse(getJVPosting().getTotDebitsByBatchCcy(),
 				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
-		this.totCreditsByBatchCcy.setValue(PennantAppUtil.formateAmount(getJVPosting().getTotCreditsByBatchCcy(),
+		this.totCreditsByBatchCcy.setValue(CurrencyUtil.parse(getJVPosting().getTotCreditsByBatchCcy(),
 				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		this.batchPurpose.setValue(aJVPosting.getBatchPurpose());
 		setFilters(StringUtils.equals(null, aJVPosting.getPostAgainst()) ? aJVPosting.getPostAgainst()
@@ -1694,9 +1694,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	public void doUpdateBatchDetails(JVPosting jVPosting) {
 		this.debitCount.setValue(jVPosting.getDebitCount());
 		this.creditsCount.setValue(jVPosting.getCreditsCount());
-		this.totCreditsByBatchCcy.setValue(PennantAppUtil.formateAmount(jVPosting.getTotCreditsByBatchCcy(),
+		this.totCreditsByBatchCcy.setValue(CurrencyUtil.parse(jVPosting.getTotCreditsByBatchCcy(),
 				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
-		this.totDebitsByBatchCcy.setValue(PennantAppUtil.formateAmount(jVPosting.getTotDebitsByBatchCcy(),
+		this.totDebitsByBatchCcy.setValue(CurrencyUtil.parse(jVPosting.getTotDebitsByBatchCcy(),
 				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 	}
 
@@ -1803,14 +1803,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 					if (jvPostingEntry.getTxnEntry().equalsIgnoreCase(AccountConstants.TRANTYPE_CREDIT)) {
 						creditAmount = creditAmount
-								.add(CurrencyUtil.unFormat(PennantAppUtil.formateAmount(
+								.add(CurrencyUtil.unFormat(CurrencyUtil.parse(
 										CalculationUtil.getConvertedAmount(jvPostingEntry.getTxnCCy(),
 												getJVPosting().getCurrency(), jvPostingEntry.getTxnAmount()),
 										formatter), formatter));
 						creditCount = creditCount + 1;
 					} else {
 						debitAmount = debitAmount
-								.add(CurrencyUtil.unFormat(PennantAppUtil.formateAmount(
+								.add(CurrencyUtil.unFormat(CurrencyUtil.parse(
 										CalculationUtil.getConvertedAmount(jvPostingEntry.getTxnCCy(),
 												getJVPosting().getCurrency(), jvPostingEntry.getTxnAmount()),
 										formatter), formatter));
@@ -1826,11 +1826,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		creditAmount = creditAmount.setScale(2, RoundingMode.HALF_DOWN);
 		debitAmount = debitAmount.setScale(2, RoundingMode.HALF_DOWN);
 
-		this.totCreditsByBatchCcy.setValue(
-				PennantAppUtil.formateAmount(creditAmount, CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totCreditsByBatchCcy
+				.setValue(CurrencyUtil.parse(creditAmount, CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		this.creditsCount.setValue(creditCount);
-		this.totDebitsByBatchCcy.setValue(
-				PennantAppUtil.formateAmount(debitAmount, CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totDebitsByBatchCcy
+				.setValue(CurrencyUtil.parse(debitAmount, CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		this.debitCount.setValue(debitCount);
 	}
 

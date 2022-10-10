@@ -1032,7 +1032,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finType.setValue(aFinanceMain.getFinType());
 		this.finCcy.setValue(aFinanceMain.getFinCcy(), CurrencyUtil.getCcyDesc(aFinanceMain.getFinCcy()));
 		fillComboBox(this.cbProfitDaysBasis, aFinanceMain.getProfitDaysBasis(), profitDaysBasisList, "");
-		this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), finFormatter));
+		this.finAmount.setValue(CurrencyUtil.parse(aFinanceMain.getFinAmount(), finFormatter));
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
@@ -1051,8 +1051,8 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.downPayBank.setValue(BigDecimal.ZERO);
 				this.downPaySupl.setValue(BigDecimal.ZERO);
 			} else {
-				this.downPayBank.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayBank(), finFormatter));
-				this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(), finFormatter));
+				this.downPayBank.setValue(CurrencyUtil.parse(aFinanceMain.getDownPayBank(), finFormatter));
+				this.downPaySupl.setValue(CurrencyUtil.parse(aFinanceMain.getDownPaySupl(), finFormatter));
 			}
 		}
 		setdownpayPercentage();
@@ -1060,7 +1060,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Down Pay By Bank
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired()
 				&& aFinanceMain.getMinDownPayPerc().compareTo(BigDecimal.ZERO) >= 0) {
-			this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(), finFormatter));
+			this.downPaySupl.setValue(CurrencyUtil.parse(aFinanceMain.getDownPaySupl(), finFormatter));
 			if (this.downPaySupl.isReadonly() && aFinanceMain.getDownPaySupl().compareTo(BigDecimal.ZERO) == 0) {
 				this.downPaySupl.setVisible(false);
 			}
@@ -1234,7 +1234,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
 				PennantStaticListUtil.getInterestRateType(true), "");
-		this.finRepaymentAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getReqRepayAmount(), finFormatter));
+		this.finRepaymentAmount.setValue(CurrencyUtil.parse(aFinanceMain.getReqRepayAmount(), finFormatter));
 
 		if ("PFT".equals(aFinanceMain.getScheduleMethod())) {
 			this.finRepaymentAmount.setReadonly(true);
@@ -1444,8 +1444,8 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.custEmpDept.setValue(customer.getEmpDept());
 		this.custEmpDesg.setValue(customer.getEmpDesg());
 		this.custEmpName.setValue(String.valueOf(customer.getEmpName()));
-		this.custIncome.setValue(PennantAppUtil.formateAmount(customer.getTotalIncome(), ccyformater));
-		this.custTotExpense.setValue(PennantAppUtil.formateAmount(customer.getTotalExpense(), ccyformater));
+		this.custIncome.setValue(CurrencyUtil.parse(customer.getTotalIncome(), ccyformater));
+		this.custTotExpense.setValue(CurrencyUtil.parse(customer.getTotalExpense(), ccyformater));
 		fillComboBox(this.custSalutationCode, customer.getCustSalutationCode(),
 				PennantAppUtil.getSalutationCodes(customer.getCustGenderCode()), "");
 
@@ -6286,7 +6286,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// validate finance amount is between finance minimum and maximum amounts or not
 			if (!this.finAmount.isReadonly() && getFinanceDetail().getFinScheduleData().getFinanceType()
 					.getFinMinAmount().compareTo(BigDecimal.ZERO) > 0) {
-				if (this.finAmount.getActualValue().compareTo(PennantAppUtil.formateAmount(
+				if (this.finAmount.getActualValue().compareTo(CurrencyUtil.parse(
 						getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinAmount(), format)) < 0) {
 
 					errorList
@@ -6299,7 +6299,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			if (!this.finAmount.isReadonly() && getFinanceDetail().getFinScheduleData().getFinanceType()
 					.getFinMaxAmount().compareTo(BigDecimal.ZERO) > 0) {
-				if (this.finAmount.getActualValue().compareTo(PennantAppUtil.formateAmount(
+				if (this.finAmount.getActualValue().compareTo(CurrencyUtil.parse(
 						getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxAmount(), format)) > 0) {
 
 					errorList
@@ -7096,7 +7096,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 							totPriInc = totPriInc.add(income1);
 						}
 						cell = new Listcell();
-						Decimalbox priInc = new Decimalbox(PennantAppUtil.formateAmount(income1, ccyFormatter));
+						Decimalbox priInc = new Decimalbox(CurrencyUtil.parse(income1, ccyFormatter));
 						priInc.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 						priInc.setWidth("120px");
 						priInc.addForward("onChange", window_RetailWIFFinanceMainDialog, "onChangeIncomeAmount", null);
@@ -7115,7 +7115,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 							totSecInc = totSecInc.add(income2);
 						}
 						cell = new Listcell();
-						Decimalbox secInc = new Decimalbox(PennantAppUtil.formateAmount(income2, ccyFormatter));
+						Decimalbox secInc = new Decimalbox(CurrencyUtil.parse(income2, ccyFormatter));
 						secInc.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 						secInc.setWidth("120px");
 						secInc.setId("I_" + category.trim() + "_" + customerIncome.getIncomeType().trim() + "_S");
@@ -7194,7 +7194,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 							}
 						}
 						cell = new Listcell();
-						Decimalbox priInc = new Decimalbox(PennantAppUtil.formateAmount(income1, ccyFormatter));
+						Decimalbox priInc = new Decimalbox(CurrencyUtil.parse(income1, ccyFormatter));
 						priInc.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 						priInc.setWidth("120px");
 						priInc.addForward("onChange", window_RetailWIFFinanceMainDialog, "onChangeIncomeAmount", null);
@@ -7225,7 +7225,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 							}
 						}
 						cell = new Listcell();
-						Decimalbox secInc = new Decimalbox(PennantAppUtil.formateAmount(income2, ccyFormatter));
+						Decimalbox secInc = new Decimalbox(CurrencyUtil.parse(income2, ccyFormatter));
 						secInc.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 						secInc.setWidth("120px");
 						secInc.setId("E_" + category.trim() + "_" + customerIncome.getIncomeType().trim() + "_S");

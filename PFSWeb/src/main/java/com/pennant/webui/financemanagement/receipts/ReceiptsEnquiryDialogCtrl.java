@@ -1991,7 +1991,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 * @return ChartSetElement (list)
 	 */
-	@SuppressWarnings("deprecation")
 	public List<ChartSetElement> getReportDataForRepayments(FinScheduleData scheduleData, int formatter) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
@@ -2006,8 +2005,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Payment Amount", PennantAppUtil.formateAmount(curSchd.getRepayAmount(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+							"Payment Amount", CurrencyUtil.parse(curSchd.getRepayAmount(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 			}
@@ -2016,8 +2015,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Principal", PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+							"Principal", CurrencyUtil.parse(curSchd.getPrincipalSchd(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 
@@ -2027,8 +2026,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Interest", PennantAppUtil.formateAmount(curSchd.getProfitSchd(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+							"Interest", CurrencyUtil.parse(curSchd.getProfitSchd(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 
 				}
@@ -2043,7 +2042,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 * @return ChartSetElement (list)
 	 */
-	@SuppressWarnings("deprecation")
 	public List<ChartSetElement> getReportDataForFinVsAmount(FinScheduleData scheduleData, int formatter) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
@@ -2062,13 +2060,12 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
 
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
-				financeAmount = financeAmount.add(PennantAppUtil.formateAmount(curSchd.getDisbAmount(), format));
-				downPayment = downPayment.add(PennantAppUtil.formateAmount(curSchd.getDownPaymentAmount(), format));
-				capitalized = capitalized.add(PennantAppUtil.formateAmount(curSchd.getCpzAmount(), format));
+				financeAmount = financeAmount.add(CurrencyUtil.parse(curSchd.getDisbAmount(), format));
+				downPayment = downPayment.add(CurrencyUtil.parse(curSchd.getDownPaymentAmount(), format));
+				capitalized = capitalized.add(CurrencyUtil.parse(curSchd.getCpzAmount(), format));
 
-				scheduleProfit = scheduleProfit.add(PennantAppUtil.formateAmount(curSchd.getProfitSchd(), format));
-				schedulePrincipal = schedulePrincipal
-						.add(PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(), format));
+				scheduleProfit = scheduleProfit.add(CurrencyUtil.parse(curSchd.getProfitSchd(), format));
+				schedulePrincipal = schedulePrincipal.add(CurrencyUtil.parse(curSchd.getPrincipalSchd(), format));
 
 			}
 			chartSetElement = new ChartSetElement("Down Payment", downPayment);

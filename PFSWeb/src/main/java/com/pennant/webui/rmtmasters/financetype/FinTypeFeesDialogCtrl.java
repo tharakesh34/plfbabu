@@ -416,7 +416,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 		this.ruleCode.setValue(aFinTypeFees.getRuleCode());
 		this.ruleCode.setDescription(StringUtils.trimToEmpty(aFinTypeFees.getRuleDesc()));
-		this.amount.setValue(PennantAppUtil.formateAmount(aFinTypeFees.getAmount(), ccyFormat));
+		this.amount.setValue(CurrencyUtil.parse(aFinTypeFees.getAmount(), ccyFormat));
 		this.percentage.setValue(aFinTypeFees.getPercentage());
 		this.feeOrder.setValue(aFinTypeFees.getFeeOrder());
 		this.maxWaiver.setValue(aFinTypeFees.getMaxWaiverPerc());

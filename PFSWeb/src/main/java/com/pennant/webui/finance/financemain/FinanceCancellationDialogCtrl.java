@@ -64,7 +64,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -359,7 +358,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired() && aFinanceDetail
 				.getFinScheduleData().getFinanceMain().getMinDownPayPerc().compareTo(BigDecimal.ZERO) >= 0) {
-			this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(),
+			this.downPaySupl.setValue(CurrencyUtil.parse(aFinanceMain.getDownPaySupl(),
 					CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 		}
 
@@ -430,9 +429,9 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		} else {
 			this.row_ManualSchedule.setVisible(false);
 		}
-		this.finAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(),
+		this.finAssetValue.setValue(CurrencyUtil.parse(aFinanceMain.getFinAssetValue(),
 				CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
-		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(),
+		this.finCurrentAssetValue.setValue(CurrencyUtil.parse(aFinanceMain.getFinCurrAssetValue(),
 				CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 		setNetFinanceAmount(true);
 
@@ -556,7 +555,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 				if (StringUtils.equals(FinServiceEvent.OVERDRAFTSCHD, this.moduleDefiner)) {
 					if (this.finAssetValue.getValidateValue()
-							.compareTo(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), formatter)) < 0) {
+							.compareTo(CurrencyUtil.parse(aFinanceMain.getFinAssetValue(), formatter)) < 0) {
 						throw new WrongValueException(this.finAssetValue.getCcyTextBox(),
 								Labels.getLabel("NUMBER_MINVALUE_EQ",
 										new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),

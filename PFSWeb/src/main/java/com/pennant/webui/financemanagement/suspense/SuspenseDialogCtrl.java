@@ -90,7 +90,6 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -330,8 +329,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		this.finSuspSeq.setValue(aSuspHead.getFinSuspSeq());
 		this.finIsInSusp.setChecked(aSuspHead.isFinIsInSusp());
 		this.manualSusp.setChecked(aSuspHead.isManualSusp());
-		this.finSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinSuspAmt(), format));
-		this.finCurSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinCurSuspAmt(), format));
+		this.finSuspAmt.setValue(CurrencyUtil.parse(aSuspHead.getFinSuspAmt(), format));
+		this.finCurSuspAmt.setValue(CurrencyUtil.parse(aSuspHead.getFinCurSuspAmt(), format));
 		this.finSuspDate.setValue(aSuspHead.getFinSuspDate());
 		this.finSuspTrfDate.setValue(aSuspHead.getFinSuspTrfDate());
 		if (aSuspHead.getFinSuspDate() == null) {

@@ -376,7 +376,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 						if (fieldName.equalsIgnoreCase("CustAge")) {
 							decimalbox.setValue(new BigDecimal(fieldValue));
 						} else {
-							decimalbox.setValue(PennantAppUtil.formateAmount(new BigDecimal(fieldValue), formatter));
+							decimalbox.setValue(CurrencyUtil.parse(new BigDecimal(fieldValue), formatter));
 						}
 					} catch (Exception e) {
 						decimalbox.setValue(BigDecimal.ZERO);

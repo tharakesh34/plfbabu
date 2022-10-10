@@ -397,13 +397,13 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	private void setEligibilityAmounts(Sampling sampling) {
-		this.finAmtReq.setValue(PennantAppUtil.formateAmount(sampling.getLoanAmountRequested(), ccyFormatter));
-		this.foirEligiblity.setValue(PennantAppUtil.formateAmount(sampling.getFoirEligibility(), ccyFormatter));
-		this.emiPerLakh.setValue(PennantAppUtil.formateAmount(sampling.getEmi(), ccyFormatter));
-		this.iirEligibility.setValue(PennantAppUtil.formateAmount(sampling.getIrrEligibility(), ccyFormatter));
-		this.loanEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLoanEligibility(), ccyFormatter));
-		this.lcrEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLcrEligibility(), ccyFormatter));
-		this.ltvEligibility.setValue(PennantAppUtil.formateAmount(sampling.getLtvEligibility(), ccyFormatter));
+		this.finAmtReq.setValue(CurrencyUtil.parse(sampling.getLoanAmountRequested(), ccyFormatter));
+		this.foirEligiblity.setValue(CurrencyUtil.parse(sampling.getFoirEligibility(), ccyFormatter));
+		this.emiPerLakh.setValue(CurrencyUtil.parse(sampling.getEmi(), ccyFormatter));
+		this.iirEligibility.setValue(CurrencyUtil.parse(sampling.getIrrEligibility(), ccyFormatter));
+		this.loanEligibility.setValue(CurrencyUtil.parse(sampling.getLoanEligibility(), ccyFormatter));
+		this.lcrEligibility.setValue(CurrencyUtil.parse(sampling.getLcrEligibility(), ccyFormatter));
+		this.ltvEligibility.setValue(CurrencyUtil.parse(sampling.getLtvEligibility(), ccyFormatter));
 	}
 
 	private void doFillCollaterals(List<SamplingCollateral> collSetupList) {

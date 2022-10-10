@@ -108,7 +108,6 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
@@ -481,37 +480,33 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finStartDate.setValue(financeMain.getFinStartDate());
 		this.maturityDate.setValue(financeMain.getMaturityDate());
 
-		this.label_FinWriteoffDialog_WOPriAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffPri(), format));
-		this.label_FinWriteoffDialog_WOPftAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffPft(), format));
+		this.label_FinWriteoffDialog_WOPriAmt.setValue(CurrencyUtil.parse(financeWriteoff.getWrittenoffPri(), format));
+		this.label_FinWriteoffDialog_WOPftAmt.setValue(CurrencyUtil.parse(financeWriteoff.getWrittenoffPft(), format));
 
 		this.label_FinWriteoffDialog_WOSchdFeeAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffSchFee(), format));
+				.setValue(CurrencyUtil.parse(financeWriteoff.getWrittenoffSchFee(), format));
 
-		this.label_FinWriteoffDialog_ODPriAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getCurODPri(), format));
-		this.label_FinWriteoffDialog_ODPftAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getCurODPft(), format));
+		this.label_FinWriteoffDialog_ODPriAmt.setValue(CurrencyUtil.parse(financeWriteoff.getCurODPri(), format));
+		this.label_FinWriteoffDialog_ODPftAmt.setValue(CurrencyUtil.parse(financeWriteoff.getCurODPft(), format));
 		this.label_FinWriteoffDialog_UnPaidPriAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPri(), format));
+				.setValue(CurrencyUtil.parse(financeWriteoff.getUnPaidSchdPri(), format));
 		this.label_FinWriteoffDialog_UnPaidPftAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPft(), format));
+				.setValue(CurrencyUtil.parse(financeWriteoff.getUnPaidSchdPft(), format));
 		this.label_FinWriteoffDialog_UnPaidSchFeeAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidSchFee(), format));
+				.setValue(CurrencyUtil.parse(financeWriteoff.getUnpaidSchFee(), format));
 		this.label_FinWriteoffDialog_OutStandPrincipal
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPri(), format));
+				.setValue(CurrencyUtil.parse(financeWriteoff.getUnPaidSchdPri(), format));
 		this.label_FinWriteoffDialog_OutStandProfit
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPft(), format));
+				.setValue(CurrencyUtil.parse(financeWriteoff.getUnPaidSchdPft(), format));
 		this.label_FinWriteoffDialog_PenaltyAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getPenaltyAmount(), format));
+				.setValue(CurrencyUtil.parse(financeWriteoff.getPenaltyAmount(), format));
 		this.label_FinWriteoffDialog_ProvisionAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getProvisionedAmount(), format));
+				.setValue(CurrencyUtil.parse(financeWriteoff.getProvisionedAmount(), format));
 
-		this.writeoffPriAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffPrincipal(), format));
-		this.writeoffPftAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffProfit(), format));
-		this.writeoffSchFee.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffSchFee(), format));
-		this.adjAmount.setValue(PennantAppUtil.formateAmount(financeWriteoff.getAdjAmount(), format));
+		this.writeoffPriAmt.setValue(CurrencyUtil.parse(financeWriteoff.getWriteoffPrincipal(), format));
+		this.writeoffPftAmt.setValue(CurrencyUtil.parse(financeWriteoff.getWriteoffProfit(), format));
+		this.writeoffSchFee.setValue(CurrencyUtil.parse(financeWriteoff.getWriteoffSchFee(), format));
+		this.adjAmount.setValue(CurrencyUtil.parse(financeWriteoff.getAdjAmount(), format));
 		this.remarks.setValue(financeWriteoff.getRemarks());
 		this.writeoffDate.setValue(financeWriteoff.getWriteoffDate());
 
@@ -539,9 +534,9 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					&& financeWriteoff.getWriteoffProfit().compareTo(BigDecimal.ZERO) == 0
 					&& financeWriteoff.getWriteoffSchFee().compareTo(BigDecimal.ZERO) == 0) {
 
-				this.writeoffPriAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPri(), format));
-				this.writeoffPftAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPft(), format));
-				this.writeoffSchFee.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidSchFee(), format));
+				this.writeoffPriAmt.setValue(CurrencyUtil.parse(financeWriteoff.getUnPaidSchdPri(), format));
+				this.writeoffPftAmt.setValue(CurrencyUtil.parse(financeWriteoff.getUnPaidSchdPft(), format));
+				this.writeoffSchFee.setValue(CurrencyUtil.parse(financeWriteoff.getUnpaidSchFee(), format));
 
 				Events.sendEvent("onClick$btnWriteoffCal", this.window_FinWriteoffDialog, null);
 			} else {

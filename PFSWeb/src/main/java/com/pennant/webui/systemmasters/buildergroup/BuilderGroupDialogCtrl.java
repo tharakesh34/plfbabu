@@ -55,7 +55,6 @@ import com.pennant.backend.service.systemmasters.BuilderGroupService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -548,8 +547,8 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 					StringUtils.trimToEmpty(aBuilderGroup.getAreaName()));
 		}
 		// Exposure Limit on Amount
-		this.expLimitOnAmt.setValue(
-				PennantAppUtil.formateAmount(aBuilderGroup.getExpLmtOnAmt(), PennantConstants.defaultCCYDecPos));
+		this.expLimitOnAmt
+				.setValue(CurrencyUtil.parse(aBuilderGroup.getExpLmtOnAmt(), PennantConstants.defaultCCYDecPos));
 
 		// Exposure Limit on number of Units
 		this.expLimitOnNoOfUnits.setValue((aBuilderGroup.getExpLmtOnNoOfUnits()));
@@ -558,8 +557,8 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		this.currentExpUnits.setValue((aBuilderGroup.getCurrExpUnits()));
 
 		// Current Exposure (Amount )
-		this.currentExpAmt.setValue(
-				PennantAppUtil.formateAmount(aBuilderGroup.getCurrExpAmt(), PennantConstants.defaultCCYDecPos));
+		this.currentExpAmt
+				.setValue(CurrencyUtil.parse(aBuilderGroup.getCurrExpAmt(), PennantConstants.defaultCCYDecPos));
 
 		this.recordStatus.setValue(aBuilderGroup.getRecordStatus());
 

@@ -54,7 +54,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.CostOfFundService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -312,9 +311,9 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 		this.cofCode.setValue(aCostOfFund.getCofCode());
 		this.currency.setValue(aCostOfFund.getCurrency());
 		this.cofEffDate.setValue(aCostOfFund.getCofEffDate());
-		this.cofRate.setValue(PennantAppUtil.formateAmount(
-				aCostOfFund.getCofRate() == null ? BigDecimal.ZERO : aCostOfFund.getCofRate(),
-				PennantConstants.defaultCCYDecPos));
+		this.cofRate.setValue(
+				CurrencyUtil.parse(aCostOfFund.getCofRate() == null ? BigDecimal.ZERO : aCostOfFund.getCofRate(),
+						PennantConstants.defaultCCYDecPos));
 		this.deleteRate.setChecked(aCostOfFund.isDelExistingRates());
 		this.active.setChecked(aCostOfFund.isActive());
 

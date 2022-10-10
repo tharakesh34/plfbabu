@@ -651,8 +651,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.reference.setValue(aFeePostings.getReference());
 		this.feeTypeCode.setValue(
 				aFeePostings.isNewRecord() ? aFeePostings.getFeeTyeCode() : aFeePostings.getFeeTyeCode().trim());
-		this.postingAmount
-				.setValue(PennantAppUtil.formateAmount(aFeePostings.getPostingAmount(), aCurrency.getCcyEditField()));
+		this.postingAmount.setValue(CurrencyUtil.parse(aFeePostings.getPostingAmount(), aCurrency.getCcyEditField()));
 		this.postingDivision.setValue(aFeePostings.getPostingDivision(), aFeePostings.getDivisionCodeDesc());
 		this.postingCcy.setValue(aFeePostings.getCurrency());
 		if (aFeePostings.isNewRecord()) {

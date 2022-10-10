@@ -69,7 +69,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.PTCKeditor;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -439,14 +438,14 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.facilityCCY.setValue(aFacilityDetail.getFacilityCCY(),
 				CurrencyUtil.getCcyDesc(aFacilityDetail.getFacilityCCY()));
 		if (commitment != null) {
-			this.existingLimit.setValue(PennantAppUtil.formateAmount(commitment.getCmtAmount(), ccyFormat));
-			this.exposure.setValue(PennantAppUtil.formateAmount(commitment.getCmtAvailable(), ccyFormat));
+			this.existingLimit.setValue(CurrencyUtil.parse(commitment.getCmtAmount(), ccyFormat));
+			this.exposure.setValue(CurrencyUtil.parse(commitment.getCmtAvailable(), ccyFormat));
 		} else {
-			this.existingLimit.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, ccyFormat));
-			this.exposure.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, ccyFormat));
+			this.existingLimit.setValue(CurrencyUtil.parse(BigDecimal.ZERO, ccyFormat));
+			this.exposure.setValue(CurrencyUtil.parse(BigDecimal.ZERO, ccyFormat));
 		}
-		this.newLimit.setValue(PennantAppUtil.formateAmount(aFacilityDetail.getNewLimit(), ccyFormat));
-		this.financeAmount.setValue(PennantAppUtil.formateAmount(aFacilityDetail.getFinanceAmount(), ccyFormat));
+		this.newLimit.setValue(CurrencyUtil.parse(aFacilityDetail.getNewLimit(), ccyFormat));
+		this.financeAmount.setValue(CurrencyUtil.parse(aFacilityDetail.getFinanceAmount(), ccyFormat));
 		this.pricing.setValue(aFacilityDetail.getPricing());
 		this.repayments.setValue(aFacilityDetail.getRepayments());
 		this.rateType.setValue(aFacilityDetail.getRateType());

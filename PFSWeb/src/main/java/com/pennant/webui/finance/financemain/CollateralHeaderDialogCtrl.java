@@ -62,7 +62,6 @@ import com.pennant.backend.service.configuration.AssetTypeService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.commitment.commitment.CommitmentDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -626,10 +625,9 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 					totCollateralCount = totCollateralCount + 1;
 					totAssignedColValue = totAssignedColValue.add(curAssignValue);
 
-					totalAssignedValue = totalAssignedValue
-							.add(PennantAppUtil.formateAmount(curAssignValue, ccyFormat));
+					totalAssignedValue = totalAssignedValue.add(CurrencyUtil.parse(curAssignValue, ccyFormat));
 					totalBankValuation = totalBankValuation
-							.add(PennantAppUtil.formateAmount(collateralAssignment.getBankValuation(), ccyFormat));
+							.add(CurrencyUtil.parse(collateralAssignment.getBankValuation(), ccyFormat));
 					assignedCount = assignedCount + 1;
 					if (collateralAssignment.getSpecialLTV().compareTo(BigDecimal.ZERO) == 0) {
 						totalLtv = totalLtv.add(collateralAssignment.getBankLTV());

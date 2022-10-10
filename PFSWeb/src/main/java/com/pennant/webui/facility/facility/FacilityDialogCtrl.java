@@ -100,7 +100,6 @@ import com.pennant.component.PTCKeditor;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.ShowDedupListBox;
@@ -807,8 +806,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.customerGroup.setValue(aFacility.getCustGrpCodeName());
 		this.customerGroup.setDescription(StringUtils.trimToEmpty(aFacility.getCustomerGroupName()));
 
-		this.countryExposure.setValue(PennantAppUtil.formateAmount(aFacility.getCountryExposure(), ccyFormat));
-		this.countryLimit.setValue(PennantAppUtil.formateAmount(aFacility.getCountryLimit(), ccyFormat));
+		this.countryExposure.setValue(CurrencyUtil.parse(aFacility.getCountryExposure(), ccyFormat));
+		this.countryLimit.setValue(CurrencyUtil.parse(aFacility.getCountryLimit(), ccyFormat));
 		this.reviewCenter.setValue(aFacility.getReviewCenter());
 		this.countryLimitAdeq.setValue(aFacility.getCountryLimitAdeq());
 		if (!aFacility.isOverriddeCirculation()) {
@@ -847,7 +846,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				totfacilityUsd = totfacilityUsd.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(),
 						AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
 			}
-			totfacilityUsd = PennantAppUtil.formateAmount(totfacilityUsd, AccountConstants.CURRENCY_USD_FORMATTER);
+			totfacilityUsd = CurrencyUtil.parse(totfacilityUsd, AccountConstants.CURRENCY_USD_FORMATTER);
 		}
 
 		if (StringUtils.isNotEmpty(countryLimitCureency)
@@ -1869,8 +1868,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP);
 					BigDecimal custGroupExposureEQ = category.getRiskAmount().divide(
 							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP);
-					this.custGroupLimit.setValue(PennantAppUtil.formateAmount(custGroupLimitEQ, ccyFormat));
-					this.custGroupExposure.setValue(PennantAppUtil.formateAmount(custGroupExposureEQ, ccyFormat));
+					this.custGroupLimit.setValue(CurrencyUtil.parse(custGroupLimitEQ, ccyFormat));
+					this.custGroupExposure.setValue(CurrencyUtil.parse(custGroupExposureEQ, ccyFormat));
 					label_FacilityDialog_CustGroupExposure.setValue(label_FacilityDialog_CustGroupExposure.getValue()
 							+ "(" + category.getLimitCurrency() + ")");
 					label_FacilityDialog_CustGroupLimit.setValue(

@@ -44,7 +44,6 @@ import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -259,8 +258,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			}
 		}
 		if (sampling.getRecommendedAmount() != null) {
-			this.samplingFinalRcmdAmt.setValue(
-					PennantAppUtil.formateAmount(sampling.getRecommendedAmount(), sampling.getCcyeditfield()));
+			this.samplingFinalRcmdAmt
+					.setValue(CurrencyUtil.parse(sampling.getRecommendedAmount(), sampling.getCcyeditfield()));
 		} else {
 			this.samplingFinalRcmdAmt.setValue(BigDecimal.ZERO);
 		}

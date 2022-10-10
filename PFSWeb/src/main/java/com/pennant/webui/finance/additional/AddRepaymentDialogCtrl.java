@@ -62,7 +62,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -343,11 +342,9 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		int format = CurrencyUtil.getFormat(aFinSchData.getFinanceMain().getFinCcy());
 		if (getFinanceScheduleDetail() != null) {
 			if (getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE)) {
-				this.wIAmount
-						.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getPrincipalSchd(), format));
+				this.wIAmount.setValue(CurrencyUtil.parse(getFinanceScheduleDetail().getPrincipalSchd(), format));
 			} else {
-				this.wIAmount
-						.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getRepayAmount(), format));
+				this.wIAmount.setValue(CurrencyUtil.parse(getFinanceScheduleDetail().getRepayAmount(), format));
 			}
 		}
 
@@ -961,7 +958,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (StringUtils.equals(schdMthd, CalculationConstants.SCHMTHD_PFT)
 				|| StringUtils.equals(schdMthd, CalculationConstants.SCHMTHD_PFTCPZ)
 				|| StringUtils.equals(schdMthd, CalculationConstants.SCHMTHD_NOPAY)) {
-			this.wIAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,
+			this.wIAmount.setValue(CurrencyUtil.parse(BigDecimal.ZERO,
 					CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
 			this.wIAmount.setDisabled(true);
 		} else {
@@ -1074,7 +1071,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFT)
 						|| this.cbSchdMthd.getSelectedItem().getValue().toString()
 								.equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
-					this.wIAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,
+					this.wIAmount.setValue(CurrencyUtil.parse(BigDecimal.ZERO,
 							CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
 					this.wIAmount.setDisabled(true);
 				} else {
