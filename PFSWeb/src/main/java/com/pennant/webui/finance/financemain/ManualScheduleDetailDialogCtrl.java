@@ -430,11 +430,11 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		FinanceMain finmain = getFinanceMainData();
 		String msg = ("First Disbursement Amount : " + CurrencyUtil.format(finmain.getFinAmount(), formatter) + "\n")
 				+ ((finmain.getDownPayment() != null && finmain.getDownPayment().compareTo(BigDecimal.ZERO) > 0)
-						? "Down Payment   : " + CurrencyUtil.format(finmain.getDownPayment(), formatter)
+						? "Down Payment\t: " + CurrencyUtil.format(finmain.getDownPayment(), formatter)
 						: "")
 				+ "\n"
 				+ ((finmain.getFeeChargeAmt() != null && finmain.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0)
-						? "Fee Amount	: " + CurrencyUtil.format(finmain.getFeeChargeAmt(), formatter)
+						? "Fee Amount\t: " + CurrencyUtil.format(finmain.getFeeChargeAmt(), formatter)
 						: "");
 
 		Clients.showNotification(msg, "info", null, null, -1);

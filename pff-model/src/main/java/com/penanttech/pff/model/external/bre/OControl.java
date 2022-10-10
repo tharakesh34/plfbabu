@@ -7,8 +7,6 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OControl {
-
-	private static final long serialVersionUID = 1L;
 	@XmlElement(name = "ALIAS")
 	private String alias;
 	@XmlElement(name = "SIGNATURE")

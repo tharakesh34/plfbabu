@@ -70,7 +70,6 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class AdvancePaymentService extends ServiceHelper {
-	private static final long serialVersionUID = 1442146139821584760L;
 	private Logger logger = LogManager.getLogger(AdvancePaymentService.class);
 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;

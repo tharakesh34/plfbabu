@@ -47,7 +47,7 @@ public class Dataset {
 	}
 
 	public static Long getLong(Cell[] data, int index) {
-		return new Long(data[index].getContents());
+		return Long.parseLong(data[index].getContents());
 	}
 
 	public static BigDecimal getBigDecimal(Cell[] data, int index) {
@@ -63,7 +63,7 @@ public class Dataset {
 	}
 
 	public static boolean getBoolean(Cell[] data, int index) {
-		return new Boolean(data[index].getContents());
+		return Boolean.parseBoolean(data[index].getContents());
 	}
 
 	public static void close() {

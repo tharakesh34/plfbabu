@@ -18,7 +18,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class AutoDisbursementService extends ServiceHelper {
-	private static final long serialVersionUID = 1442146139821584760L;
 	private Logger logger = LogManager.getLogger(AutoDisbursementService.class);
 
 	public void processDisbursementPostings(CustEODEvent custEODEvent) {

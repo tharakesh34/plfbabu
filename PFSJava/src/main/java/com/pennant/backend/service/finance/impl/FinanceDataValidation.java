@@ -4276,7 +4276,7 @@ public class FinanceDataValidation {
 			case UF:
 				if (advTerms > 0) {
 					String[] valueParm = new String[3];
-					valueParm[0] = "Upfront Interest Full Tenor the  Terms " + String.valueOf(fm.getAdvTerms());
+					valueParm[0] = "Upfront Interest Full Tenor the  Terms " + fm.getAdvTerms();
 					valueParm[1] = "0";
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
 					return;
@@ -4285,7 +4285,7 @@ public class FinanceDataValidation {
 			case AF:
 				if (advTerms > 0) {
 					String[] valueParm = new String[3];
-					valueParm[0] = "Advance at Interest Frequency the Terms " + String.valueOf(advTerms);
+					valueParm[0] = "Advance at Interest Frequency the Terms " + advTerms;
 					valueParm[1] = "0";
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
 					return;

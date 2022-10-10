@@ -30,7 +30,6 @@ public class FinanceTypeDataFactory {
 
 		try {
 			Sheet loanTypeSheet = getSheet(finType);
-			Cell[] colums = loanTypeSheet.getColumn(1);
 			Cell[] values = loanTypeSheet.getColumn(2);
 
 			financeType.setFinType(Dataset.getString(values, 1));

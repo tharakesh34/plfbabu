@@ -30,8 +30,6 @@ package com.pennant.backend.model.mandate;
  * 
  */
 public class UploadSecondaryMandate {
-	private static final long serialVersionUID = 1L;
-
 	private long uploadId = Long.MIN_VALUE;
 	private long mandateID = Long.MIN_VALUE;
 	private String mandateType;
