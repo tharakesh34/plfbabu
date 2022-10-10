@@ -5190,11 +5190,6 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
-		<property name="provisionDAO" ref="provisionDAO" />
-		<property name="provisionMovementDAO" ref="provisionMovementDAO" />
-		<property name="engineExecution" ref="engineExecution" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
 
 	<!--============ Rate Util ============== -->
