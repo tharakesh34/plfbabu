@@ -55,7 +55,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.Property;
@@ -262,38 +261,6 @@ public class PennantAppUtil {
 			}
 		}
 		return moduleName;
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#amountFormate} instead.
-	 */
-	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
-		return CurrencyUtil.unFormat(amount, dec);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#formateAmount} instead.
-	 */
-	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
-		return CurrencyUtil.parse(amount, dec);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link CurrencyUtil#amountFormate} instead.
-	 */
-	public static String amountFormate(BigDecimal amount, int dec) {
-		return CurrencyUtil.format(amount, dec);
-	}
-
-	/**
-	 * 
-	 * @deprecated use {@link PennantApplicationUtil#unFormateAmount} instead.
-	 */
-	public static BigDecimal unFormateAmount(String amount, int dec) {
-		return CurrencyUtil.unFormat(amount, dec);
 	}
 
 	public static String formateDate(Date date, String dateFormate) {

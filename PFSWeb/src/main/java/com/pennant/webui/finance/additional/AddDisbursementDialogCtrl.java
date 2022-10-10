@@ -92,7 +92,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
@@ -875,8 +874,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 						prvTotDisbValue = prvTotDisbValue.add(curDisb.getDisbAmount());
 					}
-					BigDecimal curTotDisbValue = PennantAppUtil
-							.unFormateAmount(this.disbAmount.getValidateValue(), formatter).add(prvTotDisbValue);
+					BigDecimal curTotDisbValue = CurrencyUtil.unFormat(this.disbAmount.getValidateValue(), formatter)
+							.add(prvTotDisbValue);
 
 					if (curTotDisbValue.compareTo(finMain.getFinAssetValue()) == 0) {
 						isValidDate = false;
@@ -1300,7 +1299,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		List<FinanceScheduleDetail> fsd = finScheduleData.getFinanceScheduleDetails();
 		int schdDetailsSize = fsd.size();
-		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
+		FinanceScheduleDetail curSchd;
 		boolean priRecalFromDate = false;
 		boolean priRecalToDate = false;
 

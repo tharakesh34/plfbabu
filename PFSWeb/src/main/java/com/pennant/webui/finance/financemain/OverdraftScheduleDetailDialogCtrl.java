@@ -20,7 +20,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -141,8 +140,8 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 		this.schdl_odMonths.setValue(String.valueOf(financeMain.getNumberOfTerms() % 12));
 		this.schdl_odBranch.setValue(financeMain.getFinBranch());
 		this.schdl_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-		this.schdl_odLimit.setValue(PennantAppUtil.formateAmount(financeMain.getFinAssetValue(),
-				CurrencyUtil.getFormat(financeMain.getFinCcy())));
+		this.schdl_odLimit.setValue(
+				CurrencyUtil.parse(financeMain.getFinAssetValue(), CurrencyUtil.getFormat(financeMain.getFinCcy())));
 		this.schdl_dropLineFrequency
 				.setValue(FrequencyUtil.getFrequencyDetail(financeMain.getDroplineFrq()).getFrequencyDescription());
 		this.schdl_customer.setValue(getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
@@ -177,11 +176,11 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 					PennantApplicationUtil.formatRate(curSchd.getDroplineRate().doubleValue(), formatter) + "%");
 			item.appendChild(lc);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(curSchd.getLimitDrop(), formatter));
+			lc = new Listcell(CurrencyUtil.format(curSchd.getLimitDrop(), formatter));
 			lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
 			item.appendChild(lc);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(curSchd.getODLimit(), formatter));
+			lc = new Listcell(CurrencyUtil.format(curSchd.getODLimit(), formatter));
 			item.appendChild(lc);
 			listBoxSchedule.appendChild(item);
 		}

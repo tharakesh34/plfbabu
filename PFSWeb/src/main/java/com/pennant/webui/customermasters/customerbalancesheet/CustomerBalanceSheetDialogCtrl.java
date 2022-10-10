@@ -50,6 +50,7 @@ import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -382,15 +383,15 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		this.custShrtName.setValue(aCustomerBalanceSheet.getLovDescCustShrtName() == null ? ""
 				: aCustomerBalanceSheet.getLovDescCustShrtName().trim());
 
-		this.totalAssets.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getTotalAssets(), 0));
-		this.totalLiabilities.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getTotalLiabilities(), 0));
-		this.netProfit.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetProfit(), 0));
-		this.netSales.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetSales(), 0));
-		this.netIncome.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetIncome(), 0));
-		this.operatingProfit.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getOperatingProfit(), 0));
-		this.cashFlow.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getCashFlow(), 0));
-		this.bookValue.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getBookValue(), 0));
-		this.marketValue.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getMarketValue(), 0));
+		this.totalAssets.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getTotalAssets(), 0));
+		this.totalLiabilities.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getTotalLiabilities(), 0));
+		this.netProfit.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getNetProfit(), 0));
+		this.netSales.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getNetSales(), 0));
+		this.netIncome.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getNetIncome(), 0));
+		this.operatingProfit.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getOperatingProfit(), 0));
+		this.cashFlow.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getCashFlow(), 0));
+		this.bookValue.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getBookValue(), 0));
+		this.marketValue.setValue(CurrencyUtil.parse(aCustomerBalanceSheet.getMarketValue(), 0));
 
 		this.recordStatus.setValue(aCustomerBalanceSheet.getRecordStatus());
 		logger.debug("Leaving");
@@ -419,49 +420,47 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setTotalAssets(PennantAppUtil.unFormateAmount(this.totalAssets.getValue(), 0));
+			aCustomerBalanceSheet.setTotalAssets(CurrencyUtil.unFormat(this.totalAssets.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet
-					.setTotalLiabilities(PennantAppUtil.unFormateAmount(this.totalLiabilities.getValue(), 0));
+			aCustomerBalanceSheet.setTotalLiabilities(CurrencyUtil.unFormat(this.totalLiabilities.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setNetProfit(PennantAppUtil.unFormateAmount(this.netProfit.getValue(), 0));
+			aCustomerBalanceSheet.setNetProfit(CurrencyUtil.unFormat(this.netProfit.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setNetSales(PennantAppUtil.unFormateAmount(this.netSales.getValue(), 0));
+			aCustomerBalanceSheet.setNetSales(CurrencyUtil.unFormat(this.netSales.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setNetIncome(PennantAppUtil.unFormateAmount(this.netIncome.getValue(), 0));
+			aCustomerBalanceSheet.setNetIncome(CurrencyUtil.unFormat(this.netIncome.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet
-					.setOperatingProfit(PennantAppUtil.unFormateAmount(this.operatingProfit.getValue(), 0));
+			aCustomerBalanceSheet.setOperatingProfit(CurrencyUtil.unFormat(this.operatingProfit.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setCashFlow(PennantAppUtil.unFormateAmount(this.cashFlow.getValue(), 0));
+			aCustomerBalanceSheet.setCashFlow(CurrencyUtil.unFormat(this.cashFlow.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setBookValue(PennantAppUtil.unFormateAmount(this.bookValue.getValue(), 0));
+			aCustomerBalanceSheet.setBookValue(CurrencyUtil.unFormat(this.bookValue.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setMarketValue(PennantAppUtil.unFormateAmount(this.marketValue.getValue(), 0));
+			aCustomerBalanceSheet.setMarketValue(CurrencyUtil.unFormat(this.marketValue.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

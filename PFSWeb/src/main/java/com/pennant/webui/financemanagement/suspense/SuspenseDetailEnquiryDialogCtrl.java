@@ -52,7 +52,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinanceSuspDetails;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
 import com.pennant.webui.financemanagement.suspense.model.SuspenseDetailListModelItemRenderer;
 import com.pennant.webui.reports.model.LoanEnquiryPostingsComparator;
@@ -231,8 +230,8 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 			int format = CurrencyUtil.getFormat(aSuspHead.getFinCcy());
 			this.finIsInSusp.setChecked(aSuspHead.isFinIsInSusp());
 			this.manualSusp.setChecked(aSuspHead.isManualSusp());
-			this.finSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinSuspAmt(), format));
-			this.finCurSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinCurSuspAmt(), format));
+			this.finSuspAmt.setValue(CurrencyUtil.parse(aSuspHead.getFinSuspAmt(), format));
+			this.finCurSuspAmt.setValue(CurrencyUtil.parse(aSuspHead.getFinCurSuspAmt(), format));
 			this.finSuspDate.setValue(aSuspHead.getFinSuspDate());
 			this.finSuspTrfDate.setValue(aSuspHead.getFinSuspTrfDate());
 

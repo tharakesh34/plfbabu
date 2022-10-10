@@ -68,7 +68,6 @@ import com.pennant.backend.model.applicationmaster.SysNotificationDetails;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.SysNotificationService;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.SysNotificationDialogModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -437,8 +436,8 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 				String mailID = getSysNotificationService().getCustomerEMail(details.getCustID());
 
 				details.setLastMntBy(securityUser.getUsrID());
-				details.setFinCurODAmtInStr(PennantAppUtil.amountFormate(details.getFinCurODAmt(),
-						CurrencyUtil.getFormat(details.getFinCcy())));
+				details.setFinCurODAmtInStr(
+						CurrencyUtil.format(details.getFinCurODAmt(), CurrencyUtil.getFormat(details.getFinCcy())));
 
 				// Mail Send
 				if (StringUtils.isNotEmpty(mailID)) {

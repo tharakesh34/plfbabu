@@ -1571,7 +1571,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.openMandate.setChecked(aMandate.isOpenMandate());
 		this.startDate.setValue(aMandate.getStartDate());
 		this.expiryDate.setValue(aMandate.getExpiryDate());
-		this.maxLimit.setValue(PennantApplicationUtil.formateAmount(aMandate.getMaxLimit(), ccyFormatter));
+		this.maxLimit.setValue(CurrencyUtil.parse(aMandate.getMaxLimit(), ccyFormatter));
 		this.periodicity.setValue(aMandate.getPeriodicity());
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
 		this.reason.setValue(aMandate.getReason());
@@ -1760,7 +1760,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
-			aMandate.setMaxLimit(PennantApplicationUtil.unFormateAmount(this.maxLimit.getActualValue(), ccyFormatter));
+			aMandate.setMaxLimit(CurrencyUtil.unFormat(this.maxLimit.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2844,14 +2844,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				lc.setParent(item);
 
 				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue().add(finEnquiry.getFeeChargeAmt());
-				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc = new Listcell(CurrencyUtil.format(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(finEnquiry.getMaxInstAmount(),
 						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
+				lc = new Listcell(CurrencyUtil.format(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
 						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);

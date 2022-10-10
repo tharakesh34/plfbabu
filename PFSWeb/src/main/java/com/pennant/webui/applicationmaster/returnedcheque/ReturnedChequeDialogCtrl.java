@@ -32,7 +32,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -317,13 +316,13 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 			ccyFormatter = 2;
 			this.currency.setDescription("");
 			this.custCIF.setDescription("");
-			this.amount.setValue(PennantAppUtil.formateAmount(aReturnedCheque.getAmount(), ccyFormatter));
+			this.amount.setValue(CurrencyUtil.parse(aReturnedCheque.getAmount(), ccyFormatter));
 		} else {
 			this.custCIF.setDescription(aReturnedCheque.getCustShrtName());
 			this.currency.setDescription(aReturnedCheque.getCcyDesc());
 			returnedCheque.setCcyEditField(CurrencyUtil.getFormat(returnedCheque.getCurrency()));
 			ccyFormatter = aReturnedCheque.getCcyEditField();
-			this.amount.setValue(PennantAppUtil.formateAmount(aReturnedCheque.getAmount(), ccyFormatter));
+			this.amount.setValue(CurrencyUtil.parse(aReturnedCheque.getAmount(), ccyFormatter));
 
 		}
 		this.amount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));

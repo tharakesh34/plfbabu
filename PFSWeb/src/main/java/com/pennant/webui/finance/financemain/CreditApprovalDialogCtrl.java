@@ -218,9 +218,9 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.finCcy.setValue(finMain.getFinCcy());
 		// this.finCcyDesc.setValue(main.getLovDescFinCcyName());
 		this.finDivison.setValue(type.getFinDivision() + " - " + type.getLovDescFinDivisionName());
-		this.finAmount.setValue(PennantAppUtil.formateAmount(finMain.getFinAmount(), ccyFormatter));
-		this.finDownPayBank.setValue(PennantAppUtil.formateAmount(finMain.getDownPayBank(), ccyFormatter));
-		this.finDownPaySupp.setValue(PennantAppUtil.formateAmount(finMain.getDownPaySupl(), ccyFormatter));
+		this.finAmount.setValue(CurrencyUtil.parse(finMain.getFinAmount(), ccyFormatter));
+		this.finDownPayBank.setValue(CurrencyUtil.parse(finMain.getDownPayBank(), ccyFormatter));
+		this.finDownPaySupp.setValue(CurrencyUtil.parse(finMain.getDownPaySupl(), ccyFormatter));
 		this.finProfitRate.setValue(finMain.getRepayProfitRate());
 		this.numberOfterms.setValue(finMain.getNumberOfTerms());
 		this.finPurpose.setValue(finMain.getFinPurpose());
@@ -261,7 +261,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				lc.setParent(item);
 				BigDecimal totAmt = finEnquiry.getFinAmount()
 						.subtract(finEnquiry.getDownPayment().add(finEnquiry.getFeeChargeAmt()));
-				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc = new Listcell(CurrencyUtil.format(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				BigDecimal instAmt = BigDecimal.ZERO;
@@ -272,7 +272,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 						PennantApplicationUtil.amountFormate(instAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
+				lc = new Listcell(CurrencyUtil.format(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
 						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -341,8 +341,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 							val = val.setScale(2, RoundingMode.HALF_DOWN);
 							labelCode = String.valueOf(val) + "%";
 						} else {
-							labelCode = PennantAppUtil.amountFormate(new BigDecimal(detail.getRuleResult()),
-									ccyFormatter);
+							labelCode = CurrencyUtil.format(new BigDecimal(detail.getRuleResult()), ccyFormatter);
 						}
 						StyleCode = "text-align:right;";
 					}

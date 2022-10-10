@@ -35,7 +35,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -61,19 +60,19 @@ public class PayOrderIssueListModelItemRenderer implements ListitemRenderer<PayO
 		lc.setParent(item);
 		lc = new Listcell(payOrderIssueHeader.getFinType());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(payOrderIssueHeader.getTotalPOAmount(),
+		lc = new Listcell(CurrencyUtil.format(payOrderIssueHeader.getTotalPOAmount(),
 				CurrencyUtil.getFormat(payOrderIssueHeader.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(payOrderIssueHeader.getTotalPOCount()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(payOrderIssueHeader.getIssuedPOAmount(),
+		lc = new Listcell(CurrencyUtil.format(payOrderIssueHeader.getIssuedPOAmount(),
 				CurrencyUtil.getFormat(payOrderIssueHeader.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(payOrderIssueHeader.getIssuedPOCount()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(payOrderIssueHeader.getpODueAmount(),
+		lc = new Listcell(CurrencyUtil.format(payOrderIssueHeader.getpODueAmount(),
 				CurrencyUtil.getFormat(payOrderIssueHeader.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);

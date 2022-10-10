@@ -48,6 +48,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -57,7 +58,6 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -195,7 +195,7 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		this.finCollateral_finType.setValue(fintype);
 		this.finCollateral_finReference.setValue(finReference);
 		this.finCollateral_custID.setValue(String.valueOf(custID));
-		this.finCollateral_finAmount.setValue(PennantAppUtil.amountFormate(finAmount, decPos));
+		this.finCollateral_finAmount.setValue(CurrencyUtil.format(finAmount, decPos));
 		logger.debug("Leaving");
 	}
 

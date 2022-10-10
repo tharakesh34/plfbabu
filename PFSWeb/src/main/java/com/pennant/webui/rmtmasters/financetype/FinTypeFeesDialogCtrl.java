@@ -49,6 +49,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -415,7 +416,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 		this.ruleCode.setValue(aFinTypeFees.getRuleCode());
 		this.ruleCode.setDescription(StringUtils.trimToEmpty(aFinTypeFees.getRuleDesc()));
-		this.amount.setValue(PennantAppUtil.formateAmount(aFinTypeFees.getAmount(), ccyFormat));
+		this.amount.setValue(CurrencyUtil.parse(aFinTypeFees.getAmount(), ccyFormat));
 		this.percentage.setValue(aFinTypeFees.getPercentage());
 		this.feeOrder.setValue(aFinTypeFees.getFeeOrder());
 		this.maxWaiver.setValue(aFinTypeFees.getMaxWaiverPerc());
@@ -588,7 +589,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			wve.add(we);
 		}
 		try {
-			aFinTypeFees.setAmount(PennantAppUtil.unFormateAmount(
+			aFinTypeFees.setAmount(CurrencyUtil.unFormat(
 					this.amount.isReadonly() ? this.amount.getActualValue() : this.amount.getValidateValue(),
 					ccyFormat));
 

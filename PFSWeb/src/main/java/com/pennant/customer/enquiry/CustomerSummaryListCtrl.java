@@ -430,9 +430,9 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				 * lc = new Listcell(PennantAppUtil.amountFormate(category.getRiskAmount(),
 				 * category.getLimitCcyEdit())); lc.setParent(item);
 				 */
-				lc = new Listcell(PennantAppUtil.amountFormate(category.getLimitAmount(), category.getLimitCcyEdit()));
+				lc = new Listcell(CurrencyUtil.format(category.getLimitAmount(), category.getLimitCcyEdit()));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(category.getAvailAmount(), category.getLimitCcyEdit()));
+				lc = new Listcell(CurrencyUtil.format(category.getAvailAmount(), category.getLimitCcyEdit()));
 				lc.setParent(item);
 				this.listBoxCustomerLimit.appendChild(item);
 			}

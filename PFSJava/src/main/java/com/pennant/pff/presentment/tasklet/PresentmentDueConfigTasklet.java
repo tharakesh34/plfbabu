@@ -31,7 +31,7 @@ public class PresentmentDueConfigTasklet implements Tasklet {
 
 		String automation = jobParameters.getString("AUTOMATION");
 
-		if (automation.equals("N")) {
+		if ("N".equals(automation)) {
 			return RepeatStatus.FINISHED;
 		}
 

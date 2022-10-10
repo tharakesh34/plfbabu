@@ -81,7 +81,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
@@ -1339,11 +1338,10 @@ public class FinScheduleListItemRenderer implements Serializable {
 			if (getFinanceScheduleDetail().getEarlyPaid().compareTo(BigDecimal.ZERO) > 0) {
 
 				// Event Description Details
-				doFillListBox(getFinanceScheduleDetail(), 2,
-						Labels.getLabel("label_listcell_EarlyPaidDetailsAdded_label", new String[] {
-								PennantAppUtil.amountFormate(getFinanceScheduleDetail().getEarlyPaid(), formatter),
-								PennantAppUtil.amountFormate(getFinanceScheduleDetail().getEarlyPaidBal(),
-										formatter) }),
+				doFillListBox(getFinanceScheduleDetail(), 2, Labels.getLabel(
+						"label_listcell_EarlyPaidDetailsAdded_label",
+						new String[] { CurrencyUtil.format(getFinanceScheduleDetail().getEarlyPaid(), formatter),
+								CurrencyUtil.format(getFinanceScheduleDetail().getEarlyPaidBal(), formatter) }),
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO, BigDecimal.ZERO, false, false, false, false, false, "", "", 2, null, false,
@@ -1354,8 +1352,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 				// Event Description Details
 				doFillListBox(getFinanceScheduleDetail(), 2,
 						Labels.getLabel("label_listcell_EarlyPayBalDetailsAdded_label",
-								new String[] { PennantAppUtil
-										.amountFormate(getFinanceScheduleDetail().getEarlyPaidBal(), formatter) }),
+								new String[] {
+										CurrencyUtil.format(getFinanceScheduleDetail().getEarlyPaidBal(), formatter) }),
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO, BigDecimal.ZERO, false, false, false, false, false, "", "", 2, null, false,
@@ -1697,7 +1695,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 						} else if (fillType == 15) {
 							lc = new Listcell(String.valueOf(amountlist[i].intValue()));
 						} else {
-							lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i], formatter));
+							lc = new Listcell(CurrencyUtil.format(amountlist[i], formatter));
 						}
 
 						if (fillType == 5) {
@@ -1731,7 +1729,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 					if (fillType == 0 && !lastRec
 							&& (count == 1 || (data.isDisbOnSchDate() && data.isRepayOnSchDate()))) {
 
-						lc = new Listcell(PennantAppUtil.amountFormate(availableLimit, formatter));
+						lc = new Listcell(CurrencyUtil.format(availableLimit, formatter));
 						lc.setStyle("text-align:right;");
 						if (!isEditable) {
 							lc.setStyle("text-align:right;cursor:default;");
@@ -1745,7 +1743,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 					if (fillType == 0 && !lastRec && showZeroEndBal
 							&& (count == 1 || (data.isDisbOnSchDate() && data.isRepayOnSchDate()))) {
 
-						lc = new Listcell(PennantAppUtil.amountFormate(odLimit, formatter));
+						lc = new Listcell(CurrencyUtil.format(odLimit, formatter));
 						lc.setStyle("text-align:right;");
 						if (!isEditable) {
 							lc.setStyle("text-align:right;cursor:default;");
@@ -1756,7 +1754,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 					}
 				} else if (this.closingBal.compareTo(BigDecimal.ZERO) == 0 && i == amountlist.length - 1 && !lastRec
 						&& showZeroEndBal) {
-					lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i], formatter));
+					lc = new Listcell(CurrencyUtil.format(amountlist[i], formatter));
 					lc.setStyle("text-align:right;");
 					if (!isEditable) {
 						lc.setStyle("text-align:right;cursor:default;");
@@ -1767,7 +1765,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 					if (fillType == 5) {
 						lc = new Listcell("");
 					} else {
-						lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i], formatter));
+						lc = new Listcell(CurrencyUtil.format(amountlist[i], formatter));
 					}
 					lc.setStyle("text-align:right;");
 					if (!isEditable) {
@@ -1775,7 +1773,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 					}
 
 				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 10) && isFee) {
-					lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i], formatter));
+					lc = new Listcell(CurrencyUtil.format(amountlist[i], formatter));
 					if (StringUtils.isNotEmpty(bgColor)) {
 						lc.setStyle("text-align:right;font-weight: bold;color:" + bgColor + ";");
 						if (!isEditable) {
@@ -1860,7 +1858,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 			// for Cash Flow Effect value
 			if (financeMain.isStepFinance() && showStepDetail) {
 				if (!isRate && !lastRec) {
-					lc = new Listcell(PennantAppUtil.amountFormate(data.getOrgPft(), formatter));
+					lc = new Listcell(CurrencyUtil.format(data.getOrgPft(), formatter));
 				} else {
 					lc = new Listcell("");
 				}
@@ -1869,7 +1867,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 				// for Vs Profit value
 				if (!isRate && !lastRec) {
-					lc = new Listcell(PennantAppUtil.amountFormate(data.getOrgPri(), formatter));
+					lc = new Listcell(CurrencyUtil.format(data.getOrgPri(), formatter));
 				} else {
 					lc = new Listcell("");
 				}
@@ -1878,7 +1876,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 				// for Original Principal Due value
 				if (!isRate && !lastRec) {
-					lc = new Listcell(PennantAppUtil.amountFormate(data.getOrgEndBal(), formatter));
+					lc = new Listcell(CurrencyUtil.format(data.getOrgEndBal(), formatter));
 				} else {
 					lc = new Listcell("");
 				}
@@ -1914,22 +1912,22 @@ public class FinScheduleListItemRenderer implements Serializable {
 		listitem.appendChild(lc);
 
 		// Profit Schedule Amount
-		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getProfitSchd(), formatter));
+		lc = new Listcell(CurrencyUtil.format(scheduleDetail.getProfitSchd(), formatter));
 		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 		listitem.appendChild(lc);
 
 		// Schedule Principle Amount
-		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getPrincipalSchd(), formatter));
+		lc = new Listcell(CurrencyUtil.format(scheduleDetail.getPrincipalSchd(), formatter));
 		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 		listitem.appendChild(lc);
 
 		// Repay Installment Amount
-		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getRepayAmount(), formatter));
+		lc = new Listcell(CurrencyUtil.format(scheduleDetail.getRepayAmount(), formatter));
 		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 		listitem.appendChild(lc);
 
 		// Closing Balance Amount
-		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getClosingBalance(), formatter));
+		lc = new Listcell(CurrencyUtil.format(scheduleDetail.getClosingBalance(), formatter));
 		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 		listitem.appendChild(lc);
 
@@ -3378,9 +3376,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 				data.setPrincipalBal(BigDecimal.ZERO);
 				data.setFinanceBal(BigDecimal.ZERO);
 			} else {
-				data.setFinanceBal(PennantAppUtil.formateAmount(financeBal, formatter));
-				data.setPrincipalBal(PennantAppUtil.formateAmount(principalBal, formatter));
-				data.setProfitBal(PennantAppUtil.formateAmount(profitBal, formatter));
+				data.setFinanceBal(CurrencyUtil.parse(financeBal, formatter));
+				data.setPrincipalBal(CurrencyUtil.parse(principalBal, formatter));
+				data.setProfitBal(CurrencyUtil.parse(profitBal, formatter));
 			}
 
 			profitBal = profitBal.add(aScheduleDetail.getProfitCalc());
@@ -3462,14 +3460,14 @@ public class FinScheduleListItemRenderer implements Serializable {
 				return new BigDecimal(
 						PennantApplicationUtil.formatRate(amount.doubleValue(), PennantConstants.rateFormate)) + " % ";
 			} else {
-				return PennantAppUtil.amountFormate(amount, format);
+				return CurrencyUtil.format(amount, format);
 			}
 		} else if (this.closingBal.compareTo(BigDecimal.ZERO) == 0 && !lastRec && showZeroEndBal) {
-			return PennantAppUtil.amountFormate(amount, format);
+			return CurrencyUtil.format(amount, format);
 		} else if (this.closingBal.compareTo(BigDecimal.ZERO) == 0 && lastRec) {
-			return PennantAppUtil.amountFormate(amount, format);
+			return CurrencyUtil.format(amount, format);
 		} else if (amount.compareTo(BigDecimal.ZERO) == 0 && showZeroEndBal) {
-			return PennantAppUtil.amountFormate(amount, format);
+			return CurrencyUtil.format(amount, format);
 		} else {
 			return "";
 		}
@@ -3661,7 +3659,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 			Tab tab = new Tab();
 			tab.setId("Tab_FinSubVenSchdDetails" + disbursement.getDisbSeq());
 			tab.setLabel("T" + disbursement.getDisbSeq() + " / "
-					+ PennantAppUtil.amountFormate(disbursement.getDisbAmount(), PennantConstants.defaultCCYDecPos));
+					+ CurrencyUtil.format(disbursement.getDisbAmount(), PennantConstants.defaultCCYDecPos));
 
 			tab.setParent(tabs);
 
@@ -3814,22 +3812,22 @@ public class FinScheduleListItemRenderer implements Serializable {
 		listitem.appendChild(lc);
 
 		// Discounted Interest
-		lc = new Listcell(PennantAppUtil.amountFormate(SubScheDetail.getDiscountedPft(), formatter));
+		lc = new Listcell(CurrencyUtil.format(SubScheDetail.getDiscountedPft(), formatter));
 		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 		listitem.appendChild(lc);
 
 		// Present Value
-		lc = new Listcell(PennantAppUtil.amountFormate(SubScheDetail.getPresentValue(), formatter));
+		lc = new Listcell(CurrencyUtil.format(SubScheDetail.getPresentValue(), formatter));
 		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 		listitem.appendChild(lc);
 
 		// Future Value
-		lc = new Listcell(PennantAppUtil.amountFormate(SubScheDetail.getFutureValue(), formatter));
+		lc = new Listcell(CurrencyUtil.format(SubScheDetail.getFutureValue(), formatter));
 		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 		listitem.appendChild(lc);
 
 		// Closing Balance
-		lc = new Listcell(PennantAppUtil.amountFormate(SubScheDetail.getClosingBal(), formatter));
+		lc = new Listcell(CurrencyUtil.format(SubScheDetail.getClosingBal(), formatter));
 		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 		listitem.appendChild(lc);
 

@@ -10,9 +10,9 @@ import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.service.finance.EligibilityRule;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.util.PennantAppUtil;
 
 public class EligibilityCheckListItemRenderer implements ListitemRenderer<EligibilityRule>, Serializable {
 
@@ -62,14 +62,14 @@ public class EligibilityCheckListItemRenderer implements ListitemRenderer<Eligib
 					val = val.setScale(2, RoundingMode.HALF_DOWN);
 					labelCode = String.valueOf(val) + "%";
 				} else {
-					labelCode = PennantAppUtil.amountFormate(elgRule.getElgAmount(), formatter);
+					labelCode = CurrencyUtil.format(elgRule.getElgAmount(), formatter);
 				}
 
 				StyleCode = "font-weight:bold;text-align:right;";
 			}
 
 			if (RuleConstants.RETURNTYPE_INTEGER.equals(elgRule.getRuleReturnType())) {
-				labelCode = PennantAppUtil.amountFormate(elgRule.getElgAmount(), 0);
+				labelCode = CurrencyUtil.format(elgRule.getElgAmount(), 0);
 				StyleCode = "font-weight:bold;text-align:right;";
 			}
 

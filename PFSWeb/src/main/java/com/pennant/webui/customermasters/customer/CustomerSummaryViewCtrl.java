@@ -45,7 +45,6 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -288,7 +287,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 					lc = new Listcell("------------");
 					lc.setStyle("color: #f39a36; font-size: 15px;");
 				} else {
-					lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(), ccyFormatter));
+					lc = new Listcell(CurrencyUtil.format(financeMain.getFinAmount(), ccyFormatter));
 					lc.setStyle("font-size: 15px");
 				}
 				lc.setParent(item);
@@ -353,10 +352,10 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(DateUtility.formatToLongDate(collateralSetup.getNextReviewDate()));
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(collateralSetup.getCollateralValue(), ccyFormatter));
+				lc = new Listcell(CurrencyUtil.format(collateralSetup.getCollateralValue(), ccyFormatter));
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(collateralSetup.getBankValuation(), ccyFormatter));
+				lc = new Listcell(CurrencyUtil.format(collateralSetup.getBankValuation(), ccyFormatter));
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
 				item.setAttribute("data", collateralSetup);

@@ -40,6 +40,7 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.returnedcheques.ReturnedCheques;
@@ -291,7 +292,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 					if (StringUtils.isNotEmpty(returnedCheques.getCurrency())) {
 						Currency currency = PennantAppUtil.getCurrencyBycode(returnedCheques.getCurrency());
 						if (currency != null) {
-							lc = new Listcell(PennantAppUtil.amountFormate(decfieldValue, currency.getCcyEditField()));
+							lc = new Listcell(CurrencyUtil.format(decfieldValue, currency.getCcyEditField()));
 							lc.setStyle("text-align:right;");
 						} else {
 							lc = new Listcell();

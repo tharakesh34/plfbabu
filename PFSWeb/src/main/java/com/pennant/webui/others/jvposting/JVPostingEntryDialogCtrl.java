@@ -74,7 +74,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.accounting.HostAccountStatus;
 import com.pennant.pff.accounting.TransactionType;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -1060,14 +1059,14 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 
 		// Txn Amount
 		try {
-			aJVPostingEntry.setTxnAmount(PennantAppUtil.unFormateAmount(this.txnAmount.getActualValue(),
+			aJVPostingEntry.setTxnAmount(CurrencyUtil.unFormat(this.txnAmount.getActualValue(),
 					CurrencyUtil.getFormat(getJVPostingEntry().getTxnCCy())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// exchange_Converted_txnAmount
 		try {
-			aJVPostingEntry.setTxnAmount_Ac(PennantAppUtil.unFormateAmount(this.exchange_Converted_txnAmount.getValue(),
+			aJVPostingEntry.setTxnAmount_Ac(CurrencyUtil.unFormat(this.exchange_Converted_txnAmount.getValue(),
 					CurrencyUtil.getFormat(getJVPostingEntry().getAccCCy())));
 		} catch (WrongValueException we) {
 			wve.add(we);

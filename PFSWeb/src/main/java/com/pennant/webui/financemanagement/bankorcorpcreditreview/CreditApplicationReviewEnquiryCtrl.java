@@ -575,7 +575,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		this.currFormatter = CurrencyUtil.getFormat(aCreditReviewDetails.getCurrency());
 		this.conversionRate.setFormat(PennantApplicationUtil.getAmountFormate(currFormatter));
 		if (aCreditReviewDetails.getConversionRate() == null) {
-			BigDecimal converstnRate = PennantAppUtil.formateAmount(CalculationUtil.getConvertedAmount(
+			BigDecimal converstnRate = CurrencyUtil.parse(CalculationUtil.getConvertedAmount(
 					this.currencyType.getValue(), AccountConstants.CURRENCY_USD, new BigDecimal(1000)), currFormatter);
 			this.conversionRate.setValue(converstnRate);
 		} else {

@@ -57,7 +57,6 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsComparator;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsListItemRenderer;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -312,7 +311,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			detail.setCcy(dataSet.getAcCcy());
 			detail.setAccount(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
 			detail.setPostAmount(
-					PennantAppUtil.amountFormate(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));
+					CurrencyUtil.format(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));
 			detail.setRevTranCode(dataSet.getRevTranCode());
 			detail.setPostDate(DateUtility.format(dataSet.getPostDate(), DateFormat.LONG_DATE.getPattern()));
 			detail.setValueDate(DateUtility.format(dataSet.getValueDate(), DateFormat.LONG_DATE.getPattern()));

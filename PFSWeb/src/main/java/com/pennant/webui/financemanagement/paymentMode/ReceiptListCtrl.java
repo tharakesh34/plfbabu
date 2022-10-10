@@ -36,6 +36,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -664,8 +665,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc = new Listcell(finReceiptHeader.getTransactionRef());
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(finReceiptHeader.getReceiptAmount(),
-					PennantConstants.defaultCCYDecPos));
+			lc = new Listcell(
+					CurrencyUtil.format(finReceiptHeader.getReceiptAmount(), PennantConstants.defaultCCYDecPos));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
 

@@ -68,7 +68,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -481,7 +480,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			}
 		}
 		this.getLabel_AccountingDisbCrVal().setValue(PennantApplicationUtil.amountFormate(getDisbCrSum(), formatter));
-		this.getLabel_AccountingDisbDrVal().setValue(PennantAppUtil.amountFormate(getDisbDrSum(), formatter));
+		this.getLabel_AccountingDisbDrVal().setValue(CurrencyUtil.format(getDisbDrSum(), formatter));
 		logger.debug("Leaving");
 	}
 
@@ -603,7 +602,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 			this.getLabel_PostAccountingDisbCrVal()
 					.setValue(PennantApplicationUtil.amountFormate(getDisbCrSum(), formatter));
-			this.getLabel_PostAccountingDisbDrVal().setValue(PennantAppUtil.amountFormate(getDisbDrSum(), formatter));
+			this.getLabel_PostAccountingDisbDrVal().setValue(CurrencyUtil.format(getDisbDrSum(), formatter));
 		}
 		logger.debug("Leaving");
 	}
@@ -717,7 +716,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						}
 						accountingsExecuted = true;
 					}
-					lc = new Listcell(PennantAppUtil.amountFormate(amt, formatter));
+					lc = new Listcell(CurrencyUtil.format(amt, formatter));
 					lc.setStyle("font-weight:bold;text-align:right;");
 					lc.setParent(item);
 					lc = new Listcell(
@@ -731,7 +730,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			if (isOverdraft) {
 				this.getLabel_AccountingDisbCrVal()
 						.setValue(PennantApplicationUtil.amountFormate(cmtCrEntry, formatter));
-				this.getLabel_AccountingDisbDrVal().setValue(PennantAppUtil.amountFormate(cmtDrEntry, formatter));
+				this.getLabel_AccountingDisbDrVal().setValue(CurrencyUtil.format(cmtDrEntry, formatter));
 			}
 		}
 		logger.debug("Leaving");
@@ -828,7 +827,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					BigDecimal amt = entry.getPostAmount() != null ? entry.getPostAmount()
 							: BigDecimal.ZERO.setScale(0, RoundingMode.FLOOR);
 
-					lc = new Listcell(PennantAppUtil.amountFormate(amt, formatter));
+					lc = new Listcell(CurrencyUtil.format(amt, formatter));
 					lc.setStyle("font-weight:bold;text-align:right;");
 					lc.setParent(item);
 					lc = new Listcell(
@@ -935,7 +934,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				detail.setTransDesc(dataSet.getTranDesc());
 				detail.setCcy(dataSet.getAcCcy());
 				detail.setAccount(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
-				detail.setPostAmount(PennantAppUtil.amountFormate(dataSet.getPostAmount(),
+				detail.setPostAmount(CurrencyUtil.format(dataSet.getPostAmount(),
 						dataSet.getFormatter() == 0 ? formatter : dataSet.getFormatter()));
 				accountingDetails.add(detail);
 			}

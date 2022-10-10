@@ -72,7 +72,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.commitment.commitment.CommitmentDialogCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -647,7 +646,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 						.multiply(collateralAssignment.getAssignPerc())).divide(BigDecimal.valueOf(100), 0,
 								RoundingMode.HALF_DOWN);
 
-				listcell = new Listcell(PennantAppUtil.amountFormate(curAssignValue, ccyFormat));
+				listcell = new Listcell(CurrencyUtil.format(curAssignValue, ccyFormat));
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 
@@ -661,7 +660,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 					availAssignValue = BigDecimal.ZERO;
 				}
 
-				listcell = new Listcell(PennantAppUtil.amountFormate(availAssignValue, ccyFormat));
+				listcell = new Listcell(CurrencyUtil.format(availAssignValue, ccyFormat));
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 
@@ -670,7 +669,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 					utlzedAmt = (curAssignValue.multiply(utilizedAmount)).divide(loanAssignedValue, 0,
 							RoundingMode.HALF_DOWN);
 				}
-				listcell = new Listcell(PennantAppUtil.amountFormate(utlzedAmt, ccyFormat));
+				listcell = new Listcell(CurrencyUtil.format(utlzedAmt, ccyFormat));
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 
@@ -701,10 +700,9 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 					totCollateralCount = totCollateralCount + 1;
 					totAssignedColValue = totAssignedColValue.add(curAssignValue);
 
-					totalAssignedValue = totalAssignedValue
-							.add(PennantAppUtil.formateAmount(curAssignValue, ccyFormat));
+					totalAssignedValue = totalAssignedValue.add(CurrencyUtil.parse(curAssignValue, ccyFormat));
 					totalBankValuation = totalBankValuation
-							.add(PennantAppUtil.formateAmount(collateralAssignment.getBankValuation(), ccyFormat));
+							.add(CurrencyUtil.parse(collateralAssignment.getBankValuation(), ccyFormat));
 					assignedCount = assignedCount + 1;
 					if (collateralAssignment.getSpecialLTV().compareTo(BigDecimal.ZERO) == 0) {
 						totalLtv = totalLtv.add(collateralAssignment.getBankLTV());

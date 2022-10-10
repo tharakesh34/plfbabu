@@ -58,12 +58,12 @@ public class CustomerIncomeListItemRenderer implements ListitemRenderer<Customer
 
 			lc = new Listcell(income.getIncomeTypeDesc());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(income.getIncome(), format));
+			lc = new Listcell(CurrencyUtil.format(income.getIncome(), format));
 			lc.setParent(item);
 		} else {
 			lc = new Listcell(income.getIncomeType());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(income.getIncome(), format));
+			lc = new Listcell(CurrencyUtil.format(income.getIncome(), format));
 			lc.setParent(item);
 		}
 		lc = new Listcell(income.getRecordStatus());

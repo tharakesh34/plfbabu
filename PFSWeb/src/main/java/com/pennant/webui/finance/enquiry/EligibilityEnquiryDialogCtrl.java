@@ -42,6 +42,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -50,7 +51,6 @@ import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -239,7 +239,7 @@ public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibility
 							val = val.setScale(2, RoundingMode.HALF_DOWN);
 							labelCode = String.valueOf(val) + "%";
 						} else {
-							labelCode = PennantAppUtil.amountFormate(new BigDecimal(detail.getRuleResult()), formatter);
+							labelCode = CurrencyUtil.format(new BigDecimal(detail.getRuleResult()), formatter);
 						}
 
 						StyleCode = "text-align:right;";

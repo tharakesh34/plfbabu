@@ -71,7 +71,6 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -423,8 +422,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 		List<ChartSetElement> listChartSetElement = getReportDataForFinVsAmount();
 
 		ChartsConfig chartsConfig = new ChartsConfig("Loan Vs Amounts",
-				"Loan Amount ="
-						+ PennantAppUtil.amountFormate(getFinScheduleData().getFinanceMain().getFinAmount(), formatter),
+				"Loan Amount =" + CurrencyUtil.format(getFinScheduleData().getFinanceMain().getFinAmount(), formatter),
 				"", "");
 		aDashboardConfiguration = new DashboardConfiguration();
 		chartsConfig.setSetElements(listChartSetElement);
@@ -481,14 +479,13 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
 
 				downPayment = downPayment
-						.add(PennantAppUtil.formateAmount(listScheduleDetail.get(i).getDownPaymentAmount(), formatter));
-				capitalized = capitalized
-						.add(PennantAppUtil.formateAmount(listScheduleDetail.get(i).getCpzAmount(), formatter));
+						.add(CurrencyUtil.parse(listScheduleDetail.get(i).getDownPaymentAmount(), formatter));
+				capitalized = capitalized.add(CurrencyUtil.parse(listScheduleDetail.get(i).getCpzAmount(), formatter));
 
 				scheduleProfit = scheduleProfit
-						.add(PennantAppUtil.formateAmount(listScheduleDetail.get(i).getProfitSchd(), formatter));
+						.add(CurrencyUtil.parse(listScheduleDetail.get(i).getProfitSchd(), formatter));
 				schedulePrincipal = schedulePrincipal
-						.add(PennantAppUtil.formateAmount(listScheduleDetail.get(i).getPrincipalSchd(), formatter));
+						.add(CurrencyUtil.parse(listScheduleDetail.get(i).getPrincipalSchd(), formatter));
 
 			}
 
@@ -522,8 +519,8 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"RepayAmount", PennantAppUtil.formateAmount(curSchd.getRepayAmount(), formatter)
-									.setScale(formatter, RoundingMode.HALF_UP));
+							"RepayAmount", CurrencyUtil.parse(curSchd.getRepayAmount(), formatter).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 			}
@@ -532,7 +529,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"PrincipalSchd", PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(), formatter)
+							"PrincipalSchd", CurrencyUtil.parse(curSchd.getPrincipalSchd(), formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
@@ -543,8 +540,8 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"ProfitSchd", PennantAppUtil.formateAmount(curSchd.getProfitSchd(), formatter)
-									.setScale(formatter, RoundingMode.HALF_UP));
+							"ProfitSchd", CurrencyUtil.parse(curSchd.getProfitSchd(), formatter).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 
 				}

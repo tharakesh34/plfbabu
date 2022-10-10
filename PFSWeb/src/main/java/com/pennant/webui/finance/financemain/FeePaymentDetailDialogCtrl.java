@@ -45,6 +45,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -55,7 +56,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -493,7 +493,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 
 		try {
 			aFeePaymentDetail.setPaymentAmount(
-					PennantAppUtil.unFormateAmount(this.paymentAmount.isReadonly() ? this.paymentAmount.getActualValue()
+					CurrencyUtil.unFormat(this.paymentAmount.isReadonly() ? this.paymentAmount.getActualValue()
 							: this.paymentAmount.getValidateValue(), ccyFormatter));
 
 		} catch (WrongValueException we) {

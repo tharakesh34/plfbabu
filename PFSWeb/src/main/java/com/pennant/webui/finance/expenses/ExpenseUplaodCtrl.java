@@ -54,7 +54,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.App;
@@ -710,7 +709,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 
 				int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-				uploadFinExpenses.setAmountValue(PennantAppUtil.unFormateAmount(amountValue, formatter));
+				uploadFinExpenses.setAmountValue(CurrencyUtil.unFormat(amountValue, formatter));
 			} catch (Exception exception) {
 
 				uploadFinExpenses.setAmountValue(BigDecimal.ZERO);
@@ -1029,11 +1028,11 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			if (fm.getFinAssetValue() != null && fm.getFinAssetValue().compareTo(BigDecimal.ZERO) != 0) {
 				BigDecimal percentage = uploadDetail.getPercentage();
 				// formatting the amount
-				txnAmount = PennantAppUtil.formateAmount(fm.getFinAssetValue(), formatter);
+				txnAmount = CurrencyUtil.parse(fm.getFinAssetValue(), formatter);
 				// calculating percentage
 				txnAmount = (percentage.multiply(txnAmount)).divide(new BigDecimal(100));
 				// un-formatting the amount
-				txnAmount = PennantAppUtil.unFormateAmount(txnAmount, formatter);
+				txnAmount = CurrencyUtil.unFormat(txnAmount, formatter);
 			} else {
 				return;
 			}

@@ -894,16 +894,15 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 					.setValue(String.valueOf(financeFlag.getNumberOfTerms() + financeFlag.getGraceTerms()));
 			this.finFlags_startDate.setValue(DateUtility.formatToLongDate(financeFlag.getFinStartDate()));
 			this.finFlags_maturityDate.setValue(DateUtility.formatToLongDate(financeFlag.getMaturityDate()));
-			this.finFlags_purchasePrice
-					.setValue(PennantAppUtil.formateAmount(financeFlag.getFinAmount(), ccyFormatter));
-			this.finFlags_otherExp.setValue(PennantAppUtil.formateAmount(financeFlag.getFeeChargeAmt(), ccyFormatter));
-			this.finFlags_totalCost.setValue(PennantAppUtil.formateAmount(
+			this.finFlags_purchasePrice.setValue(CurrencyUtil.parse(financeFlag.getFinAmount(), ccyFormatter));
+			this.finFlags_otherExp.setValue(CurrencyUtil.parse(financeFlag.getFeeChargeAmt(), ccyFormatter));
+			this.finFlags_totalCost.setValue(CurrencyUtil.parse(
 					financeFlag.getFinAmount().subtract(financeFlag.getDownPaySupl()).add(
 							financeFlag.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeFlag.getFeeChargeAmt()),
 					ccyFormatter));
-			this.finFlags_totalPft.setValue(PennantAppUtil.formateAmount(financeFlag.getTotalProfit(), ccyFormatter));
+			this.finFlags_totalPft.setValue(CurrencyUtil.parse(financeFlag.getTotalProfit(), ccyFormatter));
 			this.finFlags_contractPrice
-					.setValue(PennantAppUtil.formateAmount(
+					.setValue(CurrencyUtil.parse(
 							financeFlag.getFinAmount().subtract(financeFlag.getDownPaySupl())
 									.add(financeFlag.getFeeChargeAmt() == null ? BigDecimal.ZERO
 											: financeFlag.getFeeChargeAmt())
@@ -980,16 +979,15 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 					.setValue(String.valueOf(financeMain.getNumberOfTerms() + financeMain.getGraceTerms()));
 			this.finFlags_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 			this.finFlags_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
-			this.finFlags_purchasePrice
-					.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount(), ccyFormatter));
-			this.finFlags_otherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
-			this.finFlags_totalCost.setValue(PennantAppUtil.formateAmount(
+			this.finFlags_purchasePrice.setValue(CurrencyUtil.parse(financeMain.getFinAmount(), ccyFormatter));
+			this.finFlags_otherExp.setValue(CurrencyUtil.parse(financeMain.getFeeChargeAmt(), ccyFormatter));
+			this.finFlags_totalCost.setValue(CurrencyUtil.parse(
 					financeMain.getFinAmount().subtract(financeMain.getDownPaySupl()).add(
 							financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt()),
 					ccyFormatter));
-			this.finFlags_totalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalProfit(), ccyFormatter));
+			this.finFlags_totalPft.setValue(CurrencyUtil.parse(financeMain.getTotalProfit(), ccyFormatter));
 			this.finFlags_contractPrice
-					.setValue(PennantAppUtil.formateAmount(
+					.setValue(CurrencyUtil.parse(
 							financeMain.getFinAmount().subtract(financeMain.getDownPaySupl())
 									.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO
 											: financeMain.getFeeChargeAmt())

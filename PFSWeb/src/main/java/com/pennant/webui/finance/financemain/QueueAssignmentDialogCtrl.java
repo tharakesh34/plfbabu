@@ -54,6 +54,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.QueueAssignmentHeader;
 import com.pennant.backend.model.administration.SecurityUserOperationRoles;
@@ -63,7 +64,6 @@ import com.pennant.backend.service.QueueAssignmentService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
@@ -960,8 +960,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 				listCell = new Listcell(String.valueOf(queue.getLovDescCustCIF()));
 				listCell.setParent(item);
 
-				listCell = new Listcell(
-						PennantAppUtil.amountFormate(queue.getLovDescFinAmount(), queue.getLovDescEditField()));
+				listCell = new Listcell(CurrencyUtil.format(queue.getLovDescFinAmount(), queue.getLovDescEditField()));
 				listCell.setStyle("text-align:right;");
 				listCell.setParent(item);
 

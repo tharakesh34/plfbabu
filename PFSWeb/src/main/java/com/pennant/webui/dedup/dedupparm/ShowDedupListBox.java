@@ -49,7 +49,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -538,7 +537,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(BigDecimal.class)) {
 
 					BigDecimal decfieldValue = (BigDecimal) data.getClass().getMethod(fieldMethod).invoke(data);
-					lc = new Listcell(PennantAppUtil.amountFormate(decfieldValue, CurrencyUtil.getFormat("")));
+					lc = new Listcell(CurrencyUtil.format(decfieldValue, CurrencyUtil.getFormat("")));
 					lc.setStyle("text-align:right;");
 					BigDecimal currBigdeValue = (BigDecimal) getFinanceDedup().getClass().getMethod(fieldMethod)
 							.invoke(getFinanceDedup());

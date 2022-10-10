@@ -36,7 +36,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -67,7 +66,7 @@ public class LiabilityRequestListModelItemRenderer implements ListitemRenderer<L
 		lc.setParent(item);
 		lc = new Listcell(liabilityRequest.getFinCcy());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(liabilityRequest.getFinAmount(),
+		lc = new Listcell(CurrencyUtil.format(liabilityRequest.getFinAmount(),
 				CurrencyUtil.getFormat(liabilityRequest.getFinCcy())));
 		lc.setParent(item);
 		lc = new Listcell(liabilityRequest.getRecordStatus());

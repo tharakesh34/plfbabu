@@ -43,6 +43,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -53,7 +54,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -339,8 +339,8 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		this.reference.setValue(aCollateral.getReference());
 		this.lastReview.setValue(aCollateral.getLastReview());
 		this.currency.setValue(aCollateral.getCurrency());
-		this.value.setValue(PennantAppUtil.formateAmount(aCollateral.getValue(), ccyFormat));
-		this.bankvaluation.setValue(PennantAppUtil.formateAmount(aCollateral.getBankvaluation(), ccyFormat));
+		this.value.setValue(CurrencyUtil.parse(aCollateral.getValue(), ccyFormat));
+		this.bankvaluation.setValue(CurrencyUtil.parse(aCollateral.getBankvaluation(), ccyFormat));
 
 		this.bankmargin.setValue(aCollateral.getBankmargin());
 		this.actualCoverage.setValue(aCollateral.getActualCoverage());

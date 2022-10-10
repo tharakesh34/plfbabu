@@ -40,7 +40,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
@@ -94,15 +93,15 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 				String.valueOf(financeMain.getGraceTerms() + financeMain.getCalTerms() + financeMain.getAdvTerms()));
 		lc.setParent(item);
 		lc.setStyle("text-align:right;");
-		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(), format));
+		lc = new Listcell(CurrencyUtil.format(financeMain.getFinAmount(), format));
 		lc.setParent(item);
 		lc.setStyle("text-align:right;");
 		BigDecimal finAmount = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt());
 		if (financeMain.getFinAssetValue().compareTo(BigDecimal.ZERO) == 0) {
-			lc = new Listcell(PennantAppUtil.amountFormate(finAmount, format));
+			lc = new Listcell(CurrencyUtil.format(finAmount, format));
 			lc.setParent(item);
 		} else {
-			lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAssetValue(), format));
+			lc = new Listcell(CurrencyUtil.format(financeMain.getFinAssetValue(), format));
 			lc.setParent(item);
 		}
 		lc.setStyle("text-align:right;");

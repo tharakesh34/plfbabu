@@ -38,12 +38,12 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -258,8 +258,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			}
 		}
 		if (sampling.getRecommendedAmount() != null) {
-			this.samplingFinalRcmdAmt.setValue(
-					PennantAppUtil.formateAmount(sampling.getRecommendedAmount(), sampling.getCcyeditfield()));
+			this.samplingFinalRcmdAmt
+					.setValue(CurrencyUtil.parse(sampling.getRecommendedAmount(), sampling.getCcyeditfield()));
 		} else {
 			this.samplingFinalRcmdAmt.setValue(BigDecimal.ZERO);
 		}
@@ -527,8 +527,8 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			wve.add(we);
 		}
 		try {
-			sampling.setRecommendedAmount(PennantAppUtil.unFormateAmount(this.samplingFinalRcmdAmt.getActualValue(),
-					sampling.getCcyeditfield()));
+			sampling.setRecommendedAmount(
+					CurrencyUtil.unFormat(this.samplingFinalRcmdAmt.getActualValue(), sampling.getCcyeditfield()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

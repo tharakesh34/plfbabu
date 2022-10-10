@@ -54,7 +54,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -196,12 +195,11 @@ public class SchdlRepaymentDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			if (schdlList.size() > 0) {
 				FinanceScheduleDetail financeScheduleDetail = schdlList.get(0);
 				this.schdlDate.setValue(financeScheduleDetail.getSchDate());
-				this.schdlAmount
-						.setValue(PennantAppUtil.formateAmount(financeScheduleDetail.getRepayAmount(), finformetter));
+				this.schdlAmount.setValue(CurrencyUtil.parse(financeScheduleDetail.getRepayAmount(), finformetter));
 				BigDecimal temp = financeScheduleDetail.getRepayAmount()
 						.subtract(financeScheduleDetail.getSchdPftPaid())
 						.subtract(financeScheduleDetail.getSchdPriPaid());
-				this.schdlBalAmount.setValue(PennantAppUtil.formateAmount(temp, finformetter));
+				this.schdlBalAmount.setValue(CurrencyUtil.parse(temp, finformetter));
 			}
 		}
 		logger.debug("Leaving" + event.toString());

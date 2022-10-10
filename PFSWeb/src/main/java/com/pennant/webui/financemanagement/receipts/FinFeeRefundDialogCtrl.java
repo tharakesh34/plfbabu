@@ -105,7 +105,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -801,8 +800,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 				// Refund Amount without GST
 				Decimalbox allocAmtBox = getDecimalbox(finFormatter, true);
-				allocAmtBox
-						.setValue(PennantAppUtil.formateAmount(curFinFeeRefund.getRefundAmtOriginal(), finFormatter));
+				allocAmtBox.setValue(CurrencyUtil.parse(curFinFeeRefund.getRefundAmtOriginal(), finFormatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(allocAmtBox);
@@ -810,14 +808,14 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 				// Refund Amount GST
 				Decimalbox allocAmtGstBox = getDecimalbox(finFormatter, true);
-				allocAmtGstBox.setValue(PennantAppUtil.formateAmount(curFinFeeRefund.getRefundAmtGST(), finFormatter));
+				allocAmtGstBox.setValue(CurrencyUtil.parse(curFinFeeRefund.getRefundAmtGST(), finFormatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(allocAmtGstBox);
 				lc.setParent(item);
 
 				Decimalbox allocAmtTdsBox = getDecimalbox(finFormatter, true);
-				allocAmtTdsBox.setValue(PennantAppUtil.formateAmount(curFinFeeRefund.getRefundAmtTDS(), finFormatter));
+				allocAmtTdsBox.setValue(CurrencyUtil.parse(curFinFeeRefund.getRefundAmtTDS(), finFormatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(allocAmtTdsBox);
@@ -825,8 +823,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 				// Refund Amount total
 				Decimalbox totAllocAmtTotBox = getDecimalbox(finFormatter, !readOnly);
-				totAllocAmtTotBox
-						.setValue(PennantAppUtil.formateAmount(curFinFeeRefund.getRefundAmount(), finFormatter));
+				totAllocAmtTotBox.setValue(CurrencyUtil.parse(curFinFeeRefund.getRefundAmount(), finFormatter));
 				lc = new Listcell();
 				lc.appendChild(totAllocAmtTotBox);
 				lc.setStyle("text-align:right;");
@@ -916,7 +913,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		BigDecimal allocatedAmtGST = BigDecimal.ZERO;
 		BigDecimal allocatedAmtTDS = BigDecimal.ZERO;
 		BigDecimal allocatedAmt = BigDecimal.ZERO;
-		BigDecimal allocatedAmtTOT = PennantAppUtil.unFormateAmount(totAllocAmtTotBox.getValue(), formatter);
+		BigDecimal allocatedAmtTOT = CurrencyUtil.unFormat(totAllocAmtTotBox.getValue(), formatter);
 		BigDecimal fraction = BigDecimal.ONE;
 		BigDecimal totPerc = BigDecimal.ZERO;
 
@@ -959,10 +956,10 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		finFeeRefund.setRefundAmtGST(allocatedAmtGST);
 		finFeeRefund.setRefundAmtTDS(allocatedAmtTDS);
 		finFeeRefund.setRefundAmtOriginal(allocatedAmt);
-		allocAmtBox.setValue(PennantAppUtil.formateAmount(allocatedAmt, formatter));
-		allocAmtGstBox.setValue(PennantAppUtil.formateAmount(allocatedAmtGST, formatter));
-		allocAmtTdsBox.setValue(PennantAppUtil.formateAmount(allocatedAmtTDS, formatter));
-		totAllocAmtTotBox.setValue(PennantAppUtil.formateAmount(allocatedAmtTOT, formatter));
+		allocAmtBox.setValue(CurrencyUtil.parse(allocatedAmt, formatter));
+		allocAmtGstBox.setValue(CurrencyUtil.parse(allocatedAmtGST, formatter));
+		allocAmtTdsBox.setValue(CurrencyUtil.parse(allocatedAmtTDS, formatter));
+		totAllocAmtTotBox.setValue(CurrencyUtil.parse(allocatedAmtTOT, formatter));
 		doFillSummaryDetails(listBoxFeeDetail);
 		logger.debug(Literal.LEAVING);
 	}

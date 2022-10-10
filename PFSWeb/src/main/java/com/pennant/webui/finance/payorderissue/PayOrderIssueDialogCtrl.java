@@ -87,7 +87,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -427,7 +426,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 	}
 
 	private BigDecimal formateAmount(BigDecimal decimal) {
-		return PennantAppUtil.formateAmount(decimal, ccyformat);
+		return CurrencyUtil.parse(decimal, ccyformat);
 	}
 
 	/**

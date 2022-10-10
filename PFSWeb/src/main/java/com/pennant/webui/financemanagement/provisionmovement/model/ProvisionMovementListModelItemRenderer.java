@@ -33,10 +33,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -59,7 +59,7 @@ public class ProvisionMovementListModelItemRenderer implements ListitemRenderer<
 		lc = new Listcell(PennantApplicationUtil.formateInt(provisionMovement.getProvMovementSeq()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(provisionMovement.getNonFormulaProv(), 3));
+		lc = new Listcell(CurrencyUtil.format(provisionMovement.getNonFormulaProv(), 3));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell();
@@ -74,10 +74,10 @@ public class ProvisionMovementListModelItemRenderer implements ListitemRenderer<
 		cbAutoReleaseNFP.setChecked(provisionMovement.isAutoReleaseNFP());
 		lc.appendChild(cbAutoReleaseNFP);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(provisionMovement.getPrincipalDue(), 3));
+		lc = new Listcell(CurrencyUtil.format(provisionMovement.getPrincipalDue(), 3));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(provisionMovement.getProfitDue(), 3));
+		lc = new Listcell(CurrencyUtil.format(provisionMovement.getProfitDue(), 3));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getDueFromDate()));

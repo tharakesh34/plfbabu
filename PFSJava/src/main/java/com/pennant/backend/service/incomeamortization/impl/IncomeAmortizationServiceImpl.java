@@ -76,7 +76,7 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 	private CustomerQueuingDAO customerQueuingDAO;
 	private ProjectedAmortizationService projectedAmortizationService;
 
-	public void processAmortization(List<FinanceMain> financeList, Date monthEndDate) throws Exception {
+	public void processAmortization(List<FinanceMain> financeList, Date monthEndDate) {
 		logger.info(Literal.ENTERING);
 
 		FinEODEvent finEODEvent = null;
@@ -91,7 +91,7 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 
 		for (FinanceMain finMain : financeList) {
 			long finID = finMain.getFinID();
-			String finReference = finMain.getFinReference();
+
 			incomeAMZList = this.projectedAmortizationDAO.getIncomeAMZDetailsByRef(finID);
 
 			if (CollectionUtils.isEmpty(incomeAMZList)) {

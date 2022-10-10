@@ -42,7 +42,6 @@ import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.finance.FinanceMainService;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -344,18 +343,18 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getMaturityDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getFinAmount(),
-				CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
+		lc = new Listcell(
+				CurrencyUtil.format(aFinanceEnq.getFinAmount(), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt())
+		lc = new Listcell(CurrencyUtil.format(aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt())
 				.subtract(aFinanceEnq.getFinRepaymentAmount()), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getNextDueDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getNextDueAmount(),
-				CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
+		lc = new Listcell(
+				CurrencyUtil.format(aFinanceEnq.getNextDueAmount(), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		item.setAttribute("data", aFinanceEnq);
@@ -402,7 +401,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		cell.setSpan(7);
 		listgroupfoot.appendChild(cell);
 
-		cell = new Listcell(PennantAppUtil.amountFormate(grpTotalAmt, formatter));
+		cell = new Listcell(CurrencyUtil.format(grpTotalAmt, formatter));
 		cell.setStyle("font-weight:bold;text-align:right;");
 		listgroupfoot.appendChild(cell);
 

@@ -46,6 +46,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -56,7 +57,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -323,7 +323,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 			this.expenseType.setValue(aFinTypeExpense.getExpenseTypeCode(), aFinTypeExpense.getExpenseTypeDesc());
 		}
 
-		this.amount.setValue(PennantAppUtil.formateAmount(aFinTypeExpense.getAmount(), ccyFormat));
+		this.amount.setValue(CurrencyUtil.parse(aFinTypeExpense.getAmount(), ccyFormat));
 		this.percentage.setValue(aFinTypeExpense.getPercentage());
 
 		String calTypeExcludeFields = "," + PennantConstants.FEE_CALCULATION_TYPE_RULE + ",";
@@ -391,7 +391,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		}
 		// Amount
 		try {
-			aFinTypeExpense.setAmount(PennantAppUtil.unFormateAmount(
+			aFinTypeExpense.setAmount(CurrencyUtil.unFormat(
 					this.amount.isReadonly() ? this.amount.getActualValue() : this.amount.getValidateValue(),
 					ccyFormat));
 

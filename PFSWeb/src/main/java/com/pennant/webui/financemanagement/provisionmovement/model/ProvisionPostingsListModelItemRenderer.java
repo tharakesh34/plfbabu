@@ -32,8 +32,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -61,7 +61,7 @@ public class ProvisionPostingsListModelItemRenderer implements ListitemRenderer<
 		lc.setParent(item);
 		lc = new Listcell(returnDataSet.getTranCode());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(), 0));
+		lc = new Listcell(CurrencyUtil.format(returnDataSet.getPostAmount(), 0));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(returnDataSet.getPostStatus());

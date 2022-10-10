@@ -73,6 +73,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -99,7 +100,6 @@ import com.pennant.component.PTCKeditor;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.ShowDedupListBox;
@@ -806,8 +806,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.customerGroup.setValue(aFacility.getCustGrpCodeName());
 		this.customerGroup.setDescription(StringUtils.trimToEmpty(aFacility.getCustomerGroupName()));
 
-		this.countryExposure.setValue(PennantAppUtil.formateAmount(aFacility.getCountryExposure(), ccyFormat));
-		this.countryLimit.setValue(PennantAppUtil.formateAmount(aFacility.getCountryLimit(), ccyFormat));
+		this.countryExposure.setValue(CurrencyUtil.parse(aFacility.getCountryExposure(), ccyFormat));
+		this.countryLimit.setValue(CurrencyUtil.parse(aFacility.getCountryLimit(), ccyFormat));
 		this.reviewCenter.setValue(aFacility.getReviewCenter());
 		this.countryLimitAdeq.setValue(aFacility.getCountryLimitAdeq());
 		if (!aFacility.isOverriddeCirculation()) {
@@ -846,7 +846,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				totfacilityUsd = totfacilityUsd.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(),
 						AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
 			}
-			totfacilityUsd = PennantAppUtil.formateAmount(totfacilityUsd, AccountConstants.CURRENCY_USD_FORMATTER);
+			totfacilityUsd = CurrencyUtil.parse(totfacilityUsd, AccountConstants.CURRENCY_USD_FORMATTER);
 		}
 
 		if (StringUtils.isNotEmpty(countryLimitCureency)
@@ -1044,13 +1044,13 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		// Country Exposure
 		try {
-			aFacility.setCountryExposure(PennantAppUtil.unFormateAmount(this.countryExposure.getValue(), ccyFormat));
+			aFacility.setCountryExposure(CurrencyUtil.unFormat(this.countryExposure.getValue(), ccyFormat));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Country Limit
 		try {
-			aFacility.setCountryLimit(PennantAppUtil.unFormateAmount(this.countryLimit.getValue(), ccyFormat));
+			aFacility.setCountryLimit(CurrencyUtil.unFormat(this.countryLimit.getValue(), ccyFormat));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1868,8 +1868,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP);
 					BigDecimal custGroupExposureEQ = category.getRiskAmount().divide(
 							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP);
-					this.custGroupLimit.setValue(PennantAppUtil.formateAmount(custGroupLimitEQ, ccyFormat));
-					this.custGroupExposure.setValue(PennantAppUtil.formateAmount(custGroupExposureEQ, ccyFormat));
+					this.custGroupLimit.setValue(CurrencyUtil.parse(custGroupLimitEQ, ccyFormat));
+					this.custGroupExposure.setValue(CurrencyUtil.parse(custGroupExposureEQ, ccyFormat));
 					label_FacilityDialog_CustGroupExposure.setValue(label_FacilityDialog_CustGroupExposure.getValue()
 							+ "(" + category.getLimitCurrency() + ")");
 					label_FacilityDialog_CustGroupLimit.setValue(
@@ -1892,15 +1892,15 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					lc.setParent(item);
 					lc = new Listcell(category.getLimitCategoryDesc());
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.amountFormate(category.getRiskAmount().divide(
+					lc = new Listcell(CurrencyUtil.format(category.getRiskAmount().divide(
 							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP),
 							0));
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.amountFormate(category.getLimitAmount().divide(
+					lc = new Listcell(CurrencyUtil.format(category.getLimitAmount().divide(
 							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP),
 							0));
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.amountFormate(category.getAvailAmount().divide(
+					lc = new Listcell(CurrencyUtil.format(category.getAvailAmount().divide(
 							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP),
 							0));
 					lc.setParent(item);
@@ -1943,14 +1943,12 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				cell.setParent(item);
 				cell = new Listcell(customerCollateral.getCollCcy());
 				cell.setParent(item);
-				cell = new Listcell(
-						PennantAppUtil.amountFormate(new BigDecimal(customerCollateral.getCollValue().toString())
-								.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
+				cell = new Listcell(CurrencyUtil.format(new BigDecimal(customerCollateral.getCollValue().toString())
+						.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
-				cell = new Listcell(
-						PennantAppUtil.amountFormate(new BigDecimal(customerCollateral.getCollBankVal().toString())
-								.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
+				cell = new Listcell(CurrencyUtil.format(new BigDecimal(customerCollateral.getCollBankVal().toString())
+						.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
 				BigDecimal per = new BigDecimal(customerCollateral.getCollBankValMar().toString())

@@ -23,7 +23,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -277,51 +276,50 @@ public class FinanceProfitEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSummary> 
 
 		int formatter = CurrencyUtil.getFormat(finSummary.getFinCcy());
 
-		this.totalPriSchd.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPriSchd(), formatter));
+		this.totalPriSchd.setValue(CurrencyUtil.format(finSummary.getTotalPriSchd(), formatter));
 		this.totalPriSchd.setStyle("text-align:right");
-		this.totalPftSchd.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPftSchd(), formatter));
+		this.totalPftSchd.setValue(CurrencyUtil.format(finSummary.getTotalPftSchd(), formatter));
 		this.totalPftSchd.setStyle("text-align:right");
-		this.totalOriginal.setValue(PennantAppUtil.amountFormate(finSummary.getTotalOriginal(), formatter));
+		this.totalOriginal.setValue(CurrencyUtil.format(finSummary.getTotalOriginal(), formatter));
 		this.totalOriginal.setStyle("text-align:right");
 
-		this.outStandPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getOutStandPrincipal(), formatter));
-		this.outStandProfit.setValue(PennantAppUtil.amountFormate(finSummary.getOutStandProfit(), formatter));
-		this.totalOutStanding.setValue(PennantAppUtil.amountFormate(finSummary.getTotalOutStanding(), formatter));
+		this.outStandPrincipal.setValue(CurrencyUtil.format(finSummary.getOutStandPrincipal(), formatter));
+		this.outStandProfit.setValue(CurrencyUtil.format(finSummary.getOutStandProfit(), formatter));
+		this.totalOutStanding.setValue(CurrencyUtil.format(finSummary.getTotalOutStanding(), formatter));
 
-		this.schdPriPaid.setValue(PennantAppUtil.amountFormate(finSummary.getSchdPriPaid(), formatter));
-		this.schdPftPaid.setValue(PennantAppUtil.amountFormate(finSummary.getSchdPftPaid(), formatter));
-		this.totalPaid.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPaid(), formatter));
+		this.schdPriPaid.setValue(CurrencyUtil.format(finSummary.getSchdPriPaid(), formatter));
+		this.schdPftPaid.setValue(CurrencyUtil.format(finSummary.getSchdPftPaid(), formatter));
+		this.totalPaid.setValue(CurrencyUtil.format(finSummary.getTotalPaid(), formatter));
 
-		this.unPaidPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getUnPaidPrincipal(), formatter));
-		this.unPaidProfit.setValue(PennantAppUtil.amountFormate(finSummary.getUnPaidProfit(), formatter));
-		this.totalUnPaid.setValue(PennantAppUtil.amountFormate(finSummary.getTotalUnPaid(), formatter));
+		this.unPaidPrincipal.setValue(CurrencyUtil.format(finSummary.getUnPaidPrincipal(), formatter));
+		this.unPaidProfit.setValue(CurrencyUtil.format(finSummary.getUnPaidProfit(), formatter));
+		this.totalUnPaid.setValue(CurrencyUtil.format(finSummary.getTotalUnPaid(), formatter));
 
-		this.overDuePrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getOverDuePrincipal(), formatter));
-		this.overDueProfit.setValue(PennantAppUtil.amountFormate(finSummary.getOverDueProfit(), formatter));
-		this.totalOverDue.setValue(PennantAppUtil.amountFormate(finSummary.getTotalOverDue(), formatter));
+		this.overDuePrincipal.setValue(CurrencyUtil.format(finSummary.getOverDuePrincipal(), formatter));
+		this.overDueProfit.setValue(CurrencyUtil.format(finSummary.getOverDueProfit(), formatter));
+		this.totalOverDue.setValue(CurrencyUtil.format(finSummary.getTotalOverDue(), formatter));
 
-		this.earnedPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getEarnedPrincipal(), formatter));
-		this.earnedProfit.setValue(PennantAppUtil.amountFormate(finSummary.getEarnedProfit(), formatter));
-		this.totalEarned.setValue(PennantAppUtil.amountFormate(finSummary.getTotalEarned(), formatter));
+		this.earnedPrincipal.setValue(CurrencyUtil.format(finSummary.getEarnedPrincipal(), formatter));
+		this.earnedProfit.setValue(CurrencyUtil.format(finSummary.getEarnedProfit(), formatter));
+		this.totalEarned.setValue(CurrencyUtil.format(finSummary.getTotalEarned(), formatter));
 
-		this.unEarnedPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getUnEarnedPrincipal(), formatter));
-		this.unEarnedProfit.setValue(PennantAppUtil.amountFormate(finSummary.getUnEarnedProfit(), formatter));
-		this.totalUnEarned.setValue(PennantAppUtil.amountFormate(finSummary.getTotalUnEarned(), formatter));
+		this.unEarnedPrincipal.setValue(CurrencyUtil.format(finSummary.getUnEarnedPrincipal(), formatter));
+		this.unEarnedProfit.setValue(CurrencyUtil.format(finSummary.getUnEarnedProfit(), formatter));
+		this.totalUnEarned.setValue(CurrencyUtil.format(finSummary.getTotalUnEarned(), formatter));
 
-		this.payOffPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getPayOffPrincipal(), formatter));
-		this.payOffProfit.setValue(PennantAppUtil.amountFormate(finSummary.getPayOffProfit(), formatter));
-		this.totalPayOff.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPayOff(), formatter));
+		this.payOffPrincipal.setValue(CurrencyUtil.format(finSummary.getPayOffPrincipal(), formatter));
+		this.payOffProfit.setValue(CurrencyUtil.format(finSummary.getPayOffProfit(), formatter));
+		this.totalPayOff.setValue(CurrencyUtil.format(finSummary.getTotalPayOff(), formatter));
 
 		this.overDueInstlments.setValue(String.valueOf(finSummary.getOverDueInstlments()));
-		this.overDueInstlementPft
-				.setValue(PennantAppUtil.amountFormate(finSummary.getOverDueInstlementPft(), formatter));
+		this.overDueInstlementPft.setValue(CurrencyUtil.format(finSummary.getOverDueInstlementPft(), formatter));
 		this.finProfitrate.setValue(PennantApplicationUtil.formatRate(finSummary.getFinRate().doubleValue(), 2));
 
 		this.paidInstlments.setValue(String.valueOf(finSummary.getPaidInstlments()));
-		this.paidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getPaidInstlementPft(), formatter));
+		this.paidInstlementPft.setValue(CurrencyUtil.format(finSummary.getPaidInstlementPft(), formatter));
 
 		this.unPaidInstlments.setValue(String.valueOf(finSummary.getNumberOfTerms() - finSummary.getPaidInstlments()));
-		this.unPaidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getUnPaidInstlementPft(), formatter));
+		this.unPaidInstlementPft.setValue(CurrencyUtil.format(finSummary.getUnPaidInstlementPft(), formatter));
 
 		logger.debug("Leaving");
 	}

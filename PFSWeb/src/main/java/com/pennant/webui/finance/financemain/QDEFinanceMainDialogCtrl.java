@@ -486,8 +486,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finType.setValue(aFinanceMain.getFinType());
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 		this.finReference.setValue(aFinanceMain.getFinReference());
-		this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), format));
-		this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(), format));
+		this.finAmount.setValue(CurrencyUtil.parse(aFinanceMain.getFinAmount(), format));
+		this.downPaySupl.setValue(CurrencyUtil.parse(aFinanceMain.getDownPaySupl(), format));
 		this.numberOfTerms.setValue(aFinanceMain.getNumberOfTerms());
 		this.finCcy.setValue(aFinanceMain.getFinCcy());
 		this.finBranch.setValue(aFinanceMain.getFinBranch());
@@ -660,12 +660,12 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 		try {
-			aFinanceMain.setDownPaySupl(PennantAppUtil.unFormateAmount(this.downPaySupl.getValidateValue(), formatter));
+			aFinanceMain.setDownPaySupl(CurrencyUtil.unFormat(this.downPaySupl.getValidateValue(), formatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinanceMain.setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getValidateValue(), formatter));
+			aFinanceMain.setFinAmount(CurrencyUtil.unFormat(this.finAmount.getValidateValue(), formatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1029,8 +1029,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy());
 
-		BigDecimal oldDwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
-		BigDecimal newDwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter);
+		BigDecimal oldDwnPaySupl = CurrencyUtil.unFormat(this.oldVar_downPaySupl, formatter);
+		BigDecimal newDwnPaySupl = CurrencyUtil.unFormat(this.downPaySupl.getActualValue(), formatter);
 		if (oldDwnPaySupl.compareTo(newDwnPaySupl) != 0) {
 			return true;
 		}
@@ -2024,7 +2024,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				if (StringUtils.isEmpty(moduleDefiner)) {
 					getFinanceDetail().getFinScheduleData().getFinanceMain().setFinAmount(
-							PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), details.getCcyEditField()));
+							CurrencyUtil.unFormat(this.finAmount.getActualValue(), details.getCcyEditField()));
 				}
 			}
 		}
@@ -2455,7 +2455,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public FinanceMain getFinanceMain() {
 		FinanceMain financeMain = super.getFinanceMain();
 		financeMain.setDownPayment(
-				PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue()),
+				CurrencyUtil.unFormat(this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue()),
 						CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
 		return financeMain;
 	}

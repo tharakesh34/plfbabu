@@ -62,7 +62,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -288,7 +287,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (repayList != null && repayList.size() > 0) {
 
 			this.postDate.setValue(DateUtility.formatToLongDate(repayList.get(0).getFinPostDate()));
-			this.rpyAmount.setValue(PennantAppUtil.amountFormate(repayList.get(0).getFinRpyAmount(), format));
+			this.rpyAmount.setValue(CurrencyUtil.format(repayList.get(0).getFinRpyAmount(), format));
 			doFilllistbox(repayList);
 
 			// Posting Details
@@ -357,27 +356,27 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				lc = new Listcell(DateUtility.formatToLongDate(repay.getFinSchdDate()));
 				lc.setParent(item);
 
-				lc = new Listcell(PennantAppUtil.amountFormate(repay.getFinSchdPriPaid(), formatter));
+				lc = new Listcell(CurrencyUtil.format(repay.getFinSchdPriPaid(), formatter));
 				lc.setStyle(sclass);
 				lc.setParent(item);
 
-				lc = new Listcell(PennantAppUtil.amountFormate(repay.getFinSchdPftPaid(), formatter));
+				lc = new Listcell(CurrencyUtil.format(repay.getFinSchdPftPaid(), formatter));
 				lc.setStyle(sclass);
 				lc.setParent(item);
 
-				lc = new Listcell(PennantAppUtil.amountFormate(repay.getFinTotSchdPaid(), formatter));
+				lc = new Listcell(CurrencyUtil.format(repay.getFinTotSchdPaid(), formatter));
 				lc.setStyle(sclass);
 				lc.setParent(item);
 
-				lc = new Listcell(PennantAppUtil.amountFormate(repay.getFinFee(), formatter));
+				lc = new Listcell(CurrencyUtil.format(repay.getFinFee(), formatter));
 				lc.setStyle(sclass);
 				lc.setParent(item);
 
-				lc = new Listcell(PennantAppUtil.amountFormate(repay.getFinWaiver(), formatter));
+				lc = new Listcell(CurrencyUtil.format(repay.getFinWaiver(), formatter));
 				lc.setStyle(sclass);
 				lc.setParent(item);
 
-				lc = new Listcell(PennantAppUtil.amountFormate(repay.getFinRefund(), formatter));
+				lc = new Listcell(CurrencyUtil.format(repay.getFinRefund(), formatter));
 				lc.setStyle(sclass);
 				lc.setParent(item);
 
@@ -760,7 +759,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getAcCcy());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(),
+				lc = new Listcell(CurrencyUtil.format(returnDataSet.getPostAmount(),
 						CurrencyUtil.getFormat(financeMain.getFinCcy())));
 				lc.setStyle("font-weight:bold;text-align:right;");
 				lc.setParent(item);

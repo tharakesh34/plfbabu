@@ -51,7 +51,6 @@ import com.pennant.backend.financeservice.AddDatedScheduleService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -202,8 +201,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		fillSchDates(this.cbTillDate, aFinSchData);
 		int formatter = CurrencyUtil.getFormat(aFinSchData.getFinanceMain().getFinCcy());
 		if (getFinanceScheduleDetail() != null) {
-			this.repayAmount
-					.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getDisbAmount(), formatter));
+			this.repayAmount.setValue(CurrencyUtil.parse(getFinanceScheduleDetail().getDisbAmount(), formatter));
 			this.repayAmount.setScale(formatter);
 			this.fromDate.setValue(getFinanceScheduleDetail().getSchDate());
 		}

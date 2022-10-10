@@ -45,6 +45,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.CostOfFund;
@@ -53,7 +54,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.CostOfFundService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -311,9 +311,9 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 		this.cofCode.setValue(aCostOfFund.getCofCode());
 		this.currency.setValue(aCostOfFund.getCurrency());
 		this.cofEffDate.setValue(aCostOfFund.getCofEffDate());
-		this.cofRate.setValue(PennantAppUtil.formateAmount(
-				aCostOfFund.getCofRate() == null ? BigDecimal.ZERO : aCostOfFund.getCofRate(),
-				PennantConstants.defaultCCYDecPos));
+		this.cofRate.setValue(
+				CurrencyUtil.parse(aCostOfFund.getCofRate() == null ? BigDecimal.ZERO : aCostOfFund.getCofRate(),
+						PennantConstants.defaultCCYDecPos));
 		this.deleteRate.setChecked(aCostOfFund.isDelExistingRates());
 		this.active.setChecked(aCostOfFund.isActive());
 
@@ -364,8 +364,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 			wve.add(we);
 		}
 		try {
-			aCostOfFund.setCofRate(
-					PennantAppUtil.unFormateAmount(this.cofRate.getValue(), PennantConstants.defaultCCYDecPos));
+			aCostOfFund.setCofRate(CurrencyUtil.unFormat(this.cofRate.getValue(), PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -55,6 +55,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -73,7 +74,6 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -427,8 +427,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			countBox.addForward("onChange", window_DepositDetailsDialog, "onChangeCount", cashDenomination);
 
 			// Total Amount
-			BigDecimal amount = PennantAppUtil.formateAmount(cashDenomination.getAmount(),
-					PennantConstants.defaultCCYDecPos);
+			BigDecimal amount = CurrencyUtil.parse(cashDenomination.getAmount(), PennantConstants.defaultCCYDecPos);
 			Decimalbox amountBox = new Decimalbox();
 			amountBox.setMaxlength(18);
 			amountBox.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
@@ -502,8 +501,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		} else {
 			cashDenomination.setCount(count.getValue());
 			BigDecimal denomination = new BigDecimal(cashDenomination.getDenomination());
-			cashDenomination.setAmount(PennantAppUtil.unFormateAmount(
-					denomination.multiply(new BigDecimal(count.getValue())), PennantConstants.defaultCCYDecPos));
+			cashDenomination.setAmount(CurrencyUtil.unFormat(denomination.multiply(new BigDecimal(count.getValue())),
+					PennantConstants.defaultCCYDecPos));
 		}
 
 		doFillDenominationsList(getCashDenominations());
@@ -524,11 +523,9 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		CashDenomination cashDenomination = (CashDenomination) event.getData();
 
 		if (amount.getValue() == null) {
-			cashDenomination
-					.setAmount(PennantAppUtil.unFormateAmount(BigDecimal.ZERO, PennantConstants.defaultCCYDecPos));
+			cashDenomination.setAmount(CurrencyUtil.unFormat(BigDecimal.ZERO, PennantConstants.defaultCCYDecPos));
 		} else {
-			cashDenomination
-					.setAmount(PennantAppUtil.unFormateAmount(amount.getValue(), PennantConstants.defaultCCYDecPos));
+			cashDenomination.setAmount(CurrencyUtil.unFormat(amount.getValue(), PennantConstants.defaultCCYDecPos));
 		}
 
 		doFillDenominationsList(getCashDenominations());
@@ -660,8 +657,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				// lc.setParent(item);
 
 				// Amount
-				lc = new Listcell(
-						PennantAppUtil.amountFormate(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));
+				lc = new Listcell(CurrencyUtil.format(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -691,7 +687,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			return;
 		}
 		Checkbox active = (Checkbox) event.getOrigin().getTarget();
-		BigDecimal reservedAmount = PennantAppUtil.unFormateAmount(this.reservedAmount.getValidateValue(),
+		BigDecimal reservedAmount = CurrencyUtil.unFormat(this.reservedAmount.getValidateValue(),
 				PennantConstants.defaultCCYDecPos);
 		if (active.isChecked()) {
 			reservedAmount = reservedAmount.add(depositCheques.getAmount());
@@ -764,10 +760,10 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		}
 		// Reserved Amount
 		try {
-			aDepositDetails.setReservedAmount(PennantAppUtil.unFormateAmount(this.reservedAmount.getValidateValue(),
-					PennantConstants.defaultCCYDecPos));
-			depositMovements.setReservedAmount(PennantAppUtil.unFormateAmount(this.reservedAmount.getValidateValue(),
-					PennantConstants.defaultCCYDecPos));
+			aDepositDetails.setReservedAmount(
+					CurrencyUtil.unFormat(this.reservedAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
+			depositMovements.setReservedAmount(
+					CurrencyUtil.unFormat(this.reservedAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

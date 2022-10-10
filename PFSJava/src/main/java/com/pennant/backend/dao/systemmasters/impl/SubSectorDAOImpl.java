@@ -249,11 +249,11 @@ public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDA
 	}
 
 	@Override
-	public boolean isExistSectorCode(String secCode, String SuSeCode) {
+	public boolean isExistSectorCode(String sectorCode, String subSectorCode) {
 		String sql = "Select Count(CustSubSector) From Customers Where CustSector = ? and CustSubSector = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, secCode, SuSeCode) > 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, sectorCode, subSectorCode) > 0;
 	}
 }

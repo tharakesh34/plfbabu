@@ -822,7 +822,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			if (fieldDetail.isAllowInRule()) {
 				Object value = detail.get(fieldDetail.getFieldName());
 				if (StringUtils.equals("CURRENCY", fieldDetail.getFieldType())) {
-					value = PennantAppUtil.formateAmount((BigDecimal) value, CurrencyUtil.getFormat(ccy));
+					value = CurrencyUtil.parse((BigDecimal) value, CurrencyUtil.getFormat(ccy));
 				}
 				declaredMap.put(fieldDetail.getLovDescModuleName() + "_" + fieldDetail.getLovDescSubModuleName() + "_"
 						+ fieldDetail.getFieldName(), value);

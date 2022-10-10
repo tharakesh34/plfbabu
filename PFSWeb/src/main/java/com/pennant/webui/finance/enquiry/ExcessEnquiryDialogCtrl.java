@@ -36,9 +36,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -173,19 +173,19 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				break;
 			}
 
-			lc = new Listcell(PennantAppUtil.amountFormate(excessAmt.getAmount(), ccyFormatter));
+			lc = new Listcell(CurrencyUtil.format(excessAmt.getAmount(), ccyFormatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(excessAmt.getUtilisedAmt(), ccyFormatter));
+			lc = new Listcell(CurrencyUtil.format(excessAmt.getUtilisedAmt(), ccyFormatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(excessAmt.getReservedAmt(), ccyFormatter));
+			lc = new Listcell(CurrencyUtil.format(excessAmt.getReservedAmt(), ccyFormatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(excessAmt.getBalanceAmt(), ccyFormatter));
+			lc = new Listcell(CurrencyUtil.format(excessAmt.getBalanceAmt(), ccyFormatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			this.listBoxExcess.appendChild(item);

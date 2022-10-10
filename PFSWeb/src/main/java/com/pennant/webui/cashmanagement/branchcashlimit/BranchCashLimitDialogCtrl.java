@@ -45,6 +45,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -55,7 +56,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -367,20 +367,19 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 		}
 
 		this.remarks.setValue(aBranchCashLimit.getRemarks());
-		this.reOrderLimit.setValue(
-				PennantAppUtil.formateAmount(aBranchCashLimit.getReOrderLimit(), PennantConstants.defaultCCYDecPos));
-		this.cashLimit.setValue(
-				PennantAppUtil.formateAmount(aBranchCashLimit.getCashLimit(), PennantConstants.defaultCCYDecPos));
-		this.adHocCashLimit.setValue(
-				PennantAppUtil.formateAmount(aBranchCashLimit.getAdHocCashLimit(), PennantConstants.defaultCCYDecPos));
+		this.reOrderLimit
+				.setValue(CurrencyUtil.parse(aBranchCashLimit.getReOrderLimit(), PennantConstants.defaultCCYDecPos));
+		this.cashLimit.setValue(CurrencyUtil.parse(aBranchCashLimit.getCashLimit(), PennantConstants.defaultCCYDecPos));
+		this.adHocCashLimit
+				.setValue(CurrencyUtil.parse(aBranchCashLimit.getAdHocCashLimit(), PennantConstants.defaultCCYDecPos));
 
 		if (aBranchCashLimit.getPreviousDate() == null) {
 			this.prevLimitSetDate.setValue(curLimitSetDate.getValue());
 		} else {
 			this.prevLimitSetDate.setValue(aBranchCashLimit.getPreviousDate());
 		}
-		this.prevLimitAmount.setValue(
-				PennantAppUtil.formateAmount(aBranchCashLimit.getPreviousAmount(), PennantConstants.defaultCCYDecPos));
+		this.prevLimitAmount
+				.setValue(CurrencyUtil.parse(aBranchCashLimit.getPreviousAmount(), PennantConstants.defaultCCYDecPos));
 
 		this.recordStatus.setValue(aBranchCashLimit.getRecordStatus());
 		fillListInfo(aBranchCashLimit.getBranchCashDetail());
@@ -424,18 +423,15 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 		BigDecimal tempCashLimit = BigDecimal.ZERO;
 
 		if (!StringUtils.isBlank(this.reOrderLimit.getCcyTextBox().getValue())) {
-			tempReOrder = PennantAppUtil.unFormateAmount(this.reOrderLimit.getActualValue(),
-					PennantConstants.defaultCCYDecPos);
+			tempReOrder = CurrencyUtil.unFormat(this.reOrderLimit.getActualValue(), PennantConstants.defaultCCYDecPos);
 		}
 
 		if (!StringUtils.isBlank(this.adHocCashLimit.getCcyTextBox().getValue())) {
-			tempadHoc = PennantAppUtil.unFormateAmount(this.adHocCashLimit.getActualValue(),
-					PennantConstants.defaultCCYDecPos);
+			tempadHoc = CurrencyUtil.unFormat(this.adHocCashLimit.getActualValue(), PennantConstants.defaultCCYDecPos);
 		}
 
 		if (!StringUtils.isBlank(this.cashLimit.getCcyTextBox().getValue())) {
-			tempCashLimit = PennantAppUtil.unFormateAmount(this.cashLimit.getActualValue(),
-					PennantConstants.defaultCCYDecPos);
+			tempCashLimit = CurrencyUtil.unFormat(this.cashLimit.getActualValue(), PennantConstants.defaultCCYDecPos);
 		}
 
 		this.label_CashStatus.setValue(
@@ -486,7 +482,7 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 		// Re Order Limit
 		BigDecimal tempOrderLimit = BigDecimal.ZERO;
 		try {
-			tempOrderLimit = PennantAppUtil.unFormateAmount(this.reOrderLimit.getValidateValue(),
+			tempOrderLimit = CurrencyUtil.unFormat(this.reOrderLimit.getValidateValue(),
 					PennantConstants.defaultCCYDecPos);
 			aBranchCashLimit.setReOrderLimit(tempOrderLimit);
 		} catch (WrongValueException we) {
@@ -497,8 +493,7 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 		BigDecimal tempCashLimit = BigDecimal.ZERO;
 		try {
 
-			tempCashLimit = PennantAppUtil.unFormateAmount(this.cashLimit.getValidateValue(),
-					PennantConstants.defaultCCYDecPos);
+			tempCashLimit = CurrencyUtil.unFormat(this.cashLimit.getValidateValue(), PennantConstants.defaultCCYDecPos);
 			aBranchCashLimit.setCashLimit(tempCashLimit);
 
 			if (tempCashLimit.compareTo(tempOrderLimit) <= 0) {
@@ -513,8 +508,8 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 		}
 		// Ad Hoc Cash Limit
 		try {
-			aBranchCashLimit.setAdHocCashLimit(PennantAppUtil.unFormateAmount(this.adHocCashLimit.getValidateValue(),
-					PennantConstants.defaultCCYDecPos));
+			aBranchCashLimit.setAdHocCashLimit(
+					CurrencyUtil.unFormat(this.adHocCashLimit.getValidateValue(), PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

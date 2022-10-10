@@ -51,12 +51,12 @@ import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.service.finance.EligibilityRule;
 import com.pennant.backend.service.finance.FinanceEligibility;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -169,7 +169,7 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 				lc = new Listcell(String.valueOf(finEligibility.getRepayProfitRate()) + " %");
 				lc.setStyle("text-align:right");
 				item.appendChild(lc);
-				lc = new Listcell(PennantAppUtil.amountFormate(finEligibility.getElgAmount(), formatter));
+				lc = new Listcell(CurrencyUtil.format(finEligibility.getElgAmount(), formatter));
 				lc.setStyle("text-align:right");
 				item.appendChild(lc);
 				lc = new Listcell();

@@ -46,7 +46,6 @@ import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessorConstatnt;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.batchupload.util.BatchProcessorUtil;
@@ -824,7 +823,7 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 		}
 
 		try {
-			txnAmount = PennantAppUtil.unFormateAmount(row.get(9), formatter);
+			txnAmount = CurrencyUtil.unFormat(row.get(9), formatter);
 		} catch (Exception e) {
 			txnAmount = BigDecimal.ZERO;
 			reason = "Wrong Transaction Amount format";

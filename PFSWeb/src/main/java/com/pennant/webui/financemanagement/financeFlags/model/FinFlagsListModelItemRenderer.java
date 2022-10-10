@@ -11,7 +11,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
-import com.pennant.util.PennantAppUtil;
 
 public class FinFlagsListModelItemRenderer implements ListitemRenderer<FinanceFlag>, Serializable {
 
@@ -50,12 +49,11 @@ public class FinFlagsListModelItemRenderer implements ListitemRenderer<FinanceFl
 
 		int formatter = CurrencyUtil.getFormat(financeFlag.getFinCcy());
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, formatter));
+		lc = new Listcell(CurrencyUtil.format(finAmount, formatter));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		if (financeFlag.getFinRepaymentAmount() != null) {
-			lc = new Listcell(
-					PennantAppUtil.amountFormate(finAmount.subtract(financeFlag.getFinRepaymentAmount()), formatter));
+			lc = new Listcell(CurrencyUtil.format(finAmount.subtract(financeFlag.getFinRepaymentAmount()), formatter));
 			lc.setStyle("text-align:right");
 		} else {
 			lc = new Listcell("");

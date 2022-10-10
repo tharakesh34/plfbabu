@@ -54,6 +54,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -71,7 +72,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -600,8 +600,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 
 	public void onFulfill$expAmount(Event event) {
 		logger.debug("Entering");
-		setAmountDue(
-				PennantAppUtil.unFormateAmount(this.expAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
+		setAmountDue(CurrencyUtil.unFormat(this.expAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
 		logger.debug("Leaving");
 
 	}

@@ -38,7 +38,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -73,8 +72,8 @@ public class CustomerIncomeListModelItemRenderer implements ListitemRenderer<Cus
 			cb.setChecked(customerIncome.isJointCust());
 			cb.setParent(lc);
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(),
-					CurrencyUtil.getFormat(customerIncome.getToCcy())));
+			lc = new Listcell(
+					CurrencyUtil.format(customerIncome.getIncome(), CurrencyUtil.getFormat(customerIncome.getToCcy())));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			lc = new Listcell(customerIncome.getRecordStatus());

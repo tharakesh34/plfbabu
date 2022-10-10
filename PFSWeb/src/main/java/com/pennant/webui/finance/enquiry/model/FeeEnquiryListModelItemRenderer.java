@@ -9,10 +9,10 @@ import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 public class FeeEnquiryListModelItemRenderer implements ListitemRenderer<FinFeeDetail>, Serializable {
 
@@ -45,23 +45,23 @@ public class FeeEnquiryListModelItemRenderer implements ListitemRenderer<FinFeeD
 			lc = new Listcell(feeType);
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(finFeeDetail.getCalculatedAmount(), formatter));
+			lc = new Listcell(CurrencyUtil.format(finFeeDetail.getCalculatedAmount(), formatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
+			lc = new Listcell(CurrencyUtil.format(finFeeDetail.getActualAmount(), formatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(finFeeDetail.getWaivedAmount(), formatter));
+			lc = new Listcell(CurrencyUtil.format(finFeeDetail.getWaivedAmount(), formatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
+			lc = new Listcell(CurrencyUtil.format(finFeeDetail.getPaidAmount(), formatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(finFeeDetail.getRemainingFee(), formatter));
+			lc = new Listcell(CurrencyUtil.format(finFeeDetail.getRemainingFee(), formatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 

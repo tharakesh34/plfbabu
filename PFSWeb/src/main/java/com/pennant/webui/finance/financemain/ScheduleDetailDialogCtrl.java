@@ -97,7 +97,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.financemanagement.receipts.LoanClosureEnquiryDialogCtrl;
@@ -780,18 +779,17 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.schdl_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
 		BigDecimal totalCost = BigDecimal.ZERO;
 		if (isOverdraft) {
-			this.schdl_purchasePrice
-					.setValue(PennantAppUtil.formateAmount(financeMain.getFinAssetValue(), ccyFormatter));
-			totalCost = PennantAppUtil.formateAmount(financeMain.getFinAssetValue()
-					.subtract(financeMain.getDownPayment()).add(financeMain.getFeeChargeAmt()), ccyFormatter);
+			this.schdl_purchasePrice.setValue(CurrencyUtil.parse(financeMain.getFinAssetValue(), ccyFormatter));
+			totalCost = CurrencyUtil.parse(financeMain.getFinAssetValue().subtract(financeMain.getDownPayment())
+					.add(financeMain.getFeeChargeAmt()), ccyFormatter);
 		} else {
-			this.schdl_purchasePrice.setValue(PennantAppUtil.formateAmount(finAmount, ccyFormatter));
-			totalCost = PennantAppUtil.formateAmount(
+			this.schdl_purchasePrice.setValue(CurrencyUtil.parse(finAmount, ccyFormatter));
+			totalCost = CurrencyUtil.parse(
 					finAmount.subtract(financeMain.getDownPayment()).add(financeMain.getFeeChargeAmt()), ccyFormatter);
 		}
-		this.schdl_otherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
-		this.schdl_totalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalGrossPft(), ccyFormatter));
-		this.schdl_contractPrice.setValue(PennantAppUtil.formateAmount(finAmount.subtract(financeMain.getDownPayment())
+		this.schdl_otherExp.setValue(CurrencyUtil.parse(financeMain.getFeeChargeAmt(), ccyFormatter));
+		this.schdl_totalPft.setValue(CurrencyUtil.parse(financeMain.getTotalGrossPft(), ccyFormatter));
+		this.schdl_contractPrice.setValue(CurrencyUtil.parse(finAmount.subtract(financeMain.getDownPayment())
 				.add(financeMain.getFeeChargeAmt()).add(financeMain.getTotalGrossPft()), ccyFormatter));
 		this.schdl_totalCost.setValue(totalCost);
 		financeMain.setTotalPriAmt(this.schdl_contractPrice.getValue());
@@ -805,7 +803,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		if (isOverdraft) {
 			this.schdl_odBranch.setValue(financeMain.getFinBranch());
-			this.schdl_odLimit.setValue(PennantAppUtil.formateAmount(financeMain.getFinAssetValue(),
+			this.schdl_odLimit.setValue(CurrencyUtil.parse(financeMain.getFinAssetValue(),
 					CurrencyUtil.getFormat(financeMain.getFinCcy())));
 			this.schdl_odyearlyTenor.setValue(String.valueOf(financeMain.getNumberOfTerms() / 12));
 			this.schdl_odMnthTenor.setValue(String.valueOf(financeMain.getNumberOfTerms() % 12));
@@ -815,8 +813,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				this.schdl_droplineFrequency.setValue(
 						FrequencyUtil.getFrequencyDetail(financeMain.getDroplineFrq()).getFrequencyDescription());
 			}
-			this.schdl_odOtherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
-			this.schdl_odTotalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalGrossPft(), ccyFormatter));
+			this.schdl_odOtherExp.setValue(CurrencyUtil.parse(financeMain.getFeeChargeAmt(), ccyFormatter));
+			this.schdl_odTotalPft.setValue(CurrencyUtil.parse(financeMain.getTotalGrossPft(), ccyFormatter));
 			BigDecimal futTotDisbAmt = BigDecimal.ZERO;
 			if (aFinSchData.getDisbursementDetails() != null && aFinSchData.getDisbursementDetails().size() > 0) {
 				Date appDate = SysParamUtil.getAppDate();
@@ -826,7 +824,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					}
 				}
 			}
-			this.schdl_odfutureDisb.setValue(PennantAppUtil.formateAmount(futTotDisbAmt, ccyFormatter));
+			this.schdl_odfutureDisb.setValue(CurrencyUtil.parse(futTotDisbAmt, ccyFormatter));
 		}
 
 		// Check Rights Based on Condition is EITHER WIF or MAIN
@@ -847,11 +845,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					feeToFinAmt = feeToFinAmt.add(finFeeDetail.getRemainingFee());
 				}
 			}
-			this.schdl_otherExp.setValue(PennantAppUtil.formateAmount(totalExpAmt, ccyFormatter));
-			this.schdl_contractPrice
-					.setValue(PennantAppUtil.formateAmount(finAmount.subtract(financeMain.getDownPayment())
-							.add(feeToFinAmt).add(financeMain.getTotalGrossPft()), ccyFormatter));
-			totalCost = PennantAppUtil.formateAmount(finAmount.subtract(financeMain.getDownPayment()).add(feeToFinAmt),
+			this.schdl_otherExp.setValue(CurrencyUtil.parse(totalExpAmt, ccyFormatter));
+			this.schdl_contractPrice.setValue(CurrencyUtil.parse(finAmount.subtract(financeMain.getDownPayment())
+					.add(feeToFinAmt).add(financeMain.getTotalGrossPft()), ccyFormatter));
+			totalCost = CurrencyUtil.parse(finAmount.subtract(financeMain.getDownPayment()).add(feeToFinAmt),
 					ccyFormatter);
 			this.schdl_totalCost.setValue(totalCost);
 		}
@@ -1250,7 +1247,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 */
 	private void doSetPropVisiblity(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
-		FinanceType financeType = aFinSchData.getFinanceType();
+
 		FinanceMain financeMain = aFinSchData.getFinanceMain();
 		int ccyFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
@@ -1532,7 +1529,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnReCalcualte.setDisabled(!isAvailable);
 			/* PSD Ticket 130142 (LMS: Add term history is not correctly reflected on approval screen) */
 			FinanceMain fm = finScheduleData.getFinanceMain();
-			String finReference = fm.getFinReference();
 			FinanceProfitDetail pfd = financeDetailService.getFinProfitDetailsById(fm.getFinID());
 			if (pfd != null) {
 				if (fm.isAlwGrcAdj()) {

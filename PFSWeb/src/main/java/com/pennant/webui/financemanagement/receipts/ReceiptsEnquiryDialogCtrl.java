@@ -959,7 +959,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param receiptData
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("deprecation")
 	public boolean recalEarlyPaySchd(boolean isRecal) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		// Schedule Recalculation Depends on Earlypay Effective Schedule method
@@ -1738,7 +1737,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Generate the Customer Rating Details List in the CustomerDialogCtrl and set the list in the listBoxCustomerRating
 	 * listbox by using Pagination
 	 */
-	@SuppressWarnings("deprecation")
 	public void doFillRepaySchedules(List<RepayScheduleDetail> repaySchdList) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
@@ -1763,42 +1761,42 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdBal(), formatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getProfitSchdBal(), formatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPrincipalSchdBal(), formatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getPrincipalSchdBal(), formatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(
-						repaySchd.getProfitSchdPayNow().add(repaySchd.getPftSchdWaivedNow()), formatter));
+				lc = new Listcell(CurrencyUtil
+						.format(repaySchd.getProfitSchdPayNow().add(repaySchd.getPftSchdWaivedNow()), formatter));
 				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow().add(repaySchd.getPftSchdWaivedNow()));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getTdsSchdPayNow(), formatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getTdsSchdPayNow(), formatter));
 				totalTds = totalTds.add(repaySchd.getTdsSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(
-						repaySchd.getLatePftSchdPayNow().add(repaySchd.getLatePftSchdWaivedNow()), formatter));
+				lc = new Listcell(CurrencyUtil
+						.format(repaySchd.getLatePftSchdPayNow().add(repaySchd.getLatePftSchdWaivedNow()), formatter));
 				totalLatePft = totalLatePft
 						.add(repaySchd.getLatePftSchdPayNow().add(repaySchd.getLatePftSchdWaivedNow()));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(
-						repaySchd.getPrincipalSchdPayNow().add(repaySchd.getPriSchdWaivedNow()), formatter));
+				lc = new Listcell(CurrencyUtil
+						.format(repaySchd.getPrincipalSchdPayNow().add(repaySchd.getPriSchdWaivedNow()), formatter));
 				totalPri = totalPri.add(repaySchd.getPrincipalSchdPayNow().add(repaySchd.getPriSchdWaivedNow()));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil
-						.amountFormate(repaySchd.getPenaltyPayNow().add(repaySchd.getWaivedAmt()), formatter));
+				lc = new Listcell(
+						CurrencyUtil.format(repaySchd.getPenaltyPayNow().add(repaySchd.getWaivedAmt()), formatter));
 				totalCharge = totalCharge.add(repaySchd.getPenaltyPayNow().add(repaySchd.getWaivedAmt()));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
 				if (repaySchd.getDaysLate() > 0) {
-					lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getMaxWaiver(), formatter));
+					lc = new Listcell(CurrencyUtil.format(repaySchd.getMaxWaiver(), formatter));
 				} else {
-					lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getRefundMax(), formatter));
+					lc = new Listcell(CurrencyUtil.format(repaySchd.getRefundMax(), formatter));
 				}
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -1814,12 +1812,12 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 				}
 
-				lc = new Listcell(PennantAppUtil.amountFormate(refundPft, formatter));
+				lc = new Listcell(CurrencyUtil.format(refundPft, formatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
 				// Fee Details
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdFeePayNow(), formatter));
+				lc = new Listcell(CurrencyUtil.format(repaySchd.getSchdFeePayNow(), formatter));
 				lc.setStyle("text-align:right;");
 				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
 				lc.setParent(item);
@@ -1829,15 +1827,15 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						.add(repaySchd.getSchdFeePayNow())
 						.add(repaySchd.getLatePftSchdPayNow().add(repaySchd.getLatePftSchdWaivedNow()))
 						.add(repaySchd.getPenaltyPayNow().add(repaySchd.getWaivedAmt()).subtract(refundPft));
-				lc = new Listcell(PennantAppUtil.amountFormate(netPay, formatter));
+				lc = new Listcell(CurrencyUtil.format(netPay, formatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
 				BigDecimal netBalance = repaySchd.getProfitSchdBal().add(repaySchd.getPrincipalSchdBal())
 						.add(repaySchd.getSchdFeeBal());
 
-				lc = new Listcell(PennantAppUtil.amountFormate(
-						netBalance.subtract(netPay.subtract(totalCharge).subtract(totalLatePft)), formatter));
+				lc = new Listcell(CurrencyUtil
+						.format(netBalance.subtract(netPay.subtract(totalCharge).subtract(totalLatePft)), formatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				item.setAttribute("data", repaySchd);
@@ -1893,7 +1891,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param label
 	 * @param fieldValue
 	 */
-	@SuppressWarnings("deprecation")
 	private void fillListItem(String label, BigDecimal fieldValue) {
 
 		Listcell lc;
@@ -1905,8 +1902,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		lc.setStyle("font-weight:bold;");
 		lc.setSpan(2);
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.amountFormate(fieldValue, receiptData.getRepayMain().getLovDescFinFormatter()));
+		lc = new Listcell(CurrencyUtil.format(fieldValue, receiptData.getRepayMain().getLovDescFinFormatter()));
 		lc.setStyle("text-align:right;color:#f36800;");
 		lc.setParent(item);
 		lc = new Listcell();
@@ -1937,7 +1933,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * Method to show report chart
 	 */
-	@SuppressWarnings("deprecation")
 	public void doShowReportChart(FinScheduleData finScheduleData) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
@@ -1949,9 +1944,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		List<ChartSetElement> listChartSetElement = getReportDataForFinVsAmount(finScheduleData, formatter);
 
 		ChartsConfig chartsConfig = new ChartsConfig("Loan Vs Amounts",
-				"Loan Amount =" + PennantAppUtil.amountFormate(
-						PennantAppUtil.unFormateAmount(finScheduleData.getFinanceMain().getFinAmount(), formatter),
-						formatter),
+				"Loan Amount =" + CurrencyUtil.format(
+						CurrencyUtil.unFormat(finScheduleData.getFinanceMain().getFinAmount(), formatter), formatter),
 				"", "");
 		aDashboardConfiguration = new DashboardConfiguration();
 		chartsConfig.setSetElements(listChartSetElement);
@@ -1997,7 +1991,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 * @return ChartSetElement (list)
 	 */
-	@SuppressWarnings("deprecation")
 	public List<ChartSetElement> getReportDataForRepayments(FinScheduleData scheduleData, int formatter) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
@@ -2012,8 +2005,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Payment Amount", PennantAppUtil.formateAmount(curSchd.getRepayAmount(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+							"Payment Amount", CurrencyUtil.parse(curSchd.getRepayAmount(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 			}
@@ -2022,8 +2015,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Principal", PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+							"Principal", CurrencyUtil.parse(curSchd.getPrincipalSchd(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 
@@ -2033,8 +2026,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Interest", PennantAppUtil.formateAmount(curSchd.getProfitSchd(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+							"Interest", CurrencyUtil.parse(curSchd.getProfitSchd(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 
 				}
@@ -2049,7 +2042,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 * @return ChartSetElement (list)
 	 */
-	@SuppressWarnings("deprecation")
 	public List<ChartSetElement> getReportDataForFinVsAmount(FinScheduleData scheduleData, int formatter) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
@@ -2068,13 +2060,12 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
 
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
-				financeAmount = financeAmount.add(PennantAppUtil.formateAmount(curSchd.getDisbAmount(), format));
-				downPayment = downPayment.add(PennantAppUtil.formateAmount(curSchd.getDownPaymentAmount(), format));
-				capitalized = capitalized.add(PennantAppUtil.formateAmount(curSchd.getCpzAmount(), format));
+				financeAmount = financeAmount.add(CurrencyUtil.parse(curSchd.getDisbAmount(), format));
+				downPayment = downPayment.add(CurrencyUtil.parse(curSchd.getDownPaymentAmount(), format));
+				capitalized = capitalized.add(CurrencyUtil.parse(curSchd.getCpzAmount(), format));
 
-				scheduleProfit = scheduleProfit.add(PennantAppUtil.formateAmount(curSchd.getProfitSchd(), format));
-				schedulePrincipal = schedulePrincipal
-						.add(PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(), format));
+				scheduleProfit = scheduleProfit.add(CurrencyUtil.parse(curSchd.getProfitSchd(), format));
+				schedulePrincipal = schedulePrincipal.add(CurrencyUtil.parse(curSchd.getPrincipalSchd(), format));
 
 			}
 			chartSetElement = new ChartSetElement("Down Payment", downPayment);

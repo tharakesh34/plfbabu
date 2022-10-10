@@ -32,12 +32,12 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -63,8 +63,7 @@ public class DepositDetailsListModelItemRenderer implements ListitemRenderer<Dep
 		lc = new Listcell(depositDetails.getBranchCode() + " - " + depositDetails.getBranchDesc());
 		lc.setParent(item);
 		// Available Amount
-		lc = new Listcell(
-				PennantAppUtil.amountFormate(depositDetails.getActualAmount(), PennantConstants.defaultCCYDecPos));
+		lc = new Listcell(CurrencyUtil.format(depositDetails.getActualAmount(), PennantConstants.defaultCCYDecPos));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		// Record Status

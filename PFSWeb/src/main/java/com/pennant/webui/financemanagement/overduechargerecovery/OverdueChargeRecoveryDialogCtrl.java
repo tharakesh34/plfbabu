@@ -22,7 +22,6 @@
  * 11-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
-
 package com.pennant.webui.financemanagement.overduechargerecovery;
 
 import java.lang.reflect.InvocationTargetException;
@@ -63,7 +62,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-// -//import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.service.PagedListService;
@@ -74,7 +72,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -438,23 +435,23 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		this.finReference.setValue(aOverdueChargeRecovery.getFinReference());
 		this.finStartDate.setValue(aOverdueChargeRecovery.getLovDescFinStartDate());
 		this.finMaturityDate.setValue(aOverdueChargeRecovery.getLovDescMaturityDate());
-		this.finAmt.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescFinAmount(), format));
-		this.curFinAmt.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurFinAmt(), format));
-		this.curSchPriDue.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPriDue(), // value1
+		this.finAmt.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getLovDescFinAmount(), format));
+		this.curFinAmt.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getLovDescCurFinAmt(), format));
+		this.curSchPriDue.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getLovDescCurSchPriDue(), // value1
 				format));
-		this.curSchPftDue.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPftDue(), // value2
+		this.curSchPftDue.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getLovDescCurSchPftDue(), // value2
 				format));
-		this.totOvrDueChrg.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrg(), // value3
+		this.totOvrDueChrg.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getLovDescTotOvrDueChrg(), // value3
 				format));
 		this.totOvrDueChrgWaived
-				.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrgWaived(), format));
+				.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getLovDescTotOvrDueChrgWaived(), format));
 		this.totOvrDueChrgPaid
-				.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrgPaid(), format));
+				.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getLovDescTotOvrDueChrgPaid(), format));
 		/*
 		 * this.totOvrDueChrgBal.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.
 		 * getLovDescTotOvrDueChrgBal( ), format));
 		 */
-		this.totOvrDueChrgBal.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPriDue()
+		this.totOvrDueChrgBal.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getLovDescCurSchPriDue()
 				.subtract(aOverdueChargeRecovery.getLovDescCurSchPftDue())
 				.subtract(aOverdueChargeRecovery.getLovDescTotOvrDueChrg()), format));
 		// Overdue Recovery Details
@@ -463,9 +460,9 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		// this.finODCRuleCode.setValue(aOverdueChargeRecovery.getFinODCRuleCode());
 		// this.finODCCustCtg.setValue(aOverdueChargeRecovery.getFinODCCustCtg());
 		fillComboBox(this.cbFinODFor, aOverdueChargeRecovery.getFinODFor(), finOdForList, "");
-		this.finODTot.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getFinCurODAmt(), format));
-		this.finODPri.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getFinCurODPri(), format));
-		this.finODPft.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getFinCurODPft(), format));
+		this.finODTot.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getFinCurODAmt(), format));
+		this.finODPri.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getFinCurODPri(), format));
+		this.finODPft.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getFinCurODPft(), format));
 		fillComboBox(this.cbFinODCType, aOverdueChargeRecovery.getPenaltyType(), finODCTypeList, "");
 		this.finODCOn.setValue(aOverdueChargeRecovery.getPenaltyCalOn());
 
@@ -474,11 +471,11 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		 * this.finODCPLAc.setValue(aOverdueChargeRecovery.getFinODCPLAc());
 		 * this.finODCCAc.setValue(aOverdueChargeRecovery.getFinODCCAc());
 		 */
-		this.finODCPenalty.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getPenalty(), format));
+		this.finODCPenalty.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getPenalty(), format));
 
 		// this.finODCAlwWaiver.setChecked(aOverdueChargeRecovery.isFinODCAlwWaiver());
 		this.finODCMaxWaiver.setValue(aOverdueChargeRecovery.getMaxWaiver());
-		this.finODCWaived.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getWaivedAmt(), format));
+		this.finODCWaived.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getWaivedAmt(), format));
 		/*
 		 * if(aOverdueChargeRecovery.isFinODCAlwWaiver()) { this.oDCWaivedRow.setVisible(true);
 		 * this.oDCAlwWaiverRow.setVisible(true); }else {
@@ -495,16 +492,16 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		 * this.finODCCPenalty.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getFinODCCPenalty(),
 		 * format));
 		 */
-		this.finODCPaid.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getFinODCPaid(), format));
+		this.finODCPaid.setValue(CurrencyUtil.parse(aOverdueChargeRecovery.getFinODCPaid(), format));
 		// FinODCCPenalty - FinODCPaid - FinODCWaived
 		/*
 		 * this.balChrgRecovery.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getFinODCPenalty().
 		 * subtract(aOverdueChargeRecovery.getFinODCPaid()).subtract( aOverdueChargeRecovery.getFinODCWaiverPaid()),
 		 * format));
 		 */
-		this.balChrgRecovery.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getPenalty()
-				.subtract(aOverdueChargeRecovery.getFinODCPaid()).subtract(aOverdueChargeRecovery.getWaivedAmt()),
-				format));
+		this.balChrgRecovery.setValue(
+				CurrencyUtil.parse(aOverdueChargeRecovery.getPenalty().subtract(aOverdueChargeRecovery.getFinODCPaid())
+						.subtract(aOverdueChargeRecovery.getWaivedAmt()), format));
 
 		// Extra fields
 		/*
@@ -623,8 +620,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 				} else if (this.finODCWaived.getValue() == null) {
 					this.finODCWaived.setValue(new BigDecimal(0));
 				}
-				aOverdueChargeRecovery
-						.setFinODCWaived(PennantAppUtil.unFormateAmount(this.finODCWaived.getValue(), format));
+				aOverdueChargeRecovery.setFinODCWaived(CurrencyUtil.unFormat(this.finODCWaived.getValue(), format));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1276,8 +1272,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 			this.finODCWaived.setValue(new BigDecimal(0));
 		}
 
-		getOverdueChargeRecovery()
-				.setFinODCWaived(PennantAppUtil.unFormateAmount(this.finODCWaived.getValue(), format));
+		getOverdueChargeRecovery().setFinODCWaived(CurrencyUtil.unFormat(this.finODCWaived.getValue(), format));
 
 		try {
 

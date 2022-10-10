@@ -905,8 +905,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		BeanUtils.copyProperties(this.legalDetail, aLegalDetail);
 
 		// Setting the formatted fin amount for approval process
-		aLegalDetail.setFinAmount(PennantAppUtil.formateAmount(aLegalDetail.getFinAmount(),
-				CurrencyUtil.getFormat(aLegalDetail.getFinCcy())));
+		aLegalDetail.setFinAmount(
+				CurrencyUtil.parse(aLegalDetail.getFinAmount(), CurrencyUtil.getFormat(aLegalDetail.getFinCcy())));
 
 		doRemoveValidation();
 
