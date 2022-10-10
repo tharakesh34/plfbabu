@@ -141,18 +141,14 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 
 	@Override
 	public String save(ClusterHierarchy clusterHierarchey, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into cluster_hierarchy");
+		StringBuilder sql = new StringBuilder(" Insert Into Cluster_Hierarchy");
 		sql.append(tableType.getSuffix());
-		sql.append(" (entity, clusterType, seqOrder, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append(" :entity, :clusterType, :seqOrder, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" (Entity, ClusterType, seqOrder, ");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values(:entity, :clusterType, :seqOrder, ");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus,");
+		sql.append(" :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -164,7 +160,6 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return String.valueOf(clusterHierarchey.getEntity());
 	}
 
@@ -295,5 +290,14 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		logger.debug(Literal.LEAVING);
 
 		return exists;
+	}
+
+	@Override
+	public boolean isExisitEntity(String entityCode) {
+		String sql = "Select Count(Entity) From cluster_hierarchy Where Entity = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, entityCode) > 0;
 	}
 }

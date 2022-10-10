@@ -29,8 +29,10 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.ClusterDAO;
 import com.pennant.backend.dao.applicationmaster.ClusterHierarchyDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
@@ -52,6 +54,7 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ClusterHierarchyDAO clusterHierarchyDAO;
+	private ClusterDAO clusterDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -314,7 +317,7 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -333,40 +336,56 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 	 * @return
 	 */
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
 		ClusterHierarchy clusterhierarchy = (ClusterHierarchy) auditDetail.getModelData();
 		for (ClusterHierarchy ch : clusterhierarchy.getClusterTypes()) {
 			// Check the unique keys.
-			if (!ch.isNewRecord()) {
-				continue;
+			if (ch.isNewRecord()) {
+				if (clusterHierarchyDAO.isDuplicateKey(ch.getEntity(), ch.getClusterType(),
+						clusterhierarchy.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+					String[] parameters = new String[2];
+
+					parameters[0] = PennantJavaUtil.getLabel("label_Entity") + ": " + ch.getEntity();
+					parameters[1] = PennantJavaUtil.getLabel("label_ClusterType") + ": " + ch.getClusterType();
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+					auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+				} else if (clusterHierarchyDAO.isDuplicateKey(ch.getEntity(), ch.getSeqOrder(),
+						clusterhierarchy.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+					String[] parameters = new String[2];
+
+					parameters[0] = PennantJavaUtil.getLabel("label_Entity") + ": " + ch.getEntity();
+					parameters[1] = PennantJavaUtil.getLabel("label_Cluster_SeqOrder") + ": " + ch.getSeqOrder();
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+					auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+				}
 			}
 
-			if (clusterHierarchyDAO.isDuplicateKey(ch.getEntity(), ch.getClusterType(),
-					clusterhierarchy.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[2];
+			if (!PennantConstants.method_doReject.equals(method)
+					&& PennantConstants.RECORD_TYPE_DEL.equals(clusterhierarchy.getRecordType())) {
+				boolean clusterexsist = clusterDAO.isExsistClusterType(ch.getEntity(), ch.getClusterType());
 
-				parameters[0] = PennantJavaUtil.getLabel("label_Entity") + ": " + ch.getEntity();
-				parameters[1] = PennantJavaUtil.getLabel("label_ClusterType") + ": " + ch.getClusterType();
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
-				auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+				if (clusterexsist) {
+					String[] parameters = new String[2];
+					parameters[0] = PennantJavaUtil.getLabel("label_Entity") + ": " + ch.getEntity();
+					parameters[1] = PennantJavaUtil.getLabel("label_ClusterType") + ": " + ch.getClusterType();
 
-			} else if (clusterHierarchyDAO.isDuplicateKey(ch.getEntity(), ch.getSeqOrder(),
-					clusterhierarchy.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[2];
-
-				parameters[0] = PennantJavaUtil.getLabel("label_Entity") + ": " + ch.getEntity();
-				parameters[1] = PennantJavaUtil.getLabel("label_Cluster_SeqOrder") + ": " + ch.getSeqOrder();
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
-				auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+				}
 			}
 		}
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 
 	}
 
+	@Autowired
+	public void setClusterDAO(ClusterDAO clusterDAO) {
+		this.clusterDAO = clusterDAO;
+	}
 }

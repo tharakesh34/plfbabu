@@ -59,4 +59,5 @@ public interface ClusterDAO extends BasicCrudDao<Cluster> {
 
 	boolean isChildsExists(Cluster cluster);
 
+	boolean isExsistClusterType(String entity, String clusterType);
 }

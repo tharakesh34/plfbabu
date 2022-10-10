@@ -44,6 +44,7 @@ import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>AccountType model</b> class.<br>
@@ -268,5 +269,14 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
+	@Override
+	public boolean isExsistAccountGroup(long groupId) {
+		String sql = "Select Count(AcTypeGrpId) From RMTAccountTypes where AcTypeGrpId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, groupId) > 0;
 	}
 }

@@ -273,4 +273,13 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 
 		return jdbcTemplate.query(sql.toString(), source, rowMapper);
 	}
+
+	@Override
+	public boolean isExsistClusterType(String entity, String clusterType) {
+		String sql = "Select Count(ClusterType) From  clusters Where Entity = ? And ClusterType = ? ";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, entity, clusterType) > 0;
+	}
 }

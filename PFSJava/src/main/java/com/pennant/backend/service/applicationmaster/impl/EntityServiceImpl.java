@@ -28,8 +28,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.ClusterHierarchyDAO;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
@@ -57,6 +59,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	private DivisionDetailDAO divisionDetailDAO;
 	private PartnerBankDAO partnerBankDAO;
 	private MandateDAO mandateDAO;
+	private ClusterHierarchyDAO clusterHierarchyDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -345,7 +348,8 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(entity.getRecordType())) {
 			// Entity
 			boolean isEntityExists = getMandateDAO().entityExistMandate(entity.getEntityCode(), "_View");
-			if (isEntityExists) {
+			boolean isexsistCluster = clusterHierarchyDAO.isExisitEntity(entity.getEntityCode());
+			if (isEntityExists || isexsistCluster) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 			}
 		}
@@ -389,6 +393,11 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
+	}
+
+	@Autowired
+	public void setClusterHierarchyDAO(ClusterHierarchyDAO clusterHierarchyDAO) {
+		this.clusterHierarchyDAO = clusterHierarchyDAO;
 	}
 
 }
