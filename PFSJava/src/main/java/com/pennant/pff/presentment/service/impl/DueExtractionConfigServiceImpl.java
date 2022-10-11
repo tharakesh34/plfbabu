@@ -157,6 +157,8 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 
 		if (header.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
+		} else {
+			header.getConfig().stream().forEach(dec -> dec.setModified(false));
 		}
 
 		List<DueExtractionHeader> headList = new ArrayList<>();
@@ -170,7 +172,7 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 			dueExtractionConfigDAO.update(header.getConfig(), tableType);
 		}
 
-		return null;
+		return auditHeader;
 	}
 
 	@Override
@@ -188,6 +190,8 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 
 		List<DueExtractionHeader> headList = new ArrayList<>();
 		headList.add(header);
+
+		header.getConfig().stream().forEach(dec -> dec.setModified(false));
 
 		if (header.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			dueExtractionConfigDAO.saveHeader(headList, TableType.MAIN_TAB);

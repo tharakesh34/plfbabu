@@ -914,8 +914,8 @@ public class FinStatementController extends SummaryDetailService {
 							.add(closureReport.getForeClosFees().add(closureReport.getManualAdviceAmt()))
 							.subtract(closureReport.getTds()).subtract(closureReport.getTotWaiver()));
 					if (noOfIntDays > 0) {
-						closureReport.setIntPerday(
-								closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2));
+						closureReport.setIntPerday(closureReport.getInstForTheMonth()
+								.divide(new BigDecimal(noOfIntDays), RoundingMode.CEILING));
 					}
 
 					// Charges Inclusive of GST
@@ -1184,7 +1184,8 @@ public class FinStatementController extends SummaryDetailService {
 			}
 
 			if (noOfIntDays > 0) {
-				closureReport.setIntPerday(closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2));
+				closureReport.setIntPerday(
+						closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), RoundingMode.CEILING));
 			}
 
 			// Issue Fixed 141142

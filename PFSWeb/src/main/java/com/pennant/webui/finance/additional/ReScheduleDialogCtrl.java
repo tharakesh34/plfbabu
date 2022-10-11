@@ -25,6 +25,7 @@
 package com.pennant.webui.finance.additional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -249,7 +250,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.numberOfTerms.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
 		this.repayPftRate.setMaxlength(13);
 		this.repayPftRate.setFormat(PennantConstants.rateFormate9);
-		this.repayPftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayPftRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.repayPftRate.setScale(9);
 		this.grcPeriodEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextGrcRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -268,7 +269,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		this.grcPftRate.setMaxlength(13);
 		this.grcPftRate.setFormat(PennantConstants.rateFormate9);
-		this.grcPftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.grcPftRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.grcPftRate.setScale(9);
 		logger.debug("Leaving");
 

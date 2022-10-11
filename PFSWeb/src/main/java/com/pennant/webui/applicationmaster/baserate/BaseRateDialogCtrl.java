@@ -25,6 +25,7 @@
 package com.pennant.webui.applicationmaster.baserate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -174,7 +175,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		this.bREffDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.bRRate.setMaxlength(13);
 		this.bRRate.setFormat(PennantConstants.rateFormate9);
-		this.bRRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.bRRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.bRRate.setScale(9);
 
 		this.bRType.setMandatoryStyle(true);

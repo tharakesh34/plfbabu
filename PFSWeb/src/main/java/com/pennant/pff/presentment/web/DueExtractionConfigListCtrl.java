@@ -12,7 +12,6 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -36,18 +35,18 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 	protected Borderlayout borderLayoutDueExtractionConfigList;
 	protected Paging pagingDueExtractionConfigList;
 	protected Listbox listBoxDueExtractionConfig;
-	protected Button buttonDueExtractionConfigSearch;
 
 	private transient DueExtractionConfigService dueExtractionConfigService;
 
 	private List<DueExtractionHeader> headers;
+
+	private static final String HEADER_KEY = "DueExtractionHeader";
 
 	public DueExtractionConfigListCtrl() {
 		super();
 	}
 
 	@Override
-
 	protected void doSetProperties() {
 		super.moduleCode = "DueExtractionConfig";
 		super.pageRightName = "DueExtractionConfigList";
@@ -62,8 +61,6 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 		setPageComponents(windowDueExtractionConfigList, borderLayoutDueExtractionConfigList,
 				listBoxDueExtractionConfig, pagingDueExtractionConfigList);
 
-		registerButton(buttonDueExtractionConfigSearch);
-
 		headers = new ArrayList<>();
 		headers.addAll(dueExtractionConfigService.getDueExtractionHeaders());
 
@@ -76,34 +73,17 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void onClick$buttonDueExtractionConfigSearch(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+	@Override
+	public void search() {
+		logger.debug(Literal.ENTERING);
 
 		headers = new ArrayList<>();
 		headers.addAll(dueExtractionConfigService.getDueExtractionHeaders());
 
 		getPagedListWrapper().initList(headers, listBoxDueExtractionConfig, pagingDueExtractionConfigList);
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
-
-	public void onClick$btnRefresh(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
-
-		headers = new ArrayList<>();
-		headers.addAll(dueExtractionConfigService.getDueExtractionHeaders());
-
-		getPagedListWrapper().initList(headers, listBoxDueExtractionConfig, pagingDueExtractionConfigList);
-
-		logger.debug(Literal.LEAVING.concat(event.toString()));
-	}
-
-	/**
-	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
-	 * the selected entity.
-	 * 
-	 * @param event An event sent to the event handler of the component.
-	 */
 
 	public void onItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
@@ -113,7 +93,7 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 			return;
 		}
 
-		DueExtractionHeader header = (DueExtractionHeader) selectedItem.getAttribute("DueExtractionHeader");
+		DueExtractionHeader header = (DueExtractionHeader) selectedItem.getAttribute(HEADER_KEY);
 
 		header.setWorkflowId(getWorkFlowId());
 		doShowDialogPage(header);
@@ -121,17 +101,12 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	/**
-	 * Displays the dialog page with the required parameters as map.
-	 * 
-	 * @param The entity that need to be passed to the dialog.
-	 */
 	private void doShowDialogPage(DueExtractionHeader header) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("DueExtractionHeader", header);
-		arg.put("DueExtractionConfigListCtrl", this);
+		arg.put(HEADER_KEY, header);
+		arg.put("DueExtractionConfigList", this);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Presentment/DueExtractionConfigDialog.zul", null, arg);
@@ -167,7 +142,7 @@ public class DueExtractionConfigListCtrl extends GFCBaseListCtrl<DueExtractionHe
 			lc = new Listcell(data.getRecordType());
 			lc.setParent(item);
 
-			item.setAttribute("DueExtractionHeader", data);
+			item.setAttribute(HEADER_KEY, data);
 
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onItemDoubleClicked");
 		}

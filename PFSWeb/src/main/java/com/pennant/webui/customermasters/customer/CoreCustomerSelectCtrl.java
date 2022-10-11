@@ -584,6 +584,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		Customer customer = customerDetails.getCustomer();
 
+		customer.setCustNationality(this.custNationality.getValue());
+
 		if (customer.getLovDescCustCtgType() == null && customer.getCustCtgCode() == null
 				&& customer.getLovDescCustCtgCodeName() == null) {
 			customer.setLovDescCustCtgType(ctgType);

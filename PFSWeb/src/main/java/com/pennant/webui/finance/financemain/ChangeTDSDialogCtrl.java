@@ -24,6 +24,7 @@
 package com.pennant.webui.finance.financemain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -263,7 +264,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		logger.debug("Entering");
 		this.tdsPercentage.setMaxlength(5);
 		this.tdsPercentage.setFormat(PennantConstants.rateFormate9);
-		this.tdsPercentage.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.tdsPercentage.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.tdsPercentage.setScale(2);
 		this.tdsStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.tdsEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());

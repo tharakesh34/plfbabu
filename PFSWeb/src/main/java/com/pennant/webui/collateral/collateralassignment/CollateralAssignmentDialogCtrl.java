@@ -522,12 +522,12 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 
 		this.assignValuePerc.setMaxlength(6);
 		this.assignValuePerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
-		this.assignValuePerc.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.assignValuePerc.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.assignValuePerc.setScale(2);
 
 		this.availableAssignPerc.setMaxlength(6);
 		this.availableAssignPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
-		this.availableAssignPerc.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.availableAssignPerc.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.availableAssignPerc.setScale(2);
 
 		this.hostReference.setMaxlength(50);

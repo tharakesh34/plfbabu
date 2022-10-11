@@ -24,7 +24,7 @@
  */
 package com.pennant.webui.smtmasters.pfsparameter;
 
-import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -211,7 +211,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		this.comboParmValue.setVisible(false);
 		this.txtLanguageParmValue.setVisible(false);
 		this.doubleParamValue.setVisible(false);
-		this.doubleParamValue.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.doubleParamValue.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.doubleParamValue.setScale(0);
 		this.txtLanguageParmValue.setMaxlength(2);
 		this.dateParamValue.setVisible(false);

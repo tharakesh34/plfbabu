@@ -25,6 +25,7 @@
 package com.pennant.webui.finance.vasMovement;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -212,7 +213,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		this.vasReference.setDescColumn("ProductCode");
 
 		this.modiftAmt.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.modiftAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.modiftAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.modiftAmt.setScale(PennantConstants.defaultCCYDecPos);
 		this.modiftAmt.setMandatory(true);
 

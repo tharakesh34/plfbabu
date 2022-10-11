@@ -24,7 +24,7 @@
  */
 package com.pennant.webui.applicationmaster.assignment;
 
-import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -204,7 +204,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 		this.disbDate.setFormat(PennantConstants.dateFormat);
 		this.sharingPercentage.setMaxlength(8);
 		this.sharingPercentage.setFormat(PennantConstants.rateFormate9);
-		this.sharingPercentage.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.sharingPercentage.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.sharingPercentage.setScale(2);
 
 		setStatusDetails();

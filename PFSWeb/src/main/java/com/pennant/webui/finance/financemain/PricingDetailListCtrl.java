@@ -36,6 +36,7 @@ package com.pennant.webui.finance.financemain;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1642,7 +1643,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		roiBox.setId("ROI_" + topup_label);
 		roiBox.setReadonly(true);
 		roiBox.setFormat(PennantConstants.rateFormate9);
-		roiBox.setRoundingMode(BigDecimal.ROUND_DOWN);
+		roiBox.setRoundingMode(RoundingMode.DOWN.ordinal());
 		roiBox.setScale(9);
 		roiBox.setValue(roi);
 

@@ -380,7 +380,7 @@
 			<menuItem id="menuItem_Presentment_ExcludeCode"
 					zulNavigation="/WEB-INF/pages/Presentment/PresentmentExcludeCodeList.zul" rightName="menuItem_PresentmentExcludeCodes" />
 			<menuItem id="menuItem_Due_Extraction_Config"
-					zulNavigation="/WEB-INF/pages/Presentment/DueExtractionConfigList.zul" rightName="" />
+					zulNavigation="/WEB-INF/pages/Presentment/DueExtractionConfigList.zul" rightName="menuItem_DueExtractionConfig" />
 		</menu>
 
 		<menu id="menu_Category_CersaiMasters">

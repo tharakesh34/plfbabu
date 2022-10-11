@@ -24,7 +24,7 @@
  */
 package com.pennant.webui.accounts.accounts;
 
-import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -251,27 +251,27 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.acShortName.setReadonly(true);
 		this.acPrvDayBal.setMaxlength(18);
 		this.acPrvDayBal.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acPrvDayBal.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.acPrvDayBal.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.acPrvDayBal.setScale(0);
 		this.acTodayDr.setMaxlength(18);
 		this.acTodayDr.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acTodayDr.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.acTodayDr.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.acTodayDr.setScale(0);
 		this.acTodayCr.setMaxlength(18);
 		this.acTodayCr.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acTodayCr.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.acTodayCr.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.acTodayCr.setScale(0);
 		this.acTodayNet.setMaxlength(18);
 		this.acTodayNet.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acTodayNet.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.acTodayNet.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.acTodayNet.setScale(0);
 		this.acAccrualBal.setMaxlength(18);
 		this.acAccrualBal.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acAccrualBal.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.acAccrualBal.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.acAccrualBal.setScale(0);
 		this.acTodayBal.setMaxlength(18);
 		this.acTodayBal.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acTodayBal.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.acTodayBal.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.acTodayBal.setScale(0);
 		this.acOpenDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.acOpenDate.setDisabled(true);

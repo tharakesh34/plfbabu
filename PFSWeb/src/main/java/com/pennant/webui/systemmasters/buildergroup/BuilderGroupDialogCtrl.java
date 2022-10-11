@@ -24,7 +24,7 @@
  */
 package com.pennant.webui.systemmasters.buildergroup;
 
-import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
@@ -201,22 +201,22 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 
 		this.expLimitOnAmt.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.expLimitOnAmt.setFormat(PennantConstants.rateFormate9);
-		this.expLimitOnAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.expLimitOnAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.expLimitOnAmt.setScale(2);
 
 		this.expLimitOnNoOfUnits.setFormat(PennantConstants.rateFormate9);
-		this.expLimitOnNoOfUnits.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.expLimitOnNoOfUnits.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.expLimitOnNoOfUnits.setScale(2);
 		this.expLimitOnNoOfUnits.setMaxlength(16);
 
 		this.currentExpUnits.setFormat(PennantConstants.rateFormate9);
-		this.currentExpUnits.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.currentExpUnits.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.currentExpUnits.setScale(2);
 		this.currentExpUnits.setMaxlength(16);
 
 		this.currentExpAmt.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.currentExpAmt.setFormat(PennantConstants.rateFormate9);
-		this.currentExpAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.currentExpAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.currentExpAmt.setScale(2);
 
 		setStatusDetails();

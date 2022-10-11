@@ -52,8 +52,8 @@ import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
@@ -378,7 +378,7 @@ public class CalculationUtil implements Serializable {
 		/*
 		 * interest= (Principal * Days Factor * Rate)/100
 		 */
-		MathContext mathContext = new MathContext(BigDecimal.ROUND_UP);
+		MathContext mathContext = new MathContext(0);
 		BigDecimal daysFactor = getInterestDays(dtStart, dtEnd, strDaysBasis);
 		BigDecimal interest = ((principalAmount.multiply(daysFactor, mathContext)).multiply(rate, mathContext))
 				.divide(BigDecimal.valueOf(100));
@@ -390,7 +390,7 @@ public class CalculationUtil implements Serializable {
 		/*
 		 * interest= (Principal * Days Factor * Rate)/100
 		 */
-		MathContext mathContext = new MathContext(BigDecimal.ROUND_UP);
+		MathContext mathContext = new MathContext(0);
 		BigDecimal interest = ((principalAmount.multiply(daysFactor, mathContext)).multiply(rate, mathContext))
 				.divide(BigDecimal.valueOf(100));
 		return interest;
@@ -559,13 +559,13 @@ public class CalculationUtil implements Serializable {
 
 		if (rate.compareTo(BigDecimal.ZERO) != 0) {
 			BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
-					BigDecimal.ROUND_HALF_DOWN);
+					RoundingMode.HALF_DOWN);
 			BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
 			BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
 			BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
-			return numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
+			return numerator.divide(denominator, 10, RoundingMode.HALF_DOWN);
 		} else {
-			return principle.divide(BigDecimal.valueOf(noOfTerms), 10, BigDecimal.ROUND_HALF_DOWN);
+			return principle.divide(BigDecimal.valueOf(noOfTerms), 10, RoundingMode.HALF_DOWN);
 		}
 
 	}
@@ -589,7 +589,7 @@ public class CalculationUtil implements Serializable {
 
 		actualAmount = (actualAmount.multiply(sellRate).multiply(toCurrency.getCcyMinorCcyUnits()))
 				.divide(buyRate.multiply(fromCurrency.getCcyMinorCcyUnits()), 0, RoundingMode.HALF_DOWN);
-		actualAmount = actualAmount.setScale(0, BigDecimal.ROUND_HALF_DOWN);
+		actualAmount = actualAmount.setScale(0, RoundingMode.HALF_DOWN);
 
 		return actualAmount;
 
@@ -837,7 +837,7 @@ public class CalculationUtil implements Serializable {
 																										// 28-11-2016 -
 																										// PSD Ticket ID
 																										// 124367)
-								).add(totalProfit)), 2, BigDecimal.ROUND_HALF_DOWN);
+								).add(totalProfit)), 2, RoundingMode.HALF_DOWN);
 		return anualizedPercRate;
 	}
 
@@ -1073,7 +1073,7 @@ public class CalculationUtil implements Serializable {
 
 		return totalPerc;
 	}
-	
+
 	public static BigDecimal getTotalPaidGST(ManualAdviseMovements mam) {
 		BigDecimal totPaidGSTAmount = BigDecimal.ZERO;
 		totPaidGSTAmount = totPaidGSTAmount.add(mam.getPaidCGST());

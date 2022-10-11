@@ -234,6 +234,11 @@ public class DueExtractionConfigDialogCtrl extends GFCBaseCtrl<InstrumentTypes> 
 				datebox.setWidth("100px");
 				datebox.setFormat(DateFormat.SHORT_DATE.getPattern());
 				datebox.setDisabled(isDisabled(config));
+
+				if (config.isModified()) {
+					datebox.setStyle("background-color:#FFFF00;");
+				}
+
 				datebox.setValue(config.getExtractionDate());
 				datebox.setAttribute("Changed", false);
 				datebox.setAttribute("PEC", config);
@@ -303,7 +308,19 @@ public class DueExtractionConfigDialogCtrl extends GFCBaseCtrl<InstrumentTypes> 
 	}
 
 	private boolean isDisabled(DueExtractionConfig config) {
-		return config.getConfigureDays() <= 0 || config.getExtractionDate().compareTo(this.appDate.getValue()) <= 0;
+		if (isReadOnly("DueExtractionConfig_ExtractionDate")) {
+			return true;
+		}
+
+		if (config.getConfigureDays() <= 0) {
+			return true;
+		}
+
+		if (config.getExtractionDate().compareTo(this.appDate.getValue()) <= 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public void onClick$btnClose(Event event) {
@@ -534,6 +551,15 @@ public class DueExtractionConfigDialogCtrl extends GFCBaseCtrl<InstrumentTypes> 
 
 		logger.debug(Literal.LEAVING);
 		return processCompleted;
+	}
+
+	@Override
+	protected void refreshList() {
+		dueExtractionConfigList.search();
+	}
+
+	public void onClick$btnNotes(Event event) {
+		doShowNotes(this.dueExtractionHeader);
 	}
 
 	@Autowired

@@ -25,6 +25,7 @@
 package com.pennant.webui.financemanagement.receipts;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -200,7 +201,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		// Available Amount
 		this.availableAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.availableAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.availableAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.availableAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.availableAmount.setScale(PennantConstants.defaultCCYDecPos);
 
 		// Reserved Amount
@@ -210,7 +211,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			this.reservedAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 		}
 		this.reservedAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.reservedAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.reservedAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.reservedAmount.setScale(PennantConstants.defaultCCYDecPos);
 
 		// Deposit Slip Number

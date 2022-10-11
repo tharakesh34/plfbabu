@@ -539,10 +539,18 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 		sql.append(", c.CreatedBy, c.CreatedOn, c.ApprovedBy, c.ApprovedOn, c.LastMntBy, c.LastMntOn");
 		sql.append(", c.Active, c.RecordStatus, c.RoleCode, c.NextRoleCode, c.TaskId, c.NextTaskId");
 		sql.append(", c.RecordType, c.WorkFlowId, it.Code, it.ExtractionDays");
-		sql.append(" From Due_Extraction_Config c");
+		sql.append(" From Due_Extraction_Config_Temp c");
 		sql.append(" Inner Join Instrument_Types it on it.ID = c.InstrumentID");
 		sql.append(" Where c.MonthID = ?");
-		sql.append(" Order by c.DueDate");
+		sql.append(" Union All Select");
+		sql.append(" c.ID, c.MonthID, c.InstrumentID, c.DueDate, c.ExtractionDate, c.Modified, c.Version");
+		sql.append(", c.CreatedBy, c.CreatedOn, c.ApprovedBy, c.ApprovedOn, c.LastMntBy, c.LastMntOn");
+		sql.append(", c.Active, c.RecordStatus, c.RoleCode, c.NextRoleCode, c.TaskId, c.NextTaskId");
+		sql.append(", c.RecordType, c.WorkFlowId, it.Code, it.ExtractionDays");
+		sql.append(" From Due_Extraction_Config c");
+		sql.append(" Inner Join Instrument_Types it on it.ID = c.InstrumentID");
+		sql.append(" Where c.MonthID = ? and not exists (");
+		sql.append(" Select 1 From Due_Extraction_Config_Temp Where ID = c.ID)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -574,7 +582,7 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 			config.setConfigureDays(rs.getInt("ExtractionDays"));
 
 			return config;
-		}, monthID);
+		}, monthID, monthID);
 	}
 
 	@Override

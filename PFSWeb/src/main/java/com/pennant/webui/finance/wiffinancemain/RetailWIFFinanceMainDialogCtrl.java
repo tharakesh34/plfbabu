@@ -718,11 +718,11 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.graceRate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
 		this.gracePftRate.setMaxlength(13);
 		this.gracePftRate.setFormat(PennantConstants.rateFormate9);
-		this.gracePftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.gracePftRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.gracePftRate.setScale(9);
 		this.grcEffectiveRate.setMaxlength(13);
 		this.grcEffectiveRate.setFormat(PennantConstants.rateFormate9);
-		this.grcEffectiveRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.grcEffectiveRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.grcEffectiveRate.setScale(9);
 		this.nextGrcPftDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextGrcPftRvwDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -737,11 +737,11 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.repayRate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
 		this.repayProfitRate.setMaxlength(13);
 		this.repayProfitRate.setFormat(PennantConstants.rateFormate9);
-		this.repayProfitRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayProfitRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.repayProfitRate.setScale(9);
 		this.repayEffectiveRate.setMaxlength(13);
 		this.repayEffectiveRate.setFormat(PennantConstants.rateFormate9);
-		this.repayEffectiveRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayEffectiveRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.repayEffectiveRate.setScale(9);
 		this.nextRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextRepayPftDate.setFormat(DateFormat.SHORT_DATE.getPattern());

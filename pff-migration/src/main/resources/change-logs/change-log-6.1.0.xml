@@ -338,4 +338,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#207610" author="Gopal.p">
+		<modifyDataType tableName="Extended_Field_Ext_Temp" columnName="Event" newDataType="varchar(5)"/>
+	</changeSet>
+	
+	<changeSet id="PSD#207610.1" author="Gopal.p">
+		<modifyDataType tableName="Extended_Field_Ext" columnName="Event" newDataType="varchar(5)"/>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -627,11 +627,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.graceRate.getEffRateComp().setVisible(true);
 		this.gracePftRate.setMaxlength(13);
 		this.gracePftRate.setFormat(PennantConstants.rateFormate9);
-		this.gracePftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.gracePftRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.gracePftRate.setScale(9);
 		this.graceRate.getEffRateComp().setMaxlength(13);
 		this.graceRate.getEffRateComp().setFormat(PennantConstants.rateFormate9);
-		this.graceRate.getEffRateComp().setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.graceRate.getEffRateComp().setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.graceRate.getEffRateComp().setScale(9);
 
 		this.nextGrcPftDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -650,11 +650,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.repayRate.getEffRateComp().setVisible(true);
 		this.repayProfitRate.setMaxlength(13);
 		this.repayProfitRate.setFormat(PennantConstants.rateFormate9);
-		this.repayProfitRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayProfitRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.repayProfitRate.setScale(9);
 		this.repayRate.getEffRateComp().setMaxlength(13);
 		this.repayRate.getEffRateComp().setFormat(PennantConstants.rateFormate9);
-		this.repayRate.getEffRateComp().setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayRate.getEffRateComp().setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.repayRate.getEffRateComp().setScale(9);
 		this.nextRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextRepayPftDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -694,7 +694,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			this.fixedTenorRate.setMaxlength(LengthConstants.LEN_RATE);
 			this.fixedTenorRate.setFormat(PennantConstants.rateFormate9);
-			this.fixedTenorRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+			this.fixedTenorRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 			this.fixedTenorRate.setScale(LengthConstants.LEN_RATE_SCALE);
 		}
 		setFinAssetFieldVisibility(financeType);

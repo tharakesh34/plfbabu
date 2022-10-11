@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -866,7 +867,7 @@ public class CERSAIDownloadProcess {
 			value = BigDecimal.ZERO;
 		}
 
-		value = value.setScale(0, BigDecimal.ROUND_DOWN);
+		value = value.setScale(0, RoundingMode.DOWN);
 
 		addField(record, value.toString());
 	}
