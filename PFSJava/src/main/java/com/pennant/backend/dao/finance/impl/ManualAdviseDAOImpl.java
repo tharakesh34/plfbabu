@@ -1907,6 +1907,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" From FinReceiptHeader rh");
 		sql.append(" Inner Join ReceiptAllocationDetail rad on rad.ReceiptID = rh.ReceiptID and rh.ValueDate <= ?");
 		sql.append(" Where rh.Reference = ? and rh.ReceiptModeStatus not in (?, ?)");
+		sql.append(" and Not Exists (Select 1 from FinReceiptHeader_Temp rht");
+		sql.append(" Where rh.ReceiptID = rht.ReceiptID)");
 		sql.append(" and rad.AllocationType = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -1922,6 +1924,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" Inner Join FinReceiptHeader rh on rh.ReceiptID = rad.ReceiptID");
 		sql.append(" Inner Join ManualAdvise ma on ma.AdviseID = rad.AllocationTO");
 		sql.append(" Where rh.Reference = ?  and ma.FeeTypeID = ? and rh.ValueDate <= ?");
+		sql.append(" and Not Exists (Select 1 from FinReceiptHeader_Temp rht");
+		sql.append(" Where rh.ReceiptID = rht.ReceiptID)");
 		sql.append(" and rh.ReceiptModeStatus not in (?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
