@@ -502,6 +502,9 @@
 	<bean name="entityServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.EntityServiceImpl">
 		<property name="entityDAO" ref="entityDAO" />
 	</bean>
+	
+	<bean id="clusterHierarchyDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterHierarchyDAOImpl"
+		parent="basicDao" />
 
 	<bean id="provinceService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
