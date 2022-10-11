@@ -10,5 +10,8 @@ public class LookUpCode {
 
 	public static final String SU_EMP_TYPE = "SU_EMP_TYPE";
 
-	public static final String SU_DR_DORMANT = "SU_DR_DORMANT";
+	public static final String SU_DR_DORMANT = "DORMANT";
+
+	public static final String SU_DR_INCORRECTPASSWORD = "INCORRECT PASSWORD";
+
 }

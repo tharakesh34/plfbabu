@@ -61,9 +61,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.pff.constant.LookUpCode;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -87,6 +89,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 	private ActiveDirectoryLdapAuthenticationProviderAdapter defaultLdapAuthenticationProviderAdapter;
 	private DaoAuthenticationProvider daoAuthenticationProvider;
 	private ExternalAuthenticationProvider externalAuthenticationProvider;
+	private SecurityUserDAO securityUsersDAO;
 
 	@Value("${authentication.default}")
 	private String defaultAuthType;
@@ -175,7 +178,16 @@ public class AuthenticationManager implements AuthenticationProvider {
 
 	private void logAttempt(Authentication authentication, String error) {
 		userService.logLoginAttempt(getLoginLog(authentication, error));
-		userService.updateInvalidTries(authentication.getName());
+
+		List<String> reasons = securityUsersDAO.getLovFieldCodeValues(LookUpCode.SU_DISABLE_REASON);
+
+		String disableReason = LookUpCode.SU_DR_INCORRECTPASSWORD;
+
+		if (!reasons.contains(disableReason)) {
+			disableReason = null;
+		}
+
+		userService.updateInvalidTries(authentication.getName(), disableReason);
 	}
 
 	private void logAttempt(Authentication authentication, long userId) {
@@ -371,4 +383,8 @@ public class AuthenticationManager implements AuthenticationProvider {
 		this.externalAuthenticationProvider = externalAuthenticationProvider;
 	}
 
+	@Autowired
+	public void setSecurityUsersDAO(SecurityUserDAO securityUsersDAO) {
+		this.securityUsersDAO = securityUsersDAO;
+	}
 }

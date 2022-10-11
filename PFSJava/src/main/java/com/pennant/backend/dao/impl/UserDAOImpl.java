@@ -111,7 +111,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		this.jdbcTemplate.update(sql.toString(), parameterSource);
 	}
 
-	public void updateInvalidTries(String userName) {
+	public void updateInvalidTries(String userName, String disableReason) {
 		// If parameter value is 3, on 3rd invalid login details entered, application will disable the user.
 		int invalidLogins = SysParamUtil.getValueAsInt("MAX_INVALIDLOGINS") - 1;
 
@@ -119,12 +119,14 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("UsrLogin", userName);
 		parameterSource.addValue("UsrEnabled", 0);
+		parameterSource.addValue("DisableReason", disableReason);
 		parameterSource.addValue("LastFailLoginOn", null);
 		parameterSource.addValue("UsrInvldLoginTries", invalidLogins);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("Update SecUsers set UsrInvldLoginTries = UsrInvldLoginTries+1");
 		sql.append(", UsrEnabled = :UsrEnabled");
+		sql.append(", DisableReason = :DisableReason");
 		sql.append(", LastFailLoginOn = :LastFailLoginOn");
 		sql.append(" Where UsrLogin = :UsrLogin");
 		sql.append(" and UsrInvldLoginTries >= :UsrInvldLoginTries");
@@ -256,6 +258,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		sql.append(", BV.DESCRIPTION BUSINESSVERTICALDESC");
 		sql.append(", SU.LDAPDomainName");
 		sql.append(", SU.Deleted");
+		sql.append(", SU.DisableReason");
 		sql.append(" FROM SECUSERS SU");
 		sql.append(" LEFT JOIN RMTBRANCHES B ON B.BRANCHCODE = SU.USRBRANCHCODE");
 		sql.append(" LEFT JOIN BUSINESS_VERTICAL BV ON  BV.ID = SU.BUSINESSVERTICAL");

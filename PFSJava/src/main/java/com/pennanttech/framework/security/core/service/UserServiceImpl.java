@@ -158,8 +158,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateInvalidTries(String userLogin) {
-		userDAO.updateInvalidTries(userLogin);
+	public void updateInvalidTries(String userLogin, String disableReason) {
+		userDAO.updateInvalidTries(userLogin, disableReason);
 	}
 
 	@Override

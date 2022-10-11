@@ -72,5 +72,5 @@ public interface UserService {
 
 	void updateLoginStatus(long userId);
 
-	void updateInvalidTries(String userLogin);
+	void updateInvalidTries(String userLogin, String DisableReason);
 }
