@@ -244,8 +244,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
 			switch (instrumentType) {
 			case EMANDATE:
-			case DAS:
-			case SI:
 				if (StringUtils.isNotBlank(mandate.getMandateRef())) {
 					mandate.setStatus(MandateStatus.APPROVED);
 				} else {
@@ -253,13 +251,17 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				}
 
 				break;
+			case DAS:
+			case SI:
+				mandate.setStatus(MandateStatus.AWAITCON);
+				break;
 
 			default:
 				break;
 			}
 
-			if (MandateExtension.EXTERNAL_REGISTRATION) {
-				mandate.setStatus(MandateStatus.AWAITCON);
+			if (StringUtils.isNotBlank(mandate.getMandateRef())) {
+				mandate.setStatus(MandateStatus.APPROVED);
 			}
 
 			getDocument(mandate);

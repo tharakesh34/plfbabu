@@ -9,8 +9,6 @@ public enum InstrumentType {
 
 	ECS("ECS", "Electronic Clearing Service"),
 
-	ENACH("E-NACH", "E-NACH"),
-
 	EMANDATE("E-MANDATE", "E-Mandate"),
 
 	PDC("PDC", "Post Dated Cheque"),
@@ -55,10 +53,6 @@ public enum InstrumentType {
 
 	public static boolean isECS(String instrumentType) {
 		return isEqual(ECS, getType(instrumentType));
-	}
-
-	public static boolean isENACH(String instrumentType) {
-		return isEqual(ENACH, getType(instrumentType));
 	}
 
 	public static boolean isEMandate(String instrumentType) {

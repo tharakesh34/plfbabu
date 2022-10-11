@@ -298,6 +298,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandate.setNewRecord(true);
 			this.mandate.setCustID(fm.getCustID());
 			this.mandate.setCustCIF(getCIFForCustomer(fd));
+			String custShrtName = fd.getCustomerDetails().getCustomer().getCustShrtName();
+			this.mandate.setCustShrtName(custShrtName);
 
 			if (!issecurityMandate) {
 				this.mandate.setMandateType(fm.getFinRepayMethod());
@@ -512,7 +514,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.mandateRef.setValueType(DataType.LONG);
 		this.mandateRef.setValidateColumns(new String[] { "MandateID" });
 
-		// addMandateFiletrs(null);
+		if (fromLoan) {
+			addMandateFilters(null);
+		}
 
 		this.active.setChecked(true);
 		this.reason.setMaxlength(60);
@@ -1297,7 +1301,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (bankAccountValidationService != null && !enqiryModule) {
 			btnPennyDropResult.setVisible(true);
 		} else {
-			btnPennyDropResult.setVisible(false);
+			btnPennyDropResult.setVisible(true);
 		}
 
 		if (this.finReference.getValue() == null) {
@@ -2032,6 +2036,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void doSetMandateDetValidation(boolean validate) {
+		if (this.externalMandate.isChecked() && !this.umrNumber.isReadonly()) {
+			this.umrNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_UmrNumber.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
 
 		Date mandbackDate = DateUtil.addDays(SysParamUtil.getAppDate(),
 				-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
@@ -2602,6 +2610,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			return;
 		}
 
+		if (fromLoan) {
+			addMandateFilters(mandateType);
+		}
+
 		doEditFieldByInstrument(instrumentType);
 
 		if (instrumentType == InstrumentType.PDC || instrumentType == InstrumentType.MANUAL) {
@@ -2635,7 +2647,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		clearMandatedata();
 	}
 
-	private void addMandateFiletrs(String repaymethod) {
+	private void addMandateFilters(String repaymethod) {
 		FinanceDetail fd = (FinanceDetail) arguments.get("financeDetail");
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 

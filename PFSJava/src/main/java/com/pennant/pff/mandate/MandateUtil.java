@@ -36,7 +36,6 @@ public class MandateUtil {
 			case PDC:
 			case SI:
 			case DAS:
-			case ENACH:
 			case EMANDATE:
 				instrumentTypes.add(new ValueLabel(item.name(), item.code()));
 				break;
@@ -60,7 +59,6 @@ public class MandateUtil {
 			switch (item) {
 			case ECS:
 			case NACH:
-			case ENACH:
 			case EMANDATE:
 				securityInstrumentTypes.add(new ValueLabel(item.name(), item.code()));
 				break;
@@ -91,7 +89,6 @@ public class MandateUtil {
 			case SI:
 			case DAS:
 			case EMANDATE:
-			case ENACH:
 				repaymentMethods.add(new ValueLabel(item.name(), item.code()));
 				break;
 			default:
@@ -113,7 +110,6 @@ public class MandateUtil {
 		case NACH:
 		case ECS:
 		case EMANDATE:
-		case ENACH:
 		case SI:
 		case DAS:
 			return true;

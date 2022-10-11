@@ -69,7 +69,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.model.dms.DMSModule;
@@ -260,8 +259,24 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			mandate.setRecordType("");
 			mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
-			if (MandateExtension.EXTERNAL_REGISTRATION) {
+			String mandateType = mandate.getMandateType();
+		
+			InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
+			
+			switch (instrumentType) {
+			case EMANDATE:
+				if (StringUtils.isNotBlank(mandate.getMandateRef())) {
+					mandate.setStatus(MandateStatus.APPROVED);
+				} else {
+					mandate.setStatus(MandateStatus.AWAITCON);
+				}
+				break;
+			case DAS:
+			case SI:
 				mandate.setStatus(MandateStatus.AWAITCON);
+				break;
+			default:
+				break;
 			}
 
 			getDocument(mandate);

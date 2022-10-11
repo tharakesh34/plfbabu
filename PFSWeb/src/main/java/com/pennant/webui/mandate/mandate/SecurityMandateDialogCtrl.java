@@ -297,6 +297,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandate.setNewRecord(true);
 			this.mandate.setCustID(fm.getCustID());
 			this.mandate.setCustCIF(getCIFForCustomer(fd));
+			String custShrtName = fd.getCustomerDetails().getCustomer().getCustShrtName();
+			this.mandate.setCustShrtName(custShrtName);
 
 			if (!issecurityMandate) {
 				this.mandate.setMandateType(fm.getFinRepayMethod());

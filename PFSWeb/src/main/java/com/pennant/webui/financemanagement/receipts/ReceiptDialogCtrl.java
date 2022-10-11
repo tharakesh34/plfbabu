@@ -2590,8 +2590,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			rcd.setPayOrder(rcdList.size() + 1);
 			rcd.setReceiptSeqID(getReceiptSeqID(rcd));
 
-			if (payable.getPaidGST().compareTo(BigDecimal.ZERO) > 0
-					|| payable.getGstAmount().compareTo(BigDecimal.ZERO) > 0) {
+			if (payable.getGstAmount().compareTo(BigDecimal.ZERO) > 0) {
 				ManualAdviseMovements payAdvMovement = new ManualAdviseMovements();
 
 				payAdvMovement.setAdviseID(payable.getPayableID());

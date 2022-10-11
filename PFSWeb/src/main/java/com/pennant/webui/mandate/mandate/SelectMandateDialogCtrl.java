@@ -157,6 +157,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (entity.size() == 1) {
 			this.entityCode.setValue(entity.get(0).getEntityCode());
 			this.entityCode.setDescColumn(entity.get(0).getEntityDesc());
+			this.entityCode.setVisible(false);
 		}
 
 		this.entityCode.setMaxlength(8);
