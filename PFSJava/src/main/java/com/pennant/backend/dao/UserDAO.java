@@ -66,7 +66,7 @@ public interface UserDAO {
 
 	List<SecurityUser> getUserListByLogin(String login);
 
-	void updateInvalidTries(String usrLogin);
+	void updateInvalidTries(String usrLogin, String disableReason);
 
 	void updateLoginStatus(long userId);
 
