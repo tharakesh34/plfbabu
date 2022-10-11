@@ -444,6 +444,7 @@ public class PFFJobScheduler extends JobScheduler {
 		this.presentmentJobService = presentmentJobService;
 	}
 
+	@Autowired(required = false)
 	public void setExtractCustomerData(ExtractCustomerData extractCustomerData) {
 		this.extractCustomerData = extractCustomerData;
 	}

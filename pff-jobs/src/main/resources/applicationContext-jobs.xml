@@ -32,7 +32,6 @@
 		<property name="externalInterfaceService" ref="externalInterfaceService" />
 		<property name="defaultMandateProcess" ref="defaultMandateProcess" />
 		<property name="presentmentJobService" ref="presentmentJobService" />
-		<property name="extractCustomerData" ref="extractCustomerData" />
 		<property name="eodService" ref="eodService" />
 		<property name="nonLanReceiptService" ref="nonLanReceiptService" />
 	</bean>
