@@ -25,6 +25,7 @@
 package com.pennant.webui.tds.receivables.tdsreceivable;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -207,11 +208,11 @@ public class TdsReceivableCancelDialogCtrl extends GFCBaseCtrl<TdsReceivable> {
 		this.assessmentYear.setMaxlength(9);
 		this.certificateAmount.setMaxlength(18);
 		this.certificateAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.certificateAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.certificateAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.certificateAmount.setScale(PennantConstants.defaultCCYDecPos);
 		this.balanceAmount.setMaxlength(18);
 		this.balanceAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.balanceAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.balanceAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.balanceAmount.setScale(PennantConstants.defaultCCYDecPos);
 		this.dateOfReceipt.setFormat(PennantConstants.dateFormat);
 

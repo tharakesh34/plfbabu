@@ -714,11 +714,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.graceRate.getEffRateComp().setVisible(true);
 		this.gracePftRate.setMaxlength(13);
 		this.gracePftRate.setFormat(PennantConstants.rateFormate9);
-		this.gracePftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.gracePftRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.gracePftRate.setScale(9);
 		this.repayRate.getEffRateComp().setMaxlength(13);
 		this.repayRate.getEffRateComp().setFormat(PennantConstants.rateFormate9);
-		this.repayRate.getEffRateComp().setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayRate.getEffRateComp().setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.repayRate.getEffRateComp().setScale(9);
 		this.repayRate.getEffRateComp().setVisible(true);
 		this.nextGrcPftDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -744,11 +744,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.repayRate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
 		this.repayProfitRate.setMaxlength(13);
 		this.repayProfitRate.setFormat(PennantConstants.rateFormate9);
-		this.repayProfitRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayProfitRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.repayProfitRate.setScale(9);
 		this.repayRate.getEffRateComp().setMaxlength(13);
 		this.repayRate.getEffRateComp().setFormat(PennantConstants.rateFormate9);
-		this.repayRate.getEffRateComp().setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayRate.getEffRateComp().setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.repayRate.getEffRateComp().setScale(9);
 		this.nextRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextRepayDate_two.setFormat(DateFormat.LONG_DATE.getPattern());
@@ -763,12 +763,12 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		this.finMinRate.setMaxlength(13);
 		this.finMinRate.setFormat(PennantConstants.rateFormate9);
-		this.finMinRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finMinRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.finMinRate.setScale(9);
 
 		this.finMaxRate.setMaxlength(13);
 		this.finMaxRate.setFormat(PennantConstants.rateFormate9);
-		this.finMaxRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finMaxRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.finMaxRate.setScale(9);
 
 		this.planEmiHLockPeriod.setMaxlength(3);

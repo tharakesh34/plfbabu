@@ -25,6 +25,7 @@
 package com.pennant.webui.applicationmaster.costoffund;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -177,7 +178,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 		this.cofEffDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.cofRate.setMaxlength(13);
 		this.cofRate.setFormat(PennantConstants.rateFormate9);
-		this.cofRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.cofRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.cofRate.setScale(9);
 
 		this.cofCode.setMandatoryStyle(true);

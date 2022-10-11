@@ -3704,8 +3704,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 						.add(closureReport.getForeClosFees().add(closureReport.getManualAdviceAmt()))
 						.subtract(closureReport.getTds()).subtract(closureReport.getTotWaiver()));
 				if (noOfIntDays > 0) {
-					closureReport
-							.setIntPerday((closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2)));
+					closureReport.setIntPerday((closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays),
+							RoundingMode.CEILING)));
 				}
 				// Issue Fixed 141142
 				List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
@@ -4453,7 +4453,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 	private BigDecimal getCalcIntrstPerDay(BigDecimal priOutstanding, BigDecimal roi, String roundingMode) {
 		BigDecimal oneDayIntrst = BigDecimal.ZERO;
-		oneDayIntrst = priOutstanding.multiply(roi.divide(new BigDecimal(100))).divide(new BigDecimal(365), 2);
+		oneDayIntrst = priOutstanding.multiply(roi.divide(new BigDecimal(100))).divide(new BigDecimal(365),
+				RoundingMode.CEILING);
 		oneDayIntrst = oneDayIntrst.setScale(0, RoundingMode.valueOf(roundingMode));
 		return oneDayIntrst;
 	}

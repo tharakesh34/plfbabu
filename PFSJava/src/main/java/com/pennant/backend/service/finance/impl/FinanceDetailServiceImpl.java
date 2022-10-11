@@ -10613,7 +10613,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (i == 0) {
 				totalRepayAmt = totalRepayAmt.divide(new BigDecimal("1"));
 			} else {
-				totalRepayAmt = totalRepayAmt.divide(new BigDecimal(i), BigDecimal.ROUND_UP);
+				totalRepayAmt = totalRepayAmt.divide(new BigDecimal(i), RoundingMode.UP);
 			}
 
 			totRepayAmt = totRepayAmt.add(totalRepayAmt);

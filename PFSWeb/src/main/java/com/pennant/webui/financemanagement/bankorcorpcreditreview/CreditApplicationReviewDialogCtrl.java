@@ -323,7 +323,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		this.auditedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.conversionRate.setMaxlength(13);
 		this.conversionRate.setFormat(PennantConstants.rateFormate9);
-		this.conversionRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.conversionRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.conversionRate.setScale(9);
 		this.custCIF.setMandatoryStyle(true);
 		this.currencyType.setMaxlength(3);

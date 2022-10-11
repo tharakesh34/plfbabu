@@ -1296,12 +1296,12 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		this.cmtPftRateMin.setMaxlength(13);
 		this.cmtPftRateMin.setFormat(PennantConstants.rateFormate9);
-		this.cmtPftRateMin.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.cmtPftRateMin.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.cmtPftRateMin.setScale(9);
 		this.space_CmtPftRateMin.setSclass("mandatory");
 		this.cmtPftRateMax.setMaxlength(13);
 		this.cmtPftRateMax.setFormat(PennantConstants.rateFormate9);
-		this.cmtPftRateMax.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.cmtPftRateMax.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.cmtPftRateMax.setScale(9);
 
 		this.cmtAmount.setTextBoxWidth(155);
@@ -1311,12 +1311,12 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		this.cmtUtilizedAmount.setMaxlength(18);
 		this.cmtUtilizedAmount.setFormat(PennantApplicationUtil.getAmountFormate(defaultCCYDecPos));
-		this.cmtUtilizedAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.cmtUtilizedAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.cmtUtilizedAmount.setScale(defaultCCYDecPos);
 
 		this.cmtAvailable.setMaxlength(18);
 		this.cmtAvailable.setFormat(PennantApplicationUtil.getAmountFormate(defaultCCYDecPos));
-		this.cmtAvailable.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.cmtAvailable.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.cmtAvailable.setScale(defaultCCYDecPos);
 
 		this.cmtPromisedDate.setFormat(DateFormat.SHORT_DATE.getPattern());

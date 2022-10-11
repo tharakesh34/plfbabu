@@ -289,7 +289,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.totNoOfRestructuring.setReadonly(true);
 		this.actRate.setMaxlength(13);
 		this.actRate.setFormat(PennantConstants.rateFormate9);
-		this.actRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.actRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.actRate.setScale(9);
 		this.baseRate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
 		this.baseRate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");

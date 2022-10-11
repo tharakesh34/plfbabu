@@ -24,7 +24,7 @@
  */
 package com.pennant.webui.systemmasters.buildercompany;
 
-import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -286,7 +286,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 
 		this.absavailablity.setMaxlength(19);
 		this.absavailablity.setFormat(PennantConstants.rateFormate9);
-		this.absavailablity.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.absavailablity.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.absavailablity.setScale(2);
 		this.totalProj.setMaxlength(3);
 		this.approved.setMaxlength(30);
@@ -299,7 +299,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.limitOnAmt.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.limitOnUnits.setMaxlength(16);
 		this.limitOnUnits.setFormat(PennantConstants.rateFormate11);
-		this.limitOnUnits.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.limitOnUnits.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.limitOnUnits.setScale(2);
 		this.currentExpUni.setMaxlength(18);
 		this.currentExpAmt.setProperties(false, PennantConstants.defaultCCYDecPos);

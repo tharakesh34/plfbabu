@@ -25,6 +25,7 @@
 package com.pennant.webui.finance.additional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -250,7 +251,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.anyDateRateChangeToDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.rateChange.setMaxlength(13);
 		this.rateChange.setFormat(PennantConstants.rateFormate9);
-		this.rateChange.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.rateChange.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.rateChange.setScale(9);
 		this.rate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
 		this.rate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");

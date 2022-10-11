@@ -1,6 +1,7 @@
 package com.pennant.webui.organization.school;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -1247,7 +1248,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				feeCharge = CurrencyUtil.unFormat(feeCharged.getValidateValue(), 2);
 				multiply = multiplier.getValue();
 				feeRecBasisFrq.setValue(
-						CurrencyUtil.parse(feeCharge.divide(new BigDecimal(multiply), BigDecimal.ROUND_HALF_DOWN), 2));
+						CurrencyUtil.parse(feeCharge.divide(new BigDecimal(multiply), RoundingMode.HALF_DOWN), 2));
 			}
 			listCell.appendChild(feeRecBasisFrq);
 			listCell.setParent(item);
@@ -1350,7 +1351,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		}
 
 		if (mult != 0) {
-			feeRecBasisFrq.setValue(fee.divide(new BigDecimal(mult), BigDecimal.ROUND_HALF_DOWN));
+			feeRecBasisFrq.setValue(fee.divide(new BigDecimal(mult), RoundingMode.HALF_DOWN));
 		}
 		totalCore.setValue(fee.multiply(new BigDecimal(students)));
 		logger.debug(Literal.LEAVING);

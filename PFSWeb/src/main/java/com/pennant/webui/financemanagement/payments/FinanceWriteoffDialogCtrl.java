@@ -35,6 +35,7 @@ package com.pennant.webui.financemanagement.payments;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -339,82 +340,82 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		this.writeoffPriAmt.setMaxlength(18);
 		this.writeoffPriAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.writeoffPriAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.writeoffPriAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.writeoffPriAmt.setScale(format);
 
 		this.writeoffPftAmt.setMaxlength(18);
 		this.writeoffPftAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.writeoffPftAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.writeoffPftAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.writeoffPftAmt.setScale(format);
 
 		this.writeoffSchFee.setMaxlength(18);
 		this.writeoffSchFee.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.writeoffSchFee.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.writeoffSchFee.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.writeoffSchFee.setScale(format);
 
 		this.adjAmount.setMaxlength(18);
 		this.adjAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.adjAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.adjAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.adjAmount.setScale(format);
 
 		this.label_FinWriteoffDialog_WOPriAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_WOPriAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_WOPriAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_WOPriAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_WOPriAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_WOPftAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_WOPftAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_WOPftAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_WOPftAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_WOPftAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_WOSchdFeeAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_WOSchdFeeAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_WOSchdFeeAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_WOSchdFeeAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_WOSchdFeeAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_ODPriAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_ODPriAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_ODPriAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_ODPriAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_ODPriAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_ODPftAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_ODPftAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_ODPftAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_ODPftAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_ODPftAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_UnPaidPriAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_UnPaidPriAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_UnPaidPriAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_UnPaidPriAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_UnPaidPriAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_UnPaidPftAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_UnPaidPftAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_UnPaidPftAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_UnPaidPftAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_UnPaidPftAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_UnPaidSchFeeAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_UnPaidSchFeeAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_UnPaidSchFeeAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_UnPaidSchFeeAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_UnPaidSchFeeAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_OutStandPrincipal.setMaxlength(18);
 		this.label_FinWriteoffDialog_OutStandPrincipal.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_OutStandPrincipal.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_OutStandPrincipal.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_OutStandPrincipal.setScale(format);
 
 		this.label_FinWriteoffDialog_OutStandProfit.setMaxlength(18);
 		this.label_FinWriteoffDialog_OutStandProfit.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_OutStandProfit.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_OutStandProfit.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_OutStandProfit.setScale(format);
 
 		this.label_FinWriteoffDialog_ProvisionAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_ProvisionAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_ProvisionAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_ProvisionAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_ProvisionAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_PenaltyAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_PenaltyAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_PenaltyAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.label_FinWriteoffDialog_PenaltyAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.label_FinWriteoffDialog_PenaltyAmt.setScale(format);
 
 		this.remarks.setMaxlength(200);

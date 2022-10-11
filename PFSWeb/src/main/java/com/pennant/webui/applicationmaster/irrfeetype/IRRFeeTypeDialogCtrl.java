@@ -24,7 +24,7 @@
  */
 package com.pennant.webui.applicationmaster.irrfeetype;
 
-import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -186,7 +186,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 
 		this.feePercentage.setMaxlength(6);
 		this.feePercentage.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.feePercentage.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.feePercentage.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.feePercentage.setScale(PennantConstants.defaultCCYDecPos);
 
 		setStatusDetails();

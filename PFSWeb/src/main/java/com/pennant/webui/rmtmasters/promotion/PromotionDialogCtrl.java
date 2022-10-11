@@ -25,6 +25,7 @@
 package com.pennant.webui.rmtmasters.promotion;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -302,19 +303,19 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.promotionDesc.setMaxlength(50);
 		this.actualInterestRate.setMaxlength(13);
 		this.actualInterestRate.setFormat(PennantConstants.rateFormate9);
-		this.actualInterestRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.actualInterestRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.actualInterestRate.setScale(9);
 		this.finMinTerm.setMaxlength(3);
 		this.finMaxTerm.setMaxlength(3);
 
 		this.finMinRate.setMaxlength(13);
 		this.finMinRate.setFormat(PennantConstants.rateFormate9);
-		this.finMinRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finMinRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.finMinRate.setScale(9);
 
 		this.finMaxRate.setMaxlength(13);
 		this.finMaxRate.setFormat(PennantConstants.rateFormate9);
-		this.finMaxRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finMaxRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.finMaxRate.setScale(9);
 
 		this.finType.setModuleName("FinanceType");
@@ -370,7 +371,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 			this.subventionRate.setMaxlength(13);
 			this.subventionRate.setFormat(PennantConstants.rateFormate9);
-			this.subventionRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+			this.subventionRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 			this.subventionRate.setScale(9);
 
 			this.dbdFeetype.setModuleName("FeeType");

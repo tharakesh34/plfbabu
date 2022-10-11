@@ -25,6 +25,7 @@
 package com.pennant.webui.finance.manualadvise;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -289,16 +290,16 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.feeTypeID.setMandatoryStyle(true);
 
 		this.adviseAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.adviseAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.adviseAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.adviseAmount.setScale(PennantConstants.defaultCCYDecPos);
 		this.adviseAmount.setMandatory(true);
 
 		this.paidAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.paidAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.paidAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.paidAmount.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.waivedAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.waivedAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.waivedAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.waivedAmount.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.sequence.setMaxlength(10);

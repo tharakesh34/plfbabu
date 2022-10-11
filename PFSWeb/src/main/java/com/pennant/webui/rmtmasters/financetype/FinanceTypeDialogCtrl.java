@@ -27,6 +27,7 @@
 package com.pennant.webui.rmtmasters.financetype;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -838,28 +839,28 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.finIntRate.setMaxlength(13);
 		this.finIntRate.setFormat(PennantConstants.rateFormate9);
-		this.finIntRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finIntRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.finIntRate.setScale(9);
 		this.fInMinRate.setMaxlength(13);
 		this.fInMinRate.setFormat(PennantConstants.rateFormate9);
-		this.fInMinRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.fInMinRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.fInMinRate.setScale(9);
 		this.finMaxRate.setMaxlength(13);
 		this.finMaxRate.setFormat(PennantConstants.rateFormate9);
-		this.finMaxRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finMaxRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.finMaxRate.setScale(9);
 		this.fixedRateTenor.setMaxlength(3);
 		this.finGrcIntRate.setMaxlength(13);
 		this.finGrcIntRate.setFormat(PennantConstants.rateFormate9);
-		this.finGrcIntRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finGrcIntRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.finGrcIntRate.setScale(9);
 		this.fInGrcMinRate.setMaxlength(13);
 		this.fInGrcMinRate.setFormat(PennantConstants.rateFormate9);
-		this.fInGrcMinRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.fInGrcMinRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.fInGrcMinRate.setScale(9);
 		this.finGrcMaxRate.setMaxlength(13);
 		this.finGrcMaxRate.setFormat(PennantConstants.rateFormate9);
-		this.finGrcMaxRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finGrcMaxRate.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.finGrcMaxRate.setScale(9);
 
 		this.finMinTerm.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
@@ -901,7 +902,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.pastduePftMargin.setMaxlength(13);
 		this.pastduePftMargin.setFormat(PennantConstants.rateFormate9);
-		this.pastduePftMargin.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.pastduePftMargin.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.pastduePftMargin.setScale(9);
 
 		this.planEmiHLockPeriod.setMaxlength(3);

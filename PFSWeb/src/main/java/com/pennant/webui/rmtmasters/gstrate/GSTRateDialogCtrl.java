@@ -25,6 +25,7 @@
 package com.pennant.webui.rmtmasters.gstrate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -185,7 +186,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 
 		this.percentage.setMaxlength(5);
 		this.percentage.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.percentage.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.percentage.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.percentage.setScale(PennantConstants.defaultCCYDecPos);
 		setStatusDetails();
 

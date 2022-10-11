@@ -1,6 +1,7 @@
 package com.pennanttech.pff.service.sampling;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -626,12 +627,12 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			BigDecimal principle = new BigDecimal(100000);
 
 			BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
-					BigDecimal.ROUND_HALF_DOWN);
+					RoundingMode.HALF_DOWN);
 			BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
 			BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
 			BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
 
-			BigDecimal emi = numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
+			BigDecimal emi = numerator.divide(denominator, 10, RoundingMode.HALF_DOWN);
 			emi = emi.multiply(new BigDecimal(100));
 			sampling.setEmi(emi);
 		}

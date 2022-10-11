@@ -3179,7 +3179,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			BigDecimal totalNoCreditTran = BigDecimal.valueOf(divider, 0);
 			BigDecimal avgCreditTran = BigDecimal.ZERO;
 			if (totalNoCreditTran.compareTo(BigDecimal.ZERO) > 0) {
-				avgCreditTran = totalCreditTanAmt.divide(totalNoCreditTran, 2);
+				avgCreditTran = totalCreditTanAmt.divide(totalNoCreditTran, RoundingMode.CEILING);
 			}
 			BankingDetail bankingDetail = agreement.new BankingDetail();
 			bankingDetail.setApplicantType(StringUtils.trimToEmpty(applicantType));
