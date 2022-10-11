@@ -247,7 +247,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 						CurrencyUtil.getFormat(jVPosting.getCurrency()), false));
 			}
 
-			financeMainDAO.updateMaintainceStatus(jVPosting.getExpReference(), "");
+			financeMainDAO.updateMaintainceStatus(jVPosting.getReference(), "");
 
 			// Processing Account Postings from Approver level
 			Collections.sort(dbList, new EntryComparator());
