@@ -10627,7 +10627,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain fm = schdData.getFinanceMain();
 		List<FinFeeDetail> fees = schdData.getFinFeeDetailList();
 
-		if (CollectionUtils.isEmpty(fees)) {
+		if (fm.isWifLoan() || CollectionUtils.isEmpty(fees)) {
 			return;
 		}
 
