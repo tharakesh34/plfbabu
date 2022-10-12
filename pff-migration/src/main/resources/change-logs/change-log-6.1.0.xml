@@ -111,7 +111,7 @@
 	<changeSet id="02" author="rahul.r">
 		<sql>
 			<![CDATA[
-				DELETE FROM RBFIELDDETAILS WHERE ((RBMODULE = 'FIN') AND (RBEVENT = 'FIN')) 
+				DELETE FROM RBFIELDDETAILS WHERE ((RBMODULE = 'FIN') AND (RBEVENT = 'FIN')) ;
 
 				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FIN','FIN','ct_custShrtName','Customer Name','nvarchar',50,'1','1','Customers','static,global','Customer');
 				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FIN','FIN','fm_custID','Customer ID','bigint',10,'0','1','Customers','static,dbvalue','Customer');
@@ -409,7 +409,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="PSD#207610.1" author="Gopal.p">
+	<changeSet id="PSD#207610.1.1" author="Gopal.p">
 		<sql>
 			<![CDATA[
 				UPDATE FINANCEMAIN SET RCDMAINTAINSTS = NULL;
