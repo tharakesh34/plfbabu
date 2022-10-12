@@ -252,7 +252,7 @@ public class PresentmentEngine {
 			}
 		}
 
-		if (PresentmentExtension.AUTO_APPROVAL) {
+		if (PresentmentExtension.AUTO_APPROVAL && ph.isAutoExtract()) {
 			pd.setStatus(RepayConstants.PEXC_APPROV);
 		} else {
 			pd.setStatus(RepayConstants.PEXC_IMPORT);
@@ -266,7 +266,7 @@ public class PresentmentEngine {
 		pd.setSchPftDue(schPftDue);
 		pd.setSchFeeDue(schFeeDue);
 		pd.settDSAmount(tDSAmount);
-		
+
 		pd.setSchInsDue(BigDecimal.ZERO);
 		pd.setSchPenaltyDue(BigDecimal.ZERO);
 		pd.setAdvanceAmt(BigDecimal.ZERO);
