@@ -109,7 +109,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public Mandate getMandateByOrgReference(String orgReference, Boolean isSecurityMandate, String status,
+	public Mandate getMandateByOrgReference(String orgReference, boolean isSecurityMandate, String status,
 			String type) {
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where OrgReference = ?  and Status = ? and SecurityMandate = ?");

@@ -385,8 +385,12 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	}
 
 	private void deleteMandate(String finreferece, Mandate mandate, List<AuditDetail> auditDetails) {
+		boolean securityMandate = false;
 
-		boolean securityMandate = mandate.isSecurityMandate();
+		if (mandate != null) {
+			securityMandate = mandate.isSecurityMandate();
+		}
+
 		Mandate oldmandate = mandateDAO.getMandateByOrgReference(finreferece, securityMandate, MandateStatus.FIN,
 				"_Temp");
 
