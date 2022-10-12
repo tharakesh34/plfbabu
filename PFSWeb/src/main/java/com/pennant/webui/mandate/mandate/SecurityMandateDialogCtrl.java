@@ -1009,7 +1009,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateDetailsGroupbox.setVisible(true);
 			this.otherDetailsGroupbox.setVisible(true);
 			this.useExisting.setVisible(true);
-			this.mandateSwapGroupbox.setVisible(true);
+			this.mandateSwapGroupbox.setVisible(false);
 			this.dasGroupbox.setVisible(false);
 			doEdit();
 		}
@@ -1766,9 +1766,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
-			if (issecurityMandate && PennantConstants.List_Select.equals(getComboboxValue(this.mandateType))) {
-				//
-			} else if (this.periodicity.isValidComboValue()) {
+			if (!issecurityMandate && this.periodicity.isValidComboValue()) {
 				aMandate.setPeriodicity(this.periodicity.getValue() == null ? "" : this.periodicity.getValue());
 			}
 		} catch (WrongValueException we) {
