@@ -1883,7 +1883,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, AdviseType, FinID, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
-		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
+		sql.append(", LinkedTranId, ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
 		sql.append(", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST");
 		sql.append(", WaivedUGST, WaivedIGST, WaivedCESS, DueCreation, PresentmentId, DueDate, FinSource");
 		sql.append(", Reason, Status");
@@ -2012,7 +2012,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ma.setFinReference(rs.getString("FinReference"));
 			ma.setFeeTypeID(rs.getLong("FeeTypeID"));
 			ma.setSequence(rs.getInt("sequence"));
-			ma.setAdviseAmount(rs.getBigDecimal("adviseAmount"));
+			ma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
 			ma.setBounceID(rs.getLong("BounceID"));
 			ma.setReceiptID(rs.getLong("ReceiptID"));
 			ma.setLinkedTranId(rs.getLong("LinkedTranId"));
