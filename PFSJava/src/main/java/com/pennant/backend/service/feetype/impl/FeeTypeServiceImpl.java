@@ -271,6 +271,24 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 			}
 		}
 
+		if (Allocation.MANADV.equals(payableLinkTo)) {
+			payableLinkTo = Allocation.MANADV;
+			String otherFeeTypeCode = feeTypeDAO.getFeeTypeCode(feeTypeCode, payableLinkTo);
+
+			long recvFeeTypeId = feeType.getRecvFeeTypeId();
+			long recvFeeTypeIds = feeTypeDAO.getRecvFeeTypeId(feeTypeCode, payableLinkTo, recvFeeTypeId);
+
+			if (otherFeeTypeCode != null && recvFeeTypeIds > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = PennantJavaUtil.getLabel("label_FeeTypeDialog_PayableLinkTo.value").concat(": ")
+						.concat("Other Receivables").concat(" And Receivable Type ");
+				valueParm[1] = PennantJavaUtil.getLabel("label_FeeTypeCode").concat(": ").concat(otherFeeTypeCode);
+				auditDetail.setErrorDetail(new ErrorDetail("41018", valueParm));
+
+			}
+
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
