@@ -254,7 +254,7 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 				aClusterhierarchy.setRecordType("");
 				aClusterhierarchy.setWorkflowId(0);
 
-				if (aClusterhierarchy.getVersion() <= 2) {
+				if (aClusterhierarchy.getVersion() <= 3) {
 					newClusters.add(aClusterhierarchy);
 				}
 			}
