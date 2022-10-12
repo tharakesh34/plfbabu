@@ -516,6 +516,8 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		Thread thread = new Thread(pde);
 		thread.start();
 		Thread.sleep(1000);
+
+		this.timer.start();
 		logger.debug(Literal.LEAVING);
 	}
 
