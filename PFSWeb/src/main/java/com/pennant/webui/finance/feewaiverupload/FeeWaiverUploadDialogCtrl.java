@@ -435,7 +435,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		// Reference
 		String finReference = row.get(0);
 
-		Long finID = financeMainService.getFinID(finReference);
+		Long finID = null;
 
 		if (StringUtils.isBlank(finReference)) {
 			reason = "Loan Reference is Mandatory. ";
@@ -446,7 +446,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				error = true;
 				finReference = null;
 			} else {
-
+				 finID = financeMainService.getFinID(finReference);
 				finMain = financeMainService.getFinanceMain(finID, new String[] { "FinIsActive, FinStartDate" }, "");
 				if (finMain == null) {
 					reason = reason + " Incorrect LAN Reference Captured ";
