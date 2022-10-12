@@ -23910,4 +23910,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.manualAdviseService = manualAdviseService;
 	}
 
+	public CollateralHeaderDialogCtrl getCollateralHeaderDialogCtrl() {
+		return collateralHeaderDialogCtrl;
+	}
+
 }

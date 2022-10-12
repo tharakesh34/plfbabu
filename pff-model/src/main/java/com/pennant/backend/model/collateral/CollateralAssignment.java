@@ -25,7 +25,9 @@
 package com.pennant.backend.model.collateral;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -77,6 +79,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	private String collateralType;
 	private Long assetid = Long.MIN_VALUE;
 	private Long siid = Long.MIN_VALUE;
+	private List<CostComponentDetail> costComponentDetailList = new ArrayList<>();
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -98,6 +101,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 		excludeFields.add("assignPercent");
 		excludeFields.add("siid");
 		excludeFields.add("assetid");
+		excludeFields.add("costComponentDetailList");
 
 		return excludeFields;
 	}
@@ -348,6 +352,14 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 
 	public void setSiid(Long siid) {
 		this.siid = siid;
+	}
+
+	public List<CostComponentDetail> getCostComponentDetailList() {
+		return costComponentDetailList;
+	}
+
+	public void setCostComponentDetailList(List<CostComponentDetail> costComponentDetailList) {
+		this.costComponentDetailList = costComponentDetailList;
 	}
 
 }
