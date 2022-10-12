@@ -3414,7 +3414,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 	}
 
-	private void setError(AuditDetail ad, String code, String usrLanguage, long receiptID) {
+	private void setError(AuditDetail ad, String usrLanguage, String code, long receiptID) {
 		if (StringUtils.isEmpty(code)) {
 			return;
 		}
@@ -3424,7 +3424,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		valueParm[0] = String.valueOf(receiptID);
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 
-		setError(ad, code, usrLanguage, errParm, valueParm);
+		setError(ad, usrLanguage, code, errParm, valueParm);
 	}
 
 	private void setError(AuditDetail ad, String code, String usrLanguage, String[] errParm, String[] valueParm) {
