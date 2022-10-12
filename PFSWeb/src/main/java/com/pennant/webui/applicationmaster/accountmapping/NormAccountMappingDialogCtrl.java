@@ -131,6 +131,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		logger.debug("Entering");
 
 		this.account.setMaxlength(50);
+		this.account.setDisabled(true);
 		this.hostAccount.setMaxlength(50);
 
 		this.profitCenter.setModuleName("ProfitCenter");
@@ -487,6 +488,12 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		if (!this.openedDate.isDisabled()) {
 			this.openedDate.setConstraint(new PTDateValidator(Labels.getLabel("DATE_NO_FUTURE"), true, null,
 					SysParamUtil.getAppDate(), true));
+		}
+
+		if (!this.status.isDisabled()) {
+			this.status.setConstraint(
+					new StaticListValidator(AccountingUtil.getGLAccountStatus(),
+							Labels.getLabel("label_NormAccountMappingDialog_Status.value")));
 		}
 
 		logger.debug("Leaving");
@@ -885,6 +892,10 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			this.spaceClosedDate.setSclass("");
 			this.closedDate.setDisabled(false);
 		}
+	}
+
+	public void onFulfill$finType(Event event) {
+		this.account.setValue(this.finType.getValue().concat(this.accountType.getValue()));
 	}
 
 	/**
