@@ -235,7 +235,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Groupbox listBoxFinancesGroupbox;
 	protected Listbox listBoxMandateFinExposure;
 
-	private transient final String btnCtroller_ClassPrefix = "button_MandateDialog_";
+	private transient static String btnCtroller_ClassPrefix = "button_MandateDialog_";
 	private boolean notes_Entered = false;
 
 	private transient MandateRegistrationListCtrl mandateRegistrationListCtrl;
@@ -776,14 +776,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		Object dataObject = null;
-		long custID = Long.parseLong(this.custID.getAttribute("custID").toString());
-		Filter filter[] = new Filter[2];
-		filter[0] = new Filter("CustID", custID, Filter.OP_EQUAL);
+		long custId = Long.parseLong(this.custID.getAttribute("custID").toString());
+		Filter[] filter = new Filter[2];
+		filter[0] = new Filter("CustID", custId, Filter.OP_EQUAL);
 		filter[1] = new Filter("RepaymentFrom", "Y", Filter.OP_EQUAL);
 
 		dataObject = ExtendedSearchListBox.show(this.window, "CustomerBankInfoAccntNumbers", filter, "");
 
-		if (dataObject == null || !(dataObject instanceof CustomerBankInfo)) {
+		if (!(dataObject instanceof CustomerBankInfo)) {
 			return;
 		}
 
@@ -1233,9 +1233,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (fromLoan) {
 			readOnlyComponent(true, this.mandateType);
-		} /*
-			 * else { readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType); }
-			 */
+		}
 
 		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())) {
 			readOnlyComponent(true, this.finReference);
@@ -2019,7 +2017,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (!this.finReference.isReadonly()) {
 			this.finReference
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_FinReference.value"),
-							null, ImplementationConstants.CLIENT_NFL ? false : validate));
+							null, !ImplementationConstants.CLIENT_NFL));
 		}
 
 		if (!this.eMandateSource.isReadonly()) {
@@ -2335,7 +2333,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		String amtInWords = NumberToEnglishWords.getNumberToWords(this.maxLimit.getActualValue().toBigInteger());
 
 		String[] words = amtInWords.split(" ");
-		StringBuffer AmtInWord = new StringBuffer();
+		StringBuilder AmtInWord = new StringBuilder();
 
 		for (int i = 0; i < words.length; i++) {
 			if (!words[i].isEmpty()) {
@@ -2616,11 +2614,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		doEditFieldByInstrument(instrumentType);
 
-		if (instrumentType == InstrumentType.PDC || instrumentType == InstrumentType.MANUAL) {
-			this.parenttab.setVisible(false);
-		} else {
-			this.parenttab.setVisible(true);
-		}
+		this.parenttab.setVisible(!(instrumentType == InstrumentType.PDC || instrumentType == InstrumentType.MANUAL));
 
 		fillComboBox(this.mandateType, mandateType, mandateTypeList, "");
 
