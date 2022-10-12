@@ -90,22 +90,16 @@
 									<space spacing="2px" sclass="mandatory" />
 									<textbox id="returnCode" />
 								</hbox>
-								<label value="${c:l('label_BounceReasonDialog_InstrumentType.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<combobox id="instrumentType" width="200px" />
-								</hbox>
 							</row>
 							<row id="row4">
 								<label value="${c:l('label_BounceReasonDialog_HoldMarkCount.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<intbox id="holdMarkBounceCount" style="text-align:right"  maxlength="1"/>
-								</hbox>
+								<intbox id="holdMarkBounceCount" style="text-align:right" maxlength="1" />
+								<label value="${c:l('label_BounceReasonDialog_InstrumentType.value')}" />
+								<combobox id="instrumentType" width="200px" />
+							</row>
+							<row>
 								<label value="${c:l('label_BounceReasonDialog_Active.value')}" />
-								<hbox>
-									<checkbox id="active" checked="true" />
-								</hbox>
+								<checkbox id="active" checked="true" />
 							</row>
 						</rows>
 					</grid>
