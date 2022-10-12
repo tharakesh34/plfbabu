@@ -992,6 +992,17 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	public void onFulfill$finReference(Event event) {
 		validateFinReference(event, false);
 		this.btnValidate.setDisabled(false);
+
+		this.referenceId.setMandatoryStyle(true);
+		this.referenceId.setDescColumn("BalanceAmt");
+		this.referenceId.setConstraint("");
+		this.referenceId.setValue("", "");
+		this.referenceId.setValueType(DataType.LONG);
+		this.receiptAmount.setValue(BigDecimal.ZERO);
+		Filter filter[] = new Filter[2];
+		filter[0] = new Filter("FinReference", this.finReference.getValue(), Filter.OP_EQUAL);
+		filter[1] = new Filter("BalanceAmt", BigDecimal.ZERO, Filter.OP_GREATER_THAN);
+		this.referenceId.setFilters(filter);
 	}
 
 	public void validateFinReference(Event event, boolean isShowSearchList) {
