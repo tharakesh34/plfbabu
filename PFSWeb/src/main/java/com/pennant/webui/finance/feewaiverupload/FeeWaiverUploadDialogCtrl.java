@@ -434,6 +434,9 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		// Reference
 		String finReference = row.get(0);
+
+		Long finID = financeMainService.getFinID(finReference);
+
 		if (StringUtils.isBlank(finReference)) {
 			reason = "Loan Reference is Mandatory. ";
 			error = true;
@@ -443,7 +446,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				error = true;
 				finReference = null;
 			} else {
-				Long finID = financeMainService.getFinID(finReference);
+
 				finMain = financeMainService.getFinanceMain(finID, new String[] { "FinIsActive, FinStartDate" }, "");
 				if (finMain == null) {
 					reason = reason + " Incorrect LAN Reference Captured ";
@@ -504,6 +507,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
 		// get fee waiver details from manual advise and finoddetails to prepare the list.
 		feeWaiverHeader.setNewRecord(true);
+		feeWaiverHeader.setFinID(finID);
 		feeWaiverHeader.setFinReference(waiverUpload.getFinReference());
 		feeWaiverHeader = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiverHeader);
 		if (StringUtils.isBlank(waivedAmount)) {
@@ -572,7 +576,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			}
 
 			String reference = feeWaiverHeader.getFinReference();
-			long finID = feeWaiverHeader.getFinID();
+			finID = feeWaiverHeader.getFinID();
 			if (!feeWaiverHeader.isAlwtoProceed()) {
 				reason = Labels.getLabel("Recipt_Is_In_Process") + reference;
 				error = true;

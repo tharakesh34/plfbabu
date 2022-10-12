@@ -251,6 +251,8 @@ public class FeeWaiverUploadServiceImpl extends GenericService<FeeWaiverUpload> 
 	public FeeWaiverHeader prepareDetails(FeeWaiverUpload feeWaiverUpload) {
 		logger.debug(Literal.ENTERING);
 
+		long finID = financeMainDAO.getFinID(feeWaiverUpload.getFinReference());
+
 		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
 		feeWaiverHeader.setWaiverId(Long.MIN_VALUE);
 		feeWaiverHeader.setFinReference(feeWaiverUpload.getFinReference());
@@ -267,6 +269,7 @@ public class FeeWaiverUploadServiceImpl extends GenericService<FeeWaiverUpload> 
 		feeWaiverHeader.setNewRecord(true);
 		feeWaiverHeader.setUserDetails(feeWaiverUpload.getUserDetails());
 		feeWaiverHeader.setWaiverId(feeWaiverUpload.getWaiverId());
+		feeWaiverHeader.setFinID(finID);
 		processWaiverDetails(feeWaiverHeader, feeWaiverUpload);
 
 		logger.debug(Literal.LEAVING);
