@@ -428,7 +428,9 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		}
 
 		try {
-			aBounceReason.setInstrumentType(this.instrumentType.getSelectedItem().getValue().toString());
+			if (this.holdMarkBounceCount.getValue() > 0) {
+				aBounceReason.setInstrumentType(this.instrumentType.getSelectedItem().getValue().toString());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -526,7 +528,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
-		if (!this.instrumentType.isReadonly()) {
+		if (this.holdMarkBounceCount.getValue() > 0 && !this.instrumentType.isDisabled()) {
 			this.instrumentType.setConstraint(new StaticListValidator(instrumentTypeList,
 					Labels.getLabel("label_BounceReasonDialog_InstrumentType.value")));
 		}
