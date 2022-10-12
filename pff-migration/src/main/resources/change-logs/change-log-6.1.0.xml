@@ -417,4 +417,23 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#207610.2" author="Gopal.p" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+				UPDATE EXTENDED_FIELD_EXT_TEMP SET EVENT = trim(EVENT);
+				UPDATE EXTENDED_FIELD_EXT SET EVENT = trim(EVENT);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#207610.2" author="Gopal.p" dbms="sqlserver">
+		<sql>
+			<![CDATA[
+				UPDATE EXTENDED_FIELD_EXT_TEMP SET EVENT = ltrim(rtrim(EVENT));
+				UPDATE EXTENDED_FIELD_EXT SET EVENT = ltrim(rtrim(EVENT));
+			]]>
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>
