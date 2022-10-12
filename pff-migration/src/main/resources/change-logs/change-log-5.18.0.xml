@@ -5688,7 +5688,7 @@
 					USING (SELECT T1.Id, cd1.CustID, cd1.CustDocCategory FROM (
 					SELECT (select coalesce(max(DocId),0) from documentdetails_view) + ROW_NUMBER() OVER(ORDER BY cd2.CustID, cd2.CustDocCategory) Id, CustID, CustDocCategory 
 					FROM Cust_Docs cd2 )T1
-					INNER JOIN CustomerDocuments cd1 ON cd1.CustID = T1.CustID)T2
+					INNER JOIN CustomerDocuments cd1 ON cd1.CustID = T1.CustID and cd1.CustDocCategory=T1.CustDocCategory)T2
 					ON (cd.CustID = T2.CustID)
 					WHEN MATCHED THEN UPDATE SET cd.Id = T2.Id
 			]]>
@@ -5703,7 +5703,7 @@
                       (SELECT T1.Id, cd1.CustID, cd1.CustDocCategory FROM (
                       SELECT (select coalesce(max(DocId),0) from documentdetails_view) + ROW_NUMBER() OVER(ORDER BY cd2.CustID, cd2.CustDocCategory) Id, CustID, CustDocCategory 
                       FROM Cust_Docs cd2 )T1
-                      INNER JOIN CustomerDocuments_Temp cd1 ON cd1.CustID = T1.CustID)T2
+                      INNER JOIN CustomerDocuments_Temp cd1 ON cd1.CustID = T1.CustID and cd1.CustDocCategory=T1.CustDocCategory)T2
                       WHERE CustomerDocuments_Temp.CustID = T2.CustID 
 			]]>
 		</sql>
@@ -5716,9 +5716,30 @@
                       USING (SELECT T1.Id, cd1.CustID, cd1.CustDocCategory FROM (
                       SELECT (select coalesce(max(DocId),0) from documentdetails_view) + ROW_NUMBER() OVER(ORDER BY cd2.CustID, cd2.CustDocCategory) Id, CustID, CustDocCategory 
                       FROM Cust_Docs cd2 )T1
-                      INNER JOIN CustomerDocuments_Temp cd1 ON cd1.CustID = T1.CustID)T2
+                      INNER JOIN CustomerDocuments_Temp cd1 ON cd1.CustID = T1.CustID and cd1.CustDocCategory=T1.CustDocCategory)T2
                       ON (cd.CustID = T2.CustID)
                       WHEN MATCHED THEN UPDATE SET cd.Id = T2.Id
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#11.7.1_pre" author="kavya.n"  dbms="mssql, postgresql">
+		<sql>
+			<![CDATA[	
+				update CustomerDocuments_Temp  set id= t1.id from 
+				(select id,CustID, CustDocCategory from CustomerDocuments) t1
+				where t1.CustID=CustomerDocuments_Temp.CustID and t1.CustDocCategory=CustomerDocuments_Temp.CustDocCategory;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.7.2_pre" author="kavya.n" dbms="oracle">
+		<sql>
+			<![CDATA[	
+				merge into CustomerDocuments_Temp  t1
+				using (select id,CustID, CustDocCategory from CustomerDocuments) t2
+				on (t1.CustID=t.CustID and t1.CustDocCategory=t.CustDocCategory)
+				when matched then update set t1.id= t2.id;
 			]]>
 		</sql>
 	</changeSet>

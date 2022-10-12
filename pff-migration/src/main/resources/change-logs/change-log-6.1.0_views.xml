@@ -1428,7 +1428,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="18_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="18.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'lmtfinrefdetail_finview');
@@ -1436,7 +1436,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="18" author="Gopal.p " dbms="postgresql,mssql">
+	<changeSet id="18.1" author="Gopal.p " dbms="postgresql,mssql">
 		<createView viewName="LMTFINREFDETAIL_FINVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINREFDETAILID,
@@ -1502,7 +1502,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="18" author="Gopal.p " dbms="oracle">
+	<changeSet id="18.1" author="Gopal.p " dbms="oracle">
 		<createView viewName="LMTFINREFDETAIL_FINVIEW" replaceIfExists="true">
 			<![CDATA[
 					SELECT T1.FINREFDETAILID,
@@ -1569,7 +1569,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="18_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="18.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'lmtfinrefdetail_finview');
