@@ -23970,4 +23970,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
 	}
+	
+	public CollateralHeaderDialogCtrl getCollateralHeaderDialogCtrl() {
+		return collateralHeaderDialogCtrl;
+	}
 }

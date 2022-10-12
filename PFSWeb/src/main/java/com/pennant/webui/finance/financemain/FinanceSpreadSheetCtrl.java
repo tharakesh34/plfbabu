@@ -35,16 +35,22 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CostComponentDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.spreadsheet.SheetCopier;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -71,6 +77,8 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 	private FinanceDetail fd;
 	private Tab parentTab;
+
+	int format = PennantConstants.defaultCCYDecPos;
 
 	public FinanceSpreadSheetCtrl() {
 		super();
@@ -247,11 +255,17 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			/* Setting co-applicant data to corresponding cell based on the configuration either from Fields or */
 			for (Entry<String, Map<String, Object>> coAppData : coApplicantData.entrySet()) {
 				try {
-					Sheet sheet = getSheet("CO_APP", book, coAppData.getValue());
+					Map<String, Object> coappData = coAppData.getValue();
+					Sheet sheet = getSheet("CO_APP", book, coappData);
 
 					doSetData(sheet);
 
-					doSetScreenData(sheet, coAppData.getValue());
+					Map<String, Object> modicoappData = new HashMap<String, Object>();
+					for (Entry<String, Object> data : coappData.entrySet()) {
+						modicoappData.put("CO_APP_" + data.getKey(), data.getValue());
+					}
+
+					doSetScreenData(sheet, modicoappData);
 				} catch (Exception e) {
 					//
 				}
@@ -261,8 +275,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 			this.button_FetchData.setVisible(!isReadOnly);
 
-			getBorderLayoutHeight();
-
+			this.window_SpreadSheetDialog.setHeight((getContentAreaHeight() - 75) + "px");
 		} catch (Exception e) {
 			MessageUtil.showMessage(e.getMessage());
 		}
@@ -770,7 +783,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private String getCIF(String sheetName) {
 		String[] tokens = sheetName.split("_");
 
-		return tokens[tokens.length];
+		return tokens[tokens.length - 1];
 	}
 
 	protected boolean isDataChanged() {
@@ -921,6 +934,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		dataMap.put("CIF", custCIF);
 		dataMap.put("CUST_CTG", custCategory);
+		dataMap.put("CUST_FULL_NAME", customer.getCustShrtName());
 		dataMap.put("CUST_EMPLOYMENT_TYPE", employmentType);
 		dataMap.put("CUST_DOB", customer.getCustDOB());
 		dataMap.put("CUST_AGE", DateUtil.getYearsBetween(SysParamUtil.getAppDate(), customer.getCustDOB()));
@@ -932,16 +946,78 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		dataMap.put("ROI", getROI());
 		dataMap.put("FIN_ASSET_VALUE", getFinAssetValue());
 		dataMap.put("TENOR", getTenor());
+		dataMap.put("FIRST_PRI_PFT", getFIRST_PRI_PFT());
 
 		dataMap.putAll(getIncomeMap(cd.getCustomerIncomeList()));
+
+		setCollateralData(dataMap);
+
+		setCustFinanceExposure(cd, dataMap);
 
 		return dataMap;
 	}
 
+	private void setCustFinanceExposure(CustomerDetails cd, Map<String, Object> dataMap) {
+		List<FinanceEnquiry> list = cd.getCustFinanceExposureList();
+
+		Date date = SysParamUtil.getAppDate();
+		BigDecimal lessThan2years = BigDecimal.ZERO;
+		BigDecimal greaterThan2years = BigDecimal.ZERO;
+
+		for (FinanceEnquiry financeEnquiry : list) {
+
+			int years = DateUtility.getYearsBetween(financeEnquiry.getFinStartDate(), date);
+			if (years <= 2) {
+				lessThan2years = lessThan2years.add(financeEnquiry.getMaxInstAmount());
+			} else {
+				greaterThan2years = greaterThan2years.add(financeEnquiry.getMaxInstAmount());
+			}
+
+		}
+		dataMap.put("CUST_EXPOS_LESS2", PennantApplicationUtil.formateAmount(lessThan2years, format));
+		dataMap.put("CUST_EXPOS_GREATER2", PennantApplicationUtil.formateAmount(greaterThan2years, format));
+
+	}
+
+	private void setCollateralData(Map<String, Object> dataMap) {
+		BigDecimal declaredValue = BigDecimal.ZERO;
+		BigDecimal consideredForLTV = BigDecimal.ZERO;
+		BigDecimal consideredForSanction = BigDecimal.ZERO;
+
+		List<CollateralAssignment> list = null;
+
+		if (financeMainDialogCtrl != null) {
+			CollateralHeaderDialogCtrl collheadr = financeMainDialogCtrl.getCollateralHeaderDialogCtrl();
+			if (collheadr != null) {
+				list = collheadr.getCollateralAssignments();
+			} else {
+				if (fd != null) {
+					list = fd.getCollateralAssignmentList();
+				}
+			}
+		}
+
+		if (list != null) {
+			for (CollateralAssignment collateralAssignment : list) {
+				List<CostComponentDetail> costlist = collateralAssignment.getCostComponentDetailList();
+				if (costlist != null) {
+					for (CostComponentDetail costComp : costlist) {
+						declaredValue = declaredValue.add(costComp.getDeclaredValue());
+						consideredForLTV = consideredForLTV.add(costComp.getConsideredForLTV());
+						consideredForSanction = consideredForSanction.add(costComp.getConsideredForSanction());
+					}
+				}
+
+			}
+		}
+
+		dataMap.put("DECLAREDVALUE", CurrencyUtil.unFormat(declaredValue, format));
+		dataMap.put("CONSIDEREDFORLTV", CurrencyUtil.unFormat(consideredForLTV, format));
+		dataMap.put("CONSIDEREDFORSANCTION", CurrencyUtil.unFormat(consideredForSanction, format));
+	}
+
 	private Map<String, Object> getIncomeMap(List<CustomerIncome> list) {
 		Map<String, Object> dataMap = new HashMap<>();
-
-		int format = PennantConstants.defaultCCYDecPos;
 
 		for (CustomerIncome item : list) {
 			BigDecimal income = item.getIncome();
@@ -1009,6 +1085,43 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			return financeMainDialogCtrl.numberOfTerms_two.intValue();
 		}
 		return 0;
+	}
+
+	private BigDecimal getFIRST_PRI_PFT() {
+
+		BigDecimal emi = new BigDecimal(0);
+		if (financeMainDialogCtrl != null) {
+			FinanceDetail fanced = financeMainDialogCtrl.getFinanceDetail();
+			if (fanced == null) {
+				return emi;
+			}
+
+			if (fanced.getFinScheduleData() == null) {
+				return emi;
+			}
+
+			List<FinanceScheduleDetail> listsc = fanced.getFinScheduleData().getFinanceScheduleDetails();
+
+			if (listsc == null || listsc.isEmpty()) {
+				return emi;
+			}
+
+			for (FinanceScheduleDetail fsd : listsc) {
+
+				if (fsd.getPrincipalSchd().compareTo(BigDecimal.ZERO) > 0
+						&& fsd.getProfitSchd().compareTo(BigDecimal.ZERO) > 0) {
+					emi = fsd.getPrincipalSchd().add(fsd.getProfitSchd());
+					break;
+				}
+
+			}
+
+		}
+		if (emi.compareTo(BigDecimal.ZERO) > 0) {
+			emi = CurrencyUtil.unFormat(emi, format);
+		}
+
+		return emi;
 	}
 
 	public void doSaveScoreDetail(FinanceDetail afd) {

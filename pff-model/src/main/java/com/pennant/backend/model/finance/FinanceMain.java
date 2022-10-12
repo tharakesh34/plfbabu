@@ -840,6 +840,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date sanctionedDate;
 	private FinODPenaltyRate penaltyRate = null;
 	private boolean resetFromLastStep;
+	private boolean wifLoan = false;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1082,6 +1083,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("moduleDefiner");
 		excludeFields.add("resetFromLastStep");
 		excludeFields.add("securityMandateID");
+		excludeFields.add("wifLoan");
 
 		return excludeFields;
 	}
@@ -1402,6 +1404,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setProductCategory(this.productCategory);
 		entity.setMandateID(this.mandateID);
 		entity.setSecurityMandateID(this.securityMandateID);
+		entity.setWifLoan(this.wifLoan);
 		entity.setRefundAmount(this.refundAmount);
 		this.errorDetails.stream().forEach(e -> entity.getErrorDetails().add(e));
 		if (lovDescNextUsersRolesMap != null) {
@@ -5541,6 +5544,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setSecurityMandateID(Long securityMandateID) {
 		this.securityMandateID = securityMandateID;
+	}
+
+	public boolean isWifLoan() {
+		return wifLoan;
+	}
+
+	public void setWifLoan(boolean wifLoan) {
+		this.wifLoan = wifLoan;
 	}
 
 }
