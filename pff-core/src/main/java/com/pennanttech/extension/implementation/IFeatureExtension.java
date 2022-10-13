@@ -8,4 +8,6 @@ public interface IFeatureExtension {
 	Map<String, Object> getMandateExtensions();
 
 	Map<String, Object> getPresentmentExtensions();
+
+	Map<String, Object> getAccountingExtensions();
 }

@@ -44,6 +44,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.webui.applicationmaster.accountmapping.model.AccountMappingListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -125,7 +126,19 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 		registerField("hostAccount", listheader_HostAccount, SortOrder.NONE, hostAccount, sortOperator_hostAccount,
 				Operators.STRING);
 
-		// Render the page and display the data.
+		if (AccountingExtension.LOAN_TYPE_GL_MAPPING && AccountingExtension.NORMAL_GL_MAPPING) {
+			loanTypeAc.setVisible(true);
+			normalAc.setVisible(true);
+		} else if (AccountingExtension.LOAN_TYPE_GL_MAPPING) {
+			loanTypeAc.setVisible(false);
+			loanTypeAc.setSelected(true);
+			normalAc.setVisible(false);
+		} else if (AccountingExtension.NORMAL_GL_MAPPING) {
+			normalAc.setVisible(false);
+			normalAc.setSelected(true);
+			loanTypeAc.setVisible(false);
+		}
+
 		doRenderPage();
 		search();
 	}
