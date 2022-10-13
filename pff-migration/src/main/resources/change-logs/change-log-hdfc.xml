@@ -421,4 +421,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="05" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE ='240' WHERE SYSPARMCODE ='BANK_CODE';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -365,7 +365,9 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		}
 
 		if (StringUtils.isNotBlank(iFSC) && bankBranchDAO.getBankBranchCountByIFSC(iFSC, "") > 1) {
-			bankBranch.setError(getError("90702", iFSC));
+			if (StringUtils.isEmpty(micr)) {
+				bankBranch.setError(getError("90702", iFSC));
+			}
 			return bankBranch;
 		}
 

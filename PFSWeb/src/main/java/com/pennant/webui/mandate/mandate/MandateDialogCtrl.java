@@ -969,14 +969,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
 			readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
-
-			if (fromLoan) {
-				readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
-				readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
-			} else {
-				readOnlyComponent(true, this.employeeID);
-				readOnlyComponent(true, this.employerName);
-			}
+			readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
+			readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
 
 		}
 
@@ -988,6 +982,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
 			readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
 			readOnlyComponent(isReadOnly("MandateDialog_JointAccHolderName"), this.jointAccHolderName);
+
+			String bankcode = SysParamUtil.getValueAsString("BANK_CODE");
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("BankCode", bankcode, Filter.OP_EQUAL);
+			this.bankBranchID.setFilters(filters);
 		}
 
 		switch (instrumentType) {
@@ -1192,7 +1191,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (fromLoan) {
 			this.north_mandate.setVisible(false);
-			readOnlyComponent(!MandateExtension.ALLOW_CO_APP, this.custID);
+
+			if (MandateExtension.ALLOW_CO_APP) {
+				readOnlyComponent(MandateExtension.ALLOW_CO_APP, this.custID);
+			} else {
+				readOnlyComponent(true, this.custID);
+			}
 
 			this.reasonRow.setVisible(true);
 			this.mandateStatusRow.setVisible(true);
@@ -1217,7 +1221,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (this.mandate.isNewRecord()) {
 			this.btnCancel.setVisible(false);
 
-			if (fromLoan) {
+			if (fromLoan && MandateExtension.ALLOW_CO_APP) {
 				this.custID.setReadonly(false);
 			}
 
@@ -2854,15 +2858,17 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				lc.setParent(item);
 
 				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue().add(finEnquiry.getFeeChargeAmt());
-				lc = new Listcell(PennantApplicationUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(finEnquiry.getMaxInstAmount(),
 						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
-						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
+								CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getFinStatus());

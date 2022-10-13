@@ -1185,7 +1185,11 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (fromLoan) {
 			this.north_mandate.setVisible(false);
-			readOnlyComponent(!MandateExtension.ALLOW_CO_APP, this.custID);
+			if (MandateExtension.ALLOW_CO_APP) {
+				readOnlyComponent(MandateExtension.ALLOW_CO_APP, this.custID);
+			} else {
+				readOnlyComponent(true, this.custID);
+			}
 
 			this.reasonRow.setVisible(false);
 			this.mandateStatusRow.setVisible(false);
@@ -1210,7 +1214,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (this.mandate.isNewRecord()) {
 			this.btnCancel.setVisible(false);
 
-			if (fromLoan) {
+			if (fromLoan && MandateExtension.ALLOW_CO_APP) {
 				this.custID.setReadonly(false);
 			}
 

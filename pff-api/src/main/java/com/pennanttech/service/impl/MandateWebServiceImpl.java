@@ -474,6 +474,14 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 			return getFailedStatus(error.getCode(), error.getError());
 		}
 
+		if (InstrumentType.isSI(mandate.getMandateType())) {
+			String dftBankCode = StringUtils.trimToEmpty(SysParamUtil.getValueAsString("BANK_CODE"));
+
+			if (!StringUtils.equalsIgnoreCase(dftBankCode, bankBranch.getBankCode())) {
+				return getFailedStatus("MNDT03", dftBankCode);
+			}
+
+		}
 		mandate.setBankCode(bankBranch.getBankCode());
 		mandate.setMICR(bankBranch.getMICR());
 
