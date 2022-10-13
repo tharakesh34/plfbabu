@@ -1,6 +1,7 @@
 package com.pennant.backend.service.cersai.impl;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -135,7 +136,7 @@ public class SecurityInterestTypeServiceImpl extends GenericService<SecurityInte
 	 * @return CERSAI_SIType
 	 */
 	@Override
-	public SecurityInterestType getSecurityInterestType(String assetCategoryId, int id) {
+	public SecurityInterestType getSecurityInterestType(Long assetCategoryId, int id) {
 		return getSecurityInterestTypeDAO().getSecurityInterestType(assetCategoryId, id, "_View");
 	}
 
@@ -147,7 +148,7 @@ public class SecurityInterestTypeServiceImpl extends GenericService<SecurityInte
 	 * @param id              id of the SecurityInterestType. (String)
 	 * @return CERSAI_SIType
 	 */
-	public SecurityInterestType getApprovedSecurityInterestType(String assetCategoryId, int id) {
+	public SecurityInterestType getApprovedSecurityInterestType(Long assetCategoryId, int id) {
 		return getSecurityInterestTypeDAO().getSecurityInterestType(assetCategoryId, id, "_AView");
 	}
 

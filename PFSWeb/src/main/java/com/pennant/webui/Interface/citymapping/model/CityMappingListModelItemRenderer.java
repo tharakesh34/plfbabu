@@ -8,7 +8,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.cersai.CityMapping;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 
 /**
@@ -27,7 +26,7 @@ public class CityMappingListModelItemRenderer implements ListitemRenderer<CityMa
 	public void render(Listitem item, CityMapping cityMapping, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(PennantApplicationUtil.formateInt(cityMapping.getMappingType()));
+		lc = new Listcell(cityMapping.getMappingType());
 		lc.setParent(item);
 		lc = new Listcell(cityMapping.getCityCode());
 		lc.setParent(item);

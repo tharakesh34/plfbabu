@@ -14,7 +14,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class CityMapping extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private int mappingType;
+	private String mappingType = "0";
 	private String cityCode;
 	private String cityCodeName;
 	private String mappingValue;
@@ -37,11 +37,11 @@ public class CityMapping extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public int getMappingType() {
+	public String getMappingType() {
 		return mappingType;
 	}
 
-	public void setMappingType(int mappingType) {
+	public void setMappingType(String mappingType) {
 		this.mappingType = mappingType;
 	}
 

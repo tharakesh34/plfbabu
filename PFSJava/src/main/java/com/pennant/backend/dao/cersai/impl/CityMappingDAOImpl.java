@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.cersai.impl;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -50,7 +51,7 @@ public class CityMappingDAOImpl extends BasicDao<CityMapping> implements CityMap
 		logger.trace(Literal.SQL + sql.toString());
 
 		CityMapping cityMapping = new CityMapping();
-		cityMapping.setMappingType(mappingType);
+		cityMapping.setMappingType(String.valueOf(mappingType));
 		cityMapping.setCityCode(cityCode);
 		cityMapping.setMappingValue(mappingValue);
 
@@ -176,7 +177,7 @@ public class CityMappingDAOImpl extends BasicDao<CityMapping> implements CityMap
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("mappingType", mappingType);
+		paramSource.addValue("mappingType", String.valueOf(mappingType));
 		paramSource.addValue("cityCode", cityCode);
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);

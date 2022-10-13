@@ -158,8 +158,8 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		this.custCIF.setValueColumn("CustCIF");
 		this.custCIF.setDescColumn("CustShrtName");
 		this.custCIF.setValidateColumns(new String[] { "CustCIF" });
-		
-		Filter coreCustFilter[] = new Filter[1];
+
+		Filter[] coreCustFilter = new Filter[1];
 		if (App.DATABASE == App.Database.ORACLE) {
 			coreCustFilter[0] = new Filter("CustCoreBank", null, Filter.OP_EQUAL);
 		} else {

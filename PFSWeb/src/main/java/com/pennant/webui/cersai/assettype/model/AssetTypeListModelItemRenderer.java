@@ -28,7 +28,7 @@ public class AssetTypeListModelItemRenderer implements ListitemRenderer<AssetTyp
 
 		Listcell lc;
 
-		lc = new Listcell(assetType.getAssetCategoryId());
+		lc = new Listcell(String.valueOf(assetType.getAssetCategoryId()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.formateInt(assetType.getId()));
 		lc.setParent(item);

@@ -7,9 +7,9 @@ public interface SecurityInterestTypeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	SecurityInterestType getSecurityInterestType(String assetCategoryId, int id);
+	SecurityInterestType getSecurityInterestType(Long assetCategoryId, int id);
 
-	SecurityInterestType getApprovedSecurityInterestType(String assetCategoryId, int id);
+	SecurityInterestType getApprovedSecurityInterestType(Long assetCategoryId, int id);
 
 	AuditHeader delete(AuditHeader auditHeader);
 

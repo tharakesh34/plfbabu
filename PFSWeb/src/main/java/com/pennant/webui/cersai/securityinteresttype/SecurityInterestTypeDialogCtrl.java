@@ -31,6 +31,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -137,6 +138,7 @@ public class SecurityInterestTypeDialogCtrl extends GFCBaseCtrl<SecurityInterest
 		this.assetCategoryId.setModuleName("AssetCategory");
 		this.assetCategoryId.setValueColumn("Id");
 		this.assetCategoryId.setDescColumn("Description");
+		this.assetCategoryId.setValueType(DataType.LONG);
 		this.assetCategoryId.setValidateColumns(new String[] { "Id" });
 		this.id.setMaxlength(3);
 		this.description.setMaxlength(100);
@@ -288,7 +290,9 @@ public class SecurityInterestTypeDialogCtrl extends GFCBaseCtrl<SecurityInterest
 	public void doWriteBeanToComponents(SecurityInterestType aSecurityInterestType) {
 		logger.debug(Literal.ENTERING);
 
-		this.assetCategoryId.setValue(aSecurityInterestType.getAssetCategoryId());
+		if (aSecurityInterestType.getAssetCategoryId() != null) {
+			this.assetCategoryId.setValue(String.valueOf(aSecurityInterestType.getAssetCategoryId()));
+		}
 		this.id.setValue(aSecurityInterestType.getId());
 		this.description.setValue(aSecurityInterestType.getDescription());
 
@@ -317,7 +321,7 @@ public class SecurityInterestTypeDialogCtrl extends GFCBaseCtrl<SecurityInterest
 
 		// Asset Category Id
 		try {
-			aSecurityInterestType.setAssetCategoryId(this.assetCategoryId.getValue());
+			aSecurityInterestType.setAssetCategoryId(Long.valueOf(this.assetCategoryId.getValue()));
 			aSecurityInterestType.setAssetCategoryIdName(this.assetCategoryId.getDescription());
 
 		} catch (WrongValueException we) {

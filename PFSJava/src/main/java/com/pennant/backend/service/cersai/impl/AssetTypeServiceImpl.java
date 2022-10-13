@@ -1,6 +1,7 @@
 package com.pennant.backend.service.cersai.impl;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -183,8 +184,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetTyp> implements As
 		getAssetTypDAO().delete(assetType, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(assetType.getRecordType())) {
-			auditHeader.getAuditDetail()
-					.setBefImage(assetTypDAO.getAssetTyp(assetType.getAssetCategoryId(), assetType.getId(), ""));
+			auditHeader.getAuditDetail().setBefImage(
+					assetTypDAO.getAssetTyp(String.valueOf(assetType.getAssetCategoryId()), assetType.getId(), ""));
 		}
 
 		if (assetType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {

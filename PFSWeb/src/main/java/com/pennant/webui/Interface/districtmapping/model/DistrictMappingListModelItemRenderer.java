@@ -8,7 +8,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.cersai.DistrictMapping;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 
 /**
@@ -28,7 +27,7 @@ public class DistrictMappingListModelItemRenderer implements ListitemRenderer<Di
 
 		Listcell lc;
 
-		lc = new Listcell(PennantApplicationUtil.formateInt(districtMapping.getMappingType()));
+		lc = new Listcell(districtMapping.getMappingType());
 		lc.setParent(item);
 		lc = new Listcell(districtMapping.getDistrict());
 		lc.setParent(item);

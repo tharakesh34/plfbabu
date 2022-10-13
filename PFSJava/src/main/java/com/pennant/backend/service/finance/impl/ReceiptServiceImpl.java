@@ -581,6 +581,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
+		List<FinFeeDetail> feesList = finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "_TView");
+		if (CollectionUtils.isNotEmpty(feesList)) {
+			for (FinFeeDetail finFeeDetail : feesList) {
+				Long taxHeaderId = finFeeDetail.getTaxHeaderId();
+				if (taxHeaderId != null && taxHeaderId > 0) {
+					List<Taxes> taxDetailById = taxHeaderDetailsDAO.getTaxDetailById(taxHeaderId, "_TView");
+					TaxHeader taxheader = new TaxHeader();
+					taxheader.setTaxDetails(taxDetailById);
+					taxheader.setHeaderId(taxHeaderId);
+					finFeeDetail.setTaxHeader(taxheader);
+				}
+			}
+			rd.setFinFeeDetails(feesList);
+		}
+
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 			List<CollateralAssignment> assignements = new ArrayList<>();
 			String module = FinanceConstants.MODULE_NAME;

@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.cersai.impl;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -51,7 +52,7 @@ public class ProvinceMappingDAOImpl extends BasicDao<ProvinceMapping> implements
 		logger.trace(Literal.SQL + sql.toString());
 
 		ProvinceMapping provinceMapping = new ProvinceMapping();
-		provinceMapping.setMappingType(mappingType);
+		provinceMapping.setMappingType(String.valueOf(mappingType));
 		provinceMapping.setProvince(province);
 		provinceMapping.setMappingValue(mappingValue);
 
@@ -177,7 +178,7 @@ public class ProvinceMappingDAOImpl extends BasicDao<ProvinceMapping> implements
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("mappingType", mappingType);
+		paramSource.addValue("mappingType", String.valueOf(mappingType));
 		paramSource.addValue("province", province);
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);

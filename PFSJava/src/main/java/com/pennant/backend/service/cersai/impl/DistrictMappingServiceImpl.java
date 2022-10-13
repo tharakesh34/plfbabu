@@ -1,6 +1,7 @@
 package com.pennant.backend.service.cersai.impl;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -184,8 +185,8 @@ public class DistrictMappingServiceImpl extends GenericService<DistrictMapping> 
 		getDistrictMappingDAO().delete(districtMapping, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(districtMapping.getRecordType())) {
-			auditHeader.getAuditDetail()
-					.setBefImage(districtMappingDAO.getDistrictMapping(districtMapping.getMappingType(),
+			auditHeader.getAuditDetail().setBefImage(
+					districtMappingDAO.getDistrictMapping(Integer.valueOf(districtMapping.getMappingType()),
 							districtMapping.getDistrict(), districtMapping.getMappingValue(), ""));
 		}
 
@@ -293,7 +294,8 @@ public class DistrictMappingServiceImpl extends GenericService<DistrictMapping> 
 
 		// Check the unique keys.
 		if (districtMapping.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(districtMapping.getRecordType())
-				&& districtMappingDAO.isDuplicateKey(districtMapping.getMappingType(), districtMapping.getDistrict(),
+				&& districtMappingDAO.isDuplicateKey(Integer.valueOf(districtMapping.getMappingType()),
+						districtMapping.getDistrict(),
 						districtMapping.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

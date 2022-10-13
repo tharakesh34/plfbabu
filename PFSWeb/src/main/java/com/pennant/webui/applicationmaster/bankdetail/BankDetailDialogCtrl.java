@@ -299,9 +299,6 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 
 		try {
 
-			this.accNoLength.setConstraint("");
-			this.accNoLength.setErrorMessage("");
-
 			if (this.accNoLength.getValue() == null) {
 				throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_MINVALUE_EQ", new String[] {
 						Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "minAccNoLength" }));
@@ -312,7 +309,10 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 
 			aBankDetail.setAccNoLength(this.accNoLength.getValue());
 
-			if (aBankDetail.getMinAccNoLength() != 0
+			if (this.minAccNoLength.getValue() == null) {
+				throw new WrongValueException(this.minAccNoLength, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+						new String[] { Long.toString(this.minAccNoLength.getValue()), Long.toString(minAcNoLength) }));
+			} else if (aBankDetail.getMinAccNoLength() != 0
 					&& aBankDetail.getAccNoLength() < aBankDetail.getMinAccNoLength()) {
 				throw new WrongValueException(this.accNoLength,
 						Labels.getLabel("FIELD_IS_EQUAL_OR_GREATER",
@@ -462,6 +462,11 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 					Labels.getLabel("label_BankDetailDialog_MinimumAccNoLength.value"), true, false, 0));
 		}
 
+		if (!this.accNoLength.isReadonly()) {
+			this.accNoLength.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), true, false, 0));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -609,8 +614,9 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 
 		isNew = aBankDetail.isNewRecord();
 		if (this.userAction.getSelectedItem() != null) {
-			if ((!isNew) && (PennantConstants.RCD_STATUS_SUBMITTED.equalsIgnoreCase(this.userAction.getSelectedItem().getValue())
-					|| PennantConstants.RCD_STATUS_SAVED 
+			if ((!isNew) && (PennantConstants.RCD_STATUS_SUBMITTED
+					.equalsIgnoreCase(this.userAction.getSelectedItem().getValue())
+					|| PennantConstants.RCD_STATUS_SAVED
 							.equalsIgnoreCase(this.userAction.getSelectedItem().getValue()))) {
 				if (this.updateBranches.isChecked()) {
 					this.isSkip = false;
