@@ -3,7 +3,8 @@ package com.pennant.webui.Interface.districtmapping;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -157,7 +158,7 @@ public class DistrictMappingListCtrl extends GFCBaseListCtrl<DistrictMapping> {
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxDistrictMapping.getSelectedItem();
-		final int mappingType = (int) selectedItem.getAttribute("mappingType");
+		final int mappingType = Integer.valueOf((String) selectedItem.getAttribute("mappingType"));
 		final String district = (String) selectedItem.getAttribute("district");
 		final String mappingValue = (String) selectedItem.getAttribute("mappingValue");
 		DistrictMapping districtmapping = districtMappingService.getDistrictMapping(mappingType, district,
