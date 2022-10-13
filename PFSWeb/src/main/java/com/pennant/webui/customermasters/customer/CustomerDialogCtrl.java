@@ -6265,6 +6265,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void doFillCustomerEmploymentDetail(List<CustomerEmploymentDetail> custEmploymentDetails) {
 		logger.debug("Entering");
+		this.listBoxCustomerEmploymentDetail.getItems().clear();
 		if (custEmploymentDetails != null && !custEmploymentDetails.isEmpty()) {
 			setCustomerEmploymentDetailList(custEmploymentDetails);
 			for (CustomerEmploymentDetail customerEmploymentDetail : custEmploymentDetails) {
