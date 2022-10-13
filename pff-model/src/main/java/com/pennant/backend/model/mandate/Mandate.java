@@ -187,7 +187,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String finRepayMethod;
 	private String alwdRpyMethods;
 	private Long oldMandate;
-	private boolean allowDas;
+	private boolean allowDAS;
 	// API validation purpose only
 	private Mandate validateMandate = this;
 
@@ -248,7 +248,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("alwdRpyMethods");
 		excludeFields.add("oldMandate");
 		excludeFields.add("validateMandate");
-		excludeFields.add("allowDas");
+		excludeFields.add("allowDAS");
 
 		return excludeFields;
 	}
@@ -976,20 +976,20 @@ public class Mandate extends AbstractWorkflowEntity {
 		this.oldMandate = oldMandate;
 	}
 
+	public boolean isAllowDAS() {
+		return allowDAS;
+	}
+
+	public void setAllowDAS(boolean allowDAS) {
+		this.allowDAS = allowDAS;
+	}
+
 	public Mandate getValidateMandate() {
 		return validateMandate;
 	}
 
 	public void setValidateMandate(Mandate validateMandate) {
 		this.validateMandate = validateMandate;
-	}
-
-	public boolean isAllowDas() {
-		return allowDas;
-	}
-
-	public void setAllowDas(boolean allowDas) {
-		this.allowDas = allowDas;
 	}
 
 }

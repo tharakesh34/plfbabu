@@ -252,7 +252,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					MessageUtil.showError("Employer details are not available for this Customer");
 					return;
 				} else {
-					if (!employerDetails.isAllowDas()) {
+					if (!employerDetails.isAllowDAS()) {
 						MessageUtil.showError("Allow Das is not applicable for this employer");
 						return;
 					}

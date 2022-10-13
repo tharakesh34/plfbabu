@@ -735,7 +735,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 				mdt.setEmployeeID(rs.getLong("EmployerID"));
 				mdt.setEmployerName(rs.getString("EmpName"));
-				mdt.setAllowDas(rs.getBoolean("AllowDas"));
+				mdt.setAllowDAS(rs.getBoolean("AllowDas"));
 
 				return mdt;
 			}, 1, custID, 1);

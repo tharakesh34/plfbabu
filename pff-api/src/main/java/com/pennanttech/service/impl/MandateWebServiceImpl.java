@@ -374,7 +374,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 
 			if (employerDetails == null || employerDetails.getEmployeeID() != mandate.getEmployeeID()) {
 				returnStatus = getFailedStatus("MNDT01", String.valueOf(mandate.getEmployeeID()));
-			} else if (!employerDetails.isAllowDas()) {
+			} else if (!employerDetails.isAllowDAS()) {
 				returnStatus = getFailedStatus("MNDT02", String.valueOf(mandate.getEmployeeID()));
 			}
 
