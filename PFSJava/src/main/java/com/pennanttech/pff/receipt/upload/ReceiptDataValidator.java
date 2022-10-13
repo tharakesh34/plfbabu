@@ -152,12 +152,12 @@ public class ReceiptDataValidator {
 			}
 
 			if (precisionAmount.compareTo(BigDecimal.ZERO) <= 0 && rud.isNewReceipt()) {
-				setError(rud, "[RECEIPTAMOUNT] with value <=0 ");
+				setError(rud, "[RECEIPTAMOUNT] with value <= 0");
 				return;
 			}
 		} catch (Exception e) {
 			rud.setReceiptAmount(BigDecimal.ZERO);
-			setError(rud, "[RECEIPTAMOUNT] ");
+			setError(rud, "[RECEIPTAMOUNT] is not valid.");
 			return;
 		}
 
