@@ -666,8 +666,8 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -686,20 +686,6 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 			auditDetailMap.put("ExtendedFieldDetails",
 					extendedFieldDetailsService.setExtendedFieldsAuditData(renderList, auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
-		}
-
-		// Loan Field Details
-		if (financeDetail.getExtendedFieldRender() != null) {
-			ExtendedFieldRender extendedFieldRender = financeDetail.getExtendedFieldRender();
-			if (extendedFieldRender.getInstructionUID() == Long.MIN_VALUE
-					&& financeMain.getInstructionUID() != Long.MIN_VALUE) {
-				extendedFieldRender.setInstructionUID(financeMain.getInstructionUID());
-			}
-			auditDetailMap.put("LoanExtendedFieldDetails",
-					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
-							extendedFieldRender, auditTranType, method, ExtendedFieldConstants.MODULE_LOAN));
-			financeDetail.setAuditDetailMap(auditDetailMap);
-			auditDetails.addAll(auditDetailMap.get("LoanExtendedFieldDetails"));
 		}
 
 		// Extended Field Details
@@ -735,6 +721,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		if (CollectionUtils.isEmpty(fsi)) {
 			FinServiceInstruction fi = new FinServiceInstruction();
+			fi.setFinID(fsd.getFinID());
 			fi.setFinReference(fsd.getFinReference());
 			fi.setFinEvent(event);
 
