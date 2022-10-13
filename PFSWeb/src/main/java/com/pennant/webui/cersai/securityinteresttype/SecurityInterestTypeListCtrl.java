@@ -2,7 +2,8 @@ package com.pennant.webui.cersai.securityinteresttype;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -92,7 +93,7 @@ public class SecurityInterestTypeListCtrl extends GFCBaseListCtrl<SecurityIntere
 				"button_SecurityInterestTypeList_NewSecurityInterestType", true);
 
 		registerField("assetCategoryId", listheader_AssetCategoryId, SortOrder.NONE, assetCategoryId,
-				sortOperator_AssetCategoryId, Operators.STRING);
+				sortOperator_AssetCategoryId, Operators.NUMERIC);
 		registerField("assetCategoryIdName");
 		registerField("id", listheader_Id, SortOrder.NONE, id, sortOperator_Id, Operators.NUMERIC);
 		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description,
@@ -152,7 +153,7 @@ public class SecurityInterestTypeListCtrl extends GFCBaseListCtrl<SecurityIntere
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxSecurityInterestType.getSelectedItem();
-		final String assetCategoryId = (String) selectedItem.getAttribute("assetCategoryId");
+		final Long assetCategoryId = (Long) selectedItem.getAttribute("assetCategoryId");
 		final int id = (int) selectedItem.getAttribute("id");
 		SecurityInterestType securityinteresttype = securityInterestTypeService.getSecurityInterestType(assetCategoryId,
 				id);
