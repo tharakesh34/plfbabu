@@ -372,6 +372,7 @@ public class PrincipleHolidayDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().getFinanceMain().setRecalToDate(recalToDate);
 		finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 
+		finServiceInstruction.setFinID(getFinScheduleData().getFinanceMain().getFinID());
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
 		finServiceInstruction.setFinEvent(getScheduleDetailDialogCtrl().getFinanceDetail().getModuleDefiner());
 		getFinScheduleData().setFeeEvent(moduleDefiner);

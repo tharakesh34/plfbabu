@@ -384,6 +384,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		String moduleDefiner = fd.getModuleDefiner();
 		if (CollectionUtils.isEmpty(serviceInstructions)) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinID(financeMain.getFinID());
 			finServInst.setFinReference(financeMain.getFinReference());
 			finServInst.setFinEvent(moduleDefiner);
 

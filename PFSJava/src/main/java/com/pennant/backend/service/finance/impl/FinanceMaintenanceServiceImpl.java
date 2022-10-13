@@ -1980,6 +1980,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		if (CollectionUtils.isEmpty(serviceInstructions)) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinID(financeMain.getFinID());
 			finServInst.setFinReference(financeMain.getFinReference());
 			finServInst.setFinEvent(financeDetail.getModuleDefiner());
 

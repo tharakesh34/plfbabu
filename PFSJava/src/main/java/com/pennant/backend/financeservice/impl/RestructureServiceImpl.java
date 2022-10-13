@@ -114,7 +114,6 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		FinanceProfitDetail fpd = getFinProfitDetailsById(finID);
 
 		fsi.setFinID(finID);
-
 		fsi.setFinReference(finReference);
 		fsi.setFinEvent(FinServiceEvent.RESTRUCTURE);
 

@@ -6471,7 +6471,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			FinServiceInstruction instruction = new FinServiceInstruction();
 			instruction.setFinID(fm.getFinID());
 			instruction.setFinReference(fm.getFinReference());
-			instruction.setFinReference(fm.getFinReference());
 			instruction.setFinEvent(rpyHeader.getFinEvent());
 			instruction.setAmount(rpyHeader.getRepayAmount());
 			instruction.setAppDate(appDate);

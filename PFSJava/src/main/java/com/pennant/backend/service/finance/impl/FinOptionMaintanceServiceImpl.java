@@ -145,6 +145,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		String event = fmi.getEvent();
 		if (CollectionUtils.isEmpty(serviceInstructions)) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinID(fmi.getFinID());
 			finServInst.setFinReference(fmi.getFinReference());
 			finServInst.setFinEvent(event);
 
