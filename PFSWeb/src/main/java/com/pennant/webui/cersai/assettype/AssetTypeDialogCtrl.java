@@ -22,16 +22,16 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.cersai.AssetCategory;
 import com.pennant.backend.model.cersai.AssetTyp;
-import com.pennant.backend.service.configuration.AssetTypeService;
+import com.pennant.backend.service.cersai.AssetTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.webui.configuration.assettype.AssetTypeListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -135,6 +135,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetTyp> {
 		this.assetCategoryId.setModuleName("AssetCategory");
 		this.assetCategoryId.setValueColumn("Id");
 		this.assetCategoryId.setDescColumn("Description");
+		this.assetCategoryId.setValueType(DataType.LONG);
 		this.assetCategoryId.setValidateColumns(new String[] { "Id" });
 		this.id.setMaxlength(3);
 		this.description.setMaxlength(100);
@@ -285,8 +286,9 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetTyp> {
 	 */
 	public void doWriteBeanToComponents(AssetTyp aAssetTyp) {
 		logger.debug(Literal.ENTERING);
-
-		this.assetCategoryId.setValue(aAssetTyp.getAssetCategoryId());
+		if (aAssetTyp.getAssetCategoryId() != null) {
+			this.assetCategoryId.setValue(String.valueOf(aAssetTyp.getAssetCategoryId()));
+		}
 		this.id.setValue(aAssetTyp.getId());
 		this.description.setValue(aAssetTyp.getDescription());
 
@@ -315,7 +317,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetTyp> {
 
 		// Asset Category Id
 		try {
-			aAssetTyp.setAssetCategoryId(this.assetCategoryId.getValidatedValue());
+			aAssetTyp.setAssetCategoryId(Long.valueOf(this.assetCategoryId.getValidatedValue()));
 			aAssetTyp.setAssetCategoryIdName(this.assetCategoryId.getDescription());
 
 		} catch (WrongValueException we) {
