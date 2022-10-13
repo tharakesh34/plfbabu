@@ -3,7 +3,8 @@ package com.pennant.webui.Interface.provincemapping;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -160,7 +161,7 @@ public class ProvinceMappingListCtrl extends GFCBaseListCtrl<ProvinceMapping> {
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxProvinceMapping.getSelectedItem();
-		final int mappingType = (int) selectedItem.getAttribute("mappingType");
+		final int mappingType = Integer.valueOf((String) selectedItem.getAttribute("mappingType"));
 		final String province = (String) selectedItem.getAttribute("province");
 		final String mappingValue = (String) selectedItem.getAttribute("mappingValue");
 		ProvinceMapping provincemapping = provinceMappingService.getProvinceMapping(mappingType, province,

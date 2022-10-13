@@ -8,7 +8,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.cersai.ProvinceMapping;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 
 /**
@@ -27,7 +26,7 @@ public class ProvinceMappingListModelItemRenderer implements ListitemRenderer<Pr
 	public void render(Listitem item, ProvinceMapping provinceMapping, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(PennantApplicationUtil.formateInt(provinceMapping.getMappingType()));
+		lc = new Listcell(provinceMapping.getMappingType());
 		lc.setParent(item);
 		lc = new Listcell(provinceMapping.getProvince());
 		lc.setParent(item);
