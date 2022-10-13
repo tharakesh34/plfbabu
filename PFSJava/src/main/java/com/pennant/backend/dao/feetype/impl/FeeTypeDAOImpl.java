@@ -640,9 +640,31 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	}
 
 	@Override
+	public String getOtrRecFeeTypeCode(String feeTypeCode, String payableLinkTo, long recvFeeTypeId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select Min(FeeTypeCode) From (");
+		sql.append(" Select FeeTypeCode From FeeTypes_Temp Where PayableLinkTo  = ?");
+		sql.append(" and FeeTypeCode != ? and RecvFeeTypeId = ?");
+		sql.append(" Union all");
+		sql.append(" Select FeeTypeCode From  FeeTypes Where PayableLinkTo  = ?");
+		sql.append(" and FeeTypeCode != ? and RecvFeeTypeId = ?");
+		sql.append(") T");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, payableLinkTo, feeTypeCode,
+					recvFeeTypeId, payableLinkTo, feeTypeCode, recvFeeTypeId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
 	public long getRecvFeeTypeId(String feeTypeCode, String payableLinkTo, long recvFeeTypeId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select Min(RecvFeeTypeId) From (");
+		sql.append("Select coalesce(Min(RecvFeeTypeId), 0) From (");
 		sql.append(" Select RecvFeeTypeId From FeeTypes_Temp Where PayableLinkTo  = ?");
 		sql.append(" and FeeTypeCode != ? and RecvFeeTypeId = ?");
 		sql.append(" Union all");

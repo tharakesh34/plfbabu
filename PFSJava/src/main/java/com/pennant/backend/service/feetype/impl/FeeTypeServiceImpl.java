@@ -273,9 +273,9 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 
 		if (Allocation.MANADV.equals(payableLinkTo)) {
 			payableLinkTo = Allocation.MANADV;
-			String otherFeeTypeCode = feeTypeDAO.getFeeTypeCode(feeTypeCode, payableLinkTo);
-
 			long recvFeeTypeId = feeType.getRecvFeeTypeId();
+
+			String otherFeeTypeCode = feeTypeDAO.getOtrRecFeeTypeCode(feeTypeCode, payableLinkTo, recvFeeTypeId);
 			long recvFeeTypeIds = feeTypeDAO.getRecvFeeTypeId(feeTypeCode, payableLinkTo, recvFeeTypeId);
 
 			if (otherFeeTypeCode != null && recvFeeTypeIds > 0) {
