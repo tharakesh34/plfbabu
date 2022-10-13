@@ -429,4 +429,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="06" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM RULES WHERE RULEMODULE = 'LMTLINE';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
