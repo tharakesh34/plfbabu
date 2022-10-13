@@ -11066,8 +11066,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public String getFinCategory(String finType) {
-		return financeMainDAO.getFinCategory(finType);
+	public String getFinCategory(String finReference) {
+		return financeMainDAO.getFinCategory(finReference);
 	}
 
 	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {

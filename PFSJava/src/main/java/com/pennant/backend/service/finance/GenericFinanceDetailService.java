@@ -1777,14 +1777,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	private void setVASAcctCodes(FinanceDetail fd, Map<String, Object> dataMap) {
 		List<VASRecording> vasRecordingList = fd.getFinScheduleData().getVasRecordingList();
-		String ft = fd.getFinScheduleData().getFinanceMain().getFinType();
+		String finReference = fd.getFinScheduleData().getFinanceMain().getFinReference();
 
 		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
 			VASRecording vasRecording = vasRecordingList.get(0);
 			if (vasRecording != null) {
 				// For GL Code
 				VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(vasRecording.getProductCode());
-				String productCode = financeMainDAO.getFinCategory(ft);
+				String productCode = financeMainDAO.getFinCategory(finReference);
 				dataMap.put("ae_vasProductShrtCode", vehicleDealer.getProductShortCode());
 				dataMap.put("ae_productCode", productCode);
 				dataMap.put("ae_dealerCode", vehicleDealer.getDealerShortCode());

@@ -386,8 +386,6 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 			FinReceiptData receiptData = new FinReceiptData();
 
-			header.setFinCategory(financeDetailService.getFinCategory(header.getFinType()));
-
 			receiptData.setReceiptHeader(header);
 
 			logUserAccess("menu_Item_FeeReceiptCancellation", header.getExtReference());

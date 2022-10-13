@@ -666,6 +666,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 
 		if (CollectionUtils.isEmpty(si)) {
 			FinServiceInstruction fsi = new FinServiceInstruction();
+			fsi.setFinID(fmi.getFinID());
 			fsi.setFinReference(fmi.getFinReference());
 			fsi.setFinEvent(event);
 

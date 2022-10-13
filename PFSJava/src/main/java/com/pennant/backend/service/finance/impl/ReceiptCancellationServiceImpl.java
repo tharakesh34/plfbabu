@@ -253,6 +253,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			return null;
 		}
 
+		rch.setFinCategory(financeMainDAO.getFinCategoryByFinType(rch.getFinType()));
+
 		Long finID = rch.getFinID();
 
 		List<FinReceiptDetail> receiptDetails = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, "_AView");

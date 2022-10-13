@@ -15696,13 +15696,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void setVASAcctCodes(Map<String, Object> dataMap) {
 		List<VASRecording> vasRecordingList = financeDetail.getFinScheduleData().getVasRecordingList();
-		String finType = financeDetail.getFinScheduleData().getFinanceMain().getFinType();
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
 			VASRecording vasRecording = vasRecordingList.get(0);
 			if (vasRecording != null) {
 				// For GL Code
 				VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(vasRecording.getProductCode());
-				String productCode = financeDetailService.getFinCategory(finType);
+				String productCode = financeDetailService.getFinCategory(finReference);
 				dataMap.put("ae_vasProductShrtCode", vehicleDealer.getProductShortCode());
 				dataMap.put("ae_productCode", productCode);
 				dataMap.put("ae_dealerCode", vehicleDealer.getDealerShortCode());
@@ -23970,7 +23970,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
 	}
-	
+
 	public CollateralHeaderDialogCtrl getCollateralHeaderDialogCtrl() {
 		return collateralHeaderDialogCtrl;
 	}

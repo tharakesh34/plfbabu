@@ -265,7 +265,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (getUserWorkspace().getHasMenuRights().containsKey(menuItemName)) {
 				menuItemRightName = getUserWorkspace().getHasMenuRights().get(menuItemName);
 			}
-			
+
 			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
 
 			/* set components visible dependent on the users rights */
@@ -2317,7 +2317,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 
-			aFinanceMain.setFinCategory(financeDetailService.getFinCategory(aFinanceMain.getFinType()));
+			aFinanceMain.setFinCategory(financeDetailService.getFinCategory(aFinanceMain.getFinReference()));
 
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
@@ -2699,7 +2699,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 
-			aFinanceMain.setFinCategory(financeDetailService.getFinCategory(aFinanceMain.getFinType()));
+			aFinanceMain.setFinCategory(financeDetailService.getFinCategory(aFinanceMain.getFinReference()));
 
 			// Set WorkFlow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
@@ -3025,7 +3025,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		fm.setFinCategory(financeDetailService.getFinCategory(fm.getFinType()));
+		fm.setFinCategory(financeDetailService.getFinCategory(fm.getFinReference()));
 
 		// Fee Waivers
 		FeeWaiverHeader fwh = new FeeWaiverHeader();

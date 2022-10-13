@@ -300,7 +300,7 @@ public interface FinanceDetailService {
 
 	Long getFinID(String referenceId, TableType tableType);
 
-	String getFinCategory(String finType);
+	String getFinCategory(String finReference);
 
 	List<FinanceRepayments> getFinRepayList(long finID);
 

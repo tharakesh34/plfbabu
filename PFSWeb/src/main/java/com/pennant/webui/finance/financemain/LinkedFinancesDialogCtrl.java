@@ -559,13 +559,11 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		ExtendedFieldRender extendedFieldRender = null;
 		FinScheduleData schData = financeDetail.getFinScheduleData();
 		FinanceMain fm = schData.getFinanceMain();
-		fm.setFinCategory(fm.getEntityCode());
 
 		try {
-
 			extendedFieldCtrl = new ExtendedFieldCtrl();
-			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl
-					.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, fm.getFinCategory(), finEvent);
+			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl.getExtendedFieldHeader(
+					ExtendedFieldConstants.MODULE_LOAN, fm.getLovDescProductCodeName(), finEvent);
 			if (extendedFieldHeader == null) {
 				return;
 			}
