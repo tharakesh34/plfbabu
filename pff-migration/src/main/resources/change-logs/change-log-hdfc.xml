@@ -437,4 +437,14 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="07" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				UPDATE DOCUMENTDETAILS SET DOCURI = NULL;
+				UPDATE DOCUMENTMANAGER SET DOCURI = NULL;
+				UPDATE CUSTOMERDOCUMENTS SET DOCURI = NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
