@@ -1376,8 +1376,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 	public void onSelectCovenantType() {
 		String selectedCovenantType = this.cmbCovenantType.getSelectedItem().getValue();
 
-		if ("LOS".equals(selectedCovenantType) || "OTC".equals(selectedCovenantType)
-				|| PennantConstants.List_Select.equals(selectedCovenantType)) {
+		if ("OTC".equals(selectedCovenantType) || PennantConstants.List_Select.equals(selectedCovenantType)) {
 			this.allowPostPonement.setDisabled(true);
 			this.allowPostPonement.setChecked(false);
 
@@ -1386,6 +1385,11 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 
 			this.allowedPaymentModes.setDisabled(true);
 			this.allowedPaymentModes.setValue("");
+		}
+
+		if ("LOS".equals(selectedCovenantType)) {
+			this.allowPostPonement.setDisabled(false);
+			this.maxAllowedDays.setDisabled(true);
 		}
 
 		if ("OTC".equals(selectedCovenantType)) {
