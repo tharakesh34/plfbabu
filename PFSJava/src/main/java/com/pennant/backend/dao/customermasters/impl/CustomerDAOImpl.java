@@ -1413,7 +1413,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				wif.setCustCRCPR(rs.getString("CustCRCPR"));
 				wif.setNoOfDependents(rs.getInt("NoOfDependents"));
 				wif.setCustBaseCcy(rs.getString("CustBaseCcy"));
-				wif.setCustNationality(rs.getString("CustBaseCcy"));
+				wif.setCustNationality(rs.getString("CustNationality"));
 				wif.setJointCust(rs.getBoolean("JointCust"));
 				wif.setExistCustID(rs.getLong("ExistCustID"));
 				wif.setElgRequired(rs.getBoolean("ElgRequired"));
