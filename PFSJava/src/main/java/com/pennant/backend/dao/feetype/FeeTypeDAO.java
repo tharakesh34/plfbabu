@@ -68,5 +68,7 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 
 	String getFeeTypeCode(String feeTypeCode, String payableLinkTo);
 
+	public String getOtrRecFeeTypeCode(String feeTypeCode, String payableLinkTo, long recvFeeTypeId);
+
 	long getRecvFeeTypeId(String feeTypeCode, String payableLinkTo, long recvFeeTypeId);
 }
