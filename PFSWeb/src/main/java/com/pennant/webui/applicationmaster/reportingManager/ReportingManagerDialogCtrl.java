@@ -190,7 +190,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 		this.branchcode.setValidateColumns(new String[] { "BranchCode" });
 
 		this.reportingto.setMandatoryStyle(true);
-		this.reportingto.setModuleName("SecurityUserHierarchy");
+		this.reportingto.setModuleName("reportingTo");
 		this.reportingto.setValueColumn("UserName");
 		this.reportingto.setDescColumn("UserName");
 		this.reportingto.setValidateColumns(new String[] { "UserName" });

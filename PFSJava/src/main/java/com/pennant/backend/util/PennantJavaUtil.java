@@ -3137,6 +3137,11 @@ public class PennantJavaUtil {
 						new String[] { "userhierarchy_view", "userhierarchy_view" }, null, new String[] { "UserName",
 								"BusinessVerticalCode", "FinType", "Product", "Branch", "ReportingToUserName" },
 						null, 800));
+
+		ModuleUtil.register("reportingTo",
+				new ModuleMapping("reportingTo", SecurityUserHierarchy.class,
+						new String[] { "userhierarchy_view", "userhierarchy_view" }, null,
+						new String[] { "UserId", "UserName" }, null, 400));
 		// TemplateFields
 
 		ModuleUtil.register("TemplateFields",

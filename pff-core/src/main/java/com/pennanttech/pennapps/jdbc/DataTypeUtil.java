@@ -13,6 +13,8 @@ package com.pennanttech.pennapps.jdbc;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -61,6 +63,23 @@ public final class DataTypeUtil {
 		}
 	}
 
+	private static Field[] getDeclaredFields(Class<?> clazz) {
+		return clazz.getDeclaredFields();
+	}
+
+	private static Field[] getFields(Class<?> clazz) {
+		List<Field> fields = new ArrayList<>();
+
+		do {
+			for (Field field : getDeclaredFields(clazz)) {
+				fields.add(field);
+			}
+			clazz = clazz.getSuperclass();
+		} while (clazz instanceof Object);
+
+		return fields.toArray(new Field[] {});
+	}
+
 	public static Object getValueAsObject(String fieldName, String value, Class<?> clazz) {
 		value = StringUtils.trimToNull(value);
 
@@ -68,7 +87,7 @@ public final class DataTypeUtil {
 			return null;
 		}
 
-		Field[] fields = clazz.getDeclaredFields();
+		Field[] fields = getFields(clazz);
 
 		for (Field field : fields) {
 			if (StringUtils.equalsIgnoreCase(fieldName, field.getName())) {

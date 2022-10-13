@@ -5,7 +5,7 @@
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_ReportingManagerDialog" border="normal" apply="${reportingManagerDialogCtrl}" width="700px"
+	<window id="window_ReportingManagerDialog" border="normal" apply="${reportingManagerDialogCtrl}" width="800px"
 		height="500px" sizable="false">
 
 		<borderlayout>
