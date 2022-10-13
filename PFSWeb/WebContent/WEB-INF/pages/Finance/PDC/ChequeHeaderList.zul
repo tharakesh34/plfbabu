@@ -54,10 +54,16 @@
 									<listbox id="sortOperator_FinReference" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="finReference" width="180px" maxlength="20" />
+								</row>
+								<row>
 									<label id="label_ChequeHeaderList_NoOfCheques" value="${c:l('label_ChequeHeaderList_NoOfCheques.value')}" />
 									<listbox id="sortOperator_NoOfCheques" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<intbox id="noOfCheques" width="90px" maxlength="10" />
+									<label id="label_ChequeHeaderList_TotalAmount" value="${c:l('label_ChequeHeaderList_TotalAmount.value')}" />
+									<listbox id="sortOperator_TotalAmt" width="43px" mold="select" rows="1"
+									     emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+								    <decimalbox id="totalAmount" width="90px" maxlength="10" />
 								</row>
 								<row>
 									<label id="label_ChequeHeaderList_RecordStatus" value="${c:l('label_ChequeHeaderList_RecordStatus.value')}" />
