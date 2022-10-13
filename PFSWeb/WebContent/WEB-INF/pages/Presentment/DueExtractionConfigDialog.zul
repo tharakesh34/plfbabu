@@ -20,7 +20,7 @@
 				</toolbar>
 
 				<toolbar align="center" sclass="toolbar-center">
-					<label value="Due Extration Configuration" sclass="label-heading" />
+					<label value="Due Extraction Configuration" sclass="label-heading" />
 				</toolbar>
 
 				<toolbar align="end" sclass="toolbar-end">
