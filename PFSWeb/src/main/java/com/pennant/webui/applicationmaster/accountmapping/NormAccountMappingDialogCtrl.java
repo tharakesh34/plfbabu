@@ -589,10 +589,10 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.costCenter.setReadonly(isReadOnly("AccountMappingDialog_CostCenter"));
 		this.accountType.setReadonly(isReadOnly("AccountMappingDialog_AccountType"));
 		this.finType.setReadonly(isReadOnly("AccountMappingDialog_FinType"));
-		this.openedDate.setReadonly(isReadOnly("AccountMappingDialog_OpenedDate"));
-		this.closedDate.setReadonly(isReadOnly("AccountMappingDialog_ClosedDate"));
-		this.allowedManualEntry.setReadonly(isReadOnly("AccountMappingDialog_AllowedManualEntry"));
-		this.status.setReadonly(isReadOnly("AccountMappingDialog_Status"));
+		this.openedDate.setDisabled(isReadOnly("AccountMappingDialog_OpenedDate"));
+		this.closedDate.setDisabled(isReadOnly("AccountMappingDialog_ClosedDate"));
+		this.allowedManualEntry.setDisabled(isReadOnly("AccountMappingDialog_AllowedManualEntry"));
+		this.status.setDisabled(isReadOnly("AccountMappingDialog_Status"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
