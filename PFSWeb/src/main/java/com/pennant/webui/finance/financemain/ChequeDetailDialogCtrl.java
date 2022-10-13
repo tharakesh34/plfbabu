@@ -929,7 +929,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		boolean isPDC = InstrumentType.isPDC(this.chequeType.getSelectedItem().getValue());
 
-		if (!this.accountType.isDisabled() && isPDC) {
+		if (!this.accountType.isDisabled()) {
 			this.accountType.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_ChequeDetailDialog_AccType.value"), accTypeList, true));
 		}
