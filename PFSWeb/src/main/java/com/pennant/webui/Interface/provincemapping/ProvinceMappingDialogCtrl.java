@@ -326,10 +326,10 @@ public class ProvinceMappingDialogCtrl extends GFCBaseCtrl<ProvinceMapping> {
 				strMappingType = this.mappingType.getSelectedItem().getValue().toString();
 			}
 			if (strMappingType != null && !PennantConstants.List_Select.equals(strMappingType)) {
-				aProvinceMapping.setMappingType(Integer.parseInt(strMappingType));
+				aProvinceMapping.setMappingType(strMappingType);
 
 			} else {
-				aProvinceMapping.setMappingType(0);
+				aProvinceMapping.setMappingType("0");
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

@@ -806,7 +806,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 
 			if (!this.alertToRoles.getButton().isDisabled()) {
 				this.alertToRoles.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_CovenantTypeDialog_AlertToRoles.value"), null, true));
+						Labels.getLabel("label_CovenantTypeDialog_AlertToRoles.value"), null, false));
 			}
 
 			if (!this.userTemplate.isReadonly()

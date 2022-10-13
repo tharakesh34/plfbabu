@@ -220,7 +220,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public AssetClassification getClassification(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" npa.Id, nps.CustId, nps.FinID, nps.FinReference, nps.EODDate, nps.EntityCode");
+		sql.append(" npa.Id, nps.CustId, nps.FinID, nps.FinReference, nps.EODDate, nps.EntityCode ");
 		sql.append(", nps.PastDueDays, nps.PastDueDate, npa.NpaPastDueDays, npa.NpaPastDueDate, npa.NpaStage");
 		sql.append(" From Npa_Provision_Stage nps");
 		sql.append(" Left Join Npa_Loan_Info npa On npa.FinID = nps.FinID");
@@ -426,7 +426,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setDate(index++, JdbcUtil.getDate(ac.getEodDate()));
 				ps.setInt(index++, ac.getPastDueDays());
 				ps.setDate(index++, JdbcUtil.getDate(ac.getPastDueDate()));
-				ps.setLong(index++, ac.getNpaClassID());
+				ps.setObject(index++, ac.getNpaClassID());
 				ps.setInt(index++, ac.getNpaPastDueDays());
 				ps.setDate(index++, JdbcUtil.getDate(ac.getNpaPastDueDate()));
 				ps.setBoolean(index++, ac.isNpaStage());

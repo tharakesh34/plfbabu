@@ -36,6 +36,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -83,10 +84,11 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	// Search Fields
 	protected Textbox finReference;
 	protected Intbox noOfCheques;
-	protected Textbox totalAmount;
+	protected Decimalbox totalAmount;
 
 	protected Listbox sortOperator_FinReference;
 	protected Listbox sortOperator_NoOfCheques;
+	protected Listbox sortOperator_TotalAmt;
 
 	private ChequeHeaderService chequeHeaderService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -131,7 +133,8 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 				Operators.STRING);
 		registerField("noOfCheques", listheader_NoOfCheques, SortOrder.NONE, noOfCheques, sortOperator_NoOfCheques,
 				Operators.NUMERIC);
-		registerField("totalAmount", listheader_TotalAmount, SortOrder.NONE);
+		registerField("totalAmount", listheader_TotalAmount, SortOrder.NONE, totalAmount, sortOperator_TotalAmt,
+				Operators.NUMERIC);
 		registerField("active");
 
 		// Render the page and display the data.

@@ -969,13 +969,14 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		}
 
 		if (!this.hSNNumber.isReadonly()) {
-			this.hSNNumber.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_HSNNumber.value"), null, true));
+			this.hSNNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_HSNNumber.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.natureService.isReadonly()) {
-			this.natureService.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_NatureService.value"), null, true));
+			this.natureService
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_NatureService.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		logger.debug(Literal.LEAVING);

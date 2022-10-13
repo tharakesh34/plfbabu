@@ -14,7 +14,7 @@ public interface SecurityInterestTypeDAO extends BasicCrudDao<SecurityInterestTy
 	 * @param tableType       The type of the table.
 	 * @return SecurityInterestType
 	 */
-	SecurityInterestType getSecurityInterestType(String assetCategoryId, int id, String type);
+	SecurityInterestType getSecurityInterestType(Long assetCategoryId, int id, String type);
 
 	boolean isDuplicateKey(int id, TableType tableType);
 

@@ -327,10 +327,10 @@ public class CityMappingDialogCtrl extends GFCBaseCtrl<CityMapping> {
 				strMappingType = this.mappingType.getSelectedItem().getValue().toString();
 			}
 			if (strMappingType != null && !PennantConstants.List_Select.equals(strMappingType)) {
-				aCityMapping.setMappingType(Integer.parseInt(strMappingType));
+				aCityMapping.setMappingType(strMappingType);
 
 			} else {
-				aCityMapping.setMappingType(0);
+				aCityMapping.setMappingType("0");
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

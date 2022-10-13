@@ -1,6 +1,7 @@
 package com.pennant.backend.service.cersai.impl;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -184,8 +185,9 @@ public class CityMappingServiceImpl extends GenericService<CityMapping> implemen
 		getCityMappingDAO().delete(cityMapping, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(cityMapping.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(cityMappingDAO.getCityMapping(cityMapping.getMappingType(),
-					cityMapping.getCityCode(), cityMapping.getMappingValue(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(cityMappingDAO.getCityMapping(Integer.valueOf(cityMapping.getMappingType()),
+							cityMapping.getCityCode(), cityMapping.getMappingValue(), ""));
 		}
 
 		if (cityMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -294,7 +296,8 @@ public class CityMappingServiceImpl extends GenericService<CityMapping> implemen
 
 		// Check the unique keys.
 		if (cityMapping.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(cityMapping.getRecordType())
-				&& cityMappingDAO.isDuplicateKey(cityMapping.getMappingType(), cityMapping.getCityCode(),
+				&& cityMappingDAO.isDuplicateKey(Integer.valueOf(cityMapping.getMappingType()),
+						cityMapping.getCityCode(),
 						cityMapping.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

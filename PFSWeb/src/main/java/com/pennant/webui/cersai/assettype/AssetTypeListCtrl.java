@@ -151,7 +151,7 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetTyp> {
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxAssetType.getSelectedItem();
-		final String assetCategoryId = (String) selectedItem.getAttribute("assetCategoryId");
+		final String assetCategoryId = String.valueOf(selectedItem.getAttribute("assetCategoryId"));
 		final int id = (int) selectedItem.getAttribute("id");
 		AssetTyp assettyp = assetTypService.getAssetTyp(assetCategoryId, id);
 

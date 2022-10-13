@@ -851,4 +851,7 @@
 	
 	<bean id="payOrderIssueHeaderDAO" class="com.pennant.backend.dao.payorderissue.impl.PayOrderIssueHeaderDAOImpl"
 		parent="basicDao" />
+		
+	<bean id="clusterHierarchyDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterHierarchyDAOImpl"
+		parent="basicDao" />
 </beans>

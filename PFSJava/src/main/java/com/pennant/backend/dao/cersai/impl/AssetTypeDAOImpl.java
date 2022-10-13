@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.cersai.impl;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -51,7 +52,7 @@ public class AssetTypeDAOImpl extends BasicDao<AssetTyp> implements AssetTypDAO 
 		logger.trace(Literal.SQL + sql.toString());
 
 		AssetTyp assetTyp = new AssetTyp();
-		assetTyp.setAssetCategoryId(assetCategoryId);
+		assetTyp.setAssetCategoryId(Long.valueOf(assetCategoryId));
 		assetTyp.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assetTyp);

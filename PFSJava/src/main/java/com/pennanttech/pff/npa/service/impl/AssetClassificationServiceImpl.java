@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -512,6 +513,9 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 	private AssetClassSetupDetail getAssetClassSetup(int npaPastDueDays, AssetClassSetupHeader assetClassSetupHeader) {
 		List<AssetClassSetupDetail> list = assetClassSetupHeader.getDetails();
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
 		for (AssetClassSetupDetail ac : list) {
 			if (npaPastDueDays >= ac.getDpdMin() && npaPastDueDays <= ac.getDpdMax()) {
 				return ac;

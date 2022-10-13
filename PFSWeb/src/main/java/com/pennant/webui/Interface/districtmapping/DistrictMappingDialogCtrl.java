@@ -328,10 +328,10 @@ public class DistrictMappingDialogCtrl extends GFCBaseCtrl<DistrictMapping> {
 				strMappingType = this.mappingType.getSelectedItem().getValue().toString();
 			}
 			if (strMappingType != null && !PennantConstants.List_Select.equals(strMappingType)) {
-				aDistrictMapping.setMappingType(Integer.parseInt(strMappingType));
+				aDistrictMapping.setMappingType(strMappingType);
 
 			} else {
-				aDistrictMapping.setMappingType(0);
+				aDistrictMapping.setMappingType("0");
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
