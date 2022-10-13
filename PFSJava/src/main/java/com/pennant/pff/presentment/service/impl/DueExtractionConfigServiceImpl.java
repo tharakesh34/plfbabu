@@ -62,7 +62,7 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 			header.setTaskId("");
 			header.setNextTaskId("");
 			header.setRecordType("");
-			header.setRecordStatus("Aprroved");
+			header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			header.setWorkflowId(0);
 
 			map.put(extractionMonth, header);
@@ -118,7 +118,6 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 				pec.setTaskId("");
 				pec.setNextTaskId("");
 				pec.setRecordType("");
-				pec.setRecordStatus("Aprroved");
 				pec.setWorkflowId(0);
 
 				presentmentExtractConfig.add(pec);
