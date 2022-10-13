@@ -1674,6 +1674,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		uppercasebox.setId(getComponentId(detail.getFieldName()));
 		uppercasebox.setMaxlength(detail.getFieldLength());
 		uppercasebox.setReadonly(isReadOnly);
+		uppercasebox.setStyle("");
 
 		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
 				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
