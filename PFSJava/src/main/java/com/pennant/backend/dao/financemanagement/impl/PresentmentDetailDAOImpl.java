@@ -1039,6 +1039,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		if (includeData) {
 			sql.append(" and (pd.ExcludeReason = ? or pd.ExcludeReason = ?) and pd.Status <> ?");
+			sql.append(" and pd.Receiptid = ? ");
 		}
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -1051,6 +1052,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				ps.setInt(index++, RepayConstants.PEXC_EMIINCLUDE);
 				ps.setInt(index++, RepayConstants.PEXC_EMIINADVANCE);
 				ps.setString(index, RepayConstants.PEXC_APPROV);
+				ps.setInt(index++, 0);
 			}
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
