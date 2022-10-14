@@ -522,6 +522,30 @@
 				select deps_restore_dependencies ('plf', 'finfeedetail_tview');
 			]]>
 		</sql>
-	</changeSet>	
+	</changeSet>
+	
+	<changeSet id="03" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Create Table Collateral_land_ed_bkp as select * from collateral_land_ed;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="04" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Alter Table collateral_land_ed drop column noofunits1;
+				Alter Table collateral_land_ed drop column unitprice1;
+				Alter Table collateral_land_ed drop column noofunits;
+				Alter Table collateral_land_ed drop column unitprice;
+				
+				Alter Table collateral_land_ed_temp drop column noofunits1;
+				Alter Table collateral_land_ed_temp drop column unitprice1;
+				Alter Table collateral_land_ed_temp drop column noofunits;
+				Alter Table collateral_land_ed_temp drop column unitprice;
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
