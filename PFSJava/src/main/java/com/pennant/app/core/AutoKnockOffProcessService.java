@@ -165,7 +165,7 @@ public class AutoKnockOffProcessService {
 				}
 
 				String feeMap = "";
-				if (RepayConstants.ALLOCATION_KOEMI.equalsIgnoreCase(feeMapping.getFeeTypeCode())) {
+				if (Allocation.KOEMI.equalsIgnoreCase(feeMapping.getFeeTypeCode())) {
 					feeMap = Allocation.EMI;
 				} else {
 					feeMap = feeMapping.getFeeTypeCode();
@@ -279,7 +279,7 @@ public class AutoKnockOffProcessService {
 				allocation.setTotalPaid(emiSplit[1]);
 				allocation.setPaidAmount(emiSplit[1]);
 				break;
-			case RepayConstants.ALLOCATION_NPFT:
+			case Allocation.NPFT:
 				if (emiSplit[2].compareTo(balanceAmount) > 0) {
 					emiSplit[2] = balanceAmount;
 				}
@@ -293,7 +293,7 @@ public class AutoKnockOffProcessService {
 				allocation.setTotalPaid(emiSplit[0]);
 				allocation.setPaidAmount(emiSplit[0]);
 				break;
-			case RepayConstants.ALLOCATION_TDS:
+			case Allocation.TDS:
 				allocation.setTotalPaid(emiSplit[1].subtract(emiSplit[2]));
 				allocation.setPaidAmount(emiSplit[1].subtract(emiSplit[2]));
 				break;

@@ -526,7 +526,7 @@ public class FinStatementController extends SummaryDetailService {
 				totLatePftPayNow = ad.getPaidAmount();
 			} else if (Allocation.ODC.equals(allocationType)) {
 				totPenaltyPayNow = ad.getPaidAmount();
-			} else if (RepayConstants.ALLOCATION_TDS.equals(allocationType)) {
+			} else if (Allocation.TDS.equals(allocationType)) {
 				totTdsReturn = ad.getPaidAmount();
 			} else if (Allocation.FEE.equals(allocationType)) {
 				totFeePayNow = ad.getPaidAmount();
@@ -800,8 +800,7 @@ public class FinStatementController extends SummaryDetailService {
 					for (ReceiptAllocationDetail receiptAllocationDetail : receiptAllocationDetails) {
 
 						// Outstanding Principle
-						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
-								RepayConstants.ALLOCATION_FUT_PRI)) {
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.FUT_PRI)) {
 							closureReport.setOutstandingPri(PennantApplicationUtil
 									.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
 							closureReport.setOutstandingPriInWords(
@@ -827,8 +826,7 @@ public class FinStatementController extends SummaryDetailService {
 						}
 
 						// Interest for the month
-						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
-								RepayConstants.ALLOCATION_FUT_PFT)) {
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.FUT_PFT)) {
 							closureReport.setInstForTheMonth(PennantApplicationUtil
 									.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
 							closureReport.setInstForTheMonthInWords(
@@ -843,12 +841,10 @@ public class FinStatementController extends SummaryDetailService {
 							principleAmt = receiptAllocationDetail.getTotRecv();
 						}
 
-						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
-								RepayConstants.ALLOCATION_TDS)) {
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.TDS)) {
 							tdsAmt = receiptAllocationDetail.getTotRecv();
 						}
-						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
-								RepayConstants.ALLOCATION_FUT_TDS)) {
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.FUT_TDS)) {
 							futTdsAmt = receiptAllocationDetail.getTotRecv();
 						}
 						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.FEE)) {
@@ -1105,7 +1101,7 @@ public class FinStatementController extends SummaryDetailService {
 			for (ReceiptAllocationDetail rad : radList) {
 
 				// Outstanding Principle
-				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FUT_PRI)) {
+				if (StringUtils.equals(rad.getAllocationType(), Allocation.FUT_PRI)) {
 					closureReport.setOutstandingPri(rad.getTotRecv());
 				}
 
@@ -1123,7 +1119,7 @@ public class FinStatementController extends SummaryDetailService {
 				}
 
 				// Interest for the month
-				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FUT_PFT)) {
+				if (StringUtils.equals(rad.getAllocationType(), Allocation.FUT_PFT)) {
 					closureReport.setInstForTheMonth(rad.getTotRecv());
 				}
 
@@ -1134,10 +1130,10 @@ public class FinStatementController extends SummaryDetailService {
 					principleAmt = rad.getTotRecv();
 				}
 
-				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_TDS)) {
+				if (StringUtils.equals(rad.getAllocationType(), Allocation.TDS)) {
 					tdsAmt = rad.getTotRecv();
 				}
-				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FUT_TDS)) {
+				if (StringUtils.equals(rad.getAllocationType(), Allocation.FUT_TDS)) {
 					futTdsAmt = rad.getTotRecv();
 				}
 				if (StringUtils.equals(rad.getAllocationType(), Allocation.FEE)) {
@@ -1491,7 +1487,7 @@ public class FinStatementController extends SummaryDetailService {
 		allocations.add(ad);
 
 		ad = new ReceiptAllocationDetail();
-		ad.setAllocationType(RepayConstants.ALLOCATION_TDS);
+		ad.setAllocationType(Allocation.TDS);
 		ad.setPaidAmount(tdsAccruedTillNow);
 		allocations.add(ad);
 

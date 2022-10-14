@@ -451,10 +451,10 @@ public class PennantStaticListUtil {
 			dueList = new ArrayList<String>(7);
 			dueList.add(Allocation.PFT);
 			dueList.add(Allocation.PRI);
-			dueList.add(RepayConstants.ALLOCATION_TDS);
-			dueList.add(RepayConstants.ALLOCATION_NPFT);
-			dueList.add(RepayConstants.ALLOCATION_FUT_TDS);
-			dueList.add(RepayConstants.ALLOCATION_FUT_PFT);
+			dueList.add(Allocation.TDS);
+			dueList.add(Allocation.NPFT);
+			dueList.add(Allocation.FUT_TDS);
+			dueList.add(Allocation.FUT_PFT);
 			dueList.add(Allocation.PFT);
 
 		}
@@ -4831,11 +4831,11 @@ public class PennantStaticListUtil {
 	public static List<String> getNoWaiverList() {
 		if (noWaiverList == null) {
 			noWaiverList = new ArrayList<String>(3);
-			noWaiverList.add(RepayConstants.ALLOCATION_FUT_NPFT);
-			noWaiverList.add(RepayConstants.ALLOCATION_FUT_TDS);
-			noWaiverList.add(RepayConstants.ALLOCATION_TDS);
+			noWaiverList.add(Allocation.FUT_NPFT);
+			noWaiverList.add(Allocation.FUT_TDS);
+			noWaiverList.add(Allocation.TDS);
 			noWaiverList.add(Allocation.EMI);
-			noWaiverList.add(RepayConstants.ALLOCATION_NPFT);
+			noWaiverList.add(Allocation.NPFT);
 
 		}
 		return noWaiverList;
@@ -4943,7 +4943,7 @@ public class PennantStaticListUtil {
 			vanAllocationMethods = new ArrayList<ValueLabel>(2);
 			vanAllocationMethods
 					.add(new ValueLabel(AllocationType.AUTO, Labels.getLabel("label_AllocationMethod_AutoAllocation")));
-			vanAllocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_PARK_IN_EXCESS,
+			vanAllocationMethods.add(new ValueLabel(AllocationType.PARK_IN_EXCESS,
 					Labels.getLabel("label_AllocationMethod_ParkInExcess")));
 		}
 		return vanAllocationMethods;

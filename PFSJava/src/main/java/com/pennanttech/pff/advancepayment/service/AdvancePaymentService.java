@@ -483,8 +483,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		id = id + 1;
 
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_TDS");
-		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_TDS, id,
-				curSchd.getTDSAmount(), desc, 0, "", false, false);
+		allocation = receiptCalculator.setAllocRecord(receiptData, Allocation.TDS, id, curSchd.getTDSAmount(), desc, 0,
+				"", false, false);
 		allocation.setPaidNow(curSchd.getTDSPaid());
 		allocation.setPaidAmount(curSchd.getTDSPaid());
 		allocation.setReceiptID(receiptID);
@@ -494,8 +494,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_NPFT");
 		BigDecimal npftDue = curSchd.getProfitSchd().subtract(curSchd.getTDSAmount());
 		BigDecimal npftPaid = curSchd.getSchdPftPaid().subtract(curSchd.getTDSPaid());
-		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_NPFT, id, npftDue, desc, 0,
-				"", false, false);
+		allocation = receiptCalculator.setAllocRecord(receiptData, Allocation.NPFT, id, npftDue, desc, 0, "", false,
+				false);
 		allocation.setPaidNow(npftPaid);
 		allocation.setPaidAmount(npftPaid);
 		allocation.setReceiptID(receiptID);
@@ -570,9 +570,9 @@ public class AdvancePaymentService extends ServiceHelper {
 			if (Allocation.PFT.equals(allocation.getAllocationType())) {
 				rsd.setProfitSchdPayNow(rsd.getProfitSchdPayNow().add(allocation.getPaidNow()));
 				rsd.setPftSchdWaivedNow(rsd.getPftSchdWaivedNow().add(allocation.getWaivedNow()));
-			} else if (RepayConstants.ALLOCATION_TDS.equals(allocation.getAllocationType())) {
+			} else if (Allocation.TDS.equals(allocation.getAllocationType())) {
 				rsd.setTdsSchdPayNow(allocation.getPaidNow().add(allocation.getWaivedNow()));
-			} else if (RepayConstants.ALLOCATION_NPFT.equals(allocation.getAllocationType())) {
+			} else if (Allocation.NPFT.equals(allocation.getAllocationType())) {
 				// rsd.setTdsSchdPayNow(allocation.getPaidNow().add(allocation.getWaivedNow()));
 			}
 		}

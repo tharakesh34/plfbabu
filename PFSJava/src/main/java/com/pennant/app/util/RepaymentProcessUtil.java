@@ -1205,7 +1205,7 @@ public class RepaymentProcessUtil {
 			if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 				for (ReceiptAllocationDetail rad : rch.getAllocations()) {
 					String allocationType = rad.getAllocationType();
-					if (RepayConstants.ALLOCATION_FUT_TDS.equals(allocationType)) {
+					if (Allocation.FUT_TDS.equals(allocationType)) {
 						toExcess = toExcess.subtract(rad.getDueAmount());
 						toExcess = toExcess.subtract(rad.getDueAmount());
 					}

@@ -3555,11 +3555,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					allocTypeMsg = rad.getTypeDesc();
 				} else if (Allocation.BOUNCE.equals(allocType)) {
 					allocTypeMsg = "Bounce Charges";
-				} else if (RepayConstants.ALLOCATION_FUT_PRI.equals(allocType)) {
+				} else if (Allocation.FUT_PRI.equals(allocType)) {
 					allocTypeMsg = "Principal";
-				} else if (RepayConstants.ALLOCATION_FUT_NPFT.equals(allocType)) {
+				} else if (Allocation.FUT_NPFT.equals(allocType)) {
 					allocTypeMsg = "Interest";
-				} else if (RepayConstants.ALLOCATION_PP.equals(allocType)) {
+				} else if (Allocation.PP.equals(allocType)) {
 					allocTypeMsg = "Principal";
 				} else if (Allocation.FEE.equals(allocType)) {
 					allocTypeMsg = "Fees";

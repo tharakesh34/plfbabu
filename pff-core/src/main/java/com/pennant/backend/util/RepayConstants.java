@@ -1,7 +1,5 @@
 package com.pennant.backend.util;
 
-import com.pennanttech.pff.receipt.constants.Allocation;
-import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class RepayConstants {
@@ -194,54 +192,8 @@ public class RepayConstants {
 	 */
 	public static final String RECEIPTMODE_DSF = "DSF";
 
-	/**
-	 * @deprecated use {@link AllocationType#PARK_IN_EXCESS} instead.
-	 */
-	public static final String ALLOCATIONTYPE_PARK_IN_EXCESS = "PIE";
-
 	public static final String ALLOCTYPE_AUTO = "Auto";
 	public static final String ALLOCTYPE_MANUAL = "Manual";
-
-	/**
-	 * @deprecated use {@link Allocation#NPFT} instead.
-	 */
-	public static final String ALLOCATION_NPFT = "NPFT";
-	/**
-	 * @deprecated use {@link Allocation#TDS} instead.
-	 */
-	public static final String ALLOCATION_TDS = "TDS";
-	/**
-	 * @deprecated use {@link Allocation#INS} instead.
-	 */
-	public static final String ALLOCATION_INS = "INS";
-	/**
-	 * @deprecated use {@link Allocation#PP} instead.
-	 */
-	public static final String ALLOCATION_PP = "PP";
-	/**
-	 * @deprecated use {@link Allocation#FUTPRI} instead.
-	 */
-	public static final String ALLOCATION_FUT_PRI = "FUTPRI";
-	/**
-	 * @deprecated use {@link Allocation#FUTPFT} instead.
-	 */
-	public static final String ALLOCATION_FUT_PFT = "FUTPFT";
-	/**
-	 * @deprecated use {@link Allocation#FUTNPFT} instead.
-	 */
-	public static final String ALLOCATION_FUT_NPFT = "FUTNPFT";
-	/**
-	 * @deprecated use {@link Allocation#FUTTDS} instead.
-	 */
-	public static final String ALLOCATION_FUT_TDS = "FUTTDS";
-	/**
-	 * @deprecated use {@link Allocation#KOFFEMI} instead.
-	 */
-	public static final String ALLOCATION_KOEMI = "KOFFEMI";
-	/**
-	 * @deprecated use {@link Allocation#KOFFLPI} instead.
-	 */
-	public static final String ALLOCATION_KOLPI = "KOFFLPI";
 
 	// Receipt process Types
 	public static final String RECEIPTTYPE_RECIPT = "R";
