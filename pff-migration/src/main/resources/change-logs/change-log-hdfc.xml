@@ -447,7 +447,7 @@
 		</sql>
 	</changeSet>
 	
-		<changeSet id="08" author="gopal.p">
+	<changeSet id="08" author="gopal.p">
 		<sql>
 			<![CDATA[
 				UPDATE DUE_EXTRACTION_HEADER SET RECORDSTATUS = 'Approved';
