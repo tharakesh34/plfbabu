@@ -4682,7 +4682,7 @@
 			constraintName="PK_Due_Extraction_Config_Log" />
 	</changeSet>
 
-	<changeSet id="ST#90.30_temp" author="Gopal.p">
+	<changeSet id="ST#90.30.1_temp" author="Gopal.p">
 		<sql>
 			<![CDATA[
 				DELETE FROM DUE_EXTRACTION_CONFIG_TEMP;
