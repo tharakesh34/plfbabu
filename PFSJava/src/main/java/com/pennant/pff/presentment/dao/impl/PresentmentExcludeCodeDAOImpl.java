@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -234,20 +235,26 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 	}
 
 	@Override
-	public Map<Integer, String> getBounceForPD() {
+	public Map<String, String> getBounceForPD() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" pec.ExcludeID, br.ReturnCode");
+		sql.append(" pec.ExcludeID, br.InstrumentType, br.ReturnCode");
 		sql.append(" From Presentment_Exclude_Codes pec");
 		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
 		sql.append(" Where CreateBounceOnDueDate = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		Map<Integer, String> map = new HashMap<>();
+		Map<String, String> map = new HashMap<>();
 
 		return jdbcOperations.query(sql.toString(), rs -> {
 			while (rs.next()) {
-				map.put(rs.getInt(1), rs.getString(2));
+				int excludeId = rs.getInt(1);
+				
+				String instrumentType = StringUtils.trimToEmpty(rs.getString(2));
+
+				instrumentType = instrumentType.concat(String.valueOf(excludeId));
+
+				map.put(instrumentType, rs.getString(3));
 			}
 
 			return map;

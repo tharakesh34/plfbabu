@@ -205,11 +205,13 @@ public class ReceiptPaymentService {
 		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 
 		int excludeReason = pd.getExcludeReason();
+		String key = StringUtils.trimToEmpty(pd.getInstrumentType()).concat(String.valueOf(excludeReason));
+
 		EventProperties ep = fm.getEventProperties();
 
-		Map<Integer, String> excludeMap = ep.getPresentmentExcludeBounce();
+		Map<String, String> excludeMap = ep.getPresentmentExcludeBounce();
 
-		if (!excludeMap.containsKey(excludeReason)) {
+		if (!excludeMap.containsKey(key)) {
 			return;
 		}
 
@@ -232,7 +234,7 @@ public class ReceiptPaymentService {
 
 		custEODEvent.setFinEODEvents(list);
 
-		String bounceCode = excludeMap.get(excludeReason);
+		String bounceCode = excludeMap.get(key);
 
 		FinReceiptHeader rch = receiptDTO.getFinReceiptHeader();
 
