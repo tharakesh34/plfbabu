@@ -260,9 +260,9 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
 			String mandateType = mandate.getMandateType();
-		
+
 			InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
-			
+
 			switch (instrumentType) {
 			case EMANDATE:
 				if (StringUtils.isNotBlank(mandate.getMandateRef())) {
@@ -273,7 +273,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				break;
 			case DAS:
 			case SI:
-				mandate.setStatus(MandateStatus.AWAITCON);
+				mandate.setStatus(MandateStatus.APPROVED);
 				break;
 			default:
 				break;

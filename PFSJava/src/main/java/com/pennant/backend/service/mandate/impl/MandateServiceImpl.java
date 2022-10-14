@@ -253,7 +253,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				break;
 			case DAS:
 			case SI:
-				mandate.setStatus(MandateStatus.AWAITCON);
+				mandate.setStatus(MandateStatus.APPROVED);
 				break;
 
 			default:
