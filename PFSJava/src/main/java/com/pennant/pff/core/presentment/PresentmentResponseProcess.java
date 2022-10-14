@@ -164,6 +164,8 @@ public class PresentmentResponseProcess implements Runnable {
 		boolean finIsActive = pd.isFinisActive();
 		String status = RepayConstants.PEXC_SUCCESS;
 
+		String fateCorrection = pd.getFateCorrection();
+
 		if (presentmentImportProcess != null) {
 			presentmentReference = presentmentImportProcess.getPresentmentRef(presentmentReference);
 			status = presentmentImportProcess.getStatus(status);
@@ -186,6 +188,8 @@ public class PresentmentResponseProcess implements Runnable {
 		info.append("\nPresement Response Status: ").append(clearingStatus);
 		info.append("\nBounce Reason Code: ").append(bounceCode);
 		info.append("\nBounceRemarks: ").append(bounceRemarks);
+		info.append("\nFate Correction: ").append(fateCorrection);
+
 		logger.info(info.toString());
 
 		/* Validations */
@@ -210,11 +214,16 @@ public class PresentmentResponseProcess implements Runnable {
 		boolean processReceipt = false;
 		Long linkedTranId;
 
+		if (RepayConstants.PEXC_BOUNCE.equals(pd.getStatus()) && RepayConstants.PEXC_SUCCESS.equals(clearingStatus)
+				&& "Y".equals(pd.getFateCorrection())) {
+			receiptID = 0L;
+		}
+
 		if (receiptID == 0) {
-			if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
-				processReceipt = processInactiveLoan(custEODEvent, pd);
-			} else if (!finIsActive) {
+			if (!PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
 				createPresentmentReceipt(pd);
+			} else if (!finIsActive) {
+				processReceipt = processInactiveLoan(custEODEvent, pd);
 			}
 
 			receiptID = pd.getReceiptID();
@@ -256,6 +265,10 @@ public class PresentmentResponseProcess implements Runnable {
 
 		try {
 			if (RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
+				if ("Y".equals(fateCorrection) && receiptID != 0) {
+					// FIXME::FateCorrection change required
+				}
+
 				updateFinanceDetails(finEODEvent, pd);
 				if (rh != null) {
 					updateFinReceiptHeader(rh);
@@ -270,9 +283,18 @@ public class PresentmentResponseProcess implements Runnable {
 				status = RepayConstants.PEXC_BOUNCE;
 				pd.setStatus(status);
 
-				pd = receiptCancellationService.presentmentCancellation(pd, custEODEvent);
+				if ("N".equals(fateCorrection)) {
+					pd = receiptCancellationService.presentmentCancellation(pd, custEODEvent);
+				} else {
+					if (finIsActive) {
+						pd = receiptCancellationService.presentmentCancellation(pd, custEODEvent);
+					} else {
+						pd.setErrorDesc("Loan is closed and cannot update bounce");
+					}
+				}
 
 				if (StringUtils.trimToNull(pd.getErrorDesc()) != null) {
+					pd.setSchdVersion(pd.getSchdVersion() + 1);
 					updatePresentmentDetail(pd);
 					throw new AppException(pd.getErrorDesc());
 				}
@@ -433,7 +455,10 @@ public class PresentmentResponseProcess implements Runnable {
 
 		if (RepayConstants.PEXC_SUCCESS.equals(pd.getStatus()) && RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
 			return "Presentment response already marked as success.";
-		} else if (RepayConstants.PEXC_BOUNCE.equals(pd.getStatus())) {
+		} else if (RepayConstants.PEXC_BOUNCE.equals(pd.getStatus()) && "N".equals(pd.getFateCorrection())) {
+			return "Presentment response already marked as bounce.";
+		} else if (RepayConstants.PEXC_BOUNCE.equals(pd.getStatus())
+				&& RepayConstants.PEXC_BOUNCE.equals(clearingStatus)) {
 			return "Presentment response already marked as bounce.";
 		}
 

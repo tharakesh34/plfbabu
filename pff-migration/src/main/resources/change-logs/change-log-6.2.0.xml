@@ -4874,4 +4874,106 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="01" author="Gopal.p">
+		<addColumn tableName="Presentment_Extraction_Stage">
+			<column name="SchdVersion" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="02" author="Gopal.p">
+		<addColumn tableName="PresentmentDetails">
+			<column name="SchdVersion" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="03" author="Gopal.p">
+		<addColumn tableName="PRESENTMENTDETAILS">
+			<column name="FateCorrection" type="char(1)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="04" author="Gopal.p">
+		<addColumn tableName="PRESENTMENT_FILEIMPORT">
+			<column name="FateCorrection" type="char(1)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="05" author="Gopal.p">
+		<addColumn tableName="PRESENTMENT_RESP_DTLS">
+			<column name="FateCorrection" type="char(1)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="06" author="saikrishna.b">
+		<sql>
+			<![CDATA[	
+				UPDATE PRESENTMENTDETAILS SET FATECORRECTION = 'N' WHERE FATECORRECTION IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="07" author="saikrishna.b">
+		<sql>
+			<![CDATA[	
+				UPDATE PRESENTMENT_FILEIMPORT SET FATECORRECTION = 'N' WHERE FATECORRECTION IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="08" author="saikrishna.b">
+		<sql>
+			<![CDATA[	
+				UPDATE PRESENTMENT_RESP_DTLS SET FATECORRECTION = 'N' WHERE FATECORRECTION IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="09" author="saikrishna.b">
+		<addNotNullConstraint tableName="PRESENTMENTDETAILS" columnName="FateCorrection" columnDataType="char(1)" />
+	</changeSet>
+	
+	<changeSet id="10" author="saikrishna.b">
+		<addNotNullConstraint tableName="PRESENTMENT_FILEIMPORT" columnName="FateCorrection" columnDataType="char(1)" />
+	</changeSet>
+	
+	<changeSet id="11" author="saikrishna.b">
+		<addNotNullConstraint tableName="PRESENTMENT_RESP_DTLS" columnName="FateCorrection" columnDataType="char(1)" />
+	</changeSet>
+	
+	<changeSet id="12" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="FateCorrection" tableName="PRESENTMENTDETAILS" defaultValue="N" />
+	</changeSet>
+
+	<changeSet id="12" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRESENTMENTDETAILS ADD CONSTRAINT DF_PD_FATECORRECTION DEFAULT N FOR FATECORRECTION;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="13" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="FateCorrection" tableName="PRESENTMENT_FILEIMPORT" defaultValue="N" />
+	</changeSet>
+
+	<changeSet id="13" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRESENTMENT_FILEIMPORT ADD CONSTRAINT DF_PFI_FATECORRECTION DEFAULT N FOR FATECORRECTION;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="14" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="FateCorrection" tableName="PRESENTMENT_RESP_DTLS" defaultValue="N" />
+	</changeSet>
+
+	<changeSet id="14" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRESENTMENT_RESP_DTLS ADD CONSTRAINT DF_PRD_FATECORRECTION DEFAULT N FOR FATECORRECTION;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

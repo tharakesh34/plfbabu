@@ -1558,11 +1558,14 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public void updatePresentmentDetail(PresentmentDetail pd) {
-		String sql = "Update PresentmentDetails Set Status = ?, ErrorCode = ?, ErrorDesc = ?, LinkedTranId = ?, BounceID = ?, ManualAdviseId = ?, UTR_Number = ? Where Id = ?";
+		StringBuilder sql = new StringBuilder("Update PresentmentDetails Set");
+		sql.append(" Status = ?, ErrorCode = ?, ErrorDesc = ?, LinkedTranId = ?");
+		sql.append(", BounceID = ?, ManualAdviseId = ?, UTR_Number = ?, FateCorrection = ?");
+		sql.append(" Where Id = ?");
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		this.jdbcTemplate.getJdbcOperations().update(sql, ps -> {
+		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, pd.getStatus());
 			ps.setString(index++, pd.getErrorCode());
@@ -1571,6 +1574,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setObject(index++, pd.getBounceID());
 			ps.setObject(index++, pd.getManualAdviseId());
 			ps.setString(index++, pd.getUtrNumber());
+			ps.setString(index++, pd.getFateCorrection());
+
 			ps.setLong(index, pd.getId());
 		});
 	}
@@ -1598,7 +1603,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(", PD.ADVANCEAMT, PD.EXCESSID, PD.ADVISEAMT, PD.PRESENTMENTAMT");
 		sql.append(", PD.TDSAMOUNT, PD.EXCLUDEREASON, PD.EMINO, PD.STATUS, PD.PRESENTMENTREF");
 		sql.append(", PD.ECSRETURN, PD.RECEIPTID, PD.ERRORCODE, PD.ERRORDESC, PD.MANUALADVISEID");
-		sql.append(", FM.FINISACTIVE, FM.FINTYPE, PRD.ACCOUNT_NUMBER, PRD.UTR_Number");
+		sql.append(", FM.FINISACTIVE, FM.FINTYPE, PRD.ACCOUNT_NUMBER, PRD.UTR_Number, PRD.FateCorrection");
 		sql.append(" FROM Presentment_Resp_Dtls PRD");
 		sql.append(" INNER JOIN PresentmentDetails PD ON PD.PRESENTMENTREF = PRD.PRESENTMENT_REFERENCE");
 		sql.append(" INNER JOIN PresentmentHeader PH ON PH.ID = PD.PRESENTMENTID");
@@ -1716,12 +1721,14 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(", CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE, BANK_CODE, BANK_NAME");
 		sql.append(", BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
 		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
-		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG, UTR_Number )");
+		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG, UTR_Number");
+		sql.append(", FateCorrection)");
 		sql.append(" SELECT ?, BatchID, AgreementNo, BFLReferenceNo, InstalmentNo, AmountCleared, ClearingDate");
 		sql.append(", Status, ReasonCode, Bounce_Remarks, ReasonCode, NULL, BANK_NAME");
 		sql.append(", BranchCode, BranchCode, Partner_Bank, Partner_Bank");
 		sql.append(", Bank_Address, AccNumber, IFSC, UMRN_NO, MICR_CODE, ChequeSerialNo");
 		sql.append(", Corporate_User_No, Corporate_Name, Dest_Acc_holder, Debit_Credit_Flag, UTR_Number");
+		sql.append(", FateCorrection");
 		sql.append(" from Presentment_FileImport WHERE HEADER_ID = ?");
 
 		return jdbcOperations.update(sql.toString(), ps -> {

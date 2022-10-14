@@ -243,7 +243,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into Presentment_Extraction_Stage (");
 		sql.append(" FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
-		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage");
+		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage, SchdVersion");
 		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
 		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
 		sql.append(", SchdPftPaid, SchdPriPaid, SchdFeePaid, TdsPaid, InstrumentType");
@@ -252,7 +252,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", PartnerBankId, BranchCode, BankCode");
 		sql.append(") Select");
 		sql.append(" fm.FinId, fm.FinReference, fm.FinType, fm.ProductCategory, fm.FinBranch, sdd.EntityCode");
-		sql.append(", fm.BpiTreatment, fm.GrcPeriodEndDate, fm.GrcAdvType, fm.AdvType, fm.AdvStage");
+		sql.append(", fm.BpiTreatment, fm.GrcPeriodEndDate, fm.GrcAdvType, fm.AdvType, fm.AdvStage, fm.SchdVersion");
 		sql.append(", fsd.SchDate, fsd.DefSchdDate, fsd.SchSeq, fsd.InstNumber, fsd.BpiOrHoliday");
 		sql.append(", fsd.ProfitSchd, fsd.PrincipalSchd, fsd.FeeSchd, fsd.TdsAmount");
 		sql.append(", fsd.SchdPftPaid, fsd.SchdPriPaid, fsd.SchdFeePaid, fsd.TdsPaid");
@@ -298,7 +298,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public List<PresentmentDetail> getPresentmentDetails() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
-		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage");
+		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage, SchdVersion");
 		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
 		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
 		sql.append(", SchdPftPaid, SchdPriPaid, SchdFeePaid, TdsPaid");
@@ -323,6 +323,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setGrcAdvType(rs.getString("GrcAdvType"));
 			pd.setAdvType(rs.getString("AdvType"));
 			pd.setAdvStage(rs.getString("AdvStage"));
+			pd.setSchdVersion(rs.getInt("SchdVersion"));
 			pd.setSchDate(rs.getDate("SchDate"));
 			pd.setDefSchdDate(rs.getDate("DefSchdDate"));
 			pd.setSchSeq(rs.getInt("SchSeq"));
@@ -544,7 +545,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	@Override
 	public long saveList(List<PresentmentDetail> presentments) {
 		StringBuilder sql = new StringBuilder("Insert into PresentmentDetails");
-		sql.append("(Id, PresentmentId, PresentmentRef, FinID, FinReference, SchDate, MandateId");
+		sql.append("(Id, PresentmentId, PresentmentRef, FinID, FinReference, SchDate, MandateId, SchdVersion");
 		sql.append(", SchAmtDue, SchPriDue, SchPftDue, SchFeeDue, SchInsDue, SchPenaltyDue, AdvanceAmt, ExcessID");
 		sql.append(", AdviseAmt, PresentmentAmt, ExcludeReason, BounceID, EmiNo, TDSAmount, Status, ReceiptID");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
@@ -567,6 +568,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				ps.setLong(i++, pd.getFinID());
 				ps.setString(i++, pd.getFinReference());
 				ps.setDate(i++, JdbcUtil.getDate(pd.getSchDate()));
+				ps.setInt(i++, pd.getSchdVersion());
 				ps.setObject(i++, pd.getMandateId());
 				ps.setBigDecimal(i++, pd.getSchAmtDue());
 				ps.setBigDecimal(i++, pd.getSchPriDue());

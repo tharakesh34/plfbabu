@@ -27,9 +27,7 @@ package com.pennanttech.pff.presentment.model;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -47,6 +45,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class PresentmentDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
+
 	@XmlElement(name = "presentmentId")
 	private long id = Long.MIN_VALUE;
 	@XmlElement(name = "presentmentHeaderId")
@@ -54,7 +53,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private long responseId;
 	@XmlElement
 	private String batchReference;
-
 	@XmlElement(name = "uniqueReference")
 	private String presentmentRef;
 	private long finID;
@@ -90,7 +88,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String customerName;
 	@XmlElement(name = "cif")
 	private String custCif;
-
 	@XmlElement
 	private String finType;
 	private String finTypeDesc;
@@ -101,16 +98,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String finCcy;
 	private String ecsReturn;
 	private long receiptID;
-
 	private String accountNo;
 	private String acType;
 	private String errorCode;
 	private String errorDesc;
 	private String entityCode;
 	private Long partnerBankId;
-
-	private FinanceDetail financeDetail;
-
 	private String grcAdvType;
 	private String advType;
 	private String advStage;
@@ -119,11 +112,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private Date appDate;
 	private String bpiOrHoliday;
 	private String bpiTreatment;
-	private FinExcessAmount excessAmount;
-	private FinExcessAmount excessAmountReversal;
-	private List<PresentmentDetail> presements = new ArrayList<>();
 	private String bankCode;
-	private FinExcessAmount emiInAdvance;
 	private Long linkedTranId;
 	private String presentmentType;
 	private String utrNumber;
@@ -132,7 +121,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private Date representmentDate;
 	private String productCategory;
 	private BigDecimal charges = BigDecimal.ZERO;
-	private List<PresentmentCharge> presentmentCharges = new ArrayList<>();
 	private BigDecimal lppAmount = BigDecimal.ZERO;
 	private BigDecimal bounceAmount = BigDecimal.ZERO;
 	private String bankName;
@@ -153,134 +141,29 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String chequeStatus;
 	private Date chequeDate;
 	private String branchCode;
+	private String bounceReason;
 	private FinExcessAmount advInExcess;
 	private FinExcessAmount emiInAdv;
 	private boolean dueExist;
 	private boolean bpiPaidOnInstDate;
 	private String instrumentType;
-
-	public PresentmentDetail() {
-		super();
-	}
-
-	public String getMandateStatus() {
-		return mandateStatus;
-	}
-
-	public void setMandateStatus(String mandateStatus) {
-		this.mandateStatus = mandateStatus;
-	}
-
-	public PresentmentDetail copyEntity() {
-		PresentmentDetail entity = new PresentmentDetail();
-		entity.setId(this.id);
-		entity.setHeaderId(this.headerId);
-		entity.setPresentmentRef(this.presentmentRef);
-		entity.setFinID(this.finID);
-		entity.setFinReference(this.finReference);
-		entity.setHostReference(this.hostReference);
-		entity.setSchDate(this.schDate);
-		entity.setDefSchdDate(this.defSchdDate);
-		entity.setOriginalSchDate(this.originalSchDate);
-		entity.setMandateId(this.mandateId);
-		entity.setSchAmtDue(this.schAmtDue);
-		entity.setSchPriDue(this.schPriDue);
-		entity.setSchPftDue(this.schPftDue);
-		entity.setSchFeeDue(this.schFeeDue);
-		entity.setSchInsDue(this.schInsDue);
-		entity.setSchPenaltyDue(this.schPenaltyDue);
-		entity.setAdvanceAmt(this.advanceAmt);
-		entity.settDSAmount(this.tDSAmount);
-		entity.setExcessID(this.excessID);
-		entity.setAdviseAmt(this.adviseAmt);
-		entity.setExcludeReason(this.excludeReason);
-		entity.setPresentmentAmt(this.presentmentAmt);
-		entity.setEmiNo(this.emiNo);
-		entity.setSchSeq(this.schSeq);
-		entity.setBounceID(this.bounceID);
-		entity.setBounceCode(this.bounceCode);
-		entity.setBounceRemarks(this.bounceRemarks);
-		entity.setManualAdviseId(this.manualAdviseId);
-		entity.setStatus(this.status);
-		entity.setNewRecord(super.isNewRecord());
-		entity.setCustomerName(this.customerName);
-		entity.setFinType(this.finType);
-		entity.setFinTypeDesc(this.finTypeDesc);
-		entity.setMandateType(this.mandateType);
-		entity.setMandateStatus(this.mandateStatus);
-		entity.setMandateExpiryDate(this.mandateExpiryDate);
-		entity.setFinCcy(this.finCcy);
-		entity.setEcsReturn(this.ecsReturn);
-		entity.setReceiptID(this.receiptID);
-		entity.setAccountNo(this.accountNo);
-		entity.setAcType(this.acType);
-		entity.setErrorCode(this.errorCode);
-		entity.setErrorDesc(this.errorDesc);
-		entity.setEntityCode(this.entityCode);
-		entity.setPartnerBankId(this.partnerBankId);
-		entity.setFinanceDetail(this.financeDetail);
-		entity.setGrcAdvType(this.grcAdvType);
-		entity.setAdvType(this.advType);
-		entity.setAdvStage(this.advStage);
-		entity.setGrcPeriodEndDate(this.grcPeriodEndDate);
-		entity.setAdvAdjusted(this.advAdjusted);
-		entity.setAppDate(this.appDate);
-		entity.setBpiOrHoliday(this.bpiOrHoliday);
-		entity.setBpiTreatment(this.bpiTreatment);
-		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
-		entity.setUserDetails(this.userDetails);
-		entity.setPresentmentType(this.presentmentType);
-		entity.setUtrNumber(this.utrNumber);
-		entity.setClearingStatus(this.clearingStatus);
-		entity.setFinisActive(this.finisActive);
-		entity.setRepresentmentDate(this.representmentDate);
-		entity.setInstrumentType(this.instrumentType);
-		entity.setRecordStatus(super.getRecordStatus());
-		entity.setRoleCode(super.getRoleCode());
-		entity.setNextRoleCode(super.getNextRoleCode());
-		entity.setTaskId(super.getTaskId());
-		entity.setNextTaskId(super.getNextTaskId());
-		entity.setRecordType(super.getRecordType());
-		entity.setWorkflowId(super.getWorkflowId());
-		entity.setUserAction(super.getUserAction());
-		entity.setVersion(super.getVersion());
-		entity.setLastMntBy(super.getLastMntBy());
-		entity.setLastMntOn(super.getLastMntOn());
-		return entity;
-	}
-
-	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<>();
-		excludeFields.add("accountNo");
-		excludeFields.add("acType");
-		excludeFields.add("bounceReason");
-		excludeFields.add("financeDetail");
-		excludeFields.add("grcAdvType");
-		excludeFields.add("advType");
-		excludeFields.add("grcPeriodEndDate");
-		excludeFields.add("advAdjusted");
-		excludeFields.add("advStage");
-		excludeFields.add("partnerBankId");
-		excludeFields.add("bpiOrHoliday");
-		excludeFields.add("bpiTreatment");
-		excludeFields.add("excessAmount");
-		excludeFields.add("excessAmountReversal");
-		excludeFields.add("bankCode");
-		excludeFields.add("emiInAdvance");
-		excludeFields.add("linkedTranId");
-		excludeFields.add("presentmentType");
-		excludeFields.add("hostReference");
-		excludeFields.add("representmentDate");
-		excludeFields.add("intrumentType");
-
-		return excludeFields;
-	}
+	private int schdVersion;
+	private String fateCorrection;
 
 	@XmlTransient
 	private PresentmentDetail befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	private String bounceReason;
+	private FinanceDetail financeDetail;
+	private FinExcessAmount excessAmount;
+	private FinExcessAmount excessAmountReversal;
+	private List<PresentmentDetail> presements = new ArrayList<>();
+	private FinExcessAmount emiInAdvance;
+	private List<PresentmentCharge> presentmentCharges = new ArrayList<>();
+
+	public PresentmentDetail() {
+		super();
+	}
 
 	public long getId() {
 		return id;
@@ -314,6 +197,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.batchReference = batchReference;
 	}
 
+	public String getPresentmentRef() {
+		return presentmentRef;
+	}
+
+	public void setPresentmentRef(String presentmentRef) {
+		this.presentmentRef = presentmentRef;
+	}
+
 	public long getFinID() {
 		return finID;
 	}
@@ -328,6 +219,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public String getHostReference() {
+		return hostReference;
+	}
+
+	public void setHostReference(String hostReference) {
+		this.hostReference = hostReference;
 	}
 
 	public Date getSchDate() {
@@ -352,6 +251,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setOriginalSchDate(Date originalSchDate) {
 		this.originalSchDate = originalSchDate;
+	}
+
+	public Long getMandateId() {
+		return mandateId;
+	}
+
+	public void setMandateId(Long mandateId) {
+		this.mandateId = mandateId;
 	}
 
 	public BigDecimal getSchAmtDue() {
@@ -408,6 +315,22 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setAdvanceAmt(BigDecimal advanceAmt) {
 		this.advanceAmt = advanceAmt;
+	}
+
+	public BigDecimal gettDSAmount() {
+		return tDSAmount;
+	}
+
+	public void settDSAmount(BigDecimal tDSAmount) {
+		this.tDSAmount = tDSAmount;
+	}
+
+	public long getExcessID() {
+		return excessID;
+	}
+
+	public void setExcessID(long excessID) {
+		this.excessID = excessID;
 	}
 
 	public BigDecimal getAdviseAmt() {
@@ -474,20 +397,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.bounceRemarks = bounceRemarks;
 	}
 
-	public BigDecimal gettDSAmount() {
-		return tDSAmount;
+	public Long getManualAdviseId() {
+		return manualAdviseId;
 	}
 
-	public void settDSAmount(BigDecimal tDSAmount) {
-		this.tDSAmount = tDSAmount;
-	}
-
-	public long getExcessID() {
-		return excessID;
-	}
-
-	public void setExcessID(long excessID) {
-		this.excessID = excessID;
+	public void setManualAdviseId(Long manualAdviseId) {
+		this.manualAdviseId = manualAdviseId;
 	}
 
 	public String getStatus() {
@@ -496,22 +411,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public PresentmentDetail getBefImage() {
-		return befImage;
-	}
-
-	public void setBefImage(PresentmentDetail befImage) {
-		this.befImage = befImage;
-	}
-
-	public LoggedInUser getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(LoggedInUser userDetails) {
-		this.userDetails = userDetails;
 	}
 
 	public String getCustomerName() {
@@ -530,20 +429,20 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.custCif = custCif;
 	}
 
-	public String getFinTypeDesc() {
-		return finTypeDesc;
-	}
-
-	public void setFinTypeDesc(String finTypeDesc) {
-		this.finTypeDesc = finTypeDesc;
-	}
-
 	public String getFinType() {
 		return finType;
 	}
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+
+	public String getFinTypeDesc() {
+		return finTypeDesc;
+	}
+
+	public void setFinTypeDesc(String finTypeDesc) {
+		this.finTypeDesc = finTypeDesc;
 	}
 
 	public String getMandateType() {
@@ -554,28 +453,20 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.mandateType = mandateType;
 	}
 
+	public String getMandateStatus() {
+		return mandateStatus;
+	}
+
+	public void setMandateStatus(String mandateStatus) {
+		this.mandateStatus = mandateStatus;
+	}
+
 	public Date getMandateExpiryDate() {
 		return mandateExpiryDate;
 	}
 
 	public void setMandateExpiryDate(Date mandateExpiryDate) {
 		this.mandateExpiryDate = mandateExpiryDate;
-	}
-
-	public Long getMandateId() {
-		return mandateId;
-	}
-
-	public void setMandateId(Long mandateId) {
-		this.mandateId = mandateId;
-	}
-
-	public String getPresentmentRef() {
-		return presentmentRef;
-	}
-
-	public void setPresentmentRef(String presentmentRef) {
-		this.presentmentRef = presentmentRef;
 	}
 
 	public String getFinCcy() {
@@ -600,14 +491,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setReceiptID(long receiptID) {
 		this.receiptID = receiptID;
-	}
-
-	public String getBounceReason() {
-		return bounceReason;
-	}
-
-	public void setBounceReason(String bounceReason) {
-		this.bounceReason = bounceReason;
 	}
 
 	public String getAccountNo() {
@@ -642,14 +525,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.errorDesc = errorDesc;
 	}
 
-	public Long getManualAdviseId() {
-		return manualAdviseId;
-	}
-
-	public void setManualAdviseId(Long manualAdviseId) {
-		this.manualAdviseId = manualAdviseId;
-	}
-
 	public String getEntityCode() {
 		return entityCode;
 	}
@@ -658,18 +533,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.entityCode = entityCode;
 	}
 
-	/**
-	 * @return the financeDetail
-	 */
-	public FinanceDetail getFinanceDetail() {
-		return financeDetail;
+	public Long getPartnerBankId() {
+		return partnerBankId;
 	}
 
-	/**
-	 * @param financeDetail the financeDetail to set
-	 */
-	public void setFinanceDetail(FinanceDetail financeDetail) {
-		this.financeDetail = financeDetail;
+	public void setPartnerBankId(Long partnerBankId) {
+		this.partnerBankId = partnerBankId;
 	}
 
 	public String getGrcAdvType() {
@@ -688,6 +557,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.advType = advType;
 	}
 
+	public String getAdvStage() {
+		return advStage;
+	}
+
+	public void setAdvStage(String advStage) {
+		this.advStage = advStage;
+	}
+
 	public Date getGrcPeriodEndDate() {
 		return grcPeriodEndDate;
 	}
@@ -702,22 +579,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setAdvAdjusted(BigDecimal advAdjusted) {
 		this.advAdjusted = advAdjusted;
-	}
-
-	public String getAdvStage() {
-		return advStage;
-	}
-
-	public void setAdvStage(String advStage) {
-		this.advStage = advStage;
-	}
-
-	public Long getPartnerBankId() {
-		return partnerBankId;
-	}
-
-	public void setPartnerBankId(Long partnerBankId) {
-		this.partnerBankId = partnerBankId;
 	}
 
 	public Date getAppDate() {
@@ -744,44 +605,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.bpiTreatment = bpiTreatment;
 	}
 
-	public FinExcessAmount getExcessAmount() {
-		return excessAmount;
-	}
-
-	public void setExcessAmount(FinExcessAmount excessAmount) {
-		this.excessAmount = excessAmount;
-	}
-
-	public FinExcessAmount getExcessAmountReversal() {
-		return excessAmountReversal;
-	}
-
-	public void setExcessAmountReversal(FinExcessAmount excessAmountReversal) {
-		this.excessAmountReversal = excessAmountReversal;
-	}
-
-	public List<PresentmentDetail> getPresements() {
-		return presements;
-	}
-
-	public void setPresements(List<PresentmentDetail> presements) {
-		this.presements = presements;
-	}
-
 	public String getBankCode() {
 		return bankCode;
 	}
 
 	public void setBankCode(String bankCode) {
 		this.bankCode = bankCode;
-	}
-
-	public FinExcessAmount getEmiInAdvance() {
-		return emiInAdvance;
-	}
-
-	public void setEmiInAdvance(FinExcessAmount emiInAdvance) {
-		this.emiInAdvance = emiInAdvance;
 	}
 
 	public Long getLinkedTranId() {
@@ -824,14 +653,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.finisActive = finisActive;
 	}
 
-	public String getHostReference() {
-		return hostReference;
-	}
-
-	public void setHostReference(String hostReference) {
-		this.hostReference = hostReference;
-	}
-
 	public Date getRepresentmentDate() {
 		return representmentDate;
 	}
@@ -854,14 +675,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setCharges(BigDecimal charges) {
 		this.charges = charges;
-	}
-
-	public List<PresentmentCharge> getPresentmentCharges() {
-		return presentmentCharges;
-	}
-
-	public void setPresentmentCharges(List<PresentmentCharge> presentmentCharges) {
-		this.presentmentCharges = presentmentCharges;
 	}
 
 	public BigDecimal getLppAmount() {
@@ -1024,6 +837,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.branchCode = branchCode;
 	}
 
+	public String getBounceReason() {
+		return bounceReason;
+	}
+
+	public void setBounceReason(String bounceReason) {
+		this.bounceReason = bounceReason;
+	}
+
 	public FinExcessAmount getAdvInExcess() {
 		return advInExcess;
 	}
@@ -1062,6 +883,86 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setInstrumentType(String instrumentType) {
 		this.instrumentType = instrumentType;
+	}
+
+	public int getSchdVersion() {
+		return schdVersion;
+	}
+
+	public void setSchdVersion(int schdVersion) {
+		this.schdVersion = schdVersion;
+	}
+
+	public String getFateCorrection() {
+		return fateCorrection;
+	}
+
+	public void setFateCorrection(String fateCorrection) {
+		this.fateCorrection = fateCorrection;
+	}
+
+	public PresentmentDetail getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(PresentmentDetail befImage) {
+		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public FinExcessAmount getExcessAmount() {
+		return excessAmount;
+	}
+
+	public void setExcessAmount(FinExcessAmount excessAmount) {
+		this.excessAmount = excessAmount;
+	}
+
+	public FinExcessAmount getExcessAmountReversal() {
+		return excessAmountReversal;
+	}
+
+	public void setExcessAmountReversal(FinExcessAmount excessAmountReversal) {
+		this.excessAmountReversal = excessAmountReversal;
+	}
+
+	public List<PresentmentDetail> getPresements() {
+		return presements;
+	}
+
+	public void setPresements(List<PresentmentDetail> presements) {
+		this.presements = presements;
+	}
+
+	public FinExcessAmount getEmiInAdvance() {
+		return emiInAdvance;
+	}
+
+	public void setEmiInAdvance(FinExcessAmount emiInAdvance) {
+		this.emiInAdvance = emiInAdvance;
+	}
+
+	public List<PresentmentCharge> getPresentmentCharges() {
+		return presentmentCharges;
+	}
+
+	public void setPresentmentCharges(List<PresentmentCharge> presentmentCharges) {
+		this.presentmentCharges = presentmentCharges;
 	}
 
 }
