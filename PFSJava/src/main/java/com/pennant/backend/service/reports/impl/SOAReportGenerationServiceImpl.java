@@ -857,12 +857,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			for (RestructureCharge rstChrg : rstChrgs) {
 				String alocType = rstChrg.getAlocType();
-				if (!RepayConstants.ALLOCATION_PRI.equals(alocType)
-						&& !RepayConstants.ALLOCATION_PFT.equals(alocType)) {
+				if (!Allocation.PRI.equals(alocType) && !Allocation.PFT.equals(alocType)) {
 					continue;
 				}
 
-				if (RepayConstants.ALLOCATION_PRI.equals(alocType)) {
+				if (Allocation.PRI.equals(alocType)) {
 					rstPri = PennantApplicationUtil.formateAmount(rstChrg.getTotalAmount(), ccyEditField);
 				} else {
 					rstPft = PennantApplicationUtil.formateAmount(rstChrg.getTotalAmount(), ccyEditField);
@@ -3550,7 +3549,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				String allocType = rad.getAllocationType();
 				String allocTypeMsg = "";
 				BigDecimal paidAmount = rad.getPaidAmount();
-				if (RepayConstants.ALLOCATION_EMI.equals(allocType)) {
+				if (Allocation.EMI.equals(allocType)) {
 					allocTypeMsg = "EMI Adjusted";
 				} else if (Allocation.MANADV.equals(allocType)) {
 					allocTypeMsg = rad.getTypeDesc();
@@ -3562,7 +3561,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					allocTypeMsg = "Interest";
 				} else if (RepayConstants.ALLOCATION_PP.equals(allocType)) {
 					allocTypeMsg = "Principal";
-				} else if (RepayConstants.ALLOCATION_FEE.equals(allocType)) {
+				} else if (Allocation.FEE.equals(allocType)) {
 					allocTypeMsg = "Fees";
 				} else if (Allocation.ODC.equals(allocType)) {
 					allocTypeMsg = "Late Pay Penalty";
@@ -3607,7 +3606,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			BigDecimal capitalizedAmount = rstChrg.getTotalAmount();
 
 			switch (allocType) {
-			case RepayConstants.ALLOCATION_EMI:
+			case Allocation.EMI:
 				allocTypeMsg = "EMI Capitalized";
 				break;
 			case Allocation.MANADV:
@@ -3619,10 +3618,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			case Allocation.BOUNCE:
 				allocTypeMsg = "Bounce Charges Capitalized";
 				break;
-			case RepayConstants.ALLOCATION_PRI:
+			case Allocation.PRI:
 				allocTypeMsg = "Principal Capitalized";
 				break;
-			case RepayConstants.ALLOCATION_PFT:
+			case Allocation.PFT:
 				allocTypeMsg = "Interest Capitalized";
 				break;
 			case Allocation.ODC:

@@ -35,6 +35,8 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.overdraft.OverdraftConstants;
+import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.pennanttech.pff.staticlist.ExtFieldStaticList;
@@ -447,13 +449,13 @@ public class PennantStaticListUtil {
 		if (dueList == null) {
 
 			dueList = new ArrayList<String>(7);
-			dueList.add(RepayConstants.ALLOCATION_PFT);
-			dueList.add(RepayConstants.ALLOCATION_PRI);
+			dueList.add(Allocation.PFT);
+			dueList.add(Allocation.PRI);
 			dueList.add(RepayConstants.ALLOCATION_TDS);
 			dueList.add(RepayConstants.ALLOCATION_NPFT);
 			dueList.add(RepayConstants.ALLOCATION_FUT_TDS);
 			dueList.add(RepayConstants.ALLOCATION_FUT_PFT);
-			dueList.add(RepayConstants.ALLOCATION_PFT);
+			dueList.add(Allocation.PFT);
 
 		}
 		return dueList;
@@ -3315,10 +3317,9 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getAllocationMethods() {
 		if (allocationMethods == null) {
 			allocationMethods = new ArrayList<ValueLabel>(2);
-			allocationMethods.add(
-					new ValueLabel(RepayConstants.ALLOCATIONTYPE_AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
-			allocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_MANUAL,
-					Labels.getLabel("label_AllocationMethod_Manual")));
+			allocationMethods.add(new ValueLabel(AllocationType.AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
+			allocationMethods
+					.add(new ValueLabel(AllocationType.MANUAL, Labels.getLabel("label_AllocationMethod_Manual")));
 		}
 		return allocationMethods;
 	}
@@ -4833,7 +4834,7 @@ public class PennantStaticListUtil {
 			noWaiverList.add(RepayConstants.ALLOCATION_FUT_NPFT);
 			noWaiverList.add(RepayConstants.ALLOCATION_FUT_TDS);
 			noWaiverList.add(RepayConstants.ALLOCATION_TDS);
-			noWaiverList.add(RepayConstants.ALLOCATION_EMI);
+			noWaiverList.add(Allocation.EMI);
 			noWaiverList.add(RepayConstants.ALLOCATION_NPFT);
 
 		}
@@ -4940,8 +4941,8 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getVanAllocationMethods() {
 		if (vanAllocationMethods == null) {
 			vanAllocationMethods = new ArrayList<ValueLabel>(2);
-			vanAllocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_AUTO,
-					Labels.getLabel("label_AllocationMethod_AutoAllocation")));
+			vanAllocationMethods
+					.add(new ValueLabel(AllocationType.AUTO, Labels.getLabel("label_AllocationMethod_AutoAllocation")));
 			vanAllocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_PARK_IN_EXCESS,
 					Labels.getLabel("label_AllocationMethod_ParkInExcess")));
 		}

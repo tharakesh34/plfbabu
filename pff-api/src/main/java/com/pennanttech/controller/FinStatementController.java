@@ -94,6 +94,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
@@ -517,9 +518,9 @@ public class FinStatementController extends SummaryDetailService {
 
 		for (ReceiptAllocationDetail ad : allocations) {
 			String allocationType = ad.getAllocationType();
-			if (RepayConstants.ALLOCATION_PRI.equals(allocationType)) {
+			if (Allocation.PRI.equals(allocationType)) {
 				totPriPayNow = ad.getPaidAmount();
-			} else if (RepayConstants.ALLOCATION_PFT.equals(allocationType)) {
+			} else if (Allocation.PFT.equals(allocationType)) {
 				totPftPayNow = ad.getPaidAmount();
 			} else if (Allocation.LPFT.equals(allocationType)) {
 				totLatePftPayNow = ad.getPaidAmount();
@@ -527,7 +528,7 @@ public class FinStatementController extends SummaryDetailService {
 				totPenaltyPayNow = ad.getPaidAmount();
 			} else if (RepayConstants.ALLOCATION_TDS.equals(allocationType)) {
 				totTdsReturn = ad.getPaidAmount();
-			} else if (RepayConstants.ALLOCATION_FEE.equals(allocationType)) {
+			} else if (Allocation.FEE.equals(allocationType)) {
 				totFeePayNow = ad.getPaidAmount();
 			}
 		}
@@ -648,7 +649,7 @@ public class FinStatementController extends SummaryDetailService {
 			rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 			rch.setReceiptDate(SysParamUtil.getAppDate());
 			rch.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-			rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+			rch.setAllocationType(AllocationType.AUTO);
 			rch.setNewRecord(true);
 
 			FinReceiptDetail rcd = new FinReceiptDetail();
@@ -835,12 +836,10 @@ public class FinStatementController extends SummaryDetailService {
 											.formateAmount(receiptAllocationDetail.getTotRecv(), formatter), finCCy));
 						}
 
-						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
-								RepayConstants.ALLOCATION_PFT)) {
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.PFT)) {
 							profitAmt = receiptAllocationDetail.getTotRecv();
 						}
-						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
-								RepayConstants.ALLOCATION_PRI)) {
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.PRI)) {
 							principleAmt = receiptAllocationDetail.getTotRecv();
 						}
 
@@ -852,8 +851,7 @@ public class FinStatementController extends SummaryDetailService {
 								RepayConstants.ALLOCATION_FUT_TDS)) {
 							futTdsAmt = receiptAllocationDetail.getTotRecv();
 						}
-						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
-								RepayConstants.ALLOCATION_FEE)) {
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.FEE)) {
 							BigDecimal fcFeeAmtWithGst = receiptAllocationDetail.getTotRecv();
 							BigDecimal gstAmt = receiptAllocationDetail.getDueGST();
 							BigDecimal fcFeeAmtWithoutGst = fcFeeAmtWithGst.subtract(gstAmt);
@@ -1015,7 +1013,7 @@ public class FinStatementController extends SummaryDetailService {
 
 		rh.setReceiptDate(appDate);
 		rh.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-		rh.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		rh.setAllocationType(AllocationType.AUTO);
 		rh.setNewRecord(true);
 
 		FinReceiptDetail rd = new FinReceiptDetail();
@@ -1129,10 +1127,10 @@ public class FinStatementController extends SummaryDetailService {
 					closureReport.setInstForTheMonth(rad.getTotRecv());
 				}
 
-				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
+				if (StringUtils.equals(rad.getAllocationType(), Allocation.PFT)) {
 					profitAmt = rad.getTotRecv();
 				}
-				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
+				if (StringUtils.equals(rad.getAllocationType(), Allocation.PRI)) {
 					principleAmt = rad.getTotRecv();
 				}
 
@@ -1142,7 +1140,7 @@ public class FinStatementController extends SummaryDetailService {
 				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FUT_TDS)) {
 					futTdsAmt = rad.getTotRecv();
 				}
-				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FEE)) {
+				if (StringUtils.equals(rad.getAllocationType(), Allocation.FEE)) {
 					BigDecimal fcFeeAmtWithGst = rad.getTotRecv();
 					BigDecimal gstAmt = rad.getDueGST();
 					BigDecimal fcFeeAmtWithoutGst = fcFeeAmtWithGst.subtract(gstAmt);
@@ -1483,12 +1481,12 @@ public class FinStatementController extends SummaryDetailService {
 		pftAmt = pftAccruedTillNow.subtract(pftPaid);
 
 		ReceiptAllocationDetail ad = new ReceiptAllocationDetail();
-		ad.setAllocationType(RepayConstants.ALLOCATION_PRI);
+		ad.setAllocationType(Allocation.PRI);
 		ad.setPaidAmount(priBalance);
 		allocations.add(ad);
 
 		ad = new ReceiptAllocationDetail();
-		ad.setAllocationType(RepayConstants.ALLOCATION_PFT);
+		ad.setAllocationType(Allocation.PFT);
 		ad.setPaidAmount(pftAmt);
 		allocations.add(ad);
 
@@ -1498,7 +1496,7 @@ public class FinStatementController extends SummaryDetailService {
 		allocations.add(ad);
 
 		ad = new ReceiptAllocationDetail();
-		ad.setAllocationType(RepayConstants.ALLOCATION_FEE);
+		ad.setAllocationType(Allocation.FEE);
 		ad.setPaidAmount(totFeeAmount);
 		allocations.add(ad);
 

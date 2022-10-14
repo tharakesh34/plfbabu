@@ -83,6 +83,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennattech.pff.cd.dao.ManufacturerDAO;
 
 public class CashBackProcessServiceImpl implements CashBackProcessService {
@@ -571,7 +572,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		fsi.setModule("Receipts");
 		fsi.setValueDate(valueDate);
 		fsi.setAmount(rcptAmount);
-		fsi.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		fsi.setAllocationType(AllocationType.AUTO);
 
 		long partnerBankId = Long.valueOf(SysParamUtil.getValueAsInt("DISB_PARTNERBANK"));
 		PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(partnerBankId, "_AView");
@@ -747,7 +748,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 				continue;
 			}
 
-			if ("BPI".equals(rc.getAlocType()) || RepayConstants.ALLOCATION_FEE.equals(rc.getAlocType())) {
+			if ("BPI".equals(rc.getAlocType()) || Allocation.FEE.equals(rc.getAlocType())) {
 				if ("BPI".equals(rc.getAlocType())) {
 					bpiAmount = rc.getTotalAmount();
 				}
@@ -757,10 +758,10 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 			String alocType = "";
 			switch (rc.getAlocType()) {
-			case RepayConstants.ALLOCATION_PFT:
+			case Allocation.PFT:
 				alocType = "I";
 				break;
-			case RepayConstants.ALLOCATION_PRI:
+			case Allocation.PRI:
 				alocType = "P";
 				break;
 			case Allocation.LPFT:
@@ -796,7 +797,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		fsi.setModule("Receipts");
 		fsi.setValueDate(rd.getRestructureDate());
 		fsi.setAmount(totAmount);
-		fsi.setAllocationType(RepayConstants.ALLOCATIONTYPE_MANUAL);
+		fsi.setAllocationType(AllocationType.MANUAL);
 		fsi.setLoggedInUser(fm.getUserDetails());
 		fsi.setStatus(RepayConstants.PAYSTATUS_APPROVED);
 		fsi.setDepositDate(rd.getRestructureDate());

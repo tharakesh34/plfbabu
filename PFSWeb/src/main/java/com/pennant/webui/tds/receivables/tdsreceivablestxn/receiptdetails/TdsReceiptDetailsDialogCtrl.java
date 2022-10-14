@@ -97,10 +97,10 @@ public class TdsReceiptDetailsDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_PP)) {
 				continue;
 			}
-			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_PFT)
+			if (StringUtils.equals(rad.getAllocationType(), Allocation.PFT)
 					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_TDS)
 					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_NPFT)
-					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
+					|| StringUtils.equals(rad.getAllocationType(), Allocation.PRI)) {
 				paidAmount = BigDecimal.ZERO;
 			} else {
 				paidAmount = rad.getPaidAmount();
@@ -112,7 +112,7 @@ public class TdsReceiptDetailsDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (StringUtils.equals(rad.getAllocationType(), Allocation.MANADV)) {
 				allocDesc = rad.getTypeDesc();
 			}
-			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FEE)) {
+			if (StringUtils.equals(rad.getAllocationType(), Allocation.FEE)) {
 				Filter[] masterCodeFiler = new Filter[1];
 				masterCodeFiler[0] = new Filter("FeeTypeId", -rad.getAllocationTo(), Filter.OP_EQUAL);
 				allocDesc = PennantApplicationUtil.getDBDescription("FeeType", "FeeTypes", "FeeTypeDesc",

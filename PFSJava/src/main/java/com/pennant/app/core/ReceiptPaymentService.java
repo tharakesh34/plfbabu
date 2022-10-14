@@ -36,6 +36,7 @@ import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.payment.model.LoanPayment;
 import com.pennanttech.pff.payment.service.LoanPaymentService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class ReceiptPaymentService extends ServiceHelper {
@@ -170,7 +171,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		rch.setAllocationType(AllocationType.AUTO);
 		rch.setReceiptAmount(presentmentAmt);// header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 		rch.setEffectSchdMethod(PennantConstants.List_Select);
 		rch.setActFinReceipt(true);
@@ -287,7 +288,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		rch.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
-		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		rch.setAllocationType(AllocationType.AUTO);
 		rch.setReceiptAmount(pd.getAdvanceAmt());
 		rch.setEffectSchdMethod(PennantConstants.List_Select);
 		rch.setReceiptMode(RepayConstants.PAYTYPE_EXCESS);

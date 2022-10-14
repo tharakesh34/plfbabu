@@ -68,7 +68,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -282,7 +281,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 				amountToPOS = amountToPOS.add(totAmt);
 
-				if (!RepayConstants.ALLOCATION_FEE.equals(rsChrg.getAlocType())) {
+				if (!Allocation.FEE.equals(rsChrg.getAlocType())) {
 					cpzRestructAmt = cpzRestructAmt.add(totAmt);
 				}
 			}
@@ -423,11 +422,11 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		int chargeSeq = 1;
 		if (priDue.compareTo(BigDecimal.ZERO) > 0) {
-			charges.add(getChargeRcd(priDue, BigDecimal.ZERO, null, chargeSeq++, RepayConstants.ALLOCATION_PRI,
+			charges.add(getChargeRcd(priDue, BigDecimal.ZERO, null, chargeSeq++, Allocation.PRI,
 					Labels.getLabel("label_RecceiptDialog_AllocationType_PRI"), null, true));
 		}
 		if (pftDue.compareTo(BigDecimal.ZERO) > 0) {
-			charges.add(getChargeRcd(pftDue, BigDecimal.ZERO, null, chargeSeq++, RepayConstants.ALLOCATION_PFT,
+			charges.add(getChargeRcd(pftDue, BigDecimal.ZERO, null, chargeSeq++, Allocation.PFT,
 					Labels.getLabel("label_RecceiptDialog_AllocationType_PFT"), null, true));
 		}
 
@@ -472,7 +471,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 				RestructureCharge frc = new RestructureCharge();
 				frc.setChargeSeq(chargeSeq++);
-				frc.setAlocType(RepayConstants.ALLOCATION_FEE);
+				frc.setAlocType(Allocation.FEE);
 				frc.setAlocTypeDesc(ffd.getFeeTypeDesc());
 				frc.setActualAmount(ffd.getRemainingFeeOriginal());
 				frc.setFeeCode(ffd.getFeeTypeCode());
@@ -1422,7 +1421,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			BigDecimal actualAmount = rc.getActualAmount();
 			String alocType = rc.getAlocType();
 
-			if (!RepayConstants.ALLOCATION_FEE.equals(alocType) && actualAmount.compareTo(BigDecimal.ZERO) > 0) {
+			if (!Allocation.FEE.equals(alocType) && actualAmount.compareTo(BigDecimal.ZERO) > 0) {
 				errors.add(getErrorDetail("12725", rc.getFeeCode()));
 			}
 		}
@@ -1633,11 +1632,11 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		for (RestructureCharge rc : charges) {
 			alocType = rc.getAlocType();
-			if ("BPI".equals(alocType) || RepayConstants.ALLOCATION_FEE.equals(alocType)) {
+			if ("BPI".equals(alocType) || Allocation.FEE.equals(alocType)) {
 				continue;
 			}
 
-			if (RepayConstants.ALLOCATION_PRI.equals(alocType) || RepayConstants.ALLOCATION_PFT.equals(alocType)) {
+			if (Allocation.PRI.equals(alocType) || Allocation.PFT.equals(alocType)) {
 				isDue = true;
 				break;
 			}

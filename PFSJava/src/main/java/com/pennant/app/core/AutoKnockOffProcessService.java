@@ -75,6 +75,8 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 
 public class AutoKnockOffProcessService {
 	private static Logger logger = LogManager.getLogger(AutoKnockOffProcessService.class);
@@ -114,7 +116,7 @@ public class AutoKnockOffProcessService {
 		// header.setPayAgainstId(knockOffData.getPayableId());
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		rch.setAllocationType(AllocationType.AUTO);
 		rch.setEffectSchdMethod(PennantConstants.List_Select);
 		rch.setActFinReceipt(true);
 		rch.setReceiptMode(getPaymentType(knockOffData.getPayableType()));
@@ -164,7 +166,7 @@ public class AutoKnockOffProcessService {
 
 				String feeMap = "";
 				if (RepayConstants.ALLOCATION_KOEMI.equalsIgnoreCase(feeMapping.getFeeTypeCode())) {
-					feeMap = RepayConstants.ALLOCATION_EMI;
+					feeMap = Allocation.EMI;
 				} else {
 					feeMap = feeMapping.getFeeTypeCode();
 				}
@@ -186,7 +188,7 @@ public class AutoKnockOffProcessService {
 						rad.setTotalPaid(rad.getTotalPaid().add(paidNow));
 						rad.setPaidAmount(rad.getPaidAmount().add(paidNow));
 						receiptAmount = receiptAmount.add(paidNow);
-						if (RepayConstants.ALLOCATION_EMI.equalsIgnoreCase(feeMap)) {
+						if (Allocation.EMI.equalsIgnoreCase(feeMap)) {
 							emiAmount = emiAmount.add(paidNow);
 						}
 					}
@@ -270,7 +272,7 @@ public class AutoKnockOffProcessService {
 
 			BigDecimal balanceAmount = totalDue.subtract(waivedAmount);
 			switch (allocationType) {
-			case RepayConstants.ALLOCATION_PFT:
+			case Allocation.PFT:
 				if (emiSplit[1].compareTo(balanceAmount) > 0) {
 					emiSplit[1] = balanceAmount;
 				}
@@ -284,7 +286,7 @@ public class AutoKnockOffProcessService {
 				allocation.setTotalPaid(emiSplit[2]);
 				allocation.setPaidAmount(emiSplit[2]);
 				break;
-			case RepayConstants.ALLOCATION_PRI:
+			case Allocation.PRI:
 				if (emiSplit[0].compareTo(balanceAmount) > 0) {
 					emiSplit[0] = balanceAmount;
 				}

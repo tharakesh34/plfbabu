@@ -195,14 +195,6 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_DSF = "DSF";
 
 	/**
-	 * @deprecated use {@link AllocationType#AUTO} instead.
-	 */
-	public static final String ALLOCATIONTYPE_AUTO = "A";
-	/**
-	 * @deprecated use {@link AllocationType#MANUAL} instead.
-	 */
-	public static final String ALLOCATIONTYPE_MANUAL = "M";
-	/**
 	 * @deprecated use {@link AllocationType#PARK_IN_EXCESS} instead.
 	 */
 	public static final String ALLOCATIONTYPE_PARK_IN_EXCESS = "PIE";
@@ -210,14 +202,6 @@ public class RepayConstants {
 	public static final String ALLOCTYPE_AUTO = "Auto";
 	public static final String ALLOCTYPE_MANUAL = "Manual";
 
-	/**
-	 * @deprecated use {@link Allocation#PRI} instead.
-	 */
-	public static final String ALLOCATION_PRI = "PRI";
-	/**
-	 * @deprecated use {@link Allocation#PFT} instead.
-	 */
-	public static final String ALLOCATION_PFT = "PFT";
 	/**
 	 * @deprecated use {@link Allocation#NPFT} instead.
 	 */
@@ -227,10 +211,6 @@ public class RepayConstants {
 	 */
 	public static final String ALLOCATION_TDS = "TDS";
 	/**
-	 * @deprecated use {@link Allocation#FEE} instead.
-	 */
-	public static final String ALLOCATION_FEE = "FEE";
-	/**
 	 * @deprecated use {@link Allocation#INS} instead.
 	 */
 	public static final String ALLOCATION_INS = "INS";
@@ -238,10 +218,6 @@ public class RepayConstants {
 	 * @deprecated use {@link Allocation#PP} instead.
 	 */
 	public static final String ALLOCATION_PP = "PP";
-	/**
-	 * @deprecated use {@link Allocation#EMI} instead.
-	 */
-	public static final String ALLOCATION_EMI = "EMI";
 	/**
 	 * @deprecated use {@link Allocation#FUTPRI} instead.
 	 */

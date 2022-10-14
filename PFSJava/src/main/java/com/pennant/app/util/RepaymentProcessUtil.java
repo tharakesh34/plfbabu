@@ -262,7 +262,7 @@ public class RepaymentProcessUtil {
 		BigDecimal priPaynow = BigDecimal.ZERO;
 
 		for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
-			if (RepayConstants.ALLOCATION_PRI.equals(allocate.getAllocationType())) {
+			if (Allocation.PRI.equals(allocate.getAllocationType())) {
 				priPaynow = allocate.getPaidAmount();
 				break;
 			}
@@ -1933,8 +1933,8 @@ public class RepaymentProcessUtil {
 
 		// If allocation map is present then Paid adjustment based on Allocations only
 		if (allocationPaidMap != null) {
-			if (allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID())) {
-				BigDecimal remPaidBal = allocationPaidMap.get(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID());
+			if (allocationPaidMap.containsKey(Allocation.FEE + "_" + feeSchd.getFeeID())) {
+				BigDecimal remPaidBal = allocationPaidMap.get(Allocation.FEE + "_" + feeSchd.getFeeID());
 				if (feeBal.compareTo(remPaidBal) > 0) {
 					feeBal = remPaidBal;
 				}
@@ -1950,9 +1950,8 @@ public class RepaymentProcessUtil {
 
 			// If allocation map is present then Waived adjustment based on Allocations only
 			if (allocationWaivedMap != null) {
-				if (allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID())) {
-					BigDecimal remWaivedBal = allocationWaivedMap
-							.get(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID());
+				if (allocationWaivedMap.containsKey(Allocation.FEE + "_" + feeSchd.getFeeID())) {
+					BigDecimal remWaivedBal = allocationWaivedMap.get(Allocation.FEE + "_" + feeSchd.getFeeID());
 					if (feeBal.compareTo(remWaivedBal) > 0) {
 						feeBal = remWaivedBal;
 					}
@@ -1971,11 +1970,9 @@ public class RepaymentProcessUtil {
 
 			// Allocation map Balance adjustment after Collection(Paid/waived)
 			if (allocationWaivedMap != null) {
-				if (allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID())) {
-					BigDecimal remWaivedBal = allocationWaivedMap
-							.get(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID());
-					allocationWaivedMap.put(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID(),
-							remWaivedBal.subtract(feeBal));
+				if (allocationWaivedMap.containsKey(Allocation.FEE + "_" + feeSchd.getFeeID())) {
+					BigDecimal remWaivedBal = allocationWaivedMap.get(Allocation.FEE + "_" + feeSchd.getFeeID());
+					allocationWaivedMap.put(Allocation.FEE + "_" + feeSchd.getFeeID(), remWaivedBal.subtract(feeBal));
 				}
 			}
 
@@ -1991,11 +1988,9 @@ public class RepaymentProcessUtil {
 
 			// Allocation map Balance adjustment after Collection(Paid/waived)
 			if (allocationPaidMap != null) {
-				if (allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID())) {
-					BigDecimal remPaidBal = allocationPaidMap
-							.get(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID());
-					allocationPaidMap.put(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID(),
-							remPaidBal.subtract(feeBal));
+				if (allocationPaidMap.containsKey(Allocation.FEE + "_" + feeSchd.getFeeID())) {
+					BigDecimal remPaidBal = allocationPaidMap.get(Allocation.FEE + "_" + feeSchd.getFeeID());
+					allocationPaidMap.put(Allocation.FEE + "_" + feeSchd.getFeeID(), remPaidBal.subtract(feeBal));
 				}
 			}
 		}
@@ -2483,7 +2478,7 @@ public class RepaymentProcessUtil {
 		BigDecimal priPaynow = BigDecimal.ZERO;
 
 		for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
-			if (RepayConstants.ALLOCATION_PRI.equals(allocate.getAllocationType())) {
+			if (Allocation.PRI.equals(allocate.getAllocationType())) {
 				priPaynow = allocate.getPaidAmount();
 				break;
 			}
@@ -2757,7 +2752,7 @@ public class RepaymentProcessUtil {
 
 				duesList.add(dueData);
 				break;
-			case RepayConstants.ALLOCATION_FEE:
+			case Allocation.FEE:
 				dueData.setAllocType(RepayConstants.DUETYPE_FEES);
 				dueData.setFeeTypeCode(rad.getFeeTypeCode());
 				dueData.setDueDate(rad.getValueDate());

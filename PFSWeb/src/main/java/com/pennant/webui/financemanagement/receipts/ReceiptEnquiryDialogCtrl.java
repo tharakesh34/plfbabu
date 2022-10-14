@@ -665,7 +665,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				} else {
 					this.listBoxPastdues.appendChild(item);
 					if (StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_TDS)
-							|| StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
+							|| StringUtils.equals(allocation.getAllocationType(), Allocation.PFT)) {
 						// Nothing TO DO
 					} else {
 						totalPaidAmount = totalPaidAmount.add(allocation.getPaidAmount());

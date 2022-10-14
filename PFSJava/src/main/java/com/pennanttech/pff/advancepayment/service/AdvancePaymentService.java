@@ -68,6 +68,8 @@ import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 
 public class AdvancePaymentService extends ServiceHelper {
 	private Logger logger = LogManager.getLogger(AdvancePaymentService.class);
@@ -385,7 +387,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		rch.setExcessAdjustTo(PennantConstants.List_Select);
-		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		rch.setAllocationType(AllocationType.AUTO);
 		rch.setReceiptAmount(receiptAmount);
 		// rch.setEffectSchdMethod(PennantConstants.List_Select);
 		rch.setReceiptMode(receiptMode);
@@ -472,8 +474,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		ReceiptAllocationDetail allocation;
 
 		String desc = Labels.getLabel("label_RecceiptDialog_AllocationType_PFT");
-		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_PFT, id,
-				curSchd.getProfitSchd(), desc, 0, "", false, false);
+		allocation = receiptCalculator.setAllocRecord(receiptData, Allocation.PFT, id, curSchd.getProfitSchd(), desc, 0,
+				"", false, false);
 		allocation.setPaidNow(curSchd.getSchdPftPaid());
 		allocation.setPaidAmount(curSchd.getSchdPftPaid());
 		allocation.setReceiptID(receiptID);
@@ -501,8 +503,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		id = id + 1;
 
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_PRI");
-		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_PRI, id,
-				curSchd.getPrincipalSchd(), desc, 0, "", false, false);
+		allocation = receiptCalculator.setAllocRecord(receiptData, Allocation.PRI, id, curSchd.getPrincipalSchd(), desc,
+				0, "", false, false);
 		allocation.setPaidNow(curSchd.getSchdPriPaid());
 		allocation.setPaidAmount(curSchd.getSchdPriPaid());
 		allocation.setReceiptID(receiptID);
@@ -512,8 +514,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		BigDecimal emiDue = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd());
 		BigDecimal emiPaid = curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid());
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_EMI");
-		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_EMI, id, emiDue, desc, 0,
-				"", false, false);
+		allocation = receiptCalculator.setAllocRecord(receiptData, Allocation.EMI, id, emiDue, desc, 0, "", false,
+				false);
 		allocation.setPaidNow(emiPaid);
 		allocation.setPaidAmount(emiPaid);
 		allocation.setReceiptID(receiptID);
@@ -565,7 +567,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		rsd.setLinkedTranId(rph.getLinkedTranId());
 
 		for (ReceiptAllocationDetail allocation : allocations) {
-			if (RepayConstants.ALLOCATION_PFT.equals(allocation.getAllocationType())) {
+			if (Allocation.PFT.equals(allocation.getAllocationType())) {
 				rsd.setProfitSchdPayNow(rsd.getProfitSchdPayNow().add(allocation.getPaidNow()));
 				rsd.setPftSchdWaivedNow(rsd.getPftSchdWaivedNow().add(allocation.getWaivedNow()));
 			} else if (RepayConstants.ALLOCATION_TDS.equals(allocation.getAllocationType())) {

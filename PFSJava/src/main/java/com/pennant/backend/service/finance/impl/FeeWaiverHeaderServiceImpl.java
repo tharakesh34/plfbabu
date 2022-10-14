@@ -418,7 +418,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				fwd.setFinReference(finReference);
 				fwd.setNewRecord(true);
 				fwd.setAdviseId(-4);
-				fwd.setFeeTypeCode(RepayConstants.ALLOCATION_PFT);
+				fwd.setFeeTypeCode(Allocation.PFT);
 				fwd.setFeeTypeDesc(Labels.getLabel("label_feeWaiver_WaiverType_Interest"));
 				fwd.setReceivableAmount(receivableAmt);
 				fwd.setReceivedAmount(receivedAmt);
@@ -1394,8 +1394,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		for (FeeWaiverDetail fw : fwDetails) {
-			if (RepayConstants.ALLOCATION_PFT.equals(fw.getFeeTypeCode())
-					&& fw.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
+			if (Allocation.PFT.equals(fw.getFeeTypeCode()) && fw.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 				feeWaiverDetail = fw;
 				break;
 			}
@@ -1551,7 +1550,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		for (FeeWaiverDetail fwd : fwdList) {
-			if (RepayConstants.ALLOCATION_PFT.equals(fwd.getFeeTypeCode())
+			if (Allocation.PFT.equals(fwd.getFeeTypeCode())
 					&& fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 				feeWaiverDetail = fwd;
 				break;
@@ -1873,7 +1872,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			String feeTypeCode = fwd.getFeeTypeCode();
 
 			if (!Allocation.ODC.equals(feeTypeCode) && !Allocation.LPFT.equals(feeTypeCode)
-					&& !RepayConstants.ALLOCATION_PFT.equals(feeTypeCode)
+					&& !Allocation.PFT.equals(feeTypeCode)
 					&& fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 				BigDecimal curwaivedAmt = fwd.getCurrWaiverAmount();

@@ -77,6 +77,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.rits.cloning.Cloner;
 
 /**
@@ -482,7 +483,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 
 		String allocateMthd = header.getAllocationType();
 		if (StringUtils.isEmpty(allocateMthd)) {
-			allocateMthd = RepayConstants.ALLOCATIONTYPE_AUTO;
+			allocateMthd = AllocationType.AUTO;
 		}
 		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(),

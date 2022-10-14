@@ -145,6 +145,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.web.util.ComponentUtil;
 import com.rits.cloning.Cloner;
 
@@ -1525,7 +1526,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		String allocateMthd = header.getAllocationType();
 		if (StringUtils.isEmpty(allocateMthd)) {
-			allocateMthd = RepayConstants.ALLOCATIONTYPE_AUTO;
+			allocateMthd = AllocationType.AUTO;
 		}
 		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
 		checkByReceiptMode(header.getReceiptMode(), false);
