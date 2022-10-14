@@ -3579,7 +3579,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinReceiptDetail rcd = rd.getReceiptHeader().getReceiptDetails().get(0);
 
-		if (fsi.isNewReceipt() && rcd.getFundingAc() <= 0 && ReceiptMode.isFundingAccountReq(receiptMode)
+		if (fsi.isNewReceipt() && rcd.getFundingAc() != null && rcd.getFundingAc() <= 0
+				&& ReceiptMode.isFundingAccountReq(receiptMode)
 				|| (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE
 						&& ReceiptMode.CASH.equals(receiptMode))) {
 			if (!"MOB".equals(fsi.getReceiptChannel())) {
@@ -3658,8 +3659,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		boolean autoReceipt = ReceiptUtil.isAutoReceipt(fsi.getPaymentMode(), fm.getFinCategory());
 
-		long fundingAccount = fsi.getReceiptDetail().getFundingAc();
-		fsi.setFundingAc(fundingAccount);
+		Long fundingAccount = fsi.getReceiptDetail().getFundingAc();
+		if (fundingAccount != null) {
+			fsi.setFundingAc(fundingAccount);
+		}
 		String receiptMode = fsi.getPaymentMode();
 
 		if (ReceiptMode.ONLINE.equals(receiptMode)) {
@@ -5678,7 +5681,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		rch.setPartnerBankId(rcd.getFundingAc());
-		if (rcd.getFundingAc() > 0) {
+		if (rcd.getFundingAc() != null && rcd.getFundingAc() > 0) {
 			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(rcd.getFundingAc());
 			if (partnerBank != null) {
 				rcd.setPartnerBankAc(partnerBank.getAccountNo());
@@ -6386,26 +6389,27 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fd.getFinScheduleData().setReceiptAllocationList(rch.getAllocations());
 		}
 
-		if (rcd.getFundingAc() > 0) {
-			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(rcd.getFundingAc(), "");
-			if (partnerBank != null) {
-				rcd.setPartnerBankAc(partnerBank.getAccountNo());
-				rcd.setPartnerBankAcType(partnerBank.getAcType());
-			}
-		}
-
-		String receiptMode = fsi.getPaymentMode();
-		if (ReceiptMode.ONLINE.equals(receiptMode)) {
-			receiptMode = fsi.getSubReceiptMode();
-		}
-
-		if (!ReceiptMode.CHEQUE.equals(receiptMode) && !ReceiptMode.DD.equals(receiptMode)) {
+		Long fundingAc = rcd.getFundingAc();
+		if (fundingAc != null && fundingAc > 0) {
 			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(rcd.getFundingAc(), "");
 			if (partnerBank != null) {
 				rcd.setPartnerBankAc(partnerBank.getAccountNo());
 				rcd.setPartnerBankAcType(partnerBank.getAcType());
 			}
 
+			String receiptMode = fsi.getPaymentMode();
+			if (ReceiptMode.ONLINE.equals(receiptMode)) {
+				receiptMode = fsi.getSubReceiptMode();
+			}
+
+			if (!ReceiptMode.CHEQUE.equals(receiptMode) && !ReceiptMode.DD.equals(receiptMode)) {
+				PartnerBank pBank = partnerBankDAO.getPartnerBankById(rcd.getFundingAc(), "");
+				if (pBank != null) {
+					rcd.setPartnerBankAc(pBank.getAccountNo());
+					rcd.setPartnerBankAcType(pBank.getAcType());
+				}
+
+			}
 		}
 
 		AuditHeader auditHeader = getAuditHeader(rd, PennantConstants.TRAN_WF);
