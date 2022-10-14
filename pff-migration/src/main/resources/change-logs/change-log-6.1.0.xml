@@ -535,9 +535,13 @@
 	<changeSet id="04" author="rahul.r">
 		<sql>
 			<![CDATA[
+				Alter Table collateral_land_ed drop column noofunits1;
+				Alter Table collateral_land_ed drop column unitprice1;
 				Alter Table collateral_land_ed drop column noofunits;
 				Alter Table collateral_land_ed drop column unitprice;
-			
+				
+				Alter Table collateral_land_ed_temp drop column noofunits1;
+				Alter Table collateral_land_ed_temp drop column unitprice1;
 				Alter Table collateral_land_ed_temp drop column noofunits;
 				Alter Table collateral_land_ed_temp drop column unitprice;
 			]]>
@@ -547,11 +551,11 @@
 	<changeSet id="05" author="rahul.r">
 		<sql>
 			<![CDATA[
-				Alter Table collateral_land_ed drop column noofunits1;
-				Alter Table collateral_land_ed drop column unitprice1;
-				
-				Alter Table collateral_land_ed_temp drop column noofunits1;
-				Alter Table collateral_land_ed_temp drop column unitprice1;
+				Alter Table collateral_land_ed drop column noofunits;
+				Alter Table collateral_land_ed drop column unitprice;
+
+				Alter Table collateral_land_ed_temp drop column noofunits;
+				Alter Table collateral_land_ed_temp drop column unitprice;
 			]]>
 		</sql>
 	</changeSet>
