@@ -5,8 +5,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<bean id="presentmentExtractionService" class="com.pennant.pff.presentment.PresentmentExtractionService" >
-		<property name="peJobLauncher" ref="peJobLauncher"></property>
-		<property name="peExtractionJob" ref="peExtractionJob"></property>
+		<property name="peJobLauncher" ref="peJobLauncher"/>
+		<property name="peExtractionJob" ref="peExtractionJob"/>
 	</bean>
 	
 	<bean id="presentmentExtractionJob" class="com.pennant.pff.presentment.PresentmentExtractionJob"/>
@@ -16,6 +16,8 @@
 	<bean id="preparation" class="com.pennant.pff.presentment.tasklet.PreparationTasklet" />
 
 	<bean id="grouping" class="com.pennant.pff.presentment.tasklet.GroupingTasklet" />
+	
+	<bean id="approval" class="com.pennant.pff.presentment.tasklet.ApprovalTasklet" />
 
 	<bean id="presentmentEngine" class="com.pennant.pff.presentment.service.PresentmentEngine" />
 

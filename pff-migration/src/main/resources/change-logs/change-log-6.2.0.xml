@@ -83,7 +83,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#93.9" author="nagavamsi.p" dbms="oracle">
 		<sql>
 			<![CDATA[  
@@ -148,26 +148,30 @@
 		<addNotNullConstraint tableName="AccountMapping_Temp" columnName="CreatedOn"
 			columnDataType="datetime" />
 	</changeSet>
-	
+
 	<changeSet id="ST#93.14.1" author="nagavamsi.p">
-		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="OpenedDate" columnDataType="datetime"/>
+		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="OpenedDate"
+			columnDataType="datetime" />
 	</changeSet>
 
 	<changeSet id="ST#93.15.1" author="nagavamsi.p">
-		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="Status" columnDataType="varchar(8)"/>
+		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="Status"
+			columnDataType="varchar(8)" />
 	</changeSet>
 
 	<changeSet id="ST#93.16.1" author="nagavamsi.p">
 		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="AllowedManualEntry"
 			columnDataType="Char(1)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#93.17.1" author="nagavamsi.p">
-		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="CreatedBy" columnDataType="bigint" />
+		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="CreatedBy"
+			columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="ST#93.18.1" author="nagavamsi.p">
-		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="CreatedOn" columnDataType="datetime" />
+		<dropNotNullConstraint tableName="AccountMapping_Temp" columnName="CreatedOn"
+			columnDataType="datetime" />
 	</changeSet>
 
 	<changeSet id="ST#93.19" author="nagavamsi.p">
@@ -225,7 +229,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#93.27" author="nagavamsi.p" dbms="oracle">
 		<sql>
 			<![CDATA[  
@@ -287,27 +291,29 @@
 	<changeSet id="ST#93.36" author="nagavamsi.p">
 		<addNotNullConstraint tableName="AccountMapping" columnName="CreatedOn" columnDataType="datetime" />
 	</changeSet>
-	
+
 	<changeSet id="ST#93.32.1" author="nagavamsi.p">
 		<dropNotNullConstraint tableName="AccountMapping" columnName="OpenedDate"
 			columnDataType="datetime" />
 	</changeSet>
 
 	<changeSet id="ST#93.33.1" author="nagavamsi.p">
-		<dropNotNullConstraint tableName="AccountMapping" columnName="Status" columnDataType="varchar(8)" />
+		<dropNotNullConstraint tableName="AccountMapping" columnName="Status"
+			columnDataType="varchar(8)" />
 	</changeSet>
 
 	<changeSet id="ST#93.34.1" author="nagavamsi.p">
 		<dropNotNullConstraint tableName="AccountMapping" columnName="AllowedManualEntry"
 			columnDataType="Char(1)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#93.35.1" author="nagavamsi.p">
 		<dropNotNullConstraint tableName="AccountMapping" columnName="CreatedBy" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="ST#93.36.1" author="nagavamsi.p">
-		<dropNotNullConstraint tableName="AccountMapping" columnName="CreatedOn" columnDataType="datetime" />
+		<dropNotNullConstraint tableName="AccountMapping" columnName="CreatedOn"
+			columnDataType="datetime" />
 	</changeSet>
 
 	<changeSet id="ST#93.37_pre" author="nagavamsi.p" dbms="postgresql">
@@ -1201,7 +1207,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#84.46" author="Mounika.M" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1873,7 +1879,7 @@
 			<column name="SecurityMandate" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.3.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -1881,11 +1887,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.3_post" author="saikiran.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="SecurityMandate" tableName="Mandates_Temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#76.3_post" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -1960,7 +1966,7 @@
 			<column name="SecurityMandate" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.14.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -1968,11 +1974,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.14_post" author="saikiran.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="SecurityMandate" tableName="Mandates" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#76.14_post" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3167,7 +3173,7 @@
 			<column name="Nach" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.2.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3175,7 +3181,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.2_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Nach" tableName="BMTBankDetail_Temp" defaultValue="0" />
 	</changeSet>
@@ -3193,7 +3199,7 @@
 			<column name="Dd" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.3.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3201,7 +3207,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.3_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Dd" tableName="BMTBankDetail_Temp" defaultValue="0" />
 	</changeSet>
@@ -3219,7 +3225,7 @@
 			<column name="Dda" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.4.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3227,7 +3233,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.4_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Dda" tableName="BMTBankDetail_Temp" defaultValue="0" />
 	</changeSet>
@@ -3245,7 +3251,7 @@
 			<column name="Ecs" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.5.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3253,7 +3259,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#94.5_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Ecs" tableName="BMTBankDetail_Temp" defaultValue="0" />
 	</changeSet>
@@ -3271,7 +3277,7 @@
 			<column name="Cheque" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.6.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3279,7 +3285,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#94.6_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Cheque" tableName="BMTBankDetail_Temp" defaultValue="0" />
 	</changeSet>
@@ -3297,7 +3303,7 @@
 			<column name="Emandate" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.7.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3305,7 +3311,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.7_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Emandate" tableName="BMTBankDetail_Temp" defaultValue="0" />
 	</changeSet>
@@ -3323,7 +3329,7 @@
 			<column name="AllowedSources" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.8.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3331,7 +3337,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.8_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="AllowedSources" tableName="BMTBankDetail_Temp" defaultValue="0" />
 	</changeSet>
@@ -3349,7 +3355,7 @@
 			<column name="UpdateBranches" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.9.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3357,7 +3363,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#94.9_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="UpdateBranches" tableName="BMTBankDetail_Temp" defaultValue="0" />
 	</changeSet>
@@ -3375,7 +3381,7 @@
 			<column name="Nach" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.10.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3383,7 +3389,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.10_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Nach" tableName="BMTBankDetail" defaultValue="0" />
 	</changeSet>
@@ -3401,7 +3407,7 @@
 			<column name="Dd" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.11.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3409,7 +3415,7 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ST#94.11_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Dd" tableName="BMTBankDetail" defaultValue="0" />
 	</changeSet>
@@ -3427,7 +3433,7 @@
 			<column name="Dda" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.12.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3435,7 +3441,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#94.12_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Dda" tableName="BMTBankDetail" defaultValue="0" />
 	</changeSet>
@@ -3453,7 +3459,7 @@
 			<column name="Ecs" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.13.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3461,7 +3467,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#94.13_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Ecs" tableName="BMTBankDetail" defaultValue="0" />
 	</changeSet>
@@ -3479,7 +3485,7 @@
 			<column name="Cheque" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.14.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3487,7 +3493,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#94.14_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Cheque" tableName="BMTBankDetail" defaultValue="0" />
 	</changeSet>
@@ -3505,7 +3511,7 @@
 			<column name="Emandate" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.15.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3513,7 +3519,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#94.15_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="Emandate" tableName="BMTBankDetail" defaultValue="0" />
 	</changeSet>
@@ -3537,7 +3543,7 @@
 			<column name="UpdateBranches" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.17.1_post" author="saikiran.n">
 		<sql>
 			<![CDATA[  
@@ -3545,7 +3551,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.17_post" author="saikiran.n" dbms="oracle, postgresql">
 		<addDefaultValue columnName="UpdateBranches" tableName="BMTBankDetail" defaultValue="0" />
 	</changeSet>
@@ -3557,7 +3563,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.18_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3584,7 +3590,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.18_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3821,10 +3827,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.0" author="saikrishna.b">
 		<createTable tableName="Presentment_Extraction_Job">
-			<column name="ID" type="bigint" autoIncrement="true" >
+			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
 			<column name="Name" type="varchar(10)" />
@@ -3843,7 +3849,7 @@
 
 	<changeSet id="ST#99.1" author="saikrishna.b">
 		<createTable tableName="Presentment_Extraction_Stage">
-			<column name="ID" type="bigint" autoIncrement="true" >
+			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
 			<column name="JobID" type="bigint" />
@@ -3950,7 +3956,7 @@
 
 	<changeSet id="ST#112.1" author="sandeepkumar.m">
 		<createTable tableName="Presentment_Exclude_Codes">
-			<column name="ID" type="bigint" >
+			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="Code" type="varchar(20)">
@@ -4043,7 +4049,7 @@
 
 	<changeSet id="ST#112.7" author="sandeepkumar.m">
 		<createTable tableName="Presentment_Exclude_Codes_temp">
-			<column name="ID" type="bigint" >
+			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="Code" type="varchar(20)">
@@ -4163,7 +4169,7 @@
 
 	<changeSet id="ST#90.0" author="Alekhya.T">
 		<createTable tableName="Instrument_Types">
-			<column name="ID" type="bigint" >
+			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="Code" type="varchar(8)" />
@@ -4244,7 +4250,7 @@
 
 	<changeSet id="ST#90.4" author="Alekhya.T">
 		<createTable tableName="Instrument_Types_Temp">
-			<column name="ID" type="bigint" >
+			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="Code" type="varchar(8)" />
@@ -4331,7 +4337,7 @@
 
 	<changeSet id="ST#90.9" author="Alekhya.T">
 		<createTable tableName="Due_Extraction_Header">
-			<column name="ID" type="bigint" >
+			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="ExtractionMonth" type="varchar(10)">
@@ -4389,7 +4395,7 @@
 
 	<changeSet id="ST#90.12" author="Alekhya.T">
 		<createTable tableName="Due_Extraction_Header_Temp">
-			<column name="ID" type="bigint" >
+			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="ExtractionMonth" type="varchar(10)">
@@ -4452,7 +4458,7 @@
 
 	<changeSet id="ST#90.16" author="Alekhya.T">
 		<createTable tableName="Due_Extraction_Config">
-			<column name="ID" type="bigint" >
+			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="MonthID" type="bigint">
@@ -4538,7 +4544,7 @@
 
 	<changeSet id="ST#90.22" author="Alekhya.T">
 		<createTable tableName="Due_Extraction_Config_Temp">
-			<column name="ID" type="bigint" >
+			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="MonthID" type="bigint">
@@ -4625,7 +4631,7 @@
 
 	<changeSet id="ST#90.28" author="Alekhya.T">
 		<createTable tableName="Due_Extraction_Config_Log">
-			<column name="ID" type="bigint" >
+			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="MonthID" type="bigint">
@@ -4687,7 +4693,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#90.30.1" author="Alekhya.T">
 		<sql>
 			<![CDATA[
@@ -4714,7 +4720,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#90.32" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -4723,7 +4729,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.29" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -4739,7 +4745,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#206624" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -4747,7 +4753,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#206193.2_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4782,7 +4788,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.30.1" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -4792,7 +4798,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#112.001" author="sandeep">
 		<sql>
 			<![CDATA[
@@ -4801,7 +4807,7 @@
         	 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.31.1" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -4811,8 +4817,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="ST#112.002" author="Gopal.p">
+
+	<changeSet id="ST#112.002" author="Gopal.p">
 		<sql>
 			<![CDATA[
 			    DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'DUE_EXTRACTION_CONFIG_MAKER');
@@ -4853,7 +4859,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.32" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -4863,7 +4869,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.33" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -4873,37 +4879,37 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="01" author="Gopal.p">
 		<addColumn tableName="Presentment_Extraction_Stage">
 			<column name="SchdVersion" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="02" author="Gopal.p">
 		<addColumn tableName="PresentmentDetails">
 			<column name="SchdVersion" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="03" author="Gopal.p">
 		<addColumn tableName="PRESENTMENTDETAILS">
 			<column name="FateCorrection" type="char(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="04" author="Gopal.p">
 		<addColumn tableName="PRESENTMENT_FILEIMPORT">
 			<column name="FateCorrection" type="char(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="05" author="Gopal.p">
 		<addColumn tableName="PRESENTMENT_RESP_DTLS">
 			<column name="FateCorrection" type="char(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="06" author="saikrishna.b">
 		<sql>
 			<![CDATA[	
@@ -4911,7 +4917,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="07" author="saikrishna.b">
 		<sql>
 			<![CDATA[	
@@ -4919,7 +4925,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="08" author="saikrishna.b">
 		<sql>
 			<![CDATA[	
@@ -4927,19 +4933,22 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="09" author="saikrishna.b">
-		<addNotNullConstraint tableName="PRESENTMENTDETAILS" columnName="FateCorrection" columnDataType="char(1)" />
+		<addNotNullConstraint tableName="PRESENTMENTDETAILS" columnName="FateCorrection"
+			columnDataType="char(1)" />
 	</changeSet>
-	
+
 	<changeSet id="10" author="saikrishna.b">
-		<addNotNullConstraint tableName="PRESENTMENT_FILEIMPORT" columnName="FateCorrection" columnDataType="char(1)" />
+		<addNotNullConstraint tableName="PRESENTMENT_FILEIMPORT" columnName="FateCorrection"
+			columnDataType="char(1)" />
 	</changeSet>
-	
+
 	<changeSet id="11" author="saikrishna.b">
-		<addNotNullConstraint tableName="PRESENTMENT_RESP_DTLS" columnName="FateCorrection" columnDataType="char(1)" />
+		<addNotNullConstraint tableName="PRESENTMENT_RESP_DTLS" columnName="FateCorrection"
+			columnDataType="char(1)" />
 	</changeSet>
-	
+
 	<changeSet id="12" author="saikrishna.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="FateCorrection" tableName="PRESENTMENTDETAILS" defaultValue="N" />
 	</changeSet>
@@ -4951,7 +4960,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="13" author="saikrishna.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="FateCorrection" tableName="PRESENTMENT_FILEIMPORT" defaultValue="N" />
 	</changeSet>
@@ -4963,7 +4972,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="14" author="saikrishna.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="FateCorrection" tableName="PRESENTMENT_RESP_DTLS" defaultValue="N" />
 	</changeSet>
@@ -4975,5 +4984,96 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="15" author="murthy.y">
+		<sql>
+			<![CDATA[	
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentDetail_PresentmentFileDownlaod');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentDetail_PresentmentFileDownlaod';
+
+
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_PresentmentDetail_PresentmentFileDownlaod', 'FileDBInterface', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENTBATCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentDetail_PresentmentFileDownlaod'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENTBATCH_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentDetail_PresentmentFileDownlaod'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="16_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'presentmentdetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="16" author="murthy.y">
+		<createView replaceIfExists="true" viewName="PRESENTMENTDETAILS_AVIEW">
+			<![CDATA[
+				SELECT T1.ID, 
+					T1.PRESENTMENTID, 
+					T1.PRESENTMENTREF,
+					T1.FINID, 
+					T1.FINREFERENCE, 
+					T1.SCHDATE, 
+					T1.MANDATEID, 
+					T1.SCHAMTDUE, 
+					T1.SCHPRIDUE, 
+					T1.SCHPFTDUE, 
+					T1.SCHFEEDUE,
+					T1.SCHINSDUE, 
+					T1.SCHPENALTYDUE, 
+					T1.ADVANCEAMT, 
+					T1.EXCESSID, 
+					T1.ADVISEAMT, 
+					T1.PRESENTMENTAMT, 
+					T1.EXCLUDEREASON, 
+					T1.TDSAMOUNT, 
+					T1.BOUNCEID, 
+					T1.EMINO, 
+					T1.STATUS,
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON,
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID, 
+					PH.MANDATETYPE, 
+					T3.FINTYPE,
+					T4.FINTYPEDESC, 
+					T5.CUSTSHRTNAME CUSTOMERNAME,
+					T1.RECEIPTID, 
+					T1.ECSRETURN, 
+					T1.ERRORCODE, 
+					T1.ERRORDESC, 
+					T1.MANUALADVISEID,
+					T1.CHARGES,
+					T1.LPPAMOUNT, 
+					T1.BOUNCEAMOUNT, 
+					T7.BANKNAME
+				FROM PRESENTMENTDETAILS T1
+                INNER JOIN PRESENTMENTHEADER PH ON PH.ID = T1.PRESENTMENTID
+                LEFT JOIN MANDATES T2 ON T1.MANDATEID = T2.MANDATEID
+				INNER JOIN FINANCEMAIN T3 ON T1.FINID = T3.FINID 
+				INNER JOIN RMTFINANCETYPES T4 ON T3.FINTYPE = T4.FINTYPE 
+				INNER JOIN CUSTOMERS T5 ON T5.CUSTID = T3.CUSTID 
+				LEFT JOIN BANKBRANCHES T6 ON T2.BANKBRANCHID = T6.BANKBRANCHID 
+				LEFT JOIN BMTBANKDETAIL T7 ON T6.BANKCODE = T7.BANKCODE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="16_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'presentmentdetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

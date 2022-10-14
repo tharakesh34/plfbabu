@@ -98,16 +98,23 @@ public class ReceiptPaymentService {
 
 		if (pd.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0 && pd.getExcessID() != 0) {
 			logger.info("Creating Receipts for EMI In Advance...");
-			createEMIInAdvReceipt(receiptDTO);
+			if (RepayConstants.PEXC_APPROV.equals(pd.getStatus())) {
+				createEMIInAdvReceipt(receiptDTO);
+			}
 		}
 
-		createReceiptAndBounce(receiptDTO);
+		if (RepayConstants.PEXC_IMPORT.equals(pd.getStatus())) {
+			createReceiptAndBounce(receiptDTO);
+		}
 
 		if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION && pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 			logger.info("Creating Receipts for Presentment...");
-			createPresentmentReceipt(receiptDTO);
-		} else
 
+			if (RepayConstants.PEXC_APPROV.equals(pd.getStatus())) {
+				createPresentmentReceipt(receiptDTO);
+			}
+
+		} else
 			logger.debug(Literal.LEAVING);
 	}
 

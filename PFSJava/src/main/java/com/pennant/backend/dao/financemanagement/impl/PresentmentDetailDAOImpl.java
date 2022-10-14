@@ -1051,8 +1051,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			if (includeData) {
 				ps.setInt(index++, RepayConstants.PEXC_EMIINCLUDE);
 				ps.setInt(index++, RepayConstants.PEXC_EMIINADVANCE);
-				ps.setString(index, RepayConstants.PEXC_APPROV);
-				ps.setInt(index++, 0);
+				ps.setString(index++, RepayConstants.PEXC_APPROV);
+				ps.setInt(index, 0);
 			}
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
@@ -1103,14 +1103,14 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	@Override
 	public List<PresentmentDetail> getPresentmenToPost(long custId, Date schData) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.CustId, fm.FinBranch, fm.FinType, pd.Id, pd.PresentmentId");
+		sql.append(" fm.CustId, fm.FinBranch, fm.FinType, pd.Id, pd.PresentmentId, pd.Status");
 		sql.append(", fm.FinID, pd.FinReference, pd.SchDate, pd.MandateId, pd.AdvanceAmt, pd.ExcessID");
 		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, pb.AccountNo, pb.AcType, pb.PartnerBankId");
 		sql.append(" From PresentmentDetails pd ");
 		sql.append(" Inner join PresentmentHeader ph on ph.Id = pd.PresentmentId");
 		sql.append(" Left join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
 		sql.append(" Inner join Financemain fm on pd.FinID = fm.FinID");
-		sql.append(" Where fm.CustId = ? and pd.SchDate = ? and pd.Status = ?");
+		sql.append(" Where fm.CustId = ? and pd.SchDate = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1118,13 +1118,13 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			int index = 1;
 			ps.setLong(index++, custId);
 			ps.setDate(index++, JdbcUtil.getDate(schData));
-			ps.setString(index, RepayConstants.PEXC_APPROV);
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 
 			pd.setFinType(rs.getString("FinType"));
 			pd.setId(rs.getLong("Id"));
 			pd.setHeaderId(rs.getLong("PresentmentId"));
+			pd.setStatus(rs.getString("Status"));
 			pd.setFinID(rs.getLong("FinID"));
 			pd.setFinReference(rs.getString("FinReference"));
 			pd.setSchDate(rs.getTimestamp("SchDate"));

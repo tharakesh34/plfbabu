@@ -409,13 +409,12 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		detailHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		detailHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		detailHeader.setEmandateSource(emandateSource.getValidatedValue());
+
+		presentmentExtractionService.extractPresentment(detailHeader);
+
 		logger.debug(Literal.LEAVING);
 
-		// presentmentExtractionService.extractPresentment(detailHeader);
-
-		PresentmentExtractionService.extractPresentment();
-
-		return "";
+		return "Presentment extraction process initiated…";
 	}
 
 	/**
