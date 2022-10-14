@@ -3215,10 +3215,10 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
 
 			if (ImplementationConstants.ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS) {
-				excessAdjustTo.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASHCLT,
+				excessAdjustTo.add(new ValueLabel(ReceiptMode.CASHCLT,
 						Labels.getLabel("label_RecceiptDialog_ExcessType_CASHCLT")));
-				excessAdjustTo.add(new ValueLabel(RepayConstants.RECEIPTMODE_DSF,
-						Labels.getLabel("label_RecceiptDialog_ExcessType_DSF")));
+				excessAdjustTo
+						.add(new ValueLabel(ReceiptMode.DSF, Labels.getLabel("label_RecceiptDialog_ExcessType_DSF")));
 			}
 
 			// excessAdjustTo.add(new
@@ -3234,11 +3234,9 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getReceiptModes() {
 		if (receiptModes == null) {
 			receiptModes = new ArrayList<ValueLabel>(8);
-			receiptModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASH, Labels.getLabel("label_ReceiptMode_Cash")));
-			receiptModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_CHEQUE, Labels.getLabel("label_ReceiptMode_Cheque")));
-			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_DD, Labels.getLabel("label_ReceiptMode_DD")));
+			receiptModes.add(new ValueLabel(ReceiptMode.CASH, Labels.getLabel("label_ReceiptMode_Cash")));
+			receiptModes.add(new ValueLabel(ReceiptMode.CHEQUE, Labels.getLabel("label_ReceiptMode_Cheque")));
+			receiptModes.add(new ValueLabel(ReceiptMode.DD, Labels.getLabel("label_ReceiptMode_DD")));
 			receiptModes
 					.add(new ValueLabel(RepayConstants.RECEIPTMODE_NEFT, Labels.getLabel("label_ReceiptMode_NEFT")));
 			receiptModes
@@ -4730,8 +4728,8 @@ public class PennantStaticListUtil {
 			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EMIINADV, Labels.getLabel("label_EMI_Advance")));
 			knockOffFrom
 					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYABLE, Labels.getLabel("label_Payable_Advice")));
-			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASHCLT, Labels.getLabel("label_CASHCLT")));
-			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_DSF, Labels.getLabel("label_DSF")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.CASHCLT, Labels.getLabel("label_CASHCLT")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.DSF, Labels.getLabel("label_DSF")));
 			knockOffFrom
 					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PRESENTMENT, Labels.getLabel("label_PRESENTMENT")));
 

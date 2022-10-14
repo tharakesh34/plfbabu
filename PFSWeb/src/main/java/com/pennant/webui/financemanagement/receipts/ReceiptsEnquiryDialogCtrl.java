@@ -1493,10 +1493,10 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			return RepayConstants.RECEIPTMODE_EMIINADV;
 		case RepayConstants.EXAMOUNTTYPE_EXCESS:
 			return RepayConstants.RECEIPTMODE_EXCESS;
-		case RepayConstants.RECEIPTMODE_ADVEMI:
+		case ReceiptMode.ADVEMI:
 		case RepayConstants.RECEIPTMODE_ADVINT:
-		case RepayConstants.RECEIPTMODE_CASHCLT:
-		case RepayConstants.RECEIPTMODE_DSF:
+		case ReceiptMode.CASHCLT:
+		case ReceiptMode.DSF:
 			return mode;
 		default:
 			return mode;

@@ -52,6 +52,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptRealization/ReceiptRealizationList.zul file.
@@ -179,8 +180,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		this.searchObject.addWhereClause(" FinIsActive = 1 AND (ReceiptModeStatus = '"
 				+ RepayConstants.PAYSTATUS_APPROVED + "' " + " OR ( ReceiptModeStatus = '"
 				+ RepayConstants.PAYSTATUS_REALIZED + "' AND (RecordType IS NOT NULL AND RecordType<>'' )) ) "
-				+ " AND (ReceiptMode = '" + RepayConstants.RECEIPTMODE_CHEQUE + "' OR ReceiptMode = '"
-				+ RepayConstants.RECEIPTMODE_DD + "') ");
+				+ " AND (ReceiptMode = '" + ReceiptMode.CHEQUE + "' OR ReceiptMode = '" + ReceiptMode.DD + "') ");
 	}
 
 	/**

@@ -109,6 +109,7 @@ import com.pennanttech.pff.payment.service.LoanPaymentService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
@@ -497,10 +498,8 @@ public class RepaymentProcessUtil {
 			if (!RepayConstants.RECEIPTMODE_EMIINADV.equals(paymentType)
 					&& !RepayConstants.RECEIPTMODE_EXCESS.equals(paymentType)
 					&& !RepayConstants.RECEIPTMODE_PAYABLE.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_CASHCLT.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_DSF.equals(paymentType)) {
+					&& !RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType) && !ReceiptMode.ADVEMI.equals(paymentType)
+					&& !ReceiptMode.CASHCLT.equals(paymentType) && !ReceiptMode.DSF.equals(paymentType)) {
 				receiptFromBank = receiptFromBank.add(rcd.getAmount());
 			}
 		}
@@ -738,12 +737,12 @@ public class RepaymentProcessUtil {
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extDataMap.put("ae_toExcessAmt", toExcess);
 				break;
-			case RepayConstants.RECEIPTMODE_DSF:
+			case ReceiptMode.DSF:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extDataMap.put("ae_toDSFAmt", toExcess);
 				dataMap.put("ae_toDSFAmt", toExcess);
 				break;
-			case RepayConstants.RECEIPTMODE_CASHCLT:
+			case ReceiptMode.CASHCLT:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extDataMap.put("ae_toCashCollAmt", toExcess);
 				dataMap.put("ae_toCashCollAmt", toExcess);
@@ -1571,9 +1570,9 @@ public class RepaymentProcessUtil {
 			if (RepayConstants.RECEIPTMODE_EXCESS.equals(rcd.getPaymentType())
 					|| RepayConstants.RECEIPTMODE_EMIINADV.equals(rcd.getPaymentType())
 					|| RepayConstants.RECEIPTMODE_ADVINT.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_CASHCLT.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_DSF.equals(rcd.getPaymentType())) {
+					|| ReceiptMode.ADVEMI.equals(rcd.getPaymentType())
+					|| ReceiptMode.CASHCLT.equals(rcd.getPaymentType())
+					|| ReceiptMode.DSF.equals(rcd.getPaymentType())) {
 
 				long payAgainstID = rcd.getPayAgainstID();
 

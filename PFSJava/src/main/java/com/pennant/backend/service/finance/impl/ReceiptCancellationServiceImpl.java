@@ -161,6 +161,7 @@ import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.rits.cloning.Cloner;
 
 public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService implements ReceiptCancellationService {
@@ -239,7 +240,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// Bounce reason Code
 		if ((StringUtils.isNotEmpty(rch.getRecordType())
 				&& RepayConstants.MODULETYPE_BOUNCE.equals(rch.getReceiptModeStatus()))
-				|| (isFeePayment && RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(rch.getReceiptMode()))) {
+				|| (isFeePayment && ReceiptMode.CHEQUE.equalsIgnoreCase(rch.getReceiptMode()))) {
 			rch.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptID, "_TView"));
 		}
 
@@ -860,7 +861,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		if (ImplementationConstants.DEPOSIT_PROC_REQ) {
 			if (!PennantConstants.method_doReject.equals(method)
 					&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(rch.getRecordStatus())
-					&& RepayConstants.RECEIPTMODE_CASH.equals(rch.getReceiptMode())) {
+					&& ReceiptMode.CASH.equals(rch.getReceiptMode())) {
 
 				DepositMovements movement = depositDetailsDAO.getDepositMovementsByReceiptId(rch.getReceiptID(),
 						"_AView");
@@ -868,7 +869,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// Find Amount of Deposited Request
 					BigDecimal reqAmount = BigDecimal.ZERO;
 					for (FinReceiptDetail rcptDetail : rch.getReceiptDetails()) {
-						if (RepayConstants.RECEIPTMODE_CASH.equals(rcptDetail.getPaymentType())) { // CASH
+						if (ReceiptMode.CASH.equals(rcptDetail.getPaymentType())) { // CASH
 							reqAmount = reqAmount.add(rcptDetail.getAmount());
 						}
 					}
@@ -1959,8 +1960,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				FinReceiptDetail receiptDetail = rch.getReceiptDetails().get(i);
 				if (!isBounceProcess
 						|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)
-						|| (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
-								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))) {
+						|| (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.CHEQUE)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.DD))) {
 					finReceiptDetailDAO.updateReceiptStatus(receiptDetail.getReceiptID(),
 							receiptDetail.getReceiptSeqID(), rch.getReceiptModeStatus());
 
@@ -1970,9 +1971,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
 								|| StringUtils.equals(receiptDetail.getPaymentType(),
 										RepayConstants.RECEIPTMODE_EMIINADV)
-								|| StringUtils.equals(receiptDetail.getPaymentType(),
-										RepayConstants.RECEIPTMODE_CASHCLT)
-								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DSF)) {
+								|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.CASHCLT)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.DSF)) {
 
 							// Excess utilize Reversals
 							finExcessAmountDAO.updateExcessAmount(receiptDetail.getPayAgainstID(), "U",
@@ -1990,14 +1990,14 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 			// Accounting Execution Process for Deposit Reversal for CASH
 			if (ImplementationConstants.DEPOSIT_PROC_REQ) {
-				if (RepayConstants.RECEIPTMODE_CASH.equals(receiptMode)) {
+				if (ReceiptMode.CASH.equals(receiptMode)) {
 
 					DepositMovements movement = depositDetailsDAO.getDepositMovementsByReceiptId(receiptID, "_AView");
 					if (movement != null) {
 						// Find Amount of Deposited Request
 						BigDecimal reqAmount = BigDecimal.ZERO;
 						for (FinReceiptDetail rcptDetail : rch.getReceiptDetails()) {
-							if (RepayConstants.RECEIPTMODE_CASH.equals(rcptDetail.getPaymentType())) { // CASH
+							if (ReceiptMode.CASH.equals(rcptDetail.getPaymentType())) { // CASH
 								reqAmount = reqAmount.add(rcptDetail.getAmount());
 							}
 						}
@@ -2024,8 +2024,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				// Accounting Execution Process for Deposit Reversal for Cheque
 				// / DD
-				if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)
-						|| RepayConstants.RECEIPTMODE_DD.equals(receiptMode)) {
+				if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
 
 					// Verify Cheque or DD Details exists in Deposited Cheques
 					DepositCheques depositCheque = depositChequesDAO.getDepositChequeByReceiptID(receiptID);
@@ -2050,8 +2049,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							// Find Amount of Deposited Request
 							BigDecimal reqAmount = BigDecimal.ZERO;
 							for (FinReceiptDetail rcptDetail : rch.getReceiptDetails()) {
-								if (RepayConstants.RECEIPTMODE_CHEQUE.equals(rcptDetail.getPaymentType())
-										|| RepayConstants.RECEIPTMODE_DD.equals(rcptDetail.getPaymentType())) { // Cheque/DD
+								if (ReceiptMode.CHEQUE.equals(rcptDetail.getPaymentType())
+										|| ReceiptMode.DD.equals(rcptDetail.getPaymentType())) { // Cheque/DD
 									reqAmount = reqAmount.add(rcptDetail.getAmount());
 								}
 							}

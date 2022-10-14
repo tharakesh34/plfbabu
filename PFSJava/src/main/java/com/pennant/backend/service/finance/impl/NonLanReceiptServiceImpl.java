@@ -77,6 +77,7 @@ import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.rits.cloning.Cloner;
 
 public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implements NonLanReceiptService {
@@ -388,7 +389,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			receiptCancellationService.doApproveNonLanReceipt(aAuditHeader);
 
 			// Calling Collection Agencies API
-			if (RECEIPT_SOURCE_MOBILE.equals(receiptSource) && ((RepayConstants.RECEIPTMODE_CASH.equals(receiptMode)
+			if (RECEIPT_SOURCE_MOBILE.equals(receiptSource) && ((ReceiptMode.CASH.equals(receiptMode)
 					&& RECEIPT_CHANNEL_MOBILE.equals(receiptChannel))
 					|| (RepayConstants.RECEIPTMODE_ONLINE.equals(receiptMode)
 							&& RepayConstants.RECEIPTMODE_BANKDEPOSIT.equals(receiptHeader.getSubReceiptMode())))) {
@@ -426,8 +427,8 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 
 			linkedTranId = executeAccounting(receiptData);
 
-		} else if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())
-				&& !StringUtils.equals(RepayConstants.RECEIPTMODE_DD, rch.getReceiptMode())) {
+		} else if (!StringUtils.equals(ReceiptMode.CHEQUE, rch.getReceiptMode())
+				&& !StringUtils.equals(ReceiptMode.DD, rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
 
 			// Executing Accounting for Cash/Online
@@ -545,7 +546,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.getAuditDetail().setModelData(receiptData);
 
 		if ("Y".equalsIgnoreCase(FLAG)) {
-			if (RECEIPT_SOURCE_MOBILE.equals(receiptSource) && ((RepayConstants.RECEIPTMODE_CASH.equals(receiptMode)
+			if (RECEIPT_SOURCE_MOBILE.equals(receiptSource) && ((ReceiptMode.CASH.equals(receiptMode)
 					&& RECEIPT_CHANNEL_MOBILE.equals(receiptChannel))
 					|| (RepayConstants.RECEIPTMODE_ONLINE.equals(receiptMode)
 							&& RepayConstants.RECEIPTMODE_BANKDEPOSIT.equals(receiptHeader.getSubReceiptMode())))) {
@@ -862,9 +863,9 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 					|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_BILLDESK)) {
 				fsi.setReceiptChannel(DisbursementConstants.RECEIPT_CHANNEL_POR);
 			}
-		} else if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
+		} else if (StringUtils.equals(receiptMode, ReceiptMode.CASH)
+				|| StringUtils.equals(receiptMode, ReceiptMode.CHEQUE)
+				|| StringUtils.equals(receiptMode, ReceiptMode.DD)) {
 			fsi.setReceiptChannel("OTC");
 		}
 
@@ -995,9 +996,8 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Channel
-		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)) {
+		if (StringUtils.equals(receiptMode, ReceiptMode.CHEQUE) || StringUtils.equals(receiptMode, ReceiptMode.DD)
+				|| StringUtils.equals(receiptMode, ReceiptMode.CASH)) {
 			if (!RECEIPT_CHANNELS.contains(receiptChannel)) {
 				parm0 = "Channel";
 				parm1 = RECEIPT_CHANNELS.stream().collect(Collectors.joining(","));
@@ -1107,7 +1107,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Transaction Reference mandatory for all non CASH modes
-		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)) {
+		if (!StringUtils.equals(receiptMode, ReceiptMode.CASH)) {
 			if (StringUtils.isBlank(rcd.getTransactionRef())) {
 				finScheduleData = setErrorToFSD(finScheduleData, "90502", "Transaction Reference");
 				return receiptData;
@@ -1115,7 +1115,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Funding account is mandatory for all modes except Cash
-		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)) {
+		if (!StringUtils.equals(receiptMode, ReceiptMode.CASH)) {
 			if (rcd.getFundingAc() <= 0) {
 				finScheduleData = setErrorToFSD(finScheduleData, "90502", "Funding Account");
 				return receiptData;
@@ -1148,11 +1148,10 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			 * else { finScheduleData = setErrorToFSD(finScheduleData, "NC003", "ReceivedFrom"); return receiptData; }
 			 */
 		// Cheque OR DD
-		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
+		if (StringUtils.equals(receiptMode, ReceiptMode.CHEQUE) || StringUtils.equals(receiptMode, ReceiptMode.DD)) {
 			rcd.setFavourNumber(rcd.getTransactionRef());
 			finScheduleData = validateForChequeOrDD(rcd, finScheduleData);
-		} else if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
+		} else if (StringUtils.equals(receiptMode, ReceiptMode.CASH)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
 			// CASH OR ONLINE
 			finScheduleData = validateForNonChequeOrDD(rcd, finScheduleData);
@@ -1183,8 +1182,8 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			parm1 = RepayConstants.PAYSTATUS_APPROVED + "," + RepayConstants.PAYSTATUS_REALIZED;
 			finScheduleData = setErrorToFSD(finScheduleData, "90298", "Status", parm1);
 			return receiptData;
-		} else if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
+		} else if (!StringUtils.equals(receiptMode, ReceiptMode.DD)
+				&& !StringUtils.equals(receiptMode, ReceiptMode.CHEQUE)) {
 
 			if (StringUtils.equals(instructstatus, RepayConstants.PAYSTATUS_REALIZED)) {
 				parm1 = RepayConstants.PAYSTATUS_APPROVED;
@@ -1213,7 +1212,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		fsi.setFundingAc(fundingAccount);
 		String receiptMode = fsi.getPaymentMode();
 
-		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
+		if (!StringUtils.equals(receiptMode, ReceiptMode.CASH)
 				&& !StringUtils.equals(fsi.getReqType(), RepayConstants.REQTYPE_INQUIRY)) {
 			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(fundingAccount, "");
 			if (partnerBank == null) {
@@ -1508,7 +1507,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 
 	public FinScheduleData validateForNonChequeOrDD(FinReceiptDetail receiptDetail, FinScheduleData finScheduleData) {
 
-		String parm1 = RepayConstants.RECEIPTMODE_CASH + "," + RepayConstants.RECEIPTMODE_ONLINE;
+		String parm1 = ReceiptMode.CASH + "," + RepayConstants.RECEIPTMODE_ONLINE;
 		boolean isReceiptUpload = finScheduleData.getFinServiceInstruction().isReceiptUpload();
 
 		// Value Date must not be sent
@@ -1579,8 +1578,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		rch.setExtReference(fsi.getExternalReference());
 
 		String paymentType = rcd.getPaymentType();
-		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(paymentType)
-				|| RepayConstants.RECEIPTMODE_DD.equals(paymentType)) {
+		if (ReceiptMode.CHEQUE.equals(paymentType) || ReceiptMode.DD.equals(paymentType)) {
 			rch.setTransactionRef(rcd.getFavourNumber());
 		} else {
 			rch.setTransactionRef(rcd.getTransactionRef());

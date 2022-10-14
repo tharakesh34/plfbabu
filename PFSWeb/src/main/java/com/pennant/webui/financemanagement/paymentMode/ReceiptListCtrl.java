@@ -72,6 +72,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
@@ -694,8 +695,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				if (RepayConstants.RECEIPTMODE_EXCESS.equals(receiptMode)
 						|| RepayConstants.RECEIPTMODE_EMIINADV.equals(receiptMode)
 						|| RepayConstants.RECEIPTMODE_PAYABLE.equals(receiptMode)
-						|| RepayConstants.RECEIPTMODE_CASHCLT.equals(receiptMode)
-						|| RepayConstants.RECEIPTMODE_DSF.equals(receiptMode)) {
+						|| ReceiptMode.CASHCLT.equals(receiptMode) || ReceiptMode.DSF.equals(receiptMode)) {
 					lc = new Listcell("Adjusted");
 					lc.setParent(item);
 				} else {

@@ -78,6 +78,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.rits.cloning.Cloner;
 
 /**
@@ -347,8 +348,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 			this.row_remarks.setVisible(true);
 			this.row_fundingAcNo.setVisible(true);
 
-			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
-					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
+			if (StringUtils.equals(recMode, ReceiptMode.CHEQUE) || StringUtils.equals(recMode, ReceiptMode.DD)) {
 
 				this.row_favourNo.setVisible(true);
 				this.row_BankCode.setVisible(true);
@@ -356,7 +356,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
 
-				if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
+				if (StringUtils.equals(recMode, ReceiptMode.CHEQUE)) {
 					this.row_ChequeAcNo.setVisible(true);
 					this.label_ReceiptRealizationDialog_favourNo
 							.setValue(Labels.getLabel("label_ReceiptRealizationDialog_ChequeFavourNo.value"));
@@ -366,7 +366,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 							.setValue(Labels.getLabel("label_ReceiptRealizationDialog_DDFavourNo.value"));
 				}
 
-			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
+			} else if (StringUtils.equals(recMode, ReceiptMode.CASH)) {
 
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);

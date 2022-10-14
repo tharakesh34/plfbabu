@@ -82,6 +82,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.SubReceiptPaymentModes;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.web.util.ComponentUtil;
 
 public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
@@ -248,8 +249,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		String recMode = this.receiptMode.getSelectedItem().getValue().toString();
 
-		if (!StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
-				&& !StringUtils.equals(RepayConstants.RECEIPTMODE_DD, recMode)) {
+		if (!StringUtils.equals(recMode, ReceiptMode.CHEQUE) && !StringUtils.equals(ReceiptMode.DD, recMode)) {
 			return;
 		}
 
@@ -296,13 +296,13 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			this.referenceId.setValueColumn("AdviseID");
 			this.referenceId.setDescColumn("BalanceAmt");
 			this.referenceId.setValidateColumns(new String[] { "AdviseID" });
-		} else if (StringUtils.equals(getComboboxValue(knockOffFrom), RepayConstants.RECEIPTMODE_CASHCLT)) {
+		} else if (StringUtils.equals(getComboboxValue(knockOffFrom), ReceiptMode.CASHCLT)) {
 
 			this.referenceId.setModuleName("CASHCLT");
 			this.referenceId.setValueColumn("ExcessID");
 			this.referenceId.setDescColumn("BalanceAmt");
 			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
-		} else if (StringUtils.equals(getComboboxValue(knockOffFrom), RepayConstants.RECEIPTMODE_DSF)) {
+		} else if (StringUtils.equals(getComboboxValue(knockOffFrom), ReceiptMode.DSF)) {
 
 			this.referenceId.setModuleName("DSF");
 			this.referenceId.setValueColumn("ExcessID");

@@ -88,18 +88,6 @@ public class RepayConstants {
 	public static final String REQTYPE_POST = "Post";
 
 	/**
-	 * @deprecated use {@link ReceiptMode#CASH} instead.
-	 */
-	public static final String RECEIPTMODE_CASH = "CASH";
-	/**
-	 * @deprecated use {@link ReceiptMode#CHEQUE} instead.
-	 */
-	public static final String RECEIPTMODE_CHEQUE = "CHEQUE";
-	/**
-	 * @deprecated use {@link ReceiptMode#DD} instead.
-	 */
-	public static final String RECEIPTMODE_DD = "DD";
-	/**
 	 * @deprecated use {@link ReceiptMode#NEFT} instead.
 	 */
 	public static final String RECEIPTMODE_NEFT = "NEFT";
@@ -172,10 +160,6 @@ public class RepayConstants {
 	 */
 	public static final String RECEIPTMODE_ADVINT = "ADVINT";
 	/**
-	 * @deprecated use {@link ReceiptMode#ADVEMI} instead.
-	 */
-	public static final String RECEIPTMODE_ADVEMI = "ADVEMI";
-	/**
 	 * @deprecated use {@link ReceiptMode#PAYABLE} instead.
 	 */
 	public static final String RECEIPTMODE_PAYABLE = "PAYABLE";
@@ -183,14 +167,6 @@ public class RepayConstants {
 	 * @deprecated use {@link ReceiptMode#PRESENT} instead.
 	 */
 	public static final String RECEIPTMODE_PRESENTMENT = "PRESENT";
-	/**
-	 * @deprecated use {@link ReceiptMode#CASHCLT} instead.
-	 */
-	public static final String RECEIPTMODE_CASHCLT = "CASHCLT";
-	/**
-	 * @deprecated use {@link ReceiptMode#DSF} instead.
-	 */
-	public static final String RECEIPTMODE_DSF = "DSF";
 
 	public static final String ALLOCTYPE_AUTO = "Auto";
 	public static final String ALLOCTYPE_MANUAL = "Manual";

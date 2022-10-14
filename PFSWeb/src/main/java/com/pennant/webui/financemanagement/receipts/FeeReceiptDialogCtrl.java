@@ -146,6 +146,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.web.util.ComponentUtil;
 import com.rits.cloning.Cloner;
 
@@ -1168,8 +1169,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.row_fundingAcNo.setVisible(true);
 			this.row_remarks.setVisible(true);
 
-			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
-					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
+			if (StringUtils.equals(recMode, ReceiptMode.CHEQUE) || StringUtils.equals(recMode, ReceiptMode.DD)) {
 
 				this.row_favourNo.setVisible(true);
 				this.row_BankCode.setVisible(true);
@@ -1177,7 +1177,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
 
-				if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
+				if (StringUtils.equals(recMode, ReceiptMode.CHEQUE)) {
 					this.row_ChequeAcNo.setVisible(true);
 					this.label_FeeReceiptDialog_favourNo
 							.setValue(Labels.getLabel("label_FeeReceiptDialog_ChequeFavourNo.value"));
@@ -1206,7 +1206,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					this.favourName.setValue(Labels.getLabel("label_ClientName"));
 				}
 
-			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
+			} else if (StringUtils.equals(recMode, ReceiptMode.CASH)) {
 
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);
@@ -1286,10 +1286,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					rch.getReceiptDetails().add(rcd);
 				}
 				rch.setRemarks(this.remarks.getValue());
-				if (RepayConstants.RECEIPTMODE_CHEQUE.equals(rch.getReceiptMode())
-						|| RepayConstants.RECEIPTMODE_DD.equals(rch.getReceiptMode())) {
+				if (ReceiptMode.CHEQUE.equals(rch.getReceiptMode()) || ReceiptMode.DD.equals(rch.getReceiptMode())) {
 					rch.setTransactionRef(this.favourNo.getValue());
-				} else if (RepayConstants.RECEIPTMODE_CASH.equals(rch.getReceiptMode())) {
+				} else if (ReceiptMode.CASH.equals(rch.getReceiptMode())) {
 					rch.setTransactionRef(this.paymentRef.getValue());
 				} else {
 					rch.setTransactionRef(this.transactionRef.getValue());
@@ -1946,7 +1945,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							true, this.valueDate.getValue(), appDate, true));
 		}
 
-		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
+		if (StringUtils.equals(recptMode, ReceiptMode.CHEQUE)) {
 
 			if (!this.chequeAcNo.isReadonly()) {
 				this.chequeAcNo.setConstraint(new PTStringValidator(
@@ -1967,12 +1966,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DD)
-				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
+		if (StringUtils.equals(recptMode, ReceiptMode.DD) || StringUtils.equals(recptMode, ReceiptMode.CHEQUE)) {
 
 			if (!this.favourNo.isReadonly()) {
 				String label = Labels.getLabel("label_FeeReceiptDialog_ChequeFavourNo.value");
-				if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DD)) {
+				if (StringUtils.equals(recptMode, ReceiptMode.DD)) {
 					label = Labels.getLabel("label_FeeReceiptDialog_DDFavourNo.value");
 				}
 				this.favourNo.setConstraint(

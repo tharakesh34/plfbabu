@@ -133,6 +133,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.rits.cloning.Cloner;
 
 /**
@@ -628,8 +629,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			this.row_fundingAcNo.setVisible(true);
 			this.row_remarks.setVisible(true);
 
-			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
-					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
+			if (StringUtils.equals(recMode, ReceiptMode.CHEQUE) || StringUtils.equals(recMode, ReceiptMode.DD)) {
 
 				this.row_favourNo.setVisible(true);
 				this.row_BankCode.setVisible(true);
@@ -637,7 +637,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
 
-				if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
+				if (StringUtils.equals(recMode, ReceiptMode.CHEQUE)) {
 					this.row_ChequeAcNo.setVisible(true);
 					this.label_ReceiptCancellationDialog_ChequeAccountNo.setVisible(true);
 					this.chequeAcNo.setVisible(true);
@@ -651,7 +651,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 							.setValue(Labels.getLabel("label_ReceiptCancellationDialog_DDFavourNo.value"));
 				}
 
-			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
+			} else if (StringUtils.equals(recMode, ReceiptMode.CASH)) {
 
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);
@@ -706,7 +706,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)
 				|| (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)
-						&& RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(this.receiptHeader.getReceiptMode()))) {
+						&& ReceiptMode.CHEQUE.equalsIgnoreCase(this.receiptHeader.getReceiptMode()))) {
 			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
 			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 				aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_CANCEL);
@@ -877,7 +877,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		logger.debug("Entering" + event.toString());
 
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)
-				|| RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(this.receiptHeader.getReceiptMode())) {
+				|| ReceiptMode.CHEQUE.equalsIgnoreCase(this.receiptHeader.getReceiptMode())) {
 			this.bounceCharge.setValue(BigDecimal.ZERO);
 			return;
 		}
@@ -1063,7 +1063,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 		// in case of Fee Bounce
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)
-				&& RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(this.receiptHeader.getReceiptMode())) {
+				&& ReceiptMode.CHEQUE.equalsIgnoreCase(this.receiptHeader.getReceiptMode())) {
 			this.row_CancelReason.setVisible(false);
 			this.cancelReason.setMandatoryStyle(false);
 			this.cancelReason.setReadonly(true);
