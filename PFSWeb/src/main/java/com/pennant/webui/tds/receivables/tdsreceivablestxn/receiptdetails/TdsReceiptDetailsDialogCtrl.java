@@ -26,6 +26,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class TdsReceiptDetailsDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
@@ -108,7 +109,7 @@ public class TdsReceiptDetailsDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			sum = sum.add(paidAmount);
 			Listitem item = new Listitem();
 			String allocDesc = Labels.getLabel("label_RecceiptDialog_AllocationType_" + rad.getAllocationType());
-			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_MANADV)) {
+			if (StringUtils.equals(rad.getAllocationType(), Allocation.MANADV)) {
 				allocDesc = rad.getTypeDesc();
 			}
 			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FEE)) {

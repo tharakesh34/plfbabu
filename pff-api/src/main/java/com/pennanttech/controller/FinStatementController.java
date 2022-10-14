@@ -93,6 +93,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
@@ -520,9 +521,9 @@ public class FinStatementController extends SummaryDetailService {
 				totPriPayNow = ad.getPaidAmount();
 			} else if (RepayConstants.ALLOCATION_PFT.equals(allocationType)) {
 				totPftPayNow = ad.getPaidAmount();
-			} else if (RepayConstants.ALLOCATION_LPFT.equals(allocationType)) {
+			} else if (Allocation.LPFT.equals(allocationType)) {
 				totLatePftPayNow = ad.getPaidAmount();
-			} else if (RepayConstants.ALLOCATION_ODC.equals(allocationType)) {
+			} else if (Allocation.ODC.equals(allocationType)) {
 				totPenaltyPayNow = ad.getPaidAmount();
 			} else if (RepayConstants.ALLOCATION_TDS.equals(allocationType)) {
 				totTdsReturn = ad.getPaidAmount();
@@ -808,8 +809,7 @@ public class FinStatementController extends SummaryDetailService {
 						}
 
 						// Late Payment Charges
-						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
-								RepayConstants.ALLOCATION_ODC)) {
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.ODC)) {
 							closureReport.setLatePayCharges(PennantApplicationUtil
 									.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
 							closureReport.setLatePayChargesInWords(
@@ -817,13 +817,11 @@ public class FinStatementController extends SummaryDetailService {
 											.formateAmount(receiptAllocationDetail.getTotRecv(), formatter), finCCy));
 						}
 
-						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
-								RepayConstants.ALLOCATION_BOUNCE)) {
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.BOUNCE)) {
 							bncCharge = receiptAllocationDetail.getTotRecv();
 						}
 						// Issue Fixed 141089
-						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
-								RepayConstants.ALLOCATION_MANADV)) {
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), Allocation.MANADV)) {
 							receivableAmt = receivableAmt.add(receiptAllocationDetail.getTotRecv());
 						}
 
@@ -1114,15 +1112,15 @@ public class FinStatementController extends SummaryDetailService {
 				}
 
 				// Late Payment Charges
-				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_ODC)) {
+				if (StringUtils.equals(rad.getAllocationType(), Allocation.ODC)) {
 					closureReport.setLatePayCharges(rad.getTotRecv());
 				}
 
-				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_BOUNCE)) {
+				if (StringUtils.equals(rad.getAllocationType(), Allocation.BOUNCE)) {
 					bncCharge = rad.getTotRecv();
 				}
 				// Issue Fixed 141089
-				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_MANADV)) {
+				if (StringUtils.equals(rad.getAllocationType(), Allocation.MANADV)) {
 					receivableAmt = receivableAmt.add(rad.getTotRecv());
 				}
 
@@ -1533,12 +1531,12 @@ public class FinStatementController extends SummaryDetailService {
 		}
 
 		ad = new ReceiptAllocationDetail();
-		ad.setAllocationType(RepayConstants.ALLOCATION_ODC);
+		ad.setAllocationType(Allocation.ODC);
 		ad.setPaidAmount(penaltyBal);
 		allocations.add(ad);
 
 		ad = new ReceiptAllocationDetail();
-		ad.setAllocationType(RepayConstants.ALLOCATION_LPFT);
+		ad.setAllocationType(Allocation.LPFT);
 		ad.setPaidAmount(latePayPftBal);
 		allocations.add(ad);
 

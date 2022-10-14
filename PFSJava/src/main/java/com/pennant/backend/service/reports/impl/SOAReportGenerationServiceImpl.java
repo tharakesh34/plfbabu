@@ -3407,7 +3407,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							}
 						} else {
 							if (bounceFeeType == null) {
-								bounceFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+								bounceFeeType = getFeeTypeDAO().getTaxDetailByCode(Allocation.BOUNCE);
 							}
 							if (bounceFeeType != null) {
 								taxComponent = bounceFeeType.getTaxComponent();
@@ -3460,8 +3460,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 											soaTranReport.setDebitAmount(BigDecimal.ZERO);
 
 											if (bounceFeeType == null) {
-												bounceFeeType = getFeeTypeDAO()
-														.getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+												bounceFeeType = getFeeTypeDAO().getTaxDetailByCode(Allocation.BOUNCE);
 											}
 											if (bounceFeeType != null) {
 												taxComponent = bounceFeeType.getTaxComponent();
@@ -3553,9 +3552,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				BigDecimal paidAmount = rad.getPaidAmount();
 				if (RepayConstants.ALLOCATION_EMI.equals(allocType)) {
 					allocTypeMsg = "EMI Adjusted";
-				} else if (RepayConstants.ALLOCATION_MANADV.equals(allocType)) {
+				} else if (Allocation.MANADV.equals(allocType)) {
 					allocTypeMsg = rad.getTypeDesc();
-				} else if (RepayConstants.ALLOCATION_BOUNCE.equals(allocType)) {
+				} else if (Allocation.BOUNCE.equals(allocType)) {
 					allocTypeMsg = "Bounce Charges";
 				} else if (RepayConstants.ALLOCATION_FUT_PRI.equals(allocType)) {
 					allocTypeMsg = "Principal";
@@ -3565,9 +3564,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					allocTypeMsg = "Principal";
 				} else if (RepayConstants.ALLOCATION_FEE.equals(allocType)) {
 					allocTypeMsg = "Fees";
-				} else if (RepayConstants.ALLOCATION_ODC.equals(allocType)) {
+				} else if (Allocation.ODC.equals(allocType)) {
 					allocTypeMsg = "Late Pay Penalty";
-				} else if (RepayConstants.ALLOCATION_LPFT.equals(allocType)) {
+				} else if (Allocation.LPFT.equals(allocType)) {
 					allocTypeMsg = "Late Pay Interest";
 				}
 				if (StringUtils.isNotEmpty(allocTypeMsg)) {
@@ -3611,13 +3610,13 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			case RepayConstants.ALLOCATION_EMI:
 				allocTypeMsg = "EMI Capitalized";
 				break;
-			case RepayConstants.ALLOCATION_MANADV:
+			case Allocation.MANADV:
 				FeeType feeType = feeTypeDAO.getTaxDetailByCode(rstChrg.getFeeCode());
 				if (feeType != null) {
 					allocTypeMsg = feeType.getFeeTypeDesc().concat(" Capitalized");
 				}
 				break;
-			case RepayConstants.ALLOCATION_BOUNCE:
+			case Allocation.BOUNCE:
 				allocTypeMsg = "Bounce Charges Capitalized";
 				break;
 			case RepayConstants.ALLOCATION_PRI:
@@ -3626,10 +3625,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			case RepayConstants.ALLOCATION_PFT:
 				allocTypeMsg = "Interest Capitalized";
 				break;
-			case RepayConstants.ALLOCATION_ODC:
+			case Allocation.ODC:
 				allocTypeMsg = "Late Pay Penalty Capitalized";
 				break;
-			case RepayConstants.ALLOCATION_LPFT:
+			case Allocation.LPFT:
 				allocTypeMsg = "Late Pay Interest Capitalized";
 				break;
 			default:

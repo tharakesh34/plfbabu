@@ -105,7 +105,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -119,6 +118,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/RestructureDialog.zul file.
@@ -1423,10 +1423,10 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				cb.setAttribute("data", charge);
 				cb.setChecked(charge.isCapitalized());
 				cb.addForward("onClick", self, "onClick_Capitalized");
-				if (StringUtils.equals(charge.getAlocType(), RepayConstants.ALLOCATION_MANADV)
-						|| StringUtils.equals(charge.getAlocType(), RepayConstants.ALLOCATION_BOUNCE)
-						|| StringUtils.equals(charge.getAlocType(), RepayConstants.ALLOCATION_ODC)
-						|| StringUtils.equals(charge.getAlocType(), RepayConstants.ALLOCATION_LPFT)) {
+				if (StringUtils.equals(charge.getAlocType(), Allocation.MANADV)
+						|| StringUtils.equals(charge.getAlocType(), Allocation.BOUNCE)
+						|| StringUtils.equals(charge.getAlocType(), Allocation.ODC)
+						|| StringUtils.equals(charge.getAlocType(), Allocation.LPFT)) {
 					cb.setDisabled(false);
 				} else {
 					cb.setDisabled(true);

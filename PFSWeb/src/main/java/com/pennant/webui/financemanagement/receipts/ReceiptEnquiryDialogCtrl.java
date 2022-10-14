@@ -63,6 +63,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.rits.cloning.Cloner;
 
 /**
@@ -657,7 +658,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				if (StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_MANADV)) {
+				if (StringUtils.equals(allocation.getAllocationType(), Allocation.MANADV)) {
 					this.listBoxManualAdvises.appendChild(item);
 					totalAdvPaidAmount = totalAdvPaidAmount.add(allocation.getPaidAmount());
 					totalAdvWaivedAmount = totalAdvWaivedAmount.add(allocation.getWaivedAmount());

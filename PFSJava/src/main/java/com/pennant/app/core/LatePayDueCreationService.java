@@ -65,13 +65,13 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.eod.cache.FeeTypeConfigCache;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.eod.EODUtil;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class LatePayDueCreationService extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(LatePayDueCreationService.class);
@@ -164,18 +164,18 @@ public class LatePayDueCreationService extends ServiceHelper {
 
 			if (lppAmount.compareTo(BigDecimal.ZERO) > 0) {
 				if (EODUtil.isEod()) {
-					lppFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(RepayConstants.ALLOCATION_ODC);
+					lppFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(Allocation.ODC);
 				} else {
-					lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+					lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);
 				}
 				lppGSTAmount = calculateGST(lppAmount, lppFeeType, taxPercmap);
 			}
 
 			if (lpiAmount.compareTo(BigDecimal.ZERO) > 0) {
 				if (EODUtil.isEod()) {
-					lpiFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(RepayConstants.ALLOCATION_LPFT);
+					lpiFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(Allocation.LPFT);
 				} else {
-					lpiFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_LPFT);
+					lpiFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.LPFT);
 				}
 				lpiGSTAmount = calculateGST(lpiAmount, lpiFeeType, taxPercmap);
 			}
@@ -465,7 +465,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 		ugstTax.setTaxType(RuleConstants.CODE_UGST);
 		cessTax.setTaxType(RuleConstants.CODE_CESS);
 
-		if (RepayConstants.ALLOCATION_ODC.equals(feeType.getFeeTypeCode())) {
+		if (Allocation.ODC.equals(feeType.getFeeTypeCode())) {
 			cgstTax.setNetTax(calGstMap.get("LPP_CGST_R"));
 			sgstTax.setNetTax(calGstMap.get("LPP_SGST_R"));
 			igstTax.setNetTax(calGstMap.get("LPP_IGST_R"));

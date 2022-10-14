@@ -214,6 +214,7 @@ import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.rits.cloning.Cloner;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
@@ -2540,7 +2541,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		BigDecimal dueAmount = advise.getAdviseAmount();
 
 		// Bounce Tax Details
-		FeeType feeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+		FeeType feeType = feeTypeDAO.getTaxDetailByCode(Allocation.BOUNCE);
 		if (feeType == null || feeType.getAccountSetId() == null || feeType.getAccountSetId() <= 0) {
 			logger.debug("Leaving");
 			return null;

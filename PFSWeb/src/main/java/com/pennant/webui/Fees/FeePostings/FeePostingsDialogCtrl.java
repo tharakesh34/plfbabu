@@ -90,7 +90,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -108,6 +107,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * This is the controller class for the /WEB-INF/pages/others/JVPosting/jVPostingDialog.zul file.
@@ -604,9 +604,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.feeTypeCode.setValidateColumns(new String[] { "FeeTypeCode" });
 
 		ArrayList<String> list = new ArrayList<>();
-		list.add(RepayConstants.ALLOCATION_BOUNCE);
-		list.add(RepayConstants.ALLOCATION_ODC);
-		list.add(RepayConstants.ALLOCATION_LPFT);
+		list.add(Allocation.BOUNCE);
+		list.add(Allocation.ODC);
+		list.add(Allocation.LPFT);
 
 		Filter[] filters = new Filter[1];
 		filters[0] = Filter.notIn("FeeTypeCode", list);
