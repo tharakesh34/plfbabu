@@ -62,7 +62,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -73,6 +72,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -580,21 +580,21 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		String priInvFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_PRI_EXEMPTED);
 		String restructFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_RESTRUCT_CPZ);
 
-		if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)
-				|| StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)
-				|| StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)
+		if (StringUtils.equals(aFeeType.getFeeTypeCode(), Allocation.BOUNCE)
+				|| StringUtils.equals(aFeeType.getFeeTypeCode(), Allocation.ODC)
+				|| StringUtils.equals(aFeeType.getFeeTypeCode(), Allocation.LPFT)
 				|| (StringUtils.isNotBlank(pftInvFeeCode)
 						&& StringUtils.equals(aFeeType.getFeeTypeCode(), pftInvFeeCode))
 				|| (StringUtils.isNotBlank(priInvFeeCode)
 						&& StringUtils.equals(aFeeType.getFeeTypeCode(), priInvFeeCode))
 				|| (StringUtils.isNotBlank(restructFeeCode) && restructFeeCode.equals(aFeeType.getFeeTypeCode()))) {
 
-			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
+			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), Allocation.BOUNCE)) {
 				this.row1.setVisible(false);
 			}
 			this.row2.setVisible(false);
-			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)
-					&& !StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)
+			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), Allocation.ODC)
+					&& !StringUtils.equals(aFeeType.getFeeTypeCode(), Allocation.BOUNCE)
 					&& !StringUtils.equals(aFeeType.getFeeTypeCode(), restructFeeCode)) {
 				this.row3.setVisible(false);
 			}
@@ -605,7 +605,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				this.refundableFee.setDisabled(true);
 			}
 
-			if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)
+			if (StringUtils.equals(aFeeType.getFeeTypeCode(), Allocation.LPFT)
 					|| StringUtils.equals(aFeeType.getFeeTypeCode(), restructFeeCode)) {
 				this.taxApplicable.setDisabled(true);
 			}

@@ -227,14 +227,6 @@ public class RepayConstants {
 	 */
 	public static final String ALLOCATION_TDS = "TDS";
 	/**
-	 * @deprecated use {@link Allocation#LPFT} instead.
-	 */
-	public static final String ALLOCATION_LPFT = "LPFT";
-	/**
-	 * @deprecated use {@link Allocation#ODC} instead.
-	 */
-	public static final String ALLOCATION_ODC = "ODC";
-	/**
 	 * @deprecated use {@link Allocation#FEE} instead.
 	 */
 	public static final String ALLOCATION_FEE = "FEE";
@@ -242,14 +234,6 @@ public class RepayConstants {
 	 * @deprecated use {@link Allocation#INS} instead.
 	 */
 	public static final String ALLOCATION_INS = "INS";
-	/**
-	 * @deprecated use {@link Allocation#MANADV} instead.
-	 */
-	public static final String ALLOCATION_MANADV = "MANADV";
-	/**
-	 * @deprecated use {@link Allocation#BOUNCE} instead.
-	 */
-	public static final String ALLOCATION_BOUNCE = "BOUNCE";
 	/**
 	 * @deprecated use {@link Allocation#PP} instead.
 	 */

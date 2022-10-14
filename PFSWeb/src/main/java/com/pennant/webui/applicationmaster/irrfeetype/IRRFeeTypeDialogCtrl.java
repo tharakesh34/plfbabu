@@ -51,7 +51,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -61,6 +60,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * This is the controller class for the /WEB-INF/pages/applicationmaster/IRRFeeType/iRRFeeTypeDialog.zul file. <br>
@@ -176,9 +176,9 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 		this.feeTypeID.setValidateColumns(new String[] { "FeeTypeCode" });
 
 		ArrayList<String> list = new ArrayList<>();
-		list.add(RepayConstants.ALLOCATION_BOUNCE);
-		list.add(RepayConstants.ALLOCATION_ODC);
-		list.add(RepayConstants.ALLOCATION_LPFT);
+		list.add(Allocation.BOUNCE);
+		list.add(Allocation.ODC);
+		list.add(Allocation.LPFT);
 
 		Filter[] filters = new Filter[1];
 		filters[0] = Filter.notIn("FeeTypeCode", list);

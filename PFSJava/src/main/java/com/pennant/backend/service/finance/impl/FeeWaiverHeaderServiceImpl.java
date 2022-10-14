@@ -279,7 +279,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			fwd.setNewRecord(true);
 			fwd.setAdviseId(-3);
 			fwd.setFeeTypeCode(Allocation.BOUNCE);
-			FeeType bounce = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(RepayConstants.ALLOCATION_BOUNCE);
+			FeeType bounce = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(Allocation.BOUNCE);
 			if (bounce != null) {
 				fwd.setFeeTypeDesc(bounce.getFeeTypeDesc());
 				fwd.setTaxApplicable(bounce.isTaxApplicable());
@@ -336,9 +336,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					fwd.setFinReference(finReference);
 					fwd.setNewRecord(true);
 					fwd.setAdviseId(-1);
-					fwd.setFeeTypeCode(RepayConstants.ALLOCATION_ODC);
+					fwd.setFeeTypeCode(Allocation.ODC);
 
-					FeeType lpp = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(RepayConstants.ALLOCATION_ODC);
+					FeeType lpp = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(Allocation.ODC);
 					if (lpp != null && StringUtils.isNotBlank(lpp.getTaxComponent())) {
 						fwd.setFeeTypeDesc(lpp.getFeeTypeDesc());
 						fwd.setTaxApplicable(lpp.isTaxApplicable());
@@ -378,7 +378,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				fwd.setFinReference(finReference);
 				fwd.setNewRecord(true);
 				fwd.setAdviseId(-2);
-				fwd.setFeeTypeCode(RepayConstants.ALLOCATION_LPFT);
+				fwd.setFeeTypeCode(Allocation.LPFT);
 				fwd.setFeeTypeDesc(Labels.getLabel("label_feeWaiver_WaiverType_LPFT"));
 				fwd.setReceivableAmount(receivableAmt);
 				fwd.setReceivedAmount(receivedAmt);
@@ -1143,7 +1143,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		if (!odTaxMovList.isEmpty()) {
 
 			// Fee Type is amortization Req?
-			boolean isFeeTypeAmortzReq = feeTypeDAO.isFeeTypeAmortzReq(RepayConstants.ALLOCATION_ODC);
+			boolean isFeeTypeAmortzReq = feeTypeDAO.isFeeTypeAmortzReq(Allocation.ODC);
 			if (isFeeTypeAmortzReq) {
 
 				FinanceDetail financeDetail = new FinanceDetail();
@@ -1232,7 +1232,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			}
 
 			// update late pay penalty waived amounts to the Finoddetails table.
-			if (RepayConstants.ALLOCATION_ODC.equals(fwd.getFeeTypeCode())) {
+			if (Allocation.ODC.equals(fwd.getFeeTypeCode())) {
 
 				BigDecimal curwaivedAmt = fwd.getCurrWaiverAmount();
 				BigDecimal curActualwaivedAmt = fwd.getCurrActualWaiver();
@@ -1355,7 +1355,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			}
 
 			// update late pay profit waived amounts to the Finoddetails table.
-			if (fwd.getFeeTypeCode().equals(RepayConstants.ALLOCATION_LPFT)) {
+			if (fwd.getFeeTypeCode().equals(Allocation.LPFT)) {
 				BigDecimal curwaivedAmt = fwd.getCurrWaiverAmount();
 				for (FinODDetails oddetail : finodPftdetails) {
 					if (oddetail.getLPIBal().compareTo(curwaivedAmt) >= 0) {
@@ -1699,7 +1699,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						}
 					}
 
-					if (RepayConstants.ALLOCATION_BOUNCE.equals(movement.getFeeTypeCode())) {
+					if (Allocation.BOUNCE.equals(movement.getFeeTypeCode())) {
 						totBounce = totBounce.add(movement.getWaivedAmount());
 						bounceCGST = bounceCGST.add(cgstTax.getWaivedTax());
 						bounceSGST = bounceSGST.add(sgstTax.getWaivedTax());
@@ -1708,7 +1708,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						bounceCESS = bounceCESS.add(cessTax.getWaivedTax());
 						bounceWithGst = totBounce.add(bounceCGST).add(bounceSGST).add(bounceIGST).add(bounceUGST)
 								.add(bounceCESS);
-					} else if (RepayConstants.ALLOCATION_ODC.equals(movement.getFeeTypeCode())) {
+					} else if (Allocation.ODC.equals(movement.getFeeTypeCode())) {
 						totLPP = totLPP.add(movement.getMovementAmount());
 						lppCGST = lppCGST.add(cgstTax.getWaivedTax());
 						lppSGST = lppSGST.add(sgstTax.getWaivedTax());
@@ -1733,9 +1733,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						}
 					}
 				} else {
-					if (RepayConstants.ALLOCATION_BOUNCE.equals(movement.getFeeTypeCode())) {
+					if (Allocation.BOUNCE.equals(movement.getFeeTypeCode())) {
 						bounceWithGst = totBounce.add(movement.getWaivedAmount());
-					} else if (RepayConstants.ALLOCATION_ODC.equals(movement.getFeeTypeCode())) {
+					} else if (Allocation.ODC.equals(movement.getFeeTypeCode())) {
 						totLPP = totLPP.add(movement.getMovementAmount());
 					} else {
 						if (StringUtils.isNotEmpty(movement.getFeeTypeCode())) {
@@ -1872,8 +1872,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
 			String feeTypeCode = fwd.getFeeTypeCode();
 
-			if (!RepayConstants.ALLOCATION_ODC.equals(feeTypeCode)
-					&& !RepayConstants.ALLOCATION_LPFT.equals(feeTypeCode)
+			if (!Allocation.ODC.equals(feeTypeCode) && !Allocation.LPFT.equals(feeTypeCode)
 					&& !RepayConstants.ALLOCATION_PFT.equals(feeTypeCode)
 					&& fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 
@@ -2376,8 +2375,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		// update the waiver amounts to the tables.
 		for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
 
-			if (!RepayConstants.ALLOCATION_ODC.equals(fwd.getFeeTypeCode())
-					&& !RepayConstants.ALLOCATION_LPFT.equals(fwd.getFeeTypeCode())) {
+			if (!Allocation.ODC.equals(fwd.getFeeTypeCode()) && !Allocation.LPFT.equals(fwd.getFeeTypeCode())) {
 
 				manualAdviseList = manualAdviseDAO.getManualAdvise(fwh.getFinID());
 
@@ -2415,7 +2413,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				}
 
 				// validate the current waived amount against Late pay penalty.
-				if (fwd.getFeeTypeCode().equals(RepayConstants.ALLOCATION_ODC)) {
+				if (fwd.getFeeTypeCode().equals(Allocation.ODC)) {
 					BigDecimal waiverAmount = BigDecimal.ZERO;
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fwd.getTaxComponent())) {
 						waiverAmount = fwd.getCurrActualWaiver();
@@ -2433,7 +2431,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				}
 
 				// validate the current waived amount against the late pay profit
-				if (fwd.getFeeTypeCode().equals(RepayConstants.ALLOCATION_LPFT)
+				if (fwd.getFeeTypeCode().equals(Allocation.LPFT)
 						&& fwd.getCurrWaiverAmount().compareTo(totalLPIBal) > 0) {
 					valueParm[0] = String.valueOf(fwd.getCurrWaiverAmount());
 					errParm[0] = fwd.getFeeTypeDesc() + ": " + valueParm[0];

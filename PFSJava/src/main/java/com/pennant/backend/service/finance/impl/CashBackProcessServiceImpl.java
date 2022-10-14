@@ -82,6 +82,7 @@ import com.pennanttech.pff.cd.model.TransactionMapping;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennattech.pff.cd.dao.ManufacturerDAO;
 
 public class CashBackProcessServiceImpl implements CashBackProcessService {
@@ -654,7 +655,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 			List<FinODDetails> penaltyList = finODDetailsDAO.getFinODBalByFinRef(finID);
 
-			String lppTaxType = feeTypeDAO.getTaxCompByCode(RepayConstants.ALLOCATION_ODC);
+			String lppTaxType = feeTypeDAO.getTaxCompByCode(Allocation.ODC);
 			for (FinODDetails fod : penaltyList) {
 				if (fod.getTotPenaltyBal().compareTo(BigDecimal.ZERO) <= 0
 						&& fod.getLPIBal().compareTo(BigDecimal.ZERO) <= 0) {
@@ -678,7 +679,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		if (cashBackAmount.compareTo(BigDecimal.ZERO) > 0) {
 			List<ManualAdvise> adviseList = manualAdviseDAO.getReceivableAdvises(finID, "_AView");
 
-			String bounceTaxType = feeTypeDAO.getTaxCompByCode(RepayConstants.ALLOCATION_BOUNCE);
+			String bounceTaxType = feeTypeDAO.getTaxCompByCode(Allocation.BOUNCE);
 
 			for (ManualAdvise adv : adviseList) {
 
@@ -762,13 +763,13 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 			case RepayConstants.ALLOCATION_PRI:
 				alocType = "P";
 				break;
-			case RepayConstants.ALLOCATION_LPFT:
+			case Allocation.LPFT:
 				alocType = "L";
 				break;
-			case RepayConstants.ALLOCATION_ODC:
+			case Allocation.ODC:
 				alocType = "O";
 				break;
-			case RepayConstants.ALLOCATION_MANADV:
+			case Allocation.MANADV:
 				alocType = "M";
 				break;
 			default:

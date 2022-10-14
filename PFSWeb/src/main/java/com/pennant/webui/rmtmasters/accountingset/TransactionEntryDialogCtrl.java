@@ -93,7 +93,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -105,6 +104,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RulesFactory/TransactionEntry/transactionEntryDialog.zul file.
@@ -1707,9 +1707,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		ArrayList<String> list = new ArrayList<>();
 
 		if (!ImplementationConstants.ALLOW_TDS_ON_FEE) {
-			list.add(RepayConstants.ALLOCATION_BOUNCE);
-			list.add(RepayConstants.ALLOCATION_ODC);
-			list.add(RepayConstants.ALLOCATION_LPFT);
+			list.add(Allocation.BOUNCE);
+			list.add(Allocation.ODC);
+			list.add(Allocation.LPFT);
 		}
 
 		list.add("KOFF_EMI");

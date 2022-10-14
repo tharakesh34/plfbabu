@@ -5052,7 +5052,7 @@ public class ReceiptCalculator {
 			return rd;
 		}
 
-		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);
 		String taxType = null;
 
 		if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
@@ -5081,7 +5081,7 @@ public class ReceiptCalculator {
 			rd.setPendingODC(lppBal);
 			boolean isODCAllocExists = false;
 			for (ReceiptAllocationDetail allocate : allocations) {
-				if (RepayConstants.ALLOCATION_ODC.equalsIgnoreCase(allocate.getAllocationType())) {
+				if (Allocation.ODC.equalsIgnoreCase(allocate.getAllocationType())) {
 					isODCAllocExists = true;
 					break;
 				}
@@ -5089,8 +5089,7 @@ public class ReceiptCalculator {
 
 			if (!isODCAllocExists) {
 				String desc = Labels.getLabel("label_RecceiptDialog_AllocationType_ODC");
-				allocations.add(setODCAllocRecord(rd, RepayConstants.ALLOCATION_ODC, 6, lppBal, penalGst, desc, 0,
-						taxType, true));
+				allocations.add(setODCAllocRecord(rd, Allocation.ODC, 6, lppBal, penalGst, desc, 0, taxType, true));
 			}
 		}
 
@@ -5128,15 +5127,15 @@ public class ReceiptCalculator {
 			boolean isBounceAllocExists = false;
 
 			for (ReceiptAllocationDetail allocate : allocations) {
-				if (RepayConstants.ALLOCATION_BOUNCE.equalsIgnoreCase(allocate.getAllocationType())) {
+				if (Allocation.BOUNCE.equalsIgnoreCase(allocate.getAllocationType())) {
 					isBounceAllocExists = true;
 					break;
 				}
 			}
 
 			if (!isBounceAllocExists) {
-				ReceiptAllocationDetail allocDetail = setAllocationRecord(frd, RepayConstants.ALLOCATION_BOUNCE, id,
-						adviseDue, desc, advise.getAdviseID(), taxComponent, true, false, advise);
+				ReceiptAllocationDetail allocDetail = setAllocationRecord(frd, Allocation.BOUNCE, id, adviseDue, desc,
+						advise.getAdviseID(), taxComponent, true, false, advise);
 				allocDetail.setFeeTypeCode(advise.getFeeTypeCode());
 				allocations.add(allocDetail);
 			}

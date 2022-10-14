@@ -388,11 +388,11 @@ public class RepaymentProcessUtil {
 		BigDecimal bounceAmount = BigDecimal.ZERO;
 
 		for (ReceiptAllocationDetail allocate : allocationDetails) {
-			if (RepayConstants.ALLOCATION_BOUNCE.equalsIgnoreCase(allocate.getAllocationType())) {
+			if (Allocation.BOUNCE.equalsIgnoreCase(allocate.getAllocationType())) {
 				allocate.setPaidAmount(allocate.getTotalDue());
 				allocate.setTotalPaid(allocate.getTotalDue());
 				bounceAmount = bounceAmount.add(allocate.getTotalDue());
-			} else if (RepayConstants.ALLOCATION_ODC.equalsIgnoreCase(allocate.getAllocationType())) {
+			} else if (Allocation.ODC.equalsIgnoreCase(allocate.getAllocationType())) {
 				allocate.setPaidAmount(allocate.getTotalDue());
 				allocate.setTotalPaid(allocate.getTotalDue());
 				lppAmount = lppAmount.add(allocate.getTotalDue());
@@ -1232,7 +1232,7 @@ public class RepaymentProcessUtil {
 		addAmountToMap(movementMap, "bounceCharge_UGST_W", BigDecimal.ZERO);
 		addAmountToMap(movementMap, "bounceCharge_CESS_W", BigDecimal.ZERO);
 
-		String bounceComponent = feeTypeDAO.getTaxComponent(RepayConstants.ALLOCATION_BOUNCE);
+		String bounceComponent = feeTypeDAO.getTaxComponent(Allocation.BOUNCE);
 
 		for (ManualAdviseMovements movement : movements) {
 			TaxHeader taxHeader = movement.getTaxHeader();
@@ -1289,7 +1289,7 @@ public class RepaymentProcessUtil {
 			String feeTypeCode = movement.getFeeTypeCode();
 			String taxComponent = feeTypeDAO.getTaxComponent(feeTypeCode);
 
-			if (StringUtils.isEmpty(feeTypeCode) || RepayConstants.ALLOCATION_BOUNCE.equals(feeTypeCode)) {
+			if (StringUtils.isEmpty(feeTypeCode) || Allocation.BOUNCE.equals(feeTypeCode)) {
 
 				if (taxComponent == null) {
 					taxComponent = bounceComponent;
@@ -1399,7 +1399,7 @@ public class RepaymentProcessUtil {
 					allocationWaivedMap.put(allocationType + "_" + allocationTo, allocation.getWaivedAmount());
 
 					// Manual Advises update
-					if (RepayConstants.ALLOCATION_MANADV.equals(allocationType)) {
+					if (Allocation.MANADV.equals(allocationType)) {
 						if (allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0
 								|| allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 
@@ -1465,7 +1465,7 @@ public class RepaymentProcessUtil {
 					}
 
 					// Bounce Charges Update
-					if (RepayConstants.ALLOCATION_BOUNCE.equals(allocationType)) {
+					if (Allocation.BOUNCE.equals(allocationType)) {
 						if (allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0
 								|| allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 							/*
@@ -2741,7 +2741,7 @@ public class RepaymentProcessUtil {
 			FinDueData dueData = new FinDueData();
 
 			switch (allocationType) {
-			case RepayConstants.ALLOCATION_MANADV:
+			case Allocation.MANADV:
 				dueData.setAllocType(RepayConstants.DUETYPE_MANUALADVISE);
 				dueData.setAdviseId(rad.getAllocationTo());
 				dueData.setDueDate(rad.getValueDate());
@@ -2749,7 +2749,7 @@ public class RepaymentProcessUtil {
 
 				duesList.add(dueData);
 				break;
-			case RepayConstants.ALLOCATION_BOUNCE:
+			case Allocation.BOUNCE:
 				dueData.setAllocType(RepayConstants.DUETYPE_BOUNCE);
 				dueData.setAdviseId(rad.getAllocationTo());
 				dueData.setDueDate(rad.getValueDate());

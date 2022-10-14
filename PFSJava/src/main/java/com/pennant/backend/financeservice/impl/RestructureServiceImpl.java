@@ -75,6 +75,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.rits.cloning.Cloner;
 
 public class RestructureServiceImpl extends GenericService<FinServiceInstruction> implements RestructureService {
@@ -522,7 +523,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			odPenalRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView");
 		}
 
-		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);
 
 		String taxType = null;
 		if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
@@ -585,11 +586,11 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			}
 
 			if (lpiBal.compareTo(BigDecimal.ZERO) > 0) {
-				charges.add(getChargeRcd(lpiBal, BigDecimal.ZERO, null, chargeSeq++, RepayConstants.ALLOCATION_LPFT,
+				charges.add(getChargeRcd(lpiBal, BigDecimal.ZERO, null, chargeSeq++, Allocation.LPFT,
 						Labels.getLabel("label_RecceiptDialog_AllocationType_LPFT"), null, false));
 			}
 			if (lppBal.compareTo(BigDecimal.ZERO) > 0) {
-				charges.add(getChargeRcd(lppBal, tdsAmount, lppTax, chargeSeq++, RepayConstants.ALLOCATION_ODC,
+				charges.add(getChargeRcd(lppBal, tdsAmount, lppTax, chargeSeq++, Allocation.ODC,
 						Labels.getLabel("label_RecceiptDialog_AllocationType_ODC"), null, false));
 			}
 		}
@@ -628,17 +629,17 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 				// Adding Advise Details to Map
 				if (advise.getBounceID() > 0) {
 					if (bounceFeeType == null) {
-						bounceFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+						bounceFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.BOUNCE);
 					}
 					if (bounceFeeType != null && bounceFeeType.isTaxApplicable()) {
 						taxType = bounceFeeType.getTaxComponent();
 						bounceTax.setTaxType(taxType);
 					}
 					isTdsApplicable = bounceFeeType.isTdsReq();
-					type = RepayConstants.ALLOCATION_BOUNCE;
+					type = Allocation.BOUNCE;
 					desc = "Bounce Charges";
 				} else {
-					type = RepayConstants.ALLOCATION_MANADV;
+					type = Allocation.MANADV;
 					desc = advise.getFeeTypeDesc();
 					isTdsApplicable = advise.isTdsReq();
 					// Calculation Receivable Advises
@@ -710,7 +711,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 			// Bounce Due Charges
 			if (bounceDue.compareTo(BigDecimal.ZERO) > 0) {
-				charges.add(getChargeRcd(bounceDue, bounceTds, bounceTax, chargeSeq++, RepayConstants.ALLOCATION_BOUNCE,
+				charges.add(getChargeRcd(bounceDue, bounceTds, bounceTax, chargeSeq++, Allocation.BOUNCE,
 						bounceFeeType.getFeeTypeDesc(), bounceFeeType.getFeeTypeCode(), false));
 			}
 		}
@@ -1641,8 +1642,8 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 				break;
 			}
 
-			if ((RepayConstants.ALLOCATION_MANADV.equals(alocType) || RepayConstants.ALLOCATION_BOUNCE.equals(alocType)
-					|| RepayConstants.ALLOCATION_ODC.equals(alocType)) && !rc.isCapitalized()) {
+			if ((Allocation.MANADV.equals(alocType) || Allocation.BOUNCE.equals(alocType)
+					|| Allocation.ODC.equals(alocType)) && !rc.isCapitalized()) {
 				isDue = false;
 			} else {
 				isDue = true;

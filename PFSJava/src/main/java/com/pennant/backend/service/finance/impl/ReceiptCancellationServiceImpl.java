@@ -160,6 +160,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.rits.cloning.Cloner;
 
 public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService implements ReceiptCancellationService {
@@ -1936,7 +1937,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					}
 
 					AEEvent aeEvent = executeBounceDueAccounting(fm, rch.getBounceDate(), manualAdvise, postBranch,
-							RepayConstants.ALLOCATION_BOUNCE);
+							Allocation.BOUNCE);
 
 					if (aeEvent != null && StringUtils.isNotEmpty(aeEvent.getErrorMessage())) {
 						logger.debug(Literal.LEAVING);
@@ -2216,9 +2217,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			FeeType lppFeeType = null;
 
 			if (eventProperties.isCacheLoaded()) {
-				lppFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(RepayConstants.ALLOCATION_ODC);
+				lppFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(Allocation.ODC);
 			} else {
-				lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+				lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);
 			}
 
 			// Calculate LPP GST Amount
