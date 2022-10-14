@@ -177,7 +177,7 @@ public class DueExtractionConfigDialogCtrl extends GFCBaseCtrl<InstrumentTypes> 
 				}
 			}
 
-			list = list.stream().sorted((l1, l2) -> l1.getExtractionDate().compareTo(l2.getExtractionDate()))
+			list = list.stream().sorted((l1, l2) -> l1.getDueDate().compareTo(l2.getDueDate()))
 					.collect(Collectors.toList());
 			count = list.size();
 			dataMap.put(key, list);
