@@ -29,4 +29,6 @@ public interface TaxHeaderDetailsDAO {
 
 	long save(Taxes taxes, String type);
 
+	List<Long> getHeaderIdsFromMAM(long receiptId, String type);
+
 }

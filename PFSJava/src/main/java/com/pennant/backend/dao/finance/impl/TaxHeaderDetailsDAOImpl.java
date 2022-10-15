@@ -299,18 +299,28 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 	@Override
 	public List<Long> getHeaderIdsByReceiptId(long receiptId, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select TaxHeaderID from ReceiptAllocationDetail");
+		sql.append(type);
+		sql.append(" Where ReceiptID = ?");
 
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("ReceiptID", receiptId);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		StringBuilder selectSql = new StringBuilder("Select  TaxHeaderID from ReceiptAllocationDetail");
-		selectSql.append(type);
-		selectSql.append(" Where ReceiptID = :ReceiptID ");
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			return JdbcUtil.getLong(rs.getObject(1));
+		}, receiptId);
+	}
 
-		logger.debug("selectSql: " + selectSql.toString());
+	@Override
+	public List<Long> getHeaderIdsFromMAM(long receiptId, String type) {
+		StringBuilder sql = new StringBuilder("Select TaxHeaderID from ManualAdviseMovements");
+		sql.append(type);
+		sql.append(" Where ReceiptID = ?");
 
-		return this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, Long.class);
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			return JdbcUtil.getLong(rs.getObject(1));
+		}, receiptId);
 	}
 
 	@Override

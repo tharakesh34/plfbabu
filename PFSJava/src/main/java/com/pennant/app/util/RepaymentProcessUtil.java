@@ -1669,6 +1669,18 @@ public class RepaymentProcessUtil {
 							rcd.getPayAdvMovement().setReceiptID(receiptID);
 							rcd.getPayAdvMovement().setReceiptSeqID(receiptSeqID);
 							rcd.getPayAdvMovement().setMovementDate(SysParamUtil.getAppDate());
+
+							TaxHeader taxHeader = rcd.getPayAdvMovement().getTaxHeader();
+							if (taxHeader != null && CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
+								List<Taxes> taxDetails = taxHeader.getTaxDetails();
+								Long headerId = taxHeaderDetailsDAO.save(taxHeader, TableType.MAIN_TAB.getSuffix());
+								for (Taxes taxes : taxDetails) {
+									taxes.setReferenceId(headerId);
+								}
+								taxHeaderDetailsDAO.saveTaxes(taxDetails, TableType.MAIN_TAB.getSuffix());
+								rcd.getPayAdvMovement().setTaxHeaderId(headerId);
+							}
+
 							manualAdviseDAO.saveMovement(rcd.getPayAdvMovement(), TableType.MAIN_TAB.getSuffix());
 						}
 

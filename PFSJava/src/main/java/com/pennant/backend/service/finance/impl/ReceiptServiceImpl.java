@@ -289,6 +289,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							rcd.getReceiptSeqID(), rcd.getPayAgainstID(),
 							StringUtils.equals(type, "_View") ? "_Temp" : "");
 					if (advMov != null) {
+						Long headerId = advMov.getTaxHeaderId();
+
+						if (headerId != null && headerId > 0) {
+							List<Taxes> taxDetails = taxHeaderDetailsDAO.getTaxDetailById(headerId, type);
+							TaxHeader taxHeader = new TaxHeader(headerId);
+							taxHeader.setTaxDetails(taxDetails);
+							advMov.setTaxHeader(taxHeader);
+						}
+						
 						rcd.setPayAdvMovement(advMov);
 					}
 
@@ -1172,6 +1181,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.debug(Literal.ENTERING);
 
 		List<Long> headerIdsByReceiptId = taxHeaderDetailsDAO.getHeaderIdsByReceiptId(receiptId, type);
+
+		headerIdsByReceiptId.addAll(taxHeaderDetailsDAO.getHeaderIdsFromMAM(receiptId, type));
+
 		if (CollectionUtils.isNotEmpty(headerIdsByReceiptId)) {
 			for (Long headerIds : headerIdsByReceiptId) {
 				if (headerIds != null && headerIds > 0) {
