@@ -308,9 +308,12 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				if (PennantConstants.FINSOURCE_ID_API.equals(fm.getFinSourceID())
 						&& auditHeader.getApiHeader() != null) {
 					BankBranch bankBranch = bankBranchDAO.getBankBrachByMicr(mandate.getMICR(), "");
-					mandate.setBankName(bankBranch.getBankName());
-					mandate.setBranchDesc(bankBranch.getBranchDesc());
-					mandate.setApprovalID(String.valueOf(mandate.getUserDetails().getUserId()));
+
+					if (bankBranch != null) {
+						mandate.setBankName(bankBranch.getBankName());
+						mandate.setBranchDesc(bankBranch.getBranchDesc());
+						mandate.setApprovalID(String.valueOf(mandate.getUserDetails().getUserId()));
+					}
 				}
 
 				for (CustomerEMail customerEMail : customer) {

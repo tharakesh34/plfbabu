@@ -955,8 +955,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (instrumentType == InstrumentType.EMANDATE) {
 			this.emandateRow.setVisible(true);
-			readOnlyComponent(false, this.eMandateReferenceNo);
-			readOnlyComponent(false, this.eMandateSource);
+			readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.eMandateReferenceNo);
+			readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), this.eMandateSource);
+			readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.umrNumber);
 		}
 
 		if (instrumentType == InstrumentType.DAS) {
@@ -975,6 +976,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (instrumentType == InstrumentType.SI) {
+
+			if (!fromLoan && customerLoans.size() > 1) {
+				readOnlyComponent(false, this.finReference);
+			}
+
 			this.accDetailsGroupbox.setVisible(true);
 
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
