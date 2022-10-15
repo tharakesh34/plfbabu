@@ -1137,7 +1137,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		ps.setBigDecimal(index++, fd.getLpCpzAmount());
 		ps.setBigDecimal(index++, fd.getLpCurCpzBal());
 
-		ps.setString(index++, fd.getFinReference());
+		ps.setLong(index++, fd.getFinID());
 		ps.setDate(index, JdbcUtil.getDate(fd.getFinODSchdDate()));
 	}
 }

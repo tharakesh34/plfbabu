@@ -297,7 +297,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							taxHeader.setTaxDetails(taxDetails);
 							advMov.setTaxHeader(taxHeader);
 						}
-						
+
 						rcd.setPayAdvMovement(advMov);
 					}
 
@@ -1914,8 +1914,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Overdue Details updation , if Value Date is Back dated.
 		scheduleData.setFinanceScheduleDetails(schdList);
 		Date reqMaxODDate = curBusDate;
-		List<FinODDetails> overdueList = null;
-		List<FinODDetails> repayODList = new ArrayList<FinODDetails>();
 
 		if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			reqMaxODDate = rch.getValueDate();
@@ -1924,12 +1922,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (!ImplementationConstants.LPP_CALC_SOD) {
 			reqMaxODDate = DateUtil.addDays(valueDate, -1);
 		}
-		overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
+		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
 
 		overdueList = calPenalty(scheduleData, rd, reqMaxODDate, overdueList);
 
-		if (!repayODList.isEmpty()) {
-			finODDetailsDAO.updatePaidPenalties(repayODList);
+		if (!overdueList.isEmpty()) {
+			finODDetailsDAO.updatePaidPenalties(overdueList);
 		}
 
 		if (rch.getUserDetails() == null && SessionUserDetails.getLogiedInUser() != null) {
