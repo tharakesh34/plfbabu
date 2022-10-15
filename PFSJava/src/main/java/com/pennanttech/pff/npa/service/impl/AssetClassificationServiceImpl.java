@@ -439,6 +439,12 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 	@Override
 	public void doProcessEarlySettlement(long finID) {
+		String entityCode = assetClassificationDAO.getEntityCodeFromStage(finID);
+
+		if (entityCode == null) {
+			return;
+		}
+
 		AssetClassification npa = getNpaDetails(finID);
 
 		if (npa == null) {
@@ -456,7 +462,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		npa.setNpaStage(false);
 		npa.setFinIsActive(false);
 		npa.setAssetClassSetup(assetClassSetups);
-		npa.setEntityCode(assetClassificationDAO.getEntityCodeFromStage(finID));
+		npa.setEntityCode(entityCode);
 
 		setNpaClassification(npa);
 

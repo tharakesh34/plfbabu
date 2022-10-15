@@ -766,7 +766,13 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public String getEntityCodeFromStage(long finID) {
 		String sql = "Select EntityCode From Npa_Provision_Stage Where FinID = ? and LinkedLoan = ?";
-		return jdbcOperations.queryForObject(sql, String.class, finID, 0);
+
+		try {
+			return jdbcOperations.queryForObject(sql, String.class, finID, 0);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override

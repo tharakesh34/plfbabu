@@ -3034,7 +3034,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ClosedDate = ?");
 		}
 
-		sql.append(" Where FinID = ? and ClosedDate IS NULL");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
