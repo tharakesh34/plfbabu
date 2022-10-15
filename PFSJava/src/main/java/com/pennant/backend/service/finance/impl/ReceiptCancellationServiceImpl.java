@@ -483,13 +483,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				TableType.MAIN_TAB.getSuffix());
 
 		FinanceDetail fd = rd.getFinanceDetail();
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER)
-				&& finReceiptHeader == null) {
-			fd = rd.getFinanceDetail();
-			FinScheduleData schdData = fd.getFinScheduleData();
-			FinanceMain fm = schdData.getFinanceMain();
-			processSuccessPostings(rch, fm);
-		}
 
 		String errorCode = "";
 
