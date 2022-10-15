@@ -18,6 +18,7 @@ import com.pennant.pff.presentment.dao.impl.PresentmentItemProcessor;
 import com.pennant.pff.presentment.dao.impl.PresentmentItemReader;
 import com.pennant.pff.presentment.dao.impl.PresentmentItemWriter;
 import com.pennant.pff.presentment.service.PresentmentEngine;
+import com.pennant.pff.presentment.tasklet.ApprovalTasklet;
 import com.pennant.pff.presentment.tasklet.ClearQueueTasklet;
 import com.pennant.pff.presentment.tasklet.GroupingTasklet;
 import com.pennant.pff.presentment.tasklet.PreparationTasklet;
@@ -48,6 +49,9 @@ public class PresentmentExtractionJob {
 	private GroupingTasklet grouping;
 
 	@Autowired
+	private ApprovalTasklet approval;
+
+	@Autowired
 	private DataSource dataSource;
 
 	@Autowired
@@ -66,6 +70,8 @@ public class PresentmentExtractionJob {
 				.next(grouping()).on("FAILED").fail()
 
 				.next(extraction()).on("FAILED").fail()
+
+				.next(approval()).on("FAILED").fail()
 
 				.next(clear()).on("*").end("COMPLETED").on("FAILED").fail()
 
@@ -87,6 +93,11 @@ public class PresentmentExtractionJob {
 	@Bean
 	private TaskletStep grouping() {
 		return this.peStepBuilderFactory.get("GROUPING").tasklet(grouping).build();
+	}
+
+	@Bean
+	private TaskletStep approval() {
+		return this.peStepBuilderFactory.get("APPROVAL").tasklet(approval).build();
 	}
 
 	@Bean

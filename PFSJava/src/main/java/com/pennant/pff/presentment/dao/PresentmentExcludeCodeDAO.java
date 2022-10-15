@@ -26,5 +26,5 @@ public interface PresentmentExcludeCodeDAO {
 
 	boolean isDuplicateKey(long id, TableType type);
 
-	Map<Integer, String> getBounceForPD();
+	Map<String, String> getBounceForPD();
 }

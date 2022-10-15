@@ -150,7 +150,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void doSetFieldProperties() {
-		fillComboBox(this.mandateTypes, "", mandateTypeList, InstrumentType.PDC.name());
+		fillComboBox(this.mandateTypes, "", mandateTypeList, "," + InstrumentType.PDC.code() + ",");
 
 		List<Entity> entity = mandateService.getEntities();
 

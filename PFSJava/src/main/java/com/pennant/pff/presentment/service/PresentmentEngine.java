@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,15 +20,18 @@ import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
+import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
@@ -36,15 +41,21 @@ import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public class PresentmentEngine {
+	private final Logger logger = LogManager.getLogger(PresentmentEngine.class);
+
+	public static final String STATUS_SUBMIT = "Submit";
+	public static final String STATUS_APPROVE = "Approve";
+
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private OverdrafLoanService overdrafLoanService;
 	private ChequeDetailDAO chequeDetailDAO;
 	private PresentmentDAO presentmentDAO;
 	private DueExtractionConfigDAO dueExtractionConfigDAO;
+	private PresentmentDetailService presentmentDetailService;
 
 	public PresentmentEngine() {
 		super();
-	};
+	}
 
 	public void preparation(JobParameters jobParameters) {
 		Date appDate = jobParameters.getDate("AppDate");
@@ -96,7 +107,7 @@ public class PresentmentEngine {
 
 		count = count - presentmentDAO.clearByNoDues();
 
-		if (instrumentType != null && !ph.isAutoExtract()) {
+		if ((instrumentType != null && !"#".equals(instrumentType)) && !ph.isAutoExtract()) {
 			count = count - presentmentDAO.clearByInstrumentType(instrumentType);
 		}
 
@@ -252,11 +263,7 @@ public class PresentmentEngine {
 			}
 		}
 
-		if (PresentmentExtension.AUTO_APPROVAL && ph.isAutoExtract()) {
-			pd.setStatus(RepayConstants.PEXC_APPROV);
-		} else {
-			pd.setStatus(RepayConstants.PEXC_IMPORT);
-		}
+		pd.setStatus(RepayConstants.PEXC_IMPORT);
 
 		pd.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
 
@@ -284,7 +291,7 @@ public class PresentmentEngine {
 			pd.setSchDate(pd.getDefSchdDate());
 		}
 
-		if (pd.getSchAmtDue().compareTo(BigDecimal.ZERO) > 0) {
+		if (pd.getSchAmtDue().compareTo(BigDecimal.ZERO) > 0 && pd.getDueDate() != null) {
 			doCalculations(ph, pd);
 		}
 	}
@@ -555,6 +562,51 @@ public class PresentmentEngine {
 		this.presentmentDAO.clearQueue();
 	}
 
+	public void approve(Date fromDate, Date toDate) {
+		LoggedInUser loggedInUser = new LoggedInUser();
+
+		List<PresentmentHeader> headerList = presentmentDAO.getPresentmentHeaders(fromDate, toDate);
+
+		for (PresentmentHeader ph : headerList) {
+			long id = ph.getId();
+
+			List<Long> includeList = presentmentDAO.getIncludeList(id);
+			ph.setIncludeList(includeList);
+
+			boolean searchIncludeList = presentmentDAO.searchIncludeList(id, 0);
+
+			if (!searchIncludeList) {
+				continue;
+			}
+			// FIXME>> MURTHY This needs to be addressed where there is no up-front bounce.
+			// List<Long> excludeList = presentmentDAO.getExcludeList(id);
+			// ph.setExcludeList(excludeList);
+
+			if (StringUtils.isEmpty(ph.getPartnerAcctNumber())
+					&& (ph.getPartnerBankId() == null || ph.getPartnerBankId() <= 0)) {
+				Presentment pb = presentmentDAO.getPartnerBankId(ph.getLoanType(), ph.getMandateType());
+				ph.setPartnerAcctNumber(pb.getAccountNo());
+				ph.setPartnerBankId(pb.getPartnerBankId());
+			} else {
+				ph.setPartnerAcctNumber(ph.getPartnerAcctNumber());
+				ph.setPartnerBankId(ph.getPartnerBankId());
+			}
+
+			ph.setUserDetails(loggedInUser);
+
+			try {
+				ph.setUserAction(STATUS_SUBMIT);
+				presentmentDetailService.updatePresentmentDetails(ph);
+
+				ph.setUserAction(STATUS_APPROVE);
+				presentmentDetailService.updatePresentmentDetails(ph);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+
+	}
+
 	private void setPresentmentRef(PresentmentDetail pd) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(pd.getBranchCode());
@@ -592,6 +644,11 @@ public class PresentmentEngine {
 	@Autowired
 	public void setDueExtractionConfigDAO(DueExtractionConfigDAO dueExtractionConfigDAO) {
 		this.dueExtractionConfigDAO = dueExtractionConfigDAO;
+	}
+
+	@Autowired
+	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
+		this.presentmentDetailService = presentmentDetailService;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.pennant.pff.presentment.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
@@ -72,4 +73,14 @@ public interface PresentmentDAO {
 	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
 	int updateSchdWithPresentmentId(List<PresentmentDetail> presenetments);
+
+	List<PresentmentHeader> getPresentmentHeaders(Date fromDate, Date toDate);
+
+	List<Long> getIncludeList(long id);
+
+	boolean searchIncludeList(long id, int i);
+
+	List<Long> getExcludeList(long id);
+
+	Presentment getPartnerBankId(String loanType, String mandateType);
 }

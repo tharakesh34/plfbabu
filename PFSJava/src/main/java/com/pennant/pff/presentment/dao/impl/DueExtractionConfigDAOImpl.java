@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -554,7 +555,7 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		List<DueExtractionConfig> list = jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			DueExtractionConfig config = new DueExtractionConfig();
 
 			config.setID(rs.getLong("Id"));
@@ -583,6 +584,9 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 
 			return config;
 		}, monthID, monthID);
+
+		return list.stream().sorted((l1, l2) -> l1.getDueDate().compareTo(l2.getDueDate()))
+				.collect(Collectors.toList());
 	}
 
 	@Override

@@ -59,6 +59,7 @@ import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -148,7 +149,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		registerField("FileName");
 		registerField("FileLocation");
 		registerField("Status");
-		registerField("EndTime");
+		registerField("EndTime", listheader_ProcessedDate, SortOrder.DESC);
 		registerField("ConfigId");
 		registerField("PostEvent");
 

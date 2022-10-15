@@ -6,13 +6,16 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
+import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -243,7 +246,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into Presentment_Extraction_Stage (");
 		sql.append(" FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
-		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage");
+		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage, SchdVersion");
 		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
 		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
 		sql.append(", SchdPftPaid, SchdPriPaid, SchdFeePaid, TdsPaid, InstrumentType");
@@ -252,7 +255,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", PartnerBankId, BranchCode, BankCode");
 		sql.append(") Select");
 		sql.append(" fm.FinId, fm.FinReference, fm.FinType, fm.ProductCategory, fm.FinBranch, sdd.EntityCode");
-		sql.append(", fm.BpiTreatment, fm.GrcPeriodEndDate, fm.GrcAdvType, fm.AdvType, fm.AdvStage");
+		sql.append(", fm.BpiTreatment, fm.GrcPeriodEndDate, fm.GrcAdvType, fm.AdvType, fm.AdvStage, fm.SchdVersion");
 		sql.append(", fsd.SchDate, fsd.DefSchdDate, fsd.SchSeq, fsd.InstNumber, fsd.BpiOrHoliday");
 		sql.append(", fsd.ProfitSchd, fsd.PrincipalSchd, fsd.FeeSchd, fsd.TdsAmount");
 		sql.append(", fsd.SchdPftPaid, fsd.SchdPriPaid, fsd.SchdFeePaid, fsd.TdsPaid");
@@ -298,7 +301,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public List<PresentmentDetail> getPresentmentDetails() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
-		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage");
+		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage, SchdVersion");
 		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
 		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
 		sql.append(", SchdPftPaid, SchdPriPaid, SchdFeePaid, TdsPaid");
@@ -323,6 +326,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setGrcAdvType(rs.getString("GrcAdvType"));
 			pd.setAdvType(rs.getString("AdvType"));
 			pd.setAdvStage(rs.getString("AdvStage"));
+			pd.setSchdVersion(rs.getInt("SchdVersion"));
 			pd.setSchDate(rs.getDate("SchDate"));
 			pd.setDefSchdDate(rs.getDate("DefSchdDate"));
 			pd.setSchSeq(rs.getInt("SchSeq"));
@@ -544,13 +548,13 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	@Override
 	public long saveList(List<PresentmentDetail> presentments) {
 		StringBuilder sql = new StringBuilder("Insert into PresentmentDetails");
-		sql.append("(Id, PresentmentId, PresentmentRef, FinID, FinReference, SchDate, MandateId");
+		sql.append("(Id, PresentmentId, PresentmentRef, FinID, FinReference, SchDate, MandateId, SchdVersion");
 		sql.append(", SchAmtDue, SchPriDue, SchPftDue, SchFeeDue, SchInsDue, SchPenaltyDue, AdvanceAmt, ExcessID");
 		sql.append(", AdviseAmt, PresentmentAmt, ExcludeReason, BounceID, EmiNo, TDSAmount, Status, ReceiptID");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -567,6 +571,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				ps.setLong(i++, pd.getFinID());
 				ps.setString(i++, pd.getFinReference());
 				ps.setDate(i++, JdbcUtil.getDate(pd.getSchDate()));
+				ps.setInt(i++, pd.getSchdVersion());
 				ps.setObject(i++, pd.getMandateId());
 				ps.setBigDecimal(i++, pd.getSchAmtDue());
 				ps.setBigDecimal(i++, pd.getSchPriDue());
@@ -688,6 +693,96 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	public List<PresentmentHeader> getPresentmentHeaders(Date fromDate, Date toDate) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Id, Reference, EntityCode, Schdate, BankCode, BankName, PartnerBankName");
+		sql.append(", FromDate, ToDate, PresentmentDate, Status, MandateType");
+		sql.append(", RecordStatus, RecordType");
+		sql.append(", LoanType, PartnerAcctNumber, PartnerBankId");
+		sql.append(" From PresentmentHeader_view");
+		sql.append(" Where FromDate = ? and ToDate = ? and Status = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setDate(1, JdbcUtil.getDate(fromDate));
+			ps.setDate(2, JdbcUtil.getDate(toDate));
+			ps.setInt(3, RepayConstants.PEXC_EXTRACT);
+		}, (rs, rowNum) -> {
+			PresentmentHeader ph = new PresentmentHeader();
+
+			ph.setId(rs.getLong("Id"));
+			ph.setReference(rs.getString("Reference"));
+			ph.setEntityCode(rs.getString("EntityCode"));
+			ph.setSchdate(rs.getDate("Schdate"));
+			ph.setBankCode(rs.getString("BankCode"));
+			ph.setBankName(rs.getString("BankName"));
+			ph.setPartnerBankName(rs.getString("PartnerBankName"));
+			ph.setFromDate(rs.getDate("FromDate"));
+			ph.setToDate(rs.getDate("ToDate"));
+			ph.setPresentmentDate(rs.getDate("PresentmentDate"));
+			ph.setStatus(rs.getInt("Status"));
+			ph.setMandateType(rs.getString("MandateType"));
+			ph.setRecordStatus(rs.getString("RecordStatus"));
+			ph.setRecordType(rs.getString("RecordType"));
+			ph.setLoanType(rs.getString("LoanType"));
+			ph.setPartnerAcctNumber(rs.getString("PartnerAcctNumber"));
+			ph.setPartnerBankId(rs.getLong("PartnerBankId"));
+
+			return ph;
+		});
+	}
+
+	@Override
+	public List<Long> getExcludeList(long id) {
+		String sql = "Select ID From PresentmentDetails Where PresentmentId = ? and ExcludeReason != ? and ExcludeReason != ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForList(sql, Long.class, id, RepayConstants.PEXC_EMIINCLUDE,
+				RepayConstants.PEXC_MANUAL_EXCLUDE);
+
+	}
+
+	@Override
+	public List<Long> getIncludeList(long id) {
+		String sql = "Select ID From PresentmentDetails Where PresentmentId = ? and ExcludeReason = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForList(sql, Long.class, id, RepayConstants.PEXC_EMIINCLUDE);
+	}
+
+	@Override
+	public boolean searchIncludeList(long presentmentId, int excludereason) {
+		String sql = "Select Count(Id) From PresentmentDetails Where PresentmentId = ? and ExcludeReason = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, presentmentId, excludereason) > 0;
+	}
+
+	public Presentment getPartnerBankId(String finType, String mandateType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PartnerBankID, AccountNo");
+		sql.append(" From PresentmentPartnerBank");
+		sql.append(" Where FinType = ? and MandateType = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				Presentment p = new Presentment();
+				p.setPartnerBankId(rs.getLong("PartnerBankID"));
+				p.setAccountNo(rs.getString("AccountNo"));
+				return p;
+			}, finType, mandateType);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
 	public long getNextValue() {
 		return getNextValue("SeqPresentmentDetails");
 	}
@@ -696,4 +791,5 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public long getSeqNumber(String tableName) {
 		return getNextValue(tableName);
 	}
+
 }

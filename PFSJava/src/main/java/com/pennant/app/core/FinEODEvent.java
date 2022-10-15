@@ -112,8 +112,6 @@ public class FinEODEvent implements Serializable {
 				.forEach(e -> entity.getFinanceDisbursements().add(e == null ? null : e.copyEntity()));
 		this.finFeeScheduleDetails.stream()
 				.forEach(e -> entity.getFinFeeScheduleDetails().add(e == null ? null : e.copyEntity()));
-		this.presentmentDetails.stream()
-				.forEach(e -> entity.getPresentmentDetails().add(e == null ? null : e.copyEntity()));
 		this.returnDataSet.stream().forEach(e -> entity.getReturnDataSet().add(e == null ? null : e.copyEntity()));
 		this.provisions.stream().forEach(e -> entity.getProvisions().add(e == null ? null : e.copyEntity()));
 		this.finExcessAmounts.stream()

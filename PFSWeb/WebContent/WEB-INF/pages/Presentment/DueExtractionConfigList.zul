@@ -40,12 +40,12 @@
 							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
 							span="true">
 							<listhead sizable="true">
-								<listheader label="Month - Year" sort="auto" hflex="min" />
+								<listheader label="Month - Year" hflex="min" />
 								<listheader label="Created On" hflex="min" />
 								<listheader label="Last Maintained By" hflex="min" />
 								<listheader label="Last Maintained On" hflex="min" />
-								<listheader label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" />
-								<listheader label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" />
+								<listheader label="${c:l('listheader_RecordStatus.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_RecordType.label')}" hflex="min" />
 							</listhead>
 						</listbox>
 					</div>

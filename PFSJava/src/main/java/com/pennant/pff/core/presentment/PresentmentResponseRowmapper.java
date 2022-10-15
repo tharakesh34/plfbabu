@@ -5,8 +5,8 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public class PresentmentResponseRowmapper implements RowMapper<PresentmentDetail> {
 
@@ -51,6 +51,7 @@ public class PresentmentResponseRowmapper implements RowMapper<PresentmentDetail
 		pd.setAccountNo(rs.getString("ACCOUNT_NUMBER"));
 		// pd.setAcType(rs.getString("ACTYPE"));
 		pd.setUtrNumber(rs.getString("UTR_Number"));
+		pd.setFateCorrection(rs.getString("FateCorrection"));
 
 		return pd;
 	}

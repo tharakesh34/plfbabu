@@ -98,16 +98,23 @@ public class ReceiptPaymentService {
 
 		if (pd.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0 && pd.getExcessID() != 0) {
 			logger.info("Creating Receipts for EMI In Advance...");
-			createEMIInAdvReceipt(receiptDTO);
+			if (RepayConstants.PEXC_APPROV.equals(pd.getStatus())) {
+				createEMIInAdvReceipt(receiptDTO);
+			}
 		}
 
-		createReceiptAndBounce(receiptDTO);
+		if (RepayConstants.PEXC_IMPORT.equals(pd.getStatus())) {
+			createReceiptAndBounce(receiptDTO);
+		}
 
 		if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION && pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 			logger.info("Creating Receipts for Presentment...");
-			createPresentmentReceipt(receiptDTO);
-		} else
 
+			if (RepayConstants.PEXC_APPROV.equals(pd.getStatus())) {
+				createPresentmentReceipt(receiptDTO);
+			}
+
+		} else
 			logger.debug(Literal.LEAVING);
 	}
 
@@ -205,11 +212,13 @@ public class ReceiptPaymentService {
 		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 
 		int excludeReason = pd.getExcludeReason();
+		String key = StringUtils.trimToEmpty(pd.getInstrumentType()).concat(String.valueOf(excludeReason));
+
 		EventProperties ep = fm.getEventProperties();
 
-		Map<Integer, String> excludeMap = ep.getPresentmentExcludeBounce();
+		Map<String, String> excludeMap = ep.getPresentmentExcludeBounce();
 
-		if (!excludeMap.containsKey(excludeReason)) {
+		if (!excludeMap.containsKey(key)) {
 			return;
 		}
 
@@ -232,7 +241,7 @@ public class ReceiptPaymentService {
 
 		custEODEvent.setFinEODEvents(list);
 
-		String bounceCode = excludeMap.get(excludeReason);
+		String bounceCode = excludeMap.get(key);
 
 		FinReceiptHeader rch = receiptDTO.getFinReceiptHeader();
 
