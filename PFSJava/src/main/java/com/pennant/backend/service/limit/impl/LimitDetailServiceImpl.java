@@ -1409,6 +1409,11 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		Map<String, List<String>> groupLineMap = new HashMap<String, List<String>>();
 		List<LimitDetails> limitDetails = aLimitHeader.getCustomerLimitDetailsList();
 
+		if (limitDetails == null) {
+			errorDetails.add(ErrorUtil.getError("90502", "limitDetails"));
+			return errorDetails;
+		}
+
 		for (LimitDetails limitDetail : limitDetails) {
 			if (!StringUtils.isEmpty(limitDetail.getGroupCode())) {
 				if (StringUtils.equals(LimitConstants.LIMIT_ITEM_TOTAL, limitDetail.getGroupCode())) {

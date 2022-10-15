@@ -181,7 +181,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 			StringBuilder sql = new StringBuilder();
 			sql.append(
-					"(((RecordType IS NULL OR RecordType='')  AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL AND RecordType !='')) AND ( ProductCtg != '");
+					"(((RecordType IS NULL OR RecordType='')  AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL OR RecordType !='')) AND ( ProductCtg != '");
 			sql.append(VASConsatnts.VAS_CATEGORY_VASI).append("')");
 			this.searchObject.addWhereClause(sql.toString());
 		} else if (VASConsatnts.STATUS_NORMAL.equals(module)) {

@@ -386,7 +386,12 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		if (bankDetail.isActive() && (partnerBankDAO.getPartnerBankbyBank(code, "") != 0
+		boolean active = !bankDetail.isActive();
+		if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(bankDetail.getRecordType())) {
+			active = bankDetail.isActive();
+		}
+
+		if (active && (partnerBankDAO.getPartnerBankbyBank(code, "") != 0
 				|| finAdvancePaymentsDAO.getBankCode(code, "") != 0
 				|| finCollateralsDAO.getFinCollateralsByBank(code, "") != 0
 				|| finReceiptDetailDAO.getReceiptHeaderByBank(code, "") != 0
