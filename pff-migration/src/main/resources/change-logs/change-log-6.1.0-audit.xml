@@ -46,5 +46,63 @@
 	<changeSet id="DE#30.1" author="saisandeep.b">
 		<dropNotNullConstraint tableName="AdtBUILDERGROUP" columnName="SEGMENTATION" columnDataType="varchar(50)" />
     </changeSet>
+    
+    <changeSet id="PSD#206531_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'finstsaprvlinquiry_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#206531" author="Gopal.p">
+		<createView viewName="FINSTSAPRVLINQUIRY_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT AF.FINREFERENCE AUDITREFERENCE, 
+					AF.RCDMAINTAINSTS AUDITEVENT,
+					AF.LASTMNTON AUDITDATE,
+					AF.ROLECODE, 
+					AF.LASTMNTBY, 
+					SR.ROLEDESC, 
+					AF.RECORDSTATUS, 
+					AF.RECORDTYPE, 
+                    SU.USRFNAME || COALESCE(' ' ${call.concatenate} SU.USRMNAME ${call.concatenate}' ', ' ') ${call.concatenate} SU.USRLNAME USRNAME,
+                    AH.AUDITMODULE,
+                    AH.AUDITID,
+                    AH.AUDITTRANTYPE
+				FROM AUDITHEADER AH 
+                INNER JOIN ADTFINANCEMAIN AF ON AF.AUDITID = AH.AUDITID 
+                LEFT JOIN SECROLES SR ON SR.ROLECD = AF.ROLECODE                     
+                INNER JOIN SECUSERS SU ON SU.USRID = AF.LASTMNTBY 
+                WHERE (AUDITMODULE = 'FinanceDetail' OR AUDITMODULE = 'InvestmentFinHeader') AND AF.RECORDSTATUS != 'Saved'
+                UNION ALL 
+                SELECT AF.REFERENCE AUDITREFERENCE, 
+                	AF.RCDMAINTAINSTS AUDITEVENT,
+                	AF.LASTMNTON AUDITDATE, 
+                	AF.ROLECODE, 
+                	AF.LASTMNTBY, 
+                	SR.ROLEDESC, 
+                	AF.RECORDSTATUS, 
+                	AF.RECORDTYPE, 
+                    SU.USRFNAME || COALESCE(' ' ${call.concatenate} SU.USRMNAME ${call.concatenate}' ', ' ') ${call.concatenate} SU.USRLNAME USRNAME,
+                    AH.AUDITMODULE,
+                    AH.AUDITID,
+                    AH.AUDITTRANTYPE
+				FROM AUDITHEADER AH 
+				INNER JOIN ADTFINRECEIPTHEADER AF ON AF.AUDITID = AH.AUDITID 
+                LEFT JOIN SECROLES SR ON SR.ROLECD = AF.ROLECODE                     
+                INNER JOIN SECUSERS SU ON SU.USRID = AF.LASTMNTBY
+                WHERE AUDITMODULE = 'FinReceiptHeader' AND AF.RECORDSTATUS != 'Saved'
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#206531_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'finstsaprvlinquiry_view');
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
