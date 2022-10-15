@@ -959,7 +959,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(false, this.eMandateSource);
 		}
 
-		if (instrumentType == InstrumentType.DAS || maintain) {
+		if (instrumentType == InstrumentType.DAS) {
 			if (!fromLoan && customerLoans.size() > 1) {
 				readOnlyComponent(false, this.finReference);
 			}
@@ -1126,7 +1126,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.reason.setValue("");
 		}
 
-		if (MandateStatus.isApproved(status) || MandateStatus.isHold(status) || MandateStatus.isRelease(status)) {
+		if (MandateStatus.isApproved(status) || MandateStatus.isHold(status) || MandateStatus.isRelease(status)
+				|| enqModule) {
 			readOnlyComponent(true, this.mandateRef);
 			readOnlyComponent(true, this.mandateType);
 			readOnlyComponent(true, this.bankBranchID);
@@ -1150,6 +1151,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.holdReason);
 			readOnlyComponent(true, this.partnerBank);
 			readOnlyComponent(true, this.externalMandate);
+			readOnlyComponent(true, this.employeeID);
+			readOnlyComponent(true, this.employerName);
 		}
 
 		if (MandateStatus.isApproved(status) || MandateStatus.isRelease(status) || MandateStatus.isHold(status)) {
@@ -1199,7 +1202,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 			this.reasonRow.setVisible(true);
-			this.mandateStatusRow.setVisible(true);
 
 			readOnlyComponent(true, this.finReference);
 		}

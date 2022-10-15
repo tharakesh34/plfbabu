@@ -253,7 +253,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				break;
 			case DAS:
 			case SI:
-				mandate.setStatus(MandateStatus.AWAITCON);
+				mandate.setStatus(MandateStatus.APPROVED);
 				break;
 
 			default:
@@ -877,55 +877,71 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	private ErrorDetail validateNew(FinanceDetail fd) {
 		Mandate mandate = fd.getMandate();
-
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
-
 		String repaymentMethod = fm.getFinRepayMethod();
 
 		mandate.setMandateID(Long.MIN_VALUE);
-		if (MandateExtension.PARTNER_BANK_REQ) {
-			if (mandate.getPartnerBankId() <= 0) {
-				return ErrorUtil.getError("90502", "partnerBankId");
+		mandate.setCustID(fm.getCustID());
+
+		ErrorDetail errordetail = basicValidation(mandate, repaymentMethod);
+
+		if (errordetail != null) {
+			return errordetail;
+		}
+
+		String mandateType = mandate.getMandateType();
+
+		switch (InstrumentType.valueOf(mandateType)) {
+		case ECS:
+		case DD:
+		case NACH:
+		case EMANDATE:
+		case SI:
+			errordetail = validateAccountDetail(mandate);
+
+			if (errordetail != null && !InstrumentType.isSI(mandateType)) {
+				errordetail = otherDetailValidation(mandate);
 			}
 
-			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
-			if (partnerBank == null) {
-				return ErrorUtil.getError("90263", "");
+			break;
+		case DAS:
+			if (mandate.getEmployeeID() == null) {
+				return ErrorUtil.getError("90502", "employeeID");
 			}
+
+			Mandate employerDetails = getEmployerDetails(mandate.getCustID());
+
+			if (employerDetails == null || employerDetails.getEmployeeID().compareTo(mandate.getEmployeeID()) != 0) {
+				ErrorUtil.getError("MNDT01", String.valueOf(mandate.getEmployeeID()));
+			} else if (!employerDetails.isAllowDAS()) {
+				ErrorUtil.getError("MNDT02", String.valueOf(mandate.getEmployeeID()));
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		if (errordetail != null) {
+			return errordetail;
+		}
+
+		return errordetail;
+	}
+
+	private ErrorDetail basicValidation(Mandate mandate, String repaymentMethod) {
+		if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), repaymentMethod)) {
+			return ErrorUtil.getError("90311", repaymentMethod, mandate.getMandateType());
 		}
 
 		if (StringUtils.isBlank(mandate.getMandateType())) {
 			return ErrorUtil.getError("90502", "mandateType");
 		}
+		return null;
+	}
 
-		String ifsc = mandate.getIFSC();
-		String micr = mandate.getMICR();
-		if (StringUtils.isBlank(ifsc)
-				&& (StringUtils.isBlank(mandate.getBankCode()) || StringUtils.isBlank(mandate.getBranchCode()))) {
-			return ErrorUtil.getError("90313", "");
-		}
-
-		if (StringUtils.isBlank(mandate.getAccType())) {
-			return ErrorUtil.getError("90502", "accType");
-		}
-
-		if (StringUtils.isBlank(mandate.getAccNumber())) {
-			return ErrorUtil.getError("90502", "accNumber");
-		}
-
-		if (ImplementationConstants.ALLOW_BARCODE && StringUtils.isBlank(mandate.getBarCodeNumber())) {
-			return ErrorUtil.getError("90502", "BarCodeNumber");
-		}
-
-		if (mandate.getAccNumber().length() > 50) {
-			return ErrorUtil.getError("30568", "accNumber length", "50");
-		}
-
-		if (StringUtils.isBlank(mandate.getAccHolderName())) {
-			return ErrorUtil.getError("90502", "accHolderName");
-		}
-
+	private ErrorDetail mandateDetailValidation(Mandate mandate) {
 		if (mandate.getStartDate() == null) {
 			return ErrorUtil.getError("90502", "startDate");
 		}
@@ -938,6 +954,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			if (mandate.getExpiryDate() != null) {
 				return ErrorUtil.getError("90329", "expiryDate", "open mandate");
 			}
+		}
+
+		if (ImplementationConstants.ALLOW_BARCODE && StringUtils.isBlank(mandate.getBarCodeNumber())) {
+			return ErrorUtil.getError("90502", "BarCodeNumber");
 		}
 
 		if (StringUtils.isNotBlank(mandate.getBarCodeNumber())) {
@@ -978,6 +998,110 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			}
 		}
 
+		if (StringUtils.isNotBlank(mandate.getMandateType())) {
+			List<ValueLabel> mandateType = MandateUtil.getInstrumentTypes();
+			boolean mandateTypeSts = false;
+			for (ValueLabel value : mandateType) {
+				if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
+					mandateTypeSts = true;
+					break;
+				}
+			}
+			if (!mandateTypeSts) {
+				return ErrorUtil.getError("90307", mandate.getMandateType());
+			}
+		}
+
+		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
+			ErrorDetail error = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
+			if (error != null && StringUtils.isNotBlank(error.getCode())) {
+				return ErrorUtil.getError("90207", mandate.getPeriodicity());
+			}
+		} else {
+			mandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
+		}
+
+		if (StringUtils.isNotBlank(mandate.getStatus())) {
+			List<ValueLabel> status = MandateUtil.getMandateStatus();
+			boolean sts = false;
+			for (ValueLabel value : status) {
+				if (StringUtils.equals(value.getValue(), mandate.getStatus())) {
+					sts = true;
+					break;
+				}
+			}
+			if (!sts) {
+				return ErrorUtil.getError("90309", mandate.getStatus());
+			}
+		}
+
+		if (mandate.getDocImage() == null && StringUtils.isBlank(mandate.getExternalRef())) {
+			return ErrorUtil.getError("90123", "docContent", "docRefId");
+		} else if (StringUtils.isBlank(mandate.getDocumentName())) {
+			return ErrorUtil.getError("90502", "Document Name");
+		}
+
+		if (StringUtils.isNotBlank(mandate.getDocumentName())) {
+			String docName = mandate.getDocumentName().toLowerCase();
+			if (!docName.contains(".")) {
+				return ErrorUtil.getError("90291", mandate.getDocumentName());
+			}
+
+			if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
+				return ErrorUtil.getError("90502", "Document Name");
+			}
+
+			if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")
+					&& !docName.endsWith(".pdf")) {
+				return ErrorUtil.getError("90122", "Document Extension available ext are:JPG,JPEG,PNG,PDF ");
+			}
+		}
+
+		return null;
+	}
+
+	private ErrorDetail otherDetailValidation(Mandate mandate) {
+		if (!MandateExtension.PARTNER_BANK_REQ) {
+			return null;
+		}
+
+		if (mandate.getPartnerBankId() <= 0) {
+			return ErrorUtil.getError("90502", "partnerBankId");
+		}
+
+		PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
+
+		if (partnerBank == null) {
+			return ErrorUtil.getError("90263", "");
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validateAccountDetail(Mandate mandate) {
+		String ifsc = mandate.getIFSC();
+		String micr = mandate.getMICR();
+		if (StringUtils.isBlank(ifsc)
+				&& (StringUtils.isBlank(mandate.getBankCode()) || StringUtils.isBlank(mandate.getBranchCode()))) {
+			return ErrorUtil.getError("90313", "");
+		}
+
+		if (StringUtils.isBlank(mandate.getAccType())) {
+			return ErrorUtil.getError("90502", "accType");
+		}
+
+		if (StringUtils.isBlank(mandate.getAccNumber())) {
+			return ErrorUtil.getError("90502", "accNumber");
+		}
+
+		if (mandate.getAccNumber().length() > 50) {
+			return ErrorUtil.getError("30568", "accNumber length", "50");
+		}
+
+		if (StringUtils.isBlank(mandate.getAccHolderName())) {
+			return ErrorUtil.getError("90502", "accHolderName");
+		}
+
 		String bankCode = mandate.getBankCode();
 		String branchCode = mandate.getBranchCode();
 
@@ -1013,6 +1137,20 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			}
 		}
 
+		if (StringUtils.isNotBlank(mandate.getAccType())) {
+			List<ValueLabel> accType = MandateUtil.getAccountTypes();
+			boolean accTypeSts = false;
+			for (ValueLabel value : accType) {
+				if (StringUtils.equals(value.getValue(), mandate.getAccType())) {
+					accTypeSts = true;
+					break;
+				}
+			}
+			if (!accTypeSts) {
+				return ErrorUtil.getError("90308", mandate.getAccType());
+			}
+		}
+
 		String mobileNumber = mandate.getPhoneNumber();
 		if (StringUtils.isNotBlank(mobileNumber) && !(mobileNumber.matches("\\d{10}"))) {
 			return ErrorUtil.getError("90278", "");
@@ -1030,91 +1168,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			return ErrorUtil.getError("90237", "JointAccHolderName");
 		}
 
-		if (StringUtils.isNotBlank(mandate.getMandateType())) {
-			List<ValueLabel> mandateType = MandateUtil.getInstrumentTypes();
-			boolean mandateTypeSts = false;
-			for (ValueLabel value : mandateType) {
-				if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
-					mandateTypeSts = true;
-					break;
-				}
-			}
-			if (!mandateTypeSts) {
-				return ErrorUtil.getError("90307", mandate.getMandateType());
-			}
-		}
-
-		if (StringUtils.isNotBlank(mandate.getAccType())) {
-			List<ValueLabel> accType = MandateUtil.getAccountTypes();
-			boolean accTypeSts = false;
-			for (ValueLabel value : accType) {
-				if (StringUtils.equals(value.getValue(), mandate.getAccType())) {
-					accTypeSts = true;
-					break;
-				}
-			}
-			if (!accTypeSts) {
-				return ErrorUtil.getError("90308", mandate.getAccType());
-			}
-		}
-
-		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
-			ErrorDetail error = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
-			if (error != null && StringUtils.isNotBlank(error.getCode())) {
-				return ErrorUtil.getError("90207", mandate.getPeriodicity());
-			}
-		} else {
-			mandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
-		}
-
-		if (StringUtils.isNotBlank(mandate.getStatus())) {
-			List<ValueLabel> status = MandateUtil.getMandateStatus();
-			boolean sts = false;
-			for (ValueLabel value : status) {
-				if (StringUtils.equals(value.getValue(), mandate.getStatus())) {
-					sts = true;
-					break;
-				}
-			}
-			if (!sts) {
-				return ErrorUtil.getError("90309", mandate.getStatus());
-			}
-		}
-
-		if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), repaymentMethod)) {
-			return ErrorUtil.getError("90311", repaymentMethod, mandate.getMandateType());
-		}
-
-		if (mandate.getDocImage() == null && StringUtils.isBlank(mandate.getExternalRef())) {
-			return ErrorUtil.getError("90123", "docContent", "docRefId");
-		} else if (StringUtils.isBlank(mandate.getDocumentName())) {
-			return ErrorUtil.getError("90502", "Document Name");
-		}
-
-		if (StringUtils.isNotBlank(mandate.getDocumentName())) {
-			String docName = mandate.getDocumentName().toLowerCase();
-			if (!docName.contains(".")) {
-				return ErrorUtil.getError("90291", mandate.getDocumentName());
-			}
-
-			if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
-				return ErrorUtil.getError("90502", "Document Name");
-			}
-
-			if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")
-					&& !docName.endsWith(".pdf")) {
-				return ErrorUtil.getError("90122", "Document Extension available ext are:JPG,JPEG,PNG,PDF ");
-			}
-		}
-		if (MandateExtension.PARTNER_BANK_REQ) {
-			if (mandate.getPartnerBankId() <= 0) {
-				return ErrorUtil.getError("90502", "partnerBankId");
-			} else {
-				PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
-				if (partnerBank == null) {
-					return ErrorUtil.getError("90263", "");
-				}
-			}
+		if (!InstrumentType.isSI(mandate.getMandateType())) {
+			return mandateDetailValidation(mandate);
 		}
 
 		return null;

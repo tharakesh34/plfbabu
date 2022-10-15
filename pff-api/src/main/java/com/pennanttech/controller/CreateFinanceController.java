@@ -2129,15 +2129,36 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		Mandate mandate = financeDetail.getMandate();
 		if (mandate != null) {
-			String ifsc = mandate.getIFSC();
-			String micr = mandate.getMICR();
-			String bankCode = mandate.getBankCode();
-			String branchCode = mandate.getBranchCode();
+			String mandateType = mandate.getMandateType();
 
-			BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+			switch (InstrumentType.valueOf(mandateType)) {
+			case ECS:
+			case DD:
+			case NACH:
+			case EMANDATE:
+			case SI:
+				String ifsc = mandate.getIFSC();
+				String micr = mandate.getMICR();
+				String bankCode = mandate.getBankCode();
+				String branchCode = mandate.getBranchCode();
 
-			if (bankBranch.getError() != null) {
-				financeDetail.getFinScheduleData().getErrorDetails().add(bankBranch.getError());
+				BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+				if (bankBranch.getError() != null) {
+					financeDetail.getFinScheduleData().getErrorDetails().add(bankBranch.getError());
+				}
+
+				financeDetail.getMandate().setBankCode(bankBranch.getBankCode());
+				financeDetail.getMandate().setBranchCode(bankBranch.getBranchCode());
+				financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
+				financeDetail.getMandate().setIFSC(bankBranch.getIFSC());
+				financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
+				break;
+			case DAS:
+				break;
+			default:
+				break;
+
 			}
 
 			if (!moveLoanStage) {
@@ -2165,11 +2186,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			// mandate details
 			financeDetail.getMandate().setCustCIF(financeMain.getLovDescCustCIF());
 			financeDetail.getMandate().setCustID(financeMain.getCustID());
-			financeDetail.getMandate().setBankCode(bankBranch.getBankCode());
-			financeDetail.getMandate().setBranchCode(bankBranch.getBranchCode());
-			financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
-			financeDetail.getMandate().setIFSC(bankBranch.getIFSC());
-			financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
 			financeDetail.getMandate().setActive(true);
 			financeDetail.getMandate().setInputDate(SysParamUtil.getAppDate());
 		}
