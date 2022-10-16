@@ -874,12 +874,14 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			details.setNextTaskId(fm.getNextTaskId());
 			details.setRoleCode(fm.getRoleCode());
 			details.setNextRoleCode(fm.getNextRoleCode());
-			details.setNewRecord(fd.isNewRecord());
+			details.setNewRecord(fm.isNewRecord());
 			if (PennantConstants.RECORD_TYPE_DEL.equals(fm.getRecordType())) {
 				if (StringUtils.trimToNull(details.getRecordType()) == null) {
 					details.setRecordType(fm.getRecordType());
 					details.setNewRecord(true);
 				}
+			} else if (details.isNewRecord()) {
+				details.setRecordType(PennantConstants.RCD_ADD);
 			}
 		}
 
