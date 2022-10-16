@@ -658,19 +658,19 @@ public class PresentmentResponseProcess implements Runnable {
 			return;
 		}
 
-		int consecutiveBounceCount = 0;
+		int consecutiveBounceCount = bounceReason.getHoldMarkBounceCount();
 
 		Long mandateId = pd.getMandateId();
-		Long bounceId = pd.getBounceID();
+		Long bounceId = bounceReason.getBounceID();
 		Date schdDate = pd.getSchDate();
 
 		ConsecutiveBounce consecBounces = consecutiveBounceDAO.getBounces(mandateId);
 
 		if (consecBounces == null) {
 			consecutiveBounceDAO.create(mandateId, bounceId, schdDate);
-			return;
 		}
 
+		consecBounces = consecutiveBounceDAO.getBounces(mandateId);
 		long lastBounceId = consecBounces.getBounceID();
 		int bounceCount = consecBounces.getBounceCount();
 		Date lastBounceDate = consecBounces.getLastBounceDate();
@@ -684,7 +684,7 @@ public class PresentmentResponseProcess implements Runnable {
 			consecutiveBounceDAO.update(mandateId, schdDate, bounceCount);
 		}
 
-		if (bounceCount >= consecutiveBounceCount) {
+		if (bounceCount < consecutiveBounceCount) {
 			return;
 		}
 

@@ -20,7 +20,7 @@ public class ConsecutiveBounceDAOImpl extends SequenceDao<ConsecutiveBounce> imp
 
 	@Override
 	public ConsecutiveBounce getBounces(long mandateId) {
-		String sql = "Select ID, BounceId, LastBounceDate, BounceCount From Presentment_Consecutive_Bounce Where and MandateId = ?";
+		String sql = "Select ID, BounceId, LastBounceDate, BounceCount From Presentment_Consecutive_Bounce Where MandateId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -29,8 +29,9 @@ public class ConsecutiveBounceDAOImpl extends SequenceDao<ConsecutiveBounce> imp
 				ConsecutiveBounce cb1 = new ConsecutiveBounce();
 
 				cb1.setId(rs.getLong("ID"));
+				cb1.setBounceID(rs.getLong("BounceId"));
 				cb1.setLastBounceDate(rs.getTimestamp("LastBounceDate"));
-				cb1.setBounceID(rs.getLong("BounceCount"));
+				cb1.setBounceCount(rs.getInt("BounceCount"));
 
 				return cb1;
 			}, mandateId);
@@ -44,7 +45,7 @@ public class ConsecutiveBounceDAOImpl extends SequenceDao<ConsecutiveBounce> imp
 	public void create(long mandateId, long bounceId, Date schdDate) {
 		StringBuilder sql = new StringBuilder("Insert Into Presentment_Consecutive_Bounce");
 		sql.append("(MandateId, BounceId, LastBounceDate, BounceCount, CreatedOn, LastMnton");
-		sql.append(" Values (");
+		sql.append(") Values (");
 		sql.append("?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));

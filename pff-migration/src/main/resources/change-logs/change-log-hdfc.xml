@@ -457,4 +457,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="11" author="gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'PRESENTMENT_REQUEST' WHERE SYSPARMCODE LIKE  'PRESENTMENT_REQUEST_PDC';		
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

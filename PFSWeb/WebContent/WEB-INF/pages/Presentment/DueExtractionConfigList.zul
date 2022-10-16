@@ -51,7 +51,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingDueExtractionConfigList" height="35px" />
+					<paging id="pagingDueExtractionConfigList" />
 				</south>
 			</borderlayout>
 		</window>
