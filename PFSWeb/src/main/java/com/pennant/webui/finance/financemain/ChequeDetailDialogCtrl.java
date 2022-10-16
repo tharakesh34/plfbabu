@@ -809,15 +809,16 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		List<WrongValueException> wve = new ArrayList<>();
 
+		boolean spdc = InstrumentType.isSPDC(chequeType.getSelectedItem().getValue());
 		try {
-			if (InstrumentType.isSPDC(chequeType.getSelectedItem().getValue())) {
+			if (spdc) {
 				Integer chequeNo = this.totNoOfCheques.getValue();
 				ch.setNoOfCheques(chequeNo == null ? 0 : chequeNo);
 			} else {
 				ch.setNoOfCheques(this.totNoOfCheques.getValue());
 			}
 		} catch (WrongValueException we) {
-			if (!isGenarate) {
+			if (!isGenarate && !spdc) {
 				wve.add(we);
 			}
 		}
@@ -945,7 +946,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					Labels.getLabel("label_ChequeDetailDialog_BankBranchID.value"), null, true, true));
 		}
 
-		if (!this.amount.isReadonly()) {
+		if (!this.amount.isReadonly() && isPDC) {
 			this.amount.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_ChequeDetailDialog_AmountCD.value"), ccyEditField,
 							(isPDC || (!SysParamUtil.isAllowed(SMTParameterConstants.UDC_ALLOW_ZERO_AMT))), false));
@@ -1217,7 +1218,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				}
 			}
 
-			this.deleteCheques.setVisible(cheques.size() > 0);
+			this.deleteCheques.setVisible(!cheques.isEmpty());
 			this.totNoOfCheques.setValue(totalCheques);
 			chequeDetailList.addAll(cheques);
 
@@ -1383,7 +1384,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		}
 
-		listHeaderCheckBoxComp.setDisabled(!isDeleteVisible());
+		validateCheckBox();
+
 		this.totNoOfCheques.setValue(getNoOfCheques());
 	}
 
@@ -2734,6 +2736,20 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private boolean isDeleteVisible() {
 		return !(CollectionUtils.isEmpty(chequeDetailList) || this.btnGen.isDisabled() || enqiryModule
 				|| this.deleteCheques.isDisabled());
+	}
+
+	private void validateCheckBox() {
+		if (!listBoxChequeDetail.getItems().isEmpty()) {
+			listHeaderCheckBoxComp.setDisabled(!isDeleteVisible());
+		} else {
+			listHeaderCheckBoxComp.setDisabled(true);
+		}
+
+		if (!listBoxSPDCChequeDetail.getItems().isEmpty()) {
+			listSPDCHeaderCheckBoxComp.setDisabled(!isDeleteVisible());
+		} else {
+			listSPDCHeaderCheckBoxComp.setDisabled(true);
+		}
 	}
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {

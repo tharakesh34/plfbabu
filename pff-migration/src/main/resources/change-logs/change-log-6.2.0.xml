@@ -5092,5 +5092,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#208051" author="Gopal.p">
+		<sql>
+			<![CDATA[	
+				UPDATE CHEQUEDETAIL SET CHEQUETYPE = 'SPDC' WHERE CHEQUETYPE = 'UDC';
+				UPDATE CHEQUEDETAIL_TEMP SET CHEQUETYPE = 'SPDC' WHERE CHEQUETYPE = 'UDC';
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
