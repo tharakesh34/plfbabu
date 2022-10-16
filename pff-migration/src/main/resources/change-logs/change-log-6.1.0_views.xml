@@ -10663,14 +10663,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="91_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="91.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'extended_field_mnt_view'); 
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="91" author="Gopal.p">
+	
+	<changeSet id="91.1" author="Gopal.p">
 		<createView viewName="EXTENDED_FIELD_MNT_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
@@ -10711,7 +10712,8 @@
 				    T1.WORKFLOWID,
 				    T2.SCHEDULEMETHOD,
 				    T2.PROFITDAYSBASIS,
-				    COALESCE(T7.NOINST, 0) NOINST
+				    COALESCE(T7.NOINST, 0) NOINST,
+				    T2.FINCURRASSETVALUE + T2.FEECHARGEAMT FINAMOUNT
 				FROM EXTENDED_FIELD_MNT_TEMP T1
 			    JOIN FINANCEMAIN T2 ON T2.FINREFERENCE = T1.REFERENCE
 			    INNER JOIN FINPFTDETAILS T7 ON T7.FINREFERENCE = T1.REFERENCE
@@ -10758,7 +10760,8 @@
 				    T1.WORKFLOWID,
 				    T2.SCHEDULEMETHOD,
 				    T2.PROFITDAYSBASIS,
-				    COALESCE(T7.NOINST, 0) NOINST
+				    COALESCE(T7.NOINST, 0) NOINST,
+				    T2.FINCURRASSETVALUE + T2.FEECHARGEAMT FINAMOUNT
 				FROM EXTENDED_FIELD_MNT T1
      			JOIN FINANCEMAIN T2 ON T2.FINREFERENCE = T1.REFERENCE
      			INNER JOIN FINPFTDETAILS T7 ON T7.FINREFERENCE = T1.REFERENCE
@@ -10770,7 +10773,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	<changeSet id="91_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="91.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'extended_field_mnt_view');	
