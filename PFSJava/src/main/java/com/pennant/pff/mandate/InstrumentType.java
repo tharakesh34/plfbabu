@@ -13,6 +13,8 @@ public enum InstrumentType {
 
 	PDC("PDC", "Post Dated Cheque"),
 
+	IPDC("PDC", "Internal Post Dated Cheque"),
+
 	SPDC("SPDC", "Security Post Dated Cheque"),
 
 	SI("SI", "Standing Instruction"),
@@ -61,6 +63,10 @@ public enum InstrumentType {
 
 	public static boolean isPDC(String instrumentType) {
 		return isEqual(PDC, getType(instrumentType));
+	}
+
+	public static boolean isIPDC(String instrumentType) {
+		return isEqual(IPDC, getType(instrumentType));
 	}
 
 	public static boolean isSPDC(String instrumentType) {

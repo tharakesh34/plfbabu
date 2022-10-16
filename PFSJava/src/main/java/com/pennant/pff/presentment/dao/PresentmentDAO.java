@@ -10,7 +10,7 @@ import com.pennanttech.pff.presentment.model.PresentmentHeader;
 public interface PresentmentDAO {
 	int extarct(Date dueDate);
 
-	int extarct(String instrumentType, Date dueDate);
+	int extarct(Date fromDate, Date toDate);
 
 	int extarct(String instrumentType, Date fromDate, Date toDate);
 
@@ -25,6 +25,10 @@ public interface PresentmentDAO {
 	int clearByLoanBranch(String loanBranch);
 
 	int clearByEntityCode(String entityCode);
+
+	int clearSecurityCheque();
+
+	void updateIPDC();
 
 	int clearByExistingRecord();
 
@@ -83,4 +87,9 @@ public interface PresentmentDAO {
 	List<Long> getExcludeList(long id);
 
 	Presentment getPartnerBankId(String loanType, String mandateType);
+
+	void approveExludes(long id);
+
+	void updatePartnerBankID(long id, long PartnerBankId);
+
 }

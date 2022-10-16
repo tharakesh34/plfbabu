@@ -228,7 +228,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 	@Override
 	public String savePresentmentDetails(PresentmentHeader ph) {
-		if (InstrumentType.isPDC(ph.getMandateType())) {
+		if (InstrumentType.isPDC(ph.getMandateType()) || InstrumentType.isIPDC(ph.getMandateType())) {
 			return savePDCPresentments(ph);
 		}
 		return savePresentments(ph);
@@ -410,7 +410,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 						excessAmountList = new ArrayList<>();
 					}
 				}
-				if (InstrumentType.isPDC(ph.getMandateType())) {
+				if (InstrumentType.isPDC(ph.getMandateType()) || InstrumentType.isIPDC(ph.getMandateType())) {
 					chequeStatusList.add(item.getMandateId());
 
 					if (chequeStatusList.size() == PennantConstants.CHUNK_SIZE) {
@@ -445,7 +445,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			updatePresentmentIdAsZero(pd.getId());
 
 			String paymentMode = this.presentmentDetailDAO.getPaymenyMode(pd.getPresentmentRef());
-			if (InstrumentType.isPDC(paymentMode)) {
+			if (InstrumentType.isPDC(paymentMode) || InstrumentType.isIPDC(paymentMode)) {
 				updateChequeStatus(pd.getMandateId(), ChequeSatus.NEW);
 			}
 
@@ -558,10 +558,11 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		try {
 			String presentmentRef = presentmentHeader.getReference();
 			String bankAccNo = presentmentHeader.getPartnerAcctNumber();
-			boolean isPDC = InstrumentType.isPDC(presentmentHeader.getMandateType());
+			boolean isPDC = InstrumentType.isPDC(presentmentHeader.getMandateType())
+					|| InstrumentType.isIPDC(presentmentHeader.getMandateType());
 
-			getPresentmentRequest().sendReqest(idList, idExcludeEmiList, headerId, isError, isPDC, presentmentRef,
-					bankAccNo);
+			getPresentmentRequest().sendReqest(idList, idExcludeEmiList, headerId, isError,
+					presentmentHeader.getMandateType(), presentmentRef, bankAccNo);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

@@ -26,8 +26,8 @@ public class PresentmentExtension {
 
 	static {
 		DUE_DATE_RECEIPT_CREATION = getValueAsBoolean("DUE_DATE_RECEIPT_CREATION", true);
-		AUTO_EXTRACTION = getValueAsBoolean("AUTO_EXTRACTION", false);
-		AUTO_APPROVAL = getValueAsBoolean("AUTO_APPROVAL", false);
+		AUTO_EXTRACTION = getValueAsBoolean("AUTO_EXTRACTION", true);
+		AUTO_APPROVAL = getValueAsBoolean("AUTO_APPROVAL", true);
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {

@@ -423,7 +423,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.parameterSearchObject = new JdbcSearchObject<PresentmentDetail>();
 		this.parameterSearchObject.setSearchClass(PresentmentDetail.class);
 
-		if (InstrumentType.isPDC(aPresentmentHeader.getMandateType())) {
+		if (InstrumentType.isPDC(aPresentmentHeader.getMandateType())
+				|| InstrumentType.isIPDC(aPresentmentHeader.getMandateType())) {
 			this.parameterSearchObject.addTabelName("PresentmentDetails_PDCAView");
 		} else {
 			this.parameterSearchObject.addTabelName("PresentmentDetails_AView");
@@ -535,6 +536,9 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 			if (InstrumentType.isPDC(presentmentDetail.getMandateType())) {
 				addCell(item, Labels.getLabel("label_Mandate_PDC"));
+			}
+			if (InstrumentType.isIPDC(presentmentDetail.getMandateType())) {
+				addCell(item, Labels.getLabel("label_Mandate_IPDC"));
 			} else {
 				addCell(item, presentmentDetail.getMandateType());
 			}

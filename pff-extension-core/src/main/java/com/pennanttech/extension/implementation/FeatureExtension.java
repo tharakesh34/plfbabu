@@ -8,9 +8,10 @@ import com.pennanttech.pff.provision.ProvisionBook;
 import com.pennanttech.pff.provision.ProvisionReversalStage;
 
 public class FeatureExtension implements IFeatureExtension {
-	static Map<String, Object> defaultExtensions = new HashMap<>();
-	static Map<String, Object> mandateExtensions = new HashMap<>();
-	static Map<String, Object> presentmentExtensions = new HashMap<>();
+	private Map<String, Object> defaultExtensions = new HashMap<>();
+	private Map<String, Object> mandateExtensions = new HashMap<>();
+	private Map<String, Object> presentmentExtensions = new HashMap<>();
+	private Map<String, Object> accountingExtensions = new HashMap<>();
 
 	/**
 	 * <p>
@@ -160,5 +161,10 @@ public class FeatureExtension implements IFeatureExtension {
 	public Map<String, Object> getPresentmentExtensions() {
 		return presentmentExtensions;
 
+	}
+
+	@Override
+	public Map<String, Object> getAccountingExtensions() {
+		return accountingExtensions;
 	}
 }

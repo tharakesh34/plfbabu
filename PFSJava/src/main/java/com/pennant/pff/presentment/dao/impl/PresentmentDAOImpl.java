@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -30,7 +31,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public int extarct(Date dueDate) {
-		StringBuilder sql = new StringBuilder(getExtractQuery(null));
+		StringBuilder sql = new StringBuilder(getExtractQuery("NACH+ECS+EMANDATE+SI+SII"));
 		sql.append(" Where (SchDate = ? or DefSchddate = ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -56,30 +57,76 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
 			ps.setString(index++, InstrumentType.PDC.name());
 		});
-		return recordCount;
 
-	}
-
-	@Override
-	public int extarct(String instrumentType, Date dueDate) {
-		StringBuilder sql = new StringBuilder(getExtractQuery(instrumentType));
-
-		if (InstrumentType.isPDC(instrumentType)) {
-			sql.append(" Where (SchDate = ? or DefSchddate = ?) and cd.ChequeType = ?");
-		} else {
-			sql.append(" Where (SchDate = ? or DefSchddate = ?) and m.MandateType = ?");
-		}
+		sql = new StringBuilder(getExtractQuery(InstrumentType.DAS.name()));
+		sql.append(" Where (SchDate = ? or DefSchddate = ?) and MandateType = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.update(sql.toString(), ps -> {
+		recordCount = recordCount + this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
 			ps.setInt(index++, 1);
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
-			ps.setString(index++, instrumentType);
+			ps.setString(index++, InstrumentType.DAS.name());
 		});
+
+		return recordCount;
+	}
+
+	@Override
+	public int extarct(Date fromDate, Date toDate) {
+		StringBuilder sql = new StringBuilder(getExtractQuery("NACH+ECS+EMANDATE+SI+SII"));
+		sql.append(" Where (SchDate >= ? and SchDate <= ?) or (DefSchddate >= ? and DefSchddate <= ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setInt(index++, 1);
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+			ps.setDate(index++, JdbcUtil.getDate(toDate));
+		});
+
+		sql = new StringBuilder(getExtractQuery(InstrumentType.PDC.name()));
+		sql.append(
+				" Where ((SchDate >= ? and SchDate <= ?) or (DefSchddate >= ? and DefSchddate <= ?)) and ChequeType = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		recordCount = recordCount + this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setInt(index++, 1);
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setString(index++, InstrumentType.PDC.name());
+		});
+
+		sql = new StringBuilder(getExtractQuery(InstrumentType.DAS.name()));
+		sql.append(
+				" Where ((SchDate >= ? and SchDate <= ?) or (DefSchddate >= ? and DefSchddate <= ?)) and MandateType = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		recordCount = recordCount + this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setInt(index++, 1);
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setString(index++, InstrumentType.DAS.name());
+		});
+
+		return recordCount;
 	}
 
 	@Override
@@ -157,6 +204,27 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.update(sql, entityCode);
+	}
+
+	@Override
+	public int clearSecurityCheque() {
+		String sql = "Delete From Presentment_Extraction_Stage Where ChequeType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.update(sql, InstrumentType.SPDC.name());
+	}
+
+	@Override
+	public void updateIPDC() {
+		String sql = "Update Presentment_Extraction_Stage set InstrumentType = ?, MandateType = ? Where InstrumentType = ? and BankCode = ?";
+
+		String bankcode = SysParamUtil.getValueAsString("BANK_CODE");
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, InstrumentType.IPDC.name(), InstrumentType.IPDC.name(),
+				InstrumentType.PDC.name(), bankcode);
 	}
 
 	@Override
@@ -571,8 +639,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				ps.setLong(i++, pd.getFinID());
 				ps.setString(i++, pd.getFinReference());
 				ps.setDate(i++, JdbcUtil.getDate(pd.getSchDate()));
-				ps.setInt(i++, pd.getSchdVersion());
 				ps.setObject(i++, pd.getMandateId());
+				ps.setInt(i++, pd.getSchdVersion());
 				ps.setBigDecimal(i++, pd.getSchAmtDue());
 				ps.setBigDecimal(i++, pd.getSchPriDue());
 				ps.setBigDecimal(i++, pd.getSchPftDue());
@@ -762,11 +830,28 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		return jdbcOperations.queryForObject(sql, Integer.class, presentmentId, excludereason) > 0;
 	}
 
+	@Override
+	public void approveExludes(long presentmentId) {
+		String sql = "Update PresentmentDetails Set Status = ? Where PresentmentId = ? and Excludereason in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		Object[] args = new Object[] { RepayConstants.PEXC_APPROV, presentmentId, RepayConstants.PEXC_EMIHOLD,
+				RepayConstants.PEXC_MANDATE_HOLD, RepayConstants.PEXC_MANDATE_NOTAPPROV,
+				RepayConstants.PEXC_MANDATE_EXPIRY, RepayConstants.PEXC_MANUAL_EXCLUDE,
+				RepayConstants.PEXC_MANDATE_REJECTED, RepayConstants.CHEQUESTATUS_PRESENT,
+				RepayConstants.CHEQUESTATUS_BOUNCE, RepayConstants.CHEQUESTATUS_REALISE,
+				RepayConstants.CHEQUESTATUS_REALISED };
+
+		this.jdbcOperations.update(sql, args);
+
+	}
+
 	public Presentment getPartnerBankId(String finType, String mandateType) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" PartnerBankID, AccountNo");
 		sql.append(" From PresentmentPartnerBank");
-		sql.append(" Where FinType = ? and MandateType = ?");
+		sql.append(" Where FinType = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -776,10 +861,19 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				p.setPartnerBankId(rs.getLong("PartnerBankID"));
 				p.setAccountNo(rs.getString("AccountNo"));
 				return p;
-			}, finType, mandateType);
+			}, finType);
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public void updatePartnerBankID(long id, long PartnerBankId) {
+		String sql = "Update PresentmentHeader set PartnerBankId = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, PartnerBankId, id);
 	}
 
 	@Override

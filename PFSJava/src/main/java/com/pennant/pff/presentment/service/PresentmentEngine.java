@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,7 @@ import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
+import com.pennant.pff.presentment.dao.PresentmentExcludeCodeDAO;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -52,6 +54,7 @@ public class PresentmentEngine {
 	private PresentmentDAO presentmentDAO;
 	private DueExtractionConfigDAO dueExtractionConfigDAO;
 	private PresentmentDetailService presentmentDetailService;
+	private PresentmentExcludeCodeDAO presentmentExcludeCodeDAO;
 
 	public PresentmentEngine() {
 		super();
@@ -93,10 +96,10 @@ public class PresentmentEngine {
 
 		int count = 0;
 
-		if (fromDate != null && toDate != null) {
+		if (fromDate != null && toDate != null && "#".equals(instrumentType)) {
+			count = presentmentDAO.extarct(fromDate, toDate);
+		} else if (fromDate != null && toDate != null && instrumentType != null && !"#".equals(instrumentType)) {
 			count = presentmentDAO.extarct(instrumentType, fromDate, toDate);
-		} else if (instrumentType != null && dueDate != null) {
-			count = presentmentDAO.extarct(instrumentType, dueDate);
 		} else if (dueDate != null) {
 			count = presentmentDAO.extarct(dueDate);
 		}
@@ -134,7 +137,12 @@ public class PresentmentEngine {
 			count = count - presentmentDAO.clearByRepresentment();
 		}
 
+		count = count - presentmentDAO.clearSecurityCheque();
+
+		presentmentDAO.updateIPDC();
+
 		presentmentDAO.updatePartnerBankID();
+
 	}
 
 	public void grouping(PresentmentHeader ph) {
@@ -157,7 +165,6 @@ public class PresentmentEngine {
 			setHeader(ph, list);
 			presentmentDAO.updateHeaderIdByDefault(list);
 		}
-
 	}
 
 	private void setHeader(PresentmentHeader ph, List<PresentmentDetail> list) {
@@ -172,7 +179,13 @@ public class PresentmentEngine {
 
 			Date fromDate = ph.getFromDate();
 			Date toDate = ph.getToDate();
-			Date dueDate = dueDates.get(instrumentType);
+			Date dueDate = null;
+
+			if (fromDate != null && toDate != null) {
+				dueDate = toDate;
+			} else {
+				dueDate = dueDates.get(instrumentType);
+			}
 
 			if (fromDate == null) {
 				fromDate = dueDate;
@@ -299,7 +312,7 @@ public class PresentmentEngine {
 	private void doCalculations(PresentmentHeader ph, PresentmentDetail pd) {
 		String mandateStatus = pd.getMandateStatus();
 
-		if (InstrumentType.isPDC(pd.getInstrumentType())) {
+		if (InstrumentType.isPDC(pd.getInstrumentType()) || InstrumentType.isIPDC(pd.getInstrumentType())) {
 			pd.setMandateId(pd.getChequeId());
 			String chequeStatus = pd.getChequeStatus();
 			if (!ChequeSatus.NEW.equals(chequeStatus)) {
@@ -547,7 +560,7 @@ public class PresentmentEngine {
 
 		List<PresentmentDetail> cheques = new ArrayList<>();
 		for (PresentmentDetail pd : includeList) {
-			if (InstrumentType.isPDC(pd.getInstrumentType())) {
+			if (InstrumentType.isPDC(pd.getInstrumentType()) || InstrumentType.isIPDC(pd.getInstrumentType())) {
 				cheques.add(pd);
 			}
 
@@ -563,6 +576,10 @@ public class PresentmentEngine {
 	}
 
 	public void approve(Date fromDate, Date toDate) {
+		Map<String, String> bounceForPD = presentmentExcludeCodeDAO.getBounceForPD();
+
+		boolean upfronBounceRequired = MapUtils.isNotEmpty(bounceForPD);
+
 		LoggedInUser loggedInUser = new LoggedInUser();
 
 		List<PresentmentHeader> headerList = presentmentDAO.getPresentmentHeaders(fromDate, toDate);
@@ -576,15 +593,30 @@ public class PresentmentEngine {
 			boolean searchIncludeList = presentmentDAO.searchIncludeList(id, 0);
 
 			if (!searchIncludeList) {
+				if (upfronBounceRequired) {
+					presentmentDAO.approveExludes(id);
+				}
+
 				continue;
 			}
-			// FIXME>> MURTHY This needs to be addressed where there is no up-front bounce.
-			// List<Long> excludeList = presentmentDAO.getExcludeList(id);
-			// ph.setExcludeList(excludeList);
+
+			if (!upfronBounceRequired) {
+				List<Long> excludeList = presentmentDAO.getExcludeList(id);
+				ph.setExcludeList(excludeList);
+			}
 
 			if (StringUtils.isEmpty(ph.getPartnerAcctNumber())
 					&& (ph.getPartnerBankId() == null || ph.getPartnerBankId() <= 0)) {
 				Presentment pb = presentmentDAO.getPartnerBankId(ph.getLoanType(), ph.getMandateType());
+
+				if (pb == null) {
+					pb = new Presentment();
+					pb.setPartnerBankId(621L);
+
+					presentmentDAO.updatePartnerBankID(id, pb.getPartnerBankId());
+
+				}
+
 				ph.setPartnerAcctNumber(pb.getAccountNo());
 				ph.setPartnerBankId(pb.getPartnerBankId());
 			} else {
@@ -649,6 +681,11 @@ public class PresentmentEngine {
 	@Autowired
 	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
 		this.presentmentDetailService = presentmentDetailService;
+	}
+
+	@Autowired
+	public void setPresentmentExcludeCodeDAO(PresentmentExcludeCodeDAO presentmentExcludeCodeDAO) {
+		this.presentmentExcludeCodeDAO = presentmentExcludeCodeDAO;
 	}
 
 }

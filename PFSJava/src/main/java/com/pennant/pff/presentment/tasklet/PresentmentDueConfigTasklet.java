@@ -2,7 +2,6 @@ package com.pennant.pff.presentment.tasklet;
 
 import java.util.Date;
 
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -27,14 +26,6 @@ public class PresentmentDueConfigTasklet implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
-
-		String automation = jobParameters.getString("AUTOMATION");
-
-		if ("N".equals(automation)) {
-			return RepeatStatus.FINISHED;
-		}
-
 		Date appDate = SysParamUtil.getAppDate();
 
 		boolean configExists = dueExtractionConfigDAO.isConfigExists();

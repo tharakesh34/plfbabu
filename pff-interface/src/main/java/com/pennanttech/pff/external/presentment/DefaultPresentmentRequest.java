@@ -46,16 +46,19 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 
 	@Override
 	public void sendReqest(List<Long> idList, List<Long> idExcludeEmiList, long presentmentId, boolean isError,
-			boolean isPDC, String presentmentRef, String bankAccNo) throws Exception {
+			String mandateType, String presentmentRef, String bankAccNo) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		boolean isBatchFail = false;
 		StringBuilder sql = null;
 
 		if (idList != null && !idList.isEmpty()) {
+			boolean isPDC = "PDC".equals(mandateType) || "IPDC".equals(mandateType);
 
 			if (isPDC) {
 				sql = getPDCSqlQuery();
+			} else if ("DAS".equals(mandateType)) {
+				sql = getDASSqlQuery();
 			} else {
 				sql = getSqlQuery();
 			}
@@ -252,7 +255,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT  T2.FINBRANCH, T1.FINREFERENCE, T4.MICR, T1.SCHDATE, ");
 		sql.append(" T3.ACCOUNTTYPE ACCTYPE, T3.ACCOUNTNO ACCNUMBER, T3.ACCHOLDERNAME, T3.CHEQUESERIALNO MANDATEREF,");
-		sql.append(" 'PDC' MANDATETYPE,T0.EMANDATESOURCE, T5.CUSTSHRTNAME,T5.CUSTCOREBANK, T6.BANKCODE, ");
+		sql.append(" MANDATETYPE,T0.EMANDATESOURCE, T5.CUSTSHRTNAME,T5.CUSTCOREBANK, T6.BANKCODE, ");
 		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 		sql.append(" T0.PRESENTMENTDATE, T4.IFSC,");
 		sql.append(" T7.PARTNERBANKCODE, T7.PARTNERBANKNAME, T7.UTILITYCODE, ");
@@ -276,6 +279,32 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		return sql;
 	}
 
+	private StringBuilder getDASSqlQuery() {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT  T2.FINBRANCH, T1.FINREFERENCE, NULL MICR, T3.ACCTYPE, T1.SCHDATE, ");
+		sql.append(" T3.ACCNUMBER, T5.CUSTSHRTNAME,T5.CUSTCOREBANK,T3.ACCHOLDERNAME, NULL BANKCODE, ");
+		sql.append("  NULL BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
+		sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, NULL IFSC, ");
+		sql.append(
+				" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE,T0.EMANDATESOURCE, ");
+		sql.append(" T2.FINTYPE, T2.CUSTID , T1.EMINO, NULL BRANCHDESC, NULL BRANCHCODE, T1.ID, T1.PresentmentRef, ");
+		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS, ");
+		sql.append(" T7.PARTNERBANKNAME, NULL CHEQUESERIALNO, NULL CHEQUEDATE, T5.CUSTCIF ");
+		sql.append(" FROM PRESENTMENTHEADER T0 ");
+		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
+		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
+		sql.append(" INNER JOIN CUSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
+		sql.append(" INNER JOIN MANDATES T3 ON T2.MANDATEID = T3.MANDATEID ");
+		sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
+		sql.append(" INNER JOIN RMTBRANCHES T8 ON T8.BRANCHCODE = T2.FINBRANCH ");
+		sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
+		sql.append(" INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T2.FINCCY");
+		sql.append(" INNER JOIN SMTDIVISIONDETAIL T11 ON T11.DIVISIONCODE=T9.FINDIVISION");
+		sql.append(" WHERE T1.PRESENTMENTID = :PRESENTMENTID");
+		sql.append(" AND T1.EXCLUDEREASON = :EXCLUDEREASON AND T1.STATUS <> :STATUS ");
+		return sql;
+	}
+
 	public class PresentmentRowMapper implements RowMapper<Presentment> {
 		List<Presentment> presements = new ArrayList<>();
 
@@ -284,7 +313,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			Presentment presement = new Presentment();
 
 			// Payment Mode Data
-			presement.setAccType(Long.valueOf(rs.getString("ACCTYPE")));
+			presement.setAccType(rs.getLong("ACCTYPE"));
 			presement.setAccountNo(rs.getString("ACCNUMBER"));
 			presement.setUmrnNo(rs.getString("MANDATEREF"));
 
