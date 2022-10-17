@@ -3455,8 +3455,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("RisksAndMitigants", new ModuleMapping("RisksAndMitigants", RisksAndMitigants.class,
 				new String[] { "RisksAndMitigants" }, masterWF, new String[] { "Risk", "Mitigants" }, null, 300));
 		ModuleUtil.register("SanctionConditions",
-				new ModuleMapping("SanctionConditions", SanctionConditions.class, new String[] { "SanctionConditions" },
-						masterWF, new String[] { "SanctionCondition", "Status" }, null, 300));
+				new ModuleMapping("SanctionConditions", SanctionConditions.class,
+						new String[] { "Sanction_Conditions" }, masterWF,
+						new String[] { "SanctionCondition", "Status" }, null, 300));
 		ModuleUtil.register("DealRecommendationMerits",
 				new ModuleMapping("DealRecommendationMerits", DealRecommendationMerits.class,
 						new String[] { "DealRecommendationMerits" }, masterWF, new String[] { "dealMerits" }, null,
