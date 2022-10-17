@@ -5738,7 +5738,7 @@
 			<![CDATA[	
 				merge into CustomerDocuments_Temp  t1
 				using (select id,CustID, CustDocCategory from CustomerDocuments) t2
-				on (t1.CustID=t.CustID and t1.CustDocCategory=t.CustDocCategory)
+				on (t1.CustID=t2.CustID and t1.CustDocCategory=t2.CustDocCategory)
 				when matched then update set t1.id= t2.id;
 			]]>
 		</sql>
