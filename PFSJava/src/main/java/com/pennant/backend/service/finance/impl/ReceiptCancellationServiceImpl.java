@@ -810,7 +810,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 
 		ManualAdvise ma = rch.getManualAdvise();
-		pd.setBounceCode(br.getReason());
+		pd.setBounceCode(br.getReturnCode());
 		pd.setBounceID(ma.getBounceID());
 		pd.setManualAdviseId(ma.getAdviseID());
 
