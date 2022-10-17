@@ -506,6 +506,24 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onFulfill$manufacturer(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = manufacturer.getObject();
+		if (dataObject == null) {
+			this.manufacturer.setValue("");
+			this.manufacturer.setDescription("");
+			this.manufacturer.setObject(null);
+		} else {
+			VehicleDealer object = (VehicleDealer) this.manufacturer.getObject();
+			if (object.getId() == 0) {
+				this.manufacturer.setValue("");
+				this.manufacturer.setDescription("");
+				this.manufacturer.setObject(null);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	public void onChange$freeLockPeriod(Event event) {
 		logger.debug(Literal.ENTERING);
 		this.flpCalculatedOn.setErrorMessage("");
