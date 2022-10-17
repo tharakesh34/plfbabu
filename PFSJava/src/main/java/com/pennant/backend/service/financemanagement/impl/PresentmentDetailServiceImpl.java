@@ -84,6 +84,7 @@ import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
+import com.pennanttech.external.ExternalPresentmentHook;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -135,6 +136,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private CustomerDataService customerDataService;
 	private FinMandateService finMandateService;
+	private ExternalPresentmentHook externalPresentmentHook;
 
 	@Override
 	public PresentmentHeader getPresentmentHeader(long id) {
@@ -561,8 +563,13 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			boolean isPDC = InstrumentType.isPDC(presentmentHeader.getMandateType())
 					|| InstrumentType.isIPDC(presentmentHeader.getMandateType());
 
-			getPresentmentRequest().sendReqest(idList, idExcludeEmiList, headerId, isError,
-					presentmentHeader.getMandateType(), presentmentRef, bankAccNo);
+			if (externalPresentmentHook != null) {
+				externalPresentmentHook.processPresentmentRequest(presentmentHeader);
+			} else {
+				getPresentmentRequest().sendReqest(idList, idExcludeEmiList, headerId, isError,
+						presentmentHeader.getMandateType(), presentmentRef, bankAccNo);
+			}
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -1145,4 +1152,9 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public void setFinMandateService(FinMandateService finMandateService) {
 		this.finMandateService = finMandateService;
 	}
+
+	public void setExternalPresentmentHook(ExternalPresentmentHook externalPresentmentHook) {
+		this.externalPresentmentHook = externalPresentmentHook;
+	}
+
 }
