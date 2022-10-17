@@ -271,6 +271,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.extension.FeeExtension;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -4936,7 +4937,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(fd);
 
-		if (ImplementationConstants.FEE_SERVICEING_STAMPIN_ON_ORG
+		if (FeeExtension.FEE_SERVICEING_STAMPIN_ON_ORG
 				&& StringUtils.equals(FinServiceEvent.ORG, fd.getModuleDefiner())) {
 			List<FinFeeConfig> calculateFees = feeCalculator.convertToFinanceFees(fd);
 			if (CollectionUtils.isNotEmpty(calculateFees)) {

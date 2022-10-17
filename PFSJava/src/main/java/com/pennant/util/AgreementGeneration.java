@@ -225,6 +225,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.document.generator.TemplateEngine;
+import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
@@ -3569,7 +3570,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		}
 		String netFinAmt = CurrencyUtil.format(netFinanceVal, formatter);
 		if (finAmount != null && finAmount.compareTo(BigDecimal.ZERO) > 0) {
-			if (ImplementationConstants.ADD_FEEINFTV_ONCALC) {
+			if (FeeExtension.ADD_FEEINFTV_ONCALC) {
 				agreement.setNetFinAmount(netFinAmt);
 			} else {
 				agreement.setNetFinAmount(netFinAmt);

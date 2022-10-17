@@ -939,7 +939,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(" fm.FinID, m.MandateId, m.MandateType, fm.MandateId OldMandateId");
 		sql.append(" From Mandates m");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference and fm.FinID = ?");
-		sql.append(" Where SwapIsActive = ?");
+		sql.append(" Where SwapIsActive = ? and m.MandateId <> fm.MandateId ");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

@@ -60,6 +60,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -439,7 +440,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.groupboxWf.setVisible(false);
 		}
 
-		this.feeIncomeOrExpenseRow.setVisible(ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG);
+		this.feeIncomeOrExpenseRow.setVisible(FeeExtension.ALLOW_SINGLE_FEE_CONFIG);
 		this.feeIncomeOrExpense.setWidth("200px");
 		this.feeIncomeOrExpense.setModuleName("AccountType");
 		this.feeIncomeOrExpense.setValueColumn("AcType");

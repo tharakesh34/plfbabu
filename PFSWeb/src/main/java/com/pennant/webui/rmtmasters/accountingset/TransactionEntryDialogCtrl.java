@@ -95,6 +95,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.pff.extension.FeeExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -332,7 +333,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 
 		// ### START SFA_20210405 -->
-		if (!ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+		if (!FeeExtension.ALLOW_SINGLE_FEE_CONFIG) {
 			this.row_FeeRepeat.setVisible(false);
 			this.row_AssignEntry.setVisible(false);
 			this.feeRepeat.setChecked(false);

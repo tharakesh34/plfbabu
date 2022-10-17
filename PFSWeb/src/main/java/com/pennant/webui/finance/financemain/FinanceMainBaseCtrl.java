@@ -305,6 +305,7 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
@@ -17891,7 +17892,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		String netFinAmt = PennantApplicationUtil
 				.amountFormate(PennantApplicationUtil.unFormateAmount(netFinanceVal, formatter), formatter);
 		if (finAmount != null && finAmount.compareTo(BigDecimal.ZERO) > 0) {
-			if (ImplementationConstants.ADD_FEEINFTV_ONCALC) {
+			if (FeeExtension.ADD_FEEINFTV_ONCALC) {
 				this.netFinAmount.setValue(netFinAmt + " ("
 						+ ((netFinanceVal.multiply(new BigDecimal(100))).divide(finAmount, 2, RoundingMode.HALF_DOWN))
 						+ "%)");

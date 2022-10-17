@@ -38,7 +38,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -63,6 +62,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.extension.FeeExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
@@ -469,7 +469,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		String netFinAmt = PennantApplicationUtil
 				.amountFormate(PennantApplicationUtil.unFormateAmount(netFinanceVal, formatter), formatter);
 		if (finAmount != null && finAmount.compareTo(BigDecimal.ZERO) > 0) {
-			if (ImplementationConstants.ADD_FEEINFTV_ONCALC) {
+			if (FeeExtension.ADD_FEEINFTV_ONCALC) {
 				this.netFinAmount.setValue(netFinAmt + " ("
 						+ ((netFinanceVal.multiply(new BigDecimal(100))).divide(finAmount, 2, RoundingMode.HALF_DOWN))
 						+ "%)");

@@ -109,6 +109,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.FeeExtension;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -506,7 +507,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				doFillFinFeeDetailList(finFeeDetailList);
 			}
 		} else {
-			if (ImplementationConstants.ALLOW_FEES_RECALCULATE) {
+			if (FeeExtension.ALLOW_FEES_RECALCULATE) {
 				setFinFeeDetailList(finFeeDetailActualList);
 				calculateFees(finFeeDetailActualList, financeDetail.getFinScheduleData(), financeDetail.getValueDate());
 			} else {

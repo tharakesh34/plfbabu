@@ -50,7 +50,7 @@ public class ImplementationConstants {
 		PREAPPROVAL_ALLOWED = getValueAsBoolean("PREAPPROVAL_ALLOWED", false);
 		ALLOW_DEVIATIONS = getValueAsBoolean("ALLOW_DEVIATIONS", true);
 		LATEPAY_PROFIT_CAL_ON_DAYZERO = getValueAsBoolean("LATEPAY_PROFIT_CAL_ON_DAYZERO", true);
-		ADD_FEEINFTV_ONCALC = getValueAsBoolean("ADD_FEEINFTV_ONCALC", true);
+
 		ALLOW_SPECIALRATE = getValueAsBoolean("ALLOW_SPECIALRATE", false);
 		ALLOW_MANUAL_SCHEDULE = getValueAsBoolean("ALLOW_MANUAL_SCHEDULE", false);
 		CAPTURE_APPLICATION_NUMBER = getValueAsBoolean("CAPTURE_APPLICATION_NUMBER", true);
@@ -78,8 +78,7 @@ public class ImplementationConstants {
 		VARTUAL_DPD = getValueAsBoolean("VARTUAL_DPD", true);
 		ALLOW_COSTOFFUNDS = getValueAsBoolean("ALLOW_COSTOFFUNDS", true);
 		ALLOW_IRRCODES = getValueAsBoolean("ALLOW_IRRCODES", true);
-		ALLOW_FEES_RECALCULATE = getValueAsBoolean("ALLOW_FEES_RECALCULATE", true);
-		ALLOW_PAID_FEE_SCHEDULE_METHOD = getValueAsBoolean("ALLOW_PAID_FEE_SCHEDULE_METHOD", false);
+
 		ALLOW_BARCODE = getValueAsBoolean("ALLOW_BARCODE", false);
 		PPPERCENT_VALIDATION_REQ = getValueAsBoolean("PPPERCENT_VALIDATION_REQ", false);
 		DEPOSIT_PROC_REQ = getValueAsBoolean("DEPOSIT_PROC_REQ", false);
@@ -101,7 +100,7 @@ public class ImplementationConstants {
 		PYBADV_CREATE_ON_INTEMI = getValueAsBoolean("PYBADV_CREATE_ON_INTEMI", true);
 		COVENANT_REQUIRED = getValueAsBoolean("COVENANT_REQUIRED", false);
 		QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES = getValueAsBoolean("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES", true);
-		UPFRONT_FEE_REVERSAL_REQ = getValueAsBoolean("UPFRONT_FEE_REVERSAL_REQ", false);
+
 		GAP_INTEREST_REQUIRED = getValueAsBoolean("GAP_INTEREST_REQUIRED", true);
 		ALLOW_ALL_SERV_RCDS = getValueAsBoolean("ALLOW_ALL_SERV_RCDS", false);
 		LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
@@ -167,7 +166,6 @@ public class ImplementationConstants {
 		CUSTOM_BLACKLIST_PARAMS = getValueAsBoolean("CUSTOM_BLACKLIST_PARAMS", false);
 		DISBURSEMENT_ALLOW_CO_APP = getValueAsBoolean("DISBURSEMENT_ALLOW_CO_APP", false);
 		CHEQUE_ALLOW_CO_APP = getValueAsBoolean("CHEQUE_ALLOW_CO_APP", false);
-		FEE_SERVICEING_STAMPIN_ON_ORG = getValueAsBoolean("FEE_SERVICEING_STAMPIN_ON_ORG", false);
 		ALW_VERIFICATION_SYNC = getValueAsBoolean("ALW_VERIFICATION_SYNC", false);
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean("GROUP_BATCH_BY_PARTNERBANK", false);
 		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean("ALLOW_ED_FIELDS_IN_NPA", false);
@@ -195,7 +193,7 @@ public class ImplementationConstants {
 		SNAP_SHOT_DATE_AS_CUR_BUS_DATE = getValueAsBoolean("SNAP_SHOT_DATE_AS_CUR_BUS_DATE", false);
 		// this constant should be true for goderaj
 		CHEQUE_AMOUNT_ZERO_UDC = getValueAsBoolean("CHEQUE_AMOUNT_ZERO_UDC", false);
-		ALLOW_SINGLE_FEE_CONFIG = getValueAsBoolean("ALLOW_SINGLE_FEE_CONFIG", false);
+
 		VALIDATION_ON_CHECKER_APPROVER_ALLOWED = getValueAsBoolean("VALIDATION_ON_CHECKER_APPROVER_ALLOWED", false);
 		CIBIL_BASED_ON_ENTITY = getValueAsBoolean("CIBIL_BASED_ON_ENTITY", false);
 		RESTRUCTURE_DFT_APP_DATE = getValueAsBoolean("RESTRUCTURE_DFT_APP_DATE", false);
@@ -322,7 +320,6 @@ public class ImplementationConstants {
 	public static boolean PREAPPROVAL_ALLOWED;
 	public static boolean ALLOW_DEVIATIONS;
 	public static boolean LATEPAY_PROFIT_CAL_ON_DAYZERO;
-	public static boolean ADD_FEEINFTV_ONCALC;
 	public static boolean ALLOW_SPECIALRATE;
 	public static boolean ALLOW_MANUAL_SCHEDULE;
 	public static boolean CAPTURE_APPLICATION_NUMBER;
@@ -350,8 +347,6 @@ public class ImplementationConstants {
 	public static boolean VARTUAL_DPD;
 	public static boolean ALLOW_COSTOFFUNDS;
 	public static boolean ALLOW_IRRCODES;
-	public static boolean ALLOW_FEES_RECALCULATE;
-	public static boolean ALLOW_PAID_FEE_SCHEDULE_METHOD;
 	public static boolean ALLOW_BARCODE;
 	public static boolean PPPERCENT_VALIDATION_REQ;
 	public static boolean DEPOSIT_PROC_REQ;
@@ -373,7 +368,6 @@ public class ImplementationConstants {
 	public static boolean PYBADV_CREATE_ON_INTEMI;
 	public static boolean COVENANT_REQUIRED;
 	public static boolean QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES;
-	public static boolean UPFRONT_FEE_REVERSAL_REQ;
 	public static boolean GAP_INTEREST_REQUIRED;
 	public static boolean ALLOW_ALL_SERV_RCDS;
 	public static boolean LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS;
@@ -433,7 +427,6 @@ public class ImplementationConstants {
 	public static boolean CUSTOM_BLACKLIST_PARAMS;
 	public static boolean DISBURSEMENT_ALLOW_CO_APP;
 	public static boolean CHEQUE_ALLOW_CO_APP;
-	public static boolean FEE_SERVICEING_STAMPIN_ON_ORG;
 	public static boolean ALW_VERIFICATION_SYNC;
 	public static boolean ALLOW_AUTO_GRACE_EXT;
 	public static boolean ALLOW_LOAN_DOWNSIZING;
@@ -551,8 +544,6 @@ public class ImplementationConstants {
 	public static boolean DISBURSEMENT_INSTRUCTIONS_OFF_LINE;
 	public static boolean SNAP_SHOT_DATE_AS_CUR_BUS_DATE;
 	public static boolean CHEQUE_AMOUNT_ZERO_UDC;
-	public static boolean ALLOW_SINGLE_FEE_CONFIG;
-
 	public static String GST_INCLUSIVE_SYMBOL;
 	public static String GST_EXCLUSIVE_SYMBOL;
 	public static boolean ALW_RATE_CHANGE;

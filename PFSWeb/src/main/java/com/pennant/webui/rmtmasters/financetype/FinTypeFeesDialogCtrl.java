@@ -48,7 +48,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -63,6 +62,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.FeeExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -286,7 +286,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.groupboxWf.setVisible(false);
 		}
 
-		if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+		if (FeeExtension.ALLOW_SINGLE_FEE_CONFIG) {
 			this.label_FinTypeFeesDialog_InclForAssignment.setVisible(true);
 			this.inclForAssignment.setVisible(true);
 		}
@@ -459,8 +459,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			excluedeFields = getRestructureExcludeFields();
 		}
 
-		if (!ImplementationConstants.ALLOW_PAID_FEE_SCHEDULE_METHOD) { // Paid by customer and waived by bank has been
-																		// excluded
+		if (!FeeExtension.ALLOW_PAID_FEE_SCHEDULE_METHOD) { // Paid by customer and waived by bank has been
+															// excluded
 			excluedeFields = excluedeFields + "," + CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ","
 					+ CalculationConstants.REMFEE_WAIVED_BY_BANK + ",";
 		}
@@ -483,7 +483,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.recordStatus.setValue(aFinTypeFees.getRecordStatus());
 
 		// ### START SFA_20210405 -->
-		if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+		if (FeeExtension.ALLOW_SINGLE_FEE_CONFIG) {
 			this.inclForAssignment.setChecked(aFinTypeFees.isInclForAssignment());
 		}
 		// ### END SFA_20210405 <--
@@ -681,7 +681,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 
 		// ### START SFA_20210405 -->
-		if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+		if (FeeExtension.ALLOW_SINGLE_FEE_CONFIG) {
 			try {
 				aFinTypeFees.setInclForAssignment(this.inclForAssignment.isChecked());
 			} catch (WrongValueException we) {
