@@ -1108,8 +1108,8 @@ public class RepaymentPostingsUtil {
 					amountCodes.setRpTotPr(amountCodes.getRpTot());
 					amountCodes.setPriPr(amountCodes.getPri());
 					amountCodes.setPriSPr(amountCodes.getPriS());
-					amountCodes.setRpPft(BigDecimal.ZERO);
-					amountCodes.setRpTot(BigDecimal.ZERO);
+					// amountCodes.setRpPft(BigDecimal.ZERO);
+					// amountCodes.setRpTot(BigDecimal.ZERO);
 				} else {
 					amountCodes.setPriPr(BigDecimal.ZERO);
 					amountCodes.setPriSPr(BigDecimal.ZERO);
