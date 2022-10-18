@@ -252,7 +252,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setLong(index++, mdt.getCustID());
 			ps.setString(index++, mdt.getMandateRef());
 			ps.setString(index++, mdt.getMandateType());
-			ps.setObject(index++, JdbcUtil.getLong(mdt.getBankBranchID()));
+			ps.setObject(index++, mdt.getBankBranchID());
 			ps.setString(index++, mdt.getAccNumber());
 			ps.setString(index++, mdt.getAccHolderName());
 			ps.setString(index++, mdt.getJointAccHolderName());
@@ -272,7 +272,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.getReason());
 			ps.setString(index++, mdt.getMandateCcy());
 			ps.setString(index++, mdt.getDocumentName());
-			ps.setObject(index++, JdbcUtil.getLong(mdt.getDocumentRef()));
+			ps.setObject(index++, mdt.getDocumentRef());
 			ps.setString(index++, mdt.getExternalRef());
 			ps.setInt(index++, mdt.getVersion());
 			ps.setLong(index++, mdt.getLastMntBy());
