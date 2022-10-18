@@ -25,5 +25,5 @@ public interface CustTypePANMappingDAO extends BasicCrudDao<CustTypePANMapping> 
 
 	boolean isDuplicateKey(long id, String custType, String pANLetter, TableType tableType);
 
-	CustTypePANMapping getApprovedPANMapping(CustTypePANMapping custTypePANMapping, String type);
+	boolean isValidPANLetter(String custType, String custCategory, String panLetter);
 }

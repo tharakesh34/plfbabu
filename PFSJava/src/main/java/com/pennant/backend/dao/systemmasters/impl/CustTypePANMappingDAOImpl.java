@@ -40,7 +40,6 @@ import com.pennant.backend.dao.systemmasters.CustTypePANMappingDAO;
 import com.pennant.backend.model.systemmasters.CustTypePANMapping;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -223,34 +222,11 @@ public class CustTypePANMappingDAOImpl extends SequenceDao<CustTypePANMapping> i
 	}
 
 	@Override
-	public CustTypePANMapping getApprovedPANMapping(CustTypePANMapping panMap, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" MappingID, CustCategory, CustType, PANLetter, Active");
-		sql.append(" From CustTypePANMapping");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CustType = ? and CustCategory = ? and Active = ?");
+	public boolean isValidPANLetter(String custType, String custCategory, String panLetter) {
+		String sql = "Select count(MappingID) From CustTypePANMapping Where CustType = ? and CustCategory = ? and PANLetter = ? and Active = ?";
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
-		try {
-			return jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { panMap.getCustType(), panMap.getCustCategory(), 1 }, (rs, i) -> {
-						CustTypePANMapping custPanMap = new CustTypePANMapping();
-
-						custPanMap.setMappingID(JdbcUtil.getLong(rs.getLong("MappingID")));
-						custPanMap.setCustCategory(rs.getString("CustCategory"));
-						custPanMap.setCustType(rs.getString("CustType"));
-						custPanMap.setPanLetter(rs.getString("PANLetter"));
-						custPanMap.setActive(rs.getBoolean("Active"));
-
-						return custPanMap;
-					});
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn(
-					"Record is not found in CustTypePANMapping{} for the specified CustType >> {}, CustCategory >> {}, Active >> 1",
-					type, panMap.getCustType(), panMap.getCustCategory());
-		}
-
-		return null;
+		return jdbcOperations.queryForObject(sql, Integer.class, custType, custCategory, panLetter, 1) > 0;
 	}
 }

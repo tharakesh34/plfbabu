@@ -312,8 +312,8 @@ public class CustTypePANMappingServiceImpl extends GenericService<CustTypePANMap
 	 * @param panMapping
 	 */
 	@Override
-	public CustTypePANMapping getApprovedPANMapping(CustTypePANMapping panMapping, String type) {
-		return getCustTypePANMappingDAO().getApprovedPANMapping(panMapping, type);
+	public boolean isValidPANLetter(String custType, String custCategory, String panLetter) {
+		return custTypePANMappingDAO.isValidPANLetter(custType, custCategory, panLetter);
 	}
 
 	// ******************************************************//

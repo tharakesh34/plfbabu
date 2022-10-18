@@ -32,6 +32,5 @@ public interface CustTypePANMappingService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	CustTypePANMapping getApprovedPANMapping(CustTypePANMapping panMapping, String type);
-
+	boolean isValidPANLetter(String custType, String custCategory, String panLetter);
 }

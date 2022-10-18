@@ -140,7 +140,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.systemmasters.Caste;
 import com.pennant.backend.model.systemmasters.Country;
-import com.pennant.backend.model.systemmasters.CustTypePANMapping;
 import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
@@ -198,7 +197,6 @@ import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.InterfaceConstants;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.FinnovService;
@@ -1905,17 +1903,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			if (StringUtils.isNotBlank(aCustomer.getCustCRCPR()) && !this.eidNumber.isReadonly()
 					&& StringUtils.isNotBlank(aCustomer.getCustTypeCode())) {
-				CustTypePANMapping custTypePANMapping = new CustTypePANMapping();
-				custTypePANMapping.setCustCategory(aCustomer.getCustCtgCode());
-				custTypePANMapping.setCustType(aCustomer.getCustTypeCode());
-				CustTypePANMapping approvedPANMapping = custTypePANMappingService
-						.getApprovedPANMapping(custTypePANMapping, TableType.MAIN_TAB.getSuffix());
-				if (approvedPANMapping != null) {
-					String panFourthLetter = StringUtils.substring(aCustomer.getCustCRCPR(), 3, 4);
-					if (!StringUtils.equals(approvedPANMapping.getPanLetter(), panFourthLetter)) {
-						throw new WrongValueException(this.eidNumber, aCustomer.getCustCRCPR()
-								+ Labels.getLabel("label_CustTypePANMapping_panValidation.value"));
-					}
+
+				String panFourthLetter = StringUtils.substring(aCustomer.getCustCRCPR(), 3, 4);
+				if (!custTypePANMappingService.isValidPANLetter(aCustomer.getCustTypeCode(), aCustomer.getCustCtgCode(),
+						panFourthLetter)) {
+					throw new WrongValueException(this.eidNumber,
+							aCustomer.getCustCRCPR() + Labels.getLabel("label_CustTypePANMapping_panValidation.value"));
 				}
 			}
 		} catch (WrongValueException we) {

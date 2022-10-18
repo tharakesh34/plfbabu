@@ -159,7 +159,6 @@ import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
-import com.pennant.backend.model.systemmasters.CustTypePANMapping;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
@@ -218,7 +217,6 @@ import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.external.Crm;
@@ -4673,20 +4671,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// PAN 4th Letter Mapping check
 		if (StringUtils.isNotBlank(customer.getCustCRCPR()) && StringUtils.isNotBlank(customer.getCustTypeCode())) {
 			String[] errorParameters = new String[2];
-			CustTypePANMapping custTypePANMapping = new CustTypePANMapping();
-			custTypePANMapping.setCustCategory(customer.getCustCtgCode());
-			custTypePANMapping.setCustType(customer.getCustTypeCode());
-			CustTypePANMapping approvedPANMapping = custTypePANMappingService.getApprovedPANMapping(custTypePANMapping,
-					TableType.MAIN_TAB.getSuffix());
-			if (approvedPANMapping != null) {
-				String panFourthLetter = StringUtils.substring(customer.getCustCRCPR(), 3, 4);
-				if (!StringUtils.equals(approvedPANMapping.getPanLetter(), panFourthLetter)) {
-					errorParameters[0] = Labels.getLabel("label_PAN_FourthLetter.label");
-					errorParameters[1] = approvedPANMapping.getPanLetter();
 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41000", errorParameters)));
+			String panFourthLetter = StringUtils.substring(customer.getCustCRCPR(), 3, 4);
+			if (!custTypePANMappingService.isValidPANLetter(customer.getCustTypeCode(), customer.getCustCtgCode(),
+					panFourthLetter)) {
 
-				}
+				errorParameters[0] = Labels.getLabel("label_PAN_FourthLetter.label");
+				errorParameters[1] = panFourthLetter;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41000", errorParameters)));
 			}
 		}
 		// Employment type other than NON-WORKING setting below fields as Mandatory
