@@ -1409,11 +1409,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		Map<String, List<String>> groupLineMap = new HashMap<String, List<String>>();
 		List<LimitDetails> limitDetails = aLimitHeader.getCustomerLimitDetailsList();
 
-		if (limitDetails == null) {
-			errorDetails.add(ErrorUtil.getError("90502", "limitDetails"));
-			return errorDetails;
-		}
-
 		for (LimitDetails limitDetail : limitDetails) {
 			if (!StringUtils.isEmpty(limitDetail.getGroupCode())) {
 				if (StringUtils.equals(LimitConstants.LIMIT_ITEM_TOTAL, limitDetail.getGroupCode())) {
@@ -1655,64 +1650,69 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 
 		List<LimitDetails> limitDetails = limitHeader.getCustomerLimitDetailsList();
+
+		if (CollectionUtils.isEmpty(limitDetails)) {
+			auditDetail.setErrorDetail(ErrorUtil.getError("90502", "limitDetails"));
+			return auditDetail;
+		}
+
 		Date lineMaxExpDate = SysParamUtil.getAppDate();
 		Map<Long, Long> structureMap = new HashMap<Long, Long>();
-		if (limitDetails != null) {
-			for (LimitDetails detail : limitDetails) {
-				long structureId = detail.getLimitStructureDetailsID();
-				if (!structureMap.containsKey(structureId)) {
-					structureMap.put(structureId, structureId);
-				} else {
-					String[] valueParm = new String[1];
-					valueParm[0] = limitHeader.getLimitStructureCode();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90811", "", valueParm)));
+
+		for (LimitDetails detail : limitDetails) {
+			long structureId = detail.getLimitStructureDetailsID();
+			if (!structureMap.containsKey(structureId)) {
+				structureMap.put(structureId, structureId);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = limitHeader.getLimitStructureCode();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90811", "", valueParm)));
+				return auditDetail;
+			}
+			// validate structureDetailId from LimitDetails
+			int count = getLimitDetailDAO().getLimitDetailByStructureId(structureId, "");
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(structureId);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90803", "", valueParm)));
+			}
+			if (detail.getExpiryDate() != null) {
+				if (detail.getExpiryDate().compareTo(SysParamUtil.getAppDate()) < 0
+						|| detail.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Limit expiry date";
+					valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
+					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 					return auditDetail;
 				}
-				// validate structureDetailId from LimitDetails
-				int count = getLimitDetailDAO().getLimitDetailByStructureId(structureId, "");
-				if (count <= 0) {
-					String[] valueParm = new String[1];
-					valueParm[0] = String.valueOf(structureId);
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90803", "", valueParm)));
-				}
-				if (detail.getExpiryDate() != null) {
-					if (detail.getExpiryDate().compareTo(SysParamUtil.getAppDate()) < 0
-							|| detail.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
-						String[] valueParm = new String[3];
-						valueParm[0] = "Limit expiry date";
-						valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
-						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
-						return auditDetail;
+				if (detail.getExpiryDate() != null && lineMaxExpDate != null) {
+					if (detail.getExpiryDate().compareTo(lineMaxExpDate) >= 0) {
+						lineMaxExpDate = detail.getExpiryDate();
 					}
-					if (detail.getExpiryDate() != null && lineMaxExpDate != null) {
-						if (detail.getExpiryDate().compareTo(lineMaxExpDate) >= 0) {
-							lineMaxExpDate = detail.getExpiryDate();
-						}
-					}
-				}
-				if (detail.getLimitSanctioned().compareTo(BigDecimal.ZERO) < 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "limitSanctioned";
-					valueParm[1] = "Zero";
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90205", "", valueParm)));
-					return auditDetail;
-				}
-				// validate limit check method
-				if (!StringUtils.equals(detail.getLimitChkMethod(), LimitConstants.LIMIT_CHECK_ACTUAL)
-						&& !StringUtils.equals(detail.getLimitChkMethod(), LimitConstants.LIMIT_CHECK_RESERVED)) {
-					String[] valueParm = new String[1];
-					valueParm[0] = LimitConstants.LIMIT_CHECK_ACTUAL + "," + LimitConstants.LIMIT_CHECK_RESERVED;
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90809", "", valueParm)));
 				}
 			}
-			if (limitHeader.getLimitExpiryDate() != null) {
-				if (limitHeader.getLimitExpiryDate().before(lineMaxExpDate)) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "Limit expiry date";
-					valueParm[1] = DateUtility.formatToLongDate(lineMaxExpDate);
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm)));
-				}
+			if (detail.getLimitSanctioned().compareTo(BigDecimal.ZERO) < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "limitSanctioned";
+				valueParm[1] = "Zero";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90205", "", valueParm)));
+				return auditDetail;
+			}
+			// validate limit check method
+			if (!StringUtils.equals(detail.getLimitChkMethod(), LimitConstants.LIMIT_CHECK_ACTUAL)
+					&& !StringUtils.equals(detail.getLimitChkMethod(), LimitConstants.LIMIT_CHECK_RESERVED)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = LimitConstants.LIMIT_CHECK_ACTUAL + "," + LimitConstants.LIMIT_CHECK_RESERVED;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90809", "", valueParm)));
+			}
+		}
+		if (limitHeader.getLimitExpiryDate() != null) {
+			if (limitHeader.getLimitExpiryDate().before(lineMaxExpDate)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Limit expiry date";
+				valueParm[1] = DateUtility.formatToLongDate(lineMaxExpDate);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm)));
 			}
 		}
 
