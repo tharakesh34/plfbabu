@@ -7584,6 +7584,11 @@ public class ScheduleCalculator {
 		schdData.setEqualInst(true);
 		for (int iLoop = 0; iLoop < 50; iLoop++) {
 			// STEP2: Set Repay instructions with emiGuess and calculate the schedule
+
+			if (newEmiGuess.compareTo(BigDecimal.ZERO) < 0) {
+				newEmiGuess = BigDecimal.ZERO;
+			}
+
 			instructions.get(idxRI).setRepayAmount(newEmiGuess);
 			fm.setAdjustClosingBal(isAdjustClosingBal);
 			schdData = getRpyInstructDetails(schdData);
