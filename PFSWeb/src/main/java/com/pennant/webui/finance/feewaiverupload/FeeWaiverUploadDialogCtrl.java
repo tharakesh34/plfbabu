@@ -70,6 +70,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -424,185 +425,160 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	public FeeWaiverUpload validateUploadDetails(List<String> row, int formatter) throws ParseException {
+		FeeWaiverUpload waiverUpload = new FeeWaiverUpload();
+
+		String reason = validate(row, waiverUpload);
+
+		if (reason != null) {
+			waiverUpload.setReason(reason);
+			waiverUpload.setStatus(UploadConstants.UPLOAD_STATUS_FAIL);
+			waiverUpload.setRejectStage(UploadConstants.UPLOAD_MAKER_STAGE);
+		} else {
+			waiverUpload.setNewRecord(true);
+			waiverUpload.setRecordType(PennantConstants.RCD_ADD);
+			waiverUpload.setVersion(waiverUpload.getVersion() + 1);
+			waiverUpload.setStatus(UploadConstants.UPLOAD_STATUS_SUCCESS);
+		}
+
+		return waiverUpload;
+	}
+
+	private String validate(List<String> row, FeeWaiverUpload waiverUpload) {
 		logger.debug(Literal.ENTERING);
 
-		boolean error = false;
-		String reason = "";
-		Date valueDate = null;
-		FeeWaiverUpload waiverUpload = new FeeWaiverUpload();
-		FinanceMain finMain = null;
-
-		// Reference
 		String finReference = row.get(0);
 
-		Long finID = null;
-
 		if (StringUtils.isBlank(finReference)) {
-			reason = "Loan Reference is Mandatory. ";
-			error = true;
-		} else if (StringUtils.isNotBlank(finReference)) {
-			if (finReference.length() > 20) {
-				reason = reason + " Loan Reference length is exceeded, it should be lessthan or equal to 20. ";
-				error = true;
-				finReference = null;
-			} else {
-				 finID = financeMainService.getFinID(finReference);
-				finMain = financeMainService.getFinanceMain(finID, new String[] { "FinIsActive, FinStartDate" }, "");
-				if (finMain == null) {
-					reason = reason + " Incorrect LAN Reference Captured ";
-					error = true;
-				} else if (!finMain.isFinIsActive()) {
-					reason = reason + " LAN Reference is Inactive ";
-					error = true;
-				}
-			}
+			throw new AppException("Loan Reference is Mandatory. ");
 		}
+
+		if (finReference.length() > 20) {
+			throw new AppException(" Loan Reference length is exceeded, it should be lessthan or equal to 20. ");
+		}
+
+		Long finID = financeMainService.getFinID(finReference);
+		FinanceMain fm = financeMainService.getFinanceMain(finID, new String[] { "FinIsActive, FinStartDate" }, "");
+
+		if (fm == null) {
+			throw new AppException(" Incorrect LAN Reference Captured ");
+		}
+
+		if (!fm.isFinIsActive()) {
+			throw new AppException(" LAN Reference is Inactive ");
+		}
+
 		waiverUpload.setFinReference(finReference);
 
-		// Fee Type
 		String feeType = row.get(1);
 		if (StringUtils.isBlank(feeType)) {
-			reason = reason + " Fee Type is mandatory. ";
-			error = true;
-		} else {
-			if (feeType.length() > 8) {
-				reason = reason + " Fee type length is exceeded. ";
-				error = true;
-				feeType = feeType.substring(0, 8);
-			} else {
-				FeeType fee = feeWaiverUploadHeaderService.getApprovedFeeTypeByFeeCode(feeType);
-				if (fee == null) {
-					reason = reason + " Incorrect / Invalid Fee Type code - Please do check again ";
-					error = true;
-				}
-			}
+			return " Fee Type is mandatory. ";
 		}
+
+		if (feeType.length() > 8) {
+			return " Fee type length is exceeded. ";
+		}
+
+		FeeType fee = feeWaiverUploadHeaderService.getApprovedFeeTypeByFeeCode(feeType);
+		if (fee == null) {
+			return " Incorrect / Invalid Fee Type code - Please do check again ";
+		}
+
 		waiverUpload.setFeeTypeCode(feeType);
 
-		// Value Date
 		try {
 			if (StringUtils.isBlank(row.get(2))) {
-				reason = reason + " Value Date is mandatory. ";
-				error = true;
-			} else {
-				valueDate = getUtilDate(row.get(2));
-				if (valueDate != null && finMain != null) {
-					if (valueDate.compareTo(finMain.getFinStartDate()) < 0
-							|| valueDate.compareTo(SysParamUtil.getAppDate()) > 0) {
-						reason = reason
-								+ " Value date should be greater than Loan Start date & less than Current PLF Application date ";
-						error = true;
-					}
-				}
+				return " Value Date is mandatory. ";
 			}
+
+			Date appDate = SysParamUtil.getAppDate();
+			Date valueDate = getUtilDate(row.get(2));
+			if (DateUtil.compare(valueDate, fm.getFinStartDate()) < 0 || DateUtil.compare(valueDate, appDate) > 0) {
+				return " Value date should be greater than Loan Start date & less than Current PLF Application date ";
+			}
+
+			waiverUpload.setValueDate(valueDate);
 		} catch (Exception e) {
-			reason = reason + " Value date format is incorrect.It's format should be dd/MM/yyyy. ";
-			error = true;
+			return " Value date format is incorrect.It's format should be dd/MM/yyyy. ";
 		}
-		waiverUpload.setValueDate(valueDate);
 
-		// Waived Amount
 		String waivedAmount = row.get(3);
-		BigDecimal amount = BigDecimal.ZERO;
-		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
-		// get fee waiver details from manual advise and finoddetails to prepare the list.
-		feeWaiverHeader.setNewRecord(true);
-		feeWaiverHeader.setFinID(finID);
-		feeWaiverHeader.setFinReference(waiverUpload.getFinReference());
-		feeWaiverHeader = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiverHeader);
-		if (StringUtils.isBlank(waivedAmount)) {
-			reason = reason + " Waiver Amount is Mandatory ";
-			error = true;
-		} else {
-			try {
-				amount = new BigDecimal(waivedAmount);
-				if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-					throw new Exception("Waiver Amount should be greater than 0");
-				}
 
-			} catch (NumberFormatException e) {
-				reason = reason + " Waiver Amount is Invalid ";
-				error = true;
-			} catch (Exception e) {
-				reason = reason + e.getMessage();
-				error = true;
-			}
+		FeeWaiverHeader fwh = new FeeWaiverHeader();
+
+		fwh.setNewRecord(true);
+		fwh.setFinID(finID);
+		fwh.setFinReference(waiverUpload.getFinReference());
+
+		fwh = feeWaiverHeaderService.getFeeWaiverByFinRef(fwh);
+
+		if (StringUtils.isBlank(waivedAmount)) {
+			return " Waiver Amount is Mandatory ";
 		}
+
+		BigDecimal amount = BigDecimal.ZERO;
+		try {
+			amount = new BigDecimal(waivedAmount);
+			if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+				throw new AppException("Waiver Amount should be greater than 0");
+			}
+
+		} catch (NumberFormatException e) {
+			return " Waiver Amount is Invalid ";
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+
 
 		boolean feeExistsforLan = false;
-		for (FeeWaiverDetail waiverdetail : feeWaiverHeader.getFeeWaiverDetails()) {
+		for (FeeWaiverDetail waiverdetail : fwh.getFeeWaiverDetails()) {
 			if (waiverdetail.getFeeTypeCode().equals(waiverUpload.getFeeTypeCode())) {
 				feeExistsforLan = true;
 				BigDecimal remainingFee = PennantApplicationUtil.formateAmount(
 						waiverdetail.getReceivableAmount().subtract(waiverdetail.getReceivedAmount()),
 						PennantConstants.defaultCCYDecPos);
 				if (amount.compareTo(remainingFee) > 0) {
-					reason = reason + " Incorrect waiver amount provided against Fee Code + LAN Reference Combination ";
-					error = true;
+					return " Incorrect waiver amount provided against Fee Code + LAN Reference Combination ";
 				}
 			}
 		}
 
 		if (!feeExistsforLan) {
-			reason = reason + " Incorrect Fee Code provided against LAN Reference";
-			error = true;
+			return " Incorrect Fee Code provided against LAN Reference";
 		}
 
-		if (amount != null) {
+		if (amount.compareTo(BigDecimal.ZERO) <= 0) {
 			amount = PennantApplicationUtil.unFormateAmount(amount, 2);
 		}
+
 		waiverUpload.setWaivedAmount(amount);
 
-		// Remarks
 		String remarks = row.get(4);
-		if (StringUtils.isNotBlank(remarks)) {
-			if (remarks.length() > 100) {
-				reason = reason + " Remarks length is exceeded. ";
-				error = true;
-				remarks = null;
-			}
+		if (StringUtils.isNotBlank(remarks) && remarks.length() > 100) {
+			return " Remarks length is exceeded. ";
 		}
+
 		waiverUpload.setRemarks(remarks);
 
-		if (!error) {
-
-			String key = finReference + feeType;
-
-			if (validations.contains(key)) {
-				reason = " Loan Reference is duplicated in the upload file with the same fee type. ";
-				error = true;
-			} else {
-				validations.add(key);
-			}
-
-			String reference = feeWaiverHeader.getFinReference();
-			finID = feeWaiverHeader.getFinID();
-			if (!feeWaiverHeader.isAlwtoProceed()) {
-				reason = Labels.getLabel("Recipt_Is_In_Process") + reference;
-				error = true;
-			}
-			String rcdMaintainSts = feeWaiverUploadHeaderService.getFinanceMainByRcdMaintenance(finID);
-
-			if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-				reason = Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts);
-				error = true;
-			}
+		String key = finReference + feeType;
+		if (validations.contains(key)) {
+			return " Loan Reference is duplicated in the upload file with the same fee type. ";
+		} else {
+			validations.add(key);
 		}
 
-		waiverUpload.setNewRecord(true);
-		waiverUpload.setRecordType(PennantConstants.RCD_ADD);
-		waiverUpload.setVersion(waiverUpload.getVersion() + 1);
+		String reference = fwh.getFinReference();
+		finID = fwh.getFinID();
+		if (!fwh.isAlwtoProceed()) {
+			return Labels.getLabel("Recipt_Is_In_Process") + reference;
+		}
 
-		if (error) {
-			waiverUpload.setReason(reason);
-			waiverUpload.setStatus(UploadConstants.UPLOAD_STATUS_FAIL);
-			waiverUpload.setRejectStage(UploadConstants.UPLOAD_MAKER_STAGE);
-		} else {
-			waiverUpload.setStatus(UploadConstants.UPLOAD_STATUS_SUCCESS);
+		String rcdMaintainSts = feeWaiverUploadHeaderService.getFinanceMainByRcdMaintenance(finID);
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			return Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return waiverUpload;
+		return null;
 	}
 
 	private Date getUtilDate(String date) throws ParseException {
