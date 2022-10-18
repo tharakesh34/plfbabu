@@ -7594,7 +7594,6 @@
 		<property name="notificationService" ref="notificationService" />
 		<property name="receiptPaymentService" ref="receiptPaymentService" />
 		<property name="eventPropertiesService" ref="eventPropertiesService" />
-		<property name="externalPresentmentHook" ref="externalPresentmentHook" />
 	</bean>
 
 	<!-- AccountMapping -->

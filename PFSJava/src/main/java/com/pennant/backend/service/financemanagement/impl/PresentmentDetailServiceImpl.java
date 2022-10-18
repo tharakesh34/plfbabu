@@ -1153,6 +1153,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.finMandateService = finMandateService;
 	}
 
+	@Autowired(required = false)
 	public void setExternalPresentmentHook(ExternalPresentmentHook externalPresentmentHook) {
 		this.externalPresentmentHook = externalPresentmentHook;
 	}
