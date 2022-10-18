@@ -7685,7 +7685,11 @@ public class ScheduleCalculator {
 			if (!curSchd.isRepayOnSchDate()) {
 				continue;
 			}
-			calTerms = calTerms + 1;
+
+			if (StringUtil.isBlank(curSchd.getBpiOrHoliday())) {
+				calTerms = calTerms + 1;
+			}
+
 			if (isEmiCheck) {
 				emiSum = emiSum.add(curSchd.getRepayAmount());
 			} else {
