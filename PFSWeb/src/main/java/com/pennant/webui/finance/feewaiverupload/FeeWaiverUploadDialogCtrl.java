@@ -1000,10 +1000,14 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.ENTERING);
 
 		if (this.csvFile) {
-			// CSV File
 			processCSVUploadDetails(uploadHeader);
 		} else if (this.fileImport != null) {
-			this.workbook = this.fileImport.writeFile();
+			try {
+				this.workbook = this.fileImport.writeFile();
+			} catch (Exception e) {
+				throw new InterfaceException("Error", "Invalid File format");
+			}
+
 			if (this.workbook != null) {
 				List<String> keys = this.fileImport.getRowValuesByIndex(this.workbook, 0, 0, totalColumns);
 				if (CollectionUtils.isEmpty(keys) || !("Loan Reference".equalsIgnoreCase(keys.get(0))
