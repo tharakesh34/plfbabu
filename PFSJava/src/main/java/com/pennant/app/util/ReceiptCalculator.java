@@ -4428,7 +4428,10 @@ public class ReceiptCalculator {
 			allocAmount = allocAmount.subtract(actualPft);
 		}
 
-		pftAmount = CalculationUtil.roundAmount(pftAmount, fm.getCalRoundingMode(), fm.getRoundingTarget());
+		/*
+		 * PSD# - Gopal.p on 18/OCT/2022 This method used to derive the allocated interest amount from the Paid rounding
+		 * should not be happen. Removed the rounding call.
+		 */
 		return pftAmount;
 
 	}
