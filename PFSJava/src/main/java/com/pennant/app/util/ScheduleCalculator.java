@@ -707,6 +707,7 @@ public class ScheduleCalculator {
 		if (fm.isSanBsdSchdle() && CalculationConstants.EARLYPAY_PRIHLD.equals(method)) {
 			setRepayForSanctionBasedPriHld(finScheduleData, earlyPayAmt);
 		} else if (CalculationConstants.RPYCHG_ADJMDT.equals(method)
+				|| CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(method)
 				|| CalculationConstants.EARLYPAY_ADMPFI.equals(method)) {
 
 			fm.setRecalToDate(fm.getMaturityDate());
@@ -1413,7 +1414,8 @@ public class ScheduleCalculator {
 
 		if (fm.isApplySanctionCheck()) {
 			boolean isResetRecalDate = false;
-			if (!StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+			if (!StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
+					&& !CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(fm.getRecalType())) {
 
 				if (StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
 					isResetRecalDate = true;
@@ -1430,7 +1432,8 @@ public class ScheduleCalculator {
 
 		boolean isStepLoan = false;
 		if (fm.isStepFinance() && fm.isAlwManualSteps()
-				&& !CalculationConstants.RPYCHG_ADJMDT.equals(fm.getRecalType())) {
+				&& !CalculationConstants.RPYCHG_ADJMDT.equals(fm.getRecalType())
+				&& !CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(fm.getRecalType())) {
 			if (PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())
 					&& CollectionUtils.isNotEmpty(finScheduleData.getStepPolicyDetails())) {
 				prepareManualRepayRI(finScheduleData);
@@ -1619,7 +1622,8 @@ public class ScheduleCalculator {
 		boolean isApplySanctionBasedSchedule = SanctionBasedSchedule.isApplySanctionBasedSchedule(finScheduleData);
 
 		if (isApplySanctionBasedSchedule) {
-			if (!StringUtils.equals(recalType, CalculationConstants.RPYCHG_ADJMDT)) {
+			if (!StringUtils.equals(recalType, CalculationConstants.RPYCHG_ADJMDT)
+					&& !CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(recalType)) {
 				finScheduleData.setErrorDetail(new ErrorDetail("SCH31",
 						"Schedules Build on SANCTION AMOUNT does not allow any RECAL TYPE other than ADJMDT Till full disbursement",
 						new String[] { " " }));
@@ -1657,7 +1661,8 @@ public class ScheduleCalculator {
 		// Same code is kept in add disbursement also (Whereever recal is
 		// possible in two periods..)
 
-		if (StringUtils.equals(recalType, CalculationConstants.RPYCHG_ADJMDT)) {
+		if (StringUtils.equals(recalType, CalculationConstants.RPYCHG_ADJMDT)
+				|| CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(recalType)) {
 			fm.setRecalFromDate(fm.getMaturityDate());
 			fm.setRecalToDate(fm.getMaturityDate());
 		}
@@ -1959,7 +1964,8 @@ public class ScheduleCalculator {
 		if (CalculationConstants.SCHMTHD_PFTCAP.equals(reqSchdMethod)
 				|| CalculationConstants.SCHMTHD_PRI_PFTC.equals(reqSchdMethod)) {
 
-			if (CalculationConstants.RPYCHG_ADJMDT.equals(fm.getRecalType())) {
+			if (CalculationConstants.RPYCHG_ADJMDT.equals(fm.getRecalType())
+					|| CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(fm.getRecalType())) {
 				schdMethod = repayInstructions.get(risize - 1).getRepaySchdMethod();
 			} else {
 				for (int i = 0; i < risize; i++) {
@@ -2586,7 +2592,8 @@ public class ScheduleCalculator {
 			return finScheduleData;
 		} else {
 
-			if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT) && !fm.isSanBsdSchdle()) {
+			if ((StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT)
+					|| CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(recaltype)) && !fm.isSanBsdSchdle()) {
 				fm.setRecalFromDate(fm.getMaturityDate());
 				fm.setRecalToDate(fm.getMaturityDate());
 			}
@@ -2609,7 +2616,8 @@ public class ScheduleCalculator {
 				}
 			}
 
-			if (fm.isSanBsdSchdle() && StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+			if (fm.isSanBsdSchdle() && (StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
+					|| CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(fm.getRecalType()))) {
 				finScheduleData = setRepayForSanctionBasedDisbADJMDT(finScheduleData, newDisbAmount);
 			} else {
 				finScheduleData = setRecalAttributes(finScheduleData, PROC_ADDDISBURSEMENT, newDisbAmount,
@@ -2894,7 +2902,8 @@ public class ScheduleCalculator {
 			return finScheduleData;
 		} else {
 
-			if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT)) {
+			if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT)
+					&& CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(recaltype)) {
 				fm.setRecalFromDate(fm.getMaturityDate());
 				fm.setRecalToDate(fm.getMaturityDate());
 			}
@@ -2913,7 +2922,8 @@ public class ScheduleCalculator {
 				}
 			}
 
-			if (fm.isSanBsdSchdle() && !StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+			if (fm.isSanBsdSchdle() && !StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
+					&& !CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(fm.getRecalType())) {
 				finScheduleData = setRepayForSanctionBasedDisbADJMDT(finScheduleData, newDisbAmount);
 			} else {
 				finScheduleData = setRecalAttributes(finScheduleData, PROC_ADDDISBURSEMENT, newDisbAmount,
@@ -3157,7 +3167,8 @@ public class ScheduleCalculator {
 			return finScheduleData;
 		}
 
-		if (!StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+		if (!StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
+				&& !CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(fm.getRecalType())) {
 			if (fm.isStepFinance()) {
 				if ((CalculationConstants.SCHMTHD_PRI_PFT.equals(finScheduleData.getFinanceMain().getScheduleMethod())
 						|| CalculationConstants.SCHMTHD_PRI
@@ -7544,9 +7555,10 @@ public class ScheduleCalculator {
 			}
 		}
 
-		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())) {
+		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
+				&& fm.getAdvTerms() > 0) {
 			int idx = schdData.getFinanceScheduleDetails().size() - fm.getAdvTerms() - 1;
-			fm.setRecalToDate(schdData.getFinanceScheduleDetails().get(idx).getSchDate());;
+			fm.setRecalToDate(schdData.getFinanceScheduleDetails().get(idx).getSchDate());
 		}
 
 		// STEP1: Get the First Co-ordinates for approximation
@@ -8159,7 +8171,8 @@ public class ScheduleCalculator {
 				}
 			}
 
-		} else if (CalculationConstants.RPYCHG_ADJMDT.equals(recaltype)) {
+		} else if (CalculationConstants.RPYCHG_ADJMDT.equals(recaltype)
+				|| CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(recaltype)) {
 			fm.setCalculateRepay(false);
 			fm.setEqualRepay(false);
 
@@ -8192,7 +8205,8 @@ public class ScheduleCalculator {
 		// Set Repayment Instructions as 1 for recalFromDate to recalToDate.
 		// Reason for not setting zero is to avoid deleting future zero
 		// instructions
-		if (!CalculationConstants.RPYCHG_ADJMDT.equals(recaltype) && resetRpyInstruction) {
+		if (!CalculationConstants.RPYCHG_ADJMDT.equals(recaltype)
+				&& !CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(recaltype) && resetRpyInstruction) {
 			finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, recalToDate, BigDecimal.ONE,
 					schdMethod);
 		} else if (!resetRpyInstruction) {
