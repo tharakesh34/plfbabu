@@ -277,20 +277,20 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		filter[1] = new Filter("BalanceAmt", BigDecimal.ZERO, Filter.OP_GREATER_THAN);
 		this.referenceId.setFilters(filter);
 
-		if (StringUtils.equals(getComboboxValue(knockOffFrom), RepayConstants.RECEIPTMODE_EXCESS)) {
+		if (StringUtils.equals(getComboboxValue(knockOffFrom), ReceiptMode.EXCESS)) {
 			this.referenceId.setModuleName("Excess");
 			this.referenceId.setValueColumn("ExcessID");
 			this.referenceId.setDescColumn("BalanceAmt");
 			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
 
-		} else if (StringUtils.equals(getComboboxValue(knockOffFrom), RepayConstants.RECEIPTMODE_EMIINADV)) {
+		} else if (StringUtils.equals(getComboboxValue(knockOffFrom), ReceiptMode.EMIINADV)) {
 
 			this.referenceId.setModuleName("EMIInAdvance");
 			this.referenceId.setValueColumn("ExcessID");
 			this.referenceId.setDescColumn("BalanceAmt");
 			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
 
-		} else if (StringUtils.equals(getComboboxValue(knockOffFrom), RepayConstants.RECEIPTMODE_PAYABLE)) {
+		} else if (StringUtils.equals(getComboboxValue(knockOffFrom), ReceiptMode.PAYABLE)) {
 
 			this.referenceId.setModuleName("PayableAdvise");
 			this.referenceId.setValueColumn("AdviseID");

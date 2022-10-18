@@ -941,7 +941,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		FinReceiptDetail finReceiptDetail = null;
 		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail item : receiptHeader.getReceiptDetails()) {
-				if (item.getPaymentType().equals(RepayConstants.RECEIPTMODE_PRESENTMENT)) {
+				if (item.getPaymentType().equals(ReceiptMode.PRESENTMENT)) {
 					finReceiptDetail = item;
 					break;
 				}
@@ -1120,7 +1120,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			for (FinReceiptDetail detail : rch.getReceiptDetails()) {
 				String paymentType = detail.getPaymentType();
 
-				if (receiptMode.equals(paymentType) && !RepayConstants.RECEIPTMODE_EXCESS.equals(receiptMode)) {
+				if (receiptMode.equals(paymentType) && !ReceiptMode.EXCESS.equals(receiptMode)) {
 					String receiptNumber = detail.getPaymentRef();
 
 					if (StringUtils.isBlank(receiptNumber)) {
@@ -1150,7 +1150,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				FinReceiptDetail receiptDetail = receiptDetails.get(i);
 
 				// GST Invoice debit note for Payable Advise Usage
-				if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+				if (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PAYABLE)) {
 					long payAgainstID = receiptDetail.getPayAgainstID();
 
 					// Payable Advise Amount make utilization
@@ -1170,10 +1170,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					}
 				}
 
-				if (isBounceProcess && (StringUtils.equals(receiptDetail.getPaymentType(),
-						RepayConstants.RECEIPTMODE_EXCESS)
-						|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-						|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE))) {
+				if (isBounceProcess && (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EXCESS)
+						|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EMIINADV)
+						|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PAYABLE))) {
 					continue;
 				}
 
@@ -1958,8 +1957,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			// Update Receipt Details based on Receipt Mode
 			for (int i = 0; i < rch.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = rch.getReceiptDetails().get(i);
-				if (!isBounceProcess
-						|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)
+				if (!isBounceProcess || StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PRESENTMENT)
 						|| (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.CHEQUE)
 								|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.DD))) {
 					finReceiptDetailDAO.updateReceiptStatus(receiptDetail.getReceiptID(),
@@ -1968,9 +1966,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// Receipt Reversal for Excess or Payable
 					if (!isBounceProcess) {
 
-						if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-								|| StringUtils.equals(receiptDetail.getPaymentType(),
-										RepayConstants.RECEIPTMODE_EMIINADV)
+						if (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EXCESS)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EMIINADV)
 								|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.CASHCLT)
 								|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.DSF)) {
 
@@ -1978,8 +1975,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							finExcessAmountDAO.updateExcessAmount(receiptDetail.getPayAgainstID(), "U",
 									receiptDetail.getAmount().negate());
 
-						} else if (StringUtils.equals(receiptDetail.getPaymentType(),
-								RepayConstants.RECEIPTMODE_PAYABLE)) {
+						} else if (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PAYABLE)) {
 
 							// Payable Utilize reversals
 							manualAdviseDAO.reverseUtilise(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
@@ -2086,7 +2082,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		long postingId = postingsDAO.getPostingId();
 
 		if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
-			if (!RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptMode)) {
+			if (!ReceiptMode.PRESENTMENT.equals(receiptMode)) {
 				rdSet = postingsPreparationUtil.postReversalsByPostRef(receiptID, postingId, appDate);
 			}
 		} else {

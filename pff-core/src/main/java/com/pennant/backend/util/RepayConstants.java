@@ -1,7 +1,5 @@
 package com.pennant.backend.util;
 
-import com.pennanttech.pff.receipt.constants.ReceiptMode;
-
 public class RepayConstants {
 
 	private RepayConstants() {
@@ -86,87 +84,6 @@ public class RepayConstants {
 
 	public static final String REQTYPE_INQUIRY = "Inquiry";
 	public static final String REQTYPE_POST = "Post";
-
-	/**
-	 * @deprecated use {@link ReceiptMode#NEFT} instead.
-	 */
-	public static final String RECEIPTMODE_NEFT = "NEFT";
-	/**
-	 * @deprecated use {@link ReceiptMode#RTGS} instead.
-	 */
-	public static final String RECEIPTMODE_RTGS = "RTGS";
-	/**
-	 * @deprecated use {@link ReceiptMode#IMPS} instead.
-	 */
-	public static final String RECEIPTMODE_IMPS = "IMPS";
-	/**
-	 * @deprecated use {@link ReceiptMode#PAYTM} instead.
-	 */
-	public static final String RECEIPTMODE_PAYTM = "PAYTM";
-	/**
-	 * @deprecated use {@link ReceiptMode#EXPERIA} instead.
-	 */
-	public static final String RECEIPTMODE_EXPERIA = "EXPERIA";
-	/**
-	 * @deprecated use {@link ReceiptMode#PORTAL} instead.
-	 */
-	public static final String RECEIPTMODE_PORTAL = "PORTAL";
-	/**
-	 * @deprecated use {@link ReceiptMode#PAYU} instead.
-	 */
-	public static final String RECEIPTMODE_PAYU = "PAYU";
-	/**
-	 * @deprecated use {@link ReceiptMode#EXCESS} instead.
-	 */
-	public static final String RECEIPTMODE_EXCESS = "EXCESS";
-	/**
-	 * @deprecated use {@link ReceiptMode#ESCROW} instead.
-	 */
-	public static final String RECEIPTMODE_ESCROW = "ESCROW";
-	/**
-	 * @deprecated use {@link ReceiptMode#REPLEDGE} instead.
-	 */
-	public static final String RECEIPTMODE_REPLEDGE = "REPLEDGE";
-	/**
-	 * @deprecated use {@link ReceiptMode#ONLINE} instead.
-	 */
-	public static final String RECEIPTMODE_ONLINE = "ONLINE";
-	/**
-	 * @deprecated use {@link ReceiptMode#BILLDESK} instead.
-	 */
-	public static final String RECEIPTMODE_BILLDESK = "BILLDESK";
-	/**
-	 * @deprecated use {@link ReceiptMode#MOBILE} instead.
-	 */
-	public static final String RECEIPTMODE_MOBILE = "MOBILE";
-	/**
-	 * @deprecated use {@link ReceiptMode#RESTRUCT} instead.
-	 */
-	public static final String RECEIPTMODE_RESTRUCT = "RESTRUCT";
-	/**
-	 * @deprecated use {@link ReceiptMode#DIGITAL} instead.
-	 */
-	public static final String RECEIPTMODE_DIGITAL = "DIGITAL";
-	/**
-	 * @deprecated use {@link ReceiptMode#BANKDEPT} instead.
-	 */
-	public static final String RECEIPTMODE_BANKDEPOSIT = "BANKDEPT";
-	/**
-	 * @deprecated use {@link ReceiptMode#EMIINADV} instead.
-	 */
-	public static final String RECEIPTMODE_EMIINADV = "EMIINADV";
-	/**
-	 * @deprecated use {@link ReceiptMode#ADVINT} instead.
-	 */
-	public static final String RECEIPTMODE_ADVINT = "ADVINT";
-	/**
-	 * @deprecated use {@link ReceiptMode#PAYABLE} instead.
-	 */
-	public static final String RECEIPTMODE_PAYABLE = "PAYABLE";
-	/**
-	 * @deprecated use {@link ReceiptMode#PRESENT} instead.
-	 */
-	public static final String RECEIPTMODE_PRESENTMENT = "PRESENT";
 
 	public static final String ALLOCTYPE_AUTO = "Auto";
 	public static final String ALLOCTYPE_MANUAL = "Manual";

@@ -1176,7 +1176,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (!FinanceConstants.CLOSURE_MAKER.equals(module) && !isKnockOff) {
 			if (DisbursementConstants.PAYMENT_TYPE_ONLINE.equals(receiptData.getReceiptHeader().getReceiptMode())
-					&& RepayConstants.RECEIPTMODE_ESCROW.equals(receiptData.getReceiptHeader().getSubReceiptMode())) {
+					&& ReceiptMode.ESCROW.equals(receiptData.getReceiptHeader().getSubReceiptMode())) {
 				this.row_CustomerAccount.setVisible(true);
 			}
 		}

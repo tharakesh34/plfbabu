@@ -320,8 +320,7 @@ public class RepaymentProcessUtil {
 		doSaveReceipts(rch, null, true);
 
 		// OD DETAILS UPDATE AND PFTDETAILS UPDATE
-		if (RepayConstants.RECEIPTMODE_PRESENTMENT.equals(rch.getReceiptMode())
-				&& ImplementationConstants.ALLOW_OLDEST_DUE) {
+		if (ReceiptMode.PRESENTMENT.equals(rch.getReceiptMode()) && ImplementationConstants.ALLOW_OLDEST_DUE) {
 			repaymentPostingsUtil.recalOldestDueKnockOff(fm, profitDetail, valuedate, scheduleDetails);
 		}
 
@@ -495,11 +494,10 @@ public class RepaymentProcessUtil {
 			receiptAmount = receiptAmount.add(rcd.getAmount());
 			String paymentType = rcd.getPaymentType();
 			movements.addAll(rcd.getAdvMovements());
-			if (!RepayConstants.RECEIPTMODE_EMIINADV.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_EXCESS.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_PAYABLE.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType) && !ReceiptMode.ADVEMI.equals(paymentType)
-					&& !ReceiptMode.CASHCLT.equals(paymentType) && !ReceiptMode.DSF.equals(paymentType)) {
+			if (!ReceiptMode.EMIINADV.equals(paymentType) && !ReceiptMode.EXCESS.equals(paymentType)
+					&& !ReceiptMode.PAYABLE.equals(paymentType) && !ReceiptMode.ADVINT.equals(paymentType)
+					&& !ReceiptMode.ADVEMI.equals(paymentType) && !ReceiptMode.CASHCLT.equals(paymentType)
+					&& !ReceiptMode.DSF.equals(paymentType)) {
 				receiptFromBank = receiptFromBank.add(rcd.getAmount());
 			}
 		}
@@ -617,7 +615,7 @@ public class RepaymentProcessUtil {
 
 		// FIXME: NO SURE ON GOLD LOAN. SO FOR LOOP KEPT AS IS
 		for (FinReceiptDetail frd : rcdList) {
-			if (RepayConstants.RECEIPTMODE_REPLEDGE.equals(frd.getPaymentType())) {
+			if (ReceiptMode.REPLEDGE.equals(frd.getPaymentType())) {
 				extDataMap.put("PR_ReceiptAmount", frd.getAmount());
 			}
 		}
@@ -1567,9 +1565,8 @@ public class RepaymentProcessUtil {
 			long receiptSeqID = finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
 
 			// Excess Amounts
-			if (RepayConstants.RECEIPTMODE_EXCESS.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_EMIINADV.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_ADVINT.equals(rcd.getPaymentType())
+			if (ReceiptMode.EXCESS.equals(rcd.getPaymentType()) || ReceiptMode.EMIINADV.equals(rcd.getPaymentType())
+					|| ReceiptMode.ADVINT.equals(rcd.getPaymentType())
 					|| ReceiptMode.ADVEMI.equals(rcd.getPaymentType())
 					|| ReceiptMode.CASHCLT.equals(rcd.getPaymentType())
 					|| ReceiptMode.DSF.equals(rcd.getPaymentType())) {
@@ -1618,7 +1615,7 @@ public class RepaymentProcessUtil {
 			}
 
 			// Payable Advise Amounts
-			if (StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+			if (StringUtils.equals(rcd.getPaymentType(), ReceiptMode.PAYABLE)) {
 
 				long payAgainstID = rcd.getPayAgainstID();
 
@@ -2386,7 +2383,7 @@ public class RepaymentProcessUtil {
 		switch (finEvent) {
 		case FinServiceEvent.SCHDRPY:
 			if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
-				if (RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptMode)) {
+				if (ReceiptMode.PRESENTMENT.equals(receiptMode)) {
 					return AccountingEvent.PRSNT;
 				}
 			}

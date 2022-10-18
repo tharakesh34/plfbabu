@@ -77,6 +77,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class AutoKnockOffProcessService {
 	private static Logger logger = LogManager.getLogger(AutoKnockOffProcessService.class);
@@ -402,10 +403,10 @@ public class AutoKnockOffProcessService {
 		String event = "";
 		switch (type) {
 		case "E":
-			event = RepayConstants.RECEIPTMODE_EXCESS;
+			event = ReceiptMode.EXCESS;
 			break;
 		case "P":
-			event = RepayConstants.RECEIPTMODE_PAYABLE;
+			event = ReceiptMode.PAYABLE;
 			break;
 
 		default:

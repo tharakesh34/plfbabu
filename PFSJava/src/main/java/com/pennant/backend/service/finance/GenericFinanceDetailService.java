@@ -194,7 +194,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -215,6 +214,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.rits.cloning.Cloner;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
@@ -1827,7 +1827,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 				for (FinReceiptDetail detail : receiptHeader.getReceiptDetails()) {
 					if (StringUtils.equals(detail.getPaymentType(), receiptHeader.getReceiptMode())
-							&& !StringUtils.equals(receiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_EXCESS)) {
+							&& !StringUtils.equals(receiptHeader.getReceiptMode(), ReceiptMode.EXCESS)) {
 						valueDate = detail.getReceivedDate();
 						tranAmount = detail.getAmount();
 						receiptNumber = detail.getPaymentRef();

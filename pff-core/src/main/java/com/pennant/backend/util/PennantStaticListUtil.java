@@ -3237,22 +3237,14 @@ public class PennantStaticListUtil {
 			receiptModes.add(new ValueLabel(ReceiptMode.CASH, Labels.getLabel("label_ReceiptMode_Cash")));
 			receiptModes.add(new ValueLabel(ReceiptMode.CHEQUE, Labels.getLabel("label_ReceiptMode_Cheque")));
 			receiptModes.add(new ValueLabel(ReceiptMode.DD, Labels.getLabel("label_ReceiptMode_DD")));
-			receiptModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_NEFT, Labels.getLabel("label_ReceiptMode_NEFT")));
-			receiptModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_RTGS, Labels.getLabel("label_ReceiptMode_RTGS")));
-			receiptModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_ReceiptMode_IMPS")));
-			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS,
-					Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
-			receiptModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_ReceiptMode_ESCROW")));
-			receiptModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_MOBILE, Labels.getLabel("label_ReceiptMode_MOBILE")));
-			receiptModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_DIGITAL, Labels.getLabel("label_ReceiptMode_DIGITAL")));
-			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_PRESENTMENT,
-					Labels.getLabel("label_ReceiptMode_PRESENT")));
+			receiptModes.add(new ValueLabel(ReceiptMode.NEFT, Labels.getLabel("label_ReceiptMode_NEFT")));
+			receiptModes.add(new ValueLabel(ReceiptMode.RTGS, Labels.getLabel("label_ReceiptMode_RTGS")));
+			receiptModes.add(new ValueLabel(ReceiptMode.IMPS, Labels.getLabel("label_ReceiptMode_IMPS")));
+			receiptModes.add(new ValueLabel(ReceiptMode.EXCESS, Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
+			receiptModes.add(new ValueLabel(ReceiptMode.ESCROW, Labels.getLabel("label_ReceiptMode_ESCROW")));
+			receiptModes.add(new ValueLabel(ReceiptMode.MOBILE, Labels.getLabel("label_ReceiptMode_MOBILE")));
+			receiptModes.add(new ValueLabel(ReceiptMode.DIGITAL, Labels.getLabel("label_ReceiptMode_DIGITAL")));
+			receiptModes.add(new ValueLabel(ReceiptMode.PRESENTMENT, Labels.getLabel("label_ReceiptMode_PRESENT")));
 			/*
 			 * receiptModes.add( new ValueLabel(RepayConstants.RECEIPTMODE_NACH,
 			 * Labels.getLabel("label_ReceiptMode_NACH")));
@@ -3264,8 +3256,8 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getReceiptModesByFeePayment() {
 		if (receiptModeWithOnline.isEmpty()) {
 			receiptModeWithOnline.addAll(getReceiptModes());
-			receiptModeWithOnline.add(new ValueLabel(RepayConstants.RECEIPTMODE_ONLINE,
-					Labels.getLabel("label_ReceiptPaymentMode_ONLINE")));
+			receiptModeWithOnline
+					.add(new ValueLabel(ReceiptMode.ONLINE, Labels.getLabel("label_ReceiptPaymentMode_ONLINE")));
 		}
 
 		return receiptModeWithOnline;
@@ -4724,14 +4716,12 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getKnockOffFromVlaues() {
 		if (knockOffFrom == null) {
 			knockOffFrom = new ArrayList<>(3);
-			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS, Labels.getLabel("label_Excess")));
-			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EMIINADV, Labels.getLabel("label_EMI_Advance")));
-			knockOffFrom
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYABLE, Labels.getLabel("label_Payable_Advice")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.EXCESS, Labels.getLabel("label_Excess")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.EMIINADV, Labels.getLabel("label_EMI_Advance")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.PAYABLE, Labels.getLabel("label_Payable_Advice")));
 			knockOffFrom.add(new ValueLabel(ReceiptMode.CASHCLT, Labels.getLabel("label_CASHCLT")));
 			knockOffFrom.add(new ValueLabel(ReceiptMode.DSF, Labels.getLabel("label_DSF")));
-			knockOffFrom
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PRESENTMENT, Labels.getLabel("label_PRESENTMENT")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.PRESENTMENT, Labels.getLabel("label_PRESENTMENT")));
 
 		}
 		return knockOffFrom;
@@ -4765,9 +4755,9 @@ public class PennantStaticListUtil {
 	public static List<String> getExcessList() {
 		if (excessList == null) {
 			excessList = new ArrayList<>(3);
-			excessList.add(RepayConstants.RECEIPTMODE_EXCESS);
-			excessList.add(RepayConstants.RECEIPTMODE_EMIINADV);
-			excessList.add(RepayConstants.RECEIPTMODE_PAYABLE);
+			excessList.add(ReceiptMode.EXCESS);
+			excessList.add(ReceiptMode.EMIINADV);
+			excessList.add(ReceiptMode.PAYABLE);
 
 		}
 		return excessList;

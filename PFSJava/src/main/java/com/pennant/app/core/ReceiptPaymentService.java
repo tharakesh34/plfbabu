@@ -37,6 +37,7 @@ import com.pennanttech.pff.payment.model.LoanPayment;
 import com.pennanttech.pff.payment.service.LoanPaymentService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class ReceiptPaymentService extends ServiceHelper {
@@ -182,7 +183,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		rch.setVersion(rch.getVersion() + 1);
 
 		if (!isPDetailsExits) {
-			rch.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			rch.setReceiptMode(ReceiptMode.EXCESS);
 		}
 		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 
@@ -234,7 +235,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		FinReceiptDetail rcd = new FinReceiptDetail();
 		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-		rcd.setPaymentType(RepayConstants.RECEIPTMODE_PRESENTMENT);
+		rcd.setPaymentType(ReceiptMode.PRESENTMENT);
 		rcd.setAmount(presentmentAmt);
 		rcd.setDueAmount(presentmentAmt);
 		rcd.setValueDate(schDate);

@@ -653,7 +653,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (!FinanceConstants.CLOSURE_MAKER.equals(module) && !isKnockOff) {
 			if (DisbursementConstants.PAYMENT_TYPE_ONLINE.equals(receiptData.getReceiptHeader().getReceiptMode())
-					&& RepayConstants.RECEIPTMODE_ESCROW.equals(receiptData.getReceiptHeader().getSubReceiptMode())) {
+					&& ReceiptMode.ESCROW.equals(receiptData.getReceiptHeader().getSubReceiptMode())) {
 				this.row_CustomerAccount.setVisible(true);
 			}
 		}
@@ -1490,11 +1490,11 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private String payType(String mode) {
 		switch (mode) {
 		case RepayConstants.EXAMOUNTTYPE_EMIINADV:
-			return RepayConstants.RECEIPTMODE_EMIINADV;
+			return ReceiptMode.EMIINADV;
 		case RepayConstants.EXAMOUNTTYPE_EXCESS:
-			return RepayConstants.RECEIPTMODE_EXCESS;
+			return ReceiptMode.EXCESS;
 		case ReceiptMode.ADVEMI:
-		case RepayConstants.RECEIPTMODE_ADVINT:
+		case ReceiptMode.ADVINT:
 		case ReceiptMode.CASHCLT:
 		case ReceiptMode.DSF:
 			return mode;

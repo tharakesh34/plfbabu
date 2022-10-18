@@ -1145,7 +1145,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select)
-				|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+				|| StringUtils.equals(recMode, ReceiptMode.EXCESS)) {
 			this.gb_ReceiptDetails.setVisible(false);
 			this.receiptAmount.setMandatory(false);
 			this.receiptAmount.setReadonly(true);
@@ -1536,9 +1536,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
 				receiptAmountsMap.put(receiptDetail.getPaymentType(), receiptDetail.getAmount());
-				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+				if (!StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EXCESS)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EMIINADV)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PAYABLE)) {
 					this.receiptAmount
 							.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
 					this.favourNo.setValue(receiptDetail.getFavourNumber());
@@ -1953,7 +1953,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		if (!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+		if (!StringUtils.equals(recptMode, ReceiptMode.EXCESS)) {
 			if (!this.fundingAccount.isReadonly() && this.fundingAccount.isVisible()) {
 				this.fundingAccount.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_FeeReceiptDialog_FundingAccount.value"), null, true));
@@ -2007,10 +2007,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_NEFT)
-				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_RTGS)
-				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_IMPS)
-				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DIGITAL)) {
+		if (StringUtils.equals(recptMode, ReceiptMode.NEFT) || StringUtils.equals(recptMode, ReceiptMode.RTGS)
+				|| StringUtils.equals(recptMode, ReceiptMode.IMPS)
+				|| StringUtils.equals(recptMode, ReceiptMode.DIGITAL)) {
 
 			if (!this.transactionRef.isReadonly()) {
 				this.transactionRef.setConstraint(
@@ -2019,7 +2018,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		if (!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+		if (!StringUtils.equals(recptMode, ReceiptMode.EXCESS)) {
 			if (!this.paymentRef.isReadonly()) {
 				this.paymentRef.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_paymentReference.value"),

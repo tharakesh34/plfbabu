@@ -389,10 +389,10 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			receiptCancellationService.doApproveNonLanReceipt(aAuditHeader);
 
 			// Calling Collection Agencies API
-			if (RECEIPT_SOURCE_MOBILE.equals(receiptSource) && ((ReceiptMode.CASH.equals(receiptMode)
-					&& RECEIPT_CHANNEL_MOBILE.equals(receiptChannel))
-					|| (RepayConstants.RECEIPTMODE_ONLINE.equals(receiptMode)
-							&& RepayConstants.RECEIPTMODE_BANKDEPOSIT.equals(receiptHeader.getSubReceiptMode())))) {
+			if (RECEIPT_SOURCE_MOBILE.equals(receiptSource)
+					&& ((ReceiptMode.CASH.equals(receiptMode) && RECEIPT_CHANNEL_MOBILE.equals(receiptChannel))
+							|| (ReceiptMode.ONLINE.equals(receiptMode)
+									&& ReceiptMode.BANKDEPOSIT.equals(receiptHeader.getSubReceiptMode())))) {
 
 				if ("Y".equalsIgnoreCase(FLAG)) {
 					updateMobileAgencyLimit(receiptHeader, "D", false);
@@ -546,10 +546,10 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.getAuditDetail().setModelData(receiptData);
 
 		if ("Y".equalsIgnoreCase(FLAG)) {
-			if (RECEIPT_SOURCE_MOBILE.equals(receiptSource) && ((ReceiptMode.CASH.equals(receiptMode)
-					&& RECEIPT_CHANNEL_MOBILE.equals(receiptChannel))
-					|| (RepayConstants.RECEIPTMODE_ONLINE.equals(receiptMode)
-							&& RepayConstants.RECEIPTMODE_BANKDEPOSIT.equals(receiptHeader.getSubReceiptMode())))) {
+			if (RECEIPT_SOURCE_MOBILE.equals(receiptSource)
+					&& ((ReceiptMode.CASH.equals(receiptMode) && RECEIPT_CHANNEL_MOBILE.equals(receiptChannel))
+							|| (ReceiptMode.ONLINE.equals(receiptMode)
+									&& ReceiptMode.BANKDEPOSIT.equals(receiptHeader.getSubReceiptMode())))) {
 				updateMobileAgencyLimit(receiptHeader, "C", false);
 			}
 		}
@@ -604,9 +604,8 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		BigDecimal amount = BigDecimal.ZERO;
 		for (FinReceiptDetail detail : receiptData.getReceiptHeader().getReceiptDetails()) {
 			String paymentType = detail.getPaymentType();
-			if (!(paymentType.equals(RepayConstants.RECEIPTMODE_EMIINADV)
-					|| paymentType.equals(RepayConstants.RECEIPTMODE_EXCESS)
-					|| paymentType.equals(RepayConstants.RECEIPTMODE_PAYABLE))) {
+			if (!(paymentType.equals(ReceiptMode.EMIINADV) || paymentType.equals(ReceiptMode.EXCESS)
+					|| paymentType.equals(ReceiptMode.PAYABLE))) {
 				amount = amount.add(detail.getAmount());
 				amountCodes.setPartnerBankAc(detail.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(detail.getPartnerBankAcType());
@@ -787,9 +786,9 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		FinReceiptDetail finReceiptDetail = new FinReceiptDetail();
 
 		for (FinReceiptDetail receiptDetail : finReceiptData.getReceiptHeader().getReceiptDetails()) {
-			if (!(RepayConstants.RECEIPTMODE_EMIINADV.equals(receiptDetail.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_EXCESS.equals(receiptDetail.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_PAYABLE.equals(receiptDetail.getPaymentType()))) {
+			if (!(ReceiptMode.EMIINADV.equals(receiptDetail.getPaymentType())
+					|| ReceiptMode.EXCESS.equals(receiptDetail.getPaymentType())
+					|| ReceiptMode.PAYABLE.equals(receiptDetail.getPaymentType()))) {
 				finReceiptDetail = receiptDetail;
 				finReceiptDetail.setStatus(finReceiptData.getReceiptHeader().getReceiptModeStatus());
 			}
@@ -857,10 +856,10 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 
 		String receiptMode = fsi.getPaymentMode();
 		if (SUB_RECEIPT_MODES.contains(receiptMode)) {
-			fsi.setPaymentMode(RepayConstants.RECEIPTMODE_ONLINE);
+			fsi.setPaymentMode(ReceiptMode.ONLINE);
 			fsi.setSubReceiptMode(receiptMode);
-			if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_PORTAL)
-					|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_BILLDESK)) {
+			if (StringUtils.equals(receiptMode, ReceiptMode.PORTAL)
+					|| StringUtils.equals(receiptMode, ReceiptMode.BILLDESK)) {
 				fsi.setReceiptChannel(DisbursementConstants.RECEIPT_CHANNEL_POR);
 			}
 		} else if (StringUtils.equals(receiptMode, ReceiptMode.CASH)
@@ -1008,7 +1007,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Sub Receipt Sub Mode
-		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
+		if (StringUtils.equals(receiptMode, ReceiptMode.ONLINE)) {
 			if (!SUB_RECEIPT_MODES.contains(subReceiptMode)) {
 				parm0 = "Sub Receipt Mode";
 				parm1 = SUB_RECEIPT_MODES.stream().collect(Collectors.joining(","));
@@ -1152,7 +1151,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			rcd.setFavourNumber(rcd.getTransactionRef());
 			finScheduleData = validateForChequeOrDD(rcd, finScheduleData);
 		} else if (StringUtils.equals(receiptMode, ReceiptMode.CASH)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
+				|| StringUtils.equals(receiptMode, ReceiptMode.ONLINE)) {
 			// CASH OR ONLINE
 			finScheduleData = validateForNonChequeOrDD(rcd, finScheduleData);
 		}
@@ -1229,7 +1228,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 						RepayConstants.RECEIPTTYPE_RECIPT);
 				if (partnerBankModes != null && CollectionUtils.isNotEmpty(partnerBankModes)) {
 					PartnerBankModes partnerMode = null;
-					if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
+					if (StringUtils.equals(receiptMode, ReceiptMode.ONLINE)) {
 						partnerMode = partnerBankModes.stream()
 								.filter(mode -> fsi.getSubReceiptMode().equalsIgnoreCase(mode.getPaymentMode()))
 								.findFirst().orElse(null);
@@ -1466,7 +1465,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 
 		rcd.setReceiptType(RepayConstants.NONLAN_RECEIPT_NOTAPPLICABLE);
 		rcd.setPaymentTo(RepayConstants.NONLAN_RECEIPT_NOTAPPLICABLE);
-		if (StringUtils.equals(fsi.getPaymentMode(), RepayConstants.RECEIPTMODE_ONLINE)) {
+		if (StringUtils.equals(fsi.getPaymentMode(), ReceiptMode.ONLINE)) {
 			rcd.setPaymentType(fsi.getSubReceiptMode());
 		} else {
 			rcd.setPaymentType(fsi.getPaymentMode());
@@ -1507,7 +1506,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 
 	public FinScheduleData validateForNonChequeOrDD(FinReceiptDetail receiptDetail, FinScheduleData finScheduleData) {
 
-		String parm1 = ReceiptMode.CASH + "," + RepayConstants.RECEIPTMODE_ONLINE;
+		String parm1 = ReceiptMode.CASH + "," + ReceiptMode.ONLINE;
 		boolean isReceiptUpload = finScheduleData.getFinServiceInstruction().isReceiptUpload();
 
 		// Value Date must not be sent

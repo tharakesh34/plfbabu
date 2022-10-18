@@ -543,7 +543,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.collectionAgentId.setValidateColumns(new String[] { "Code" });
 
 		if (DisbursementConstants.PAYMENT_TYPE_MOB.equals(receiptData.getReceiptHeader().getReceiptChannel())
-				|| RepayConstants.RECEIPTMODE_BANKDEPOSIT.equals(receiptData.getReceiptHeader().getSubReceiptMode())) {
+				|| ReceiptMode.BANKDEPOSIT.equals(receiptData.getReceiptHeader().getSubReceiptMode())) {
 			this.collectionAgentId.setMandatoryStyle(true);
 		}
 
@@ -1388,7 +1388,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			return;
 		}
 
-		if ((RepayConstants.RECEIPTMODE_ONLINE.equals(rch.getReceiptMode())) && rch.getSubReceiptMode() != null
+		if ((ReceiptMode.ONLINE.equals(rch.getReceiptMode())) && rch.getSubReceiptMode() != null
 				&& !StringUtils.equals(rch.getSubReceiptMode(), PennantConstants.List_Select)) {
 			receiptTypeLabel.setVisible(true);
 			subReceiptMode.setVisible(true);
@@ -1515,7 +1515,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
+		if (StringUtils.equals(recptMode, ReceiptMode.ONLINE)) {
 
 			if (!this.transactionRef.isReadonly()) {
 				this.transactionRef
@@ -1524,7 +1524,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		if (!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+		if (!StringUtils.equals(recptMode, ReceiptMode.EXCESS)) {
 			if (!this.paymentRef.isReadonly()) {
 				this.paymentRef.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_ReceiptDialog_paymentReference.value"),

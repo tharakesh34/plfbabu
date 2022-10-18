@@ -615,7 +615,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		logger.debug("Entering");
 
 		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select)
-				|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+				|| StringUtils.equals(recMode, ReceiptMode.EXCESS)) {
 			this.gb_ReceiptDetails.setVisible(false);
 			this.receiptAmount.setMandatory(false);
 			this.receiptAmount.setReadonly(true);
@@ -1085,9 +1085,9 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				doFillReceipts(receiptDetail, finFormatter);
 				boolean isReceiptModeDetail = false;
 
-				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+				if (!StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EXCESS)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EMIINADV)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PAYABLE)) {
 
 					this.favourNo.setValue(receiptDetail.getFavourNumber());
 					this.valueDate.setValue(receiptDetail.getValueDate());
@@ -1307,13 +1307,13 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		Listitem item = new Listitem();
 		Listcell lc = null;
 		String label = "";
-		if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-				|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-				|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)) {
+		if (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EXCESS)
+				|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EMIINADV)
+				|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PRESENTMENT)) {
 
 			label = Labels.getLabel("label_ReceiptCancellationDialog_ExcessType_" + receiptDetail.getPaymentType());
 
-		} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+		} else if (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PAYABLE)) {
 			label = receiptDetail.getFeeTypeDesc();
 		} else {
 			label = PennantApplicationUtil.getLabelDesc(receiptDetail.getPaymentType(),
@@ -1385,10 +1385,9 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 					FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
 					boolean isReceiptModeDetail = false;
 
-					if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-							&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-							&& !StringUtils.equals(receiptDetail.getPaymentType(),
-									RepayConstants.RECEIPTMODE_PAYABLE)) {
+					if (!StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EXCESS)
+							&& !StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EMIINADV)
+							&& !StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PAYABLE)) {
 
 						isReceiptModeDetail = true;
 					}

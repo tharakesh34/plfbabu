@@ -580,9 +580,9 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			} else {
 				receiptHeader.setBatchId(batchId);
 				for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
-					if (!(RepayConstants.RECEIPTMODE_EMIINADV.equals(receiptDetail.getPaymentType())
-							|| RepayConstants.RECEIPTMODE_EXCESS.equals(receiptDetail.getPaymentType())
-							|| RepayConstants.RECEIPTMODE_PAYABLE.equals(receiptDetail.getPaymentType()))
+					if (!(ReceiptMode.EMIINADV.equals(receiptDetail.getPaymentType())
+							|| ReceiptMode.EXCESS.equals(receiptDetail.getPaymentType())
+							|| ReceiptMode.PAYABLE.equals(receiptDetail.getPaymentType()))
 							&& FinanceConstants.DEPOSIT_MAKER.equals(module)) {
 						receiptDetail.setDepositDate(finReceiptDetail.getDepositDate());
 						receiptDetail.setDepositNo(finReceiptDetail.getDepositNo());
@@ -607,7 +607,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 						// Cash & Online Receipt Mode could not be realized
 						if (ReceiptMode.CASH.equals(receiptHeader.getReceiptMode())
-								|| RepayConstants.RECEIPTMODE_ONLINE.equals(receiptHeader.getReceiptMode())) {
+								|| ReceiptMode.ONLINE.equals(receiptHeader.getReceiptMode())) {
 							MessageUtil.showError(
 									"Some selected Receipts' ReceiptMode are 'Cash' Or 'Online', So they could not be Realized");
 							return;
@@ -616,7 +616,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 						receiptHeader.setBounceDate(finReceiptDetail.getDepositDate());
 						receiptHeader.setBounceReason(finReceiptHeader.getBounceReason());
 						if (ReceiptMode.CASH.equals(receiptHeader.getReceiptMode())
-								|| RepayConstants.RECEIPTMODE_ONLINE.equals(receiptHeader.getReceiptMode())) {
+								|| ReceiptMode.ONLINE.equals(receiptHeader.getReceiptMode())) {
 							MessageUtil.showError(
 									"Some selected Receipts' ReceiptMode are 'Cash' Or 'Online', So they could not be Bounce");
 							return;

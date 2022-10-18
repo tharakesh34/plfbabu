@@ -692,10 +692,9 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				lc.setParent(item);
 				break;
 			case RepayConstants.PAYSTATUS_REALIZED:
-				if (RepayConstants.RECEIPTMODE_EXCESS.equals(receiptMode)
-						|| RepayConstants.RECEIPTMODE_EMIINADV.equals(receiptMode)
-						|| RepayConstants.RECEIPTMODE_PAYABLE.equals(receiptMode)
-						|| ReceiptMode.CASHCLT.equals(receiptMode) || ReceiptMode.DSF.equals(receiptMode)) {
+				if (ReceiptMode.EXCESS.equals(receiptMode) || ReceiptMode.EMIINADV.equals(receiptMode)
+						|| ReceiptMode.PAYABLE.equals(receiptMode) || ReceiptMode.CASHCLT.equals(receiptMode)
+						|| ReceiptMode.DSF.equals(receiptMode)) {
 					lc = new Listcell("Adjusted");
 					lc.setParent(item);
 				} else {
