@@ -616,6 +616,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			Menuitem menuitem = null;
 			for (ValueLabel enquiry : list) {
 				menuitem = new Menuitem();
+				menuitem.setImage("/images/icons/Old/arrow_blue_right_16x16.gif");
 				menuitem.setLabel(enquiry.getLabel());
 				menuitem.setValue(enquiry.getValue());
 				menuitem.setStyle("font-weight:bold;");
