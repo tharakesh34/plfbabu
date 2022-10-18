@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
@@ -843,53 +844,51 @@ public class CustomerDetailsController extends GenericService<Object> {
 	 * @return
 	 */
 	public CustomerDetails getCustomerBankingInformation(String cif) {
-		logger.debug("Entering");
-		CustomerDetails response = null;
+		logger.debug(Literal.ENTERING);
+
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
-		List<BankInfoDetail> bankInfoDetailList = null;
-		List<BankInfoSubDetail> bankInfoSubDetailList = null;
+		List<BankInfoDetail> bankList = new ArrayList<>();
+		List<BankInfoSubDetail> subList = new ArrayList<>();
+
 		try {
-			List<CustomerBankInfo> customerBankInfoList = customerBankInfoService
+			List<CustomerBankInfo> infoList = customerBankInfoService
 					.getApprovedBankInfoByCustomerId(customer.getCustID());
-			for (CustomerBankInfo customerBankInfo : customerBankInfoList) {
-				bankInfoDetailList = customerBankInfoService.getBankInfoDetailById(customerBankInfo.getBankId());
-				for (BankInfoDetail bankInfoDetail : bankInfoDetailList) {
-					customerBankInfoService.getBankInfoSubDetailById(bankInfoDetail.getBankId(),
-							bankInfoDetail.getMonthYear());
+
+			for (CustomerBankInfo cbi : infoList) {
+				bankList = customerBankInfoService.getBankInfoDetailById(cbi.getBankId());
+				cbi.setBankInfoDetails(bankList);
+				for (BankInfoDetail bid : bankList) {
+					subList = customerBankInfoService.getBankInfoSubDetailById(bid.getBankId(), bid.getMonthYear());
+					bid.setBankInfoSubDetails(subList);
 				}
 			}
 
-			if (customerBankInfoList != null && !customerBankInfoList.isEmpty() && bankInfoDetailList != null
-					&& !bankInfoDetailList.isEmpty()) {
-				response = new CustomerDetails();
-				response.setCustCIF(cif);
-				response.setCustomerBankInfoList(customerBankInfoList);
-				for (CustomerBankInfo customerBankInfo : customerBankInfoList) {
-					customerBankInfo.setBankInfoDetails(bankInfoDetailList);
-					for (BankInfoDetail bankInfoDetail : bankInfoDetailList) {
-						bankInfoDetail.setBankInfoSubDetails(bankInfoSubDetailList);
-					}
-				}
-				response.setCustomer(null);
-				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-			} else {
-				response = new CustomerDetails();
-				response.setCustomer(null);
+			CustomerDetails response = new CustomerDetails();
+			response.setCustomer(null);
+
+			if (CollectionUtils.isEmpty(infoList)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = cif;
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
+
+				return response;
 			}
+
+			response.setCustCIF(cif);
+			response.setCustomerBankInfoList(infoList);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+			return response;
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
+
 			APIErrorHandlerService.logUnhandledException(e);
-			response = new CustomerDetails();
+			CustomerDetails response = new CustomerDetails();
 			response.setCustomer(null);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+
+			return response;
 		}
-
-		logger.debug("Leaving");
-		return response;
-
 	}
 
 	/**
