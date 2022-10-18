@@ -53,6 +53,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.helper.StringUtil;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
@@ -7543,6 +7544,11 @@ public class ScheduleCalculator {
 			}
 		}
 
+		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())) {
+			int idx = schdData.getFinanceScheduleDetails().size() - fm.getAdvTerms() - 1;
+			fm.setRecalToDate(schdData.getFinanceScheduleDetails().get(idx).getSchDate());;
+		}
+
 		// STEP1: Get the First Co-ordinates for approximation
 		// Set New EMI Guess using PMT Calculation
 
@@ -7660,11 +7666,7 @@ public class ScheduleCalculator {
 		Date recalFromDate = fm.getRecalFromDate();
 		Date recalToDate = fm.getRecalToDate();
 		int calTerms = 0;
-		int sdSize = schedules.size();
 		BigDecimal newEndinBalance = BigDecimal.ZERO;
-		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())) {
-			sdSize = sdSize - fm.getAdvTerms();
-		}
 
 		for (int iFsd = 0; iFsd < schedules.size(); iFsd++) {
 			FinanceScheduleDetail curSchd = schedules.get(iFsd);
