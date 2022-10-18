@@ -867,7 +867,6 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(fm.getRecordStatus());
-			details.setRecordType(fm.getRecordType());
 			details.setVersion(fm.getVersion());
 			details.setWorkflowId(fm.getWorkflowId());
 			details.setTaskId(fm.getTaskId());
