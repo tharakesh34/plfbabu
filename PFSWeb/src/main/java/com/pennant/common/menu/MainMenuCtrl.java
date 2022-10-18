@@ -355,7 +355,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return;
 		}
 
-		if (App.getBooleanProperty("menu.access.log.req")) {
+		if (App.getBooleanProperty("user.access.log.req")) {
 			UserAccess menuAccess = new UserAccess();
 			menuAccess.setMenuItem(Labels.getLabel(menuItem.getId()));
 			menuAccess.setUsrLoginId(user.getLoginLogId());
