@@ -1130,7 +1130,7 @@ public class FrequencyUtil implements Serializable {
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
+		int weekDay = calendar.get(Calendar.DAY_OF_WEEK) - 1;
 		int maxDaysOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 		int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
@@ -1145,7 +1145,7 @@ public class FrequencyUtil implements Serializable {
 
 		case 'W':
 
-			if (weekDay - 1 == freqDetails.getFrequencyDay()) {
+			if (weekDay == freqDetails.getFrequencyDay()) {
 				return true;
 			}
 			return false;
