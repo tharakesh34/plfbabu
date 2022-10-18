@@ -1155,7 +1155,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.repayRate.setMarginValue(aFinanceMain.getRepayMargin());
 
 		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList,
-				",NO_PAY,GRCNDPAY,PFTCAP,");
+				",NO_PAY,GRCNDPAY,PFTCAP,POSINT");
 
 		if (StringUtils.isNotEmpty(aFinanceMain.getRepayBaseRate()) && StringUtils.equals(
 				CalculationConstants.RATE_BASIS_R, this.repayRateBasis.getSelectedItem().getValue().toString())) {
