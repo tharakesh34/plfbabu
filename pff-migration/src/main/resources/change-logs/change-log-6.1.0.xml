@@ -621,4 +621,11 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="10" author="rahul.r">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FinPlanEMIHMonths DROP CONSTRAINT FK_FinPlanEMIHMonths_FinId;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
