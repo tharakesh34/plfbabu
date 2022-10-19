@@ -18,7 +18,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class DateService extends ServiceHelper {
-	private static final long serialVersionUID = -4861845683077000353L;
 	private static Logger logger = LogManager.getLogger(DateService.class);
 
 	/**

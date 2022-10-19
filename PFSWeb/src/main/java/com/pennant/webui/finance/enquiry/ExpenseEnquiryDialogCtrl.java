@@ -68,7 +68,6 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 	private List<FinExpenseDetails> finExpenseDetails;
 	private UploadHeaderService uploadHeaderService;
 	private Long finID;
-	private String finReference;
 	private int ccyFormatter = 0;
 
 	/**
@@ -104,12 +103,6 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 			this.finExpenseDetails = (List<FinExpenseDetails>) arguments.get("finExpenseDetails");
 		} else {
 			this.finExpenseDetails = null;
-		}
-
-		if (arguments.containsKey("finReference")) {
-			this.finReference = (String) arguments.get("finReference");
-		} else {
-			this.finReference = null;
 		}
 
 		if (arguments.containsKey("finID")) {

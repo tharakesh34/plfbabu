@@ -458,7 +458,6 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 	 */
 	public void doShowDialog(ClusterHierarchy clusterHierarchey) {
 		logger.debug(Literal.ENTERING);
-		Listcell listOfCell;
 
 		if (clusterHierarchey.isNewRecord()) {
 			this.btnCtrl.setInitNew();
@@ -538,16 +537,6 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 			Uppercasebox textBox = (Uppercasebox) listitem.getFirstChild().getFirstChild();
 			textBox.setConstraint("");
 		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Set Validations for LOV Fields
-	 */
-
-	private void doSetLOVValidation() {
-		logger.debug(Literal.LEAVING);
 
 		logger.debug(Literal.LEAVING);
 	}

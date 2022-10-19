@@ -12,9 +12,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DateRollOverService extends ServiceHelper {
-
 	private static Logger logger = LogManager.getLogger(DateRollOverService.class);
-	private static final long serialVersionUID = -3371115026576113554L;
 
 	public void process(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(Literal.ENTERING);

@@ -55,7 +55,6 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class Facility extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long finID;
 	private String cAFReference;
 	private String facilityType;
 	private long custID;
@@ -223,7 +222,7 @@ public class Facility extends AbstractWorkflowEntity {
 	}
 
 	public String getCAFReference() {
-		return cAFReference;
+		return getId();
 	}
 
 	public void setCAFReference(String cAFReference) {

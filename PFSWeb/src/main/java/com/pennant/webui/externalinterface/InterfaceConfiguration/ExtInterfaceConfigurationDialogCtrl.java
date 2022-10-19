@@ -94,10 +94,8 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	// param
 	private transient ExtInterfaceConfigurationService ExtInterfaceConfigurationService;
 	private Row emailRow;
-	private List<ValueLabel> listType = PennantStaticListUtil.getAcademicList();
 	private List<ValueLabel> listNotificationType = PennantStaticListUtil.getNotificationTypeList();
 	private List<ValueLabel> listInterfaceType = PennantStaticListUtil.getInterfaceTypeList();
-	private int emailCount = 0;
 	private static Pattern pattern;
 	private Matcher matcher;
 
