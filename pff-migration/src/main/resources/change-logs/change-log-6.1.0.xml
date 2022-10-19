@@ -628,4 +628,20 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="11" author="rahul.r">
+		<sql>
+			<![CDATA[
+				update ReportList set fieldvalues='FinType, LovDescProductCodeName, LovDescCustCIF, FinReference, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinancingAmount, CurFinAmount, FinCurrAssetValue, FeeChargeAmt, TotalCpz, FinRepaymentAmount, SvAmount, DownPayment, ClosingStatus' where code='FINENQ';
+				update ReportList set fieldtype='String, String, String, String, String, Date, int, Date, String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, String' where code='FINENQ';
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="12" author="rahul.r">
+		<sql>
+			<![CDATA[
+				update ReportList set fieldvalues='FinType, LovDescProductCodeName, LovDescCustCIF, FinReference, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinancingAmount, CurFinAmount, FinCurrAssetValue, FeeChargeAmt, TotalCpz, FinRepaymentAmount, SvAmount, DownPayment, ClosingStatus' where code='SCHENQ';
+				update ReportList set fieldtype='String, String, String, String, String, Date, int, Date, String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, String' where code='SCHENQ';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
