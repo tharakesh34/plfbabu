@@ -568,4 +568,30 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="07" author="rahul.r">
+	<sql>
+			<![CDATA[
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='activeLoansOnFinType';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='cibilScore';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='riskScore';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='sal_NotCredit_flag';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='calculatedAnnualNetSalary';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='emi_Bounce_flag';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='custAddrCity';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='disbursedAmount';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='Collateral_Bank_Valuation';
+				
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','activeLoansOnFinType','Active Loans for loan type','bigint',4,'1','1',null,'static',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','riskScore','risk Score','Decimal',18,'1','1',null,'static,global,calvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','cibilScore','cibilScore','Decimal',18,'1','1',null,'static,global,calvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','disbursedAmount','Disbursed Amount','Decimal',18,'1','1',null,'calvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Collateral_Bank_Valuation','Collateral Bank Valuation','Decimal',18,'0','0','LoanPurposes','static',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','custAddrCity','custAddress City','nchar',1,'1','0',null,'static,global,dbvalue','City');
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','calculatedAnnualNetSalary','calculated Annual NetSalary','Decimal',18,'1','1',null,'static,global,calvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','emi_Bounce_flag','emi_Bounce flag','Decimal',18,'1','1',null,'static,global,calvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','sal_NotCredit_flag','sal_Not Credit_flag','Decimal',18,'1','1',null,'static,global,calvalue',null);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
