@@ -9427,7 +9427,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="81_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="81.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_orgview'); 	
@@ -9435,7 +9435,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="81" author="Gopal.p">
+	<changeSet id="81.1" author="Gopal.p">
 		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINTYPE,
@@ -9599,6 +9599,7 @@
 				    T1.DSFREQ,
 				    T1.CASHCOLLATERALREQ,
 				    T1.ALWEARLYPAYMETHODS,
+				    T1.FINSCHEDULEON,
 				    T1.TDSALLOWTOMODIFY,
 				    T1.TDSAPPLICABLETO,
 				    T1.ALWVAN,
@@ -9638,7 +9639,7 @@
 					T1.REGPROVRULE,
 					T1.INTPROVRULE
 				FROM RMTFINANCETYPES T1
-				JOIN SMTDIVISIONDETAIL T3 ON T1.FINDIVISION = T3.DIVISIONCODE
+				INNER JOIN SMTDIVISIONDETAIL T3 ON T1.FINDIVISION = T3.DIVISIONCODE
 				LEFT JOIN STEPPOLICYHEADER T4 ON T1.DFTSTEPPOLICY = T4.POLICYCODE
 				LEFT JOIN RULES T5 ON T1.DOWNPAYRULE = T5.RULEID
 				LEFT JOIN RULES T6 ON T1.GRCPRICINGMETHOD = T6.RULEID
@@ -9648,7 +9649,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="81_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="81.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtfinancetypes_orgview');
