@@ -6457,4 +6457,17 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return finMains;
 	}
 
+	public String getOrgFinCategory(String finReference) {
+		String sql = "Select FinCategory From FinanceMain_Temp Where FinReference = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }

@@ -633,7 +633,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (StringUtils.isNotBlank(this.finReference.getValue())) {
-			receiptHeader.setFinCategory(financeDetailService.getFinCategory(this.finReference.getValue()));
+			receiptHeader.setFinCategory(financeDetailService.getOrgFinCategory(this.finReference.getValue()));
 			appendExtendedFieldDetails(receiptHeader, moduleDefiner);
 		} else {
 			if (extendedFieldCtrl != null) {

@@ -305,4 +305,6 @@ public interface FinanceDetailService {
 	List<FinanceRepayments> getFinRepayList(long finID);
 
 	void addExtFieldsToAttributes(FinanceMain afinanceMain);
+
+	String getOrgFinCategory(String finReference);
 }

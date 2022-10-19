@@ -11071,6 +11071,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return financeMainDAO.getFinCategory(finReference);
 	}
 
+	public String getOrgFinCategory(String finReference) {
+		return financeMainDAO.getOrgFinCategory(finReference);
+	}
+
 	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
 		this.reasonDetailDAO = reasonDetailDAO;
 	}

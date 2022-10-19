@@ -403,4 +403,6 @@ public interface FinanceMainDAO {
 
 	List<FinanceMain> getFinanceMainActiveList(Date fromDate, Date toDate, String finType);
 
+	String getOrgFinCategory(String finReference);
+
 }
