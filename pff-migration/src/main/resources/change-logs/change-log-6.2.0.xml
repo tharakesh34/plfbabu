@@ -5148,5 +5148,13 @@
    			 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#208131" author="saikrishna.b">
+		<sql>
+   			 <![CDATA[
+   			 	UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'FinBranch' WHERE REPORTID = (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_LoanwiseVoucherDetail') AND FIELDID = 3;
+   			  ]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
