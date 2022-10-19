@@ -1863,8 +1863,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			if (aMandate.isSwapIsActive()) {
-				aMandate.setSwapEffectiveDate(
-						DateUtility.getDate(DateUtil.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
+				aMandate.setSwapEffectiveDate(DateUtility
+						.getDate(DateUtil.format(this.swapEffectiveDate.getValue(), PennantConstants.dateFormat)));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
