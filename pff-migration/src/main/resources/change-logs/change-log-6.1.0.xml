@@ -602,7 +602,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="08" author="rahul.r">
+	<changeSet id="09" author="rahul.r">
 		<sql>
 			<![CDATA[
 				Delete FROM RBFieldDetails WHERE RBModule = 'FEES' AND RBEvent = 'ADDDBSN' and rbfldname='ct_custNationality';
@@ -610,6 +610,14 @@
 				
 				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','ADDDBSN','ct_custNationality','Customer Nationality','nchar',2,'0','0','NationalityCode','static,global,dbvalue',null);
 				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','WAIVER','COLLATERAL_OPENPLOT_ADDR','COLLATERAL_OPENPLOT_ADDR','nchar',50,'1','0',null,'static',null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="03.1" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Drop Table Collateral_land_ed_bkp;
 			]]>
 		</sql>
 	</changeSet>
