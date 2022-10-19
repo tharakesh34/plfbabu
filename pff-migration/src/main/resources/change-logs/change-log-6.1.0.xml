@@ -594,4 +594,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="08" author="rahul.r">
+	<sql>
+			<![CDATA[
+				Delete FROM RBFieldDetails WHERE RBModule = 'VERRULE' AND RBEvent = 'VERRULE' and rbfldname='LOAN_LAP_UPDATED_LTV_5';
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('VERRULE','VERRULE','LOAN_LAP_UPDATED_LTV_5','LOAN_LAP_UPDATED_LTV_5','Decimal',18,'1','1',null,'static',null);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
