@@ -32,8 +32,7 @@
 						<hbox width="250px" height="15px">
 							<menubar id="menubar" width="auto" style="float:left; border-style: none;">
 								<menu id="menu_filter" width="230px">
-									<menupopup id="menupopup_filter" width="220px">
-									</menupopup>
+									<menupopup id="menupopup_filter" width="230px" height="400px" style="overflow:auto" />
 								</menu>
 							</menubar>
 							<space id="space_menubar" width="20px" />
