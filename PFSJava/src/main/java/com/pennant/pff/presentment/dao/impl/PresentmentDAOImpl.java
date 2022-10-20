@@ -1,13 +1,18 @@
 package com.pennant.pff.presentment.dao.impl;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.payment.PaymentHeader;
@@ -30,7 +35,30 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public int extarct(Date dueDate) {
+	public long createBatch(String batchName) {
+		String sql = "Insert into Presentment_Batch_Job (Name, StartTime) values (?, ?)";
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+
+		jdbcOperations.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "Id" });
+				ps.setString(1, batchName);
+				ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+
+				return ps;
+			}
+		}, keyHolder);
+
+		return keyHolder.getKey().longValue();
+	}
+
+	@Override
+	public int extarct(long batchID, Date dueDate) {
 		StringBuilder sql = new StringBuilder(getExtractQuery("NACH+ECS+EMANDATE+SI+SII"));
 		sql.append(" Where (SchDate = ? or DefSchddate = ?)");
 
@@ -39,6 +67,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, batchID);
 			ps.setInt(index++, 1);
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
@@ -52,6 +81,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		recordCount = recordCount + this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, batchID);
 			ps.setInt(index++, 1);
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
@@ -66,6 +96,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		recordCount = recordCount + this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, batchID);
 			ps.setInt(index++, 1);
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
@@ -76,7 +107,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public int extarct(Date fromDate, Date toDate) {
+	public int extarct(long batchID, Date fromDate, Date toDate) {
 		StringBuilder sql = new StringBuilder(getExtractQuery("NACH+ECS+EMANDATE+SI+SII"));
 		sql.append(" Where (SchDate >= ? and SchDate <= ?) or (DefSchddate >= ? and DefSchddate <= ?)");
 
@@ -85,6 +116,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, batchID);
 			ps.setInt(index++, 1);
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
 			ps.setDate(index++, JdbcUtil.getDate(toDate));
@@ -101,6 +133,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		recordCount = recordCount + this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, batchID);
 			ps.setInt(index++, 1);
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
 			ps.setDate(index++, JdbcUtil.getDate(toDate));
@@ -118,6 +151,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		recordCount = recordCount + this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, batchID);
 			ps.setInt(index++, 1);
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
 			ps.setDate(index++, JdbcUtil.getDate(toDate));
@@ -130,110 +164,123 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public int extarct(String instrumentType, Date fromDate, Date toDate) {
+	public int extarct(long batchID, String instrumentType, Date fromDate, Date toDate) {
 		StringBuilder sql = new StringBuilder(getExtractQuery(instrumentType));
 		sql.append(" Where (SchDate >= ? and SchDate <= ?) or (DefSchddate >= ? and DefSchddate <= ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+		try {
+			return this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
-			ps.setInt(index++, 1);
+				ps.setLong(index++, batchID);
 
-			ps.setDate(index++, JdbcUtil.getDate(fromDate));
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
-			ps.setDate(index++, JdbcUtil.getDate(fromDate));
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
+				ps.setInt(index++, 1);
+				if (InstrumentType.isPDC(instrumentType) || InstrumentType.isIPDC(instrumentType)) {
+					ps.setString(index++, "PDC");
+				} else {
+					ps.setString(index++, instrumentType);
+				}
+				ps.setDate(index++, JdbcUtil.getDate(fromDate));
+				ps.setDate(index++, JdbcUtil.getDate(toDate));
+				ps.setDate(index++, JdbcUtil.getDate(fromDate));
+				ps.setDate(index++, JdbcUtil.getDate(toDate));
 
-		});
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 	@Override
-	public int clearByNoDues() {
-		String sql = "Delete From Presentment_Extraction_Stage Where (ProfitSchd + PrincipalSchd + FeeSchd + TdsAmount) - (SchdPftPaid + SchdPriPaid + SchdFeePaid + TdsPaid) <= ? and ProductCategory != ?";
+	public int clearByNoDues(long batchID) {
+		String sql = "Delete From Presentment_Extraction_Stage Where BatchID = ? and (ProfitSchd + PrincipalSchd + FeeSchd + TdsAmount) - (SchdPftPaid + SchdPriPaid + SchdFeePaid + TdsPaid) <= ? and ProductCategory != ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.update(sql, ps -> {
-			ps.setBigDecimal(1, BigDecimal.ZERO);
-			ps.setString(2, FinanceConstants.PRODUCT_ODFACILITY);
+			ps.setLong(1, batchID);
+			ps.setBigDecimal(2, BigDecimal.ZERO);
+			ps.setString(3, FinanceConstants.PRODUCT_ODFACILITY);
 		});
 	}
 
 	@Override
-	public int clearByInstrumentType(String instrumentType) {
-		String sql = "Delete From Presentment_Extraction_Stage Where MandateType != ? or ChequeType != ?";
+	public int clearByInstrumentType(long batchID, String instrumentType) {
+		String sql = "Delete From Presentment_Extraction_Stage Where BatchID = ? and MandateType != ? or ChequeType != ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.update(sql, instrumentType, instrumentType);
+		return this.jdbcOperations.update(sql, batchID, instrumentType, instrumentType);
 	}
 
 	@Override
-	public int clearByInstrumentType(String instrumentType, String emnadateSource) {
-		String sql = "Delete From Presentment_Extraction_Stage Where MandateType != ? and EmandateSource != ?";
+	public int clearByInstrumentType(long batchID, String instrumentType, String emnadateSource) {
+		String sql = "Delete From Presentment_Extraction_Stage Where BatchID = ? and MandateType != ? and EmandateSource != ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.update(sql, instrumentType, emnadateSource);
+		return this.jdbcOperations.update(sql, batchID, instrumentType, emnadateSource);
 	}
 
 	@Override
-	public int clearByLoanType(String loanType) {
-		String sql = "Delete From Presentment_Extraction_Stage Where FinType != ?";
+	public int clearByLoanType(long batchID, String loanType) {
+		String sql = "Delete From Presentment_Extraction_Stage Where BatchID = ? and FinType != ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.update(sql, loanType);
+		return this.jdbcOperations.update(sql, batchID, loanType);
 	}
 
 	@Override
-	public int clearByLoanBranch(String loanBranch) {
-		String sql = "Delete From Presentment_Extraction_Stage Where FinBranch != ?";
+	public int clearByLoanBranch(long batchID, String loanBranch) {
+		String sql = "Delete From Presentment_Extraction_Stage Where BatchID = ? and FinBranch != ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.update(sql, loanBranch);
+		return this.jdbcOperations.update(sql, batchID, loanBranch);
 	}
 
 	@Override
-	public int clearByEntityCode(String entityCode) {
-		String sql = "Delete From Presentment_Extraction_Stage Where EntityCode != ?";
+	public int clearByEntityCode(long batchID, String entityCode) {
+		String sql = "Delete From Presentment_Extraction_Stage Where BatchID = ? and EntityCode != ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.update(sql, entityCode);
+		return this.jdbcOperations.update(sql, batchID, entityCode);
 	}
 
 	@Override
-	public int clearSecurityCheque() {
-		String sql = "Delete From Presentment_Extraction_Stage Where ChequeType = ?";
+	public int clearSecurityCheque(long batchID) {
+		String sql = "Delete From Presentment_Extraction_Stage Where BatchID = ? and ChequeType = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.update(sql, InstrumentType.SPDC.name());
+		return this.jdbcOperations.update(sql, batchID, InstrumentType.SPDC.name());
 	}
 
 	@Override
-	public void updateIPDC() {
-		String sql = "Update Presentment_Extraction_Stage set InstrumentType = ?, MandateType = ? Where InstrumentType = ? and BankCode = ?";
+	public void updateIPDC(long batchID) {
+		String sql = "Update Presentment_Extraction_Stage set InstrumentType = ?, MandateType = ? Where BatchID = ? and InstrumentType = ? and BankCode = ?";
 
 		String bankcode = SysParamUtil.getValueAsString("BANK_CODE");
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, InstrumentType.IPDC.name(), InstrumentType.IPDC.name(),
+		this.jdbcOperations.update(sql, InstrumentType.IPDC.name(), InstrumentType.IPDC.name(), batchID,
 				InstrumentType.PDC.name(), bankcode);
 	}
 
 	@Override
-	public int clearByExistingRecord() {
+	public int clearByExistingRecord(long batchID) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Delete From Presentment_Extraction_Stage Where ID in (Select ps.ID");
+		sql.append(" Delete From Presentment_Extraction_Stage");
+		sql.append(" Where BatchID = ? and ID in (Select ps.ID");
 		sql.append(" From Presentment_Extraction_Stage ps");
 		sql.append(" Inner Join PresentmentDetails pd on pd.FinID = ps.FinID and pd.SchDate = ps.SchDate");
-		sql.append(" Where pd.ExcludeReason in (?, ?, ?, ?)");
+		sql.append(" Where pd.ExcludeReason in (?, ?, ?, ?) and pd.Status = ?");
 		sql.append(" )");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -241,33 +288,43 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		int count = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, batchID);
 			ps.setInt(index++, ExcludeReasonCode.EMI_INCLUDE.id());
 			ps.setInt(index++, ExcludeReasonCode.EMI_IN_ADVANCE.id());
 			ps.setInt(index++, ExcludeReasonCode.INT_ADV.id());
-			ps.setInt(index, ExcludeReasonCode.EMI_ADV.id());
+			ps.setInt(index++, ExcludeReasonCode.EMI_ADV.id());
+			ps.setString(index, RepayConstants.PEXC_APPROV);
 		});
 
 		sql = new StringBuilder();
-		sql.append(
-				" Delete From Presentment_Extraction_Stage Where ID in (Select ps.ID from Presentment_Extraction_Stage ps");
+		sql.append(" Delete From Presentment_Extraction_Stage");
+		sql.append(" Where BatchID = ? and ID in (Select ps.ID from Presentment_Extraction_Stage ps");
 		sql.append(" Inner Join PresentmentDetails pd on pd.FinID = ps.FinID and pd.SchDate = ps.SchDate");
 		sql.append(" Inner Join PresentmentHeader ph on ph.ID = pd.PresentmentID");
 		sql.append(" Inner Join Mandates m on m.MandateID = ps.MandateID");
-		sql.append(" Where pd.ExcludeReason = ? and ph.status in (1, 2, 3) and m.StartDate <= ps.SchDate");
+		sql.append(" Where pd.ExcludeReason = ? and ph.Status in (?, ?, ?) and m.StartDate <= ps.SchDate");
 		sql.append(" )");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return count + this.jdbcOperations.update(sql.toString(), ExcludeReasonCode.MANUAL_EXCLUDE.id());
+		return count = count + this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, batchID);
+			ps.setInt(index++, ExcludeReasonCode.MANUAL_EXCLUDE.id());
+			ps.setInt(index++, ExcludeReasonCode.EMI_IN_ADVANCE.id());
+			ps.setInt(index++, ExcludeReasonCode.EMI_HOLD.id());
+			ps.setInt(index, ExcludeReasonCode.MANDATE_HOLD.id());
+		});
 	}
 
 	@Override
-	public int clearByRepresentment() {
+	public int clearByRepresentment(long batchID) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" Delete From Presentment_Extraction_Stage Where ID not in (Select ps.ID from Presentment_Extraction_Stage ps");
+		sql.append(" Delete From Presentment_Extraction_Stage");
+		sql.append(" Where BatchID = ? and ID not in (Select ps.ID from Presentment_Extraction_Stage ps");
 		sql.append(" Inner Join PresentmentDetails pd on pd.FinID = ps.FinID and pd.SchDate = ps.SchDate");
-		sql.append(" Where pd.Status in (?, ?)");
+		sql.append(" pd.Status in (?, ?)");
 		sql.append(" )");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -275,25 +332,28 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, batchID);
 			ps.setString(index++, "B");
 			ps.setString(index++, "F");
 		});
 	}
 
 	@Override
-	public void updatePartnerBankID() {
-		String sql = "Update Presentment_Extraction_Stage set PartnerBankId = ? Where PartnerBankId is null";
+	public void updatePartnerBankID(long batchID) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update Presentment_Extraction_Stage set PartnerBankId = ?");
+		sql.append(" Where BatchID = ? and PartnerBankId is null");
 
-		logger.debug(Literal.SQL.concat(sql));
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		this.jdbcOperations.update(sql, -1);
+		this.jdbcOperations.update(sql.toString(), -1, batchID);
 	}
 
 	@Override
-	public int clearByManualExclude() {
+	public int clearByManualExclude(long batchID) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" Delete From Presentment_Extraction_Stage Where ID in ( Select ps.ID from Presentment_Extraction_Stage ps");
+		sql.append(" Delete From Presentment_Extraction_Stage");
+		sql.append(" Where BatchID = ? and ID in (Select ps.ID from Presentment_Extraction_Stage ps");
 		sql.append(" Inner Join PresentmentDetails pd on pd.FinID = ps.FinID and pd.SchDate = ps.SchDate");
 		sql.append(" Inner Join PresentmentHeader ph on ph.ID = pd.PresentmentID");
 		sql.append(" Inner Join Mandates m On m.MandateID = ps.MandateID");
@@ -305,15 +365,19 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, batchID);
 			ps.setInt(index++, ExcludeReasonCode.MANUAL_EXCLUDE.id());
+			ps.setInt(index++, ExcludeReasonCode.EMI_IN_ADVANCE.id());
+			ps.setInt(index++, ExcludeReasonCode.EMI_HOLD.id());
+			ps.setInt(index, ExcludeReasonCode.MANDATE_HOLD.id());
 		});
 
 	}
 
 	private StringBuilder getExtractQuery(String instrumentType) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Insert Into Presentment_Extraction_Stage (");
-		sql.append(" FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
+		sql.append("Insert Into Presentment_Extraction_Stage (BatchID");
+		sql.append(", FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
 		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage, SchdVersion");
 		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
 		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
@@ -322,21 +386,22 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
 		sql.append(", PartnerBankId, BranchCode, BankCode");
 		sql.append(") Select");
-		sql.append(" fm.FinId, fm.FinReference, fm.FinType, fm.ProductCategory, fm.FinBranch, sdd.EntityCode");
+		sql.append(" ?, fm.FinId, fm.FinReference, fm.FinType, fm.ProductCategory, fm.FinBranch, sdd.EntityCode");
 		sql.append(", fm.BpiTreatment, fm.GrcPeriodEndDate, fm.GrcAdvType, fm.AdvType, fm.AdvStage, fm.SchdVersion");
 		sql.append(", fsd.SchDate, fsd.DefSchdDate, fsd.SchSeq, fsd.InstNumber, fsd.BpiOrHoliday");
 		sql.append(", fsd.ProfitSchd, fsd.PrincipalSchd, fsd.FeeSchd, fsd.TdsAmount");
 		sql.append(", fsd.SchdPftPaid, fsd.SchdPriPaid, fsd.SchdFeePaid, fsd.TdsPaid");
 
-		if (InstrumentType.isPDC(instrumentType)) {
+		if (InstrumentType.isPDC(instrumentType) || InstrumentType.isIPDC(instrumentType)) {
 			sql.append(", cd.ChequeType, cd.ChequeDetailsId, cd.ChequeType, cd.ChequeStatus, cd.ChequeDate");
-			sql.append(", null, null, null, null, null");
+			sql.append(", cd.ChequeDetailsId, cd.ChequeType, null, null, null");
 			sql.append(", null, b.BranchCode, bb.BankCode");
 			sql.append(" From FinScheduleDetails fsd");
 			sql.append(" Inner Join FinanceMain fm On fm.FinID = fsd.FinID and fm.FinIsActive = ?");
 			sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
 			sql.append(" Inner Join ChequeHeader ch on ch.FinId = fm.FinId");
-			sql.append(" Inner Join ChequeDetail cd on cd.HeaderId = ch.HeaderId and cd.EmiRefNo = fsd.InstNumber");
+			sql.append(" Inner Join ChequeDetail cd on cd.HeaderId = ch.HeaderId");
+			sql.append(" and cd.EmiRefNo = fsd.InstNumber and cd.ChequeType = ?");
 			sql.append(" Inner Join RmtBranches b on b.BranchCode = fm.FinBranch");
 			sql.append(" Inner Join BankBranches bb on bb.BankBranchId = cd.BankBranchId");
 		} else if (InstrumentType.isDAS(instrumentType)) {
@@ -346,7 +411,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			sql.append(" From FinScheduleDetails fsd");
 			sql.append(" Inner Join FinanceMain fm On fm.FinID = fsd.FinID and fm.FinIsActive = ?");
 			sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
-			sql.append(" Inner Join Mandates m ON m.MandateId = fm.MandateId");
+			sql.append(" Inner Join Mandates m on m.MandateId = fm.MandateId and MandateType = ?");
 			sql.append(" Inner Join RmtBranches b On b.BranchCode = fm.FinBranch");
 		} else {
 			sql.append(", m.MandateType, null, null, null, null");
@@ -355,7 +420,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			sql.append(" From FinScheduleDetails fsd");
 			sql.append(" Inner Join FinanceMain fm On fm.FinID = fsd.FinID and fm.FinIsActive = ?");
 			sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
-			sql.append(" Inner Join Mandates m ON m.MandateId = fm.MandateId");
+			sql.append(" Inner Join Mandates m on m.MandateId = fm.MandateId and MandateType = ?");
 			sql.append(" Inner Join RmtBranches b On b.BranchCode = fm.FinBranch");
 			sql.append(" Inner Join BankBranches bb On bb.BankBranchId = m.BankBranchId");
 		}
@@ -366,9 +431,9 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public List<PresentmentDetail> getPresentmentDetails() {
+	public List<PresentmentDetail> getPresentmentDetails(long batchID) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
+		sql.append("Select BatchID, FinId, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
 		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage, SchdVersion");
 		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
 		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
@@ -376,13 +441,14 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
 		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
 		sql.append(", PartnerBankId, BranchCode, BankCode");
-		sql.append(" From  Presentment_Extraction_Stage");
+		sql.append(" From  Presentment_Extraction_Stage Where BatchID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 
+			pd.setFinID(rs.getLong("BatchID"));
 			pd.setFinID(rs.getLong("FinId"));
 			pd.setFinReference(rs.getString("FinReference"));
 			pd.setFinType(rs.getString("FinType"));
@@ -422,12 +488,12 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setBankCode(rs.getString("BankCode"));
 
 			return pd;
-		});
+		}, batchID);
 	}
 
 	@Override
-	public List<PresentmentDetail> getGroupByDefault() {
-		String sql = "Select DefSchdDate, EntityCode, InstrumentType  From  Presentment_Extraction_Stage Group By DefSchdDate, EntityCode, InstrumentType";
+	public List<PresentmentDetail> getGroupByDefault(long batchID) {
+		String sql = "Select DefSchdDate, EntityCode, InstrumentType From Presentment_Extraction_Stage Where BatchID = ? Group By DefSchdDate, EntityCode, InstrumentType";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -439,12 +505,12 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setInstrumentType(rs.getString("InstrumentType"));
 
 			return pd;
-		});
+		}, batchID);
 	}
 
 	@Override
-	public List<PresentmentDetail> getGroupByPartnerBankAndBank() {
-		String sql = "Select DefSchdDate, BankCode, EntityCode, PartnerBankId, InstrumentType From Presentment_Extraction_Stage Group By DefSchdDate, BankCode, EntityCode, PartnerBankId, InstrumentType";
+	public List<PresentmentDetail> getGroupByPartnerBankAndBank(long batchID) {
+		String sql = "Select DefSchdDate, BankCode, EntityCode, PartnerBankId, InstrumentType From Presentment_Extraction_Stage Where BatchID = ? Group By DefSchdDate, BankCode, EntityCode, PartnerBankId, InstrumentType";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -458,12 +524,12 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setInstrumentType(rs.getString("InstrumentType"));
 
 			return pd;
-		});
+		}, batchID);
 	}
 
 	@Override
-	public List<PresentmentDetail> getGroupByBank() {
-		String sql = "Select DefSchdDate, BankCode, EntityCode, InstrumentType From Presentment_Extraction_Stage Group By DefSchdDate, BankCode, EntityCode, InstrumentType";
+	public List<PresentmentDetail> getGroupByBank(long batchID) {
+		String sql = "Select DefSchdDate, BankCode, EntityCode, InstrumentType From Presentment_Extraction_Stage Where BatchID = ? Group By DefSchdDate, BankCode, EntityCode, InstrumentType";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -476,12 +542,12 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setInstrumentType(rs.getString("InstrumentType"));
 
 			return pd;
-		});
+		}, batchID);
 	}
 
 	@Override
-	public List<PresentmentDetail> getGroupByPartnerBank() {
-		String sql = "Select DefSchdDate, EntityCode, PartnerBankId, InstrumentType From Presentment_Extraction_Stage Group By DefSchdDate, EntityCode, PartnerBankId, InstrumentType";
+	public List<PresentmentDetail> getGroupByPartnerBank(long batchID) {
+		String sql = "Select DefSchdDate, EntityCode, PartnerBankId, InstrumentType From Presentment_Extraction_Stage Where BatchID = ? Group By DefSchdDate, EntityCode, PartnerBankId, InstrumentType";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -494,12 +560,12 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setInstrumentType(rs.getString("InstrumentType"));
 
 			return pd;
-		});
+		}, batchID);
 	}
 
 	@Override
-	public void updateHeaderIdByDefault(List<PresentmentDetail> list) {
-		String sql = "Update Presentment_Extraction_Stage set HeaderID = ?, DueDate = ? Where DefSchdDate = ? and EntityCode = ? and InstrumentType = ?";
+	public void updateHeaderIdByDefault(long batchID, List<PresentmentDetail> list) {
+		String sql = "Update Presentment_Extraction_Stage set HeaderID = ?, DueDate = ? Where BatchID = ? and DefSchdDate = ? and EntityCode = ? and InstrumentType = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -510,6 +576,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				int index = 1;
 				PresentmentDetail pd = list.get(i);
 
+				ps.setLong(index++, batchID);
 				ps.setLong(index++, pd.getHeaderId());
 				ps.setDate(index++, JdbcUtil.getDate(pd.getDueDate()));
 
@@ -526,12 +593,15 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public void updateHeaderIdByPartnerBankAndBank(List<PresentmentDetail> list) {
-		String sql = "Update Presentment_Extraction_Stage set HeaderID = ?, DueDate = ? Where DefSchdDate = ? and BankCode = ? and EntityCode = ? and PartnerBankId = ? and InstrumentType = ?";
+	public void updateHeaderIdByPartnerBankAndBank(long batchID, List<PresentmentDetail> list) {
+		StringBuilder sql = new StringBuilder("Update Presentment_Extraction_Stage set HeaderID = ?, DueDate = ?");
+		sql.append(" Where BatchID = ?");
+		sql.append(" and DefSchdDate = ? and BankCode = ? and EntityCode = ?");
+		sql.append(" and PartnerBankId = ? and InstrumentType = ?");
 
-		logger.debug(Literal.SQL.concat(sql));
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -541,6 +611,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				ps.setLong(index++, pd.getHeaderId());
 				ps.setDate(index++, JdbcUtil.getDate(pd.getDueDate()));
 
+				ps.setLong(index++, batchID);
 				ps.setDate(index++, JdbcUtil.getDate(pd.getDefSchdDate()));
 				ps.setString(index++, pd.getBankCode());
 				ps.setString(index++, pd.getEntityCode());
@@ -556,12 +627,14 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public void updateHeaderIdByBank(List<PresentmentDetail> list) {
-		String sql = "Update Presentment_Extraction_Stage set HeaderID = ?, DueDate = ? Where DefSchdDate = ? and BankCode = ? and EntityCode = ? and InstrumentType = ?";
+	public void updateHeaderIdByBank(long batchID, List<PresentmentDetail> list) {
+		StringBuilder sql = new StringBuilder("Update Presentment_Extraction_Stage set HeaderID = ?, DueDate = ?");
+		sql.append(" Where BatchID = ?");
+		sql.append(" and DefSchdDate = ? and BankCode = ? and EntityCode = ? and InstrumentType = ?");
 
-		logger.debug(Literal.SQL.concat(sql));
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -571,6 +644,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				ps.setLong(index++, pd.getHeaderId());
 				ps.setDate(index++, JdbcUtil.getDate(pd.getDueDate()));
 
+				ps.setLong(index++, batchID);
 				ps.setDate(index++, JdbcUtil.getDate(pd.getDefSchdDate()));
 				ps.setString(index++, pd.getBankCode());
 				ps.setString(index++, pd.getEntityCode());
@@ -585,12 +659,14 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public void updateHeaderIdByPartnerBank(List<PresentmentDetail> list) {
-		String sql = "Update Presentment_Extraction_Stage set HeaderID = ?, DueDate = ? Where DefSchdDate = ? and EntityCode = ? and PartnerBankId = ? and InstrumentType = ?";
+	public void updateHeaderIdByPartnerBank(long batchID, List<PresentmentDetail> list) {
+		StringBuilder sql = new StringBuilder("Update Presentment_Extraction_Stage set HeaderID = ?, DueDate = ?");
+		sql.append(" Where BatchID = ?");
+		sql.append(" and DefSchdDate = ? and EntityCode = ? and PartnerBankId = ? and InstrumentType = ?");
 
-		logger.debug(Literal.SQL.concat(sql));
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -600,6 +676,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				ps.setLong(index++, pd.getHeaderId());
 				ps.setDate(index++, JdbcUtil.getDate(pd.getDueDate()));
 
+				ps.setLong(index++, batchID);
 				ps.setDate(index++, JdbcUtil.getDate(pd.getDefSchdDate()));
 				ps.setString(index++, pd.getEntityCode());
 				ps.setObject(index++, pd.getPartnerBankId());
@@ -680,14 +757,14 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public long savePresentmentHeader(PresentmentHeader ph) {
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" PresentmentHeader");
-		sql.append("(Id, Reference, PresentmentDate, PartnerBankId, FromDate, ToDate, PresentmentType");
+		sql.append("(Id, BatchID, Reference, PresentmentDate, PartnerBankId, FromDate, ToDate, PresentmentType");
 		sql.append(", Status, MandateType, EmandateSource, FinBranch, Schdate, LoanType, ImportStatusId");
 		sql.append(", TotalRecords, ProcessedRecords, SuccessRecords, FailedRecords, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
 		sql.append(", WorkflowId, dBStatusId, bankCode, EntityCode");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?");
+		sql.append(", ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -696,6 +773,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			int index = 1;
 
 			ps.setLong(index++, ph.getId());
+			ps.setLong(index++, ph.getBatchID());
 			ps.setString(index++, ph.getReference());
 			ps.setDate(index++, JdbcUtil.getDate(ph.getPresentmentDate()));
 			ps.setObject(index++, ph.getPartnerBankId());
@@ -756,26 +834,26 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public void clearQueue() {
-		jdbcOperations.update("TRUNCATE TABLE Presentment_Extraction_Stage");
+	public void clearQueue(long batchId) {
+		jdbcOperations.update("Delete From Presentment_Extraction_Stage Where BatchID = ?", batchId);
 	}
 
 	@Override
-	public List<PresentmentHeader> getPresentmentHeaders(Date fromDate, Date toDate) {
+	public List<PresentmentHeader> getPresentmentHeaders(long batchID) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select Id, Reference, EntityCode, Schdate, BankCode, BankName, PartnerBankName");
-		sql.append(", FromDate, ToDate, PresentmentDate, Status, MandateType");
-		sql.append(", RecordStatus, RecordType");
-		sql.append(", LoanType, PartnerAcctNumber, PartnerBankId");
-		sql.append(" From PresentmentHeader_view");
-		sql.append(" Where FromDate = ? and ToDate = ? and Status = ?");
+		sql.append("Select Id, Reference, EntityCode, Schdate, bd.BankCode, bd.BankName, pb.PartnerBankName");
+		sql.append(", FromDate, ToDate, PresentmentDate, Status, MandateType, ph.RecordStatus, ph.RecordType");
+		sql.append(", LoanType, pb.ACCOUNTNO PartnerAcctNumber, ph.PartnerBankId");
+		sql.append(" From  PresentmentHeader ph");
+		sql.append(" Left Join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
+		sql.append(" Left Join BmtBankDetail bd on bd.BankCode = ph.BankCode");
+		sql.append(" Where BatchID = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setDate(1, JdbcUtil.getDate(fromDate));
-			ps.setDate(2, JdbcUtil.getDate(toDate));
-			ps.setInt(3, RepayConstants.PEXC_EXTRACT);
+			ps.setLong(1, batchID);
+			ps.setInt(2, RepayConstants.PEXC_EXTRACT);
 		}, (rs, rowNum) -> {
 			PresentmentHeader ph = new PresentmentHeader();
 
@@ -814,11 +892,12 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public List<Long> getIncludeList(long id) {
-		String sql = "Select ID From PresentmentDetails Where PresentmentId = ? and ExcludeReason = ?";
+		String sql = "Select ID From PresentmentDetails Where PresentmentId = ?"; // and ExcludeReason = ?
 
 		logger.debug(Literal.SQL.concat(sql));
+		// , RepayConstants.PEXC_EMIINCLUDE
 
-		return jdbcOperations.queryForList(sql, Long.class, id, RepayConstants.PEXC_EMIINCLUDE);
+		return jdbcOperations.queryForList(sql, Long.class, id);
 	}
 
 	@Override
@@ -844,6 +923,9 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				RepayConstants.CHEQUESTATUS_REALISED };
 
 		this.jdbcOperations.update(sql, args);
+
+		this.jdbcOperations.update("Update PresentmentHeader Set Status = ? where ID = ?",
+				RepayConstants.PEXC_SEND_PRESENTMENT, presentmentId);
 
 	}
 

@@ -13,7 +13,7 @@ public enum InstrumentType {
 
 	PDC("PDC", "Post Dated Cheque"),
 
-	IPDC("PDC", "Internal Post Dated Cheque"),
+	IPDC("IPDC", "Internal Post Dated Cheque"),
 
 	SPDC("SPDC", "Security Post Dated Cheque"),
 

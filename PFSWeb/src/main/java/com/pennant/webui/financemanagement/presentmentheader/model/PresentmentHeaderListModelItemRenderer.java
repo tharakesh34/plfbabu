@@ -82,7 +82,8 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 
 		lc.setParent(item);
 
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(ph.getMandateType(), MandateUtil.getInstrumentTypes()));
+		lc = new Listcell(
+				PennantStaticListUtil.getlabelDesc(ph.getMandateType(), MandateUtil.getInstrumentTypesForBE()));
 		lc.setParent(item);
 
 		lc = new Listcell(DateUtility.formatToLongDate(ph.getPresentmentDate()));

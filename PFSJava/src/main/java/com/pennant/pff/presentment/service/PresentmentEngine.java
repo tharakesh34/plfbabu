@@ -13,7 +13,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
@@ -60,30 +59,33 @@ public class PresentmentEngine {
 		super();
 	}
 
-	public void preparation(JobParameters jobParameters) {
-		Date appDate = jobParameters.getDate("AppDate");
-		String presentmentType = jobParameters.getString("PresentmentType");
+	public void preparation(PresentmentHeader header) {
+		Date appDate = header.getAppDate();
+		String presentmentType = header.getPresentmentType();
+		boolean autoExtract = header.isAutoExtract();
 
-		Map<String, Date> dueDates = dueExtractionConfigDAO.getDueDates(appDate);
+		if (autoExtract) {
+			Map<String, Date> dueDates = dueExtractionConfigDAO.getDueDates(appDate);
 
-		for (String code : dueDates.keySet()) {
-			PresentmentHeader ph = new PresentmentHeader();
-			ph.setAutoExtract(true);
+			for (String code : dueDates.keySet()) {
+				PresentmentHeader ph = new PresentmentHeader();
+				ph.setBatchID(header.getBatchID());
+				ph.setAutoExtract(true);
 
-			ph.setPresentmentType(presentmentType);
-			ph.setMandateType(code);
-			ph.setAppDate(appDate);
-			ph.setDueDate(dueDates.get(code));
+				ph.setPresentmentType(presentmentType);
+				ph.setMandateType(code);
+				ph.setAppDate(appDate);
+				ph.setDueDate(dueDates.get(code));
 
-			prepareDues(ph);
+				prepareDues(ph);
+			}
+		} else {
+			prepareDues(header);
 		}
 	}
 
-	public void preparation(PresentmentHeader ph) {
-		prepareDues(ph);
-	}
-
 	private void prepareDues(PresentmentHeader ph) {
+		long batchID = ph.getBatchID();
 		String finType = ph.getLoanType();
 		String finBranch = ph.getFinBranch();
 		String entityCode = ph.getEntityCode();
@@ -97,78 +99,82 @@ public class PresentmentEngine {
 		int count = 0;
 
 		if (fromDate != null && toDate != null && "#".equals(instrumentType)) {
-			count = presentmentDAO.extarct(fromDate, toDate);
+			count = presentmentDAO.extarct(batchID, fromDate, toDate);
 		} else if (fromDate != null && toDate != null && instrumentType != null && !"#".equals(instrumentType)) {
-			count = presentmentDAO.extarct(instrumentType, fromDate, toDate);
+			count = presentmentDAO.extarct(batchID, instrumentType, fromDate, toDate);
 		} else if (dueDate != null) {
-			count = presentmentDAO.extarct(dueDate);
+			count = presentmentDAO.extarct(batchID, instrumentType, dueDate, dueDate);
 		}
 
 		if (count == 0) {
 			return;
 		}
 
-		count = count - presentmentDAO.clearByNoDues();
+		count = count - presentmentDAO.clearByNoDues(batchID);
 
 		if ((instrumentType != null && !"#".equals(instrumentType)) && !ph.isAutoExtract()) {
-			count = count - presentmentDAO.clearByInstrumentType(instrumentType);
+			count = count - presentmentDAO.clearByInstrumentType(batchID, instrumentType);
 		}
 
 		if (InstrumentType.isEMandate(instrumentType) && StringUtils.isNotEmpty(emandateSource)
 				&& !ph.isAutoExtract()) {
-			count = count - presentmentDAO.clearByInstrumentType(instrumentType, emandateSource);
+			count = count - presentmentDAO.clearByInstrumentType(batchID, instrumentType, emandateSource);
 		}
 
 		if (StringUtils.trimToNull(finType) != null) {
-			count = count - presentmentDAO.clearByLoanType(finType);
+			count = count - presentmentDAO.clearByLoanType(batchID, finType);
 		}
 
 		if (StringUtils.trimToNull(finBranch) != null) {
-			count = count - presentmentDAO.clearByLoanBranch(finBranch);
+			count = count - presentmentDAO.clearByLoanBranch(batchID, finBranch);
 		}
 
 		if (StringUtils.trimToNull(entityCode) != null) {
-			count = count - presentmentDAO.clearByEntityCode(entityCode);
+			count = count - presentmentDAO.clearByEntityCode(batchID, entityCode);
 		}
 
 		if (PennantConstants.PROCESS_PRESENTMENT.equalsIgnoreCase(presentmentType)) {
-			count = count - presentmentDAO.clearByExistingRecord();
+			count = count - presentmentDAO.clearByExistingRecord(batchID);
 		} else {
-			count = count - presentmentDAO.clearByRepresentment();
+			count = count - presentmentDAO.clearByRepresentment(batchID);
 		}
 
-		count = count - presentmentDAO.clearSecurityCheque();
+		count = count - presentmentDAO.clearSecurityCheque(batchID);
 
-		presentmentDAO.updateIPDC();
+		if (InstrumentType.isIPDC(instrumentType)) {
+			presentmentDAO.updateIPDC(batchID);
+		}
 
-		presentmentDAO.updatePartnerBankID();
+		presentmentDAO.updatePartnerBankID(batchID);
 
 	}
 
 	public void grouping(PresentmentHeader ph) {
+		long batchID = ph.getBatchID();
 		List<PresentmentDetail> list = null;
 
 		if (ph.isGroupByBank() && ph.isGroupByPartnerBank()) {
-			list = presentmentDAO.getGroupByPartnerBankAndBank();
+			list = presentmentDAO.getGroupByPartnerBankAndBank(batchID);
 			setHeader(ph, list);
-			presentmentDAO.updateHeaderIdByPartnerBank(list);
+			presentmentDAO.updateHeaderIdByPartnerBank(batchID, list);
 		} else if (ph.isGroupByBank()) {
-			list = presentmentDAO.getGroupByBank();
+			list = presentmentDAO.getGroupByBank(batchID);
 			setHeader(ph, list);
-			presentmentDAO.updateHeaderIdByBank(list);
+			presentmentDAO.updateHeaderIdByBank(batchID, list);
 		} else if (ph.isGroupByPartnerBank()) {
-			list = presentmentDAO.getGroupByPartnerBank();
+			list = presentmentDAO.getGroupByPartnerBank(batchID);
 			setHeader(ph, list);
-			presentmentDAO.updateHeaderIdByPartnerBank(list);
+			presentmentDAO.updateHeaderIdByPartnerBank(batchID, list);
 		} else {
-			list = presentmentDAO.getGroupByDefault();
+			list = presentmentDAO.getGroupByDefault(batchID);
 			setHeader(ph, list);
-			presentmentDAO.updateHeaderIdByDefault(list);
+			presentmentDAO.updateHeaderIdByDefault(batchID, list);
 		}
 	}
 
 	private void setHeader(PresentmentHeader ph, List<PresentmentDetail> list) {
 		Date appDate = ph.getAppDate();
+		long batchID = ph.getBatchID();
 
 		Map<String, Date> dueDates = dueExtractionConfigDAO.getDueDates(appDate);
 
@@ -195,20 +201,25 @@ public class PresentmentEngine {
 				toDate = dueDate;
 			}
 
-			long headerId = saveHeader(pd, fromDate, toDate, instrumentType, presentmentType);
+			if (fromDate == null && toDate == null) {
+				System.out.println(instrumentType);
+			}
+
+			long headerId = saveHeader(batchID, pd, fromDate, toDate, instrumentType, presentmentType);
 
 			pd.setDueDate(dueDate);
 			pd.setHeaderId(headerId);
 		});
 	}
 
-	private long saveHeader(PresentmentDetail pd, Date fromDate, Date toDate, String instrumentType,
+	private long saveHeader(long batchID, PresentmentDetail pd, Date fromDate, Date toDate, String instrumentType,
 			String presentmentType) {
 		long headerId = presentmentDAO.getSeqNumber("SeqPresentmentHeader");
 
 		String reference = StringUtils.leftPad(String.valueOf(headerId), 15, "0");
 
 		PresentmentHeader ph = new PresentmentHeader();
+		ph.setBatchID(batchID);
 		ph.setStatus(RepayConstants.PEXC_EXTRACT);
 		ph.setPresentmentDate(DateUtil.getSysDate());
 		ph.setFromDate(fromDate);
@@ -571,18 +582,18 @@ public class PresentmentEngine {
 		}
 	}
 
-	public void clearQueue() {
-		this.presentmentDAO.clearQueue();
+	public void clearQueue(long batchId) {
+		this.presentmentDAO.clearQueue(batchId);
 	}
 
-	public void approve(Date fromDate, Date toDate) {
+	public void approve(long batchId) {
 		Map<String, String> bounceForPD = presentmentExcludeCodeDAO.getBounceForPD();
 
 		boolean upfronBounceRequired = MapUtils.isNotEmpty(bounceForPD);
 
 		LoggedInUser loggedInUser = new LoggedInUser();
 
-		List<PresentmentHeader> headerList = presentmentDAO.getPresentmentHeaders(fromDate, toDate);
+		List<PresentmentHeader> headerList = presentmentDAO.getPresentmentHeaders(batchId);
 
 		for (PresentmentHeader ph : headerList) {
 			long id = ph.getId();
@@ -590,20 +601,18 @@ public class PresentmentEngine {
 			List<Long> includeList = presentmentDAO.getIncludeList(id);
 			ph.setIncludeList(includeList);
 
-			boolean searchIncludeList = presentmentDAO.searchIncludeList(id, 0);
+			/*
+			 * boolean searchIncludeList = presentmentDAO.searchIncludeList(id, 0);
+			 * 
+			 * if (upfronBounceRequired) { presentmentDAO.approveExludes(id); }
+			 * 
+			 * if (!searchIncludeList) { continue; }
+			 */
 
-			if (!searchIncludeList) {
-				if (upfronBounceRequired) {
-					presentmentDAO.approveExludes(id);
-				}
-
-				continue;
-			}
-
-			if (!upfronBounceRequired) {
-				List<Long> excludeList = presentmentDAO.getExcludeList(id);
-				ph.setExcludeList(excludeList);
-			}
+			/*
+			 * if (!upfronBounceRequired) { List<Long> excludeList = presentmentDAO.getExcludeList(id);
+			 * ph.setExcludeList(excludeList); }
+			 */
 
 			if (StringUtils.isEmpty(ph.getPartnerAcctNumber())
 					&& (ph.getPartnerBankId() == null || ph.getPartnerBankId() <= 0)) {

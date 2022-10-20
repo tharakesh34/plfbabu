@@ -8,7 +8,6 @@
 		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 	<import resource="classpath:applicationContext-jdbc.xml" />
-	<import resource="classpath:presentment-extraction-job.xml" />
 
 	<!-- ====================================================== -->
 	<!-- Audit Details Configuration -->
@@ -13005,5 +13004,5 @@
 
 	<bean id="dueExtractionConfigDAO" class="com.pennant.pff.presentment.dao.impl.DueExtractionConfigDAOImpl"
 		parent="sequenceDao" />
-
+		
 </beans>

@@ -21,6 +21,7 @@ public class MandateUtil {
 	private static List<ValueLabel> mandateStatus;
 	private static List<ValueLabel> chequeTypesList;
 	private static List<ValueLabel> accTypeList;
+	private static List<ValueLabel> instrumentTypesForBE;
 
 	public static List<ValueLabel> getInstrumentTypes() {
 		if (instrumentTypes != null) {
@@ -46,6 +47,33 @@ public class MandateUtil {
 		}
 
 		return instrumentTypes;
+	}
+
+	public static List<ValueLabel> getInstrumentTypesForBE() {
+		if (instrumentTypesForBE != null) {
+			return instrumentTypesForBE;
+		}
+
+		instrumentTypesForBE = new ArrayList<>(8);
+
+		for (InstrumentType item : InstrumentType.values()) {
+			switch (item) {
+			case ECS:
+			case NACH:
+			case PDC:
+			case IPDC:
+			case SI:
+			case DAS:
+			case EMANDATE:
+				instrumentTypesForBE.add(new ValueLabel(item.name(), item.code()));
+				break;
+
+			default:
+				continue;
+			}
+		}
+
+		return instrumentTypesForBE;
 	}
 
 	public static List<ValueLabel> getSecurityInstrumentTypes() {
