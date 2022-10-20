@@ -4296,67 +4296,6 @@ public class ScheduleCalculator {
 		return null;
 	}
 
-	/**
-	 * Method for calculate TDS Amount
-	 * 
-	 * @param fm
-	 * @param curSchd
-	 * @param tdsPerc
-	 * @return
-	 */
-	// FIXME Have to disucss with Siva and remove this method
-	private BigDecimal calTDSAmount(FinanceMain fm, FinanceScheduleDetail curSchd, BigDecimal tdsPerc) {
-
-		BigDecimal tdsAmount = BigDecimal.ZERO;
-
-		List<LowerTaxDeduction> ltdList = sortLowerTaxDeduction(finScheduleData.getLowerTaxDeductionDetails());
-		LowerTaxDeduction ltd = null;
-		BigDecimal ltdLimitByRcd = BigDecimal.ZERO;
-
-		Date schdDate = new Date();
-		boolean ltdApplicable = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
-
-		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
-			curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-			schdDate = curSchd.getSchDate();
-
-			if (TDSCalculator.isTDSApplicable(fm) && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
-				tdsAmount = null;
-				boolean taxOnSysPerc = true;
-				if (ltdApplicable) {
-
-					if (ltd == null || DateUtility.compare(schdDate, ltd.getEndDate()) > 0) {
-						ltd = fetchLTDRecord(ltdList, schdDate);
-						ltdLimitByRcd = BigDecimal.ZERO;
-					}
-
-					if (ltd != null) {
-						tdsAmount = (curSchd.getProfitSchd().multiply(ltd.getPercentage())).divide(new BigDecimal(100),
-								0, RoundingMode.HALF_DOWN);
-						tdsAmount = CalculationUtil.roundAmount(tdsAmount, fm.getCalRoundingMode(),
-								fm.getRoundingTarget());
-						if (ltd.getLimitAmt().compareTo(BigDecimal.ZERO) > 0
-								&& ltd.getLimitAmt().compareTo(ltdLimitByRcd.add(tdsAmount)) >= 0) {
-							taxOnSysPerc = false;
-						} else if (ltd.getLimitAmt().compareTo(BigDecimal.ZERO) == 0) {
-							taxOnSysPerc = false;
-						}
-						ltdLimitByRcd = ltdLimitByRcd.add(tdsAmount);
-					}
-				}
-
-				if (taxOnSysPerc) {
-					tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-							RoundingMode.HALF_DOWN);
-					tdsAmount = CalculationUtil.roundAmount(tdsAmount, fm.getCalRoundingMode(), fm.getRoundingTarget());
-
-				}
-				curSchd.setTDSAmount(tdsAmount);
-			}
-		}
-		return tdsAmount;
-	}
-
 	/*
 	 * ************************************************************************* ***************************************
 	 * Method : calSchdProcess Description : Calculate Schedule Process Process :
@@ -7289,239 +7228,6 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
-	private FinScheduleData calEqualPayment(FinScheduleData finScheduleData) {
-		logger.debug("Entering");
-
-		FinanceMain fm = finScheduleData.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
-		List<RepayInstruction> repayInstructions = finScheduleData.getRepayInstructions();
-
-		boolean isAdjustClosingBal = fm.isAdjustClosingBal();
-
-		int sdSize = finSchdDetails.size();
-
-		if (!isAdjustClosingBal && AdvanceType.hasAdvEMI(fm.getAdvType())
-				&& AdvanceStage.hasFrontEnd(fm.getAdvStage())) {
-			sdSize = finSchdDetails.size() - fm.getAdvTerms();
-		}
-
-		int riSize = repayInstructions.size();
-		int iTerms = fm.getAdjTerms();
-		int iRpyInst = 0;
-
-		BigDecimal repayAmountLow = BigDecimal.ZERO;
-		BigDecimal repayAmountHigh = BigDecimal.ZERO;
-
-		// Setting Compare to Expected defaults to false for Further actions
-		fm.setCompareToExpected(false);
-		BigDecimal comparisionAmount = BigDecimal.ZERO;
-		BigDecimal comparisionToAmount = BigDecimal.ZERO;
-		String schdMethod = "";
-		BigDecimal approxEMI = BigDecimal.ZERO;
-		boolean isCompareMDTRecord = false;
-		boolean isComapareWithEMI = false;
-
-		// Comparison amount is Maturity Record or Instruction record
-		if (StringUtils.equals(CalculationConstants.RPYCHG_CURPRD, fm.getRecalType())
-				|| StringUtils.equals(CalculationConstants.RPYCHG_TILLDATE, fm.getRecalType())) {
-			isCompareMDTRecord = true;
-		}
-
-		// Find Comparision with EMI or Principal
-		schdMethod = repayInstructions.get(riSize - 1).getRepaySchdMethod();
-		if (StringUtils.equals(CalculationConstants.SCHMTHD_EQUAL, schdMethod)) {
-			isComapareWithEMI = true;
-		}
-
-		// TODO: PV: 25 MAY 19 CHANGED THE CONDITION finMain.getRecalFromDate())
-		// = 0 TO finMain.getRecalFromDate()) >= 0
-		// IF RECAL SPREADS IN TO GRACE AND REPAY, DATE WILL NOT BE FOUND WITH
-		// EQUAL CONDITION
-		// PENDING THOUROUGH TESTING
-		// Get Repayment instruction index
-
-		Date recalDate = fm.getRecalFromDate();
-		if (fm.isStepFinance() && fm.isResetFromLastStep()) {
-			int stepSize = finScheduleData.getStepPolicyDetails().size();
-			recalDate = finScheduleData.getStepPolicyDetails().get(stepSize - 1).getStepStart();
-		}
-
-		for (int i = 0; i < riSize; i++) {
-			if (DateUtil.compare(repayInstructions.get(i).getRepayDate(), recalDate) >= 0) {
-				iRpyInst = i;
-				approxEMI = repayInstructions.get(i).getRepayAmount();
-				break;
-			}
-		}
-
-		// Calculate terms to be adjusted
-		for (int i = 0; i < sdSize; i++) {
-			if (DateUtil.compare(finSchdDetails.get(i).getSchDate(), recalDate) >= 0
-					&& DateUtility.compare(finSchdDetails.get(i).getSchDate(), fm.getRecalToDate()) <= 0) {
-				iTerms = iTerms + 1;
-			}
-		}
-
-		// Set Recalculation Schedule Method
-		schdMethod = fm.getRecalSchdMethod();
-
-		// Find COMPARISION Amount
-		if (isCompareMDTRecord) {
-			comparisionAmount = fm.getCompareExpectedResult();
-		} else {
-			comparisionAmount = repayInstructions.get(iRpyInst).getRepayAmount();
-		}
-
-		// Find COMPARISION TO Amount
-		if (isComapareWithEMI) {
-			comparisionToAmount = finSchdDetails.get(sdSize - 1).getRepayAmount();
-		} else {
-			comparisionToAmount = finSchdDetails.get(sdSize - 1).getPrincipalSchd();
-		}
-
-		if (approxEMI.compareTo(comparisionToAmount) == 1) {
-			repayAmountLow = comparisionToAmount;
-			repayAmountHigh = approxEMI;
-		} else {
-			repayAmountLow = approxEMI;
-			repayAmountHigh = comparisionToAmount;
-		}
-
-		BigDecimal lastTriedEMI = BigDecimal.ZERO;
-		BigDecimal number2 = new BigDecimal(2);
-		BigDecimal diff_Low_High = BigDecimal.ZERO;
-
-		for (int i = 0; i < 50; i++) {
-			int size = finSchdDetails.size() - 1;
-			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())) {
-				size = size - fm.getAdvTerms();
-			}
-			approxEMI = (repayAmountLow.add(repayAmountHigh)).divide(number2, 0, RoundingMode.HALF_DOWN);
-			approxEMI = CalculationUtil.roundAmount(approxEMI, fm.getCalRoundingMode(), fm.getRoundingTarget());
-
-			if (repayAmountLow.compareTo(approxEMI) == 0 || repayAmountHigh.compareTo(approxEMI) == 0) {
-				logger.info("NUMBER OF LOOPS IN GOAL SEEK  : " + i);
-				break;
-			}
-
-			diff_Low_High = (repayAmountHigh.subtract(repayAmountLow)).abs();
-			if (diff_Low_High.compareTo(BigDecimal.valueOf(fm.getRoundingTarget())) <= 0) {
-				logger.info("NUMBER OF LOOPS IN GOAL SEEK  : " + i);
-				break;
-			}
-
-			lastTriedEMI = approxEMI;
-			repayInstructions.get(iRpyInst).setRepayAmount(approxEMI);
-			fm.setAdjustClosingBal(isAdjustClosingBal);
-			finScheduleData = getRpyInstructDetails(finScheduleData);
-			finScheduleData = graceSchdCal(finScheduleData);
-			finScheduleData = repaySchdCal(finScheduleData, false);
-
-			// Find COMPARISION Amount
-			if (!isCompareMDTRecord) {
-				comparisionAmount = repayInstructions.get(iRpyInst).getRepayAmount();
-			}
-
-			// Find COMPARISION TO Amount
-			if (isComapareWithEMI) {
-				comparisionToAmount = finSchdDetails.get(size).getRepayAmount();
-			} else {
-				comparisionToAmount = finSchdDetails.get(size).getPrincipalSchd();
-			}
-
-			if (comparisionToAmount.compareTo(comparisionAmount) == 0) {
-				logger.info("NUMBER OF LOOPS IN GOAL SEEK  : " + i);
-				logger.debug("Leaving");
-				return finScheduleData;
-			}
-
-			diff_Low_High = (comparisionToAmount.subtract(comparisionAmount)).abs();
-			if (diff_Low_High.compareTo(BigDecimal.valueOf(fm.getRoundingTarget())) <= 0) {
-				logger.info("NUMBER OF LOOPS IN GOAL SEEK  : " + i);
-				logger.debug("Leaving");
-				return finScheduleData;
-			}
-
-			if (comparisionAmount.compareTo(comparisionToAmount) < 0) {
-				repayAmountLow = approxEMI;
-			} else {
-				repayAmountHigh = approxEMI;
-			}
-
-		}
-
-		// Find Nearest EMI
-		BigDecimal minRepayDifference = BigDecimal.ZERO;
-		BigDecimal maxRepayDifference = BigDecimal.ZERO;
-
-		// Find COMPARISION Amount
-		if (!isCompareMDTRecord) {
-			comparisionAmount = repayInstructions.get(iRpyInst).getRepayAmount();
-		}
-
-		// Find COMPARISION TO Amount
-		if (isComapareWithEMI) {
-			comparisionToAmount = finSchdDetails.get(sdSize - 1).getRepayAmount();
-		} else {
-			comparisionToAmount = finSchdDetails.get(sdSize - 1).getPrincipalSchd();
-		}
-
-		if (repayAmountLow.compareTo(repayAmountHigh) != 0) {
-			if (lastTriedEMI.compareTo(repayAmountLow) == 0) {
-				minRepayDifference = (comparisionToAmount.subtract(comparisionAmount)).abs();
-				approxEMI = repayAmountHigh;
-			} else {
-				maxRepayDifference = (comparisionToAmount.subtract(comparisionAmount)).abs();
-				approxEMI = repayAmountLow;
-			}
-
-			approxEMI = CalculationUtil.roundAmount(approxEMI, fm.getCalRoundingMode(), fm.getRoundingTarget());
-
-			lastTriedEMI = approxEMI;
-			repayInstructions.get(iRpyInst).setRepayAmount(approxEMI);
-			fm.setAdjustClosingBal(isAdjustClosingBal);
-			finScheduleData = getRpyInstructDetails(finScheduleData);
-			finScheduleData = graceSchdCal(finScheduleData);
-			finScheduleData = repaySchdCal(finScheduleData, false);
-
-			// Find COMPARISION Amount
-			if (!isCompareMDTRecord) {
-				comparisionAmount = repayInstructions.get(iRpyInst).getRepayAmount();
-			}
-
-			// Find COMPARISION TO Amount
-			if (isComapareWithEMI) {
-				comparisionToAmount = finSchdDetails.get(sdSize - 1).getRepayAmount();
-			} else {
-				comparisionToAmount = finSchdDetails.get(sdSize - 1).getPrincipalSchd();
-			}
-
-			if (lastTriedEMI.compareTo(repayAmountLow) == 0) {
-				minRepayDifference = (comparisionToAmount.subtract(comparisionAmount)).abs();
-			} else {
-				maxRepayDifference = (comparisionToAmount.subtract(comparisionAmount)).abs();
-			}
-
-			if (maxRepayDifference.compareTo(minRepayDifference) < 0) {
-				approxEMI = repayAmountHigh;
-			} else {
-				approxEMI = repayAmountLow;
-			}
-		}
-
-		approxEMI = CalculationUtil.roundAmount(approxEMI, fm.getCalRoundingMode(), fm.getRoundingTarget());
-
-		// SET EQUAL REPAYMENT AMOUNT AS EFFECTIVE REPAY AMOUNT AND CALL PROCESS
-		repayInstructions.get(iRpyInst).setRepayAmount(approxEMI);
-		fm.setAdjustClosingBal(isAdjustClosingBal);
-		finScheduleData = getRpyInstructDetails(finScheduleData);
-		finScheduleData = graceSchdCal(finScheduleData);
-		finScheduleData = repaySchdCal(finScheduleData, false);
-
-		logger.debug("Leaving");
-		return finScheduleData;
-	}
-
 	// This is a new method introduced to calculate Equal Installment Amount for the given dates
 	// Algorithm used Linear Interpolation Method
 	private FinScheduleData calEqualInst(FinScheduleData schdData) {
@@ -9629,7 +9335,7 @@ public class ScheduleCalculator {
 					}
 				} else if (StringUtils.equals(curSchd.getPftDaysBasis(), CalculationConstants.IDB_30E360IA)) {
 
-					BigDecimal idb30Factor = new BigDecimal(30 / 360d).setScale(9);
+					BigDecimal idb30Factor = BigDecimal.valueOf(30 / 360d).setScale(9);
 					BigDecimal dayFactor = CalculationUtil.getInterestDays(prvSchd.getSchDate(), curSchd.getSchDate(),
 							CalculationConstants.IDB_30E360IA);
 					BigDecimal dayFactorScale = dayFactor.setScale(9);
@@ -10139,8 +9845,7 @@ public class ScheduleCalculator {
 
 				// iFsd == riEnd
 				if (spd.getInstallments() == instCount) {
-					if (CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)
-							&& CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)) {
+					if (CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)) {
 						grcEnd = true;
 					}
 					spd.setStepEnd(fsd.getSchDate());
@@ -11268,8 +10973,7 @@ public class ScheduleCalculator {
 
 				// iFsd == riEnd
 				if (spd.getInstallments() == instCount) {
-					if (CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)
-							&& CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)) {
+					if (CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)) {
 						grcEnd = true;
 					}
 					idxStart = iFsd + 1;
