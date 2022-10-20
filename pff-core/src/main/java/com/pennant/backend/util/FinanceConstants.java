@@ -404,4 +404,6 @@ public class FinanceConstants {
 	public static final String OD_BILLING_DUE_PRINCIPLE_AND_INTEREST = "ODBDPAI";
 
 	public static final String OD_TRANCHE_AMOUNT = "Tranche Amount";
+
+	public static final String ACCOUNTTYPE_FIN = "F";
 }
