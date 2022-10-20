@@ -152,7 +152,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 
 			if (!additionalBPIAdded && CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(recalType)
 					&& DateUtil.getDaysBetween(newDate.getTime(), prvSchdate) > 30) {
-				additionalBPISchd = prepareAddtionalBPISchd(schdData, curSchd);
+				additionalBPISchd = prepareAddtionalBPISchd(schdData, curSchd, day);
 			}
 
 			String planEMIHM = fm.getPlanEMIHMethod();
@@ -321,7 +321,8 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		return schdData;
 	}
 
-	private FinanceScheduleDetail prepareAddtionalBPISchd(FinScheduleData schdData, FinanceScheduleDetail curSchd) {
+	private FinanceScheduleDetail prepareAddtionalBPISchd(FinScheduleData schdData, FinanceScheduleDetail curSchd,
+			int day) {
 		FinanceMain fm = schdData.getFinanceMain();
 		Date adtlBPIDate = DateUtility.addMonths(curSchd.getSchDate(), -1);
 
@@ -358,6 +359,19 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		}
 
 		sd.setTDSApplicable(fm.isTDSApplicable());
+
+		if (day > DateUtil.getDay(adtlBPIDate)) {
+			int monthEndDate = DateUtil.getDay(DateUtil.getMonthEnd(adtlBPIDate));
+			if (day > monthEndDate) {
+				adtlBPIDate = DateUtil.getDate(DateUtil.getYear(adtlBPIDate), DateUtil.getMonth(adtlBPIDate) - 1,
+						monthEndDate);
+			} else {
+				adtlBPIDate = DateUtil.getDate(DateUtil.getYear(adtlBPIDate), DateUtil.getMonth(adtlBPIDate) - 1, day);
+			}
+
+			sd.setSchDate(adtlBPIDate);
+			sd.setDefSchdDate(adtlBPIDate);
+		}
 
 		if (DateUtil.compare(adtlBPIDate, fm.getGrcPeriodEndDate()) > 0) {
 			sd.setSchdMethod(fm.getScheduleMethod());
