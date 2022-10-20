@@ -1571,25 +1571,36 @@ public class ReceiptCalculator {
 	public BigDecimal getPartPaymentAmount(FinReceiptData receiptData) {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		int receiptCtg = ReceiptUtil.getReceiptPurpose(rch.getReceiptPurpose());
+
+		ReceiptAllocationDetail pastDues = rch.getTotalPastDues();
+		ReceiptAllocationDetail bounce = rch.getTotalBounces();
+		ReceiptAllocationDetail receivables = rch.getTotalRcvAdvises();
+
 		BigDecimal partPayAmount = rch.getReceiptAmount();
+
 		if (receiptCtg == 2) {
 			if (!receiptData.isForeClosure()) {
 				partPayAmount = partPayAmount.add(receiptData.getExcessAvailable());
 			}
-			partPayAmount = partPayAmount.subtract(rch.getTotalPastDues().getPaidAmount())
-					.subtract(rch.getTotalBounces().getPaidAmount()).subtract(rch.getTotalRcvAdvises().getPaidAmount());
 
-			// partPayAmount = adjustAdvIntPayment(receiptData, partPayAmount);
+			partPayAmount = partPayAmount.subtract(pastDues.getPaidAmount()).subtract(bounce.getPaidAmount())
+					.subtract(receivables.getPaidAmount());
 		}
-		if (receiptCtg < 2) {
 
-			partPayAmount = partPayAmount.subtract(rch.getTotalPastDues().getPaidAmount())
-					.subtract(rch.getTotalBounces().getPaidAmount()).subtract(rch.getTotalRcvAdvises().getPaidAmount());
+		if (receiptCtg < 2) {
+			if (AllocationType.AUTO.equals(rch.getAllocationType()) || StringUtils.isEmpty(rch.getAllocationType())) {
+				partPayAmount = partPayAmount.subtract(pastDues.getTotalDue()).subtract(bounce.getTotalDue())
+						.subtract(receivables.getTotalDue());
+			} else {
+				partPayAmount = partPayAmount.subtract(pastDues.getPaidAmount()).subtract(bounce.getPaidAmount())
+						.subtract(receivables.getPaidAmount());
+			}
 		}
 
 		if (partPayAmount.compareTo(BigDecimal.ZERO) <= 0) {
 			partPayAmount = BigDecimal.ZERO;
 		}
+
 		return partPayAmount;
 	}
 
