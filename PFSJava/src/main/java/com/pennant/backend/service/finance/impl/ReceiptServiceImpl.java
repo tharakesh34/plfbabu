@@ -5274,6 +5274,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			repayMain.setEarlyPayAmount(repayMain.getCurFinAmount());
 		}
 
+		fm.setReceiptPurpose(receiptPurpose.code());
 		if (fm.isStepFinance()
 				&& (StringUtils.isNotBlank(fm.getStepPolicy()) || (fm.isAlwManualSteps() && fm.getNoOfSteps() > 0))
 				&& SysParamUtil.isAllowed(SMTParameterConstants.STEP_LOAN_SERVICING_REQ)) {
@@ -5290,7 +5291,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		ScheduleCalculator.recalEarlyPaySchedule(schdData, repayMain.getEarlyPayOnSchDate(), null,
+		schdData = ScheduleCalculator.recalEarlyPaySchedule(schdData, repayMain.getEarlyPayOnSchDate(), null,
 				repayMain.getEarlyPayAmount(), method);
 	}
 
@@ -5429,8 +5430,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinanceDetail fd = rd.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
-
-		List<FinanceScheduleDetail> finSchdDtls = copy(schdData.getFinanceScheduleDetails());
 		FinanceMain fm = schdData.getFinanceMain();
 
 		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
@@ -5463,7 +5462,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		if (peceiptPurpose != ReceiptPurpose.SCHDRPY && !fm.isSimulateAccounting()) {
+		if (peceiptPurpose != ReceiptPurpose.SCHDRPY) {
 			recalEarlyPay(rd);
 		}
 
@@ -5495,7 +5494,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		receiptCalculator.initiateReceipt(rd, false);
 
-		schdData.setFinanceScheduleDetails(finSchdDtls);
 		schdData.setFeeEvent(eventCode);
 
 		return rd;

@@ -902,12 +902,13 @@ public class RepaymentPostingsUtil {
 		}
 
 		// Set Repay Amount Codes
-		amountCodes.setRpTot(rqh.getPrincipal().add(rqh.getProfit()).add(rqh.getLateProfit()));
-		amountCodes.setRpPft(rqh.getProfit());
-		amountCodes.setLpiPaid(rqh.getLateProfit());
 		amountCodes.setRpPri(rqh.getPrincipal());
-		amountCodes.setInstpri(rqh.getPrincipal().subtract(rqh.getPartialPaid()));
+		amountCodes.setRpPft(rqh.getProfit());
+		amountCodes.setRpTot(rqh.getPrincipal().add(rqh.getProfit()));
 		amountCodes.setRpTds(rqh.getTds());
+		amountCodes.setLpiPaid(rqh.getLateProfit());
+		amountCodes.setInstpri(rqh.getPrincipal().subtract(rqh.getPartialPaid()));
+		amountCodes.setInstpft(rqh.getProfit());
 		amountCodes.setInsttot(rqh.getPrincipal().add(rqh.getProfit().subtract(rqh.getPartialPaid())));
 
 		// Fee Details

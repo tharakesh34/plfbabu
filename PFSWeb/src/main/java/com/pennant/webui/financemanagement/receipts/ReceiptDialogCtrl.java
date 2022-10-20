@@ -1731,6 +1731,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
+		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 

@@ -73,6 +73,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -133,6 +134,7 @@ import com.pennant.backend.model.finance.GSTInvoiceTxnDetails;
 import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
@@ -232,6 +234,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private RepayInstructionDAO repayInstructionDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
+	private FinFeeDetailDAO finFeeDetailDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -556,13 +559,19 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			if (FinServiceEvent.SCHDRPY.equals(rch.getReceiptPurpose()) && finReceiptHeader != null) {
 				finReceiptHeaderDAO.update(rch, TableType.MAIN_TAB);
 				tdsReceivablesTxnService.cancelReceivablesTxnByReceiptId(rch.getReceiptID());
-
 			} else {
 				finReceiptHeaderDAO.save(rch, TableType.MAIN_TAB);
 				for (FinReceiptDetail finRecpt : rch.getReceiptDetails()) {
 					finReceiptDetailDAO.save(finRecpt, TableType.MAIN_TAB);
-
 				}
+
+				int i = 0;
+				for (ReceiptAllocationDetail alloc : rch.getAllocations()) {
+					alloc.setReceiptID(receiptID);
+					alloc.setAllocationID(++i);
+				}
+
+				allocationDetailDAO.saveAllocations(rch.getAllocations(), TableType.MAIN_TAB);
 			}
 
 			List<FinReceiptDetail> finRcptDtlList = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, "");
@@ -602,6 +611,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		// Status Update in Presentment Details
 		presentmentDetailDAO.updateStatusAgainstReseipId(rch.getReceiptModeStatus(), receiptID);
+
+		finFeeDetailDAO.deleteByTransactionId(String.valueOf(receiptID), false, TableType.TEMP_TAB.getSuffix());
 
 		if (ImplementationConstants.LIMIT_INTERNAL) {
 			BigDecimal priAmt = BigDecimal.ZERO;
@@ -3624,4 +3635,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		this.gstInvoiceTxnDAO = gstInvoiceTxnDAO;
 	}
 
+	@Autowired
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
 }
