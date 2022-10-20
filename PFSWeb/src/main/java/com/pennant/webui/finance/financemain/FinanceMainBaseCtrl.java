@@ -12875,7 +12875,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		financeMain.setRpyMaxRate(this.finMaxRate.getValue());
 		financeMain.setGrcPeriodEndDate(this.gracePeriodEndDate.getValue() != null ? this.gracePeriodEndDate.getValue()
 				: this.gracePeriodEndDate_two.getValue());
-		if (this.allowGrace.isChecked()) {
+		if (this.allowGrace.isVisible() && this.allowGrace.isChecked()) {
 			financeMain.setGrcSchdMthd(getComboboxValue(this.cbGrcSchdMthd));
 		}
 		financeMain.setAllowGrcPeriod(this.allowGrace.isChecked());
@@ -13531,7 +13531,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				try {
-					if (StringUtils.equals(CalculationConstants.RATE_BASIS_R,
+					if (this.allowGrace.isVisible() && StringUtils.equals(CalculationConstants.RATE_BASIS_R,
 							this.grcRateBasis.getSelectedItem().getValue().toString())
 							&& StringUtils.isNotEmpty(financeType.getFinGrcBaseRate())) {
 						if (this.finGrcMinRate.getValue() != null && this.finGrcMaxRate.getValue() != null) {
@@ -19566,7 +19566,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			isOverDraft = true;
 		}
 
-		int format = CurrencyUtil.getFormat(getFinanceMain().getFinCcy());
+		int format = CurrencyUtil.getFormat(this.finCcy.getValue());
 		FinODPenaltyRate penaltyRate = getFinanceDetail().getFinScheduleData().getFinODPenaltyRate();
 		this.space_oDChargeCalOn.setSclass(PennantConstants.mandateSclass);
 		this.space_oDChargeAmtOrPerc.setSclass(PennantConstants.mandateSclass);
