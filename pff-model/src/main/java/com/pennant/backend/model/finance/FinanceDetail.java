@@ -158,12 +158,12 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private List<CollateralAssignment> collateralAssignmentList = new ArrayList<>(1);
 	private List<FinAssetTypes> finAssetTypesList = new ArrayList<>(1);
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<>(1);
-	private List<FinBlacklistCustomer> finBlacklistCustomer;
-	private List<FinanceDedup> finDedupDetails;
-	private List<CustomerDedup> customerDedupList;
+	private List<FinBlacklistCustomer> finBlacklistCustomer = new ArrayList<>();
+	private List<FinanceDedup> finDedupDetails = new ArrayList<>();
+	private List<CustomerDedup> customerDedupList = new ArrayList<>();
 	@XmlElement(name = "disbursement")
 	private List<FinAdvancePayments> advancePaymentsList = new ArrayList<>();
-	private List<FeePaymentDetail> feePaymentDetailList;
+	private List<FeePaymentDetail> feePaymentDetailList = new ArrayList<>();
 	@XmlElementWrapper(name = "covenants")
 	@XmlElement(name = "covenant")
 	private List<FinCovenantType> covenantTypeList = new ArrayList<>(1);

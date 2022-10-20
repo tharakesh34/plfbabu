@@ -5180,5 +5180,36 @@
    			  ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#92.1_pre" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'categorywiseevents_view');
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="ST#92.1" author="Mounika.M">
+		<createView viewName="CATEGORYWISEEVENTS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT         
+  					T1.AEEVENTCODE,
+  					T1.CATEGORYCODE,
+  					T1.MANDATORY,
+  					T1.SEQORDER,
+  					T2.AEEVENTCODEDESC,
+  					T2.ACTIVE 
+   				FROM  CATEGORYWISEEVENTS  T1 
+   				INNER JOIN BMTAEEVENTS T2 ON T1.AEEVENTCODE = T2.AEEVENTCODE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#92.1_post" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'categorywiseevents_view');	
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

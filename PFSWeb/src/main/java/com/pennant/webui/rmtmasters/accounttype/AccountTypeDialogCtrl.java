@@ -55,6 +55,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.rmtmasters.AccountTypeService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -391,7 +392,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acType.setValue(aAccountType.getAcType());
 		this.acTypeDesc.setValue(aAccountType.getAcTypeDesc());
 		this.acLmtCategory.setValue(aAccountType.getAcLmtCategory());
-		fillComboBox(this.acPurpose, aAccountType.getAcPurpose(), PennantStaticListUtil.getAccountPurpose(), "");
+		fillComboBox(this.acPurpose, FinanceConstants.ACCOUNTTYPE_FIN, PennantStaticListUtil.getAccountPurpose(),
+				"");
 
 		this.acHeadCode.setText(aAccountType.getAcHeadCode() == null ? ""
 				: StringUtils.leftPad(String.valueOf(aAccountType.getAcHeadCode()), 4, '0'));
@@ -433,8 +435,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			excludeFields = "," + AccountConstants.EXTRACTION_TYPE_TRANSACTION + ",";
 		}
 
-		fillComboBox(this.extractionType, aAccountType.getExtractionType(), PennantStaticListUtil.getExtractionTypes(),
-				excludeFields);
+		fillComboBox(this.extractionType, AccountConstants.EXTRACTION_TYPE_NOTAPPLICABLE,
+				PennantStaticListUtil.getExtractionTypes(), excludeFields);
 		this.revChargeApplicable.setChecked(aAccountType.isaCCADDLCHAR1());
 
 		logger.debug("Leaving");

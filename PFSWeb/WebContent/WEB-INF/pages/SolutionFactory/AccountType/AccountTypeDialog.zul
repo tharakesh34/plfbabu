@@ -76,10 +76,10 @@
 									<extendedcombobox id="acTypeGrpId" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row visible="false">
 								<label id="label_AccountTypeDialog_AcPurpose" value="${c:l('label_AccountTypeDialog_AcPurpose.value')}" />
 								<hbox>
-									<space spacing="2px" sclass="mandatory" />
+									<space spacing="2px" />
 									<combobox id="acPurpose" readonly="true" width="120px">
 									</combobox>
 								</hbox>
@@ -99,14 +99,14 @@
 								</hbox>
 							</row>
 
-							<row visible="true">
+							<row visible="false">
 								<label id="label_AccountTypeDialog_IsInternalAc" value="${c:l('label_AccountTypeDialog_IsInternalAc.value')}" />
 								<hbox>
 									<space spacing="2px" />
 									<checkbox id="internalAc" checked="false" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row visible="false">
 								<label id="label_AccountTypeDialog_IsCustSysAc" value="${c:l('label_AccountTypeDialog_IsCustSysAc.value')}" />
 								<hbox>
 									<space spacing="2px" />
@@ -192,7 +192,7 @@
 									<checkbox id="allowOverDraw" checked="false" />
 								</hbox>
 							</row>
-							<row>
+							<row visible="false">
 								<label id="label_AccountTypeDialog_ExtractionType" value="${c:l('label_AccountTypeDialog_ExtractionType.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
