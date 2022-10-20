@@ -962,7 +962,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.shadowPosting.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_shadowPosting"));
 		this.entryByInvestment.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_entryByInvestment"));
 		this.openNewFinAc.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_openNewFinAc"));
-		this.account.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_account"));
+		this.account.setDisabled(true);
 		this.btnSearchAccountBranch.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountBranch"));
 		this.btnSearchAccountType.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
 		this.btnSearchSystemIntAccount.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));

@@ -199,19 +199,19 @@
 
 
 									<row id="row_Account">
+									<label id="label_TransactionEntryDialog_PostToERP" value="${c:l('label_TransactionEntryDialog_CoreOrERP.value')}" />
+										<hbox id="hbox_PostToCore">
+											<space spacing="2px" />
+											<radiogroup>
+												<radio id="postToERP" checked="true" label="${c:l('label_TransactionEntryDialog_PostToERP.value')}"
+													style="padding-right:15px;" />
+												<radio id="postToCore" checked="false" label="${c:l('label_TransactionEntryDialog_PostToCore.value')}" />
+											</radiogroup>
+										</hbox>
 										<label id="label_TransactionEntryDialog_Account" value="${c:l('label_TransactionEntryDialog_Account.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<combobox id="account" width="225px" readonly="true" />
-										</hbox>
-										<label id="label_TransactionEntryDialog_PostToCore" value="${c:l('label_TransactionEntryDialog_CoreOrERP.value')}" />
-										<hbox id="hbox_PostToCore">
-											<space spacing="2px" />
-											<radiogroup>
-												<radio id="postToCore" checked="true" label="${c:l('label_TransactionEntryDialog_PostToCore.value')}"
-													style="padding-right:15px;" />
-												<radio id="postToERP" checked="false" label="${c:l('label_TransactionEntryDialog_PostToERP.value')}" />
-											</radiogroup>
 										</hbox>
 									</row>
 
