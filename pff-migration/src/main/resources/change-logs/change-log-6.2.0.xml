@@ -5212,4 +5212,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#92.2" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AccountTypeDialog_isControlAc');
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AccountType_Maker'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AccountTypeDialog_isControlAc'), 1, 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
