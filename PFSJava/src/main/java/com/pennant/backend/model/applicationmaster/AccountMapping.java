@@ -51,8 +51,8 @@ public class AccountMapping extends AbstractWorkflowEntity {
 	private AccountMapping befImage;
 	private LoggedInUser userDetails;
 
-	private long profitCenterID;
-	private long costCenterID;
+	private Long profitCenterID;
+	private Long costCenterID;
 	private String profitCenterDesc;
 	private String costCenterDesc;
 	private String costCenterCode;
@@ -154,19 +154,19 @@ public class AccountMapping extends AbstractWorkflowEntity {
 		this.finType = finType;
 	}
 
-	public long getProfitCenterID() {
+	public Long getProfitCenterID() {
 		return profitCenterID;
 	}
 
-	public void setProfitCenterID(long profitCenterID) {
+	public void setProfitCenterID(Long profitCenterID) {
 		this.profitCenterID = profitCenterID;
 	}
 
-	public long getCostCenterID() {
+	public Long getCostCenterID() {
 		return costCenterID;
 	}
 
-	public void setCostCenterID(long costCenterID) {
+	public void setCostCenterID(Long costCenterID) {
 		this.costCenterID = costCenterID;
 	}
 

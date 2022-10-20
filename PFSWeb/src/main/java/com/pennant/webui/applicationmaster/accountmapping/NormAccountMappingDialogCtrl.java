@@ -139,14 +139,12 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.profitCenter.setDescColumn("ProfitCenterDesc");
 		this.profitCenter.setDisplayStyle(2);
 		this.profitCenter.setValidateColumns(new String[] { "ProfitCenterCode" });
-		this.profitCenter.setMandatoryStyle(true);
 
 		this.costCenter.setModuleName("CostCenter");
 		this.costCenter.setValueColumn("CostCenterCode");
 		this.costCenter.setDescColumn("CostCenterDesc");
 		this.costCenter.setDisplayStyle(2);
 		this.costCenter.setValidateColumns(new String[] { "CostCenterCode" });
-		this.costCenter.setMandatoryStyle(true);
 
 		this.accountType.setModuleName("AccountType");
 		this.accountType.setValueColumn("AcType");
@@ -163,7 +161,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.finType.setDescColumn("FinTypeDesc");
 		this.finType.setDisplayStyle(2);
 		this.finType.setValidateColumns(new String[] { "FinType" });
-		this.finType.setMandatoryStyle(true);
 
 		this.openedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.closedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -272,12 +269,12 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.account.setValue(am.getAccount());
 		this.hostAccount.setValue(am.getHostAccount());
 
-		if (String.valueOf(am.getProfitCenterID()) != null) {
+		if (am.getProfitCenterID() != null) {
 			this.profitCenter.setObject(new ProfitCenter(am.getProfitCenterID()));
 			this.profitCenter.setValue(am.getProfitCenterCode(), am.getProfitCenterDesc());
 		}
 
-		if (String.valueOf(am.getCostCenterID()) != null) {
+		if (am.getCostCenterID() != null) {
 			this.costCenter.setObject(new CostCenter(am.getCostCenterID()));
 			this.costCenter.setValue(am.getCostCenterCode(), am.getCostCenterDesc());
 		}
@@ -358,20 +355,24 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 		try {
 			this.profitCenter.getValidatedValue();
-			ProfitCenter profitCenter = (ProfitCenter) this.profitCenter.getObject();
-			accountMapping.setProfitCenterID(profitCenter.getProfitCenterID());
-			accountMapping.setProfitCenterCode(profitCenter.getProfitCenterCode());
-			accountMapping.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
+			if (this.profitCenter.getObject() != null) {
+				ProfitCenter profitCenter = (ProfitCenter) this.profitCenter.getObject();
+				accountMapping.setProfitCenterID(profitCenter.getProfitCenterID());
+				accountMapping.setProfitCenterCode(profitCenter.getProfitCenterCode());
+				accountMapping.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			this.costCenter.getValidatedValue();
-			CostCenter costCenter = (CostCenter) this.costCenter.getObject();
-			accountMapping.setCostCenterID(costCenter.getCostCenterID());
-			accountMapping.setCostCenterCode(costCenter.getCostCenterCode());
-			accountMapping.setCostCenterDesc(costCenter.getCostCenterDesc());
+			if (this.costCenter.getObject() != null) {
+				CostCenter costCenter = (CostCenter) this.costCenter.getObject();
+				accountMapping.setCostCenterID(costCenter.getCostCenterID());
+				accountMapping.setCostCenterCode(costCenter.getCostCenterCode());
+				accountMapping.setCostCenterDesc(costCenter.getCostCenterDesc());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -462,22 +463,10 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 					new PTStringValidator(Labels.getLabel("label_NormAccountMappingDialog_HostAccount.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		if (!this.profitCenter.isReadonly()) {
-			this.profitCenter.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_NormAccountMappingDialog_ProfitCenter.value"), null, true));
-		}
-		if (!this.costCenter.isReadonly()) {
-			this.costCenter.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_NormAccountMappingDialog_CostCenter.value"), null, true));
-		}
+
 		if (!this.accountType.isReadonly()) {
 			this.accountType.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_NormAccountMappingDialog_AccountType.value"), null, true));
-		}
-
-		if (!this.finType.isReadonly()) {
-			this.finType.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_NormAccountMappingDialog_FinType.value"), null, true));
 		}
 
 		if (!this.allowedManualEntry.isDisabled()) {
@@ -491,9 +480,8 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		}
 
 		if (!this.status.isDisabled()) {
-			this.status.setConstraint(
-					new StaticListValidator(AccountingUtil.getGLAccountStatus(),
-							Labels.getLabel("label_NormAccountMappingDialog_Status.value")));
+			this.status.setConstraint(new StaticListValidator(AccountingUtil.getGLAccountStatus(),
+					Labels.getLabel("label_NormAccountMappingDialog_Status.value")));
 		}
 
 		logger.debug("Leaving");
@@ -508,8 +496,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		setValidationOn(false);
 		this.account.setConstraint("");
 		this.hostAccount.setConstraint("");
-		this.profitCenter.setConstraint("");
-		this.costCenter.setConstraint("");
 		this.accountType.setConstraint("");
 		this.finType.setConstraint("");
 		this.openedDate.setConstraint("");
@@ -579,9 +565,14 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		if (this.accountMapping.isNewRecord()) {
 			this.account.setReadonly(false);
 			this.btnCancel.setVisible(false);
+			this.status.setDisabled(true);
+			this.closedDate.setDisabled(true);
 		} else {
 			this.account.setReadonly(true);
 			this.btnCancel.setVisible(true);
+
+			this.closedDate.setDisabled(isReadOnly("AccountMappingDialog_ClosedDate"));
+			this.status.setDisabled(isReadOnly("AccountMappingDialog_Status"));
 		}
 
 		this.hostAccount.setReadonly(isReadOnly("AccountMappingDialog_HostAccount"));
@@ -590,9 +581,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.accountType.setReadonly(isReadOnly("AccountMappingDialog_AccountType"));
 		this.finType.setReadonly(isReadOnly("AccountMappingDialog_FinType"));
 		this.openedDate.setDisabled(isReadOnly("AccountMappingDialog_OpenedDate"));
-		this.closedDate.setDisabled(isReadOnly("AccountMappingDialog_ClosedDate"));
 		this.allowedManualEntry.setDisabled(isReadOnly("AccountMappingDialog_AllowedManualEntry"));
-		this.status.setDisabled(isReadOnly("AccountMappingDialog_Status"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
