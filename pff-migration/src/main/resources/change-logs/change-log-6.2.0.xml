@@ -5181,7 +5181,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#92.1_pre" author="Mounika.M">
+	<changeSet id="ST#92.1_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'categorywiseevents_view');
@@ -5205,7 +5205,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#92.1_post" author="Mounika.M">
+	<changeSet id="ST#92.1_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'categorywiseevents_view');	
