@@ -647,7 +647,7 @@
 	<changeSet id="13" author="rahul.r">
 		<sql>
 			<![CDATA[
-				Delete From WorkFlowDetails Where WorkFlowType='LINKDELINK_WF';
+				Delete From WorkFlowDetails Where WorkFlowType='LINKDELINK_WF' And workflowactive=1;
 			]]>
 		</sql>
 	</changeSet>
