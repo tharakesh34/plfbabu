@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
@@ -27,6 +28,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennant.pff.presentment.dao.PresentmentExcludeCodeDAO;
@@ -80,7 +82,35 @@ public class PresentmentEngine {
 				prepareDues(ph);
 			}
 		} else {
-			prepareDues(header);
+			String instrumentType = StringUtils.trimToNull(header.getMandateType());
+
+			if (instrumentType != null && !"#".equals(instrumentType)) {
+				prepareDues(header);
+			} else {
+				for (ValueLabel code : MandateUtil.getInstrumentTypesForBE()) {
+					PresentmentHeader ph = new PresentmentHeader();
+					ph.setMandateType(header.getMandateType());
+					ph.setEmandateSource(header.getEmandateSource());
+					ph.setLoanType(header.getLoanType());
+					ph.setEntityCode(header.getEntityCode());
+					ph.setFinBranch(header.getFinBranch());
+					ph.setFromDate(header.getFromDate());
+					ph.setToDate(header.getToDate());
+					ph.setDueDate(header.getDueDate());
+					ph.setBpiPaidOnInstDate(header.isBpiPaidOnInstDate());
+					ph.setGroupByBank(header.isGroupByPartnerBank());
+					ph.setGroupByPartnerBank(header.isGroupByPartnerBank());
+
+					ph.setBatchID(header.getBatchID());
+					ph.setAutoExtract(true);
+
+					ph.setPresentmentType(presentmentType);
+					ph.setMandateType(code.getValue());
+					ph.setAppDate(appDate);
+
+					prepareDues(ph);
+				}
+			}
 		}
 	}
 
