@@ -492,4 +492,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#208465" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'Y' WHERE SYSPARMCODE = 'ALLOW_DIVISION_BASED_CLUSTER';
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'Y' WHERE SYSPARMCODE ='ALLOW_ORGANISATIONAL_STRUCTURE';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
