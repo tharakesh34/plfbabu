@@ -116,6 +116,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	@XmlElement(name = "excludeDetails")
 	private List<PresentmentDetail> presentmentDetailsList;
 
+	private Long batchID;
 	private Date appDate;
 	private Date dueDate;
 	private boolean autoExtract;
@@ -140,6 +141,8 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("groupByPartnerBank");
 		excludeFields.add("groups");
 		excludeFields.add("presentments");
+		excludeFields.add("batchID");
+		excludeFields.add("appDate");
 		excludeFields.add("appDate");
 
 		return excludeFields;
@@ -501,6 +504,14 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setBounceReq(boolean bounceReq) {
 		this.bounceReq = bounceReq;
+	}
+
+	public Long getBatchID() {
+		return batchID;
+	}
+
+	public void setBatchID(Long batchID) {
+		this.batchID = batchID;
 	}
 
 	public Date getAppDate() {

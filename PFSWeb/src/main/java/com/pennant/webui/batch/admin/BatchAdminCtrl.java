@@ -875,7 +875,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			appendRow(Step.ledgerNotification.name(), StepUtil.LEDGER_NOTIFICATION.getName());
 		}
 
-		if (isServiceExists(CollectionDataDownloadProcess.class)) {
+		if (ImplementationConstants.COLLECTION_DOWNLOAD_REQ && isServiceExists(CollectionDataDownloadProcess.class)) {
 			appendRow(Step.collectionDataDownLoad.name(), StepUtil.COLLECTION_DOWNLOAD.getName());
 
 			if (isServiceExists(EODNotificationService.class)) {

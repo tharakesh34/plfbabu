@@ -8,6 +8,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.eod.step.StepUtil;
@@ -26,8 +27,12 @@ public class CollectionDataDownload implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		logger.debug(Literal.ENTERING);
+
 		BatchUtil.setExecutionStatus(chunkContext, StepUtil.COLLECTION_DOWNLOAD);
-		getCollectionDataDownloadProcess().processDownload();
+
+		if (ImplementationConstants.COLLECTION_DOWNLOAD_REQ) {
+			getCollectionDataDownloadProcess().processDownload();
+		}
 
 		logger.debug(Literal.LEAVING);
 		return RepeatStatus.FINISHED;

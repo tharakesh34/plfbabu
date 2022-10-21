@@ -8,67 +8,60 @@ import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public interface PresentmentDAO {
-	int extarct(Date dueDate);
 
-	int extarct(Date fromDate, Date toDate);
+	long createBatch(String batchName);
 
-	int extarct(String instrumentType, Date fromDate, Date toDate);
+	int extarct(long batchID, Date dueDate);
 
-	int clearByNoDues();
+	int extarct(long batchID, Date fromDate, Date toDate);
 
-	int clearByInstrumentType(String instrumentType);
+	int extarct(long batchID, String instrumentType, Date fromDate, Date toDate);
 
-	int clearByInstrumentType(String instrumentType, String emnadateSource);
+	int clearByNoDues(long batchID);
 
-	int clearByLoanType(String loanType);
+	int clearByInstrumentType(long batchID, String instrumentType);
 
-	int clearByLoanBranch(String loanBranch);
+	int clearByInstrumentType(long batchID, String instrumentType, String emnadateSource);
 
-	int clearByEntityCode(String entityCode);
+	int clearByLoanType(long batchID, String loanType);
 
-	int clearSecurityCheque();
+	int clearByLoanBranch(long batchID, String loanBranch);
 
-	void updateIPDC();
+	int clearByEntityCode(long batchID, String entityCode);
 
-	int clearByExistingRecord();
+	int clearSecurityCheque(long batchID);
 
-	int clearByRepresentment();
+	void updateIPDC(long batchID);
 
-	void updatePartnerBankID();
+	int clearByExistingRecord(long batchID);
 
-	int clearByManualExclude();
+	int clearByRepresentment(long batchID);
 
-	List<PresentmentDetail> getPresentmentDetails();
+	void updatePartnerBankID(long batchID);
 
-	List<PresentmentDetail> getGroupByDefault();
+	int clearByManualExclude(long batchID);
 
-	List<PresentmentDetail> getGroupByPartnerBankAndBank();
+	List<PresentmentDetail> getPresentmentDetails(long batchID);
 
-	List<PresentmentDetail> getGroupByBank();
+	List<PresentmentDetail> getGroupByDefault(long batchID);
 
-	List<PresentmentDetail> getGroupByPartnerBank();
+	List<PresentmentDetail> getGroupByPartnerBankAndBank(long batchID);
 
-	void updateHeaderIdByDefault(List<PresentmentDetail> list);
+	List<PresentmentDetail> getGroupByBank(long batchID);
 
-	void updateHeaderIdByPartnerBankAndBank(List<PresentmentDetail> list);
+	List<PresentmentDetail> getGroupByPartnerBank(long batchID);
 
-	void updateHeaderIdByBank(List<PresentmentDetail> list);
+	void updateHeaderIdByDefault(long batchID, List<PresentmentDetail> list);
 
-	void updateHeaderIdByPartnerBank(List<PresentmentDetail> list);
+	void updateHeaderIdByPartnerBankAndBank(long batchID, List<PresentmentDetail> list);
 
-	void clearQueue();
+	void updateHeaderIdByBank(long batchID, List<PresentmentDetail> list);
+
+	void updateHeaderIdByPartnerBank(long batchID, List<PresentmentDetail> list);
+
+	void clearQueue(long batchId);
 
 	long saveList(List<PresentmentDetail> presentments);
-
-	/*
-	 * void orderByPartnerBankIdAndBankCode();
-	 * 
-	 * void orderByBankCode();
-	 * 
-	 * void orderByPartnerBankId();
-	 * 
-	 * void orderByData();
-	 */
 
 	long getNextValue();
 
@@ -78,7 +71,7 @@ public interface PresentmentDAO {
 
 	int updateSchdWithPresentmentId(List<PresentmentDetail> presenetments);
 
-	List<PresentmentHeader> getPresentmentHeaders(Date fromDate, Date toDate);
+	List<PresentmentHeader> getPresentmentHeaders(long batchId);
 
 	List<Long> getIncludeList(long id);
 
@@ -91,5 +84,4 @@ public interface PresentmentDAO {
 	void approveExludes(long id);
 
 	void updatePartnerBankID(long id, long PartnerBankId);
-
 }

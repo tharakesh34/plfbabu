@@ -502,7 +502,7 @@
 	<bean name="entityServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.EntityServiceImpl">
 		<property name="entityDAO" ref="entityDAO" />
 	</bean>
-	
+
 	<bean id="clusterHierarchyDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterHierarchyDAOImpl"
 		parent="basicDao" />
 
@@ -844,19 +844,59 @@
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
-	
+
 	<bean id="vASConfigurationDAO" class="com.pennant.backend.dao.configuration.impl.VASConfigurationDAOImpl"
 		parent="basicDao" />
-		
+
 	<bean id="vASProviderAccDetailDAO" class="com.pennant.backend.dao.systemmasters.impl.VASProviderAccDetailDAOImpl"
 		parent="sequenceDao" />
-	
+
 	<bean id="payOrderIssueHeaderDAO" class="com.pennant.backend.dao.payorderissue.impl.PayOrderIssueHeaderDAOImpl"
 		parent="basicDao" />
-		
+
 	<bean name="receiptCancellationService"
 		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" />
-		
-	<bean id="presentmentExcludeCodeDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentExcludeCodeDAOImpl" parent="sequenceDao" />
-		
+
+	<bean id="presentmentExcludeCodeDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentExcludeCodeDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="presentmentDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentDAOImpl" parent="sequenceDao" />
+
+	<bean id="consecutiveBounceDAO" class="com.pennant.pff.presentment.dao.impl.ConsecutiveBounceDAOImpl"
+		parent="sequenceDao" />
+
+	<bean name="presentmentEngine" class="com.pennant.pff.presentment.service.PresentmentEngine" />
+
+	<bean name="presentmentDetailService"
+		class="com.pennant.backend.service.financemanagement.impl.PresentmentDetailServiceImpl">
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="receiptCancellationService" ref="receiptCancellationService" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="repaymentPostingsUtil" ref="repaymentPostingsUtil" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="repaymentProcessUtil" ref="repaymentProcessUtil" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="notificationService" ref="notificationService" />
+		<property name="receiptPaymentService" ref="receiptPaymentService" />
+		<property name="eventPropertiesService" ref="eventPropertiesService" />
+	</bean>
+
+	<bean id="dueExtractionConfigDAO" class="com.pennant.pff.presentment.dao.impl.DueExtractionConfigDAOImpl"
+		parent="sequenceDao" />
+
+	<bean name="dueExtractionConfigService"
+		class="com.pennant.pff.presentment.service.impl.DueExtractionConfigServiceImpl" />
+
+	<bean id="defaultPresentmentRequest" class="com.pennanttech.pff.external.presentment.DefaultPresentmentRequest"
+		parent="abstractInterface" />
+
 </beans>

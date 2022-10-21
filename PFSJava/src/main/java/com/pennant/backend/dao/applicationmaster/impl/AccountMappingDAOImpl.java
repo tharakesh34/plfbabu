@@ -111,8 +111,8 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 				ps.setString(index++, ac.getRecordType());
 				ps.setLong(index++, ac.getWorkflowId());
 				ps.setString(index++, ac.getFinType());
-				ps.setLong(index++, ac.getCostCenterID());
-				ps.setLong(index++, ac.getProfitCenterID());
+				ps.setObject(index++, ac.getCostCenterID());
+				ps.setObject(index++, ac.getProfitCenterID());
 				ps.setString(index++, ac.getAccountType());
 				ps.setDate(index++, JdbcUtil.getDate(ac.getOpenedDate()));
 				ps.setDate(index++, JdbcUtil.getDate(ac.getClosedDate()));
@@ -162,8 +162,8 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 			ps.setString(index++, ac.getRecordType());
 			ps.setLong(index++, ac.getWorkflowId());
 			ps.setString(index++, ac.getFinType());
-			ps.setLong(index++, ac.getCostCenterID());
-			ps.setLong(index++, ac.getProfitCenterID());
+			ps.setObject(index++, ac.getCostCenterID());
+			ps.setObject(index++, ac.getProfitCenterID());
 			ps.setString(index++, ac.getAccountType());
 			ps.setDate(index++, JdbcUtil.getDate(ac.getOpenedDate()));
 			ps.setDate(index++, JdbcUtil.getDate(ac.getClosedDate()));
@@ -267,8 +267,8 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 			ac.setAccount(rs.getString("Account"));
 			ac.setHostAccount(rs.getString("HostAccount"));
 			ac.setFinType(rs.getString("FinType"));
-			ac.setCostCenterID(rs.getLong("CostCenterID"));
-			ac.setProfitCenterID(rs.getLong("ProfitCenterID"));
+			ac.setCostCenterID(JdbcUtil.getLong(rs.getObject("CostCenterID")));
+			ac.setProfitCenterID(JdbcUtil.getLong(rs.getObject("ProfitCenterID")));
 			ac.setAccountType(rs.getString("AccountType"));
 			ac.setOpenedDate(rs.getDate("OpenedDate"));
 			ac.setClosedDate(rs.getDate("ClosedDate"));

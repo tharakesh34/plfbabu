@@ -3,20 +3,26 @@ package com.pennant.pff.presentment;
 import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.JobParametersIncrementer;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
-import com.pennant.pff.batch.job.BatchJobParameterIncrementer;
+import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
 import com.pennant.pff.presentment.dao.impl.PresentmentItemProcessor;
 import com.pennant.pff.presentment.dao.impl.PresentmentItemReader;
 import com.pennant.pff.presentment.dao.impl.PresentmentItemWriter;
+import com.pennant.pff.presentment.service.DueExtractionConfigService;
 import com.pennant.pff.presentment.service.PresentmentEngine;
 import com.pennant.pff.presentment.tasklet.ApprovalTasklet;
 import com.pennant.pff.presentment.tasklet.ClearQueueTasklet;
@@ -25,31 +31,19 @@ import com.pennant.pff.presentment.tasklet.PreparationTasklet;
 import com.pennant.pff.presentment.tasklet.PresentmentDueConfigTasklet;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
+@Configuration
+@EnableBatchProcessing
 public class PresentmentExtractionJob {
 
-	@Autowired
-	private JobBuilderFactory peJobBuilderFactory;
+	public PresentmentExtractionJob() {
+		super();
+	}
 
 	@Autowired
-	private BatchJobParameterIncrementer peBatchJobParameterIncrementer;
+	protected StepBuilderFactory stepBuilderFactory;
 
 	@Autowired
-	private StepBuilderFactory peStepBuilderFactory;
-
-	@Autowired
-	private PresentmentDueConfigTasklet dueConfig;
-
-	@Autowired
-	private PreparationTasklet preparation;
-
-	@Autowired
-	private ClearQueueTasklet clearQueue;
-
-	@Autowired
-	private GroupingTasklet grouping;
-
-	@Autowired
-	private ApprovalTasklet approval;
+	protected JobBuilderFactory jobBuilderFactory;
 
 	@Autowired
 	private DataSource dataSource;
@@ -58,20 +52,29 @@ public class PresentmentExtractionJob {
 	private PresentmentEngine presentmentEngine;
 
 	@Autowired
-	private TransactionManager peTransactionManager;
+	private TransactionManager transactionManager;
+
+	@Autowired
+	private DueExtractionConfigService dueExtractionConfigService;
+
+	@Autowired
+	private DueExtractionConfigDAO dueExtractionConfigDAO;
 
 	@Bean
 	public Job peExtractionJob() throws Exception {
-		return this.peJobBuilderFactory.get("peExtractionJob").incrementer(peBatchJobParameterIncrementer)
-				.start(dueConfig())
+		return this.jobBuilderFactory.get("peExtractionJob")
 
-				.next(preparation()).on("FAILED").fail()
+				.incrementer(jobParametersIncrementer())
 
-				.next(grouping()).on("FAILED").fail()
+				.start(dueConfigStep())
 
-				.next(extraction()).on("FAILED").fail()
+				.next(preparationStep()).on("FAILED").fail()
 
-				.next(approval()).on("FAILED").fail()
+				.next(groupingStep()).on("FAILED").fail()
+
+				.next(extractionStep()).on("FAILED").fail()
+
+				.next(approvalStep()).on("FAILED").fail()
 
 				.next(clear()).on("*").end("COMPLETED").on("FAILED").fail()
 
@@ -81,33 +84,58 @@ public class PresentmentExtractionJob {
 	}
 
 	@Bean
-	private TaskletStep dueConfig() {
-		return this.peStepBuilderFactory.get("CONFIGURATION").tasklet(dueConfig).build();
+	public PresentmentDueConfigTasklet dueConfigTasklet() {
+		return new PresentmentDueConfigTasklet(dueExtractionConfigService, dueExtractionConfigDAO);
 	}
 
 	@Bean
-	private TaskletStep preparation() {
-		return this.peStepBuilderFactory.get("PREPARATION").tasklet(preparation).build();
+	public PreparationTasklet preparationTasklet() {
+		return new PreparationTasklet(presentmentEngine);
 	}
 
 	@Bean
-	private TaskletStep grouping() {
-		return this.peStepBuilderFactory.get("GROUPING").tasklet(grouping).build();
+	public GroupingTasklet groupingTasklet() {
+		return new GroupingTasklet(presentmentEngine);
 	}
 
 	@Bean
-	private TaskletStep approval() {
-		return this.peStepBuilderFactory.get("APPROVAL").tasklet(approval).build();
+	public ApprovalTasklet approvalTasklet() {
+		return new ApprovalTasklet(presentmentEngine);
 	}
 
 	@Bean
-	public TaskletStep extraction() throws Exception {
+	public ClearQueueTasklet clearQueueTasklet() {
+		return new ClearQueueTasklet(presentmentEngine);
+	}
+
+	@Bean
+	public TaskletStep dueConfigStep() {
+		return this.stepBuilderFactory.get("CONFIGURATION").tasklet(dueConfigTasklet()).build();
+	}
+
+	@Bean
+	public TaskletStep preparationStep() {
+		return this.stepBuilderFactory.get("PREPARATION").tasklet(preparationTasklet()).build();
+	}
+
+	@Bean
+	public TaskletStep groupingStep() {
+		return this.stepBuilderFactory.get("GROUPING").tasklet(groupingTasklet()).build();
+	}
+
+	@Bean
+	public TaskletStep approvalStep() {
+		return this.stepBuilderFactory.get("APPROVAL").tasklet(approvalTasklet()).build();
+	}
+
+	@Bean
+	public TaskletStep extractionStep() throws Exception {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
-		return peStepBuilderFactory.get("EXTRACTION").<PresentmentDetail, PresentmentDetail>chunk(1)
-				.reader(itemReader()).processor(new PresentmentItemProcessor(this.presentmentEngine))
-				.writer(new PresentmentItemWriter(this.peTransactionManager, this.presentmentEngine))
+		return stepBuilderFactory.get("EXTRACTION").<PresentmentDetail, PresentmentDetail>chunk(1).reader(itemReader())
+				.processor(new PresentmentItemProcessor(this.presentmentEngine))
+				.writer(new PresentmentItemWriter(this.transactionManager, this.presentmentEngine))
 				.taskExecutor(taskExecutor()).transactionAttribute(attribute).build();
 	}
 
@@ -120,7 +148,25 @@ public class PresentmentExtractionJob {
 
 	@Bean
 	public TaskletStep clear() {
-		return this.peStepBuilderFactory.get("CLEAR").tasklet(clearQueue).build();
+		return this.stepBuilderFactory.get("CLEAR").tasklet(clearQueueTasklet()).build();
+	}
+
+	@Bean
+	public JobParametersIncrementer jobParametersIncrementer() {
+		return new JobParametersIncrementer() {
+
+			@Override
+			public JobParameters getNext(JobParameters parameters) {
+				if (parameters == null || parameters.isEmpty()) {
+					return new JobParametersBuilder().addLong("run.id", 1L).toJobParameters();
+				}
+
+				Long id = parameters.getLong("run.id", 1L) + 1;
+
+				return new JobParametersBuilder().addLong("run.id", id).toJobParameters();
+			}
+
+		};
 	}
 
 	public SimpleAsyncTaskExecutor taskExecutor() {

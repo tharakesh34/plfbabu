@@ -1216,7 +1216,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#84.47" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -1228,7 +1228,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#84.48" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -3706,7 +3706,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.24" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -4770,7 +4770,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#90.31.1" author="Alekhya.T" dbms="postgresql,mssql">
 		<sql>
 			<![CDATA[
@@ -5136,7 +5136,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.34" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -5153,7 +5153,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208051" author="Gopal.p">
 		<sql>
 			<![CDATA[	
@@ -5162,7 +5162,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#205073" author="saikrishna.b">
 		<sql>
    			 <![CDATA[
@@ -5172,7 +5172,7 @@
    			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208131" author="saikrishna.b">
 		<sql>
    			 <![CDATA[
@@ -5180,7 +5180,7 @@
    			  ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#92.1_pre" author="Mounika.M">
 		<sql>
 			<![CDATA[
@@ -5212,7 +5212,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#92.2" author="Mounika.M">
 		<sql>
 			<![CDATA[
@@ -5222,4 +5222,43 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="ST#4597_01" author="murthy.y">
+		<renameColumn tableName="PRESENTMENT_EXTRACTION_STAGE" oldColumnName="JobId" newColumnName="BatchID" />
+	</changeSet>
+
+	<changeSet id="ST#4597_02" author="murthy.y">
+		<createIndex tableName="PRESENTMENT_EXTRACTION_STAGE" indexName="IDX_PEX_BATCHID">
+			<column name="BatchID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#4597_03" author="murthy.y">
+		<renameTable newTableName="PRESENTMENT_BATCH_JOB" oldTableName="PRESENTMENT_EXTRACTION_JOB" />
+	</changeSet>
+
+	<changeSet id="ST#4597_04.1" author="murthy.y">
+		<addColumn tableName="PRESENTMENTHEADER_TEMP">
+			<column name="BatchID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#4597_04.2" author="murthy.y">
+		<createIndex tableName="PRESENTMENTHEADER_TEMP" indexName="IDX_PHT_BATCHID">
+			<column name="BatchID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#4597_04.3" author="murthy.y">
+		<addColumn tableName="PRESENTMENTHEADER">
+			<column name="BatchID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#4597_04.4" author="murthy.y">
+		<createIndex tableName="PRESENTMENTHEADER" indexName="IDX_PH_BATCHID">
+			<column name="BatchID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
 </databaseChangeLog>

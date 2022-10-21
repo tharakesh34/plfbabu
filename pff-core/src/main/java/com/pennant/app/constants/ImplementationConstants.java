@@ -297,6 +297,7 @@ public class ImplementationConstants {
 		RECEIPT_ALLOW_FULL_WAIVER = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER", false);
 		ALLOW_CERSAI = getValueAsBoolean("ALLOW_CERSAI", false);
 		DISB_STP = getValueAsBoolean("DISB_STP", false);
+		COLLECTION_DOWNLOAD_REQ = getValueAsBoolean("COLLECTION_DOWNLOAD_REQ", true);
 
 		setVerificationConstants();
 	}
@@ -381,7 +382,7 @@ public class ImplementationConstants {
 	public static boolean VALIDATE_BENFICIARY_ACCOUNT;
 	public static boolean AUTO_EOD_REQUIRED;
 	public static boolean ALW_ADV_INTEMI_ADVICE_CREATION;
-	public static boolean TAX_DFT_CR_INV_REQ = false;
+	public static boolean TAX_DFT_CR_INV_REQ;
 	public static boolean ALLOW_IND_AS;
 	public static boolean IND_AS_ACCOUNTING_REQ;
 	public static boolean ALLOW_AUTO_KNOCK_OFF;
@@ -626,6 +627,7 @@ public class ImplementationConstants {
 	public static boolean VER_RCU_INITATE_BY_AGENCY;
 
 	public static boolean CUSTOMIZED_SOAREPORT;
+	public static boolean COLLECTION_DOWNLOAD_REQ;
 
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);

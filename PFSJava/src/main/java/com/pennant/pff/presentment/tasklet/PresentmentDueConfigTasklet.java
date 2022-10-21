@@ -6,7 +6,6 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
@@ -14,21 +13,20 @@ import com.pennant.pff.presentment.service.DueExtractionConfigService;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class PresentmentDueConfigTasklet implements Tasklet {
-	@Autowired
-	private DueExtractionConfigService presentmentDueConfigService;
+	private DueExtractionConfigService decService;
+	private DueExtractionConfigDAO decDao;
 
-	@Autowired
-	private DueExtractionConfigDAO dueExtractionConfigDAO;
-
-	public PresentmentDueConfigTasklet() {
+	public PresentmentDueConfigTasklet(DueExtractionConfigService decService, DueExtractionConfigDAO decDao) {
 		super();
+		this.decService = decService;
+		this.decDao = decDao;
 	}
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		Date appDate = SysParamUtil.getAppDate();
+		Date appDate = SysParamUtil.getLastBusinessdate();
 
-		boolean configExists = dueExtractionConfigDAO.isConfigExists();
+		boolean configExists = decDao.isConfigExists();
 
 		Date marchFirst = DateUtil.getDate(DateUtil.getYear(appDate), 2, 1);
 
@@ -49,7 +47,7 @@ public class PresentmentDueConfigTasklet implements Tasklet {
 			}
 		}
 
-		presentmentDueConfigService.extarctDueConfig(startDate, startEndDate);
+		decService.extarctDueConfig(startDate, startEndDate);
 
 		return RepeatStatus.FINISHED;
 	}
