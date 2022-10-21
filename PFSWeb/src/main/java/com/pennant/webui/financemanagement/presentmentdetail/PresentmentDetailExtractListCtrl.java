@@ -151,7 +151,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
+		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypesForBE(), "");
 		fillComboBox(this.presentmentType, PennantConstants.PROCESS_PRESENTMENT,
 				PennantStaticListUtil.getPresetmentTypeList(), "");
 
@@ -229,7 +229,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		if (ImplementationConstants.INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS) {
 			this.mandateType.setConstraint(
 					new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
-							MandateUtil.getInstrumentTypes(), true));
+							MandateUtil.getInstrumentTypesForBE(), true));
 		}
 		this.presentmentType.setConstraint(
 				new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_PresentmentType.value"),
@@ -429,7 +429,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	private void doResetInitValues() {
 		logger.debug(Literal.ENTERING);
 
-		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
+		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypesForBE(), "");
 		fillComboBox(this.presentmentType, "", PennantStaticListUtil.getPresetmentTypeList(), "");
 		this.loanType.setErrorMessage("");
 		this.loanType.setValue("");

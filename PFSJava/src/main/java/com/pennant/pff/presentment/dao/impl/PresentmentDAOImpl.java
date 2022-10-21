@@ -263,14 +263,14 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public void updateIPDC(long batchID) {
-		String sql = "Update Presentment_Extraction_Stage set InstrumentType = ?, MandateType = ? Where BatchID = ? and InstrumentType = ? and BankCode = ?";
+		String sql = "Update Presentment_Extraction_Stage set InstrumentType = ?, MandateType = ?, ChequeType = ? Where BatchID = ? and InstrumentType = ? and BankCode = ?";
 
 		String bankcode = SysParamUtil.getValueAsString("BANK_CODE");
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, InstrumentType.IPDC.name(), InstrumentType.IPDC.name(), batchID,
-				InstrumentType.PDC.name(), bankcode);
+		this.jdbcOperations.update(sql, InstrumentType.IPDC.name(), InstrumentType.IPDC.name(),
+				InstrumentType.IPDC.name(), batchID, InstrumentType.PDC.name(), bankcode);
 	}
 
 	@Override

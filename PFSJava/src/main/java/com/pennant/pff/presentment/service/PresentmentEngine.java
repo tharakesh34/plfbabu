@@ -112,6 +112,10 @@ public class PresentmentEngine {
 
 		count = count - presentmentDAO.clearByNoDues(batchID);
 
+		if (InstrumentType.isIPDC(instrumentType)) {
+			presentmentDAO.updateIPDC(batchID);
+		}
+
 		if ((instrumentType != null && !"#".equals(instrumentType)) && !ph.isAutoExtract()) {
 			count = count - presentmentDAO.clearByInstrumentType(batchID, instrumentType);
 		}
@@ -140,10 +144,6 @@ public class PresentmentEngine {
 		}
 
 		count = count - presentmentDAO.clearSecurityCheque(batchID);
-
-		if (InstrumentType.isIPDC(instrumentType)) {
-			presentmentDAO.updateIPDC(batchID);
-		}
 
 		presentmentDAO.updatePartnerBankID(batchID);
 
