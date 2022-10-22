@@ -4938,7 +4938,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.getAuditDetail().setModelData(fd);
 
 		if (FeeExtension.FEE_SERVICEING_STAMPIN_ON_ORG
-				&& StringUtils.equals(FinServiceEvent.ORG, fd.getModuleDefiner())) {
+				&& FinServiceEvent.ORG.equals(fd.getModuleDefiner()) && !isWIF) {
 			List<FinFeeConfig> calculateFees = feeCalculator.convertToFinanceFees(fd);
 			if (CollectionUtils.isNotEmpty(calculateFees)) {
 				finFeeConfigService.saveList(calculateFees, "");
@@ -4951,14 +4951,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			restructureService.computeLPPandUpdateOD(fd);
 		}
 
-		// Save ManualUploadScheduleHeader and Details
 		this.manualScheduleService.doApprove(fd);
 
-		// Save VariableODScheduleService and Details
 		this.variableOverdraftSchdService.doApprove(fd);
 
-		// Save GCDCustomer'/////
-		// processgcdCustomer(financeDetail, "insert");
 		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
