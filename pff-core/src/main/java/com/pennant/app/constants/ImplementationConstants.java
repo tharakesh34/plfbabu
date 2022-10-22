@@ -3,6 +3,7 @@ package com.pennant.app.constants;
 import org.springframework.stereotype.Component;
 
 import com.pennanttech.extension.FeatureExtension;
+import com.pennanttech.pff.Module;
 import com.pennanttech.pff.npa.NpaScope;
 import com.pennanttech.pff.provision.ProvisionBook;
 import com.pennanttech.pff.provision.ProvisionReversalStage;
@@ -13,8 +14,6 @@ public class ImplementationConstants {
 	private ImplementationConstants() {
 		super();
 	}
-
-	private static final String MODULE = "DFT";
 
 	/**
 	 * The static block to initialise the implementation constants.
@@ -75,7 +74,7 @@ public class ImplementationConstants {
 		CO_APP_ENQ_SAME_AS_CUST_ENQ = getValueAsBoolean("CO_APP_ENQ_SAME_AS_CUST_ENQ", true);
 		PAN_DUPLICATE_NOT_ALLOWED = getValueAsBoolean("PAN_DUPLICATE_NOT_ALLOWED", true);
 		ALLOW_AUTO_DISBURSEMENTS = getValueAsBoolean("ALLOW_AUTO_DISBURSEMENTS", false);
-		VARTUAL_DPD = getValueAsBoolean("VARTUAL_DPD", true);
+
 		ALLOW_COSTOFFUNDS = getValueAsBoolean("ALLOW_COSTOFFUNDS", true);
 		ALLOW_IRRCODES = getValueAsBoolean("ALLOW_IRRCODES", true);
 
@@ -345,7 +344,7 @@ public class ImplementationConstants {
 	public static boolean CO_APP_ENQ_SAME_AS_CUST_ENQ;
 	public static boolean PAN_DUPLICATE_NOT_ALLOWED;
 	public static boolean ALLOW_AUTO_DISBURSEMENTS;
-	public static boolean VARTUAL_DPD;
+
 	public static boolean ALLOW_COSTOFFUNDS;
 	public static boolean ALLOW_IRRCODES;
 	public static boolean ALLOW_BARCODE;
@@ -652,19 +651,19 @@ public class ImplementationConstants {
 	}
 
 	public static boolean getValueAsBoolean(String key, boolean defaultValue) {
-		return FeatureExtension.getValueAsBoolean(MODULE, key, defaultValue);
+		return FeatureExtension.getValueAsBoolean(Module.DEFAULT, key, defaultValue);
 	}
 
 	public static String getValueAsString(String key, String defaultValue) {
-		return FeatureExtension.getValueAsString(MODULE, key, defaultValue);
+		return FeatureExtension.getValueAsString(Module.DEFAULT, key, defaultValue);
 	}
 
 	public static Object getValueAsObject(String key, Object defaultValue) {
-		return FeatureExtension.getValueAsObject(MODULE, key, defaultValue);
+		return FeatureExtension.getValueAsObject(Module.DEFAULT, key, defaultValue);
 	}
 
 	public static int getValueAsInt(String key, int defaultValue) {
-		return FeatureExtension.getValueAsInt(MODULE, key, defaultValue);
+		return FeatureExtension.getValueAsInt(Module.DEFAULT, key, defaultValue);
 	}
 
 }

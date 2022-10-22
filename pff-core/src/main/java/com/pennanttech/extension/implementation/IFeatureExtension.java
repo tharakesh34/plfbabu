@@ -12,4 +12,6 @@ public interface IFeatureExtension {
 	Map<String, Object> getAccountingExtensions();
 
 	Map<String, Object> getFeeExtensions();
+
+	Map<String, Object> getDPDExtensions();
 }

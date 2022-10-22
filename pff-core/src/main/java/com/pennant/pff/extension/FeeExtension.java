@@ -1,13 +1,12 @@
 package com.pennant.pff.extension;
 
 import com.pennanttech.extension.FeatureExtension;
+import com.pennanttech.pff.Module;
 
 public class FeeExtension {
 	private FeeExtension() {
 		super();
 	}
-
-	private static final String MODULE = "FEE";
 
 	public static boolean FEE_SERVICEING_STAMPIN_ON_ORG;
 	public static boolean ADD_FEEINFTV_ONCALC;
@@ -26,6 +25,6 @@ public class FeeExtension {
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
-		return FeatureExtension.getValueAsBoolean(MODULE, key, defaultValue);
+		return FeatureExtension.getValueAsBoolean(Module.FEE, key, defaultValue);
 	}
 }

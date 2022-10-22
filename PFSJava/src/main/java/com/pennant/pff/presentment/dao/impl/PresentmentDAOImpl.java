@@ -170,28 +170,23 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		try {
-			return this.jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-				ps.setLong(index++, batchID);
+			ps.setLong(index++, batchID);
 
-				ps.setInt(index++, 1);
-				if (InstrumentType.isPDC(instrumentType) || InstrumentType.isIPDC(instrumentType)) {
-					ps.setString(index++, "PDC");
-				} else {
-					ps.setString(index++, instrumentType);
-				}
-				ps.setDate(index++, JdbcUtil.getDate(fromDate));
-				ps.setDate(index++, JdbcUtil.getDate(toDate));
-				ps.setDate(index++, JdbcUtil.getDate(fromDate));
-				ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setInt(index++, 1);
+			if (InstrumentType.isPDC(instrumentType) || InstrumentType.isIPDC(instrumentType)) {
+				ps.setString(index++, "PDC");
+			} else {
+				ps.setString(index++, instrumentType);
+			}
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+			ps.setDate(index++, JdbcUtil.getDate(toDate));
 
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
+		});
 	}
 
 	@Override

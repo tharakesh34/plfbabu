@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.pennanttech.extension.implementation.IFeatureExtension;
 import com.pennanttech.pennapps.core.FactoryException;
+import com.pennanttech.pff.Module;
 
 public final class FeatureExtension {
 
@@ -13,7 +14,7 @@ public final class FeatureExtension {
 
 	private static IFeatureExtension extension;
 
-	private static Map<String, Object> getExtensions(String module) {
+	private static Map<String, Object> getExtensions(Module module) {
 		if (extension == null) {
 			initilizeExtension();
 		}
@@ -21,15 +22,15 @@ public final class FeatureExtension {
 		return getFeatureExtension(module);
 	}
 
-	private static Map<String, Object> getFeatureExtension(String module) {
+	private static Map<String, Object> getFeatureExtension(Module module) {
 		switch (module) {
-		case "MANDATE":
+		case MANDATE:
 			return extension.getMandateExtensions();
-		case "PRESENTMENT":
+		case PRESENTMENT:
 			return extension.getPresentmentExtensions();
-		case "ACCOUNTING":
+		case ACCOUNTING:
 			return extension.getAccountingExtensions();
-		case "FEE":
+		case FEE:
 			return extension.getFeeExtensions();
 
 		default:
@@ -66,7 +67,7 @@ public final class FeatureExtension {
 	 * @return the value as boolean from extended constants to which the specified key is mapped, or defaultValue if
 	 *         this map contain no mapping for the key.
 	 */
-	public static boolean getValueAsBoolean(String module, String key, boolean defaultValue) {
+	public static boolean getValueAsBoolean(Module module, String key, boolean defaultValue) {
 		try {
 			return (boolean) getExtensions(module).computeIfAbsent(key, ft -> defaultValue);
 		} catch (Exception ex) {
@@ -85,7 +86,7 @@ public final class FeatureExtension {
 	 * @return the value as String from extended constants to which the specified key is mapped, or defaultValue if this
 	 *         map contain no mapping for the key.
 	 */
-	public static String getValueAsString(String module, String key, String defaultValue) {
+	public static String getValueAsString(Module module, String key, String defaultValue) {
 		try {
 			return (String) getExtensions(module).computeIfAbsent(key, ft -> defaultValue);
 		} catch (Exception ex) {
@@ -93,7 +94,7 @@ public final class FeatureExtension {
 		}
 	}
 
-	public static int getValueAsInt(String module, String key, int defaultValue) {
+	public static int getValueAsInt(Module module, String key, int defaultValue) {
 		try {
 			return (int) getExtensions(module).computeIfAbsent(key, ft -> defaultValue);
 		} catch (Exception ex) {
@@ -101,7 +102,7 @@ public final class FeatureExtension {
 		}
 	}
 
-	public static Object getValueAsObject(String module, String key, Object defaultValue) {
+	public static Object getValueAsObject(Module module, String key, Object defaultValue) {
 		try {
 			return getExtensions(module).computeIfAbsent(key, ft -> defaultValue);
 		} catch (Exception ex) {

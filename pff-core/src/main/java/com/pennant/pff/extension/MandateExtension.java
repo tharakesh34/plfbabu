@@ -1,6 +1,7 @@
 package com.pennant.pff.extension;
 
 import com.pennanttech.extension.FeatureExtension;
+import com.pennanttech.pff.Module;
 
 public class MandateExtension {
 	private MandateExtension() {
@@ -73,6 +74,6 @@ public class MandateExtension {
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
-		return FeatureExtension.getValueAsBoolean(MODULE, key, defaultValue);
+		return FeatureExtension.getValueAsBoolean(Module.MANDATE, key, defaultValue);
 	}
 }
