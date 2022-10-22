@@ -4431,6 +4431,13 @@ public class ScheduleCalculator {
 				return finScheduleData;
 			}
 
+			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
+					&& finScheduleData.getFinanceMain().getAdvTerms() > 0) {
+				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
+				int idx = finScheduleData.getFinanceScheduleDetails().size() - fm.getAdvTerms() - 1;
+				fm.setRecalToDate(finScheduleData.getFinanceScheduleDetails().get(idx).getSchDate());
+			}
+
 			finScheduleData = getRpyInstructDetails(finScheduleData);
 
 			/* Grace Schedule calculation */
