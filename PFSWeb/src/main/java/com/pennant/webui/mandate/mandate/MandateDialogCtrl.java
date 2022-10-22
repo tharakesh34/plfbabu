@@ -728,6 +728,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (this.externalMandate.isChecked()) {
 			readOnlyComponent(isReadOnly("MandateDialog_UmrNumber"), this.umrNumber);
 		} else {
+			this.umrNumber.setConstraint("");
 			readOnlyComponent(true, this.umrNumber);
 		}
 
@@ -1273,7 +1274,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
 		readOnlyComponent(isReadOnly("MandateDialog_OpenMandate"), this.openMandate);
 		readOnlyComponent(isReadOnly("MandateDialog_StartDate"), this.startDate);
-		readOnlyComponent(isReadOnly("MandateDialog_ExpiryDate"), this.expiryDate);
+		if (!openMandate.isChecked()) {
+			readOnlyComponent(isReadOnly("MandateDialog_ExpiryDate"), this.expiryDate);
+		}
 		readOnlyComponent(isReadOnly("MandateDialog_MaxLimit"), this.maxLimit);
 		readOnlyComponent(isReadOnly("MandateDialog_Periodicity"), this.periodicity);
 		readOnlyComponent(isReadOnly("MandateDialog_PhoneNumber"), this.phoneNumber);
@@ -1440,6 +1443,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (!fromLoanEnquiry) {
 			doFillManFinanceExposureDetails(mandateService.getMandateFinanceDetailById(aMandate.getMandateID()));
 		}
+
+		this.securityMandate.setChecked(aMandate.isSecurityMandate());
 
 		if (issecurityMandate) {
 			fillComboBox(this.mandateType, aMandate.getMandateType(), securityMandateTypeList, "");
