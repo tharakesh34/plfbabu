@@ -53,16 +53,12 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.DPDExtension;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
 
 public class LatePayBucketService extends ServiceHelper {
 
-	private static final long serialVersionUID = 6161809223570900644L;
-
-	/**
-	 * Default constructor
-	 */
 	public LatePayBucketService() {
 		super();
 	}
@@ -110,16 +106,25 @@ public class LatePayBucketService extends ServiceHelper {
 		EventProperties eventProperties = fm.getEventProperties();
 
 		// prepare the re allocation required records i.e. schedule Date with scheduled amount and total paid till today
-		for (FinanceScheduleDetail schDetail : schedules) {
-			if (schDetail.getSchDate().compareTo(valueDate) > 0) {
+		for (FinanceScheduleDetail schd : schedules) {
+			if (schd.getSchDate().compareTo(valueDate) > 0) {
 				break;
 			}
 
-			if (schDetail.isRepayOnSchDate() || schDetail.isPftOnSchDate()) {
-				totalPaid = totalPaid.add(schDetail.getSchdPriPaid().add(schDetail.getSchdPftPaid()));
-				BigDecimal profitSchd = schDetail.getPrincipalSchd().add(schDetail.getProfitSchd());
+			if (schd.isRepayOnSchDate() || schd.isPftOnSchDate()) {
+				totalPaid = totalPaid.add(schd.getSchdPriPaid().add(schd.getSchdPftPaid()));
 
-				reallocationMap.put(schDetail.getSchDate(), profitSchd);
+				BigDecimal partialPaidAmt = BigDecimal.ZERO;
+				if (DPDExtension.EXCLUDE_VD_PART_PAYMENT) {
+					partialPaidAmt = schd.getPartialPaidAmt();
+					totalPaid = totalPaid.subtract(partialPaidAmt);
+				}
+
+				BigDecimal schdEmi = schd.getPrincipalSchd().add(schd.getProfitSchd());
+
+				schdEmi = schdEmi.subtract(partialPaidAmt);
+
+				reallocationMap.put(schd.getSchDate(), schdEmi);
 			}
 		}
 
@@ -235,7 +240,7 @@ public class LatePayBucketService extends ServiceHelper {
 		pfd.setDueBucket(newDueBucket);
 
 		pfd.setActualODDays(pfd.getCurODDays());
-		if (ImplementationConstants.VARTUAL_DPD) {
+		if (DPDExtension.VARTUAL_DPD) {
 			pfd.setCurODDays(newCurODDays);
 		}
 	}
