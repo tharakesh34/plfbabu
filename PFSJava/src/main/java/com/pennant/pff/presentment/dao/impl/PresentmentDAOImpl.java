@@ -170,6 +170,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
+		String bankCode = SysParamUtil.getValueAsString("BANK_CODE");
+
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
@@ -178,6 +180,9 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setInt(index++, 1);
 			if (InstrumentType.isPDC(instrumentType) || InstrumentType.isIPDC(instrumentType)) {
 				ps.setString(index++, "PDC");
+				if (InstrumentType.isIPDC(instrumentType)) {
+					ps.setString(index++, bankCode);
+				}
 			} else {
 				ps.setString(index++, instrumentType);
 			}
@@ -399,6 +404,9 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			sql.append(" and cd.EmiRefNo = fsd.InstNumber and cd.ChequeType = ?");
 			sql.append(" Inner Join RmtBranches b on b.BranchCode = fm.FinBranch");
 			sql.append(" Inner Join BankBranches bb on bb.BankBranchId = cd.BankBranchId");
+			if (InstrumentType.isIPDC(instrumentType)) {
+				sql.append(" and bb.BankCode = ?");
+			}
 		} else if (InstrumentType.isDAS(instrumentType)) {
 			sql.append(", m.MandateType, null, null, null, null");
 			sql.append(", fm.MandateId, m.MandateType, m.EmandateSource, m.Status, m.ExpiryDate");
@@ -876,23 +884,21 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public List<Long> getExcludeList(long id) {
-		String sql = "Select ID From PresentmentDetails Where PresentmentId = ? and ExcludeReason != ? and ExcludeReason != ?";
+		String sql = "Select ID From PresentmentDetails Where PresentmentId = ? and ExcludeReason != ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return jdbcOperations.queryForList(sql, Long.class, id, RepayConstants.PEXC_EMIINCLUDE,
-				RepayConstants.PEXC_MANUAL_EXCLUDE);
+		return jdbcOperations.queryForList(sql, Long.class, id, RepayConstants.PEXC_EMIINCLUDE);
 
 	}
 
 	@Override
 	public List<Long> getIncludeList(long id) {
-		String sql = "Select ID From PresentmentDetails Where PresentmentId = ?"; // and ExcludeReason = ?
+		String sql = "Select ID From PresentmentDetails Where PresentmentId = ? and ExcludeReason = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
-		// , RepayConstants.PEXC_EMIINCLUDE
 
-		return jdbcOperations.queryForList(sql, Long.class, id);
+		return jdbcOperations.queryForList(sql, Long.class, id, RepayConstants.PEXC_EMIINCLUDE);
 	}
 
 	@Override
@@ -905,7 +911,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public void approveExludes(long presentmentId) {
+	public int approveExludes(long presentmentId) {
 		String sql = "Update PresentmentDetails Set Status = ? Where PresentmentId = ? and Excludereason in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -917,11 +923,15 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				RepayConstants.CHEQUESTATUS_BOUNCE, RepayConstants.CHEQUESTATUS_REALISE,
 				RepayConstants.CHEQUESTATUS_REALISED };
 
-		this.jdbcOperations.update(sql, args);
+		return this.jdbcOperations.update(sql, args);
+	}
 
-		this.jdbcOperations.update("Update PresentmentHeader Set Status = ? where ID = ?",
-				RepayConstants.PEXC_SEND_PRESENTMENT, presentmentId);
+	@Override
+	public int updateHeader(long presentmentId, int totalRecords) {
+		String sql = "Update PresentmentHeader Set Status = ?, TotalRecords = ?  Where Id = ?";
 
+		logger.debug(Literal.SQL.concat(sql));
+		return this.jdbcOperations.update(sql, RepayConstants.PEXC_SEND_PRESENTMENT, totalRecords, presentmentId);
 	}
 
 	public Presentment getPartnerBankId(String finType, String mandateType) {

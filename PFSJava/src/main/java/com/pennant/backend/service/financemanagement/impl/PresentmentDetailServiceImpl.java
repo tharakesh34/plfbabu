@@ -560,8 +560,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		try {
 			String presentmentRef = presentmentHeader.getReference();
 			String bankAccNo = presentmentHeader.getPartnerAcctNumber();
-			boolean isPDC = InstrumentType.isPDC(presentmentHeader.getMandateType())
-					|| InstrumentType.isIPDC(presentmentHeader.getMandateType());
 
 			if (externalPresentmentHook != null) {
 				externalPresentmentHook.processPresentmentRequest(presentmentHeader);

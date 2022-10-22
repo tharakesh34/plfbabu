@@ -81,7 +81,9 @@ public interface PresentmentDAO {
 
 	Presentment getPartnerBankId(String loanType, String mandateType);
 
-	void approveExludes(long id);
+	int approveExludes(long id);
 
 	void updatePartnerBankID(long id, long PartnerBankId);
+
+	int updateHeader(long presentmentId, int totalRecords);
 }

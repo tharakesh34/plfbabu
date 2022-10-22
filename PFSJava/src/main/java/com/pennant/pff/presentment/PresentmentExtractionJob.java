@@ -133,7 +133,7 @@ public class PresentmentExtractionJob {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
-		return stepBuilderFactory.get("EXTRACTION").<PresentmentDetail, PresentmentDetail>chunk(1).reader(itemReader())
+		return stepBuilderFactory.get("EXTRACTION").<PresentmentDetail, PresentmentDetail>chunk(10).reader(itemReader())
 				.processor(new PresentmentItemProcessor(this.presentmentEngine))
 				.writer(new PresentmentItemWriter(this.transactionManager, this.presentmentEngine))
 				.taskExecutor(taskExecutor()).transactionAttribute(attribute).build();

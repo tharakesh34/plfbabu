@@ -231,10 +231,6 @@ public class PresentmentEngine {
 				toDate = dueDate;
 			}
 
-			if (fromDate == null && toDate == null) {
-				System.out.println(instrumentType);
-			}
-
 			long headerId = saveHeader(batchID, pd, fromDate, toDate, instrumentType, presentmentType);
 
 			pd.setDueDate(dueDate);
@@ -345,7 +341,7 @@ public class PresentmentEngine {
 			pd.setSchDate(pd.getDefSchdDate());
 		}
 
-		if (pd.getSchAmtDue().compareTo(BigDecimal.ZERO) > 0 && pd.getDueDate() != null) {
+		if (pd.getSchAmtDue().compareTo(BigDecimal.ZERO) > 0) {
 			doCalculations(ph, pd);
 		}
 	}
@@ -382,15 +378,22 @@ public class PresentmentEngine {
 				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
 			}
 
-			if (!InstrumentType.isECS(pd.getMandateType())) {
-				if (!MandateStatus.isApproved(mandateStatus)) {
-					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
-				}
+			// FIXME Murthy Need to Check with Chaitanya
+			/*
+			 * if (!InstrumentType.isECS(pd.getMandateType())) { if (!MandateStatus.isApproved(mandateStatus)) {
+			 * pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV); }
+			 * 
+			 * if (pd.getMandateExpiryDate() != null && DateUtil.compare(pd.getDefSchdDate(), pd.getMandateExpiryDate())
+			 * > 0) { pd.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY); } }
+			 */
 
-				if (pd.getMandateExpiryDate() != null
-						&& DateUtil.compare(pd.getDefSchdDate(), pd.getMandateExpiryDate()) > 0) {
-					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
-				}
+			if (!MandateStatus.isApproved(mandateStatus)) {
+				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
+			}
+
+			if (pd.getMandateExpiryDate() != null
+					&& DateUtil.compare(pd.getDefSchdDate(), pd.getMandateExpiryDate()) > 0) {
+				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
 			}
 		}
 
@@ -626,23 +629,23 @@ public class PresentmentEngine {
 		List<PresentmentHeader> headerList = presentmentDAO.getPresentmentHeaders(batchId);
 
 		for (PresentmentHeader ph : headerList) {
+			int totalRecords = 0;
+
 			long id = ph.getId();
 
 			List<Long> includeList = presentmentDAO.getIncludeList(id);
 			ph.setIncludeList(includeList);
 
-			/*
-			 * boolean searchIncludeList = presentmentDAO.searchIncludeList(id, 0);
-			 * 
-			 * if (upfronBounceRequired) { presentmentDAO.approveExludes(id); }
-			 * 
-			 * if (!searchIncludeList) { continue; }
-			 */
+			totalRecords = includeList.size();
 
-			/*
-			 * if (!upfronBounceRequired) { List<Long> excludeList = presentmentDAO.getExcludeList(id);
-			 * ph.setExcludeList(excludeList); }
-			 */
+			if (upfronBounceRequired) {
+				totalRecords = totalRecords + presentmentDAO.approveExludes(id);
+			} else {
+				List<Long> excludeList = presentmentDAO.getExcludeList(id);
+				ph.setExcludeList(excludeList);
+
+				totalRecords = totalRecords + excludeList.size();
+			}
 
 			if (StringUtils.isEmpty(ph.getPartnerAcctNumber())
 					&& (ph.getPartnerBankId() == null || ph.getPartnerBankId() <= 0)) {
@@ -674,6 +677,8 @@ public class PresentmentEngine {
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
+
+			presentmentDAO.updateHeader(id, totalRecords);
 		}
 
 	}
