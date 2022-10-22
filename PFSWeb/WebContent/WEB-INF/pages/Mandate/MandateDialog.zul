@@ -143,10 +143,6 @@
 									<label value="${c:l('label_MandateDialog_AmtInWords.value')}" />
 									<label id="amountInWords" style="font-weight:bold;" />
 								</row>
-								<row id="holdRow" visible="false">
-									<label value="${c:l('label_MandateDialog_HoldReason.value')}" />
-									<extendedcombobox id="holdReason" width="200px" />
-								</row>
 								<row id="mandateStatusRow">
 									<label value="${c:l('label_MandateDialog_RegStatus.value')}" />
 									<label id="regStatus" style="font-weight:bold;" />
@@ -155,6 +151,10 @@
 										<combobox id="mandateStatus" readonly="true" disabled="true" />
 										<button id="btnReason" label="view" />
 									</hbox>
+								</row>
+								<row id="holdRow" visible="false">
+									<label value="${c:l('label_MandateDialog_HoldReason.value')}" />
+									<extendedcombobox id="holdReason" width="200px" />
 								</row>
 								<row id="reasonRow">
 									<label value="${c:l('label_MandateStatusDialog_Reason.value')}" />

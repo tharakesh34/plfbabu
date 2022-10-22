@@ -1950,7 +1950,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			if (MandateStatus.isHold(getComboboxValue(this.mandateStatus)) && !this.holdReason.isReadonly()) {
-				aMandate.setHoldReason(Long.valueOf(this.holdReason.getValue()));
+				String holdReason = StringUtils.trimToEmpty(this.holdReason.getValue());
+				if (holdReason != null) {
+					aMandate.setHoldReason(Long.valueOf(holdReason));
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2088,6 +2091,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateStatusDialog_Reason.value"),
 								PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			}
+		}
+
+		if (MandateStatus.isHold(getComboboxValue(this.mandateStatus)) && !this.holdReason.isReadonly()) {
+			this.holdReason.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_HoldReason.value"), null, validate));
 		}
 
 	}
