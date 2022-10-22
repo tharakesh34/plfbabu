@@ -23,6 +23,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.eod.step.StepUtil;
@@ -37,7 +38,7 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 	private DataSource dataSource;
 	private AssetClassificationService assetClassificationService;
 
-	private static final String QUEUE_QUERY = "Select FinID From Asset_Classification_Queue Where ThreadID = ? and Progress= ?";
+	private static final String QUEUE_QUERY = "Select FinID From Asset_Classification_Queue Where ThreadID = ? and Progress = ?";
 
 	public static AtomicLong processedCount = new AtomicLong(0);
 	public static AtomicLong failedCount = new AtomicLong(0);
@@ -97,6 +98,10 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 				assetClassificationService.updateProgress(finID, EodConstants.PROGRESS_IN_PROCESS);
 
 				AssetClassification npa = assetClassificationService.getNpaDetails(finID);
+
+				if (npa == null) {
+					throw new AppException("Data is not found in NPA Loan Info for the FinID :" + finID);
+				}
 
 				npa.setAssetClassSetup(header);
 

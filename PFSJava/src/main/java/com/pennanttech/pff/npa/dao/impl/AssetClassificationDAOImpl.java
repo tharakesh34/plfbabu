@@ -144,7 +144,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 	@Override
 	public void deleteQueue() {
-		jdbcOperations.update("truncate table Asset_Classification_Queue");
+		jdbcOperations.update("Delete From Asset_Classification_Queue");
 	}
 
 	@Override
@@ -640,7 +640,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		sql.append(", eascc.Code EffNpaSubClassCode, eascc.Description EffNpaSubClassDesc");
 		sql.append(", np.EffNpaStage, enp.FinIsActive");
 		sql.append(" From Npa_Loan_Info np");
-		sql.append(" Inner Join Npa_Loan_Info enp on enp.FinReference = np.EffFinReference");
+		sql.append(" Inner Join Npa_Loan_Info enp on enp.FinID = np.EffFinID");
 		sql.append(" Inner Join Asset_Class_Setup_Details acsd on acsd.ID = np.NpaClassID");
 		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.ClassID");
 		sql.append(" Inner Join Asset_Sub_Class_Codes ascc on ascc.ID = acsd.SubClassID");

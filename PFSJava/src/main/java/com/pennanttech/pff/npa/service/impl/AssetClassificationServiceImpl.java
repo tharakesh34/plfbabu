@@ -472,7 +472,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		npa.setEffNpaPastDueDate(null);
 		npa.setEffNpaStage(npa.isNpaStage());
 		npa.setEffNpaClassID(npa.getNpaClassID());
-		npa.setFinID(finID);
+		npa.setEffFinID(finID);
 		npa.setEffFinReference(npa.getFinReference());
 
 		updateClassification(npa);

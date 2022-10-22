@@ -132,7 +132,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 	@Override
 	public ProvisionRuleData getProvisionData(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" npa.FinReference, nps.FinType, nps.Product, nps.CustCategoryCode");
+		sql.append(" npa.FinID, npa.FinReference, nps.FinType, nps.Product, nps.CustCategoryCode");
 		sql.append(", nps.FinAssetValue, nps.FinCurrAssetValue, nps.OsPrincipal, nps.OsProfit, nps.FuturePrincipal");
 		sql.append(", nps.OdPrincipal, nps.OdProfit, nps.TotPriBal, nps.TotPriPaid");
 		sql.append(", nps.TotPftPaid, nps.TotPftAccrued, nps.AmzTillLBDate, nps.TillDateSchdPri");
@@ -145,8 +145,8 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(", nps.CustID, nps.EntityCode, nps.FinCCY, nps.FinBranch");
 		sql.append(", acsd.NpaAge NpaAge, eacsd.NpaAge EffNpaAge");
 		sql.append(" From Npa_Loan_Info npa");
-		sql.append(" Inner Join Npa_Provision_Stage nps on nps.FinReference = npa.FinReference");
-		sql.append(" Inner Join FinanceMain fm on fm.FinReference = nps.FinReference");
+		sql.append(" Inner Join Npa_Provision_Stage nps on nps.FinID = npa.FinID");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = nps.FinID");
 		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Left Join Rules regProvnR on regProvnR.RuleID = ft.RegProvRule");
 		sql.append(" Left Join Rules intProvnR on intProvnR.RuleID = ft.IntProvRule");
@@ -164,6 +164,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				ProvisionRuleData data = new ProvisionRuleData();
 
+				data.setFinID(rs.getLong("FinID"));
 				data.setFinReference(rs.getString("FinReference"));
 				data.setFinType(rs.getString("FinType"));
 				data.setProductCategory(rs.getString("Product"));

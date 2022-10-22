@@ -24,6 +24,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.eod.step.StepUtil;
@@ -98,6 +99,10 @@ public class AssetClassificationTaskLet implements Tasklet {
 				assetClassificationService.updateProgress(finID, EodConstants.PROGRESS_IN_PROCESS);
 
 				AssetClassification ac = assetClassificationService.getClassification(finID);
+
+				if (ac == null) {
+					throw new AppException("Data is not found in NPA Loan Info Stage for the FinID :" + finID);
+				}
 
 				ac.setAssetClassSetup(header);
 				assetClassificationService.setNpaClassification(ac);
