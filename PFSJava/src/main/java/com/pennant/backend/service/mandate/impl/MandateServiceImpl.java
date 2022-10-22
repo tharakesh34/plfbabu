@@ -1204,7 +1204,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			return ErrorUtil.getError("90311", repaymentMethod, curMandate.getMandateType());
 		}
 
-		if (!(curMandate.isOpenMandate() || (curMandate.getOrgReference() == null))) {
+		if (!mandate.isOpenMandate()) {
+			return ErrorUtil.getError("MDT04", String.valueOf(mandate.getMandateID()));
+		}
+
+		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
 			return ErrorUtil.getError("90312", String.valueOf(mandate.getMandateID()));
 		}
 
