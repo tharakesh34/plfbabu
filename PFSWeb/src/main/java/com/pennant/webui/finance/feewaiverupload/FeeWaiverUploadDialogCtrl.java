@@ -1,15 +1,12 @@
 package com.pennant.webui.finance.feewaiverupload;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +40,8 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.northconcepts.datapipeline.core.Record;
+import com.northconcepts.datapipeline.csv.CSVReader;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -380,11 +379,9 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		String fileName = this.media.getName();
 
 		try {
-			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".csv")
-					|| StringUtils.endsWith(fileName.toLowerCase(), ".xlsx")
-					|| StringUtils.endsWith(fileName.toLowerCase(), ".xls"))) {
+			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".xlsx"))) {
 				MessageUtil.showError(
-						"The uploaded file could not be recognized. Please upload a valid csv or xls or xlsx file.");
+						"The uploaded file could not be recognized. Please upload a valid xlsx file.");
 				this.media = null;
 				return;
 			} else {
@@ -1015,7 +1012,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 						&& "Value Date".equalsIgnoreCase(keys.get(2)) && "Waived Amount".equalsIgnoreCase(keys.get(3))
 						&& "Remarks".equalsIgnoreCase(keys.get(4)))) {
 					throw new InterfaceException("Error",
-							"The uploaded file could not be processed.Please upload a valid xls or xlsx file.");
+							"The uploaded file could not be processed.Please upload a valid xlsx file.");
 				}
 
 				Sheet sheet = this.workbook.getSheetAt(0);
@@ -1034,7 +1031,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			}
 		} else {
 			throw new AppException(
-					"The uploaded file could not be recognized. Please upload a valid xls or xlsx or csv file.");
+					"The uploaded file could not be recognized. Please upload a valid xlsx file.");
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1043,75 +1040,54 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	private void processCSVUploadDetails(FeeWaiverUploadHeader uploadHeader) throws IOException, Exception {
 		logger.debug(Literal.ENTERING);
 
-		BufferedReader br = null;
-		String line = "";
-		String cvsSplitBy = ",";
-		String filePath = getFilePath();
-		File parent = new File(filePath);
 
-		if (!parent.exists()) {
-			parent.mkdirs();
-		}
+		File file = new File(filePath.concat(File.separator).concat(this.media.getName()));
 
-		File file = new File(parent.getPath().concat(File.separator).concat(this.media.getName()));
-		if (file.exists()) {
-			file.delete();
-		}
-		file.createNewFile();
+		String delimiter = ",";
+
+		CSVReader reader = null;
 
 		try {
-			if (media.isBinary()) {
-				FileUtils.writeByteArrayToFile(file, this.media.getByteData());
+			reader = new CSVReader(file);
+
+			reader.setFieldNamesInFirstRow(true);
+			reader.setStartingRow(0);
+
+			if (String.valueOf(delimiter.charAt(0)).equals("	")) {
+				reader.setTrimFields(false);
 			} else {
-				FileUtils.writeStringToFile(file, this.media.getStringData());
+				reader.setTrimFields(true);
 			}
-			br = new BufferedReader(new FileReader(file));
-			int count = 0;
-			List<FeeWaiverUpload> feeWaivers = new ArrayList<FeeWaiverUpload>();
+
+			reader.setFieldSeparator(delimiter.charAt(0));
+			reader.open();
 			int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
-			while ((line = br.readLine()) != null) {
-				List<String> row = Arrays.asList(line.split(cvsSplitBy, totalColumns));
+			Record record = null;
 
-				if (row.size() >= totalColumns) {
-					if (count == 0) { // Skip Header row
-						if (CollectionUtils.isEmpty(row) || !("Loan Reference".equalsIgnoreCase(row.get(0))
-								&& "Fee / Charge Code".equalsIgnoreCase(row.get(1))
-								&& "Value Date".equalsIgnoreCase(row.get(2))
-								&& "Waived Amount".equalsIgnoreCase(row.get(3))
-								&& "Remarks".equalsIgnoreCase(row.get(4)))) {
-							throw new InterfaceException("Error",
-									"The uploaded file could not be processed.Please upload a valid xls or xlsx file.");
-						}
-					} else {
-						feeWaivers.add(validateUploadDetails(row, formatter));
-					}
-				} else {
-					// Failure Case
-					FeeWaiverUpload waiverUpload = new FeeWaiverUpload();
-					waiverUpload.setNewRecord(true);
-					waiverUpload.setRecordType(PennantConstants.RCD_ADD);
-					waiverUpload.setVersion(waiverUpload.getVersion() + 1);
-					waiverUpload.setStatus("F");
-					waiverUpload.setReason("Number of columns are not matching.");
-					feeWaivers.add(waiverUpload);
-				}
+			List<FeeWaiverUpload> feeWaivers = new ArrayList<>();
 
-				count++;
+			while ((record = reader.read()) != null) {
+				List<String> row = new ArrayList<>();
+
+				row.add(String.valueOf(record.getField(0).getValue()));
+				row.add(String.valueOf(record.getField(1).getValue()));
+				row.add(String.valueOf(record.getField(2).getValue()));
+				row.add(String.valueOf(record.getField(3).getValue()));
+				row.add(String.valueOf(record.getField(4).getValue()));
+
+				feeWaivers.add(validateUploadDetails(row, formatter));
 			}
+
+			
 			uploadHeader.setUploadFeeWaivers(feeWaivers);
-			uploadHeader.setTotalRecords(count - 1);
+			uploadHeader.setTotalRecords(feeWaivers.size());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		} finally {
-			backUpFile(file);
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
+			if (reader != null) {
+				reader.close();
 			}
 		}
 
