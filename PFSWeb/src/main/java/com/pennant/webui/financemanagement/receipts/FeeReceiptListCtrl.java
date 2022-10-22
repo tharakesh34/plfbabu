@@ -269,7 +269,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				header.setWorkflowId(getWorkFlowId());
 			}
 
-			header.setFinCategory(financeDetailService.getFinCategory(header.getReference()));
+			header.setFinCategory(financeDetailService.getOrgFinCategory(header.getReference()));
 
 			logUserAccess("menu_Item_FeeReceipts", header.getReference());
 			doShowDialogPage(header);
