@@ -1,12 +1,15 @@
 package com.pennant.webui.finance.feewaiverupload;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,8 +43,6 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.northconcepts.datapipeline.core.Record;
-import com.northconcepts.datapipeline.csv.CSVReader;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -1040,54 +1041,75 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	private void processCSVUploadDetails(FeeWaiverUploadHeader uploadHeader) throws IOException, Exception {
 		logger.debug(Literal.ENTERING);
 
+		BufferedReader br = null;
+		String line = "";
+		String cvsSplitBy = ",";
+		String filePath = getFilePath();
+		File parent = new File(filePath);
 
-		File file = new File(filePath.concat(File.separator).concat(this.media.getName()));
+		if (!parent.exists()) {
+			parent.mkdirs();
+		}
 
-		String delimiter = ",";
-
-		CSVReader reader = null;
+		File file = new File(parent.getPath().concat(File.separator).concat(this.media.getName()));
+		if (file.exists()) {
+			file.delete();
+		}
+		file.createNewFile();
 
 		try {
-			reader = new CSVReader(file);
-
-			reader.setFieldNamesInFirstRow(true);
-			reader.setStartingRow(0);
-
-			if (String.valueOf(delimiter.charAt(0)).equals("	")) {
-				reader.setTrimFields(false);
+			if (media.isBinary()) {
+				FileUtils.writeByteArrayToFile(file, this.media.getByteData());
 			} else {
-				reader.setTrimFields(true);
+				FileUtils.writeStringToFile(file, this.media.getStringData());
 			}
-
-			reader.setFieldSeparator(delimiter.charAt(0));
-			reader.open();
+			br = new BufferedReader(new FileReader(file));
+			int count = 0;
+			List<FeeWaiverUpload> feeWaivers = new ArrayList<FeeWaiverUpload>();
 			int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
-			Record record = null;
+			while ((line = br.readLine()) != null) {
+				List<String> row = Arrays.asList(line.split(cvsSplitBy, totalColumns));
 
-			List<FeeWaiverUpload> feeWaivers = new ArrayList<>();
+				if (row.size() >= totalColumns) {
+					if (count == 0) { // Skip Header row
+						if (CollectionUtils.isEmpty(row) || !("Loan Reference".equalsIgnoreCase(row.get(0))
+								&& "Fee / Charge Code".equalsIgnoreCase(row.get(1))
+								&& "Value Date".equalsIgnoreCase(row.get(2))
+								&& "Waived Amount".equalsIgnoreCase(row.get(3))
+								&& "Remarks".equalsIgnoreCase(row.get(4)))) {
+							throw new InterfaceException("Error",
+									"The uploaded file could not be processed.Please upload a valid xls or xlsx file.");
+						}
+					} else {
+						feeWaivers.add(validateUploadDetails(row, formatter));
+					}
+				} else {
+					// Failure Case
+					FeeWaiverUpload waiverUpload = new FeeWaiverUpload();
+					waiverUpload.setNewRecord(true);
+					waiverUpload.setRecordType(PennantConstants.RCD_ADD);
+					waiverUpload.setVersion(waiverUpload.getVersion() + 1);
+					waiverUpload.setStatus("F");
+					waiverUpload.setReason("Number of columns are not matching.");
+					feeWaivers.add(waiverUpload);
+				}
 
-			while ((record = reader.read()) != null) {
-				List<String> row = new ArrayList<>();
-
-				row.add(String.valueOf(record.getField(0).getValue()));
-				row.add(String.valueOf(record.getField(1).getValue()));
-				row.add(String.valueOf(record.getField(2).getValue()));
-				row.add(String.valueOf(record.getField(3).getValue()));
-				row.add(String.valueOf(record.getField(4).getValue()));
-
-				feeWaivers.add(validateUploadDetails(row, formatter));
+				count++;
 			}
-
-			
 			uploadHeader.setUploadFeeWaivers(feeWaivers);
-			uploadHeader.setTotalRecords(feeWaivers.size());
+			uploadHeader.setTotalRecords(count - 1);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		} finally {
-			if (reader != null) {
-				reader.close();
+			backUpFile(file);
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
 			}
 		}
 
