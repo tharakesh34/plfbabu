@@ -5236,5 +5236,15 @@
 			<column name="BatchID" type="bigint" />
 		</createIndex>
 	</changeSet>
-
+	
+	<changeSet id="PSD#207229" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE = 'MNDT04';
+				
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('MNDT04', 'EN', 'E', 'Selected mandate is not an Open mandate {0}.', 'error', 'Approved', null, null, null, null, null, 0, null, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
