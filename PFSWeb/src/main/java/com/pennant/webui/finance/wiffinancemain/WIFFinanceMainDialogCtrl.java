@@ -992,7 +992,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (aFinanceMain.isAllowGrcRepay()) {
 				this.grcRepayRow.setVisible(true);
 				this.allowGrcRepay.setChecked(aFinanceMain.isAllowGrcRepay());
-				fillComboBox(this.cbGrcSchdMthd, aFinanceMain.getGrcSchdMthd(), schMethodList, ",EQUAL,PRI_PFT,PRI,");
+				fillComboBox(this.cbGrcSchdMthd, aFinanceMain.getGrcSchdMthd(), schMethodList,
+						",EQUAL,PRI_PFT,PRI,POSINT,");
 			}
 
 			this.graceRate.setMarginValue(aFinanceMain.getGrcMargin());
@@ -1155,7 +1156,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.repayRate.setMarginValue(aFinanceMain.getRepayMargin());
 
 		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList,
-				",NO_PAY,GRCNDPAY,PFTCAP,POSINT");
+				",NO_PAY,GRCNDPAY,PFTCAP,POSINT,");
 
 		if (StringUtils.isNotEmpty(aFinanceMain.getRepayBaseRate()) && StringUtils.equals(
 				CalculationConstants.RATE_BASIS_R, this.repayRateBasis.getSelectedItem().getValue().toString())) {
@@ -2528,7 +2529,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					PennantStaticListUtil.getInterestRateType(true), "");
 			this.repayRateBasis.setDisabled(true);
 			fillComboBox(this.cbScheduleMethod, CalculationConstants.SCHMTHD_EQUAL, schMethodList,
-					",NO_PAY,GRCNDPAY,PFTCAP,");
+					",NO_PAY,GRCNDPAY,PFTCAP,POSINT,");
 			this.cbScheduleMethod.setDisabled(true);
 			Events.sendEvent("onChange", repayRateBasis, true);
 		}
@@ -4624,7 +4625,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.cbGrcSchdMthd.setDisabled(false);
 			this.space_GrcSchdMthd.setStyle("background-color:red");
 			fillComboBox(this.cbGrcSchdMthd, getFinanceDetail().getFinScheduleData().getFinanceMain().getGrcSchdMthd(),
-					schMethodList, ",EQUAL,PRI_PFT,PRI,");
+					schMethodList, ",EQUAL,PRI_PFT,PRI,POSINT,");
 		} else {
 			this.cbGrcSchdMthd.setDisabled(true);
 			this.cbGrcSchdMthd.setSelectedIndex(0);
@@ -4838,7 +4839,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 
 			this.allowGrcRepay.setChecked(finType.isFinIsAlwGrcRepay());
-			fillComboBox(cbGrcSchdMthd, finType.getFinGrcSchdMthd(), schMethodList, ",EQUAL,PRI_PFT,PRI,");
+			fillComboBox(cbGrcSchdMthd, finType.getFinGrcSchdMthd(), schMethodList, ",EQUAL,PRI_PFT,PRI,POSINT,");
 
 			if (finType.isFinIsAlwGrcRepay()) {
 				this.grcRepayRow.setVisible(true);
@@ -5504,7 +5505,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		if ("#".equals(getComboboxValue(this.cbScheduleMethod))) {
 			fillComboBox(this.cbScheduleMethod, financeType.getFinSchdMthd(), schMethodList,
-					",NO_PAY,GRCNDPAY,PFTCAP,");
+					",NO_PAY,GRCNDPAY,PFTCAP,POSINT,");
 		}
 
 		if ("#".equals(getComboboxValue(this.cbProfitDaysBasis))) {
@@ -5546,7 +5547,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 				fillComboBox(this.cbGrcSchdMthd,
 						getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcSchdMthd(), schMethodList,
-						",EQUAL,PRI_PFT,PRI,");
+						",EQUAL,PRI_PFT,PRI,POSINT,");
 			}
 
 			if (this.graceRate.getMarginValue() == null) {
