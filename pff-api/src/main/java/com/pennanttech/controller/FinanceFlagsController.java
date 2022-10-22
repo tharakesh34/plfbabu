@@ -21,6 +21,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FinanceFlagsController extends ExtendedTestClass {
@@ -77,7 +78,7 @@ public class FinanceFlagsController extends ExtendedTestClass {
 		List<FinFlagsDetail> flagseList = financeFlag.getFinFlagDetailList();
 		for (FinFlagsDetail detail : flagseList) {
 			detail.setLastMntBy(userDetails.getUserId());
-			detail.setModuleName(FinanceConstants.MODULE_NAME);
+			detail.setModuleName(FinServiceEvent.FINFLAGS);
 		}
 
 		financeFlag.setUserDetails(userDetails);
