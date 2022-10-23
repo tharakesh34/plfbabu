@@ -1219,6 +1219,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 
 			this.deleteCheques.setVisible(!cheques.isEmpty());
+			listHeaderCheckBoxComp.setChecked(cheques.isEmpty());
 			this.totNoOfCheques.setValue(totalCheques);
 			chequeDetailList.addAll(cheques);
 
@@ -1440,7 +1441,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		}
 
 		if (wve.isEmpty()) {
-			intbox.setValue(Integer.valueOf(combobox.getValue()));
+			intbox.setValue((int) combobox.getSelectedItem().getValue());
 			currencyBox.setValue(PennantApplicationUtil.formateAmount(getEmiAmount(chequeDate), 2));
 		}
 
