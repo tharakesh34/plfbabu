@@ -38,7 +38,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public long createBatch(String batchName) {
 		String sql = "Insert into Presentment_Batch_Job (Name, StartTime) values (?, ?)";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -46,15 +46,22 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "Id" });
-				ps.setString(1, batchName);
-				ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+				try (PreparedStatement ps = con.prepareStatement(sql, new String[] { "Id" })) {
+					ps.setString(1, batchName);
+					ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
 
-				return ps;
+					return ps;
+				}
 			}
 		}, keyHolder);
 
-		return keyHolder.getKey().longValue();
+		Number key = keyHolder.getKey();
+
+		if (key == null) {
+			return 0;
+		}
+
+		return key.longValue();
 	}
 
 	@Override
