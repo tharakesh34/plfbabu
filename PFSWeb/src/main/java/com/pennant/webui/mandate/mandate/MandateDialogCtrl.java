@@ -958,7 +958,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.emandateRow.setVisible(true);
 			readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.eMandateReferenceNo);
 			readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), this.eMandateSource);
-			readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.umrNumber);
 		}
 
 		if (instrumentType == InstrumentType.DAS) {

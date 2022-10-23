@@ -720,8 +720,9 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	public void onCheck$externalMandate(Event event) {
 		if (this.externalMandate.isChecked()) {
-			readOnlyComponent(isReadOnly("MandateDialog_umrNumber"), this.umrNumber);
+			readOnlyComponent(isReadOnly("MandateDialog_UmrNumber"), this.umrNumber);
 		} else {
+			this.umrNumber.setConstraint("");
 			readOnlyComponent(true, this.umrNumber);
 		}
 
@@ -867,7 +868,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MasterDialog_TxnDetails"), txnDetails);
 			readOnlyComponent(isReadOnly("MandateDialog_DefaultMandate"), defaultMandate);
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
-			readOnlyComponent(isReadOnly("MandateDialog_umrNumber"), this.umrNumber);
+			readOnlyComponent(isReadOnly("MandateDialog_UmrNumber"), this.umrNumber);
 
 		}
 		readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), eMandateSource);
@@ -949,8 +950,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (instrumentType == InstrumentType.EMANDATE) {
 			this.emandateRow.setVisible(true);
-			readOnlyComponent(false, this.eMandateReferenceNo);
-			readOnlyComponent(false, this.eMandateSource);
+			readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.eMandateReferenceNo);
+			readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), this.eMandateSource);
 		}
 
 		if (!issecurityMandate) {
@@ -2029,6 +2030,10 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void doSetMandateDetValidation(boolean validate) {
+		if (this.externalMandate.isChecked() && !this.umrNumber.isReadonly()) {
+			this.umrNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_UmrNumber.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
 
 		Date mandbackDate = DateUtil.addDays(SysParamUtil.getAppDate(),
 				-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
