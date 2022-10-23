@@ -1969,7 +1969,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			if (financeMain != null && StringUtils.isNotEmpty(financeMain.getParentRef())) {
 				List<FinanceMain> parentFinanceMainList = getFinanceMainObject(financeMain.getParentRef());
 				ocrAmountCalculationForProrata(ocrTotalDemand, ocrTotalpaid, financeMain, parentFinanceMainList);
-			} else {
+			} else if (financeMain != null && StringUtils.isNotEmpty(financeMain.getFinReference())) {
 				List<FinanceMain> childFinanceMainList = getFinanceMainObject(financeMain.getFinReference());
 				if (CollectionUtils.isNotEmpty(childFinanceMainList)) {
 					ocrAmountCalculationForProrata(ocrTotalDemand, ocrTotalpaid, financeMain, childFinanceMainList);
