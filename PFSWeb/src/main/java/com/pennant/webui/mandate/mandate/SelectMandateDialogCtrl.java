@@ -256,8 +256,8 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						MessageUtil.showError("Allow Das is not applicable for this employer");
 						return;
 					}
-					this.mandate.setEmployeeID(employerDetails.getEmployeeID());
-					this.mandate.setEmployerName(employerDetails.getEmployerName());
+					this.mandate.setEmployerID(employerDetails.getEmployerID());
+					this.mandate.setEmployeeNo(employerDetails.getEmployeeNo());
 				}
 			}
 

@@ -181,9 +181,9 @@ public class Mandate extends AbstractWorkflowEntity {
 	private Long holdReason;
 	private boolean securityMandate;
 	@XmlElement
-	private Long employeeID;
+	private Long employerID;
 	@XmlElement
-	private String employerName;
+	private String employeeNo;
 	private String finRepayMethod;
 	private String alwdRpyMethods;
 	private Long oldMandate;
@@ -936,20 +936,20 @@ public class Mandate extends AbstractWorkflowEntity {
 		this.securityMandate = securityMandate;
 	}
 
-	public Long getEmployeeID() {
-		return employeeID;
+	public Long getEmployerID() {
+		return employerID;
 	}
 
-	public void setEmployeeID(Long employeeID) {
-		this.employeeID = employeeID;
+	public void setEmployerID(Long employerID) {
+		this.employerID = employerID;
 	}
 
-	public String getEmployerName() {
-		return employerName;
+	public String getEmployeeNo() {
+		return employeeNo;
 	}
 
-	public void setEmployerName(String employerName) {
-		this.employerName = employerName;
+	public void setEmployeeNo(String employeeNo) {
+		this.employeeNo = employeeNo;
 	}
 
 	public String getFinRepayMethod() {

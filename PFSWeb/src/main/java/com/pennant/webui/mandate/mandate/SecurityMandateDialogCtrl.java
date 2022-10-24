@@ -181,8 +181,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Row mandateStatusRow;
 	protected Combobox mandateStatus;
 	protected Button btnReason;
-	protected Row reasonRow;
-	protected Textbox reason;
+	protected Row remarksRow;
+	protected Textbox remarks;
 	protected Textbox documentName;
 
 	protected Groupbox mandateSwapGroupbox;
@@ -206,8 +206,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	protected Groupbox dasGroupbox;
 	protected Row dasRow;
-	private ExtendedCombobox employeeID;
-	private Textbox employerName;
+	private ExtendedCombobox employerID;
+	private Textbox employeeNo;
 
 	protected Groupbox otherDetailsGroupbox;
 	protected Datebox inputDate;
@@ -513,7 +513,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// addMandateFiletrs(null);
 
 		this.active.setChecked(true);
-		this.reason.setMaxlength(60);
+		this.remarks.setMaxlength(60);
 		this.umrNumber.setReadonly(true);
 		this.documentName.setMaxlength(150);
 
@@ -556,18 +556,18 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.holdReason.setDescColumn("Reason");
 		this.holdReason.setValidateColumns(new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" });
 
-		this.employeeID.setInputAllowed(true);
-		this.employeeID.setMandatoryStyle(true);
-		this.employeeID.setModuleName("EmployerDetails");
-		this.employeeID.setTextBoxWidth(200);
-		this.employeeID.setValueColumn("EmployerId");
-		this.employeeID.setValueType(DataType.LONG);
-		this.employeeID.setFilters(new Filter[] { new Filter("AllowDAS", 1, Filter.OP_EQUAL) });
-		this.employeeID.setValidateColumns(new String[] { "EmployerId" });
-		this.employerName.setValue("EmpName");
+		this.employerID.setInputAllowed(true);
+		this.employerID.setMandatoryStyle(true);
+		this.employerID.setModuleName("EmployerDetails");
+		this.employerID.setTextBoxWidth(200);
+		this.employerID.setValueColumn("EmployerId");
+		this.employerID.setValueType(DataType.LONG);
+		this.employerID.setFilters(new Filter[] { new Filter("AllowDAS", 1, Filter.OP_EQUAL) });
+		this.employerID.setValidateColumns(new String[] { "EmployerId" });
+		this.employeeNo.setValue("EmpName");
 
 		if (fromLoan) {
-			this.reasonRow.setVisible(false);
+			this.remarksRow.setVisible(false);
 			this.mandateStatusRow.setVisible(false);
 		}
 
@@ -965,11 +965,11 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
 
 				if (fromLoan) {
-					readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
+					readOnlyComponent(isReadOnly("MandateDialog_EmployerID"), this.employerID);
 				} else {
-					readOnlyComponent(true, this.employeeID);
+					readOnlyComponent(true, this.employerID);
 				}
-				readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
+				readOnlyComponent(isReadOnly("MandateDialog_EmployeeNo"), this.employeeNo);
 
 			}
 
@@ -1101,24 +1101,24 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (status.equals("") || status.equals(PennantConstants.List_Select)) {
 			mandateStatusRow.setVisible(false);
-			reasonRow.setVisible(false);
+			remarksRow.setVisible(false);
 		} else {
 			mandateStatusRow.setVisible(true);
-			reasonRow.setVisible(true);
+			remarksRow.setVisible(true);
 		}
 
 		if (MandateStatus.isRejected(status)) {
 			readOnlyComponent(true, mandateStatus);
-			readOnlyComponent(true, reason);
+			readOnlyComponent(true, remarks);
 		}
 
 		if (MandateStatus.isNew(status) || MandateStatus.isInprocess(status)) {
 			readOnlyComponent(true, this.mandateStatus);
-			readOnlyComponent(true, reason);
+			readOnlyComponent(true, remarks);
 
 			mandateStatusRow.setVisible(true);
-			reasonRow.setVisible(true);
-			this.reason.setValue("");
+			remarksRow.setVisible(true);
+			this.remarks.setValue("");
 		}
 
 		if (MandateStatus.isApproved(status) || MandateStatus.isHold(status) || MandateStatus.isRelease(status)
@@ -1171,11 +1171,11 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (registration) {
-			this.reasonRow.setVisible(true);
+			this.remarksRow.setVisible(true);
 			this.mandateStatusRow.setVisible(true);
 
 			readOnlyComponent(false, this.mandateStatus);
-			readOnlyComponent(false, this.reason);
+			readOnlyComponent(false, this.remarks);
 
 			this.btnCancel.setVisible(false);
 			this.btnEdit.setVisible(false);
@@ -1193,7 +1193,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				readOnlyComponent(true, this.custID);
 			}
 
-			this.reasonRow.setVisible(false);
+			this.remarksRow.setVisible(false);
 
 			readOnlyComponent(true, this.finReference);
 		}
@@ -1266,7 +1266,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_Periodicity"), this.periodicity);
 		readOnlyComponent(isReadOnly("MandateDialog_PhoneNumber"), this.phoneNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_Status"), this.mandateStatus);
-		readOnlyComponent(isReadOnly("MandateDialog_Status"), this.reason);
+		readOnlyComponent(isReadOnly("MandateDialog_Status"), this.remarks);
 		readOnlyComponent(isReadOnly("MandateDialog_InputDate"), this.inputDate);
 		readOnlyComponent(isReadOnly("MandateDialog_ExternalMandate"), this.externalMandate);
 		readOnlyComponent(true, this.umrNumber);
@@ -1283,8 +1283,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.securityMandate);
 		}
 
-		readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
-		readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
+		readOnlyComponent(isReadOnly("MandateDialog_EmployerID"), this.employerID);
+		readOnlyComponent(isReadOnly("MandateDialog_EmployeeNo"), this.employeeNo);
 		readOnlyComponent(isReadOnly("button_MandateDialog_btnPennyDropResult"), this.btnPennyDropResult);
 
 		if (MandateExtension.PARTNER_BANK_REQ) {
@@ -1386,7 +1386,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.defaultMandate);
 		readOnlyComponent(true, this.mandateStatus);
 		readOnlyComponent(true, this.btnReason);
-		readOnlyComponent(true, this.reason);
+		readOnlyComponent(true, this.remarks);
 
 		readOnlyComponent(true, this.externalMandate);
 		readOnlyComponent(true, this.umrNumber);
@@ -1399,8 +1399,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.holdReason);
 		readOnlyComponent(true, this.swapMandate);
 		readOnlyComponent(true, this.swapEffectiveDate);
-		readOnlyComponent(true, this.employeeID);
-		readOnlyComponent(true, this.employerName);
+		readOnlyComponent(true, this.employerID);
+		readOnlyComponent(true, this.employeeNo);
 	}
 
 	public void doReadOnly() {
@@ -1487,7 +1487,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		fillComboBox(this.mandateStatus, aMandate.getStatus(), MandateUtil.getMandateStatus(), excludeList);
 
-		this.reason.setValue(aMandate.getReason());
+		this.remarks.setValue(aMandate.getReason());
 
 		doWriteData(aMandate);
 
@@ -1518,12 +1518,12 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.swapEffectiveDate.setValue(aMandate.getSwapEffectiveDate());
 		}
 
-		if (aMandate.getEmployeeID() != null) {
-			this.employeeID.setValue(String.valueOf(aMandate.getEmployeeID()));
-			this.employerName.setValue(aMandate.getEmployerName());
+		if (aMandate.getEmployerID() != null) {
+			this.employerID.setValue(String.valueOf(aMandate.getEmployerID()));
+			this.employeeNo.setValue(aMandate.getEmployeeNo());
 		} else {
-			this.employeeID.setValue("");
-			this.employerName.setValue("");
+			this.employerID.setValue("");
+			this.employeeNo.setValue("");
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1579,7 +1579,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.maxLimit.setValue(PennantApplicationUtil.formateAmount(aMandate.getMaxLimit(), ccyFormatter));
 		this.periodicity.setValue(aMandate.getPeriodicity());
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
-		this.reason.setValue(aMandate.getReason());
+		this.remarks.setValue(aMandate.getReason());
 		this.umrNumber.setValue(aMandate.getMandateRef());
 		this.documentName.setValue(aMandate.getDocumentName());
 		this.defaultMandate.setChecked(aMandate.isDefaultMandate());
@@ -1808,7 +1808,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
-			aMandate.setReason(this.reason.getValue());
+			aMandate.setReason(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1936,14 +1936,14 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
-			String empId = StringUtils.trimToNull(employeeID.getValue());
-			aMandate.setEmployeeID(empId == null ? null : Long.valueOf(empId));
+			String empId = StringUtils.trimToNull(employerID.getValue());
+			aMandate.setEmployerID(empId == null ? null : Long.valueOf(empId));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aMandate.setEmployerName(this.employerName.getValue());
+			aMandate.setEmployeeNo(this.employeeNo.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2060,11 +2060,11 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					ccyFormatter, validate, false));
 		}
 
-		if (!this.reason.isReadonly() && (PennantConstants.List_Select.equals(this.mandateStatus.getValue()))) {
+		if (!this.remarks.isReadonly() && (PennantConstants.List_Select.equals(this.mandateStatus.getValue()))) {
 
 			if (this.mandateStatus.getValue().equals(this.mandate.getStatus())) {
-				this.reason
-						.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateStatusDialog_Reason.value"),
+				this.remarks
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateStatusDialog_Remarks.value"),
 								PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			}
 		}
@@ -2115,9 +2115,9 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void doSetDasValidation(boolean validate) {
-		if (this.dasRow.isVisible() && !this.employeeID.isReadonly()) {
-			this.employeeID.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_MandateDialog_EmployeeID.value"), null, true, false));
+		if (this.dasRow.isVisible() && !this.employerID.isReadonly()) {
+			this.employerID.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_EmployerID.value"), null, true, false));
 
 		}
 	}
@@ -2166,14 +2166,14 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.maxLimit.setConstraint("");
 		this.phoneNumber.setConstraint("");
 		this.mandateStatus.setConstraint("");
-		this.reason.setConstraint("");
+		this.remarks.setConstraint("");
 		this.finReference.setConstraint("");
 		this.eMandateReferenceNo.setConstraint("");
 		this.eMandateSource.setConstraint("");
 		this.partnerBank.setConstraint("");
 		this.holdReason.setConstraint("");
-		this.employeeID.setConstraint("");
-		this.employerName.setConstraint("");
+		this.employerID.setConstraint("");
+		this.employeeNo.setConstraint("");
 	}
 
 	@Override
@@ -2192,14 +2192,14 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.maxLimit.setErrorMessage("");
 		this.phoneNumber.setErrorMessage("");
 		this.mandateStatus.setErrorMessage("");
-		this.reason.setErrorMessage("");
+		this.remarks.setErrorMessage("");
 		this.documentName.setErrorMessage("");
 		this.finReference.setErrorMessage("");
 		this.partnerBank.setErrorMessage("");
 
 		this.holdReason.setErrorMessage("");
-		this.employeeID.setErrorMessage("");
-		this.employerName.setErrorMessage("");
+		this.employerID.setErrorMessage("");
+		this.employeeNo.setErrorMessage("");
 	}
 
 	protected void refreshList() {
@@ -2306,22 +2306,22 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfill$employeeID(Event event) {
-		Object dataObject = employeeID.getObject();
+	public void onFulfill$employerID(Event event) {
+		Object dataObject = employerID.getObject();
 
 		if (dataObject instanceof String) {
-			this.employeeID.setValue(dataObject.toString());
+			this.employerID.setValue(dataObject.toString());
 			return;
 		}
 
 		EmployerDetail details = (EmployerDetail) dataObject;
 		if (details != null) {
-			this.employeeID.setValue(String.valueOf(details.getEmployerId()));
-			this.employerName.setValue(details.getEmpName());
+			this.employerID.setValue(String.valueOf(details.getEmployerId()));
+			this.employeeNo.setValue(details.getEmpName());
 
 		} else {
-			this.employeeID.setValue("");
-			this.employerName.setValue("");
+			this.employerID.setValue("");
+			this.employeeNo.setValue("");
 		}
 	}
 
@@ -2377,7 +2377,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.micr.setValue("");
 		this.ifsc.setValue("");
 		this.city.setValue("");
-		this.reason.setValue("");
+		this.remarks.setValue("");
 		this.documentName.setValue("");
 		this.defaultMandate.setChecked(false);
 		this.partnerBank.setValue("");
@@ -2386,8 +2386,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.eMandateReferenceNo.setValue("");
 
 		this.holdReason.setValue("");
-		this.employeeID.setValue("");
-		this.employerName.setValue("");
+		this.employerID.setValue("");
+		this.employeeNo.setValue("");
 
 	}
 

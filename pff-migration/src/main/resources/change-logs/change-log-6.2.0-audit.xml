@@ -653,4 +653,12 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#76.9" author="saikiran.n">
+		<renameColumn tableName="ADTMANDATES" oldColumnName="EmployeeID" newColumnName="EmployerID" />
+	</changeSet>
+
+	<changeSet id="ST#76.10" author="saikiran.n">
+		<renameColumn tableName="ADTMANDATES" oldColumnName="EmployerName" newColumnName="EmployeeNo" />
+	</changeSet>
+
 </databaseChangeLog>
