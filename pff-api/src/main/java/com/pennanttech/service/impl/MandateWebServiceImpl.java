@@ -366,16 +366,16 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 			returnStatus = validateBankDetail(mandate);
 			break;
 		case DAS:
-			if (mandate.getEmployeeID() == null) {
-				return returnStatus = getFailedStatus("90502", "employeeID");
+			if (mandate.getEmployerID() == null) {
+				return getFailedStatus("90502", "employerID");
 			}
 
 			Mandate employerDetails = mandateService.getEmployerDetails(mandate.getCustID());
 
-			if (employerDetails == null || employerDetails.getEmployeeID().compareTo(mandate.getEmployeeID()) != 0) {
-				returnStatus = getFailedStatus("MNDT01", String.valueOf(mandate.getEmployeeID()));
+			if (employerDetails == null || employerDetails.getEmployerID().compareTo(mandate.getEmployerID()) != 0) {
+				return getFailedStatus("MNDT01", String.valueOf(mandate.getEmployerID()));
 			} else if (!employerDetails.isAllowDAS()) {
-				returnStatus = getFailedStatus("MNDT02", String.valueOf(mandate.getEmployeeID()));
+				return getFailedStatus("MNDT02", String.valueOf(mandate.getEmployerID()));
 			}
 
 			break;
@@ -636,8 +636,8 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		mndt.setSourceId(PennantConstants.FINSOURCE_ID_API);
 
 		if (InstrumentType.isDAS(mandate.getMandateType())) {
-			mndt.setEmployeeID(mandate.getEmployeeID());
-			mndt.setEmployerName(mandate.getEmployerName());
+			mndt.setEmployerID(mandate.getEmployerID());
+			mndt.setEmployeeNo(mandate.getEmployeeNo());
 		} else if (InstrumentType.isSI(mandate.getMandateType())) {
 			mndt.setBankBranchID(mandate.getBankBranchID());
 			mndt.setAccNumber(mandate.getAccNumber());

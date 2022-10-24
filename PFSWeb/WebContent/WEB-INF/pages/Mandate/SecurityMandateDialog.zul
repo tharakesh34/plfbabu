@@ -158,10 +158,10 @@
 										<button id="btnReason" label="view" />
 									</hbox>
 								</row>
-								<row id="reasonRow">
-									<label value="${c:l('label_MandateStatusDialog_Reason.value')}" />
+								<row id="remarksRow">
+									<label value="${c:l('label_MandateStatusDialog_Remarks.value')}" />
 									<cell colspan="3">
-										<textbox id="reason" maxlength="200" width="880px" multiline="true" rows="5" />
+										<textbox id="remarks" maxlength="200" width="880px" multiline="true" rows="5" />
 									</cell>
 								</row>
 								<row>
@@ -289,10 +289,10 @@
 							</columns>
 							<rows>
 								<row id="dasRow" visible="false">
-									<label value="${c:l('label_MandateDialog_EmployeeID.value')}" />
-									<extendedcombobox id="employeeID" width="200px" readonly="true" />
-									<label value="${c:l('label_MandateDialog_EmployerName.value')}" />
-									<textbox id="employerName" width="250px" />
+									<label value="${c:l('label_MandateDialog_EmployeeNo.value')}" />
+									<textbox id="employeeNo" width="250px" />
+									<label value="${c:l('label_MandateDialog_EmployerID.value')}" />
+									<extendedcombobox id="employerID" width="200px" readonly="true" />
 								</row>
 							</rows>
 						</grid>
