@@ -1,22 +1,16 @@
 package com.pennant.pff.batch.job;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersIncrementer;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
 import org.springframework.batch.core.configuration.support.MapJobRegistry;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
@@ -26,116 +20,120 @@ import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobOperator;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.support.JdbcTransactionManager;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.transaction.PlatformTransactionManager;
 
-public class BatchConfiguration extends DefaultBatchConfigurer {
+public class BatchConfiguration {
 	protected static final Log logger = LogFactory.getLog(BatchConfiguration.class.getClass());
 
 	protected DataSource dataSource;
 	protected PlatformTransactionManager transactionManager;
-	private JobOperator jobOperator;
+	protected String tablePrefix;
+	protected JobRepository jobRepository;
+	protected JobLauncher jobLauncher;
+	protected JobExplorer jobExplorer;
+	protected JobOperator jobOperator;
+	protected CustomSerializer serializer;
+	protected MapJobRegistry jobRegistry;
+	protected DefaultLobHandler defaultLobHandler;
+	protected StepBuilderFactory stepBuilderFactory;
+	protected JobBuilderFactory jobBuilderFactory;
+	protected JobParametersIncrementer jobParametersIncrementer;
 
-	private String tablePrefix;
-
-	public BatchConfiguration(String tablePrefix) throws Exception {
+	public BatchConfiguration() throws Exception {
 		super();
+	}
+
+	public BatchConfiguration(DataSource dataSource, String tablePrefix) throws Exception {
+		this.dataSource = dataSource;
 		this.tablePrefix = tablePrefix;
+		this.transactionManager = new DataSourceTransactionManager(this.dataSource);
 	}
 
-	public JobInstance getLastJobInstance(String jobName) {
-		return getJobExplorer().getLastJobInstance(jobName);
+	@PostConstruct
+	public void initilize() throws Exception {
+		this.serializer = serializer();
+		this.defaultLobHandler = defaultLobHandler();
+		this.jobRegistry = jobRegistry();
+		this.jobRepository = createJobRepository();
+		this.jobLauncher = createJobLauncher();
+		this.jobExplorer = createJobExplorer();
+		this.jobOperator = jobOperator();
+		this.jobBuilderFactory = new JobBuilderFactory(jobRepository);
+		this.stepBuilderFactory = new StepBuilderFactory(jobRepository, transactionManager);
+		this.jobParametersIncrementer = jobParametersIncrementer();
 	}
 
-	public JobExecution getLastJobExecution(JobInstance jobInstance) {
-		return getJobExplorer().getLastJobExecution(jobInstance);
+	public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor() {
+		JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor = new JobRegistryBeanPostProcessor();
+		jobRegistryBeanPostProcessor.setJobRegistry(jobRegistry);
+		return jobRegistryBeanPostProcessor;
 	}
 
-	public Set<JobExecution> findRunningJobExecutions(String jobName) {
-		return getJobExplorer().findRunningJobExecutions(jobName);
+	public CustomSerializer serializer() {
+		return new CustomSerializer();
 	}
 
-	public List<StepExecution> getStepExecutions(JobInstance jobInstance) throws Exception {
-		List<StepExecution> list = new ArrayList<>();
-
-		List<JobExecution> jobExecutions = getJobExplorer().getJobExecutions(jobInstance);
-
-		jobExecutions.stream().forEach(je -> list.addAll(je.getStepExecutions()));
-
-		Map<String, StepExecution> distinctSteps = new HashMap<>();
-
-		list.stream().forEach(se -> distinctSteps.put(se.getStepName(), se));
-
-		return new ArrayList<StepExecution>(distinctSteps.values());
+	public DefaultLobHandler defaultLobHandler() {
+		return new DefaultLobHandler();
 	}
 
-	@Override
+	public MapJobRegistry jobRegistry() {
+		return new MapJobRegistry();
+	}
+
 	protected JobLauncher createJobLauncher() throws Exception {
 		SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
-		jobLauncher.setJobRepository(getJobRepository());
+		jobLauncher.setJobRepository(jobRepository);
+		jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
 		jobLauncher.afterPropertiesSet();
 		return jobLauncher;
 	}
 
-	@Override
 	protected JobRepository createJobRepository() throws Exception {
 		JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
 		factory.setDataSource(dataSource);
-		factory.setSerializer(serializer());
+		factory.setSerializer(serializer);
 		factory.setTablePrefix(tablePrefix);
 		factory.setTransactionManager(transactionManager);
+		factory.setValidateTransactionState(false);
 		factory.afterPropertiesSet();
-		factory.setLobHandler(lobHandler());
+		factory.setLobHandler(defaultLobHandler);
 
 		return factory.getObject();
 	}
 
-	@Override
 	protected JobExplorer createJobExplorer() throws Exception {
 		JobExplorerFactoryBean factory = new JobExplorerFactoryBean();
 		factory.setDataSource(dataSource);
 		factory.afterPropertiesSet();
 		factory.setTablePrefix(tablePrefix);
-		factory.setSerializer(serializer());
+		factory.setSerializer(serializer);
 		return factory.getObject();
 	}
 
-	@Bean
-	protected void jobOperator() throws Exception {
+	public JobOperator jobOperator() throws Exception {
 		SimpleJobOperator simpleJobOperator = new SimpleJobOperator();
-		simpleJobOperator.setJobLauncher(getJobLauncher());
-		simpleJobOperator.setJobExplorer(getJobExplorer());
-		simpleJobOperator.setJobRepository(getJobRepository());
-		simpleJobOperator.setJobRegistry(getjobRegistry());
+		simpleJobOperator.setJobLauncher(jobLauncher);
+		simpleJobOperator.setJobExplorer(jobExplorer);
+		simpleJobOperator.setJobRepository(jobRepository);
+		simpleJobOperator.setJobRegistry(jobRegistry);
 
-		this.jobOperator = simpleJobOperator;
+		return simpleJobOperator;
 	}
 
-	@Override
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-		this.transactionManager = new JdbcTransactionManager(dataSource);
-	}
-
-	public JobOperator getJobOperator() {
-		return jobOperator;
-	}
-
-	@Bean
 	public JobParametersIncrementer jobParametersIncrementer() {
 		return new JobParametersIncrementer() {
 
 			@Override
 			public JobParameters getNext(JobParameters parameters) {
 				if (parameters == null || parameters.isEmpty()) {
-					return new JobParametersBuilder().addLong("run.id", 1L).toJobParameters();
+					return new JobParametersBuilder().addLong("run.id", Long.valueOf("1")).toJobParameters();
 				}
 
-				Long id = parameters.getLong("run.id", 1L) + 1;
+				Long id = parameters.getLong("run.id", Long.valueOf("1")) + 1;
 
 				return new JobParametersBuilder().addLong("run.id", id).toJobParameters();
 			}
@@ -143,15 +141,4 @@ public class BatchConfiguration extends DefaultBatchConfigurer {
 		};
 	}
 
-	private CustomSerializer serializer() {
-		return new CustomSerializer();
-	}
-
-	private DefaultLobHandler lobHandler() {
-		return new DefaultLobHandler();
-	}
-
-	private MapJobRegistry getjobRegistry() {
-		return new MapJobRegistry();
-	}
 }

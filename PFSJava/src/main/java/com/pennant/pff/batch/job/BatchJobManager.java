@@ -1,6 +1,12 @@
 package com.pennant.pff.batch.job;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.sql.DataSource;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
@@ -22,15 +28,15 @@ import com.pennant.pff.batch.job.model.StepDetail;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class BatchJobService extends BatchConfiguration {
+public abstract class BatchJobManager extends BatchConfiguration {
 
-	public BatchJobService(String tablePrefix) throws Exception {
-		super(tablePrefix);
+	public BatchJobManager(DataSource dataSource, String tablePrefix) throws Exception {
+		super(dataSource, tablePrefix);
 	}
 
 	public void start(Job job, JobParameters jobParameters) {
 		try {
-			getJobLauncher().run(job, jobParameters);
+			jobLauncher.run(job, jobParameters);
 		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
 				| JobParametersInvalidException e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -39,11 +45,37 @@ public class BatchJobService extends BatchConfiguration {
 
 	public void restart(long executionId) {
 		try {
-			getJobOperator().restart(executionId);
+			jobOperator.restart(executionId);
 		} catch (JobInstanceAlreadyCompleteException | NoSuchJobExecutionException | NoSuchJobException
 				| JobRestartException | JobParametersInvalidException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+	}
+
+	public JobInstance getLastJobInstance(String jobName) {
+		return jobExplorer.getLastJobInstance(jobName);
+	}
+
+	public JobExecution getLastJobExecution(JobInstance jobInstance) {
+		return jobExplorer.getLastJobExecution(jobInstance);
+	}
+
+	public Set<JobExecution> findRunningJobExecutions(String jobName) {
+		return jobExplorer.findRunningJobExecutions(jobName);
+	}
+
+	public List<StepExecution> getStepExecutions(JobInstance jobInstance) throws Exception {
+		List<StepExecution> list = new ArrayList<>();
+
+		List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance);
+
+		jobExecutions.stream().forEach(je -> list.addAll(je.getStepExecutions()));
+
+		Map<String, StepExecution> distinctSteps = new HashMap<>();
+
+		list.stream().forEach(se -> distinctSteps.put(se.getStepName(), se));
+
+		return new ArrayList<StepExecution>(distinctSteps.values());
 	}
 
 	protected void setRunningJobExecutionDetails(BatchJob eodJob) throws Exception {

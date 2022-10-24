@@ -19,6 +19,7 @@ import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennanttech.model.presentment.Presentment;
@@ -46,12 +47,12 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				try (PreparedStatement ps = con.prepareStatement(sql, new String[] { "Id" })) {
-					ps.setString(1, batchName);
-					ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+				PreparedStatement ps = con.prepareStatement(sql, new String[] { "Id" });
 
-					return ps;
-				}
+				ps.setString(1, batchName);
+				ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+
+				return ps;
 			}
 		}, keyHolder);
 
@@ -269,6 +270,37 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	public int updateToSecurityMandate(long batchID) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update Presentment_Extraction_Stage Set MandateStatus = ?");
+		sql.append(", MandateID = (select m.MandateID From Mandates m Where m.SecurityMandate = ?");
+		sql.append(" and Presentment_Extraction_Stage.FinReference = m.OrgReference and m.Status = ?)");
+		sql.append(", MandateType = (select m.MandateType From Mandates m Where m.SecurityMandate = ?");
+		sql.append(" and Presentment_Extraction_Stage.FinReference = m.OrgReference and m.Status = ?)");
+		sql.append(", InstrumentType = (select m.MandateType From Mandates m Where m.SecurityMandate = ?");
+		sql.append(" and Presentment_Extraction_Stage.FinReference = m.OrgReference and m.Status =?)");
+		sql.append(" Where BatchID = ? and MandateStatus = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, MandateStatus.APPROVED);
+			ps.setBoolean(index++, true);
+			ps.setString(index++, MandateStatus.APPROVED);
+			ps.setBoolean(index++, true);
+			ps.setString(index++, MandateStatus.APPROVED);
+			ps.setBoolean(index++, true);
+			ps.setString(index++, MandateStatus.APPROVED);
+
+			ps.setLong(index++, batchID);
+			ps.setString(index++, MandateStatus.NEW);
+
+		});
+	}
+
+	@Override
 	public void updateIPDC(long batchID) {
 		String sql = "Update Presentment_Extraction_Stage set InstrumentType = ?, MandateType = ?, ChequeType = ? Where BatchID = ? and InstrumentType = ? and BankCode = ?";
 
@@ -392,6 +424,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
 		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
 		sql.append(", PartnerBankId, BranchCode, BankCode");
+		sql.append(", EmployeeNo, EmPloyerId, EmployerName");
 		sql.append(") Select");
 		sql.append(" ?, fm.FinId, fm.FinReference, fm.FinType, fm.ProductCategory, fm.FinBranch, sdd.EntityCode");
 		sql.append(", fm.BpiTreatment, fm.GrcPeriodEndDate, fm.GrcAdvType, fm.AdvType, fm.AdvStage, fm.SchdVersion");
@@ -403,6 +436,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			sql.append(", cd.ChequeType, cd.ChequeDetailsId, cd.ChequeType, cd.ChequeStatus, cd.ChequeDate");
 			sql.append(", cd.ChequeDetailsId, cd.ChequeType, null, null, null");
 			sql.append(", null, b.BranchCode, bb.BankCode");
+			sql.append(", null, null, null");
 			sql.append(" From FinScheduleDetails fsd");
 			sql.append(" Inner Join FinanceMain fm On fm.FinID = fsd.FinID and fm.FinIsActive = ?");
 			sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
@@ -418,15 +452,18 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			sql.append(", m.MandateType, null, null, null, null");
 			sql.append(", fm.MandateId, m.MandateType, m.EmandateSource, m.Status, m.ExpiryDate");
 			sql.append(", m.PartnerBankId, b.BranchCode, null");
+			sql.append(", m.EmployeeNo, m.EmPloyerId, e.EmpName EmPloyerName");
 			sql.append(" From FinScheduleDetails fsd");
 			sql.append(" Inner Join FinanceMain fm On fm.FinID = fsd.FinID and fm.FinIsActive = ?");
 			sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
 			sql.append(" Inner Join Mandates m on m.MandateId = fm.MandateId and MandateType = ?");
 			sql.append(" Inner Join RmtBranches b On b.BranchCode = fm.FinBranch");
+			sql.append(" Inner Join EmployerDetail e On e.EmPloyerId = m.EmPloyerId");
 		} else {
 			sql.append(", m.MandateType, null, null, null, null");
 			sql.append(", fm.MandateId, m.MandateType, m.EmandateSource, m.Status, m.ExpiryDate");
 			sql.append(", m.PartnerBankId, b.BranchCode, bb.BankCode");
+			sql.append(", null, null, null");
 			sql.append(" From FinScheduleDetails fsd");
 			sql.append(" Inner Join FinanceMain fm On fm.FinID = fsd.FinID and fm.FinIsActive = ?");
 			sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
@@ -706,9 +743,10 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append("(Id, PresentmentId, PresentmentRef, FinID, FinReference, SchDate, MandateId, SchdVersion");
 		sql.append(", SchAmtDue, SchPriDue, SchPftDue, SchFeeDue, SchInsDue, SchPenaltyDue, AdvanceAmt, ExcessID");
 		sql.append(", AdviseAmt, PresentmentAmt, ExcludeReason, BounceID, EmiNo, TDSAmount, Status, ReceiptID");
+		sql.append(", EmployeeNo, EmployerId, EmployerName");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -744,6 +782,9 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				ps.setBigDecimal(i++, pd.gettDSAmount());
 				ps.setString(i++, pd.getStatus());
 				ps.setLong(i++, pd.getReceiptID());
+				ps.setString(i++, pd.getEmployeeNo());
+				ps.setObject(i++, pd.getEmployerId());
+				ps.setString(i++, pd.getEmployerName());
 				ps.setInt(i++, pd.getVersion());
 				ps.setLong(i++, pd.getLastMntBy());
 				ps.setTimestamp(i++, pd.getLastMntOn());
@@ -821,7 +862,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public int updateSchdWithPresentmentId(List<PresentmentDetail> presenetments) {
-		String sql = "Update FinScheduleDetails Set PresentmentId = ? Where FinID = ? and SchDate = ? and  SchSeq = ? and (PresentmentId = 0 or PresentmentId is null)";
+		String sql = "Update FinScheduleDetails Set PresentmentId = ? Where FinID = ? and SchDate = ? and  SchSeq = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 

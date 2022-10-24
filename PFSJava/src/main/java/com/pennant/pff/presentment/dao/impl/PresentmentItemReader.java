@@ -68,6 +68,9 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 			pd.setBranchCode(rs.getString("BranchCode"));
 			pd.setBankCode(rs.getString("BankCode"));
 			pd.setInstrumentType(rs.getString("InstrumentType"));
+			pd.setEmployeeNo(rs.getString("EmployeeNo"));
+			pd.setEmployerId(JdbcUtil.getLong(rs.getObject("EmployerId")));
+			pd.setEmployerName(rs.getString("EmployerName"));
 			return pd;
 		});
 	}
@@ -82,6 +85,7 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
 		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
 		sql.append(", PartnerBankId, BranchCode, BankCode, InstrumentType");
+		sql.append(", EmployeeNo, EmployerId, EmployerName");
 
 		return sql.toString();
 	}

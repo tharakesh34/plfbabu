@@ -7,12 +7,12 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.pff.extension.PresentmentExtension;
-import com.pennant.pff.presentment.PresentmentExtractionService;
+import com.pennant.pff.presentment.ExtractionJobManager;
 
 public class PresentmentExtractionTasklet implements Tasklet {
 
 	@Autowired
-	private PresentmentExtractionService presentmentExtractionService;
+	private ExtractionJobManager presentmentExtractionService;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {

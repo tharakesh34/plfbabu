@@ -25,7 +25,7 @@ public class ApprovalTasklet implements Tasklet {
 			return RepeatStatus.FINISHED;
 		}
 
-		long batchId = jobParameters.getLong("BTACH_ID");
+		long batchId = jobParameters.getLong("BATCH_ID");
 
 		presentmentEngine.approve(batchId);
 

@@ -2,22 +2,23 @@ package com.pennant.pff.presentment;
 
 import java.util.Date;
 
+import javax.sql.DataSource;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.pff.batch.job.BatchJobService;
+import com.pennant.pff.batch.job.BatchJobManager;
 import com.pennant.pff.batch.job.model.BatchJob;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
-@Component
-public class PresentmentExtractionService extends BatchJobService {
+@Configuration
+public class ExtractionJobManager extends BatchJobManager {
 
 	@Autowired
 	private PresentmentDAO presentmentDAO;
@@ -25,56 +26,30 @@ public class PresentmentExtractionService extends BatchJobService {
 	@Autowired
 	private Job peExtractionJob;
 
-	public PresentmentExtractionService() throws Exception {
-		super("BATCH");
+	public ExtractionJobManager(DataSource dataSource) throws Exception {
+		super(dataSource, "BATCH_");
 	}
 
 	public void extractPresentment() {
-		PresentmentExtractionThread target = new PresentmentExtractionThread();
-		Thread thread = new Thread(target);
-		thread.start();
+		start(null);
 	}
 
 	public void extractPresentment(PresentmentHeader ph) {
-		Thread thread = new Thread(new PresentmentExtractionThread(ph));
-		thread.start();
+		start(ph);
 	}
 
 	public void extractRePresentment(PresentmentHeader ph) {
-		Thread thread = new Thread(new PresentmentExtractionThread(ph));
-		thread.start();
+		start(ph);
 	}
 
-	public class PresentmentExtractionThread implements Runnable {
-		private PresentmentHeader ph;
-
-		public PresentmentExtractionThread() {
-			super();
-		}
-
-		public PresentmentExtractionThread(PresentmentHeader ph) {
-			this.ph = ph;
-		}
-
-		@Override
-		public void run() {
-			try {
-				start(ph);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
-
-	}
-
-	public void start(PresentmentHeader ph) throws Exception {
+	public void start(PresentmentHeader ph) {
 		Date appDate = SysParamUtil.getAppDate();
 
 		long batchID = presentmentDAO.createBatch("EXTRACTOIN");
 
 		JobParametersBuilder builder = new JobParametersBuilder();
 
-		builder.addLong("BTACH_ID", batchID);
+		builder.addLong("BATCH_ID", batchID);
 		builder.addDate("AppDate", appDate);
 		if (ph != null) {
 			builder.addString("MandateType", ph.getMandateType());

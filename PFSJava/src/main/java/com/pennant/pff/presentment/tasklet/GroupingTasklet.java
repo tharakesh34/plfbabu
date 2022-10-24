@@ -25,7 +25,7 @@ public class GroupingTasklet implements Tasklet {
 
 		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
 
-		Long batchId = jobParameters.getLong("BTACH_ID");
+		Long batchId = jobParameters.getLong("BATCH_ID");
 
 		ph.setBatchID(batchId);
 		ph.setAppDate(jobParameters.getDate("AppDate"));

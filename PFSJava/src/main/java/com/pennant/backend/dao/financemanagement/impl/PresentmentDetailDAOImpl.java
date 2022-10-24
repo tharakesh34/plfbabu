@@ -1473,7 +1473,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				presentment.setMicrCode(rs.getString("micr_code"));
 				presentment.setAccountNo(rs.getString("accountno"));
 				presentment.setDestAccHolder(rs.getString("dest_acc_holder"));
-				presentment.setAccType(rs.getLong("acc_type"));
+				presentment.setAccType(rs.getString("acc_type"));
 				presentment.setBatchId(rs.getString("batchid"));
 				presentment.setIFSC(rs.getString("ifsc"));
 				presentment.setSetilmentDate(rs.getDate("setilment_date"));

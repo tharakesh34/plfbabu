@@ -71,7 +71,7 @@ public class Presentment {
 	@XmlElement(name = "custName")
 	private String destAccHolder;
 	@XmlElement
-	private long accType;
+	private String accType;
 	private String bankAddress;
 	private String resubFlag = "Y";
 	private String orginSystem = "2";
@@ -387,11 +387,11 @@ public class Presentment {
 		this.destAccHolder = destAccHolder;
 	}
 
-	public long getAccType() {
+	public String getAccType() {
 		return accType;
 	}
 
-	public void setAccType(long accType) {
+	public void setAccType(String accType) {
 		this.accType = accType;
 	}
 

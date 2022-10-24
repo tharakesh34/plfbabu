@@ -21,7 +21,7 @@ public class ClearQueueTasklet implements Tasklet {
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
 
-		Long batchId = jobParameters.getLong("BTACH_ID");
+		Long batchId = jobParameters.getLong("BATCH_ID");
 
 		presentmentEngine.clearQueue(batchId);
 

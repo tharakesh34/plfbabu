@@ -31,6 +31,8 @@ public interface PresentmentDAO {
 
 	int clearSecurityCheque(long batchID);
 
+	int updateToSecurityMandate(long batchID);
+
 	void updateIPDC(long batchID);
 
 	int clearByExistingRecord(long batchID);
@@ -86,4 +88,5 @@ public interface PresentmentDAO {
 	void updatePartnerBankID(long id, long PartnerBankId);
 
 	int updateHeader(long presentmentId, int totalRecords);
+
 }

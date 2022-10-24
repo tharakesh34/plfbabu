@@ -313,7 +313,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			Presentment presement = new Presentment();
 
 			// Payment Mode Data
-			presement.setAccType(rs.getLong("ACCTYPE"));
+			presement.setAccType(rs.getString("ACCTYPE"));
 			presement.setAccountNo(rs.getString("ACCNUMBER"));
 			presement.setUmrnNo(rs.getString("MANDATEREF"));
 

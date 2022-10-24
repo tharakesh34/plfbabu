@@ -3,12 +3,6 @@ package com.pennant.pff.presentment;
 import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersIncrementer;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +12,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
+import com.pennant.pff.batch.job.BatchConfiguration;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
 import com.pennant.pff.presentment.dao.impl.PresentmentItemProcessor;
 import com.pennant.pff.presentment.dao.impl.PresentmentItemReader;
@@ -32,18 +27,11 @@ import com.pennant.pff.presentment.tasklet.PresentmentDueConfigTasklet;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 @Configuration
-@EnableBatchProcessing
-public class PresentmentExtractionJob {
+public class ExtractionJob extends BatchConfiguration {
 
-	public PresentmentExtractionJob() {
-		super();
+	public ExtractionJob(@Autowired DataSource dataSource) throws Exception {
+		super(dataSource, "BATCH_");
 	}
-
-	@Autowired
-	protected StepBuilderFactory stepBuilderFactory;
-
-	@Autowired
-	protected JobBuilderFactory jobBuilderFactory;
 
 	@Autowired
 	private DataSource dataSource;
@@ -151,29 +139,10 @@ public class PresentmentExtractionJob {
 		return this.stepBuilderFactory.get("CLEAR").tasklet(clearQueueTasklet()).build();
 	}
 
-	@Bean
-	public JobParametersIncrementer jobParametersIncrementer() {
-		return new JobParametersIncrementer() {
-
-			@Override
-			public JobParameters getNext(JobParameters parameters) {
-				if (parameters == null || parameters.isEmpty()) {
-					return new JobParametersBuilder().addLong("run.id", 1L).toJobParameters();
-				}
-
-				Long id = parameters.getLong("run.id", 1L) + 1;
-
-				return new JobParametersBuilder().addLong("run.id", id).toJobParameters();
-			}
-
-		};
-	}
-
 	public SimpleAsyncTaskExecutor taskExecutor() {
 		SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor("PRESENTMENT_EXTRACTION_JOB");
 		taskExecutor.setConcurrencyLimit(100);
 		return taskExecutor;
-
 	}
 
 }

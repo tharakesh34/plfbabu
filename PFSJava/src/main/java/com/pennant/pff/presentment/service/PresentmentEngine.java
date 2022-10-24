@@ -62,9 +62,35 @@ public class PresentmentEngine {
 	}
 
 	public void preparation(PresentmentHeader header) {
+		logger.debug(Literal.ENTERING);
+
 		Date appDate = header.getAppDate();
 		String presentmentType = header.getPresentmentType();
 		boolean autoExtract = header.isAutoExtract();
+		String finType = header.getLoanType();
+		String finBranch = header.getFinBranch();
+		String entityCode = header.getEntityCode();
+		String emandateSource = header.getEmandateSource();
+		String instrumentType = StringUtils.trimToNull(header.getMandateType());
+		Date fromDate = header.getFromDate();
+		Date toDate = header.getToDate();
+		Date dueDate = header.getDueDate();
+
+		StringBuilder info = new StringBuilder();
+		info.append("Batch-ID: ").append(presentmentType);
+		info.append("\nPresentment Type: ").append(presentmentType);
+		info.append("\nEMandate Source: ").append(emandateSource);
+		info.append("\nInstrument Type: ").append(presentmentType);
+		info.append("\nLoan Types: ").append(finType);
+		info.append("\nLoan Branch: ").append(entityCode);
+		info.append("\nEntity: ").append(finBranch);
+		info.append("\nFrom Date: ").append(DateUtil.formatToShortDate(fromDate));
+		info.append("\nTo Date: ").append(DateUtil.formatToShortDate(toDate));
+		info.append("\nDue Date: ").append(DateUtil.formatToShortDate(dueDate));
+		info.append("\nApp Date: ").append(DateUtil.formatToShortDate(appDate));
+		info.append("\nAuto Extaction: ").append(autoExtract);
+
+		logger.info(info.toString());
 
 		if (autoExtract) {
 			Map<String, Date> dueDates = dueExtractionConfigDAO.getDueDates(appDate);
@@ -82,8 +108,6 @@ public class PresentmentEngine {
 				prepareDues(ph);
 			}
 		} else {
-			String instrumentType = StringUtils.trimToNull(header.getMandateType());
-
 			if (instrumentType != null && !"#".equals(instrumentType)) {
 				prepareDues(header);
 			} else {
@@ -112,9 +136,12 @@ public class PresentmentEngine {
 				}
 			}
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void prepareDues(PresentmentHeader ph) {
+		logger.debug(Literal.ENTERING);
+
 		long batchID = ph.getBatchID();
 		String finType = ph.getLoanType();
 		String finBranch = ph.getFinBranch();
@@ -136,13 +163,22 @@ public class PresentmentEngine {
 			count = presentmentDAO.extarct(batchID, instrumentType, dueDate, dueDate);
 		}
 
+		if (fromDate != null && toDate != null) {
+			logger.info("Instrument Type {}\nFrom Date {}\nTo Date {}", instrumentType,
+					DateUtil.formatToShortDate(fromDate), DateUtil.formatToShortDate(toDate));
+		} else {
+			logger.info("Instrument Type {}\nDue Date {}", instrumentType, DateUtil.formatToShortDate(dueDate));
+		}
+
 		if (count == 0) {
 			return;
 		}
 
 		count = count - presentmentDAO.clearByNoDues(batchID);
 
+		logger.info("Clearing No Dues...");
 		if (InstrumentType.isIPDC(instrumentType)) {
+			logger.info("Updating IPDC...");
 			presentmentDAO.updateIPDC(batchID);
 		}
 
@@ -175,11 +211,15 @@ public class PresentmentEngine {
 
 		count = count - presentmentDAO.clearSecurityCheque(batchID);
 
+		presentmentDAO.updateToSecurityMandate(batchID);
+
 		presentmentDAO.updatePartnerBankID(batchID);
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void grouping(PresentmentHeader ph) {
+		logger.debug(Literal.ENTERING);
 		long batchID = ph.getBatchID();
 		List<PresentmentDetail> list = null;
 
@@ -200,9 +240,12 @@ public class PresentmentEngine {
 			setHeader(ph, list);
 			presentmentDAO.updateHeaderIdByDefault(batchID, list);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setHeader(PresentmentHeader ph, List<PresentmentDetail> list) {
+		logger.debug(Literal.ENTERING);
+
 		Date appDate = ph.getAppDate();
 		long batchID = ph.getBatchID();
 
@@ -236,10 +279,13 @@ public class PresentmentEngine {
 			pd.setDueDate(dueDate);
 			pd.setHeaderId(headerId);
 		});
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private long saveHeader(long batchID, PresentmentDetail pd, Date fromDate, Date toDate, String instrumentType,
 			String presentmentType) {
+		logger.debug(Literal.ENTERING);
 		long headerId = presentmentDAO.getSeqNumber("SeqPresentmentHeader");
 
 		String reference = StringUtils.leftPad(String.valueOf(headerId), 15, "0");
@@ -274,10 +320,13 @@ public class PresentmentEngine {
 
 		presentmentDAO.savePresentmentHeader(ph);
 
+		logger.debug(Literal.LEAVING);
 		return headerId;
 	}
 
 	public void extract(PresentmentHeader ph, PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		BigDecimal schAmtDue = BigDecimal.ZERO;
 
 		BigDecimal schPriDue = BigDecimal.ZERO;
@@ -344,9 +393,13 @@ public class PresentmentEngine {
 		if (pd.getSchAmtDue().compareTo(BigDecimal.ZERO) > 0) {
 			doCalculations(ph, pd);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doCalculations(PresentmentHeader ph, PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		String mandateStatus = pd.getMandateStatus();
 
 		if (InstrumentType.isPDC(pd.getInstrumentType()) || InstrumentType.isIPDC(pd.getInstrumentType())) {
@@ -410,6 +463,8 @@ public class PresentmentEngine {
 
 		BigDecimal advAmount = pd.getAdvAdjusted();
 		pd.setPresentmentAmt(pd.getPresentmentAmt().subtract(advAmount));
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void processAdvAmounts(PresentmentHeader ph, PresentmentDetail pd) {

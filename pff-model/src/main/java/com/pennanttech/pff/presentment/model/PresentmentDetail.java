@@ -149,6 +149,9 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String instrumentType;
 	private int schdVersion;
 	private String fateCorrection;
+	private String employeeNo;
+	private Long employerId;
+	private String employerName;
 
 	@XmlTransient
 	private PresentmentDetail befImage;
@@ -899,6 +902,30 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setFateCorrection(String fateCorrection) {
 		this.fateCorrection = fateCorrection;
+	}
+
+	public String getEmployeeNo() {
+		return employeeNo;
+	}
+
+	public void setEmployeeNo(String employeeNo) {
+		this.employeeNo = employeeNo;
+	}
+
+	public Long getEmployerId() {
+		return employerId;
+	}
+
+	public void setEmployerId(Long employerId) {
+		this.employerId = employerId;
+	}
+
+	public String getEmployerName() {
+		return employerName;
+	}
+
+	public void setEmployerName(String employerName) {
+		this.employerName = employerName;
 	}
 
 	public PresentmentDetail getBefImage() {

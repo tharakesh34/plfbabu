@@ -63,7 +63,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
-import com.pennant.pff.presentment.PresentmentExtractionService;
+import com.pennant.pff.presentment.ExtractionJobManager;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -110,7 +110,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	private transient PresentmentDetailService presentmentDetailService;
 
 	@Autowired
-	private transient PresentmentExtractionService presentmentExtractionService;
+	private ExtractionJobManager extractionJobManager;
 
 	/**
 	 * default constructor.<br>
@@ -410,7 +410,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		detailHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		detailHeader.setEmandateSource(emandateSource.getValidatedValue());
 
-		presentmentExtractionService.extractPresentment(detailHeader);
+		extractionJobManager.extractPresentment(detailHeader);
 
 		logger.debug(Literal.LEAVING);
 
