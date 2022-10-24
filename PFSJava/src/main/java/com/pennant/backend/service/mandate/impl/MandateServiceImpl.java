@@ -222,6 +222,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				isApproved = true;
 			}
 
+			String orgStatus = mandate.getStatus();
+
 			if (MandateStatus.isRelease(mandate.getStatus())) {
 				mandate.setStatus(MandateStatus.APPROVED);
 			} else if (!MandateStatus.isHold(mandate.getStatus())) {
@@ -262,6 +264,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 			if (StringUtils.isNotBlank(mandate.getMandateRef())) {
 				mandate.setStatus(MandateStatus.APPROVED);
+			}
+
+			if (MandateStatus.isHold(orgStatus)) {
+				mandate.setStatus(MandateStatus.HOLD);
 			}
 
 			getDocument(mandate);
