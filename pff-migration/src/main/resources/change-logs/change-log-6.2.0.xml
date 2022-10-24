@@ -4867,9 +4867,9 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#76.46" author="saikiran.n">
+	<changeSet id="ST#76.46.1" author="saikiran.n">
 		<addColumn tableName="PresentmentDetails">
-			<column name="EmployeerName" type="varchar(50)" />
+			<column name="EmployerName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
 	
@@ -5238,7 +5238,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="16.2_pre" author="murthy.y" dbms="postgresql">
+	<changeSet id="16.3_pre" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'presentmentdetails_aview');
@@ -5246,7 +5246,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="16.2" author="murthy.y">
+	<changeSet id="16.3" author="murthy.y">
 		<createView replaceIfExists="true" viewName="PRESENTMENTDETAILS_AVIEW">
 			<![CDATA[
 				SELECT T1.ID, 
@@ -5296,7 +5296,7 @@
 					T7.BANKNAME,
 					T1.EMPLOYERID,
 					T1.EMPLOYEENO,
-					T1.EMPLOYEERNAME
+					T1.EMPLOYERNAME
 				FROM PRESENTMENTDETAILS T1
                 INNER JOIN PRESENTMENTHEADER PH ON PH.ID = T1.PRESENTMENTID
                 LEFT JOIN MANDATES T2 ON T1.MANDATEID = T2.MANDATEID
@@ -5309,7 +5309,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="16.2_post" author="murthy.y" dbms="postgresql">
+	<changeSet id="16.3_post" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'presentmentdetails_aview');
@@ -5317,9 +5317,9 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#76.48" author="saikiran.n">
+	<changeSet id="ST#76.48.1" author="saikiran.n">
 		<addColumn tableName="Presentment_Extraction_Stage">
-			<column name="EmployeerName" type="varchar(50)" />
+			<column name="EmployerName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
 </databaseChangeLog>
