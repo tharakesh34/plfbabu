@@ -55,7 +55,7 @@ function encryptSecUserPassword() {
 	}
 }
 
-function encryptSecUserPasswordRest() {
+function encryptForgotPassword() {
 	var password = zk.Widget.$('$password');
 	var newPassword = zk.Widget.$('$newPassword');
 	var retypeNewPassword = zk.Widget.$('$retypeNewPassword');
@@ -108,6 +108,41 @@ function passwordRestByAdmin() {
 	var retypeNewPassword1 = zk.Widget.$('$retypeNewPassword1');
 	retypeNewPassword1.updateChange_();
 	retypeNewPassword1.$n().value = ("");
+	if (retypeNewPassword.value.trim().length > 0) {
+		retypeNewPassword1.$n().value=(encrypt(retypeNewPassword.value, randomKey.getValue()));
+		retypeNewPassword1.updateChange_();
+		retypeNewPassword.value = "";
+	}
+}
+
+function encryptSecUserPasswordRest() {
+	var password = document.getElementById('password');
+	var newPassword = document.getElementById('newPassword');
+	var retypeNewPassword = document.getElementById('retypeNewPassword');
+
+	var randomKey = zk.Widget.$('$txtbox_randomKey');
+	
+	var password1 = zk.Widget.$('$password1');
+	password1.$n().value = ("");
+	password1.updateChange_();
+	if (password.value.trim().length > 0) {
+		password1.$n().value=(encrypt(password.value, randomKey.getValue()));
+		password1.updateChange_();
+		password.value = "";
+	}
+	
+	var newPassword1 = zk.Widget.$('$newPassword1');
+	newPassword1.$n().value = ("");
+	newPassword1.updateChange_();
+	if (newPassword.value.trim().length > 0) {
+		newPassword1.$n().value=(encrypt(newPassword.value, randomKey.getValue()));
+		newPassword1.updateChange_();
+		newPassword.value = "";
+	}
+	
+	var retypeNewPassword1 = zk.Widget.$('$retypeNewPassword1');
+	retypeNewPassword1.$n().value = ("");
+	retypeNewPassword1.updateChange_();
 	if (retypeNewPassword.value.trim().length > 0) {
 		retypeNewPassword1.$n().value=(encrypt(retypeNewPassword.value, randomKey.getValue()));
 		retypeNewPassword1.updateChange_();

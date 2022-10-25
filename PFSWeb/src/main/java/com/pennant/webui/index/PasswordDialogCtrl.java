@@ -179,6 +179,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 			getSecurityUser().setUserDetails(getUserWorkspace().getLoggedInUser());
 			int expDays = SysParamUtil.getValueAsInt("USR_EXPIRY_DAYS");
 			getSecurityUser().setPwdExpDt(DateUtility.addDays(new Date(System.currentTimeMillis()), expDays));
+			getSecurityUser().setCreatedBy(securityUser.getCreatedBy());
+			getSecurityUser().setCreatedOn(securityUser.getCreatedOn());
 
 			// Generate the audit header and request for update.
 			auditHeader = getAuditHeader(getSecurityUser(), PennantConstants.TRAN_UPD);
