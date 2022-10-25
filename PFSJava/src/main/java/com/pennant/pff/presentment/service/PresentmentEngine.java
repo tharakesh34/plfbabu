@@ -431,22 +431,16 @@ public class PresentmentEngine {
 				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
 			}
 
-			// FIXME Murthy Need to Check with Chaitanya
-			/*
-			 * if (!InstrumentType.isECS(pd.getMandateType())) { if (!MandateStatus.isApproved(mandateStatus)) {
-			 * pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV); }
-			 * 
-			 * if (pd.getMandateExpiryDate() != null && DateUtil.compare(pd.getDefSchdDate(), pd.getMandateExpiryDate())
-			 * > 0) { pd.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY); } }
-			 */
+			
+			if (!InstrumentType.isECS(pd.getMandateType())) {
+				if (!MandateStatus.isApproved(mandateStatus)) {
+					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
+				}
 
-			if (!MandateStatus.isApproved(mandateStatus)) {
-				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
-			}
-
-			if (pd.getMandateExpiryDate() != null
-					&& DateUtil.compare(pd.getDefSchdDate(), pd.getMandateExpiryDate()) > 0) {
-				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
+				if (pd.getMandateExpiryDate() != null
+						&& DateUtil.compare(pd.getDefSchdDate(), pd.getMandateExpiryDate()) > 0) {
+					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
+				}
 			}
 		}
 
