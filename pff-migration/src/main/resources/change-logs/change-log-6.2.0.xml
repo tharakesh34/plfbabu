@@ -4818,61 +4818,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#76.36" author="saikiran.n">
-		<renameColumn tableName="Mandates_Temp" oldColumnName="EmployeeID" newColumnName="EmployerID" />
-	</changeSet>
-
-	<changeSet id="ST#76.37" author="saikiran.n">
-		<renameColumn tableName="Mandates_Temp" oldColumnName="EmployerName" newColumnName="EmployeeNo" />
-	</changeSet>
-	
-	<changeSet id="ST#76.38" author="saikiran.n">
-		<renameColumn tableName="Mandates" oldColumnName="EmployeeID" newColumnName="EmployerID" />
-	</changeSet>
-
-	<changeSet id="ST#76.39" author="saikiran.n">
-		<renameColumn tableName="Mandates" oldColumnName="EmployerName" newColumnName="EmployeeNo" />
-	</changeSet>
-	
-	<changeSet id="ST#76.40" author="saikiran.n">
-		<modifyDataType tableName="Mandates_Temp" columnName="EmployeeNo" newDataType="varchar(50)"/>
-	</changeSet>
-	
-	<changeSet id="ST#76.41" author="saikiran.n">
-		<modifyDataType tableName="Mandates" columnName="EmployeeNo" newDataType="varchar(50)"/>
-	</changeSet>
-	
-	<changeSet id="ST#76.42" author="saikiran.n">
-		<renameColumn tableName="Presentment_Extraction_Stage" oldColumnName="EmployerName" newColumnName="EmployeeNo" />
-	</changeSet>
-	
-	<changeSet id="ST#76.43" author="saikiran.n">
-		<addColumn tableName="PresentmentDetails">
-			<column name="EmployerID" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#76.44" author="saikiran.n">
-		<addColumn tableName="PresentmentDetails">
-			<column name="EmployeeNo" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="ST#76.45" author="saikiran.n">
-		<sql>
-			<![CDATA[
-				UPDATE SECRIGHTS SET RIGHTNAME = 'MandateDialog_EmployeeID' WHERE RIGHTNAME = 'MandateDialog_EmployerID';
-				UPDATE SECRIGHTS SET RIGHTNAME = 'MandateDialog_EmployeeNo' WHERE RIGHTNAME = 'MandateDialog_EmployerName';
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="ST#76.46.1" author="saikiran.n">
-		<addColumn tableName="PresentmentDetails">
-			<column name="EmployerName" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-	
 	<changeSet id="ST#76.22.1_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4949,8 +4894,6 @@
 					, M.HOLDREASON
 					, M.SWAPEFFECTIVEDATE
 					, M.SECURITYMANDATE
-					, M.EMPLOYERID
-					, M.EMPLOYEENO
 				FROM MANDATES M
 				INNER JOIN CUSTOMERS C ON C.CUSTID = M.CUSTID
 				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
@@ -5045,8 +4988,6 @@
 					, M.HOLDREASON
 					, M.SWAPEFFECTIVEDATE
 					, M.SECURITYMANDATE
-					, M.EMPLOYERID
-					, M.EMPLOYEENO
 				FROM MANDATES_TEMP M
 				INNER JOIN CUSTOMERS C ON C.CUSTID = M.CUSTID
 				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
@@ -5076,6 +5017,441 @@
 	</changeSet>
 
 	<changeSet id="ST#76.24.1" author="saikiran.n">
+		<createView viewName="MANDATES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT M.MANDATEID
+					, M.CUSTID
+					, M.MANDATEREF
+					, M.MANDATETYPE
+					, M.BANKBRANCHID
+					, M.ACCNUMBER
+					, M.ACCHOLDERNAME
+					, M.JOINTACCHOLDERNAME
+					, M.ACCTYPE
+					, M.OPENMANDATE
+					, M.STARTDATE
+					, M.EXPIRYDATE
+					, M.MAXLIMIT
+					, M.PERIODICITY
+					, M.PHONECOUNTRYCODE
+					, M.PHONEAREACODE
+					, M.PHONENUMBER
+					, M.STATUS
+					, M.APPROVALID
+					, M.VERSION
+					, M.LASTMNTBY
+					, M.LASTMNTON
+					, M.RECORDSTATUS
+					, M.ROLECODE
+					, M.NEXTROLECODE
+					, M.TASKID
+					, M.NEXTTASKID
+					, M.RECORDTYPE
+					, M.WORKFLOWID
+					, M.REASON
+					, M.MANDATECCY
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, BB.BANKCODE
+					, BB.BRANCHCODE
+					, BB.BRANCHDESC
+					, BB.MICR
+					, BB.IFSC
+					, BB.CITY
+					, BD.BANKNAME
+					, M.INPUTDATE
+					, M.ACTIVE
+					, M.DEFAULTMANDATE
+					, 0 USEEXISTING
+					, M.ORGREFERENCE
+					, PC.PCCITYNAME
+					, M.DOCUMENTNAME
+					, M.DOCUMENTREF
+					, M.EXTERNALREF
+					, M.ENTITYCODE
+					, E.ENTITYDESC
+					, M.PRIMARYMANDATEID
+					, M.SWAPISACTIVE
+					, M.BARCODENUMBER
+					, PB.PARTNERBANKCODE
+					, PB.PARTNERBANKNAME
+					, M.PARTNERBANKID
+					, M.EMANDATESOURCE
+					, M.EMANDATEREFERENCENO
+					, FM.FINTYPE
+					, M.HOLDREASON
+					, M.SWAPEFFECTIVEDATE
+					, M.SECURITYMANDATE
+				FROM MANDATES_TEMP M
+				INNER JOIN CUSTOMERS C ON M.CUSTID = C.CUSTID
+				LEFT JOIN BANKBRANCHES BB ON M.BANKBRANCHID = BB.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BB.BANKCODE = BD.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PC ON BB.CITY = PC.PCCITY
+				LEFT JOIN ENTITY E ON M.ENTITYCODE = E.ENTITYCODE
+				LEFT JOIN PARTNERBANKS PB ON M.PARTNERBANKID = PB.PARTNERBANKID
+				LEFT JOIN FINANCEMAIN FM ON M.ORGREFERENCE = FM.FINREFERENCE
+				UNION ALL
+				SELECT M.MANDATEID
+					, M.CUSTID
+					, M.MANDATEREF
+					, M.MANDATETYPE
+					, M.BANKBRANCHID
+					, M.ACCNUMBER
+					, M.ACCHOLDERNAME
+					, M.JOINTACCHOLDERNAME
+					, M.ACCTYPE
+					, M.OPENMANDATE
+					, M.STARTDATE
+					, M.EXPIRYDATE
+					, M.MAXLIMIT
+					, M.PERIODICITY
+					, M.PHONECOUNTRYCODE
+					, M.PHONEAREACODE
+					, M.PHONENUMBER
+					, M.STATUS
+					, M.APPROVALID
+					, M.VERSION
+					, M.LASTMNTBY
+					, M.LASTMNTON
+					, M.RECORDSTATUS
+					, M.ROLECODE
+					, M.NEXTROLECODE
+					, M.TASKID
+					, M.NEXTTASKID
+					, M.RECORDTYPE
+					, M.WORKFLOWID
+					, M.REASON
+					, M.MANDATECCY
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, BB.BANKCODE
+					, BB.BRANCHCODE
+					, BB.BRANCHDESC
+					, BB.MICR
+					, BB.IFSC
+					, BB.CITY
+					, BD.BANKNAME
+					, M.INPUTDATE
+					, M.ACTIVE
+					, M.DEFAULTMANDATE
+					, 1 USEEXISTING
+					, M.ORGREFERENCE
+					, PC.PCCITYNAME
+					, M.DOCUMENTNAME
+					, M.DOCUMENTREF
+					, M.EXTERNALREF
+					, M.ENTITYCODE
+					, E.ENTITYDESC
+					, M.PRIMARYMANDATEID
+					, M.SWAPISACTIVE
+					, M.BARCODENUMBER
+					, PB.PARTNERBANKCODE
+					, PB.PARTNERBANKNAME
+					, M.PARTNERBANKID
+					, M.EMANDATESOURCE
+					, M.EMANDATEREFERENCENO
+					, FM.FINTYPE
+					, M.HOLDREASON
+					, M.SWAPEFFECTIVEDATE
+					, M.SECURITYMANDATE
+				FROM MANDATES M
+				INNER JOIN CUSTOMERS C ON M.CUSTID = C.CUSTID
+				LEFT JOIN BANKBRANCHES BB ON M.BANKBRANCHID = BB.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BB.BANKCODE = BD.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PC ON BB.CITY = PC.PCCITY
+				LEFT JOIN ENTITY E ON M.ENTITYCODE = E.ENTITYCODE
+				LEFT JOIN PARTNERBANKS PB ON M.PARTNERBANKID = PB.PARTNERBANKID
+				LEFT JOIN FINANCEMAIN FM ON M.ORGREFERENCE = FM.FINREFERENCE
+				WHERE NOT EXISTS (SELECT 1 FROM MANDATES_TEMP WHERE MANDATES_TEMP.MANDATEID = M.MANDATEID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#76.24.1_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.36" author="saikiran.n">
+		<renameColumn tableName="Mandates_Temp" oldColumnName="EmployeeID" newColumnName="EmployerID" />
+	</changeSet>
+
+	<changeSet id="ST#76.37" author="saikiran.n">
+		<renameColumn tableName="Mandates_Temp" oldColumnName="EmployerName" newColumnName="EmployeeNo" />
+	</changeSet>
+
+	<changeSet id="ST#76.38" author="saikiran.n">
+		<renameColumn tableName="Mandates" oldColumnName="EmployeeID" newColumnName="EmployerID" />
+	</changeSet>
+
+	<changeSet id="ST#76.39" author="saikiran.n">
+		<renameColumn tableName="Mandates" oldColumnName="EmployerName" newColumnName="EmployeeNo" />
+	</changeSet>
+
+	<changeSet id="ST#76.40_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates_temp');
+				select deps_save_and_drop_dependencies ('plf', 'mandates');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.40" author="saikiran.n">
+		<modifyDataType tableName="Mandates_Temp" columnName="EmployeeNo" newDataType="varchar(50)" />
+	</changeSet>
+
+	<changeSet id="ST#76.41" author="saikiran.n">
+		<modifyDataType tableName="Mandates" columnName="EmployeeNo" newDataType="varchar(50)" />
+	</changeSet>
+
+	<changeSet id="ST#76.22.1_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates_temp');
+				select deps_restore_dependencies ('plf', 'mandates');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.42" author="saikiran.n">
+		<renameColumn tableName="Presentment_Extraction_Stage" oldColumnName="EmployerName"
+			newColumnName="EmployeeNo" />
+	</changeSet>
+
+	<changeSet id="ST#76.43" author="saikiran.n">
+		<addColumn tableName="PresentmentDetails">
+			<column name="EmployerID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.44" author="saikiran.n">
+		<addColumn tableName="PresentmentDetails">
+			<column name="EmployeeNo" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.45" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE SECRIGHTS SET RIGHTNAME = 'MandateDialog_EmployeeID' WHERE RIGHTNAME = 'MandateDialog_EmployerID';
+				UPDATE SECRIGHTS SET RIGHTNAME = 'MandateDialog_EmployeeNo' WHERE RIGHTNAME = 'MandateDialog_EmployerName';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.46.1" author="saikiran.n">
+		<addColumn tableName="PresentmentDetails">
+			<column name="EmployerName" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.22.2_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.22.2" author="saikiran.n">
+		<createView viewName="MANDATES_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT M.MANDATEID
+					, M.CUSTID
+					, M.MANDATEREF
+					, M.MANDATETYPE
+					, M.BANKBRANCHID
+					, M.ACCNUMBER
+					, M.ACCHOLDERNAME
+					, M.JOINTACCHOLDERNAME
+					, M.ACCTYPE
+					, M.OPENMANDATE
+					, M.STARTDATE
+					, M.EXPIRYDATE
+					, M.MAXLIMIT
+					, M.PERIODICITY
+					, M.PHONECOUNTRYCODE
+					, M.PHONEAREACODE
+					, M.PHONENUMBER
+					, M.STATUS
+					, M.APPROVALID
+					, M.VERSION
+					, M.LASTMNTBY
+					, M.LASTMNTON
+					, M.RECORDSTATUS
+					, M.ROLECODE
+					, M.NEXTROLECODE
+					, M.TASKID
+					, M.NEXTTASKID
+					, M.RECORDTYPE
+					, M.WORKFLOWID
+					, M.REASON
+					, M.MANDATECCY
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, BB.BANKCODE
+					, BB.BRANCHCODE
+					, BB.BRANCHDESC
+					, BB.MICR
+					, BB.IFSC
+					, BB.CITY
+					, BD.BANKNAME
+					, M.INPUTDATE
+					, M.INPUTDATE FROMDATE
+					, M.INPUTDATE TODATE
+					, M.ACTIVE
+					, M.DEFAULTMANDATE
+					, 1  USEEXISTING
+					, M.ORGREFERENCE
+					, PC.PCCITYNAME
+					, M.DOCUMENTNAME
+					, M.DOCUMENTREF
+					, M.EXTERNALREF
+					, M.ENTITYCODE
+					, E.ENTITYDESC
+					, M.PRIMARYMANDATEID
+					, M.SWAPISACTIVE
+					, M.BARCODENUMBER
+					, PB.PARTNERBANKCODE
+					, PB.PARTNERBANKNAME
+					, M.PARTNERBANKID
+					, M.EMANDATESOURCE
+					, M.EMANDATEREFERENCENO
+					, FM.FINTYPE
+					, M.HOLDREASON
+					, M.SWAPEFFECTIVEDATE
+					, M.SECURITYMANDATE
+					, M.EMPLOYERID
+					, M.EMPLOYEENO
+				FROM MANDATES M
+				INNER JOIN CUSTOMERS C ON C.CUSTID = M.CUSTID
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE 
+				LEFT JOIN RMTPROVINCEVSCITY PC ON PC.PCCITY = BB.CITY
+				LEFT JOIN ENTITY E ON E.ENTITYCODE = M.ENTITYCODE
+				LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
+				LEFT JOIN FINANCEMAIN FM ON FM.FINREFERENCE = M.ORGREFERENCE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#76.22.2_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.23.2_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.23.2" author="saikiran.n">
+		<createView viewName="MANDATES_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT M.MANDATEID
+					, M.CUSTID
+					, M.MANDATEREF
+					, M.MANDATETYPE
+					, M.BANKBRANCHID
+					, M.ACCNUMBER
+					, M.ACCHOLDERNAME
+					, M.JOINTACCHOLDERNAME
+					, M.ACCTYPE
+					, M.OPENMANDATE
+					, M.STARTDATE
+					, M.EXPIRYDATE
+					, M.MAXLIMIT
+					, M.PERIODICITY
+					, M.PHONECOUNTRYCODE
+					, M.PHONEAREACODE
+					, M.PHONENUMBER
+					, M.STATUS
+					, M.APPROVALID
+					, M.VERSION
+					, M.LASTMNTBY
+					, M.LASTMNTON
+					, M.RECORDSTATUS
+					, M.ROLECODE
+					, M.NEXTROLECODE
+					, M.TASKID
+					, M.NEXTTASKID
+					, M.RECORDTYPE
+					, M.WORKFLOWID
+					, M.REASON
+					, M.MANDATECCY
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, BB.BANKCODE
+					, BB.BRANCHCODE
+					, BB.BRANCHDESC
+					, BB.MICR
+					, BB.IFSC
+					, BB.CITY
+					, BD.BANKNAME
+					, M.INPUTDATE
+					, M.ACTIVE
+					, M.DEFAULTMANDATE
+					, 0 USEEXISTING
+					, M.ORGREFERENCE
+					, PC.PCCITYNAME
+					, M.DOCUMENTNAME
+					, M.DOCUMENTREF
+					, M.EXTERNALREF
+					, M.ENTITYCODE
+					, E.ENTITYDESC
+					, M.PRIMARYMANDATEID
+					, M.SWAPISACTIVE
+					, M.BARCODENUMBER
+					, PB.PARTNERBANKCODE
+					, PB.PARTNERBANKNAME
+					, M.PARTNERBANKID
+					, M.EMANDATESOURCE
+					, M.EMANDATEREFERENCENO
+					, FM.FINTYPE
+					, M.HOLDREASON
+					, M.SWAPEFFECTIVEDATE
+					, M.SECURITYMANDATE
+					, M.EMPLOYERID
+					, M.EMPLOYEENO
+				FROM MANDATES_TEMP M
+				INNER JOIN CUSTOMERS C ON C.CUSTID = M.CUSTID
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PC ON PC.PCCITY = BB.CITY
+				LEFT JOIN ENTITY E ON E.ENTITYCODE = M.ENTITYCODE
+				LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
+				LEFT JOIN FINANCEMAIN FM ON FM.FINREFERENCE = M.ORGREFERENCE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#76.23.2_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.24.2_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.24.2" author="saikiran.n">
 		<createView viewName="MANDATES_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT M.MANDATEID
@@ -5230,14 +5606,14 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#76.24.1_post" author="saikiran.n" dbms="postgresql">
+	<changeSet id="ST#76.24.2_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'mandates_view');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="16.3_pre" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5316,7 +5692,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#76.48.1" author="saikiran.n">
 		<addColumn tableName="Presentment_Extraction_Stage">
 			<column name="EmployerName" type="varchar(50)" />
