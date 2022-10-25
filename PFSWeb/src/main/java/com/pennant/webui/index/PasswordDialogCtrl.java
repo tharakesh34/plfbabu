@@ -449,7 +449,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	 * @param event
 	 */
 	public void onClick$btnClose(Event event) {
-		closeDialog();
+		Executions.sendRedirect("loginDialog.zul");
 	}
 
 	// ******************************************************//
