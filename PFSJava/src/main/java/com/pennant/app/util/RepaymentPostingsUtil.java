@@ -902,7 +902,7 @@ public class RepaymentPostingsUtil {
 		}
 
 		// Set Repay Amount Codes
-		amountCodes.setRpPri(rqh.getPrincipal());
+		amountCodes.setRpPri(rqh.getPrincipal().subtract(rqh.getPartialPaid()));
 		amountCodes.setRpPft(rqh.getProfit());
 		amountCodes.setRpTot(rqh.getPrincipal().add(rqh.getProfit()));
 		amountCodes.setRpTds(rqh.getTds());
