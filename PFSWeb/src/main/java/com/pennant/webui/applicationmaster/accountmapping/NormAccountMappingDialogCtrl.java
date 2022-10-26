@@ -884,7 +884,16 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	}
 
 	public void onFulfill$finType(Event event) {
-		this.account.setValue(this.finType.getValue().concat(this.accountType.getValue()));
+		this.account.setValue(getAccount());
+	}
+
+	public void onFulfill$accountType(Event event) {
+		this.account.setValue(getAccount());
+	}
+
+	private String getAccount() {
+		return StringUtils.trimToEmpty(this.finType.getValue())
+				.concat(StringUtils.trimToEmpty(this.accountType.getValue()));
 	}
 
 	/**
