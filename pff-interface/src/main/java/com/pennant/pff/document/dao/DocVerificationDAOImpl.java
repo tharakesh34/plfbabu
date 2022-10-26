@@ -44,7 +44,7 @@ public class DocVerificationDAOImpl extends BasicDao<DocVerificationHeader> impl
 				ps.setString(index++, header.getClientId());
 				ps.setString(index++, header.getDocRequest());
 				ps.setString(index++, header.getDocResponse());
-				ps.setString(index++, header.getStatus());
+				ps.setString(index, header.getStatus());
 				return ps;
 			}
 		}, keyHolder);
@@ -76,7 +76,7 @@ public class DocVerificationDAOImpl extends BasicDao<DocVerificationHeader> impl
 				ps.setString(index++, details.getDob());
 				ps.setInt(index++, details.getAge());
 				ps.setString(index++, details.getPanNumber());
-				ps.setString(index++, details.getAadhaarNumber());
+				ps.setString(index, details.getAadhaarNumber());
 				return ps;
 			}
 		}, keyHolder);
@@ -107,7 +107,7 @@ public class DocVerificationDAOImpl extends BasicDao<DocVerificationHeader> impl
 				ps.setString(index++, address.getDistrict());
 				ps.setString(index++, address.getState());
 				ps.setString(index++, address.getCountry());
-				ps.setString(index++, address.getZip());
+				ps.setString(index, address.getZip());
 				return ps;
 			}
 		}, keyHolder);
