@@ -173,7 +173,7 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxPSLDetail.getSelectedItem();
 		final long finID = (Long) selectedItem.getAttribute("finID");
-		final String finReference = (String) selectedItem.getAttribute("finReference");
+
 		PSLDetail psldetail = pSLDetailService.getPSLDetail(finID);
 
 		if (psldetail == null) {

@@ -188,7 +188,6 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 
 		// Get the selected entity.
 		long finID = (Long) selectedItem.getAttribute("finID");
-		String finRef = (String) selectedItem.getAttribute("finRef");
 		PayOrderIssueHeader aPayOrderIssueHeader = payOrderIssueService.getPayOrderIssueHeaderById(finID);
 
 		if (aPayOrderIssueHeader == null) {

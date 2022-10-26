@@ -2726,7 +2726,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		logger.debug(Literal.ENTERING);
 
 		long finID = rch.getFinID();
-		String finReference = rch.getReference();
 		List<FinFeeDetail> finFeeDetailsList = rch.getPaidFeeList();
 		Long oldLinkTranId = rch.getLinkedTranId();
 

@@ -19,9 +19,7 @@ public class TestPMAYDAO {
 
 	@Autowired
 	private PMAYDAO pmayDAO;
-
 	private PMAY p;
-	private PmayEligibilityLog pMaylog;
 
 	@Test
 	@Transactional

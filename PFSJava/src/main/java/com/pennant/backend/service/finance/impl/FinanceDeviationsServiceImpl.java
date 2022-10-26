@@ -448,7 +448,6 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		String userRole = fm.getRoleCode();
 		// Get the list of finance deviations that were finalized.
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 		List<FinanceDeviations> financedeviations = deviationDetailsDAO.getFinanceDeviations(finID, "");
 		List<FinanceDeviations> deviations = new ArrayList<>();
 		for (FinanceDeviations financeDeviation : financedeviations) {

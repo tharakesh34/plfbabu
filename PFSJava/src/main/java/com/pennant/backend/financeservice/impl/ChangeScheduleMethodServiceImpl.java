@@ -178,7 +178,6 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 		AuditDetail auditDetail = new AuditDetail();
 		String lang = "EN";
 		long finID = fis.getFinID();
-		String finReference = fis.getFinReference();
 		Date fromDate = fis.getFromDate();
 		// Repayment Schedule Method (If not blanks validation already happens in defaulting)
 		if (!StringUtils.equals(fis.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)

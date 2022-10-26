@@ -887,7 +887,6 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	}
 
 	class MultiReceiptRunnable implements Runnable {
-		private final Logger logger_ = LogManager.getLogger(MultiReceiptRunnable.class);
 		private List<AuditHeader> auditHeaderList;
 		Map<Long, FinReceiptHeader> finReceiptHeaderMap;
 		long batchId;

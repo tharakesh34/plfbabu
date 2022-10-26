@@ -308,7 +308,7 @@ public class AutoKnockOffProcessService {
 
 	private FinReceiptData getInProcessReceiptData(FinReceiptData receiptData) {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		String finReference = rch.getReference();
+
 		// Multi Receipts: Get In Process Receipts
 		long curReceiptID = 0;
 		if (rch != null) {

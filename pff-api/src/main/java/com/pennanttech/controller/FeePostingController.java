@@ -293,7 +293,6 @@ public class FeePostingController extends ExtendedTestClass {
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		fd.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(finID));
 

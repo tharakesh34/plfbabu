@@ -360,7 +360,6 @@ public class FinStatementController extends SummaryDetailService {
 		FinanceMain fm = schdData.getFinanceMain();
 
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		List<FinFeeDetail> feeDues = new ArrayList<>();
 
@@ -502,7 +501,6 @@ public class FinStatementController extends SummaryDetailService {
 		FinanceMain fm = schdData.getFinanceMain();
 
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		// Repayments Posting Process Execution
 		// =====================================
