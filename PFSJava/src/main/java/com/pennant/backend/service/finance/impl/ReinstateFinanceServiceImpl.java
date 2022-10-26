@@ -220,6 +220,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 
 		if (CollectionUtils.isEmpty(serviceInstructions)) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinID(rif.getFinID());
 			finServInst.setFinReference(rif.getFinReference());
 			finServInst.setFinEvent(rif.getFinEvent());
 
