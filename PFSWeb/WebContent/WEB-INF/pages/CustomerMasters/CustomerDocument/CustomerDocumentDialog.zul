@@ -77,6 +77,9 @@
 									<hbox>
 										<space id="space_CustIDNumber" spacing="2px" sclass="mandatory" />
 										<uppercasebox id="custDocTitle" maxlength="100" width="250px" />
+										<textbox id="otp" maxlength="10" width="100px" visible="false"/>
+										<button id="btnSendOTP" visible="false" label="${c:l('label_aadhar_sendotp.value')}"/>
+										<button id="btnValidate" visible="false" label="${c:l('label_aadhar_validateotp.value')}"/>
 									</hbox>
 								</row>
 								<row>
@@ -138,6 +141,54 @@
 									<hbox>
 										<space id="space_Remarks" spacing="2px" />
 										<textbox id="remarks" multiline="true" rows="4" width="250px" style="resize: none;" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gbDetailsAsPerPAN" sclass="gb-dialog" visible="false">
+						<grid id="grid_detailsAsPerPAN" sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="180px" />
+								<column />
+								<column width="180px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_CustomerDocumentDialog_firstNameAsPerPAN"
+										value="${c:l('label_CustomerDocumentDialog_firstNameAsPerPAN.value')}" />
+									<hbox>
+										<space id="space_firstNameAsPerPAN" spacing="2px" />
+										<textbox id="firstNameAsPerPAN" maxlength="100" width="250px" readonly="true"/>
+									</hbox>
+									<label id="label_CustomerDocumentDialog_middleNameAsPerPAN"
+										value="${c:l('label_CustomerDocumentDialog_middleNameAsPerPAN.value')}"/>
+									<hbox>
+										<space id="space_middleNameAsPerPAN" spacing="2px" />
+										<textbox id="middleNameAsPerPAN" maxlength="100" width="250px" readonly="true"/>
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerDocumentDialog_lastNameAsPerPAN"
+										value="${c:l('label_CustomerDocumentDialog_lastNameAsPerPAN.value')}" />
+									<hbox>
+										<space id="space_lastNameAsPerPAN" spacing="2px" />
+										<textbox id="lastNameAsPerPAN" width="250px" readonly="true"/>
+									</hbox>
+									<label id="label_CustomerDocumentDialog_verificationStatus"
+										value="${c:l('label_CustomerDocumentDialog_verificationStatus.value')}" />
+									<hbox>
+										<space id="space_verificationStatus" spacing="2px" />
+										<textbox id="verificationStatus" width="250px" readonly="true"/>
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerDocumentDialog_recordModified"
+										value="${c:l('label_CustomerDocumentDialog_recordModified.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="lastModified" width="250px" readonly="true" />
 									</hbox>
 								</row>
 							</rows>

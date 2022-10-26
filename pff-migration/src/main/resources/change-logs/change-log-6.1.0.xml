@@ -682,4 +682,81 @@
 			</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="16" author="rahul.r">
+		<createTable tableName="DOC_VERIFICATION_HEADER">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="custCif" type="nvarchar(20)"/>
+			<column name="doctype" type="nvarchar(50)"/>
+			<column name="docNumber" type="nvarchar(100)"/>
+			<column name="verified" type="smallint"/>
+			<column name="verifiedon" type="datetime"/>
+			<column name="docReference" type="nvarchar(50)"/>
+			<column name="clientId" type="nvarchar(100)"/>
+			<column name="docRequest" type="text"/>
+			<column name="docResponse" type="text"/>
+			<column name="status" type="nvarchar(6)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="17" author="rahul.r">
+		<createTable tableName="DOC_VERIFICATION_DETAILS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="headerId" type="bigint" />
+			<column name="fullName" type="nvarchar(200)"/>
+			<column name="fatherOrHusbandName" type="nvarchar(200)"/>
+			<column name="gender" type="nvarchar(5)"/>
+			<column name="dob" type="nvarchar(50)"/>
+			<column name="age" type="int"/>
+			<column name="panNumber" type="nvarchar(15)"/>
+			<column name="aadhaarNumber" type="nvarchar(20)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="18" author="rahul.r">
+		<addForeignKeyConstraint constraintName="FK_DOCVERIFDETAIL_ID"
+			referencedTableName="DOC_VERIFICATION_HEADER" baseColumnNames="headerId" baseTableName="DOC_VERIFICATION_DETAILS"
+			referencedColumnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="19" author="rahul.r">
+		<createTable tableName="DOC_VERIFICATION_ADDRESS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="headerId" type="bigint" />
+			<column name="houseNo" type="nvarchar(100)"/>
+			<column name="street" type="nvarchar(100)"/>
+			<column name="ditrict" type="nvarchar(100)"/>
+			<column name="state" type="nvarchar(50)"/>
+			<column name="country" type="nvarchar(50)"/>
+			<column name="zip" type="nvarchar(50)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="20" author="rahul.r">
+		<addForeignKeyConstraint constraintName="FK_DOCVERIFADDRESS_ID"
+			referencedTableName="DOC_VERIFICATION_HEADER" baseColumnNames="headerId" baseTableName="DOC_VERIFICATION_ADDRESS"
+			referencedColumnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="21" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Alter Table MASTER_DEF Add Column Validation_Req smallint default 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+		<changeSet id="22" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Update MASTER_DEF Set Validation_Req=1 Where Key_type in ('PAN','AADHAAR');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -73,6 +73,20 @@ public class MasterDefUtil {
 		}
 	}
 
+	public static boolean isValidationReq(DocType docType) {
+		if (masterDefList == null) {
+			loadMasterDef();
+		}
+
+		for (MasterDef masterDef : masterDefList) {
+			if (docType.name().equals(masterDef.getKeyType())) {
+				return masterDef.isValidationReq();
+			}
+		}
+
+		return false;
+	}
+
 	private static Map<String, String> addressTypes;
 
 	public static String getAddressCode(AddressType addrType) {

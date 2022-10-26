@@ -48,6 +48,7 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -57,8 +58,8 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
@@ -78,6 +79,8 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.document.DocVerificationUtil;
+import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl;
@@ -85,11 +88,11 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.CustomerDedupCheckService;
 import com.pennanttech.pff.external.CustomerInterfaceService;
-import com.pennanttech.pff.external.pan.service.PrimaryAccountService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
@@ -140,7 +143,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private CustomerInterfaceService customerExternalInterfaceService;
 	@Autowired(required = false)
 	private CustomerDedupCheckService customerDedupService;
-	private PrimaryAccountService primaryAccountService;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	/**
@@ -393,41 +395,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 
 				// Get the primary identity.
-				String primaryIdNumber = null;
-				String primaryIdName = null;
-
-				try {
-					primaryIdNumber = primaryID.getValue();
-					// Verifying/Validating the PAN Number
-					if (isRetailCustomer && primaryAccountService.panValidationRequired()) {
-						try {
-							PrimaryAccount primaryAccount = new PrimaryAccount();
-							primaryAccount.setPanNumber(primaryID.getValue());
-							primaryAccount = primaryAccountService.retrivePanDetails(primaryAccount);
-							String custFName = StringUtils.trimToEmpty(primaryAccount.getCustFName());
-							String custMName = StringUtils.trimToEmpty(primaryAccount.getCustMName());
-							String custLName = StringUtils.trimToEmpty(primaryAccount.getCustLName());
-
-							primaryIdName = custFName.concat(" ").concat(custMName).concat(" ").concat(custLName);
-
-							if (StringUtils.isNotBlank(primaryIdName)) {
-								MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
-							} else {
-								MessageUtil.showMessage(String.format("%s PAN already verified", primaryID.getValue()));
-
-							}
-						} catch (InterfaceException e) {
-							if (MessageUtil.YES == MessageUtil
-									.confirm(e.getErrorMessage() + "\n" + "Are you sure you want to continue ?")) {
-							} else {
-								return;
-							}
-						}
-					}
-
-				} catch (WrongValueException e) {
-					wve.add(e);
-				}
+				String primaryIdNumber = primaryID.getValue();
+				String primaryIdName = validatePAN(primaryIdNumber);
 
 				doRemoveValidation();
 
@@ -519,6 +488,52 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private String validatePAN(String primaryIdNumber) {
+		String primaryIdName = null;
+		if (!(isRetailCustomer && MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)
+				&& StringUtils.isNotEmpty(primaryIdNumber))) {
+			return primaryIdName;
+		}
+
+		DocVerificationHeader header = new DocVerificationHeader();
+		header.setDocNumber(primaryIdNumber);
+		header.setCustCif(this.custCIF.getValue());
+
+		if (!DocVerificationUtil.isVerified(primaryIdNumber)) {
+			ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
+
+			if (err != null) {
+				MessageUtil.showMessage(err.getMessage());
+			} else {
+				primaryIdName = header.getDocVerificationDetail().getFullName();
+				MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
+			}
+
+			return primaryIdName;
+		}
+
+		String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
+
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
+
+				if (err != null) {
+					MessageUtil.showMessage(err.getMessage());
+				} else {
+					String fullName = header.getDocVerificationDetail().getFullName();
+					MessageUtil.showMessage(String.format("%s PAN validation successfull.", fullName));
+				}
+			}
+		});
+
+		if (header.getDocVerificationDetail() != null) {
+			primaryIdName = header.getDocVerificationDetail().getFullName();
+		}
+
+		return primaryIdName;
 	}
 
 	private CustomerDetails checkExternalDedup(CustomerDetails customerDetails, String primaryIdNumber) {
@@ -819,7 +834,4 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.customerInterfaceService = customerInterfaceService;
 	}
 
-	public void setPrimaryAccountService(PrimaryAccountService primaryAccountService) {
-		this.primaryAccountService = primaryAccountService;
-	}
 }

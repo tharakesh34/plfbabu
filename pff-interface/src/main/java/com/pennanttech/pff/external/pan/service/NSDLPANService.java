@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 @Component
 @Qualifier("nsdlPANService")
-public class NSDLPANService implements PANService {
+public class NSDLPANService {
 	private static final Logger logger = LogManager.getLogger(NSDLPANService.class);
 
 	@Value("${nsdl.pan.enquiry.certificate.name:#{null}}")
@@ -99,7 +99,6 @@ public class NSDLPANService implements PANService {
 		}
 	}
 
-	@Override
 	public PrimaryAccount getPANDetails(PrimaryAccount primaryAccount) {
 		logger.debug(Literal.ENTERING);
 

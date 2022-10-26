@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.MasterDefUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.applicationmaster.RejectDetailDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -29,6 +30,8 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.document.DocVerificationUtil;
+import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -348,6 +351,22 @@ public class ReceiptDataValidator {
 
 		if (rud.isDedupCheck()) {
 			checkDedup(rud);
+		}
+
+		String panNumber = rud.getPanNumber();
+		if (StringUtils.isNotEmpty(panNumber)) {
+			if (MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
+				DocVerificationHeader header = new DocVerificationHeader();
+				header.setDocNumber(panNumber);
+				header.setDocReference(reference);
+
+				ErrorDetail error = DocVerificationUtil.doValidatePAN(header, true);
+
+				if (error != null) {
+					setError(rud, error.getMessage());
+					return;
+				}
+			}
 		}
 
 		receiptService = (ReceiptService) SpringBeanUtil.getBean("receiptService");

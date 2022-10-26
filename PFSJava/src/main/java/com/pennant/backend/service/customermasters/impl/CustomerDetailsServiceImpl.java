@@ -50,6 +50,8 @@ import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.MasterDefUtil;
+import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
@@ -203,6 +205,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.document.DocVerificationUtil;
+import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
@@ -2700,10 +2704,15 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		List<CustomerDocument> custDocuments = customerDetails.getCustomerDocumentsList();
 		boolean panMandatory = false;
 		boolean form60Exists = false;
+		boolean aadharExists = false;
 		if (CollectionUtils.isNotEmpty(custDocuments)) {
 			for (CustomerDocument custDocument : custDocuments) {
 				if (StringUtils.equals(custDocument.getCustDocCategory(), "03")) {
 					panMandatory = true;
+				}
+
+				if (StringUtils.equals(custDocument.getCustDocCategory(), "01")) {
+					aadharExists = true;
 				}
 
 				if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode())
@@ -2734,20 +2743,36 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode())
-				&& StringUtils.isEmpty(customerDetails.getCustomer().getCustCRCPR()) && !form60Exists
-				&& !panMandatory) {
+				&& StringUtils.isEmpty(customerDetails.getCustomer().getCustCRCPR()) && !form60Exists && !panMandatory
+				&& !aadharExists) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "Either PAN (or) FORM60 Document";
+			valueParm[0] = "Either PAN (or) FORM60 (or) Aadhaar Document";
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 			return auditDetail;
 		}
-		/*
-		 * if (StringUtils.isBlank(customerDetails.getCustCIF()) && !panMandatory) { String[] valueParm = new String[1];
-		 * valueParm[0] = "PAN document"; ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502",
-		 * "", valueParm)); auditDetail.setErrorDetail(errorDetail); return auditDetail; }
-		 */
 
-		// customer bank info details
+		if (panMandatory && MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
+			String panNumber = null;
+			for (CustomerDocument custDocument : custDocuments) {
+				if (StringUtils.equals(custDocument.getCustDocCategory(), "03")) {
+					panNumber = custDocument.getCustDocTitle();
+				}
+			}
+
+			if (StringUtils.isNotEmpty(panNumber)) {
+				DocVerificationHeader header = new DocVerificationHeader();
+				header.setDocNumber(panNumber);
+				header.setCustCif(customerDetails.getCustomer().getCustCIF());
+
+				ErrorDetail error = DocVerificationUtil.doValidatePAN(header, true);
+
+				if (error != null) {
+					logger.error(error.getMessage());
+				}
+
+			}
+		}
+
 		List<CustomerBankInfo> custBankDetails = customerDetails.getCustomerBankInfoList();
 		if (custBankDetails != null) {
 			ErrorDetail errorDetail = new ErrorDetail();
@@ -3598,6 +3623,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				String[] valueParm = new String[1];
 				valueParm[0] = "panNumber";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90251", "", valueParm), "EN"));
+			} else {
+				if (MasterDefUtil.isValidationReq(DocType.PAN)) {
+					DocVerificationHeader header = new DocVerificationHeader();
+					header.setDocNumber(customer.getCustCRCPR());
+					header.setCustCif(customer.getCustCIF());
+
+					ErrorDetail error = DocVerificationUtil.doValidatePAN(header, true);
+
+					if (error != null) {
+						logger.error(error.getMessage());
+					}
+
+				}
 			}
 		}
 
