@@ -279,7 +279,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" and Presentment_Extraction_Stage.FinReference = m.OrgReference and m.Status = ?)");
 		sql.append(", InstrumentType = (select m.MandateType From Mandates m Where m.SecurityMandate = ?");
 		sql.append(" and Presentment_Extraction_Stage.FinReference = m.OrgReference and m.Status =?)");
-		sql.append(" Where BatchID = ? and MandateStatus = ?");
+		sql.append(" Where BatchID = ? and MandateStatus in (?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -296,6 +296,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 			ps.setLong(index++, batchID);
 			ps.setString(index++, MandateStatus.NEW);
+			ps.setString(index++, MandateStatus.AWAITCON);
+			ps.setString(index, MandateStatus.REJECTED);
 
 		});
 	}

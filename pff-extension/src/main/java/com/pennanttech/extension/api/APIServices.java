@@ -39,7 +39,7 @@ public class APIServices {
 
 	private static IExtensionServices getExtension() {
 		IExtensionServices extensionServices;
-		String exception = "The IExtensionServices implimentation should bcom.pennanttech.extension.api.ExtensionServicese available in the client exetension layer to override the API services list.";
+		String exception = "The IExtensionServices implimentation should be com.pennanttech.extension.api.ExtensionServicese available in the client exetension layer to override the API services list.";
 		try {
 			Object object = Class.forName("com.pennanttech.extension.api.ExtensionServices").getDeclaredConstructor()
 					.newInstance();

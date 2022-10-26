@@ -26,6 +26,12 @@ public class PresentmentDueConfigTasklet implements Tasklet {
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		Date appDate = SysParamUtil.getLastBusinessdate();
 
+		Date march3st = DateUtil.getDate(DateUtil.getYear(appDate), 2, 31);
+
+		if (DateUtil.compare(appDate, march3st) == 0) {
+
+		}
+
 		boolean configExists = decDao.isConfigExists();
 
 		Date marchFirst = DateUtil.getDate(DateUtil.getYear(appDate), 2, 1);
@@ -53,10 +59,26 @@ public class PresentmentDueConfigTasklet implements Tasklet {
 	}
 
 	private static Date getFinancialYearStart(Date date) {
-		return DateUtil.getDate(DateUtil.getYear(date), 3, 1);
+		int year = DateUtil.getYear(date);
+
+		int month = DateUtil.getMonth(date);
+
+		if (month <= 3) {
+			year = year - 1;
+		}
+
+		return DateUtil.getDate(year, 3, 1);
 	}
 
 	private static Date getFinancialYearEnd(Date date) {
-		return DateUtil.getDate(DateUtil.getYear(date) + 1, 2, 31);
+		int year = DateUtil.getYear(date);
+
+		int month = DateUtil.getMonth(date);
+
+		if (month <= 3) {
+			year = year - 1;
+		}
+
+		return DateUtil.getDate(year + 1, 2, 31);
 	}
 }
