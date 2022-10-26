@@ -77,6 +77,7 @@ import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinStageAccountingLogDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -123,6 +124,7 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -235,6 +237,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private FinanceTypeDAO financeTypeDAO;
 	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -591,6 +594,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			// process FinFeeDetails
 			processFinFeeDetails(rch);
 		}
+
+		finServiceInstructionDAO.deleteList(finID, rch.getReceiptPurpose(), TableType.TEMP_TAB.getSuffix());
+		saveFSI(rch, fd.getFinScheduleData().getFinanceMain(), auditHeader, TableType.MAIN_TAB);
 
 		// Bounce Reason Code
 		if (rch.getManualAdvise() != null) {
@@ -3420,6 +3426,38 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 	}
 
+	private void saveFSI(FinReceiptHeader rch, FinanceMain fm, AuditHeader auditHeader, TableType tableType) {
+		Date appDate = fm.getAppDate();
+		Date sysDate = DateUtil.getSysDate();
+
+		List<FinReceiptDetail> rcDtls = rch.getReceiptDetails();
+		int size = rcDtls.size();
+		FinRepayHeader rph = rcDtls.get(size - 1).getRepayHeader();
+
+		FinServiceInstruction instruction = new FinServiceInstruction();
+		instruction.setFinID(fm.getFinID());
+		instruction.setFinReference(fm.getFinReference());
+		instruction.setFinEvent(rch.getReceiptPurpose());
+		instruction.setAmount(rch.getReceiptAmount());
+		instruction.setAppDate(appDate);
+		instruction.setSystemDate(sysDate);
+		instruction.setMaker(auditHeader.getAuditUsrId());
+		instruction.setMakerAppDate(appDate);
+		instruction.setMakerSysDate(sysDate);
+		instruction.setReference(String.valueOf(rch.getReceiptID()));
+
+		if (StringUtils.isEmpty(rch.getNextRoleCode())) {
+			instruction.setChecker(auditHeader.getAuditUsrId());
+			instruction.setCheckerAppDate(appDate);
+			instruction.setCheckerSysDate(sysDate);
+			if (rph != null) {
+				instruction.setLinkedTranID(rph.getNewLinkedTranId());
+			}
+		}
+
+		finServiceInstructionDAO.save(instruction, tableType.getSuffix());
+	}
+
 	private void setError(AuditDetail ad, String usrLanguage, String code, long receiptID) {
 		if (StringUtils.isEmpty(code)) {
 			return;
@@ -3639,4 +3677,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
+
+	@Autowired
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
+
 }

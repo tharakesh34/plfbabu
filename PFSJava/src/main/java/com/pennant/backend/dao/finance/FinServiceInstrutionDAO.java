@@ -11,7 +11,7 @@ public interface FinServiceInstrutionDAO {
 
 	int saveList(List<FinServiceInstruction> finServiceInstructionList, String type);
 
-	void deleteList(long finID, String tableType, String finEvent);
+	void deleteList(long finID, String finEvent, String tableType);
 
 	List<FinServiceInstruction> getFinServiceInstructions(long finID, String type, String finEvent);
 

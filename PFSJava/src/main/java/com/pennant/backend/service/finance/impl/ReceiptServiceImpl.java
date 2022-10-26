@@ -1161,6 +1161,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			this.manualScheduleService.saveOrUpdate(rcData.getFinanceDetail(), FinServiceEvent.RECEIPT, tableType);
 		}
 
+		if (!rch.isNewRecord()) {
+			finServiceInstructionDAO.deleteList(finID, rch.getReceiptPurpose(), TableType.TEMP_TAB.getSuffix());
+		}
+
+		saveFSI(rch, fm, auditHeader, tableType);
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), rch.getExcludeFields());
 		auditHeader.setAuditDetail(
 				new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], rch.getBefImage(), rch));
@@ -1593,6 +1599,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (fm.isManualSchedule()) {
 			this.manualScheduleService.doReject(rd.getFinanceDetail());
 		}
+
+		finServiceInstructionDAO.deleteList(fm.getFinID(), rch.getReceiptPurpose(), TableType.TEMP_TAB.getSuffix());
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.getAuditDetail().setAuditTranType(PennantConstants.TRAN_WF);
@@ -2160,6 +2168,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				|| !fm.isFinIsActive()) {
 			assetClassificationService.doProcessEarlySettlement(fm.getFinID());
 		}
+
+		finServiceInstructionDAO.deleteList(finID, rch.getReceiptPurpose(), TableType.TEMP_TAB.getSuffix());
+		saveFSI(rch, fm, auditHeader, TableType.MAIN_TAB);
 
 		logger.debug(Literal.LEAVING);
 
@@ -6476,32 +6487,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return;
 		}
 
-		List<FinServiceInstruction> finServInstList = new ArrayList<>();
-		for (FinReceiptDetail recDtl : rch.getReceiptDetails()) {
-			FinRepayHeader rpyHeader = recDtl.getRepayHeader();
-
-			FinServiceInstruction instruction = new FinServiceInstruction();
-			instruction.setFinID(fm.getFinID());
-			instruction.setFinReference(fm.getFinReference());
-			instruction.setFinEvent(rpyHeader.getFinEvent());
-			instruction.setAmount(rpyHeader.getRepayAmount());
-			instruction.setAppDate(appDate);
-			instruction.setSystemDate(sysDate);
-			instruction.setMaker(auditHeader.getAuditUsrId());
-			instruction.setMakerAppDate(appDate);
-			instruction.setMakerSysDate(DateUtil.getSysDate());
-			instruction.setChecker(auditHeader.getAuditUsrId());
-			instruction.setCheckerAppDate(appDate);
-			instruction.setCheckerSysDate(DateUtil.getSysDate());
-			instruction.setReference(String.valueOf(rch.getReceiptID()));
-
-			finServInstList.add(instruction);
-		}
-
-		if (CollectionUtils.isNotEmpty(finServInstList)) {
-			finServiceInstructionDAO.saveList(finServInstList, "");
-		}
-
 		if (!fsi.isReceiptResponse() && requestSource == RequestSource.UPLOAD) {
 			this.receiptUploadDetailDAO.updateReceiptId(fsi.getUploadDetailId(), rch.getReceiptID());
 		}
@@ -7619,6 +7604,38 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		summary.setOverDueAmount(summary.getTotalOverDueIncCharges());
 
 		schdData.setFinODDetails(odDetails);
+	}
+
+	private void saveFSI(FinReceiptHeader rch, FinanceMain fm, AuditHeader auditHeader, TableType tableType) {
+		Date appDate = fm.getAppDate();
+		Date sysDate = DateUtil.getSysDate();
+
+		List<FinReceiptDetail> rcDtls = rch.getReceiptDetails();
+		int size = rcDtls.size();
+		FinRepayHeader rph = rcDtls.get(size - 1).getRepayHeader();
+
+		FinServiceInstruction instruction = new FinServiceInstruction();
+		instruction.setFinID(fm.getFinID());
+		instruction.setFinReference(fm.getFinReference());
+		instruction.setFinEvent(rch.getReceiptPurpose());
+		instruction.setAmount(rch.getReceiptAmount());
+		instruction.setAppDate(appDate);
+		instruction.setSystemDate(sysDate);
+		instruction.setMaker(auditHeader.getAuditUsrId());
+		instruction.setMakerAppDate(appDate);
+		instruction.setMakerSysDate(sysDate);
+		instruction.setReference(String.valueOf(rch.getReceiptID()));
+
+		if (StringUtils.isEmpty(rch.getNextRoleCode())) {
+			instruction.setChecker(auditHeader.getAuditUsrId());
+			instruction.setCheckerAppDate(appDate);
+			instruction.setCheckerSysDate(sysDate);
+			if (rph != null) {
+				instruction.setLinkedTranID(rph.getNewLinkedTranId());
+			}
+		}
+
+		finServiceInstructionDAO.save(instruction, tableType.getSuffix());
 	}
 
 	private void doPostHookValidation(AuditHeader auditHeader) {
