@@ -645,7 +645,16 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		String repayMethod = fm.getFinRepayMethod();
 
+		List<Date> chequeDates = new ArrayList<>();
+
 		for (ChequeDetail cheque : cheques) {
+
+			if (chequeDates.contains(cheque.getChequeDate())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Cheque Dates";
+				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
+				break;
+			}
 
 			if (InstrumentType.isPDC(cheque.getChequeType()) && !InstrumentType.isPDC(repayMethod)) {
 				String[] valueParm = new String[2];
@@ -669,6 +678,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 				date = true;
 				cheque.seteMIRefNo(fsd.getInstNumber());
+				chequeDates.add(cheque.getChequeDate());
 
 				if (fsd.getRepayAmount().compareTo(cheque.getAmount()) == 0) {
 					break;
