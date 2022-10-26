@@ -2801,7 +2801,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			filters = new Filter[1];
 			filters[0] = new Filter("Entity", selectedEntity);
 
-			branches.setWhereClause(" clusterId in (select id from clusters where parent =" + oCluster.getId() + ")");
+			branches.setWhereClause(" clusterId in (select id from clusters where Id =" + oCluster.getId() + ")");
 		}
 
 		branches.setFilters(filters);
