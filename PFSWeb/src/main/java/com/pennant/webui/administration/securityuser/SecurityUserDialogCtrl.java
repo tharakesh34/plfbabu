@@ -854,26 +854,25 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 
 		try {
-			if (!aSecurityUser.isNewRecord()
-					&& !aSecurityUser.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
-				if (!this.usrEnabled.isChecked() && !disableReasonList.isEmpty()) {
-					if (this.disableReason.getSelectedItem() != null
-							&& !StringUtils.trimToEmpty(this.disableReason.getSelectedItem().getValue().toString())
-									.equals(PennantConstants.List_Select)) {
-						aSecurityUser.setDisableReason(this.disableReason.getSelectedItem().getValue().toString());
-					} else {
-						aSecurityUser.setDisableReason(PennantConstants.List_Select);
-					}
 
-					if ("#".equals(getComboboxValue(this.disableReason))) {
-						throw new WrongValueException(this.disableReason, Labels.getLabel("STATIC_INVALID",
-								new String[] { Labels.getLabel("label_SecurityUserDialog_DisableReason.value") }));
-					} else {
-						aSecurityUser.setDisableReason(this.disableReason.getSelectedItem().getValue().toString());
-					}
+			if (!this.usrEnabled.isChecked() && CollectionUtils.isNotEmpty(disableReasonList)) {
+				if (this.disableReason.getSelectedItem() != null
+						&& !StringUtils.trimToEmpty(this.disableReason.getSelectedItem().getValue().toString())
+								.equals(PennantConstants.List_Select)) {
+					aSecurityUser.setDisableReason(this.disableReason.getSelectedItem().getValue().toString());
 				} else {
 					aSecurityUser.setDisableReason(PennantConstants.List_Select);
 				}
+
+				if ("#".equals(getComboboxValue(this.disableReason))
+						&& !aSecurityUser.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
+					throw new WrongValueException(this.disableReason, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_SecurityUserDialog_DisableReason.value") }));
+				} else {
+					aSecurityUser.setDisableReason(this.disableReason.getSelectedItem().getValue().toString());
+				}
+			} else {
+				aSecurityUser.setDisableReason(PennantConstants.List_Select);
 			}
 		} catch (WrongValueException we) {
 			tab1.add(we);
@@ -1013,31 +1012,31 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		try {
 
-			if (!aSecurityUser.isNewRecord()
-					&& !aSecurityUser.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
-				if (!employeeTypeList.isEmpty()) {
-					Comboitem empType = this.employeeType.getSelectedItem();
-					if (empType != null && !PennantConstants.List_Select.equals(empType.getValue().toString())) {
-						aSecurityUser.setEmployeeType(empType.getValue().toString());
-					} else {
-						aSecurityUser.setEmployeeType(PennantConstants.List_Select);
-					}
-
-					if ("#".equals(getComboboxValue(this.employeeType))) {
-						throw new WrongValueException(this.employeeType, Labels.getLabel("STATIC_INVALID",
-								new String[] { Labels.getLabel("label_SecurityUserDialog_EmployeeType.value") }));
-					} else {
-						aSecurityUser.setEmployeeType(empType.getValue().toString());
-					}
+			if (CollectionUtils.isNotEmpty(employeeTypeList)) {
+				Comboitem empType = this.employeeType.getSelectedItem();
+				if (empType != null && !PennantConstants.List_Select.equals(empType.getValue().toString())) {
+					aSecurityUser.setEmployeeType(empType.getValue().toString());
 				} else {
 					aSecurityUser.setEmployeeType(PennantConstants.List_Select);
 				}
+
+				if ("#".equals(getComboboxValue(this.employeeType))
+						&& !aSecurityUser.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
+					throw new WrongValueException(this.employeeType, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_SecurityUserDialog_EmployeeType.value") }));
+				} else {
+					aSecurityUser.setEmployeeType(empType.getValue().toString());
+				}
+			} else {
+				aSecurityUser.setEmployeeType(PennantConstants.List_Select);
 			}
 		} catch (WrongValueException we) {
 			tab1.add(we);
 		}
 
-		if (!findUser && getSecurityUser().isNewRecord() && aSecurityUser.getUsrLogin() != null) {
+		if (!findUser &&
+
+				getSecurityUser().isNewRecord() && aSecurityUser.getUsrLogin() != null) {
 			tab1.add(new WrongValueException(this.usrLogin, "User not found"));
 		} else {
 			this.usrLogin.setErrorMessage("");
