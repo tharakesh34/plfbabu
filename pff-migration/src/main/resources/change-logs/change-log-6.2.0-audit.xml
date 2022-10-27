@@ -661,4 +661,7 @@
 		<renameColumn tableName="ADTMANDATES" oldColumnName="EmployerName" newColumnName="EmployeeNo" />
 	</changeSet>
 
+	<changeSet id="PSD#208851.1" author="saikrishna.b">
+		<modifyDataType tableName="ADTMANDATES" columnName="HOLDREASON" newDataType="varchar(50)" />
+	</changeSet>
 </databaseChangeLog>

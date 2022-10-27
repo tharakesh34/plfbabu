@@ -60,6 +60,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.pff.eod.cache.BounceConfigCache;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
@@ -688,12 +689,14 @@ public class PresentmentResponseProcess implements Runnable {
 			return;
 		}
 
-		mandateDAO.holdMandate(mandateId, bounceId);
+		String reason = MandateExtension.CONSECUTIVE_HOLD_REASON;
+
+		mandateDAO.holdMandate(mandateId, reason);
 
 		com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 		mandateStatus.setMandateID(mandateId);
 		mandateStatus.setStatus(MandateStatus.HOLD);
-		mandateStatus.setReason(bounceReason.getReason());
+		mandateStatus.setReason(reason);
 		mandateStatus.setChangeDate(DateUtil.getSysDate());
 
 		mandateStatusDAO.save(mandateStatus, "");

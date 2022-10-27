@@ -60,6 +60,11 @@ public class MandateExtension {
 	 */
 	public static boolean ACCOUNT_DETAILS_READONLY;
 
+	/**
+	 * Feature extension to for Consecutive Hold Reason
+	 */
+	public static String CONSECUTIVE_HOLD_REASON = "CONSECUTIVE BOUNCE";
+
 	static {
 		APPROVE_ON_LOAN_ORG = getValueAsBoolean("APPROVE_ON_LOAN_ORG", false);
 		UPLOAD_ENITITY_CODE_MANDATORY = getValueAsBoolean("UPLOAD_ENITITY_CODE_MANDATORY", false);

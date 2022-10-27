@@ -14,4 +14,6 @@ public class LookUpCode {
 
 	public static final String SU_DR_INCORRECTPASSWORD = "INCORRECT PASSWORD";
 
+	public static final String MANDATE_HOLD_REASON = "MANDATE_HOLD_REASON";
+
 }

@@ -100,7 +100,7 @@ public interface MandateDAO {
 
 	List<Long> getFinanceMainbyCustId(long custId);
 
-	void holdMandate(long mandateId, long bounceId);
+	void holdMandate(long mandateId, String reason);
 
 	void unHoldMandate(long mandateId);
 

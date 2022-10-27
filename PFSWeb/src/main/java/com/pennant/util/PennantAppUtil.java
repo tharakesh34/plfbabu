@@ -2465,4 +2465,24 @@ public class PennantAppUtil {
 
 		return employeeType;
 	}
+
+	public static List<ValueLabel> getMandateHoldReasons() {
+		JdbcSearchObject<LovFieldDetail> object = new JdbcSearchObject<>(LovFieldDetail.class);
+		object.addTabelName("RMTLovFieldDetail");
+		object.addFilterEqual("fieldCode", LookUpCode.MANDATE_HOLD_REASON);
+		object.addField("fieldCodevalue");
+		object.addField("valuedesc");
+
+		PagedListService service = (PagedListService) SpringUtil.getBean("pagedListService");
+		List<LovFieldDetail> appList = service.getBySearchObject(object);
+
+		if (CollectionUtils.isEmpty(appList)) {
+			return new ArrayList<>();
+		}
+
+		List<ValueLabel> mandateHold = new ArrayList<>();
+		appList.stream().forEach(lfd -> mandateHold.add(new ValueLabel(lfd.getFieldCodeValue(), lfd.getValueDesc())));
+
+		return mandateHold;
+	}
 }

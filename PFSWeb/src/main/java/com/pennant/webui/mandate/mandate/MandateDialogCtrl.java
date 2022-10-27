@@ -59,6 +59,7 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Iframe;
@@ -177,7 +178,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected CurrencyBox maxLimit;
 	protected FrequencyBox periodicity;
 	protected Row holdRow;
-	private ExtendedCombobox holdReason;
+	protected Combobox holdReason;
 	protected Label regStatus;
 	protected Row mandateStatusRow;
 	protected Combobox mandateStatus;
@@ -271,6 +272,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private transient PennyDropService pennyDropService;
 	private transient ExternalDocumentManager externalDocumentManager = null;
 	private transient BankAccountValidationService bankAccountValidationService;
+
+	private List<ValueLabel> mandateHoldList = PennantAppUtil.getMandateHoldReasons();
 
 	/**
 	 * default constructor.<br>
@@ -554,13 +557,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.eMandateSource.setValidateColumns(new String[] { "Code" });
 
 		this.eMandateReferenceNo.setMaxlength(50);
-		this.holdReason.setModuleName("BounceReason");
-		this.holdReason.setDisplayStyle(2);
-		this.holdReason.setValueColumn("BounceID");
-		this.holdReason.setTextBoxWidth(200);
-		this.holdReason.setValueType(DataType.LONG);
-		this.holdReason.setDescColumn("Reason");
-		this.holdReason.setValidateColumns(new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" });
 
 		this.employerID.setInputAllowed(true);
 		this.employerID.setMandatoryStyle(true);
@@ -1510,6 +1506,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		this.recordStatus.setValue(aMandate.getRecordStatus());
 
+		fillComboBox(this.holdReason, aMandate.getHoldReason(), mandateHoldList, "");
+
 		if (aMandate.isNewRecord()) {
 			Date appDate = SysParamUtil.getAppDate();
 			Date sysDate = DateUtil.getSysDate();
@@ -1527,8 +1525,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.active.setChecked(true);
 		} else {
 			this.inputDate.setValue(aMandate.getInputDate());
-			if (aMandate.getHoldReason() != null) {
-				this.holdReason.setValue(String.valueOf(aMandate.getHoldReason()));
+			if (aMandate.getHoldReason() != null && MandateStatus.isHold(aMandate.getStatus())) {
+				this.holdReason.setValue(aMandate.getHoldReason());
 			}
 
 			this.swapMandate.setChecked(aMandate.isSwapIsActive());
@@ -1948,10 +1946,23 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
-			if (MandateStatus.isHold(getComboboxValue(this.mandateStatus)) && !this.holdReason.isReadonly()) {
-				String holdReason = StringUtils.trimToEmpty(this.holdReason.getValue());
-				if (holdReason != null) {
-					aMandate.setHoldReason(Long.valueOf(holdReason));
+			if (MandateStatus.isHold(getComboboxValue(this.mandateStatus)) && !this.holdReason.isDisabled()) {
+				if (CollectionUtils.isNotEmpty(mandateHoldList)) {
+					Comboitem holdRsn = this.holdReason.getSelectedItem();
+					if (holdRsn != null && !PennantConstants.List_Select.equals(holdRsn.getValue().toString())) {
+						aMandate.setHoldReason(holdRsn.getValue().toString());
+					} else {
+						aMandate.setHoldReason(PennantConstants.List_Select);
+					}
+
+					if ("#".equals(getComboboxValue(this.holdReason))) {
+						throw new WrongValueException(this.holdReason, Labels.getLabel("STATIC_INVALID",
+								new String[] { Labels.getLabel("label_MandateDialog_HoldReason.value") }));
+					} else {
+						aMandate.setHoldReason(holdReason.getValue().toString());
+					}
+				} else {
+					aMandate.setHoldReason(PennantConstants.List_Select);
 				}
 			}
 		} catch (WrongValueException we) {
@@ -2090,11 +2101,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateStatusDialog_Remarks.value"),
 								PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			}
-		}
-
-		if (MandateStatus.isHold(getComboboxValue(this.mandateStatus)) && !this.holdReason.isReadonly()) {
-			this.holdReason.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_MandateDialog_HoldReason.value"), null, validate));
 		}
 
 	}
@@ -2794,10 +2800,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		String mandateStatus = getComboboxValue(this.mandateStatus);
 
 		if (MandateStatus.isHold(mandateStatus)) {
-			this.holdReason.setReadonly(false);
+			this.holdReason.setDisabled(false);
 		} else {
 			this.holdReason.setValue("");
-			this.holdReason.setReadonly(true);
+			this.holdReason.setDisabled(true);
 		}
 	}
 

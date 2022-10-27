@@ -821,10 +821,10 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public void holdMandate(long mandateId, long bounceId) {
+	public void holdMandate(long mandateId, String reason) {
 		String sql = "Update Mandates Set Status = ?, HoldReason = ? Where MandateId = ?";
 
-		jdbcOperations.update(sql, MandateStatus.HOLD, bounceId, mandateId);
+		jdbcOperations.update(sql, MandateStatus.HOLD, reason, mandateId);
 	}
 
 	@Override
@@ -1014,7 +1014,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			mndts.setDefaultMandate(rs.getBoolean("DefaultMandate"));
 			mndts.seteMandateSource(rs.getString("EMandateSource"));
 			mndts.seteMandateReferenceNo(rs.getString("EMandateReferenceNo"));
-			mndts.setHoldReason(JdbcUtil.getLong(rs.getObject("HoldReason")));
+			mndts.setHoldReason(rs.getString("HoldReason"));
 			mndts.setSwapEffectiveDate(rs.getTimestamp("SwapEffectiveDate"));
 			mndts.setSecurityMandate(rs.getBoolean("SecurityMandate"));
 			mndts.setEmployerID(JdbcUtil.getLong(rs.getObject("EmployerID")));

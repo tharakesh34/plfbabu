@@ -147,7 +147,9 @@
 								</row>
 								<row id="holdRow" visible="false">
 									<label value="${c:l('label_MandateDialog_HoldReason.value')}" />
-									<extendedcombobox id="holdReason" width="200px" />
+									<hbox>
+										<combobox id="holdReason" width="140px" />
+									</hbox>								
 								</row>
 								<row id="mandateStatusRow">
 									<label value="${c:l('label_MandateDialog_RegStatus.value')}" />
