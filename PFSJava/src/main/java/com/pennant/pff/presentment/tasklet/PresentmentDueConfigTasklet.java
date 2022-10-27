@@ -49,7 +49,7 @@ public class PresentmentDueConfigTasklet implements Tasklet {
 
 			startDate = (Date) appDate.clone();
 			if (month == 2) {
-				startDate = DateUtil.getDate(year, month, 1);
+				startDate = DateUtil.getDate(year, month - 1, 1);
 			}
 		}
 

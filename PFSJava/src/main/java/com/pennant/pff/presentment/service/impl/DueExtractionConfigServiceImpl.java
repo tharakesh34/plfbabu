@@ -102,8 +102,9 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 
 				pec.setID(dueExtractionConfigDAO.getNextValue());
 				pec.setMonthID(header.getID());
-				pec.setDueDate(dueDate);
-				pec.setExtractionDate(DateUtil.addDays(pec.getDueDate(), -it.getExtractionDays()));
+				pec.setDueDate(DateUtil.getDatePart(dueDate));
+				Date extractionDate = DateUtil.addDays(pec.getDueDate(), -it.getExtractionDays());
+				pec.setExtractionDate(DateUtil.getDatePart(extractionDate));
 				pec.setVersion(1);
 				pec.setCreatedBy(it.getCreatedBy());
 				pec.setCreatedOn(cuurentTime);
