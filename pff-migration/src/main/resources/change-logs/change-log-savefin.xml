@@ -684,5 +684,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="14" author="rahul.r">
+		<sql>
+			<![CDATA[
+			    UPDATE SMTPARAMETERS SET SYSPARMVALUE='EligibilityMethod,EMPLOYMENTTYPE' WHERE SYSPARMCODE='CREDIT_ELG_PARAMS';
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
