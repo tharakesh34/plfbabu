@@ -6060,6 +6060,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		doReceiptTransaction(rd, eventCode);
 
+		if (CollectionUtils.isNotEmpty(rd.getReceiptHeader().getAllocations())) {
+			fd.getFinScheduleData().setReceiptAllocationList(rd.getReceiptHeader().getAllocations());
+		}
+
 		logger.info(Literal.LEAVING);
 		return fd;
 	}
