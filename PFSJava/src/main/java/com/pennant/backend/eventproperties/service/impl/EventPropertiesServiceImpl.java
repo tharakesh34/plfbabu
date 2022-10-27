@@ -135,7 +135,7 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		}
 		ep.setEntityCode(entityCode);
 
-		ep.setPresentmentExcludeBounce(presentmentExcludeCodeDAO.getBounceForPD());
+		ep.setPresentmentExcludeBounce(presentmentExcludeCodeDAO.getUpfrontBounceCode());
 
 		ep.setParameterLoaded(true);
 
