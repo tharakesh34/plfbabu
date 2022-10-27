@@ -87,6 +87,6 @@ public interface PresentmentDAO {
 
 	void updatePartnerBankID(long id, long PartnerBankId);
 
-	int updateHeader(long presentmentId, int totalRecords);
+	int updateHeader(long presentmentId);
 
 }

@@ -77,7 +77,7 @@ public class PresentmentEngine {
 		Date dueDate = header.getDueDate();
 
 		StringBuilder info = new StringBuilder();
-		info.append("Batch-ID: ").append(presentmentType);
+		info.append("\nBatch-ID: ").append(presentmentType);
 		info.append("\nPresentment Type: ").append(presentmentType);
 		info.append("\nEMandate Source: ").append(emandateSource);
 		info.append("\nInstrument Type: ").append(presentmentType);
@@ -164,10 +164,10 @@ public class PresentmentEngine {
 		}
 
 		if (fromDate != null && toDate != null) {
-			logger.info("Instrument Type {}\nFrom Date {}\nTo Date {}", instrumentType,
+			logger.info("\nInstrument Type {}\nFrom Date {}\nTo Date {}", instrumentType,
 					DateUtil.formatToShortDate(fromDate), DateUtil.formatToShortDate(toDate));
 		} else {
-			logger.info("Instrument Type {}\nDue Date {}", instrumentType, DateUtil.formatToShortDate(dueDate));
+			logger.info("\nInstrument Type {}\nDue Date {}", instrumentType, DateUtil.formatToShortDate(dueDate));
 		}
 
 		if (count == 0) {
@@ -431,7 +431,6 @@ public class PresentmentEngine {
 				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
 			}
 
-			
 			if (!InstrumentType.isECS(pd.getMandateType())) {
 				if (!MandateStatus.isApproved(mandateStatus)) {
 					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
@@ -669,7 +668,7 @@ public class PresentmentEngine {
 	}
 
 	public void approve(long batchId) {
-		Map<String, String> bounceForPD = presentmentExcludeCodeDAO.getBounceForPD();
+		Map<Integer, String> bounceForPD = presentmentExcludeCodeDAO.getUpfrontBounceCode();
 
 		boolean upfronBounceRequired = MapUtils.isNotEmpty(bounceForPD);
 
@@ -727,7 +726,7 @@ public class PresentmentEngine {
 				logger.error(Literal.EXCEPTION, e);
 			}
 
-			presentmentDAO.updateHeader(id, totalRecords);
+			presentmentDAO.updateHeader(id);
 		}
 
 	}

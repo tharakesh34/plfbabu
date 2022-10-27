@@ -3,11 +3,15 @@ package com.pennant.pff.presentment.dao.impl;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -269,37 +273,72 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		return this.jdbcOperations.update(sql, batchID, InstrumentType.SPDC.name());
 	}
 
-	@Override
-	public int updateToSecurityMandate(long batchID) {
+	private List<PresentmentDetail> getSecurityMandates(long batchID) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Update Presentment_Extraction_Stage Set MandateStatus = ?");
-		sql.append(", MandateID = (select m.MandateID From Mandates m Where m.SecurityMandate = ?");
-		sql.append(" and Presentment_Extraction_Stage.FinReference = m.OrgReference and m.Status = ?)");
-		sql.append(", MandateType = (select m.MandateType From Mandates m Where m.SecurityMandate = ?");
-		sql.append(" and Presentment_Extraction_Stage.FinReference = m.OrgReference and m.Status = ?)");
-		sql.append(", InstrumentType = (select m.MandateType From Mandates m Where m.SecurityMandate = ?");
-		sql.append(" and Presentment_Extraction_Stage.FinReference = m.OrgReference and m.Status =?)");
-		sql.append(" Where BatchID = ? and MandateStatus in (?, ?, ?)");
+		sql.append("Select pes.ID, sm.MandateId, sm.MandateType");
+		sql.append(" From Presentment_Extraction_Stage pes");
+		sql.append(" Inner Join Mandates m on m.MandateId = pes.MandateId and m.status in (?, ?, ?)");
+		sql.append(" Inner Join Mandates sm on sm.OrgReference = pes.FinReference and sm.Status = ?");
+		sql.append(" Where BatchID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.update(sql.toString(), ps -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, MandateStatus.APPROVED);
-			ps.setBoolean(index++, true);
-			ps.setString(index++, MandateStatus.APPROVED);
-			ps.setBoolean(index++, true);
-			ps.setString(index++, MandateStatus.APPROVED);
-			ps.setBoolean(index++, true);
+			ps.setString(index++, MandateStatus.NEW);
+			ps.setString(index++, MandateStatus.AWAITCON);
+			ps.setString(index++, MandateStatus.REJECTED);
 			ps.setString(index++, MandateStatus.APPROVED);
 
 			ps.setLong(index++, batchID);
-			ps.setString(index++, MandateStatus.NEW);
-			ps.setString(index++, MandateStatus.AWAITCON);
-			ps.setString(index, MandateStatus.REJECTED);
 
+		}, (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setId(rs.getLong("ID"));
+			pd.setMandateId(rs.getLong("MandateId"));
+			pd.setMandateType(rs.getString("MandateType"));
+
+			return pd;
 		});
+	}
+
+	@Override
+	public int updateToSecurityMandate(long batchID) {
+		List<PresentmentDetail> securityMandates = getSecurityMandates(batchID);
+
+		if (CollectionUtils.isEmpty(securityMandates)) {
+			return 0;
+		}
+
+		String sql = "Update Presentment_Extraction_Stage Set MandateId = ?, MandateStatus = ?, MandateType = ?, InstrumentType = ? Where Id = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				PresentmentDetail pd = securityMandates.get(i);
+
+				int index = 1;
+
+				ps.setLong(index++, pd.getMandateId());
+				ps.setString(index++, MandateStatus.APPROVED);
+				ps.setString(index++, pd.getMandateType());
+				ps.setString(index++, pd.getMandateType());
+
+				ps.setLong(index, pd.getId());
+
+			}
+
+			@Override
+			public int getBatchSize() {
+				return securityMandates.size();
+			}
+		});
+
+		return 0;
 	}
 
 	@Override
@@ -976,12 +1015,38 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		return this.jdbcOperations.update(sql, args);
 	}
 
-	@Override
-	public int updateHeader(long presentmentId, int totalRecords) {
-		String sql = "Update PresentmentHeader Set Status = ?, TotalRecords = ?  Where Id = ?";
+	private Map<Integer, Integer> getTotalPresentments(long presentmentId) {
+		Map<Integer, Integer> totals = new HashMap<>();
+
+		String sql = "Select ExcludeReason, Count(PresentmentID) from PresentmentDetails Where PresentmentID = ? group by ExcludeReason";
 
 		logger.debug(Literal.SQL.concat(sql));
-		return this.jdbcOperations.update(sql, RepayConstants.PEXC_SEND_PRESENTMENT, totalRecords, presentmentId);
+
+		return this.jdbcOperations.query(sql.toString(), (ResultSet rs) -> {
+			while (rs.next()) {
+				totals.put(rs.getInt(1), rs.getInt(2));
+
+			}
+			return totals;
+		}, presentmentId);
+
+	}
+
+	@Override
+	public int updateHeader(long presentmentId) {
+		Map<Integer, Integer> presentments = getTotalPresentments(presentmentId);
+
+		int total = presentments.size();
+		int success = presentments.get(RepayConstants.PEXC_EMIINCLUDE);
+		int failure = total - success;
+
+		int status = RepayConstants.PEXC_SEND_PRESENTMENT;
+
+		String sql = "Update PresentmentHeader Set Status = ?, TotalRecords = ?, SuccessRecords = ?, FailedRecords = ? Where Id = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.update(sql, status, total, success, failure, presentmentId);
 	}
 
 	public Presentment getPartnerBankId(String finType, String mandateType) {
