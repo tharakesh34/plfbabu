@@ -5698,4 +5698,57 @@
 			<column name="EmployerName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="PSD#208744.1" author="saikrishna.b" dbms="oracle">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval NUMBER(19);
+			begin
+			select COALESCE(max(T.FIELDCODEID),0)+1 into v_maxval from
+			(select
+			FIELDCODEID from RMTLOVFIELDDETAIL union all select FIELDCODEID from RMTLOVFIELDDETAIL_Temp) T;
+			EXECUTE IMMEDIATE
+			'alter sequence SEQRMTLOVFIELDDETAIL restart start with ' || v_maxval;
+			end;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#208744.2" author="saikrishna.b" dbms="postgresql">
+		<sql splitStatements="false">
+		<![CDATA[
+			do $$
+			declare
+			v_maxval BIGINT;
+			begin
+			select COALESCE(max(T.FIELDCODEID),0)+1 into v_maxval from
+			(select FIELDCODEID from RMTLOVFIELDDETAIL union all select FIELDCODEID from RMTLOVFIELDDETAIL_Temp) T;
+			EXECUTE 'alter
+			sequence SEQRMTLOVFIELDDETAIL restart start with ' || v_maxval;
+			end;
+			$$;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#208744.3" author="saikrishna.b" dbms="mssql">
+		<sql splitStatements="false">
+		<![CDATA[
+			DECLARE @SQLCmd NVARCHAR(MAX);
+			DECLARE @MAXNO BIGINT;
+			SELECT
+			@MAXNO=COALESCE(max(T.FIELDCODEID),0)+1 from
+			(select FIELDCODEID from RMTLOVFIELDDETAIL union all select FIELDCODEID
+			from RMTLOVFIELDDETAIL_Temp) T;
+
+			SET @SQLCmd = '
+                ALTER SEQUENCE SEQRMTLOVFIELDDETAIL
+                RESTART WITH ' + CAST( @Seq AS VARCHAR(30));
+                           
+                EXEC SP_EXECUTESQL  @SQLCmd;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
