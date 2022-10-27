@@ -1404,12 +1404,11 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			header.setDocNumber(fsi.getPanNumber());
 			header.setCustCif(fsi.getCustCIF());
 			header.setDocReference(fsi.getFinReference());
-			
+
 			ErrorDetail error = DocVerificationUtil.doValidatePAN(header, true);
 
 			if (error != null) {
-				schdData.setErrorDetail(error);
-				return fd;
+				logger.error(error.getMessage());
 			}
 		}
 
