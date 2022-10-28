@@ -752,5 +752,23 @@
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="19" author="sandeepkumar.m">
+		<sql>
+		<![CDATA[
+			INSERT INTO REPORTLIST Values ('LPPRule','LPPRule','listheader_RuleEvent.label,listheader_RuleCode.label,listheader_RuleCodeDesc.label','ruleCode,ruleCodeDesc,ruleEvent','String,String,String',' ','ReportList03','LPP Rule','Rules Factory', 1,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);      
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="20" author="sandeepkumar.m">
+	  <sql>
+		  <![CDATA[
+			DELETE FROM REPORTLIST WHERE code = 'FeePerc';
+			
+			INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) values ('FeePerc', 'Rule', 'listheader_RuleEvent.label,label_RuleCode,listheader_RuleCodeDesc.label', 'ruleEvent,ruleCode,ruleCodeDesc', 'String,String,String', null, 'ReportList03', 'Fee Percentage Rule', 'Rules Factory', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+		  ]]>
+	  </sql>
+	</changeSet>
 
 </databaseChangeLog>
