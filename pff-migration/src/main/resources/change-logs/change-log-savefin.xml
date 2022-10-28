@@ -722,5 +722,18 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+		<changeSet id="16" author="sandeepkumar.m">
+
+		<sql>
+            <![CDATA[
+				delete from REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PMAYDetails');
+				delete from REPORTCONFIGURATION where menuitemcode='menu_Item_PMAYDetails';
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:PMAY Details','PMAY Details',1,'PMAYDetails','dataSource',1,'menu_Item_PMAYDetails',1,1005,null,null,null,null,null,null,0,current_timestamp,1,1,0);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PMAYDetails'),1,'FinReference','LOVSEARCH','Loan Reference','f.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PMAYDetails'),2,'Schedule Date','DATERANGE','From Date','f.finstartdate',null,'---Select----',null,null,0,0,0,0,2,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
