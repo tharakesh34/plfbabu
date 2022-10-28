@@ -735,5 +735,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="17" author="sandeepkumar.m">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM REPORTLIST WHERE CODE = 'NonLanReceipt';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('NonLanReceipt', 'FinReceiptHeader', 'listheader_ReceiptId.label,listheader_ReceiptDate.label,listheader_ReceiptMode.label,listheader_ReceiptSource.label,listheader_ExternalReference.label,listheader_PayTypeRef.label,listheader_ReceiptAmount.label,listheader_PartnerBank.label', 'ReceiptID,ReceiptDate,ReceiptMode,ReceiptSource,Reference,TransactionRef,ReceiptAmount,PartnerBankCode', 'Long,Date,String,String,String,String,BigDecimal,String', null, 'ReportList08', 'Non-Loan Receipts', 'Loan Management', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+        	 ]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
