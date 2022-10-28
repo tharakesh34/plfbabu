@@ -44,7 +44,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.rmtmasters.AccountTypeService;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.rmtmasters.accounttype.model.AccountTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -70,10 +69,8 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 	protected Listheader listheader_AcType;
 	protected Listheader listheader_AcTypeDesc;
 	protected Listheader listheader_AcPurpose;
-	protected Listheader listheader_IsInternalAc;
 	protected Listheader listheader_AcTypeIsActive;
 	protected Listheader listheader_AcHead;
-	protected Listheader listheader_IsCustSysAccount;
 
 	protected Button button_AccountTypeList_NewAccountType;
 	protected Button button_AccountTypeList_AccountTypeSearchDialog;
@@ -81,16 +78,12 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 	protected Textbox acType;
 	protected Textbox acTypeDesc;
 	protected Combobox acPurpose;
-	protected Checkbox internalAc;
 	protected Checkbox acTypeIsActive;
-	protected Checkbox isCustSysAccount;
 
 	protected Listbox sortOperator_acType;
 	protected Listbox sortOperator_acTypeDesc;
 	protected Listbox sortOperator_acPurpose;
-	protected Listbox sortOperator_internalAc;
 	protected Listbox sortOperator_acTypeIsActive;
-	protected Listbox sortOperator_isCustSysAccount;
 
 	private transient AccountTypeService accountTypeService;
 
@@ -124,17 +117,11 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 		registerButton(button_AccountTypeList_NewAccountType, "button_AccountTypeList_NewAccountType", true);
 		registerButton(button_AccountTypeList_AccountTypeSearchDialog);
 
-		fillComboBox(this.acPurpose, "", PennantStaticListUtil.getAccountPurpose(), "");
-
 		registerField("acType", listheader_AcType, SortOrder.ASC, acType, sortOperator_acType, Operators.STRING);
 		registerField("acTypeDesc", listheader_AcTypeDesc, SortOrder.NONE, acTypeDesc, sortOperator_acTypeDesc,
 				Operators.STRING);
 		registerField("acPurpose", listheader_AcPurpose, SortOrder.NONE, acPurpose, sortOperator_acPurpose,
 				Operators.STRING);
-		registerField("internalAc", listheader_IsInternalAc, SortOrder.NONE, internalAc, sortOperator_internalAc,
-				Operators.BOOLEAN);
-		registerField("custSysAc", listheader_IsCustSysAccount, SortOrder.NONE, isCustSysAccount,
-				sortOperator_isCustSysAccount, Operators.BOOLEAN);
 		registerField("acTypeIsActive", listheader_AcTypeIsActive, SortOrder.NONE, acTypeIsActive,
 				sortOperator_acTypeIsActive, Operators.BOOLEAN);
 
