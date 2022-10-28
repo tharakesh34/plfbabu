@@ -744,5 +744,13 @@
         	 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="18" author="sandeepkumar.m">
+		<sql>
+		<![CDATA[
+			INSERT INTO REPORTLIST Values ('CustTypePANMapping','CustTypePANMapping','listheader_CustCategory.label,listheader_CustType.label,listheader_panLetter.label,listheader_Active.label','custCategory,custType,panLetter,active','String,String,String,boolean',' ','ReportList04','PAN 4th Letter Mapping','Application Masters', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);      
+		]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
