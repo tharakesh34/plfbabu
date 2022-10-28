@@ -527,6 +527,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.disbursementMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
 
+		doClear();
 		doSetValidations();
 
 		renderDisbursements();
@@ -625,6 +626,17 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.finType.setConstraint("");
 		this.toDate.setConstraint("");
 		this.entity.setConstraint("");
+		logger.debug("Leaving ");
+	}
+
+	private void doClear() {
+		logger.debug("Entering ");
+		this.finType.setErrorMessage("");
+		this.partnerBank.setErrorMessage("");
+		this.finType.setErrorMessage("");
+		this.toDate.setErrorMessage("");
+		this.entity.setErrorMessage("");
+
 		logger.debug("Leaving ");
 	}
 
