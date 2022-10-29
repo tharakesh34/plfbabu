@@ -209,6 +209,7 @@ import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
+import com.rits.cloning.Cloner;
 
 public class ReceiptServiceImpl extends GenericFinanceDetailService implements ReceiptService {
 	private static final Logger logger = LogManager.getLogger(ReceiptServiceImpl.class);
@@ -5440,6 +5441,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		FinanceDetail fd = rd.getFinanceDetail();
+		Cloner cloner = new Cloner();
+		List<FinanceScheduleDetail> finSchdDtls = cloner
+				.deepClone(rd.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
@@ -5504,7 +5508,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		receiptCalculator.initiateReceipt(rd, false);
-
+		schdData.setFinanceScheduleDetails(finSchdDtls);
 		schdData.setFeeEvent(eventCode);
 
 		return rd;
