@@ -53,7 +53,7 @@ public class PresentmentDueConfigTasklet implements Tasklet {
 			}
 		}
 
-		decService.extarctDueConfig(startDate, startEndDate);
+		decService.extarctDueConfig();
 
 		return RepeatStatus.FINISHED;
 	}

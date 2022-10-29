@@ -402,9 +402,9 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public int clearByRepresentment(long batchID) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Delete From Presentment_Extraction_Stage");
-		sql.append(" Where BatchID = ? and ID not in (Select ps.ID from Presentment_Extraction_Stage ps");
+		sql.append(" Where BatchID = ? and ID not in (Select ps.ID From Presentment_Extraction_Stage ps");
 		sql.append(" Inner Join PresentmentDetails pd on pd.FinID = ps.FinID and pd.SchDate = ps.SchDate");
-		sql.append(" pd.Status in (?, ?)");
+		sql.append(" Where pd.Status in (?, ?)");
 		sql.append(" )");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -414,7 +414,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 			ps.setLong(index++, batchID);
 			ps.setString(index++, "B");
-			ps.setString(index++, "F");
+			ps.setString(index, "F");
 		});
 	}
 
@@ -785,7 +785,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", SchAmtDue, SchPriDue, SchPftDue, SchFeeDue, SchInsDue, SchPenaltyDue, AdvanceAmt, ExcessID");
 		sql.append(", AdviseAmt, PresentmentAmt, ExcludeReason, BounceID, EmiNo, TDSAmount, Status, ReceiptID");
 		sql.append(", EmployeeNo, EmployerId, EmployerName");
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -1036,8 +1036,18 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public int updateHeader(long presentmentId) {
 		Map<Integer, Integer> presentments = getTotalPresentments(presentmentId);
 
-		int total = presentments.size();
-		int success = presentments.get(RepayConstants.PEXC_EMIINCLUDE);
+		int total = 0;
+
+		for (Integer count : presentments.values()) {
+			total = total + count;
+		}
+
+		int success = 0;
+
+		if (presentments.containsKey(RepayConstants.PEXC_EMIINCLUDE)) {
+			success = presentments.get(RepayConstants.PEXC_EMIINCLUDE);
+		}
+
 		int failure = total - success;
 
 		int status = RepayConstants.PEXC_SEND_PRESENTMENT;

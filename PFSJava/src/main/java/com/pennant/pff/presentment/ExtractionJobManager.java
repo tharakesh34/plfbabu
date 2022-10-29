@@ -14,24 +14,16 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.batch.job.BatchJobManager;
 import com.pennant.pff.batch.job.model.BatchJob;
-import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 @Configuration
 public class ExtractionJobManager extends BatchJobManager {
 
 	@Autowired
-	private PresentmentDAO presentmentDAO;
-
-	@Autowired
 	private Job peExtractionJob;
 
 	public ExtractionJobManager(DataSource dataSource) throws Exception {
 		super(dataSource, "BATCH_");
-	}
-
-	public void extractPresentment() {
-		start(null);
 	}
 
 	public void extractPresentment(PresentmentHeader ph) {
@@ -45,27 +37,24 @@ public class ExtractionJobManager extends BatchJobManager {
 	public void start(PresentmentHeader ph) {
 		Date appDate = SysParamUtil.getAppDate();
 
-		long batchID = presentmentDAO.createBatch("EXTRACTOIN");
-
 		JobParametersBuilder builder = new JobParametersBuilder();
 
-		builder.addLong("BATCH_ID", batchID);
+		builder.addLong("BATCH_ID", ph.getBatchID());
 		builder.addDate("AppDate", appDate);
-		if (ph != null) {
-			builder.addString("MandateType", ph.getMandateType());
-			builder.addString("EmandateSource", ph.getEmandateSource());
-			builder.addString("LoanType", ph.getLoanType());
-			builder.addString("EntityCode", ph.getEntityCode());
-			builder.addString("FinBranch", ph.getFinBranch());
-			builder.addDate("FromDate", ph.getFromDate());
-			builder.addDate("ToDate", ph.getToDate());
-			builder.addDate("DueDate", ph.getDueDate());
-			builder.addString("PresentmentType", ph.getPresentmentType());
-			builder.addString("AUTOMATION", "N");
-		} else {
+		builder.addString("MandateType", ph.getMandateType());
+		builder.addString("EmandateSource", ph.getEmandateSource());
+		builder.addString("LoanType", ph.getLoanType());
+		builder.addString("EntityCode", ph.getEntityCode());
+		builder.addString("FinBranch", ph.getFinBranch());
+		builder.addDate("FromDate", ph.getFromDate());
+		builder.addDate("ToDate", ph.getToDate());
+		builder.addDate("DueDate", ph.getDueDate());
+		builder.addString("PresentmentType", ph.getPresentmentType());
+
+		if (ph.isAutoExtract()) {
 			builder.addString("AUTOMATION", "Y");
-			builder.addString("PresentmentType", "P");
-			builder.addDate("DueDate", appDate);
+		} else {
+			builder.addString("AUTOMATION", "N");
 		}
 
 		builder.addString("BpiPaidOnInstDate",

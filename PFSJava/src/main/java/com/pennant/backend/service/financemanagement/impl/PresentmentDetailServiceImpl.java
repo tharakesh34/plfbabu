@@ -404,6 +404,10 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			List<Long> chequeStatusList = new ArrayList<>();
 
 			for (PresentmentDetail item : excludePresentmentList) {
+				if (item.getFinReference().equals("SPCD0000590") || item.getFinReference().equals("SPCD0000591")) {
+					System.out.println();
+				}
+
 				if (item.getExcessID() != 0) {
 					excessAmountList.add(item);
 

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
@@ -75,12 +76,41 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 	}
 
 	@Override
-	public void extarctDueConfig(Date startDate, Date endDate) {
+	public void extarctDueConfig() {
 		logger.debug(Literal.ENTERING);
 
-		int noOfDays = DateUtil.getDaysBetween(startDate, endDate);
+		Date appDate = SysParamUtil.getLastBusinessdate();
 
-		Map<String, DueExtractionHeader> extractHeader = extractHeader(startDate, endDate);
+		Date march3st = DateUtil.getDate(DateUtil.getYear(appDate), 2, 31);
+
+		if (DateUtil.compare(appDate, march3st) == 0) {
+
+		}
+
+		boolean configExists = dueExtractionConfigDAO.isConfigExists();
+
+		Date marchFirst = DateUtil.getDate(DateUtil.getYear(appDate), 2, 1);
+
+		if (configExists && DateUtil.compare(appDate, marchFirst) != 0) {
+			return;
+		}
+
+		Date yearStratDate = getFinancialYearStart(appDate);
+		Date yearEndDate = getFinancialYearEnd(appDate);
+
+		if (!configExists) {
+			int year = DateUtil.getYear(appDate);
+			int month = DateUtil.getMonth(appDate);
+
+			yearStratDate = (Date) appDate.clone();
+			if (month == 2) {
+				yearStratDate = DateUtil.getDate(year, month - 1, 1);
+			}
+		}
+
+		int noOfDays = DateUtil.getDaysBetween(yearStratDate, yearEndDate);
+
+		Map<String, DueExtractionHeader> extractHeader = extractHeader(yearStratDate, yearEndDate);
 
 		List<InstrumentTypes> instruments = dueExtractionConfigDAO.getInstrumentTypes();
 
@@ -89,14 +119,14 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 		Timestamp cuurentTime = new Timestamp(System.currentTimeMillis());
 
 		for (InstrumentTypes it : instruments) {
-			DueExtractionHeader header = extractHeader.get(DateUtil.format(startDate, DateFormat.LONG_MONTH));
+			DueExtractionHeader header = extractHeader.get(DateUtil.format(yearStratDate, DateFormat.LONG_MONTH));
 			for (int i = 1; i <= noOfDays; i++) {
 				DueExtractionConfig pec = new DueExtractionConfig();
 
 				pec.setInstrumentID(it.getID());
-				Date dueDate = DateUtil.addDays(startDate, i);
+				Date dueDate = DateUtil.addDays(yearStratDate, i);
 
-				if (DateUtil.getMonth(startDate) != DateUtil.getMonth(dueDate)) {
+				if (DateUtil.getMonth(yearStratDate) != DateUtil.getMonth(dueDate)) {
 					header = extractHeader.get(DateUtil.format(dueDate, DateFormat.LONG_MONTH));
 				}
 
@@ -221,5 +251,29 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 	@Override
 	public Map<Long, InstrumentTypes> getInstrumentTypesMap() {
 		return dueExtractionConfigDAO.getInstrumentTypesMap();
+	}
+
+	private static Date getFinancialYearStart(Date date) {
+		int year = DateUtil.getYear(date);
+
+		int month = DateUtil.getMonth(date);
+
+		if (month <= 3) {
+			year = year - 1;
+		}
+
+		return DateUtil.getDate(year, 3, 1);
+	}
+
+	private static Date getFinancialYearEnd(Date date) {
+		int year = DateUtil.getYear(date);
+
+		int month = DateUtil.getMonth(date);
+
+		if (month <= 3) {
+			year = year - 1;
+		}
+
+		return DateUtil.getDate(year + 1, 2, 31);
 	}
 }

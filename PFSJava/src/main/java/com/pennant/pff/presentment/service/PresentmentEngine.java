@@ -61,7 +61,7 @@ public class PresentmentEngine {
 		super();
 	}
 
-	public void preparation(PresentmentHeader header) {
+	public int preparation(PresentmentHeader header) {
 		logger.debug(Literal.ENTERING);
 
 		Date appDate = header.getAppDate();
@@ -92,6 +92,8 @@ public class PresentmentEngine {
 
 		logger.info(info.toString());
 
+		int count = 0;
+
 		if (autoExtract) {
 			Map<String, Date> dueDates = dueExtractionConfigDAO.getDueDates(appDate);
 
@@ -105,11 +107,11 @@ public class PresentmentEngine {
 				ph.setAppDate(appDate);
 				ph.setDueDate(dueDates.get(code));
 
-				prepareDues(ph);
+				count = count + prepareDues(ph);
 			}
 		} else {
 			if (instrumentType != null && !"#".equals(instrumentType)) {
-				prepareDues(header);
+				count = count + prepareDues(header);
 			} else {
 				for (ValueLabel code : MandateUtil.getInstrumentTypesForBE()) {
 					PresentmentHeader ph = new PresentmentHeader();
@@ -132,14 +134,28 @@ public class PresentmentEngine {
 					ph.setMandateType(code.getValue());
 					ph.setAppDate(appDate);
 
-					prepareDues(ph);
+					count = count + prepareDues(ph);
 				}
 			}
 		}
+
+		if (count == 0) {
+			return 0;
+		}
+
+		long batchID = header.getBatchID();
+		count = count - presentmentDAO.clearSecurityCheque(batchID);
+
+		presentmentDAO.updateToSecurityMandate(batchID);
+
+		presentmentDAO.updatePartnerBankID(batchID);
+
 		logger.debug(Literal.LEAVING);
+
+		return count;
 	}
 
-	private void prepareDues(PresentmentHeader ph) {
+	private int prepareDues(PresentmentHeader ph) {
 		logger.debug(Literal.ENTERING);
 
 		long batchID = ph.getBatchID();
@@ -171,10 +187,14 @@ public class PresentmentEngine {
 		}
 
 		if (count == 0) {
-			return;
+			return 0;
 		}
 
 		count = count - presentmentDAO.clearByNoDues(batchID);
+
+		if (count == 0) {
+			return 0;
+		}
 
 		logger.info("Clearing No Dues...");
 		if (InstrumentType.isIPDC(instrumentType)) {
@@ -209,13 +229,9 @@ public class PresentmentEngine {
 			count = count - presentmentDAO.clearByRepresentment(batchID);
 		}
 
-		count = count - presentmentDAO.clearSecurityCheque(batchID);
-
-		presentmentDAO.updateToSecurityMandate(batchID);
-
-		presentmentDAO.updatePartnerBankID(batchID);
-
 		logger.debug(Literal.LEAVING);
+
+		return count;
 	}
 
 	public void grouping(PresentmentHeader ph) {
@@ -399,6 +415,10 @@ public class PresentmentEngine {
 
 	private void doCalculations(PresentmentHeader ph, PresentmentDetail pd) {
 		logger.debug(Literal.ENTERING);
+
+		if (pd.getFinReference().equals("SPCD0000590") || pd.getFinReference().equals("SPCD0000591")) {
+			System.out.println();
+		}
 
 		String mandateStatus = pd.getMandateStatus();
 

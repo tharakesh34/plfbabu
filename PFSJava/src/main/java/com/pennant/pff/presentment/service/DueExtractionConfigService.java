@@ -1,6 +1,5 @@
 package com.pennant.pff.presentment.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,7 @@ import com.pennant.pff.presentment.model.InstrumentTypes;
 
 public interface DueExtractionConfigService {
 
-	void extarctDueConfig(Date startDate, Date endDate);
+	void extarctDueConfig();
 
 	List<InstrumentTypes> getInstrumentDetails();
 

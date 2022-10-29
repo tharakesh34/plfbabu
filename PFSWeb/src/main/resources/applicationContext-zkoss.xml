@@ -3960,9 +3960,7 @@
 	<!-- PresentmentDetail -->
 	<bean id="presentmentDetailExtractListCtrl"
 		class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailExtractListCtrl" parent="basisListCtrl"
-		scope="prototype">
-		<property name="presentmentDetailService" ref="presentmentDetailService" />
-	</bean>
+		scope="prototype"/>
 	<!-- PresentmentHeader -->
 	<bean id="presentmentDetailListCtrl"
 		class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailListCtrl" parent="basisListCtrl"
