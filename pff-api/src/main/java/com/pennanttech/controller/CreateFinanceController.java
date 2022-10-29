@@ -2140,14 +2140,18 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		List<Mandate> mdt = new ArrayList<>();
 
-		if (financeDetail.getMandate() != null) {
-			mdt.add(financeDetail.getMandate());
+		Mandate normalMandate = financeDetail.getMandate();
+		if (normalMandate != null) {
+			normalMandate.setSecurityMandate(false);
+			mdt.add(normalMandate);
 		}
 
-		if (financeDetail.getSecurityMandate() != null) {
-			mdt.add(financeDetail.getSecurityMandate());
+		Mandate securityMandate = financeDetail.getSecurityMandate();
+		if (securityMandate != null) {
+			securityMandate.setSecurityMandate(true);
+			mdt.add(securityMandate);
 		}
-		
+
 		for (Mandate mandate : mdt) {
 			String mandateType = mandate.getMandateType();
 
@@ -2194,7 +2198,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			mandate.setUserDetails(financeMain.getUserDetails());
 			mandate.setMandateCcy(SysParamUtil.getAppCurrency());
 			mandate.setEntityCode(entityCode);
-			
+
 			mandate.setCustCIF(financeMain.getLovDescCustCIF());
 			mandate.setCustID(financeMain.getCustID());
 			mandate.setActive(true);
