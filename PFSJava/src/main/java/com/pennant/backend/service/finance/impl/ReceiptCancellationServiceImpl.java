@@ -595,8 +595,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			processFinFeeDetails(rch);
 		}
 
+		FinanceMain fm = new FinanceMain();
+
+		fm.setFinID(finID);
+		fm.setFinReference(rch.getReference());
+		fm.setAppDate(SysParamUtil.getAppDate());
+
 		finServiceInstructionDAO.deleteList(finID, rch.getReceiptPurpose(), TableType.TEMP_TAB.getSuffix());
-		saveFSI(rch, fd.getFinScheduleData().getFinanceMain(), auditHeader, TableType.MAIN_TAB);
+		saveFSI(rch, fm, auditHeader, TableType.MAIN_TAB);
 
 		// Bounce Reason Code
 		if (rch.getManualAdvise() != null) {
