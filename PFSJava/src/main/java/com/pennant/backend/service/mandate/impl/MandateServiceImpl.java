@@ -856,6 +856,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			error = validateExisting(fd, vldGroup);
 		} else {
 			error = validateNew(fd);
+			error = validateNewSecurityMandate(fd);
 		}
 
 		if (error != null) {
@@ -934,6 +935,48 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		return errordetail;
+	}
+
+	private ErrorDetail validateNewSecurityMandate(FinanceDetail fd) {
+
+		Mandate mandate = fd.getSecurityMandate();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String repaymentMethod = fm.getFinRepayMethod();
+
+		mandate.setMandateID(Long.MIN_VALUE);
+		mandate.setCustID(fm.getCustID());
+
+		ErrorDetail errordetail = basicValidation(mandate, repaymentMethod);
+
+		if (errordetail != null) {
+			return errordetail;
+		}
+
+		String mandateType = mandate.getMandateType();
+
+		switch (InstrumentType.valueOf(mandateType)) {
+		case ECS:
+		case DD:
+		case NACH:
+		case EMANDATE:
+			errordetail = validateAccountDetail(mandate);
+
+			if (errordetail != null && !InstrumentType.isSI(mandateType)) {
+				errordetail = otherDetailValidation(mandate);
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		if (errordetail != null) {
+			return errordetail;
+		}
+
+		return errordetail;
+
 	}
 
 	private ErrorDetail basicValidation(Mandate mandate, String repaymentMethod) {
@@ -1211,7 +1254,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		if (!mandate.isOpenMandate()) {
-			return ErrorUtil.getError("MDT04", String.valueOf(mandate.getMandateID()));
+			return ErrorUtil.getError("MNDT04", String.valueOf(mandate.getMandateID()));
 		}
 
 		if (StringUtils.isNotBlank(mandate.getOrgReference())) {

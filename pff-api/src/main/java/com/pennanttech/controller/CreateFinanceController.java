@@ -2137,8 +2137,18 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (finType != null) {
 			entityCode = divisionDetailDAO.getEntityCodeByDivision(finType.getFinDivision(), "");
 		}
-		Mandate mandate = financeDetail.getMandate();
-		if (mandate != null) {
+
+		List<Mandate> mdt = new ArrayList<>();
+
+		if (financeDetail.getMandate() != null) {
+			mdt.add(financeDetail.getMandate());
+		}
+
+		if (financeDetail.getSecurityMandate() != null) {
+			mdt.add(financeDetail.getSecurityMandate());
+		}
+		
+		for (Mandate mandate : mdt) {
 			String mandateType = mandate.getMandateType();
 
 			switch (InstrumentType.valueOf(mandateType)) {
@@ -2158,11 +2168,11 @@ public class CreateFinanceController extends SummaryDetailService {
 					financeDetail.getFinScheduleData().getErrorDetails().add(bankBranch.getError());
 				}
 
-				financeDetail.getMandate().setBankCode(bankBranch.getBankCode());
-				financeDetail.getMandate().setBranchCode(bankBranch.getBranchCode());
-				financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
-				financeDetail.getMandate().setIFSC(bankBranch.getIFSC());
-				financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
+				mandate.setBankCode(bankBranch.getBankCode());
+				mandate.setBranchCode(bankBranch.getBranchCode());
+				mandate.setBankBranchID(bankBranch.getBankBranchID());
+				mandate.setIFSC(bankBranch.getIFSC());
+				mandate.setBankBranchID(bankBranch.getBankBranchID());
 				break;
 			case DAS:
 				break;
@@ -2172,32 +2182,23 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 
 			if (!moveLoanStage) {
-				financeDetail.getMandate().setNewRecord(true);
+				mandate.setNewRecord(true);
 			}
-			financeDetail.getMandate().setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			financeDetail.getMandate().setVersion(1);
+			mandate.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			mandate.setVersion(1);
 
-			financeDetail.getMandate().setLastMntBy(userDetails.getUserId());
-			financeDetail.getMandate().setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			financeDetail.getMandate().setRecordStatus(moveLoanStage ? financeMain.getRecordStatus()
+			mandate.setLastMntBy(userDetails.getUserId());
+			mandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			mandate.setRecordStatus(moveLoanStage ? financeMain.getRecordStatus()
 					: getRecordStatus(financeMain.isQuickDisb(), financeDetail.isStp()));
-			financeDetail.getMandate().setUserDetails(financeMain.getUserDetails());
-			financeDetail.getMandate().setMandateCcy(SysParamUtil.getAppCurrency());
-			financeDetail.getMandate().setEntityCode(entityCode);
-			// workflow
-			/*
-			 * financeDetail.getMandate().setWorkflowId(financeMain. getWorkflowId());
-			 * financeDetail.getMandate().setRoleCode(financeMain.getRoleCode()) ;
-			 * financeDetail.getMandate().setNextRoleCode(financeMain. getNextRoleCode());
-			 * financeDetail.getMandate().setTaskId(financeMain.getTaskId());
-			 * financeDetail.getMandate().setNextTaskId(financeMain. getNextTaskId());
-			 */
-
-			// mandate details
-			financeDetail.getMandate().setCustCIF(financeMain.getLovDescCustCIF());
-			financeDetail.getMandate().setCustID(financeMain.getCustID());
-			financeDetail.getMandate().setActive(true);
-			financeDetail.getMandate().setInputDate(SysParamUtil.getAppDate());
+			mandate.setUserDetails(financeMain.getUserDetails());
+			mandate.setMandateCcy(SysParamUtil.getAppCurrency());
+			mandate.setEntityCode(entityCode);
+			
+			mandate.setCustCIF(financeMain.getLovDescCustCIF());
+			mandate.setCustID(financeMain.getCustID());
+			mandate.setActive(true);
+			mandate.setInputDate(SysParamUtil.getAppDate());
 		}
 	}
 
