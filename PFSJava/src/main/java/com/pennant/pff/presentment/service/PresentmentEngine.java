@@ -416,6 +416,10 @@ public class PresentmentEngine {
 	private void doCalculations(PresentmentHeader ph, PresentmentDetail pd) {
 		logger.debug(Literal.ENTERING);
 
+		if (pd.getFinReference().equals("SPCD0000590") || pd.getFinReference().equals("SPCD0000591")) {
+			System.out.println();
+		}
+
 		String mandateStatus = pd.getMandateStatus();
 
 		if (InstrumentType.isPDC(pd.getInstrumentType()) || InstrumentType.isIPDC(pd.getInstrumentType())) {
