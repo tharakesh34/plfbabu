@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.transaction.TransactionManager;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
 import com.pennant.pff.batch.job.BatchConfiguration;
@@ -40,7 +40,7 @@ public class ExtractionJob extends BatchConfiguration {
 	private PresentmentEngine presentmentEngine;
 
 	@Autowired
-	private TransactionManager transactionManager;
+	private DataSourceTransactionManager transactionManager;
 
 	@Autowired
 	private DueExtractionConfigService dueExtractionConfigService;
@@ -54,11 +54,11 @@ public class ExtractionJob extends BatchConfiguration {
 
 				.incrementer(jobParametersIncrementer())
 
-				.start(dueConfigStep())
+				// .start(dueConfigStep())
 
-				.next(preparationStep()).on("FAILED").fail()
+				// .next(preparationStep()).on("FAILED").fail()
 
-				.next(groupingStep()).on("FAILED").fail()
+				.start(groupingStep()).on("FAILED").fail()
 
 				.next(extractionStep()).on("FAILED").fail()
 

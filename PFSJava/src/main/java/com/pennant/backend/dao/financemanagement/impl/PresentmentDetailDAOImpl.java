@@ -861,19 +861,17 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				count = count + updatePresentmentDetials(presements);
 				presements.clear();
 			}
-
-			if (presements.size() > 0) {
-				count = count + updatePresentmentDetials(presements);
-			}
 		}
+
+		if (presements.size() > 0) {
+			count = count + updatePresentmentDetials(presements);
+		}
+
 		return count;
 	}
 
 	private int updatePresentmentDetials(List<PresentmentDetail> presements) {
-		StringBuilder sql = new StringBuilder("Update");
-		sql.append(" PresentmentDetails");
-		sql.append(" Set ExcludeReason = ?");
-		sql.append(" Where PresentmentID = ? and ID = ?");
+		StringBuilder sql = new StringBuilder("Update PresentmentDetails Set ExcludeReason = ? Where ID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -883,8 +881,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			public void setValues(PreparedStatement ps, int index) throws SQLException {
 				PresentmentDetail item = presements.get(index);
 				ps.setInt(1, item.getExcludeReason());
-				ps.setLong(2, item.getHeaderId());
-				ps.setLong(3, item.getId());
+				ps.setLong(2, item.getId());
 			}
 
 			@Override

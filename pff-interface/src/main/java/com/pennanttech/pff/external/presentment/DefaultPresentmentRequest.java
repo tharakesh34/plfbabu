@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -32,6 +33,7 @@ import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -45,8 +47,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	private static final String STATUS = "STATUS";
 
 	@Override
-	public void sendReqest(List<Long> idList, List<Long> idExcludeEmiList, long presentmentId, boolean isError,
-			String mandateType, String presentmentRef, String bankAccNo) throws Exception {
+	public void sendReqest(List<Long> idList, long presentmentId, boolean isError, String mandateType,
+			String presentmentRef, String bankAccNo) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		boolean isBatchFail = false;
@@ -108,10 +110,6 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			}
 		}
 
-		if (!isBatchFail && idExcludeEmiList != null && !idExcludeEmiList.isEmpty()) {
-			updatePresentmentDetails(idExcludeEmiList, "A", RepayConstants.PEXC_EMIINADVANCE);
-		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -158,7 +156,6 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				parameterMap.put("SEQ_FILE", partnerBankCode);
 				dataEngine.setParameterMap(parameterMap);
 			}
-
 			Map<String, Object> parameterMap = new HashMap<>();
 			parameterMap.put("ddMMyy", DateUtil.getSysDate("ddMMyy"));
 			parameterMap.put("DepositeDate", DateUtil.format(getScheduleDate(presentmentId), "dd-MMM-yy"));
@@ -174,6 +171,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			parameterMap.put("AccountNo", bankAccNo);
 
 			String entityCode = presentment.getEntCode();
+			parameterMap.put("FILE_NAME", presentmentRef.concat(".xlsx"));
 			parameterMap.put("FILE_NAME_PREFIX", entityCode + "_Pennant_Lot_");
 
 			// for new Presentment only total count needs
@@ -238,7 +236,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
 		sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
-		sql.append(" INNER JOIN MANDATES T3 ON T2.MANDATEID = T3.MANDATEID ");
+		sql.append(" INNER JOIN MANDATES T3 ON T1.MANDATEID = T3.MANDATEID ");
 		sql.append(" INNER JOIN BANKBRANCHES T4 ON T3.BANKBRANCHID = T4.BANKBRANCHID ");
 		sql.append(" INNER JOIN BMTBANKDETAIL T6 ON T4.BANKCODE = T6.BANKCODE ");
 		sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
@@ -294,7 +292,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
 		sql.append(" INNER JOIN CUSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
-		sql.append(" INNER JOIN MANDATES T3 ON T2.MANDATEID = T3.MANDATEID ");
+		sql.append(" INNER JOIN MANDATES T3 ON T1.MANDATEID = T3.MANDATEID ");
 		sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
 		sql.append(" INNER JOIN RMTBRANCHES T8 ON T8.BRANCHCODE = T2.FINBRANCH ");
 		sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
@@ -390,37 +388,82 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		}
 	}
 
-	private void save(Presentment presentment, String tableName) {
+	private void save(Presentment ph, String tableName) {
 		StringBuilder sql = new StringBuilder("insert into ");
 		sql.append(tableName);
-		sql.append(
-				" (TXN_REF, Entity_Code, CYCLE_TYPE, INSTRUMENT_MODE,EMANDATESOURCE,PRESENTATIONDATE,BANK_CODE,PRODUCT_CODE,");
-		sql.append(" CustomerId, AGREEMENTNO, CHEQUEAMOUNT, EMI_NO, TXN_TYPE_CODE, SOURCE_CODE, BR_CODE,");
-		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
-		sql.append(
-				" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate,PARTNER_BANK,IFSC,");
-		sql.append(" ChequeSerialNo, ChequeDate, UtilityCode ");
+		sql.append(" (TXN_REF, Entity_Code, CYCLE_TYPE, INSTRUMENT_MODE, EMANDATESOURCE, PRESENTATIONDATE");
+		sql.append(", BANK_CODE, PRODUCT_CODE, CustomerId, AGREEMENTNO, CHEQUEAMOUNT");
+		sql.append(", EMI_NO, TXN_TYPE_CODE, SOURCE_CODE, BR_CODE, UMRN_NO, BANK_NAME, MICR_CODE");
+		sql.append(", AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG");
+		sql.append(", ORGIN_SYSTEM, DATA_GEN_DATE, USERID, BATCHID, job_Id, PICKUP_BATCHID");
+		sql.append(", CycleDate, PARTNER_BANK, IFSC, ChequeSerialNo, ChequeDate, UtilityCode");
 		sql.append(", SETILMENT_DATE, CUST_CIF, PDC_BY_NAME, HEADERID)");
-		sql.append(" values( :TxnReference,");
+		sql.append(" values(?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?)");
 
-		if (presentment.getEntityCode() == 0) {
-			sql.append(" null,");
-		} else {
-			sql.append(" :EntityCode,");
-		}
-
-		sql.append(" :CycleType, :InstrumentMode, :EmandateSource, :PresentationDate, :BankCode, :ProductCode,");
-		sql.append(" :CustomerId, :AgreementNo, :ChequeAmount, :EmiNo, :TxnTypeCode, :SourceCode, :BrCode,");
-		sql.append(" :UmrnNo , :BankName, :MicrCode, :AccountNo, :DestAccHolder, :AccType, :BankAddress, :ResubFlag,");
-		sql.append(
-				" :OrginSystem, :DataGenDate , :UserID, :BatchId, :JobId , :PickupBatchId, :CycleDate, :partnerBankName, :IFSC,");
-		sql.append(" :ChequeSerialNo, :ChequeDate, :UtilityCode");
-		sql.append(", :setilmentDate, :customerId, :destAccHolder, :HeaderId)");
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentment);
 		try {
-			namedJdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
+			namedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, ph.getTxnReference());
+
+				if (ph.getEntityCode() == 0) {
+					ps.setString(index++, null);
+				} else {
+					ps.setLong(index++, ph.getEntityCode());
+				}
+
+				ps.setLong(index++, ph.getCycleType());
+				ps.setString(index++, ph.getInstrumentMode());
+				ps.setString(index++, ph.getEmandateSource());
+				ps.setDate(index++, JdbcUtil.getDate(ph.getPresentationDate()));
+				ps.setString(index++, ph.getBankCode());
+				ps.setString(index++, ph.getProductCode());
+				ps.setLong(index++, ph.getCustomerId());
+				ps.setString(index++, ph.getAgreementNo());
+				ps.setBigDecimal(index++, ph.getChequeAmount());
+				ps.setLong(index++, ph.getEmiNo());
+				ps.setLong(index++, ph.getTxnTypeCode());
+				ps.setLong(index++, ph.getSourceCode());
+				ps.setString(index++, ph.getBrCode());
+				ps.setString(index++, ph.getUmrnNo());
+				ps.setString(index++, ph.getBankName());
+				ps.setString(index++, ph.getMicrCode());
+				ps.setString(index++, ph.getAccountNo());
+				ps.setString(index++, ph.getDestAccHolder());
+
+				if ("#".equals(ph.getAccType())) {
+					ps.setString(index++, null);
+				} else {
+					ps.setString(index++, ph.getAccType());
+				}
+
+				ps.setString(index++, ph.getBankAddress());
+				ps.setString(index++, ph.getResubFlag());
+				ps.setString(index++, ph.getOrginSystem());
+				ps.setDate(index++, JdbcUtil.getDate(ph.getDataGenDate()));
+				ps.setString(index++, ph.getUserID());
+				ps.setString(index++, ph.getBatchId());
+				ps.setLong(index++, ph.getJobId());
+				ps.setLong(index++, ph.getPickupBatchId());
+				ps.setDate(index++, JdbcUtil.getDate(ph.getCycleDate()));
+				ps.setString(index++, ph.getPartnerBankName());
+				ps.setString(index++, ph.getIFSC());
+				ps.setString(index++, ph.getChequeSerialNo());
+				ps.setDate(index++, JdbcUtil.getDate(ph.getChequeDate()));
+				ps.setString(index++, ph.getUtilityCode());
+				ps.setDate(index++, JdbcUtil.getDate(ph.getSetilmentDate()));
+				ps.setLong(index++, ph.getCustomerId());
+				ps.setString(index++, ph.getDestAccHolder());
+				ps.setLong(index++, ph.getHeaderId());
+
+			});
+		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new ConcurrencyException(e);
 		}

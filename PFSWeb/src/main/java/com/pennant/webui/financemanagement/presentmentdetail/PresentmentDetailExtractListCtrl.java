@@ -55,7 +55,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -63,7 +62,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
-import com.pennant.pff.presentment.ExtractionJobManager;
+import com.pennant.pff.presentment.service.ExtractionService;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -107,10 +106,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Checkbox bounceRequired;
 	protected Space space_mandateType;
 
-	private transient PresentmentDetailService presentmentDetailService;
-
 	@Autowired
-	private ExtractionJobManager extractionJobManager;
+	private ExtractionService extractionService;
 
 	/**
 	 * default constructor.<br>
@@ -410,11 +407,15 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		detailHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		detailHeader.setEmandateSource(emandateSource.getValidatedValue());
 
-		extractionJobManager.extractPresentment(detailHeader);
+		int extractPresentment = extractionService.extractPresentment(detailHeader);
 
 		logger.debug(Literal.LEAVING);
 
-		return "Presentment extraction process initiated…";
+		if (extractPresentment == 0) {
+			return Labels.getLabel("label_PresentmentSearchMessage");
+		} else {
+			return Labels.getLabel("label_PresentmentExtractedMessage");
+		}
 	}
 
 	/**
@@ -518,13 +519,4 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-
-	public PresentmentDetailService getPresentmentDetailService() {
-		return presentmentDetailService;
-	}
-
-	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
-		this.presentmentDetailService = presentmentDetailService;
-	}
-
 }

@@ -564,8 +564,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			if (externalPresentmentHook != null) {
 				externalPresentmentHook.processPresentmentRequest(presentmentHeader);
 			} else {
-				getPresentmentRequest().sendReqest(idList, idExcludeEmiList, headerId, isError,
-						presentmentHeader.getMandateType(), presentmentRef, bankAccNo);
+				getPresentmentRequest().sendReqest(idList, headerId, isError, presentmentHeader.getMandateType(),
+						presentmentRef, bankAccNo);
 			}
 
 		} catch (Exception e) {
