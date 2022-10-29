@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.transaction.TransactionManager;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.pff.presentment.service.PresentmentEngine;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -14,9 +17,9 @@ public class PresentmentItemWriter extends BasicDao<PresentmentDetail> implement
 
 	private PresentmentEngine presentmentEngine;
 
-	private TransactionManager transactionManager;
+	private DataSourceTransactionManager transactionManager;
 
-	public PresentmentItemWriter(TransactionManager transactionManager, PresentmentEngine presentmentEngine) {
+	public PresentmentItemWriter(DataSourceTransactionManager transactionManager, PresentmentEngine presentmentEngine) {
 		this.transactionManager = transactionManager;
 		this.presentmentEngine = presentmentEngine;
 	}
@@ -27,7 +30,17 @@ public class PresentmentItemWriter extends BasicDao<PresentmentDetail> implement
 
 		presentments.forEach(pd -> list.add(pd));
 
-		presentmentEngine.save(list);
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
+		try {
+			presentmentEngine.save(list);
+			transactionManager.commit(transactionStatus);
+		} catch (Exception e) {
+			transactionManager.rollback(transactionStatus);
+		}
+
 	}
 
 }

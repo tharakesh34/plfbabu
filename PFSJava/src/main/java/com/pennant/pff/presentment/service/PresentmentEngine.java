@@ -424,7 +424,10 @@ public class PresentmentEngine {
 
 		if (InstrumentType.isPDC(pd.getInstrumentType()) || InstrumentType.isIPDC(pd.getInstrumentType())) {
 			pd.setMandateId(pd.getChequeId());
+			pd.setPresentmentAmt(pd.getChequeAmount());
+
 			String chequeStatus = pd.getChequeStatus();
+
 			if (!ChequeSatus.NEW.equals(chequeStatus)) {
 				int excludeReason = 0;
 				switch (chequeStatus) {
@@ -585,12 +588,11 @@ public class PresentmentEngine {
 
 		BigDecimal advanceAmt = BigDecimal.ZERO;
 		if (emiInAdvanceAmt.compareTo(pd.getSchAmtDue()) >= 0) {
-			advanceAmt = pd.getAdvanceAmt();
-
 			pd.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
 			pd.setPresentmentAmt(BigDecimal.ZERO);
 			pd.setAdvanceAmt(pd.getSchAmtDue());
 			pd.setStatus(RepayConstants.PEXC_APPROV);
+			advanceAmt = pd.getAdvanceAmt();
 		} else {
 			advanceAmt = emiInAdvanceAmt;
 			pd.setPresentmentAmt(pd.getSchAmtDue().subtract(advanceAmt));
@@ -706,13 +708,12 @@ public class PresentmentEngine {
 
 			totalRecords = includeList.size();
 
-			if (upfronBounceRequired) {
-				totalRecords = totalRecords + presentmentDAO.approveExludes(id);
-			} else {
-				List<Long> excludeList = presentmentDAO.getExcludeList(id);
-				ph.setExcludeList(excludeList);
+			List<Long> excludeList = presentmentDAO.getExcludeList(id);
+			ph.setExcludeList(excludeList);
+			totalRecords = totalRecords + excludeList.size();
 
-				totalRecords = totalRecords + excludeList.size();
+			if (upfronBounceRequired) {
+				presentmentDAO.approveExludes(id);
 			}
 
 			if (StringUtils.isEmpty(ph.getPartnerAcctNumber())
@@ -724,7 +725,6 @@ public class PresentmentEngine {
 					pb.setPartnerBankId(621L);
 
 					presentmentDAO.updatePartnerBankID(id, pb.getPartnerBankId());
-
 				}
 
 				ph.setPartnerAcctNumber(pb.getAccountNo());

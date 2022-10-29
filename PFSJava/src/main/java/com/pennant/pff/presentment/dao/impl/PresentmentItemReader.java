@@ -64,6 +64,7 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 			pd.setChequeType(rs.getString("ChequeType"));
 			pd.setChequeStatus(rs.getString("ChequeStatus"));
 			pd.setChequeDate(rs.getDate("ChequeDate"));
+			pd.setChequeAmount(rs.getBigDecimal("ChequeAmount"));
 			pd.setPartnerBankId(JdbcUtil.getLong(rs.getObject("PartnerBankId")));
 			pd.setBranchCode(rs.getString("BranchCode"));
 			pd.setBankCode(rs.getString("BankCode"));
@@ -85,7 +86,7 @@ public class PresentmentItemReader extends JdbcPagingItemReaderBuilder<Presentme
 		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
 		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
 		sql.append(", PartnerBankId, BranchCode, BankCode, InstrumentType");
-		sql.append(", EmployeeNo, EmployerId, EmployerName");
+		sql.append(", EmployeeNo, EmployerId, EmployerName, ChequeAmount");
 
 		return sql.toString();
 	}

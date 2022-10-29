@@ -47,8 +47,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	private static final String STATUS = "STATUS";
 
 	@Override
-	public void sendReqest(List<Long> idList, List<Long> idExcludeEmiList, long presentmentId, boolean isError,
-			String mandateType, String presentmentRef, String bankAccNo) throws Exception {
+	public void sendReqest(List<Long> idList, long presentmentId, boolean isError, String mandateType,
+			String presentmentRef, String bankAccNo) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		boolean isBatchFail = false;
@@ -108,10 +108,6 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 					}
 				}
 			}
-		}
-
-		if (!isBatchFail && idExcludeEmiList != null && !idExcludeEmiList.isEmpty()) {
-			updatePresentmentDetails(idExcludeEmiList, "A", RepayConstants.PEXC_EMIINADVANCE);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -240,7 +236,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
 		sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
-		sql.append(" INNER JOIN MANDATES T3 ON T2.MANDATEID = T3.MANDATEID ");
+		sql.append(" INNER JOIN MANDATES T3 ON T1.MANDATEID = T3.MANDATEID ");
 		sql.append(" INNER JOIN BANKBRANCHES T4 ON T3.BANKBRANCHID = T4.BANKBRANCHID ");
 		sql.append(" INNER JOIN BMTBANKDETAIL T6 ON T4.BANKCODE = T6.BANKCODE ");
 		sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
@@ -296,7 +292,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
 		sql.append(" INNER JOIN CUSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
-		sql.append(" INNER JOIN MANDATES T3 ON T2.MANDATEID = T3.MANDATEID ");
+		sql.append(" INNER JOIN MANDATES T3 ON T1.MANDATEID = T3.MANDATEID ");
 		sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
 		sql.append(" INNER JOIN RMTBRANCHES T8 ON T8.BRANCHCODE = T2.FINBRANCH ");
 		sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");

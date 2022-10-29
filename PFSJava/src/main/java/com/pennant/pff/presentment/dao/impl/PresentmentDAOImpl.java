@@ -465,7 +465,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
 		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
 		sql.append(", PartnerBankId, BranchCode, BankCode");
-		sql.append(", EmployeeNo, EmPloyerId, EmployerName");
+		sql.append(", EmployeeNo, EmPloyerId, EmployerName, ChequeAmount");
 		sql.append(") Select");
 		sql.append(" ?, fm.FinId, fm.FinReference, fm.FinType, fm.ProductCategory, fm.FinBranch, sdd.EntityCode");
 		sql.append(", fm.BpiTreatment, fm.GrcPeriodEndDate, fm.GrcAdvType, fm.AdvType, fm.AdvStage, fm.SchdVersion");
@@ -477,7 +477,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			sql.append(", cd.ChequeType, cd.ChequeDetailsId, cd.ChequeType, cd.ChequeStatus, cd.ChequeDate");
 			sql.append(", cd.ChequeDetailsId, cd.ChequeType, null, null, null");
 			sql.append(", null, b.BranchCode, bb.BankCode");
-			sql.append(", null, null, null");
+			sql.append(", null, null, null, cd.Amount ChequeAmount");
 			sql.append(" From FinScheduleDetails fsd");
 			sql.append(" Inner Join FinanceMain fm On fm.FinID = fsd.FinID and fm.FinIsActive = ?");
 			sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
@@ -493,7 +493,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			sql.append(", m.MandateType, null, null, null, null");
 			sql.append(", fm.MandateId, m.MandateType, m.EmandateSource, m.Status, m.ExpiryDate");
 			sql.append(", m.PartnerBankId, b.BranchCode, null");
-			sql.append(", m.EmployeeNo, m.EmPloyerId, e.EmpName EmPloyerName");
+			sql.append(", m.EmployeeNo, m.EmPloyerId, e.EmpName EmPloyerName, 0 ChequeAmount");
 			sql.append(" From FinScheduleDetails fsd");
 			sql.append(" Inner Join FinanceMain fm On fm.FinID = fsd.FinID and fm.FinIsActive = ?");
 			sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
@@ -504,7 +504,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			sql.append(", m.MandateType, null, null, null, null");
 			sql.append(", fm.MandateId, m.MandateType, m.EmandateSource, m.Status, m.ExpiryDate");
 			sql.append(", m.PartnerBankId, b.BranchCode, bb.BankCode");
-			sql.append(", null, null, null");
+			sql.append(", null, null, null, 0 ChequeAmount");
 			sql.append(" From FinScheduleDetails fsd");
 			sql.append(" Inner Join FinanceMain fm On fm.FinID = fsd.FinID and fm.FinIsActive = ?");
 			sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");

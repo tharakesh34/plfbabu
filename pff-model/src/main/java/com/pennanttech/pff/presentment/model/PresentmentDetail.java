@@ -140,6 +140,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String chequeType;
 	private String chequeStatus;
 	private Date chequeDate;
+	private BigDecimal chequeAmount = BigDecimal.ZERO;;
 	private String branchCode;
 	private String bounceReason;
 	private FinExcessAmount advInExcess;
@@ -830,6 +831,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setChequeDate(Date chequeDate) {
 		this.chequeDate = chequeDate;
+	}
+
+	public BigDecimal getChequeAmount() {
+		return chequeAmount;
+	}
+
+	public void setChequeAmount(BigDecimal chequeAmount) {
+		this.chequeAmount = chequeAmount;
 	}
 
 	public String getBranchCode() {
