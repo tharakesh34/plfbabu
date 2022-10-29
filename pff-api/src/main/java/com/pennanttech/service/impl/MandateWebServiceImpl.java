@@ -703,7 +703,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		}
 
 		if (!newMandate.isOpenMandate()) {
-			return getFailedStatus("MDT04", String.valueOf(newMandateId));
+			return getFailedStatus("MNDT04", String.valueOf(newMandateId));
 		}
 
 		if (StringUtils.isNotBlank(newMandate.getOrgReference())) {
