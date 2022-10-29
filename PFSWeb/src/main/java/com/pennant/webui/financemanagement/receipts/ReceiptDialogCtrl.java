@@ -2591,43 +2591,44 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			rcd.setPayOrder(rcdList.size() + 1);
 			rcd.setReceiptSeqID(getReceiptSeqID(rcd));
 
-			if (payable.getGstAmount().compareTo(BigDecimal.ZERO) > 0) {
-				ManualAdviseMovements payAdvMovement = new ManualAdviseMovements();
+			ManualAdviseMovements mam = new ManualAdviseMovements();
 
-				payAdvMovement.setAdviseID(payable.getPayableID());
-				payAdvMovement.setMovementDate(rcd.getReceivedDate());
-				payAdvMovement.setMovementAmount(payable.getTotPaidNow());
-				payAdvMovement.setTaxComponent(payable.getTaxType());
-				payAdvMovement.setPaidAmount(payable.getPaidNow());
-				payAdvMovement.setFeeTypeCode(payable.getFeeTypeCode());
+			mam.setAdviseID(payable.getPayableID());
+			mam.setMovementDate(rcd.getReceivedDate());
+			mam.setMovementAmount(payable.getTotPaidNow());
+			mam.setTaxComponent(payable.getTaxType());
+			mam.setPaidAmount(payable.getTotPaidNow());
+			mam.setFeeTypeCode(payable.getFeeTypeCode());
 
-				// GST Calculations
-				if (StringUtils.isNotBlank(payable.getTaxType())) {
-
-					if (taxPercMap == null) {
-						taxPercMap = GSTCalculator.getTaxPercentages(fm);
-					}
-
-					TaxHeader taxHeader = new TaxHeader();
-					taxHeader.setNewRecord(true);
-					taxHeader.setRecordType(PennantConstants.RCD_ADD);
-					taxHeader.setVersion(taxHeader.getVersion() + 1);
-					taxHeader.getTaxDetails().add(getTaxDetail(RuleConstants.CODE_CGST,
-							taxPercMap.get(RuleConstants.CODE_CGST), payable.getPaidCGST()));
-					taxHeader.getTaxDetails().add(getTaxDetail(RuleConstants.CODE_SGST,
-							taxPercMap.get(RuleConstants.CODE_SGST), payable.getPaidSGST()));
-					taxHeader.getTaxDetails().add(getTaxDetail(RuleConstants.CODE_IGST,
-							taxPercMap.get(RuleConstants.CODE_IGST), payable.getPaidIGST()));
-					taxHeader.getTaxDetails().add(getTaxDetail(RuleConstants.CODE_UGST,
-							taxPercMap.get(RuleConstants.CODE_UGST), payable.getPaidUGST()));
-					taxHeader.getTaxDetails().add(getTaxDetail(RuleConstants.CODE_CESS,
-							taxPercMap.get(RuleConstants.CODE_CESS), payable.getPaidCESS()));
-					payAdvMovement.setTaxHeader(taxHeader);
-				} else {
-					payAdvMovement.setTaxHeader(null);
+			// GST Calculations
+			if (StringUtils.isNotBlank(payable.getTaxType())) {
+				if (taxPercMap == null) {
+					taxPercMap = GSTCalculator.getTaxPercentages(fm);
 				}
-				rcd.setPayAdvMovement(payAdvMovement);
+
+				TaxHeader taxHeader = new TaxHeader();
+				taxHeader.setNewRecord(true);
+				taxHeader.setRecordType(PennantConstants.RCD_ADD);
+				taxHeader.setVersion(taxHeader.getVersion() + 1);
+
+				List<Taxes> taxDetails = taxHeader.getTaxDetails();
+				taxDetails.add(getTaxDetail(RuleConstants.CODE_CGST, taxPercMap.get(RuleConstants.CODE_CGST),
+						payable.getPaidCGST()));
+				taxDetails.add(getTaxDetail(RuleConstants.CODE_SGST, taxPercMap.get(RuleConstants.CODE_SGST),
+						payable.getPaidSGST()));
+				taxDetails.add(getTaxDetail(RuleConstants.CODE_IGST, taxPercMap.get(RuleConstants.CODE_IGST),
+						payable.getPaidIGST()));
+				taxDetails.add(getTaxDetail(RuleConstants.CODE_UGST, taxPercMap.get(RuleConstants.CODE_UGST),
+						payable.getPaidUGST()));
+				taxDetails.add(getTaxDetail(RuleConstants.CODE_CESS, taxPercMap.get(RuleConstants.CODE_CESS),
+						payable.getPaidCESS()));
+
+				mam.setTaxHeader(taxHeader);
+			} else {
+				mam.setTaxHeader(null);
 			}
+
+			rcd.setPayAdvMovement(mam);
 
 			if (rcd.getReceiptSeqID() <= 0) {
 				rcdList.add(rcd);
@@ -3642,7 +3643,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			List<ValueLabel> epyMethodList = getEffectiveSchdMethods();
 			String defaultMethod = "";
 			String effschmethod = getFinanceDetail().getFinScheduleData().getFinanceType().getFinScheduleOn();
-			
+
 			if (!epyMethodList.isEmpty() && StringUtils.isNotEmpty(effschmethod)) {
 				defaultMethod = StringUtils.isEmpty(rch.getEffectSchdMethod()) ? effschmethod
 						: rch.getEffectSchdMethod();
