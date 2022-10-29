@@ -505,7 +505,7 @@
 	<changeSet id="PSD#208579" author="saikiran.n">
 		<sql>
 			<![CDATA[
-				UPDATE DATA_ENGINE_CONFIG SET UPLOADPATH = '/opt/pff/hdfc/mandates/request' WHERE NAME = 'MANDATES_EXPORT';
+				UPDATE DATA_ENGINE_CONFIG SET UPLOADPATH = '/opt/PFF/BASE/mandates/request' WHERE NAME = 'MANDATES_EXPORT';
 			]]>
 		</sql>
 	</changeSet>
