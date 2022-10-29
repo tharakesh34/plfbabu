@@ -864,8 +864,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 					aSecurityUser.setDisableReason(PennantConstants.List_Select);
 				}
 
-				if ("#".equals(getComboboxValue(this.disableReason))
-						&& !aSecurityUser.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
+				if ("#".equals(getComboboxValue(this.disableReason)) && !this.disableReason.isDisabled()) {
 					throw new WrongValueException(this.disableReason, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_SecurityUserDialog_DisableReason.value") }));
 				} else {
@@ -1020,8 +1019,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 					aSecurityUser.setEmployeeType(PennantConstants.List_Select);
 				}
 
-				if ("#".equals(getComboboxValue(this.employeeType))
-						&& !aSecurityUser.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
+				if ("#".equals(getComboboxValue(this.employeeType)) && !this.employeeType.isDisabled()) {
 					throw new WrongValueException(this.employeeType, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_SecurityUserDialog_EmployeeType.value") }));
 				} else {
