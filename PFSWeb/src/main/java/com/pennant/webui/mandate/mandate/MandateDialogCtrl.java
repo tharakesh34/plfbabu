@@ -723,8 +723,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	public void onCheck$externalMandate(Event event) {
 		if (this.externalMandate.isChecked()) {
 			readOnlyComponent(isReadOnly("MandateDialog_UmrNumber"), this.umrNumber);
+			this.umrNumber.clearErrorMessage();
 		} else {
+			this.umrNumber.setErrorMessage("");
 			this.umrNumber.setConstraint("");
+			this.umrNumber.setValue("");
 			readOnlyComponent(true, this.umrNumber);
 		}
 
@@ -962,10 +965,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 			this.dasGroupbox.setVisible(true);
 			this.dasRow.setVisible(true);
-			this.mandateSwapGroupbox.setVisible(true);
 
-			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
-			readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
+			if (fromLoan) {
+				this.mandateSwapGroupbox.setVisible(false);
+			} else {
+				this.mandateSwapGroupbox.setVisible(true);
+
+				readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
+				readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
+			}
 			readOnlyComponent(isReadOnly("MandateDialog_EmployerID"), this.employerID);
 			readOnlyComponent(isReadOnly("MandateDialog_EmployeeNo"), this.employeeNo);
 
@@ -1001,7 +1009,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.otherDetailsGroupbox.setVisible(true);
 			this.mandateSwapGroupbox.setVisible(true);
 			this.dasGroupbox.setVisible(false);
+
 			if (fromLoan) {
+				this.mandateSwapGroupbox.setVisible(false);
 				readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.mandateRef);
 			}
 
@@ -1556,7 +1566,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		ccyFormatter = CurrencyUtil.getFormat(aMandate.getMandateCcy());
 
 		if (aMandate.isNewRecord()) {
-			if (StringUtils.isEmpty(aMandate.getPeriodicity())) {
+			if (!issecurityMandate && StringUtils.isEmpty(aMandate.getPeriodicity())) {
 				aMandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
 			}
 			if (aMandate.getStartDate() == null) {

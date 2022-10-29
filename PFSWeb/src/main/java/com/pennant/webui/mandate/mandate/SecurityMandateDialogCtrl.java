@@ -957,8 +957,14 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.dasRow.setVisible(true);
 				this.mandateSwapGroupbox.setVisible(true);
 
-				readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
-				readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
+				if (fromLoan) {
+					this.mandateSwapGroupbox.setVisible(false);
+				} else {
+					this.mandateSwapGroupbox.setVisible(true);
+
+					readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
+					readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
+				}
 
 				if (fromLoan) {
 					readOnlyComponent(isReadOnly("MandateDialog_EmployerID"), this.employerID);
@@ -991,7 +997,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateSwapGroupbox.setVisible(true);
 			this.dasGroupbox.setVisible(false);
 			if (fromLoan) {
-				readOnlyComponent(true, this.mandateRef);
+				this.mandateSwapGroupbox.setVisible(false);
+				readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.mandateRef);
 			}
 
 			this.bankBranchID.setFilters(new Filter[] { new Filter(instrumentType.name(), 1, Filter.OP_EQUAL) });
@@ -1273,11 +1280,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
 		readOnlyComponent(isReadOnly("MandateDialog_HoldReason"), this.holdReason);
 
-		if (issecurityMandate) {
-			readOnlyComponent(isReadOnly("MandateDialog_SecurityMandate"), this.securityMandate);
-		} else {
-			readOnlyComponent(true, this.securityMandate);
-		}
+		readOnlyComponent(true, this.securityMandate);
 
 		readOnlyComponent(isReadOnly("MandateDialog_EmployerID"), this.employerID);
 		readOnlyComponent(isReadOnly("MandateDialog_EmployeeNo"), this.employeeNo);
@@ -1539,7 +1542,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		ccyFormatter = CurrencyUtil.getFormat(aMandate.getMandateCcy());
 
 		if (aMandate.isNewRecord()) {
-			if (StringUtils.isEmpty(aMandate.getPeriodicity())) {
+			if (!issecurityMandate && StringUtils.isEmpty(aMandate.getPeriodicity())) {
 				aMandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
 			}
 			if (aMandate.getStartDate() == null) {
