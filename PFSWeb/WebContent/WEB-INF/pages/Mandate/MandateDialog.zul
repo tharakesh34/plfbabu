@@ -71,7 +71,7 @@
 											style="margin-left:10px;display:inline-block;padding-top:3px;" />
 									</hbox>
 								</row>
-								<row>
+								<row id= "finreferenceRow">
 									<label value="${c:l('label_MandateDialog_FinReference.value')}" />
 									<extendedcombobox id="finReference" />
 								</row>
