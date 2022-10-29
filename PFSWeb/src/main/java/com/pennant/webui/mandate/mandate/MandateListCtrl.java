@@ -291,7 +291,14 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 				arg.put("maintain", true);
 			}
 
-			String page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
+			String page = null;
+
+			if (mandate.isSecurityMandate()) {
+				page = "/WEB-INF/pages/Mandate/SecurityMandateDialog.zul";
+			} else {
+				page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
+			}
+
 			if (enqiryModule) {
 				page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
 			}
