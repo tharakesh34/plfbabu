@@ -65,6 +65,8 @@ public class MandateExtension {
 	 */
 	public static String CONSECUTIVE_HOLD_REASON = "CONSECUTIVE BOUNCE";
 
+	public static boolean ALLOW_CONSECUTIVE_BOUNCE;
+
 	static {
 		APPROVE_ON_LOAN_ORG = getValueAsBoolean("APPROVE_ON_LOAN_ORG", false);
 		UPLOAD_ENITITY_CODE_MANDATORY = getValueAsBoolean("UPLOAD_ENITITY_CODE_MANDATORY", false);
@@ -76,6 +78,7 @@ public class MandateExtension {
 		PARTNER_BANK_REQ = getValueAsBoolean("PARTNER_BANK_REQ", false);
 		SWAP_EFFECTIVE_DATE_DEFAULT = getValueAsBoolean("SWAP_EFFECTIVE_DATE_DEFAULT", false);
 		ACCOUNT_DETAILS_READONLY = getValueAsBoolean("ACCOUNT_DETAILS_READONLY", false);
+		ALLOW_CONSECUTIVE_BOUNCE = getValueAsBoolean("ALLOW_CONSECUTIVE_BOUNCE", false);
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
