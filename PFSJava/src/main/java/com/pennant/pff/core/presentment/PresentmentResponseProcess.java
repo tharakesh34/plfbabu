@@ -251,7 +251,7 @@ public class PresentmentResponseProcess implements Runnable {
 				checkStatus = ChequeSatus.REALISED;
 			}
 		} else {
-			if (InstrumentType.isPDC(mandateType)) {
+			if (InstrumentType.isPDC(mandateType) || InstrumentType.isIPDC(mandateType)) {
 				if (StringUtils.trimToNull(pd.getErrorDesc()) == null) {
 					checkStatus = ChequeSatus.BOUNCE;
 				} else {
@@ -302,12 +302,12 @@ public class PresentmentResponseProcess implements Runnable {
 
 				presentmentDetailDAO.updatePresentmentIdAsZero(pd.getId());
 
-				if (!InstrumentType.isPDC(mandateType)) {
+				if (!(InstrumentType.isPDC(mandateType) || InstrumentType.isIPDC(mandateType))) {
 					holdMandate(pd);
 				}
 			}
 
-			if (InstrumentType.isPDC(mandateType) && checkStatus != null) {
+			if ((InstrumentType.isPDC(mandateType) || InstrumentType.isIPDC(mandateType)) && checkStatus != null) {
 				presentmentDetailDAO.updateChequeStatus(mandateID, checkStatus);
 			}
 

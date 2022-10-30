@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -14,6 +15,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.presentment.ExtractionJobManager;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 @Configuration
@@ -82,9 +84,12 @@ public class ExtractionService {
 		try {
 			count = presentmentEngine.preparation(ph);
 			transactionManager.commit(transactionStatus);
+		} catch (DuplicateKeyException e) {
+			transactionManager.rollback(transactionStatus);
+			throw new ConcurrencyException();
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);
-			throw new AppException();
+			throw new AppException("Presentment extraction failed", e);
 		}
 
 		if (count > 0) {

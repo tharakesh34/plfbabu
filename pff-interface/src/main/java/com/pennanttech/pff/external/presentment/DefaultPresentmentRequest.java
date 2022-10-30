@@ -171,7 +171,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			parameterMap.put("AccountNo", bankAccNo);
 
 			String entityCode = presentment.getEntCode();
-			parameterMap.put("FILE_NAME", presentmentRef.concat(".xlsx"));
+			parameterMap.put("FILE_NAME", "Presentment_" + presentmentRef.concat(".xlsx"));
 			parameterMap.put("FILE_NAME_PREFIX", entityCode + "_Pennant_Lot_");
 
 			// for new Presentment only total count needs

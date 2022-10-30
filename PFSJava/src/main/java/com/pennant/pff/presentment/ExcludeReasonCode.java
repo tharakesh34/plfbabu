@@ -17,7 +17,7 @@ public enum ExcludeReasonCode {
 
 	MANDATE_REJECTED(7, ""),
 
-	// CHEQUE_PRESENT(8, ""),
+	CHEQUE_PRESENT(8, ""),
 
 	// CHEQUE_BOUNCE(9, ""),
 

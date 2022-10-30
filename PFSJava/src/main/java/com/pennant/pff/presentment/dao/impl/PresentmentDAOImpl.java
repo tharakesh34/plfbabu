@@ -192,9 +192,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setInt(index++, 1);
 			if (InstrumentType.isPDC(instrumentType) || InstrumentType.isIPDC(instrumentType)) {
 				ps.setString(index++, "PDC");
-				if (InstrumentType.isIPDC(instrumentType)) {
-					ps.setString(index++, bankCode);
-				}
+				ps.setString(index++, bankCode);
 			} else {
 				ps.setString(index++, instrumentType);
 			}
@@ -360,7 +358,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" Where BatchID = ? and ID in (Select ps.ID");
 		sql.append(" From Presentment_Extraction_Stage ps");
 		sql.append(" Inner Join PresentmentDetails pd on pd.FinID = ps.FinID and pd.SchDate = ps.SchDate");
-		sql.append(" Where pd.ExcludeReason in (?, ?, ?, ?) and pd.Status = ?");
+		sql.append(" Where pd.ExcludeReason in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) and pd.Status = ?");
 		sql.append(" )");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -373,6 +371,14 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setInt(index++, ExcludeReasonCode.EMI_IN_ADVANCE.id());
 			ps.setInt(index++, ExcludeReasonCode.INT_ADV.id());
 			ps.setInt(index++, ExcludeReasonCode.EMI_ADV.id());
+			ps.setInt(index++, ExcludeReasonCode.EMI_HOLD.id());
+			ps.setInt(index++, ExcludeReasonCode.MANDATE_HOLD.id());
+			ps.setInt(index++, ExcludeReasonCode.MANDATE_NOT_APPROVED.id());
+			ps.setInt(index++, ExcludeReasonCode.MANDATE_EXPIRED.id());
+			ps.setInt(index++, ExcludeReasonCode.MANUAL_EXCLUDE.id());
+			ps.setInt(index++, ExcludeReasonCode.MANDATE_REJECTED.id());
+			ps.setInt(index++, ExcludeReasonCode.CHEQUE_PRESENT.id());
+
 			ps.setString(index, RepayConstants.PEXC_APPROV);
 		});
 
@@ -488,6 +494,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			sql.append(" Inner Join BankBranches bb on bb.BankBranchId = cd.BankBranchId");
 			if (InstrumentType.isIPDC(instrumentType)) {
 				sql.append(" and bb.BankCode = ?");
+			} else {
+				sql.append(" and bb.BankCode != ?");
 			}
 		} else if (InstrumentType.isDAS(instrumentType)) {
 			sql.append(", m.MandateType, null, null, null, null");

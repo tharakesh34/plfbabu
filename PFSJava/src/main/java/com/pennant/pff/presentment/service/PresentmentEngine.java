@@ -169,6 +169,8 @@ public class PresentmentEngine {
 		Date dueDate = ph.getDueDate();
 		String presentmentType = ph.getPresentmentType();
 
+		System.out.println();
+
 		int count = 0;
 
 		if (fromDate != null && toDate != null && "#".equals(instrumentType)) {
@@ -416,15 +418,10 @@ public class PresentmentEngine {
 	private void doCalculations(PresentmentHeader ph, PresentmentDetail pd) {
 		logger.debug(Literal.ENTERING);
 
-		if (pd.getFinReference().equals("SPCD0000590") || pd.getFinReference().equals("SPCD0000591")) {
-			System.out.println();
-		}
-
 		String mandateStatus = pd.getMandateStatus();
 
 		if (InstrumentType.isPDC(pd.getInstrumentType()) || InstrumentType.isIPDC(pd.getInstrumentType())) {
 			pd.setMandateId(pd.getChequeId());
-			pd.setPresentmentAmt(pd.getChequeAmount());
 
 			String chequeStatus = pd.getChequeStatus();
 
@@ -479,6 +476,10 @@ public class PresentmentEngine {
 
 		BigDecimal advAmount = pd.getAdvAdjusted();
 		pd.setPresentmentAmt(pd.getPresentmentAmt().subtract(advAmount));
+
+		if (InstrumentType.isPDC(pd.getInstrumentType()) || InstrumentType.isIPDC(pd.getInstrumentType())) {
+			pd.setPresentmentAmt(pd.getChequeAmount());
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -737,8 +738,8 @@ public class PresentmentEngine {
 			ph.setUserDetails(loggedInUser);
 
 			try {
-				ph.setUserAction(STATUS_SUBMIT);
-				presentmentDetailService.updatePresentmentDetails(ph);
+				// ph.setUserAction(STATUS_SUBMIT);
+				// presentmentDetailService.updatePresentmentDetails(ph);
 
 				ph.setUserAction(STATUS_APPROVE);
 				presentmentDetailService.updatePresentmentDetails(ph);
