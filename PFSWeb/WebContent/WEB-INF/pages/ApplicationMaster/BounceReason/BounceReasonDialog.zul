@@ -93,7 +93,10 @@
 							</row>
 							<row id="row4">
 								<label value="${c:l('label_BounceReasonDialog_HoldMarkCount.value')}" />
-								<intbox id="holdMarkBounceCount" style="text-align:right" maxlength="1" />
+								<hbox>
+									<space id="space_holdMarkBounceCount" spacing="2px" />
+									<intbox id="holdMarkBounceCount" style="text-align:right" maxlength="1" />
+								</hbox>
 								<label value="${c:l('label_BounceReasonDialog_InstrumentType.value')}" />
 								<combobox id="instrumentType" width="200px" />
 							</row>

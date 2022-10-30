@@ -40,6 +40,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -54,6 +55,7 @@ import com.pennant.backend.service.applicationmaster.BounceReasonService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -87,6 +89,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	protected Checkbox active;
 	protected Combobox instrumentType;
 	protected Intbox holdMarkBounceCount;
+	protected Space space_holdMarkBounceCount;
 
 	private transient BounceReasonListCtrl bounceReasonListCtrl;
 	private transient BounceReasonService bounceReasonService;
@@ -181,6 +184,10 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		this.ruleID.setFilters(filters);
 
 		this.returnCode.setMaxlength(8);
+
+		if (MandateExtension.ALLOW_CONSECUTIVE_BOUNCE) {
+			this.space_holdMarkBounceCount.setSclass("mandatory");
+		}
 
 		setStatusDetails();
 
@@ -428,15 +435,22 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		}
 
 		try {
-			if (this.holdMarkBounceCount.getValue() > 0) {
+			if (this.holdMarkBounceCount.getValue() != null && this.holdMarkBounceCount.getValue() > 0) {
 				aBounceReason.setInstrumentType(this.instrumentType.getSelectedItem().getValue().toString());
 			}
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aBounceReason.setHoldMarkBounceCount(this.holdMarkBounceCount.getValue());
+			if (MandateExtension.ALLOW_CONSECUTIVE_BOUNCE
+					&& (this.holdMarkBounceCount.getValue() == null || this.holdMarkBounceCount.getValue() <= 0)) {
+				throw new WrongValueException(this.holdMarkBounceCount, Labels.getLabel("AMOUNT_NOT_NEGATIVE",
+						new String[] { Labels.getLabel("label_BounceReasonDialog_HoldMarkCount.value") }));
+			} else {
+				aBounceReason.setHoldMarkBounceCount(this.holdMarkBounceCount.getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -528,7 +542,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
-		if (this.holdMarkBounceCount.getValue() > 0 && !this.instrumentType.isDisabled()) {
+		if (this.holdMarkBounceCount.getValue() != null && this.holdMarkBounceCount.getValue() > 0
+				&& !this.instrumentType.isDisabled()) {
 			this.instrumentType.setConstraint(new StaticListValidator(instrumentTypeList,
 					Labels.getLabel("label_BounceReasonDialog_InstrumentType.value")));
 		}
