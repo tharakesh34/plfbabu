@@ -5759,7 +5759,7 @@
 				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('MANDATE_HOLD_REASON', 'Reason for Mandate Hold', 'String', 1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
 			]]>
 		</sql>
-	</changeSet> -->
+	</changeSet>
 
    <changeSet id="PSD#208851.2" author="saikrishna.b">
 		<modifyDataType tableName="MANDATES" columnName="HOLDREASON" newDataType="varchar(50)" />
