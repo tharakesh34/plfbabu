@@ -856,11 +856,18 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			error = validateExisting(fd, vldGroup);
 		} else {
 			error = validateNew(fd);
-			error = validateNewSecurityMandate(fd);
 		}
 
 		if (error != null) {
 			return error;
+		}
+
+		if (!mandate.isUseExisting()) {
+			error = validateNewSecurityMandate(fd);
+
+			if (error != null) {
+				return error;
+			}
 		}
 
 		if (!InstrumentType.isEMandate(mandate.getMandateType())) {
@@ -943,6 +950,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 		String repaymentMethod = fm.getFinRepayMethod();
+
+		if (mandate == null) {
+			return null;
+		}
 
 		mandate.setMandateID(Long.MIN_VALUE);
 		mandate.setCustID(fm.getCustID());
