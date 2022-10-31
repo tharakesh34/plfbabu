@@ -579,24 +579,24 @@ public class RepaymentPostingsUtil {
 			Date repayDate = DateUtil.getSqlDate(repayQueue.getRpyDate());
 			if (scheduleMap.containsKey(repayDate)) {
 				scheduleDetail = scheduleMap.get(repayDate);
+
+				scheduleDetail = updateScheduleDetailsData(scheduleDetail, repayQueue);
+				Date sqlDate = DateUtil.getSqlDate(scheduleDetail.getSchDate());
+				scheduleMap.put(sqlDate, scheduleDetail);
+
+				FinODDetails latePftODTotal = getLatePftODTotal(repayQueue);
+				if (latePftODTotal != null) {
+					latePftODTotals.add(latePftODTotal);
+				}
+
+				FinODDetails odDetail = getODDetail(repayQueue);
+				if (odDetail != null) {
+					odDetails.add(odDetail);
+				}
+
+				long receiptId = rpyQueueHeader.getReceiptId();
+				repayments.add(prepareRepayDetail(repayQueue, valueDate, postDate, linkedTranId, rpyTotal, receiptId));
 			}
-
-			scheduleDetail = updateScheduleDetailsData(scheduleDetail, repayQueue);
-			Date sqlDate = DateUtil.getSqlDate(scheduleDetail.getSchDate());
-			scheduleMap.put(sqlDate, scheduleDetail);
-
-			FinODDetails latePftODTotal = getLatePftODTotal(repayQueue);
-			if (latePftODTotal != null) {
-				latePftODTotals.add(latePftODTotal);
-			}
-
-			FinODDetails odDetail = getODDetail(repayQueue);
-			if (odDetail != null) {
-				odDetails.add(odDetail);
-			}
-
-			long receiptId = rpyQueueHeader.getReceiptId();
-			repayments.add(prepareRepayDetail(repayQueue, valueDate, postDate, linkedTranId, rpyTotal, receiptId));
 		}
 
 		// Reset Finance Schedule Details
