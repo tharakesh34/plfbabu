@@ -44,6 +44,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.rmtmasters.AccountTypeService;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.rmtmasters.accounttype.model.AccountTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -264,6 +265,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 	}
 
 	private void doSetFieldProperties() {
+		fillComboBox(this.acPurpose, "", PennantStaticListUtil.getAccountPurpose(), "");
 		this.acType.setMaxlength(14);
 
 	}
