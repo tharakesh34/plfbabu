@@ -766,4 +766,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="20" author="rahul.r">
+		<sql>
+		<![CDATA[
+			UPDATE DATA_ENGINE_COLUMN SET SKIP=1 WHERE TABLEID=(SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME='PRESENTMENT_RESPONSE')) AND NAME IN ('HEADER_ID','BRANCHCODE');
+		]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
