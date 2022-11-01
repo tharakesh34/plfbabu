@@ -1054,4 +1054,12 @@
 		</sql>
 	</changeSet>
 	
+		<changeSet id="22" author="rahul.r">
+		<sql>
+			<![CDATA[
+				UPDATE WIFFINDISBURSEMENTDETAILS SET DISBSEQ=1;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
