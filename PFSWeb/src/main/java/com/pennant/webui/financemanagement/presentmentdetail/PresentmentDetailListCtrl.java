@@ -244,7 +244,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 
 		fillList(status, PennantStaticListUtil.getPresentmentBatchStatusList(), null);
-		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
+		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypesForBE(), "");
 		fillComboBox(this.presentmentType, "", PennantStaticListUtil.getPresetmentTypeList(), "");
 		this.presentmentDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.schdate.setFormat(DateFormat.SHORT_DATE.getPattern());
