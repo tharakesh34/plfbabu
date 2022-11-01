@@ -215,6 +215,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			searchObject.addFilters(filters);
 		}
 
+		if (qdp != null) {
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("QUICKDISB", this.qdp.isChecked(), Filter.OP_EQUAL);
+			searchObject.addFilters(filters);
+		}
+
 		// Adding filter to download only if the Download Type is Offline.
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("DOWNLOADTYPE", PennantConstants.OFFLINE, Filter.OP_EQUAL);
