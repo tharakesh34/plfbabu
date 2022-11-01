@@ -991,9 +991,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	private ErrorDetail basicValidation(Mandate mandate, String repaymentMethod) {
-		if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), repaymentMethod)) {
-			return ErrorUtil.getError("90311", repaymentMethod, mandate.getMandateType());
-		}
+		/*
+		 * if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), repaymentMethod)) { return
+		 * ErrorUtil.getError("90311", repaymentMethod, mandate.getMandateType()); }
+		 */
 
 		if (StringUtils.isBlank(mandate.getMandateType())) {
 			return ErrorUtil.getError("90502", "mandateType");
