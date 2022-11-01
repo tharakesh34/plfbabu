@@ -1192,14 +1192,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			if (InstrumentType.isPDC(cd.getChequeType())) {
 				emiNum = getEmiNumber(emiNum);
-				cd.seteMIRefNo(emiNum);
 
-				Combobox combobox = getCombobox(String.valueOf(cd.geteMIRefNo()));
-
-				if (PennantConstants.List_Select.equals(combobox.getSelectedItem().getLabel())) {
+				if (emiNum == -1) {
 					MessageUtil.showMessage("Cheques are generated up to till maturity.");
 					break;
 				}
+
+				cd.seteMIRefNo(emiNum);
 			}
 
 			cheques.add(cd);
@@ -2620,7 +2619,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	private int getEmiNumber(int emiNum) {
 		while (true) {
-			Date chequeDate = DateUtil.parseShortDate(getCombobox(String.valueOf(++emiNum)).getValue());
+			String dueDate = getCombobox(String.valueOf(++emiNum)).getValue();
+			if (Labels.getLabel(COMBO_SELECT).equals(dueDate)) {
+				return -1;
+			}
+
+			Date chequeDate = DateUtil.parseShortDate(dueDate);
 
 			if (!isBPIHoliday(chequeDate) && !isDueDate(chequeDate)) {
 				break;
