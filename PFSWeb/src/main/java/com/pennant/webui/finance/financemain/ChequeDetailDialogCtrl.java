@@ -1676,6 +1676,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 
 			if (!checkbox.isChecked()) {
+				if (fromLoan) {
+					cheque.seteMIRefNo(cheque.geteMIRefNo() - count);
+				}
 				cheques.add(cheque);
 				continue;
 			}
