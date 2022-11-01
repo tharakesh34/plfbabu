@@ -510,6 +510,15 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#208579.1" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET UPLOADPATH = '/opt/PFF/BASE/presentment/request' WHERE NAME = 'PRESENTMENT_REQUEST';
+				UPDATE DATA_ENGINE_CONFIG SET UPLOADPATH = '/opt/PFF/BASE/presentment/response' WHERE NAME = 'PRESENTMENT_RESPONSE';
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="PSD#208852.1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
