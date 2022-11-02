@@ -717,13 +717,6 @@ public class RepaymentPostingsUtil {
 
 		fm.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
-		// If Penalty fully paid && Schedule payment completed then make status
-		// as Inactive
-		// (!financeMain.isSanBsdSchdle() || (financeMain.isSanBsdSchdle() &&
-		// ((receiptPurpose != null
-		// && StringUtils.equals(FinServiceEvent.EARLYSETTLE,
-		// receiptPurpose))) this condition sanction based loans closed after scheduled payment.
-
 		boolean overDraft = ProductUtil.isOverDraft(fm);
 		if (FinServiceEvent.SCHDRPY.equals(receiptPurpose) && overDraft) {
 			overdrafLoanService.unBlockLimit(finID, schedules, dateValueDate);

@@ -220,6 +220,10 @@ public class PresentmentResponseProcess implements Runnable {
 			receiptID = 0L;
 		}
 
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
 		if (receiptID == 0) {
 			if (!PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
 				createPresentmentReceipt(pd);
@@ -227,9 +231,16 @@ public class PresentmentResponseProcess implements Runnable {
 				processReceipt = processInactiveLoan(custEODEvent, pd);
 			}
 
+			logger.info("Re-loading finance data...");
+
+			setLoanDetails(custEODEvent, finID, finIsActive);
+
+			finEODEvent = custEODEvent.getFinEODEvents().get(0);
+
 			receiptID = pd.getReceiptID();
 		}
 
+		//
 		String checkStatus = null;
 		FinReceiptHeader rh = null;
 
@@ -259,10 +270,6 @@ public class PresentmentResponseProcess implements Runnable {
 				}
 			}
 		}
-
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
 
 		try {
 			if (RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
@@ -398,10 +405,6 @@ public class PresentmentResponseProcess implements Runnable {
 			return false;
 		}
 
-		logger.info("Re-loading finance data...");
-
-		setLoanDetails(custEODEvent, finID, finIsActive);
-
 		logger.info(Literal.LEAVING);
 		return true;
 
@@ -417,9 +420,9 @@ public class PresentmentResponseProcess implements Runnable {
 		fm.setEventProperties(this.eventProperties);
 
 		FinanceType financeType = FinanceConfigCache.getCacheFinanceType(fm.getFinType());
-		Customer customer = null;
+		Customer customer = custEODEvent.getCustomer();
 
-		if (custEODEvent.getCustomer() == null) {
+		if (customer == null) {
 			customer = customerDAO.getCustomerEOD(fm.getCustID());
 		}
 
