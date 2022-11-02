@@ -224,54 +224,54 @@ public class PresentmentResponseProcess implements Runnable {
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
 
-		if (receiptID == 0) {
-			if (!PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
-				createPresentmentReceipt(pd);
-			} else if (!finIsActive) {
-				processReceipt = processInactiveLoan(custEODEvent, pd);
+		try {
+			if (receiptID == 0) {
+				if (!PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
+					createPresentmentReceipt(pd);
+				} else if (!finIsActive) {
+					processReceipt = processInactiveLoan(custEODEvent, pd);
+				}
+
+				logger.info("Re-loading finance data...");
+
+				setLoanDetails(custEODEvent, finID, finIsActive);
+
+				finEODEvent = custEODEvent.getFinEODEvents().get(0);
+
+				receiptID = pd.getReceiptID();
 			}
 
-			logger.info("Re-loading finance data...");
+			//
+			String checkStatus = null;
+			FinReceiptHeader rh = null;
 
-			setLoanDetails(custEODEvent, finID, finIsActive);
+			pd.setBounceID(0);
+			pd.setManualAdviseId(null);
 
-			finEODEvent = custEODEvent.getFinEODEvents().get(0);
+			if (RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
+				if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+					AEEvent event = doPresentmentStageAccounting(pd);
+					linkedTranId = event.getLinkedTranId();
+					pd.setLinkedTranId(linkedTranId);
+				}
 
-			receiptID = pd.getReceiptID();
-		}
+				if (!processReceipt) {
+					rh = getFinReceiptHeader(receiptID);
+				}
 
-		//
-		String checkStatus = null;
-		FinReceiptHeader rh = null;
-
-		pd.setBounceID(0);
-		pd.setManualAdviseId(null);
-
-		if (RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
-			if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
-				AEEvent event = doPresentmentStageAccounting(pd);
-				linkedTranId = event.getLinkedTranId();
-				pd.setLinkedTranId(linkedTranId);
-			}
-
-			if (!processReceipt) {
-				rh = getFinReceiptHeader(receiptID);
-			}
-
-			if (InstrumentType.isPDC(mandateType)) {
-				checkStatus = ChequeSatus.REALISED;
-			}
-		} else {
-			if (InstrumentType.isPDC(mandateType) || InstrumentType.isIPDC(mandateType)) {
-				if (StringUtils.trimToNull(pd.getErrorDesc()) == null) {
-					checkStatus = ChequeSatus.BOUNCE;
-				} else {
-					checkStatus = ChequeSatus.FAILED;
+				if (InstrumentType.isPDC(mandateType)) {
+					checkStatus = ChequeSatus.REALISED;
+				}
+			} else {
+				if (InstrumentType.isPDC(mandateType) || InstrumentType.isIPDC(mandateType)) {
+					if (StringUtils.trimToNull(pd.getErrorDesc()) == null) {
+						checkStatus = ChequeSatus.BOUNCE;
+					} else {
+						checkStatus = ChequeSatus.FAILED;
+					}
 				}
 			}
-		}
 
-		try {
 			if (RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
 				if ("Y".equals(fateCorrection) && receiptID != 0) {
 					// FIXME::FateCorrection change required
