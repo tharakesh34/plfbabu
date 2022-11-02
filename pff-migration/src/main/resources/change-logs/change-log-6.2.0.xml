@@ -5787,6 +5787,14 @@
 		<addDefaultValue columnName="ChequeAmount" tableName="Presentment_Extraction_Stage" defaultValue="0" />
 	</changeSet>
 	
+	<changeSet id="ST#99.20_pre" author="murthy.y" >
+		<sql>
+			<![CDATA[	
+				delete from Presentment_Extraction_Stage;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#99.20" author="murthy.y">
 		<addUniqueConstraint tableName="Presentment_Extraction_Stage" columnNames="FinID, SchDate" constraintName="uk_pes_finid_schdate"/>
 	</changeSet>
