@@ -150,8 +150,10 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				additionalBPIAdded = true;
 			}
 
+			int lastDateInMonth = DateUtil.getDay(DateUtil.getMonthEnd(prvSchdate));
+
 			if (!additionalBPIAdded && CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(recalType)
-					&& DateUtil.getDaysBetween(newDate.getTime(), prvSchdate) > 30) {
+					&& DateUtil.getDaysBetween(newDate.getTime(), prvSchdate) > lastDateInMonth) {
 				additionalBPISchd = prepareAddtionalBPISchd(schdData, curSchd, day);
 			}
 
