@@ -949,7 +949,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		Mandate mandate = fd.getSecurityMandate();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
-		String repaymentMethod = fm.getFinRepayMethod();
 
 		if (mandate == null) {
 			return null;
@@ -958,12 +957,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		mandate.setMandateID(Long.MIN_VALUE);
 		mandate.setCustID(fm.getCustID());
 
-		ErrorDetail errordetail = basicValidation(mandate, repaymentMethod);
-
-		if (errordetail != null) {
-			return errordetail;
-		}
-
 		String mandateType = mandate.getMandateType();
 
 		switch (InstrumentType.valueOf(mandateType)) {
@@ -971,30 +964,24 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		case DD:
 		case NACH:
 		case EMANDATE:
-			errordetail = validateAccountDetail(mandate);
+			ErrorDetail errordetail = validateAccountDetail(mandate);
 
 			if (errordetail != null && !InstrumentType.isSI(mandateType)) {
 				errordetail = otherDetailValidation(mandate);
 			}
 
-			break;
-		default:
-			break;
-		}
-
-		if (errordetail != null) {
 			return errordetail;
+		default:
+			return null;
 		}
-
-		return errordetail;
 
 	}
 
 	private ErrorDetail basicValidation(Mandate mandate, String repaymentMethod) {
-		/*
-		 * if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), repaymentMethod)) { return
-		 * ErrorUtil.getError("90311", repaymentMethod, mandate.getMandateType()); }
-		 */
+
+		if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), repaymentMethod)) {
+			return ErrorUtil.getError("90311", repaymentMethod, mandate.getMandateType());
+		}
 
 		if (StringUtils.isBlank(mandate.getMandateType())) {
 			return ErrorUtil.getError("90502", "mandateType");

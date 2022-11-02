@@ -550,15 +550,11 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 	@Override
 	public boolean checkMandates(String orgRef, long mandateId) {
-		String sql = "Select Count(MandateID) from Mandates Where OrgReference = ? and Status in (?, ?, ?) and Active = ?";
+		String sql = "Select Count(MandateID) from Mandates Where OrgReference = ? and Status in (?, ?, ?) and Active = ? and SecurityMandate = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, orgRef, "AC", "INPROCESS", "NEW", 1) > 0;
-		} catch (Exception e) {
-			throw e;
-		}
+		return this.jdbcOperations.queryForObject(sql, Integer.class, orgRef, "AC", "INPROCESS", "NEW", 1, 0) > 0;
 	}
 
 	@Override
@@ -734,7 +730,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				Mandate mdt = new Mandate();
 
 				mdt.setEmployerID(rs.getLong("EmployerID"));
-				mdt.setEmployeeNo(rs.getString("EmpName"));
+				mdt.setEmployerName(rs.getString("EmpName"));
 				mdt.setAllowDAS(rs.getBoolean("AllowDas"));
 
 				return mdt;

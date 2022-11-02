@@ -182,6 +182,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private boolean securityMandate;
 	@XmlElement
 	private Long employerID;
+	private String employerName;
 	@XmlElement
 	private String employeeNo;
 	private String finRepayMethod;
@@ -249,6 +250,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("oldMandate");
 		excludeFields.add("validateMandate");
 		excludeFields.add("allowDAS");
+		excludeFields.add("employerName");
 
 		return excludeFields;
 	}
@@ -942,6 +944,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setEmployerID(Long employerID) {
 		this.employerID = employerID;
+	}
+
+	public String getEmployerName() {
+		return employerName;
+	}
+
+	public void setEmployerName(String employerName) {
+		this.employerName = employerName;
 	}
 
 	public String getEmployeeNo() {

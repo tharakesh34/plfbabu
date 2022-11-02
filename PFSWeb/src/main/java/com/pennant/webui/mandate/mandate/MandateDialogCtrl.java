@@ -507,7 +507,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.bankBranchID.setValueType(DataType.LONG);
 		}
 
-		this.bankBranchID.setValidateColumns(new String[] { "BankBranchID" });
+		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
 
 		this.mandateRef.setModuleName("Mandate");
 		this.mandateRef.setMandatoryStyle(true);
@@ -564,10 +564,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.employerID.setModuleName("EmployerDetails");
 		this.employerID.setTextBoxWidth(200);
 		this.employerID.setValueColumn("EmployerId");
+		this.employerID.setDescColumn("EmpName");
 		this.employerID.setValueType(DataType.LONG);
 		this.employerID.setFilters(new Filter[] { new Filter("AllowDAS", 1, Filter.OP_EQUAL) });
 		this.employerID.setValidateColumns(new String[] { "EmployerId" });
-		this.employeeNo.setValue("EmpName");
 
 		if (fromLoan) {
 			this.remarksRow.setVisible(false);
@@ -1546,11 +1546,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (aMandate.getEmployerID() != null) {
 			this.employerID.setValue(String.valueOf(aMandate.getEmployerID()));
-			this.employeeNo.setValue(aMandate.getEmployeeNo());
+			this.employerID.setDescription(aMandate.getEmployerName());
 		} else {
 			this.employerID.setValue("");
-			this.employeeNo.setValue("");
+			this.employerID.setDescription("");
 		}
+
+		this.employeeNo.setValue(aMandate.getEmployeeNo());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -2358,11 +2360,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		EmployerDetail details = (EmployerDetail) dataObject;
 		if (details != null) {
 			this.employerID.setValue(String.valueOf(details.getEmployerId()));
-			this.employeeNo.setValue(details.getEmpName());
-
+			this.employerID.setDescription(details.getEmpName());
 		} else {
 			this.employerID.setValue("");
-			this.employeeNo.setValue("");
+			this.employerID.setDescription("");
 		}
 	}
 

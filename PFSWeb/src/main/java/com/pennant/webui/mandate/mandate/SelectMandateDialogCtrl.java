@@ -257,6 +257,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						return;
 					}
 					this.mandate.setEmployerID(employerDetails.getEmployerID());
+					this.mandate.setEmployerName(employerDetails.getEmployerName());
 					this.mandate.setEmployeeNo(employerDetails.getEmployeeNo());
 				}
 			}
