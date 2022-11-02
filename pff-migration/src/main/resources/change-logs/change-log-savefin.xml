@@ -1092,5 +1092,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="24" author="rahul.r">
+		<sql>
+			<![CDATA[
+				UPDATE CREDITREVIEWCONFIG SET EMPLOYMENTTYPE='SALARIED' WHERE EMPLOYMENTTYPE='SAL';
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
