@@ -34,7 +34,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -44,7 +43,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.rmtmasters.AccountTypeService;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.rmtmasters.accounttype.model.AccountTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -69,7 +67,6 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 
 	protected Listheader listheader_AcType;
 	protected Listheader listheader_AcTypeDesc;
-	protected Listheader listheader_AcPurpose;
 	protected Listheader listheader_AcTypeIsActive;
 	protected Listheader listheader_AcHead;
 
@@ -78,12 +75,10 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 
 	protected Textbox acType;
 	protected Textbox acTypeDesc;
-	protected Combobox acPurpose;
 	protected Checkbox acTypeIsActive;
 
 	protected Listbox sortOperator_acType;
 	protected Listbox sortOperator_acTypeDesc;
-	protected Listbox sortOperator_acPurpose;
 	protected Listbox sortOperator_acTypeIsActive;
 
 	private transient AccountTypeService accountTypeService;
@@ -120,8 +115,6 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 
 		registerField("acType", listheader_AcType, SortOrder.ASC, acType, sortOperator_acType, Operators.STRING);
 		registerField("acTypeDesc", listheader_AcTypeDesc, SortOrder.NONE, acTypeDesc, sortOperator_acTypeDesc,
-				Operators.STRING);
-		registerField("acPurpose", listheader_AcPurpose, SortOrder.NONE, acPurpose, sortOperator_acPurpose,
 				Operators.STRING);
 		registerField("acTypeIsActive", listheader_AcTypeIsActive, SortOrder.NONE, acTypeIsActive,
 				sortOperator_acTypeIsActive, Operators.BOOLEAN);
@@ -215,7 +208,6 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 	private AccountType setObjectData(AccountType aAccountType, AccountType type) {
 		logger.debug("Entering");
 
-		aAccountType.setAcPurpose(type.getAcPurpose());
 		aAccountType.setInternalAc(type.isInternalAc());
 		aAccountType.setCustSysAc(type.isCustSysAc());
 		aAccountType.setAcTypeIsActive(type.isAcTypeIsActive());
@@ -265,7 +257,6 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 	}
 
 	private void doSetFieldProperties() {
-		fillComboBox(this.acPurpose, "", PennantStaticListUtil.getAccountPurpose(), "");
 		this.acType.setMaxlength(14);
 
 	}

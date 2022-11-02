@@ -61,9 +61,6 @@
 								<textbox id="acTypeDesc" width="200px" maxlength="50" />
 							</row>
 							<row>
-								<label id="label_AccountTypeSearch_AcPurpose" value="${c:l('label_AccountTypeSearch_AcPurpose.value')}" />
-								<listbox id="sortOperator_acPurpose" width="43px" mold="select" rows="1" />
-								<combobox id="acPurpose" width="100px" readonly="true" />
 								<label id="label_AccountTypeSearch_AcTypeIsActive" value="${c:l('label_AccountTypeSearch_AcTypeIsActive.value')}" />
 								<listbox id="sortOperator_acTypeIsActive" width="43px" mold="select" rows="1" />
 								<checkbox id="acTypeIsActive" checked="false" />
@@ -86,7 +83,6 @@
 							<listheader id="listheader_AcTypeDesc" label="${c:l('listheader_AcTypeDesc.label')}" sort="auto"
 								hflex="min" />
 							<!-- <listheader id="listheader_AcHead" label="${c:l('listheader_AcHead.label')}" sort="auto" hflex="min" /> -->
-							<listheader id="listheader_AcPurpose" label="${c:l('listheader_AcPurpose.label')}" sort="auto" hflex="min" />
 							<listheader id="listheader_AcTypeIsActive" label="${c:l('listheader_AcTypeIsActive.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
