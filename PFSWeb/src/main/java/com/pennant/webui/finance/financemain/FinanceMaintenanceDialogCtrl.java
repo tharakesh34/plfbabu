@@ -100,7 +100,6 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -3494,13 +3493,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		whereCaluse.append(" WHERE FM.FINREFERENCE='");
 		whereCaluse.append(getFinanceMain().getFinReference());
 		whereCaluse.append("')))");
-		if (!MandateConstants.skipRegistration().contains(repaymethod)) {
-			whereCaluse.append(" AND MANDATEREF IS NOT NULL ");
-		} else {
-			whereCaluse.append(" AND STATUS != '");
-			whereCaluse.append(MandateStatus.REJECTED);
-			whereCaluse.append("'");
-		}
+		whereCaluse.append(" AND STATUS != '");
+		whereCaluse.append(MandateStatus.REJECTED);
+		whereCaluse.append("'");
 
 		this.mandateRef.setWhereClause(whereCaluse.toString());
 
