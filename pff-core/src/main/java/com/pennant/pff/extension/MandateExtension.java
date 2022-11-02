@@ -8,8 +8,6 @@ public class MandateExtension {
 		super();
 	}
 
-	private static final String MODULE = "MANDATE";
-
 	/**
 	 * Feature extension to allow the mandate approval even the loan in origination.
 	 */

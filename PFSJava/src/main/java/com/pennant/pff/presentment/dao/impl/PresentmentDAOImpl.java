@@ -358,7 +358,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" Where BatchID = ? and ID in (Select ps.ID");
 		sql.append(" From Presentment_Extraction_Stage ps");
 		sql.append(" Inner Join PresentmentDetails pd on pd.FinID = ps.FinID and pd.SchDate = ps.SchDate");
-		sql.append(" Where pd.ExcludeReason in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) and pd.Status = ?");
+		sql.append(" Where pd.ExcludeReason in (?, ?, ?, ?)");
 		sql.append(" )");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -371,15 +371,6 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setInt(index++, ExcludeReasonCode.EMI_IN_ADVANCE.id());
 			ps.setInt(index++, ExcludeReasonCode.INT_ADV.id());
 			ps.setInt(index++, ExcludeReasonCode.EMI_ADV.id());
-			ps.setInt(index++, ExcludeReasonCode.EMI_HOLD.id());
-			ps.setInt(index++, ExcludeReasonCode.MANDATE_HOLD.id());
-			ps.setInt(index++, ExcludeReasonCode.MANDATE_NOT_APPROVED.id());
-			ps.setInt(index++, ExcludeReasonCode.MANDATE_EXPIRED.id());
-			ps.setInt(index++, ExcludeReasonCode.MANUAL_EXCLUDE.id());
-			ps.setInt(index++, ExcludeReasonCode.MANDATE_REJECTED.id());
-			ps.setInt(index++, ExcludeReasonCode.CHEQUE_PRESENT.id());
-
-			ps.setString(index, RepayConstants.PEXC_APPROV);
 		});
 
 		sql = new StringBuilder();
@@ -398,9 +389,10 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 			ps.setLong(index++, batchID);
 			ps.setInt(index++, ExcludeReasonCode.MANUAL_EXCLUDE.id());
-			ps.setInt(index++, ExcludeReasonCode.EMI_IN_ADVANCE.id());
-			ps.setInt(index++, ExcludeReasonCode.EMI_HOLD.id());
-			ps.setInt(index, ExcludeReasonCode.MANDATE_HOLD.id());
+
+			ps.setInt(index++, RepayConstants.PEXC_EXTRACT);
+			ps.setInt(index++, RepayConstants.PEXC_BATCH_CREATED);
+			ps.setInt(index, RepayConstants.PEXC_AWAITING_CONF);
 		});
 	}
 
