@@ -1417,6 +1417,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		Intbox intbox = (Intbox) list.get(Field.INSTALLMENT_NO.index()).getFirstChild();
 
 		String strChequeDate = combobox.getSelectedItem().getLabel();
+
+		if (PennantConstants.List_Select.equals(combobox.getSelectedItem())) {
+			throw new WrongValueException(combobox,
+					Labels.getLabel("DATE_NO_EMPTY", new String[] { Labels.getLabel("Due Date") }));
+		}
+
 		Date chequeDate = DateUtil.parseShortDate(strChequeDate);
 
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
@@ -2093,10 +2099,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		for (Listitem item : items) {
 			List<Listcell> listcell = item.getChildren();
 
+			Combobox combobox = (Combobox) listcell.get(Field.DUE_DATE.index()).getFirstChild();
+
 			if (!validate) {
 				wve.addAll(validateCheque(cheques, listcell));
 			} else if (InstrumentType.isPDC(listcell.get(Field.CHEQUE_TYPE.index()).getLabel())) {
-				Combobox combobox = (Combobox) listcell.get(Field.DUE_DATE.index()).getFirstChild();
 
 				if (PennantConstants.RCD_STATUS_CANCELLED.equals(chequeStatus.getValue())) {
 					wve.addAll(validateEMIReference(cheques, combobox));
@@ -2108,6 +2115,28 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 					wve.addAll(validateSchedules(listcell, combobox, emiDate));
 				}
+			}
+
+			int emiRefNumCnt = 0;
+
+			for (ChequeDetail cd : cheques) {
+				if (!chequeDuplicate(cd, getComboboxValue(combobox))) {
+					continue;
+				}
+
+				emiRefNumCnt++;
+				if (emiRefNumCnt > 1) {
+					if (fromLoan) {
+						parenttab.setSelected(true);
+					}
+					try {
+						throw new WrongValueException(combobox, Labels.getLabel("ChequeDetailDialog_ChkEMIRef_Exists"));
+					} catch (WrongValueException e) {
+						wve.add(e);
+						break;
+					}
+				}
+
 			}
 		}
 
@@ -2758,6 +2787,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		} else {
 			listSPDCHeaderCheckBoxComp.setDisabled(true);
 		}
+	}
+
+	private boolean chequeDuplicate(ChequeDetail cd, String emiRefNum) {
+		return (!PennantConstants.RCD_STATUS_CANCELLED.equals(cd.getRecordStatus())) && StringUtils.isNumeric(emiRefNum)
+				&& (Integer.parseInt(emiRefNum) == cd.geteMIRefNo()) && (InstrumentType.isPDC(cd.getChequeType())
+						&& !PennantConstants.RCD_STATUS_CANCELLED.equals(chequeStatus.getValue()));
 	}
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
