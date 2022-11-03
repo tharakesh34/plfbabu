@@ -3559,6 +3559,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					&& getFinanceDetail().getCustomerDetails().getCustomer() != null) {
 				closureReport.setCustName(getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName());
 				closureReport.setCustCIF(getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
+				closureReport.setCustSalutation(
+						getFinanceDetail().getCustomerDetails().getCustomer().getCustSalutationCode());
 				CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsbyIdandPhoneType(
 						getFinanceDetail().getCustomerDetails().getCustID(), "MOBILE");
 				CustomerAddres custAdd = customerDetails.getAddressList().stream()
