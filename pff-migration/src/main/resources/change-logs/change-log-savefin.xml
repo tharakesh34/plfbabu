@@ -1198,11 +1198,5 @@
 		<addDefaultValue columnDataType="decimal(18,0)" columnName="CurrentBankValuation" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
 		<addDefaultValue columnDataType="boolean" columnName="SendAlert" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
 	</changeSet>
-	<changeSet id="30" author="rahul.r">
-		<sql>
-			<![CDATA[
-				UPDATE CREDITREVIEWCONFIG SET FIELDKEYS='{"FINAL_OFFER": "TENOR,ROI","APP_SAL":"CUST_FULL_NAME","CO_APP_SAL":"CO_APP_CUST_FULL_NAME"}';
-			]]>
-		</sql>
-	</changeSet>	
+				
 </databaseChangeLog>
