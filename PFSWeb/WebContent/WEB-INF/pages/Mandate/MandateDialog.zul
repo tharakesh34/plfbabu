@@ -71,14 +71,14 @@
 											style="margin-left:10px;display:inline-block;padding-top:3px;" />
 									</hbox>
 								</row>
-								<row id= "finreferenceRow">
+								<row id="finreferenceRow">
 									<label value="${c:l('label_MandateDialog_FinReference.value')}" />
 									<extendedcombobox id="finReference" />
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_MandateRef.value')}" />
 									<extendedcombobox id="mandateRef" sclass="mandatory" />
-										
+
 									<label value="${c:l('label_MandateDialog_MandateType.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
@@ -295,7 +295,10 @@
 									<label value="${c:l('label_MandateDialog_EmployerID.value')}" />
 									<extendedcombobox id="employerID" width="200px" readonly="true" />
 									<label value="${c:l('label_MandateDialog_EmployeeNo.value')}" />
-									<textbox id="employeeNo" width="250px" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="employeeNo" width="250px" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>

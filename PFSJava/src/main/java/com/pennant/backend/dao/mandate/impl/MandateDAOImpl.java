@@ -894,7 +894,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", finType, CustCIF, CustShrtName, BankCode, BranchCode");
 			sql.append(", BranchDesc, BankName, City, MICR, IFSC, PccityName, UseExisting, EntityDesc");
-			sql.append(", PartnerBankCode, PartnerBankName");
+			sql.append(", PartnerBankCode, PartnerBankName, EmpName");
 		}
 
 		sql.append(" From Mandates");
@@ -1032,6 +1032,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				mndts.setEntityDesc(rs.getString("EntityDesc"));
 				mndts.setPartnerBankCode(rs.getString("PartnerBankCode"));
 				mndts.setPartnerBankName(rs.getString("PartnerBankName"));
+				mndts.setEmployerName(rs.getString("EmpName"));
 			}
 
 			return mndts;

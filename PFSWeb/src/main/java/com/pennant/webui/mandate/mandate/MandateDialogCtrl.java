@@ -574,6 +574,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateStatusRow.setVisible(false);
 		}
 
+		this.employeeNo.setMaxlength(200);
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -2164,8 +2166,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void doSetDasValidation(boolean validate) {
 		if (this.dasRow.isVisible() && !this.employerID.isReadonly()) {
 			this.employerID.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_MandateDialog_EmployerID.value"), null, true, false));
-
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_EmployerID.value"), null, true, true));
+			this.employeeNo.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_EmployeeNo.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 	}
 

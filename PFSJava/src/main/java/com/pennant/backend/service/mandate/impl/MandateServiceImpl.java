@@ -599,7 +599,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		FinanceMain fm = financeMainDAO.getFinanceMainByRef(mandate.getOrgReference(), "", false);
 
-		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
+		if (StringUtils.isNotBlank(fm.getRepayFrq()) && StringUtils.isNotBlank(mandate.getPeriodicity())) {
 			if (!validatePayFrequency(fm.getRepayFrq().charAt(0), mandate.getPeriodicity().charAt(0))) {
 				String[] errParmFrq = new String[2];
 				errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_Periodicity.value");

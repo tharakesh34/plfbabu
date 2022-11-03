@@ -136,8 +136,8 @@
 										<space spacing="2px" sclass="mandatory" />
 										<datebox id="expiryDate" width="200px" />
 									</hbox>
-									<label value="${c:l('label_MandateDialog_Periodicity.value')}" visible="false"/>
-									<frequencybox id="periodicity" visible="false"/>
+									<label value="${c:l('label_MandateDialog_Periodicity.value')}" visible="false" />
+									<frequencybox id="periodicity" visible="false" />
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_MaxLimit.value')}" />
@@ -149,7 +149,7 @@
 									<label value="${c:l('label_MandateDialog_HoldReason.value')}" />
 									<hbox>
 										<combobox id="holdReason" width="140px" />
-									</hbox>								
+									</hbox>
 								</row>
 								<row id="mandateStatusRow">
 									<label value="${c:l('label_MandateDialog_RegStatus.value')}" />
@@ -291,10 +291,13 @@
 							</columns>
 							<rows>
 								<row id="dasRow" visible="false">
-									<label value="${c:l('label_MandateDialog_EmployeeNo.value')}" />
-									<textbox id="employeeNo" width="250px" />
 									<label value="${c:l('label_MandateDialog_EmployerID.value')}" />
 									<extendedcombobox id="employerID" width="200px" readonly="true" />
+									<label value="${c:l('label_MandateDialog_EmployeeNo.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="employeeNo" width="250px" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>

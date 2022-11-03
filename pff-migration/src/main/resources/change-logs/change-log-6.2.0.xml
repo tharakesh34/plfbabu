@@ -5249,7 +5249,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#76.22.2_pre" author="saikiran.n" dbms="postgresql">
+	<changeSet id="ST#76.22.2_01_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'mandates_aview');
@@ -5257,7 +5257,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#76.22.2" author="saikiran.n">
+	<changeSet id="ST#76.22.2_01" author="saikiran.n">
 		<createView viewName="MANDATES_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT M.MANDATEID
@@ -5326,6 +5326,7 @@
 					, M.SWAPEFFECTIVEDATE
 					, M.SECURITYMANDATE
 					, M.EMPLOYERID
+					, ED.EMPNAME
 					, M.EMPLOYEENO
 				FROM MANDATES M
 				INNER JOIN CUSTOMERS C ON C.CUSTID = M.CUSTID
@@ -5335,11 +5336,12 @@
 				LEFT JOIN ENTITY E ON E.ENTITYCODE = M.ENTITYCODE
 				LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
 				LEFT JOIN FINANCEMAIN FM ON FM.FINREFERENCE = M.ORGREFERENCE
+				LEFT JOIN EMPLOYERDETAIL ED ON ED.EMPLOYERID = M.EMPLOYERID
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#76.22.2_post" author="saikiran.n" dbms="postgresql">
+	<changeSet id="ST#76.22.2_01_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'mandates_aview');
@@ -5347,7 +5349,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#76.23.2_pre" author="saikiran.n" dbms="postgresql">
+	<changeSet id="ST#76.23.2_01_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'mandates_tview');
@@ -5355,7 +5357,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#76.23.2" author="saikiran.n">
+	<changeSet id="ST#76.23.2_01" author="saikiran.n">
 		<createView viewName="MANDATES_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT M.MANDATEID
@@ -5422,6 +5424,7 @@
 					, M.SWAPEFFECTIVEDATE
 					, M.SECURITYMANDATE
 					, M.EMPLOYERID
+					, ED.EMPNAME
 					, M.EMPLOYEENO
 				FROM MANDATES_TEMP M
 				INNER JOIN CUSTOMERS C ON C.CUSTID = M.CUSTID
@@ -5431,11 +5434,12 @@
 				LEFT JOIN ENTITY E ON E.ENTITYCODE = M.ENTITYCODE
 				LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
 				LEFT JOIN FINANCEMAIN FM ON FM.FINREFERENCE = M.ORGREFERENCE
+				LEFT JOIN EMPLOYERDETAIL ED ON ED.EMPLOYERID = M.EMPLOYERID
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#76.23.2_post" author="saikiran.n" dbms="postgresql">
+	<changeSet id="ST#76.23.2_01_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'mandates_tview');
@@ -5443,7 +5447,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#76.24.2_pre" author="saikiran.n" dbms="postgresql">
+	<changeSet id="ST#76.24.2_01_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'mandates_view');
@@ -5451,7 +5455,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#76.24.2" author="saikiran.n">
+	<changeSet id="ST#76.24.2_01" author="saikiran.n">
 		<createView viewName="MANDATES_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT M.MANDATEID
@@ -5518,6 +5522,7 @@
 					, M.SWAPEFFECTIVEDATE
 					, M.SECURITYMANDATE
 					, M.EMPLOYERID
+					, ED.EMPNAME
 					, M.EMPLOYEENO
 				FROM MANDATES_TEMP M
 				INNER JOIN CUSTOMERS C ON M.CUSTID = C.CUSTID
@@ -5527,6 +5532,7 @@
 				LEFT JOIN ENTITY E ON M.ENTITYCODE = E.ENTITYCODE
 				LEFT JOIN PARTNERBANKS PB ON M.PARTNERBANKID = PB.PARTNERBANKID
 				LEFT JOIN FINANCEMAIN FM ON M.ORGREFERENCE = FM.FINREFERENCE
+				LEFT JOIN EMPLOYERDETAIL ED ON ED.EMPLOYERID = M.EMPLOYERID
 				UNION ALL
 				SELECT M.MANDATEID
 					, M.CUSTID
@@ -5592,6 +5598,7 @@
 					, M.SWAPEFFECTIVEDATE
 					, M.SECURITYMANDATE
 					, M.EMPLOYERID
+					, ED.EMPNAME
 					, M.EMPLOYEENO
 				FROM MANDATES M
 				INNER JOIN CUSTOMERS C ON M.CUSTID = C.CUSTID
@@ -5601,12 +5608,13 @@
 				LEFT JOIN ENTITY E ON M.ENTITYCODE = E.ENTITYCODE
 				LEFT JOIN PARTNERBANKS PB ON M.PARTNERBANKID = PB.PARTNERBANKID
 				LEFT JOIN FINANCEMAIN FM ON M.ORGREFERENCE = FM.FINREFERENCE
+				LEFT JOIN EMPLOYERDETAIL ED ON ED.EMPLOYERID = M.EMPLOYERID
 				WHERE NOT EXISTS (SELECT 1 FROM MANDATES_TEMP WHERE MANDATES_TEMP.MANDATEID = M.MANDATEID)
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#76.24.2_post" author="saikiran.n" dbms="postgresql">
+	<changeSet id="ST#76.24.2_01_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'mandates_view');
@@ -5816,6 +5824,14 @@
    		     	 DELETE FROM REPORTLIST WHERE CODE = 'AccountType';
 				 INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('AccountType', 'AccountType', 'listheader_AcType.label,listheader_AcTypeDesc.label,listheader_AcPurpose.label,listheader_AcTypeIsActive.label', 'acType,acTypeDesc,acPurpose,acTypeIsActive', 'String,String,String,boolean', null, 'ReportList04', 'Account Types', 'Solution Factory', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
         	 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#76.45_01" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE SECRIGHTS SET RIGHTNAME = 'MandateDialog_EmployerID' WHERE RIGHTNAME = 'MandateDialog_EmployeeID';
+			]]>
 		</sql>
 	</changeSet>
 	

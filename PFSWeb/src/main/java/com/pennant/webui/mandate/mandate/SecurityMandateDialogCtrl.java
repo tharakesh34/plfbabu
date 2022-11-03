@@ -562,6 +562,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.employerID.setFilters(new Filter[] { new Filter("AllowDAS", 1, Filter.OP_EQUAL) });
 		this.employerID.setValidateColumns(new String[] { "EmployerId" });
 
+		this.employeeNo.setMaxlength(200);
+
 		if (fromLoan) {
 			this.remarksRow.setVisible(false);
 			this.mandateStatusRow.setVisible(false);
@@ -2136,7 +2138,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (this.dasRow.isVisible() && !this.employerID.isReadonly()) {
 			this.employerID.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_MandateDialog_EmployerID.value"), null, true, false));
-
+			this.employeeNo.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_EmployeeNo.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 	}
 
