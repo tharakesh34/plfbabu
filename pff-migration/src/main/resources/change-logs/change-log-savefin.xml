@@ -1100,4 +1100,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="25" author="rahul.r">
+		<sql>
+			<![CDATA[
+				UPDATE CIBIL_MEMBER_DETAILS SET MEMBER_SHORT_NAME='SAVE';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
