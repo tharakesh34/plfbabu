@@ -148,7 +148,7 @@
 							<Implementation-Version>${project.version}</Implementation-Version>
 						</manifestEntries>
 					</archive>
-					<warName>PFSWeb</warName>
+					<warName>pff-jobs</warName>
 				</configuration>
 			</plugin>
 		</plugins>
