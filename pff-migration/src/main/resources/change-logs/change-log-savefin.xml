@@ -1121,4 +1121,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="27" author="sandeepkumar.m">
+		<sql>
+			<![CDATA[
+				 INSERT INTO ERRORDETAILS VALUES ('41000','EN','E','{0} should be {1}','','Approved','','','','','','0',CURRENT_TIMESTAMP,'1000','0');   
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
