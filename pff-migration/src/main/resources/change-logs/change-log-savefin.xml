@@ -1121,12 +1121,82 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="27" author="sandeepkumar.m">
-		<sql>
-			<![CDATA[
-				 INSERT INTO ERRORDETAILS VALUES ('41000','EN','E','{0} should be {1}','','Approved','','','','','','0',CURRENT_TIMESTAMP,'1000','0');   
-			]]>
-		</sql>
+	<changeSet id="27" author="rahul.r">
+		<createTable tableName="COLLATERAL_LTV_BREACHES">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>	
+			<column name="BatchId" type="bigint">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="FinReference" type="varchar(20)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="CollateralType" type="varchar(20)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="CollateralRef" type="varchar(20)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="Collateralccy" type="char(3)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="MarketValue" type="decimal(18,0)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="UnitPrice" type="decimal(18,0)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="NoOfUnits" type="int">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="CollateralValue" type="decimal(18,0)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="CurrentCollateralValue" type="decimal(18,0)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="BankLTV" type="decimal(5,2)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="CurrentBankLTV" type="decimal(5,2)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="BankValuation" type="decimal(18,0)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="CurrentBankValuation" type="decimal(18,0)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="ThresholdLTV" type="decimal(5,2)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="Pos" type="decimal(18,0)">
+				<constraints  nullable="false" />
+			</column>			
+			<column name="CommodityId" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="ValueDate" type="datetime">
+				<constraints  nullable="false" />
+			</column>
+			<column name="SendAlert" type="boolean">
+				<constraints  nullable="false" />
+			</column>			
+		</createTable>
 	</changeSet>
 	
+	<changeSet id="28" author="rahul.r">
+        <addAutoIncrement tableName="COLLATERAL_LTV_BREACHES" columnDataType="bigint" columnName="id"/>				
+	</changeSet>
+	
+	<changeSet id="29" author="rahul.r">
+		<addDefaultValue columnDataType="decimal(18,0)" columnName="UnitPrice" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
+		<addDefaultValue columnDataType="int" columnName="NoOfUnits" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
+		<addDefaultValue columnDataType="decimal(18,0)" columnName="CurrentCollateralValue" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
+		<addDefaultValue columnDataType="decimal(5,2)" columnName="CurrentBankLTV" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
+		<addDefaultValue columnDataType="decimal(18,0)" columnName="CurrentBankValuation" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
+		<addDefaultValue columnDataType="boolean" columnName="SendAlert" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
+	</changeSet>
+				
 </databaseChangeLog>
