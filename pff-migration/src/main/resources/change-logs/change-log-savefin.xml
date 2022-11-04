@@ -1124,7 +1124,6 @@
 	<changeSet id="27" author="rahul.r">
 		<createTable tableName="COLLATERAL_LTV_BREACHES">
 			<column name="Id" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
 			</column>	
 			<column name="BatchId" type="bigint">
 				<constraints  nullable="false" />
@@ -1187,10 +1186,6 @@
 	</changeSet>
 	
 	<changeSet id="28" author="rahul.r">
-        <addAutoIncrement tableName="COLLATERAL_LTV_BREACHES" columnDataType="bigint" columnName="id"/>				
-	</changeSet>
-	
-	<changeSet id="29" author="rahul.r">
 		<addDefaultValue columnDataType="decimal(18,0)" columnName="UnitPrice" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
 		<addDefaultValue columnDataType="int" columnName="NoOfUnits" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
 		<addDefaultValue columnDataType="decimal(18,0)" columnName="CurrentCollateralValue" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
@@ -1199,7 +1194,7 @@
 		<addDefaultValue columnDataType="smallint" columnName="SendAlert" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
 	</changeSet>
 	
-	<changeSet id="30" author="rahul.r">
+	<changeSet id="39" author="rahul.r">
 		<sql>
 			<![CDATA[
 				UPDATE CREDITREVIEWCONFIG SET FIELDKEYS='{"FINAL_OFFER": "TENOR,ROI","APP_SAL":"CUST_FULL_NAME","CO_APP_SAL":"CO_APP_CUST_FULL_NAME"}';
