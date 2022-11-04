@@ -1195,6 +1195,12 @@
 		<addDefaultValue columnDataType="smallint" columnName="SendAlert" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
 	</changeSet>
 	
+	<changeSet id="29" author="rahul.r">
+		<addColumn tableName="COLLATERAL_LTV_BREACHES">
+			<column name="finid" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
 	<changeSet id="39" author="rahul.r">
 		<sql>
 			<![CDATA[
