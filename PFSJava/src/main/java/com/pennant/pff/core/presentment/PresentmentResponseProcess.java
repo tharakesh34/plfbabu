@@ -241,7 +241,6 @@ public class PresentmentResponseProcess implements Runnable {
 				receiptID = pd.getReceiptID();
 			}
 
-			//
 			String checkStatus = null;
 			FinReceiptHeader rh = null;
 
@@ -273,10 +272,6 @@ public class PresentmentResponseProcess implements Runnable {
 			}
 
 			if (RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
-				if ("Y".equals(fateCorrection) && receiptID != 0) {
-					// FIXME::FateCorrection change required
-				}
-
 				updateFinanceDetails(finEODEvent, pd);
 				if (rh != null) {
 					updateFinReceiptHeader(rh);
@@ -297,7 +292,7 @@ public class PresentmentResponseProcess implements Runnable {
 					if (finIsActive) {
 						pd = receiptCancellationService.presentmentCancellation(pd, custEODEvent);
 					} else {
-						pd.setErrorDesc("Loan is closed and cannot update bounce");
+						throw new AppException("Loan is closed and cannot update bounce");
 					}
 				}
 
@@ -343,7 +338,7 @@ public class PresentmentResponseProcess implements Runnable {
 			pd.setErrorCode("PR0002");
 			pd.setErrorDesc(e.getMessage());
 
-			updatePresentmentDetail(pd);
+			// updatePresentmentDetail(pd);
 			logRespDetails(headerId, pd, status, e.getMessage());
 			PresentmentDetailExtract.failedCount.incrementAndGet();
 		}
@@ -354,8 +349,6 @@ public class PresentmentResponseProcess implements Runnable {
 	private boolean processInactiveLoan(CustEODEvent custEODEvent, PresentmentDetail pd) {
 		logger.info(Literal.ENTERING);
 		Long receiptID = pd.getReceiptID();
-		long finID = pd.getFinID();
-		boolean finIsActive = pd.isFinisActive();
 
 		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(0);
 		Customer customer = custEODEvent.getCustomer();
@@ -417,6 +410,10 @@ public class PresentmentResponseProcess implements Runnable {
 
 		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, finIsActive);
 
+		if (fm == null) {
+			fm = financeMainDAO.getFinMainsForEODByFinRef(finID, false);
+		}
+
 		fm.setEventProperties(this.eventProperties);
 
 		FinanceType financeType = FinanceConfigCache.getCacheFinanceType(fm.getFinType());
@@ -428,14 +425,13 @@ public class PresentmentResponseProcess implements Runnable {
 
 		List<FinODDetails> finODDetails = finODDetailsDAO.getFinODBalByFinRef(finID);
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
-		FinanceProfitDetail pftDetail = null;
 
 		/* The last parameter false will get the records irrespective of status */
-		pftDetail = financeProfitDetailDAO.getFinProfitDetailsByFinRef(finID);
+		FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsByFinRef(finID);
 
 		finEODEvent.setFinType(financeType);
 		finEODEvent.setFinanceMain(fm);
-		finEODEvent.setFinProfitDetail(pftDetail);
+		finEODEvent.setFinProfitDetail(fpd);
 		finEODEvent.setFinanceScheduleDetails(schedules);
 		finEODEvent.setFinODDetails(finODDetails);
 
