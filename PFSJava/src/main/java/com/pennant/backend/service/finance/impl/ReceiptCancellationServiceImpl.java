@@ -944,7 +944,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		long receiptID = rch.getReceiptID();
 		String curStatus = finReceiptHeaderDAO.getReceiptModeStatus(receiptID);
 		EventProperties eventProperties = fm.getEventProperties();
-		Date appDate = getAppDate(eventProperties);
+		Date appDate = fm.getAppDate();
+
+		if (appDate == null) {
+			appDate = getAppDate(eventProperties);
+		}
 
 		long finID = rch.getFinID();
 		String finReference = rch.getReference();

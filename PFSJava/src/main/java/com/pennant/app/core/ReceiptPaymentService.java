@@ -119,7 +119,6 @@ public class ReceiptPaymentService {
 		rch.setReceiptMode(RepayConstants.PAYTYPE_EXCESS);
 		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 		rch.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
-		rch.setRealizationDate(pd.getSchDate());
 
 		FinReceiptDetail rcd = prepareRCD(receiptDTO, pd.getAdvanceAmt());
 		rcd.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
@@ -166,12 +165,10 @@ public class ReceiptPaymentService {
 	private void createPresentmentReceipt(ReceiptDTO receiptDTO) {
 		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 		FinanceMain fm = receiptDTO.getFinanceMain();
-		EventProperties ep = fm.getEventProperties();
 
 		FinReceiptHeader rch = prepareRCH(receiptDTO, pd.getPresentmentAmt());
 		rch.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
 		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
-		rch.setRealizationDate(ep.isParameterLoaded() ? ep.getAppDate() : SysParamUtil.getAppDate());
 
 		if (!receiptDTO.isPdDetailsExits()) {
 			rch.setReceiptMode(ReceiptMode.EXCESS);
@@ -221,11 +218,14 @@ public class ReceiptPaymentService {
 
 		createPresentmentReceipt(receiptDTO);
 
+		Date appDate = fm.getAppDate();
+
 		CustEODEvent custEODEvent = new CustEODEvent();
 		custEODEvent.setEodDate(pd.getAppDate());
 		custEODEvent.setCustomer(receiptDTO.getCustomer());
 
 		FinEODEvent finEODEvent = new FinEODEvent();
+		fm.setAppDate(pd.getAppDate());
 		finEODEvent.setFinanceMain(fm);
 		finEODEvent.setFinType(receiptDTO.getFinType());
 		finEODEvent.setFinProfitDetail(receiptDTO.getProfitDetail());
@@ -245,6 +245,8 @@ public class ReceiptPaymentService {
 
 		logger.info("Bouncing the receipt with Bounce Code {}", bounceCode);
 		receiptCancellationService.presentmentCancellation(pd, custEODEvent);
+
+		fm.setAppDate(appDate);
 
 		String errorDesc = pd.getErrorDesc();
 		if (StringUtils.trimToNull(errorDesc) != null) {
@@ -317,6 +319,7 @@ public class ReceiptPaymentService {
 		rch.setFinID(pd.getFinID());
 		rch.setReference(pd.getFinReference());
 		rch.setReceiptDate(pd.getSchDate());
+		rch.setRealizationDate(pd.getSchDate());
 		rch.setReceiptAmount(receiptAmount);
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
