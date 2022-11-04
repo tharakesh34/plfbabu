@@ -1454,7 +1454,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			fee.setNetAmountOriginal(netAmountOriginal);
 			fee.setNetAmountGST(BigDecimal.ZERO);
 			fee.setNetAmount(netAmountOriginal.subtract(fee.getNetTDS()));
-			fee.setActualAmount(fee.getNetAmount());
+
+			if (BigDecimal.ZERO.compareTo(waivedAmount) == 0) {
+				fee.setActualAmount(fee.getNetAmount());
+			} else {
+				fee.setActualAmount(fee.getActualAmountOriginal());
+			}
 
 			// Remaining Amount
 			fee.setRemainingFeeOriginal(
