@@ -1123,7 +1123,8 @@
 	
 	<changeSet id="27" author="rahul.r">
 		<createTable tableName="COLLATERAL_LTV_BREACHES">
-			<column name="Id" type="bigint">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
 			</column>	
 			<column name="BatchId" type="bigint">
 				<constraints  nullable="false" />
