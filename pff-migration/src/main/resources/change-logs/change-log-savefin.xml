@@ -1201,5 +1201,13 @@
 				UPDATE CREDITREVIEWCONFIG SET FIELDKEYS='{"FINAL_OFFER": "TENOR,ROI","APP_SAL":"CUST_FULL_NAME","CO_APP_SAL":"CO_APP_CUST_FULL_NAME"}';
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="40" author="sandeepkumar.m">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD = 'getFinReference' WHERE FIELDNAME = 'FinReference' AND REPORTID=(SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_FinanceBasicInformation');
+			]]>
+		</sql>
 	</changeSet>				
 </databaseChangeLog>
