@@ -862,7 +862,7 @@
 			    LEFT JOIN BMTDESIGNATIONS T6 ON T1.USRDESG = T6.DESGCODE
 			    LEFT JOIN BUSINESS_VERTICAL T7 ON T7.ID = T1.BUSINESSVERTICAL
 			    WHERE NOT EXISTS (SELECT 1 FROM SECUSERS_TEMP WHERE SECUSERS_TEMP.USRID = T1.USRID)
-			]]>	
+			]]>
 		</createView>
 	</changeSet>
 
@@ -948,7 +948,7 @@
 			    LEFT JOIN BMTLANGUAGE T5 ON T1.USRLANGUAGE = T5.LNGCODE
 			    LEFT JOIN BMTDESIGNATIONS T6 ON T1.USRDESG = T6.DESGCODE
 			    LEFT JOIN BUSINESS_VERTICAL T7 ON T7.ID = T1.BUSINESSVERTICAL
-			]]>	
+			]]>
 		</createView>
 	</changeSet>
 
@@ -1097,7 +1097,7 @@
 		        JOIN BMTDESIGNATIONS T6 ON T1.USRDESG = T6.DESGCODE
 		        LEFT JOIN BUSINESS_VERTICAL T7 ON T7.ID = T1.BUSINESSVERTICAL
 			    WHERE NOT EXISTS (SELECT 1 FROM SECUSERS_RTEMP  WHERE SECUSERS_RTEMP.USRID = T1.USRID)
-			 ]]>	
+			 ]]>
 		</createView>
 	</changeSet>
 
@@ -1355,7 +1355,7 @@
           		LEFT JOIN RMTACCOUNTINGSET T3 ON T3.ACCOUNTSETID = T1.DUEACCSET
           		LEFT JOIN RMTACCOUNTTYPES T4 ON T4.ACTYPE = T1.ACTYPE
 			]]>
-    	</createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="ST#103.9_post" author="vasudevarao.s" dbms="postgresql">
@@ -1416,7 +1416,7 @@
            		LEFT JOIN RMTACCOUNTINGSET T3 ON T3.ACCOUNTSETID = T1.DUEACCSET
            		LEFT JOIN RMTACCOUNTTYPES T4 ON T4.ACTYPE = T1.ACTYPE
 			]]>
-   		</createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="ST#103.10_post" author="vasudevarao.s" dbms="postgresql">
@@ -1523,7 +1523,7 @@
 				LEFT JOIN FEETYPES T5 ON T5.FEETYPEID = T1.RECVFEETYPEID
 				WHERE NOT EXISTS (SELECT 1 FROM FEETYPES_TEMP WHERE FEETYPES_TEMP.FEETYPEID = T1.FEETYPEID)
 			]]>
-    	</createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="ST#103.11_post" author="vasudevarao.s" dbms="postgresql">
@@ -5706,7 +5706,7 @@
 			<column name="EmployerName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208744.1" author="saikrishna.b" dbms="oracle">
 		<sql splitStatements="false">
 		<![CDATA[
@@ -5776,7 +5776,7 @@
 	<changeSet id="PSD#208851.3" author="saikrishna.b">
 		<modifyDataType tableName="MANDATES_TEMP" columnName="HOLDREASON" newDataType="varchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#209101.01" author="murthy.y">
 		<addColumn tableName="Presentment_Extraction_Stage">
 			<column name="ChequeAmount" type="bigint" />
@@ -5794,15 +5794,15 @@
 	<changeSet id="PSD#209101.02" author="murthy.y" dbms="postgresql, oracle">
 		<addDefaultValue columnName="ChequeAmount" tableName="Presentment_Extraction_Stage" defaultValue="0" />
 	</changeSet>
-	
-	<changeSet id="ST#99.20_pre" author="murthy.y" >
+
+	<changeSet id="ST#99.20_pre" author="murthy.y">
 		<sql>
 			<![CDATA[	
 				delete from Presentment_Extraction_Stage;
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.20" author="murthy.y">
 		<addUniqueConstraint tableName="Presentment_Extraction_Stage" columnNames="FinID, SchDate"
 			constraintName="uk_pes_finid_schdate" />
