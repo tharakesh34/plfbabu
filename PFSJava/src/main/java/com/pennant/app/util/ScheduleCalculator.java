@@ -1431,8 +1431,7 @@ public class ScheduleCalculator {
 		}
 
 		boolean isStepLoan = false;
-		if (fm.isStepFinance() && fm.isAlwManualSteps()
-				&& !CalculationConstants.RPYCHG_ADJMDT.equals(fm.getRecalType())
+		if (fm.isStepFinance() && fm.isAlwManualSteps() && !CalculationConstants.RPYCHG_ADJMDT.equals(fm.getRecalType())
 				&& !CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(fm.getRecalType())) {
 			if (PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())
 					&& CollectionUtils.isNotEmpty(finScheduleData.getStepPolicyDetails())) {
@@ -4421,6 +4420,13 @@ public class ScheduleCalculator {
 		/* Grace Schedule calculation */
 		finScheduleData = graceSchdCal(finScheduleData);
 
+		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
+				&& fm.getAdvTerms() > 0) {
+			fm.setAdjustClosingBal(true);
+			int idx = finScheduleData.getFinanceScheduleDetails().size() - fm.getAdvTerms() - 1;
+			fm.setRecalToDate(finScheduleData.getFinanceScheduleDetails().get(idx).getSchDate());
+		}
+
 		if (isFirstRun) {
 			finScheduleData = prepareFirstSchdCal(finScheduleData);
 
@@ -4429,13 +4435,6 @@ public class ScheduleCalculator {
 				finScheduleData = setFinanceTotals(finScheduleData);
 				logger.debug("Leaving");
 				return finScheduleData;
-			}
-
-			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
-					&& finScheduleData.getFinanceMain().getAdvTerms() > 0) {
-				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
-				int idx = finScheduleData.getFinanceScheduleDetails().size() - fm.getAdvTerms() - 1;
-				fm.setRecalToDate(finScheduleData.getFinanceScheduleDetails().get(idx).getSchDate());
 			}
 
 			finScheduleData = getRpyInstructDetails(finScheduleData);
@@ -4474,7 +4473,6 @@ public class ScheduleCalculator {
 			}
 
 			finScheduleData = calEqualInst(finScheduleData);
-			// equalRepayCal(finScheduleData);
 		} else {
 			if (!isFirstRun) {
 				finScheduleData = pmtCalc(finScheduleData);
@@ -8261,6 +8259,10 @@ public class ScheduleCalculator {
 		}
 
 		finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, recalToDate, rpyAmt, schdMethod);
+		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
+				&& fm.getAdvTerms() > 0) {
+			fm.setAdjustClosingBal(false);
+		}
 		finScheduleData = getRpyInstructDetails(finScheduleData);
 		finScheduleData = graceSchdCal(finScheduleData);
 		finScheduleData = repaySchdCal(finScheduleData, false);
