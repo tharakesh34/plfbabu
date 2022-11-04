@@ -1094,8 +1094,9 @@ public class ScheduleCalculator {
 			} else {
 				fm.setEqualRepay(true);
 			}
-			fm.setCalculateRepay(true);
 		}
+
+		fm.setCalculateRepay(true);
 
 		if (fm.isStepFinance() && fm.isAlwManualSteps()) {
 			if (PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())
