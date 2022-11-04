@@ -443,16 +443,18 @@ public class PresentmentEngine {
 				pd.setExcludeReason(excludeReason);
 			}
 		} else {
-			if (MandateStatus.isRejected(mandateStatus)) {
-				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_REJECTED);
-			}
-
-			if (MandateStatus.isHold(mandateStatus)) {
-				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
-			}
-
-			if (!InstrumentType.isECS(pd.getMandateType())) {
-				if (!MandateStatus.isApproved(mandateStatus)) {
+			if (InstrumentType.isECS(pd.getMandateType())) {
+				if (MandateStatus.isRejected(mandateStatus)) {
+					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_REJECTED);
+				} else if (MandateStatus.isHold(mandateStatus)) {
+					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
+				}
+			} else {
+				if (MandateStatus.isRejected(mandateStatus)) {
+					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_REJECTED);
+				} else if (MandateStatus.isHold(mandateStatus)) {
+					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
+				} else if (!MandateStatus.isApproved(mandateStatus)) {
 					pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
 				}
 
