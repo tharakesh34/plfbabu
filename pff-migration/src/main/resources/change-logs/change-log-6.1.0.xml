@@ -757,4 +757,29 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="23" author="sandeepkumar.m">
+		<sql>
+		<![CDATA[
+		DELETE FROM REPORTLIST WHERE CODE = 'AssetCategory';
+		DELETE FROM REPORTLIST WHERE CODE = 'AreaUnit';
+		DELETE FROM REPORTLIST WHERE CODE = 'SecurityInterestType';
+		DELETE FROM REPORTLIST WHERE CODE = 'AssetSubType';
+		DELETE FROM REPORTLIST WHERE CODE = 'AssetTyp';
+		DELETE FROM REPORTLIST WHERE CODE = 'CityMapping';
+		DELETE FROM REPORTLIST WHERE CODE = 'DistrictMapping';
+		DELETE FROM REPORTLIST WHERE CODE = 'ProvinceMapping';
+		
+		INSERT INTO REPORTLIST Values ('AssetCategory','AssetCategory','listheader_Id.label,listheader_Description.label','id,description','String,String',' ','ReportList02','Asset Category','Cersai Masters', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		INSERT INTO REPORTLIST Values ('AreaUnit','AreaUnit','listheader_Id.label,listheader_Description.label','id,description','String,String',' ','ReportList02','Area Unit','Cersai Masters', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		INSERT INTO REPORTLIST Values ('SecurityInterestType','SecurityInterestType','listheader_AssetCategoryId.label,listheader_Id.label,listheader_Description.label','assetcategoryid,id,description','String,String,String',' ','ReportList03','Security Interest Type','Cersai Masters', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		INSERT INTO REPORTLIST Values ('AssetSubType','AssetSubType','listheader_AssetTypeId.label,listheader_Id.label,listheader_Description.label','assettypeid,id,description','String,String,String',' ','ReportList03','Asset Sub Type','Cersai Masters', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		INSERT INTO REPORTLIST Values ('AssetTyp','AssetTyp','listheader_AssetCategoryId.label,listheader_Id.label,listheader_Description.label','assetcategoryid,id,description','String,String,String',' ','ReportList03','Asset Type','Cersai Masters', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		INSERT INTO REPORTLIST Values ('CityMapping','CityMapping','listheader_MappingType.label,listheader_CityCode.label,listheader_MappingValue.label',' mappingtype,citycode,mappingvalue','String,String,String',' ','ReportList03','City Mapping','Cersai Masters', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		INSERT INTO REPORTLIST Values ('DistrictMapping','DistrictMapping','listheader_MappingType.label,listheader_District.label,listheader_MappingValue.label',' mappingtype,district,mappingvalue','String,String,String',' ','ReportList03','District Mapping','Cersai Masters', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		INSERT INTO REPORTLIST Values ('ProvinceMapping','ProvinceMapping','listheader_MappingType.label,listheader_Province.label,listheader_MappingValue.label',' mappingtype,province,mappingvalue','String,String,String',' ','ReportList03','Province Mapping','Cersai Masters', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
