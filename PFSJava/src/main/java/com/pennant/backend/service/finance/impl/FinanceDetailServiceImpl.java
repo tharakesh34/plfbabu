@@ -4927,7 +4927,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		auditHeader.setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, fields[0], fields[1], fm.getBefImage(), fm));
+		auditHeader.setAuditDetail(
+				new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], fm.getBefImage(), fm));
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
 		// Adding audit as Insert/Update/deleted into main table
 		if (!isWIF) {
@@ -4937,8 +4938,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(fd);
 
-		if (FeeExtension.FEE_SERVICEING_STAMPIN_ON_ORG
-				&& FinServiceEvent.ORG.equals(fd.getModuleDefiner()) && !isWIF) {
+		if (FeeExtension.FEE_SERVICEING_STAMPIN_ON_ORG && FinServiceEvent.ORG.equals(fd.getModuleDefiner()) && !isWIF) {
 			List<FinFeeConfig> calculateFees = feeCalculator.convertToFinanceFees(fd);
 			if (CollectionUtils.isNotEmpty(calculateFees)) {
 				finFeeConfigService.saveList(calculateFees, "");
