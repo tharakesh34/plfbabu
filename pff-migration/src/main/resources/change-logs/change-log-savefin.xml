@@ -1180,7 +1180,7 @@
 			<column name="ValueDate" type="datetime">
 				<constraints  nullable="false" />
 			</column>
-			<column name="SendAlert" type="boolean">
+			<column name="SendAlert" type="smallint">
 				<constraints  nullable="false" />
 			</column>			
 		</createTable>
@@ -1196,7 +1196,7 @@
 		<addDefaultValue columnDataType="decimal(18,0)" columnName="CurrentCollateralValue" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
 		<addDefaultValue columnDataType="decimal(5,2)" columnName="CurrentBankLTV" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
 		<addDefaultValue columnDataType="decimal(18,0)" columnName="CurrentBankValuation" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
-		<addDefaultValue columnDataType="boolean" columnName="SendAlert" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
+		<addDefaultValue columnDataType="smallint" columnName="SendAlert" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
 	</changeSet>
 	
 	<changeSet id="30" author="rahul.r">
