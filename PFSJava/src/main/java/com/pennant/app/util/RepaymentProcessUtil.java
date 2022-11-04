@@ -2660,8 +2660,8 @@ public class RepaymentProcessUtil {
 
 		setFinDueDataByHierarchy(dueDataDtls, fsd.getFinanceType().getRpyHierarchy());
 
-		rd.setDueDataList(dueDataDtls.stream().sorted((d1, d2) -> Integer.compare(d1.getHierarchy(), d2.getHierarchy()))
-				.collect(Collectors.toList()));
+		dueDataDtls = sortDueDetailsByRelHierarchy(dueDataDtls);
+		rd.setDueDataList(dueDataDtls);
 
 		logger.debug(Literal.LEAVING);
 		return rd;
