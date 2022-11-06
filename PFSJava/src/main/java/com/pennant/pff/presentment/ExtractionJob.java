@@ -54,10 +54,6 @@ public class ExtractionJob extends BatchConfiguration {
 
 				.incrementer(jobParametersIncrementer())
 
-				// .start(dueConfigStep())
-
-				// .next(preparationStep()).on("FAILED").fail()
-
 				.start(groupingStep()).on("FAILED").fail()
 
 				.next(extractionStep()).on("FAILED").fail()

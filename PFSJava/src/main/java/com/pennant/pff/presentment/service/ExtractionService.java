@@ -93,7 +93,12 @@ public class ExtractionService {
 		}
 
 		if (count > 0) {
-			extractionJobManager.extractPresentment(ph);
+			try {
+				extractionJobManager.extractPresentment(ph);
+			} catch (Exception e) {
+				presentmentDAO.clearQueue(batchID);
+				throw e;
+			}
 		}
 
 		return count;
