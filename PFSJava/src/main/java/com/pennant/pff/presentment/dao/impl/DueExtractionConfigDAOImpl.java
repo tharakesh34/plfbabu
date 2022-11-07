@@ -302,6 +302,12 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		jdbcOperations.update(sql.toString());
+
+		sql = new StringBuilder("Delete from Due_Extraction_Header");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.update(sql.toString());
 	}
 
 	@Override
