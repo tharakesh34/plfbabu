@@ -81,17 +81,17 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 
 		Date appDate = SysParamUtil.getLastBusinessdate();
 
-		Date march3st = DateUtil.getDate(DateUtil.getYear(appDate), 2, 31);
+		Date march31st = DateUtil.getDate(DateUtil.getYear(appDate), 2, 31);
 
-		if (DateUtil.compare(appDate, march3st) == 0) {
-
+		if (DateUtil.compare(appDate, march31st) == 0) {
+			dueExtractionConfigDAO.deleteConfig();
 		}
 
 		boolean configExists = dueExtractionConfigDAO.isConfigExists();
 
-		Date marchFirst = DateUtil.getDate(DateUtil.getYear(appDate), 2, 1);
+		// Date marchFirst = DateUtil.getDate(DateUtil.getYear(appDate), 2, 1);
 
-		if (configExists && DateUtil.compare(appDate, marchFirst) != 0) {
+		if (configExists) { // && DateUtil.compare(appDate, marchFirst) != 0
 			return;
 		}
 
