@@ -26,6 +26,7 @@ import org.springframework.batch.item.ExecutionContext;
 import com.pennant.pff.batch.job.model.BatchJob;
 import com.pennant.pff.batch.job.model.StepDetail;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public abstract class BatchJobManager extends BatchConfiguration {
@@ -40,6 +41,7 @@ public abstract class BatchJobManager extends BatchConfiguration {
 		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
 				| JobParametersInvalidException e) {
 			logger.error(Literal.EXCEPTION, e);
+			throw new AppException(job.getName(), e);
 		}
 	}
 
@@ -49,6 +51,7 @@ public abstract class BatchJobManager extends BatchConfiguration {
 		} catch (JobInstanceAlreadyCompleteException | NoSuchJobExecutionException | NoSuchJobException
 				| JobRestartException | JobParametersInvalidException e) {
 			logger.error(Literal.EXCEPTION, e);
+			throw new AppException(String.valueOf(executionId), e);
 		}
 	}
 
