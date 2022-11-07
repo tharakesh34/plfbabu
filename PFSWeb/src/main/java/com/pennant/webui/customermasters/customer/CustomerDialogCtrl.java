@@ -2234,7 +2234,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomer.setCustTotalExpense(getCustTotExpense().add(getCustTotIncomeExp(false)));
 
 		aCustomer.setCustPassportNo(getCustDocID(PennantConstants.PASSPORT));
-		aCustomer.setPhoneNumber(getMobileNumber());
 
 		if (StringUtils.isBlank(aCustomer.getCustSourceID())) {
 			aCustomer.setCustSourceID(App.CODE);
@@ -2259,6 +2258,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			List<CustomerPhoneNumber> customerPhoneNumberList = customerPhoneNumbers.get("customerPhoneNumbers");
 			setCustomerPhoneNumberDetailList(customerPhoneNumberList);
 		}
+
+		aCustomer.setPhoneNumber(getMobileNumber());
 
 		// In line Edit functionality for Customer Emails
 		// HL change for Emails

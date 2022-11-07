@@ -782,4 +782,21 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="24" author="rahul.r">
+		<sql>
+		<![CDATA[
+				INSERT INTO BMTDOCUMENTTYPES VALUES ('CIBIL',0,1,1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0,0,0,0,'CIBIL',0,0,0,1,0,0,0,0,'CIBIL');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="25" author="rahul.r">
+		<sql>
+		<![CDATA[
+				UPDATE CUSTOMERS  SET PHONENUMBER =(SELECT CP.PHONENUMBER FROM CUSTOMERS C INNER JOIN CUSTOMERPHONENUMBERS CP ON C.CUSTID=CP.PHONECUSTID AND CP.PHONETYPEPRIORITY=5 AND CUSTOMERS.CUSTID=C.CUSTID);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
