@@ -1215,5 +1215,13 @@
 				UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD = 'getFinReference' WHERE FIELDNAME = 'FinReference' AND REPORTID=(SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_FinanceBasicInformation');
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="41" author="sandeepkumar.m">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD = 'getCustShrtName' WHERE FIELDNAME = 'Customer' AND REPORTID=(SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_FinanceBasicInformation');
+			]]>
+		</sql>
 	</changeSet>				
 </databaseChangeLog>
