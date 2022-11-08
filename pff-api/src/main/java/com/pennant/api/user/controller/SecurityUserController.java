@@ -23,6 +23,7 @@ import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.api.controller.AbstractController;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -86,8 +87,6 @@ public class SecurityUserController extends AbstractController {
 			setRecordTypeForDivsions(user.getSecurityUserDivBranchList());
 		}
 
-		BeanUtils.copyProperties(user, prvUser);
-
 		user.setCreatedOn(prvUser.getCreatedOn());
 		user.setCreatedBy(prvUser.getCreatedBy());
 		user.setNewRecord(false);
@@ -96,6 +95,8 @@ public class SecurityUserController extends AbstractController {
 		user.setUsrPwd(((PasswordEncoder) SpringBeanUtil.getBean("passwordEncoder")).encode(user.getUsrPwd()));
 		user.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 		user.setApprovedBy(ud.getUserId());
+
+		BeanUtils.copyProperties(user, prvUser);
 
 		AuditHeader ah = getAuditHeader(prvUser, PennantConstants.TRAN_WF);
 
@@ -304,6 +305,15 @@ public class SecurityUserController extends AbstractController {
 		user.setVersion(1);
 		user.setUserDetails(userDetails);
 		user.setLastMntBy(userDetails.getUserId());
+		user.setUsrDftAppCode(App.CODE);
+
+		if (user.getEmployeeType() == null) {
+			user.setEmployeeType(PennantConstants.List_Select);
+		}
+
+		if (user.getDisableReason() == null) {
+			user.setDisableReason(PennantConstants.List_Select);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
