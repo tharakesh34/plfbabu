@@ -5058,10 +5058,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		screenData.put("FinType", this.finType.getValue());
 		screenData.put("EligibilityMethod", eligibility);
 
-		if (getFinanceDetail() != null && getFinanceDetail().getCustomerDetails() != null) {
-			screenData.put("EmpType", getFinanceDetail().getCustomerDetails().getCustomer().getSubCategory());
-		}
-
 		if (customerDialogCtrl != null) {
 			screenData.put("EmpType", customerDialogCtrl.getEmpType());
 			screenData.put("IncomeDetails", getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList());
