@@ -42,6 +42,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.CreateEvent;
 import org.zkoss.zk.ui.event.Event;
@@ -75,6 +76,7 @@ import com.pennanttech.pennapps.web.menu.MenuItem;
 import com.pennanttech.pennapps.web.menu.TreeMenuBuilder;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.GlemCollateralProcess;
 
 /**
  * Controller for the main menu.
@@ -92,6 +94,9 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 	private TreeMenuBuilder menuBuilder;
 	private transient UserWorkspace userWorkspace;
+
+	@Autowired(required = false)
+	private GlemCollateralProcess glemsCollateralProcess;
 
 	/**
 	 * Creates a new main menu controller.
@@ -274,6 +279,11 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		case "menu_Item_CersaiModificationReport":
 		case "menu_Item_CersaiSatisfactionReport":
 			return ImplementationConstants.ALLOW_CERSAI;
+		case "menu_Item_CollateralDownload":
+			if (this.glemsCollateralProcess == null) {
+				return false;
+			}
+			return true;
 		default:
 			break;
 		}
