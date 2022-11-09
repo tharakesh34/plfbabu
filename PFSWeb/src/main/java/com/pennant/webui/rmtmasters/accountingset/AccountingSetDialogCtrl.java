@@ -74,6 +74,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.accountingset.model.TransactionEntryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -81,6 +82,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -228,6 +230,16 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<AccountingSet> {
 															 * this.eventCode.setDescColumn("AEEventCodeDesc");
 															 */
 		this.eventCode.setValidateColumns(new String[] { "AEEventCode" });
+
+		List<String> eventCodes = PennantAppUtil.getExcludedAccEvents();
+
+		int i = eventCodes.size();
+		Filter[] filter = new Filter[i];
+		for (i = 0; i < eventCodes.size(); i++) {
+			filter[i] = new Filter("AEEventCode", eventCodes.get(i), Filter.OP_NOT_EQUAL);
+		}
+
+		this.eventCode.setFilters(filter);
 
 		this.listheader_Account.setVisible(false);
 		this.listheader_PostToSystem.setVisible(false);
