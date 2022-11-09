@@ -189,6 +189,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				processExecution = new ProcessExecution();
 				createPanel(processExecution, PRSENTMENT_FILE_IMPORT_STATUS);
 			}
+
 			processExecution.setProcess(PRSENTMENT_FILE_IMPORT_STATUS);
 			String status = PRSENTMENT_FILE_IMPORT_STATUS.getStatus();
 			timer.start();
@@ -522,7 +523,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private void createPanel(ProcessExecution pannel, DataEngineStatus dataEngineStatus) {
 		logger.debug(Literal.ENTERING);
 
-		pannel.setId("Presentment Details");
+		pannel.setId("Presentment_Details");
 		pannel.setBorder("normal");
 		pannel.setTitle("Presentment Details");
 		pannel.setWidth("460px");
