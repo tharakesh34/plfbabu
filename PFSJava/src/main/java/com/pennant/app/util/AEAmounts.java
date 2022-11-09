@@ -114,6 +114,7 @@ public class AEAmounts implements Serializable {
 		amountCodes.setPftS(pfd.getTdSchdPft());
 		amountCodes.setPftSP(pfd.getTdSchdPftPaid());
 		amountCodes.setPftSB(pfd.getTdSchdPftBal());
+		amountCodes.setRpPft(pfd.getTdSchdPft());
 
 		// principal
 		amountCodes.setPriS(pfd.getTdSchdPri());
