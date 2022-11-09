@@ -4968,7 +4968,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		boolean isMandateIDDocExist = false;
 		if (this.customerDocumentDetailList != null && !this.customerDocumentDetailList.isEmpty()) {
 			for (CustomerDocument custDocument : this.customerDocumentDetailList) {
-				if (isRetailCustomer && !isPanMandatory && StringUtils.isBlank(this.eidNumber.getValue())
+				if (!isPanMandatory && StringUtils.isBlank(this.eidNumber.getValue())
 						&& (PennantConstants.FORM60.equals(custDocument.getCustDocCategory())
 								&& (PennantConstants.RECORD_TYPE_DEL.equals(custDocument.getRecordType())
 										|| PennantConstants.RECORD_TYPE_CAN.equals(custDocument.getRecordType())))) {
@@ -5033,11 +5033,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			boolean anyMatch = customerDocumentDetailList.stream()
 					.anyMatch(docType -> docType.getCustDocCategory().equals(PennantConstants.FORM60)
 							|| docType.getCustDocCategory().equals(PennantConstants.CPRCODE));
-			if (isRetailCustomer && StringUtils.isBlank(this.eidNumber.getValue()) && !anyMatch) {
+			if (StringUtils.isBlank(this.eidNumber.getValue()) && !anyMatch) {
 				MessageUtil.showError(Labels.getLabel("Either_PAN_FORM60_AADHAAR_Mandatory"));
 				return false;
 			}
-		} else if (isRetailCustomer && StringUtils.isBlank(this.eidNumber.getValue())) {
+		} else if (StringUtils.isBlank(this.eidNumber.getValue())) {
 			MessageUtil.showError(Labels.getLabel("Either_PAN_FORM60_AADHAAR_Mandatory"));
 			return false;
 		}
