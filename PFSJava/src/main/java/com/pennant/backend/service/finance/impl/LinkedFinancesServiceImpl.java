@@ -700,7 +700,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 
 	@Override
 	public FinanceMain getFinMainByFinRef(long finID) {
-		return financeMainDAO.getFinMainLinkedFinancesByFinRef(finID, "_LFView");
+		return financeMainDAO.getFinMainLinkedFinancesByFinRef(finID);
 	}
 
 	@Override

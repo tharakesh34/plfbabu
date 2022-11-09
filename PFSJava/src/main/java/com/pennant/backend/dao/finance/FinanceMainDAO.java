@@ -350,7 +350,7 @@ public interface FinanceMainDAO {
 
 	Map<String, Object> getGSTDataMapForDealer(long manufacturerDealerId);
 
-	FinanceMain getFinMainLinkedFinancesByFinRef(long finID, String string);
+	FinanceMain getFinMainLinkedFinancesByFinRef(long finID);
 
 	FinanceMain getFinanceMain(String finReference);
 
@@ -406,4 +406,5 @@ public interface FinanceMainDAO {
 	int getBucketByFinStatus(long finID);
 
 	List<FinanceMain> getFinanceMainActiveList(Date fromDate, Date toDate, String finType);
+
 }

@@ -5479,29 +5479,35 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public FinanceMain getFinMainLinkedFinancesByFinRef(long finID, String tableType) {
+	public FinanceMain getFinMainLinkedFinancesByFinRef(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinID, FinReference, CustID, LovDescCustCIF, LovDescCustShrtName, FinType");
-		sql.append(", FinIsActive, EntityCode, RcdMaintainsts");
-		sql.append(" From FinanceMain");
-		sql.append(StringUtils.trimToEmpty(tableType));
-		sql.append(" Where FinID = ?");
-
+		sql.append(" FinId, FinReference, CustshrtName, FinType, FinIsActive, EntityCode from (");
+		sql.append(" Select F.FinId, F.FinReference, C.CustShrtName ");
+		sql.append(",F.FinType, F.FinIsActive, SD.EntityCode");
+		sql.append(" From FinanceMain_Temp f");
+		sql.append(" Inner Join Customers c ON f.custid = c.custid");
+		sql.append(" Inner Join RMTFinanceTypes ft ON ft.fintype = f.fintype");
+		sql.append(" Inner Join SMTDivisionDetail sd ON ft.findivision = sd.divisioncode");
+		sql.append(" UNION ALL");
+		sql.append(" Select F.FinId, F.FinReference, C.CustShrtName ");
+		sql.append(", F.FinType, F.FinIsActive, SD.EntityCode");
+		sql.append(" From FinanceMain f ");
+		sql.append(" Inner Join Customers c ON f.custid = c.custid");
+		sql.append(" Inner Join RMTFinanceTypes ft ON ft.fintype = f.fintype");
+		sql.append(" Inner Join SMTDivisionDetail sd ON ft.findivision = sd.divisioncode");
+		sql.append(" Where not (exists ( SELECT 1  FROM financemain_temp WHERE financemain_temp.finID = f.finID))");
+		sql.append(") t Where FinId = ?");
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FinanceMain fm = new FinanceMain();
 
-				fm.setFinID(rs.getLong("FinID"));
 				fm.setFinReference(rs.getString("FinReference"));
-				fm.setCustID(rs.getLong("CustID"));
-				fm.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
-				fm.setLovDescCustShrtName(rs.getString("LovDescCustShrtName"));
+				fm.setLovDescCustShrtName(rs.getString("CustshrtName"));
 				fm.setFinType(rs.getString("FinType"));
 				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 				fm.setEntityCode(rs.getString("EntityCode"));
-				fm.setRcdMaintainSts(rs.getString("RcdMaintainsts"));
 
 				return fm;
 
