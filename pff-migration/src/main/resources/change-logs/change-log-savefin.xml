@@ -1223,5 +1223,13 @@
 				UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD = 'getCustShrtName' WHERE FIELDNAME = 'Customer' AND REPORTID=(SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_FinanceBasicInformation');
 			]]>
 		</sql>
-	</changeSet>				
+	</changeSet>
+	<changeSet id="42" author="rahul.r">
+		<sql>
+			<![CDATA[
+				DELETE FROM CREDITREVIEWCONFIG WHERE EmploymentType='SEP' and EligibilityMethod='SEP';
+  				INSERT INTO CREDITREVIEWCONFIG VALUES(3,null,null,null,'SEP','SEP',null,'SEP.xlsx',1,0,null,null,'{"FINAL_OFFER": "TENOR,ROI","APP_SAL":"CUST_FULL_NAME","CO_APP_SAL":"CO_APP_CUST_FULL_NAME"}','{"APP_SEP" : "B3,B4,C3,C4" ,"CO_APP_SEP" : "B3,B4,C3,C4","CO_APP_SAL" : "C5,C6,C7,C8,C9,C10,D5,D6,D7,D8,D9,D10,E12,E13","CO_APP_SENP": "C5,C6,C7,C8,C9,C10,C11,C12,D5,D6,D7,D8,D9,D10,D11,D12,F9","FINAL_OFFER": "H5,H8,H9,H16,H19,H20"}',null);
+			]]>
+		</sql>
+	</changeSet>			
 </databaseChangeLog>
