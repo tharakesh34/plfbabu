@@ -55,6 +55,7 @@ import com.pennant.backend.dao.systemmasters.DepartmentDAO;
 import com.pennant.backend.dao.systemmasters.DesignationDAO;
 import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.ReportingManager;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
@@ -68,6 +69,7 @@ import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.constant.LookUpCode;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
@@ -1396,6 +1398,13 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 		if (StringUtils.isBlank(user.getUserType())) {
 			setError(ad, ERR_90502, "userType");
+			return ad;
+		}
+
+		List<ValueLabel> authTypesList = PennantStaticListUtil.getAuthnticationTypes();
+
+		if (!authTypesList.stream().anyMatch(m -> m.getLabel().equalsIgnoreCase(user.getAuthType()))) {
+			setError(ad, "90337", "userType", "Internal/External");
 			return ad;
 		}
 

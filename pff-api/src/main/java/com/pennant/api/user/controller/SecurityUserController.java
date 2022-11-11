@@ -8,6 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.backend.dao.administration.SecurityOperationDAO;
@@ -327,6 +328,19 @@ public class SecurityUserController extends AbstractController {
 		user.setUsrDftAppId(1);
 		user.setSourceId(APIConstants.FINSOURCE_ID_API);
 		user.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+
+		String authType = user.getAuthType();
+
+		if (!authType.isEmpty()) {
+
+			if (authType.equalsIgnoreCase(Labels.getLabel("label_Auth_Type_Internal"))) {
+				user.setAuthType(com.pennanttech.pennapps.core.App.AuthenticationType.DAO.name());
+			} else if (authType.equalsIgnoreCase(Labels.getLabel("label_Auth_Type_External"))) {
+				user.setAuthType(com.pennanttech.pennapps.core.App.AuthenticationType.LDAP.name());
+			}
+		} else {
+			user.setAuthType(com.pennanttech.pennapps.core.App.AuthenticationType.DAO.name());
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
