@@ -14,7 +14,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class AssetSubType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private String assetTypeId;
+	private Long assetTypeId;
 	private String assetTypeIdName;
 
 	private int id;
@@ -43,11 +43,11 @@ public class AssetSubType extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public String getAssetTypeId() {
+	public Long getAssetTypeId() {
 		return assetTypeId;
 	}
 
-	public void setAssetTypeId(String assetTypeId) {
+	public void setAssetTypeId(Long assetTypeId) {
 		this.assetTypeId = assetTypeId;
 	}
 
