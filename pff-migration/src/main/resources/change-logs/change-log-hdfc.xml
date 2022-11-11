@@ -529,4 +529,20 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#208579.2" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET FILEEXTENSION ='.xls'  WHERE NAME ='MANDATES_IMPORT';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#208579.3" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET FILEEXTENSION ='.xls' WHERE NAME ='PRESENTMENT_RESPONSE';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
