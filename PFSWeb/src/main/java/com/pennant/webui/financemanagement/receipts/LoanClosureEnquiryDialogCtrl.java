@@ -91,6 +91,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
@@ -1256,6 +1257,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			receiptData = receiptService.calcuateDues(receiptData);
 			setFinanceDetail(receiptData.getFinanceDetail());
 			setOrgReceiptData(receiptData);
+
+			getFinanceDetail().setCustomerDetails(this.customerDetailsService.getCustById(financeMain.getCustID()));
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -3832,6 +3835,17 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				closureReport.setOneDayInterest(calcIntrstPerDay);
 
 				closureReport.setEntityDesc(fm.getEntityDesc());
+			}
+
+			closureReport.setCustMobile("");
+			List<CustomerPhoneNumber> phoneList = getFinanceDetail().getCustomerDetails().getCustomerPhoneNumList();
+			if (CollectionUtils.isNotEmpty(phoneList)) {
+				for (CustomerPhoneNumber cp : phoneList) {
+					if (cp.getPhoneTypePriority() == 5) {
+						closureReport.setCustMobile(cp.getPhoneNumber());
+						break;
+					}
+				}
 			}
 		}
 
