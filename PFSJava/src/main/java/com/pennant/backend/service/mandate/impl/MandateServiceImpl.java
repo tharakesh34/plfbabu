@@ -920,16 +920,16 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 			break;
 		case DAS:
-			if (mandate.getEmployerID() == null) {
-				return ErrorUtil.getError("90502", "employerID");
+			if (mandate.isSwapIsActive() && mandate.getSwapEffectiveDate() == null) {
+				return ErrorUtil.getError("90502", "swapEffectiveDate");
 			}
 
 			Mandate employerDetails = getEmployerDetails(mandate.getCustID());
 
 			if (employerDetails == null || employerDetails.getEmployerID().compareTo(mandate.getEmployerID()) != 0) {
-				ErrorUtil.getError("MNDT01", String.valueOf(mandate.getEmployerID()));
+				return ErrorUtil.getError("MNDT01", String.valueOf(mandate.getEmployerID()));
 			} else if (!employerDetails.isAllowDAS()) {
-				ErrorUtil.getError("MNDT02", String.valueOf(mandate.getEmployerID()));
+				return ErrorUtil.getError("MNDT02", String.valueOf(mandate.getEmployerID()));
 			}
 
 			break;

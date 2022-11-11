@@ -370,6 +370,10 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 				return getFailedStatus("90502", "employerID");
 			}
 
+			if (mandate.isSwapIsActive() && mandate.getSwapEffectiveDate() == null) {
+				return getFailedStatus("90502", "swapEffectiveDate");
+			}
+
 			Mandate employerDetails = mandateService.getEmployerDetails(mandate.getCustID());
 
 			if (employerDetails == null || employerDetails.getEmployerID().compareTo(mandate.getEmployerID()) != 0) {
@@ -636,6 +640,8 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		mndt.setSourceId(PennantConstants.FINSOURCE_ID_API);
 
 		if (InstrumentType.isDAS(mandate.getMandateType())) {
+			mndt.setSwapIsActive(mandate.isSwapIsActive());
+			mndt.setSwapEffectiveDate(mandate.getSwapEffectiveDate());
 			mndt.setEmployerID(mandate.getEmployerID());
 			mndt.setEmployeeNo(mandate.getEmployeeNo());
 		} else if (InstrumentType.isSI(mandate.getMandateType())) {
