@@ -177,6 +177,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String partnerBankName;
 	@XmlElement
 	private Boolean pennyDropStatus;
+	@XmlElement
 	private Date swapEffectiveDate;
 	private String holdReason;
 	private boolean securityMandate;
