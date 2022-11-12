@@ -1641,7 +1641,7 @@ public class ScheduleCalculator {
 
 		// Current Period or Till MDT set Recal from date and recal todate
 		if (StringUtils.equals(recalType, CalculationConstants.RPYCHG_CURPRD)) {
-			finScheduleData = getCurPerodDates(finScheduleData);
+			getCurPerodDates(finScheduleData);
 		}
 
 		// Force Set recaltype and recal to date to TILLMDT
@@ -5266,7 +5266,8 @@ public class ScheduleCalculator {
 			Date recalToDate = fm.getRecalToDate();
 			boolean flag = !PROC_CHANGEREPAY.equals(module) && !PROC_ADDDISBURSEMENT.equals(module)
 					&& !PROC_CHANGERATE.equals(module) && !PROC_RECALSCHD.equals(module);
-			if (flag && CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())
+			if (StringUtil.isBlank(curSchd.getBpiOrHoliday()) && flag
+					&& CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())
 					&& DateUtil.compare(recalToDate, derivedMDT) != 0
 					&& DateUtil.compare(curSchDate, recalToDate) == 0) {
 				procTDTRecord(finScheduleData, i, cpzPOSIntact);
@@ -5502,7 +5503,7 @@ public class ScheduleCalculator {
 					fm.setPftForSelectedPeriod(fm.getPftForSelectedPeriod().add(curSchd.getProfitCalc()));
 				}
 
-				if (!PROC_CHANGEREPAY.equals(module)
+				if (StringUtil.isBlank(curSchd.getBpiOrHoliday()) && !PROC_CHANGEREPAY.equals(module)
 						&& CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())
 						&& DateUtil.compare(recalToDate, derivedMDT) != 0
 						&& DateUtil.compare(curSchDate, recalToDate) == 0) {
@@ -7721,15 +7722,19 @@ public class ScheduleCalculator {
 
 		}
 
-		BigDecimal bgCalTerms = BigDecimal.valueOf(calTerms);
 		BigDecimal totEmiGuess = instructions.get(idxRI).getRepayAmount();
-		totEmiGuess = totEmiGuess.multiply(bgCalTerms);
+		if (calTerms > 0) {
+			BigDecimal bgCalTerms = BigDecimal.valueOf(calTerms);
+			totEmiGuess = totEmiGuess.multiply(bgCalTerms);
+		}
 
 		emiSum = emiSum.add(newEndinBalance).subtract(fm.getExpectedEndBal());
 
 		BigDecimal avgEMIDiff = totEmiGuess.subtract(emiSum).negate();
 
-		avgEMIDiff = avgEMIDiff.divide(bgCalTerms, 0, RoundingMode.HALF_DOWN);
+		if (calTerms > 0) {
+			avgEMIDiff = avgEMIDiff.divide(BigDecimal.valueOf(calTerms), 0, RoundingMode.HALF_DOWN);
+		}
 		avgEMIDiff = CalculationUtil.roundAmount(avgEMIDiff, fm.getCalRoundingMode(), fm.getRoundingTarget());
 
 		return avgEMIDiff;
@@ -7770,7 +7775,9 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			calTerms = calTerms + 1;
+			if (StringUtil.isBlank(curSchd.getBpiOrHoliday())) {
+				calTerms = calTerms + 1;
+			}
 		}
 
 		if (calTerms > 0) {
@@ -8310,10 +8317,14 @@ public class ScheduleCalculator {
 
 			}
 			// endBalance = curSchd.getClosingBalance();
-			calTerms = calTerms + 1;
+			if (StringUtil.isBlank(curSchd.getBpiOrHoliday())) {
+				calTerms = calTerms + 1;
+			}
 		}
 
-		pmtAmount = approxPMT(fm, rate, calTerms, startBalance, endBalance, 0);
+		if (calTerms > 0) {
+			pmtAmount = approxPMT(fm, rate, calTerms, startBalance, endBalance, 0);
+		}
 
 		return pmtAmount;
 	}
@@ -8586,46 +8597,61 @@ public class ScheduleCalculator {
 
 	}
 
-	private FinScheduleData getCurPerodDates(FinScheduleData finScheduleData) {
-		logger.debug("Entering");
+	private void getCurPerodDates(FinScheduleData schData) {
+		logger.debug(Literal.ENTERING);
 
 		boolean isFromDateSet = false;
-		FinanceMain fm = finScheduleData.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
-		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
-		int sdSize = finSchdDetails.size();
-		Date schdDate = new Date();
 
-		for (int i = 0; i < sdSize; i++) {
-			curSchd = finSchdDetails.get(i);
-			schdDate = curSchd.getSchDate();
+		FinanceMain fm = schData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = schData.getFinanceScheduleDetails();
 
-			if (DateUtility.compare(schdDate, fm.getEventFromDate()) <= 0) {
-				continue;
-			}
+		for (FinanceScheduleDetail schedule : schedules) {
+			Date schDate = schedule.getSchDate();
 
-			// SET RECAL FROMDATE
-			if (!isFromDateSet) {
-				if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
-					fm.setRecalFromDate(schdDate);
-					fm.setRecalToDate(schdDate);
+			if (schDate.compareTo(fm.getEventFromDate()) > 0) {
+				boolean repayOrPftOnSchDate = schedule.isPftOnSchDate() || schedule.isRepayOnSchDate();
+
+				if (!isFromDateSet && repayOrPftOnSchDate) {
+					fm.setRecalFromDate(schDate);
+					fm.setRecalToDate(schDate);
 					isFromDateSet = true;
 				}
-			}
 
-			if (DateUtility.compare(schdDate, fm.getEventToDate()) < 0) {
-				continue;
+				if (schDate.compareTo(fm.getEventToDate()) >= 0 && repayOrPftOnSchDate) {
+					fm.setRecalToDate(schDate);
+					break;
+				}
 			}
-
-			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
-				fm.setRecalToDate(schdDate);
-				break;
-			}
-
 		}
 
-		return finScheduleData;
+		FinanceScheduleDetail nextSchedule = null;
+		boolean recalFromInHldy = false;
 
+		Date recalToDate = fm.getRecalToDate();
+		Date recalFromDate = fm.getRecalFromDate();
+		int index = 0;
+
+		for (FinanceScheduleDetail schedule : schedules) {
+			index++;
+
+			if (!StringUtil.isBlank(schedule.getBpiOrHoliday())) {
+				if (schedule.getSchDate().compareTo(recalFromDate) == 0) {
+					recalFromInHldy = true;
+				}
+
+				if (schedule.getSchDate().compareTo(recalToDate) == 0) {
+					nextSchedule = schedules.get(index);
+					break;
+				}
+			}
+		}
+
+		if (nextSchedule != null && (nextSchedule.isPftOnSchDate() || nextSchedule.isRepayOnSchDate())) {
+			fm.setRecalToDate(nextSchedule.getSchDate());
+			fm.setRecalFromDate(recalFromInHldy ? nextSchedule.getSchDate() : recalFromDate);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
