@@ -5835,5 +5835,24 @@
 		</sql>
 	</changeSet>
 
-
+	<changeSet id="PSD#209101.03_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'presentment_extraction_stage');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#209101.03" author="Gopal.p">
+		<modifyDataType tableName="Presentment_Extraction_Stage " columnName="ChequeAmount" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet id="PSD#209101.03_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'presentment_extraction_stage');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
