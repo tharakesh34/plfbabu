@@ -1741,6 +1741,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			} else {
 				if (StringUtils.isNotEmpty(this.bankBranchID.getValue())) {
 					aMandate.setBankBranchID(Long.valueOf(this.bankBranchID.getValue()));
+				} else {
+					aMandate.setBankBranchID(null);
 				}
 			}
 		} catch (WrongValueException we) {
