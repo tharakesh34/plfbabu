@@ -72,6 +72,7 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 	protected Listheader listheader_PartnerBankName;
 	protected Listheader listheader_BankBranchCode;
 	protected Listheader listheader_BankCode;
+	protected Listheader listheader_PartnerBankID;
 
 	protected Button button_PartnerBankList_NewPartnerBank;
 	protected Button button_PartnerBankList_PartnerBankSearch;
@@ -126,7 +127,7 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 				Operators.STRING);
 		registerField("bankBranchCode", listheader_BankBranchCode, SortOrder.NONE, bankBranchCode,
 				sortOperator_BankBranchCode, Operators.STRING);
-		registerField("partnerBankId");
+		registerField("partnerBankId", listheader_PartnerBankID);
 
 		// Render the page and display the data.
 		doRenderPage();
