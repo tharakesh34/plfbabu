@@ -698,7 +698,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				lc = new Listcell();
 				Html html = new Html();
 				// Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
-				html.setContent(StringEscapeUtils.escapeHtml(note.getRemarks()));
+				html.setContent(note.getRemarks());
 				lc.appendChild(html);
 				lc.setStyle("cursor:default;");
 				lc.setParent(item);
