@@ -198,8 +198,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	protected Decimalbox pftDue;
 	protected Decimalbox bounceDueAmount;
 	protected Decimalbox otnerChargeDue;
-	protected Decimalbox recepitInProcess;
-	protected Decimalbox recepitInprocessManual;
 	protected Textbox finCcy;
 	protected Decimalbox paidByCustomer;
 
@@ -522,9 +520,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		this.pftDue.setFormat(amountFormat);
 		this.bounceDueAmount.setFormat(amountFormat);
 		this.otnerChargeDue.setFormat(amountFormat);
-		this.recepitInProcess.setFormat(amountFormat);
-		this.recepitInprocessManual.setFormat(amountFormat);
-
 		this.receiptDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.interestTillDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.paidByCustomer.setFormat(amountFormat);

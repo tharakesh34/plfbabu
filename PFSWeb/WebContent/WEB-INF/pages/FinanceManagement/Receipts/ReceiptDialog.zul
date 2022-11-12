@@ -141,22 +141,6 @@
 														<decimalbox id="otnerChargeDue" width="150px" readonly="true" />
 													</hbox>
 												</row>
-												<row>
-													<label id="label_ReceiptDialog_receiptsInProcess" value="${c:l('label_ReceiptDialog_receiptsInProcess.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<decimalbox id="recepitInProcess" width="150px" readonly="true" />
-														<button id="btnSearchReceiptInProcess" tooltiptext="${c:l('label_ReceiptDialog_receiptsInProcessManual.value')}"
-															image="/images/icons/more.png"
-															autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
-															disabled="true" />
-													</hbox>
-													<label id="label_ReceiptDialog_receiptsInProcessManual" value="${c:l('label_ReceiptDialog_receiptsInProcessManual.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<decimalbox id="recepitInprocessManual" width="150px" readonly="true" />
-													</hbox>
-												</row>
 												<row visible="false">
 													<label value="${c:l('label_ReceiptDialog_FinCcy.value')}" />
 													<hbox>

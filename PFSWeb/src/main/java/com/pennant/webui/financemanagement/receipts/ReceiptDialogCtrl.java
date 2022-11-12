@@ -279,14 +279,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Decimalbox pftDue;
 	protected Decimalbox bounceDueAmount;
 	protected Decimalbox otnerChargeDue;
-	protected Decimalbox recepitInProcess;
-	protected Decimalbox recepitInprocessManual;
 	protected Textbox finCcy;
 	protected Decimalbox paidByCustomer;
 
 	protected Button btnSearchCustCIF;
 	protected Button btnSearchFinreference;
-	protected Button btnSearchReceiptInProcess;
 	protected Button btnPrintSchedule;
 
 	// Receipt Details
@@ -1043,9 +1040,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.pftDue.setFormat(amountFormat);
 		this.bounceDueAmount.setFormat(amountFormat);
 		this.otnerChargeDue.setFormat(amountFormat);
-		this.recepitInProcess.setFormat(amountFormat);
-		this.recepitInprocessManual.setFormat(amountFormat);
-
 		this.receiptDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.paidByCustomer.setFormat(amountFormat);
