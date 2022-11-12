@@ -2115,28 +2115,28 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 					wve.addAll(validateSchedules(listcell, combobox, emiDate));
 				}
-			}
 
-			int emiRefNumCnt = 0;
+				int emiRefNumCnt = 0;
 
-			for (ChequeDetail cd : cheques) {
-				if (!chequeDuplicate(cd, getComboboxValue(combobox))) {
-					continue;
-				}
-
-				emiRefNumCnt++;
-				if (emiRefNumCnt > 1) {
-					if (fromLoan) {
-						parenttab.setSelected(true);
+				for (ChequeDetail cd : cheques) {
+					if (!chequeDuplicate(cd, getComboboxValue(combobox))) {
+						continue;
 					}
-					try {
-						throw new WrongValueException(combobox, Labels.getLabel("ChequeDetailDialog_ChkEMIRef_Exists"));
-					} catch (WrongValueException e) {
-						wve.add(e);
-						break;
+
+					emiRefNumCnt++;
+					if (emiRefNumCnt > 1) {
+						if (fromLoan) {
+							parenttab.setSelected(true);
+						}
+						try {
+							throw new WrongValueException(combobox,
+									Labels.getLabel("ChequeDetailDialog_ChkEMIRef_Exists"));
+						} catch (WrongValueException e) {
+							wve.add(e);
+							break;
+						}
 					}
 				}
-
 			}
 		}
 
