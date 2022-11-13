@@ -27,7 +27,7 @@ public interface DueExtractionConfigDAO {
 
 	void delete(InstrumentTypes instrType, TableType tableType);
 
-	void deleteConfig();
+	void deleteConfig(Date extractionDate);
 
 	void delete(DueExtractionHeader header, TableType tableType);
 
