@@ -5768,6 +5768,29 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#208851.2.0_pre" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				update MANDATES set HOLDREASON = null;
+				update MANDATES_TEMP set HOLDREASON = null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#208851.2.1_pre" author="saikrishna.b">
+		<dropForeignKeyConstraint baseTableName="MANDATES" constraintName="fk_mandates_holdreason" />
+		<dropForeignKeyConstraint baseTableName="MANDATES_TEMP" constraintName="fk_mandates_temp_holdreason" />
+	</changeSet> 
+	
+	<changeSet id="PSD#208851.2_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates');
+				select deps_save_and_drop_dependencies ('plf', 'mandates_temp');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="PSD#208851.2" author="saikrishna.b">
 		<modifyDataType tableName="MANDATES" columnName="HOLDREASON" newDataType="varchar(50)" />
@@ -5775,6 +5798,15 @@
 
 	<changeSet id="PSD#208851.3" author="saikrishna.b">
 		<modifyDataType tableName="MANDATES_TEMP" columnName="HOLDREASON" newDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet id="PSD#208851.2_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates');
+				select deps_restore_dependencies ('plf', 'mandates_temp');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="PSD#209101.01" author="murthy.y">
