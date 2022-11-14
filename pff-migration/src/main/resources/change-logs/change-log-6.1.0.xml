@@ -840,17 +840,6 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="29" author="rahul.r">
-		<modifyDataType tableName="rmtscoringgroup_temp" columnName="minscore"
-			newDataType="int" />
-	</changeSet>
-	<changeSet id="29_post" author="rahul.r" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'rmtscoringgroup_temp');
-			]]>
-		</sql>
-	</changeSet>
 	
 	<changeSet id="30_pre" author="rahul.r" dbms="postgresql">
 		<sql>
@@ -859,13 +848,21 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="30" author="rahul.r">
-		<modifyDataType tableName="rmtscoringgroup" columnName="minscore"
+	
+	<changeSet id="29" author="rahul.r">
+		<modifyDataType tableName="RMTScoringGroup_temp" columnName="minscore"
 			newDataType="int" />
 	</changeSet>
+	
+	<changeSet id="30" author="rahul.r">
+		<modifyDataType tableName="RMTScoringGroup" columnName="minscore"
+			newDataType="int" />
+	</changeSet>
+
 	<changeSet id="30_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtscoringgroup_temp');
 				select deps_restore_dependencies ('plf', 'rmtscoringgroup');
 			]]>
 		</sql>
