@@ -799,14 +799,24 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="26.1" author="rahul.r">
+		<sql>
+		<![CDATA[
+				Drop view facilityreferencedetail_view;
+				Drop view lmtfinrefdetail_finview;
+				Drop view lmtfinrefdetail_peview;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="26" author="rahul.r">
-		<addColumn tableName="rmtscoringgroup_temp">
+		<addColumn tableName="RMTScoringGroup_temp">
 			<column name="minscore2" type="varchar(4)" />
 		</addColumn>
 	</changeSet>
 	
 	<changeSet id="27" author="rahul.r">
-		<addColumn tableName="rmtscoringgroup">
+		<addColumn tableName="RMTScoringGroup">
 			<column name="minscore2" type="varchar(4)" />
 		</addColumn>
 	</changeSet>
@@ -881,11 +891,11 @@
 	
 	<changeSet id="33" author="rahul.r">
     	<dropColumn columnName="minscore2"
-            tableName="rmtscoringgroup_temp"/>
+            tableName="RMTScoringGroup_temp"/>
 	</changeSet>
 	
 	<changeSet id="34" author="rahul.r">
     	<dropColumn columnName="minscore2"
-            tableName="rmtscoringgroup"/>
+            tableName="RMTScoringGroup"/>
 	</changeSet>
 </databaseChangeLog>

@@ -11224,7 +11224,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="96_pre" author="rahul.r" dbms="postgresql">
+	<changeSet id="96.1_pre" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'lmtfinrefdetail_peview');
@@ -11232,7 +11232,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="96" author="rahul.r">
+	<changeSet id="96.1" author="rahul.r">
 		<createView viewName="LMTFINREFDETAIL_PEVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT t1.finrefdetailid,
@@ -11297,7 +11297,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="96_post" author="rahul.r" dbms="postgresql">
+	<changeSet id="96.1_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'lmtfinrefdetail_peview');
@@ -11306,7 +11306,7 @@
 	</changeSet>
 	
 	
-	<changeSet id="97_pre" author="rahul.r" dbms="postgresql">
+	<changeSet id="97.1_pre" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'lmtfinrefdetail_finview');
@@ -11314,7 +11314,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="97" author="rahul.r">
+	<changeSet id="97.1" author="rahul.r">
 		<createView viewName="LMTFINREFDETAIL_FINVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT t1.finrefdetailid,
@@ -11380,7 +11380,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="97_post" author="rahul.r" dbms="postgresql">
+	<changeSet id="97.1_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'lmtfinrefdetail_finview');
@@ -11389,14 +11389,14 @@
 	</changeSet>
 	
 
-	<changeSet id="98_pre" author="rahul.r" dbms="postgresql">
+	<changeSet id="98.1_pre" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'facilityreferencedetail_view');
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="98" author="rahul.r">
+	<changeSet id="98.1" author="rahul.r">
 		<createView viewName="FACILITYREFERENCEDETAIL_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT t1.finrefdetailid,
@@ -11444,7 +11444,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="98_post" author="rahul.r" dbms="postgresql">
+	<changeSet id="98.1_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'facilityreferencedetail_view');
