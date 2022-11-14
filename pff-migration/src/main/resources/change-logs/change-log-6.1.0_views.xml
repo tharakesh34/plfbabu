@@ -11223,4 +11223,599 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="96" author="rahul.r">
+		<createView viewName="RMTSCORINGSLAB_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.scoregroupid,
+			    t1.scoringslab,
+			    t1.creditworthness,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.scoregroupcode AS lovdescscoregroupcode,
+			    t2.minscore AS lovdescminscore
+			   FROM rmtscoringslab_temp t1
+			     LEFT JOIN rmtscoringgroup_temp t2 ON t1.scoregroupid = t2.scoregroupid
+			UNION ALL
+			 SELECT t1.scoregroupid,
+			    t1.scoringslab,
+			    t1.creditworthness,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.scoregroupcode AS lovdescscoregroupcode,
+			    t2.minscore AS lovdescminscore
+			   FROM rmtscoringslab t1
+			     LEFT JOIN rmtscoringgroup t2 ON t1.scoregroupid = t2.scoregroupid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM rmtscoringslab_temp
+			          WHERE rmtscoringslab_temp.scoregroupid = t1.scoregroupid AND rmtscoringslab_temp.scoringslab = t1.scoringslab))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="97" author="rahul.r">
+		<createView viewName="RMTSCORINGGROUP_VIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT t1.scoregroupid,
+				    t1.scoregroupcode,
+				    t1.minscore,
+				    t1.scoregroupname,
+				    t1.categorytype,
+				    t1.isoverride,
+				    t1.overridescore,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				        CASE
+				            WHEN t1.categorytype = 'C' THEN 'Corporate'
+				            WHEN t1.categorytype = 'I' THEN 'Individual'
+				            ELSE t1.categorytype
+				        END AS lovdesccategorytype
+				   FROM rmtscoringgroup_temp t1
+				UNION ALL
+				 SELECT t1.scoregroupid,
+				    t1.scoregroupcode,
+				    t1.minscore,
+				    t1.scoregroupname,
+				    t1.categorytype,
+				    t1.isoverride,
+				    t1.overridescore,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				        CASE
+				            WHEN t1.categorytype = 'C' THEN 'Corporate'
+				            WHEN t1.categorytype = 'I' THEN 'Individual'
+				            ELSE t1.categorytype
+				        END AS lovdesccategorytype
+				   FROM rmtscoringgroup t1
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM rmtscoringgroup_temp
+				          WHERE rmtscoringgroup_temp.scoregroupid = t1.scoregroupid))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="98" author="rahul.r">
+		<createView viewName="RMTSCORINGSLAB_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT t1.scoregroupid,
+				    t1.scoringslab,
+				    t1.creditworthness,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.scoregroupcode AS lovdescscoregroupcode,
+				    t2.minscore AS lovdescminscore
+				   FROM rmtscoringslab t1
+				     LEFT JOIN rmtscoringgroup t2 ON t1.scoregroupid = t2.scoregroupid
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="99" author="rahul.r">
+		<createView viewName="RMTSCORINGGROUP_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.scoregroupid,
+				    t1.scoregroupcode,
+				    t1.minscore,
+				    t1.scoregroupname,
+				    t1.categorytype,
+				    t1.isoverride,
+				    t1.overridescore,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM rmtscoringgroup t1
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="100" author="rahul.r">
+		<createView viewName="LMTFINREFDETAIL_TSGVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finrefdetailid,
+			    t1.fintype,
+			    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+			    t1.finreftype,
+			    t1.finrefid,
+			    t3.scoregroupcode AS lovdescrefdesc,
+			    t1.isactive,
+			    t1.showinstage,
+			    t1.mandinputinstage,
+			    t1.allowinputinstage,
+			    t1.allowdeviation,
+			    t1.allowwaiver,
+			    t1.allowpostpone,
+			    t1.allowexpire,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.scoregroupname AS lovdescnamelov,
+			    t3.scoregroupcode AS lovdesccodelov,
+			    t3.minscore AS lovdescminscore,
+			    t3.isoverride AS lovdescisoverride,
+			    t3.overridescore AS lovdescoverridescore,
+			    t1.override,
+			    t1.overridevalue,
+			    t1.finevent,
+			    t1.alerttype
+			   FROM lmtfinrefdetail_temp t1
+			     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+			     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+			     JOIN rmtscoringgroup t3 ON t1.finrefid = t3.scoregroupid AND t1.finreftype = 4 AND t3.categorytype = 'RETAIL'
+			UNION ALL
+			 SELECT t1.finrefdetailid,
+			    t1.fintype,
+			    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+			    t1.finreftype,
+			    t1.finrefid,
+			    t3.scoregroupcode AS lovdescrefdesc,
+			    t1.isactive,
+			    t1.showinstage,
+			    t1.mandinputinstage,
+			    t1.allowinputinstage,
+			    t1.allowdeviation,
+			    t1.allowwaiver,
+			    t1.allowpostpone,
+			    t1.allowexpire,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.scoregroupname AS lovdescnamelov,
+			    t3.scoregroupcode AS lovdesccodelov,
+			    t3.minscore AS lovdescminscore,
+			    t3.isoverride AS lovdescisoverride,
+			    t3.overridescore AS lovdescoverridescore,
+			    t1.override,
+			    t1.overridevalue,
+			    t1.finevent,
+			    t1.alerttype
+			   FROM lmtfinrefdetail t1
+			     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+			     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+			     JOIN rmtscoringgroup t3 ON t1.finrefid = t3.scoregroupid AND t1.finreftype = 4 AND t3.categorytype = 'RETAIL'
+			  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+			           FROM lmtfinrefdetail_temp
+			          WHERE lmtfinrefdetail_temp.finrefdetailid = t1.finrefdetailid))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="101" author="rahul.r">
+		<createView viewName="LMTFINREFDETAIL_TCSGVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finrefdetailid,
+			    t1.fintype,
+			    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+			    t1.finreftype,
+			    t1.finrefid,
+			    t3.scoregroupcode AS lovdescrefdesc,
+			    t1.isactive,
+			    t1.showinstage,
+			    t1.mandinputinstage,
+			    t1.allowinputinstage,
+			    t1.allowdeviation,
+			    t1.allowwaiver,
+			    t1.allowpostpone,
+			    t1.allowexpire,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.scoregroupname AS lovdescnamelov,
+			    t3.scoregroupcode AS lovdesccodelov,
+			    t3.minscore AS lovdescminscore,
+			    t3.isoverride AS lovdescisoverride,
+			    t3.overridescore AS lovdescoverridescore,
+			    t1.override,
+			    t1.overridevalue,
+			    t1.finevent,
+			    t1.alerttype
+			   FROM lmtfinrefdetail_temp t1
+			     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+			     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+			     JOIN rmtscoringgroup t3 ON t1.finrefid = t3.scoregroupid AND t1.finreftype = 7 AND t3.categorytype = 'CORP'
+			UNION ALL
+			 SELECT t1.finrefdetailid,
+			    t1.fintype,
+			    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+			    t1.finreftype,
+			    t1.finrefid,
+			    t3.scoregroupcode AS lovdescrefdesc,
+			    t1.isactive,
+			    t1.showinstage,
+			    t1.mandinputinstage,
+			    t1.allowinputinstage,
+			    t1.allowdeviation,
+			    t1.allowwaiver,
+			    t1.allowpostpone,
+			    t1.allowexpire,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.scoregroupname AS lovdescnamelov,
+			    t3.scoregroupcode AS lovdesccodelov,
+			    t3.minscore AS lovdescminscore,
+			    t3.isoverride AS lovdescisoverride,
+			    t3.overridescore AS lovdescoverridescore,
+			    t1.override,
+			    t1.overridevalue,
+			    t1.finevent,
+			    t1.alerttype
+			   FROM lmtfinrefdetail t1
+			     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+			     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+			     JOIN rmtscoringgroup t3 ON t1.finrefid = t3.scoregroupid AND t1.finreftype = 7 AND t3.categorytype = 'CORP'
+			  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+			           FROM lmtfinrefdetail_temp
+			          WHERE lmtfinrefdetail_temp.finrefdetailid = t1.finrefdetailid))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="102" author="rahul.r">
+		<createView viewName="LMTFINREFDETAIL_PEVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finrefdetailid,
+			    t1.fintype,
+			    t1.finreftype,
+			    t1.finrefid,
+			    t1.isactive,
+			    t1.showinstage,
+			    t1.mandinputinstage,
+			    t1.allowinputinstage,
+			    t1.allowdeviation,
+			    t1.allowwaiver,
+			    t1.allowpostpone,
+			    t1.allowexpire,
+			    t1.override,
+			    t1.overridevalue,
+			    t1.finevent,
+			    t1.alerttype,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    COALESCE(t2.fintypedesc, t10.collateraldesc, t11.productdesc) AS lovdescfintypedescname,
+			    t2.finccy AS lovdescfinccycode,
+			    t2.fincategory AS lovdescproductcodename,
+			    t3.aggimage AS lovdescaggimage,
+			    COALESCE(t3.aggname, t4.eventcode, t7.rulecodedesc, t8.scoregroupname, t9.scoregroupname) AS lovdescnamelov,
+			    COALESCE(t3.aggcode, t7.rulecode, t8.scoregroupcode, t9.scoregroupcode) AS lovdesccodelov,
+			    COALESCE(t3.aggdesc, t4.accountsetcodename, t5.checklistdesc, t7.rulecode, t8.scoregroupcode, t9.scoregroupcode) AS lovdescrefdesc,
+			    t3.aggreportname AS lovdescaggreportname,
+			    t3.aggreportpath AS lovdescaggreportpath,
+			    t3.agrrule AS lovdescaggrulename,
+			    t3.aggtype,
+			    t3.moduletype,
+			    COALESCE(t3.allowmultiple, 0) AS allowmultiple,
+			    COALESCE(t5.remarks, '0') AS lovdescisremarksallowed,
+			    COALESCE(t5.checkmincount, 0) AS lovdesccheckmincount,
+			    COALESCE(t5.checkmaxcount, 0) AS lovdesccheckmaxcount,
+			    COALESCE(t6.sqlrule, t7.sqlrule) AS lovdescelgrulevalue,
+			    COALESCE(t6.returntype, t7.returntype) AS lovdescrulereturntype,
+			    COALESCE(t8.minscore, t9.minscore, 0) AS lovdescminscore,
+			    COALESCE(t8.isoverride, t9.isoverride, 0) AS lovdescisoverride,
+			    COALESCE(t8.overridescore, t9.overridescore, '0') AS lovdescoverridescore
+			   FROM lmtfinrefdetail t1
+			     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN collateralstructure t10 ON t1.fintype = t10.collateraltype
+			     LEFT JOIN vasstructure t11 ON t1.fintype = t11.productcode
+			     LEFT JOIN bmtaggrementdef t3 ON t1.finrefid = t3.aggid AND t1.finreftype = 2
+			     LEFT JOIN rmtaccountingset t4 ON t1.finrefid = t4.accountsetid AND t1.finreftype = 5
+			     LEFT JOIN bmtchecklist t5 ON t1.finrefid = t5.checklistid AND t1.finreftype = 1
+			     LEFT JOIN rules t6 ON t6.rulecode = t5.checkrule AND t6.rulemodule = 'CLRULE' AND t6.ruleevent = 'CLRULE'
+			     LEFT JOIN rules t7 ON t1.finrefid = t7.ruleid AND t1.finreftype = 3
+			     LEFT JOIN rmtscoringgroup t8 ON t1.finrefid = t8.scoregroupid AND t1.finreftype = 4 AND t8.categorytype = 'RETAIL'
+			     LEFT JOIN rmtscoringgroup t9 ON t1.finrefid = t9.scoregroupid AND t1.finreftype = 7 AND t9.categorytype = 'CORP'
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="103" author="rahul.r">
+		<createView viewName="LMTFINREFDETAIL_FINVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finrefdetailid,
+			    t1.fintype,
+			    t1.finreftype,
+			    t1.finrefid,
+			    t1.isactive,
+			    t1.showinstage,
+			    t1.mandinputinstage,
+			    t1.allowinputinstage,
+			    t1.allowdeviation,
+			    t1.allowwaiver,
+			    t1.allowpostpone,
+			    t1.allowexpire,
+			    t1.override,
+			    t1.overridevalue,
+			    t1.finevent,
+			    t1.alerttype,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.fintypedesc AS lovdescfintypedescname,
+			    t2.finccy AS lovdescfinccycode,
+			    t2.fincategory AS lovdescproductcodename,
+			    t3.aggimage AS lovdescaggimage,
+			    COALESCE(t3.aggname, t4.eventcode, t7.rulecodedesc, t8.scoregroupname, t9.scoregroupname, t11.tabdescription) AS lovdescnamelov,
+			    COALESCE(t3.aggcode, t7.rulecode, t8.scoregroupcode, t9.scoregroupcode, t11.tabcode) AS lovdesccodelov,
+			    COALESCE(t3.aggdesc, t4.accountsetcodename, t5.checklistdesc, t7.rulecode, t8.scoregroupcode, t9.scoregroupcode, t10.limitcode, t11.tabcode) AS lovdescrefdesc,
+			    t3.aggreportname AS lovdescaggreportname,
+			    t3.aggreportpath AS lovdescaggreportpath,
+			    t3.agrrule AS lovdescaggrulename,
+			    t3.aggtype,
+			    t3.moduletype,
+			    COALESCE(t3.allowmultiple, 0) AS allowmultiple,
+			    COALESCE(t5.remarks, '0') AS lovdescisremarksallowed,
+			    COALESCE(t5.checkmincount, 0) AS lovdesccheckmincount,
+			    COALESCE(t5.checkmaxcount, 0) AS lovdesccheckmaxcount,
+			    COALESCE(t6.sqlrule, t7.sqlrule) AS lovdescelgrulevalue,
+			    COALESCE(t6.returntype, t7.returntype) AS lovdescrulereturntype,
+			    COALESCE(t8.minscore, t9.minscore, 0) AS lovdescminscore,
+			    COALESCE(t8.isoverride, t9.isoverride, 0) AS lovdescisoverride,
+			    COALESCE(t8.overridescore, t9.overridescore, '0') AS lovdescoverridescore,
+			    t11.tabcode
+			   FROM lmtfinrefdetail t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN bmtaggrementdef t3 ON t1.finrefid = t3.aggid AND t1.finreftype = 2
+			     LEFT JOIN rmtaccountingset t4 ON t1.finrefid = t4.accountsetid AND t1.finreftype = 5
+			     LEFT JOIN bmtchecklist t5 ON t1.finrefid = t5.checklistid AND t1.finreftype = 1
+			     LEFT JOIN rules t6 ON t6.rulecode = t5.checkrule AND t6.rulemodule = 'CLRULE' AND t6.ruleevent  = 'CLRULE'
+			     LEFT JOIN rules t7 ON t1.finrefid = t7.ruleid AND t1.finreftype = 3
+			     LEFT JOIN rmtscoringgroup t8 ON t1.finrefid = t8.scoregroupid AND t1.finreftype = 4 AND t8.categorytype  = 'RETAIL'
+			     LEFT JOIN rmtscoringgroup t9 ON t1.finrefid = t9.scoregroupid AND t1.finreftype = 7 AND t9.categorytype  = 'CORP'
+			     LEFT JOIN limitcodedetail t10 ON t10.limitid = t1.finrefid
+			     LEFT JOIN stagetabdetail t11 ON t1.finrefid = t11.tabid AND t1.finreftype = 15
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="104" author="rahul.r">
+		<createView viewName="LMTFINREFDETAIL_ASGVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finrefdetailid,
+			    t1.fintype,
+			    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+			    t1.finreftype,
+			    t1.finrefid,
+			    t3.scoregroupcode AS lovdescrefdesc,
+			    t1.isactive,
+			    t1.showinstage,
+			    t1.mandinputinstage,
+			    t1.allowinputinstage,
+			    t1.allowdeviation,
+			    t1.allowwaiver,
+			    t1.allowpostpone,
+			    t1.allowexpire,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.scoregroupname AS lovdescnamelov,
+			    t3.scoregroupcode AS lovdesccodelov,
+			    t3.minscore AS lovdescminscore,
+			    t3.isoverride AS lovdescisoverride,
+			    t3.overridescore AS lovdescoverridescore,
+			    t1.override,
+			    t1.overridevalue,
+			    t1.finevent,
+			    t1.alerttype
+			   FROM lmtfinrefdetail t1
+			     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+			     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+			     JOIN rmtscoringgroup t3 ON t1.finrefid = t3.scoregroupid AND t1.finreftype = 4 AND t3.categorytype = 'RETAIL'
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="105" author="rahul.r">
+		<createView viewName="LMTFINREFDETAIL_ACSGVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finrefdetailid,
+			    t1.fintype,
+			    COALESCE(t2.fintypedesc, t4.collateraldesc, t5.productdesc) AS lovdescfintypedescname,
+			    t1.finreftype,
+			    t1.finrefid,
+			    t3.scoregroupcode AS lovdescrefdesc,
+			    t1.isactive,
+			    t1.showinstage,
+			    t1.mandinputinstage,
+			    t1.allowinputinstage,
+			    t1.allowdeviation,
+			    t1.allowwaiver,
+			    t1.allowpostpone,
+			    t1.allowexpire,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.scoregroupname AS lovdescnamelov,
+			    t3.scoregroupcode AS lovdesccodelov,
+			    t3.minscore AS lovdescminscore,
+			    t3.isoverride AS lovdescisoverride,
+			    t3.overridescore AS lovdescoverridescore,
+			    t1.override,
+			    t1.overridevalue,
+			    t1.finevent,
+			    t1.alerttype
+			   FROM lmtfinrefdetail t1
+			     LEFT JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN collateralstructure t4 ON t1.fintype = t4.collateraltype
+			     LEFT JOIN vasstructure t5 ON t1.fintype = t5.productcode
+			     JOIN rmtscoringgroup t3 ON t1.finrefid = t3.scoregroupid AND t1.finreftype = 7 AND t3.categorytype = 'CORP'
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="106" author="rahul.r">
+		<createView viewName="FACILITYREFERENCEDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finrefdetailid,
+			    t1.fintype,
+			    t1.finreftype,
+			    t1.finrefid,
+			    t1.isactive,
+			    t1.showinstage,
+			    t1.mandinputinstage,
+			    t1.allowinputinstage,
+			    t1.override,
+			    t1.overridevalue,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.facilitydesc AS lovdescfintypedescname,
+			    COALESCE(t3.aggname, t5.scoregroupname, t6.scoregroupname) AS lovdescnamelov,
+			    COALESCE(t3.aggdesc, t4.checklistdesc, t5.scoregroupname, t6.scoregroupname) AS lovdescrefdesc,
+			    t3.aggreportname AS lovdescaggreportname,
+			    t3.aggreportpath AS lovdescaggreportpath,
+			    t3.aggimage AS lovdescaggimage,
+			    COALESCE(t3.aggcode, t5.scoregroupcode, t6.scoregroupcode) AS lovdesccodelov,
+			    COALESCE(t4.remarks, '0') AS lovdescisremarksallowed,
+			    COALESCE(t4.checkmincount, 0) AS lovdesccheckmincount,
+			    COALESCE(t4.checkmaxcount, 0) AS lovdesccheckmaxcount,
+			    t41.sqlrule AS lovdescelgrulevalue,
+			    COALESCE(t5.minscore, t6.minscore, 0) AS lovdescminscore,
+			    COALESCE(t5.isoverride, t6.isoverride, 0) AS lovdescisoverride,
+			    COALESCE(t5.overridescore, t6.overridescore, '0') AS lovdescoverridescore
+			   FROM lmtfacilityrefdetail t1
+			     JOIN caffacilitytypes t2 ON t1.fintype = t2.facilitytype
+			     LEFT JOIN bmtaggrementdef t3 ON t1.finrefid = t3.aggid AND t1.finreftype = 2
+			     LEFT JOIN bmtchecklist t4 ON t1.finrefid = t4.checklistid AND t1.finreftype = 1
+			     LEFT JOIN rules t41 ON t41.rulecode = t4.checkrule AND t41.rulemodule = 'CLRULE' AND t41.ruleevent = ''
+			     LEFT JOIN rmtscoringgroup t5 ON t1.finrefid = t5.scoregroupid AND t1.finreftype = 4 AND t5.categorytype = 'I'
+			     LEFT JOIN rmtscoringgroup t6 ON t1.finrefid = t6.scoregroupid AND t1.finreftype = 7 AND t6.categorytype = 'C'
+			]]>
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
