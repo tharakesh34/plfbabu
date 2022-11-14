@@ -800,37 +800,18 @@
 	</changeSet>
 	
 	<changeSet id="26" author="rahul.r">
-		<sql>
-		<![CDATA[
-				Drop view rmtscoringslab_view;
-				Drop view rmtscoringgroup_view;
-				Drop view rmtscoringslab_aview;
-				Drop view rmtscoringgroup_aview;
-				
-				Drop view lmtfinrefdetail_tsgview;
-				Drop view lmtfinrefdetail_tcsgview;
-				Drop view lmtfinrefdetail_peview;
-				Drop view lmtfinrefdetail_finview;
-				Drop view lmtfinrefdetail_asgview;
-				Drop view lmtfinrefdetail_acsgview;
-				Drop view facilityreferencedetail_view;
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="27" author="rahul.r">
 		<addColumn tableName="RMTScoringGroup_temp">
 			<column name="minscore2" type="varchar(4)" />
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="28" author="rahul.r">
+	<changeSet id="27" author="rahul.r">
 		<addColumn tableName="RMTScoringGroup">
 			<column name="minscore2" type="varchar(4)" />
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="29" author="rahul.r">
+	<changeSet id="28" author="rahul.r">
 		<sql>
 		<![CDATA[
 				UPDATE RMTScoringGroup  SET minscore2 =(SELECT C.minscore FROM RMTScoringGroup C  Where RMTScoringGroup.scoregroupid=C.scoregroupid);
@@ -842,17 +823,45 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="30" author="rahul.r">
+	<changeSet id="29_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'RMTScoringGroup_temp');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="29" author="rahul.r">
 		<modifyDataType tableName="RMTScoringGroup_temp" columnName="minscore"
 			newDataType="int" />
 	</changeSet>
+	<changeSet id="29_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'RMTScoringGroup_temp');
+			]]>
+		</sql>
+	</changeSet>
 	
-	<changeSet id="31" author="rahul.r">
+	<changeSet id="30_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'RMTScoringGroup');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="30" author="rahul.r">
 		<modifyDataType tableName="RMTScoringGroup" columnName="minscore"
 			newDataType="int" />
 	</changeSet>
+	<changeSet id="30_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'RMTScoringGroup');
+			]]>
+		</sql>
+	</changeSet>
 	
-	<changeSet id="32" author="rahul.r" dbms="oracle,postgresql">
+	<changeSet id="31" author="rahul.r" dbms="oracle,postgresql">
 		<sql>
 		<![CDATA[
 				UPDATE RMTScoringGroup  SET minscore = TO_NUMBER((SELECT C.minscore2 FROM RMTScoringGroup C  Where RMTScoringGroup.scoregroupid=C.scoregroupid),'9999');
