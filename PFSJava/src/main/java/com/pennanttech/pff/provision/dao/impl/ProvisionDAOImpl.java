@@ -281,7 +281,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 	@Override
 	public BigDecimal getCollateralValue(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" coalesce(sum(cs.collateralValue), 0) CollateralValue");
+		sql.append(" sum(cs.collateralValue) CollateralValue");
 		sql.append(" From CollateralAssignment ca");
 		sql.append(" Inner Join CollateralSetup cs ON ca.CollateralRef = cs.CollateralRef");
 		sql.append(" Where ca.Reference = ?");
@@ -289,7 +289,12 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
+		} catch (EmptyResultDataAccessException emp) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
 	}
 
 	@Override
