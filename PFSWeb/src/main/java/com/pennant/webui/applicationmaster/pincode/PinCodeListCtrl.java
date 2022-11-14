@@ -25,8 +25,12 @@
 
 package com.pennant.webui.applicationmaster.pincode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -43,12 +47,16 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.applicationmaster.PinCode;
+import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.backend.service.applicationmaster.PinCodeService;
 import com.pennant.webui.applicationmaster.pincode.model.PinCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
+import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -87,6 +95,8 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 
 	private transient PinCodeService pinCodeService;
 
+	private List<PinCode> pincodeList;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -98,9 +108,9 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	protected void doSetProperties() {
 		super.moduleCode = "PinCode";
 		super.pageRightName = "PinCodeList";
-		super.tableName = "PinCodes_AView";
-		super.queueTableName = "PinCodes_View";
-		super.enquiryTableName = "PinCodes_View";
+		super.tableName = "PinCodes";
+		super.queueTableName = "PinCodes";
+		super.enquiryTableName = "PinCodes_Temp";
 	}
 
 	/**
@@ -109,12 +119,11 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_PinCodeList(Event event) {
-		logger.debug(Literal.ENTERING);
-		// Set the page level components.
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
 		setPageComponents(window_PinCodeList, borderLayout_PinCodeList, listBoxPinCode, pagingPinCodeList);
 		setItemRender(new PinCodeListModelItemRenderer());
 
-		// Register buttons and fields.
 		registerButton(button_PinCodeList_PinCodeSearch);
 		registerButton(button_PinCodeList_NewPinCode, "button_PinCodeList_NewPinCode", true);
 
@@ -123,11 +132,18 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 		registerField("pCCityName", listheader_City, SortOrder.NONE, city, sortOperator_City, Operators.STRING);
 		registerField("areaName", listheader_AreaName, SortOrder.NONE, areaName, sortOperator_AreaName,
 				Operators.STRING);
-		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
-		// Render the page and display the data.
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active,
+				Operators.SIMPLE_NUMARIC);
+
+		this.active.setChecked(true);
+
+		fillListData();
+
 		doRenderPage();
-		search();
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
+
 	}
 
 	/**
@@ -136,7 +152,17 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PinCodeList_PinCodeSearch(Event event) {
-		search();
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
+		List<String> roleCodes = getWorkFlowRoles();
+
+		List<PinCode> pinCode = pinCodeService.getResult(getSearchFilters(), roleCodes);
+
+		listBoxPinCode.setItemRenderer(new PinCodeListModelItemRenderer());
+
+		pagedListWrapper.initList(pinCode, listBoxPinCode, pagingPinCodeList);
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	/**
@@ -145,17 +171,17 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
 		doReset();
-		search();
+		this.active.setChecked(true);
+		fillListData();
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
-	 * 
-	 * @param event An event sent to the event handler of the component.
-	 */
 	public void onClick$button_PinCodeList_NewPinCode(Event event) {
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		// Create a new entity.
 		PinCode pincode = new PinCode();
@@ -164,7 +190,7 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 		// Display the dialog page.
 		doShowDialogPage(pincode);
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	/**
@@ -175,7 +201,7 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	 */
 
 	public void onPinCodeItemDoubleClicked(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxPinCode.getSelectedItem();
@@ -200,7 +226,7 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	/**
@@ -231,7 +257,11 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
-		doPrintResults();
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
+		doPrintResults(getReportData());
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	/**
@@ -243,11 +273,6 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 		doShowHelp(event);
 	}
 
-	/**
-	 * When user clicks on "fromApproved"
-	 * 
-	 * @param event
-	 */
 	public void onCheck$fromApproved(Event event) {
 		search();
 	}
@@ -259,6 +284,74 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	 */
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
+	}
+
+	public void fillListData() {
+		List<String> roleCodes = getWorkFlowRoles();
+
+		pincodeList = pinCodeService.getResult(getSearchFilters(), roleCodes);
+
+		listBoxPinCode.setItemRenderer(new PinCodeListModelItemRenderer());
+
+		pagedListWrapper.initList(pincodeList, listBoxPinCode, pagingPinCodeList);
+	}
+
+	private ISearch getSearchFilters() {
+		ISearch search = new Search();
+
+		String pinCode = this.pinCode.getValue();
+		if (StringUtils.isNotEmpty(pinCode)) {
+			search.getFilters().add(new Filter("pinCode", pinCode, this.sortOperator_PinCode.getSelectedIndex()));
+		}
+
+		String areaName = this.areaName.getValue();
+		if (StringUtils.isNotEmpty(areaName)) {
+			search.getFilters().add(new Filter("areaName", areaName, this.sortOperator_AreaName.getSelectedIndex()));
+		}
+
+		String city = this.city.getValue();
+		if (StringUtils.isNotEmpty(city)) {
+			search.getFilters().add(new Filter("PCCityname", city, this.sortOperator_City.getSelectedIndex()));
+		}
+
+		boolean active = this.active.isChecked();
+		search.getFilters().add(new Filter("Active", active, this.sortOperator_Active.getSelectedIndex()));
+
+		String status = this.recordStatus.getValue();
+		if (StringUtils.isNotEmpty(status)) {
+			search.getFilters()
+					.add(new Filter("RecordStatus", status, this.sortOperator_RecordStatus.getSelectedIndex()));
+		}
+
+		String recordType = null;
+		if (this.recordType.getSelectedItem() != null) {
+			recordType = this.recordType.getSelectedItem().getValue();
+		}
+		if (StringUtils.isNotEmpty(recordType)) {
+			search.getFilters()
+					.add(new Filter("RecordType", recordType, this.sortOperator_RecordType.getSelectedIndex()));
+		}
+
+		return search;
+	}
+
+	private List<ReportListDetail> getReportData() {
+		List<ReportListDetail> list = new ArrayList<>(0);
+		if (CollectionUtils.isEmpty(this.pincodeList)) {
+			return list;
+		}
+
+		for (PinCode pincode : this.pincodeList) {
+			ReportListDetail bc = new ReportListDetail();
+
+			bc.setfieldString01(pincode.getPinCode());
+			bc.setfieldString02(pincode.getAreaName());
+			bc.setFieldBoolean04(pincode.isActive() ? 1 : 0);
+
+			list.add(bc);
+		}
+
+		return list;
 	}
 
 	public void setPinCodeService(PinCodeService pinCodeService) {

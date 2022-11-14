@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -1416,6 +1418,26 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 
 		return wherQuery.toString();
+	}
+
+	protected List<String> getWorkFlowRoles() {
+		List<String> roleCodes = new ArrayList<>();
+
+		List<String> userRoles = getUserWorkspace().getUserRoles();
+
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails(this.moduleCode);
+
+		List<String> workflowRoles = Arrays.asList(workFlowDetails.getRoles());
+
+		for (String userRole : userRoles) {
+			for (String workflowRole : workflowRoles) {
+				if (workflowRole.equals(userRole)) {
+					roleCodes.add(workflowRole);
+				}
+			}
+		}
+
+		return roleCodes;
 	}
 
 }

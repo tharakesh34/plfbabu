@@ -24,6 +24,8 @@
  */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +46,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -73,20 +76,6 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the pinCodeDAO
-	 */
-	public PinCodeDAO getPinCodeDAO() {
-		return pinCodeDAO;
-	}
-
-	/**
-	 * @param pinCodeDAO the pinCodeDAO to set
-	 */
-	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
-		this.pinCodeDAO = pinCodeDAO;
 	}
 
 	/**
@@ -359,6 +348,20 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 	@Autowired
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
+	}
+
+	@Override
+	public List<PinCode> getResult(ISearch search, List<String> roleCodes) {
+		return this.pinCodeDAO.getResult(search, roleCodes);
+	}
+
+	@Autowired
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
+	}
+
+	public PinCodeDAO getPinCodeDAO() {
+		return pinCodeDAO;
 	}
 
 }

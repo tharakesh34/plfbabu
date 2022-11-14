@@ -24,8 +24,11 @@
  */
 package com.pennant.backend.dao.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.PinCode;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
 
 public interface PinCodeDAO extends BasicCrudDao<PinCode> {
@@ -57,4 +60,5 @@ public interface PinCodeDAO extends BasicCrudDao<PinCode> {
 
 	PinCode getPinCodeById(long pinCodeId, String type);
 
+	List<PinCode> getResult(ISearch search, List<String> roleCodes);
 }

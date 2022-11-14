@@ -24,6 +24,11 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,9 +45,11 @@ import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -323,6 +330,81 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
+		}
+	}
+
+	@Override
+	public List<PinCode> getResult(ISearch search, List<String> roleCodes) {
+		List<Object> value = new ArrayList<>();
+		String whereCondition = QueryUtil.buildWhereClause(search, value);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PinCode, PCCityName, AreaName, Active, Version, Lastmntby, Lastmnton");
+		sql.append(", Recordstatus, Rolecode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkFlowId");
+		sql.append(" From (Select PinCode, PCCityName, AreaName, Active, t1.Version, t1.Lastmntby, t1.Lastmnton");
+		sql.append(", t1.Recordstatus, t1.Rolecode, t1.NextRoleCode, t1.TaskId, t1.NextTaskId, t1.RecordType");
+		sql.append(", t1.WorkFlowId");
+		sql.append(" From PinCodes_Temp t1");
+		sql.append(" Inner Join RMTProvincevsCity t2 on t1.City = t2.PCCity");
+		sql.append(" Union All");
+		sql.append(" Select PinCode, PCCityName, AreaName, Active, t1.Version, t1.Lastmntby, t1.Lastmnton");
+		sql.append(", t1.Recordstatus, t1.Rolecode, t1.NextRoleCode, t1.TaskId, t1.NextTaskId, t1.RecordType");
+		sql.append(", t1.WorkFlowId");
+		sql.append(" From PinCodes t1");
+		sql.append(" Inner Join RMTProvincevsCity t2 on t1.City = t2.PCCity");
+		sql.append(" Where Not Exists (Select 1 from PinCodes_Temp Where PinCode = t1.PinCode)) t");
+
+		if (!StringUtils.isEmpty(whereCondition)) {
+			sql.append(whereCondition);
+			sql.append(" and (NextRoleCode is null or NextRoleCode in (");
+		} else {
+			sql.append(" Where (NextRoleCode is null or NextRoleCode in (");
+		}
+
+		sql.append(JdbcUtil.getInCondition(roleCodes));
+		sql.append("))");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			for (Object object : value) {
+				ps.setObject(++index, object);
+			}
+
+			for (String roleCode : roleCodes) {
+				ps.setString(++index, roleCode);
+			}
+		}, new PinCodesRM());
+	}
+
+	private class PinCodesRM implements RowMapper<PinCode> {
+
+		private PinCodesRM() {
+			super();
+		}
+
+		@Override
+		public PinCode mapRow(ResultSet rs, int rowNum) throws SQLException {
+			PinCode pc = new PinCode();
+
+			pc.setPinCode(rs.getString("PinCode"));
+			pc.setPCCityName(rs.getString("PCCityName"));
+			pc.setAreaName(rs.getString("AreaName"));
+			pc.setActive(rs.getBoolean("Active"));
+			pc.setVersion(rs.getInt("Version"));
+			pc.setLastMntBy(rs.getLong("LastMntBy"));
+			pc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			pc.setRecordStatus(rs.getString("RecordStatus"));
+			pc.setRoleCode(rs.getString("RoleCode"));
+			pc.setNextRoleCode(rs.getString("NextRoleCode"));
+			pc.setTaskId(rs.getString("TaskId"));
+			pc.setNextTaskId(rs.getString("NextTaskId"));
+			pc.setRecordType(rs.getString("RecordType"));
+			pc.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return pc;
 		}
 	}
 }
