@@ -1418,9 +1418,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		String strChequeDate = combobox.getSelectedItem().getLabel();
 
-		if (PennantConstants.List_Select.equals(combobox.getSelectedItem().getValue())) {
+		if (PennantConstants.List_Select.equals(combobox.getSelectedItem())) {
 			throw new WrongValueException(combobox,
-					Labels.getLabel("DATE_NO_EMPTY", new String[] { Labels.getLabel("listheader_DueDate.label") }));
+					Labels.getLabel("DATE_NO_EMPTY", new String[] { Labels.getLabel("Due Date") }));
 		}
 
 		Date chequeDate = DateUtil.parseShortDate(strChequeDate);
