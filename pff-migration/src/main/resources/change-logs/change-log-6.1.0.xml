@@ -800,13 +800,13 @@
 	</changeSet>
 	
 	<changeSet id="26" author="rahul.r">
-		<addColumn tableName="RMTScoringGroup_temp">
+		<addColumn tableName="rmtscoringgroup_temp">
 			<column name="minscore2" type="varchar(4)" />
 		</addColumn>
 	</changeSet>
 	
 	<changeSet id="27" author="rahul.r">
-		<addColumn tableName="RMTScoringGroup">
+		<addColumn tableName="rmtscoringgroup">
 			<column name="minscore2" type="varchar(4)" />
 		</addColumn>
 	</changeSet>
@@ -826,18 +826,18 @@
 	<changeSet id="29_pre" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'RMTScoringGroup_temp');
+				select deps_save_and_drop_dependencies ('plf', 'rmtscoringgroup_temp');
 			]]>
 		</sql>
 	</changeSet>
 	<changeSet id="29" author="rahul.r">
-		<modifyDataType tableName="RMTScoringGroup_temp" columnName="minscore"
+		<modifyDataType tableName="rmtscoringgroup_temp" columnName="minscore"
 			newDataType="int" />
 	</changeSet>
 	<changeSet id="29_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'RMTScoringGroup_temp');
+				select deps_restore_dependencies ('plf', 'rmtscoringgroup_temp');
 			]]>
 		</sql>
 	</changeSet>
@@ -845,18 +845,18 @@
 	<changeSet id="30_pre" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'RMTScoringGroup');
+				select deps_save_and_drop_dependencies ('plf', 'rmtscoringgroup');
 			]]>
 		</sql>
 	</changeSet>
 	<changeSet id="30" author="rahul.r">
-		<modifyDataType tableName="RMTScoringGroup" columnName="minscore"
+		<modifyDataType tableName="rmtscoringgroup" columnName="minscore"
 			newDataType="int" />
 	</changeSet>
 	<changeSet id="30_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'RMTScoringGroup');
+				select deps_restore_dependencies ('plf', 'rmtscoringgroup');
 			]]>
 		</sql>
 	</changeSet>
@@ -881,11 +881,11 @@
 	
 	<changeSet id="33" author="rahul.r">
     	<dropColumn columnName="minscore2"
-            tableName="RMTScoringGroup_temp"/>
+            tableName="rmtscoringgroup_temp"/>
 	</changeSet>
 	
 	<changeSet id="34" author="rahul.r">
     	<dropColumn columnName="minscore2"
-            tableName="RMTScoringGroup"/>
+            tableName="rmtscoringgroup"/>
 	</changeSet>
 </databaseChangeLog>

@@ -11227,7 +11227,7 @@
 	<changeSet id="96_pre" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'LMTFINREFDETAIL_PEVIEW');
+				select deps_save_and_drop_dependencies ('plf', 'lmtfinrefdetail_peview');
 			]]>
 		</sql>
 	</changeSet>
@@ -11300,7 +11300,7 @@
 	<changeSet id="96_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'LMTFINREFDETAIL_PEVIEW');
+				select deps_restore_dependencies ('plf', 'lmtfinrefdetail_peview');
 			]]>
 		</sql>
 	</changeSet>
@@ -11309,7 +11309,7 @@
 	<changeSet id="97_pre" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'LMTFINREFDETAIL_FINVIEW');
+				select deps_save_and_drop_dependencies ('plf', 'lmtfinrefdetail_finview');
 			]]>
 		</sql>
 	</changeSet>
@@ -11383,7 +11383,7 @@
 	<changeSet id="97_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'LMTFINREFDETAIL_FINVIEW');
+				select deps_restore_dependencies ('plf', 'lmtfinrefdetail_finview');
 			]]>
 		</sql>
 	</changeSet>
@@ -11392,7 +11392,7 @@
 	<changeSet id="98_pre" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'FACILITYREFERENCEDETAIL_VIEW');
+				select deps_save_and_drop_dependencies ('plf', 'facilityreferencedetail_view');
 			]]>
 		</sql>
 	</changeSet>
@@ -11447,7 +11447,7 @@
 	<changeSet id="98_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'FACILITYREFERENCEDETAIL_VIEW');
+				select deps_restore_dependencies ('plf', 'facilityreferencedetail_view');
 			]]>
 		</sql>
 	</changeSet>
