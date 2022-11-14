@@ -569,7 +569,7 @@
 									<rows>
 										<row>
 											<label id="label_GrcAdjReq"
-												value="${c:l('label_FinanceTypeDialog_GrcAdjReq.value')}" />
+												value="${c:l('label_FinanceMainDialog_UnderConstruction.value')}" />
 											<hbox id="hlayout_GrcAdjReq" spacing="2px">
 												<space id="space_GrcAdjReq" spacing="2px" />
 												<checkbox id="grcAdjReq" />
