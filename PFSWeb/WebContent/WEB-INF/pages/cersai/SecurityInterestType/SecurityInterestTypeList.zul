@@ -54,7 +54,7 @@
 								<row>
 									<label id="label_SecurityInterestTypeList_AssetCategoryId" value="${c:l('label_SecurityInterestTypeList_AssetCategoryId.value')}" />
 									<listbox id="sortOperator_AssetCategoryId" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="assetCategoryId" width="100px" maxlength="3" />
+									<intbox id="assetCategoryId" width="100px" maxlength="3" />
 									<label id="label_SecurityInterestTypeList_Id" value="${c:l('label_SecurityInterestTypeList_Id.value')}" />
 									<listbox id="sortOperator_Id" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<intbox id="id" width="100px" maxlength="3" />
