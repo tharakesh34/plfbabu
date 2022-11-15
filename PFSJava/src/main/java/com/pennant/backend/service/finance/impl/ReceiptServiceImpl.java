@@ -61,12 +61,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepaymentProcessUtil;
@@ -196,6 +199,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -1988,10 +1992,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		fm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		financeMainDAO.updateFromReceipt(fm, TableType.MAIN_TAB);
 
 		listDeletion(finID, "");
 		listSave(scheduleData, "", 0, false);
+		financeMainDAO.updateFromReceipt(fm, TableType.MAIN_TAB);
 
 		if (scheduleData.getFinFeeDetailList() != null) {
 			if (!FinServiceEvent.RESTRUCTURE.equals(rch.getReceiptPurpose())) {
@@ -2551,9 +2555,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<RepayInstruction> repayInstructions = schdData.getRepayInstructions();
 
 		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType ft = schdData.getFinanceType();
 
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
+
+		if ((AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage()))
+				&& fm.getAdvTerms() > 0) {
+			for (FinanceScheduleDetail schedule : schedules) {
+				if (schedule.getClosingBalance().compareTo(ZERO) == 0) {
+					schedules.addAll(getAdvSchedules(fm, schedule.copyEntity(), ft.getFddLockPeriod()));
+					break;
+				}
+			}
+		}
 
 		// Finance Schedule Details
 		if (StringUtils.isEmpty(tableType)) {
@@ -2572,6 +2587,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				mapDateSeq.put(curSchd.getSchDate(), seqNo);
 				curSchd.setSchSeq(seqNo);
 				curSchd.setLogKey(logKey);
+				if ((AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage()))
+						&& fm.getAdvTerms() > 0 && curSchd.getClosingBalance().compareTo(ZERO) == 0
+						&& curSchd.getRepayAmount().compareTo(ZERO) > 0) {
+					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
+				}
 			}
 
 			financeScheduleDetailDAO.saveList(schedules, tableType, false);
@@ -2605,6 +2625,50 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			repayInstructionDAO.saveList(repayInstructions, tableType, false);
 		}
 
+	}
+
+	private List<FinanceScheduleDetail> getAdvSchedules(FinanceMain fm, FinanceScheduleDetail schedule,
+			int lockPeriod) {
+		List<FinanceScheduleDetail> advSchedules = new ArrayList<>();
+
+		for (int i = 0; i < fm.getAdvTerms(); i++) {
+			Date advSchDate = DateUtil.addMonths(schedule.getSchDate(), i);
+
+			Date schDate = FrequencyUtil
+					.getNextDate(fm.getRepayFrq(), 1, advSchDate, HolidayHandlerTypes.MOVE_NONE, true, lockPeriod)
+					.getNextFrequencyDate();
+
+			FinanceScheduleDetail advSch = new FinanceScheduleDetail();
+
+			advSch.setFinID(fm.getFinID());
+			advSch.setFinReference(fm.getFinReference());
+			advSch.setSchDate(schDate);
+			advSch.setDefSchdDate(schDate);
+			advSch.setInstNumber(schedule.getInstNumber() + (i + 1));
+			advSch.setCalculatedRate(schedule.getCalculatedRate());
+			advSch.setActRate(schedule.getActRate());
+			advSch.setSchSeq(schedule.getSchSeq());
+			advSch.setPftOnSchDate(schedule.isPftOnSchDate());
+			advSch.setRepayOnSchDate(schedule.isRepayOnSchDate());
+			advSch.setRvwOnSchDate(schedule.isRvwOnSchDate());
+			advSch.setFrqDate(schedule.isFrqDate());
+			advSch.setSchdMethod(schedule.getSchdMethod());
+			advSch.setPftDaysBasis(schedule.getPftDaysBasis());
+			advSch.setLastMntBy(fm.getLastMntBy());
+			advSch.setNoOfDays(DateUtility.getDaysBetween(schDate, advSchDate));
+			advSch.setDayFactor(CalculationUtil.getInterestDays(advSchDate, schDate, advSch.getPftDaysBasis()));
+
+			if (i == fm.getAdvTerms() - 1) {
+				advSch.setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
+				fm.setMaturityDate(advSchDate);
+			} else {
+				advSch.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
+			}
+
+			advSchedules.add(advSch);
+		}
+
+		return advSchedules;
 	}
 
 	/**
@@ -7079,7 +7143,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			} else {
 				mam.setTaxHeader(null);
 			}
-			
+
 			rcd.setPayAdvMovement(mam);
 
 			if (rcd.getReceiptSeqID() <= 0) {
