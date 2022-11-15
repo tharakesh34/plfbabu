@@ -1240,5 +1240,24 @@
 				UPDATE BMTDOCUMENTTYPES SET DOCTYPECODE='FORM60' WHERE DOCTYPECODE='FORM 60';
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="44" author="rahul.r">
+		<sql>
+			<![CDATA[
+				DELETE FROM DedupFields WHERE QueryModule='RETAILCustomer' AND fieldName ='CustPassportNo';
+				DELETE FROM DedupFields WHERE QueryModule='RETAILCustomer' AND fieldName ='VoterID';
+				DELETE FROM DedupFields WHERE QueryModule='RETAILCustomer' AND fieldName ='DrivingLicenceNo';
+				DELETE FROM DedupFields WHERE QueryModule='RETAILCustomer' AND fieldName ='CustMotherMaiden';
+				DELETE FROM DedupFields WHERE QueryModule='RETAILCustomer' AND fieldName ='Address1';
+					                            
+				INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustPassportNo', 'Customer Passport Number', 'varchar', 'RETAILCustomer', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('VoterID', 'Voter Id', 'varchar', 'RETAILCustomer', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('DrivingLicenceNo', 'Driving Licence Number', 'varchar', 'RETAILCustomer', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustMotherMaiden', 'Father Name', 'varchar', 'RETAILCustomer', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('Address1', 'Customer Address', 'varchar', 'RETAILCustomer', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+
+			]]>
+		</sql>
 	</changeSet>			
 </databaseChangeLog>
