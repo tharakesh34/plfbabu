@@ -24,7 +24,6 @@
  */
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -332,19 +331,20 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		if (StringUtils.trimToEmpty(dPDBucket.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			int count = dPDBucketConfigurationDAO.getDPDBucketConfigurationDAOById(dPDBucket.getBucketID(), "");// FIXME
-																												// for
-																												// FinanceMain
-			if (count != 0) {
+		int count = dPDBucketConfigurationDAO.getDPDBucketConfigurationDAOById(dPDBucket.getBucketID(), "");
 
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = dPDBucket.getBucketCode();
-				errParm[0] = PennantJavaUtil.getLabel("label_BucketCode") + ":" + valueParm[0];
+		if (count != 0) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = dPDBucket.getBucketCode();
+			errParm[0] = PennantJavaUtil.getLabel("label_BucketCode") + ":" + valueParm[0];
 
+			if (PennantConstants.RECORD_TYPE_DEL.equals(dPDBucket.getRecordType())) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+			} else if (dPDBucket.getBefImage().isActive() && !dPDBucket.isActive()) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41017", errParm, valueParm), usrLanguage));
 			}
 		}
 
