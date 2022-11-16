@@ -2580,7 +2580,8 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("DPDBucket",
 				new ModuleMapping("DPDBucket", DPDBucket.class, new String[] { "DPDBUCKETS", "DPDBUCKETS_AView" },
-						masterWF, new String[] { "BucketCode", "BucketDesc" }, null, 700));
+						masterWF, new String[] { "BucketCode", "BucketDesc" },
+						new Object[][] { { "Active", "0", "1" } }, 700));
 
 		ModuleUtil.register("NPABucket",
 				new ModuleMapping("NPABucket", NPABucket.class, new String[] { "NPABUCKETS", "NPABUCKETS_AView" },
