@@ -316,19 +316,6 @@ public class SecurityUserController extends AbstractController {
 			user.setDisableReason(PennantConstants.List_Select);
 		}
 
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void prepareRequiredData(SecurityUser user) {
-		logger.debug(Literal.ENTERING);
-
-		user.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		user.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		user.setNewRecord(true);
-		user.setUsrDftAppId(1);
-		user.setSourceId(APIConstants.FINSOURCE_ID_API);
-		user.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-
 		String authType = user.getAuthType();
 
 		if (!authType.isEmpty()) {
@@ -341,6 +328,19 @@ public class SecurityUserController extends AbstractController {
 		} else {
 			user.setAuthType(com.pennanttech.pennapps.core.App.AuthenticationType.DAO.name());
 		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void prepareRequiredData(SecurityUser user) {
+		logger.debug(Literal.ENTERING);
+
+		user.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		user.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		user.setNewRecord(true);
+		user.setUsrDftAppId(1);
+		user.setSourceId(APIConstants.FINSOURCE_ID_API);
+		user.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
 		logger.debug(Literal.LEAVING);
 	}

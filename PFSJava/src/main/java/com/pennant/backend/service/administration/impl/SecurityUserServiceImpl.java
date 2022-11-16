@@ -91,6 +91,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	private static final String ERR_93304 = "93304";
 	private static final String ERR_RU0040 = "RU0040";
 	private static final String ERR_90010 = "90010";
+	private static final String ERR_RU0039 = "RU0039";
+	private static final String ERR_90337 = "90337";
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private SecurityUserDAO securityUsersDAO;
@@ -1391,6 +1393,11 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		AuditDetail ad = ah.getAuditDetail();
 		SecurityUser user = (SecurityUser) ad.getModelData();
 
+		if (user.getUsrID() != Long.MIN_VALUE && !isUpdate) {
+			setError(ad, ERR_RU0039, "UsrID");
+			return ad;
+		}
+
 		if (StringUtils.isBlank(user.getUsrLogin())) {
 			setError(ad, ERR_90502, "usrLogin");
 			return ad;
@@ -1404,9 +1411,11 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		List<ValueLabel> authTypesList = PennantStaticListUtil.getAuthnticationTypes();
 
 		if (!authTypesList.stream().anyMatch(m -> m.getLabel().equalsIgnoreCase(user.getAuthType()))) {
-			setError(ad, "90337", "userType", "Internal/External");
+			setError(ad, ERR_90337, "userType", "Internal/External");
 			return ad;
 		}
+
+		validateAuthTypeandPassword(ad, user, isUpdate);
 
 		userNameValidations(ad, user);
 
@@ -1716,12 +1725,24 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		return returnStatus;
 	}
 
-	private AuditDetail validateAuthTypeandPassword(AuditDetail auditDetail, SecurityUser user, boolean isUpdate) {
+	private AuditDetail validateAuthTypeandPassword(AuditDetail ad, SecurityUser user, boolean isUpdate) {
 		logger.debug(Literal.ENTERING);
 
 		String authType = user.getAuthType();
 		String inType = Labels.getLabel("label_Auth_Type_Internal");
+		String extType = Labels.getLabel("label_Auth_Type_External");
 		boolean isPwd = false;
+		String UsrPwd = user.getUsrPwd();
+
+		if (StringUtils.isBlank(UsrPwd) && StringUtils.equals(authType, inType)) {
+			setError(ad, ERR_90502, "UsrPwd");
+			return ad;
+		}
+
+		if (StringUtils.equals(authType, extType) && StringUtils.isNotBlank(UsrPwd)) {
+			setError(ad, ERR_RU0039, "For userType:External UsrPwd");
+			return ad;
+		}
 
 		if (isUpdate && StringUtils.equals(authType, inType)) {
 			user.setAuthType(AuthenticationType.DAO.name());
@@ -1735,8 +1756,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 				valueParm[0] = "Password";
 				ErrorDetail errorDetail = new ErrorDetail();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
+				ad.setErrorDetail(errorDetail);
+				return ad;
 			}
 			isPwd = checkPasswordCriteria(user.getUsrLogin(), user.getUsrPwd());
 
@@ -1748,8 +1769,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 				valueParm[3] = "";
 				ErrorDetail errorDetail = new ErrorDetail();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30550", "", valueParm));
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
+				ad.setErrorDetail(errorDetail);
+				return ad;
 			}
 		}
 
