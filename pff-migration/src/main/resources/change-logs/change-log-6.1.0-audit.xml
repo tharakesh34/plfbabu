@@ -47,7 +47,7 @@
 		<dropNotNullConstraint tableName="AdtBUILDERGROUP" columnName="SEGMENTATION" columnDataType="varchar(50)" />
     </changeSet>
     
-    <changeSet id="PSD#206531_pre" author="Gopal.p" dbms="postgresql">
+    <changeSet id="PSD#206531.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plfaudit', 'finstsaprvlinquiry_view');
@@ -55,7 +55,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#206531" author="Gopal.p">
+	<changeSet id="PSD#206531.1" author="Gopal.p">
 		<createView viewName="FINSTSAPRVLINQUIRY_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT AF.FINREFERENCE AUDITREFERENCE, 
@@ -66,7 +66,7 @@
 					SR.ROLEDESC, 
 					AF.RECORDSTATUS, 
 					AF.RECORDTYPE, 
-                    SU.USRFNAME || COALESCE(' ' ${call.concatenate} SU.USRMNAME ${call.concatenate}' ', ' ') ${call.concatenate} SU.USRLNAME USRNAME,
+                    SU.USRFNAME ${call.concatenate} COALESCE(' ' ${call.concatenate} SU.USRMNAME ${call.concatenate}' ', ' ') ${call.concatenate} SU.USRLNAME USRNAME,
                     AH.AUDITMODULE,
                     AH.AUDITID,
                     AH.AUDITTRANTYPE
@@ -84,7 +84,7 @@
                 	SR.ROLEDESC, 
                 	AF.RECORDSTATUS, 
                 	AF.RECORDTYPE, 
-                    SU.USRFNAME || COALESCE(' ' ${call.concatenate} SU.USRMNAME ${call.concatenate}' ', ' ') ${call.concatenate} SU.USRLNAME USRNAME,
+                    SU.USRFNAME ${call.concatenate} COALESCE(' ' ${call.concatenate} SU.USRMNAME ${call.concatenate}' ', ' ') ${call.concatenate} SU.USRLNAME USRNAME,
                     AH.AUDITMODULE,
                     AH.AUDITID,
                     AH.AUDITTRANTYPE
@@ -97,7 +97,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="PSD#206531_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="PSD#206531.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plfaudit', 'finstsaprvlinquiry_view');

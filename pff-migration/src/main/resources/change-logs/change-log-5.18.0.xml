@@ -3269,12 +3269,6 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#99TK#96.13" author="Swetha">
-		<addColumn tableName="FinanceMain_PA">
-			<column name="SanctionedDate" type="datetime" />
-		</addColumn>
-	</changeSet>
-
 	<changeSet id="ST#99TK#96.14" author="Swetha">
 		<addColumn tableName="RejectFinanceMain">
 			<column name="SanctionedDate" type="datetime" />

@@ -1198,12 +1198,21 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="ST#84.46" author="Mounika.M" dbms="postgresql, mssql">
+	
+	<changeSet id="ST#84.46" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				INSERT INTO TEMPLATES (TEMPLATEID, TEMPLATEFOR, MODULE, TEMPLATECODE, TEMPLATEDESC, SMSTEMPLATE, SMSCONTENT, EMAILTEMPLATE, EMAILCONTENT, EMAILFORMAT, EMAILSUBJECT, EMAILSENDTO, TURNAROUNDTIME, REPEAT, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, EVENT) VALUES((Select COALESCE(MAX(TEMPLATEID), 0)+1 from TEMPLATES), 'SU', 'OTP', 'RESPWD_OTP', 'Reset Password', 1, 'Dear User your OTP', 1, 'Dear User Your OTP is.', 'H', 'LOGIN OTP', null, 0, 0, 1, 2, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 'OTP');
 				INSERT INTO TEMPLATES (TEMPLATEID, TEMPLATEFOR, MODULE, TEMPLATECODE, TEMPLATEDESC, SMSTEMPLATE, SMSCONTENT, EMAILTEMPLATE, EMAILCONTENT, EMAILFORMAT, EMAILSUBJECT, EMAILSENDTO, TURNAROUNDTIME, REPEAT, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, EVENT) VALUES((Select COALESCE(MAX(TEMPLATEID), 0)+1 from TEMPLATES), 'SU', 'OTP', 'TWO_FACTOR_OTP', 'Two Factor Authentication', 1, 'Dear User Your OTP', 1, 'Dear User Your OTP is.', 'H', 'LOGIN OTP', null, 0, 0, 1, 2, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 'OTP');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#84.46" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[
+				INSERT INTO TEMPLATES (TEMPLATEID, TEMPLATEFOR, MODULE, TEMPLATECODE, TEMPLATEDESC, SMSTEMPLATE, SMSCONTENT, EMAILTEMPLATE, EMAILCONTENT, EMAILFORMAT, EMAILSUBJECT, EMAILSENDTO, TURNAROUNDTIME, REPEAT, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, EVENT) VALUES((Select COALESCE(MAX(TEMPLATEID), 0)+1 from TEMPLATES), 'SU', 'OTP', 'RESPWD_OTP', 'Reset Password', 1, 'Dear User your OTP', 1, (Convert(varbinary(max),'Dear User Your OTP is.')), 'H', 'LOGIN OTP', null, 0, 0, 1, 2, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 'OTP');
+				INSERT INTO TEMPLATES (TEMPLATEID, TEMPLATEFOR, MODULE, TEMPLATECODE, TEMPLATEDESC, SMSTEMPLATE, SMSCONTENT, EMAILTEMPLATE, EMAILCONTENT, EMAILFORMAT, EMAILSUBJECT, EMAILSENDTO, TURNAROUNDTIME, REPEAT, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, EVENT) VALUES((Select COALESCE(MAX(TEMPLATEID), 0)+1 from TEMPLATES), 'SU', 'OTP', 'TWO_FACTOR_OTP', 'Two Factor Authentication', 1,'Dear User Your OTP', 1, (Convert(varbinary(max),'Dear User Your OTP is.')), 'H', 'LOGIN OTP', null, 0, 0, 1, 2, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 'OTP');
 			]]>
 		</sql>
 	</changeSet>
@@ -1924,26 +1933,6 @@
 			referencedColumnNames="employerid" />
 	</changeSet>
 
-	<changeSet id="ST#76.8" author="saikiran.n">
-		<sql>
-			<![CDATA[
-				UPDATE MANDATES_TEMP SET SECURITYMANDATE = 0;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#76.9" author="saikiran.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="SecurityMandate" tableName="Mandates_Temp" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="ST#76.10" author="saikiran.n" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE Mandates_Temp ADD CONSTRAINT DF_MANDATES_T_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="ST#76.11" author="saikiran.n">
 		<addNotNullConstraint tableName="MANDATES_TEMP" columnName="SecurityMandate"
 			columnDataType="boolean" />
@@ -2009,26 +1998,6 @@
 		<addForeignKeyConstraint constraintName="fk_mandates_employeeid"
 			referencedTableName="EmployerDetail" baseColumnNames="EmployeeID" baseTableName="Mandates"
 			referencedColumnNames="employerid" />
-	</changeSet>
-
-	<changeSet id="ST#76.19" author="saikiran.n">
-		<sql>
-			<![CDATA[
-				UPDATE MANDATES SET SECURITYMANDATE = 0;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#76.20" author="saikiran.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="SecurityMandate" tableName="Mandates" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="ST#76.20" author="saikiran.n" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE Mandates ADD CONSTRAINT DF_MANDATES_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
-			]]>
-		</sql>
 	</changeSet>
 
 	<changeSet id="ST#76.21" author="saikiran.n">
@@ -3207,7 +3176,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#94.18" author="saikiran.n">
+	<changeSet id="ST#94.18" author="saikiran.n" dbms="oracle, postgresql">
 		<createView viewName="BANK_INSTRUMENT_MAPPING" replaceIfExists="true">
 			<![CDATA[
 				SELECT BANKCODE
@@ -3225,6 +3194,42 @@
 			]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="ST#94.18" author="saikiran.n" dbms="mssql">
+		<createView viewName="BANK_INSTRUMENT_MAPPING" replaceIfExists="true">
+			<![CDATA[
+				SELECT BANKCODE
+					, DD
+					, DDA
+					, NACH
+					, ECS
+					, CHEQUE
+					, EMANDATE
+				FROM (
+						SELECT BANKCODE, 
+							   convert(bit, min(convert(int, DD))) DD, 
+							   convert(bit, min(convert(int, DDA))) DDA, 
+							   convert(bit, min(convert(int, NACH))) NACH, 
+							   convert(bit, min(convert(int, ECS))) ECS, 
+							   convert(bit, min(convert(int, CHEQUE))) CHEQUE, 
+							   convert(bit, min(convert(int, EMANDATE))) EMANDATE 
+						FROM BANKBRANCHES WHERE (DD = 1 OR DDA = 1 OR NACH = 1 OR ECS = 1 OR CHEQUE = 1 OR EMANDATE = 1)
+						group by BANKCODE,DD,DDA,NACH,ECS,CHEQUE,EMANDATE
+						UNION ALL
+						SELECT BANKCODE, 
+								convert(bit, min(convert(int, DD))) DD, 
+								convert(bit, min(convert(int, DDA))) DDA, 
+								convert(bit, min(convert(int, NACH))) NACH, 
+								convert(bit, min(convert(int, ECS))) ECS, 
+								convert(bit, min(convert(int, CHEQUE))) CHEQUE, 
+								convert(bit, min(convert(int, EMANDATE))) EMANDATE
+						FROM BANKBRANCHES_TEMP WHERE (DD = 1 OR DDA = 1 OR NACH = 1 OR ECS = 1 OR CHEQUE = 1 OR EMANDATE = 1)
+						group by BANKCODE,DD,DDA,NACH,ECS,CHEQUE,EMANDATE
+						) T 
+				GROUP BY BANKCODE,DD,DDA,NACH,ECS,CHEQUE,EMANDATE
+			]]>
+		</createView>
+	</changeSet>
 
 	<changeSet id="ST#94.18_post" author="saikiran.n" dbms="postgresql">
 		<sql>
@@ -3234,7 +3239,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#94.19" author="saikiran.n">
+	<changeSet id="ST#94.19" author="saikiran.n" dbms="oracle,postgresql">
 		<sql>
 			<![CDATA[
 				UPDATE BMTBANKDETAIL SET DD =   	(SELECT BB.DD   	FROM BANK_INSTRUMENT_MAPPING BB WHERE BMTBANKDETAIL.BANKCODE = BB.BANKCODE AND BB.DD = 1);
@@ -3246,8 +3251,38 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="ST#94.20" author="saikiran.n">
+	
+	<changeSet id="ST#94.19" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				update BMTBANKDETAIL set DD = BIM.DD 
+				from BMTBANKDETAIL BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.DD = 1;
+				
+				update BMTBANKDETAIL set DDA = BIM.DDA 
+				from BMTBANKDETAIL BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.DDA = 1;
+				
+				update BMTBANKDETAIL set NACH = BIM.NACH 
+				from BMTBANKDETAIL BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.NACH = 1;
+				
+				update BMTBANKDETAIL set ECS = BIM.ECS 
+				from BMTBANKDETAIL BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.ECS = 1;
+				
+				update BMTBANKDETAIL set CHEQUE = BIM.CHEQUE 
+				from BMTBANKDETAIL BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.CHEQUE = 1;
+				
+				update BMTBANKDETAIL set EMANDATE = BIM.EMANDATE 
+				from BMTBANKDETAIL BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.EMANDATE = 1;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.20" author="saikiran.n" dbms="oracle,postgresql">
 		<sql>
 			<![CDATA[
 				UPDATE BMTBANKDETAIL_TEMP SET DD       = (SELECT BB.DD       FROM BANK_INSTRUMENT_MAPPING BB WHERE BMTBANKDETAIL_TEMP.BANKCODE = BB.BANKCODE AND BB.DD = 1);
@@ -3256,6 +3291,36 @@
 				UPDATE BMTBANKDETAIL_TEMP SET ECS      = (SELECT BB.ECS      FROM BANK_INSTRUMENT_MAPPING BB WHERE BMTBANKDETAIL_TEMP.BANKCODE = BB.BANKCODE AND BB.ECS = 1);
 				UPDATE BMTBANKDETAIL_TEMP SET CHEQUE   = (SELECT BB.CHEQUE   FROM BANK_INSTRUMENT_MAPPING BB WHERE BMTBANKDETAIL_TEMP.BANKCODE = BB.BANKCODE AND BB.CHEQUE = 1);
 				UPDATE BMTBANKDETAIL_TEMP SET EMANDATE = (SELECT BB.EMANDATE FROM BANK_INSTRUMENT_MAPPING BB WHERE BMTBANKDETAIL_TEMP.BANKCODE = BB.BANKCODE AND BB.EMANDATE = 1);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.20" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				update BMTBANKDETAIL_TEMP set DD = BIM.DD 
+				from BMTBANKDETAIL_TEMP BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.DD = 1;
+				
+				update BMTBANKDETAIL_TEMP set DDA = BIM.DDA 
+				from BMTBANKDETAIL_TEMP BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.DDA = 1;
+				
+				update BMTBANKDETAIL_TEMP set NACH = BIM.NACH 
+				from BMTBANKDETAIL_TEMP BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.NACH = 1;
+				
+				update BMTBANKDETAIL_TEMP set ECS = BIM.ECS 
+				from BMTBANKDETAIL_TEMP BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.ECS = 1;
+				
+				update BMTBANKDETAIL_TEMP set CHEQUE = BIM.CHEQUE 
+				from BMTBANKDETAIL_TEMP BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.CHEQUE = 1;
+				
+				update BMTBANKDETAIL_TEMP set EMANDATE = BIM.EMANDATE 
+				from BMTBANKDETAIL_TEMP BBD 
+				inner join BANK_INSTRUMENT_MAPPING BIM on BBD.BankCode=BIM.BANKCODE AND BIM.EMANDATE = 1;
 			]]>
 		</sql>
 	</changeSet>
@@ -4628,7 +4693,7 @@
 	<changeSet id="12" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE PRESENTMENTDETAILS ADD CONSTRAINT DF_PD_FATECORRECTION DEFAULT N FOR FATECORRECTION;
+				ALTER TABLE PRESENTMENTDETAILS ADD CONSTRAINT DF_PD_FATECORRECTION DEFAULT 'N' FOR FATECORRECTION;
 			]]>
 		</sql>
 	</changeSet>
@@ -4640,7 +4705,7 @@
 	<changeSet id="13" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE PRESENTMENT_FILEIMPORT ADD CONSTRAINT DF_PFI_FATECORRECTION DEFAULT N FOR FATECORRECTION;
+				ALTER TABLE PRESENTMENT_FILEIMPORT ADD CONSTRAINT DF_PFI_FATECORRECTION DEFAULT 'N' FOR FATECORRECTION;
 			]]>
 		</sql>
 	</changeSet>
@@ -4652,7 +4717,7 @@
 	<changeSet id="14" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE PRESENTMENT_RESP_DTLS ADD CONSTRAINT DF_PRD_FATECORRECTION DEFAULT N FOR FATECORRECTION;
+				ALTER TABLE PRESENTMENT_RESP_DTLS ADD CONSTRAINT DF_PRD_FATECORRECTION DEFAULT 'N' FOR FATECORRECTION;
 			]]>
 		</sql>
 	</changeSet>
@@ -5208,7 +5273,7 @@
 		<modifyDataType tableName="Mandates" columnName="EmployeeNo" newDataType="varchar(50)" />
 	</changeSet>
 
-	<changeSet id="ST#76.22.1_post" author="saikiran.n" dbms="postgresql">
+	<changeSet id="ST#76.40_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'mandates_temp');
@@ -5743,7 +5808,7 @@
 	<changeSet id="PSD#208744.3" author="saikrishna.b" dbms="mssql">
 		<sql splitStatements="false">
 		<![CDATA[
-			DECLARE @SQLCmd NVARCHAR(MAX);
+			DECLARE @SQLCmd VARCHAR(MAX);
 			DECLARE @MAXNO BIGINT;
 			SELECT
 			@MAXNO=COALESCE(max(T.FIELDCODEID),0)+1 from
@@ -5752,9 +5817,9 @@
 
 			SET @SQLCmd = '
                 ALTER SEQUENCE SEQRMTLOVFIELDDETAIL
-                RESTART WITH ' + CAST( @Seq AS VARCHAR(30));
+                RESTART WITH ' + CAST(@MAXNO AS VARCHAR(MAX));
                            
-                EXEC SP_EXECUTESQL  @SQLCmd;
+                EXEC (@SQLCmd);
 			]]>
 		</sql>
 	</changeSet>
@@ -5866,6 +5931,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#209101.03.1" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Presentment_Extraction_Stage DROP  CONSTRAINT DF_PRESENTMENT_EXTRACTION_STAGE_CHEQUEAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="PSD#209101.03_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
@@ -5883,6 +5956,14 @@
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'presentment_extraction_stage');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#209101.04" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRESENTMENT_EXTRACTION_STAGE ADD CONSTRAINT DF_PRESENTMENT_EXT_STG_CHEAMT DEFAULT 0 FOR CHEQUEAMOUNT;
 			]]>
 		</sql>
 	</changeSet>

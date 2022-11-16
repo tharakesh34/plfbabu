@@ -103,7 +103,7 @@
 	<changeSet id="2.3" author="saisandeep.b" dbms ="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE AdtRMTAccountTypes ADD CONSTRAINT DF_ADTRMTAT_ACTYPEISACTIVE DEFAULT 0 FOR actypeISActive;
+				ALTER TABLE AdtRMTAccountTypes ADD CONSTRAINT DF_ADTRMTAT_ACTYPEISACTIVE DEFAULT 1 FOR actypeISActive;
 			]]>
 		</sql>
 	</changeSet>
