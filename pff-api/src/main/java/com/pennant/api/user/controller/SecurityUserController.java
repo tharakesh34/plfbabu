@@ -1,5 +1,6 @@
 package com.pennant.api.user.controller;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.util.APIConstants;
 
@@ -47,6 +49,7 @@ public class SecurityUserController extends AbstractController {
 		user.setCreatedBy(ud.getUserId());
 		user.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 		user.setApprovedBy(ud.getUserId());
+		user.setPwdExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), -1));
 		user.setUsrPwd(((PasswordEncoder) SpringBeanUtil.getBean("passwordEncoder")).encode(user.getUsrPwd()));
 
 		AuditHeader ah = getAuditHeader(user, PennantConstants.TRAN_WF);
@@ -93,9 +96,12 @@ public class SecurityUserController extends AbstractController {
 		user.setNewRecord(false);
 		user.setVersion(prvUser.getVersion() + 1);
 		user.setStatus(PennantConstants.RECORD_TYPE_NEW);
-		user.setUsrPwd(((PasswordEncoder) SpringBeanUtil.getBean("passwordEncoder")).encode(user.getUsrPwd()));
+		user.setUsrPwd(prvUser.getUsrPwd());
 		user.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 		user.setApprovedBy(ud.getUserId());
+		if (user.getPwdExpDt() == null) {
+			user.setPwdExpDt(prvUser.getPwdExpDt());
+		}
 
 		BeanUtils.copyProperties(user, prvUser);
 
