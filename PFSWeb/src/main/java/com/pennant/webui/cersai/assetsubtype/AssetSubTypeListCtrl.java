@@ -151,10 +151,10 @@ public class AssetSubTypeListCtrl extends GFCBaseListCtrl<AssetSubType> {
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxAssetSubType.getSelectedItem();
-		final Long assetTypeId = (Long) selectedItem.getAttribute("assetTypeId");
+		final Long tmpAssetTypeId = (Long) selectedItem.getAttribute("assetTypeId");
 
 		final int id = (int) selectedItem.getAttribute("id");
-		AssetSubType assetsubtype = assetSubTypeService.getAssetSubType(assetTypeId, id);
+		AssetSubType assetsubtype = assetSubTypeService.getAssetSubType(tmpAssetTypeId, id);
 
 		if (assetsubtype == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

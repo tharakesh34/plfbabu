@@ -156,11 +156,11 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 
 		List<String> roleCodes = getWorkFlowRoles();
 
-		List<PinCode> pinCode = pinCodeService.getResult(getSearchFilters(), roleCodes);
+		List<PinCode> pinCodes = pinCodeService.getResult(getSearchFilters(), roleCodes);
 
 		listBoxPinCode.setItemRenderer(new PinCodeListModelItemRenderer());
 
-		pagedListWrapper.initList(pinCode, listBoxPinCode, pagingPinCodeList);
+		pagedListWrapper.initList(pinCodes, listBoxPinCode, pagingPinCodeList);
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
@@ -299,23 +299,23 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	private ISearch getSearchFilters() {
 		ISearch search = new Search();
 
-		String pinCode = this.pinCode.getValue();
-		if (StringUtils.isNotEmpty(pinCode)) {
-			search.getFilters().add(new Filter("pinCode", pinCode, this.sortOperator_PinCode.getSelectedIndex()));
+		String tmpPinCode = this.pinCode.getValue();
+		if (StringUtils.isNotEmpty(tmpPinCode)) {
+			search.getFilters().add(new Filter("pinCode", tmpPinCode, this.sortOperator_PinCode.getSelectedIndex()));
 		}
 
-		String areaName = this.areaName.getValue();
-		if (StringUtils.isNotEmpty(areaName)) {
-			search.getFilters().add(new Filter("areaName", areaName, this.sortOperator_AreaName.getSelectedIndex()));
+		String tmpAreaName = this.areaName.getValue();
+		if (StringUtils.isNotEmpty(tmpAreaName)) {
+			search.getFilters().add(new Filter("areaName", tmpAreaName, this.sortOperator_AreaName.getSelectedIndex()));
 		}
 
-		String city = this.city.getValue();
-		if (StringUtils.isNotEmpty(city)) {
-			search.getFilters().add(new Filter("PCCityname", city, this.sortOperator_City.getSelectedIndex()));
+		String tmpCity = this.city.getValue();
+		if (StringUtils.isNotEmpty(tmpCity)) {
+			search.getFilters().add(new Filter("PCCityname", tmpCity, this.sortOperator_City.getSelectedIndex()));
 		}
 
-		boolean active = this.active.isChecked();
-		search.getFilters().add(new Filter("Active", active, this.sortOperator_Active.getSelectedIndex()));
+		boolean isActive = this.active.isChecked();
+		search.getFilters().add(new Filter("Active", isActive, this.sortOperator_Active.getSelectedIndex()));
 
 		String status = this.recordStatus.getValue();
 		if (StringUtils.isNotEmpty(status)) {
