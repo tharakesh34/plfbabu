@@ -292,6 +292,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		FinanceDetail fd = (FinanceDetail) arguments.get("financeDetail");
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
+		this.finType = fm.getFinType();
+
 		if (fd.getMandate() != null) {
 			this.mandate = fd.getMandate();
 			if (!StringUtils.equals(fm.getFinReference(), mandate.getOrgReference())) {
@@ -314,6 +316,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandate.setEntityDesc(ft.getLovDescEntityDesc());
 			this.mandate.setOrgReference(fm.getFinReference());
 		}
+
+		addPartnerBankFilter();
 
 		this.mandate.setWorkflowId(0);
 

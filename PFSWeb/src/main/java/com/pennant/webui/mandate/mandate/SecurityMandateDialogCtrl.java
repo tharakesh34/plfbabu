@@ -289,6 +289,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void onCreateFromLoanOrgination() {
 		FinanceDetail fd = (FinanceDetail) arguments.get("financeDetail");
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		this.finType = fm.getFinType();
 
 		if (fd.getSecurityMandate() != null) {
 			this.mandate = fd.getSecurityMandate();
@@ -312,6 +313,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandate.setEntityDesc(ft.getLovDescEntityDesc());
 			this.mandate.setOrgReference(fm.getFinReference());
 		}
+
+		addPartnerBankFilter();
 
 		this.mandate.setWorkflowId(0);
 
@@ -359,7 +362,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 			this.finType = fm.getFinType();
 
-			addPartenetBankFilter();
+			addPartnerBankFilter();
 		}
 
 		fillComboBox(this.mandateType, mandate.getMandateType(), mandateTypeList, "");
@@ -2294,7 +2297,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void addPartenetBankFilter() {
+	private void addPartnerBankFilter() {
 		Filter[] filter = new Filter[4];
 		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		filter[1] = new Filter("Purpose", "R", Filter.OP_EQUAL);
@@ -2321,7 +2324,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (fm != null) {
 			this.finReference.setValue(fm.getFinReference());
 			this.finType = fm.getFinType();
-			addPartenetBankFilter();
+			addPartnerBankFilter();
 		}
 
 		logger.debug(Literal.LEAVING);
