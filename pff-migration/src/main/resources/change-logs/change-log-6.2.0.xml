@@ -3383,7 +3383,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#94.24" author="saikiran.n">
+	<changeSet id="ST#94.24.1" author="saikiran.n">
 		<sql>
 			<![CDATA[
 				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'BankDetailDialog_ECS');
@@ -5964,6 +5964,34 @@
 		<sql>
 			<![CDATA[	
 				ALTER TABLE PRESENTMENT_EXTRACTION_STAGE ADD CONSTRAINT DF_PRESENTMENT_EXT_STG_CHEAMT DEFAULT 0 FOR CHEQUEAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#210561_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'querydetail_temp');
+					select deps_save_and_drop_dependencies ('plf', 'querydetail');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#210561" author="saikiran.n">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE QUERYDETAIL_TEMP MODIFY NOTIFYTO VARCHAR(2000);
+				ALTER TABLE QUERYDETAIL_TEMP MODIFY RESPONSNOTES VARCHAR(2000);
+				ALTER TABLE QUERYDETAIL MODIFY NOTIFYTO VARCHAR(2000);
+				ALTER TABLE QUERYDETAIL MODIFY RESPONSNOTES VARCHAR(2000);
+			]]>
+		</sql>
+	</changeSet>
+	
+		<changeSet id="PSD#210561_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'querydetail');
 			]]>
 		</sql>
 	</changeSet>
