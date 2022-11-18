@@ -7628,7 +7628,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private String validatePAN(String panNumber) {
 		String primaryIdName = null;
-		if (!(isRetailCustomer && MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN))) {
+		if (!(isRetailCustomer && MasterDefUtil.isValidationReq(DocType.PAN))) {
 			return primaryIdName;
 		}
 
@@ -7636,7 +7636,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		header.setDocNumber(panNumber);
 		header.setCustCif(this.custCIF.getValue());
 
-		if (!DocVerificationUtil.isVerified(panNumber)) {
+		if (!DocVerificationUtil.isVerified(panNumber, DocType.PAN)) {
 			ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 			if (err != null) {
