@@ -7188,7 +7188,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug(Literal.ENTERING);
 		if (maxvalue.getActualValue().compareTo(BigDecimal.ZERO) != 0) {
 			if (maxvalue.getActualValue().compareTo(minvalue.getActualValue()) != 1) {
-				throw new WrongValueException(maxvalue, Labels.getLabel("FIELD_IS_GREATER",
+				throw new WrongValueException(maxvalue.getCcyTextBox(), Labels.getLabel("FIELD_IS_GREATER",
 						new String[] { Labels.getLabel(maxlabel), Labels.getLabel(minlabel) }));
 			}
 		}
