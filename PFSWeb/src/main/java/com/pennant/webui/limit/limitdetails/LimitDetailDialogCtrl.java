@@ -59,7 +59,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -394,26 +393,30 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 
 	public void onFulfill$limitStructureCode(Event event) {
 		logger.debug(Literal.ENTERING);
+		
 		Clients.clearWrongValue(this.limitStructureCode);
 
-		if (getLimitHeader().getLimitStructureCode() == null || getLimitHeader().getLimitStructureCode().isEmpty()) {
-			return;
+		int conf = MessageUtil.YES;
+
+		final String lsCode = StringUtils.trimToNull(getLimitHeader().getLimitStructureCode());
+
+		String msg = null;
+
+		if (lsCode != null) {
+			msg = Labels.getLabel("message.Question.Are_you_sure_to_Modify_this_record") + "\n\n --> " + lsCode;
+			conf = MessageUtil.confirm(msg);
 		}
 
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_Modify_this_record") + "\n\n --> "
-				+ getLimitHeader().getLimitStructureCode();
-		MessageUtil.confirm(msg, evnt -> {
-			if (Messagebox.ON_YES.equals(evnt.getName())) {
-				processLimitStructure();
-			} else {
-				this.limitStructureCode.setValue(getLimitHeader().getLimitStructureCode());
-			}
-		});
+		if (conf == MessageUtil.YES) {
+			processLimitStructure();
+		} else {
+			this.limitStructureCode.setValue(lsCode);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processLimitStructure() throws DatatypeConfigurationException {
+	private void processLimitStructure() {
 		Object dataObject = limitStructureCode.getObject();
 		if (dataObject instanceof String) {
 			this.limitStructureCode.setValue(dataObject.toString());
@@ -963,7 +966,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		}
 	}
 
-	private void doFillStructureDetails(String limitStructureCode) throws DatatypeConfigurationException {
+	private void doFillStructureDetails(String limitStructureCode) {
 		List<LimitStructureDetail> structureDetails = PennantAppUtil.getLimitstructuredetails(limitStructureCode);
 		List<LimitDetails> limitDetailsList = new ArrayList<LimitDetails>();
 

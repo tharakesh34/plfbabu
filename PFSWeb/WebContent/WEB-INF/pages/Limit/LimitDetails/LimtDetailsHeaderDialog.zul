@@ -30,7 +30,7 @@
 					<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; margin:10px;">
 						<columns>
 							<column width="150px" />
-							<column width="200px" />
+							<column width="350px" />
 						</columns>
 						<rows>
 							<row>
