@@ -914,7 +914,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		case SI:
 			errordetail = validateAccountDetail(mandate);
 
-			if (errordetail != null && !InstrumentType.isSI(mandateType)) {
+			if (errordetail != null) {
+				return errordetail;
+			}
+
+			if (!InstrumentType.isSI(mandateType)) {
 				errordetail = otherDetailValidation(mandate);
 			}
 
