@@ -443,6 +443,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		this.btnNew.setVisible(false);
 		this.btnEdit.setVisible(false);
+		this.btnDelete.setVisible(false);
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ChequeDetailDialog_btnSave"));
 		this.btnGen.setDisabled(!getUserWorkspace().isAllowed("button_ChequeDetailDialog_btnGenerate"));
 		boolean alwBtnFetchAcc = getUserWorkspace().isAllowed("button_ChequeDetailDialog_btnFetchAccountDetails");
