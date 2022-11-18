@@ -9,9 +9,11 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.pff.document.model.DocVerificationAddress;
 import com.pennant.pff.document.model.DocVerificationDetail;
 import com.pennant.pff.document.model.DocVerificationHeader;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -116,12 +118,28 @@ public class DocVerificationDAOImpl extends BasicDao<DocVerificationHeader> impl
 	}
 
 	@Override
-	public boolean isVerified(String docNumber) {
-		String sql = "Select Count(DocNumber) From DOC_VERIFICATION_HEADER Where DocNumber = ? and Verified = ?";
+	public boolean isVerified(String docNumber, DocType docType) {
+		String type = "";
+		switch (docType) {
+		case PAN:
+			type = "PAN";
+			break;
+		case AADHAAR:
+			type = "AADHAAR";
+			break;
+		case CIBIL:
+			type = "CIBIL";
+		default:
+			break;
+		}
 
-		logger.debug(Literal.SQL.concat(sql));
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select Count(DocNumber) From DOC_VERIFICATION_HEADER");
+		sql.append(" Where DocNumber = ? and DocType= ? and Verified = ?");
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, docNumber, 1) > 0;
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, docNumber, type, 1) > 0;
 	}
 
 	@Override
@@ -134,6 +152,18 @@ public class DocVerificationDAOImpl extends BasicDao<DocVerificationHeader> impl
 		sql.append(" Inner Join DOC_VERIFICATION_HEADER DH");
 		sql.append(" On DD.Headerid = DH.Id");
 		sql.append(" Where DH.DocNumber = ? and Verified = ?");
+
+		switch (App.DATABASE) {
+		case ORACLE:
+			sql.append(" And rownum = 1");
+			break;
+		case POSTGRES:
+			sql.append(" Limit 1");
+			break;
+		default:
+			sql.append(" FETCH FIRST 1 ROWS ONLY");
+			break;
+		}
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -159,13 +189,25 @@ public class DocVerificationDAOImpl extends BasicDao<DocVerificationHeader> impl
 	}
 
 	@Override
-	public DocVerificationHeader getHeader(String docNumber) {
+	public DocVerificationHeader getHeader(String docNumber, String docType) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select");
 		sql.append(" Id, CustCif, DocType, DocNumber, Verified, VerifiedOn ");
 		sql.append(",DocReference, ClientId, DocRequest, DocResponse, Status ");
 		sql.append(" From DOC_VERIFICATION_HEADER ");
-		sql.append(" Where DocNumber = ? and Verified = ?");
+		sql.append(" Where DocNumber = ? and DocType = ? and Verified = ?");
+
+		switch (App.DATABASE) {
+		case ORACLE:
+			sql.append(" And rownum=1");
+			break;
+		case POSTGRES:
+			sql.append(" Limit 1");
+			break;
+		default:
+			sql.append(" FETCH FIRST 1 ROWS ONLY");
+			break;
+		}
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -184,7 +226,7 @@ public class DocVerificationDAOImpl extends BasicDao<DocVerificationHeader> impl
 				dh.setDocResponse(rs.getString("DocResponse"));
 				dh.setStatus(rs.getString("Status"));
 				return dh;
-			}, docNumber, 1);
+			}, docNumber, docType, 1);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

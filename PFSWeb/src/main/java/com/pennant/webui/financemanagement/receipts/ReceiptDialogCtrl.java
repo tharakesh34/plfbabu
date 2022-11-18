@@ -109,6 +109,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.MasterDefUtil;
+import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -3810,7 +3811,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
 
-				if (DocVerificationUtil.isVerified(panNumber)) {
+				if (DocVerificationUtil.isVerified(panNumber, DocType.PAN)) {
 					MessageUtil.confirm(msg, evnt -> {
 						if (Messagebox.ON_YES.equals(evnt.getName())) {
 							ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);

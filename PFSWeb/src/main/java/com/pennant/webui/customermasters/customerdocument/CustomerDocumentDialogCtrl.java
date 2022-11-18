@@ -2139,7 +2139,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "AADHHAR Number" });
 		try {
 
-			if (getDocumentValidation().isVerified(aadharNumber)) {
+			if (getDocumentValidation().isVerified(aadharNumber, DocType.AADHAAR)) {
 				MessageUtil.confirm(msg, evnt -> {
 					if (Messagebox.ON_YES.equals(evnt.getName())) {
 						getDocumentValidation().validate(DocType.AADHAAR, dh);
@@ -2187,7 +2187,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		header.setDocNumber(panNumber);
 		header.setCustCif(this.custCIF.getValue());
 
-		boolean isExistng = DocVerificationUtil.isVerified(panNumber);
+		boolean isExistng = DocVerificationUtil.isVerified(panNumber, DocType.PAN);
 
 		String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
 		if (isExistng) {

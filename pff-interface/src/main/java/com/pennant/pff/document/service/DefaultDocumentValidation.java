@@ -27,8 +27,8 @@ public class DefaultDocumentValidation implements DocumentValidation {
 	}
 
 	@Override
-	public boolean isVerified(String docNumebr) {
-		return docVerificationDAO.isVerified(docNumebr);
+	public boolean isVerified(String docNumebr, DocType docType) {
+		return docVerificationDAO.isVerified(docNumebr, docType);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class DefaultDocumentValidation implements DocumentValidation {
 		docDetails.setPanNumber(header.getDocNumber());
 		header.setDocVerificationDetail(docDetails);
 
-		DocVerificationHeader oldDocHead = this.docVerificationDAO.getHeader(header.getDocNumber());
+		DocVerificationHeader oldDocHead = this.docVerificationDAO.getHeader(header.getDocNumber(), "PAN");
 
 		if (oldDocHead == null) {
 			long docHeaderId = this.docVerificationDAO.saveHeader(header);

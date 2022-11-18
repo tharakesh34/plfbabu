@@ -24,11 +24,11 @@ public class DocVerificationUtil {
 		super();
 	}
 
-	public static boolean isVerified(String docNumber) {
+	public static boolean isVerified(String docNumber, DocType docType) {
 		if (getDocumentValidation() == null) {
 			return false;
 		}
-		return getDocumentValidation().isVerified(docNumber);
+		return getDocumentValidation().isVerified(docNumber, docType);
 	}
 
 	public static ErrorDetail doValidatePAN(DocVerificationHeader header, boolean reVerify) {
@@ -49,10 +49,10 @@ public class DocVerificationUtil {
 			return error;
 		}
 
-		if (!reVerify && getDocumentValidation().isVerified(panNumber)) {
+		if (!reVerify && getDocumentValidation().isVerified(panNumber, DocType.PAN)) {
 			logger.info("PAN Number already verified");
 			error = new ErrorDetail();
-			error.setMessage("There is no interface to validate PAN Number.");
+			error.setMessage("PAN Number already verified");
 			return error;
 		}
 

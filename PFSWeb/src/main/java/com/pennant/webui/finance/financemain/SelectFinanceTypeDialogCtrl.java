@@ -57,6 +57,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
+import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -848,7 +849,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		header.setDocNumber(panNumber);
 		header.setCustCif(this.custCIF.getValue());
 
-		if (!DocVerificationUtil.isVerified(panNumber)) {
+		if (!DocVerificationUtil.isVerified(panNumber, DocType.PAN)) {
 			ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 			if (err != null) {

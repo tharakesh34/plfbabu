@@ -5,7 +5,7 @@ import com.pennant.pff.document.model.DocVerificationHeader;
 
 public interface DocumentValidation {
 
-	boolean isVerified(String docNumber);
+	boolean isVerified(String docNumber, DocType docType);
 
 	DocVerificationHeader validate(DocType docType, DocVerificationHeader header);
 

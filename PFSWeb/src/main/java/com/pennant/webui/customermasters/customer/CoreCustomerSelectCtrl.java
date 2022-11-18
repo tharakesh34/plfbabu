@@ -59,6 +59,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.MasterDefUtil;
+import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
@@ -492,7 +493,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private String validatePAN(String primaryIdNumber) {
 		String primaryIdName = null;
-		if (!(isRetailCustomer && MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)
+		if (!(isRetailCustomer && MasterDefUtil.isValidationReq(DocType.PAN)
 				&& StringUtils.isNotEmpty(primaryIdNumber))) {
 			return primaryIdName;
 		}
@@ -501,7 +502,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		header.setDocNumber(primaryIdNumber);
 		header.setCustCif(this.custCIF.getValue());
 
-		if (!DocVerificationUtil.isVerified(primaryIdNumber)) {
+		if (!DocVerificationUtil.isVerified(primaryIdNumber, DocType.PAN)) {
 			ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 			if (err != null) {
