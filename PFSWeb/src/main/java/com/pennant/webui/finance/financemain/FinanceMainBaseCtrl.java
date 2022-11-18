@@ -8730,7 +8730,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						} else {
 							try (ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream()) {
 								try (ZipOutputStream out = new ZipOutputStream(arrayOutputStream)) {
+
+									Set<String> docNames = new HashSet<String>();
 									for (DocumentDetails ldocDetails : downLoaddocLst) {
+										if (docNames.contains(ldocDetails.getDocName())) {
+											continue;
+										} else {
+											docNames.add(ldocDetails.getDocName());
+										}
 										byte[] byteArray = ldocDetails.getDocImage();
 
 										out.putNextEntry(new ZipEntry(ldocDetails.getDocName()));
