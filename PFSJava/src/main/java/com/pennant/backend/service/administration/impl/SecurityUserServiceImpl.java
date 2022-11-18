@@ -1734,29 +1734,22 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		boolean isPwd = false;
 		String UsrPwd = user.getUsrPwd();
 
-		if (StringUtils.isBlank(UsrPwd) && StringUtils.equals(authType, inType)) {
-			setError(ad, ERR_90502, "UsrPwd");
-			return ad;
-		}
-
 		if (StringUtils.equals(authType, extType) && StringUtils.isNotBlank(UsrPwd)) {
 			setError(ad, ERR_RU0039, "For userType:External UsrPwd");
 			return ad;
 		}
 
-		if (isUpdate && StringUtils.equals(authType, inType)) {
+		if (isUpdate && StringUtils.equals(authType, inType) && StringUtils.isNotBlank(UsrPwd)) {
 			user.setAuthType(AuthenticationType.DAO.name());
-			return null;
+			setError(ad, ERR_RU0039, "For updateSecurityUser UsrPwd");
+			return ad;
+
 		}
 
-		if (StringUtils.equals(authType, inType)) {
+		if (!isUpdate && StringUtils.equals(authType, inType)) {
 			user.setAuthType(AuthenticationType.DAO.name());
 			if (StringUtils.isBlank(user.getUsrPwd())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Password";
-				ErrorDetail errorDetail = new ErrorDetail();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
-				ad.setErrorDetail(errorDetail);
+				setError(ad, ERR_90502, "UsrPwd");
 				return ad;
 			}
 			isPwd = checkPasswordCriteria(user.getUsrLogin(), user.getUsrPwd());
