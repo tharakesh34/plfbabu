@@ -9166,12 +9166,7 @@
 		</property>
 	</bean>
 
-	<bean name="queryDetailServiceTarget" class="com.pennant.backend.service.loanquery.impl.QueryDetailServiceImpl">
-		<property name="queryDetailDAO" ref="queryDetailDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
-		<property name="dMSService" ref="dMSService" />
-	</bean>
+	<bean name="queryDetailServiceTarget" class="com.pennant.backend.service.loanquery.impl.QueryDetailServiceImpl"/>
 
 	<!-- Master Definition -->
 	<bean id="masterDefDAO" class="com.pennant.backend.dao.masters.impl.MasterDefDAOImpl" parent="basicDao" />
