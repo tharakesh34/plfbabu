@@ -5978,17 +5978,13 @@
 	</changeSet>
 	
 	<changeSet id="PSD#210561" author="saikiran.n">
-		<sql>
-			<![CDATA[	
-				ALTER TABLE QUERYDETAIL_TEMP MODIFY NOTIFYTO VARCHAR(2000);
-				ALTER TABLE QUERYDETAIL_TEMP MODIFY RESPONSNOTES VARCHAR(2000);
-				ALTER TABLE QUERYDETAIL MODIFY NOTIFYTO VARCHAR(2000);
-				ALTER TABLE QUERYDETAIL MODIFY RESPONSNOTES VARCHAR(2000);
-			]]>
-		</sql>
+		<modifyDataType tableName="QUERYDETAIL_TEMP" columnName="NOTIFYTO" newDataType="VARCHAR(2000)" />
+		<modifyDataType tableName="QUERYDETAIL_TEMP" columnName="RESPONSNOTES" newDataType="VARCHAR(2000)" />
+		<modifyDataType tableName="QUERYDETAIL" columnName="NOTIFYTO" newDataType="VARCHAR(2000)" />
+		<modifyDataType tableName="QUERYDETAIL" columnName="RESPONSNOTES" newDataType="VARCHAR(2000)" />
 	</changeSet>
 	
-		<changeSet id="PSD#210561_post" author="saikiran.n" dbms="postgresql">
+	<changeSet id="PSD#210561_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'querydetail');
