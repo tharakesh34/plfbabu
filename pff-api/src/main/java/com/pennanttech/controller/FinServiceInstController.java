@@ -958,8 +958,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			// financeDetail.getFinScheduleData().getFinanceMain().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			List<FinAdvancePayments> advancePayments = fd.getAdvancePaymentsList();
 			if (advancePayments != null) {
+				int paymentSeq = finAdvancePaymentsService.getCountByFinReference(finID) + 1;
 				for (FinAdvancePayments advPayment : advancePayments) {
-					int paymentSeq = finAdvancePaymentsService.getCountByFinReference(finID);
 					advPayment.setFinID(finID);
 					advPayment.setFinReference(fm.getFinReference());
 					advPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -968,7 +968,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					advPayment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					advPayment.setUserDetails(fm.getUserDetails());
-					advPayment.setPaymentSeq(paymentSeq + 1);
+					advPayment.setPaymentSeq(paymentSeq++);
 					advPayment.setDisbCCy(fm.getFinCcy());
 
 					String paymentType = advPayment.getPaymentType();
