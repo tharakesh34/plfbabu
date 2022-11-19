@@ -407,7 +407,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		detailHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		detailHeader.setEmandateSource(emandateSource.getValidatedValue());
 
-		int extractPresentment = extractionService.extractPresentment(detailHeader);
+		int extractPresentment = extractionService.preparePresentment(detailHeader);
 
 		logger.debug(Literal.LEAVING);
 

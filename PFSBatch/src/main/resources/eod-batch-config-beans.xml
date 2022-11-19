@@ -866,6 +866,10 @@
 		parent="sequenceDao" />
 
 	<bean name="presentmentEngine" class="com.pennant.pff.presentment.service.PresentmentEngine" />
+	
+	<bean name="extractionBatchJobQueueDAO" class="com.pennant.pff.presentment.dao.impl.ExtractionJobQueueDAOImpl" parent="sequenceDao" />
+	
+	<bean name="approvalBatchJobQueueDAO" class="com.pennant.pff.presentment.dao.impl.ApprovalJobQueueDAOImpl" parent="sequenceDao" />
 
 	<bean name="presentmentDetailService"
 		class="com.pennant.backend.service.financemanagement.impl.PresentmentDetailServiceImpl">

@@ -429,4 +429,5 @@ public class SMTParameterConstants {
 	public static final String APP_DFT_END_DATE = "APP_DFT_END_DATE";
 	public static final String MANDATE_STARTDATE = "MANDATE_STARTDATE";
 	public static final String BANK_CODE = "BANK_CODE";
+	public static final String PRESENTMENT_EXTRACTION_THREAD_COUNT = "PRESENTMENT_EXTRACTION_THREAD_COUNT";
 }

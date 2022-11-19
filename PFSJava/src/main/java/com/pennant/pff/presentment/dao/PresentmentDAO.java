@@ -63,8 +63,6 @@ public interface PresentmentDAO {
 
 	void clearQueue(long batchId);
 
-	long saveList(List<PresentmentDetail> presentments);
-
 	long getNextValue();
 
 	long getSeqNumber(String tableName);
@@ -88,5 +86,17 @@ public interface PresentmentDAO {
 	void updatePartnerBankID(long id, long PartnerBankId);
 
 	int updateHeader(long presentmentId);
+
+	PresentmentDetail getPresentmentDetail(long extrationID);
+
+	long save(PresentmentDetail pd);
+
+	void updatePresentmentIdAsZero(long presentmentId);
+
+	PresentmentDetail getPresentmenToPost(long PresentmentId);
+
+	List<PresentmentDetail> getSendToPresentmentDetails(long presentmentId);
+
+	void updateExcludeReason(long presentmentId, int manualExclude);
 
 }

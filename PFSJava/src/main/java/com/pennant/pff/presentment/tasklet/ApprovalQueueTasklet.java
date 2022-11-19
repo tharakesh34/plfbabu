@@ -1,5 +1,7 @@
 package com.pennant.pff.presentment.tasklet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -8,35 +10,34 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
-import com.pennant.pff.presentment.dao.PresentmentDAO;
 
-public class ClearQueueTasklet implements Tasklet {
+public class ApprovalQueueTasklet implements Tasklet {
+	private Logger logger = LogManager.getLogger(ApprovalQueueTasklet.class);
 
-	private PresentmentDAO presentmentDAO;
-	private BatchJobQueueDAO ebjqDAO;
-	private BatchJobQueueDAO abjqDAO;
+	private BatchJobQueueDAO approvalBatchJobQueueDAO;
 
-	public ClearQueueTasklet(PresentmentDAO presentmentDAO, BatchJobQueueDAO ebjqDAO, BatchJobQueueDAO abjqDAO) {
+	public ApprovalQueueTasklet(BatchJobQueueDAO approvalBatchJobQueueDAO) {
 		super();
-		this.presentmentDAO = presentmentDAO;
-		this.ebjqDAO = ebjqDAO;
-		this.abjqDAO = abjqDAO;
+		this.approvalBatchJobQueueDAO = approvalBatchJobQueueDAO;
 	}
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+
 		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
 
 		Long batchId = jobParameters.getLong("BATCH_ID");
 
 		BatchJobQueue jobQueue = new BatchJobQueue();
+
 		jobQueue.setBatchId(batchId);
 
-		this.presentmentDAO.clearQueue(batchId);
-		this.ebjqDAO.deleteQueue(jobQueue);
-		this.abjqDAO.deleteQueue(jobQueue);
+		approvalBatchJobQueueDAO.deleteQueue(jobQueue);
+
+		int totalRecords = approvalBatchJobQueueDAO.prepareQueue(jobQueue);
+
+		logger.info("Queueing preparation for presentment Approval job completed with total records  {}", totalRecords);
 
 		return RepeatStatus.FINISHED;
 	}
-
 }

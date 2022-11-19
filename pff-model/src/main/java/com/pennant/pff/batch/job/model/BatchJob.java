@@ -7,12 +7,13 @@ import java.util.List;
 
 import org.springframework.batch.core.JobInstance;
 
-import com.pennant.backend.model.crm.ReturnStatus;
+import com.pennapps.core.ws.model.ReturnStatus;
 
 public class BatchJob implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String jobName;
+	private Long jobInstanceId;
 	private Long jobExecutionId;
 	private Date nextBusinessDate;
 	private Long userId;
@@ -35,6 +36,14 @@ public class BatchJob implements Serializable {
 
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
+	}
+
+	public Long getJobInstanceId() {
+		return jobInstanceId;
+	}
+
+	public void setJobInstanceId(Long jobInstanceId) {
+		this.jobInstanceId = jobInstanceId;
 	}
 
 	public Long getJobExecutionId() {
