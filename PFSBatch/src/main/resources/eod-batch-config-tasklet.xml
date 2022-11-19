@@ -220,5 +220,5 @@
 		<property name="cashFlowService" ref="cashFlowService" />
 	</bean>
 	
-	<bean id="presentmentExtractionTasklet" class="com.pennant.pff.presentment.tasklet.PresentmentExtractionTasklet"/>
+	<bean id="presentmentPreparationTasklet" class="com.pennant.pff.presentment.tasklet.PreparationTasklet"/>
 </beans>

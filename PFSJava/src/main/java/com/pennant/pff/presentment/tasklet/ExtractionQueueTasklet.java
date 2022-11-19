@@ -1,5 +1,7 @@
 package com.pennant.pff.presentment.tasklet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -8,35 +10,32 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
-import com.pennant.pff.presentment.dao.PresentmentDAO;
 
-public class ClearQueueTasklet implements Tasklet {
+public class ExtractionQueueTasklet implements Tasklet {
+	private Logger logger = LogManager.getLogger(ExtractionQueueTasklet.class);
 
-	private PresentmentDAO presentmentDAO;
-	private BatchJobQueueDAO ebjqDAO;
-	private BatchJobQueueDAO abjqDAO;
+	private static final String LITERAL_1 = "Queueing preparation for presentment extraction completed with total records  {}";
 
-	public ClearQueueTasklet(PresentmentDAO presentmentDAO, BatchJobQueueDAO ebjqDAO, BatchJobQueueDAO abjqDAO) {
+	private BatchJobQueueDAO bjqDAO;
+
+	public ExtractionQueueTasklet(BatchJobQueueDAO bjqDAO) {
 		super();
-		this.presentmentDAO = presentmentDAO;
-		this.ebjqDAO = ebjqDAO;
-		this.abjqDAO = abjqDAO;
+		this.bjqDAO = bjqDAO;
 	}
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
 
-		Long batchId = jobParameters.getLong("BATCH_ID");
-
 		BatchJobQueue jobQueue = new BatchJobQueue();
-		jobQueue.setBatchId(batchId);
+		jobQueue.setBatchId(jobParameters.getLong("BATCH_ID"));
 
-		this.presentmentDAO.clearQueue(batchId);
-		this.ebjqDAO.deleteQueue(jobQueue);
-		this.abjqDAO.deleteQueue(jobQueue);
+		bjqDAO.deleteQueue(jobQueue);
+
+		int totalRecords = bjqDAO.prepareQueue(jobQueue);
+
+		logger.info(LITERAL_1, totalRecords);
 
 		return RepeatStatus.FINISHED;
 	}
-
 }

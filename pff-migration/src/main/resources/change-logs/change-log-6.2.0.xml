@@ -5992,4 +5992,166 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#99.23" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_EXTRACTION_THREAD_COUNT';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC,SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PRESENTMENT_EXTRACTION_THREAD_COUNT', 'Presentment Extraction Thread Count', 'int', 0, '10', 3, 0, NULL, NULL, 'Presentment Extraction Thread Count', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#99.23.1" author="saikrishna.b">
+		<createSequence sequenceName="SEQ_PRESENTMENT_EXTX_QUEUE" minValue="1"
+			maxValue="999999999999999999999999999" incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="ST#99.23.2" author="saikrishna.b">
+		<createTable tableName="Presentment_Extx_Queue">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" />
+			<column name="ResetReferenceId" type="bigint" />
+			<column name="ThreadId" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int" />
+			<column name="ErrorLog" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#99.23.3" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRESENTMENT_EXTX_QUEUE ADD CONSTRAINT DF_PEQ_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.23.3" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Progress" tableName="Presentment_Extx_Queue" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#99.23.4" author="saikrishna.b">
+		<addPrimaryKey tableName="Presentment_Extx_Queue" columnNames="ID, BatchId" constraintName="pk_presentment_extx_queue" />
+	</changeSet>
+	
+	<changeSet id="ST#99.23.5" author="saikrishna.b">
+		<createIndex tableName="Presentment_Extx_Queue" indexName="idx_presentment_extx_queue_rid">
+			<column name="ReferenceId" type="bigint" />
+		</createIndex>
+	</changeSet>
+		
+	<changeSet id="ST#99.23.6" author="saikrishna.b">
+		<createTable tableName="Presentment_Extx_Queue_log">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" />
+			<column name="ResetReferenceId" type="bigint" />
+			<column name="ThreadId" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int" />
+			<column name="ErrorLog" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#99.23.7" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRESENTMENT_EXTX_QUEUE_LOG ADD CONSTRAINT DF_PEQL_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.23.7" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Progress" tableName="Presentment_Extx_Queue_log" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#99.23.8" author="saikrishna.b">
+		<addPrimaryKey tableName="Presentment_Extx_Queue_log" columnNames="ID,BatchId" constraintName="pk_presentment_extx_queue_l" />
+	</changeSet>
+	
+	<changeSet id="ST#99.23.9" author="saikrishna.b">
+		<createTable tableName="Presentment_Approve_Queue">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" />
+			<column name="ResetReferenceId" type="bigint" />
+			<column name="ThreadId" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int" />
+			<column name="ErrorLog" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#99.23.10" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRESENTMENT_APPROVE_QUEUE ADD CONSTRAINT DF_PAQ_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.23.10" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Progress" tableName="Presentment_Approve_Queue" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#99.23.11" author="saikrishna.b">
+		<addPrimaryKey tableName="Presentment_Approve_Queue" columnNames="ID,BatchId" constraintName="pk_presentment_approve_queue" />
+	</changeSet>
+	
+	<changeSet id="ST#99.23.12" author="saikrishna.b">
+		<createIndex tableName="Presentment_Approve_Queue" indexName="idx_presentmentapprovequeuerid">
+			<column name="ReferenceId" type="bigint" />
+		</createIndex>
+	</changeSet>
+		
+	<changeSet id="ST#99.23.13" author="saikrishna.b">
+		<createTable tableName="Presentment_Approve_Queue_log">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" />
+			<column name="ResetReferenceId" type="bigint" />
+			<column name="ThreadId" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int" />
+			<column name="ErrorLog" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#99.23.14" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRESENTMENT_APPROVE_QUEUE_LOG ADD CONSTRAINT DF_PAQL_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.23.14" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Progress" tableName="Presentment_Approve_Queue_log" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#99.23.15" author="saikrishna.b">
+		<addPrimaryKey tableName="Presentment_Approve_Queue_log" columnNames="ID,BatchId" constraintName="pk_presentment_approve_queue_l" />
+	</changeSet>
+	
 </databaseChangeLog>

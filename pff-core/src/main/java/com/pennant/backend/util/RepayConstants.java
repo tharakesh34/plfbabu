@@ -330,6 +330,7 @@ public class RepayConstants {
 	public static final int CHEQUESTATUS_REALISED = 11;
 	public static final int PEXC_ADVINT = 12;
 	public static final int PEXC_ADVEMI = 13;
+	public static final int PEXC_SCHDVERSION = 14;
 
 	// Presentment Status Reasons
 	public static final int PEXC_EXTRACT = 1;

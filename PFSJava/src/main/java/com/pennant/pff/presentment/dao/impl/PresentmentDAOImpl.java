@@ -779,7 +779,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public long saveList(List<PresentmentDetail> presentments) {
+	public long save(PresentmentDetail pd) {
 		StringBuilder sql = new StringBuilder("Insert into PresentmentDetails");
 		sql.append("(Id, PresentmentId, PresentmentRef, FinID, FinReference, SchDate, MandateId, SchdVersion");
 		sql.append(", SchAmtDue, SchPriDue, SchPftDue, SchFeeDue, SchInsDue, SchPenaltyDue, AdvanceAmt, ExcessID");
@@ -792,57 +792,49 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		jdbcOperations.update(sql.toString(), ps -> {
+			int i = 1;
 
-			@Override
-			public void setValues(PreparedStatement ps, int index) throws SQLException {
-				int i = 1;
-				PresentmentDetail pd = presentments.get(index);
+			ps.setLong(i++, pd.getId());
+			ps.setLong(i++, pd.getHeaderId());
+			ps.setString(i++, pd.getPresentmentRef());
+			ps.setLong(i++, pd.getFinID());
+			ps.setString(i++, pd.getFinReference());
+			ps.setDate(i++, JdbcUtil.getDate(pd.getSchDate()));
+			ps.setObject(i++, pd.getMandateId());
+			ps.setInt(i++, pd.getSchdVersion());
+			ps.setBigDecimal(i++, pd.getSchAmtDue());
+			ps.setBigDecimal(i++, pd.getSchPriDue());
+			ps.setBigDecimal(i++, pd.getSchPftDue());
+			ps.setBigDecimal(i++, pd.getSchFeeDue());
+			ps.setBigDecimal(i++, pd.getSchInsDue());
+			ps.setBigDecimal(i++, pd.getSchPenaltyDue());
+			ps.setBigDecimal(i++, pd.getAdvanceAmt());
+			ps.setLong(i++, pd.getExcessID());
+			ps.setBigDecimal(i++, pd.getAdviseAmt());
+			ps.setBigDecimal(i++, pd.getPresentmentAmt());
+			ps.setLong(i++, pd.getExcludeReason());
+			ps.setLong(i++, pd.getBounceID());
+			ps.setInt(i++, pd.getEmiNo());
+			ps.setBigDecimal(i++, pd.gettDSAmount());
+			ps.setString(i++, pd.getStatus());
+			ps.setLong(i++, pd.getReceiptID());
+			ps.setString(i++, pd.getEmployeeNo());
+			ps.setObject(i++, pd.getEmployerId());
+			ps.setString(i++, pd.getEmployerName());
+			ps.setInt(i++, pd.getVersion());
+			ps.setLong(i++, pd.getLastMntBy());
+			ps.setTimestamp(i++, pd.getLastMntOn());
+			ps.setString(i++, pd.getRecordStatus());
+			ps.setString(i++, pd.getRoleCode());
+			ps.setString(i++, pd.getNextRoleCode());
+			ps.setString(i++, pd.getTaskId());
+			ps.setString(i++, pd.getNextTaskId());
+			ps.setString(i++, pd.getRecordType());
+			ps.setLong(i, pd.getWorkflowId());
+		});
 
-				ps.setLong(i++, pd.getId());
-				ps.setLong(i++, pd.getHeaderId());
-				ps.setString(i++, pd.getPresentmentRef());
-				ps.setLong(i++, pd.getFinID());
-				ps.setString(i++, pd.getFinReference());
-				ps.setDate(i++, JdbcUtil.getDate(pd.getSchDate()));
-				ps.setObject(i++, pd.getMandateId());
-				ps.setInt(i++, pd.getSchdVersion());
-				ps.setBigDecimal(i++, pd.getSchAmtDue());
-				ps.setBigDecimal(i++, pd.getSchPriDue());
-				ps.setBigDecimal(i++, pd.getSchPftDue());
-				ps.setBigDecimal(i++, pd.getSchFeeDue());
-				ps.setBigDecimal(i++, pd.getSchInsDue());
-				ps.setBigDecimal(i++, pd.getSchPenaltyDue());
-				ps.setBigDecimal(i++, pd.getAdvanceAmt());
-				ps.setLong(i++, pd.getExcessID());
-				ps.setBigDecimal(i++, pd.getAdviseAmt());
-				ps.setBigDecimal(i++, pd.getPresentmentAmt());
-				ps.setLong(i++, pd.getExcludeReason());
-				ps.setLong(i++, pd.getBounceID());
-				ps.setInt(i++, pd.getEmiNo());
-				ps.setBigDecimal(i++, pd.gettDSAmount());
-				ps.setString(i++, pd.getStatus());
-				ps.setLong(i++, pd.getReceiptID());
-				ps.setString(i++, pd.getEmployeeNo());
-				ps.setObject(i++, pd.getEmployerId());
-				ps.setString(i++, pd.getEmployerName());
-				ps.setInt(i++, pd.getVersion());
-				ps.setLong(i++, pd.getLastMntBy());
-				ps.setTimestamp(i++, pd.getLastMntOn());
-				ps.setString(i++, pd.getRecordStatus());
-				ps.setString(i++, pd.getRoleCode());
-				ps.setString(i++, pd.getNextRoleCode());
-				ps.setString(i++, pd.getTaskId());
-				ps.setString(i++, pd.getNextTaskId());
-				ps.setString(i++, pd.getRecordType());
-				ps.setLong(i, pd.getWorkflowId());
-			}
-
-			@Override
-			public int getBatchSize() {
-				return presentments.size();
-			}
-		}).length;
+		return pd.getId();
 	}
 
 	@Override
@@ -1048,6 +1040,10 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			success = presentments.get(RepayConstants.PEXC_EMIINCLUDE);
 		}
 
+		if (presentments.containsKey(RepayConstants.PEXC_EMIINADVANCE)) {
+			success = success + presentments.get(RepayConstants.PEXC_EMIINADVANCE);
+		}
+
 		int failure = total - success;
 
 		int status = RepayConstants.PEXC_SEND_PRESENTMENT;
@@ -1086,6 +1082,216 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		logger.debug(Literal.SQL.concat(sql));
 
 		this.jdbcOperations.update(sql, PartnerBankId, id);
+	}
+
+	@Override
+	public PresentmentDetail getPresentmentDetail(long extrationID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(
+				" Id, HeaderID, DueDate, FinId, SchdVersion, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
+		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage");
+		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
+		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
+		sql.append(", SchdPftPaid, SchdPriPaid, SchdFeePaid, TdsPaid");
+		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
+		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
+		sql.append(", PartnerBankId, BranchCode, BankCode, InstrumentType");
+		sql.append(", EmployeeNo, EmployerId, EmployerName, ChequeAmount");
+		sql.append(" From Presentment_Extraction_Stage");
+		sql.append(" Where Id = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setId(rs.getLong("Id"));
+			pd.setHeaderId(JdbcUtil.getLong(rs.getObject("HeaderID")));
+			pd.setDueDate(rs.getDate("DueDate"));
+			pd.setFinID(rs.getLong("FinId"));
+			pd.setSchdVersion(rs.getInt("SchdVersion"));
+			pd.setFinReference(rs.getString("FinReference"));
+			pd.setFinType(rs.getString("FinType"));
+			pd.setProductCategory(rs.getString("ProductCategory"));
+			pd.setFinBranch(rs.getString("FinBranch"));
+			pd.setEntityCode(rs.getString("EntityCode"));
+			pd.setBpiTreatment(rs.getString("BpiTreatment"));
+			pd.setGrcPeriodEndDate(rs.getDate("GrcPeriodEndDate"));
+			pd.setGrcAdvType(rs.getString("GrcAdvType"));
+			pd.setAdvType(rs.getString("AdvType"));
+			pd.setAdvStage(rs.getString("AdvStage"));
+			pd.setSchDate(rs.getDate("SchDate"));
+			pd.setDefSchdDate(rs.getDate("DefSchdDate"));
+			pd.setSchSeq(rs.getInt("SchSeq"));
+			pd.setInstNumber(rs.getInt("InstNumber"));
+			pd.setBpiOrHoliday(rs.getString("BpiOrHoliday"));
+			pd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+			pd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+			pd.setFeeSchd(rs.getBigDecimal("FeeSchd"));
+			pd.settDSAmount(rs.getBigDecimal("TdsAmount"));
+			pd.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
+			pd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
+			pd.setSchdFeePaid(rs.getBigDecimal("SchdFeePaid"));
+			pd.setTdsPaid(rs.getBigDecimal("TdsPaid"));
+			pd.setMandateId(JdbcUtil.getLong(rs.getObject("MandateId")));
+			pd.setMandateType(rs.getString("MandateType"));
+			pd.setEmandateSource(rs.getString("EmandateSource"));
+			pd.setMandateStatus(rs.getString("MandateStatus"));
+			pd.setMandateExpiryDate(rs.getDate("MandateExpiryDate"));
+			pd.setChequeId(JdbcUtil.getLong(rs.getObject("ChequeId")));
+			pd.setChequeType(rs.getString("ChequeType"));
+			pd.setChequeStatus(rs.getString("ChequeStatus"));
+			pd.setChequeDate(rs.getDate("ChequeDate"));
+			pd.setChequeAmount(rs.getBigDecimal("ChequeAmount"));
+			pd.setPartnerBankId(JdbcUtil.getLong(rs.getObject("PartnerBankId")));
+			pd.setBranchCode(rs.getString("BranchCode"));
+			pd.setBankCode(rs.getString("BankCode"));
+			pd.setInstrumentType(rs.getString("InstrumentType"));
+			pd.setEmployeeNo(rs.getString("EmployeeNo"));
+			pd.setEmployerId(JdbcUtil.getLong(rs.getObject("EmployerId")));
+			pd.setEmployerName(rs.getString("EmployerName"));
+
+			return pd;
+
+		}, extrationID);
+	}
+
+	@Override
+	public PresentmentDetail getPresentmenToPost(long presentmentId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.CustId, fm.FinBranch, fm.FinType, pd.Id, pd.PresentmentId");
+		sql.append(", fm.FinID, pd.FinReference, pd.SchDate, pd.MandateId, pd.AdvanceAmt, pd.ExcessID");
+		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, pb.AccountNo, pb.AcType, pb.PartnerBankId");
+		sql.append(" From PresentmentDetails pd ");
+		sql.append(" Inner join PresentmentHeader ph on ph.Id = pd.PresentmentId");
+		sql.append(" Left join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
+		sql.append(" Inner join Financemain fm on pd.FinID = fm.FinID");
+		sql.append(" Where pd.Id = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setFinType(rs.getString("FinType"));
+			pd.setId(rs.getLong("Id"));
+			pd.setHeaderId(rs.getLong("PresentmentId"));
+			pd.setFinID(rs.getLong("FinID"));
+			pd.setFinReference(rs.getString("FinReference"));
+			pd.setSchDate(rs.getTimestamp("SchDate"));
+			pd.setMandateId(rs.getLong("MandateId"));
+			pd.setAdvanceAmt(rs.getBigDecimal("AdvanceAmt"));
+			pd.setExcessID(rs.getLong("ExcessID"));
+			pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
+			pd.setExcludeReason(rs.getInt("ExcludeReason"));
+			pd.setBounceID(rs.getLong("BounceID"));
+			pd.setAccountNo(rs.getString("AccountNo"));
+			pd.setAcType(rs.getString("AcType"));
+
+			return pd;
+		}, presentmentId);
+	}
+
+	@Override
+	public List<PresentmentDetail> getSendToPresentmentDetails(long presentmentId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" pd.Id, pd.PresentmentId, pd.FinID, pd.FinReference");
+		sql.append(", pd.SchDate, pd.MandateId, pd.SchAmtDue, pd.SchPriDue");
+		sql.append(", pd.SchPftDue, pd.SchFeeDue, pd.SchInsDue, pd.SchPenaltyDue, pd.AdvanceAmt, pd.ExcessID");
+		sql.append(", pd.AdviseAmt, pd.PresentmentAmt, pd.EmiNo, pd.Status, pd.PresentmentRef, pd.EcsReturn");
+		sql.append(", pd.ReceiptID, pd.ExcludeReason, pd.Version, pd.LastMntOn, pd.LastMntBy, pd.RecordStatus");
+		sql.append(", pd.RoleCode, pd.NextRoleCode, pd.TaskId, pd.NextTaskId, pd.RecordType, pd.WorkflowId");
+		sql.append(", pb.AccountNo, pb.AcType");
+		sql.append(" From PresentmentDetails pd");
+		sql.append(" inner join PresentmentHeader ph on ph.ID = pd.PresentmentID");
+		sql.append(" inner join PartnerBanks pb on pb.PartnerBankID = ph.PartnerBankID ");
+		sql.append(" Where pd.PresentmentId = ?");
+		sql.append(" and pd.ExcludeReason = ? and pd.Status <> ?");
+		sql.append(" and pd.Receiptid = ? ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, presentmentId);
+			ps.setInt(index++, RepayConstants.PEXC_EMIINCLUDE);
+			ps.setString(index++, RepayConstants.PEXC_APPROV);
+			ps.setInt(index, 0);
+		}, (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setId(rs.getLong("Id"));
+			pd.setHeaderId(rs.getLong("PresentmentId"));
+			pd.setFinID(rs.getLong("FinID"));
+			pd.setFinReference(rs.getString("FinReference"));
+			pd.setSchDate(rs.getTimestamp("SchDate"));
+			pd.setMandateId(rs.getLong("MandateId"));
+			pd.setSchAmtDue(rs.getBigDecimal("SchAmtDue"));
+			pd.setSchPriDue(rs.getBigDecimal("SchPriDue"));
+			pd.setSchPftDue(rs.getBigDecimal("SchPftDue"));
+			pd.setSchFeeDue(rs.getBigDecimal("SchFeeDue"));
+			pd.setSchInsDue(rs.getBigDecimal("SchInsDue"));
+			pd.setSchPenaltyDue(rs.getBigDecimal("SchPenaltyDue"));
+			pd.setAdvanceAmt(rs.getBigDecimal("AdvanceAmt"));
+			pd.setExcessID(rs.getLong("ExcessID"));
+			pd.setAdviseAmt(rs.getBigDecimal("AdviseAmt"));
+			pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
+			pd.setEmiNo(rs.getInt("EmiNo"));
+			pd.setStatus(rs.getString("Status"));
+			pd.setPresentmentRef(rs.getString("PresentmentRef"));
+			pd.setEcsReturn(rs.getString("EcsReturn"));
+			pd.setReceiptID(rs.getLong("ReceiptID"));
+			pd.setExcludeReason(rs.getInt("ExcludeReason"));
+			pd.setVersion(rs.getInt("Version"));
+			pd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			pd.setLastMntBy(rs.getLong("LastMntBy"));
+			pd.setRecordStatus(rs.getString("RecordStatus"));
+			pd.setRoleCode(rs.getString("RoleCode"));
+			pd.setNextRoleCode(rs.getString("NextRoleCode"));
+			pd.setTaskId(rs.getString("TaskId"));
+			pd.setNextTaskId(rs.getString("NextTaskId"));
+			pd.setRecordType(rs.getString("RecordType"));
+			pd.setWorkflowId(rs.getLong("WorkflowId"));
+			pd.setAccountNo(rs.getString("AccountNo"));
+			pd.setAcType(rs.getString("AcType"));
+
+			return pd;
+		});
+
+	}
+
+	@Override
+	public void updatePresentmentIdAsZero(long presentmentId) {
+		String sql = "Update FinScheduleDetails Set PresentmentId = ? Where PresentmentId = ?";
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, 0);
+			ps.setLong(2, presentmentId);
+		});
+	}
+
+	@Override
+	public void updateExcludeReason(long presentmentId, int manualExclude) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" UPDATE presentmentdetails Set EXCLUDEREASON = ? Where ID = ?");
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			this.jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+				ps.setInt(1, manualExclude);
+				ps.setLong(2, presentmentId);
+			});
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			sql = null;
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override

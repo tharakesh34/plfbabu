@@ -2,10 +2,6 @@ package com.pennant.pff.batch.job;
 
 import org.springframework.batch.core.repository.dao.Jackson2ExecutionContextStringSerializer;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class CustomSerializer extends Jackson2ExecutionContextStringSerializer {
 	public CustomSerializer() {
 		super(new String[] { "java.util.ArrayList"
@@ -101,15 +97,5 @@ public class CustomSerializer extends Jackson2ExecutionContextStringSerializer {
 				, "com.pennant.backend.model.eventproperties.EventProperties"
 
 				, "com.pennanttech.dataengine.model.DataEngineStatus" });
-		// setObjectMapper(objectMapper());
-	}
-
-	@SuppressWarnings("deprecation")
-	private ObjectMapper objectMapper() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-		objectMapper.enableDefaultTyping();
-		return objectMapper;
 	}
 }

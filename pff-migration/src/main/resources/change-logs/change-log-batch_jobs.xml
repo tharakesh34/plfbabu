@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="PRMT_01" author="murthy.y" >
+		<createSequence sequenceName="PRMT_STEP_EXECUTION_SEQ" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	
+	<changeSet id="PRMT_02" author="murthy.y" >
+		<createSequence sequenceName="PRMT_JOB_EXECUTION_SEQ" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	
+	<changeSet id="PRMT_03" author="murthy.y" >
+		<createSequence sequenceName="PRMT_JOB_SEQ" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+		
+	<changeSet id="PRMT_04" author="murthy.y">
+		<createTable tableName="PRMT_JOB_INSTANCE">
+			<column name="JOB_INSTANCE_ID" type="bigint">
+				<constraints  nullable="false" primaryKey="true"/>
+			</column>
+			<column name="VERSION" type="int" />
+			<column name="JOB_NAME" type="VARCHAR(100)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="JOB_KEY" type="VARCHAR(32)" >
+				<constraints nullable="false" />
+			</column>
+  		</createTable>
+	</changeSet>
+	
+	<changeSet id="PRMT_05" author="murthy.y">
+		<createIndex tableName="PRMT_JOB_INSTANCE" indexName="IDX_PRMT_JOB_INSTANCE_JOB_NAME">
+			<column name="JOB_NAME" type="VARCHAR(100)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="PRMT_06" author="murthy.y">
+		<createIndex tableName="PRMT_JOB_INSTANCE" indexName="IDX_PRMT_JOB_INSTANCE_JOB_KEY">
+			<column name="JOB_KEY" type="VARCHAR(32)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="PRMT_07" author="murthy.y">
+		<createTable tableName="PRMT_JOB_EXECUTION">
+			<column name="JOB_EXECUTION_ID" type="bigint">
+				<constraints  nullable="false" primaryKey="true" />
+			</column>
+			<column name="VERSION" type="INT" />
+			<column name="JOB_INSTANCE_ID" type="BIGINT" >
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATE_TIME" type="DATETIME" >
+				<constraints nullable="false" />
+			</column>
+			<column name="START_TIME" type="DATETIME" />
+			<column name="END_TIME" type="DATETIME" />
+			<column name="STATUS" type="VARCHAR(10)" />
+			<column name="EXIT_CODE" type="VARCHAR(20)" />
+			<column name="EXIT_MESSAGE" type="VARCHAR(2500)" />
+			<column name="LAST_UPDATED" type="DATETIME" />
+			<column name="JOB_CONFIGURATION_LOCATION" type="VARCHAR(2500)" />
+  		</createTable>
+	</changeSet>
+
+	<changeSet id="PRMT_08" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_PSIE_JOB_INSTANCE_ID"
+			referencedTableName="PRMT_JOB_INSTANCE" referencedColumnNames="JOB_INSTANCE_ID"
+			baseTableName="PRMT_JOB_EXECUTION" baseColumnNames="JOB_INSTANCE_ID" />
+	</changeSet>
+	
+	<changeSet id="PRMT_09" author="murthy.y" dbms="mssql">
+		<sql>
+        <![CDATA[
+            ALTER TABLE PRMT_JOB_EXECUTION Add CONSTRAINT DF_PRMT_JOB_EXECUT_START_TIME default NULL for START_TIME;
+            ALTER TABLE PRMT_JOB_EXECUTION Add CONSTRAINT DF_PRMT_JOB_EXECUT_END_TIME default NULL for END_TIME;
+         ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PRMT_09" author="murthy.y" dbms="postgresql, oracle">
+        <addDefaultValue tableName="PRMT_JOB_EXECUTION" columnName="START_TIME" defaultValue="NULL"/>
+        <addDefaultValue tableName="PRMT_JOB_EXECUTION" columnName="END_TIME" defaultValue="NULL"/>
+    </changeSet> 
+    
+    <changeSet id="PRMT_10" author="murthy.y">
+		<createIndex tableName="PRMT_JOB_EXECUTION" indexName="IDX_PRMT_JOB_EXECUTION_JIID">
+			<column name="JOB_INSTANCE_ID" type="BIGINT" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="PRMT_11" author="murthy.y">
+		<createTable tableName="PRMT_JOB_EXECUTION_PARAMS">
+			<column name="JOB_EXECUTION_ID" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="TYPE_CD" type="VARCHAR(6)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="KEY_NAME" type="VARCHAR(100)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="STRING_VAL" type="VARCHAR(250)" />
+			<column name="DATE_VAL" type="DATETIME" />
+			<column name="LONG_VAL" type="BIGINT" />
+			<column name="DOUBLE_VAL" type="float" />
+			<column name="IDENTIFYING" type="CHAR(1)" >
+				<constraints nullable="false" />
+			</column>
+  		</createTable>
+	</changeSet>
+
+	<changeSet id="PRMT_12" author="murthy.y">
+		<addForeignKeyConstraint constraintName="PRMT_JOB_EXEC_PARAMS_FK"
+			referencedTableName="PRMT_JOB_EXECUTION" referencedColumnNames="JOB_EXECUTION_ID"
+			baseTableName="PRMT_JOB_EXECUTION_PARAMS" baseColumnNames="JOB_EXECUTION_ID" />
+	</changeSet>			
+			
+	<changeSet id="PRMT_13" author="murthy.y" dbms="mssql">
+		<sql>
+        <![CDATA[
+            ALTER TABLE PRMT_JOB_EXECUTION_PARAMS Add CONSTRAINT DF_JOB_EXECU_PARS_DATVAL default NULL for DATE_VAL;
+         ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PRMT_13" author="murthy.y" dbms="postgresql, oracle">
+        <addDefaultValue tableName="PRMT_JOB_EXECUTION_PARAMS" columnName="DATE_VAL" defaultValue="NULL"/>
+    </changeSet> 	
+
+	<changeSet id="PRMT_14" author="murthy.y">
+		<createTable tableName="PRMT_STEP_EXECUTION">
+			<column name="STEP_EXECUTION_ID" type="bigint">
+				<constraints  nullable="false" primaryKey="true" />
+			</column>
+			<column name="VERSION" type="INT" >
+				<constraints nullable="false" />
+			</column>
+			<column name="STEP_NAME" type="VARCHAR(100)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="JOB_EXECUTION_ID" type="BIGINT" >
+				<constraints nullable="false" />
+			</column>
+			<column name="START_TIME" type="DATETIME" >
+				<constraints nullable="false" />
+			</column>
+			<column name="END_TIME" type="DATETIME" />
+			<column name="STATUS" type="VARCHAR(10)" />
+			<column name="COMMIT_COUNT" type="BIGINT" />
+			<column name="READ_COUNT" type="BIGINT" />
+			<column name="FILTER_COUNT" type="BIGINT" />
+			<column name="WRITE_COUNT" type="BIGINT" /> 
+			<column name="READ_SKIP_COUNT" type="BIGINT" /> 
+			<column name="WRITE_SKIP_COUNT" type="BIGINT" /> 
+			<column name="PROCESS_SKIP_COUNT" type="BIGINT" /> 
+			<column name="ROLLBACK_COUNT" type="BIGINT" /> 
+			<column name="EXIT_CODE" type="VARCHAR(20)" /> 
+			<column name="EXIT_MESSAGE" type="VARCHAR(2500)" /> 
+			<column name="LAST_UPDATED" type="DATETIME" /> 
+  		</createTable>
+	</changeSet>
+
+	<changeSet id="PRMT_15" author="murthy.y">
+		<addForeignKeyConstraint constraintName="PRMT_JOB_EXECUTION_STEP_FK"
+			referencedTableName="PRMT_JOB_EXECUTION" referencedColumnNames="JOB_EXECUTION_ID"
+			baseTableName="PRMT_STEP_EXECUTION" baseColumnNames="JOB_EXECUTION_ID" />
+	</changeSet>
+	
+	<changeSet id="PRMT_16" author="murthy.y" dbms="mssql">
+		<sql>
+        <![CDATA[
+            ALTER TABLE PRMT_STEP_EXECUTION Add CONSTRAINT DF_JOB_EXECUTE_START_TIM default NULL for END_TIME;
+         ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PRMT_16" author="murthy.y" dbms="postgresql, oracle">
+        <addDefaultValue tableName="PRMT_STEP_EXECUTION" columnName="END_TIME" defaultValue="NULL"/>
+    </changeSet> 
+    
+    <changeSet id="PRMT_17" author="murthy.y">
+		<createIndex tableName="PRMT_STEP_EXECUTION" indexName="IDXPRMT_STEP_EXECUTION_VERSION">
+			<column name="VERSION" type="INT" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="PRMT_18" author="murthy.y">
+		<createIndex tableName="PRMT_STEP_EXECUTION" indexName="IDXPRMTSTEPEXECUTION_STEP_NAME">
+			<column name="STEP_NAME" type="VARCHAR(100)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="PRMT_19" author="murthy.y">
+		<createIndex tableName="PRMT_STEP_EXECUTION" indexName="IDX_PRMT_STEP_EXECUTION_JEID">
+			<column name="JOB_EXECUTION_ID" type="BIGINT" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="PRMT_20" author="murthy.y">
+		<createTable tableName="PRMT_JOB_EXECUTION_CONTEXT">
+			<column name="JOB_EXECUTION_ID" type="bigint">
+				<constraints  nullable="false" primaryKey="true" />
+			</column>
+			<column name="SHORT_CONTEXT" type="VARCHAR(2500)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="SERIALIZED_CONTEXT" type="CLOB"/>
+  		</createTable>
+	</changeSet>
+
+	<changeSet id="PRMT_21" author="murthy.y">
+		<addForeignKeyConstraint constraintName="PRMT_JOB_EXEC_CTX_FK"
+			referencedTableName="PRMT_JOB_EXECUTION" referencedColumnNames="JOB_EXECUTION_ID"
+			baseTableName="PRMT_JOB_EXECUTION_CONTEXT" baseColumnNames="JOB_EXECUTION_ID" />
+	</changeSet>
+
+	<changeSet id="PRMT_22" author="murthy.y">
+		<createTable tableName="PRMT_STEP_EXECUTION_CONTEXT">
+			<column name="STEP_EXECUTION_ID" type="bigint">
+				<constraints  nullable="false"  />
+			</column>
+			<column name="SHORT_CONTEXT" type="VARCHAR(2500)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="SERIALIZED_CONTEXT" type="CLOB"/>
+  		</createTable>
+	</changeSet>
+	
+	<changeSet id="PRMT_23" author="murthy.y">
+    <addPrimaryKey 
+            columnNames="STEP_EXECUTION_ID"
+            constraintName="pk_STEP_EXECUT_CONTEXT"
+            tableName="PRMT_STEP_EXECUTION_CONTEXT"/>
+	</changeSet>
+	
+	<changeSet id="PRMT_24" author="murthy.y">
+		<addForeignKeyConstraint constraintName="PRMT_STEP_EXEC_CTX_FK"
+			referencedTableName="PRMT_STEP_EXECUTION" referencedColumnNames="STEP_EXECUTION_ID"
+			baseTableName="PRMT_STEP_EXECUTION_CONTEXT" baseColumnNames="STEP_EXECUTION_ID" />
+	</changeSet>
+	
+</databaseChangeLog>

@@ -19,9 +19,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.eventproperties.service.EventPropertiesService;
-import com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceImpl.EventType;
-import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
@@ -32,26 +29,23 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
-public class ApprovalTasklet implements Tasklet {
+public class ExtractionTasklet implements Tasklet {
 	private final Logger logger = LogManager.getLogger(ExtractionTasklet.class);
 
 	private PresentmentEngine presentmentEngine;
-	private BatchJobQueueDAO approvalBatchJobQueueDAO;
+	private BatchJobQueueDAO ebjqDAO;
 	private DataSourceTransactionManager transactionManager;
 
-	private static final String START_MSG = "Presentment approval Process started at {} for the APP_DATE {} with THREAD_ID {}";
-	private static final String FAILED_MSG = "Presentment approval Process failed on {} for the CustId {}";
-	private static final String SUCCESS_MSG = "Presentment approval Process completed at {} for the APP_DATE {} with THREAD_ID {}";
-	private static final String EXCEPTION_MSG = "Presentment approval Process failed on {} for the APP_DATE {} with THREAD_ID {}";
+	private static final String START_MSG = "Presentment extraction Process started at {} for the APP_DATE {} with THREAD_ID {}";
+	private static final String FAILED_MSG = "Presentment extraction Process failed on {} for the Presentment-ID {}";
+	private static final String SUCCESS_MSG = "Presentment extraction Process completed at {} for the APP_DATE {} with THREAD_ID {}";
+	private static final String EXCEPTION_MSG = "Presentment extraction Process failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
-	private EventPropertiesService eventPropertiesService;
-	private EventProperties eventProperties;
-
-	public ApprovalTasklet(BatchJobQueueDAO approvalBatchJobQueueDAO, PresentmentEngine presentmentEngine,
+	public ExtractionTasklet(BatchJobQueueDAO ebjqDAO, PresentmentEngine presentmentEngine,
 			DataSourceTransactionManager transactionManager) {
 		super();
-		this.approvalBatchJobQueueDAO = approvalBatchJobQueueDAO;
+		this.ebjqDAO = ebjqDAO;
 		this.presentmentEngine = presentmentEngine;
 		this.transactionManager = transactionManager;
 	}
@@ -67,17 +61,15 @@ public class ApprovalTasklet implements Tasklet {
 
 		int threadID = Integer.parseInt(stepExecutionContext.get("THREAD_ID").toString());
 
-		approvalBatchJobQueueDAO.resetSequence();
+		ebjqDAO.resetSequence();
 
-		long queueID = approvalBatchJobQueueDAO.getNextValue();
+		long queueID = ebjqDAO.getNextValue();
 
-		Long presentmentID = approvalBatchJobQueueDAO.getIdBySequence(queueID);
+		Long presentmentID = ebjqDAO.getIdBySequence(queueID);
 
 		if (presentmentID == null) {
 			return RepeatStatus.FINISHED;
 		}
-
-		eventProperties = eventPropertiesService.getEventProperties(EventType.EOD);
 
 		Date appDate = SysParamUtil.getAppDate();
 		String strAppDate = DateUtil.formatToLongDate(appDate);
@@ -87,8 +79,6 @@ public class ApprovalTasklet implements Tasklet {
 
 		PresentmentHeader ph = getPresentmentHeader(jobParameters);
 
-		ph.setAppDate(appDate);
-
 		while (presentmentID != null) {
 			BatchJobQueue jobQueue = new BatchJobQueue();
 			jobQueue.setId(queueID);
@@ -97,34 +87,36 @@ public class ApprovalTasklet implements Tasklet {
 			try {
 
 				jobQueue.setProgress(EodConstants.PROGRESS_IN_PROCESS);
-				approvalBatchJobQueueDAO.updateProgress(jobQueue);
+				ebjqDAO.updateProgress(jobQueue);
 
-				boolean status = approvePresentment(presentmentID, ph);
+				boolean status = extractPresentment(presentmentID, ph);
 
 				if (status) {
 					jobQueue.setProgress(EodConstants.PROGRESS_SUCCESS);
-					approvalBatchJobQueueDAO.updateProgress(jobQueue);
+					ebjqDAO.updateProgress(jobQueue);
 				} else {
 					jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
-					approvalBatchJobQueueDAO.updateProgress(jobQueue);
+					ebjqDAO.updateProgress(jobQueue);
 				}
 
 			} catch (Exception e) {
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
 
-				exceptions.add(e);
+				if (!exceptions.isEmpty()) {
+					exceptions.add(e);
+				}
 
 				strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 				logger.info(FAILED_MSG, strSysDate, presentmentID);
 
 				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
-				approvalBatchJobQueueDAO.updateProgress(jobQueue);
+				ebjqDAO.updateProgress(jobQueue);
 
 				break;
 			}
 
-			queueID = approvalBatchJobQueueDAO.getNextValue();
-			presentmentID = approvalBatchJobQueueDAO.getIdBySequence(queueID);
+			queueID = ebjqDAO.getNextValue();
+			presentmentID = ebjqDAO.getIdBySequence(queueID);
 		}
 
 		if (!exceptions.isEmpty()) {
@@ -142,23 +134,21 @@ public class ApprovalTasklet implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	private boolean approvePresentment(Long presentmentID, PresentmentHeader ph) {
+	private boolean extractPresentment(Long presentmentID, PresentmentHeader ph) {
 		try {
 
-			PresentmentDetail pd = presentmentEngine.getPresentmenToPost(presentmentID);
+			PresentmentDetail pd = presentmentEngine.extract(presentmentID, ph);
 
 			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 			TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
 
 			try {
-				pd.setAppDate(ph.getAppDate());
-				pd.setEventProperties(eventProperties);
-
-				presentmentEngine.approve(pd);
+				presentmentEngine.save(pd);
 				transactionManager.commit(transactionStatus);
 			} catch (Exception e) {
 				transactionManager.rollback(transactionStatus);
+				throw e;
 			}
 
 		} catch (Exception e) {
@@ -198,10 +188,6 @@ public class ApprovalTasklet implements Tasklet {
 		}
 
 		return ph;
-	}
-
-	public void setEventPropertiesService(EventPropertiesService eventPropertiesService) {
-		this.eventPropertiesService = eventPropertiesService;
 	}
 
 }

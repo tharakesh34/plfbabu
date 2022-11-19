@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -164,6 +165,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private List<PresentmentDetail> presements = new ArrayList<>();
 	private FinExcessAmount emiInAdvance;
 	private List<PresentmentCharge> presentmentCharges = new ArrayList<>();
+	private EventProperties eventProperties = new EventProperties();
 
 	public PresentmentDetail() {
 		super();
@@ -1001,4 +1003,11 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.presentmentCharges = presentmentCharges;
 	}
 
+	public EventProperties getEventProperties() {
+		return eventProperties;
+	}
+
+	public void setEventProperties(EventProperties eventProperties) {
+		this.eventProperties = eventProperties;
+	}
 }
