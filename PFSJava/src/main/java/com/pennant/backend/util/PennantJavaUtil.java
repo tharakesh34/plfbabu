@@ -879,6 +879,10 @@ public class PennantJavaUtil {
 				new String[] { "MandateID", "BankCode", "BankName", "BranchCode", "BranchDesc", "MICR", "IFSC" }, null,
 				750));
 
+		ModuleUtil.register("DasMandate",
+				new ModuleMapping("Mandate", Mandate.class, new String[] { "Mandates", "Mandates_AView" }, manadateWF,
+						new String[] { "MandateID", "EmployerID", "EmployeeNo" }, null, 450));
+
 		ModuleUtil.register("MandateStatus",
 				new ModuleMapping("MandateStatus", MandateStatus.class,
 						new String[] { "MandatesStatus", "MandatesStatus_View" }, masterWF,

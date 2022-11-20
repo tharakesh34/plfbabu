@@ -309,6 +309,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceType fintype = getFinanceDetail().getFinScheduleData().getFinanceType();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		int format = CurrencyUtil.getFormat(finMain.getFinCcy());
+		String instrumentType = finMain.getFinRepayMethod();
 
 		this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.downPaySupl.setTextBoxWidth(200);
@@ -336,13 +337,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		if (StringUtils.equals(moduleDefiner, FinServiceEvent.RPYBASICMAINTAIN)) {
-			this.mandateRef.setModuleName("Mandate");
-			this.mandateRef.setMandatoryStyle(true);
-			this.mandateRef.setValueColumn("MandateID");
-			mandateRef.setValueType(DataType.LONG);
-			this.mandateRef.setDescColumn("MandateRef");
-			this.mandateRef.setDisplayStyle(2);
-			this.mandateRef.setValidateColumns(new String[] { "MandateID" });
+			mandateFilter(instrumentType);
 		} else {
 			readOnlyComponent(true, this.finRepayMethod);
 			readOnlyComponent(true, this.mandateRef);
@@ -357,6 +352,28 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
 		logger.debug("Leaving");
+	}
+
+	private void mandateFilter(String instType) {
+		String repayMethod = this.finRepayMethod.getValue();
+		if (InstrumentType.isDAS(repayMethod) || InstrumentType.isDAS(instType)) {
+			this.mandateRef.setModuleName("DasMandate");
+			this.mandateRef.setMandatoryStyle(true);
+			this.mandateRef.setValueColumn("MandateID");
+			mandateRef.setValueType(DataType.LONG);
+			this.mandateRef.setDescColumn("MandateRef");
+			this.mandateRef.setDisplayStyle(2);
+			this.mandateRef.setValidateColumns(new String[] { "MandateID" });
+		} else {
+			this.mandateRef.setModuleName("Mandate");
+			this.mandateRef.setMandatoryStyle(true);
+			this.mandateRef.setValueColumn("MandateID");
+			mandateRef.setValueType(DataType.LONG);
+			this.mandateRef.setDescColumn("MandateRef");
+			this.mandateRef.setDisplayStyle(2);
+			this.mandateRef.setValidateColumns(new String[] { "MandateID" });
+		}
+
 	}
 
 	private void setFinAssetFieldVisibility(FinanceType financeType) {
@@ -576,6 +593,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.mandateRef.setValue("");
 			this.mandateRef.setAttribute("mandateID", new Long(0));
 		}
+		mandateFilter(finRepayMethod);
 		addMandateFiletrs(finRepayMethod, CustID);
 
 	}
@@ -3114,6 +3132,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void onChange$finRepayMethod(Event event) {
 		logger.debug("Entering" + event.toString());
 		setRepayAccMandatory();
+		mandateFilter(this.finRepayMethod.getSelectedItem().getValue().toString());
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -3485,9 +3504,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		filters[2] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.mandateRef.setFilters(filters);
 		StringBuilder whereCaluse = new StringBuilder("(OpenMandate = 1 OR");
-		whereCaluse.append("((MANDATEID not in (SELECT MANDATEID FROM FINANCEMAIN WHERE FINANCEMAIN.CUSTID=");
+		whereCaluse.append("((MANDATEID in (SELECT FM.MANDATEID FROM FINANCEMAIN FM");
+		whereCaluse.append(
+				" Inner Join Mandates m on m.MandateID = FM.MandateID and m.OpenMandate = 1 WHERE FM.CUSTID= ");
 		whereCaluse.append(custid);
-		whereCaluse.append("AND FINANCEMAIN.FINREFERENCE != '");
+		whereCaluse.append(" AND FM.FINREFERENCE != '");
 		whereCaluse.append(getFinanceMain().getFinReference());
 		whereCaluse.append("' )) OR MANDATEID IN (SELECT MANDATEID FROM FINANCEMAIN FM ");
 		whereCaluse.append(" WHERE FM.FINREFERENCE='");
