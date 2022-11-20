@@ -258,7 +258,7 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 
 		int month = DateUtil.getMonth(date);
 
-		if (month <= 3) {
+		if (month < 3) {
 			year = year - 1;
 		}
 
@@ -270,7 +270,7 @@ public class DueExtractionConfigServiceImpl implements DueExtractionConfigServic
 
 		int month = DateUtil.getMonth(date);
 
-		if (month <= 3) {
+		if (month < 3) {
 			year = year - 1;
 		}
 
