@@ -34,7 +34,7 @@ import com.pennant.pff.presentment.tasklet.GroupingTasklet;
 public class ExtractionJob extends BatchConfiguration {
 
 	public ExtractionJob(@Autowired DataSource dataSource) throws Exception {
-		super(dataSource, "PRMT_", "PRESENTMENT_EXTRACTION");
+		super(dataSource, "PRMNT_", "PRESENTMENT_EXTRACTION");
 	}
 
 	@Autowired
@@ -53,12 +53,14 @@ public class ExtractionJob extends BatchConfiguration {
 	private BatchJobQueueDAO extractionBatchJobQueueDAO;
 
 	@Autowired
-	private BatchJobQueueDAO approvalBatchJobQueueDAO;
-
-	@Autowired
 	private EventPropertiesService eventPropertiesService;
 
 	public Job job;
+
+	@Bean
+	public BatchJobQueueDAO extractionBatchJobQueueDAO() {
+		return new ExtractionJobQueueDAOImpl(dataSource);
+	}
 
 	@Bean
 	public Job peExtractionJob() throws Exception {
@@ -128,12 +130,12 @@ public class ExtractionJob extends BatchConfiguration {
 	@Bean
 	public TaskletStep approvalQueueStep() {
 		return this.stepBuilderFactory.get("APPROVAL_QUIENG")
-				.tasklet(new ApprovalQueueTasklet(approvalBatchJobQueueDAO)).build();
+				.tasklet(new ApprovalQueueTasklet(extractionBatchJobQueueDAO)).build();
 	}
 
 	@Bean
 	public Step approvalMasterStep() throws Exception {
-		ApprovalPartitioner approvalPartition = new ApprovalPartitioner(approvalBatchJobQueueDAO);
+		ApprovalPartitioner approvalPartition = new ApprovalPartitioner(extractionBatchJobQueueDAO);
 		return stepBuilderFactory.get("APPROVAL_MASTER").partitioner(approvalStep())
 				.partitioner("approvalStep", approvalPartition).listener(approvalPartition).build();
 	}
@@ -143,7 +145,8 @@ public class ExtractionJob extends BatchConfiguration {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
-		ApprovalTasklet tasklet = new ApprovalTasklet(approvalBatchJobQueueDAO, presentmentEngine, transactionManager);
+		ApprovalTasklet tasklet = new ApprovalTasklet(extractionBatchJobQueueDAO, presentmentEngine,
+				transactionManager);
 		tasklet.setEventPropertiesService(eventPropertiesService);
 		return this.stepBuilderFactory
 
@@ -173,7 +176,7 @@ public class ExtractionJob extends BatchConfiguration {
 
 	@Bean
 	public ClearQueueTasklet clearQueueTasklet() {
-		return new ClearQueueTasklet(presentmentDAO, extractionBatchJobQueueDAO, approvalBatchJobQueueDAO);
+		return new ClearQueueTasklet(presentmentDAO, extractionBatchJobQueueDAO);
 	}
 
 	@Bean
