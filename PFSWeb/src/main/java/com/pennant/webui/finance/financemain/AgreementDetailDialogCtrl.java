@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,6 +58,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -108,6 +110,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private String moduleName;
 	@Autowired
 	private ConvFinanceMainDialogCtrl convFinanceMainDialogCtrl;
+	private LinkedFinancesService linkedFinancesService;
 
 	/**
 	 * default constructor.<br>
@@ -404,6 +407,29 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				String aggName = StringUtils.trimToEmpty(data.getLovDescNamelov());
 				String reportName = "";
 
+				if ("NOC".equals(data.getLovDescCodelov())) {
+					List<String> finReferences = linkedFinancesService.getFinReferences(fm.getFinReference());
+					if (CollectionUtils.isNotEmpty(finReferences)) {
+
+						String[] args = new String[2];
+						StringBuilder ref = new StringBuilder();
+
+						finReferences.forEach(l1 -> ref.append(l1 + "\n"));
+						ref.deleteCharAt(ref.length() - 1);
+
+						args[0] = fm.getFinReference();
+						args[1] = ref.toString();
+
+						String message = args[0] + " is Linked with " + "\n" + args[1] + "\n"
+								+ "Please Delink the loan first then Proceed. ";
+
+						if (MessageUtil.confirm(message,
+								MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+							return;
+						}
+					}
+				}
+
 				/**
 				 * Disabling the aggPath functionality as aggPath is no longer considered in loan process. As discussed
 				 * with Raju. This functionality is moved to collateral and associated at customer side.
@@ -605,6 +631,14 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
+	}
+
+	public LinkedFinancesService getLinkedFinancesService() {
+		return linkedFinancesService;
+	}
+
+	public void setLinkedFinancesService(LinkedFinancesService linkedFinancesService) {
+		this.linkedFinancesService = linkedFinancesService;
 	}
 
 }

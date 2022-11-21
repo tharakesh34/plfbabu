@@ -1781,6 +1781,7 @@
 		parent="basisCtrl">
 		<property name="ruleService" ref="ruleService" />
 		<property name="agreementGeneration" ref="agreementGeneration" />
+		<property name="linkedFinancesService" ref="linkedFinancesService" />
 	</bean>
 
 	<bean id="agreementGeneration" class="com.pennant.util.AgreementGeneration">
