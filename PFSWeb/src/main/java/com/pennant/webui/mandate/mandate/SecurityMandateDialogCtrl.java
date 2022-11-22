@@ -2067,7 +2067,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					validate, mandbackDate, appExpiryDate, true));
 		}
 
-		if (!this.expiryDate.isDisabled() && this.expiryDate.isButtonVisible()) {
+		if (!this.expiryDate.isDisabled() && this.expiryDate.isButtonVisible()
+				&& MandateExtension.EXPIRY_DATE_MANDATORY) {
 			try {
 				this.expiryDate
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),

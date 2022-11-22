@@ -580,7 +580,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 	private WSReturnStatus mandateDateValidation(Mandate mandate) {
 		Date expiryDate = mandate.getExpiryDate();
 
-		if (!mandate.isOpenMandate() && expiryDate == null) {
+		if (!mandate.isOpenMandate() && (expiryDate == null && MandateExtension.EXPIRY_DATE_MANDATORY)) {
 			return getFailedStatus("90502", "expiryDate");
 		}
 

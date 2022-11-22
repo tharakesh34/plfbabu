@@ -999,7 +999,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		if (!mandate.isOpenMandate()) {
-			if (mandate.getExpiryDate() == null) {
+			if (mandate.getExpiryDate() == null && MandateExtension.EXPIRY_DATE_MANDATORY) {
 				return ErrorUtil.getError("90502", "expiryDate");
 			}
 		} else {

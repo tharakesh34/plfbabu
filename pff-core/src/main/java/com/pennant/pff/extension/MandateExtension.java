@@ -65,6 +65,11 @@ public class MandateExtension {
 
 	public static boolean ALLOW_CONSECUTIVE_BOUNCE;
 
+	/**
+	 * Feature Extension to no mandate the expiry date
+	 */
+	public static boolean EXPIRY_DATE_MANDATORY;
+
 	static {
 		APPROVE_ON_LOAN_ORG = getValueAsBoolean("APPROVE_ON_LOAN_ORG", false);
 		UPLOAD_ENITITY_CODE_MANDATORY = getValueAsBoolean("UPLOAD_ENITITY_CODE_MANDATORY", false);
@@ -77,6 +82,7 @@ public class MandateExtension {
 		SWAP_EFFECTIVE_DATE_DEFAULT = getValueAsBoolean("SWAP_EFFECTIVE_DATE_DEFAULT", false);
 		ACCOUNT_DETAILS_READONLY = getValueAsBoolean("ACCOUNT_DETAILS_READONLY", false);
 		ALLOW_CONSECUTIVE_BOUNCE = getValueAsBoolean("ALLOW_CONSECUTIVE_BOUNCE", false);
+		EXPIRY_DATE_MANDATORY = getValueAsBoolean("EXPIRY_DATE_MANDATORY", true);
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
