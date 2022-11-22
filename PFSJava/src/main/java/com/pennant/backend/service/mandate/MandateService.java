@@ -30,6 +30,7 @@ import java.util.List;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
@@ -95,6 +96,8 @@ public interface MandateService {
 	Mandate getEmployerDetails(long custID);
 
 	long saveStatus(MandateStatus mandateStatus);
+
+	List<BankBranch> getBankBranchByMICR(String micr);
 
 	public List<Entity> getEntities();
 }

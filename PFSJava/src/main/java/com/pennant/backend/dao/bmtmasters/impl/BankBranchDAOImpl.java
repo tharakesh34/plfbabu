@@ -485,6 +485,43 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	}
 
 	@Override
+	public List<BankBranch> getBankBranchByMICR(String micr) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC");
+		sql.append(", AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		sql.append(" From BankBranches");
+		sql.append(" Where Micr = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				BankBranch bb = new BankBranch();
+
+				bb.setBankBranchID(rs.getLong("BankBranchID"));
+				bb.setBankCode(rs.getString("BankCode"));
+				bb.setBranchCode(rs.getString("BranchCode"));
+				bb.setBranchDesc(rs.getString("BranchDesc"));
+				bb.setCity(rs.getString("City"));
+				bb.setMICR(rs.getString("MICR"));
+				bb.setIFSC(rs.getString("IFSC"));
+				bb.setAddOfBranch(rs.getString("AddOfBranch"));
+				bb.setNach(rs.getBoolean("Nach"));
+				bb.setDd(rs.getBoolean("Dd"));
+				bb.setDda(rs.getBoolean("Dda"));
+				bb.setEcs(rs.getBoolean("Ecs"));
+				bb.setCheque(rs.getBoolean("Cheque"));
+				bb.setActive(rs.getBoolean("Active"));
+
+				return bb;
+			}, micr);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		} 
+	}
+
+	@Override
 	public int updateInstruments(String bankcode, Map<InstrumentType, Boolean> instrumenttype, String emnadeSource) {
 		StringBuilder sql = new StringBuilder("Update BankBranches set ");
 
