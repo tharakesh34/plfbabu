@@ -889,6 +889,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		return null;
 	}
 
+	@Override
+	public List<BankBranch> getBankBranchByMICR(String micr) {
+		return bankBranchDAO.getBankBranchByMICR(micr);
+	}
+
 	private ErrorDetail validateNew(FinanceDetail fd) {
 		Mandate mandate = fd.getMandate();
 		FinScheduleData schdData = fd.getFinScheduleData();

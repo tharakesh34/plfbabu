@@ -1171,6 +1171,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.externalMandate);
 			readOnlyComponent(true, this.employerID);
 			readOnlyComponent(true, this.employeeNo);
+			readOnlyComponent(true, this.micr);
 		}
 
 		if (MandateStatus.isApproved(status) || MandateStatus.isRelease(status) || MandateStatus.isHold(status)) {
@@ -1267,9 +1268,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (MandateExtension.ACCOUNT_DETAILS_READONLY) {
 			readOnlyComponent(true, accNumber);
 			readOnlyComponent(true, bankBranchID);
+			readOnlyComponent(true, micr);
 		} else {
 			readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
+			readOnlyComponent(isReadOnly("MandateDialog_MICR"), this.micr);
 		}
 
 		if (fromLoan || issecurityMandate) {
@@ -2887,6 +2890,49 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.btnFetchAccountDetails.setDisabled(true);
 			}
 		}
+	}
+
+	public void onChange$micr(Event event) {
+		String micr = StringUtils.trimToNull(this.micr.getValue());
+
+		if (micr == null) {
+			this.bank.setValue("");
+			this.city.setValue("");
+			this.micr.setValue("");
+			this.ifsc.setValue("");
+			this.cityName.setValue("");
+			this.bankBranchID.setValue("");
+			return;
+		}
+
+		doSetBankDetails(micr);
+	}
+
+	private void doSetBankDetails(String micr) {
+		this.bank.setValue("");
+		this.city.setValue("");
+		this.micr.setValue("");
+		this.ifsc.setValue("");
+		this.cityName.setValue("");
+		this.bankBranchID.setValue("");
+
+		List<BankBranch> list = mandateService.getBankBranchByMICR(micr);
+
+		if (list.isEmpty()) {
+			MessageUtil.showError("MICR is not valid");
+			return;
+		}
+
+		if (list.size() > 1) {
+			MessageUtil.showError("Multiple Branches exists with same MICR, Please select the details through Branch.");
+		}
+
+		BankBranch bb = list.get(0);
+
+		this.city.setValue(bb.getCity());
+		this.ifsc.setValue(bb.getIFSC());
+		this.bank.setValue(bb.getBankCode());
+		this.bankBranchID.setValue(String.valueOf(bb.getBankBranchID()));
 	}
 
 	public void doFillManFinanceExposureDetails(List<FinanceEnquiry> manFinanceExposureDetails) {
