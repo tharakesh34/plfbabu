@@ -12972,10 +12972,6 @@
 	<bean id="presentmentExcludeCodeDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentExcludeCodeDAOImpl"
 		parent="sequenceDao" />
 
-	<bean name="extractionBatchJobQueueDAO" class="com.pennant.pff.presentment.dao.impl.ExtractionJobQueueDAOImpl" parent="sequenceDao" />
-	
-	<bean name="approvalBatchJobQueueDAO" class="com.pennant.pff.presentment.dao.impl.ApprovalJobQueueDAOImpl" parent="sequenceDao" />
-	
 	<bean id="presentmentExcludeCodeService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
