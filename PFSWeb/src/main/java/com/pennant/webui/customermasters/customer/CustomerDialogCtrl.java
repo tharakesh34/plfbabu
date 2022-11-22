@@ -7599,7 +7599,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void onChange$eidNumber(Event event) {
-		if (MasterDefUtil.isValidationReq(DocType.PAN) && isRetailCustomer) {
+		if (MasterDefUtil.isValidationReq(DocType.PAN)) {
 			CustomerDetails aCustomerDetails = getCustomerDetails();
 			this.label_CustomerDialog_EIDName.setValue(" ");
 			aCustomerDetails.getCustomer().setCustCRCPR(this.eidNumber.getValue());
@@ -7628,7 +7628,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private String validatePAN(String panNumber) {
 		String primaryIdName = null;
-		if (!(isRetailCustomer && MasterDefUtil.isValidationReq(DocType.PAN))) {
+		if (!(MasterDefUtil.isValidationReq(DocType.PAN))) {
 			return primaryIdName;
 		}
 

@@ -3795,7 +3795,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		String panNumber = this.panNumber.getValue();
 		Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
-		boolean isRetail = PennantConstants.PFF_CUSTCTG_INDIV.equals(customer.getCustCtgCode()) ? true : false;
 		try {
 
 			if (StringUtils.isBlank(panNumber) || !MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
@@ -3803,37 +3802,35 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				return;
 			}
 
-			if (isRetail) {
-				DocVerificationHeader header = new DocVerificationHeader();
-				header.setDocNumber(panNumber);
-				header.setCustCif(customer.getCustCIF());
-				header.setDocReference(this.finReference.getValue());
+			DocVerificationHeader header = new DocVerificationHeader();
+			header.setDocNumber(panNumber);
+			header.setCustCif(customer.getCustCIF());
+			header.setDocReference(this.finReference.getValue());
 
-				String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
+			String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
 
-				if (DocVerificationUtil.isVerified(panNumber, DocType.PAN)) {
-					MessageUtil.confirm(msg, evnt -> {
-						if (Messagebox.ON_YES.equals(evnt.getName())) {
-							ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
-							if (err != null) {
-								MessageUtil.showMessage(err.getMessage());
-							} else {
-								MessageUtil.showMessage(String.format("%s PAN validation successfull.",
-										header.getDocVerificationDetail().getFullName()));
-							}
+			if (DocVerificationUtil.isVerified(panNumber, DocType.PAN)) {
+				MessageUtil.confirm(msg, evnt -> {
+					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
+						if (err != null) {
+							MessageUtil.showMessage(err.getMessage());
+						} else {
+							MessageUtil.showMessage(String.format("%s PAN validation successfull.",
+									header.getDocVerificationDetail().getFullName()));
 						}
-
-					});
-
-				} else {
-
-					ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
-					if (err != null) {
-						MessageUtil.showMessage(err.getMessage());
-					} else {
-						MessageUtil.showMessage(String.format("%s PAN validation successfull.",
-								header.getDocVerificationDetail().getFullName()));
 					}
+
+				});
+
+			} else {
+
+				ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
+				if (err != null) {
+					MessageUtil.showMessage(err.getMessage());
+				} else {
+					MessageUtil.showMessage(String.format("%s PAN validation successfull.",
+							header.getDocVerificationDetail().getFullName()));
 				}
 			}
 		} catch (WrongValueException wve) {

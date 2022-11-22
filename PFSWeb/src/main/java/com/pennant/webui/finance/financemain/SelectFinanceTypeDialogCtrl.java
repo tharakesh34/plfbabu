@@ -830,8 +830,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		String primaryIdName = null;
 		String primaryIdNumber = this.eidNumber.getValue();
 		// Verifying/Validating the PAN Number
-		if (isRetailCustomer && MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)
-				&& StringUtils.isNotEmpty(primaryIdNumber)) {
+		if (MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN) && StringUtils.isNotEmpty(primaryIdNumber)) {
 			primaryIdName = validatePAN(primaryIdNumber);
 		}
 		processCustomer(false, isNewCustomer, primaryIdName);
@@ -841,7 +840,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private String validatePAN(String panNumber) {
 		String primaryIdName = null;
-		if (!(isRetailCustomer && MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN))) {
+		if (!(MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN))) {
 			return primaryIdName;
 		}
 

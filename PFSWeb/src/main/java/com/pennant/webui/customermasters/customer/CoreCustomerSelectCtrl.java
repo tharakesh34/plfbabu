@@ -493,8 +493,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private String validatePAN(String primaryIdNumber) {
 		String primaryIdName = null;
-		if (!(isRetailCustomer && MasterDefUtil.isValidationReq(DocType.PAN)
-				&& StringUtils.isNotEmpty(primaryIdNumber))) {
+		if (!(MasterDefUtil.isValidationReq(DocType.PAN) && StringUtils.isNotEmpty(primaryIdNumber))) {
 			return primaryIdName;
 		}
 
