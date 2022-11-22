@@ -255,7 +255,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchTel.setMaxlength(8);
 		this.branchSwiftBankCode.setMaxlength(4);
 		this.branchSwiftLocCode.setMaxlength(2);
-		this.branchSwiftBrnCde.setMaxlength(3);
+		this.branchSwiftBrnCde.setMaxlength(5);
 		this.branchSortCode.setMaxlength(6);
 		this.bankRefNo.setMaxlength(20);
 		this.branchAddrHNbr.setMaxlength(50);
