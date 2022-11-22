@@ -14,13 +14,11 @@ public class ClearQueueTasklet implements Tasklet {
 
 	private PresentmentDAO presentmentDAO;
 	private BatchJobQueueDAO ebjqDAO;
-	private BatchJobQueueDAO abjqDAO;
 
-	public ClearQueueTasklet(PresentmentDAO presentmentDAO, BatchJobQueueDAO ebjqDAO, BatchJobQueueDAO abjqDAO) {
+	public ClearQueueTasklet(PresentmentDAO presentmentDAO, BatchJobQueueDAO ebjqDAO) {
 		super();
 		this.presentmentDAO = presentmentDAO;
 		this.ebjqDAO = ebjqDAO;
-		this.abjqDAO = abjqDAO;
 	}
 
 	@Override
@@ -34,7 +32,6 @@ public class ClearQueueTasklet implements Tasklet {
 
 		this.presentmentDAO.clearQueue(batchId);
 		this.ebjqDAO.deleteQueue(jobQueue);
-		this.abjqDAO.deleteQueue(jobQueue);
 
 		return RepeatStatus.FINISHED;
 	}

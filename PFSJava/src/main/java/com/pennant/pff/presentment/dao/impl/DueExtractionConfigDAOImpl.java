@@ -297,17 +297,32 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 
 	@Override
 	public void deleteConfig(Date extractionDate) {
-		String sql = "Delete from Due_Extraction_Config Where ExtractionDate <= ?";
+		String sql = "Select Distinct MonthID From Due_Extraction_Config Where ExtractionDate <= ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		jdbcOperations.update(sql, extractionDate);
+		List<Long> list = jdbcOperations.query(sql, (rs, rowNum) -> {
+			return rs.getLong(1);
+		}, extractionDate);
 
-		sql = "Delete from Due_Extraction_Header Where ID in (Select Distinct MonthID From Due_Extraction_Config Where ExtractionDate <= ?)";
+		sql = "Delete from Due_Extraction_Config Where MonthID in (" + JdbcUtil.getInCondition(list) + ")";
+
+		Object[] obj = new Object[list.size()];
+
+		int i = 0;
+		for (Long monthID : list) {
+			obj[i++] = monthID;
+		}
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		jdbcOperations.update(sql, extractionDate);
+		jdbcOperations.update(sql, obj);
+
+		sql = "Delete from Due_Extraction_Header Where ID in (" + JdbcUtil.getInCondition(list) + ")";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.update(sql, obj);
 	}
 
 	@Override

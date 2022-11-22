@@ -15,7 +15,7 @@ import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implements BatchJobQueueDAO {
-	private static final String SEQUENCE_NAME = "SEQ_PRESENTMENT_EXTX_QUEUE";
+	private static final String SEQUENCE_NAME = "SEQ_PRMNT_EXTRACTION_QUEUE";
 
 	public ExtractionJobQueueDAOImpl(DataSource dataSource) {
 		super.setDataSource(dataSource);
@@ -28,7 +28,7 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 	@Override
 	public void deleteQueue(BatchJobQueue jobQueue) {
-		String sql = "Delete from Presentment_Extx_Queue Where BatchID = ?";
+		String sql = "Delete from PRMNT_EXTRACTION_QUEUE Where BatchID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -37,9 +37,9 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 	@Override
 	public int prepareQueue(BatchJobQueue jobQueue) {
-		StringBuilder sql = new StringBuilder("Insert into Presentment_Extx_Queue (Id, ReferenceId, BatchID)");
+		StringBuilder sql = new StringBuilder("Insert into PRMNT_EXTRACTION_QUEUE (Id, ReferenceId, BatchID)");
 		sql.append(" Select row_number() over(order by ID) ID, ID as ReferenceId, BatchID From");
-		sql.append(" Presentment_Extraction_Stage Where BatchID = ?");
+		sql.append(" PRMNT_EXTRACTION_STAGE Where BatchID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -48,11 +48,11 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 	@Override
 	public int handleFailures(BatchJobQueue jobQueue) {
-		jdbcOperations.update("Delete from Presentment_Extx_Queue_Log Where BatchID = ?", jobQueue.getBatchId());
+		jdbcOperations.update("Delete from PRMNT_EXTRACTION_QUEUE_Log Where BatchID = ?", jobQueue.getBatchId());
 
-		StringBuilder sql = new StringBuilder("Insert Into Presentment_Extx_Queue_Log(Id, ReferenceId)");
+		StringBuilder sql = new StringBuilder("Insert Into PRMNT_EXTRACTION_QUEUE_Log(Id, ReferenceId)");
 		sql.append(" Select row_number() over(order by ID) ID, ID");
-		sql.append(" From Presentment_Extx_Queue Where Progress = ? and BatchID = ?");
+		sql.append(" From PRMNT_EXTRACTION_QUEUE Where Progress = ? and BatchID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -60,8 +60,8 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 		deleteQueue(jobQueue);
 
-		sql = new StringBuilder("Insert Into Presentment_Extx_Queue (Id, ReferenceId, BatchID)");
-		sql.append(" Select ID, ReferenceId, BatchID From Presentment_Extx_Queue_Log");
+		sql = new StringBuilder("Insert Into PRMNT_EXTRACTION_QUEUE (Id, ReferenceId, BatchID)");
+		sql.append(" Select ID, ReferenceId, BatchID From PRMNT_EXTRACTION_QUEUE_Log");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -70,7 +70,7 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 	@Override
 	public int getQueueCount(BatchJobQueue jobQueue) {
-		String sql = "Select Coalesce(count(Id), 0) From Presentment_Extx_Queue where BatchID = ? and Progress = ?";
+		String sql = "Select Coalesce(count(Id), 0) From PRMNT_EXTRACTION_QUEUE where BatchID = ? and Progress = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -85,7 +85,7 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 		String sql = null;
 		if (process == EodConstants.PROGRESS_IN_PROCESS) {
-			sql = "Update Presentment_Extx_Queue Set Progress = ?, StartTime = ?, ThreadId = ? Where Id = ?";
+			sql = "Update PRMNT_EXTRACTION_QUEUE Set Progress = ?, StartTime = ?, ThreadId = ? Where Id = ?";
 
 			logger.debug(Literal.SQL.concat(sql));
 
@@ -96,7 +96,7 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 				ps.setLong(4, queueId);
 			});
 		} else if (process == EodConstants.PROGRESS_SUCCESS) {
-			sql = "Update Presentment_Extx_Queue Set EndTime = ?, Progress = ? Where Id = ?";
+			sql = "Update PRMNT_EXTRACTION_QUEUE Set EndTime = ?, Progress = ? Where Id = ?";
 
 			logger.debug(Literal.SQL.concat(sql));
 
@@ -106,7 +106,7 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 				ps.setLong(3, queueId);
 			});
 		} else if (process == EodConstants.PROGRESS_FAILED) {
-			sql = "Update Presentment_Extx_Queue Set EndTime = ?, ThreadId = ?, Progress = ? Where Id = ?";
+			sql = "Update PRMNT_EXTRACTION_QUEUE Set EndTime = ?, ThreadId = ?, Progress = ? Where Id = ?";
 
 			logger.debug(Literal.SQL.concat(sql));
 
@@ -159,7 +159,7 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 	@Override
 	public Long getIdBySequence(long sequence) {
-		String sql = "Select ReferenceId From Presentment_Extx_Queue Where Id = ? and Progress = ?";
+		String sql = "Select ReferenceId From PRMNT_EXTRACTION_QUEUE Where Id = ? and Progress = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 

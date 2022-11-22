@@ -1801,7 +1801,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		finScheduleData.getFinanceMain().setRecordType("");
 
 		finScheduleData.setStepPolicyDetails(new ArrayList<FinanceStepPolicyDetail>(1));
-		finScheduleData.setFinODPenaltyRate(null);
 		finScheduleData.setFeeRules(new ArrayList<FeeRule>());
 
 		aFinanceDetail.setTatDetail(null);
