@@ -36,6 +36,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Intbox;
@@ -83,6 +84,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Listheader listheader_AccNumber;
 	protected Listheader listheader_AccType;
 	protected Listheader listheader_Amount;
+	protected Listheader listheader_SecurityMandate;
 	protected Listheader listheader_ExpiryDate;
 	protected Listheader listheader_Status;
 	protected Listheader listheader_InputDate;
@@ -100,6 +102,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Combobox accType;
 	protected Datebox expiryDate;
 	protected Datebox inputDate;
+	protected Checkbox securityMandate;
 
 	protected Listbox sortOperator_MandateID;
 	protected Listbox sortOperator_CustCIF;
@@ -111,6 +114,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Listbox sortOperator_ExpiryDate;
 	protected Listbox sortOperator_Status;
 	protected Listbox sortOperator_InputDate;
+	protected Listbox sortOperator_SecurityMandate;
 
 	private transient MandateService mandateService;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
@@ -178,6 +182,8 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		registerField("inputDate", listheader_InputDate, SortOrder.NONE, inputDate, sortOperator_InputDate,
 				Operators.DATE);
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
+		registerField("securityMandate", listheader_SecurityMandate, SortOrder.NONE, securityMandate,
+				sortOperator_SecurityMandate, Operators.BOOLEAN);
 
 		// Render the page and display the data.
 		doRenderPage();
