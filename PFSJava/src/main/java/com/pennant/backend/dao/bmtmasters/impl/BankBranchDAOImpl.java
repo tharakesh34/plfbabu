@@ -487,9 +487,11 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	@Override
 	public List<BankBranch> getBankBranchByMICR(String micr) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC");
-		sql.append(", AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
-		sql.append(" From BankBranches");
+		sql.append(" BankBranchID, bb.BankCode, bd.BankName, BranchCode, BranchDesc, City, pc.PCCityName, MICR, IFSC");
+		sql.append(", AddOfBranch, bb.Nach, bb.Dd, bb.Dda, bb.Ecs, bb.Cheque, bb.Active");
+		sql.append(" From BankBranches bb");
+		sql.append(" Inner Join BmtBankDetail bd on bd.BankCode = bb.BankCode");
+		sql.append(" Inner Join RmtProvinceVsCity pc on pc.PcCity = bb.City");
 		sql.append(" Where Micr = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -500,9 +502,11 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 				bb.setBankBranchID(rs.getLong("BankBranchID"));
 				bb.setBankCode(rs.getString("BankCode"));
+				bb.setBankName(rs.getString("BankName"));
 				bb.setBranchCode(rs.getString("BranchCode"));
 				bb.setBranchDesc(rs.getString("BranchDesc"));
 				bb.setCity(rs.getString("City"));
+				bb.setPCCityName(rs.getString("PCCityName"));
 				bb.setMICR(rs.getString("MICR"));
 				bb.setIFSC(rs.getString("IFSC"));
 				bb.setAddOfBranch(rs.getString("AddOfBranch"));
@@ -518,7 +522,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
-		} 
+		}
 	}
 
 	@Override

@@ -870,6 +870,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_DefaultMandate"), defaultMandate);
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
 			readOnlyComponent(isReadOnly("MandateDialog_UmrNumber"), this.umrNumber);
+			readOnlyComponent(isReadOnly("MandateDialog_MICR"), this.micr);
 
 		}
 		readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), eMandateSource);
@@ -2867,6 +2868,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.ifsc.setValue("");
 			this.cityName.setValue("");
 			this.bankBranchID.setValue("");
+			this.bankBranchID.setDescription("");
 			return;
 		}
 
@@ -2880,6 +2882,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.ifsc.setValue("");
 		this.cityName.setValue("");
 		this.bankBranchID.setValue("");
+		this.bankBranchID.setDescription("");
 
 		List<BankBranch> list = mandateService.getBankBranchByMICR(micr);
 
@@ -2890,14 +2893,19 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (list.size() > 1) {
 			MessageUtil.showError("Multiple Branches exists with same MICR, Please select the details through Branch.");
+			return;
 		}
 
 		BankBranch bb = list.get(0);
 
 		this.city.setValue(bb.getCity());
 		this.ifsc.setValue(bb.getIFSC());
-		this.bank.setValue(bb.getBankCode());
-		this.bankBranchID.setValue(String.valueOf(bb.getBankBranchID()));
+		this.bank.setValue(bb.getBankName());
+		this.micr.setValue(bb.getMICR());
+		this.bankBranchID.setAttribute("bankBranchID", bb.getBankBranchID());
+		this.cityName.setValue(bb.getPCCityName());
+		this.bankBranchID.setValue(bb.getBranchCode(), bb.getBranchDesc());
+
 	}
 
 	public void doFillManFinanceExposureDetails(List<FinanceEnquiry> manFinanceExposureDetails) {
