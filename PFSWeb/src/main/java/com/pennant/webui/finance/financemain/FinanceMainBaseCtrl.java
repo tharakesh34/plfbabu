@@ -5076,7 +5076,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		screenData.put("UserRole", getRole());
 		screenData.put("Right_Eligibility", isReadOnly("FinanceMainDialog_Eligibility"));
 
-		if (spreadSheetService != null) {
+		if (spreadSheetService != null && StringUtils.isNotEmpty(eligibility)) {
 			map = spreadSheetService.setSpreadSheetData(screenData, financeDetail);
 		}
 
