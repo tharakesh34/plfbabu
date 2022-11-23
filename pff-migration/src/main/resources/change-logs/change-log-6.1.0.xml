@@ -1030,4 +1030,68 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="40_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'linkedFinances_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="40" author="rahul.r">
+		<createView viewName="linkedFinances_aview" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.id,
+				    t1.finid,
+				    t1.finreference,
+				    t1.linkedreference,
+				    f.fintype AS linkedfintype,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    c.custshrtname,
+				    t1.status
+				   FROM linkedfinances t1
+				     JOIN financemain_temp f ON t1.linkedreference = f.finreference
+				     JOIN customers c ON f.custid = c.custid
+				UNION ALL
+				 SELECT t1.id,
+				    t1.finid,
+				    t1.finreference,
+				    t1.linkedreference,
+				    f.fintype AS linkedfintype,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    c.custshrtname,
+				    t1.status
+				   FROM linkedfinances t1
+				     JOIN financemain f ON t1.linkedreference = f.finreference
+				     JOIN customers c ON f.custid = c.custid 
+		    ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="40_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'linkedFinances_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
