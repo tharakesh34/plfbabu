@@ -97,6 +97,6 @@ public interface FinanceReferenceDetailDAO {
 
 	List<FinanceReferenceDetail> getLMTFinRefDetails(String limitCode, String finType);
 
-	boolean isTabCodeExists(String tabCode, String finType, String type);
+	boolean isTabCodeExists(String tabCode, String finType, String type, String event);
 
 }

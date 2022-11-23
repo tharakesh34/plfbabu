@@ -2261,7 +2261,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 		if (getFinanceDetail().getShowTabDetailMap().containsKey(strTabCode)
-				|| financeReferenceDetailDAO.isTabCodeExists(strTabCode, financeMain.getFinType(), "_FINVIEW")) {
+				|| financeReferenceDetailDAO.isTabCodeExists(strTabCode, financeMain.getFinType(), "_FINVIEW",
+						getFinanceDetail().getModuleDefiner())) {
 			roles = getFinanceDetail().getShowTabDetailMap().get(strTabCode);
 			if (!StringUtils.contains(roles, getRole() + ",")) {
 				showTab = false;
