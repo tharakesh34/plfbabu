@@ -72,4 +72,6 @@ public interface BankBranchDAO {
 
 	List<BankBranch> getBrancesByCode(String bankCode);
 
+	List<BankBranch> getBankBranchByMICR(String micr);
+
 }

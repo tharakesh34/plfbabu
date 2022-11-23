@@ -883,6 +883,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_DefaultMandate"), defaultMandate);
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
 			readOnlyComponent(isReadOnly("MandateDialog_umrNumber"), this.umrNumber);
+			readOnlyComponent(isReadOnly("MandateDialog_MICR"), this.micr);
 
 		}
 		readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), eMandateSource);
@@ -1145,7 +1146,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (MandateStatus.isApproved(status) || MandateStatus.isHold(status) || MandateStatus.isRelease(status)
-				|| enqModule) {
+				|| enqModule || fromLoanEnquiry) {
 			readOnlyComponent(true, this.mandateRef);
 			readOnlyComponent(true, this.mandateType);
 			readOnlyComponent(true, this.bankBranchID);
@@ -1171,6 +1172,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.externalMandate);
 			readOnlyComponent(true, this.employerID);
 			readOnlyComponent(true, this.employeeNo);
+			readOnlyComponent(true, this.micr);
+			readOnlyComponent(true, this.inputDate);
 		}
 
 		if (MandateStatus.isApproved(status) || MandateStatus.isRelease(status) || MandateStatus.isHold(status)) {
@@ -1267,9 +1270,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (MandateExtension.ACCOUNT_DETAILS_READONLY) {
 			readOnlyComponent(true, accNumber);
 			readOnlyComponent(true, bankBranchID);
+			readOnlyComponent(true, micr);
 		} else {
 			readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
+			readOnlyComponent(isReadOnly("MandateDialog_MICR"), this.micr);
 		}
 
 		if (fromLoan || issecurityMandate) {
@@ -2099,7 +2104,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					validate, mandbackDate, appExpiryDate, true));
 		}
 
-		if (!this.expiryDate.isDisabled() && this.expiryDate.isButtonVisible()) {
+		if (!this.expiryDate.isDisabled() && this.expiryDate.isButtonVisible()
+				&& MandateExtension.EXPIRY_DATE_MANDATORY) {
 			try {
 				this.expiryDate
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
@@ -2886,6 +2892,56 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.btnFetchAccountDetails.setDisabled(true);
 			}
 		}
+	}
+
+	public void onChange$micr(Event event) {
+		String micr = StringUtils.trimToNull(this.micr.getValue());
+
+		if (micr == null) {
+			this.bank.setValue("");
+			this.city.setValue("");
+			this.micr.setValue("");
+			this.ifsc.setValue("");
+			this.cityName.setValue("");
+			this.bankBranchID.setValue("");
+			this.bankBranchID.setDescription("");
+			return;
+		}
+
+		doSetBankDetails(micr);
+	}
+
+	private void doSetBankDetails(String micr) {
+		this.bank.setValue("");
+		this.city.setValue("");
+		this.micr.setValue("");
+		this.ifsc.setValue("");
+		this.cityName.setValue("");
+		this.bankBranchID.setValue("");
+		this.bankBranchID.setDescription("");
+
+		List<BankBranch> list = mandateService.getBankBranchByMICR(micr);
+
+		if (list.isEmpty()) {
+			MessageUtil.showError("MICR is not valid");
+			return;
+		}
+
+		if (list.size() > 1) {
+			MessageUtil.showError("Multiple Branches exists with same MICR, Please select the details through Branch.");
+			return;
+		}
+
+		BankBranch bb = list.get(0);
+
+		this.city.setValue(bb.getCity());
+		this.ifsc.setValue(bb.getIFSC());
+		this.bank.setValue(bb.getBankName());
+		this.micr.setValue(bb.getMICR());
+		this.bankBranchID.setAttribute("bankBranchID", bb.getBankBranchID());
+		this.cityName.setValue(bb.getPCCityName());
+		this.bankBranchID.setValue(bb.getBranchCode(), bb.getBranchDesc());
+
 	}
 
 	public void doFillManFinanceExposureDetails(List<FinanceEnquiry> manFinanceExposureDetails) {

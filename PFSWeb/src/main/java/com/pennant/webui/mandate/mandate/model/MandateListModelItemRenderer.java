@@ -28,6 +28,7 @@ package com.pennant.webui.mandate.mandate.model;
 import java.io.Serializable;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -81,6 +82,14 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
 				CurrencyUtil.getFormat(mandate.getMandateCcy())));
 		lc.setParent(item);
+
+		lc = new Listcell();
+		Checkbox ckActive = new Checkbox();
+		ckActive.setChecked(mandate.isSecurityMandate());
+		ckActive.setDisabled(true);
+		ckActive.setParent(lc);
+		lc.setParent(item);
+
 		lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 		lc.setParent(item);
 

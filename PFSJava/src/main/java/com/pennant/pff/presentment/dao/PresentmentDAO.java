@@ -3,6 +3,7 @@ package com.pennant.pff.presentment.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
@@ -11,6 +12,18 @@ public interface PresentmentDAO {
 
 	long createBatch(String batchName);
 
+	BatchJobQueue getBatch(BatchJobQueue jobQueue);
+
+	void updateTotalRecords(int count, long batchID);
+
+	void updateBatch(BatchJobQueue jobQueue);
+
+	void updateRemarks(BatchJobQueue jobQueue);
+
+	void updateFailureError(BatchJobQueue jobQueue);
+
+	void updateEndTimeStatus(BatchJobQueue jobQueue);
+	
 	int extarct(long batchID, Date dueDate);
 
 	int extarct(long batchID, Date fromDate, Date toDate);

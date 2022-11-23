@@ -16,17 +16,20 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.presentment.dao.PresentmentDAO;
 
 public class ApprovalPartitioner implements Partitioner, StepExecutionListener {
 	private Logger logger = LogManager.getLogger(ApprovalPartitioner.class);
 
-	private BatchJobQueueDAO approvalBatchJobQueueDAO;
+	private BatchJobQueueDAO bjqDAO;
+	private PresentmentDAO presentmentDAO;
 
 	private Long batchId;
 
-	public ApprovalPartitioner(BatchJobQueueDAO approvalBatchJobQueueDAO) {
+	public ApprovalPartitioner(BatchJobQueueDAO bjqDAO, PresentmentDAO presentmentDAO) {
 		super();
-		this.approvalBatchJobQueueDAO = approvalBatchJobQueueDAO;
+		this.bjqDAO = bjqDAO;
+		this.presentmentDAO = presentmentDAO;
 	}
 
 	@Override
@@ -39,7 +42,9 @@ public class ApprovalPartitioner implements Partitioner, StepExecutionListener {
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchId);
 
-		int totalRecords = approvalBatchJobQueueDAO.getQueueCount(jobQueue);
+		int totalRecords = bjqDAO.getQueueCount(jobQueue);
+
+		bjqDAO.handleFailures(jobQueue);
 
 		if (totalRecords == 0) {
 			return partitionData;
@@ -76,7 +81,42 @@ public class ApprovalPartitioner implements Partitioner, StepExecutionListener {
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
-		return stepExecution.getExitStatus();
+		ExitStatus exitStatus = stepExecution.getExitStatus();
+
+		String exitCode = exitStatus.getExitCode();
+		String exitDescription = exitStatus.getExitDescription();
+
+		JobParameters jobParameters = stepExecution.getJobParameters();
+		long batchId = jobParameters.getLong("BATCH_ID");
+
+		BatchJobQueue jobQueue = new BatchJobQueue();
+		jobQueue.setBatchId(batchId);
+
+		if ("FAILED".equals(exitCode)) {
+			jobQueue.setFailedStep(stepExecution.getStepName());
+			jobQueue.setError(exitDescription);
+
+			presentmentDAO.updateFailureError(jobQueue);
+		} else {
+			jobQueue = presentmentDAO.getBatch(jobQueue);
+
+			int total = jobQueue.getTotalRecords();
+			int processed = jobQueue.getProcessRecords();
+			int success = jobQueue.getSuccessRecords();
+			int failed = jobQueue.getFailedRecords();
+			String msg = jobQueue.getRemarks();
+
+			msg = msg + "\n" + String.format(
+					"Presentment approval completed successfully with, total Records: %d, processed: %d, success: %d, failed: %d",
+					total, success, processed, failed);
+
+			jobQueue.setBatchId(batchId);
+			jobQueue.setRemarks(msg);
+
+			presentmentDAO.updateRemarks(jobQueue);
+		}
+
+		return exitStatus;
 	}
 
 }

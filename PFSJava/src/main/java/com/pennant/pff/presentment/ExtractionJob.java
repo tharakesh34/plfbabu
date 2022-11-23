@@ -55,6 +55,9 @@ public class ExtractionJob extends BatchConfiguration {
 	@Autowired
 	private EventPropertiesService eventPropertiesService;
 
+	@Autowired
+	private ExtractionJobListener extractionJobListener;
+
 	public Job job;
 
 	@Bean
@@ -63,8 +66,15 @@ public class ExtractionJob extends BatchConfiguration {
 	}
 
 	@Bean
+	public ExtractionJobListener extractionJobListener() {
+		return new ExtractionJobListener(presentmentDAO);
+	}
+
+	@Bean
 	public Job peExtractionJob() throws Exception {
 		this.job = this.jobBuilderFactory.get("peExtractionJob")
+
+				.listener(extractionJobListener)
 
 				.incrementer(jobParametersIncrementer())
 
@@ -102,7 +112,8 @@ public class ExtractionJob extends BatchConfiguration {
 
 	@Bean
 	public Step extractionMasterStep() throws Exception {
-		ExtractionPartitioner extractionPartition = new ExtractionPartitioner(extractionBatchJobQueueDAO);
+		ExtractionPartitioner extractionPartition = new ExtractionPartitioner(extractionBatchJobQueueDAO,
+				presentmentDAO);
 		return stepBuilderFactory.get("EXTRACTION_MASTER").partitioner(extractionStep())
 				.partitioner("extractionStep", extractionPartition).listener(extractionPartition).build();
 	}
@@ -116,7 +127,8 @@ public class ExtractionJob extends BatchConfiguration {
 
 				.get("EXTRACTION")
 
-				.tasklet(new ExtractionTasklet(extractionBatchJobQueueDAO, presentmentEngine, transactionManager))
+				.tasklet(new ExtractionTasklet(extractionBatchJobQueueDAO, presentmentEngine, transactionManager,
+						presentmentDAO))
 
 				.transactionAttribute(attribute)
 
@@ -130,12 +142,12 @@ public class ExtractionJob extends BatchConfiguration {
 	@Bean
 	public TaskletStep approvalQueueStep() {
 		return this.stepBuilderFactory.get("APPROVAL_QUIENG")
-				.tasklet(new ApprovalQueueTasklet(extractionBatchJobQueueDAO)).build();
+				.tasklet(new ApprovalQueueTasklet(extractionBatchJobQueueDAO, presentmentDAO)).build();
 	}
 
 	@Bean
 	public Step approvalMasterStep() throws Exception {
-		ApprovalPartitioner approvalPartition = new ApprovalPartitioner(extractionBatchJobQueueDAO);
+		ApprovalPartitioner approvalPartition = new ApprovalPartitioner(extractionBatchJobQueueDAO, presentmentDAO);
 		return stepBuilderFactory.get("APPROVAL_MASTER").partitioner(approvalStep())
 				.partitioner("approvalStep", approvalPartition).listener(approvalPartition).build();
 	}
@@ -145,7 +157,7 @@ public class ExtractionJob extends BatchConfiguration {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
-		ApprovalTasklet tasklet = new ApprovalTasklet(extractionBatchJobQueueDAO, presentmentEngine,
+		ApprovalTasklet tasklet = new ApprovalTasklet(extractionBatchJobQueueDAO, presentmentEngine, presentmentDAO,
 				transactionManager);
 		tasklet.setEventPropertiesService(eventPropertiesService);
 		return this.stepBuilderFactory

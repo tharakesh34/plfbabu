@@ -10,15 +10,18 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.presentment.dao.PresentmentDAO;
 
 public class ApprovalQueueTasklet implements Tasklet {
 	private Logger logger = LogManager.getLogger(ApprovalQueueTasklet.class);
 
-	private BatchJobQueueDAO approvalBatchJobQueueDAO;
+	private BatchJobQueueDAO bjqDAO;
+	private PresentmentDAO presentmentDAO;
 
-	public ApprovalQueueTasklet(BatchJobQueueDAO approvalBatchJobQueueDAO) {
+	public ApprovalQueueTasklet(BatchJobQueueDAO bjqDAO, PresentmentDAO presentmentDAO) {
 		super();
-		this.approvalBatchJobQueueDAO = approvalBatchJobQueueDAO;
+		this.bjqDAO = bjqDAO;
+		this.presentmentDAO = presentmentDAO;
 	}
 
 	@Override
@@ -31,10 +34,13 @@ public class ApprovalQueueTasklet implements Tasklet {
 		BatchJobQueue jobQueue = new BatchJobQueue();
 
 		jobQueue.setBatchId(batchId);
+		jobQueue.setJobName("APPROVAL");
 
-		approvalBatchJobQueueDAO.deleteQueue(jobQueue);
+		bjqDAO.deleteQueue(jobQueue);
 
-		int totalRecords = approvalBatchJobQueueDAO.prepareQueue(jobQueue);
+		int totalRecords = bjqDAO.prepareQueue(jobQueue);
+
+		presentmentDAO.updateTotalRecords(totalRecords, batchId);
 
 		logger.info("Queueing preparation for presentment Approval job completed with total records  {}", totalRecords);
 

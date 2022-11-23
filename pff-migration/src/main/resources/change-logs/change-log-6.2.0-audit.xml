@@ -664,4 +664,9 @@
 	<changeSet id="PSD#208851.1" author="saikrishna.b">
 		<modifyDataType tableName="ADTMANDATES" columnName="HOLDREASON" newDataType="varchar(50)" />
 	</changeSet>
+	
+	<changeSet id="ST#670" author="saikiran.n">
+		<modifyDataType tableName="ADTRMTBranches" columnName="BranchSwiftBrnCde" newDataType="varchar(5)" />
+	</changeSet>
+	
 </databaseChangeLog>

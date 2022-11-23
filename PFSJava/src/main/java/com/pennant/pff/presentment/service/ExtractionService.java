@@ -96,6 +96,7 @@ public class ExtractionService {
 
 		if (count > 0) {
 			try {
+				presentmentDAO.updateTotalRecords(count, batchID);
 				start(ph);
 			} catch (Exception e) {
 				presentmentDAO.clearQueue(batchID);

@@ -22,6 +22,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennant.pff.presentment.service.PresentmentEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -35,6 +36,7 @@ public class ExtractionTasklet implements Tasklet {
 	private PresentmentEngine presentmentEngine;
 	private BatchJobQueueDAO ebjqDAO;
 	private DataSourceTransactionManager transactionManager;
+	private PresentmentDAO presentmentDAO;
 
 	private static final String START_MSG = "Presentment extraction Process started at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String FAILED_MSG = "Presentment extraction Process failed on {} for the Presentment-ID {}";
@@ -42,12 +44,17 @@ public class ExtractionTasklet implements Tasklet {
 	private static final String EXCEPTION_MSG = "Presentment extraction Process failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
+	int successRecords;
+	int processRecords;
+	int failedRecords;
+
 	public ExtractionTasklet(BatchJobQueueDAO ebjqDAO, PresentmentEngine presentmentEngine,
-			DataSourceTransactionManager transactionManager) {
+			DataSourceTransactionManager transactionManager, PresentmentDAO presentmentDAO) {
 		super();
 		this.ebjqDAO = ebjqDAO;
 		this.presentmentEngine = presentmentEngine;
 		this.transactionManager = transactionManager;
+		this.presentmentDAO = presentmentDAO;
 	}
 
 	@Override
@@ -64,7 +71,7 @@ public class ExtractionTasklet implements Tasklet {
 		ebjqDAO.resetSequence();
 
 		long queueID = ebjqDAO.getNextValue();
-
+		long batchId = jobParameters.getLong("BATCH_ID");
 		Long presentmentID = ebjqDAO.getIdBySequence(queueID);
 
 		if (presentmentID == null) {
@@ -81,22 +88,34 @@ public class ExtractionTasklet implements Tasklet {
 
 		while (presentmentID != null) {
 			BatchJobQueue jobQueue = new BatchJobQueue();
+			jobQueue.setBatchId(batchId);
 			jobQueue.setId(queueID);
 			jobQueue.setThreadId(threadID);
+			++processRecords;
+			jobQueue.setProcessedRecords(processRecords);
 
 			try {
-
 				jobQueue.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 				ebjqDAO.updateProgress(jobQueue);
 
 				boolean status = extractPresentment(presentmentID, ph);
 
+				presentmentDAO.updateBatch(jobQueue);
+
 				if (status) {
 					jobQueue.setProgress(EodConstants.PROGRESS_SUCCESS);
 					ebjqDAO.updateProgress(jobQueue);
+
+					++successRecords;
+					jobQueue.setSuccessRecords(successRecords);
+					presentmentDAO.updateBatch(jobQueue);
 				} else {
 					jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 					ebjqDAO.updateProgress(jobQueue);
+
+					++failedRecords;
+					jobQueue.setFailedRecords(failedRecords);
+					presentmentDAO.updateBatch(jobQueue);
 				}
 
 			} catch (Exception e) {
@@ -105,14 +124,15 @@ public class ExtractionTasklet implements Tasklet {
 				if (!exceptions.isEmpty()) {
 					exceptions.add(e);
 				}
-
 				strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 				logger.info(FAILED_MSG, strSysDate, presentmentID);
 
 				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 				ebjqDAO.updateProgress(jobQueue);
 
-				break;
+				++failedRecords;
+				jobQueue.setFailedRecords(failedRecords);
+				presentmentDAO.updateBatch(jobQueue);
 			}
 
 			queueID = ebjqDAO.getNextValue();

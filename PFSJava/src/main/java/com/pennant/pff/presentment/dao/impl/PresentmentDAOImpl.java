@@ -25,6 +25,8 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.ExcludeReasonCode;
@@ -44,8 +46,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public long createBatch(String batchName) {
-		String sql = "Insert into PRMNT_BATCH_JOBS (Name, StartTime) values (?, ?)";
+	public long createBatch(String batchType) {
+		String sql = "Insert into PRMNT_BATCH_JOBS (Batch_Type, Start_Time) values (?, ?)";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -57,7 +59,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				PreparedStatement ps = con.prepareStatement(sql, new String[] { "Id" });
 
-				ps.setString(1, batchName);
+				ps.setString(1, batchType);
 				ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
 
 				return ps;
@@ -71,6 +73,117 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		}
 
 		return key.longValue();
+	}
+
+	@Override
+	public BatchJobQueue getBatch(BatchJobQueue jobQueue) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Batch_Type, Total_Records, Process_Records, Success_Records, Failed_Records, Remarks");
+		sql.append(" From PRMNT_BATCH_JOBS");
+		sql.append(" Where ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			BatchJobQueue bjq = new BatchJobQueue();
+
+			bjq.setBatchType(rs.getString("Batch_Type"));
+			bjq.setTotalRecords(rs.getInt("Total_Records"));
+			bjq.setProcessRecords(rs.getInt("Process_Records"));
+			bjq.setSuccessRecords(rs.getInt("Success_Records"));
+			bjq.setFailedRecords(rs.getInt("Failed_Records"));
+			bjq.setRemarks(rs.getString("Remarks"));
+
+			return bjq;
+		}, jobQueue.getBatchId());
+
+	}
+
+	@Override
+	public void updateTotalRecords(int count, long batchID) {
+		String sql = "Update PRMNT_BATCH_JOBS Set Total_Records = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, count);
+			ps.setLong(2, batchID);
+		});
+
+	}
+
+	@Override
+	public void updateBatch(BatchJobQueue jobQueue) {
+		int process = jobQueue.getProgress();
+
+		String sql = null;
+
+		if (process == EodConstants.PROGRESS_IN_PROCESS) {
+			sql = "Update PRMNT_BATCH_JOBS Set Process_Records = ? Where ID = ?";
+
+			this.jdbcOperations.update(sql, ps -> {
+				ps.setInt(1, jobQueue.getProcessedRecords());
+				ps.setLong(2, jobQueue.getBatchId());
+			});
+		}
+		if (process == EodConstants.PROGRESS_SUCCESS) {
+			sql = "Update PRMNT_BATCH_JOBS Set Success_Records = ? Where ID = ?";
+
+			this.jdbcOperations.update(sql, ps -> {
+				ps.setInt(1, jobQueue.getSuccessRecords());
+				ps.setLong(2, jobQueue.getBatchId());
+			});
+		}
+
+		if (process == EodConstants.PROGRESS_FAILED) {
+			sql = "Update PRMNT_BATCH_JOBS Set Failed_Records = ? Where ID = ?";
+
+			this.jdbcOperations.update(sql, ps -> {
+				ps.setInt(1, jobQueue.getFailedRecords());
+				ps.setLong(2, jobQueue.getBatchId());
+			});
+		}
+
+		logger.debug(Literal.SQL.concat(sql));
+
+	}
+
+	@Override
+	public void updateRemarks(BatchJobQueue jobQueue) {
+		String sql = "Update PRMNT_BATCH_JOBS Set Remarks = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setString(1, jobQueue.getRemarks());
+			ps.setLong(2, jobQueue.getBatchId());
+		});
+	}
+
+	@Override
+	public void updateFailureError(BatchJobQueue jobQueue) {
+		String sql = "Update PRMNT_BATCH_JOBS Set Failed_Step = ? , Error = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setString(1, jobQueue.getFailedStep());
+			ps.setString(2, jobQueue.getError().substring(1999));
+			ps.setLong(3, jobQueue.getBatchId());
+		});
+	}
+
+	@Override
+	public void updateEndTimeStatus(BatchJobQueue jobQueue) {
+		String sql = "Update PRMNT_BATCH_JOBS Set End_Time = ? , Status = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+			ps.setString(2, jobQueue.getBatchStatus());
+			ps.setLong(3, jobQueue.getBatchId());
+		});
 	}
 
 	@Override

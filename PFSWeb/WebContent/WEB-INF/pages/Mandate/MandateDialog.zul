@@ -131,7 +131,7 @@
 								<row>
 									<label value="${c:l('label_MandateDialog_ExpiryDate.value')}" />
 									<hbox>
-										<space spacing="2px" sclass="mandatory" />
+										<space spacing="2px" />
 										<datebox id="expiryDate" width="200px" />
 									</hbox>
 									<label value="${c:l('label_MandateDialog_Periodicity.value')}" />
@@ -247,7 +247,7 @@
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_Micr.value')}" />
-									<textbox id="micr" maxlength="50" width="200px" readonly="true" />
+									<textbox id="micr" maxlength="50" width="200px" />
 									<label value="${c:l('label_MandateDialog_Ifsc.value')}" />
 									<textbox id="ifsc" maxlength="50" width="200px" readonly="true" />
 								</row>

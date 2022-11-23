@@ -164,7 +164,7 @@
 								<label id="label_BranchDialog_BranchSwiftBrnCde" value="${c:l('label_BranchDialog_BranchSwiftBrnCde.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<uppercasebox id="branchSwiftBrnCde" maxlength="3" width="180px" />
+									<uppercasebox id="branchSwiftBrnCde" maxlength="5" width="180px" />
 								</hbox>
 
 							</row>

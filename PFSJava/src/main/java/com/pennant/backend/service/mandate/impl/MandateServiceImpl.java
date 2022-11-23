@@ -889,6 +889,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		return null;
 	}
 
+	@Override
+	public List<BankBranch> getBankBranchByMICR(String micr) {
+		return bankBranchDAO.getBankBranchByMICR(micr);
+	}
+
 	private ErrorDetail validateNew(FinanceDetail fd) {
 		Mandate mandate = fd.getMandate();
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -999,7 +1004,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		if (!mandate.isOpenMandate()) {
-			if (mandate.getExpiryDate() == null) {
+			if (mandate.getExpiryDate() == null && MandateExtension.EXPIRY_DATE_MANDATORY) {
 				return ErrorUtil.getError("90502", "expiryDate");
 			}
 		} else {

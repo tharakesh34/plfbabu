@@ -8,6 +8,7 @@ public class BatchJobQueue implements Serializable {
 
 	private long id;
 	private Long batchId;
+	private String batchType;
 	private String jobName;
 	private Date startTime;
 	private Date endTime;
@@ -15,11 +16,16 @@ public class BatchJobQueue implements Serializable {
 	private int threadId;
 	private String batchStatus;
 	private int totalRecords;
+	private int processRecords;
 	private int successRecords;
 	private int failedRecords;
 	private int processedRecords;
 	private int totalThreads;
 	private int progress;
+	private Long resetCounterId;
+	private String error;
+	private String remarks;
+	private String failedStep;
 
 	public BatchJobQueue() {
 		super();
@@ -39,6 +45,14 @@ public class BatchJobQueue implements Serializable {
 
 	public void setBatchId(Long batchId) {
 		this.batchId = batchId;
+	}
+
+	public String getBatchType() {
+		return batchType;
+	}
+
+	public void setBatchType(String batchType) {
+		this.batchType = batchType;
 	}
 
 	public String getJobName() {
@@ -97,6 +111,14 @@ public class BatchJobQueue implements Serializable {
 		this.totalRecords = totalRecords;
 	}
 
+	public int getProcessRecords() {
+		return processRecords;
+	}
+
+	public void setProcessRecords(int processRecords) {
+		this.processRecords = processRecords;
+	}
+
 	public int getSuccessRecords() {
 		return successRecords;
 	}
@@ -135,6 +157,38 @@ public class BatchJobQueue implements Serializable {
 
 	public void setProgress(int progress) {
 		this.progress = progress;
+	}
+
+	public Long getResetCounterId() {
+		return resetCounterId;
+	}
+
+	public void setResetCounterId(Long resetCounterId) {
+		this.resetCounterId = resetCounterId;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public String getFailedStep() {
+		return failedStep;
+	}
+
+	public void setFailedStep(String failedStep) {
+		this.failedStep = failedStep;
 	}
 
 }

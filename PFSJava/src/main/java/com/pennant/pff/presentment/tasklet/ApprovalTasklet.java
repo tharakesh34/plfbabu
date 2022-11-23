@@ -25,6 +25,7 @@ import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennant.pff.presentment.service.PresentmentEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -36,7 +37,8 @@ public class ApprovalTasklet implements Tasklet {
 	private final Logger logger = LogManager.getLogger(ExtractionTasklet.class);
 
 	private PresentmentEngine presentmentEngine;
-	private BatchJobQueueDAO approvalBatchJobQueueDAO;
+	private BatchJobQueueDAO bjqDAO;
+	private PresentmentDAO presentmentDAO;
 	private DataSourceTransactionManager transactionManager;
 
 	private static final String START_MSG = "Presentment approval Process started at {} for the APP_DATE {} with THREAD_ID {}";
@@ -45,14 +47,19 @@ public class ApprovalTasklet implements Tasklet {
 	private static final String EXCEPTION_MSG = "Presentment approval Process failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
+	int successRecords;
+	int processRecords;
+	int failedRecords;
+
 	private EventPropertiesService eventPropertiesService;
 	private EventProperties eventProperties;
 
-	public ApprovalTasklet(BatchJobQueueDAO approvalBatchJobQueueDAO, PresentmentEngine presentmentEngine,
+	public ApprovalTasklet(BatchJobQueueDAO bjqDAO, PresentmentEngine presentmentEngine, PresentmentDAO presentmentDAO,
 			DataSourceTransactionManager transactionManager) {
 		super();
-		this.approvalBatchJobQueueDAO = approvalBatchJobQueueDAO;
+		this.bjqDAO = bjqDAO;
 		this.presentmentEngine = presentmentEngine;
+		this.presentmentDAO = presentmentDAO;
 		this.transactionManager = transactionManager;
 	}
 
@@ -67,11 +74,11 @@ public class ApprovalTasklet implements Tasklet {
 
 		int threadID = Integer.parseInt(stepExecutionContext.get("THREAD_ID").toString());
 
-		approvalBatchJobQueueDAO.resetSequence();
+		bjqDAO.resetSequence();
 
-		long queueID = approvalBatchJobQueueDAO.getNextValue();
-
-		Long presentmentID = approvalBatchJobQueueDAO.getIdBySequence(queueID);
+		long queueID = bjqDAO.getNextValue();
+		long batchId = jobParameters.getLong("BATCH_ID");
+		Long presentmentID = bjqDAO.getIdBySequence(queueID);
 
 		if (presentmentID == null) {
 			return RepeatStatus.FINISHED;
@@ -91,22 +98,35 @@ public class ApprovalTasklet implements Tasklet {
 
 		while (presentmentID != null) {
 			BatchJobQueue jobQueue = new BatchJobQueue();
+			jobQueue.setBatchId(batchId);
 			jobQueue.setId(queueID);
 			jobQueue.setThreadId(threadID);
+			++processRecords;
+			jobQueue.setProcessedRecords(processRecords);
 
 			try {
 
 				jobQueue.setProgress(EodConstants.PROGRESS_IN_PROCESS);
-				approvalBatchJobQueueDAO.updateProgress(jobQueue);
+				bjqDAO.updateProgress(jobQueue);
 
 				boolean status = approvePresentment(presentmentID, ph);
 
+				presentmentDAO.updateBatch(jobQueue);
+
 				if (status) {
 					jobQueue.setProgress(EodConstants.PROGRESS_SUCCESS);
-					approvalBatchJobQueueDAO.updateProgress(jobQueue);
+					bjqDAO.updateProgress(jobQueue);
+
+					++successRecords;
+					jobQueue.setSuccessRecords(successRecords);
+					presentmentDAO.updateBatch(jobQueue);
 				} else {
 					jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
-					approvalBatchJobQueueDAO.updateProgress(jobQueue);
+					bjqDAO.updateProgress(jobQueue);
+
+					++failedRecords;
+					jobQueue.setFailedRecords(failedRecords);
+					presentmentDAO.updateBatch(jobQueue);
 				}
 
 			} catch (Exception e) {
@@ -118,13 +138,15 @@ public class ApprovalTasklet implements Tasklet {
 				logger.info(FAILED_MSG, strSysDate, presentmentID);
 
 				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
-				approvalBatchJobQueueDAO.updateProgress(jobQueue);
+				bjqDAO.updateProgress(jobQueue);
 
-				break;
+				++failedRecords;
+				jobQueue.setFailedRecords(failedRecords);
+				presentmentDAO.updateBatch(jobQueue);
 			}
 
-			queueID = approvalBatchJobQueueDAO.getNextValue();
-			presentmentID = approvalBatchJobQueueDAO.getIdBySequence(queueID);
+			queueID = bjqDAO.getNextValue();
+			presentmentID = bjqDAO.getIdBySequence(queueID);
 		}
 
 		if (!exceptions.isEmpty()) {
