@@ -28,20 +28,20 @@
 		</sql>
 	</changeSet>	
 	
-	<changeSet id="PRMT_01" author="murthy.y" >
-		<createSequence sequenceName="PRMT_STEP_EXECUTION_SEQ" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	<changeSet id="PRMNT_01" author="murthy.y" >
+		<createSequence sequenceName="PRMNT_STEP_EXECUTION_SEQ" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
 	</changeSet>
 	
-	<changeSet id="PRMT_02" author="murthy.y" >
-		<createSequence sequenceName="PRMT_JOB_EXECUTION_SEQ" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	<changeSet id="PRMNT_02" author="murthy.y" >
+		<createSequence sequenceName="PRMNT_JOB_EXECUTION_SEQ" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
 	</changeSet>
 	
-	<changeSet id="PRMT_03" author="murthy.y" >
-		<createSequence sequenceName="PRMT_JOB_SEQ" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	<changeSet id="PRMNT_03" author="murthy.y" >
+		<createSequence sequenceName="PRMNT_JOB_SEQ" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
 	</changeSet>
 		
-	<changeSet id="PRMT_04" author="murthy.y">
-		<createTable tableName="PRMT_JOB_INSTANCE">
+	<changeSet id="PRMNT_04" author="murthy.y">
+		<createTable tableName="PRMNT_JOB_INSTANCE">
 			<column name="JOB_INSTANCE_ID" type="bigint">
 				<constraints  nullable="false" primaryKey="true"/>
 			</column>
@@ -55,20 +55,20 @@
   		</createTable>
 	</changeSet>
 	
-	<changeSet id="PRMT_05" author="murthy.y">
-		<createIndex tableName="PRMT_JOB_INSTANCE" indexName="IDX_PRMT_JOB_INSTANCE_JOB_NAME">
+	<changeSet id="PRMNT_05" author="murthy.y">
+		<createIndex tableName="PRMNT_JOB_INSTANCE" indexName="IDXPRMNT_JOB_INSTANCE_JOB_NAME">
 			<column name="JOB_NAME" type="VARCHAR(100)" />
 		</createIndex>
 	</changeSet>
 	
-	<changeSet id="PRMT_06" author="murthy.y">
-		<createIndex tableName="PRMT_JOB_INSTANCE" indexName="IDX_PRMT_JOB_INSTANCE_JOB_KEY">
+	<changeSet id="PRMNT_06" author="murthy.y">
+		<createIndex tableName="PRMNT_JOB_INSTANCE" indexName="IDX_PRMNT_JOB_INSTANCE_JOB_KEY">
 			<column name="JOB_KEY" type="VARCHAR(32)" />
 		</createIndex>
 	</changeSet>
 	
-	<changeSet id="PRMT_07" author="murthy.y">
-		<createTable tableName="PRMT_JOB_EXECUTION">
+	<changeSet id="PRMNT_07" author="murthy.y">
+		<createTable tableName="PRMNT_JOB_EXECUTION">
 			<column name="JOB_EXECUTION_ID" type="bigint">
 				<constraints  nullable="false" primaryKey="true" />
 			</column>
@@ -89,34 +89,34 @@
   		</createTable>
 	</changeSet>
 
-	<changeSet id="PRMT_08" author="murthy.y">
+	<changeSet id="PRMNT_08" author="murthy.y">
 		<addForeignKeyConstraint constraintName="FK_PSIE_JOB_INSTANCE_ID"
-			referencedTableName="PRMT_JOB_INSTANCE" referencedColumnNames="JOB_INSTANCE_ID"
-			baseTableName="PRMT_JOB_EXECUTION" baseColumnNames="JOB_INSTANCE_ID" />
+			referencedTableName="PRMNT_JOB_INSTANCE" referencedColumnNames="JOB_INSTANCE_ID"
+			baseTableName="PRMNT_JOB_EXECUTION" baseColumnNames="JOB_INSTANCE_ID" />
 	</changeSet>
 	
-	<changeSet id="PRMT_09" author="murthy.y" dbms="mssql">
+	<changeSet id="PRMNT_09" author="murthy.y" dbms="mssql">
 		<sql>
         <![CDATA[
-            ALTER TABLE PRMT_JOB_EXECUTION Add CONSTRAINT DF_PRMT_JOB_EXECUT_START_TIME default NULL for START_TIME;
-            ALTER TABLE PRMT_JOB_EXECUTION Add CONSTRAINT DF_PRMT_JOB_EXECUT_END_TIME default NULL for END_TIME;
+            ALTER TABLE PRMNT_JOB_EXECUTION Add CONSTRAINT DF_PRMNT_JOB_EXECUT_START_TIME default NULL for START_TIME;
+            ALTER TABLE PRMNT_JOB_EXECUTION Add CONSTRAINT DF_PRMNT_JOB_EXECUT_END_TIME default NULL for END_TIME;
          ]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="PRMT_09" author="murthy.y" dbms="postgresql, oracle">
-        <addDefaultValue tableName="PRMT_JOB_EXECUTION" columnName="START_TIME" defaultValue="NULL"/>
-        <addDefaultValue tableName="PRMT_JOB_EXECUTION" columnName="END_TIME" defaultValue="NULL"/>
+	<changeSet id="PRMNT_09" author="murthy.y" dbms="postgresql, oracle">
+        <addDefaultValue tableName="PRMNT_JOB_EXECUTION" columnName="START_TIME" defaultValue="NULL"/>
+        <addDefaultValue tableName="PRMNT_JOB_EXECUTION" columnName="END_TIME" defaultValue="NULL"/>
     </changeSet> 
     
-    <changeSet id="PRMT_10" author="murthy.y">
-		<createIndex tableName="PRMT_JOB_EXECUTION" indexName="IDX_PRMT_JOB_EXECUTION_JIID">
+    <changeSet id="PRMNT_10" author="murthy.y">
+		<createIndex tableName="PRMNT_JOB_EXECUTION" indexName="IDX_PRMNT_JOB_EXECUTION_JIID">
 			<column name="JOB_INSTANCE_ID" type="BIGINT" />
 		</createIndex>
 	</changeSet>
 	
-	<changeSet id="PRMT_11" author="murthy.y">
-		<createTable tableName="PRMT_JOB_EXECUTION_PARAMS">
+	<changeSet id="PRMNT_11" author="murthy.y">
+		<createTable tableName="PRMNT_JOB_EXECUTION_PARAMS">
 			<column name="JOB_EXECUTION_ID" type="bigint">
 				<constraints  nullable="false" />
 			</column>
@@ -136,26 +136,26 @@
   		</createTable>
 	</changeSet>
 
-	<changeSet id="PRMT_12" author="murthy.y">
-		<addForeignKeyConstraint constraintName="PRMT_JOB_EXEC_PARAMS_FK"
-			referencedTableName="PRMT_JOB_EXECUTION" referencedColumnNames="JOB_EXECUTION_ID"
-			baseTableName="PRMT_JOB_EXECUTION_PARAMS" baseColumnNames="JOB_EXECUTION_ID" />
+	<changeSet id="PRMNT_12" author="murthy.y">
+		<addForeignKeyConstraint constraintName="PRMNT_JOB_EXEC_PARAMS_FK"
+			referencedTableName="PRMNT_JOB_EXECUTION" referencedColumnNames="JOB_EXECUTION_ID"
+			baseTableName="PRMNT_JOB_EXECUTION_PARAMS" baseColumnNames="JOB_EXECUTION_ID" />
 	</changeSet>			
 			
-	<changeSet id="PRMT_13" author="murthy.y" dbms="mssql">
+	<changeSet id="PRMNT_13" author="murthy.y" dbms="mssql">
 		<sql>
         <![CDATA[
-            ALTER TABLE PRMT_JOB_EXECUTION_PARAMS Add CONSTRAINT DF_JOB_EXECU_PARS_DATVAL default NULL for DATE_VAL;
+            ALTER TABLE PRMNT_JOB_EXECUTION_PARAMS Add CONSTRAINT DF_JOB_EXECU_PARS_DATVAL default NULL for DATE_VAL;
          ]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="PRMT_13" author="murthy.y" dbms="postgresql, oracle">
-        <addDefaultValue tableName="PRMT_JOB_EXECUTION_PARAMS" columnName="DATE_VAL" defaultValue="NULL"/>
+	<changeSet id="PRMNT_13" author="murthy.y" dbms="postgresql, oracle">
+        <addDefaultValue tableName="PRMNT_JOB_EXECUTION_PARAMS" columnName="DATE_VAL" defaultValue="NULL"/>
     </changeSet> 	
 
-	<changeSet id="PRMT_14" author="murthy.y">
-		<createTable tableName="PRMT_STEP_EXECUTION">
+	<changeSet id="PRMNT_14" author="murthy.y">
+		<createTable tableName="PRMNT_STEP_EXECUTION">
 			<column name="STEP_EXECUTION_ID" type="bigint">
 				<constraints  nullable="false" primaryKey="true" />
 			</column>
@@ -187,44 +187,44 @@
   		</createTable>
 	</changeSet>
 
-	<changeSet id="PRMT_15" author="murthy.y">
-		<addForeignKeyConstraint constraintName="PRMT_JOB_EXECUTION_STEP_FK"
-			referencedTableName="PRMT_JOB_EXECUTION" referencedColumnNames="JOB_EXECUTION_ID"
-			baseTableName="PRMT_STEP_EXECUTION" baseColumnNames="JOB_EXECUTION_ID" />
+	<changeSet id="PRMNT_15" author="murthy.y">
+		<addForeignKeyConstraint constraintName="PRMNT_JOB_EXECUTION_STEP_FK"
+			referencedTableName="PRMNT_JOB_EXECUTION" referencedColumnNames="JOB_EXECUTION_ID"
+			baseTableName="PRMNT_STEP_EXECUTION" baseColumnNames="JOB_EXECUTION_ID" />
 	</changeSet>
 	
-	<changeSet id="PRMT_16" author="murthy.y" dbms="mssql">
+	<changeSet id="PRMNT_16" author="murthy.y" dbms="mssql">
 		<sql>
         <![CDATA[
-            ALTER TABLE PRMT_STEP_EXECUTION Add CONSTRAINT DF_JOB_EXECUTE_START_TIM default NULL for END_TIME;
+            ALTER TABLE PRMNT_STEP_EXECUTION Add CONSTRAINT DF_JOB_EXECUTE_START_TIM default NULL for END_TIME;
          ]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="PRMT_16" author="murthy.y" dbms="postgresql, oracle">
-        <addDefaultValue tableName="PRMT_STEP_EXECUTION" columnName="END_TIME" defaultValue="NULL"/>
+	<changeSet id="PRMNT_16" author="murthy.y" dbms="postgresql, oracle">
+        <addDefaultValue tableName="PRMNT_STEP_EXECUTION" columnName="END_TIME" defaultValue="NULL"/>
     </changeSet> 
     
-    <changeSet id="PRMT_17" author="murthy.y">
-		<createIndex tableName="PRMT_STEP_EXECUTION" indexName="IDXPRMT_STEP_EXECUTION_VERSION">
+    <changeSet id="PRMNT_17" author="murthy.y">
+		<createIndex tableName="PRMNT_STEP_EXECUTION" indexName="IDXPRMNT_STEP_EXECUTIONVERSION">
 			<column name="VERSION" type="INT" />
 		</createIndex>
 	</changeSet>
 	
-	<changeSet id="PRMT_18" author="murthy.y">
-		<createIndex tableName="PRMT_STEP_EXECUTION" indexName="IDXPRMTSTEPEXECUTION_STEP_NAME">
+	<changeSet id="PRMNT_18" author="murthy.y">
+		<createIndex tableName="PRMNT_STEP_EXECUTION" indexName="IDXPRMTSTEPEXECUTION_STEP_NAME">
 			<column name="STEP_NAME" type="VARCHAR(100)" />
 		</createIndex>
 	</changeSet>
 	
-	<changeSet id="PRMT_19" author="murthy.y">
-		<createIndex tableName="PRMT_STEP_EXECUTION" indexName="IDX_PRMT_STEP_EXECUTION_JEID">
+	<changeSet id="PRMNT_19" author="murthy.y">
+		<createIndex tableName="PRMNT_STEP_EXECUTION" indexName="IDX_PRMNT_STEP_EXECUTION_JEID">
 			<column name="JOB_EXECUTION_ID" type="BIGINT" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="PRMT_20" author="murthy.y">
-		<createTable tableName="PRMT_JOB_EXECUTION_CONTEXT">
+	<changeSet id="PRMNT_20" author="murthy.y">
+		<createTable tableName="PRMNT_JOB_EXECUTION_CONTEXT">
 			<column name="JOB_EXECUTION_ID" type="bigint">
 				<constraints  nullable="false" primaryKey="true" />
 			</column>
@@ -235,14 +235,14 @@
   		</createTable>
 	</changeSet>
 
-	<changeSet id="PRMT_21" author="murthy.y">
-		<addForeignKeyConstraint constraintName="PRMT_JOB_EXEC_CTX_FK"
-			referencedTableName="PRMT_JOB_EXECUTION" referencedColumnNames="JOB_EXECUTION_ID"
-			baseTableName="PRMT_JOB_EXECUTION_CONTEXT" baseColumnNames="JOB_EXECUTION_ID" />
+	<changeSet id="PRMNT_21" author="murthy.y">
+		<addForeignKeyConstraint constraintName="PRMNT_JOB_EXEC_CTX_FK"
+			referencedTableName="PRMNT_JOB_EXECUTION" referencedColumnNames="JOB_EXECUTION_ID"
+			baseTableName="PRMNT_JOB_EXECUTION_CONTEXT" baseColumnNames="JOB_EXECUTION_ID" />
 	</changeSet>
 
-	<changeSet id="PRMT_22" author="murthy.y">
-		<createTable tableName="PRMT_STEP_EXECUTION_CONTEXT">
+	<changeSet id="PRMNT_22" author="murthy.y">
+		<createTable tableName="PRMNT_STEP_EXECUTION_CONTEXT">
 			<column name="STEP_EXECUTION_ID" type="bigint">
 				<constraints  nullable="false"  />
 			</column>
@@ -253,17 +253,17 @@
   		</createTable>
 	</changeSet>
 	
-	<changeSet id="PRMT_23" author="murthy.y">
+	<changeSet id="PRMNT_23" author="murthy.y">
     <addPrimaryKey 
             columnNames="STEP_EXECUTION_ID"
             constraintName="pk_STEP_EXECUT_CONTEXT"
-            tableName="PRMT_STEP_EXECUTION_CONTEXT"/>
+            tableName="PRMNT_STEP_EXECUTION_CONTEXT"/>
 	</changeSet>
 	
-	<changeSet id="PRMT_24" author="murthy.y">
-		<addForeignKeyConstraint constraintName="PRMT_STEP_EXEC_CTX_FK"
-			referencedTableName="PRMT_STEP_EXECUTION" referencedColumnNames="STEP_EXECUTION_ID"
-			baseTableName="PRMT_STEP_EXECUTION_CONTEXT" baseColumnNames="STEP_EXECUTION_ID" />
+	<changeSet id="PRMNT_24" author="murthy.y">
+		<addForeignKeyConstraint constraintName="PRMNT_STEP_EXEC_CTX_FK"
+			referencedTableName="PRMNT_STEP_EXECUTION" referencedColumnNames="STEP_EXECUTION_ID"
+			baseTableName="PRMNT_STEP_EXECUTION_CONTEXT" baseColumnNames="STEP_EXECUTION_ID" />
 	</changeSet>
 	
 </databaseChangeLog>

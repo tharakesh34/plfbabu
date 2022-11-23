@@ -12,7 +12,7 @@ public interface BatchJobQueueDAO {
 
 	int prepareQueue(BatchJobQueue jobQueue);
 
-	int handleFailures(BatchJobQueue jobQueue);
+	void handleFailures(BatchJobQueue jobQueue);
 
 	int getQueueCount(BatchJobQueue jobQueue);
 

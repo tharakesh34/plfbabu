@@ -6064,11 +6064,13 @@
 			<column name="Start_Time" type="datetime" />
 			<column name="End_Time" type="datetime" />
 			<column name="Total_Records" type="int" />
+			<column name="Process_Records" type="int" />
 			<column name="Success_Records" type="int" />
 			<column name="Failed_Records" type="int" />
 			<column name="Status" type="VARCHAR(10)" />
 			<column name="Failed_Step" type="varchar(100)" />
-			<column name="Error" type="varchar(200)" />
+			<column name="Error" type="varchar(2000)" />
+			<column name="Remarks" type="varchar(1000)" />
 		</createTable>
 	</changeSet>
 	

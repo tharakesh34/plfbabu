@@ -1,8 +1,14 @@
 package com.pennant.pff.presentment.dao.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
 import javax.sql.DataSource;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
@@ -21,6 +27,8 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 		super.setDataSource(dataSource);
 	}
 
+	private int count = 0;
+
 	@Override
 	public void logQueue(BatchJobQueue jobQueue) {
 		//
@@ -37,35 +45,105 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 	@Override
 	public int prepareQueue(BatchJobQueue jobQueue) {
+		if ("EXTRACTION".equals(jobQueue.getJobName())) {
+			prepareExtractionQueue(jobQueue);
+		} else {
+			prepareApprovalQueue(jobQueue);
+		}
+
+		return count;
+	}
+
+	public void prepareExtractionQueue(BatchJobQueue jobQueue) {
 		StringBuilder sql = new StringBuilder("Insert into PRMNT_EXTRACTION_QUEUE (Id, ReferenceId, BatchID)");
 		sql.append(" Select row_number() over(order by ID) ID, ID as ReferenceId, BatchID From");
 		sql.append(" PRMNT_EXTRACTION_STAGE Where BatchID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.update(sql.toString(), jobQueue.getBatchId());
+		count = this.jdbcOperations.update(sql.toString(), jobQueue.getBatchId());
+	}
+
+	public void prepareApprovalQueue(BatchJobQueue jobQueue) {
+		StringBuilder sql = new StringBuilder("Insert into PRMNT_EXTRACTION_QUEUE (Id, ReferenceId, BatchID)");
+		sql.append(" Select row_number() over(order by pd.ID) ID, pd.ID as ReferenceId, ph.BatchID");
+		sql.append(" From PresentmentHeader ph");
+		sql.append(" Inner Join PresentmentDetails pd on pd.PresentmentID = ph.Id");
+		sql.append(" Where BatchID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		count = this.jdbcOperations.update(sql.toString(), jobQueue.getBatchId());
 	}
 
 	@Override
-	public int handleFailures(BatchJobQueue jobQueue) {
-		jdbcOperations.update("Delete from PRMNT_EXTRACTION_QUEUE_Log Where BatchID = ?", jobQueue.getBatchId());
+	public void handleFailures(BatchJobQueue jobQueue) {
+		String sql = "Delete From PRMNT_EXTRACTION_QUEUE Where Progress = ? and  BatchID = ?";
 
-		StringBuilder sql = new StringBuilder("Insert Into PRMNT_EXTRACTION_QUEUE_Log(Id, ReferenceId)");
-		sql.append(" Select row_number() over(order by ID) ID, ID");
-		sql.append(" From PRMNT_EXTRACTION_QUEUE Where Progress = ? and BatchID = ?");
+		logger.debug(Literal.SQL.concat(sql));
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
+			ps.setLong(2, jobQueue.getBatchId());
+		});
 
-		this.jdbcOperations.update(sql.toString(), EodConstants.PROGRESS_WAIT, jobQueue.getBatchId());
+		sql = "Update PRMNT_EXTRACTION_QUEUE Set Progress = ? Where Progress = ? and  BatchID = ?";
 
-		deleteQueue(jobQueue);
+		logger.debug(Literal.SQL.concat(sql));
 
-		sql = new StringBuilder("Insert Into PRMNT_EXTRACTION_QUEUE (Id, ReferenceId, BatchID)");
-		sql.append(" Select ID, ReferenceId, BatchID From PRMNT_EXTRACTION_QUEUE_Log");
+		int count = this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, EodConstants.PROGRESS_WAIT);
+			ps.setInt(2, EodConstants.PROGRESS_FAILED);
+			ps.setLong(3, jobQueue.getBatchId());
+		});
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		if (count > 0) {
+			updateQueingRecords(getQueingRecords(jobQueue));
+		}
+	}
 
-		return this.jdbcOperations.update(sql.toString());
+	public void updateQueingRecords(List<BatchJobQueue> jobQueue) {
+		String sql = "Update PRMNT_EXTRACTION_QUEUE Set Id = ? Where ID = ? and BatchID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					BatchJobQueue jobQueuedetails = jobQueue.get(i);
+					int index = 1;
+
+					ps.setLong(index++, jobQueuedetails.getResetCounterId());
+					ps.setLong(index, jobQueuedetails.getId());
+					ps.setLong(index, jobQueuedetails.getBatchId());
+				}
+
+				@Override
+				public int getBatchSize() {
+					return jobQueue.size();
+				}
+			});
+		} catch (DataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+	}
+
+	private List<BatchJobQueue> getQueingRecords(BatchJobQueue bJobQueue) {
+		String sql = "Select row_number() over(order by id) resetCounterId, ID from PRMNT_EXTRACTION_QUEUE Where BatchID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, bJobQueue.getBatchId());
+		}, (rs, Num) -> {
+			BatchJobQueue jobQueue = new BatchJobQueue();
+			jobQueue.setId(rs.getLong("ID"));
+			jobQueue.setResetCounterId(rs.getLong("resetCounterId"));
+			return jobQueue;
+		});
+
 	}
 
 	@Override
