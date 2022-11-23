@@ -1130,7 +1130,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (MandateStatus.isApproved(status) || MandateStatus.isHold(status) || MandateStatus.isRelease(status)
-				|| enqModule) {
+				|| enqModule || fromLoanEnquiry) {
 			readOnlyComponent(true, this.mandateRef);
 			readOnlyComponent(true, this.mandateType);
 			readOnlyComponent(true, this.bankBranchID);
@@ -1155,6 +1155,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.partnerBank);
 			readOnlyComponent(true, this.externalMandate);
 			readOnlyComponent(true, this.micr);
+			readOnlyComponent(true, this.inputDate);
 		}
 
 		if (MandateStatus.isApproved(status) || MandateStatus.isRelease(status) || MandateStatus.isHold(status)) {
