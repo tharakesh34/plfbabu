@@ -99,4 +99,10 @@ public interface PresentmentDAO {
 
 	void updateExcludeReason(long presentmentId, int manualExclude);
 
+	int getRecordsByWaiting(String clearingStatus);
+
+	PresentmentDetail getPresentmenForResponse(Long responseID);
+
+	void logRespDetailError(long headerId, long detailId, String errorCode, String errorDesc);
+
 }

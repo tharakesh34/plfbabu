@@ -15,7 +15,7 @@ import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implements BatchJobQueueDAO {
-	private static final String SEQUENCE_NAME = "SEQ_PRESENTMENT_EXTX_QUEUE";
+	private static final String SEQUENCE_NAME = "SEQ_PRMNT_RESP_SUCCESS_QUEUE";
 
 	public SuccessResponseJobQueueDAOImpl(DataSource dataSource) {
 		super.setDataSource(dataSource);
@@ -28,7 +28,7 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 
 	@Override
 	public void deleteQueue(BatchJobQueue jobQueue) {
-		String sql = "Delete from Presentment_Approve_Queue Where BatchID = ?";
+		String sql = "Delete from PRMNT_RESP_SUCCESS_QUEUE Where BatchID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -37,15 +37,21 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 
 	@Override
 	public int prepareQueue(BatchJobQueue jobQueue) {
-		StringBuilder sql = new StringBuilder("Insert into Presentment_Approve_Queue (Id, ReferenceId, BatchID)");
-		sql.append(" Select row_number() over(order by pd.ID) ID, pd.ID as ReferenceId, ph.BatchID");
-		sql.append(" From PresentmentHeader ph");
-		sql.append(" Inner Join PresentmentDetails pd on pd.PresentmentID = ph.Id");
-		sql.append(" Where BatchID = ?");
+		StringBuilder sql = new StringBuilder("Insert into PRMNT_RESP_SUCCESS_QUEUE (Id, ReferenceId, BatchID)");
+		sql.append(" Select row_number() over(order by prd.ID) ID, prd.ID as ReferenceId");
+		sql.append(" From PRESENTMENT_RESP_HEADER prh");
+		sql.append(" Inner Join PRESENTMENT_RESP_DTLS prd on prd.Header_ID = ph.Id");
+		sql.append(" Where prh.Progress = ? and prh.Event = ? and prh.CLEARING_STATUS = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.update(sql.toString(), jobQueue.getBatchId());
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setInt(++index, 0);
+			ps.setString(++index, "IMPORT");
+			ps.setString(++index, "S");
+		});
 	}
 
 	@Override

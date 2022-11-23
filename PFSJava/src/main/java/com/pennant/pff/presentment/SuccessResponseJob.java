@@ -1,7 +1,5 @@
 package com.pennant.pff.presentment;
 
-import java.util.Date;
-
 import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
@@ -18,32 +16,24 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
-import com.pennant.backend.eventproperties.service.EventPropertiesService;
 import com.pennant.pff.batch.job.BatchConfiguration;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
+import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
-import com.pennant.pff.presentment.dao.impl.ExtractionJobQueueDAOImpl;
+import com.pennant.pff.presentment.dao.impl.SuccessResponseJobQueueDAOImpl;
 import com.pennant.pff.presentment.service.PresentmentEngine;
-import com.pennant.pff.presentment.tasklet.ApprovalPartitioner;
-import com.pennant.pff.presentment.tasklet.ApprovalQueueTasklet;
-import com.pennant.pff.presentment.tasklet.ApprovalTasklet;
 import com.pennant.pff.presentment.tasklet.ClearQueueTasklet;
-import com.pennant.pff.presentment.tasklet.CreateBatchesTasklet;
-import com.pennant.pff.presentment.tasklet.ExtractionPartitioner;
-import com.pennant.pff.presentment.tasklet.ExtractionQueueTasklet;
-import com.pennant.pff.presentment.tasklet.ExtractionTasklet;
-import com.pennant.pff.presentment.tasklet.GroupingTasklet;
+import com.pennant.pff.presentment.tasklet.SuccessResponsePartitioner;
+import com.pennant.pff.presentment.tasklet.SuccessResponseTasklet;
+import com.pennanttech.pennapps.core.AppException;
 
 @Configuration
 @EnableBatchProcessing(modular = true)
 public class SuccessResponseJob extends BatchConfiguration {
 
 	public SuccessResponseJob(@Autowired DataSource dataSource) throws Exception {
-		super(dataSource, "PRMT_", "PRMT_RESP_SUCCESS");
+		super(dataSource, "PRMT_", "PRMT_SUCCESS_RESPONSE");
 	}
-
-	@Autowired
-	private DataSource dataSource;
 
 	@Autowired
 	private PresentmentDAO presentmentDAO;
@@ -51,31 +41,39 @@ public class SuccessResponseJob extends BatchConfiguration {
 	@Autowired
 	private PresentmentEngine presentmentEngine;
 
-	@Autowired
 	private DataSourceTransactionManager transactionManager;
 
 	@Autowired
-	private BatchJobQueueDAO extractionBatchJobQueueDAO;
-
-	@Autowired
-	private BatchJobQueueDAO approvalBatchJobQueueDAO;
-
-	@Autowired
-	private EventPropertiesService eventPropertiesService;
+	private BatchJobQueueDAO bjqDAO;
 
 	public Job job;
 
 	@Scheduled(cron = "*/5 * * * * *")
 	public void perform() throws Exception {
 
-		System.out.println("Job Started at :" + new Date());
+		int totalRecords = presentmentDAO.getRecordsByWaiting("S");
 
-		JobParameters param = new JobParametersBuilder().addString("JobID", String.valueOf(System.currentTimeMillis()))
-				.toJobParameters();
+		long batchID = 0;
+		if (totalRecords > 0) {
+			batchID = presentmentDAO.createBatch("RESPONSE_SUCCESS");
+			BatchJobQueue jobQueue = new BatchJobQueue();
+			jobQueue.setBatchId(batchID);
 
-		// JobExecution execution = jobLauncher.run(readFiles(), param);
+			totalRecords = bjqDAO.prepareQueue(jobQueue);
+		}
 
-		// System.out.println("Job finished with status :" + execution.getStatus());
+		if (totalRecords == 0) {
+			return;
+		}
+
+		JobParameters jobParameters = new JobParametersBuilder().addLong("BATCH_ID", batchID).toJobParameters();
+
+		try {
+			start(jobParameters);
+		} catch (Exception e) {
+			presentmentDAO.clearQueue(batchID);
+			throw new AppException("Presentment succes response job failed", e);
+		}
 	}
 
 	@Bean
@@ -84,15 +82,7 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 				.incrementer(jobParametersIncrementer())
 
-				.start(extractionQueueStep()).on("FAILED").fail()
-
-				.next(extractionMasterStep()).on("FAILED").fail()
-
-				.next(approvalQueueStep()).on("FAILED").fail()
-
-				.next(approvalMasterStep()).on("FAILED").fail()
-
-				.next(createBatchesStep()).on("FAILED").fail()
+				.start(masterStep()).on("FAILED").fail()
 
 				.next(clear()).on("*").end("COMPLETED").on("FAILED").fail()
 
@@ -104,81 +94,29 @@ public class SuccessResponseJob extends BatchConfiguration {
 	}
 
 	@Bean
-	public TaskletStep groupingStep() {
-		return this.stepBuilderFactory.get("GROUPING").tasklet(new GroupingTasklet(presentmentEngine)).build();
-	}
-
-	@Bean
-	public TaskletStep extractionQueueStep() {
-		return this.stepBuilderFactory.get("QUIENG").tasklet(new ExtractionQueueTasklet(extractionBatchJobQueueDAO))
-				.build();
-	}
-
-	@Bean
-	public Step extractionMasterStep() throws Exception {
-		ExtractionPartitioner extractionPartition = new ExtractionPartitioner(extractionBatchJobQueueDAO);
-		return stepBuilderFactory.get("EXTRACTION_MASTER").partitioner(extractionStep())
+	public Step masterStep() throws Exception {
+		SuccessResponsePartitioner extractionPartition = new SuccessResponsePartitioner(bjqDAO);
+		return stepBuilderFactory.get("SUCCESS_RESPONSE_MASTER").partitioner(masterTasklet())
 				.partitioner("extractionStep", extractionPartition).listener(extractionPartition).build();
 	}
 
 	@Bean
-	public TaskletStep extractionStep() {
+	public TaskletStep masterTasklet() {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
 		return this.stepBuilderFactory
 
-				.get("EXTRACTION")
+				.get("SUCCESS_RESPONS")
 
-				.tasklet(new ExtractionTasklet(extractionBatchJobQueueDAO, presentmentEngine, transactionManager))
-
-				.transactionAttribute(attribute)
-
-				.taskExecutor(taskExecutor("PRESENTMENT_EXTRACTION_"))
-
-				.allowStartIfComplete(true)
-
-				.build();
-	}
-
-	@Bean
-	public TaskletStep approvalQueueStep() {
-		return this.stepBuilderFactory.get("APPROVAL_QUIENG")
-				.tasklet(new ApprovalQueueTasklet(approvalBatchJobQueueDAO)).build();
-	}
-
-	@Bean
-	public Step approvalMasterStep() throws Exception {
-		ApprovalPartitioner approvalPartition = new ApprovalPartitioner(approvalBatchJobQueueDAO);
-		return stepBuilderFactory.get("APPROVAL_MASTER").partitioner(approvalStep())
-				.partitioner("approvalStep", approvalPartition).listener(approvalPartition).build();
-	}
-
-	@Bean
-	public TaskletStep approvalStep() {
-		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
-		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
-
-		ApprovalTasklet tasklet = new ApprovalTasklet(approvalBatchJobQueueDAO, presentmentEngine, transactionManager);
-		tasklet.setEventPropertiesService(eventPropertiesService);
-		return this.stepBuilderFactory
-
-				.get("APPROVAL")
-
-				.tasklet(tasklet)
+				.tasklet(new SuccessResponseTasklet(bjqDAO, presentmentEngine, transactionManager))
 
 				.transactionAttribute(attribute)
 
-				.taskExecutor(taskExecutor("PRESENTMENT_APPROVAL_"))
+				.taskExecutor(taskExecutor("SUCCESS_RESPONS_"))
 
 				.allowStartIfComplete(true)
 
-				.build();
-	}
-
-	@Bean
-	public TaskletStep createBatchesStep() {
-		return this.stepBuilderFactory.get("BATCH_CREATION").tasklet(new CreateBatchesTasklet(presentmentEngine))
 				.build();
 	}
 
@@ -189,12 +127,12 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 	@Bean
 	public ClearQueueTasklet clearQueueTasklet() {
-		return new ClearQueueTasklet(presentmentDAO, extractionBatchJobQueueDAO, approvalBatchJobQueueDAO);
+		return new ClearQueueTasklet(presentmentDAO, bjqDAO);
 	}
 
 	@Bean
-	public BatchJobQueueDAO extractionJobQueueDAO() {
-		return new ExtractionJobQueueDAOImpl(dataSource);
+	public BatchJobQueueDAO bjqDAO() {
+		return new SuccessResponseJobQueueDAOImpl(dataSource);
 	}
 
 	private SimpleAsyncTaskExecutor taskExecutor(String threadNamePrefix) {

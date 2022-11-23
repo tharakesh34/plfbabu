@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public abstract class BatchConfiguration implements BatchConfigurer {
 	protected static final Log logger = LogFactory.getLog(BatchConfiguration.class.getClass());
 
-	private DataSource dataSource;
+	protected DataSource dataSource;
 	private PlatformTransactionManager transactionManager;
 	private String tablePrefix;
 	private String threadNamePrefix;

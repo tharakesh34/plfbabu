@@ -12,11 +12,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.payment.PaymentHeader;
@@ -27,6 +30,7 @@ import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1295,6 +1299,109 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	@Transactional(isolation = Isolation.READ_COMMITTED)
+	public int getRecordsByWaiting(String clearingStatus) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("Select count(prd.ID) From PRESENTMENT_RESP_HEADER prh");
+		sql.append(" Inner Join PRESENTMENT_RESP_DTLS prd on prd.Header_ID  = prh.ID");
+		sql.append(" Where prh.Progress = ? and Event = ? and CLEARING_STATUS = ? ");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, 1, "IMPORT", clearingStatus);
+	}
+
+	@Override
+	public PresentmentDetail getPresentmenForResponse(Long responseID) {
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" PRD.BRANCH_CODE, FM.FINID, FM.FINREFERENCE, PRD.HOST_REFERENCE, PRD.INSTALMENT_NO");
+		sql.append(", PRD.AMOUNT_CLEARED, PRD.CLEARING_DATE, PRD.CLEARING_STATUS, PRD.BOUNCE_CODE, BOUNCE_REMARKS");
+		sql.append(", PRD.ID RESPONSEID, PD.ID, PD.PRESENTMENTID, PD.MANDATEID, PH.MANDATETYPE");
+		sql.append(", PD.SCHDATE, PD.SCHAMTDUE, PD.SCHPRIDUE, PD.SCHPFTDUE");
+		sql.append(", PD.SCHFEEDUE, PD.SCHINSDUE, PD.SCHPENALTYDUE");
+		sql.append(", PD.ADVANCEAMT, PD.EXCESSID, PD.ADVISEAMT, PD.PRESENTMENTAMT");
+		sql.append(", PD.TDSAMOUNT, PD.EXCLUDEREASON, PD.EMINO, PD.STATUS, PD.PRESENTMENTREF");
+		sql.append(", PD.ECSRETURN, PD.RECEIPTID, PD.ERRORCODE, PD.ERRORDESC, PD.MANUALADVISEID");
+		sql.append(", FM.FINISACTIVE, FM.FINTYPE, PRD.ACCOUNT_NUMBER, PRD.UTR_Number, PRD.FateCorrection");
+		sql.append(" FROM PRESENTMENT_RESP_DTLS PRD");
+		sql.append(" INNER JOIN PRESENTMENTDETAILS PD ON PD.PRESENTMENTREF = PRD.PRESENTMENT_REFERENCE");
+		sql.append(" INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID");
+		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINID = PD.FINID");
+		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID");
+		sql.append(" where PRD.ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setId(rs.getLong("ID"));
+			pd.setResponseId(rs.getLong("RESPONSEID"));
+			pd.setHeaderId(rs.getLong("HEADER_ID"));
+			// pd.setPresentmentID(rs.getLong("PRESENTMENTID"));
+			pd.setFinID(rs.getLong("FINID"));
+			pd.setFinReference(rs.getString("FINREFERENCE"));
+			pd.setHostReference(rs.getString("HOST_REFERENCE"));
+			pd.setFinType(rs.getString("FINTYPE"));
+			pd.setFinisActive(rs.getBoolean("FINISACTIVE"));
+			pd.setSchDate(rs.getDate("SCHDATE"));
+			pd.setMandateId(rs.getLong("MANDATEID"));
+			pd.setMandateType(rs.getString("MANDATETYPE"));
+			pd.setSchAmtDue(rs.getBigDecimal("SCHAMTDUE"));
+			pd.setSchPriDue(rs.getBigDecimal("SCHPRIDUE"));
+			pd.setSchPftDue(rs.getBigDecimal("SCHPFTDUE"));
+			pd.setSchFeeDue(rs.getBigDecimal("SCHFEEDUE"));
+			pd.setSchInsDue(rs.getBigDecimal("SCHINSDUE"));
+			pd.setSchPenaltyDue(rs.getBigDecimal("SCHPENALTYDUE"));
+			pd.setAdvanceAmt(rs.getBigDecimal("ADVANCEAMT"));
+			pd.setExcessID(rs.getLong("EXCESSID"));
+			pd.setAdviseAmt(rs.getBigDecimal("ADVISEAMT"));
+			pd.setPresentmentAmt(rs.getBigDecimal("PRESENTMENTAMT"));
+			pd.settDSAmount(rs.getBigDecimal("TDSAMOUNT"));
+			pd.setExcludeReason(rs.getInt("EXCLUDEREASON"));
+			pd.setEmiNo(rs.getInt("EMINO"));
+			pd.setStatus(rs.getString("STATUS"));
+			pd.setBounceCode(rs.getString("BOUNCE_CODE"));
+			pd.setBounceRemarks(rs.getString("BOUNCE_REMARKS"));
+			pd.setClearingStatus(rs.getString("CLEARING_STATUS"));
+			pd.setPresentmentRef(rs.getString("PRESENTMENTREF"));
+			pd.setEcsReturn(rs.getString("ECSRETURN"));
+			pd.setReceiptID(rs.getLong("RECEIPTID"));
+			pd.setErrorCode(rs.getString("ERRORCODE"));
+			pd.setErrorDesc(rs.getString("ERRORDESC"));
+			pd.setManualAdviseId(JdbcUtil.getLong(rs.getObject("MANUALADVISEID")));
+			pd.setAccountNo(rs.getString("ACCOUNT_NUMBER"));
+			pd.setUtrNumber(rs.getString("UTR_Number"));
+			pd.setFateCorrection(rs.getString("FateCorrection"));
+
+			return pd;
+		}, responseID);
+	}
+
+	@Override
+	public void logRespDetailError(long headerId, long detailId, String errorCode, String errorDesc) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO PRESENTMENT_RESP_DTLS_ERRORS");
+		sql.append("(HEADER_ID, DETAIL_ID, ERROR_CODE, ERROR_DESCRIPTION)");
+		sql.append(" VALUES(?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
+				ps.setLong(++index, headerId);
+				ps.setLong(++index, detailId);
+				ps.setString(++index, errorCode);
+				ps.setString(++index, errorDesc);
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+	}
+
+	@Override
 	public long getNextValue() {
 		return getNextValue("SeqPresentmentDetails");
 	}
@@ -1303,5 +1410,4 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public long getSeqNumber(String tableName) {
 		return getNextValue(tableName);
 	}
-
 }
