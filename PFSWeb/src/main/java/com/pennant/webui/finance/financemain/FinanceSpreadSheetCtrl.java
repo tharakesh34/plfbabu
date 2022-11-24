@@ -983,8 +983,9 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		}
 		dataMap.put("CUST_EXPOS_LESS2", PennantApplicationUtil.formateAmount(lessThan2years, format));
 		dataMap.put("CUST_EXPOS_GREATER2", PennantApplicationUtil.formateAmount(greaterThan2years, format));
-		dataMap.put("CUST_OBLIGATION",
-				PennantApplicationUtil.formateAmount(lessThan2years.add(greaterThan2years), format));
+
+		BigDecimal custObligation = lessThan2years.add(greaterThan2years);
+		dataMap.put("CUST_OBLIGATION", PennantApplicationUtil.formateAmount(custObligation, format));
 
 	}
 
