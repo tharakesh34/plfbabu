@@ -6105,5 +6105,131 @@
 		<modifyDataType tableName="RMTBranches_temp" columnName="BranchSwiftBrnCde" newDataType="varchar(5)" />
 		<modifyDataType tableName="RMTBranches" columnName="BranchSwiftBrnCde" newDataType="varchar(5)" />
 	</changeSet>
+	
+	
+	<changeSet id="ST#99.26" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_RESPONSE_THREAD_COUNT';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC,SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PRESENTMENT_RESPONSE_THREAD_COUNT', 'Presentment Response Thread Count', 'int', 0, '10', 3, 0, NULL, NULL, 'Presentment Response Thread Count', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#99.26.1" author="saikrishna.b">
+		<createSequence sequenceName="SEQ_PRMNT_RESP_SUCCESS_QUEUE" minValue="1"
+			maxValue="999999999999999999999999999" incrementBy="1" ordered="true"/>
+	</changeSet>
+
+	<changeSet id="ST#99.26.2" author="saikrishna.b">
+		<createTable tableName="PRMNT_RESP_SUCCESS_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" />
+			<column name="ThreadId" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="ResetCounterId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#99.26.3" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRMNT_RESP_SUCCESS_QUEUE ADD CONSTRAINT DF_PESQ_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.26.3" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Progress" tableName="PRMNT_RESP_SUCCESS_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#99.26.4" author="saikrishna.b">
+		<addPrimaryKey tableName="PRMNT_RESP_SUCCESS_QUEUE" columnNames="ID, BatchId" constraintName="PK_PRMNT_RESP_SUCCESS_QUEUE" />
+	</changeSet>
+	
+	<changeSet id="ST#99.26.5" author="saikrishna.b">
+		<createIndex tableName="PRMNT_RESP_SUCCESS_QUEUE" indexName="IDX_PRMNT_RESP_SUCCESS_QUEUE_RID">
+			<column name="ReferenceId" type="bigint" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#99.27.1" author="saikrishna.b">
+		<createSequence sequenceName="SEQ_PRMNT_RESP_BOUNCE_QUEUE" minValue="1"
+			maxValue="999999999999999999999999999" incrementBy="1" ordered="true"/>
+	</changeSet>
+
+	<changeSet id="ST#99.27.2" author="saikrishna.b">
+		<createTable tableName="PRMNT_RESP_BOUNCE_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" />
+			<column name="ThreadId" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="ResetCounterId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#99.27.3" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRMNT_RESP_BOUNCE_QUEUE ADD CONSTRAINT DF_PEBQ_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.27.3" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Progress" tableName="PRMNT_RESP_BOUNCE_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#99.27.4" author="saikrishna.b">
+		<addPrimaryKey tableName="PRMNT_RESP_BOUNCE_QUEUE" columnNames="ID, BatchId" constraintName="PK_PRMNT_RESP_BOUNCE_QUEUE" />
+	</changeSet>
+	
+	<changeSet id="ST#99.27.5" author="saikrishna.b">
+		<createIndex tableName="PRMNT_RESP_BOUNCE_QUEUE" indexName="IDX_PRMNT_RESP_BOUNCE_QUEUE_RID">
+			<column name="ReferenceId" type="bigint" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#99.28" author="saikrishna.b">
+		<addColumn tableName="PRESENTMENT_RESP_HEADER">
+			<column name="Progress" type="int"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#99.28.1" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRESENTMENT_RESP_HEADER ADD CONSTRAINT DF_PRH_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.28.1" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Progress" tableName="PRESENTMENT_RESP_HEADER" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#99.28.2" author="saikrishna.b">
+		<addColumn tableName="PRESENTMENT_RESP_DTLS">
+			<column name="ERROR_CODE" type="varchar(10)"/>
+			<column name="ERROR_DESCRIPTION" type="varchar(2000)"/>
+		</addColumn>
+	</changeSet>
+	
 				
 </databaseChangeLog>

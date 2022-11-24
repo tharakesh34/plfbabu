@@ -238,6 +238,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 
 	public void processingPrsentments(long importHeaderId, String batchReference) {
+		int totalRecords = presentmentDetailDAO.logRespDetails(importHeaderId, importHeaderId);
+		presentmentDetailDAO.updateProgess(importHeaderId, 1);
+	}
+
+	public void processingPrsentments1(long importHeaderId, String batchReference) {
 		logger.info(Literal.ENTERING);
 
 		if (deStatus == null) {

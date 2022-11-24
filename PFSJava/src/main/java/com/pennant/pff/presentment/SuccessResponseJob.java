@@ -11,7 +11,6 @@ import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
@@ -25,6 +24,7 @@ import com.pennant.pff.presentment.service.PresentmentEngine;
 import com.pennant.pff.presentment.tasklet.ClearQueueTasklet;
 import com.pennant.pff.presentment.tasklet.SuccessResponsePartitioner;
 import com.pennant.pff.presentment.tasklet.SuccessResponseTasklet;
+import com.pennant.pff.presentment.tasklet.UpdateResponseTasklet;
 import com.pennanttech.pennapps.core.AppException;
 
 @Configuration
@@ -84,6 +84,8 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 				.start(masterStep()).on("FAILED").fail()
 
+				.next(updateHeaderStep()).on("FAILED").fail()
+
 				.next(clear()).on("*").end("COMPLETED").on("FAILED").fail()
 
 				.end()
@@ -95,9 +97,21 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 	@Bean
 	public Step masterStep() throws Exception {
-		SuccessResponsePartitioner extractionPartition = new SuccessResponsePartitioner(bjqDAO);
-		return stepBuilderFactory.get("SUCCESS_RESPONSE_MASTER").partitioner(masterTasklet())
-				.partitioner("extractionStep", extractionPartition).listener(extractionPartition).build();
+		return stepBuilderFactory.get("SUCCESS_RESPONSE_MASTER")
+
+				.partitioner(masterTasklet())
+
+				.partitioner("extractionStep", new SuccessResponsePartitioner(bjqDAO))
+
+				// .listener(extractionPartition)
+
+				.build();
+	}
+
+	@Bean
+	public Step updateHeaderStep() throws Exception {
+		return this.stepBuilderFactory.get("UPDATE_HEADER").tasklet(new UpdateResponseTasklet(presentmentDAO)).build();
+
 	}
 
 	@Bean
@@ -133,12 +147,6 @@ public class SuccessResponseJob extends BatchConfiguration {
 	@Bean
 	public BatchJobQueueDAO bjqDAO() {
 		return new SuccessResponseJobQueueDAOImpl(dataSource);
-	}
-
-	private SimpleAsyncTaskExecutor taskExecutor(String threadNamePrefix) {
-		SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor(threadNamePrefix);
-		taskExecutor.setConcurrencyLimit(1);
-		return taskExecutor;
 	}
 
 	@Override

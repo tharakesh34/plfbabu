@@ -102,7 +102,7 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 		}
 	}
 
-	public void updateQueingRecords(List<BatchJobQueue> jobQueue) {
+	private void updateQueingRecords(List<BatchJobQueue> jobQueue) {
 		String sql = "Update PRMNT_EXTRACTION_QUEUE Set Id = ? Where ID = ? and BatchID = ?";
 
 		logger.debug(Literal.SQL + sql);
@@ -143,7 +143,6 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 			jobQueue.setResetCounterId(rs.getLong("resetCounterId"));
 			return jobQueue;
 		});
-
 	}
 
 	@Override

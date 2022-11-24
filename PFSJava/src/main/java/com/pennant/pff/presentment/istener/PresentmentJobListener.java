@@ -1,4 +1,4 @@
-package com.pennant.pff.presentment;
+package com.pennant.pff.presentment.istener;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -7,10 +7,10 @@ import org.springframework.batch.core.JobParameters;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 
-public class ExtractionJobListener implements JobExecutionListener {
+public class PresentmentJobListener implements JobExecutionListener {
 	private PresentmentDAO presentmentDAO;
 
-	public ExtractionJobListener(PresentmentDAO presentmentDAO) {
+	public PresentmentJobListener(PresentmentDAO presentmentDAO) {
 		super();
 		this.presentmentDAO = presentmentDAO;
 	}

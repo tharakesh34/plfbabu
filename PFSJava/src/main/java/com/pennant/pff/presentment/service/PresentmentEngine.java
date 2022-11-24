@@ -1496,16 +1496,25 @@ public class PresentmentEngine {
 		return rch;
 	}
 
-	public void logRespDetailError(long headerId, long responseID, String pexcFailure, String errorMessage) {
-		presentmentDAO.logRespDetailError(headerId, responseID, pexcFailure, errorMessage);
+	public void updateError(long responseID, String pexcFailure, String errorMessage) {
+		if (StringUtils.trimToNull(errorMessage) != null) {
+			errorMessage = (errorMessage.length() >= 2000) ? errorMessage.substring(0, 1998) : errorMessage;
+		}
+
+		presentmentDAO.updateErrorForResponse(responseID, pexcFailure, errorMessage);
+	}
+
+	public PresentmentDetail getPresentmentDetail(Long presentmentID) {
+		return presentmentDAO.getPresentmentDetail(presentmentID);
 	}
 
 	// ----------------------------------------------------------------------------//
 	// --------------------------------Dependencies--------------------------------//
 	// ----------------------------------------------------------------------------//
 
-	public PresentmentDetail getPresentmentDetail(Long presentmentID) {
-		return presentmentDAO.getPresentmentDetail(presentmentID);
+	@Autowired
+	public void setDueExtractionConfigDAO(DueExtractionConfigDAO dueExtractionConfigDAO) {
+		this.dueExtractionConfigDAO = dueExtractionConfigDAO;
 	}
 
 	@Autowired
@@ -1516,31 +1525,6 @@ public class PresentmentEngine {
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	@Autowired
-	public void setOverdrafLoanService(OverdrafLoanService overdrafLoanService) {
-		this.overdrafLoanService = overdrafLoanService;
-	}
-
-	@Autowired
-	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
-		this.chequeDetailDAO = chequeDetailDAO;
-	}
-
-	@Autowired
-	public void setDueExtractionConfigDAO(DueExtractionConfigDAO dueExtractionConfigDAO) {
-		this.dueExtractionConfigDAO = dueExtractionConfigDAO;
-	}
-
-	@Autowired
-	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
-		this.presentmentDetailService = presentmentDetailService;
-	}
-
-	@Autowired
-	public void setPresentmentExcludeCodeDAO(PresentmentExcludeCodeDAO presentmentExcludeCodeDAO) {
-		this.presentmentExcludeCodeDAO = presentmentExcludeCodeDAO;
 	}
 
 	@Autowired
@@ -1564,6 +1548,66 @@ public class PresentmentEngine {
 	}
 
 	@Autowired
+	public void setPresentmentExcludeCodeDAO(PresentmentExcludeCodeDAO presentmentExcludeCodeDAO) {
+		this.presentmentExcludeCodeDAO = presentmentExcludeCodeDAO;
+	}
+
+	@Autowired
+	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
+		this.chequeDetailDAO = chequeDetailDAO;
+	}
+
+	@Autowired
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	@Autowired
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
+
+	@Autowired
+	public void setConsecutiveBounceDAO(ConsecutiveBounceDAO consecutiveBounceDAO) {
+		this.consecutiveBounceDAO = consecutiveBounceDAO;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
+	@Autowired
+	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
+		this.mandateStatusDAO = mandateStatusDAO;
+	}
+
+	@Autowired
+	public void setOverdrafLoanService(OverdrafLoanService overdrafLoanService) {
+		this.overdrafLoanService = overdrafLoanService;
+	}
+
+	@Autowired
+	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
+		this.presentmentDetailService = presentmentDetailService;
+	}
+
+	@Autowired
 	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
 		this.receiptPaymentService = receiptPaymentService;
 	}
@@ -1571,11 +1615,6 @@ public class PresentmentEngine {
 	@Autowired(required = false)
 	public void setExternalPresentmentHook(ExternalPresentmentHook externalPresentmentHook) {
 		this.externalPresentmentHook = externalPresentmentHook;
-	}
-
-	@Autowired
-	private PresentmentRequest getPresentmentRequest() {
-		return presentmentRequest == null ? defaultPresentmentRequest : presentmentRequest;
 	}
 
 	@Autowired
@@ -1589,6 +1628,26 @@ public class PresentmentEngine {
 		this.presentmentRequest = presentmentRequest;
 	}
 
+	@Autowired
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	@Autowired
+	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
+		this.receiptCancellationService = receiptCancellationService;
+	}
+
+	@Autowired
+	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
+		this.repaymentPostingsUtil = repaymentPostingsUtil;
+	}
+
+	@Autowired
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
+	}
+
 	@Autowired(required = false)
 	@Qualifier(value = "presentmentImportProcess")
 	public void setPresentmentImportProcess(PresentmentImportProcess presentmentImportProcess) {
@@ -1596,8 +1655,12 @@ public class PresentmentEngine {
 	}
 
 	@Autowired
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
+	public void setFinMandateService(FinMandateService finMandateService) {
+		this.finMandateService = finMandateService;
+	}
+
+	private PresentmentRequest getPresentmentRequest() {
+		return presentmentRequest == null ? defaultPresentmentRequest : presentmentRequest;
 	}
 
 }

@@ -173,6 +173,12 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 		};
 	}
 
+	protected SimpleAsyncTaskExecutor taskExecutor(String threadNamePrefix) {
+		SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor(threadNamePrefix);
+		taskExecutor.setConcurrencyLimit(1);
+		return taskExecutor;
+	}
+
 	public void start(JobParameters jobParameters) throws JobExecutionAlreadyRunningException, JobRestartException,
 			JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 		logger.info(Literal.ENTERING);

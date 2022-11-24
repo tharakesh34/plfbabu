@@ -2163,4 +2163,17 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		});
 	}
 
+	@Override
+	public void updateProgess(long headerID, int progress) {
+		String sql = "Update PRESENTMENT_RESP_HEADER set PROGRESS = ? Where ID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, progress);
+			ps.setLong(2, headerID);
+		});
+
+	}
+
 }

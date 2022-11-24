@@ -23,7 +23,7 @@ public interface PresentmentDAO {
 	void updateFailureError(BatchJobQueue jobQueue);
 
 	void updateEndTimeStatus(BatchJobQueue jobQueue);
-	
+
 	int extarct(long batchID, Date dueDate);
 
 	int extarct(long batchID, Date fromDate, Date toDate);
@@ -116,6 +116,19 @@ public interface PresentmentDAO {
 
 	PresentmentDetail getPresentmenForResponse(Long responseID);
 
-	void logRespDetailError(long headerId, long detailId, String errorCode, String errorDesc);
+	List<Long> getPresentmentIdListByRespBatch(long headerId);
+
+	List<String> getStatusByPresentmentHeader(Long id);
+
+	void updateHeaderCounts(Long id, int successCount, int failedCount);
+
+	void updateHeaderStatus(Long id, int pexcReceived);
+
+	List<Long> getResponseHeadersByBatch(long batchID, String responseType);
+
+	void updateResponseHeader(long headerId, int totalRecords, int successRecords, int failedRecords, String status,
+			String remarks);
+
+	void updateErrorForResponse(long responseID, String pexcFailure, String errorMessage);
 
 }

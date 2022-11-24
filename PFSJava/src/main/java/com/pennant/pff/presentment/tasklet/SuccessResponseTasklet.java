@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -45,8 +44,6 @@ public class SuccessResponseTasklet implements Tasklet {
 	private DataSourceTransactionManager transactionManager;
 
 	private EventPropertiesService eventPropertiesService;
-	private EventProperties eventProperties;
-	private Date appDate;
 
 	public SuccessResponseTasklet(BatchJobQueueDAO ebjqDAO, PresentmentEngine presentmentEngine,
 			DataSourceTransactionManager transactionManager) {
@@ -62,7 +59,6 @@ public class SuccessResponseTasklet implements Tasklet {
 
 		List<Exception> exceptions = new ArrayList<>(1);
 
-		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
 		Map<String, Object> stepExecutionContext = chunkContext.getStepContext().getStepExecutionContext();
 
 		int threadID = Integer.parseInt(stepExecutionContext.get("THREAD_ID").toString());
@@ -77,9 +73,10 @@ public class SuccessResponseTasklet implements Tasklet {
 			return RepeatStatus.FINISHED;
 		}
 
-		eventProperties = eventPropertiesService.getEventProperties(EventType.EOD);
-
+		EventProperties eventProperties = eventPropertiesService
+				.getEventProperties(EventType.PRESENTMENT_RESPONSE_UPLOAD);
 		Date appDate = SysParamUtil.getAppDate();
+
 		String strAppDate = DateUtil.formatToLongDate(appDate);
 		String strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 
@@ -90,17 +87,11 @@ public class SuccessResponseTasklet implements Tasklet {
 			jobQueue.setId(queueID);
 			jobQueue.setThreadId(threadID);
 
-			Long headerId = null;
 			try {
-
 				jobQueue.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 				ebjqDAO.updateProgress(jobQueue);
 
-				PresentmentDetail pd = presentmentEngine.getPresentmenForResponse(responseID);
-
-				headerId = pd.getHeaderId();
-
-				boolean status = processResponse(pd);
+				boolean status = processResponse(responseID, appDate, eventProperties);
 
 				if (status) {
 					jobQueue.setProgress(EodConstants.PROGRESS_SUCCESS);
@@ -109,7 +100,6 @@ public class SuccessResponseTasklet implements Tasklet {
 					jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 					ebjqDAO.updateProgress(jobQueue);
 				}
-
 			} catch (Exception e) {
 				String errorMessage = e.getMessage();
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
@@ -124,9 +114,7 @@ public class SuccessResponseTasklet implements Tasklet {
 				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 				ebjqDAO.updateProgress(jobQueue);
 
-				presentmentEngine.logRespDetailError(headerId, responseID, RepayConstants.PEXC_FAILURE, errorMessage);
-
-				break;
+				presentmentEngine.updateError(responseID, RepayConstants.PEXC_FAILURE, errorMessage);
 			}
 
 			queueID = ebjqDAO.getNextValue();
@@ -148,9 +136,10 @@ public class SuccessResponseTasklet implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	private boolean processResponse(PresentmentDetail pd) {
+	private boolean processResponse(long responseID, Date appDate, EventProperties eventProperties) {
 		try {
 
+			PresentmentDetail pd = presentmentEngine.getPresentmenForResponse(responseID);
 			pd.setAppDate(appDate);
 			pd.setEventProperties(eventProperties);
 

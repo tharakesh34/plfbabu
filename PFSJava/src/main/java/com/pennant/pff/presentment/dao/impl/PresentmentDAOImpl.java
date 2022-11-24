@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -32,7 +31,6 @@ import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennanttech.model.presentment.Presentment;
-import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -162,7 +160,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public void updateFailureError(BatchJobQueue jobQueue) {
-		String sql = "Update PRMNT_BATCH_JOBS Set Failed_Step = ? , Error = ? Where ID = ?";
+		String sql = "Update PRMNT_BATCH_JOBS Set Failed_Step = ?, Error = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -175,7 +173,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public void updateEndTimeStatus(BatchJobQueue jobQueue) {
-		String sql = "Update PRMNT_BATCH_JOBS Set End_Time = ? , Status = ? Where ID = ?";
+		String sql = "Update PRMNT_BATCH_JOBS Set End_Time = ?, Status = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -1493,25 +1491,112 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public void logRespDetailError(long headerId, long detailId, String errorCode, String errorDesc) {
+	public List<Long> getResponseHeadersByBatch(long batchID, String responseType) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO PRESENTMENT_RESP_DTLS_ERRORS");
-		sql.append("(HEADER_ID, DETAIL_ID, ERROR_CODE, ERROR_DESCRIPTION)");
-		sql.append(" VALUES(?, ?, ?, ?)");
+		sql.append("SELECT DISTINCT HEADER_ID");
+		sql.append(" FROM PRESENTMENT_RESP_DTLS PRD");
 
-		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			jdbcOperations.update(sql.toString(), ps -> {
-				int index = 0;
-				ps.setLong(++index, headerId);
-				ps.setLong(++index, detailId);
-				ps.setString(++index, errorCode);
-				ps.setString(++index, errorDesc);
-			});
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
+		if ("S".equals(responseType)) {
+			sql.append(" INNER JOIN PRMNT_RESP_SUCCESS_QUEUE PRSQ ON PRSQ.REFERENCEID = PRD.ID");
+		} else {
+			sql.append(" INNER JOIN PRMNT_RESP_BOUNCE_QUEUE PRSQ ON PRSQ.REFERENCEID = PRD.ID");
 		}
+
+		sql.append(" WHERE PRSQ.BATCHID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForList(sql.toString(), Long.class, batchID);
+	}
+
+	@Override
+	public List<Long> getPresentmentIdListByRespBatch(long headerId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT DISTINCT PH.ID FROM PRESENTMENT_RESP_DTLS PRD");
+		sql.append(" INNER JOIN PRESENTMENTDETAILS PD ON PD.PRESENTMENTREF = PRD.PRESENTMENT_REFERENCE");
+		sql.append(" INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID");
+		sql.append(" WHERE PRD.HEADER_ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForList(sql.toString(), Long.class, headerId);
+
+	}
+
+	@Override
+	public List<String> getStatusByPresentmentHeader(Long id) {
+		String sql = "SELECT STATUS FROM PRESENTMENTDETAILS WHERE PRESENTMENTID = ? AND EXCLUDEREASON = ?";
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForList(sql, String.class, id, 0);
+	}
+
+	@Override
+	public void updateHeaderCounts(Long id, int successCount, int failedCount) {
+		String sql = "UPDATE PRESENTMENTHEADER SET SUCCESSRECORDS = ?, FAILEDRECORDS = ? WHERE ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, successCount);
+			ps.setInt(2, failedCount);
+			ps.setLong(3, id);
+		});
+
+	}
+
+	@Override
+	public void updateHeaderStatus(Long id, int status) {
+		String sql = "UPDATE PresentmentHeader SET STATUS = ? WHERE ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setInt(index++, status);
+			ps.setLong(index, id);
+		});
+	}
+
+	@Override
+	public void updateResponseHeader(long headerId, int totalRecords, int successRecords, int failedRecords,
+			String status, String remarks) {
+
+		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE PRESENTMENT_RESP_HEADER SET");
+		sql.append(" TOTAL_RECORDS = ?, SUCESS_RECORDS = ?, FAILURE_RECORDS = ?,");
+		sql.append(" STATUS = ?, REMARKS = ?, END_TIME = ? WHERE ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setInt(index++, totalRecords);
+			ps.setInt(index++, successRecords);
+			ps.setInt(index++, failedRecords);
+			ps.setString(index++, status);
+			ps.setString(index++, remarks);
+			ps.setTimestamp(index++, curTimeStamp);
+			ps.setLong(index, headerId);
+
+		});
+	}
+
+	@Override
+	public void updateErrorForResponse(long responseID, String pexcFailure, String errorMessage) {
+		String sql = "UPDATE PRESENTMENT_RESP_DTLS ERROR_CODE = ?, ERROR_DESCRIPTION = ?, Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, pexcFailure);
+			ps.setString(2, errorMessage);
+			ps.setLong(3, responseID);
+
+		});
 	}
 
 	@Override
@@ -1523,4 +1608,5 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public long getSeqNumber(String tableName) {
 		return getNextValue(tableName);
 	}
+
 }
