@@ -302,7 +302,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			int index = 1;
 
 			ps.setLong(index++, batchID);
-
+			ps.setObject(index++, null);
 			ps.setInt(index++, 1);
 			if (InstrumentType.isPDC(instrumentType) || InstrumentType.isIPDC(instrumentType)) {
 				ps.setString(index++, "PDC");
@@ -313,8 +313,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
 			ps.setDate(index++, JdbcUtil.getDate(toDate));
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
-
+			ps.setDate(index, JdbcUtil.getDate(toDate));
 		});
 	}
 

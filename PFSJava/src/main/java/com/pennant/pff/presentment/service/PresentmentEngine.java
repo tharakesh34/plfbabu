@@ -45,6 +45,7 @@ import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennant.pff.presentment.dao.PresentmentExcludeCodeDAO;
 import com.pennanttech.external.ExternalPresentmentHook;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -714,7 +715,9 @@ public class PresentmentEngine {
 
 			presentmentDAO.updateSchdWithPresentmentId(includeList);
 
-			presentmentDAO.updateRepresentWithPresentmentId(includeList);
+			if (pd.getRePresentUploadID() != null) {
+				presentmentDAO.updateRepresentWithPresentmentId(includeList);
+			}
 
 			if (!excess.isEmpty()) {
 				finExcessAmountDAO.updateExcessAmtList(excess);
@@ -741,7 +744,7 @@ public class PresentmentEngine {
 				chequeDetailDAO.updateChequeStatus(cheques);
 			}
 
-		} catch (Exception e) {
+		} catch (ConcurrencyException e) {
 			pd.setExcludeReason(RepayConstants.PEXC_SCHDVERSION);
 			presentmentDAO.updateExcludeReason(pd.getId(), RepayConstants.PEXC_SCHDVERSION);
 		}

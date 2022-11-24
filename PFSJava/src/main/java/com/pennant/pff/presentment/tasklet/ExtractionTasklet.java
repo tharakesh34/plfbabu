@@ -158,6 +158,7 @@ public class ExtractionTasklet implements Tasklet {
 		try {
 
 			PresentmentDetail pd = presentmentEngine.extract(presentmentID, ph);
+			pd.setPresentmentType(ph.getPresentmentType());
 
 			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
