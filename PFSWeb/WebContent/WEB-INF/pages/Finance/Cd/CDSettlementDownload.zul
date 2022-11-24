@@ -30,7 +30,7 @@
 							<listhead sizable="true">
 
 								<listheader label="${c:l('listheader_SettlementReference.label')}" hflex="min" />
-								<listheader label="${c:l('listheader_FileName.label')}" hflex="min" />
+								<listheader label="${c:l('label_FileName')}" hflex="min" />
 								<listheader label="${c:l('listheader_ProcessedDate.label')}" hflex="min" />
 								<listheader label="${c:l('listheader_Status.label')}" hflex="min" />
 								<listheader label="${c:l('listheader_Downlaod.label')}" hflex="min" />

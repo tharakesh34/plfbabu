@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="listWindow" apply="${rePresentmentUploadListCtrl}" border="none" width="100%">
+			<timer id="timer" repeats="true" />
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<button id="buttonSearch" label="${c:l('label_Filter')}"
+							autodisable="buttonSearch,print,btnRefresh,help,btnDownload,btnApprove,btnReject" tooltiptext="${c:l('buttonSearch.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="print" label="${c:l('label_Print')}"
+							autodisable="buttonSearch,print,btnRefresh,help,btnDownload,btnApprove,btnReject" tooltiptext="${c:l('print.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+					
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="btnRefresh" label="${c:l('label_Refresh')}"
+							autodisable="buttonSearch,print,btnRefresh,help,btnDownload,btnApprove,btnReject"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="help" visible="false" label="${c:l('label_Help')}"
+							autodisable="buttonSearch,print,btnRefresh,help,btnDownload,btnApprove,btnReject"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="btnDownload" visible="false" label="${c:l('btnRePresentUploaddownload.label')}"
+							autodisable="buttonSearch,print,btnRefresh,help,btnDownload,btnApprove,btnReject"
+							tooltiptext="${c:l('btndownload.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="btnApprove" visible="false" label="${c:l('btnRePresentApprove.label')}"
+							autodisable="buttonSearch,print,btnRefresh,help,btnDownload,btnApprove,btnReject"
+							tooltiptext="${c:l('btnRePresentApprove.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="btnReject" visible="false" label="${c:l('btnRePresentReject.label')}"
+							autodisable="buttonSearch,print,btnRefresh,help,btnDownload,btnApprove,btnReject"
+							tooltiptext="${c:l('btnRePresentUploadReject.tooltiptext')}" sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+			<borderlayout id="borderLayout">
+				<north border="none" />
+				<center border="none">
+					<div>
+						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row id="entityRow" visible="false">
+									<label value="${c:l('label_EntityCode')}" />
+									<listbox id="soEntityCode" width="43px" mold="select" rows="1" />
+									<extendedcombobox id="entityCode" />
+								</row>
+								<row>
+									<label value="${c:l('label_UploadId')}" />
+									<listbox id="soUploadId" width="43px" mold="select" rows="1" />
+									<intbox id="uploadId" width="100px" maxlength="8" />
+									<label value="${c:l('label_FileName')}" />
+									<listbox id="soFileName" width="43px" mold="select" rows="1" />
+									<textbox id="fileName" width="100px" maxlength="300" />
+								</row>
+								<row id="recordStatusRow">
+									<label value="${c:l('label.RecordStatus')}" />
+									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
+									<textbox id="recordStatus" width="100px" maxlength="50" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBox" emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
+							span="true">
+							<listhead sizable="true" id="listHead">
+								<listheader id="lhCheckBox" hflex="min" />
+								<listheader id="lhUploadID" label="${c:l('label_UploadId')}" sort="auto" hflex="min" />
+								<listheader id="lhFileName" label="${c:l('label_FileName')}" sort="auto" hflex="min" />
+								<listheader id="lhTotalCount" label="${c:l('listheader_TotalCount.label')}" sort="auto"
+									hflex="min" align="center" />
+								<listheader id="lhProcCount" label="${c:l('listheader_ProcCount.label')}" sort="auto"
+									hflex="min" align="center" />
+								<listheader id="lhSuccessCount" label="${c:l('listheader_SuccessCount.label')}"
+									sort="auto" hflex="min" align="center" />
+								<listheader id="lhFailedCount" label="${c:l('listheader_FailedCount.label')}"
+									sort="auto" hflex="min" align="center" />
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}"
+									sort="auto" hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+				<south border="none">
+					<paging id="paging" />
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

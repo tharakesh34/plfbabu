@@ -669,4 +669,47 @@
 		<modifyDataType tableName="ADTRMTBranches" columnName="BranchSwiftBrnCde" newDataType="varchar(5)" />
 	</changeSet>
 	
+	<changeSet id="ST#113" author="Gireesh.G">
+		<createTable tableName="ADTFILE_UPLOAD_HEADER">
+		<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Id" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="Type" type="varchar(50)" />
+			<column name="FileName" type="varchar(100)" />
+			<column name="TotalRecords" type="int" />
+			<column name="SuccessRecords" type="int" />
+			<column name="FailureRecords" type="int" />
+			<column name="Progress" type="int" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>

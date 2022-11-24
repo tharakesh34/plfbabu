@@ -81,9 +81,9 @@
 												hflex="min" />
 											<listheader id="listheader_ReceivedDate" label="${c:l('listheader_ReceivedDate.label')}" sort="false"
 												hflex="min" />
-											<listheader id="listheader_UploadFileStatu" label="${c:l('listheader_UploadFileStatu.label')}"
+											<listheader id="listheader_UploadFileStatu" label="${c:l('label_FileStatus')}"
 												sort="false" hflex="min" />
-											<listheader id="listheader_UploadReason" label="${c:l('listheader_UploadFileReason.label')}" sort="false"
+											<listheader id="listheader_UploadReason" label="${c:l('label_FileReason')}" sort="false"
 												hflex="min" visible="false" />
 										</listhead>
 									</listbox>
@@ -104,9 +104,9 @@
 												sort="false" hflex="min" />
 											<listheader id="listheader_ReceivedDate1" label="${c:l('listheader_ReceivedDate.label')}" sort="false"
 												hflex="min" />
-											<listheader id="listheader_UploadFileStatu1" label="${c:l('listheader_UploadFileStatu.label')}"
+											<listheader id="listheader_UploadFileStatu1" label="${c:l('label_FileStatus')}"
 												sort="false" hflex="min" />
-											<listheader id="listheader_UploadReason1" label="${c:l('listheader_UploadFileReason.label')}"
+											<listheader id="listheader_UploadReason1" label="${c:l('label_FileReason')}"
 												sort="false" hflex="min" />
 										</listhead>
 									</listbox>

@@ -445,6 +445,7 @@ import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.pff.presentment.model.DueExtractionHeader;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
+import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.finance.tds.cerificate.model.TanDetail;
@@ -559,6 +560,7 @@ public class PennantJavaUtil {
 	private static String WF_OCRMAINTENANCE = "OCRMAINTENANCE";
 	private final static String EXT_FIELDS_MAINT = "EXT_FIELDS_MAINT";
 	private final static String baseRate_WF = "BASERATE_WORKFLOW";
+	private final static String WF_REPRESENT_UPLOAD = "REPRESENT_UPLOAD";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -3816,6 +3818,16 @@ public class PennantJavaUtil {
 				new ModuleMapping("DueExtractionConfig", DueExtractionHeader.class,
 						new String[] { "Due_Extraction_Header", "Due_Extraction_Header" }, masterWF,
 						new String[] { "ExtractionMonth" }, null, 360));
+
+		ModuleUtil.register("FileUploadHeader",
+				new ModuleMapping("FileUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER_AVIEW" }, WF_REPRESENT_UPLOAD,
+						new String[] { "Id", "FileName", "CreatedOn", "CreatedBy" }, null, 600));
+
+		ModuleUtil.register("RepresentUploadHeader",
+				new ModuleMapping("RepresentUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER_AVIEW" }, WF_REPRESENT_UPLOAD,
+						new String[] { "Id", "FileName", "CreatedOn", "CreatedBy" }, null, 600));
 
 		registerCustomModules();
 	}

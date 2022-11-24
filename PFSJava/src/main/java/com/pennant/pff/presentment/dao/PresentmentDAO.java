@@ -112,4 +112,9 @@ public interface PresentmentDAO {
 
 	void updateExcludeReason(long presentmentId, int manualExclude);
 
+	int extract(long batchID, PresentmentHeader ph);
+
+	List<PresentmentHeader> getpresentmentHeaderList(List<Long> headerId);
+
+	void updateRepresentWithPresentmentId(List<PresentmentDetail> presenetments);
 }

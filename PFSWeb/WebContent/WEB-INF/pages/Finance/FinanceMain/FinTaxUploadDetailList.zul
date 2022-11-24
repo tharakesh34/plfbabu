@@ -92,7 +92,7 @@
 							<listhead sizable="true">
 								<listheader id="listheader_BatchReference" label="${c:l('listheader_BatchReference.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_FileName" label="${c:l('listheader_FileName.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_FileName" label="${c:l('label_FileName')}" sort="auto" hflex="min" />
 								<listheader id="listheader_BatchCreatedDate" label="${c:l('listheader_BatchCreatedDate.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_NumberOfRecords" label="${c:l('listheader_NumberOfRecords.label')}" sort="auto"

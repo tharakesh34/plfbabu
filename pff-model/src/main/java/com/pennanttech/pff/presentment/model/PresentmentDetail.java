@@ -154,6 +154,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String employeeNo;
 	private Long employerId;
 	private String employerName;
+	private Long rePresentUploadID;
 
 	@XmlTransient
 	private PresentmentDetail befImage;
@@ -937,6 +938,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setEmployerName(String employerName) {
 		this.employerName = employerName;
+	}
+
+	public Long getRePresentUploadID() {
+		return rePresentUploadID;
+	}
+
+	public void setRePresentUploadID(Long rePresentUploadID) {
+		this.rePresentUploadID = rePresentUploadID;
 	}
 
 	public PresentmentDetail getBefImage() {

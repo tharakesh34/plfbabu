@@ -64,19 +64,15 @@ import com.pennanttech.pff.core.TableType;
 
 public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	private static final Logger logger = LogManager.getLogger(SelectReceiptUploadHeaderDialogCtrl.class);
-
 	private static final long serialVersionUID = 4783031677099154138L;
 
 	protected Window window_ReceiptUpload;
-
 	protected Button btnBrowse;
 	protected Button btnSave;
 	protected Button btnRefresh;
 	protected Button btndownload;
-
 	protected Textbox fileName;
 	protected ExtendedCombobox entity;
-
 	private Workbook workbook = null;
 	private DataFormatter objDefaultFormat = new DataFormatter();
 

@@ -120,6 +120,8 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private Date appDate;
 	private Date dueDate;
 	private boolean autoExtract;
+	private Long finID;
+	private Long rePresentUploadID;
 
 	public PresentmentHeader(long id) {
 		super();
@@ -143,7 +145,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("presentments");
 		excludeFields.add("batchID");
 		excludeFields.add("appDate");
-		excludeFields.add("appDate");
+		excludeFields.add("rePresentUploadID");
 
 		return excludeFields;
 	}
@@ -536,6 +538,22 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setAutoExtract(boolean autoExtract) {
 		this.autoExtract = autoExtract;
+	}
+
+	public Long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(Long finID) {
+		this.finID = finID;
+	}
+
+	public Long getRePresentUploadID() {
+		return rePresentUploadID;
+	}
+
+	public void setRePresentUploadID(Long rePresentUploadID) {
+		this.rePresentUploadID = rePresentUploadID;
 	}
 
 }

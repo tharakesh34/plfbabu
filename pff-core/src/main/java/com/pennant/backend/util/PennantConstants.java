@@ -646,6 +646,11 @@ public class PennantConstants {
 	public static final int RECEIPT_APPROVED = 2;
 	public static final int RECEIPT_REJECTED = 3;
 
+	public static final int REPRESENTMENT_DEFAULT = 0;
+	public static final int REPRESENTMENT_DOWNLOADED = 1;
+	public static final int REPRESENTMENT_APPROVED = 2;
+	public static final int REPRESENTMENT_REJECTED = 3;
+
 	// active and inactive
 	public static final boolean ACTIVE = true;
 	public static final boolean INACTIVE = false;
@@ -767,6 +772,9 @@ public class PennantConstants {
 	public static final String BALANCE_SHEET = "Balance Sheet";
 	public static final String PROFIT_AND_LOSS = "Profit and Loss";
 	public static final String SUMMARY_AND_RATIOS = "Summary and Ratios";
+
+	public static final String CHEQUE_AC_TYPE_NRE = "13";
+	public static final String CHEQUE_AC_TYPE_NRO = "14";
 
 	public static final String FIN_CLOSE_STATUS_WRITEOFF = "W";
 	// CD Schemes

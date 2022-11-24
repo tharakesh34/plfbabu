@@ -1,6 +1,7 @@
 package com.pennant.pff.presentment.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -143,4 +144,46 @@ public class ExtractionService {
 		}
 	}
 
+	public int extractRePresentment(List<Long> list) {
+		return extract(list);
+	}
+
+	public int extract(List<Long> list) {
+		long batchID = presentmentDAO.createBatch("REPRE_EXTR");
+
+		int count = 0;
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
+		try {
+			count = presentmentEngine.preparationForRepresentment(batchID, list);
+			transactionManager.commit(transactionStatus);
+		} catch (DuplicateKeyException e) {
+			transactionManager.rollback(transactionStatus);
+			throw new ConcurrencyException();
+		} catch (Exception e) {
+			transactionManager.rollback(transactionStatus);
+			throw new AppException("Presentment extraction failed", e);
+		}
+
+		if (count > 0) {
+			Date appDate = SysParamUtil.getAppDate();
+			PresentmentHeader ph = new PresentmentHeader();
+			ph.setPresentmentType(PennantConstants.PROCESS_REPRESENTMENT);
+			ph.setBatchID(batchID);
+			ph.setAppDate(appDate);
+			ph.setAutoExtract(false);
+
+			try {
+				start(ph);
+			} catch (Exception e) {
+				presentmentDAO.clearQueue(batchID);
+				throw new AppException("Presentment extraction failed", e);
+			}
+		}
+
+		return count;
+	}
 }

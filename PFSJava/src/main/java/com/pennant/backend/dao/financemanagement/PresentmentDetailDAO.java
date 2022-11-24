@@ -173,4 +173,6 @@ public interface PresentmentDetailDAO {
 	int getApprovedPresentmentCount(String finReference);
 
 	void updateReceptIdAndAmounts(PresentmentDetail pd);
+
+	PresentmentDetail getRePresentmentDetail(String finReference, Date SchDate);
 }
