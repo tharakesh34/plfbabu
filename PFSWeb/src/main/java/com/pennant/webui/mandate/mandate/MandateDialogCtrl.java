@@ -351,21 +351,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void onCreateFromMandate() {
 		this.mandateRegistrationListCtrl = ((MandateRegistrationListCtrl) arguments.get("mandateRegistrationListCtrl"));
 
-		if (arguments.containsKey("customerLoans")) {
-			customerLoans = (List<Mandate>) arguments.get("customerLoans");
-		}
+		this.finReference.setValue(this.mandate.getFinReference());
 
-		if (customerLoans.size() == 1) {
-			Mandate mndt = customerLoans.get(0);
-			this.finReference.setObject(mndt);
-			this.finReference.setValue(mndt.getFinReference());
+		this.mandate.setOrgReference(this.mandate.getFinReference());
+		readOnlyComponent(true, this.finReference);
 
-			this.mandate.setOrgReference(mndt.getFinReference());
-			readOnlyComponent(true, this.finReference);
-
-			this.finType = mndt.getFinType();
-
-		}
+		this.finType = this.mandate.getFinType();
 
 		addPartnerBankFilter();
 

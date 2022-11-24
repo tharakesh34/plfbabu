@@ -348,22 +348,14 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void onCreateFromMandate() {
 		this.mandateRegistrationListCtrl = ((MandateRegistrationListCtrl) arguments.get("mandateRegistrationListCtrl"));
 
-		if (arguments.containsKey("customerLoans")) {
-			customerLoans = (List<FinanceMain>) arguments.get("customerLoans");
-		}
+		this.finReference.setValue(this.mandate.getFinReference());
 
-		if (customerLoans.size() == 1) {
-			FinanceMain fm = customerLoans.get(0);
-			this.finReference.setObject(fm);
-			this.finReference.setValue(fm.getFinReference());
+		this.mandate.setOrgReference(this.mandate.getFinReference());
+		readOnlyComponent(true, this.finReference);
 
-			this.mandate.setOrgReference(fm.getFinReference());
-			readOnlyComponent(true, this.finReference);
+		this.finType = this.mandate.getFinType();
 
-			this.finType = fm.getFinType();
-
-			addPartnerBankFilter();
-		}
+		addPartnerBankFilter();
 
 		fillComboBox(this.mandateType, mandate.getMandateType(), mandateTypeList, "");
 

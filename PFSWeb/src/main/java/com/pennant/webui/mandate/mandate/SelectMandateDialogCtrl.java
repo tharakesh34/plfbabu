@@ -17,6 +17,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
@@ -30,11 +31,14 @@ import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.mandate.MandateService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
@@ -50,6 +54,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final Logger logger = LogManager.getLogger(SelectMandateDialogCtrl.class);
 
 	protected Window window_SelectMandateDialog;
+	protected ExtendedCombobox finReference;
 	protected Textbox custCIF;
 	protected Combobox mandateTypes;
 	protected ExtendedCombobox entityCode;
@@ -58,6 +63,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Label customerNameLabel;
 
 	private Mandate mandate;
+	private String finType;
 	private transient MandateListCtrl mandateListCtrl;
 
 	private transient CustomerDataService customerDataService;
@@ -108,6 +114,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private void setCustomerData(Customer customer) {
 
+		addFilter(customer);
 		if (customer == null || customer.getCustID() == 0) {
 			this.custCIF.setValue("");
 			return;
@@ -132,7 +139,6 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		String cif = StringUtils.trimToEmpty(custCIF);
 
 		if (this.custCIF.getValue().trim().isEmpty()) {
-			MessageUtil.showError("Invalid Customer Please Select valid Customer");
 			customerNameLabel.setValue("");
 
 			return null;
@@ -151,6 +157,17 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private void doSetFieldProperties() {
 		fillComboBox(this.mandateTypes, "", mandateTypeList, "," + InstrumentType.PDC.code() + ",");
+
+		this.finReference.setButtonDisabled(false);
+		this.finReference.setTextBoxWidth(155);
+		this.finReference.setMandatoryStyle(true);
+		this.finReference.setModuleName("ReceiptFinanceMain");
+		this.finReference.setValueColumn("FinReference");
+		this.finReference.setDescColumn("FinType");
+		this.finReference.setValidateColumns(new String[] { "FinReference" });
+		Filter filters[] = new Filter[1];
+		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		this.finReference.setFilters(filters);
 
 		List<Entity> entity = mandateService.getEntities();
 
@@ -248,14 +265,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			Mandate employerDetails = mandateService.getEmployerDetails(this.mandate.getCustID());
 
 			if (InstrumentType.isDAS(mandateType)) {
-				if (employerDetails == null) {
-					MessageUtil.showError("Employer details are not available for this Customer");
-					return;
-				} else {
-					if (!employerDetails.isAllowDAS()) {
-						MessageUtil.showError("Allow Das is not applicable for this employer");
-						return;
-					}
+				if (employerDetails != null) {
 					this.mandate.setEmployerID(employerDetails.getEmployerID());
 					this.mandate.setEmployerName(employerDetails.getEmployerName());
 					this.mandate.setEmployeeNo(employerDetails.getEmployeeNo());
@@ -325,15 +335,23 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			wve.add(we);
 		}
 
+		try {
+			mandate.setFinReference(this.finReference.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		mandate.setNewRecord(true);
 		mandate.setCustCIF(custCIF);
+		mandate.setFinType(finType);
 
 		return wve;
 	}
 
 	private void doSetValidation() {
-		this.custCIF.setConstraint(
-				new PTStringValidator(Labels.getLabel("label_SelectMandate_Customer.value"), null, true, true));
+		this.finReference
+				.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptPayment_LoanReference.value"),
+						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 
 		this.entityCode.setConstraint(
 				new PTStringValidator(Labels.getLabel("label_MandateDialog_EntityCode.value"), null, true, true));
@@ -348,14 +366,90 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.custCIF.setConstraint("");
 		this.entityCode.setConstraint("");
 		this.mandateTypes.setConstraint("");
+		this.finReference.setConstraint("");
 
 		this.custCIF.clearErrorMessage();
 		this.entityCode.clearErrorMessage();
 		this.mandateTypes.clearErrorMessage();
+		this.finReference.clearErrorMessage();
 	}
 
 	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
 		this.window_SelectMandateDialog.onClose();
+	}
+
+	private void addFilter(Customer customer) {
+		logger.debug(Literal.ENTERING);
+
+		this.finReference.setValue("");
+		this.finReference.setObject("");
+		this.custCIF.setValue("");
+
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		this.finReference.setFilters(filters);
+
+		if (customer != null && customer.getCustID() != 0) {
+			this.custCIF.setValue(customer.getCustCIF());
+
+			filters = new Filter[2];
+			filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+			filters[1] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
+
+			this.finReference.setFilters(filters);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$finReference(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		validateFinReference(event, false);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void validateFinReference(Event event, boolean isShowSearchList) {
+		logger.debug(Literal.ENTERING + event.toString());
+
+		this.finReference.setConstraint("");
+		this.finReference.clearErrorMessage();
+
+		Clients.clearWrongValue(finReference);
+
+		Object dataObject = this.finReference.getObject();
+
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_NOT_EQUAL);
+		this.finReference.setFilters(filters);
+
+		if (this.custCIF.getValue() != null && !this.custCIF.getValue().isEmpty()) {
+			long custID = customerDetailsService.getCustIDByCIF(this.custCIF.getValue());
+
+			filters = new Filter[3];
+			filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+			filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_NOT_EQUAL);
+			filters[2] = new Filter("CustId", custID, Filter.OP_EQUAL);
+			this.finReference.setFilters(filters);
+		}
+
+		if (dataObject == null || dataObject instanceof String) {
+			this.finReference.setValue("");
+			this.finReference.setDescription("");
+		} else {
+			FinanceMain fm = (FinanceMain) dataObject;
+			if (fm != null) {
+				this.finReference.setValue(fm.getFinReference());
+				this.finReference.setDescription(fm.getFinType());
+				this.custCIF.setValue(String.valueOf(fm.getCustCIF()));
+				this.customerNameLabel.setValue(fm.getCustShrtName());
+				this.finType = fm.getFinType();
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
