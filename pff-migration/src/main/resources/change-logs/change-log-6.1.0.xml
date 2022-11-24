@@ -1094,4 +1094,19 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="41" author="rahul.r">
+		<sql>
+			<![CDATA[
+				DELETE FROM CATEGORYWISEEVENTS where CATEGORYCODE= 'F' AND AEEVENTCODE= 'AMZ_REV' ;
+				INSERT INTO CATEGORYWISEEVENTS VALUES('AMZ_REV', 'F', 1, 1, (select Max(SeqOrder)+1 from CATEGORYWISEEVENTS where CATEGORYCODE= 'F'));
+				
+				Delete 	from BMTAEEVENTS where aeeventcode='AMZ_REV'; 
+				Delete 	from BMTAMOUNTCODES where ALLOWEDEVENT='AMZ_REV';
+				
+				INSERT INTO BMTAEEVENTS(aeeventcode, aeeventcodedesc, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, active) VALUES ('AMZ_REV', 'Month End Accrual Reversal', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('AMZ_REV',0,'ae_dAmz','Accrued Amount on Month End',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
