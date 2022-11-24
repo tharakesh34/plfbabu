@@ -19489,10 +19489,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					&& jointAccountDetailDialogCtrl.getJointAccountDetailList().size() > 0) {
 				jointAccountDetailDialogCtrl.doSave_JointAccountDetail(aFinanceDetail, false);
 			}
-		} else {
-			aFinanceDetail.setJointAccountDetailList(null);
-			aFinanceDetail.setGurantorsDetailList(null);
 		}
+
+		/**
+		 * The details of co-applicant were not getting displayed in saction letter because the co-applicant tab is not
+		 * configured in PSV stage, If we configure the co-applicant tab to PSV stage then the details are getting
+		 * displayed.
+		 */
+
+		/*
+		 * else { aFinanceDetail.setJointAccountDetailList(null); aFinanceDetail.setGurantorsDetailList(null); }
+		 */
+
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
 
 		if (finAdvancePaymentsListCtrl != null) {
