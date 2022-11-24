@@ -69,7 +69,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 	private int entitySize;
 
 	private FileUploadHeader header;
-	private UploadService<RePresentmentUploadDetail> rePresentmentUploadService;
+	private transient UploadService<RePresentmentUploadDetail> rePresentmentUploadService;
 
 	public RePresentmentUploadDialogCtrl() {
 		super();
@@ -168,6 +168,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
+	@Override
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
 
@@ -219,7 +220,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 	}
 
 	public void onFulfill$entity(Event event) {
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		this.entity.setConstraint("");
 		this.entity.setErrorMessage("");
@@ -228,31 +229,31 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 			this.entity.setValue("", "");
 		}
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void onCheck$downLoad(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
+	public void onCheck$downLoad(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		doClearMessage();
 		doCheckFields();
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void onCheck$upload(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
+	public void onCheck$upload(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		this.fileName.setValue("");
 
 		doClearMessage();
 		doCheckFields();
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$downloadTemplate(Event event) {
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		String entityCode = this.entity.getValue();
 
@@ -278,21 +279,21 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 			}
 		}
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$btnDownload(Event event) {
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		doSetValidation();
-		String fileName = "";
+		String name = "";
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
 			if (StringUtils.trimToNull(this.fileName.getValue()) == null) {
 				throw new WrongValueException(this.fileName, Labels.getLabel("empty_file"));
 			}
-			fileName = this.fileName.getDescription();
+			name = this.fileName.getDescription();
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -301,7 +302,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 		showErrorMessage(wve);
 
 		StringBuilder condition = new StringBuilder();
-		condition.append("Where FILENAME in (" + "'" + fileName + "'" + ")");
+		condition.append("Where FILENAME in (" + "'" + name + "'" + ")");
 		String whereCond = new String(condition);
 
 		StringBuilder searchCriteriaDesc = new StringBuilder(" ");
@@ -311,28 +312,30 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 
 		ReportsUtil.generateReport(usrName, "BulkFeeWaiverUploadReport", whereCond, searchCriteriaDesc);
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void onUpload$btnBrowse(UploadEvent event) throws Exception {
-		logger.debug(Literal.ENTERING);
+	public void onUpload$btnBrowse(UploadEvent event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		this.txtFileName.setText("");
 
 		doRemoveValidation();
 
 		Media media = event.getMedia();
-		String fileName = media.getName();
+		String name = media.getName();
 
 		this.header.setMedia(media);
-		this.txtFileName.setText(fileName);
-		this.header.setFileName(fileName);
+		this.txtFileName.setText(name);
+		this.header.setFileName(name);
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$btnClose(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 		closeDialog(true);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	private void closeDialog(boolean confirmationreq) {
@@ -409,10 +412,10 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 
 		doSetValidation();
 
-		String fileName = this.txtFileName.getValue();
+		String name = this.txtFileName.getValue();
 
 		try {
-			ExcelUtil.isValidFile(fileName, 200, "^[a-zA-Z0-9 ._]*$");
+			ExcelUtil.isValidFile(name, 200, "^[a-zA-Z0-9 ._]*$");
 		} catch (AppException e) {
 			throw new WrongValueException(this.txtFileName, e.getMessage());
 		}
@@ -426,7 +429,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 			throw new WrongValueException(this.entity, we.getMessage());
 		}
 
-		header.setFileName(fileName);
+		header.setFileName(name);
 
 		header.setProgress(Status.DEFAULT.getValue());
 	}
@@ -500,12 +503,12 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 
 		this.entity.setFilters(filter);
 
-		List<Entity> entity = rePresentmentUploadService.getEntities();
+		List<Entity> entities = rePresentmentUploadService.getEntities();
 
-		this.entitySize = entity.size();
+		this.entitySize = entities.size();
 		if (this.entitySize == 1) {
-			this.entity.setValue(entity.get(0).getEntityCode());
-			this.entity.setDescColumn(entity.get(0).getEntityDesc());
+			this.entity.setValue(entities.get(0).getEntityCode());
+			this.entity.setDescColumn(entities.get(0).getEntityDesc());
 			this.entity.setReadonly(true);
 		}
 
@@ -593,11 +596,9 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 				nextTaskId = getNextTaskIds(taskId, header);
 			}
 
-			if (isNotesMandatory(taskId, header)) {
-				if (!notesEntered) {
-					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-					return;
-				}
+			if (isNotesMandatory(taskId, header) && !notesEntered) {
+				MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+				return;
 			}
 		}
 

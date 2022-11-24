@@ -12,7 +12,6 @@ import com.pennant.pff.upload.dao.UploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -79,14 +78,14 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 	@Override
 	public int update(FileUploadHeader header, TableType tableType) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Update FILE_UPLOAD_HEADER").append(tableType.getSuffix());
+		StringBuilder sql = new StringBuilder("Update");
+		sql.append(" FILE_UPLOAD_HEADER").append(tableType.getSuffix());
 		sql.append(" Set FileName = ?, SuccessRecords = ?, FailureRecords = ?, TotalRecords = ?");
 		sql.append(", EntityCode = ?, Progress = ?, CreatedBy = ?, CreatedOn = ?");
 		sql.append(", ApprovedBy = ?, ApprovedOn = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
-		sql.append(" Where Id = ?");
+		sql.append(" Where ID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -251,9 +250,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, uploadID), (rs, rowNum) -> {
-			return JdbcUtil.getLong(rs.getObject("Id"));
-		});
+		return this.jdbcOperations.queryForList(sql, Long.class, uploadID);
 	}
 
 	@Override

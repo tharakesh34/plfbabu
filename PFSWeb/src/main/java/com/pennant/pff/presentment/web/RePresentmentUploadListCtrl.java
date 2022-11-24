@@ -122,6 +122,8 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 	}
 
 	public void onCreate$listWindow(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
 		setPageComponents(listWindow, borderLayout, listBox, paging);
 
 		prepareItemRenderer();
@@ -140,6 +142,8 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		this.rePresentIdMap.clear();
 		doSetFieldProperties();
 		lhCheckBoxComp.setDisabled(listBox.getItems().isEmpty());
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	private void doSetFieldProperties() {
@@ -190,7 +194,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 	}
 
 	public void onClickLHCheckBox(ForwardEvent event) {
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		for (Listitem listitem : listBox.getItems()) {
 			if (listitem instanceof Listgroup) {
@@ -211,7 +215,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 			rePresentIdMap.clear();
 		}
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	private List<Long> getHeaderIds() {
@@ -238,6 +242,8 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 	}
 
 	public void onClick$buttonSearch(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
 		this.rePresentIdMap.clear();
 		this.lhCheckBoxComp.setChecked(false);
 		this.rePresentIdMap.clear();
@@ -251,6 +257,8 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		} else {
 			lhCheckBoxComp.setDisabled(false);
 		}
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	private void doSetValidations() {
@@ -267,7 +275,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 
 		doRemoveValidation();
 
-		if (wve.size() > 0) {
+		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
@@ -283,12 +291,17 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 	}
 
 	public void onClick$btnRefresh(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
 		doRefresh();
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	private void doRefresh() {
 		doReset();
 		doRemoveValidation();
+
 		this.rePresentIdMap.clear();
 		this.lhCheckBoxComp.setChecked(false);
 		this.listbox.getItems().clear();
@@ -298,7 +311,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		this.entityCode.setValue("");
 		this.entityCode.setDescColumn("");
 
-		if (listBox.getItems().size() > 0) {
+		if (!listBox.getItems().isEmpty()) {
 			lhCheckBoxComp.setDisabled(false);
 		} else {
 			lhCheckBoxComp.setDisabled(true);
@@ -309,7 +322,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 	}
 
 	public void onClick$btnApprove(Event event) {
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		lhCheckBoxComp.setDisabled(true);
 
@@ -324,7 +337,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		Collections.sort(headerIdList);
 
 		logger.info("Checking Authority for HeaderIds {}", headerIdList);
-		List<FileUploadHeader> uploadHeadersList = doCheckAuthority(headerIdList, true);
+		List<FileUploadHeader> uploadHeadersList = doCheckAuthority(headerIdList);
 
 		if (uploadHeadersList.isEmpty()) {
 			logger.info("User is not Allowed to Approve");
@@ -336,15 +349,17 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+
 		lhCheckBoxComp.setChecked(false);
 		search();
 		Clients.showNotification("RePresentMent Process initialized.", "info", null, null, -1);
 		lhCheckBoxComp.setDisabled(false);
-		logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$btnReject(Event event) {
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		List<Long> rePresentMentList = getListofRePresentMentUpload();
 
@@ -353,11 +368,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 			return;
 		}
 
-		/*
-		 * if (checkFileDownloaded(rePresentMentList)) { return; }
-		 */
-
-		List<FileUploadHeader> list = doCheckAuthority(rePresentMentList, false);
+		List<FileUploadHeader> list = doCheckAuthority(rePresentMentList);
 
 		if (list.isEmpty()) {
 			return;
@@ -368,42 +379,41 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		doReset();
 		search();
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	private void doApprove(List<FileUploadHeader> rpuhList) {
-		try {
-			new Thread(() -> {
-				List<Long> headerIdList = rpuhList.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
-				try {
+		new Thread(() -> {
+			List<Long> headerIdList = rpuhList.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+			try {
 
-					for (FileUploadHeader header : rpuhList) {
-						logger.info("Approving Header ", header.getId(), headerIdList);
+				for (FileUploadHeader header : rpuhList) {
+					logger.info("Approving Header {}, {}", header.getId(), headerIdList);
 
-						header.setProgress(Status.APPROVED.getValue());
-						doProcess(header, PennantConstants.TRAN_ADD, PennantConstants.RCD_STATUS_APPROVED);
-					}
-
-					int extractPresentment = extractionService.extractRePresentment(headerIdList);
-
-					if (extractPresentment > 0) {
-						logger.info("RePresentment Process is Initiated");
-					}
-
-				} catch (Exception e) {
-					headerIdList.forEach(
-							ruh -> rePresentmentUploadService.updateProgress(ruh, Status.PROCESS_FAILED.getValue()));
-					logger.error(Literal.EXCEPTION, e);
-				} finally {
-					logger.info("Updating Status as Completed for the HeaderIdIs{}", headerIdList, headerIdList);
-					rePresentmentUploadService.updateStatus(headerIdList);
+					header.setProgress(Status.APPROVED.getValue());
+					doProcess(header, PennantConstants.TRAN_ADD, PennantConstants.RCD_STATUS_APPROVED);
 				}
-			}).start();
 
+				int extractPresentment = extractionService.extractRePresentment(headerIdList);
+
+				if (extractPresentment > 0) {
+					logger.info("RePresentment Process is Initiated");
+				}
+
+			} catch (Exception e) {
+				headerIdList.forEach(
+						ruh -> rePresentmentUploadService.updateProgress(ruh, Status.PROCESS_FAILED.getValue()));
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				logger.info("Updating Status as Completed for the HeaderIdIs {}", headerIdList);
+				rePresentmentUploadService.updateStatus(headerIdList);
+			}
+		}).start();
+
+		try {
 			Thread.sleep(1000);
-
 		} catch (Exception e) {
-			MessageUtil.showError(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
@@ -412,7 +422,6 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
-		String nextRoleCode = "";
 
 		ruh.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
 		ruh.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -474,6 +483,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 				}
 			}
 		} else {
+			auditHeader = getAuditHeader(ruh, tranType);
 			processCompleted = doSaveProcess(auditHeader, PennantConstants.method_doApprove);
 		}
 		logger.debug(Literal.LEAVING);
@@ -495,14 +505,17 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 					auditHeader = rePresentmentUploadService.saveOrUpdate(auditHeader);
 				}
 			} else {
-				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+				switch (StringUtils.trimToEmpty(method)) {
+				case PennantConstants.method_doApprove:
 					auditHeader = rePresentmentUploadService.doApprove(auditHeader);
-				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					break;
+				case PennantConstants.method_doReject:
 					auditHeader = rePresentmentUploadService.doReject(auditHeader);
-				} else {
+					break;
+				default:
 					auditHeader.setErrorDetails(
 							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
-					retValue = ErrorControl.showErrorControl(this.listWindow, auditHeader);
+					ErrorControl.showErrorControl(this.listWindow, auditHeader);
 					return processCompleted;
 				}
 			}
@@ -526,7 +539,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		return processCompleted;
 	}
 
-	private List<FileUploadHeader> doCheckAuthority(List<Long> headerIDs, boolean getSucessRecords) {
+	private List<FileUploadHeader> doCheckAuthority(List<Long> headerIDs) {
 		List<FileUploadHeader> list = new ArrayList<>();
 
 		for (long id : headerIDs) {
@@ -546,7 +559,6 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 			} else {
 				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 				return new ArrayList<>();
-
 			}
 
 			list.add(rpuh);
@@ -616,7 +628,9 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 	}
 
 	public void onClick$print(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 		doPrintResults();
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	private void prepareItemRenderer() {
@@ -723,11 +737,13 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 	}
 
 	public void onClick$help(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 		doShowHelp(event);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void onClick$btndownload(Event event) throws IOException {
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		List<Long> list = getHeaderIds();
 
@@ -736,7 +752,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 			return;
 		}
 
-		List<FileUploadHeader> listrpuh = doCheckAuthority(list, false);
+		List<FileUploadHeader> listrpuh = doCheckAuthority(list);
 
 		if (listrpuh.isEmpty()) {
 			return;
@@ -758,7 +774,6 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 
 						this.rePresentmentUploadService.updateProgress(id, Status.DOWNLOADED.getValue());
 					}
-					out.close();
 					String zipfileName = "RePresentMentUpload.zip";
 
 					byte[] tobytes = baos.toByteArray();
@@ -771,7 +786,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		Clients.showNotification(Labels.getLabel("label_DataExtractionList_DownloadedSuccess.value"), "info", null,
 				null, -1);
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	@Autowired

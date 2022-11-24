@@ -153,19 +153,19 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 		String reference = detail.getReference();
 
 		if (StringUtils.isBlank(reference)) {
-			setError(detail, "RPU0040", "[FINREFERENCE] is Mandatary");
+			setError(detail, "[FINREFERENCE] is Mandatary");
 			return;
 		}
 
 		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
 
 		if (fm == null) {
-			setError(detail, "RU0004", "[FINREFERENCE] is invalid");
+			setError(detail, "[FINREFERENCE] is invalid");
 			return;
 		}
 
 		if (!fm.isFinIsActive()) {
-			setError(detail, "RU0004", "[FINREFERENCE] is not in active");
+			setError(detail, "[FINREFERENCE] is not in active");
 			return;
 		}
 
@@ -174,7 +174,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 
 		String strDueDate = detail.getStrDueDate();
 		if (StringUtils.isBlank(strDueDate)) {
-			setError(detail, "RPU0040", "[DUEDATE] is Mandatary");
+			setError(detail, "[DUEDATE] is Mandatary");
 			return;
 		}
 
@@ -182,29 +182,29 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 
 		Date dueDate = detail.getDueDate();
 		if (DateUtil.compare(dueDate, appDate) > 0) {
-			setError(detail, "RPU0040", "[DUEDATE] should not be Future Date.");
+			setError(detail, "[DUEDATE] should not be Future Date.");
 			return;
 		}
 
 		String bounceCode = representmentUploadDAO.getBounceCode(reference, dueDate);
 
 		if (bounceCode == null) {
-			setError(detail, "RPU0040", "Not a valid representment.");
+			setError(detail, "Not a valid representment.");
 			return;
 		}
 
 		if (detail.getAcBounce().contains(bounceCode)) {
-			setError(detail, "RPU0040", "Unable to do the re-presenment, since Account is closed");
+			setError(detail, "Unable to do the re-presenment, since Account is closed");
 			return;
 		}
 
 		if (representmentUploadDAO.isProcessed(reference, dueDate)) {
-			setError(detail, "RPU0040", "receipt already proceessed for this schedule.");
+			setError(detail, "receipt already proceessed for this schedule.");
 			return;
 		}
 
 		if (profitDetailsDAO.getCurOddays(fm.getFinID()) == 0) {
-			setError(detail, "RPU0040", "There is no over dues for the Loan Reference : " + reference);
+			setError(detail, "There is no over dues for the Loan Reference : " + reference);
 			return;
 		}
 
@@ -218,7 +218,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 			message.append(", Due Date -").append(dueDate);
 			message.append("with filename").append(fileNames.get(0)).append("already exists");
 
-			setError(detail, "21005", message.toString());
+			setError(detail, message.toString());
 
 			logger.info("Duplicate RePresentMent found in RePresentUpload_Temp table..");
 			return;
@@ -226,7 +226,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 
 		int curSchdMonth = DateUtil.getMonth(dueDate);
 		if (curSchdMonth != appDateMonth) {
-			setError(detail, "RP0002", "Due date should be in current month only");
+			setError(detail, "Due date should be in current month only");
 			return;
 		}
 
@@ -276,9 +276,6 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 			logger.info(
 					"RePresentment creation process completed for the Header -{} with Total success count{}, Total failure count{}",
 					id, statuscount[0], statuscount[1]);
-
-			logger.info("Processed records{} , Success records{}, Failed records{} In Attempt- {} for the HeaderId {}",
-					id);
 		}
 	}
 
@@ -301,7 +298,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	public AuditHeader saveOrUpdate(AuditHeader ah) {
 		logger.debug(Literal.ENTERING);
 
-		ah = businessValidation(ah, "saveOrUpdate");
+		ah = businessValidation(ah);
 		if (!ah.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
 			return ah;
@@ -332,7 +329,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	public AuditHeader doReject(AuditHeader ah) {
 		logger.debug(Literal.ENTERING);
 
-		ah = businessValidation(ah, "doReject");
+		ah = businessValidation(ah);
 		if (!ah.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
 			return ah;
@@ -355,7 +352,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
-		ah = businessValidation(ah, "doApprove");
+		ah = businessValidation(ah);
 		if (!ah.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
 			return ah;
@@ -409,7 +406,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	public AuditHeader delete(AuditHeader ah) {
 		logger.debug(Literal.ENTERING);
 
-		ah = businessValidation(ah, "delete");
+		ah = businessValidation(ah);
 		if (!ah.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
 			return ah;
@@ -425,7 +422,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 		return ah;
 	}
 
-	private AuditHeader businessValidation(AuditHeader ah, String method) {
+	private AuditHeader businessValidation(AuditHeader ah) {
 		AuditDetail ad = validation(ah.getAuditDetail(), ah.getUsrLanguage());
 		ah.setAuditDetail(ad);
 		ah.setErrorList(ad.getErrorDetails());
@@ -472,9 +469,9 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 				new HashMap<>());
 	}
 
-	private void setError(RePresentmentUploadDetail detail, String code, String message) {
+	private void setError(RePresentmentUploadDetail detail, String message) {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setRemarks(String.format("%s %s %s", code, "-", message));
+		detail.setRemarks(message);
 	}
 
 	@Autowired
