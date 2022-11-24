@@ -405,4 +405,5 @@ public interface FinanceMainDAO {
 
 	String getOrgFinCategory(String finReference);
 
+	FinanceMain getFinanceMain(String finReference, String entity);
 }

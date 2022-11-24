@@ -1107,6 +1107,13 @@
 			<menuItem id="menu_Item_PresentmentFileImport"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul"
 				rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
+			<menuItem id="menu_Item_RePresentUpload_Maker"
+				 zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadDialog.zul?"
+				 rightName="menu_Item_RePresentUpload_Maker" />
+			<menuItem id="menu_Item_RePresentUpload_Approval"
+		         zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?"
+		         rightName="menu_Item_RePresentUpload_Approver" />
+				
 		</menu>
 		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
 			<menuItem id="menu_Item_FinanceTaxDetailUpload"
@@ -1187,6 +1194,17 @@
 			<menuItem id="menu_Item_MerchantUTRUpload"
 				zulNavigation="/WEB-INF/pages/Finance/MerchantUTR/MerchantUTRUpload.zul" rightName="menu_Item_MerchantUTRUpload" />
 		</menu>
+		
+	<!-- 	<menu id="menu_Category_RePresentUpload">
+	<menuItem id="menu_Item_RePresentUpload_Maker"
+		zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?approval=N"
+		rightName="menu_Item_RePresentUpload" />
+
+	<menuItem id="menu_Item_RePresentUpload_Approval"
+		zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?approval=Y"
+		rightName="menu_Item_RePresentUploadApprover" />
+</menu> -->
+				
 		<!-- Fee Waiver Upload -->
 		<menu id="menu_Category_FeeWaiverUpload" rightName="menuItem_FeeWaiverUpload">
 			<menuItem id="menu_Item_FeeWaiverUpload_Maker"

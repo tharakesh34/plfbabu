@@ -39,7 +39,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -54,7 +53,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public abstract class BatchConfiguration implements BatchConfigurer {
 	protected static final Log logger = LogFactory.getLog(BatchConfiguration.class.getClass());
 
+	public JobBuilderFactory jobBuilderFactory;
+	public StepBuilderFactory stepBuilderFactory;
 	protected DataSource dataSource;
+
 	private PlatformTransactionManager transactionManager;
 	private String tablePrefix;
 	private String threadNamePrefix;
@@ -66,19 +68,28 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 	private MapJobRegistry jobRegistry;
 	private JobOperator jobOperator;
 
-	@Autowired
-	public JobBuilderFactory jobBuilderFactory;
-
-	@Autowired
-	public StepBuilderFactory stepBuilderFactory;
-
 	public BatchConfiguration(DataSource dataSource, String tablePrefix, String threadNamePrefix) throws Exception {
 		this.dataSource = dataSource;
 		this.tablePrefix = tablePrefix;
 		this.threadNamePrefix = threadNamePrefix;
+
+		initilize();
 	}
 
 	public abstract Job getJob();
+
+	public void initilize() throws Exception {
+		serializer();
+		lobHandler();
+		getJobRepository();
+		getJobLauncher();
+		getJobExplorer();
+		jobRegistry();
+		jobOperator();
+		jobBuilderFactory();
+		stepBuilderFactory();
+
+	}
 
 	@Override
 	public JobRepository getJobRepository() throws Exception {
@@ -105,7 +116,6 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 	}
 
 	@Override
-	@Bean
 	public JobLauncher getJobLauncher() throws Exception {
 		SimpleJobLauncher simpleLobLauncher = new SimpleJobLauncher();
 		simpleLobLauncher.setJobRepository(jobRepository);
@@ -116,7 +126,6 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 	}
 
 	@Override
-	@Bean
 	public JobExplorer getJobExplorer() throws Exception {
 		JobExplorerFactoryBean factory = new JobExplorerFactoryBean();
 		factory.setDataSource(dataSource);
@@ -128,22 +137,18 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 
 	}
 
-	@Bean
 	public CustomSerializer serializer() {
 		return this.serializer = new CustomSerializer();
 	}
 
-	@Bean
 	public DefaultLobHandler lobHandler() {
 		return this.lobHandler = new DefaultLobHandler();
 	}
 
-	@Bean
 	public MapJobRegistry jobRegistry() {
 		return this.jobRegistry = new MapJobRegistry();
 	}
 
-	@Bean
 	public JobOperator jobOperator() throws Exception {
 		SimpleJobOperator simpleJobOperator = new SimpleJobOperator();
 		simpleJobOperator.setJobLauncher(jobLauncher);
@@ -153,6 +158,14 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 		simpleJobOperator.afterPropertiesSet();
 
 		return simpleJobOperator;
+	}
+
+	public JobBuilderFactory jobBuilderFactory() {
+		return jobBuilderFactory = new JobBuilderFactory(jobRepository);
+	}
+
+	public StepBuilderFactory stepBuilderFactory() {
+		return stepBuilderFactory = new StepBuilderFactory(jobRepository, transactionManager);
 	}
 
 	@Bean

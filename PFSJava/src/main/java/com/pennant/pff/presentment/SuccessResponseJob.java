@@ -6,7 +6,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +27,6 @@ import com.pennant.pff.presentment.tasklet.UpdateResponseTasklet;
 import com.pennanttech.pennapps.core.AppException;
 
 @Configuration
-@EnableBatchProcessing(modular = true)
 public class SuccessResponseJob extends BatchConfiguration {
 
 	public SuccessResponseJob(@Autowired DataSource dataSource) throws Exception {

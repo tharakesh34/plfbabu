@@ -50,7 +50,7 @@
 							multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
 								<listheader label="File Type" />
-								<listheader label="${c:l('listheader_FileName.label')}" />
+								<listheader label="${c:l('label_FileName')}" />
 								<listheader label="${c:l('listheader_ProcessedDate.label')}" />
 								<listheader label="${c:l('listheader_Status.label')}" />
 								<listheader label="${c:l('listheader_Downlaod.label')}" />

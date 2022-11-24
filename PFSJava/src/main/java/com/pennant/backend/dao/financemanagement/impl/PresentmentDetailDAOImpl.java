@@ -2176,4 +2176,67 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	}
 
+	@Override
+	public PresentmentDetail getRePresentmentDetail(String finReference, Date SchDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, PresentmentId, FinID, FinReference, PresentmentRef, SchDate, MandateId, SchAmtDue");
+		sql.append(", SchPriDue, SchPftDue, SchFeeDue, SchInsDue, SchPenaltyDue");
+		sql.append(", AdvanceAmt, ExcessID, AdviseAmt, PresentmentAmt, fm.FinisActive");
+		sql.append(", TDSAmount, ExcludeReason, BounceID, EmiNo, Status, ErrorCode, ErrorDesc");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From PresentmentDetails pd");
+		sql.append(" Inner Join FinanceMain fm on fm.FinId = pd.FinID");
+		sql.append(" Where fm.FinReference = ? and pd.SchdDate <= ?, fm.FinIsActive = ?, pd.Status = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PresentmentDetail pd = new PresentmentDetail();
+
+				pd.setId(rs.getLong("Id"));
+				pd.setHeaderId(rs.getLong("PresentmentId"));
+				pd.setFinID(rs.getLong("FinID"));
+				pd.setFinReference(rs.getString("FinReference"));
+				pd.setPresentmentRef(rs.getString("PresentmentRef"));
+				pd.setSchDate(rs.getDate("SchDate"));
+				pd.setMandateId(rs.getLong("MandateId"));
+				pd.setSchAmtDue(rs.getBigDecimal("SchAmtDue"));
+				pd.setSchPriDue(rs.getBigDecimal("SchPriDue"));
+				pd.setSchPftDue(rs.getBigDecimal("SchPftDue"));
+				pd.setSchFeeDue(rs.getBigDecimal("SchFeeDue"));
+				pd.setSchInsDue(rs.getBigDecimal("SchInsDue"));
+				pd.setSchPenaltyDue(rs.getBigDecimal("SchPenaltyDue"));
+				pd.setAdvanceAmt(rs.getBigDecimal("AdvanceAmt"));
+				pd.setExcessID(rs.getLong("ExcessID"));
+				pd.setAdviseAmt(rs.getBigDecimal("AdviseAmt"));
+				pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
+				pd.setFinisActive(rs.getBoolean("FinisActive"));
+				pd.settDSAmount(rs.getBigDecimal("TDSAmount"));
+				pd.setExcludeReason(rs.getInt("ExcludeReason"));
+				pd.setBounceID(rs.getLong("BounceID"));
+				pd.setEmiNo(rs.getInt("EmiNo"));
+				pd.setStatus(rs.getString("Status"));
+				pd.setErrorCode(rs.getString("ErrorCode"));
+				pd.setErrorDesc(rs.getString("ErrorDesc"));
+				pd.setVersion(rs.getInt("Version"));
+				pd.setLastMntBy(rs.getLong("LastMntBy"));
+				pd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				pd.setRecordStatus(rs.getString("RecordStatus"));
+				pd.setRoleCode(rs.getString("RoleCode"));
+				pd.setNextRoleCode(rs.getString("NextRoleCode"));
+				pd.setTaskId(rs.getString("TaskId"));
+				pd.setNextTaskId(rs.getString("NextTaskId"));
+				pd.setRecordType(rs.getString("RecordType"));
+				pd.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return pd;
+			}, finReference, SchDate, 1, "B");
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+
+	}
 }

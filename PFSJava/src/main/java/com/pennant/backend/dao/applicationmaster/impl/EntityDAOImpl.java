@@ -370,7 +370,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 
 	@Override
 	public List<Entity> getEntites() {
-		String sql = "Select EntityCode, EntityDesc FROM Entity";
+		String sql = "Select EntityCode, EntityDesc FROM Entity Where Active = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -379,7 +379,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 			et.setEntityCode(rs.getString("EntityCode"));
 			et.setEntityDesc(rs.getString("EntityDesc"));
 			return et;
-		});
+		}, 1);
 	}
 
 	@Override

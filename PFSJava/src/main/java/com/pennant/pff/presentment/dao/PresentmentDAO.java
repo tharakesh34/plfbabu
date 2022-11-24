@@ -131,4 +131,9 @@ public interface PresentmentDAO {
 
 	void updateErrorForResponse(long responseID, String pexcFailure, String errorMessage);
 
+	int extract(long batchID, PresentmentHeader ph);
+
+	List<PresentmentHeader> getpresentmentHeaderList(List<Long> headerId);
+
+	void updateRepresentWithPresentmentId(List<PresentmentDetail> presenetments);
 }

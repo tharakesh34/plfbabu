@@ -1198,7 +1198,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#84.46" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3194,7 +3194,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.18" author="saikiran.n" dbms="mssql">
 		<createView viewName="BANK_INSTRUMENT_MAPPING" replaceIfExists="true">
 			<![CDATA[
@@ -3251,7 +3251,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.19" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3281,7 +3281,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.20" author="saikiran.n" dbms="oracle,postgresql">
 		<sql>
 			<![CDATA[
@@ -3294,7 +3294,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.20" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -5833,8 +5833,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="PSD#208851.2.0_pre" author="saikrishna.b" >
+
+	<changeSet id="PSD#208851.2.0_pre" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				update MANDATES set HOLDREASON = null;
@@ -5842,12 +5842,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208851.2.1_pre" author="saikrishna.b">
 		<dropForeignKeyConstraint baseTableName="MANDATES" constraintName="fk_mandates_holdreason" />
-		<dropForeignKeyConstraint baseTableName="MANDATES_TEMP" constraintName="fk_mandates_temp_holdreason" />
-	</changeSet> 
-	
+		<dropForeignKeyConstraint baseTableName="MANDATES_TEMP"
+			constraintName="fk_mandates_temp_holdreason" />
+	</changeSet>
+
 	<changeSet id="PSD#208851.2_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5864,7 +5865,7 @@
 	<changeSet id="PSD#208851.3" author="saikrishna.b">
 		<modifyDataType tableName="MANDATES_TEMP" columnName="HOLDREASON" newDataType="varchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#208851.2_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5931,7 +5932,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#209101.03.1" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -5947,11 +5948,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#209101.03" author="Gopal.p">
-		<modifyDataType tableName="Presentment_Extraction_Stage " columnName="ChequeAmount" newDataType="decimal(18,0)" />
+		<modifyDataType tableName="Presentment_Extraction_Stage " columnName="ChequeAmount"
+			newDataType="decimal(18,0)" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#209101.03_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5959,7 +5961,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#209101.04" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -5967,7 +5969,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#210561_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5976,14 +5978,14 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#210561" author="saikiran.n">
 		<modifyDataType tableName="QUERYDETAIL_TEMP" columnName="NOTIFYTO" newDataType="VARCHAR(2000)" />
 		<modifyDataType tableName="QUERYDETAIL_TEMP" columnName="RESPONSNOTES" newDataType="VARCHAR(2000)" />
 		<modifyDataType tableName="QUERYDETAIL" columnName="NOTIFYTO" newDataType="VARCHAR(2000)" />
 		<modifyDataType tableName="QUERYDETAIL" columnName="RESPONSNOTES" newDataType="VARCHAR(2000)" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#210561_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5991,7 +5993,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.23" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -6000,10 +6002,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.23.1" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_PRMNT_EXTRACTION_QUEUE" minValue="1"
-			maxValue="999999999999999999999999999" incrementBy="1" ordered="true"/>
+			maxValue="999999999999999999999999999" incrementBy="1" ordered="true" />
 	</changeSet>
 
 	<changeSet id="ST#99.23.2" author="saikrishna.b">
@@ -6023,7 +6025,7 @@
 			<column name="ResetCounterId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.23.3" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -6037,30 +6039,31 @@
 	</changeSet>
 
 	<changeSet id="ST#99.23.4" author="saikrishna.b">
-		<addPrimaryKey tableName="PRMNT_EXTRACTION_QUEUE" columnNames="ID, BatchId" constraintName="pk_prmnt_extraction_queue" />
+		<addPrimaryKey tableName="PRMNT_EXTRACTION_QUEUE" columnNames="ID, BatchId"
+			constraintName="pk_prmnt_extraction_queue" />
 	</changeSet>
-	
+
 	<changeSet id="ST#99.23.5" author="saikrishna.b">
 		<createIndex tableName="PRMNT_EXTRACTION_QUEUE" indexName="idx_prmnt_extraction_queue_rid">
 			<column name="ReferenceId" type="bigint" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.24" author="saikrishna.b">
-		<renameTable newTableName="PRMNT_EXTRACTION_STAGE" oldTableName="Presentment_Extraction_Stage"/>
+		<renameTable newTableName="PRMNT_EXTRACTION_STAGE" oldTableName="Presentment_Extraction_Stage" />
 	</changeSet>
-	
+
 	<changeSet id="ST#99.25" author="saikrishna.b">
-		<dropTable tableName="PRESENTMENT_BATCH_JOB"/>
+		<dropTable tableName="PRESENTMENT_BATCH_JOB" />
 	</changeSet>
-	
+
 	<changeSet id="ST#99.25.1" author="saikrishna.b">
 		<createTable tableName="PRMNT_BATCH_JOBS">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
 			<column name="Batch_Type" type="varchar(20)" />
-			<column name="Created_By" type="bigint"/>
+			<column name="Created_By" type="bigint" />
 			<column name="Start_Time" type="datetime" />
 			<column name="End_Time" type="datetime" />
 			<column name="Total_Records" type="int" />
@@ -6075,14 +6078,14 @@
 	</changeSet>
 	
 	<changeSet id="ST#99.25.2" author="saikrishna.b">
-		<addPrimaryKey tableName="PRMNT_BATCH_JOBS" columnNames="ID" constraintName="PK_PRMNT_BATCH_JOBS"/>
+		<addPrimaryKey tableName="PRMNT_BATCH_JOBS" columnNames="ID" constraintName="PK_PRMNT_BATCH_JOBS" />
 	</changeSet>
 	<changeSet id="ST#99.25.3" author="saikrishna.b">
 		<createIndex tableName="PRMNT_BATCH_JOBS" indexName="IDX_PRMNT_BATCH_JOBS_BTYPE">
 			<column name="Batch_Type" type="varchar(20)" />
 		</createIndex>
 	</changeSet>
-		
+
 	<changeSet id="ST#665" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -6100,13 +6103,377 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#670" author="saikiran.n">
 		<modifyDataType tableName="RMTBranches_temp" columnName="BranchSwiftBrnCde" newDataType="varchar(5)" />
 		<modifyDataType tableName="RMTBranches" columnName="BranchSwiftBrnCde" newDataType="varchar(5)" />
 	</changeSet>
-	
-	
+
+	<changeSet id="ST#113" author="Gireesh.G">
+		<createSequence sequenceName="SEQ_FILE_UPLOAD_HEADER" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet id="ST#113.1" author="Gireesh.G">
+		<createTable tableName="FILE_UPLOAD_HEADER_TEMP">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="EntityCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Type" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FileName" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalRecords" type="int" />
+			<column name="SuccessRecords" type="int" />
+			<column name="FailureRecords" type="int" />
+			<column name="Progress" type="int" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#113.2" author="Gireesh.G">
+		<addPrimaryKey tableName="FILE_UPLOAD_HEADER_TEMP" columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#113.3" author="Gireesh.G">
+		<addUniqueConstraint tableName="FILE_UPLOAD_HEADER_TEMP" columnNames="EntityCode, Type, FileName" />
+	</changeSet>
+
+	<changeSet id="ST#113.4" author="Gireesh.G">
+		<createTable tableName="FILE_UPLOAD_HEADER">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="EntityCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Type" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FileName" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalRecords" type="int" />
+			<column name="SuccessRecords" type="int" />
+			<column name="FailureRecords" type="int" />
+			<column name="Progress" type="int" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#113.5" author="Gireesh.G">
+		<addPrimaryKey tableName="FILE_UPLOAD_HEADER" columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#113.6" author="Gireesh.G">
+		<addUniqueConstraint tableName="FILE_UPLOAD_HEADER" columnNames="EntityCode, Type, FileName" />
+	</changeSet>
+
+	<changeSet id="ST#113.7.1" author="Gireesh.G">
+		<createTable tableName="REPRESENT_UPLOADS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="PresentmentID" type="bigint" />
+			<column name="DueDate" type="datetime" />
+			<column name="Progress" type="int" />
+			<column name="Remarks" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#113.8" author="Gireesh.G">
+		<addPrimaryKey tableName="REPRESENT_UPLOADS" columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#113.9_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'file_upload_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#113.9.1" author="Gireesh.G">
+		<createView viewName="FILE_UPLOAD_HEADER_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.ENTITYCODE, 
+					T1.TYPE,
+					T1.FILENAME,
+					T1.TOTALRECORDS, 
+					T1.SUCCESSRECORDS,  
+					T1.FAILURERECORDS,
+					T1.PROGRESS,
+					T1.CREATEDON,
+					T1.CREATEDBY,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.VERSION,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FILE_UPLOAD_HEADER T1		    
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#113.9_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'file_upload_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#113.10_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'file_upload_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#113.10.2" author="Gireesh.G">
+		<createView viewName="FILE_UPLOAD_HEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.TYPE,
+					T1.FILENAME,
+					T1.ENTITYCODE, 
+					T1.TOTALRECORDS, 
+					T1.SUCCESSRECORDS,  
+					T1.FAILURERECORDS,
+					T1.PROGRESS,
+					T1.CREATEDON,
+					T1.CREATEDBY,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.VERSION,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FILE_UPLOAD_HEADER_TEMP T1
+				UNION ALL
+				SELECT T1.ID,
+					T1.TYPE,
+					T1.FILENAME,
+					T1.ENTITYCODE, 
+					T1.TOTALRECORDS, 
+					T1.SUCCESSRECORDS,  
+					T1.FAILURERECORDS,
+					T1.PROGRESS,
+					T1.CREATEDON,
+					T1.CREATEDBY,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.VERSION,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FILE_UPLOAD_HEADER T1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#113.10_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'file_upload_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#113.11_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'file_upload_header_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#113.11.1" author="Gireesh.G">
+		<createView viewName="FILE_UPLOAD_HEADER_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT T1.ID,
+					T1.TYPE,
+					T1.FILENAME,
+					T1.ENTITYCODE, 
+					T1.TOTALRECORDS, 
+					T1.SUCCESSRECORDS,  
+					T1.FAILURERECORDS,
+					T1.PROGRESS,
+					T1.CREATEDON,
+					T1.CREATEDBY,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.VERSION,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FILE_UPLOAD_HEADER_TEMP T1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#113.12_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'file_upload_header_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#113.13" author="Gireesh.G">
+		<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowType">REPRESENT_UPLOAD</column>
+			<column name="WorkFlowSubType">Representment Upload</column>
+			<column name="WorkFlowDesc">Representment Upload Workflow Process</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">REPRESENT_UPLOAD_MAKER;REPRESENT_UPLOAD_APPROVER</column>
+			<column name="FirstTaskOwner">REPRESENT_UPLOAD_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">0</column>
+			<column name="LastMntBy">1000</column>
+			<column name="LastMntOn" valueDate="current_timestamp" />
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode">Null</column>
+			<column name="NextRoleCode">Null</column>
+			<column name="TaskId">Null</column>
+			<column name="NextTaskId">Null</column>
+			<column name="RecordType">NULL</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="ST#113.14" author="Gireesh.G">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":968,"properties":{"process_id":"REPRESENT_UPLOAD","name":"RePresentment Upload Process","documentation":"Maker/Checker WorkFlow","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1"}],"bounds":{"lowerRight":{"x":130,"y":193},"upperLeft":{"x":100,"y":163}},"dockers":[]},{"resourceId":"sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897","properties":{"overrideid":"","name":"Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"REPRESENT_UPLOAD_MAKER","firstName":"REPRESENT_UPLOAD_MAKER","fullName":"REPRESENT_UPLOAD_MAKER","id":"REPRESENT_UPLOAD_MAKER","roledesc":"Workflow Maker","$$hashKey":"object:575"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3"},{"resourceId":"sid-751124CB-1CC1-40AF-B5DB-360706ED6035"}],"bounds":{"lowerRight":{"x":275,"y":218},"upperLeft":{"x":175,"y":138}},"dockers":[]},{"resourceId":"sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897"}],"bounds":{"lowerRight":{"x":174.15625,"y":178},"upperLeft":{"x":130.609375,"y":178}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897"}},{"resourceId":"sid-0E4577E1-11E1-450D-A2B6-DBE242378F08","properties":{"overrideid":"","name":"Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"REPRESENT_UPLOAD_APPROVER","firstName":"REPRESENT_UPLOAD_APPROVER","fullName":"REPRESENT_UPLOAD_APPROVER","id":"REPRESENT_UPLOAD_APPROVER","roledesc":"Workflow Approver","$$hashKey":"object:965"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22"}],"bounds":{"lowerRight":{"x":490,"y":218},"upperLeft":{"x":390,"y":138}},"dockers":[]},{"resourceId":"sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D"},{"resourceId":"sid-79F17746-BC9F-45F8-A31F-CA3969C76736"},{"resourceId":"sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE"}],"bounds":{"lowerRight":{"x":575,"y":198},"upperLeft":{"x":535,"y":158}},"dockers":[]},{"resourceId":"sid-22D15E29-D37A-4505-A48C-7A329DF13429","properties":{"overrideid":"","name":"Complete Process","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-5AABA17A-E718-463D-95FA-7B0E9E938247"}],"bounds":{"lowerRight":{"x":760,"y":218},"upperLeft":{"x":660,"y":138}},"dockers":[]},{"resourceId":"sid-5FF3A069-112E-49C0-9A73-07B73600334B","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":833,"y":192},"upperLeft":{"x":805,"y":164}},"dockers":[]},{"resourceId":"sid-5AABA17A-E718-463D-95FA-7B0E9E938247","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5FF3A069-112E-49C0-9A73-07B73600334B"}],"bounds":{"lowerRight":{"x":804.375,"y":178},"upperLeft":{"x":760.390625,"y":178}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-5FF3A069-112E-49C0-9A73-07B73600334B"}},{"resourceId":"sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB","properties":{"overrideid":"","name":"Cancel Process","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B"}],"bounds":{"lowerRight":{"x":605,"y":369},"upperLeft":{"x":505,"y":289}},"dockers":[]},{"resourceId":"sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA","properties":{"overrideid":"","name":"Rejected"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":678,"y":343},"upperLeft":{"x":650,"y":315}},"dockers":[]},{"resourceId":"sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA"}],"bounds":{"lowerRight":{"x":649.375,"y":329},"upperLeft":{"x":605.390625,"y":329}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA"}},{"resourceId":"sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01"}],"bounds":{"lowerRight":{"x":534.6484468700075,"y":178.4097335362338},"upperLeft":{"x":490.62889687999245,"y":178.2191727137662}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01"}},{"resourceId":"sid-79F17746-BC9F-45F8-A31F-CA3969C76736","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-22D15E29-D37A-4505-A48C-7A329DF13429"}],"bounds":{"lowerRight":{"x":659.5117239866028,"y":178.43426377099223},"upperLeft":{"x":575.8124947633972,"y":178.16339247900777}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-22D15E29-D37A-4505-A48C-7A329DF13429"}},{"resourceId":"sid-751124CB-1CC1-40AF-B5DB-360706ED6035","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB"}],"bounds":{"lowerRight":{"x":504.37109375,"y":329},"upperLeft":{"x":225,"y":218.51953125}},"dockers":[{"x":50,"y":40},{"x":225,"y":329},{"x":50,"y":40}],"target":{"resourceId":"sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB"}},{"resourceId":"sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB"}],"bounds":{"lowerRight":{"x":555.4341777591982,"y":288.0234430186572},"upperLeft":{"x":555.1361347408018,"y":198.3124944813428}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB"}},{"resourceId":"sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897"}],"bounds":{"lowerRight":{"x":555.5,"y":157.48046875},"upperLeft":{"x":225,"y":76}},"dockers":[{"x":20.5,"y":20.5},{"x":555.5,"y":76},{"x":225,"y":76},{"x":50,"y":40}],"target":{"resourceId":"sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897"}},{"resourceId":"sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-0E4577E1-11E1-450D-A2B6-DBE242378F08"}],"bounds":{"lowerRight":{"x":389.44921875,"y":178},"upperLeft":{"x":275.55078125,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-0E4577E1-11E1-450D-A2B6-DBE242378F08"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test"> <process id="REPRESENT_UPLOAD" name="Representment Upload Workflow Process" isExecutable="true"> <documentation>Maker/Checker WorkFlow</documentation> <startEvent id="startEvent1" name="Start" /> <userTask id="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" name="Maker" activiti:actor="REPRESENT_UPLOAD_MAKER" activiti:assignmentLevel="Role Queue" /> <sequenceFlow id="sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1" sourceRef="startEvent1" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" representsUserAction="false" mandateNotes="false" /> <userTask id="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" name="Approver" activiti:actor="REPRESENT_UPLOAD_APPROVER" activiti:assignmentLevel="Role Queue" /> <exclusiveGateway id="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" /> <serviceTask id="sid-22D15E29-D37A-4505-A48C-7A329DF13429" name="Complete Process" activiti:operation="doApprove" /> <endEvent id="sid-5FF3A069-112E-49C0-9A73-07B73600334B" name="Approved" /> <sequenceFlow id="sid-5AABA17A-E718-463D-95FA-7B0E9E938247" sourceRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" targetRef="sid-5FF3A069-112E-49C0-9A73-07B73600334B" representsUserAction="false" mandateNotes="false" /> <serviceTask id="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" name="Cancel Process" activiti:operation="doReject" /> <endEvent id="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" name="Rejected" /> <sequenceFlow id="sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B" sourceRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" targetRef="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" representsUserAction="false" mandateNotes="false" /> <sequenceFlow id="sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22" sourceRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" targetRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" representsUserAction="false" mandateNotes="false" /> <sequenceFlow id="sid-79F17746-BC9F-45F8-A31F-CA3969C76736" name="Approve" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-22D15E29-D37A-4505-A48C-7A329DF13429" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"> <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression> </sequenceFlow> <sequenceFlow id="sid-751124CB-1CC1-40AF-B5DB-360706ED6035" name="Cancel" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true"> <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression> </sequenceFlow> <sequenceFlow id="sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE" name="Reject" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"> <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression> </sequenceFlow> <sequenceFlow id="sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D" name="Resubmit" sourceRef="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" targetRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"> <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression> </sequenceFlow> <sequenceFlow id="sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3" name="Submit" sourceRef="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" targetRef="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"> <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression> </sequenceFlow> </process> <bpmndi:BPMNDiagram id="BPMNDiagram_REPRESENT_UPLOAD"> <bpmndi:BPMNPlane bpmnElement="REPRESENT_UPLOAD" id="BPMNPlane_REPRESENT_UPLOAD"> <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1"> <omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0" /> </bpmndi:BPMNShape> <bpmndi:BPMNShape bpmnElement="sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897" id="BPMNShape_sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897"> <omgdc:Bounds height="80.0" width="100.0" x="175.0" y="138.0" /> </bpmndi:BPMNShape> <bpmndi:BPMNShape bpmnElement="sid-0E4577E1-11E1-450D-A2B6-DBE242378F08" id="BPMNShape_sid-0E4577E1-11E1-450D-A2B6-DBE242378F08"> <omgdc:Bounds height="80.0" width="100.0" x="390.0" y="138.0" /> </bpmndi:BPMNShape> <bpmndi:BPMNShape bpmnElement="sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01" id="BPMNShape_sid-6D2A3EE4-19BA-44FF-93AB-717BFF16FC01"> <omgdc:Bounds height="40.0" width="40.0" x="535.0" y="158.0" /> </bpmndi:BPMNShape> <bpmndi:BPMNShape bpmnElement="sid-22D15E29-D37A-4505-A48C-7A329DF13429" id="BPMNShape_sid-22D15E29-D37A-4505-A48C-7A329DF13429"> <omgdc:Bounds height="80.0" width="100.0" x="660.0" y="138.0" /> </bpmndi:BPMNShape> <bpmndi:BPMNShape bpmnElement="sid-5FF3A069-112E-49C0-9A73-07B73600334B" id="BPMNShape_sid-5FF3A069-112E-49C0-9A73-07B73600334B"> <omgdc:Bounds height="28.0" width="28.0" x="805.0" y="164.0" /> </bpmndi:BPMNShape> <bpmndi:BPMNShape bpmnElement="sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB" id="BPMNShape_sid-0AD002F0-2C5A-4D9F-B0D2-7A03A8025FEB"> <omgdc:Bounds height="80.0" width="100.0" x="505.0" y="289.0" /> </bpmndi:BPMNShape> <bpmndi:BPMNShape bpmnElement="sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA" id="BPMNShape_sid-B8114559-3D1A-4A63-A65F-B62B0D0812CA"> <omgdc:Bounds height="28.0" width="28.0" x="650.0" y="315.0" /> </bpmndi:BPMNShape> <bpmndi:BPMNEdge bpmnElement="sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3" id="BPMNEdge_sid-F8AD09C4-9AD3-4E9F-9432-0B753ACDBFF3"> <omgdi:waypoint x="275.0" y="178.0" /> <omgdi:waypoint x="390.0" y="178.0" /> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge bpmnElement="sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D" id="BPMNEdge_sid-90A1D39E-E70D-4EB1-BB50-DF5F8F43359D"> <omgdi:waypoint x="555.5" y="158.5" /> <omgdi:waypoint x="555.5" y="76.0" /> <omgdi:waypoint x="225.0" y="76.0" /> <omgdi:waypoint x="225.0" y="138.0" /> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge bpmnElement="sid-79F17746-BC9F-45F8-A31F-CA3969C76736" id="BPMNEdge_sid-79F17746-BC9F-45F8-A31F-CA3969C76736"> <omgdi:waypoint x="574.5616883116883" y="178.4383116883117" /> <omgdi:waypoint x="660.0" y="178.16181229773463" /> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge bpmnElement="sid-5AABA17A-E718-463D-95FA-7B0E9E938247" id="BPMNEdge_sid-5AABA17A-E718-463D-95FA-7B0E9E938247"> <omgdi:waypoint x="760.0" y="178.0" /> <omgdi:waypoint x="805.0" y="178.0" /> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge bpmnElement="sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1" id="BPMNEdge_sid-CB1DEE00-A9A1-4162-BD4A-CC3D4B6E7CC1"> <omgdi:waypoint x="130.0" y="178.0" /> <omgdi:waypoint x="175.0" y="178.0" /> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge bpmnElement="sid-751124CB-1CC1-40AF-B5DB-360706ED6035" id="BPMNEdge_sid-751124CB-1CC1-40AF-B5DB-360706ED6035"> <omgdi:waypoint x="225.0" y="218.0" /> <omgdi:waypoint x="225.0" y="329.0" /> <omgdi:waypoint x="505.0" y="329.0" /> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge bpmnElement="sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE" id="BPMNEdge_sid-4A389521-29A1-4967-8A99-23A3D1BA8CDE"> <omgdi:waypoint x="555.4366666666667" y="197.56333333333333" /> <omgdi:waypoint x="555.1328903654485" y="289.0" /> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge bpmnElement="sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B" id="BPMNEdge_sid-9E25CBF1-5C3D-444E-B619-F8DF70F8710B"> <omgdi:waypoint x="605.0" y="329.0" /> <omgdi:waypoint x="650.0" y="329.0" /> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge bpmnElement="sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22" id="BPMNEdge_sid-E75E07AC-22E7-4F1C-B6E9-733C5C1A3E22"> <omgdi:waypoint x="490.0" y="178.2164502164502" /> <omgdi:waypoint x="535.4130434782609" y="178.41304347826087" /> </bpmndi:BPMNEdge> </bpmndi:BPMNPlane> </bpmndi:BPMNDiagram> </definitions>]]></column>
+			<where>workflowtype='REPRESENT_UPLOAD'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="ST#113.15" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPRESENT_UPLOAD_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPRESENT_UPLOAD_APPROVER');
+
+				DELETE FROM SECROLES WHERE ROLECD ='REPRESENT_UPLOAD_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD ='REPRESENT_UPLOAD_APPROVER';
+
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPRESENT_UPLOAD_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPRESENT_UPLOAD_APPROVER');
+
+				DELETE FROM SECGROUPS WHERE GRPCODE ='REPRESENT_UPLOAD_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='REPRESENT_UPLOAD_APPROVER';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_RePresentUpload_Maker';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_RePresentUpload_Approver';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_RePresentMentUpload_btnSave';
+
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_RePresentUpload_Maker', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_RePresentUpload_Approver', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_RePresentMentUpload_btnSave', 'RePresentMentUpload', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'REPRESENT_UPLOAD_MAKER', 'WF Maker for RePresentUpload', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'REPRESENT_UPLOAD_APPROVER', 'WF Approver for RePresentUpload', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPRESENT_UPLOAD_MAKER'),    (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RePresentUpload_Maker'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPRESENT_UPLOAD_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RePresentUpload_Approver'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPRESENT_UPLOAD_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_RePresentMentUpload_btnSave'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'REPRESENT_UPLOAD_MAKER', 'Maker role from RePresentment Upload', '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'REPRESENT_UPLOAD_APPROVER', 'Approver role from RePresentment Upload',	'', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPRESENT_UPLOAD_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'REPRESENT_UPLOAD_MAKER'),    0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPRESENT_UPLOAD_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'REPRESENT_UPLOAD_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#113.16" author="Gireesh.G">
+		<addColumn tableName="PRMNT_EXTRACTION_STAGE">
+			<column name="RePresentUploadID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#113.17" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+		    	DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'BOUNCE_CODES_FOR_ACCOUNT_CLOSED';
+
+            	INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('BOUNCE_CODES_FOR_ACCOUNT_CLOSED', 'Bounce codes for reason account closed(Codes in comma seperated)', 'String', 1, '130,131', 100, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="ST#99.26" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -6115,10 +6482,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.26.1" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_PRMNT_RESP_SUCCESS_QUEUE" minValue="1"
-			maxValue="999999999999999999999999999" incrementBy="1" ordered="true"/>
+			maxValue="999999999999999999999999999" incrementBy="1" ordered="true" />
 	</changeSet>
 
 	<changeSet id="ST#99.26.2" author="saikrishna.b">
@@ -6138,7 +6505,7 @@
 			<column name="ResetCounterId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.26.3" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -6152,18 +6519,19 @@
 	</changeSet>
 
 	<changeSet id="ST#99.26.4" author="saikrishna.b">
-		<addPrimaryKey tableName="PRMNT_RESP_SUCCESS_QUEUE" columnNames="ID, BatchId" constraintName="PK_PRMNT_RESP_SUCCESS_QUEUE" />
+		<addPrimaryKey tableName="PRMNT_RESP_SUCCESS_QUEUE" columnNames="ID, BatchId"
+			constraintName="PK_PRMNT_RESP_SUCCESS_QUEUE" />
 	</changeSet>
-	
+
 	<changeSet id="ST#99.26.5" author="saikrishna.b">
-		<createIndex tableName="PRMNT_RESP_SUCCESS_QUEUE" indexName="IDX_PRMNT_RESP_SUCCESS_QUEUE_RID">
+		<createIndex tableName="PRMNT_RESP_SUCCESS_QUEUE" indexName="IDX_PRMNT_RESP_SUCCESS_Q_RID">
 			<column name="ReferenceId" type="bigint" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.27.1" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_PRMNT_RESP_BOUNCE_QUEUE" minValue="1"
-			maxValue="999999999999999999999999999" incrementBy="1" ordered="true"/>
+			maxValue="999999999999999999999999999" incrementBy="1" ordered="true" />
 	</changeSet>
 
 	<changeSet id="ST#99.27.2" author="saikrishna.b">
@@ -6183,7 +6551,7 @@
 			<column name="ResetCounterId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.27.3" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -6197,21 +6565,22 @@
 	</changeSet>
 
 	<changeSet id="ST#99.27.4" author="saikrishna.b">
-		<addPrimaryKey tableName="PRMNT_RESP_BOUNCE_QUEUE" columnNames="ID, BatchId" constraintName="PK_PRMNT_RESP_BOUNCE_QUEUE" />
+		<addPrimaryKey tableName="PRMNT_RESP_BOUNCE_QUEUE" columnNames="ID, BatchId"
+			constraintName="PK_PRMNT_RESP_BOUNCE_QUEUE" />
 	</changeSet>
-	
+
 	<changeSet id="ST#99.27.5" author="saikrishna.b">
-		<createIndex tableName="PRMNT_RESP_BOUNCE_QUEUE" indexName="IDX_PRMNT_RESP_BOUNCE_QUEUE_RID">
+		<createIndex tableName="PRMNT_RESP_BOUNCE_QUEUE" indexName="IDX_PRMNT_RESP_BOUNCE_Q_RID">
 			<column name="ReferenceId" type="bigint" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.28" author="saikrishna.b">
 		<addColumn tableName="PRESENTMENT_RESP_HEADER">
-			<column name="Progress" type="int"/>
+			<column name="Progress" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.28.1" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -6223,13 +6592,12 @@
 	<changeSet id="ST#99.28.1" author="saikrishna.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="Progress" tableName="PRESENTMENT_RESP_HEADER" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#99.28.2" author="saikrishna.b">
 		<addColumn tableName="PRESENTMENT_RESP_DTLS">
-			<column name="ERROR_CODE" type="varchar(10)"/>
-			<column name="ERROR_DESCRIPTION" type="varchar(2000)"/>
+			<column name="ERROR_CODE" type="varchar(10)" />
+			<column name="ERROR_DESCRIPTION" type="varchar(2000)" />
 		</addColumn>
 	</changeSet>
-	
-				
+
 </databaseChangeLog>

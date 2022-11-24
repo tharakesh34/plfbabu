@@ -363,9 +363,13 @@ public class PresentmentEngine {
 		Date appDate = ph.getAppDate();
 		long batchID = ph.getBatchID();
 
-		Map<String, Date> dueDates = dueExtractionConfigDAO.getDueDates(appDate);
+		Map<String, Date> dueDates = null;
 
-		list.stream().forEach(pd -> {
+		if (PennantConstants.PROCESS_PRESENTMENT.equals(ph.getPresentmentType())) {
+			dueDates = dueExtractionConfigDAO.getDueDates(appDate);
+		}
+
+		for (PresentmentDetail pd : list) {
 
 			String instrumentType = pd.getInstrumentType();
 			String presentmentType = ph.getPresentmentType();
@@ -376,8 +380,10 @@ public class PresentmentEngine {
 
 			if (fromDate != null && toDate != null) {
 				dueDate = toDate;
-			} else {
+			} else if (dueDates != null) {
 				dueDate = dueDates.get(instrumentType);
+			} else {
+				dueDate = pd.getDefSchdDate();
 			}
 
 			if (fromDate == null) {
@@ -399,7 +405,7 @@ public class PresentmentEngine {
 
 			pd.setDueDate(dueDate);
 			pd.setHeaderId(headerId);
-		});
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -762,6 +768,8 @@ public class PresentmentEngine {
 
 			presentmentDAO.updateSchdWithPresentmentId(includeList);
 
+			presentmentDAO.updateRepresentWithPresentmentId(includeList);
+
 			if (!excess.isEmpty()) {
 				finExcessAmountDAO.updateExcessAmtList(excess);
 			}
@@ -954,6 +962,36 @@ public class PresentmentEngine {
 
 			presentmentDAO.updateHeader(id);
 		}
+	}
+
+	public int preparationForRepresentment(long batchID, List<Long> headerId) {
+		int count = 0;
+
+		List<PresentmentHeader> list = new ArrayList<>();
+
+		list = presentmentDAO.getpresentmentHeaderList(headerId);
+
+		for (PresentmentHeader ph : list) {
+			count = count + presentmentDAO.extract(batchID, ph);
+
+			if (InstrumentType.isIPDC(ph.getMandateType())) {
+				presentmentDAO.updateIPDC(batchID);
+			}
+		}
+
+		count = count - presentmentDAO.clearByNoDues(batchID);
+
+		if (count == 0) {
+			return 0;
+		}
+
+		count = count - presentmentDAO.clearSecurityCheque(batchID);
+
+		presentmentDAO.updateToSecurityMandate(batchID);
+
+		presentmentDAO.updatePartnerBankID(batchID);
+
+		return count;
 	}
 
 	public PresentmentDetail getPresentmenToPost(Long presentmentID) {

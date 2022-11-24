@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="windowRePresentMentUploadDialog" border="normal" apply="${rePresentmentUploadDialogCtrl}"
+			width="100%" height="100%" sizable="false">
+			<borderlayout id="borderlayoutRePresentMentUpload">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start" sclass="toolbar-start">
+								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnSave,btnClose,btnDownload,downloadTemplate,btnBrowse" sclass="z-toolbarbutton" />
+							</toolbar>
+
+							<!-- SEARCH AREA -->
+							<toolbar align="center" sclass="toolbar-center">
+								<label value="${c:l('window_RePresentMentUploadDialog.title')}" sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnSave,btnClose,btnDownload,downloadTemplate,btnBrowse" sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none" autoscroll="false">
+					<div>
+						<grid sclass="GridLayoutNoBorder" style="border:0px solid #F38C60;">
+							<rows>
+								<row>
+									<radiogroup>
+										<radio id="downLoad" label="${c:l('label_Download')}" />
+										<radio id="upload" style="padding-left:100px;" label="${c:l('label_Uplaod')}"
+											selected="true" />
+									</radiogroup>
+								</row>
+							</rows>
+						</grid>
+						<groupbox style="border:0px solid #F38C60;">
+							<caption label="${c:l('label_Download_Details')}" />
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="200px" />
+									<column width="450px" />
+								</columns>
+								<rows>
+									<row>
+										<label value="${c:l('label_FileName')}" />
+										<extendedcombobox id="fileName" />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox sclass="gb-dialog">
+							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
+								<toolbar align="center" sclass="toolbar-center">
+									<button id="btnDownload" label="${c:l('label_Download')}"
+										autodisable="btnSave,btnClose,btnDownload,downloadTemplate,btnBrowse"
+										tooltiptext="${c:l('btnDownload.tooltiptext')}" sclass="z-toolbarbutton" />
+									<button id="downloadTemplate" label="${c:l('label_Download_Template')}"
+										autodisable="btnSave,btnClose,btnDownload,downloadTemplate,btnBrowse"
+										tooltiptext="${c:l('label_Sample_Upload_Template')}" sclass="z-toolbarbutton" />
+								</toolbar>
+							</hbox>
+						</groupbox>
+						<groupbox style="border:0px solid #F38C60;">
+							<caption label="${c:l('label_Upload_Details')}" />
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="200px" />
+									<column width="650px" />
+								</columns>
+								<rows>
+									<row visible="true">
+										<label value="${c:l('label_EntityCode')}" />
+										<extendedcombobox id="entity" />
+									</row>
+									<row>
+										<label value="${c:l('label_FileName')}" />
+										<hbox>
+											<space spacing="2px" id="spaceTxtFileName" sclass="mandatory" />
+											<textbox id="txtFileName" width="200px" readonly="true" />
+											<button id="btnBrowse" label="${c:l('btnBrowse.label')}" upload="true"
+												autodisable="btnSave,btnClose,btnDownload,downloadTemplate,btnBrowse"
+												tooltiptext="${c:l('btnBrowse.tooltiptext')}" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</center>
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="95%">
+							<radiogroup id="userAction" name="action" />
+							<label value="${c:l('label.RecordStatus.dialog')}" sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

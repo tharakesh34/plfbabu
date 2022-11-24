@@ -6061,4 +6061,11 @@
 	<bean id="dueExtractionConfigList" class ="com.pennant.pff.presentment.web.DueExtractionConfigListCtrl" parent="basisListCtrl" scope="prototype" />
 	
 	<bean id="dueExtractionConfigDialog" class="com.pennant.pff.presentment.web.DueExtractionConfigDialogCtrl" parent="basisCtrl" scope="prototype"/>
+	
+	<bean id="rePresentmentUploadListCtrl" class="com.pennant.pff.presentment.web.RePresentmentUploadListCtrl"
+	parent="basisListCtrl" scope="prototype" />
+	
+	<bean id="rePresentmentUploadDialogCtrl" class="com.pennant.pff.presentment.web.RePresentmentUploadDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 </beans>

@@ -33,7 +33,7 @@
 									</hbox>
 								</row>
 								<row id="row_fileNames">
-									<label value="${c:l('label_FileName.value')}" />
+									<label value="${c:l('label_FileName')}" />
 									<hbox spacing="2px">
 										<space spacing="2px" />
 										<combobox id="fileNames" width="350px" readonly="true" />

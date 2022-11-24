@@ -24,6 +24,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.mandate.InstrumentType;
@@ -574,8 +575,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage, SchdVersion");
 		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
 		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
-		sql.append(", SchdPftPaid, SchdPriPaid, SchdFeePaid, TdsPaid, InstrumentType");
-		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
+		sql.append(", SchdPftPaid, SchdPriPaid, SchdFeePaid, TdsPaid, RePresentUploadID");
+		sql.append(", InstrumentType, ChequeId, ChequeType, ChequeStatus, ChequeDate");
 		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
 		sql.append(", PartnerBankId, BranchCode, BankCode");
 		sql.append(", EmployeeNo, EmPloyerId, EmployerName, ChequeAmount");
@@ -584,7 +585,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", fm.BpiTreatment, fm.GrcPeriodEndDate, fm.GrcAdvType, fm.AdvType, fm.AdvStage, fm.SchdVersion");
 		sql.append(", fsd.SchDate, fsd.DefSchdDate, fsd.SchSeq, fsd.InstNumber, fsd.BpiOrHoliday");
 		sql.append(", fsd.ProfitSchd, fsd.PrincipalSchd, fsd.FeeSchd, fsd.TdsAmount");
-		sql.append(", fsd.SchdPftPaid, fsd.SchdPriPaid, fsd.SchdFeePaid, fsd.TdsPaid");
+		sql.append(", fsd.SchdPftPaid, fsd.SchdPriPaid, fsd.SchdFeePaid, fsd.TdsPaid, ?");
 
 		if (InstrumentType.isPDC(instrumentType) || InstrumentType.isIPDC(instrumentType)) {
 			sql.append(", cd.ChequeType, cd.ChequeDetailsId, cd.ChequeType, cd.ChequeStatus, cd.ChequeDate");
@@ -1202,12 +1203,11 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	@Override
 	public PresentmentDetail getPresentmentDetail(long extrationID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(
-				" Id, HeaderID, DueDate, FinId, SchdVersion, FinReference, FinType, ProductCategory, FinBranch, EntityCode");
-		sql.append(", BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage");
+		sql.append(" Id, HeaderID, DueDate, FinId, SchdVersion, FinReference, FinType, ProductCategory, FinBranch");
+		sql.append(", EntityCode, BpiTreatment, GrcPeriodEndDate, GrcAdvType, AdvType, AdvStage");
 		sql.append(", SchDate, DefSchdDate, SchSeq, InstNumber, BpiOrHoliday");
 		sql.append(", ProfitSchd, PrincipalSchd, FeeSchd, TdsAmount");
-		sql.append(", SchdPftPaid, SchdPriPaid, SchdFeePaid, TdsPaid");
+		sql.append(", SchdPftPaid, SchdPriPaid, SchdFeePaid, TdsPaid, RePresentUploadID");
 		sql.append(", MandateId, MandateType, EmandateSource, MandateStatus, MandateExpiryDate");
 		sql.append(", ChequeId, ChequeType, ChequeStatus, ChequeDate");
 		sql.append(", PartnerBankId, BranchCode, BankCode, InstrumentType");
@@ -1248,6 +1248,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
 			pd.setSchdFeePaid(rs.getBigDecimal("SchdFeePaid"));
 			pd.setTdsPaid(rs.getBigDecimal("TdsPaid"));
+			pd.setRePresentUploadID(JdbcUtil.getLong(rs.getObject("RePresentUploadID")));
 			pd.setMandateId(JdbcUtil.getLong(rs.getObject("MandateId")));
 			pd.setMandateType(rs.getString("MandateType"));
 			pd.setEmandateSource(rs.getString("EmandateSource"));
@@ -1409,11 +1410,144 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		logger.debug(Literal.LEAVING);
 	}
 
+	public int extractPDC(long batchID, long finID, Date dueDate, Long rePresentUploadID) {
+		StringBuilder sql = new StringBuilder(getExtractQuery(InstrumentType.PDC.name()));
+		sql.append(" Where fm.FinId = ? and (SchDate = ? or DefSchddate = ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		String bankCode = SysParamUtil.getValueAsString(SMTParameterConstants.BANK_CODE);
+
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, batchID);
+			ps.setLong(index++, rePresentUploadID);
+			ps.setInt(index++, 1);
+			ps.setString(index++, InstrumentType.PDC.name());
+			ps.setString(index++, bankCode);
+			ps.setLong(index++, finID);
+			ps.setDate(index++, JdbcUtil.getDate(dueDate));
+			ps.setDate(index++, JdbcUtil.getDate(dueDate));
+
+		});
+	}
+
+	public int extractDAS(long batchID, long finID, Date dueDate, Long rePresentUploadID) {
+		StringBuilder sql = new StringBuilder(getExtractQuery(InstrumentType.DAS.name()));
+		sql.append(" Where fm.FinId = ? and (SchDate = ? or DefSchddate = ?) and MandateType = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, batchID);
+			ps.setLong(index++, rePresentUploadID);
+			ps.setInt(index++, 1);
+			ps.setLong(index++, finID);
+			ps.setDate(index++, JdbcUtil.getDate(dueDate));
+			ps.setDate(index++, JdbcUtil.getDate(dueDate));
+			ps.setString(index++, InstrumentType.DAS.name());
+		});
+	}
+
+	@Override
+	public int extract(long batchID, PresentmentHeader ph) {
+		long finID = ph.getFinID();
+		Date dueDate = ph.getDueDate();
+		String instrumentType = ph.getMandateType();
+		Long rePresentUploadID = ph.getRePresentUploadID();
+
+		InstrumentType type = InstrumentType.getType(instrumentType);
+
+		if (type == InstrumentType.PDC) {
+			return extractPDC(batchID, finID, dueDate, rePresentUploadID);
+		}
+
+		if (type == InstrumentType.DAS) {
+			return extractDAS(batchID, finID, dueDate, rePresentUploadID);
+		}
+
+		StringBuilder sql = new StringBuilder(getExtractQuery(instrumentType));
+		sql.append(" Where fm.FinId = ? and (SchDate = ? or DefSchddate = ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, batchID);
+			ps.setLong(index++, rePresentUploadID);
+			ps.setInt(index++, 1);
+			ps.setString(index++, instrumentType);
+			ps.setLong(index++, finID);
+			ps.setDate(index++, JdbcUtil.getDate(dueDate));
+			ps.setDate(index++, JdbcUtil.getDate(dueDate));
+
+		});
+	}
+
+	@Override
+	public List<PresentmentHeader> getpresentmentHeaderList(List<Long> headerId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, rpd.DueDate, fm.FinRepayMethod, rpd.Id");
+		sql.append(" From FILE_UPLOAD_HEADER rph");
+		sql.append(" Inner Join REPRESENT_UPLOADS rpd on rph.Id = rpd.HeaderId");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = rpd.FinID");
+		sql.append(" Where rph.Id in (");
+		sql.append(JdbcUtil.getInCondition(headerId));
+		sql.append(") and rpd.Progress = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			for (Long id : headerId) {
+				ps.setLong(++index, id);
+			}
+
+			ps.setInt(++index, EodConstants.PROGRESS_SUCCESS);
+		}, (rs, rowNum) -> {
+			PresentmentHeader ph = new PresentmentHeader();
+
+			ph.setFinID(rs.getLong("FinID"));
+			ph.setDueDate(rs.getDate("DueDate"));
+			ph.setMandateType(rs.getString("FinRepayMethod"));
+			ph.setRePresentUploadID(JdbcUtil.getLong(rs.getObject("Id")));
+
+			return ph;
+		});
+	}
+
+	@Override
+	public void updateRepresentWithPresentmentId(List<PresentmentDetail> presenetments) {
+		String sql = "Update REPRESENT_UPLOADS Set PresentmentID = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int index) throws SQLException {
+				PresentmentDetail pd = presenetments.get(index);
+
+				ps.setLong(1, pd.getId());
+				ps.setLong(2, pd.getRePresentUploadID());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return presenetments.size();
+			}
+		});
+	}
+
 	@Override
 	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public int getRecordsByWaiting(String clearingStatus) {
 		StringBuilder sql = new StringBuilder();
-
 		sql.append("Select count(prd.ID) From PRESENTMENT_RESP_HEADER prh");
 		sql.append(" Inner Join PRESENTMENT_RESP_DTLS prd on prd.Header_ID  = prh.ID");
 		sql.append(" Where prh.Progress = ? and Event = ? and CLEARING_STATUS = ? ");

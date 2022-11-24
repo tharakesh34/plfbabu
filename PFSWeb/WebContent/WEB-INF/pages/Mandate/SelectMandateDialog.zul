@@ -40,7 +40,7 @@
 									<label value="${c:l('label_SelectMandate_Customer.value')}"
 										style="padding-left:12px;" />
 									<hbox>
-										<space spacing="2px" sclass="mandatory" />
+										<space spacing="2px" />
 										<textbox id="custCIF" width="150px" />
 										<button id="btnSearchCustCIF"
 											tooltiptext="${c:l('label_SelectMandateDialog_CustID.tooltiptext')}" image="/images/icons/more.png"
@@ -48,6 +48,12 @@
 										<label id="customerNameLabel"
 											style="margin-left:10px;display:inline-block;padding-top:3px;" />
 									</hbox>
+								</row>
+								
+								<row>
+									<label value="${c:l('label_SelectMandate_Finreference.value')}"
+										style="padding-left:12px;" />
+									<extendedcombobox id="finReference" width="250px" />
 								</row>
 
 								<row>

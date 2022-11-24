@@ -101,9 +101,9 @@
 							span="true">
 							<listhead sizable="true" id="listHeadReceiptUpload">
 								<listheader id="listHeader_CheckBox" hflex="min" />
-								<listheader id="listheader_UploadID" label="${c:l('listheader_UploadId.label')}"
+								<listheader id="listheader_UploadID" label="${c:l('label_UploadId')}"
 									sort="auto" hflex="min" />
-								<listheader id="listheader_FileName" label="${c:l('listheader_FileName.label')}"
+								<listheader id="listheader_FileName" label="${c:l('label_FileName')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_TotalCount" label="${c:l('listheader_TotalCount.label')}"
 									sort="auto" hflex="min" align="center" />

@@ -309,7 +309,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_Form_Type.value"), null, true, true));
 		}
 		if (this.fileName.isReadonly()) {
-			this.fileName.setConstraint(new PTStringValidator(Labels.getLabel("label_FileName.value"), null, true));
+			this.fileName.setConstraint(new PTStringValidator(Labels.getLabel("label_FileName"), null, true));
 		}
 		if (this.passwordRow.isVisible()) {
 			this.pdfPassword.setConstraint(new PTStringValidator(Labels.getLabel("label_pdf_password.value"),
