@@ -117,4 +117,6 @@ public interface PresentmentDAO {
 	List<PresentmentHeader> getpresentmentHeaderList(List<Long> headerId);
 
 	void updateRepresentWithPresentmentId(List<PresentmentDetail> presenetments);
+
+	Long getPreviousMandateID(long finID, Date schDate);
 }

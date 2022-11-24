@@ -397,6 +397,14 @@ public class PresentmentEngine {
 
 		PresentmentDetail pd = presentmentDAO.getPresentmentDetail(extractionID);
 
+		if (PennantConstants.PROCESS_REPRESENTMENT.equals(ph.getPresentmentType())) {
+			Long mandateId = presentmentDAO.getPreviousMandateID(pd.getFinID(), pd.getSchDate());
+
+			if (mandateId != null) {
+				pd.setMandateId(mandateId);
+			}
+		}
+
 		BigDecimal schAmtDue = BigDecimal.ZERO;
 
 		BigDecimal schPriDue = BigDecimal.ZERO;

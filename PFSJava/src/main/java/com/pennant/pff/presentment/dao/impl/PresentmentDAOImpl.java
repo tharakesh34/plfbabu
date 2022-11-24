@@ -1542,6 +1542,20 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	public Long getPreviousMandateID(long finID, Date schDate) {
+		String sql = "Select Id, MandateID from PresentmentDetails Where FinID = ? and SchDate = ? order by Id desc";
+
+		List<Long> list = this.jdbcOperations.query(sql, ps -> {
+			ps.setLong(1, finID);
+			ps.setDate(2, JdbcUtil.getDate(schDate));
+		}, (rs, rowNum) -> {
+			return JdbcUtil.getLong(rs.getObject("MandateID"));
+		});
+
+		return list.get(0);
+	}
+
+	@Override
 	public long getNextValue() {
 		return getNextValue("SeqPresentmentDetails");
 	}
