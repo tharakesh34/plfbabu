@@ -30,7 +30,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.PathUtil;
-import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.util.PennantConstants;
@@ -310,7 +309,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 
 		String usrName = getUserWorkspace().getLoggedInUser().getFullName();
 
-		ReportsUtil.generateReport(usrName, "BulkFeeWaiverUploadReport", whereCond, searchCriteriaDesc);
+		// ReportsUtil.generateReport(usrName, "BulkFeeWaiverUploadReport", whereCond, searchCriteriaDesc);
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}

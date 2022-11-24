@@ -1552,6 +1552,10 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			return JdbcUtil.getLong(rs.getObject("MandateID"));
 		});
 
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
 		return list.get(0);
 	}
 
