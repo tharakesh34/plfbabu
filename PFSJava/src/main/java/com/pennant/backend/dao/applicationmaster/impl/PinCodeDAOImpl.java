@@ -339,15 +339,15 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		String whereCondition = QueryUtil.buildWhereClause(search, value);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" PinCode, PCCityName, AreaName, Active, Version, Lastmntby, Lastmnton");
+		sql.append(" PinCodeId, PinCode, PCCityName, AreaName, Active, Version, Lastmntby, Lastmnton");
 		sql.append(", Recordstatus, Rolecode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkFlowId");
-		sql.append(" From (Select PinCode, PCCityName, AreaName, Active, t1.Version, t1.Lastmntby, t1.Lastmnton");
-		sql.append(", t1.Recordstatus, t1.Rolecode, t1.NextRoleCode, t1.TaskId, t1.NextTaskId, t1.RecordType");
-		sql.append(", t1.WorkFlowId");
+		sql.append(" From (Select PinCodeId, PinCode, PCCityName, AreaName, Active, t1.Version, t1.Lastmntby");
+		sql.append(", t1.Lastmnton, t1.Recordstatus, t1.Rolecode, t1.NextRoleCode, t1.TaskId, t1.NextTaskId");
+		sql.append(", t1.RecordType, t1.WorkFlowId");
 		sql.append(" From PinCodes_Temp t1");
 		sql.append(" Inner Join RMTProvincevsCity t2 on t1.City = t2.PCCity");
 		sql.append(" Union All");
-		sql.append(" Select PinCode, PCCityName, AreaName, Active, t1.Version, t1.Lastmntby, t1.Lastmnton");
+		sql.append(" Select PinCodeId, PinCode, PCCityName, AreaName, Active, t1.Version, t1.Lastmntby, t1.Lastmnton");
 		sql.append(", t1.Recordstatus, t1.Rolecode, t1.NextRoleCode, t1.TaskId, t1.NextTaskId, t1.RecordType");
 		sql.append(", t1.WorkFlowId");
 		sql.append(" From PinCodes t1");
@@ -389,6 +389,7 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		public PinCode mapRow(ResultSet rs, int rowNum) throws SQLException {
 			PinCode pc = new PinCode();
 
+			pc.setPinCodeId(rs.getLong("PinCodeId"));
 			pc.setPinCode(rs.getString("PinCode"));
 			pc.setPCCityName(rs.getString("PCCityName"));
 			pc.setAreaName(rs.getString("AreaName"));
