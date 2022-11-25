@@ -175,9 +175,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		String custCIF = (String) dataMap.get("CIF");
 		String sheetName = sheetNamePrefix;
 
-		if (StringUtils.isNoneEmpty(eligibilityMethod)) {
-			sheetName = sheetNamePrefix.concat("_").concat(eligibilityMethod);
-		}
+		/*
+		 * if (StringUtils.isNoneEmpty(eligibilityMethod)) { sheetName =
+		 * sheetNamePrefix.concat("_").concat(eligibilityMethod); }
+		 */
 
 		Sheet sourceSheet = book.getSheet(sheetName);
 
@@ -185,7 +186,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			throw new AppException(sheetName + " Sheet not found.");
 		}
 
-		sheetName = sheetName.concat("_").concat(custCIF);
+		sheetName = sheetName.concat("_").concat(eligibilityMethod).concat("_").concat(custCIF);
 
 		return SheetCopier.clone(sheetName, sourceSheet);
 	}
