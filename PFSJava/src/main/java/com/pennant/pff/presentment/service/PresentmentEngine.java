@@ -301,6 +301,7 @@ public class PresentmentEngine {
 			setHeader(ph, list);
 			presentmentDAO.updateHeaderIdByDefault(batchID, list);
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -371,6 +372,17 @@ public class PresentmentEngine {
 		ph.setEntityCode(pd.getEntityCode());
 		ph.setBankCode(pd.getBankCode());
 		ph.setPartnerBankId(pd.getPartnerBankId());
+
+		if (ph.getPartnerBankId() == null || ph.getPartnerBankId() <= 0) {
+			Presentment pb = presentmentDAO.getPartnerBankId(ph.getLoanType(), ph.getMandateType());
+
+			if (pb == null) {
+				pb = new Presentment();
+				pb.setPartnerBankId(621L);
+			}
+
+			ph.setPartnerBankId(pb.getPartnerBankId());
+		}
 
 		String ref = ph.getMandateType().concat(reference);
 
@@ -826,11 +838,6 @@ public class PresentmentEngine {
 		if (DateUtil.compare(pd.getAppDate(), pd.getSchDate()) >= 0) {
 			createReceipt(pd);
 		}
-
-		if (!RepayConstants.PEXC_APPROV.equals(pd.getStatus())) {
-			return;
-		}
-
 	}
 
 	public void sendToPresentment(PresentmentHeader ph) {

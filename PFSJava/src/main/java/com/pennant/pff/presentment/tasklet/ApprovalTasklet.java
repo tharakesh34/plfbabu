@@ -34,7 +34,7 @@ import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public class ApprovalTasklet implements Tasklet {
-	private final Logger logger = LogManager.getLogger(ExtractionTasklet.class);
+	private final Logger logger = LogManager.getLogger(ApprovalTasklet.class);
 
 	private PresentmentEngine presentmentEngine;
 	private BatchJobQueueDAO bjqDAO;
@@ -165,26 +165,20 @@ public class ApprovalTasklet implements Tasklet {
 	}
 
 	private boolean approvePresentment(Long presentmentID, PresentmentHeader ph) {
+		PresentmentDetail pd = presentmentEngine.getPresentmenToPost(presentmentID);
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
 		try {
+			pd.setAppDate(ph.getAppDate());
+			pd.setEventProperties(eventProperties);
 
-			PresentmentDetail pd = presentmentEngine.getPresentmenToPost(presentmentID);
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
-
-			try {
-				pd.setAppDate(ph.getAppDate());
-				pd.setEventProperties(eventProperties);
-
-				presentmentEngine.approve(pd);
-				transactionManager.commit(transactionStatus);
-			} catch (Exception e) {
-				transactionManager.rollback(transactionStatus);
-			}
-
+			presentmentEngine.approve(pd);
+			transactionManager.commit(transactionStatus);
 		} catch (Exception e) {
-			throw e;
+			transactionManager.rollback(transactionStatus);
 		}
 
 		return true;
