@@ -8,10 +8,12 @@ import com.pennanttech.pff.provision.ProvisionBook;
 import com.pennanttech.pff.provision.ProvisionReversalStage;
 
 public class FeatureExtension implements IFeatureExtension {
-	private Map<String, Object> defaultExtensions = new HashMap<>();
-	private Map<String, Object> mandateExtensions = new HashMap<>();
-	private Map<String, Object> presentmentExtensions = new HashMap<>();
-	private Map<String, Object> accountingExtensions = new HashMap<>();
+	static Map<String, Object> defaultExtensions = new HashMap<>();
+	static Map<String, Object> mandateExtensions = new HashMap<>();
+	static Map<String, Object> presentmentExtensions = new HashMap<>();
+	static Map<String, Object> accountingExtensions = new HashMap<>();
+	static Map<String, Object> feeExtensions = new HashMap<>();
+	static Map<String, Object> dpdExtensions = new HashMap<>();
 
 	/**
 	 * <p>
@@ -166,5 +168,15 @@ public class FeatureExtension implements IFeatureExtension {
 	@Override
 	public Map<String, Object> getAccountingExtensions() {
 		return accountingExtensions;
+	}
+
+	@Override
+	public Map<String, Object> getFeeExtensions() {
+		return feeExtensions;
+	}
+
+	@Override
+	public Map<String, Object> getDPDExtensions() {
+		return dpdExtensions;
 	}
 }
