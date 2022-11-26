@@ -1108,7 +1108,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="41" author="rahul.r">
+	<changeSet id="42" author="rahul.r">
 		<sql>
 			<![CDATA[
 				UPDATE RMTACCOUNTINGSET SET EVENTCODE='AMZ_REV' WHERE EVENTCODE='AMZ_MON';
