@@ -5987,6 +5987,7 @@
 	<changeSet id="PSD#210561_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
+					select deps_restore_dependencies ('plf', 'querydetail_temp');
 					select deps_restore_dependencies ('plf', 'querydetail');
 			]]>
 		</sql>
@@ -6002,8 +6003,8 @@
 	</changeSet>
 	
 	<changeSet id="ST#99.23.1" author="saikrishna.b">
-		<createSequence sequenceName="SEQ_PRMNT_EXTRACTION_QUEUE" minValue="1"
-			maxValue="999999999999999999999999999" incrementBy="1" ordered="true"/>
+		<createSequence sequenceName="SEQ_PRMNT_EXTRACTION_QUEUE" minValue="1" maxValue="9223372036854775807" incrementBy="1" startValue="1"
+		ordered="true"/>
 	</changeSet>
 
 	<changeSet id="ST#99.23.2" author="saikrishna.b">
@@ -6101,9 +6102,27 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#670_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'rmtbranches_temp');
+					select deps_save_and_drop_dependencies ('plf', 'rmtbranches');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#670" author="saikiran.n">
 		<modifyDataType tableName="RMTBranches_temp" columnName="BranchSwiftBrnCde" newDataType="varchar(5)" />
 		<modifyDataType tableName="RMTBranches" columnName="BranchSwiftBrnCde" newDataType="varchar(5)" />
+	</changeSet>
+	
+	<changeSet id="ST#670_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'rmtbranches_temp');
+					select deps_restore_dependencies ('plf', 'rmtbranches');
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="ST#113" author="Gireesh.G">
@@ -6470,5 +6489,25 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+	
+	<changeSet id="PSD#211274_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'otp_messages');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#211274" author="Gopal.p">
+		<modifyDataType tableName="OTP_Messages" columnName="MobileNo" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="PSD#211274_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'otp_messages');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
