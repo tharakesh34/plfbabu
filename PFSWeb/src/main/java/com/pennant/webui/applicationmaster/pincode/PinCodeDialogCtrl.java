@@ -269,7 +269,10 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 	 */
 	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
-		pinCodeListCtrl.search();
+
+		this.active.setChecked(true);
+		pinCodeListCtrl.fillListData();
+
 		logger.debug(Literal.LEAVING);
 	}
 

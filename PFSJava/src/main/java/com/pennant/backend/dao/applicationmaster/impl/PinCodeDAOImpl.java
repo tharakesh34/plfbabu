@@ -356,9 +356,9 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 
 		if (!StringUtils.isEmpty(whereCondition)) {
 			sql.append(whereCondition);
-			sql.append(" and (NextRoleCode is null or NextRoleCode in (");
+			sql.append(" and (NextRoleCode is null or NextRoleCode = '' or NextRoleCode in (");
 		} else {
-			sql.append(" Where (NextRoleCode is null or NextRoleCode in (");
+			sql.append(" Where (NextRoleCode is null or NextRoleCode = '' or NextRoleCode in (");
 		}
 
 		sql.append(JdbcUtil.getInCondition(roleCodes));
