@@ -718,9 +718,6 @@ public class PresentmentEngine {
 			overdrafLoanService.createCharges(odPresentments.values().stream().collect(Collectors.toList()));
 		}
 
-		if (includeList.isEmpty()) {
-			return;
-		}
 
 		if (FinanceConstants.FLAG_HOLDEMI.equals(pd.getBpiOrHoliday())) {
 			pd.setSchDate(pd.getOriginalSchDate());
@@ -732,12 +729,6 @@ public class PresentmentEngine {
 			fm.setSchdVersion(pd.getSchdVersion());
 
 			financeMainDAO.updateSchdVersion(fm, false);
-
-			presentmentDAO.updateSchdWithPresentmentId(includeList);
-
-			if (pd.getRePresentUploadID() != null) {
-				presentmentDAO.updateRepresentWithPresentmentId(includeList);
-			}
 
 			if (!excess.isEmpty()) {
 				finExcessAmountDAO.updateExcessAmtList(excess);
@@ -753,6 +744,16 @@ public class PresentmentEngine {
 
 			if (!emiInAdvance.isEmpty()) {
 				finExcessAmountDAO.updateExcessEMIAmount(emiInAdvance, "R");
+			}
+
+			if (includeList.isEmpty()) {
+				return;
+			}
+
+			presentmentDAO.updateSchdWithPresentmentId(includeList);
+
+			if (pd.getRePresentUploadID() != null) {
+				presentmentDAO.updateRepresentWithPresentmentId(includeList);
 			}
 
 			List<PresentmentDetail> cheques = new ArrayList<>();
