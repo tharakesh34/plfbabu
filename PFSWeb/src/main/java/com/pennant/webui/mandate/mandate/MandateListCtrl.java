@@ -51,6 +51,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.mandate.mandate.model.MandateListModelItemRenderer;
@@ -160,7 +161,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		registerButton(button_MandateList_MandateSearch);
 		registerButton(button_MandateList_NewMandate, "button_MandateList_NewMandate", true);
 
-		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
+		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "," + InstrumentType.PDC.code() + ",");
 		fillComboBox(this.accType, "", MandateUtil.getAccountTypes(), "");
 		fillComboBox(this.status, "", MandateUtil.getMandateStatus(), Collections.singletonList(MandateStatus.FIN));
 
@@ -183,7 +184,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 				Operators.DATE);
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
 		registerField("securityMandate", listheader_SecurityMandate, SortOrder.NONE, securityMandate,
-				sortOperator_SecurityMandate, Operators.BOOLEAN);
+				sortOperator_SecurityMandate, Operators.SIMPLE_NUMARIC);
 
 		// Render the page and display the data.
 		doRenderPage();

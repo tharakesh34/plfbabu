@@ -1681,6 +1681,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				cheque.setAmount(getEmiAmount(listItem));
 			}
 
+			if (ChequeSatus.PRESENT.equals(cheque.getChequeStatus())) {
+				cheques.add(cheque);
+				continue;
+			}
+
 			if (!checkbox.isChecked()) {
 				if (fromLoan) {
 					cheque.seteMIRefNo(cheque.geteMIRefNo() - count);
@@ -2772,7 +2777,16 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	}
 
 	private boolean isDeleteVisible() {
-		return !(CollectionUtils.isEmpty(chequeDetailList) || this.btnGen.isDisabled() || enqiryModule
+		List<ChequeDetail> list = new ArrayList<>();
+
+		for (ChequeDetail cd : chequeDetailList) {
+			String status = cd.getChequeStatus();
+			if (!(PennantConstants.RCD_STATUS_CANCELLED.equals(status) || ChequeSatus.PRESENT.equals(status))) {
+				list.add(cd);
+			}
+		}
+
+		return !(CollectionUtils.isEmpty(list) || this.btnGen.isDisabled() || enqiryModule
 				|| this.deleteCheques.isDisabled());
 	}
 

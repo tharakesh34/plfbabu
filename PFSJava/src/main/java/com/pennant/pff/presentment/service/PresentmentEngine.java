@@ -76,6 +76,7 @@ import com.pennant.pff.presentment.dao.PresentmentExcludeCodeDAO;
 import com.pennanttech.external.ExternalPresentmentHook;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -354,6 +355,7 @@ public class PresentmentEngine {
 			setHeader(ph, list);
 			presentmentDAO.updateHeaderIdByDefault(batchID, list);
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -425,6 +427,17 @@ public class PresentmentEngine {
 		ph.setBankCode(pd.getBankCode());
 		ph.setPartnerBankId(pd.getPartnerBankId());
 
+		if (ph.getPartnerBankId() == null || ph.getPartnerBankId() <= 0) {
+			Presentment pb = presentmentDAO.getPartnerBankId(ph.getLoanType(), ph.getMandateType());
+
+			if (pb == null) {
+				pb = new Presentment();
+				pb.setPartnerBankId(621L);
+			}
+
+			ph.setPartnerBankId(pb.getPartnerBankId());
+		}
+
 		String ref = ph.getMandateType().concat(reference);
 
 		if (PennantConstants.PROCESS_REPRESENTMENT.equals(ph.getPresentmentType())) {
@@ -449,6 +462,14 @@ public class PresentmentEngine {
 		logger.debug(Literal.ENTERING);
 
 		PresentmentDetail pd = presentmentDAO.getPresentmentDetail(extractionID);
+
+		if (PennantConstants.PROCESS_REPRESENTMENT.equals(ph.getPresentmentType())) {
+			Long mandateId = presentmentDAO.getPreviousMandateID(pd.getFinID(), pd.getSchDate());
+
+			if (mandateId != null) {
+				pd.setMandateId(mandateId);
+			}
+		}
 
 		BigDecimal schAmtDue = BigDecimal.ZERO;
 
@@ -768,7 +789,9 @@ public class PresentmentEngine {
 
 			presentmentDAO.updateSchdWithPresentmentId(includeList);
 
-			presentmentDAO.updateRepresentWithPresentmentId(includeList);
+			if (pd.getRePresentUploadID() != null) {
+				presentmentDAO.updateRepresentWithPresentmentId(includeList);
+			}
 
 			if (!excess.isEmpty()) {
 				finExcessAmountDAO.updateExcessAmtList(excess);
@@ -795,7 +818,7 @@ public class PresentmentEngine {
 				chequeDetailDAO.updateChequeStatus(cheques);
 			}
 
-		} catch (Exception e) {
+		} catch (ConcurrencyException e) {
 			pd.setExcludeReason(RepayConstants.PEXC_SCHDVERSION);
 			presentmentDAO.updateExcludeReason(pd.getId(), RepayConstants.PEXC_SCHDVERSION);
 		}
@@ -869,11 +892,6 @@ public class PresentmentEngine {
 		if (DateUtil.compare(pd.getAppDate(), pd.getSchDate()) >= 0) {
 			createReceipt(pd);
 		}
-
-		if (!RepayConstants.PEXC_APPROV.equals(pd.getStatus())) {
-			return;
-		}
-
 	}
 
 	public void sendToPresentment(PresentmentHeader ph) {

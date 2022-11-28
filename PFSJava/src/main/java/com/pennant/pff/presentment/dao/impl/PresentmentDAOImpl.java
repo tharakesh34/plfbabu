@@ -304,7 +304,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			int index = 1;
 
 			ps.setLong(index++, batchID);
-
+			ps.setObject(index++, null);
 			ps.setInt(index++, 1);
 			if (InstrumentType.isPDC(instrumentType) || InstrumentType.isIPDC(instrumentType)) {
 				ps.setString(index++, "PDC");
@@ -315,8 +315,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
 			ps.setDate(index++, JdbcUtil.getDate(toDate));
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
-
+			ps.setDate(index, JdbcUtil.getDate(toDate));
 		});
 	}
 
@@ -1731,6 +1730,23 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setLong(3, responseID);
 
 		});
+	}
+
+	public Long getPreviousMandateID(long finID, Date schDate) {
+		String sql = "Select Id, MandateID from PresentmentDetails Where FinID = ? and SchDate = ? order by Id desc";
+
+		List<Long> list = this.jdbcOperations.query(sql, ps -> {
+			ps.setLong(1, finID);
+			ps.setDate(2, JdbcUtil.getDate(schDate));
+		}, (rs, rowNum) -> {
+			return JdbcUtil.getLong(rs.getObject("MandateID"));
+		});
+
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
+		return list.get(0);
 	}
 
 	@Override

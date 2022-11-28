@@ -989,6 +989,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			mndts.setReason(rs.getString("Reason"));
 			mndts.setMandateCcy(rs.getString("MandateCcy"));
 			mndts.setOrgReference(rs.getString("OrgReference"));
+			mndts.setFinReference(rs.getString("OrgReference"));
 			mndts.setDocumentName(rs.getString("DocumentName"));
 			mndts.setDocumentRef(JdbcUtil.getLong(rs.getObject("DocumentRef")));
 			mndts.setExternalRef(rs.getString("ExternalRef"));

@@ -155,23 +155,18 @@ public class ExtractionTasklet implements Tasklet {
 	}
 
 	private boolean extractPresentment(Long presentmentID, PresentmentHeader ph) {
+		PresentmentDetail pd = presentmentEngine.extract(presentmentID, ph);
+		pd.setPresentmentType(ph.getPresentmentType());
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
 		try {
-
-			PresentmentDetail pd = presentmentEngine.extract(presentmentID, ph);
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
-
-			try {
-				presentmentEngine.save(pd);
-				transactionManager.commit(transactionStatus);
-			} catch (Exception e) {
-				transactionManager.rollback(transactionStatus);
-				throw e;
-			}
-
+			presentmentEngine.save(pd);
+			transactionManager.commit(transactionStatus);
 		} catch (Exception e) {
+			transactionManager.rollback(transactionStatus);
 			throw e;
 		}
 
