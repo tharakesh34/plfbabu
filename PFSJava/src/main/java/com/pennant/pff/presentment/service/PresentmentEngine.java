@@ -46,7 +46,6 @@ import com.pennant.pff.presentment.dao.PresentmentExcludeCodeDAO;
 import com.pennanttech.external.ExternalPresentmentHook;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -820,9 +819,7 @@ public class PresentmentEngine {
 		receiptPaymentService.processReceipts(receiptDTO, presentmentIndex);
 	}
 
-	public void approve(PresentmentDetail pd) {
-		Map<Integer, String> bounceForPD = presentmentExcludeCodeDAO.getUpfrontBounceCode();
-
+	public void approve(PresentmentDetail pd, Map<String, String> bounceForPD) {
 		boolean upfronBounceRequired = MapUtils.isNotEmpty(bounceForPD);
 
 		int excludeReason = pd.getExcludeReason();
@@ -869,64 +866,6 @@ public class PresentmentEngine {
 		}
 
 		presentmentDAO.updateHeader(headerId);
-	}
-
-	public void approve(long batchId) {
-		Map<Integer, String> bounceForPD = presentmentExcludeCodeDAO.getUpfrontBounceCode();
-
-		boolean upfronBounceRequired = MapUtils.isNotEmpty(bounceForPD);
-
-		LoggedInUser loggedInUser = new LoggedInUser();
-
-		List<PresentmentHeader> headerList = presentmentDAO.getPresentmentHeaders(batchId);
-
-		for (PresentmentHeader ph : headerList) {
-			int totalRecords = 0;
-
-			long id = ph.getId();
-
-			List<Long> includeList = presentmentDAO.getIncludeList(id);
-			ph.setIncludeList(includeList);
-
-			totalRecords = includeList.size();
-
-			List<Long> excludeList = presentmentDAO.getExcludeList(id);
-			ph.setExcludeList(excludeList);
-			totalRecords = totalRecords + excludeList.size();
-
-			if (upfronBounceRequired) {
-				presentmentDAO.approveExludes(id);
-			}
-
-			if (StringUtils.isEmpty(ph.getPartnerAcctNumber())
-					&& (ph.getPartnerBankId() == null || ph.getPartnerBankId() <= 0)) {
-				Presentment pb = presentmentDAO.getPartnerBankId(ph.getLoanType(), ph.getMandateType());
-
-				if (pb == null) {
-					pb = new Presentment();
-					pb.setPartnerBankId(621L);
-
-					presentmentDAO.updatePartnerBankID(id, pb.getPartnerBankId());
-				}
-
-				ph.setPartnerAcctNumber(pb.getAccountNo());
-				ph.setPartnerBankId(pb.getPartnerBankId());
-			} else {
-				ph.setPartnerAcctNumber(ph.getPartnerAcctNumber());
-				ph.setPartnerBankId(ph.getPartnerBankId());
-			}
-
-			ph.setUserDetails(loggedInUser);
-
-			try {
-				ph.setUserAction(STATUS_APPROVE);
-				presentmentDetailService.updatePresentmentDetails(ph);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-
-			presentmentDAO.updateHeader(id);
-		}
 	}
 
 	public int preparationForRepresentment(long batchID, List<Long> headerId) {

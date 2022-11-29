@@ -432,7 +432,17 @@
 		<addPrimaryKey tableName="AdtPresentment_Exclude_Codes" constraintName="pk_adt_pec"
 			columnNames="AuditId, AuditDate, AuditSeq, AuditImage" />
 	</changeSet>
+	
+	<changeSet id="ST#112.3" author="sandeepkumar.m">
+		<addColumn tableName="AdtPresentment_Exclude_Codes">
+			<column name="instrumentType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
 
+	<changeSet id="ST#112.4" author="sandeepkumar.m">
+		<dropColumn tableName="AdtPresentment_Exclude_Codes" columnName="CreateBounceOnDueDate" />
+	</changeSet>
+	
 	<changeSet id="ST#90.0" author="Alekhya.T">
 		<createTable tableName="ADTInstrumentTypes">
 			<column name="AuditID" type="bigint">

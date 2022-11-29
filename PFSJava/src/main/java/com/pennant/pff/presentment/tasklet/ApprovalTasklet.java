@@ -2,6 +2,7 @@ package com.pennant.pff.presentment.tasklet;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +55,8 @@ public class ApprovalTasklet implements Tasklet {
 	private EventPropertiesService eventPropertiesService;
 	private EventProperties eventProperties;
 
+	Map<String, String> bounceForPD = new HashMap<String, String>();
+
 	public ApprovalTasklet(BatchJobQueueDAO bjqDAO, PresentmentEngine presentmentEngine, PresentmentDAO presentmentDAO,
 			DataSourceTransactionManager transactionManager) {
 		super();
@@ -85,6 +88,8 @@ public class ApprovalTasklet implements Tasklet {
 		}
 
 		eventProperties = eventPropertiesService.getEventProperties(EventType.EOD);
+
+		bounceForPD = presentmentDAO.getUpfrontBounceCodes();
 
 		Date appDate = SysParamUtil.getAppDate();
 		String strAppDate = DateUtil.formatToLongDate(appDate);
@@ -175,7 +180,7 @@ public class ApprovalTasklet implements Tasklet {
 			pd.setAppDate(ph.getAppDate());
 			pd.setEventProperties(eventProperties);
 
-			presentmentEngine.approve(pd);
+			presentmentEngine.approve(pd, bounceForPD);
 			transactionManager.commit(transactionStatus);
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);

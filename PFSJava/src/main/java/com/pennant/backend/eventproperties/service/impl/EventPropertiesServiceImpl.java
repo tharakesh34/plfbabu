@@ -15,11 +15,11 @@ import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.pff.presentment.dao.PresentmentExcludeCodeDAO;
+import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class EventPropertiesServiceImpl implements EventPropertiesService {
-	private PresentmentExcludeCodeDAO presentmentExcludeCodeDAO;
+	private PresentmentDAO presentmentDAO;
 
 	public enum EventType {
 		EOD(1), PRESENTMENT_BATCH_APPROVE(2), PRESENTMENT_RESPONSE_UPLOAD(3);
@@ -135,7 +135,7 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		}
 		ep.setEntityCode(entityCode);
 
-		ep.setPresentmentExcludeBounce(presentmentExcludeCodeDAO.getUpfrontBounceCode());
+		ep.setUpfrontBounceCodes(presentmentDAO.getUpfrontBounceCodes());
 
 		ep.setParameterLoaded(true);
 
@@ -220,8 +220,7 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 	}
 
 	@Autowired
-	public void setPresentmentExcludeCodeDAO(PresentmentExcludeCodeDAO presentmentExcludeCodeDAO) {
-		this.presentmentExcludeCodeDAO = presentmentExcludeCodeDAO;
+	public void setPresentmentDAO(PresentmentDAO presentmentDAO) {
+		this.presentmentDAO = presentmentDAO;
 	}
-
 }

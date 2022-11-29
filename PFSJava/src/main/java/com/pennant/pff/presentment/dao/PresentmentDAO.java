@@ -2,6 +2,7 @@ package com.pennant.pff.presentment.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennanttech.model.presentment.Presentment;
@@ -119,4 +120,6 @@ public interface PresentmentDAO {
 	void updateRepresentWithPresentmentId(List<PresentmentDetail> presenetments);
 
 	Long getPreviousMandateID(long finID, Date schDate);
+
+	Map<String, String> getUpfrontBounceCodes();
 }

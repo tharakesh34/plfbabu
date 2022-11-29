@@ -29,6 +29,7 @@ import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
+import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -1274,7 +1275,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.CustId, fm.FinBranch, fm.FinType, pd.Id, pd.PresentmentId");
 		sql.append(", fm.FinID, pd.FinReference, pd.SchDate, pd.MandateId, pd.AdvanceAmt, pd.ExcessID");
-		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, pb.AccountNo, pb.AcType, pb.PartnerBankId");
+		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, ph.MandateType, pb.AccountNo, pb.AcType");
+		sql.append(", pb.PartnerBankId");
 		sql.append(" From PresentmentDetails pd ");
 		sql.append(" Inner join PresentmentHeader ph on ph.Id = pd.PresentmentId");
 		sql.append(" Left join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
@@ -1298,6 +1300,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
 			pd.setExcludeReason(rs.getInt("ExcludeReason"));
 			pd.setBounceID(rs.getLong("BounceID"));
+			pd.setInstrumentType(rs.getString("MandateType"));
 			pd.setAccountNo(rs.getString("AccountNo"));
 			pd.setAcType(rs.getString("AcType"));
 
@@ -1557,6 +1560,34 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		}
 
 		return list.get(0);
+	}
+
+	@Override
+	public Map<String, String> getUpfrontBounceCodes() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" pec.Code, pec.InstrumentType, br.ReturnCode");
+		sql.append(" From Presentment_Exclude_Codes pec");
+		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		Map<String, String> map = new HashMap<>();
+
+		List<PresentmentExcludeCode> list = this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			PresentmentExcludeCode pec = new PresentmentExcludeCode();
+
+			pec.setCode(rs.getString("Code"));
+			pec.setInstrumentType(rs.getString("InstrumentType"));
+			pec.setReturnCode(rs.getString("ReturnCode"));
+
+			return pec;
+		});
+
+		for (PresentmentExcludeCode pec : list) {
+			map.put(pec.getCode().concat("$").concat(pec.getInstrumentType()), pec.getReturnCode());
+		}
+
+		return map;
 	}
 
 	@Override

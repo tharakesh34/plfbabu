@@ -3,9 +3,7 @@ package com.pennant.pff.presentment.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -17,15 +15,15 @@ import com.pennant.pff.presentment.dao.PresentmentExcludeCodeDAO;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCode>
+public class PresentmentExcludeCodeDAOImpl extends SequenceDao<PresentmentExcludeCode>
 		implements PresentmentExcludeCodeDAO {
 
 	public PresentmentExcludeCodeDAOImpl() {
@@ -33,18 +31,18 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 	}
 
 	@Override
-	public PresentmentExcludeCode getExcludeCode(String code) {
+	public PresentmentExcludeCode getExcludeCode(long id) {
 		StringBuilder sql = getSqlQuery(TableType.TEMP_TAB);
-		sql.append(" Where pec.Code = ?");
+		sql.append(" Where pec.id = ?");
 		sql.append(" Union all ");
 		sql.append(getSqlQuery(TableType.MAIN_TAB));
-		sql.append(" Where pec.Code = ?");
+		sql.append(" Where pec.id = ?");
 		sql.append(" and not exists (Select 1 From Presentment_Exclude_Codes_Temp Where Id = pec.Id)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new PresentmentExcludeCodesRM(), code, code);
+			return this.jdbcOperations.queryForObject(sql.toString(), new PresentmentExcludeCodesRM(), id, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -54,7 +52,7 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 	@Override
 	public List<PresentmentExcludeCode> getPresentmentExcludeCodes(List<String> roleCodes) {
 		StringBuilder sql = new StringBuilder("select");
-		sql.append(" Id, Code, Description, ExcludeId, BounceId, CreateBounceOnDueDate");
+		sql.append(" Id, Code, Description, ExcludeId, BounceId, InstrumentType");
 		sql.append(", BounceCode, ReturnCode, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, Active, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -84,7 +82,7 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 		List<Object> value = new ArrayList<>();
 
 		StringBuilder sql = new StringBuilder("select");
-		sql.append(" Id, Code, Description, ExcludeId, BounceId, CreateBounceOnDueDate");
+		sql.append(" Id, Code, Description, ExcludeId, BounceId, InstrumentType");
 		sql.append(", BounceCode, ReturnCode, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, Active, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -109,9 +107,14 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 
 	@Override
 	public String save(PresentmentExcludeCode bc, TableType type) {
+
+		if (bc.getId() == 0 || bc.getId() == Long.MIN_VALUE) {
+			bc.setId(getNextValue("SEQ_Presentment_Exclude_Codes"));
+		}
+
 		StringBuilder sql = new StringBuilder("Insert Into Presentment_Exclude_Codes");
 		sql.append(type.getSuffix());
-		sql.append(" (Id, Code, Description, ExcludeId, BounceId, CreateBounceOnDueDate");
+		sql.append(" (Id, Code, Description, ExcludeId, BounceId, InstrumentType");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
 		sql.append(", LastMntOn, Active, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId)");
@@ -128,7 +131,7 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 				ps.setString(index++, bc.getDescription());
 				ps.setInt(index++, bc.getExcludeId());
 				ps.setObject(index++, bc.getBounceId());
-				ps.setBoolean(index++, bc.isCreateBounceOnDueDate());
+				ps.setString(index++, bc.getInstrumentType());
 				ps.setInt(index++, bc.getVersion());
 				ps.setLong(index++, bc.getCreatedBy());
 				ps.setTimestamp(index++, bc.getCreatedOn());
@@ -156,8 +159,8 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 	public void update(PresentmentExcludeCode bc, TableType type) {
 		StringBuilder sql = new StringBuilder("Update Presentment_Exclude_Codes");
 		sql.append(type.getSuffix());
-		sql.append(" Set Code = ?, Description = ?, ExcludeId = ?, BounceId = ?, CreateBounceOnDueDate = ? ");
-		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(" Set Code = ?, Description = ?, ExcludeId = ?, BounceId = ?");
+		sql.append(", InstrumentType = ? , Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where Id = ?");
 
@@ -171,7 +174,7 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 				ps.setString(index++, bc.getDescription());
 				ps.setInt(index++, bc.getExcludeId());
 				ps.setObject(index++, bc.getBounceId());
-				ps.setBoolean(index++, bc.isCreateBounceOnDueDate());
+				ps.setString(index++, bc.getInstrumentType());
 				ps.setInt(index++, bc.getVersion());
 				ps.setLong(index++, bc.getLastMntBy());
 				ps.setTimestamp(index++, bc.getLastMntOn());
@@ -208,11 +211,11 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 	}
 
 	@Override
-	public boolean isDuplicateKey(long id, TableType type) {
-		Object[] parameters = new Object[] { id };
+	public boolean isDuplicateKey(String excludeCode, String instrumentType, TableType type) {
+		Object[] parameters = new Object[] { excludeCode, instrumentType };
 
 		String sql;
-		String whereClause = "Id = ?";
+		String whereClause = "Code = ? and InstrumentType = ?";
 		String[] tables = new String[] { "Presentment_Exclude_Codes_Temp", "Presentment_Exclude_Codes" };
 
 		switch (type) {
@@ -224,7 +227,7 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 			break;
 		default:
 			sql = QueryUtil.getCountQuery(tables, whereClause);
-			parameters = new Object[] { id, id };
+			parameters = new Object[] { excludeCode, instrumentType, excludeCode, instrumentType };
 			break;
 		}
 
@@ -233,31 +236,10 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 		return jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
 	}
 
-	@Override
-	public Map<Integer, String> getUpfrontBounceCode() {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" pec.ExcludeID, br.ReturnCode");
-		sql.append(" From Presentment_Exclude_Codes pec");
-		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
-		sql.append(" Where CreateBounceOnDueDate = ?");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		Map<Integer, String> map = new HashMap<>();
-
-		return jdbcOperations.query(sql.toString(), rs -> {
-			while (rs.next()) {
-				map.put(rs.getInt(1), rs.getString(2));
-			}
-
-			return map;
-		}, 1);
-	}
-
 	private StringBuilder getSqlQuery(TableType tableType) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" pec.Id, pec.Code, pec.Description, pec.ExcludeId, pec.BounceId, pec.CreateBounceOnDueDate");
-		sql.append(", br.BounceCode, br.ReturnCode, pec.Version");
+		sql.append(" pec.Id, pec.Code, pec.Description, pec.ExcludeId, pec.BounceId");
+		sql.append(", pec.InstrumentType, br.BounceCode, br.ReturnCode, pec.Version");
 		sql.append(", pec.CreatedBy, pec.CreatedOn, pec.ApprovedBy, pec.ApprovedOn");
 		sql.append(", pec.LastMntBy, pec.LastMntOn, pec.Active, pec.RecordStatus, pec.RoleCode");
 		sql.append(", pec.NextRoleCode, pec.TaskId, pec.NextTaskId, pec.RecordType, pec.WorkflowId");
@@ -269,12 +251,12 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 
 	public List<ReportListDetail> getPrintCodes(List<String> roleCodes) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Code, Description, BounceCode, CreateBounceOnDueDate");
-		sql.append(" From (Select Code, Description, BounceCode, CreateBounceOnDueDate");
+		sql.append(" Code, Description, BounceCode");
+		sql.append(" From (Select Code, Description, BounceCode");
 		sql.append(" From Presentment_Exclude_Codes_temp pec");
 		sql.append(" Left Join BounceReasons br on br.BounceID = pec.BounceID");
 		sql.append(" Union All ");
-		sql.append(" Select Code, Description, BounceCode, CreateBounceOnDueDate");
+		sql.append(" Select Code, Description, BounceCode");
 		sql.append(" From Presentment_Exclude_Codes pec");
 		sql.append(" Left Join BounceReasons br on br.BounceID = pec.BounceID");
 		sql.append(" Where pec.NextRoleCode is null or pec.NextRoleCode = ? or pec.NextRoleCode in (");
@@ -302,7 +284,7 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 			bc.setDescription(rs.getString("Description"));
 			bc.setExcludeId(rs.getInt("ExcludeId"));
 			bc.setBounceId(JdbcUtil.getLong(rs.getObject("BounceId")));
-			bc.setCreateBounceOnDueDate(rs.getBoolean("CreateBounceOnDueDate"));
+			bc.setInstrumentType(rs.getString("InstrumentType"));
 			bc.setBounceCode(rs.getString("BounceCode"));
 			bc.setReturnCode(rs.getString("ReturnCode"));
 			bc.setVersion(rs.getInt("Version"));
@@ -334,7 +316,6 @@ public class PresentmentExcludeCodeDAOImpl extends BasicDao<PresentmentExcludeCo
 
 			bc.setfieldString01(rs.getString("Code"));
 			bc.setfieldString02(rs.getString("Description"));
-			bc.setFieldBoolean04(rs.getInt("CreateBounceOnDueDate"));
 			bc.setfieldString03(rs.getString("BounceCode"));
 
 			return bc;
