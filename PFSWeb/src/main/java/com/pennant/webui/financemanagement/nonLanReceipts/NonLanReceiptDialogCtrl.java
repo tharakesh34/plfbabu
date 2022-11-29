@@ -63,7 +63,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
@@ -232,7 +231,6 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private String recordType = "";
 	private FinReceiptHeader befImage;
-	private List<FinReceiptDetail> recDtls = new ArrayList<>();
 
 	// Temporary Fix for the User Next role Modification On Submit-Fail & Saving
 	// the record
@@ -255,7 +253,6 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	private boolean isPanMandatory = false;
-	private Space panSpace;
 	private String paymentType;
 	private long receiptSeqId;
 	private String old_ReceiptModeStatus;
@@ -892,8 +889,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.fundingAccount.setReadonly(false);
 
 		} else if (StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)
-				&& ((!StringUtils.equals(recMode, ReceiptMode.CHEQUE) && !StringUtils.equals(recMode, ReceiptMode.DD)
-						&& !StringUtils.equals(recMode, ReceiptMode.CASH)))) {
+				&& (!StringUtils.equals(recMode, ReceiptMode.CHEQUE) && !StringUtils.equals(recMode, ReceiptMode.DD)
+						&& !StringUtils.equals(recMode, ReceiptMode.CASH))) {
 			this.fundingAccount.setMandatoryStyle(true);
 		}
 
