@@ -240,7 +240,7 @@ public final class QueryUtil {
 		}
 	}
 
-	private static void commaJoin(StringBuilder sql, Object value, List<Object> psList) throws Exception {
+	private static void commaJoin(StringBuilder sql, Object value, List<Object> psList) {
 		List<Object> inList = Arrays.asList(value);
 		for (Object object : inList) {
 			String valu = String.valueOf(object);
