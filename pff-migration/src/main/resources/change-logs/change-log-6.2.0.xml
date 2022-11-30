@@ -6616,7 +6616,7 @@
 
 	<changeSet id="ST#99.26.1" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_PRMNT_RESP_SUCCESS_QUEUE" minValue="1"
-			maxValue="999999999999999999999999999" incrementBy="1" ordered="true" />
+			maxValue="9223372036854775807" incrementBy="1" startValue="1"  ordered="true" />
 	</changeSet>
 
 	<changeSet id="ST#99.26.2" author="saikrishna.b">
@@ -6671,7 +6671,7 @@
 
 	<changeSet id="ST#99.27.1" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_PRMNT_RESP_BOUNCE_QUEUE" minValue="1"
-			maxValue="999999999999999999999999999" incrementBy="1" ordered="true" />
+			maxValue="9223372036854775807" incrementBy="1" startValue="1"  ordered="true" />
 	</changeSet>
 
 	<changeSet id="ST#99.27.2" author="saikrishna.b">
