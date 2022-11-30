@@ -2,6 +2,7 @@ package com.pennant.pff.presentment.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennanttech.model.presentment.Presentment;
@@ -23,7 +24,7 @@ public interface PresentmentDAO {
 	void updateFailureError(BatchJobQueue jobQueue);
 
 	void updateEndTimeStatus(BatchJobQueue jobQueue);
-
+	
 	int extarct(long batchID, Date dueDate);
 
 	int extarct(long batchID, Date fromDate, Date toDate);
@@ -112,6 +113,16 @@ public interface PresentmentDAO {
 
 	void updateExcludeReason(long presentmentId, int manualExclude);
 
+	int extract(long batchID, PresentmentHeader ph);
+
+	List<PresentmentHeader> getpresentmentHeaderList(List<Long> headerId);
+
+	void updateRepresentWithPresentmentId(List<PresentmentDetail> presenetments);
+
+	Long getPreviousMandateID(long finID, Date schDate);
+	
+	Map<String, String> getUpfrontBounceCodes();
+
 	int getRecordsByWaiting(String clearingStatus);
 
 	PresentmentDetail getPresentmenForResponse(Long responseID);
@@ -129,13 +140,9 @@ public interface PresentmentDAO {
 	void updateResponseHeader(long headerId, int totalRecords, int successRecords, int failedRecords, String status,
 			String remarks);
 
-	void updateErrorForResponse(long responseID, String pexcFailure, String errorMessage);
+	void updateResposeStatus(long responseID, String pexcFailure, String errorMessage, int processFlag);
 
-	int extract(long batchID, PresentmentHeader ph);
+	int logRespDetail(long Id);
 
-	List<PresentmentHeader> getpresentmentHeaderList(List<Long> headerId);
-
-	void updateRepresentWithPresentmentId(List<PresentmentDetail> presenetments);
-
-	Long getPreviousMandateID(long finID, Date schDate);
+	int clearRespDetail(long Id);
 }

@@ -31,7 +31,7 @@ public class ExtractionQueueTasklet implements Tasklet {
 		jobQueue.setBatchId(jobParameters.getLong("BATCH_ID"));
 		jobQueue.setJobName("EXTRACTION");
 
-		bjqDAO.deleteQueue(jobQueue);
+		bjqDAO.clearQueue();
 
 		int totalRecords = bjqDAO.prepareQueue(jobQueue);
 

@@ -32,6 +32,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.extension.PresentmentExtension;
+import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -202,19 +203,20 @@ public class ReceiptPaymentService {
 		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 
 		int excludeReason = pd.getExcludeReason();
+		String resonCode = ExcludeReasonCode.reasonCode(excludeReason);
+		String instrumentType = pd.getInstrumentType();
 
 		EventProperties ep = fm.getEventProperties();
+		Map<String, String> excludeMap = ep.getUpfrontBounceCodes();
 
-		Map<Integer, String> excludeMap = ep.getPresentmentExcludeBounce();
+		String returnCode = excludeMap.get(resonCode.concat("$").concat(instrumentType));
 
-		if (!excludeMap.containsKey(excludeReason)) {
+		if (returnCode == null) {
 			return;
 		}
 
-		String bounceCode = excludeMap.get(excludeReason);
-
 		logger.info("Creating receipt for the presentment exclude reason {} and Return Code {}", excludeReason,
-				bounceCode);
+				returnCode);
 
 		createPresentmentReceipt(receiptDTO);
 
@@ -241,9 +243,9 @@ public class ReceiptPaymentService {
 
 		pd.setStatus(RepayConstants.PEXC_BOUNCE);
 		pd.setReceiptID(rch.getReceiptID());
-		pd.setBounceCode(bounceCode);
+		pd.setBounceCode(returnCode);
 
-		logger.info("Bouncing the receipt with Bounce Code {}", bounceCode);
+		logger.info("Bouncing the receipt with Bounce Code {}", returnCode);
 		receiptCancellationService.presentmentCancellation(pd, custEODEvent);
 
 		fm.setAppDate(appDate);

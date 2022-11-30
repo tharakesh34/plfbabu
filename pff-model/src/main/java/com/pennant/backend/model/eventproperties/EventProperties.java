@@ -65,7 +65,7 @@ public class EventProperties implements Serializable {
 	private String phase;
 	private boolean covenantModule;
 	private int overDraftMonthlyLimit;
-	private Map<Integer, String> presentmentExcludeBounce = new HashMap<>();
+	private Map<String, String> upfrontBounceCodes = new HashMap<>();
 
 	private boolean parameterLoaded;
 	private boolean cacheLoaded;
@@ -599,12 +599,12 @@ public class EventProperties implements Serializable {
 		this.cacheLoaded = cacheLoaded;
 	}
 
-	public Map<Integer, String> getPresentmentExcludeBounce() {
-		return presentmentExcludeBounce;
+	public Map<String, String> getUpfrontBounceCodes() {
+		return upfrontBounceCodes;
 	}
 
-	public void setPresentmentExcludeBounce(Map<Integer, String> presentmentExcludeBounce) {
-		this.presentmentExcludeBounce = presentmentExcludeBounce;
+	public void setUpfrontBounceCodes(Map<String, String> upfrontBounceCodes) {
+		this.upfrontBounceCodes = upfrontBounceCodes;
 	}
 
 }

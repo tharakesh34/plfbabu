@@ -1,7 +1,6 @@
 package com.pennant.pff.presentment.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
@@ -10,7 +9,7 @@ import com.pennanttech.pff.core.TableType;
 
 public interface PresentmentExcludeCodeDAO {
 
-	PresentmentExcludeCode getExcludeCode(String code);
+	PresentmentExcludeCode getExcludeCode(long id);
 
 	List<PresentmentExcludeCode> getPresentmentExcludeCodes(List<String> roleCodes);
 
@@ -24,7 +23,5 @@ public interface PresentmentExcludeCodeDAO {
 
 	void delete(PresentmentExcludeCode code, TableType type);
 
-	boolean isDuplicateKey(long id, TableType type);
-
-	Map<Integer, String> getUpfrontBounceCode();
+	boolean isDuplicateKey(String excludeCode, String instrumentType, TableType type);
 }

@@ -3680,6 +3680,11 @@
 		</createIndex>
 	</changeSet>
 
+	<changeSet id="ST#112.0" author="saikrishna.b">
+		<createSequence sequenceName="SEQ_Presentment_Exclude_Codes" minValue="1"
+			maxValue="9223372036854775807" incrementBy="1" startValue="1" />
+	</changeSet>
+
 	<changeSet id="ST#112.1" author="sandeepkumar.m">
 		<createTable tableName="Presentment_Exclude_Codes">
 			<column name="ID" type="bigint">
@@ -3726,13 +3731,24 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="ST#112.1.1" author="saikrishna.b">
+		<addColumn tableName="Presentment_Exclude_Codes">
+			<column name="InstrumentType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
 	<changeSet id="ST#112.2" author="sandeepkumar.m">
 		<addPrimaryKey tableName="Presentment_Exclude_Codes" columnNames="ID" constraintName="pk_Pec" />
 	</changeSet>
 
-	<changeSet id="ST#112.3" author="sandeepkumar.m">
-		<addUniqueConstraint tableName="Presentment_Exclude_Codes" columnNames="Code"
+	<changeSet id="ST#112.3.1" author="saikrishna.b">
+		<dropUniqueConstraint tableName="Presentment_Exclude_Codes" uniqueColumns="Code"
 			constraintName="uk_pec_code" />
+	</changeSet>
+
+	<changeSet id="ST#112.3.2" author="sandeepkumar.m">
+		<addUniqueConstraint tableName="Presentment_Exclude_Codes" columnNames="Code,InstrumentType"
+			constraintName="uk_pec_codeinstrumentType" />
 	</changeSet>
 
 	<changeSet id="ST#112.4" author="sandeepkumar.m" dbms="postgresql, oracle">
@@ -3819,13 +3835,24 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="ST#112.7.1" author="saikrishna.b">
+		<addColumn tableName="Presentment_Exclude_Codes_temp">
+			<column name="InstrumentType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
 	<changeSet id="ST#112.8" author="sandeepkumar.m">
 		<addPrimaryKey tableName="Presentment_Exclude_Codes_temp" columnNames="ID" constraintName="pk_pec_t_id" />
 	</changeSet>
 
-	<changeSet id="ST#112.9" author="sandeepkumar.m">
-		<addUniqueConstraint tableName="Presentment_Exclude_Codes_temp" columnNames="Code"
+	<changeSet id="ST#112.9.1" author="saikrishna.b">
+		<dropUniqueConstraint tableName="Presentment_Exclude_Codes_temp" uniqueColumns="Code"
 			constraintName="uk_pec_t_code" />
+	</changeSet>
+
+	<changeSet id="ST#112.9.2" author="sandeepkumar.m">
+		<addUniqueConstraint tableName="Presentment_Exclude_Codes_temp" columnNames="Code,InstrumentType"
+			constraintName="uk_pec_t_codeinstrumentType" />
 	</changeSet>
 
 	<changeSet id="ST#112.10" author="sandeepkumar.m" dbms="postgresql, oracle">
@@ -3851,7 +3878,7 @@
 			baseColumnNames="BounceId" />
 	</changeSet>
 
-	<changeSet id="ST#112.12" author="sandeepkumar.m">
+	<changeSet id="ST#112.12.1" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
 			    DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER');
@@ -3867,11 +3894,26 @@
 				DELETE FROM SECGROUPS WHERE GRPCODE ='PRESENTMENT_EXCLUDE_CODES_APPROVER';
 				
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menuItem_PresentmentExcludeCodes';
-				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='PresentmentExcludeCodes_BounceOnDueDate';
+				DELETE FROM SECRIGHTS WHERE RightName ='button_PresentmentExcludeCode_btnPresentmentExcludeCode';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='PresentmentExcludeCodeDialog_Code';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='PresentmentExcludeCodeDialog_Description';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='PresentmentExcludeCodeDialog_BounceOnDueDate';
+				DELETE FROM SECRIGHTS WHERE RightName ='PresentmentExcludeCodeDialog_InstrumentType';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='PresentmentExcludeCodeDialog_BounceCode';
 				
 				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_PresentmentExcludeCodes', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 				
-		    	INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodes_BounceOnDueDate', 'PresentmentExcludeCodesDialog', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_PresentmentExcludeCode_btnPresentmentExcludeCode', 'PresentmentExcludeCodeDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodeDialog_Code', 'PresentmentExcludeCodeDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodeDialog_Description', 'PresentmentExcludeCodeDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+		    	INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodeDialog_BounceOnDueDate', 'PresentmentExcludeCodesDialog', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	
+		    	INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodeDialog_InstrumentType', 'PresentmentExcludeCodeDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		    	
+		    	INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodeDialog_BounceCode', 'PresentmentExcludeCodeDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 		    
 		    	INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'PRESENTMENT_EXCLUDE_CODES_MAKER', 'WF Maker for BounceCode', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'PRESENTMENT_EXCLUDE_CODES_APPROVER', 'WF Approver for BounceCode', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
@@ -3879,7 +3921,13 @@
 		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'),    (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentExcludeCodes'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentExcludeCodes'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		   		
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_PresentmentExcludeCode_btnPresentmentExcludeCode'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		   		
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCodes_Code'), 			1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCodes_Description'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCodes_BounceOnDueDate'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCode_instrumentType'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCodes_BounceCode'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		   		
 		  		INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'PRESENTMENT_EXCLUDE_CODES_MAKER', 'Maker role from Presentment Exclude Codes', '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
 		  		INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'PRESENTMENT_EXCLUDE_CODES_APPROVER', 'Approver role from Presentment Exclude Codes',	'', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
@@ -3891,6 +3939,50 @@
 		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="ST#112.17" author="sandeepkumar.m">
+		<addColumn tableName="INSTRUMENT_TYPES">
+			<column name="BatchSize" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#112.18" author="sandeepkumar.m">
+		<addColumn tableName="Instrument_Types_Temp">
+			<column name="BatchSize" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#112.19" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE INSTRUMENT_TYPES ADD CONSTRAINT DF_IT_BATCHSIZE DEFAULT 0 FOR BATCHSIZE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#112.19" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="BatchSize" tableName="INSTRUMENT_TYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#112.20" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE INSTRUMENT_TYPES_TEMP ADD CONSTRAINT DF_ITT_BATCHSIZE DEFAULT 0 FOR BATCHSIZE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#112.20" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="BatchSize" tableName="Instrument_Types_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#112.21" author="sandeepkumar.m">
+		<dropColumn tableName="Presentment_Exclude_Codes" columnName="CreateBounceOnDueDate" />
+	</changeSet>
+
+	<changeSet id="ST#112.22" author="sandeepkumar.m">
+		<dropColumn tableName="Presentment_Exclude_Codes_TEMP" columnName="CreateBounceOnDueDate" />
 	</changeSet>
 
 	<changeSet id="ST#90.0" author="Alekhya.T">
@@ -6492,7 +6584,27 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="PSD#211274_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'otp_messages');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#211274" author="Gopal.p">
+		<modifyDataType tableName="OTP_Messages" columnName="MobileNo" newDataType="varchar(20)" />
+	</changeSet>
+
+	<changeSet id="PSD#211274_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'otp_messages');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="ST#99.26" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -6548,6 +6660,15 @@
 		</createIndex>
 	</changeSet>
 
+	<changeSet id="ST#99.26.6" author="saikrishna.b">
+		<dropPrimaryKey tableName="PRMNT_RESP_SUCCESS_QUEUE" />
+	</changeSet>
+
+	<changeSet id="ST#99.26.7" author="saikrishna.b">
+		<addPrimaryKey tableName="PRMNT_RESP_SUCCESS_QUEUE" columnNames="ID"
+			constraintName="PK_PRMNT_RESP_SUCCESS_QUEUE" />
+	</changeSet>
+
 	<changeSet id="ST#99.27.1" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_PRMNT_RESP_BOUNCE_QUEUE" minValue="1"
 			maxValue="999999999999999999999999999" incrementBy="1" ordered="true" />
@@ -6594,6 +6715,16 @@
 		</createIndex>
 	</changeSet>
 
+	<changeSet id="ST#99.27.6" author="saikrishna.b">
+		<dropPrimaryKey tableName="PRMNT_RESP_BOUNCE_QUEUE" />
+	</changeSet>
+
+	<changeSet id="ST#99.27.7" author="saikrishna.b">
+		<addPrimaryKey tableName="PRMNT_RESP_BOUNCE_QUEUE" columnNames="ID"
+			constraintName="PK_PRMNT_RESP_BOUNCE_QUEUE" />
+	</changeSet>
+
+
 	<changeSet id="ST#99.28" author="saikrishna.b">
 		<addColumn tableName="PRESENTMENT_RESP_HEADER">
 			<column name="Progress" type="int" />
@@ -6617,26 +6748,6 @@
 			<column name="ERROR_CODE" type="varchar(10)" />
 			<column name="ERROR_DESCRIPTION" type="varchar(2000)" />
 		</addColumn>
-	</changeSet>
-
-	<changeSet id="PSD#211274_pre" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'otp_messages');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="PSD#211274" author="Gopal.p">
-		<modifyDataType tableName="OTP_Messages" columnName="MobileNo" newDataType="varchar(20)" />
-	</changeSet>
-
-	<changeSet id="PSD#211274_post" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'otp_messages');
-			]]>
-		</sql>
 	</changeSet>
 
 </databaseChangeLog>

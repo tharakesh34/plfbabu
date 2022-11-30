@@ -28,35 +28,31 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 	}
 
 	@Override
-	public void logQueue(BatchJobQueue jobQueue) {
-		//
-	}
-
-	@Override
-	public void deleteQueue(BatchJobQueue jobQueue) {
-		String sql = "Delete from PRMNT_RESP_SUCCESS_QUEUE Where BatchID = ?";
+	public void clearQueue() {
+		String sql = "Truncate table PRMNT_RESP_SUCCESS_QUEUE";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		jdbcOperations.update(sql, jobQueue.getBatchId());
+		jdbcOperations.update(sql);
 	}
 
 	@Override
 	public int prepareQueue(BatchJobQueue jobQueue) {
 		StringBuilder sql = new StringBuilder("Insert into PRMNT_RESP_SUCCESS_QUEUE (Id, ReferenceId, BatchID)");
-		sql.append(" Select row_number() over(order by prd.ID) ID, prd.ID as ReferenceId");
+		sql.append(" Select row_number() over(order by prd.ID) ID, prd.ID as ReferenceId, ?");
 		sql.append(" From PRESENTMENT_RESP_HEADER prh");
-		sql.append(" Inner Join PRESENTMENT_RESP_DTLS prd on prd.Header_ID = ph.Id");
-		sql.append(" Where prh.Progress = ? and prh.Event = ? and prh.CLEARING_STATUS = ?");
+		sql.append(" Inner Join PRESENTMENT_RESP_DTLS prd on prd.Header_ID = prh.Id");
+		sql.append(" and prh.Progress = ? and prh.Event = ?");
+		sql.append(" Where prd.PROCESS_FLAG = ? and prd.CLEARING_STATUS = ? ");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 0;
-
-			ps.setInt(++index, 0);
-			ps.setString(++index, "IMPORT");
-			ps.setString(++index, "S");
+			ps.setLong(1, jobQueue.getBatchId());
+			ps.setInt(2, 1);
+			ps.setString(3, "IMPORT");
+			ps.setInt(4, 0);
+			ps.setString(5, "S");
 		});
 	}
 
@@ -177,12 +173,12 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 
 	@Override
 	public Long getIdBySequence(long sequence) {
-		String sql = "Select ReferenceId From Presentment_Approve_Queue Where Id = ? and Progress = ?";
+		String sql = "Select ReferenceId From PRMNT_RESP_SUCCESS_QUEUE Where Id = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return jdbcOperations.queryForObject(sql, Long.class, sequence, EodConstants.PROGRESS_WAIT);
+			return jdbcOperations.queryForObject(sql, Long.class, sequence);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

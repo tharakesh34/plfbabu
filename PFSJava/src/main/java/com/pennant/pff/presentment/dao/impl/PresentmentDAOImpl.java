@@ -31,6 +31,7 @@ import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
+import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -1276,7 +1277,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.CustId, fm.FinBranch, fm.FinType, pd.Id, pd.PresentmentId");
 		sql.append(", fm.FinID, pd.FinReference, pd.SchDate, pd.MandateId, pd.AdvanceAmt, pd.ExcessID");
-		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, pb.AccountNo, pb.AcType, pb.PartnerBankId");
+		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, ph.MandateType, pb.AccountNo, pb.AcType");
+		sql.append(", pb.PartnerBankId");
 		sql.append(" From PresentmentDetails pd ");
 		sql.append(" Inner join PresentmentHeader ph on ph.Id = pd.PresentmentId");
 		sql.append(" Left join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
@@ -1300,6 +1302,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
 			pd.setExcludeReason(rs.getInt("ExcludeReason"));
 			pd.setBounceID(rs.getLong("BounceID"));
+			pd.setInstrumentType(rs.getString("MandateType"));
 			pd.setAccountNo(rs.getString("AccountNo"));
 			pd.setAcType(rs.getString("AcType"));
 
@@ -1544,6 +1547,52 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	public Long getPreviousMandateID(long finID, Date schDate) {
+		String sql = "Select Id, MandateID from PresentmentDetails Where FinID = ? and SchDate = ? order by Id desc";
+
+		List<Long> list = this.jdbcOperations.query(sql, ps -> {
+			ps.setLong(1, finID);
+			ps.setDate(2, JdbcUtil.getDate(schDate));
+		}, (rs, rowNum) -> {
+			return JdbcUtil.getLong(rs.getObject("MandateID"));
+		});
+
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
+		return list.get(0);
+	}
+	
+	@Override
+	public Map<String, String> getUpfrontBounceCodes() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" pec.Code, pec.InstrumentType, br.ReturnCode");
+		sql.append(" From Presentment_Exclude_Codes pec");
+		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		Map<String, String> map = new HashMap<>();
+
+		List<PresentmentExcludeCode> list = this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			PresentmentExcludeCode pec = new PresentmentExcludeCode();
+
+			pec.setCode(rs.getString("Code"));
+			pec.setInstrumentType(rs.getString("InstrumentType"));
+			pec.setReturnCode(rs.getString("ReturnCode"));
+
+			return pec;
+		});
+
+		for (PresentmentExcludeCode pec : list) {
+			map.put(pec.getCode().concat("$").concat(pec.getInstrumentType()), pec.getReturnCode());
+		}
+
+		return map;
+	}
+
+	@Override
 	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public int getRecordsByWaiting(String clearingStatus) {
 		StringBuilder sql = new StringBuilder();
@@ -1559,7 +1608,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	@Override
 	public PresentmentDetail getPresentmenForResponse(Long responseID) {
 		StringBuilder sql = new StringBuilder("SELECT");
-		sql.append(" PRD.BRANCH_CODE, FM.FINID, FM.FINREFERENCE, PRD.HOST_REFERENCE, PRD.INSTALMENT_NO");
+		sql.append(" PRD.HEADER_ID, PRD.BRANCH_CODE, FM.FINID, FM.FINREFERENCE, PRD.HOST_REFERENCE, PRD.INSTALMENT_NO");
 		sql.append(", PRD.AMOUNT_CLEARED, PRD.CLEARING_DATE, PRD.CLEARING_STATUS, PRD.BOUNCE_CODE, BOUNCE_REMARKS");
 		sql.append(", PRD.ID RESPONSEID, PD.ID, PD.PRESENTMENTID, PD.MANDATEID, PH.MANDATETYPE");
 		sql.append(", PD.SCHDATE, PD.SCHAMTDUE, PD.SCHPRIDUE, PD.SCHPFTDUE");
@@ -1719,34 +1768,51 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public void updateErrorForResponse(long responseID, String pexcFailure, String errorMessage) {
-		String sql = "UPDATE PRESENTMENT_RESP_DTLS ERROR_CODE = ?, ERROR_DESCRIPTION = ?, Where ID = ?";
+	public void updateResposeStatus(long responseID, String pexcFailure, String errorMessage, int processFlag) {
+		String sql = "UPDATE PRESENTMENT_RESP_DTLS SET ERROR_CODE = ?, ERROR_DESCRIPTION = ?, PROCESS_FLAG = ?  Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		jdbcOperations.update(sql.toString(), ps -> {
 			ps.setString(1, pexcFailure);
 			ps.setString(2, errorMessage);
-			ps.setLong(3, responseID);
+			ps.setInt(3, processFlag);
+			ps.setLong(4, responseID);
 
 		});
 	}
 
-	public Long getPreviousMandateID(long finID, Date schDate) {
-		String sql = "Select Id, MandateID from PresentmentDetails Where FinID = ? and SchDate = ? order by Id desc";
+	@Override
+	public int logRespDetail(long Id) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO PRESENTMENT_RESP_DTLS_LOG");
+		sql.append("(HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO, AMOUNT_CLEARED");
+		sql.append(", CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE, BANK_CODE, BANK_NAME");
+		sql.append(", BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
+		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
+		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG, PROCESS_FLAG");
+		sql.append(", THREAD_ID, UTR_Number)");
+		sql.append(" SELECT HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO ");
+		sql.append(", AMOUNT_CLEARED, CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE");
+		sql.append(", BANK_CODE, BANK_NAME, BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
+		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
+		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG , PROCESS_FLAG");
+		sql.append(", THREAD_ID, UTR_Number from Presentment_Resp_Dtls Where ID = ? ");
 
-		List<Long> list = this.jdbcOperations.query(sql, ps -> {
-			ps.setLong(1, finID);
-			ps.setDate(2, JdbcUtil.getDate(schDate));
-		}, (rs, rowNum) -> {
-			return JdbcUtil.getLong(rs.getObject("MandateID"));
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.update(sql.toString(), ps -> {
+			ps.setLong(1, Id);
 		});
+	}
 
-		if (CollectionUtils.isEmpty(list)) {
-			return null;
-		}
+	@Override
+	public int clearRespDetail(long Id) {
+		String sql = "Delete From Presentment_Resp_Dtls Where ID = ?";
 
-		return list.get(0);
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.update(sql, Id);
 	}
 
 	@Override

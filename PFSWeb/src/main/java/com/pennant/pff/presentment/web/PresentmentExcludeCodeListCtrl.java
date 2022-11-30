@@ -14,7 +14,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
@@ -24,7 +24,11 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.mandate.MandateUtil;
+import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennant.pff.presentment.service.PresentmentExcludeCodeService;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -46,23 +50,27 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 	protected Paging pagingPresentmentExcludeCodeList;
 	protected Listbox listBoxPresentmentExcludeCode;
 	protected Button buttonSearchDialog;
+	protected Button button_PresentmentExcludeCodeList_NewButton;
 
-	protected Textbox code;
+	protected Combobox code;
 	protected Textbox codeDesc;
-	protected Checkbox createBounceOnDueDate;
 	protected Textbox bounceCode;
+	protected Combobox instrumentType;
 
 	protected Listbox codeSort;
 	protected Listbox codeDescSort;
 	protected Listbox bounceCodeSort;
-	protected Listbox createBounceOnDueDateSort;
+	protected Listbox instrumentTypeSort;
 
 	protected Listheader codeHeader;
 	protected Listheader codeDescHeader;
-	protected Listheader createBounceOnDueDateHeader;
+	protected Listheader instrumentTypeHeader;
 	protected Listheader bounceCodeHeader;
 
 	private transient PresentmentExcludeCodeService presentmentExcludeCodeService;
+
+	private List<ValueLabel> excludeCodeList = ExcludeReasonCode.getExcludeCodes();
+	private List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 
 	public PresentmentExcludeCodeListCtrl() {
 		super();
@@ -84,10 +92,15 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 				listBoxPresentmentExcludeCode, pagingPresentmentExcludeCodeList);
 
 		registerButton(buttonSearchDialog);
+		registerButton(button_PresentmentExcludeCodeList_NewButton, "button_PresentmentExcludeCodeList_NewButton",
+				true);
+
+		fillComboBox(this.code, "", excludeCodeList, "");
 		registerField("code", codeHeader, SortOrder.NONE, code, codeSort, Operators.STRING);
 		registerField("description", codeDescHeader, SortOrder.NONE, codeDesc, codeDescSort, Operators.STRING);
-		registerField("createBounceOnDueDate", createBounceOnDueDateHeader, SortOrder.NONE, createBounceOnDueDate,
-				createBounceOnDueDateSort, Operators.BOOLEAN);
+		fillComboBox(this.instrumentType, "", mandateTypeList, "");
+		registerField("instrumentType", instrumentTypeHeader, SortOrder.NONE, instrumentType, instrumentTypeSort,
+				Operators.STRING);
 		registerField("bounceCode", bounceCodeHeader, SortOrder.NONE, bounceCode, bounceCodeSort, Operators.STRING);
 
 		fillListData();
@@ -95,6 +108,18 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 		doRenderPage();
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
+	}
+
+	public void onClick$button_PresentmentExcludeCodeList_NewButton(Event event) {
+		logger.debug("Entering");
+
+		PresentmentExcludeCode excludeCode = new PresentmentExcludeCode();
+		excludeCode.setNewRecord(true);
+		excludeCode.setWorkflowId(getWorkFlowId());
+
+		doShowDialogPage(excludeCode);
+
+		logger.debug("Leaving");
 	}
 
 	public void fillListData() {
@@ -134,14 +159,15 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 
 		Listitem item = this.listBoxPresentmentExcludeCode.getSelectedItem();
 
-		PresentmentExcludeCode excludeCode = presentmentExcludeCodeService.getExcludeCode((String) item.getAttribute("Code"));
+		PresentmentExcludeCode excludeCode = presentmentExcludeCodeService
+				.getExcludeCode((long) item.getAttribute("Id"));
 
 		if (excludeCode == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
-		String whereCond = "Where Code = ?";
+		String whereCond = "Where Id = ?";
 
 		if (doCheckAuthority(excludeCode, whereCond, new Object[] { excludeCode.getCode() })) {
 			if (isWorkFlowEnabled() && excludeCode.getWorkflowId() == 0) {
@@ -186,13 +212,21 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 		ISearch search = new Search();
 
 		String code = this.code.getValue();
-		if (StringUtils.isNotEmpty(code)) {
+		if (!StringUtils.trimToEmpty(this.code.getSelectedItem().getValue().toString())
+				.equals(PennantConstants.List_Select)) {
 			search.getFilters().add(new Filter("pec.Code", code, this.codeSort.getSelectedIndex()));
 		}
 
 		String description = this.codeDesc.getValue();
 		if (StringUtils.isNotEmpty(description)) {
 			search.getFilters().add(new Filter("pec.Description", description, this.codeDescSort.getSelectedIndex()));
+		}
+
+		String instrumentType = this.instrumentType.getValue();
+		if (!StringUtils.trimToEmpty(this.instrumentType.getSelectedItem().getValue().toString())
+				.equals(PennantConstants.List_Select)) {
+			search.getFilters()
+					.add(new Filter("pec.instrumentType", instrumentType, this.instrumentTypeSort.getSelectedIndex()));
 		}
 
 		String status = this.recordStatus.getValue();
@@ -225,14 +259,8 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 			lc.setParent(item);
 			lc = new Listcell(excludeCode.getDescription());
 			lc.setParent(item);
-			lc = new Listcell();
-
-			final Checkbox dueDate = new Checkbox();
-			dueDate.setDisabled(true);
-			dueDate.setChecked(excludeCode.isCreateBounceOnDueDate());
-			lc.appendChild(dueDate);
+			lc = new Listcell(excludeCode.getInstrumentType());
 			lc.setParent(item);
-
 			lc = new Listcell(StringUtils.trimToEmpty(excludeCode.getBounceCode()));
 			lc.setParent(item);
 			lc = new Listcell(excludeCode.getRecordStatus());
@@ -240,7 +268,7 @@ public class PresentmentExcludeCodeListCtrl extends GFCBaseListCtrl<PresentmentE
 			lc = new Listcell(PennantJavaUtil.getLabel(excludeCode.getRecordType()));
 			lc.setParent(item);
 
-			item.setAttribute("Code", excludeCode.getCode());
+			item.setAttribute("Id", excludeCode.getId());
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onItemDoubleClicked");
 		}
 	}

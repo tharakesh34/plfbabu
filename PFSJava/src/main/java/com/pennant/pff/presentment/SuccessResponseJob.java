@@ -10,15 +10,16 @@ import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
+import com.pennant.backend.eventproperties.service.EventPropertiesService;
 import com.pennant.pff.batch.job.BatchConfiguration;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennant.pff.presentment.dao.impl.SuccessResponseJobQueueDAOImpl;
+import com.pennant.pff.presentment.istener.PresentmentJobListener;
 import com.pennant.pff.presentment.service.PresentmentEngine;
 import com.pennant.pff.presentment.tasklet.ClearQueueTasklet;
 import com.pennant.pff.presentment.tasklet.SuccessResponsePartitioner;
@@ -30,7 +31,7 @@ import com.pennanttech.pennapps.core.AppException;
 public class SuccessResponseJob extends BatchConfiguration {
 
 	public SuccessResponseJob(@Autowired DataSource dataSource) throws Exception {
-		super(dataSource, "PRMT_", "PRMT_SUCCESS_RESPONSE");
+		super(dataSource, "PRMNT_", "PRMNT_SUCCESS_RESPONSE");
 	}
 
 	@Autowired
@@ -39,26 +40,41 @@ public class SuccessResponseJob extends BatchConfiguration {
 	@Autowired
 	private PresentmentEngine presentmentEngine;
 
-	private DataSourceTransactionManager transactionManager;
+	@Autowired
+	private PresentmentJobListener jobListener;
 
 	@Autowired
+	private EventPropertiesService eventPropertiesService;
+
 	private BatchJobQueueDAO bjqDAO;
 
-	public Job job;
+	@Bean
+	public PresentmentJobListener jobListener() {
+		return jobListener = new PresentmentJobListener(presentmentDAO);
+	}
 
-	@Scheduled(cron = "*/5 * * * * *")
+	@Bean
+	public BatchJobQueueDAO bjqDAO() {
+		return bjqDAO = new SuccessResponseJobQueueDAOImpl(dataSource);
+	}
+
+	@Scheduled(cron = "0 */1 * ? * *")
 	public void perform() throws Exception {
 
 		int totalRecords = presentmentDAO.getRecordsByWaiting("S");
 
-		long batchID = 0;
-		if (totalRecords > 0) {
-			batchID = presentmentDAO.createBatch("RESPONSE_SUCCESS");
-			BatchJobQueue jobQueue = new BatchJobQueue();
-			jobQueue.setBatchId(batchID);
-
-			totalRecords = bjqDAO.prepareQueue(jobQueue);
+		if (totalRecords == 0) {
+			return;
 		}
+
+		long batchID = 0;
+		bjqDAO.clearQueue();
+
+		batchID = presentmentDAO.createBatch("RESPONSE_SUCCESS");
+		BatchJobQueue jobQueue = new BatchJobQueue();
+		jobQueue.setBatchId(batchID);
+
+		totalRecords = bjqDAO.prepareQueue(jobQueue);
 
 		if (totalRecords == 0) {
 			return;
@@ -69,14 +85,16 @@ public class SuccessResponseJob extends BatchConfiguration {
 		try {
 			start(jobParameters);
 		} catch (Exception e) {
-			presentmentDAO.clearQueue(batchID);
+			bjqDAO.clearQueue();
 			throw new AppException("Presentment succes response job failed", e);
 		}
 	}
 
 	@Bean
 	public Job peSuccessJob() throws Exception {
-		this.job = this.jobBuilderFactory.get("peSuccessJob")
+		super.job = this.jobBuilderFactory.get("peSuccessJob")
+
+				.listener(jobListener)
 
 				.incrementer(jobParametersIncrementer())
 
@@ -90,18 +108,19 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 				.build();
 
-		return this.job;
+		return super.job;
 	}
 
 	@Bean
 	public Step masterStep() throws Exception {
+		SuccessResponsePartitioner partitioner = new SuccessResponsePartitioner(bjqDAO);
 		return stepBuilderFactory.get("SUCCESS_RESPONSE_MASTER")
 
 				.partitioner(masterTasklet())
 
-				.partitioner("extractionStep", new SuccessResponsePartitioner(bjqDAO))
+				.partitioner("successResponseStep", partitioner)
 
-				// .listener(extractionPartition)
+				.listener(partitioner)
 
 				.build();
 	}
@@ -121,7 +140,8 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 				.get("SUCCESS_RESPONS")
 
-				.tasklet(new SuccessResponseTasklet(bjqDAO, presentmentEngine, transactionManager))
+				.tasklet(new SuccessResponseTasklet(bjqDAO, presentmentEngine, transactionManager,
+						eventPropertiesService))
 
 				.transactionAttribute(attribute)
 
@@ -141,15 +161,4 @@ public class SuccessResponseJob extends BatchConfiguration {
 	public ClearQueueTasklet clearQueueTasklet() {
 		return new ClearQueueTasklet(presentmentDAO, bjqDAO);
 	}
-
-	@Bean
-	public BatchJobQueueDAO bjqDAO() {
-		return new SuccessResponseJobQueueDAOImpl(dataSource);
-	}
-
-	@Override
-	public Job getJob() {
-		return this.job;
-	}
-
 }

@@ -8,7 +8,6 @@ import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
 import com.pennant.backend.eventproperties.service.EventPropertiesService;
@@ -33,7 +32,7 @@ import com.pennant.pff.presentment.tasklet.GroupingTasklet;
 public class ExtractionJob extends BatchConfiguration {
 
 	public ExtractionJob(@Autowired DataSource dataSource) throws Exception {
-		super(dataSource, "PRMNT_", "PRESENTMENT_EXTRACTION");
+		super(dataSource, "PRMNT_", "PRMNT_EXTRACTION");
 	}
 
 	@Autowired
@@ -46,26 +45,20 @@ public class ExtractionJob extends BatchConfiguration {
 	private PresentmentEngine presentmentEngine;
 
 	@Autowired
-	private DataSourceTransactionManager transactionManager;
-
-	@Autowired
-	private BatchJobQueueDAO ebjqDAO;
-
-	@Autowired
 	private EventPropertiesService eventPropertiesService;
 
 	@Autowired
-	private PresentmentJobListener jobListener;
+	private PresentmentJobListener presentmentJobListener;
 
-	public Job job;
+	private BatchJobQueueDAO ebjqDAO;
 
 	@Bean
 	public BatchJobQueueDAO ebjqDAO() {
-		return new ExtractionJobQueueDAOImpl(dataSource);
+		return ebjqDAO = new ExtractionJobQueueDAOImpl(dataSource);
 	}
 
 	@Bean
-	public PresentmentJobListener jobListener() {
+	public PresentmentJobListener presentmentJobListener() {
 		return new PresentmentJobListener(presentmentDAO);
 	}
 
@@ -73,7 +66,7 @@ public class ExtractionJob extends BatchConfiguration {
 	public Job peExtractionJob() throws Exception {
 		this.job = this.jobBuilderFactory.get("peExtractionJob")
 
-				.listener(jobListener)
+				.listener(presentmentJobListener)
 
 				.incrementer(jobParametersIncrementer())
 
@@ -192,11 +185,6 @@ public class ExtractionJob extends BatchConfiguration {
 	@Bean
 	public ClearQueueTasklet clearQueueTasklet() {
 		return new ClearQueueTasklet(presentmentDAO, ebjqDAO);
-	}
-
-	@Override
-	public Job getJob() {
-		return this.job;
 	}
 
 }

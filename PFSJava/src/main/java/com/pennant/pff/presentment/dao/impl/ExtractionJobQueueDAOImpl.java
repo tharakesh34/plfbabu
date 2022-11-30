@@ -27,44 +27,35 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 		super.setDataSource(dataSource);
 	}
 
-	private int count = 0;
-
 	@Override
-	public void logQueue(BatchJobQueue jobQueue) {
-		//
-	}
-
-	@Override
-	public void deleteQueue(BatchJobQueue jobQueue) {
-		String sql = "Delete from PRMNT_EXTRACTION_QUEUE Where BatchID = ?";
+	public void clearQueue() {
+		String sql = "Truncate table PRMNT_EXTRACTION_QUEUE";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		jdbcOperations.update(sql, jobQueue.getBatchId());
+		jdbcOperations.update(sql);
 	}
 
 	@Override
 	public int prepareQueue(BatchJobQueue jobQueue) {
 		if ("EXTRACTION".equals(jobQueue.getJobName())) {
-			prepareExtractionQueue(jobQueue);
+			return prepareExtractionQueue(jobQueue);
 		} else {
-			prepareApprovalQueue(jobQueue);
+			return prepareApprovalQueue(jobQueue);
 		}
-
-		return count;
 	}
 
-	public void prepareExtractionQueue(BatchJobQueue jobQueue) {
+	private int prepareExtractionQueue(BatchJobQueue jobQueue) {
 		StringBuilder sql = new StringBuilder("Insert into PRMNT_EXTRACTION_QUEUE (Id, ReferenceId, BatchID)");
 		sql.append(" Select row_number() over(order by ID) ID, ID as ReferenceId, BatchID From");
 		sql.append(" PRMNT_EXTRACTION_STAGE Where BatchID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		count = this.jdbcOperations.update(sql.toString(), jobQueue.getBatchId());
+		return this.jdbcOperations.update(sql.toString(), jobQueue.getBatchId());
 	}
 
-	public void prepareApprovalQueue(BatchJobQueue jobQueue) {
+	private int prepareApprovalQueue(BatchJobQueue jobQueue) {
 		StringBuilder sql = new StringBuilder("Insert into PRMNT_EXTRACTION_QUEUE (Id, ReferenceId, BatchID)");
 		sql.append(" Select row_number() over(order by pd.ID) ID, pd.ID as ReferenceId, ph.BatchID");
 		sql.append(" From PresentmentHeader ph");
@@ -73,7 +64,7 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		count = this.jdbcOperations.update(sql.toString(), jobQueue.getBatchId());
+		return this.jdbcOperations.update(sql.toString(), jobQueue.getBatchId());
 	}
 
 	@Override
@@ -236,15 +227,16 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 	@Override
 	public Long getIdBySequence(long sequence) {
-		String sql = "Select ReferenceId From PRMNT_EXTRACTION_QUEUE Where Id = ? and Progress = ?";
+		String sql = "Select ReferenceId From PRMNT_EXTRACTION_QUEUE Where Id = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return jdbcOperations.queryForObject(sql, Long.class, sequence, EodConstants.PROGRESS_WAIT);
+			return jdbcOperations.queryForObject(sql, Long.class, sequence);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+
 	}
 }

@@ -36,7 +36,7 @@ public class ApprovalQueueTasklet implements Tasklet {
 		jobQueue.setBatchId(batchId);
 		jobQueue.setJobName("APPROVAL");
 
-		bjqDAO.deleteQueue(jobQueue);
+		bjqDAO.clearQueue();
 
 		int totalRecords = bjqDAO.prepareQueue(jobQueue);
 

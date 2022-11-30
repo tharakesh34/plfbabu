@@ -35,8 +35,8 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 	}
 
 	@Override
-	public PresentmentExcludeCode getExcludeCode(String code) {
-		return this.presentmentExcludeCodeDAO.getExcludeCode(code);
+	public PresentmentExcludeCode getExcludeCode(long Id) {
+		return this.presentmentExcludeCodeDAO.getExcludeCode(Id);
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 		this.presentmentExcludeCodeDAO.delete(code, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(code.getRecordType())) {
-			ah.getAuditDetail().setBefImage(presentmentExcludeCodeDAO.getExcludeCode(code.getCode()));
+			ah.getAuditDetail().setBefImage(presentmentExcludeCodeDAO.getExcludeCode(code.getId()));
 		}
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(code.getRecordType())) {
@@ -183,14 +183,19 @@ public class PresentmentExcludeCodeServiceImpl extends GenericService<Presentmen
 
 		PresentmentExcludeCode code = (PresentmentExcludeCode) ah.getModelData();
 
-		long id = code.getId();
+		String excludeCode = code.getCode();
+		String instrumentType = code.getInstrumentType();
 
 		if (code.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(code.getRecordType())
-				&& presentmentExcludeCodeDAO.isDuplicateKey(code.getId(),
+				&& presentmentExcludeCodeDAO.isDuplicateKey(excludeCode, instrumentType,
 						code.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("label_Id") + ": " + id;
-			ah.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			String[] valueParm = new String[2];
+			valueParm[0] = PennantJavaUtil.getLabel("label_PresentmentExcludeDialog_InstrumentType.value").concat(": ")
+					.concat(instrumentType);
+			valueParm[1] = PennantJavaUtil.getLabel("label_BounceCodeDialog_Code.value").concat(": ")
+					.concat(excludeCode);
+			ah.setErrorDetail(new ErrorDetail("41018", valueParm));
+
 		}
 
 		ah.setErrorDetails(ErrorUtil.getErrorDetails(ah.getErrorDetails(), usrLanguage));

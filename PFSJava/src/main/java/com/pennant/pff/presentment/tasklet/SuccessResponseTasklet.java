@@ -25,6 +25,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.presentment.service.PresentmentEngine;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -42,15 +43,15 @@ public class SuccessResponseTasklet implements Tasklet {
 	private PresentmentEngine presentmentEngine;
 	private BatchJobQueueDAO ebjqDAO;
 	private DataSourceTransactionManager transactionManager;
-
 	private EventPropertiesService eventPropertiesService;
 
 	public SuccessResponseTasklet(BatchJobQueueDAO ebjqDAO, PresentmentEngine presentmentEngine,
-			DataSourceTransactionManager transactionManager) {
+			DataSourceTransactionManager transactionManager, EventPropertiesService eventPropertiesService) {
 		super();
 		this.ebjqDAO = ebjqDAO;
 		this.presentmentEngine = presentmentEngine;
 		this.transactionManager = transactionManager;
+		this.eventPropertiesService = eventPropertiesService;
 	}
 
 	@Override
@@ -100,11 +101,16 @@ public class SuccessResponseTasklet implements Tasklet {
 					jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 					ebjqDAO.updateProgress(jobQueue);
 				}
+
+				presentmentEngine.updateResposeStatus(responseID, RepayConstants.PEXC_FAILURE, "",
+						EodConstants.PROGRESS_SUCCESS);
+
+				presentmentEngine.logRespDetail(responseID);
 			} catch (Exception e) {
 				String errorMessage = e.getMessage();
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
 
-				if (!exceptions.isEmpty()) {
+				if (exceptions.isEmpty()) {
 					exceptions.add(e);
 				}
 
@@ -114,7 +120,8 @@ public class SuccessResponseTasklet implements Tasklet {
 				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 				ebjqDAO.updateProgress(jobQueue);
 
-				presentmentEngine.updateError(responseID, RepayConstants.PEXC_FAILURE, errorMessage);
+				presentmentEngine.updateResposeStatus(responseID, RepayConstants.PEXC_FAILURE, errorMessage,
+						EodConstants.PROGRESS_FAILED);
 			}
 
 			queueID = ebjqDAO.getNextValue();
@@ -137,28 +144,26 @@ public class SuccessResponseTasklet implements Tasklet {
 	}
 
 	private boolean processResponse(long responseID, Date appDate, EventProperties eventProperties) {
+		PresentmentDetail pd = presentmentEngine.getPresentmenForResponse(responseID);
+		pd.setAppDate(appDate);
+		pd.setEventProperties(eventProperties);
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
 		try {
-
-			PresentmentDetail pd = presentmentEngine.getPresentmenForResponse(responseID);
-			pd.setAppDate(appDate);
-			pd.setEventProperties(eventProperties);
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
-
-			try {
-				presentmentEngine.processResponse(pd);
-				transactionManager.commit(transactionStatus);
-			} catch (Exception e) {
-				transactionManager.rollback(transactionStatus);
-				throw e;
-			}
-
+			presentmentEngine.processResponse(pd);
+			transactionManager.commit(transactionStatus);
+		} catch (AppException e) {
+			transactionManager.rollback(transactionStatus);
+			return false;
 		} catch (Exception e) {
+			transactionManager.rollback(transactionStatus);
 			throw e;
 		}
 
 		return true;
 	}
+
 }

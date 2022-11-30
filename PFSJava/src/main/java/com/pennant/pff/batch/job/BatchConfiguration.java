@@ -55,9 +55,11 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 
 	public JobBuilderFactory jobBuilderFactory;
 	public StepBuilderFactory stepBuilderFactory;
-	protected DataSource dataSource;
 
-	private PlatformTransactionManager transactionManager;
+	protected Job job;
+	protected DataSource dataSource;
+	protected DataSourceTransactionManager transactionManager;
+
 	private String tablePrefix;
 	private String threadNamePrefix;
 	private CustomSerializer serializer;
@@ -75,8 +77,6 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 
 		initilize();
 	}
-
-	public abstract Job getJob();
 
 	public void initilize() throws Exception {
 		serializer();
@@ -196,16 +196,16 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 			JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 		logger.info(Literal.ENTERING);
 
-		jobLauncher.run(getJob(), jobParameters);
+		jobLauncher.run(this.job, jobParameters);
 
 		logger.info(Literal.LEAVING);
 	}
 
 	public void restart(long executionId) throws Exception {
 		try {
-			jobRegistry.getJob(getJob().getName());
+			jobRegistry.getJob(this.job.getName());
 		} catch (NoSuchJobException e) {
-			jobRegistry.register(new ReferenceJobFactory(getJob()));
+			jobRegistry.register(new ReferenceJobFactory(this.job));
 		}
 
 		try {

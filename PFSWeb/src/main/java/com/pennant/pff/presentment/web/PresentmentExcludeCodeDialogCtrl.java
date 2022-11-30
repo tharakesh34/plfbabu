@@ -13,16 +13,19 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.pff.mandate.MandateUtil;
+import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennant.pff.presentment.service.PresentmentExcludeCodeService;
 import com.pennant.util.ErrorControl;
@@ -39,14 +42,17 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 
 	protected Window windowPresentmentExcludeCodeDialog;
 
-	protected Textbox code;
+	protected Combobox code;
+	protected Combobox instrumentType;
 	protected Textbox description;
-	protected Checkbox createBounceOnDueDate;
 	protected ExtendedCombobox bounceId;
 
 	private PresentmentExcludeCode excludeCode;
 	private transient PresentmentExcludeCodeListCtrl presentmentExcludeCodeList;
 	private transient PresentmentExcludeCodeService presentmentExcludeCodeService;
+
+	private List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
+	private List<ValueLabel> excludeCodeList = ExcludeReasonCode.getExcludeCodes();
 
 	public PresentmentExcludeCodeDialogCtrl() {
 		super();
@@ -100,6 +106,7 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
+		this.bounceId.setMandatoryStyle(true);
 		this.bounceId.setModuleName("BounceReason");
 		this.bounceId.setValueColumn("BounceCode");
 		this.bounceId.setValidateColumns(new String[] { "BounceCode" });
@@ -225,14 +232,15 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 	public void doWriteBeanToComponents(PresentmentExcludeCode aBounceCode) {
 		logger.debug(Literal.ENTERING);
 
-		this.code.setValue(aBounceCode.getCode());
 		this.description.setValue(aBounceCode.getDescription());
-		this.createBounceOnDueDate.setChecked(aBounceCode.isCreateBounceOnDueDate());
 		this.bounceId.setValue(StringUtils.trimToEmpty(aBounceCode.getBounceCode()),
 				StringUtils.trimToEmpty(aBounceCode.getReturnCode()));
 		this.bounceId.setAttribute("BounceCode", aBounceCode.getBounceId());
 
 		this.recordStatus.setValue(aBounceCode.getRecordStatus());
+
+		fillComboBox(this.code, aBounceCode.getCode(), excludeCodeList, "");
+		fillComboBox(this.instrumentType, aBounceCode.getInstrumentType(), mandateTypeList, "");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -243,19 +251,22 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
-			aBounceCode.setCode(this.code.getValue());
+			if (this.code.getSelectedItem() != null
+					&& !StringUtils.trimToEmpty(this.code.getSelectedItem().getValue().toString())
+							.equals(PennantConstants.List_Select)) {
+				aBounceCode.setCode(this.code.getSelectedItem().getValue().toString());
+			} else {
+				aBounceCode.setCode(PennantConstants.List_Select);
+				throw new WrongValueException(this.code, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_BounceCodeDialog_Code.value") }));
+
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			aBounceCode.setDescription(this.description.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			aBounceCode.setCreateBounceOnDueDate(this.createBounceOnDueDate.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -275,7 +286,26 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 			wve.add(we);
 		}
 
+		try {
+			if (this.instrumentType.getSelectedItem() != null
+					&& !StringUtils.trimToEmpty(this.instrumentType.getSelectedItem().getValue().toString())
+							.equals(PennantConstants.List_Select)) {
+				aBounceCode.setInstrumentType(this.instrumentType.getSelectedItem().getValue().toString());
+			} else {
+				aBounceCode.setInstrumentType(PennantConstants.List_Select);
+				throw new WrongValueException(this.instrumentType, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_PresentmentExcludeDialog_InstrumentType.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		aBounceCode.setRecordStatus(this.recordStatus.getValue());
+
+		if (aBounceCode.isNewRecord()) {
+			aBounceCode.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+			aBounceCode.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+		}
 
 		doRemoveValidation();
 
@@ -322,20 +352,15 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		if (!this.code.isReadonly()) {
-			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceCodeDialog_Code.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}
-
 		if (!this.description.isReadonly()) {
 			this.description
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceCodeDialog_BounceCodeDesc.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
-		if (this.createBounceOnDueDate.isChecked() && !this.bounceId.isReadonly()) {
-			this.bounceId.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceCodeDialog_BounceId.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+		if (!this.bounceId.isReadonly()) {
+			this.bounceId.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BounceCodeDialog_BounceId.value"), null, true, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -347,6 +372,7 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		this.code.setConstraint("");
 		this.description.setConstraint("");
 		this.bounceId.setConstraint("");
+		this.instrumentType.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -358,6 +384,7 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		this.code.setErrorMessage("");
 		this.description.setErrorMessage("");
 		this.bounceId.setErrorMessage("");
+		this.instrumentType.setErrorMessage("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -365,11 +392,15 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
-		this.code.setReadonly(true);
-		this.description.setReadonly(true);
-		this.createBounceOnDueDate.setDisabled(false);
-
-		this.btnCancel.setVisible(true);
+		if (getExcludeCode().isNewRecord()) {
+			this.code.setReadonly(false);
+			this.instrumentType.setDisabled(false);
+			this.btnCancel.setVisible(false);
+		} else {
+			this.code.setDisabled(true);
+			this.instrumentType.setDisabled(true);
+			this.btnCancel.setVisible(true);
+		}
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -393,10 +424,10 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 	public void doReadOnly() {
 		logger.debug(Literal.ENTERING);
 
-		this.code.setReadonly(true);
+		this.code.setDisabled(true);
 		this.description.setReadonly(true);
-		this.createBounceOnDueDate.setDisabled(true);
 		this.bounceId.setReadonly(true);
+		this.instrumentType.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -417,8 +448,8 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 
 		this.code.setValue("");
 		this.description.setValue("");
-		this.createBounceOnDueDate.setChecked(false);
 		this.bounceId.setValue("");
+		this.instrumentType.setValue("");
 		this.btnCancel.setVisible(true);
 
 		logger.debug(Literal.LEAVING);
@@ -597,6 +628,14 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 	@Autowired
 	public void setPresentmentExcludeCodeService(PresentmentExcludeCodeService presentmentExcludeCodeService) {
 		this.presentmentExcludeCodeService = presentmentExcludeCodeService;
+	}
+
+	public PresentmentExcludeCode getExcludeCode() {
+		return excludeCode;
+	}
+
+	public void setExcludeCode(PresentmentExcludeCode excludeCode) {
+		this.excludeCode = excludeCode;
 	}
 
 }

@@ -167,4 +167,16 @@ public class FeatureExtension implements IFeatureExtension {
 	public Map<String, Object> getAccountingExtensions() {
 		return accountingExtensions;
 	}
+
+	@Override
+	public Map<String, Object> getFeeExtensions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getDPDExtensions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

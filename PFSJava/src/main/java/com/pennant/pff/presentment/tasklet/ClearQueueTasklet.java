@@ -31,7 +31,7 @@ public class ClearQueueTasklet implements Tasklet {
 		jobQueue.setBatchId(batchId);
 
 		this.presentmentDAO.clearQueue(batchId);
-		this.ebjqDAO.deleteQueue(jobQueue);
+		this.ebjqDAO.clearQueue();
 
 		return RepeatStatus.FINISHED;
 	}

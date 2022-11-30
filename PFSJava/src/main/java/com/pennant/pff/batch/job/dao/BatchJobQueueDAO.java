@@ -6,10 +6,6 @@ public interface BatchJobQueueDAO {
 
 	Long getJobId(String jobName);
 
-	void logQueue(BatchJobQueue jobQueue);
-
-	void deleteQueue(BatchJobQueue jobQueue);
-
 	int prepareQueue(BatchJobQueue jobQueue);
 
 	void handleFailures(BatchJobQueue jobQueue);
@@ -17,6 +13,8 @@ public interface BatchJobQueueDAO {
 	int getQueueCount(BatchJobQueue jobQueue);
 
 	void updateProgress(BatchJobQueue jobQueue);
+
+	void clearQueue();
 
 	long getNextValue();
 
