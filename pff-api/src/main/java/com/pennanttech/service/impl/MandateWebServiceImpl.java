@@ -1,5 +1,6 @@
 package com.pennanttech.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -430,6 +431,8 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 			return getFailedStatus("90502", "FinReference");
 		}
 
+		mandate.setLoanMaturityDate(financeMainDAO.getMaturityDate(orgReference));
+
 		Mandate loanInfo = mandateDAO.getLoanInfo(orgReference);
 
 		if (loanInfo == null) {
@@ -611,6 +614,15 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 				valueParm[2] = DateUtil.formatToLongDate(dftEndDate);
 				return getFailedStatus("90318", valueParm);
 			}
+		}
+
+		if (mandate.getExpiryDate() != null && mandate.getExpiryDate().before(mandate.getLoanMaturityDate())) {
+			String[] errParmFrq = new String[2];
+			errParmFrq[0] = PennantJavaUtil.getLabel("tab_label_MANDATE") + " "
+					+ PennantJavaUtil.getLabel("label_MandateDialog_ExpiryDate.value");
+			errParmFrq[1] = PennantJavaUtil.getLabel("label_MaturityDate");
+
+			return getFailedStatus("30509", errParmFrq);
 		}
 
 		return null;

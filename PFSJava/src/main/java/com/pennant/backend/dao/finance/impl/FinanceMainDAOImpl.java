@@ -6496,4 +6496,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			return null;
 		}
 	}
+
+	@Override
+	public Date getMaturityDate(String finReference) {
+		String sql = "Select MaturityDate From FinanceMain Where FinReference = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql, Date.class, finReference);
+	}
 }

@@ -446,6 +446,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.custCIF.setValue(String.valueOf(fm.getCustCIF()));
 				this.customerNameLabel.setValue(fm.getCustShrtName());
 				this.finType = fm.getFinType();
+				this.mandate.setLoanMaturityDate(fm.getMaturityDate());
 			}
 		}
 

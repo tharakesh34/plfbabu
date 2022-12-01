@@ -902,6 +902,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		mandate.setMandateID(Long.MIN_VALUE);
 		mandate.setCustID(fm.getCustID());
+		mandate.setLoanMaturityDate(fm.getMaturityDate());
 
 		ErrorDetail errordetail = basicValidation(mandate, repaymentMethod);
 
@@ -1049,6 +1050,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				String strStartDate = DateUtil.formatToLongDate(mandbackDate);
 				return ErrorUtil.getError("90318", "mandate start date", strStartDate, strEndDate);
 			}
+		}
+
+		if (mandate.getExpiryDate() != null && mandate.getExpiryDate().before(mandate.getLoanMaturityDate())) {
+
+			String maturityDate = DateUtil.formatToLongDate(mandate.getLoanMaturityDate());
+			return ErrorUtil.getError("30509", "mandate Expiry date", maturityDate, strEndDate);
 		}
 
 		if (StringUtils.isNotBlank(mandate.getMandateType())) {

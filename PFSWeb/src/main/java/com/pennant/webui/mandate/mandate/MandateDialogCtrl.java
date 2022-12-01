@@ -2102,6 +2102,20 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 		}
 
+		if (this.expiryDate.getValue() != null && (this.expiryDate.getValue().compareTo(this.startDate.getValue()) <= 0
+				|| this.expiryDate.getValue().after(appExpiryDate))) {
+			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
+					validate, this.startDate.getValue(), appExpiryDate, true));
+		}
+
+		Date lanMatDate = this.mandate.getLoanMaturityDate();
+		Date expDate = this.expiryDate.getValue();
+
+		if (expDate != null && expDate.before(lanMatDate)) {
+			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
+					validate, lanMatDate, appExpiryDate, true));
+		}
+
 		if (!this.maxLimit.isReadonly()) {
 			this.maxLimit.setConstraint(new PTDecimalValidator(Labels.getLabel("label_MandateDialog_MaxLimit.value"),
 					ccyFormatter, validate, false));

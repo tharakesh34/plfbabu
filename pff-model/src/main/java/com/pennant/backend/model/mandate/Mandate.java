@@ -193,6 +193,8 @@ public class Mandate extends AbstractWorkflowEntity {
 	// API validation purpose only
 	private Mandate validateMandate = this;
 
+	private Date loanMaturityDate;
+
 	public Mandate() {
 		super();
 	}
@@ -252,6 +254,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("validateMandate");
 		excludeFields.add("allowDAS");
 		excludeFields.add("employerName");
+		excludeFields.add("loanMaturityDate");
 
 		return excludeFields;
 	}
@@ -1001,6 +1004,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setValidateMandate(Mandate validateMandate) {
 		this.validateMandate = validateMandate;
+	}
+
+	public Date getLoanMaturityDate() {
+		return loanMaturityDate;
+	}
+
+	public void setLoanMaturityDate(Date loanMaturityDate) {
+		this.loanMaturityDate = loanMaturityDate;
 	}
 
 }
