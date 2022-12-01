@@ -506,6 +506,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		return convertStringToMap(creditReviewDetails.getFieldKeys());
 	}
 
+	private Map<String, Object> getProtectedFieldsBySheet() {
+		return convertStringToMap(creditReviewDetails.getProtectedCells());
+	}
+
 	private String[] getFields(Object object) {
 		String[] fields = null;
 		if (object == null || StringUtils.isEmpty(object.toString())) {
@@ -554,6 +558,16 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 					} catch (Exception e) {
 						logger.warn(Literal.EXCEPTION, e);
 					}
+				}
+			}
+		}
+
+		Map<String, Object> protectedCellsBySheet = getProtectedFieldsBySheet();
+		for (Entry<String, Object> fieldMap : protectedCellsBySheet.entrySet()) {
+			if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
+				for (String fieldName : getFields(fieldMap.getValue())) {
+					fieldName = StringUtils.trim(fieldName);
+					protectField(sheet, fieldName);
 				}
 			}
 		}
@@ -655,6 +669,24 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			CellStyle cellStyle = range.getCellStyle();
 			EditableCellStyle newStyle = range.getCellStyleHelper().createCellStyle(cellStyle);
 			newStyle.setLocked(false);
+			range.setCellStyle(newStyle);
+		}
+	}
+
+	private void protectField(Sheet sheet, String fieldName) {
+
+		if (isReadOnly) {
+			return;
+		}
+
+		fieldName = StringUtils.trim(fieldName);
+
+		Range range = getRange(sheet, fieldName);
+
+		if (range != null) {
+			CellStyle cellStyle = range.getCellStyle();
+			EditableCellStyle newStyle = range.getCellStyleHelper().createCellStyle(cellStyle);
+			newStyle.setLocked(true);
 			range.setCellStyle(newStyle);
 		}
 	}

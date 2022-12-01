@@ -5051,7 +5051,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY);
 		}
 
-		final Map<String, Object> screenData = new HashMap<>();
+		Map<String, Object> map = getCreditReviewMap();
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> dataMap = (Map<String, Object>) map.getOrDefault("dataMap", new HashMap<>());
+
+		if (dataMap.containsKey("spreadsheet")) {
+			SpreadSheet spreadSheet = (SpreadSheet) dataMap.get("spreadsheet");
+			Sessions.getCurrent().setAttribute("ss", spreadSheet);
+		}
+
+		map.put("financeMainDialogCtrl", this);
+		map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY));
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceSpreadSheet.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY), map);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public Map<String, Object> getCreditReviewMap() {
+		Map<String, Object> screenData = new HashMap<>();
 
 		String eligibility = this.eligibilityMethod.getValue();
 
@@ -5080,25 +5104,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map = spreadSheetService.setSpreadSheetData(screenData, financeDetail);
 		}
 
-		@SuppressWarnings("unchecked")
-		Map<String, Object> dataMap = (Map<String, Object>) map.getOrDefault("dataMap", new HashMap<>());
-
-		if (dataMap.containsKey("spreadsheet")) {
-			SpreadSheet spreadSheet = (SpreadSheet) dataMap.get("spreadsheet");
-			Sessions.getCurrent().setAttribute("ss", spreadSheet);
-		}
-
-		map.put("financeMainDialogCtrl", this);
-		map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY));
-
-		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceSpreadSheet.zul",
-					getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY), map);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
+		return map;
 	}
 
 	/**

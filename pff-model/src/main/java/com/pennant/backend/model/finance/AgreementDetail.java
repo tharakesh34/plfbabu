@@ -353,6 +353,11 @@ public class AgreementDetail {
 	private String processingFeeSchdMeth = "";
 
 	/**
+	 * Provides Total Eligibility Amount from CreditReview Sheet
+	 */
+	private String totalEligibilityAmount = "0.00";
+
+	/**
 	 * Provides Eligibility Method Description
 	 */
 	private String lovDescEligibilityMethod = "";
@@ -1917,6 +1922,7 @@ public class AgreementDetail {
 	public void setActualProcessFeeValueInWords(String actualProcessFeeValueInWords) {
 		this.actualProcessFeeValueInWords = actualProcessFeeValueInWords;
 	}
+
 	private String priorityNumber;
 	private String priorityEmail;
 
@@ -11280,4 +11286,13 @@ public class AgreementDetail {
 	public void setFinProduct(String finProduct) {
 		this.finProduct = finProduct;
 	}
+
+	public String getTotalEligibilityAmount() {
+		return totalEligibilityAmount;
+	}
+
+	public void setTotalEligibilityAmount(String totalEligibilityAmount) {
+		this.totalEligibilityAmount = totalEligibilityAmount;
+	}
+
 }
