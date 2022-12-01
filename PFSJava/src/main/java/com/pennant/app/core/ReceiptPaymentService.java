@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -208,6 +209,10 @@ public class ReceiptPaymentService {
 
 		EventProperties ep = fm.getEventProperties();
 		Map<String, String> excludeMap = ep.getUpfrontBounceCodes();
+
+		if (MapUtils.isEmpty(excludeMap)) {
+			return;
+		}
 
 		String returnCode = excludeMap.get(resonCode.concat("$").concat(instrumentType));
 

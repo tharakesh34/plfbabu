@@ -1052,7 +1052,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			}
 		}
 
-		if (mandate.getExpiryDate() != null && mandate.getExpiryDate().before(mandate.getLoanMaturityDate())) {
+		if (mandate.getExpiryDate() != null && mandate.getLoanMaturityDate() != null
+				&& mandate.getExpiryDate().before(mandate.getLoanMaturityDate())) {
 
 			String maturityDate = DateUtil.formatToLongDate(mandate.getLoanMaturityDate());
 			return ErrorUtil.getError("30509", "mandate Expiry date", maturityDate, strEndDate);
