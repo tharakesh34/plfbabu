@@ -75,7 +75,7 @@
 								<uppercasebox id="branchCountry" width="100px" maxlength="2" />
 								<label id="label_BranchSearch_BranchSwiftBankCde" value="${c:l('label_BranchSearch_BranchSwiftBankCde.value')}" />
 								<listbox id="sortOperator_branchSwiftBankCde" width="43px" mold="select" rows="1" />
-								<uppercasebox id="branchSwiftBrnCde" width="100px" maxlength="4" />
+								<uppercasebox id="branchSwiftBrnCde" width="100px" maxlength="5" />
 							</row>
 							<row>
 								<label id="label_BranchSearch_Area" value="${c:l('label_BranchSearch_Area.value')}" />
