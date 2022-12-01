@@ -54,14 +54,13 @@ public class BounceResponseJob extends BatchConfiguration {
 		}
 
 		return bjqDAO;
-
 	}
 
 	@Scheduled(cron = "0 */5 * ? * *")
 	public void bounceResponseJob() throws Exception {
 		logger.info("Presentment Bounce Response Job invoked at {}", DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
 
-		if (bjqDAO.getQueueCount() > 0) {
+		if (bjqDAO().getQueueCount() > 0) {
 			logger.info("Previous Job still in progress");
 			return;
 		}

@@ -61,7 +61,7 @@ public class SuccessResponseJob extends BatchConfiguration {
 	public void successResponseJob() throws Exception {
 		logger.info("Presentment Success Response Job invoked at {}", DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
 
-		if (bjqDAO.getQueueCount() > 0) {
+		if (bjqDAO().getQueueCount() > 0) {
 			logger.info("Previous Job still in progress");
 			return;
 		}
