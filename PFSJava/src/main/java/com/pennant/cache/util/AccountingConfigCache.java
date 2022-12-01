@@ -1,7 +1,6 @@
 package com.pennant.cache.util;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -228,7 +227,7 @@ public class AccountingConfigCache {
 		Rule rule;
 		try {
 			rule = ruleCache.get(ruleKey);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.warn("Unable to load data from Rule cache: ", e);
 			rule = ruleDAO.getRuleByID(ruleCode, ruleModule, ruleEvent, "");
 		}
@@ -263,7 +262,7 @@ public class AccountingConfigCache {
 	public static String getCacheAccountMapping(String account) {
 		try {
 			return accountMappingCache.get(account);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.warn("Unable to load data from Rule cache: ", e);
 			return accountMappingDAO.getAccountMappingByAccount(account);
 		}

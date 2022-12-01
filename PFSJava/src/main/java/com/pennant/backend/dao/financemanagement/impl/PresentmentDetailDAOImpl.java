@@ -1101,7 +1101,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public List<PresentmentDetail> getPresentmenToPost(long custId, Date schData) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.CustId, fm.FinBranch, fm.FinType, pd.Id, pd.PresentmentId");
-		sql.append(", fm.FinID, pd.FinReference, pd.SchDate, pd.MandateId, pd.AdvanceAmt, pd.ExcessID");
+		sql.append(", fm.FinID, pd.FinReference, pd.SchDate, pd.MandateId, ph.MandateType, pd.AdvanceAmt, pd.ExcessID");
 		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, pb.AccountNo, pb.AcType, pb.PartnerBankId");
 		sql.append(" From PresentmentDetails pd ");
 		sql.append(" Inner join PresentmentHeader ph on ph.Id = pd.PresentmentId");
@@ -1126,6 +1126,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			pd.setFinReference(rs.getString("FinReference"));
 			pd.setSchDate(rs.getTimestamp("SchDate"));
 			pd.setMandateId(rs.getLong("MandateId"));
+			pd.setInstrumentType(rs.getString("MandateType"));
 			pd.setAdvanceAmt(rs.getBigDecimal("AdvanceAmt"));
 			pd.setExcessID(rs.getLong("ExcessID"));
 			pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
