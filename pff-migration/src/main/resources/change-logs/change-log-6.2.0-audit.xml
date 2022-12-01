@@ -443,6 +443,14 @@
 		<dropColumn tableName="AdtPresentment_Exclude_Codes" columnName="CreateBounceOnDueDate" />
 	</changeSet>
 	
+	<changeSet id="ST#112.5" author="saikrishna.b">
+		<sql>
+			<![CDATA[	
+				DELETE FROM AdtPresentment_Exclude_Codes;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#90.0" author="Alekhya.T">
 		<createTable tableName="ADTInstrumentTypes">
 			<column name="AuditID" type="bigint">

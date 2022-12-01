@@ -3985,6 +3985,24 @@
 		<dropColumn tableName="Presentment_Exclude_Codes_TEMP" columnName="CreateBounceOnDueDate" />
 	</changeSet>
 
+	<changeSet id="ST#112.23" author="saikrishna.b">
+		<sql>
+			<![CDATA[	
+				DELETE FROM Presentment_Exclude_Codes;
+				DELETE FROM Presentment_Exclude_Codes_TEMP;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#112.002" author="sandeep">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM REPORTLIST WHERE CODE = 'PresentmentExcludeCode';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('PresentmentExcludeCode', 'PresentmentExcludeCode', 'code,codeDesc,bounceCode,instrumentType' ,'code,description,bounceCode,instrumentType', 'String,String,String,String', null, 'ReportList04', 'PresentmentExcludeCode', 'System Masters', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+        	 ]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#90.0" author="Alekhya.T">
 		<createTable tableName="Instrument_Types">
 			<column name="ID" type="bigint">
@@ -4625,15 +4643,6 @@
 				
 				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('MNDT01', 'EN', 'E', 'Employer Id {0} not matched with Customer Current Employer Id.', 'error', 'Approved', null, null, null, null, null, 0, null, 1000, 0);
 			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#112.001" author="sandeep">
-		<sql>
-			<![CDATA[
-   		     	DELETE FROM REPORTLIST WHERE CODE = 'PresentmentExcludeCode';
-				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('PresentmentExcludeCode', 'PresentmentExcludeCode', 'code,codeDesc,bounceCode,createBounceOnDueDate' ,'code,description,bounceCode,createBounceOnDueDate', 'String,String,String,Boolean', null, 'ReportList04', 'PresentmentExcludeCode', 'System Masters', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
-        	 ]]>
 		</sql>
 	</changeSet>
 

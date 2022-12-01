@@ -29,7 +29,7 @@
 					<toolbar align="end" style="border-style: none;">
 						<button id="button_PresentmentExcludeCodeList_NewButton" label="${c:l('label_New')}"
 							autodisable="buttonSearchDialog,print,btnRefresh,help"
-							tooltiptext="${c:l('button_PresentmentExcludeCodesList_NewPresentmentExcludeCodes.tooltiptext')}" sclass="z-toolbarbutton" />
+							tooltiptext="New Presentment Exclude Codes" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" label="${c:l('label_Refresh')}"
 							autodisable="button_PresentmentExcludeCodeList_NewButton,buttonSearchDialog,print,btnRefresh,help" 
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />

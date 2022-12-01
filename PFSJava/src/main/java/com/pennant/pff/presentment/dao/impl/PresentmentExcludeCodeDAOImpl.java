@@ -251,12 +251,12 @@ public class PresentmentExcludeCodeDAOImpl extends SequenceDao<PresentmentExclud
 
 	public List<ReportListDetail> getPrintCodes(List<String> roleCodes) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Code, Description, BounceCode");
-		sql.append(" From (Select Code, Description, BounceCode");
+		sql.append(" Code, Description, BounceCode, InstrumentType");
+		sql.append(" From (Select Code, Description, BounceCode, pec.InstrumentType");
 		sql.append(" From Presentment_Exclude_Codes_temp pec");
 		sql.append(" Left Join BounceReasons br on br.BounceID = pec.BounceID");
 		sql.append(" Union All ");
-		sql.append(" Select Code, Description, BounceCode");
+		sql.append(" Select Code, Description, BounceCode, pec.InstrumentType");
 		sql.append(" From Presentment_Exclude_Codes pec");
 		sql.append(" Left Join BounceReasons br on br.BounceID = pec.BounceID");
 		sql.append(" Where pec.NextRoleCode is null or pec.NextRoleCode = ? or pec.NextRoleCode in (");
@@ -317,6 +317,7 @@ public class PresentmentExcludeCodeDAOImpl extends SequenceDao<PresentmentExclud
 			bc.setfieldString01(rs.getString("Code"));
 			bc.setfieldString02(rs.getString("Description"));
 			bc.setfieldString03(rs.getString("BounceCode"));
+			bc.setfieldString04(rs.getString("InstrumentType"));
 
 			return bc;
 		}
