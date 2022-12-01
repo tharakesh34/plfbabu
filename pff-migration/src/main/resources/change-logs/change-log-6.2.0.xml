@@ -3976,7 +3976,16 @@
 	<changeSet id="ST#112.20" author="saikrishna.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="BatchSize" tableName="Instrument_Types_Temp" defaultValue="0" />
 	</changeSet>
-
+	
+	<changeSet id="ST#112.21_pre" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				  alter table Presentment_Exclude_Codes 	 drop constraint DF_PEC_CREATEBOUNCEONDUEDATE;
+				  alter table Presentment_Exclude_Codes_TEMP drop constraint DF_PECT_CREATEBOUNCEONDUEDATE;
+				]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#112.21" author="sandeepkumar.m">
 		<dropColumn tableName="Presentment_Exclude_Codes" columnName="CreateBounceOnDueDate" />
 	</changeSet>
@@ -6105,9 +6114,14 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#99.23.1" author="saikrishna.b">
+	<changeSet id="ST#99.23.1" author="saikrishna.b" dbms="oracle">
 		<createSequence sequenceName="SEQ_PRMNT_EXTRACTION_QUEUE" minValue="1" maxValue="9223372036854775807"
 			incrementBy="1" startValue="1" ordered="true" />
+	</changeSet>
+	
+	<changeSet id="ST#99.23.1" author="saikrishna.b" dbms="postgresql,mssql">
+		<createSequence sequenceName="SEQ_PRMNT_EXTRACTION_QUEUE" minValue="1" maxValue="9223372036854775807"
+			incrementBy="1" startValue="1" />
 	</changeSet>
 
 	<changeSet id="ST#99.23.2" author="saikrishna.b">
@@ -6623,9 +6637,14 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#99.26.1" author="saikrishna.b">
+	<changeSet id="ST#99.26.1" author="saikrishna.b" dbms="oracle">
 		<createSequence sequenceName="SEQ_PRMNT_RESP_SUCCESS_QUEUE" minValue="1"
 			maxValue="9223372036854775807" incrementBy="1" startValue="1"  ordered="true" />
+	</changeSet>
+	
+	<changeSet id="ST#99.26.1" author="saikrishna.b" dbms="postgresql,mssql">
+		<createSequence sequenceName="SEQ_PRMNT_RESP_SUCCESS_QUEUE" minValue="1"
+			maxValue="9223372036854775807" incrementBy="1" startValue="1"   />
 	</changeSet>
 
 	<changeSet id="ST#99.26.2" author="saikrishna.b">
@@ -6678,9 +6697,14 @@
 			constraintName="PK_PRMNT_RESP_SUCCESS_QUEUE" />
 	</changeSet>
 
-	<changeSet id="ST#99.27.1" author="saikrishna.b">
+	<changeSet id="ST#99.27.1" author="saikrishna.b" dbms="oracle">
 		<createSequence sequenceName="SEQ_PRMNT_RESP_BOUNCE_QUEUE" minValue="1"
 			maxValue="9223372036854775807" incrementBy="1" startValue="1"  ordered="true" />
+	</changeSet>
+
+	<changeSet id="ST#99.27.1" author="saikrishna.b" dbms="postgresql,mssql">
+		<createSequence sequenceName="SEQ_PRMNT_RESP_BOUNCE_QUEUE" minValue="1"
+			maxValue="9223372036854775807" incrementBy="1" startValue="1"  />
 	</changeSet>
 
 	<changeSet id="ST#99.27.2" author="saikrishna.b">
@@ -6755,6 +6779,11 @@
 	<changeSet id="ST#99.28.2" author="saikrishna.b">
 		<addColumn tableName="PRESENTMENT_RESP_DTLS">
 			<column name="ERROR_CODE" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#99.28.2.1" author="saikrishna.b">
+		<addColumn tableName="PRESENTMENT_RESP_DTLS">
 			<column name="ERROR_DESCRIPTION" type="varchar(2000)" />
 		</addColumn>
 	</changeSet>
@@ -6841,7 +6870,7 @@
 				SELECT T1.LINKEDTRANID
 					, T1.POSTREF
 					, T1.POSTINGID
-					, CAST(T3.REFERENCE VARCHAR(20)) FINREFERENCE
+					, CAST(T3.REFERENCE as VARCHAR(20)) FINREFERENCE
 					, T1.FINEVENT
 					, T1.POSTDATE
 					, T1.VALUEDATE
@@ -6901,7 +6930,7 @@
 					, AM.HOSTACCOUNT GLCODE
 				FROM POSTINGS T1
 				INNER JOIN BMTAEEVENTS T2 ON T1.FINEVENT = T2.AEEVENTCODE
-				INNER JOIN FEEPOSTINGS T3 ON CAST(T3.POSTID VARCHAR(20)) = T1.FINREFERENCE
+				INNER JOIN FEEPOSTINGS T3 ON CAST(T3.POSTID as VARCHAR(20)) = T1.FINREFERENCE
 				INNER JOIN FINANCEMAIN T4 ON T3.REFERENCE = T4.FINREFERENCE
 				LEFT JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = T1.ACCOUNT
 				WHERE T1.FINEVENT = 'MANFEE'
