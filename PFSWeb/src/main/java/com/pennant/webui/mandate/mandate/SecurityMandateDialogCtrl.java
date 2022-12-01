@@ -260,7 +260,6 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private boolean issecurityMandate = true;
 	private transient BankAccountValidation bankAccountValidations;
 
-	private List<FinanceMain> customerLoans = new ArrayList<>();
 	private List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 	private List<ValueLabel> securityMandateTypeList = MandateUtil.getSecurityInstrumentTypes();
 	private final List<ValueLabel> accTypeList = MandateUtil.getAccountTypes();
@@ -466,10 +465,6 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.finReference.setModuleName("FinanceManagement");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-
-		if (!fromLoan) {
-			this.finReference.setList(customerLoans);
-		}
 
 		this.accHolderName.setMaxlength(100);
 		this.jointAccHolderName.setMaxlength(50);

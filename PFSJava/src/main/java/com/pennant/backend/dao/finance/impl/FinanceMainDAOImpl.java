@@ -6505,4 +6505,31 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.queryForObject(sql, Date.class, finReference);
 	}
+
+	@Override
+	public FinanceMain getEntityByRef(String finReference) {
+		StringBuilder sql = new StringBuilder("Select fm.FinID, fm.FinReference, e.EntityCode,e.EntityDesc");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType");
+		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
+		sql.append(" Inner Join Entity e On e.EntityCode = dd.EntityCode");
+		sql.append(" Where fm.FinReference = ? ");
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setEntityCode(rs.getString("EntityCode"));
+				fm.setEntityDesc(rs.getString("EntityDesc"));
+				return fm;
+			}, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

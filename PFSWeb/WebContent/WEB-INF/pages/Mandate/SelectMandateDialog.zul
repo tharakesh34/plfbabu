@@ -57,13 +57,6 @@
 								</row>
 
 								<row>
-									<label id="label_SelectMandate_EntityCode"
-										value="${c:l('label_SelectMandate_EntityCode.value')}" style="padding-left:12px;" />
-									<hbox>
-										<extendedcombobox id="entityCode" width="250px" />
-									</hbox>
-								</row>
-								<row>
 									<label value="${c:l('label_SelectMandate_MandateTypes.value')}"
 										style="padding-left:12px;" />
 									<hbox>

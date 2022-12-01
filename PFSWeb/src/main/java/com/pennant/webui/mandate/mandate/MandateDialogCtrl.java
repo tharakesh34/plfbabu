@@ -262,7 +262,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private boolean issecurityMandate = false;
 	private transient BankAccountValidation bankAccountValidations;
 
-	private List<Mandate> customerLoans = new ArrayList<>();
 	private List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 	private List<ValueLabel> securityMandateTypeList = MandateUtil.getSecurityInstrumentTypes();
 	private final List<ValueLabel> accTypeList = MandateUtil.getAccountTypes();
@@ -471,10 +470,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.finReference.setModuleName("FinanceManagement");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-
-		if (!fromLoan) {
-			this.finReference.setList(customerLoans);
-		}
 
 		this.accHolderName.setMaxlength(100);
 		this.jointAccHolderName.setMaxlength(50);
@@ -959,9 +954,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (instrumentType == InstrumentType.DAS) {
-			if (!fromLoan && customerLoans.size() > 1) {
-				readOnlyComponent(false, this.finReference);
-			}
 			this.dasGroupbox.setVisible(true);
 			this.dasRow.setVisible(true);
 
@@ -979,10 +971,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (instrumentType == InstrumentType.SI) {
-
-			if (!fromLoan && customerLoans.size() > 1) {
-				readOnlyComponent(false, this.finReference);
-			}
 
 			this.accDetailsGroupbox.setVisible(true);
 

@@ -1282,6 +1282,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	@Override
+	public FinanceMain getEntityByRef(String finReference) {
+		return financeMainDAO.getEntityByRef(finReference);
+	}
+
+	@Override
 	public long saveStatus(com.pennant.backend.model.mandate.MandateStatus mandateStatus) {
 		return mandateStatusDAO.save(mandateStatus, "");
 	}
@@ -1360,4 +1365,5 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private MandateProcesses getMandateProcess() {
 		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
 	}
+
 }
