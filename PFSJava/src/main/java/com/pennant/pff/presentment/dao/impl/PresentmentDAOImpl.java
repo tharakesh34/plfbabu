@@ -54,7 +54,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				PreparedStatement ps = con.prepareStatement(sql, new String[] { "Id" });
+				PreparedStatement ps = con.prepareStatement(sql, new String[] { "id" });
 
 				ps.setString(1, batchType);
 				ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));

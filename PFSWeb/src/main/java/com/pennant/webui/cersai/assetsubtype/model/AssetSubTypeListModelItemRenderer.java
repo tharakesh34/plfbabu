@@ -27,7 +27,7 @@ public class AssetSubTypeListModelItemRenderer implements ListitemRenderer<Asset
 	public void render(Listitem item, AssetSubType assetSubType, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(assetSubType.getAssetTypeId());
+		lc = new Listcell(String.valueOf(assetSubType.getAssetTypeId()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.formateInt(assetSubType.getId()));
 		lc.setParent(item);

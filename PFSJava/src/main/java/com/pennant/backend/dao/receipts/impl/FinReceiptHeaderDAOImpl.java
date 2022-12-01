@@ -415,7 +415,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		Object[] parameters = new Object[] { RepayConstants.RECEIPTMODE_CASH, RepayConstants.PAYSTATUS_CANCEL,
+		Object[] parameters = new Object[] { ReceiptMode.CASH, RepayConstants.PAYSTATUS_CANCEL,
 				PennantConstants.RECORD_TYPE_NEW, depositBranch };
 
 		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, parameters);

@@ -20,6 +20,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
 
+@Deprecated
 public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements PrimaryAccountDAO {
 
 	private static Logger logger = LogManager.getLogger(PrimaryAccountDAOImpl.class);

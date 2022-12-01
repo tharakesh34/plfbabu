@@ -30,6 +30,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -144,6 +145,7 @@ public class AssetSubTypeDialogCtrl extends GFCBaseCtrl<AssetSubType> {
 		this.assetTypeId.setValueColumn("Id");
 		this.assetTypeId.setDescColumn("Description");
 		this.assetTypeId.setValidateColumns(new String[] { "Id" });
+		this.assetTypeId.setValueType(DataType.LONG);
 
 		this.id.setMaxlength(3);
 		this.description.setMaxlength(100);
@@ -278,14 +280,16 @@ public class AssetSubTypeDialogCtrl extends GFCBaseCtrl<AssetSubType> {
 	public void doWriteBeanToComponents(AssetSubType aAssetSubType) {
 		logger.debug(Literal.ENTERING);
 
-		this.assetTypeId.setValue(aAssetSubType.getAssetTypeId());
+		if (aAssetSubType.getAssetTypeId() != null) {
+			this.assetTypeId.setValue(String.valueOf(aAssetSubType.getAssetTypeId()));
+		}
 		this.id.setValue(aAssetSubType.getId());
 		this.description.setValue(aAssetSubType.getDescription());
 
 		if (aAssetSubType.isNewRecord()) {
 			this.assetTypeId.setDescription("");
 		} else {
-			this.assetTypeId.setDescription(aAssetSubType.getAssetTypeId());
+			this.assetTypeId.setDescription(String.valueOf(aAssetSubType.getAssetTypeId()));
 		}
 		if (aAssetSubType.isNewRecord()) {
 			this.assetTypeId.setDescription("");
@@ -311,7 +315,9 @@ public class AssetSubTypeDialogCtrl extends GFCBaseCtrl<AssetSubType> {
 
 		// Asset Type Id
 		try {
-			aAssetSubType.setAssetTypeId(this.assetTypeId.getValue());
+			this.assetTypeId.getValidatedValue();
+			Long assetid = Long.valueOf(this.assetTypeId.getValue());
+			aAssetSubType.setAssetTypeId((assetid));
 			aAssetSubType.setAssetTypeIdName(this.assetTypeId.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);

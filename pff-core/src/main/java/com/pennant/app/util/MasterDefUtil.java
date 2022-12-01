@@ -17,7 +17,7 @@ public class MasterDefUtil {
 	 */
 	public enum DocType {
 		AADHAAR, PAN, PASSPORT, VOTER_ID, DRIVING_LICENCE, RATION_CARD, CORPORATE_ID_NUMBER, TAX_IDENTIFICATION_NUMBER,
-		DIRECTOR_IDENTIFICATION_NUMBER, SERVICE_TAX_REG_NO, ENO;
+		DIRECTOR_IDENTIFICATION_NUMBER, SERVICE_TAX_REG_NO, ENO, CIBIL;
 
 	}
 
@@ -71,6 +71,20 @@ public class MasterDefUtil {
 				documentTypes.put(masterDef.getKeyType(), masterDef.getKeyCode());
 			}
 		}
+	}
+
+	public static boolean isValidationReq(DocType docType) {
+		if (masterDefList == null) {
+			loadMasterDef();
+		}
+
+		for (MasterDef masterDef : masterDefList) {
+			if (docType.name().equals(masterDef.getKeyType())) {
+				return masterDef.isValidationReq();
+			}
+		}
+
+		return false;
 	}
 
 	private static Map<String, String> addressTypes;

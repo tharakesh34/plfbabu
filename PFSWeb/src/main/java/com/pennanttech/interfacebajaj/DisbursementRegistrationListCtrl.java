@@ -215,6 +215,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			searchObject.addFilters(filters);
 		}
 
+		if (qdp != null) {
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("QUICKDISB", this.qdp.isChecked(), Filter.OP_EQUAL);
+			searchObject.addFilters(filters);
+		}
+
 		// Adding filter to download only if the Download Type is Offline.
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("DOWNLOADTYPE", PennantConstants.OFFLINE, Filter.OP_EQUAL);
@@ -527,6 +533,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.disbursementMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
 
+		doClear();
 		doSetValidations();
 
 		renderDisbursements();
@@ -625,6 +632,17 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.finType.setConstraint("");
 		this.toDate.setConstraint("");
 		this.entity.setConstraint("");
+		logger.debug("Leaving ");
+	}
+
+	private void doClear() {
+		logger.debug("Entering ");
+		this.finType.setErrorMessage("");
+		this.partnerBank.setErrorMessage("");
+		this.finType.setErrorMessage("");
+		this.toDate.setErrorMessage("");
+		this.entity.setErrorMessage("");
+
 		logger.debug("Leaving ");
 	}
 

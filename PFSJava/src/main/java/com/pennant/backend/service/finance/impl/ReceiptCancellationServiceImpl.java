@@ -1993,9 +1993,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			FeeType lppFeeType = null;
 
 			if (eventProperties.isCacheLoaded()) {
-				lppFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(RepayConstants.ALLOCATION_ODC);
+				lppFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(Allocation.ODC);
 			} else {
-				lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+				lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);
 			}
 
 			// Calculate LPP GST Amount
@@ -2506,7 +2506,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		logger.debug(Literal.ENTERING);
 
 		long finID = rch.getFinID();
-		String finReference = rch.getReference();
 		List<FinFeeDetail> finFeeDetailsList = rch.getPaidFeeList();
 		Long oldLinkTranId = rch.getLinkedTranId();
 

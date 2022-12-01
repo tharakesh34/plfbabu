@@ -1991,7 +1991,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		StringBuilder sql = new StringBuilder("INSERT INTO Presentment_FileImport");
 		sql.append("(HEADER_ID, BRANCHCODE, AGREEMENTNO, INSTALMENTNO, BFLREFERENCENO, BATCHID, AMOUNTCLEARED");
 		sql.append(", CLEARINGDATE, STATUS, REASONCODE, UMRN_NO");
-		sql.append(" VALUES (");
+		sql.append(") VALUES (");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());

@@ -36,6 +36,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.overdraft.OverdraftConstants;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.pennanttech.pff.staticlist.ExtFieldStaticList;
@@ -443,13 +444,13 @@ public class PennantStaticListUtil {
 		if (dueList == null) {
 
 			dueList = new ArrayList<String>(7);
-			dueList.add(RepayConstants.ALLOCATION_PFT);
-			dueList.add(RepayConstants.ALLOCATION_PRI);
-			dueList.add(RepayConstants.ALLOCATION_TDS);
-			dueList.add(RepayConstants.ALLOCATION_NPFT);
-			dueList.add(RepayConstants.ALLOCATION_FUT_TDS);
-			dueList.add(RepayConstants.ALLOCATION_FUT_PFT);
-			dueList.add(RepayConstants.ALLOCATION_PFT);
+			dueList.add(Allocation.PFT);
+			dueList.add(Allocation.PRI);
+			dueList.add(Allocation.TDS);
+			dueList.add(Allocation.NPFT);
+			dueList.add(Allocation.FUT_TDS);
+			dueList.add(Allocation.FUT_PFT);
+			dueList.add(Allocation.PFT);
 
 		}
 		return dueList;
@@ -1883,8 +1884,8 @@ public class PennantStaticListUtil {
 			// remFeeSchdMethodList.add(new
 			// ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
 			// Labels.getLabel("label_ScheduleToNinstalments")));
-			remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PAID_BY_CUSTOMER,
-					Labels.getLabel("label_RemFee_PaidByCustomer")));
+			// remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PAID_BY_CUSTOMER,
+			// Labels.getLabel("label_RemFee_PaidByCustomer")));
 			// remFeeSchdMethodList.add(new
 			// ValueLabel(CalculationConstants.REMFEE_WAIVED_BY_BANK,
 			// Labels.getLabel("label_RemFee_WaivedByBank")));
@@ -3114,10 +3115,10 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
 
 			if (ImplementationConstants.ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS) {
-				excessAdjustTo.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASHCLT,
+				excessAdjustTo.add(new ValueLabel(ReceiptMode.CASHCLT,
 						Labels.getLabel("label_RecceiptDialog_ExcessType_CASHCLT")));
-				excessAdjustTo.add(new ValueLabel(RepayConstants.RECEIPTMODE_DSF,
-						Labels.getLabel("label_RecceiptDialog_ExcessType_DSF")));
+				excessAdjustTo
+						.add(new ValueLabel(ReceiptMode.DSF, Labels.getLabel("label_RecceiptDialog_ExcessType_DSF")));
 			}
 
 			// excessAdjustTo.add(new
@@ -3132,28 +3133,18 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getReceiptModes() {
 		if (receiptModes == null) {
-			receiptModes = new ArrayList<ValueLabel>(8);
-			receiptModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASH, Labels.getLabel("label_ReceiptMode_Cash")));
-			receiptModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_CHEQUE, Labels.getLabel("label_ReceiptMode_Cheque")));
-			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_DD, Labels.getLabel("label_ReceiptMode_DD")));
-			receiptModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_NEFT, Labels.getLabel("label_ReceiptMode_NEFT")));
-			receiptModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_RTGS, Labels.getLabel("label_ReceiptMode_RTGS")));
-			receiptModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_ReceiptMode_IMPS")));
-			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS,
-					Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
-			receiptModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_ReceiptMode_ESCROW")));
-			receiptModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_MOBILE, Labels.getLabel("label_ReceiptMode_MOBILE")));
-			receiptModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_DIGITAL, Labels.getLabel("label_ReceiptMode_DIGITAL")));
-			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_PRESENTMENT,
-					Labels.getLabel("label_ReceiptMode_PRESENT")));
+			receiptModes = new ArrayList<>(11);
+			receiptModes.add(new ValueLabel(ReceiptMode.CASH, Labels.getLabel("label_ReceiptMode_Cash")));
+			receiptModes.add(new ValueLabel(ReceiptMode.CHEQUE, Labels.getLabel("label_ReceiptMode_Cheque")));
+			receiptModes.add(new ValueLabel(ReceiptMode.DD, Labels.getLabel("label_ReceiptMode_DD")));
+			receiptModes.add(new ValueLabel(ReceiptMode.NEFT, Labels.getLabel("label_ReceiptMode_NEFT")));
+			receiptModes.add(new ValueLabel(ReceiptMode.RTGS, Labels.getLabel("label_ReceiptMode_RTGS")));
+			receiptModes.add(new ValueLabel(ReceiptMode.IMPS, Labels.getLabel("label_ReceiptMode_IMPS")));
+			receiptModes.add(new ValueLabel(ReceiptMode.EXCESS, Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
+			receiptModes.add(new ValueLabel(ReceiptMode.ESCROW, Labels.getLabel("label_ReceiptMode_ESCROW")));
+			receiptModes.add(new ValueLabel(ReceiptMode.MOBILE, Labels.getLabel("label_ReceiptMode_MOBILE")));
+			receiptModes.add(new ValueLabel(ReceiptMode.DIGITAL, Labels.getLabel("label_ReceiptMode_DIGITAL")));
+			receiptModes.add(new ValueLabel(ReceiptMode.PRESENTMENT, Labels.getLabel("label_ReceiptMode_PRESENT")));
 			/*
 			 * receiptModes.add( new ValueLabel(RepayConstants.RECEIPTMODE_NACH,
 			 * Labels.getLabel("label_ReceiptMode_NACH")));
@@ -3165,8 +3156,8 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getReceiptModesByFeePayment() {
 		if (receiptModeWithOnline.isEmpty()) {
 			receiptModeWithOnline.addAll(getReceiptModes());
-			receiptModeWithOnline.add(new ValueLabel(RepayConstants.RECEIPTMODE_ONLINE,
-					Labels.getLabel("label_ReceiptPaymentMode_ONLINE")));
+			receiptModeWithOnline
+					.add(new ValueLabel(ReceiptMode.ONLINE, Labels.getLabel("label_ReceiptPaymentMode_ONLINE")));
 		}
 
 		return receiptModeWithOnline;
@@ -3215,11 +3206,10 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getAllocationMethods() {
 		if (allocationMethods == null) {
-			allocationMethods = new ArrayList<ValueLabel>(2);
-			allocationMethods.add(
-					new ValueLabel(RepayConstants.ALLOCATIONTYPE_AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
-			allocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_MANUAL,
-					Labels.getLabel("label_AllocationMethod_Manual")));
+			allocationMethods = new ArrayList<>(2);
+			allocationMethods.add(new ValueLabel(AllocationType.AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
+			allocationMethods
+					.add(new ValueLabel(AllocationType.MANUAL, Labels.getLabel("label_AllocationMethod_Manual")));
 		}
 		return allocationMethods;
 	}
@@ -4521,15 +4511,12 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getKnockOffFromVlaues() {
 		if (knockOffFrom == null) {
 			knockOffFrom = new ArrayList<>(3);
-			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS, Labels.getLabel("label_Excess")));
-			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EMIINADV, Labels.getLabel("label_EMI_Advance")));
-			knockOffFrom
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYABLE, Labels.getLabel("label_Payable_Advice")));
-			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASHCLT, Labels.getLabel("label_CASHCLT")));
-			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_DSF, Labels.getLabel("label_DSF")));
-			knockOffFrom
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PRESENTMENT, Labels.getLabel("label_PRESENTMENT")));
-
+			knockOffFrom.add(new ValueLabel(ReceiptMode.EXCESS, Labels.getLabel("label_Excess")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.EMIINADV, Labels.getLabel("label_EMI_Advance")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.PAYABLE, Labels.getLabel("label_Payable_Advice")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.CASHCLT, Labels.getLabel("label_CASHCLT")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.DSF, Labels.getLabel("label_DSF")));
+			knockOffFrom.add(new ValueLabel(ReceiptMode.PRESENTMENT, Labels.getLabel("label_PRESENTMENT")));
 		}
 		return knockOffFrom;
 	}
@@ -4562,9 +4549,9 @@ public class PennantStaticListUtil {
 	public static List<String> getExcessList() {
 		if (excessList == null) {
 			excessList = new ArrayList<>(3);
-			excessList.add(RepayConstants.RECEIPTMODE_EXCESS);
-			excessList.add(RepayConstants.RECEIPTMODE_EMIINADV);
-			excessList.add(RepayConstants.RECEIPTMODE_PAYABLE);
+			excessList.add(ReceiptMode.EXCESS);
+			excessList.add(ReceiptMode.EMIINADV);
+			excessList.add(ReceiptMode.PAYABLE);
 
 		}
 		return excessList;
@@ -4625,12 +4612,12 @@ public class PennantStaticListUtil {
 
 	public static List<String> getNoWaiverList() {
 		if (noWaiverList == null) {
-			noWaiverList = new ArrayList<String>(3);
-			noWaiverList.add(RepayConstants.ALLOCATION_FUT_NPFT);
-			noWaiverList.add(RepayConstants.ALLOCATION_FUT_TDS);
-			noWaiverList.add(RepayConstants.ALLOCATION_TDS);
-			noWaiverList.add(RepayConstants.ALLOCATION_EMI);
-			noWaiverList.add(RepayConstants.ALLOCATION_NPFT);
+			noWaiverList = new ArrayList<>(3);
+			noWaiverList.add(Allocation.FUT_NPFT);
+			noWaiverList.add(Allocation.FUT_TDS);
+			noWaiverList.add(Allocation.TDS);
+			noWaiverList.add(Allocation.EMI);
+			noWaiverList.add(Allocation.NPFT);
 
 		}
 		return noWaiverList;
@@ -4735,10 +4722,10 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getVanAllocationMethods() {
 		if (vanAllocationMethods == null) {
-			vanAllocationMethods = new ArrayList<ValueLabel>(2);
-			vanAllocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_AUTO,
-					Labels.getLabel("label_AllocationMethod_AutoAllocation")));
-			vanAllocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_PARK_IN_EXCESS,
+			vanAllocationMethods = new ArrayList<>(2);
+			vanAllocationMethods
+					.add(new ValueLabel(AllocationType.AUTO, Labels.getLabel("label_AllocationMethod_AutoAllocation")));
+			vanAllocationMethods.add(new ValueLabel(AllocationType.PARK_IN_EXCESS,
 					Labels.getLabel("label_AllocationMethod_ParkInExcess")));
 		}
 		return vanAllocationMethods;

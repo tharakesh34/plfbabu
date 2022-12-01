@@ -24,6 +24,8 @@
  */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +46,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -76,20 +79,6 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 	}
 
 	/**
-	 * @return the pinCodeDAO
-	 */
-	public PinCodeDAO getPinCodeDAO() {
-		return pinCodeDAO;
-	}
-
-	/**
-	 * @param pinCodeDAO the pinCodeDAO to set
-	 */
-	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
-		this.pinCodeDAO = pinCodeDAO;
-	}
-
-	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
 	 * Do Add or Update the Record a) Add new Record for the new record in the DB table PinCodes/PinCodes_Temp by using
@@ -118,11 +107,11 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 		}
 
 		if (pinCode.isNewRecord()) {
-			pinCode.setId(Long.parseLong(getPinCodeDAO().save(pinCode, tableType)));
+			pinCode.setId(Long.parseLong(pinCodeDAO.save(pinCode, tableType)));
 			auditHeader.getAuditDetail().setModelData(pinCode);
 			auditHeader.setAuditReference(String.valueOf(pinCode.getPinCodeId()));
 		} else {
-			getPinCodeDAO().update(pinCode, tableType);
+			pinCodeDAO.update(pinCode, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -151,7 +140,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 		}
 
 		PinCode pinCode = (PinCode) auditHeader.getAuditDetail().getModelData();
-		getPinCodeDAO().delete(pinCode, TableType.MAIN_TAB);
+		pinCodeDAO.delete(pinCode, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -167,7 +156,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 	 */
 	@Override
 	public PinCode getPinCode(long pinCodeId) {
-		return getPinCodeDAO().getPinCode(pinCodeId, "_View");
+		return pinCodeDAO.getPinCode(pinCodeId, "_View");
 	}
 
 	/**
@@ -178,7 +167,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 	 * @return PinCodes
 	 */
 	public PinCode getApprovedPinCode(long pinCodeId) {
-		return getPinCodeDAO().getPinCode(pinCodeId, "_AView");
+		return pinCodeDAO.getPinCode(pinCodeId, "_AView");
 	}
 
 	/**
@@ -210,7 +199,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 		PinCode pinCode = new PinCode();
 		BeanUtils.copyProperties((PinCode) auditHeader.getAuditDetail().getModelData(), pinCode);
 
-		getPinCodeDAO().delete(pinCode, TableType.TEMP_TAB);
+		pinCodeDAO.delete(pinCode, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(pinCode.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(pinCodeDAO.getPinCode(pinCode.getPinCodeId(), ""));
@@ -218,7 +207,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 
 		if (pinCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getPinCodeDAO().delete(pinCode, TableType.MAIN_TAB);
+			pinCodeDAO.delete(pinCode, TableType.MAIN_TAB);
 		} else {
 			pinCode.setRoleCode("");
 			pinCode.setNextRoleCode("");
@@ -229,11 +218,11 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 			if (pinCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				pinCode.setRecordType("");
-				getPinCodeDAO().save(pinCode, TableType.MAIN_TAB);
+				pinCodeDAO.save(pinCode, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				pinCode.setRecordType("");
-				getPinCodeDAO().update(pinCode, TableType.MAIN_TAB);
+				pinCodeDAO.update(pinCode, TableType.MAIN_TAB);
 			}
 		}
 
@@ -272,7 +261,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 		PinCode pinCode = (PinCode) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getPinCodeDAO().delete(pinCode, TableType.TEMP_TAB);
+		pinCodeDAO.delete(pinCode, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -330,7 +319,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 
 		// If PIN Code is already utilized in Branches
 		if (PennantConstants.RECORD_TYPE_DEL.equals(pinCode.getRecordType())) {
-			boolean workflowExists = getBranchDAO().isPinCodeExists(pinCode.getPinCode());
+			boolean workflowExists = branchDAO.isPinCodeExists(pinCode.getPinCode());
 			boolean pincount = customerAddresDAO.isExisiCustPincode(pinCode.getId());
 
 			if (workflowExists || pincount) {
@@ -348,8 +337,9 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 		return auditDetail;
 	}
 
-	public BranchDAO getBranchDAO() {
-		return branchDAO;
+	@Override
+	public List<PinCode> getResult(ISearch search, List<String> roleCodes) {
+		return this.pinCodeDAO.getResult(search, roleCodes);
 	}
 
 	public void setBranchDAO(BranchDAO branchDAO) {
@@ -359,6 +349,11 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 	@Autowired
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
+	}
+
+	@Autowired
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
 	}
 
 }

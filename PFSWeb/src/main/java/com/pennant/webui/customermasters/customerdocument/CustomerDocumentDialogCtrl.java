@@ -38,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
@@ -55,10 +56,12 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -91,6 +94,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.document.DocVerificationUtil;
+import com.pennant.pff.document.model.DocVerificationHeader;
+import com.pennant.pff.document.service.DocumentValidation;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -106,6 +112,7 @@ import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicat
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -160,6 +167,16 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	protected Textbox pdfPassword;
 	protected Textbox remarks;
 	protected Space space_Remarks;
+	protected Textbox otp;
+	protected Button btnValidate;
+	protected Button btnSendOTP;
+
+	protected Groupbox gbDetailsAsPerPAN;
+	protected Textbox firstNameAsPerPAN;
+	protected Textbox middleNameAsPerPAN;
+	protected Textbox lastNameAsPerPAN;
+	protected Textbox verificationStatus;
+	protected Textbox lastModified;
 	// not auto wired variables
 	private CustomerDocument customerDocument; // overHanded per parameter
 	private transient CustomerDocumentListCtrl customerDocumentListCtrl; // overHanded
@@ -210,6 +227,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	public String dmsApplicationNo;
 	public String leadId;
+
+	private DocumentValidation defaultDocumentValidation;
+	private DocumentValidation customDocumentValidation;
 
 	/**
 	 * default constructor.<br>
@@ -447,6 +467,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocIssuedCountry.setValueColumn("CountryCode");
 		this.custDocIssuedCountry.setDescColumn("CountryDesc");
 		this.custDocIssuedCountry.setValidateColumns(new String[] { "CountryCode" });
+
+		this.btnSendOTP.addForward("onClick", window_CustomerDocumentDialog, "onSendOTP");
 
 		this.remarks.setMaxlength(500);
 
@@ -2075,7 +2097,166 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}
 		// ### 01-05-2018 - End
 
+		this.gbDetailsAsPerPAN.setVisible(false);
+		this.firstNameAsPerPAN.setValue("");
+		this.middleNameAsPerPAN.setValue("");
+		this.lastNameAsPerPAN.setValue("");
+		this.lastModified.setValue("");
+		this.verificationStatus.setValue("");
+		this.btnValidate.setVisible(false);
+		if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.AADHAAR), this.custDocType.getValue())) {
+			if (getDocumentValidation() != null && MasterDefUtil.isValidationReq(DocType.AADHAAR)) {
+				this.btnSendOTP.setVisible(true);
+				this.custDocTitle.setReadonly(false);
+				this.btnValidate.setVisible(false);
+				this.btnSendOTP.setLabel(Labels.getLabel("label_aadhar_sendotp.value"));
+				this.otp.setVisible(false);
+			}
+		} else if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.PAN), this.custDocType.getValue())) {
+			if (getDocumentValidation() != null && MasterDefUtil.isValidationReq(DocType.PAN)) {
+				this.btnValidate.setVisible(true);
+				this.custDocTitle.setReadonly(false);
+				this.btnSendOTP.setVisible(false);
+				this.otp.setVisible(false);
+			}
+		}
+
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSendOTP(Event e) {
+		String aadharNumber = this.custDocTitle.getValue();
+		if (StringUtils.isEmpty(aadharNumber)) {
+			MessageUtil.showMessage(String.format("Aadhaar Number Must Be Entered!"));
+			return;
+		}
+		if (getDocumentValidation() == null && !MasterDefUtil.isValidationReq(MasterDefUtil.DocType.AADHAAR)) {
+			return;
+		}
+		DocVerificationHeader dh = new DocVerificationHeader();
+		dh.setDocNumber(aadharNumber);
+		dh.setCustCif(this.custCIF.getValue());
+		String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "AADHHAR Number" });
+		try {
+
+			if (getDocumentValidation().isVerified(aadharNumber, DocType.AADHAAR)) {
+				MessageUtil.confirm(msg, evnt -> {
+					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						getDocumentValidation().validate(DocType.AADHAAR, dh);
+						this.custDocTitle.setReadonly(true);
+						this.btnValidate.setVisible(true);
+						this.btnSendOTP.setLabel("ReSend");
+						this.otp.setVisible(true);
+						this.btnValidate.setAttribute("data", dh);
+					}
+				});
+
+			} else {
+				getDocumentValidation().validate(DocType.AADHAAR, dh);
+				this.custDocTitle.setReadonly(true);
+				this.btnValidate.setVisible(true);
+				this.btnSendOTP.setLabel("ReSend");
+				this.otp.setVisible(true);
+				this.btnValidate.setAttribute("data", dh);
+			}
+		} catch (InterfaceException ie) {
+			MessageUtil.showMessage(ie.getErrorMessage());
+		} catch (Exception ex) {
+			throw ex;
+		}
+	}
+
+	public void onClick$btnValidate(Event e) throws Exception {
+		DocVerificationHeader dh = (DocVerificationHeader) this.btnValidate.getAttribute("data");
+		if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.AADHAAR), this.custDocType.getValue())) {
+			validateAadhaar(dh);
+		} else if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.PAN), this.custDocType.getValue())) {
+			validatePAN();
+		}
+
+	}
+
+	private void validatePAN() {
+		String panNumber = this.custDocTitle.getValue();
+		if (StringUtils.isEmpty(panNumber)) {
+			MessageUtil.showMessage(String.format("PAN Number Must Be Entered!"));
+			return;
+		}
+
+		DocVerificationHeader header = new DocVerificationHeader();
+		header.setDocNumber(panNumber);
+		header.setCustCif(this.custCIF.getValue());
+
+		boolean isExistng = DocVerificationUtil.isVerified(panNumber, DocType.PAN);
+
+		String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
+		if (isExistng) {
+			MessageUtil.confirm(msg, evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+
+					getPANDetails(header, isExistng);
+				}
+			});
+
+		} else {
+			getPANDetails(header, false);
+		}
+	}
+
+	private void getPANDetails(DocVerificationHeader header, boolean isExistng) {
+
+		ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
+
+		if (err != null) {
+			MessageUtil.showMessage(err.getMessage());
+			return;
+		}
+
+		MessageUtil.showMessage(
+				String.format("%s PAN validation successfull.", header.getDocVerificationDetail().getFullName()));
+
+		this.gbDetailsAsPerPAN.setVisible(true);
+		this.firstNameAsPerPAN.setValue(header.getDocVerificationDetail().getFName());
+		this.middleNameAsPerPAN.setValue(header.getDocVerificationDetail().getMName());
+		this.lastNameAsPerPAN.setValue(header.getDocVerificationDetail().getLName());
+
+		if (isExistng) {
+			this.verificationStatus.setValue("Existing & Verified");
+			this.lastModified.setValue(header.getPrevVerifiedOn().toString());
+		} else {
+			this.verificationStatus.setValue("verified");
+		}
+	}
+
+	private void validateAadhaar(DocVerificationHeader dh) throws Exception {
+		if (dh == null || StringUtils.isEmpty(dh.getClientId())) {
+			MessageUtil.showMessage("OTP Not Generated!");
+			return;
+		}
+
+		if (StringUtils.isEmpty(this.otp.getValue())) {
+			MessageUtil.showMessage("OTP must be required!");
+			return;
+		}
+
+		try {
+			dh = getDocumentValidation().validateOTP(dh, this.otp.getValue());
+
+			if (dh.getDocVerificationDetail() != null) {
+				MessageUtil.showMessage(
+						String.format("Aadhar verified for " + dh.getDocVerificationDetail().getFullName()));
+				this.custDocTitle.setReadonly(false);
+				this.btnValidate.setVisible(false);
+				this.btnSendOTP.setLabel(Labels.getLabel("label_aadhar_sendotp.value"));
+				this.otp.setVisible(false);
+				this.btnValidate.setAttribute("data", null);
+			}
+
+		} catch (InterfaceException ie) {
+			MessageUtil.showMessage(ie.getErrorMessage());
+		} catch (Exception ex) {
+			throw ex;
+		}
 	}
 
 	/**
@@ -2463,4 +2644,17 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
 	}
 
+	public DocumentValidation getDocumentValidation() {
+		return customDocumentValidation == null ? defaultDocumentValidation : customDocumentValidation;
+	}
+
+	@Autowired
+	public void setDefaultDocumentValidation(DocumentValidation defaultDocumentValidation) {
+		this.defaultDocumentValidation = defaultDocumentValidation;
+	}
+
+	@Autowired(required = false)
+	public void setCustomDocumentValidation(DocumentValidation customDocumentValidation) {
+		this.customDocumentValidation = customDocumentValidation;
+	}
 }

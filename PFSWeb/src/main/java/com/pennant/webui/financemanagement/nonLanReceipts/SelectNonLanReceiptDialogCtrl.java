@@ -76,6 +76,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess;
 import com.rits.cloning.Cloner;
 
@@ -392,8 +393,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 			@Override
 			public boolean test(FinReceiptHeader t) {
-				if (RepayConstants.RECEIPTMODE_CHEQUE.equals(t.getReceiptMode())
-						|| RepayConstants.RECEIPTMODE_DD.equals(t.getReceiptMode())) {
+				if (ReceiptMode.CHEQUE.equals(t.getReceiptMode()) || ReceiptMode.DD.equals(t.getReceiptMode())) {
 					return true;
 				}
 				return false;
@@ -581,9 +581,9 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			} else {
 				receiptHeader.setBatchId(batchId);
 				for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
-					if (!(RepayConstants.RECEIPTMODE_EMIINADV.equals(receiptDetail.getPaymentType())
-							|| RepayConstants.RECEIPTMODE_EXCESS.equals(receiptDetail.getPaymentType())
-							|| RepayConstants.RECEIPTMODE_PAYABLE.equals(receiptDetail.getPaymentType()))
+					if (!(ReceiptMode.EMIINADV.equals(receiptDetail.getPaymentType())
+							|| ReceiptMode.EXCESS.equals(receiptDetail.getPaymentType())
+							|| ReceiptMode.PAYABLE.equals(receiptDetail.getPaymentType()))
 							&& FinanceConstants.DEPOSIT_MAKER.equals(module)) {
 						receiptDetail.setDepositDate(finReceiptDetail.getDepositDate());
 						receiptDetail.setDepositNo(finReceiptDetail.getDepositNo());
@@ -607,8 +607,8 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 						}
 
 						// Cash & Online Receipt Mode could not be realized
-						if (RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())
-								|| RepayConstants.RECEIPTMODE_ONLINE.equals(receiptHeader.getReceiptMode())) {
+						if (ReceiptMode.CASH.equals(receiptHeader.getReceiptMode())
+								|| ReceiptMode.ONLINE.equals(receiptHeader.getReceiptMode())) {
 							MessageUtil.showError(
 									"Some selected Receipts' ReceiptMode are 'Cash' Or 'Online', So they could not be Realized");
 							return;
@@ -616,8 +616,8 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 					} else if (RepayConstants.PAYSTATUS_BOUNCE.equals(finReceiptHeader.getReceiptModeStatus())) {
 						receiptHeader.setBounceDate(finReceiptDetail.getDepositDate());
 						receiptHeader.setBounceReason(finReceiptHeader.getBounceReason());
-						if (RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())
-								|| RepayConstants.RECEIPTMODE_ONLINE.equals(receiptHeader.getReceiptMode())) {
+						if (ReceiptMode.CASH.equals(receiptHeader.getReceiptMode())
+								|| ReceiptMode.ONLINE.equals(receiptHeader.getReceiptMode())) {
 							MessageUtil.showError(
 									"Some selected Receipts' ReceiptMode are 'Cash' Or 'Online', So they could not be Bounce");
 							return;
@@ -888,7 +888,6 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	}
 
 	class MultiReceiptRunnable implements Runnable {
-		private final Logger logger_ = LogManager.getLogger(MultiReceiptRunnable.class);
 		private List<AuditHeader> auditHeaderList;
 		Map<Long, FinReceiptHeader> finReceiptHeaderMap;
 		long batchId;

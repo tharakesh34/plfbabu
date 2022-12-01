@@ -11,6 +11,9 @@
  */
 package com.pennant.backend.service.systemmasters.impl;
 
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -313,7 +316,19 @@ public class CustTypePANMappingServiceImpl extends GenericService<CustTypePANMap
 	 */
 	@Override
 	public boolean isValidPANLetter(String custType, String custCategory, String panLetter) {
-		return custTypePANMappingDAO.isValidPANLetter(custType, custCategory, panLetter);
+		List<CustTypePANMapping> panLetterMapping = custTypePANMappingDAO.getPANLetterMapping(custType, custCategory);
+
+		if (CollectionUtils.isEmpty(panLetterMapping)) {
+			return true;
+		}
+
+		for (CustTypePANMapping panMap : panLetterMapping) {
+			if (panLetter.equals(panMap.getPanLetter())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	// ******************************************************//

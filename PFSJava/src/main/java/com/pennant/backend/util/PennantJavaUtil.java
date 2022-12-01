@@ -492,6 +492,7 @@ import com.pennanttech.pff.organization.model.Organization;
 import com.pennanttech.pff.overdraft.model.OverdraftLimit;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class PennantJavaUtil {
 	@Autowired(required = false)
@@ -3202,12 +3203,12 @@ public class PennantJavaUtil {
 		ModuleUtil.register("CASHCLT",
 				new ModuleMapping("CASHCLT", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" }, null,
 						new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
-						new String[][] { { "AmountType", "0", RepayConstants.RECEIPTMODE_CASHCLT } }, 750));
+						new String[][] { { "AmountType", "0", ReceiptMode.CASHCLT } }, 750));
 
 		ModuleUtil.register("DSF",
 				new ModuleMapping("DSF", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" }, null,
 						new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
-						new String[][] { { "AmountType", "0", RepayConstants.RECEIPTMODE_DSF } }, 750));
+						new String[][] { { "AmountType", "0", ReceiptMode.DSF } }, 750));
 
 		ModuleUtil.register("PayableAdvise",
 				new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise_LovView" }, null,
@@ -3474,8 +3475,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("RisksAndMitigants", new ModuleMapping("RisksAndMitigants", RisksAndMitigants.class,
 				new String[] { "RisksAndMitigants" }, masterWF, new String[] { "Risk", "Mitigants" }, null, 300));
 		ModuleUtil.register("SanctionConditions",
-				new ModuleMapping("SanctionConditions", SanctionConditions.class, new String[] { "SanctionConditions" },
-						masterWF, new String[] { "SanctionCondition", "Status" }, null, 300));
+				new ModuleMapping("SanctionConditions", SanctionConditions.class,
+						new String[] { "Sanction_Conditions" }, masterWF,
+						new String[] { "SanctionCondition", "Status" }, null, 300));
 		ModuleUtil.register("DealRecommendationMerits",
 				new ModuleMapping("DealRecommendationMerits", DealRecommendationMerits.class,
 						new String[] { "DealRecommendationMerits" }, masterWF, new String[] { "dealMerits" }, null,

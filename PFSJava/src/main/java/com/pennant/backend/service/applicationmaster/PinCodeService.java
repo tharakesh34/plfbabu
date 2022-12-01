@@ -24,8 +24,11 @@
  */
 package com.pennant.backend.service.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
 
 public interface PinCodeService {
 
@@ -40,4 +43,6 @@ public interface PinCodeService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	List<PinCode> getResult(ISearch search, List<String> roleCodes);
 }

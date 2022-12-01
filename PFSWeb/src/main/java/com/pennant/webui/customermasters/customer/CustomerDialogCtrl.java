@@ -103,7 +103,6 @@ import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -166,6 +165,8 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
+import com.pennant.pff.document.DocVerificationUtil;
+import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -200,7 +201,6 @@ import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.FinnovService;
-import com.pennanttech.pff.external.pan.service.PrimaryAccountService;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.PDVerificationDialogCtrl;
@@ -553,7 +553,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl;
 	private boolean dedupCheckReq = false;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
-	private PrimaryAccountService primaryAccountService;
 	private DMSService dMSService;
 	private String usrAction = null;
 
@@ -2228,7 +2227,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomer.setCustTotalExpense(getCustTotExpense().add(getCustTotIncomeExp(false)));
 
 		aCustomer.setCustPassportNo(getCustDocID(PennantConstants.PASSPORT));
-		aCustomer.setPhoneNumber(getMobileNumber());
 
 		if (StringUtils.isBlank(aCustomer.getCustSourceID())) {
 			aCustomer.setCustSourceID(App.CODE);
@@ -2253,6 +2251,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			List<CustomerPhoneNumber> customerPhoneNumberList = customerPhoneNumbers.get("customerPhoneNumbers");
 			setCustomerPhoneNumberDetailList(customerPhoneNumberList);
 		}
+
+		aCustomer.setPhoneNumber(getMobileNumber());
 
 		// In line Edit functionality for Customer Emails
 		// HL change for Emails
@@ -4961,7 +4961,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		boolean isMandateIDDocExist = false;
 		if (this.customerDocumentDetailList != null && !this.customerDocumentDetailList.isEmpty()) {
 			for (CustomerDocument custDocument : this.customerDocumentDetailList) {
-				if (isRetailCustomer && !isPanMandatory && StringUtils.isBlank(this.eidNumber.getValue())
+				if (!isPanMandatory && StringUtils.isBlank(this.eidNumber.getValue())
 						&& (PennantConstants.FORM60.equals(custDocument.getCustDocCategory())
 								&& (PennantConstants.RECORD_TYPE_DEL.equals(custDocument.getRecordType())
 										|| PennantConstants.RECORD_TYPE_CAN.equals(custDocument.getRecordType())))) {
@@ -5024,11 +5024,15 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		if (CollectionUtils.isNotEmpty(customerDocumentDetailList) && !isPanMandatory) {
 			boolean anyMatch = customerDocumentDetailList.stream()
-					.anyMatch(docType -> docType.getCustDocCategory().equals(PennantConstants.FORM60));
-			if (isRetailCustomer && StringUtils.isBlank(this.eidNumber.getValue()) && !anyMatch) {
-				MessageUtil.showError(Labels.getLabel("Either_PAN_FORM60_Mandatory"));
+					.anyMatch(docType -> docType.getCustDocCategory().equals(PennantConstants.FORM60)
+							|| docType.getCustDocCategory().equals(PennantConstants.CPRCODE));
+			if (StringUtils.isBlank(this.eidNumber.getValue()) && !anyMatch) {
+				MessageUtil.showError(Labels.getLabel("Either_PAN_FORM60_AADHAAR_Mandatory"));
 				return false;
 			}
+		} else if (StringUtils.isBlank(this.eidNumber.getValue())) {
+			MessageUtil.showError(Labels.getLabel("Either_PAN_FORM60_AADHAAR_Mandatory"));
+			return false;
 		}
 
 		if (!StringUtils.isBlank(aCustomer.getCustCRCPR()) && !isMandateIDDocExist && validateAllDetails) {
@@ -7588,7 +7592,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void onChange$eidNumber(Event event) {
-		if (primaryAccountService.panValidationRequired() && isRetailCustomer) {
+		if (MasterDefUtil.isValidationReq(DocType.PAN)) {
 			CustomerDetails aCustomerDetails = getCustomerDetails();
 			this.label_CustomerDialog_EIDName.setValue(" ");
 			aCustomerDetails.getCustomer().setCustCRCPR(this.eidNumber.getValue());
@@ -7606,45 +7610,65 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		Customer customer = aCustomerDetails.getCustomer();
 		String panNumber = customer.getCustCRCPR();
 
-		if (StringUtils.isBlank(panNumber)) {
+		if (StringUtils.isBlank(panNumber) || !MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
 			logger.debug(Literal.LEAVING);
 			return;
 		}
 
+		validatePAN(this.eidNumber.getValue());
+		logger.debug(Literal.LEAVING);
+	}
+
+	private String validatePAN(String panNumber) {
 		String primaryIdName = null;
-		try {
-			PrimaryAccount primaryAccount = new PrimaryAccount();
-			primaryAccount.setPanNumber(panNumber);
-			// Verifying/Validating the PAN Number
-			primaryAccount = primaryAccountService.retrivePanDetails(primaryAccount);
-			String custFName = StringUtils.trimToEmpty(primaryAccount.getCustFName());
-			String custMName = StringUtils.trimToEmpty(primaryAccount.getCustMName());
-			String custLName = StringUtils.trimToEmpty(primaryAccount.getCustLName());
+		if (!(MasterDefUtil.isValidationReq(DocType.PAN))) {
+			return primaryIdName;
+		}
 
-			primaryIdName = custFName.concat(" ").concat(custMName).concat(" ").concat(custLName);
+		DocVerificationHeader header = new DocVerificationHeader();
+		header.setDocNumber(panNumber);
+		header.setCustCif(this.custCIF.getValue());
 
-			if (StringUtils.isNotBlank(primaryIdName)) {
-				MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
-				this.label_CustomerDialog_EIDName.setValue(StringUtils.trimToEmpty(panNumber));
+		if (!DocVerificationUtil.isVerified(panNumber, DocType.PAN)) {
+			ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
+
+			if (err != null) {
+				MessageUtil.showMessage(err.getMessage());
 			} else {
-				MessageUtil.showMessage(String.format("%s PAN already verified", panNumber));
-
+				primaryIdName = header.getDocVerificationDetail().getFullName();
+				MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
 			}
+		} else {
+			String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
+
+			MessageUtil.confirm(msg, evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+					ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
+
+					if (err != null) {
+						MessageUtil.showMessage(err.getMessage());
+					} else {
+						String fullName = header.getDocVerificationDetail().getFullName();
+						MessageUtil.showMessage(String.format("%s PAN validation successfull.", fullName));
+					}
+				}
+			});
+		}
+
+		if (header.getDocVerificationDetail() != null) {
+			primaryIdName = header.getDocVerificationDetail().getFullName();
 
 			if (isRetailCustomer) {
-				this.custFirstName.setValue(customer.getCustFName());
-				this.custLastName.setValue(customer.getCustLName());
-				this.custMiddleName.setValue(customer.getCustMName());
+				this.custFirstName.setValue(header.getDocVerificationDetail().getFName());
+				this.custLastName.setValue(header.getDocVerificationDetail().getLName());
+				this.custMiddleName.setValue(header.getDocVerificationDetail().getMName());
+				this.custShrtName.setValue(primaryIdName);
 			} else {
-				this.custShrtName.setValue(StringUtils.trimToEmpty(customer.getCustLName()));
+				this.custShrtName.setValue(StringUtils.trimToEmpty(header.getDocVerificationDetail().getLName()));
 			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw new WrongValueException(this.eidNumber,
-					StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
-		} finally {
-			logger.debug(Literal.LEAVING);
 		}
+
+		return primaryIdName;
 	}
 
 	private BigDecimal processDateDiff(Date fromDate, Label displayComp) {
@@ -7991,10 +8015,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
-	}
-
-	public void setPrimaryAccountService(PrimaryAccountService primaryAccountService) {
-		this.primaryAccountService = primaryAccountService;
 	}
 
 	public String getNatOfBusiness() {

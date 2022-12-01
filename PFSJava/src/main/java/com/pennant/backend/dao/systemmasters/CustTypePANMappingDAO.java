@@ -11,6 +11,8 @@
  */
 package com.pennant.backend.dao.systemmasters;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.CustTypePANMapping;
 import com.pennanttech.pff.core.TableType;
@@ -25,5 +27,5 @@ public interface CustTypePANMappingDAO extends BasicCrudDao<CustTypePANMapping> 
 
 	boolean isDuplicateKey(long id, String custType, String pANLetter, TableType tableType);
 
-	boolean isValidPANLetter(String custType, String custCategory, String panLetter);
+	List<CustTypePANMapping> getPANLetterMapping(String custType, String custCategory);
 }

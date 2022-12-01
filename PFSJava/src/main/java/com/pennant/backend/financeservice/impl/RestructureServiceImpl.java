@@ -68,13 +68,13 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.rits.cloning.Cloner;
 
 public class RestructureServiceImpl extends GenericService<FinServiceInstruction> implements RestructureService {
@@ -280,7 +280,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 				amountToPOS = amountToPOS.add(totAmt);
 
-				if (!RepayConstants.ALLOCATION_FEE.equals(rsChrg.getAlocType())) {
+				if (!Allocation.FEE.equals(rsChrg.getAlocType())) {
 					cpzRestructAmt = cpzRestructAmt.add(totAmt);
 				}
 			}
@@ -421,11 +421,11 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		int chargeSeq = 1;
 		if (priDue.compareTo(BigDecimal.ZERO) > 0) {
-			charges.add(getChargeRcd(priDue, BigDecimal.ZERO, null, chargeSeq++, RepayConstants.ALLOCATION_PRI,
+			charges.add(getChargeRcd(priDue, BigDecimal.ZERO, null, chargeSeq++, Allocation.PRI,
 					Labels.getLabel("label_RecceiptDialog_AllocationType_PRI"), null, true));
 		}
 		if (pftDue.compareTo(BigDecimal.ZERO) > 0) {
-			charges.add(getChargeRcd(pftDue, BigDecimal.ZERO, null, chargeSeq++, RepayConstants.ALLOCATION_PFT,
+			charges.add(getChargeRcd(pftDue, BigDecimal.ZERO, null, chargeSeq++, Allocation.PFT,
 					Labels.getLabel("label_RecceiptDialog_AllocationType_PFT"), null, true));
 		}
 
@@ -470,7 +470,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 				RestructureCharge frc = new RestructureCharge();
 				frc.setChargeSeq(chargeSeq++);
-				frc.setAlocType(RepayConstants.ALLOCATION_FEE);
+				frc.setAlocType(Allocation.FEE);
 				frc.setAlocTypeDesc(ffd.getFeeTypeDesc());
 				frc.setActualAmount(ffd.getRemainingFeeOriginal());
 				frc.setFeeCode(ffd.getFeeTypeCode());
@@ -521,7 +521,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			odPenalRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView");
 		}
 
-		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);
 
 		String taxType = null;
 		if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
@@ -584,11 +584,11 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			}
 
 			if (lpiBal.compareTo(BigDecimal.ZERO) > 0) {
-				charges.add(getChargeRcd(lpiBal, BigDecimal.ZERO, null, chargeSeq++, RepayConstants.ALLOCATION_LPFT,
+				charges.add(getChargeRcd(lpiBal, BigDecimal.ZERO, null, chargeSeq++, Allocation.LPFT,
 						Labels.getLabel("label_RecceiptDialog_AllocationType_LPFT"), null, false));
 			}
 			if (lppBal.compareTo(BigDecimal.ZERO) > 0) {
-				charges.add(getChargeRcd(lppBal, tdsAmount, lppTax, chargeSeq++, RepayConstants.ALLOCATION_ODC,
+				charges.add(getChargeRcd(lppBal, tdsAmount, lppTax, chargeSeq++, Allocation.ODC,
 						Labels.getLabel("label_RecceiptDialog_AllocationType_ODC"), null, false));
 			}
 		}
@@ -627,17 +627,17 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 				// Adding Advise Details to Map
 				if (advise.getBounceID() > 0) {
 					if (bounceFeeType == null) {
-						bounceFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+						bounceFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.BOUNCE);
 					}
 					if (bounceFeeType != null && bounceFeeType.isTaxApplicable()) {
 						taxType = bounceFeeType.getTaxComponent();
 						bounceTax.setTaxType(taxType);
 					}
 					isTdsApplicable = bounceFeeType.isTdsReq();
-					type = RepayConstants.ALLOCATION_BOUNCE;
+					type = Allocation.BOUNCE;
 					desc = "Bounce Charges";
 				} else {
-					type = RepayConstants.ALLOCATION_MANADV;
+					type = Allocation.MANADV;
 					desc = advise.getFeeTypeDesc();
 					isTdsApplicable = advise.isTdsReq();
 					// Calculation Receivable Advises
@@ -709,7 +709,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 			// Bounce Due Charges
 			if (bounceDue.compareTo(BigDecimal.ZERO) > 0) {
-				charges.add(getChargeRcd(bounceDue, bounceTds, bounceTax, chargeSeq++, RepayConstants.ALLOCATION_BOUNCE,
+				charges.add(getChargeRcd(bounceDue, bounceTds, bounceTax, chargeSeq++, Allocation.BOUNCE,
 						bounceFeeType.getFeeTypeDesc(), bounceFeeType.getFeeTypeCode(), false));
 			}
 		}
@@ -1420,7 +1420,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			BigDecimal actualAmount = rc.getActualAmount();
 			String alocType = rc.getAlocType();
 
-			if (!RepayConstants.ALLOCATION_FEE.equals(alocType) && actualAmount.compareTo(BigDecimal.ZERO) > 0) {
+			if (!Allocation.FEE.equals(alocType) && actualAmount.compareTo(BigDecimal.ZERO) > 0) {
 				errors.add(getErrorDetail("12725", rc.getFeeCode()));
 			}
 		}
@@ -1631,17 +1631,17 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		for (RestructureCharge rc : charges) {
 			alocType = rc.getAlocType();
-			if ("BPI".equals(alocType) || RepayConstants.ALLOCATION_FEE.equals(alocType)) {
+			if ("BPI".equals(alocType) || Allocation.FEE.equals(alocType)) {
 				continue;
 			}
 
-			if (RepayConstants.ALLOCATION_PRI.equals(alocType) || RepayConstants.ALLOCATION_PFT.equals(alocType)) {
+			if (Allocation.PRI.equals(alocType) || Allocation.PFT.equals(alocType)) {
 				isDue = true;
 				break;
 			}
 
-			if ((RepayConstants.ALLOCATION_MANADV.equals(alocType) || RepayConstants.ALLOCATION_BOUNCE.equals(alocType)
-					|| RepayConstants.ALLOCATION_ODC.equals(alocType)) && !rc.isCapitalized()) {
+			if ((Allocation.MANADV.equals(alocType) || Allocation.BOUNCE.equals(alocType)
+					|| Allocation.ODC.equals(alocType)) && !rc.isCapitalized()) {
 				isDue = false;
 			} else {
 				isDue = true;

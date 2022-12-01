@@ -310,13 +310,13 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	public void onClick$btnLink() {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
-		String finref = this.finReference.getValue().trim();
-
 		Clients.clearWrongValue(this.finReference);
 		this.finReference.setErrorMessage("");
 		this.finReference.setConstraint("");
+
+		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
+		String finref = this.finReference.getValue().trim();
 
 		if (StringUtils.isEmpty(finref)) {
 			throw new WrongValueException(this.finReference, Labels.getLabel("label_LinkLoan"));

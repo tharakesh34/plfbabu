@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
@@ -203,12 +204,13 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						presentmentDetailDAO.updateHeader(headerId, deExecutionId, totalRecords, successRecords,
 								failedRecords, ExecutionStatus.S.name(), remarks);
 
-						deStatus.setRemarks("File Reading completed...Start processing...");
-						deStatus.setProcessedRecords(recordCount.get());
-						deStatus.setSuccessRecords(successCount.get());
-						deStatus.setFailedRecords(failedCount.get());
-
 						processingPrsentments(headerId, fileName);
+
+						deStatus.setTotalRecords(totalRecords);
+						deStatus.setRemarks(remarks);
+						deStatus.setProcessedRecords(totalRecords);
+						deStatus.setFailedRecords(failedRecords);
+						deStatus.setSuccessRecords(successRecords);
 						break;
 					}
 				}
@@ -216,6 +218,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				if (deStatus.getTotalRecords() > 0) {
 					totalRecords = (int) deStatus.getTotalRecords();
 					logger.info("\nTotal Records: {}", totalRecords);
+				} else if (StringUtils.isNotEmpty(deStatus.getRemarks())) {
+					break;
 				}
 
 			} while (ExecutionStatus.S.name().equals(deStatus.getStatus())

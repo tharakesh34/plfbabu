@@ -310,7 +310,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 				}
 
 				final Listcell lc = new Listcell(fieldValue);
-				if (selectedValuesMap.containsKey(fieldValue)) {
+				if (selectedValuesMap.containsKey(fieldValue) && i == 0) {
 					item.setSelected(true);
 				}
 

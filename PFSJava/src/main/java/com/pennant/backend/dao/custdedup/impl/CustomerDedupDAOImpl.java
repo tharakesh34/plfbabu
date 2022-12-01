@@ -262,8 +262,9 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		sql.append(", t7.PhoneNumber) MobileNumber, t1.CustCtgCode, t1.CustDftBranch, t1.CustTypeCode");
 		sql.append(", t1.CustSector, t1.CustSubSector, t1.SubCategory, t1.CasteID, t1.ReligionID, t3.CasteCode");
 		sql.append(", t3.CasteDesc, t4.ReligionCode, t4.ReligionDesc, t2.CustTypeCtg LovDescCustCtgType");
-		sql.append(", cda.CustDocTitle AadharNumber, cdp.CustDocTitle PanNumber, t6.CustEmail");
+		sql.append(", cda.CustDocTitle AadharNumber, cdp.CustDocTitle PanNumber, t6.CustEmail, t1.CustMotherMaiden");
 		sql.append(", cdv.CustDocTitle VoterID, cdd.CustDocTitle DrivingLicenceNo, t1.CustShrtName CustCompName");
+		sql.append(", cad.CustAddrStreet Address1 ");
 
 		StringBuilder extendedFields = filterSqlColumns(extFields, sql);
 		sql.append(extendedFields.toString());
@@ -285,6 +286,7 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		sql.append(getMasterDefQuery("DLNO"));
 		sql.append(" LEFT JOIN  CustomerEmails t6 ON t1.custid = t6.custid AND t6.custemailpriority = 5");
 		sql.append(" LEFT JOIN  CustomerPhonenumbers t7 ON t1.custid = t7.phonecustid");
+		sql.append(" LEFT JOIN CustomerAddresses cad ON t1.custid= cad.custid AND cad.custaddrpriority = 5");
 
 		if (extendedFields.length() > 0) {
 			sql.append(" INNER JOIN ");

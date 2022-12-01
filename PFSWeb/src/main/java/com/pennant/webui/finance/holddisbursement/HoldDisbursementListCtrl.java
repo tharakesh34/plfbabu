@@ -193,7 +193,7 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxHoldDisbursement.getSelectedItem();
 		long finID = (Long) selectedItem.getAttribute("finID");
-		final String finReference = (String) selectedItem.getAttribute("finReference");
+
 		HoldDisbursement holddisbursement = holdDisbursementService.getHoldDisbursement(finID);
 
 		if (holddisbursement == null) {

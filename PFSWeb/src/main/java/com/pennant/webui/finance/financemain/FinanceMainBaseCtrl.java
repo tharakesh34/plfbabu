@@ -2272,7 +2272,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 		if (getFinanceDetail().getShowTabDetailMap().containsKey(strTabCode)
-				|| financeReferenceDetailDAO.isTabCodeExists(strTabCode, financeMain.getFinType(), "_FINVIEW")) {
+				|| financeReferenceDetailDAO.isTabCodeExists(strTabCode, financeMain.getFinType(), "_FINVIEW",
+						getFinanceDetail().getModuleDefiner())) {
 			roles = getFinanceDetail().getShowTabDetailMap().get(strTabCode);
 			if (!StringUtils.contains(roles, getRole() + ",")) {
 				showTab = false;
@@ -5095,6 +5096,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		screenData.put("FinType", this.finType.getValue());
 		screenData.put("EligibilityMethod", eligibility);
 
+		if (getFinanceDetail() != null && getFinanceDetail().getCustomerDetails() != null) {
+			screenData.put("EmpType", getFinanceDetail().getCustomerDetails().getCustomer().getSubCategory());
+		}
+
 		if (customerDialogCtrl != null) {
 			screenData.put("EmpType", customerDialogCtrl.getEmpType());
 			screenData.put("IncomeDetails", getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList());
@@ -5108,7 +5113,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		screenData.put("UserRole", getRole());
 		screenData.put("Right_Eligibility", isReadOnly("FinanceMainDialog_Eligibility"));
 
-		if (spreadSheetService != null) {
+		if (spreadSheetService != null && StringUtils.isNotEmpty(eligibility)) {
 			map = spreadSheetService.setSpreadSheetData(screenData, financeDetail);
 		}
 
@@ -8769,7 +8774,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						} else {
 							try (ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream()) {
 								try (ZipOutputStream out = new ZipOutputStream(arrayOutputStream)) {
+
+									Set<String> docNames = new HashSet<String>();
 									for (DocumentDetails ldocDetails : downLoaddocLst) {
+										if (docNames.contains(ldocDetails.getDocName())) {
+											continue;
+										} else {
+											docNames.add(ldocDetails.getDocName());
+										}
 										byte[] byteArray = ldocDetails.getDocImage();
 
 										out.putNextEntry(new ZipEntry(ldocDetails.getDocName()));
@@ -19535,10 +19547,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					&& jointAccountDetailDialogCtrl.getJointAccountDetailList().size() > 0) {
 				jointAccountDetailDialogCtrl.doSave_JointAccountDetail(aFinanceDetail, false);
 			}
-		} else {
-			aFinanceDetail.setJointAccountDetailList(null);
-			aFinanceDetail.setGurantorsDetailList(null);
 		}
+
+		/**
+		 * The details of co-applicant were not getting displayed in saction letter because the co-applicant tab is not
+		 * configured in PSV stage, If we configure the co-applicant tab to PSV stage then the details are getting
+		 * displayed.
+		 */
+
+		/*
+		 * else { aFinanceDetail.setJointAccountDetailList(null); aFinanceDetail.setGurantorsDetailList(null); }
+		 */
+
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
 
 		if (finAdvancePaymentsListCtrl != null) {

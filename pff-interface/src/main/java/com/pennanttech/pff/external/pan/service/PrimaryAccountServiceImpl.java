@@ -11,6 +11,7 @@ import com.pennant.backend.model.PrimaryAccount;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
 
+@Deprecated
 @Component
 public class PrimaryAccountServiceImpl implements PrimaryAccountService {
 	private static final Logger logger = LogManager.getLogger(PrimaryAccountServiceImpl.class);

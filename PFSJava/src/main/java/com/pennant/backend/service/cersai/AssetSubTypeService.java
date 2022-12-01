@@ -7,9 +7,9 @@ public interface AssetSubTypeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	AssetSubType getAssetSubType(String assetTypeId, int id);
+	AssetSubType getAssetSubType(Long assetTypeId, int id);
 
-	AssetSubType getApprovedAssetSubType(String assetTypeId, int id);
+	AssetSubType getApprovedAssetSubType(Long assetTypeId, int id);
 
 	AuditHeader delete(AuditHeader auditHeader);
 

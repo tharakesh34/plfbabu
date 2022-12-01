@@ -898,5 +898,8 @@
 
 	<bean id="defaultPresentmentRequest" class="com.pennanttech.pff.external.presentment.DefaultPresentmentRequest"
 		parent="abstractInterface" />
-
+	
+	<bean id="defaultDocumentValidation" class="com.pennant.pff.document.service.DefaultDocumentValidation" />
+	
+	<bean id="docVerificationDAO" class="com.pennant.pff.document.dao.DocVerificationDAOImpl" parent="basicDao"/>
 </beans>

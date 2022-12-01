@@ -826,7 +826,6 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		// validate Instruction details
 		boolean isWIF = fsi.isWif();
 		long finID = fsi.getFinID();
-		String finReference = fsi.getFinReference();
 
 		Date fromDate = fsi.getFromDate();
 		if (fromDate == null) {

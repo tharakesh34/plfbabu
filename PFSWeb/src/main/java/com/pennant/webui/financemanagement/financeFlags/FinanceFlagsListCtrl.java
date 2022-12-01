@@ -260,7 +260,6 @@ public class FinanceFlagsListCtrl extends GFCBaseListCtrl<FinanceFlag> {
 		Listitem selectedItem = this.listBoxFinFlags.getSelectedItem();
 
 		// Get the selected entity.
-		String id = (String) selectedItem.getAttribute("id");
 		long finID = (Long) selectedItem.getAttribute("finID");
 		String tableType = StringUtils.isEmpty((String) selectedItem.getAttribute("recordType")) ? "_View" : "_TView";
 		FinanceFlag afinanceFlag = financeFlagsService.getFinanceFlagsByRef(finID, tableType);

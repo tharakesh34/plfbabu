@@ -21,11 +21,11 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class TdsReceiptDetailsDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
@@ -93,13 +93,13 @@ public class TdsReceiptDetailsDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		for (int i = 0; i < allocations.size(); i++) {
 			ReceiptAllocationDetail rad = allocations.get(i);
-			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_PP)) {
+			if (StringUtils.equals(rad.getAllocationType(), Allocation.PP)) {
 				continue;
 			}
-			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_PFT)
-					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_TDS)
-					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_NPFT)
-					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
+			if (StringUtils.equals(rad.getAllocationType(), Allocation.PFT)
+					|| StringUtils.equals(rad.getAllocationType(), Allocation.TDS)
+					|| StringUtils.equals(rad.getAllocationType(), Allocation.NPFT)
+					|| StringUtils.equals(rad.getAllocationType(), Allocation.PRI)) {
 				paidAmount = BigDecimal.ZERO;
 			} else {
 				paidAmount = rad.getPaidAmount();
@@ -108,10 +108,10 @@ public class TdsReceiptDetailsDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			sum = sum.add(paidAmount);
 			Listitem item = new Listitem();
 			String allocDesc = Labels.getLabel("label_RecceiptDialog_AllocationType_" + rad.getAllocationType());
-			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_MANADV)) {
+			if (StringUtils.equals(rad.getAllocationType(), Allocation.MANADV)) {
 				allocDesc = rad.getTypeDesc();
 			}
-			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FEE)) {
+			if (StringUtils.equals(rad.getAllocationType(), Allocation.FEE)) {
 				Filter[] masterCodeFiler = new Filter[1];
 				masterCodeFiler[0] = new Filter("FeeTypeId", -rad.getAllocationTo(), Filter.OP_EQUAL);
 				allocDesc = PennantApplicationUtil.getDBDescription("FeeType", "FeeTypes", "FeeTypeDesc",
@@ -123,8 +123,8 @@ public class TdsReceiptDetailsDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			addAmountCell(item, rad.getTdsDue(), ("AllocateTdsDue_" + i), false);
 			addAmountCell(item, rad.getTotalDue(), ("AllocateDue_" + i), false);
 			addAmountCell(item, rad.getTdsPaid(), ("AllocateTdsPaid_" + i), false);
-			if (rad.getAllocationType().equalsIgnoreCase(RepayConstants.ALLOCATION_TDS)
-					|| rad.getAllocationType().equalsIgnoreCase(RepayConstants.ALLOCATION_NPFT)) {
+			if (rad.getAllocationType().equalsIgnoreCase(Allocation.TDS)
+					|| rad.getAllocationType().equalsIgnoreCase(Allocation.NPFT)) {
 				addAmountCell(item, rad.getTotalDue(), ("AllocatePaid_" + i), false);
 			} else {
 				addAmountCell(item, rad.getPaidAmount(), ("AllocatePaid_" + i), false);

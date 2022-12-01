@@ -49,7 +49,7 @@ public class SecurityInterestTypeListCtrl extends GFCBaseListCtrl<SecurityIntere
 	protected Button button_SecurityInterestTypeList_SecurityInterestTypeSearch;
 
 	// Search Fields
-	protected Textbox assetCategoryId; // autowired
+	protected Intbox assetCategoryId; // autowired
 	protected Intbox id; // autowired
 	protected Textbox description; // autowired
 

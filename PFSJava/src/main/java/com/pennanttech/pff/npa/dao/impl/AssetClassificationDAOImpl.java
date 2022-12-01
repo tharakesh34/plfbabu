@@ -463,7 +463,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setInt(index++, ac.getNpaPastDueDays());
 				ps.setDate(index++, JdbcUtil.getDate(ac.getNpaPastDueDate()));
 				ps.setBoolean(index++, ac.isNpaStage());
-				ps.setLong(index++, ac.getNpaClassID());
+				ps.setObject(index++, ac.getNpaClassID());
 
 				ps.setLong(index, ac.getId());
 			});

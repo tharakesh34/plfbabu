@@ -48,6 +48,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.rits.cloning.Cloner;
 
 public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHeader>
@@ -220,8 +221,8 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		// Update Receipt Details based on Receipt Mode
 		for (int i = 0; i < rch.getReceiptDetails().size(); i++) {
 			FinReceiptDetail receiptDetail = rch.getReceiptDetails().get(i);
-			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
-					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD)) {
+			if (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.CHEQUE)
+					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.DD)) {
 				finReceiptDetailDAO.updateReceiptStatus(receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(),
 						RepayConstants.PAYSTATUS_REALIZED);
 				break;

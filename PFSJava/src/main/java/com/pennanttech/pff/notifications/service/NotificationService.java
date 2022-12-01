@@ -86,7 +86,6 @@ import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -106,6 +105,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.DataMapUtil;
 import com.pennanttech.pff.core.util.DataMapUtil.FieldPrefix;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.sms.PresentmentBounceService;
 
 import freemarker.cache.StringTemplateLoader;
@@ -975,9 +975,9 @@ public class NotificationService extends GenericService<Notification> {
 		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {
 			for (int i = 0; i < rch.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = rch.getReceiptDetails().get(i);
-				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+				if (!StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EXCESS)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EMIINADV)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PAYABLE)) {
 					valueDate = receiptDetail.getReceivedDate();
 					modeAmount = receiptDetail.getAmount();
 

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.MasterDefUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.applicationmaster.RejectDetailDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -29,12 +30,15 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.document.DocVerificationUtil;
+import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class ReceiptDataValidator {
 	private static final Logger logger = LogManager.getLogger(ReceiptDataValidator.class);
@@ -203,7 +207,7 @@ public class ReceiptDataValidator {
 			return;
 		}
 
-		if (RepayConstants.RECEIPTMODE_CASH.equals(receiptMode) && RepayConstants.PAYSTATUS_BOUNCE.equals(status)) {
+		if (ReceiptMode.CASH.equals(receiptMode) && RepayConstants.PAYSTATUS_BOUNCE.equals(status)) {
 			setError(rud, "[RECEIPTMODE] with Bounce Not allowed");
 			return;
 		}
@@ -218,10 +222,9 @@ public class ReceiptDataValidator {
 			throw new AppException("RU0040", "[RECEIPTCHANNEL] with length more than 10 characters");
 		}
 
-		boolean bounceOrCheque = RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)
-				|| RepayConstants.RECEIPTMODE_DD.equals(receiptMode);
+		boolean bounceOrCheque = ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode);
 
-		if (StringUtils.isBlank(channel) && (RepayConstants.RECEIPTMODE_CASH.equals(receiptMode) || bounceOrCheque)) {
+		if (StringUtils.isBlank(channel) && (ReceiptMode.CASH.equals(receiptMode) || bounceOrCheque)) {
 			setError(rud, "Blanks in [RECEIPTCHANNEL]");
 			return;
 		}
@@ -237,7 +240,7 @@ public class ReceiptDataValidator {
 		}
 
 		String favourNumber = rud.getFavourNumber();
-		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode) && StringUtils.isBlank(favourNumber)) {
+		if (ReceiptMode.CHEQUE.equals(receiptMode) && StringUtils.isBlank(favourNumber)) {
 			setError(rud, "[FAVOURNUMBER] is Mandatory");
 			return;
 		}
@@ -346,6 +349,22 @@ public class ReceiptDataValidator {
 
 		if (rud.isDedupCheck()) {
 			checkDedup(rud);
+		}
+
+		String panNumber = rud.getPanNumber();
+		if (StringUtils.isNotEmpty(panNumber)) {
+			if (MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
+				DocVerificationHeader header = new DocVerificationHeader();
+				header.setDocNumber(panNumber);
+				header.setDocReference(reference);
+
+				ErrorDetail error = DocVerificationUtil.doValidatePAN(header, true);
+
+				if (error != null) {
+					setError(rud, error.getMessage());
+					return;
+				}
+			}
 		}
 
 		receiptService = (ReceiptService) SpringBeanUtil.getBean("receiptService");
@@ -618,8 +637,7 @@ public class ReceiptDataValidator {
 			}
 
 			if (RepayConstants.PAYSTATUS_BOUNCE.equals(status)) {
-				if (!RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)
-						&& !RepayConstants.RECEIPTMODE_DD.equals(receiptMode)) {
+				if (!ReceiptMode.CHEQUE.equals(receiptMode) && !ReceiptMode.DD.equals(receiptMode)) {
 					setError(rud, "92021", "Status Bounce is only allowed for CHEQUE/DD cases");
 				}
 			}
@@ -745,8 +763,7 @@ public class ReceiptDataValidator {
 	}
 
 	private boolean isChequeOrDDMode(String receiptMode) {
-		return RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(receiptMode)
-				|| RepayConstants.RECEIPTMODE_DD.equalsIgnoreCase(receiptMode);
+		return ReceiptMode.CHEQUE.equalsIgnoreCase(receiptMode) || ReceiptMode.DD.equalsIgnoreCase(receiptMode);
 	}
 
 	public void setErrorToRUD(ReceiptUploadDetail rud, String errorCode, String parm0) {

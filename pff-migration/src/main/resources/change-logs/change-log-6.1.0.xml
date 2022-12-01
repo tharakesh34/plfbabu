@@ -293,4 +293,1002 @@
 			]]>
 		</sql>
 	</changeSet>	
+	
+	<changeSet id="06" author="rahul.r">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FinPlanEMIHDates DROP CONSTRAINT FK_FinPlanEMIHDates_FinId;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="07" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='activeLoansOnFinType';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='cibilScore';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='riskScore';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='sal_NotCredit_flag';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='calculatedAnnualNetSalary';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='emi_Bounce_flag';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='custAddrCity';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='disbursedAmount';
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='Collateral_Bank_Valuation';
+				
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','activeLoansOnFinType','Active Loans for loan type','bigint',4,'1','1',null,'static',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','riskScore','risk Score','Decimal',18,'1','1',null,'static,global,calvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','cibilScore','cibilScore','Decimal',18,'1','1',null,'static,global,calvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','disbursedAmount','Disbursed Amount','Decimal',18,'1','1',null,'calvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Collateral_Bank_Valuation','Collateral Bank Valuation','Decimal',18,'0','0','LoanPurposes','static',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','custAddrCity','custAddress City','nchar',1,'1','0',null,'static,global,dbvalue','City');
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','calculatedAnnualNetSalary','calculated Annual NetSalary','Decimal',18,'1','1',null,'static,global,calvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','emi_Bounce_flag','emi_Bounce flag','Decimal',18,'1','1',null,'static,global,calvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','sal_NotCredit_flag','sal_Not Credit_flag','Decimal',18,'1','1',null,'static,global,calvalue',null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="08" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Delete FROM RBFieldDetails WHERE RBModule = 'VERRULE' AND RBEvent = 'VERRULE' and rbfldname='LOAN_LAP_UPDATED_LTV_5';
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('VERRULE','VERRULE','LOAN_LAP_UPDATED_LTV_5','LOAN_LAP_UPDATED_LTV_5','Decimal',18,'1','1',null,'static',null);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="09" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Delete FROM RBFieldDetails WHERE RBModule = 'FEES' AND RBEvent = 'ADDDBSN' and rbfldname='ct_custNationality';
+				Delete FROM RBFieldDetails WHERE RBModule = 'FEES' AND RBEvent = 'WAIVER' and rbfldname='COLLATERAL_OPENPLOT_ADDR';
+				
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','ADDDBSN','ct_custNationality','Customer Nationality','nchar',2,'0','0','NationalityCode','static,global,dbvalue',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','WAIVER','COLLATERAL_OPENPLOT_ADDR','COLLATERAL_OPENPLOT_ADDR','nchar',50,'1','0',null,'static',null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="10" author="rahul.r">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FinPlanEMIHMonths DROP CONSTRAINT FK_FinPlanEMIHMonths_FinId;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="11" author="rahul.r">
+		<sql>
+			<![CDATA[
+				update ReportList set fieldvalues='FinType, LovDescProductCodeName, LovDescCustCIF, FinReference, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinancingAmount, CurFinAmount, FinCurrAssetValue, FeeChargeAmt, TotalCpz, FinRepaymentAmount, SvAmount, DownPayment, ClosingStatus' where code='FINENQ';
+				update ReportList set fieldtype='String, String, String, String, String, Date, int, Date, String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, String' where code='FINENQ';
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="12" author="rahul.r">
+		<sql>
+			<![CDATA[
+				update ReportList set fieldvalues='FinType, LovDescProductCodeName, LovDescCustCIF, FinReference, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinancingAmount, CurFinAmount, FinCurrAssetValue, FeeChargeAmt, TotalCpz, FinRepaymentAmount, SvAmount, DownPayment, ClosingStatus' where code='SCHENQ';
+				update ReportList set fieldtype='String, String, String, String, String, Date, int, Date, String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, String' where code='SCHENQ';
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="13" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Delete From WorkFlowDetails Where WorkFlowType='LINKDELINK_WF' And workflowactive=1;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="14" author="rahul.r">
+		<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowType">LINKDELINK_WF</column>
+			<column name="WorkFlowSubType">Linking/DeLinking Workflow Process</column>
+			<column name="WorkFlowDesc">Maker/Checker Linking/DeLinking Workflow Process</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">LINKDELINK_MAKER;LINKDELINK_APPROVER</column>
+			<column name="FirstTaskOwner">LINKDELINK_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">1</column>
+			<column name="LastMntBy">1000</column>
+			<column name="LastMntOn" valueDate="current_timestamp" />
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode">Null</column>
+			<column name="NextRoleCode">Null</column>
+			<column name="TaskId">Null</column>
+			<column name="NextTaskId">Null</column>
+			<column name="RecordType">NULL</column>
+		</insert>
+	</changeSet>
+	<changeSet id="15" author="rahul.r">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":823,"properties":{"process_id":"LINKDELINK_WF","name":"Maker/Checker for Linking/DeLinking ","documentation":"Maker/Checker for Linking/DeLinking ","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-7E9BDDFD-3BAA-4DCA-9A9A-A8F9B3AF0C22"}],"bounds":{"lowerRight":{"x":130,"y":193},"upperLeft":{"x":100,"y":163}},"dockers":[]},{"resourceId":"sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB","properties":{"overrideid":"","name":"Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LINKDELINK_MAKER","firstName":"LINKDELINK_MAKER","fullName":"LINKDELINK_MAKER","id":"LINKDELINK_MAKER","roledesc":"LINKDELINK_MAKER","$$hashKey":"object:455"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-E6C34FDD-1985-4B70-B4FC-AE1CD41660EB"},{"resourceId":"sid-F9C2F8D9-30F5-4D44-8057-8A3C055D26FE"}],"bounds":{"lowerRight":{"x":275,"y":218},"upperLeft":{"x":175,"y":138}},"dockers":[]},{"resourceId":"sid-7E9BDDFD-3BAA-4DCA-9A9A-A8F9B3AF0C22","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB"}],"bounds":{"lowerRight":{"x":174.15625,"y":178},"upperLeft":{"x":130.609375,"y":178}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB"}},{"resourceId":"sid-AE387314-FE0F-46BC-85D0-ACE8D773FF2C","properties":{"overrideid":"","name":"Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LINKDELINK_APPROVER","firstName":"LINKDELINK_APPROVER","fullName":"LINKDELINK_APPROVER","id":"LINKDELINK_APPROVER","roledesc":"LINKDELINK_APPROVER","$$hashKey":"object:755"}}}},"additionalforms":"Accounting","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-27367909-9EE2-4D22-A5B9-7292366D00ED"}],"bounds":{"lowerRight":{"x":475,"y":218},"upperLeft":{"x":375,"y":138}},"dockers":[]},{"resourceId":"sid-62197CD7-4385-4D76-97EC-4DF2B08406C9","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-C74D85AE-C331-4EA1-A402-5953D537438F"},{"resourceId":"sid-FA0157BE-EB72-4CF5-880B-52487103D987"},{"resourceId":"sid-D026A55F-B1E7-4C7B-86A0-56B74E46320F"}],"bounds":{"lowerRight":{"x":580,"y":198},"upperLeft":{"x":540,"y":158}},"dockers":[]},{"resourceId":"sid-27367909-9EE2-4D22-A5B9-7292366D00ED","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-62197CD7-4385-4D76-97EC-4DF2B08406C9"}],"bounds":{"lowerRight":{"x":539.3867255581166,"y":178.42209123822184},"upperLeft":{"x":475.7538994418834,"y":178.18728376177816}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-62197CD7-4385-4D76-97EC-4DF2B08406C9"}},{"resourceId":"sid-7122C355-EF27-402B-93E7-DCD95A1BDF06","properties":{"overrideid":"","name":"Complete Process","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-2A3B8B2E-6BE1-45EB-B8BF-B10AF4BCC2C6"}],"bounds":{"lowerRight":{"x":775,"y":218},"upperLeft":{"x":675,"y":138}},"dockers":[]},{"resourceId":"sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE","properties":{"overrideid":"","name":"Cancel Process","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-33A05361-67E5-4840-8AFF-4EE031BA06E0"}],"bounds":{"lowerRight":{"x":614.760009765625,"y":333.4500045776367},"upperLeft":{"x":514.760009765625,"y":253.45000457763672}},"dockers":[]},{"resourceId":"sid-F9C2F8D9-30F5-4D44-8057-8A3C055D26FE","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE"}],"bounds":{"lowerRight":{"x":514.654070854187,"y":293.4500045776367},"upperLeft":{"x":225,"y":218.68593907356262}},"dockers":[{"x":50,"y":40},{"x":225,"y":293.4500045776367},{"x":50,"y":40}],"target":{"resourceId":"sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE"}},{"resourceId":"sid-16520C59-C11C-4A34-BC99-C32E99A30235","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":848,"y":192},"upperLeft":{"x":820,"y":164}},"dockers":[]},{"resourceId":"sid-2A3B8B2E-6BE1-45EB-B8BF-B10AF4BCC2C6","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-16520C59-C11C-4A34-BC99-C32E99A30235"}],"bounds":{"lowerRight":{"x":819.375,"y":178},"upperLeft":{"x":775.390625,"y":178}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-16520C59-C11C-4A34-BC99-C32E99A30235"}},{"resourceId":"sid-3C05AC27-9552-40C7-9199-4CF94AA9319F","properties":{"overrideid":"","name":"Rejected"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":687.760009765625,"y":307.4500045776367},"upperLeft":{"x":659.760009765625,"y":279.4500045776367}},"dockers":[]},{"resourceId":"sid-33A05361-67E5-4840-8AFF-4EE031BA06E0","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-3C05AC27-9552-40C7-9199-4CF94AA9319F"}],"bounds":{"lowerRight":{"x":659.135009765625,"y":293.4500045776367},"upperLeft":{"x":615.150634765625,"y":293.4500045776367}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-3C05AC27-9552-40C7-9199-4CF94AA9319F"}},{"resourceId":"sid-C74D85AE-C331-4EA1-A402-5953D537438F","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB"}],"bounds":{"lowerRight":{"x":560.5,"y":157.17734622955322},"upperLeft":{"x":225,"y":78.45001220703125}},"dockers":[{"x":20.5,"y":20.5},{"x":560.5,"y":78.45001220703125},{"x":225,"y":78.45001220703125},{"x":50,"y":40}],"target":{"resourceId":"sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB"}},{"resourceId":"sid-D026A55F-B1E7-4C7B-86A0-56B74E46320F","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE"}],"bounds":{"lowerRight":{"x":560.5,"y":252.75418674797942},"upperLeft":{"x":560.5,"y":198.68243975928885}},"dockers":[{"x":20.5,"y":20.5},{"x":45.739990234375,"y":19.486621929631553}],"target":{"resourceId":"sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE"}},{"resourceId":"sid-E6C34FDD-1985-4B70-B4FC-AE1CD41660EB","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-AE387314-FE0F-46BC-85D0-ACE8D773FF2C"}],"bounds":{"lowerRight":{"x":374.78125,"y":178},"upperLeft":{"x":276,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-AE387314-FE0F-46BC-85D0-ACE8D773FF2C"}},{"resourceId":"sid-FA0157BE-EB72-4CF5-880B-52487103D987","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-7122C355-EF27-402B-93E7-DCD95A1BDF06"}],"bounds":{"lowerRight":{"x":674.5214889942897,"y":178.43836675036258},"upperLeft":{"x":580.7773391307103,"y":178.15343012463742}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-7122C355-EF27-402B-93E7-DCD95A1BDF06"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test"><process id="LINKDELINK_WF" name="Maker/Checker for Linking/DeLinking " isExecutable="true"><documentation>Maker/Checker for Linking/DeLinking </documentation><startEvent id="startEvent1" name="Start"/><userTask id="sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB" name="Maker" activiti:actor="LINKDELINK_MAKER" activiti:assignmentLevel="Role Queue"/><sequenceFlow id="sid-7E9BDDFD-3BAA-4DCA-9A9A-A8F9B3AF0C22" sourceRef="startEvent1" targetRef="sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB" representsUserAction="false" mandateNotes="false"/><userTask id="sid-AE387314-FE0F-46BC-85D0-ACE8D773FF2C" name="Approver" activiti:actor="LINKDELINK_APPROVER" activiti:additionalForms="Accounting" activiti:assignmentLevel="Role Queue"/><exclusiveGateway id="sid-62197CD7-4385-4D76-97EC-4DF2B08406C9"/><sequenceFlow id="sid-27367909-9EE2-4D22-A5B9-7292366D00ED" sourceRef="sid-AE387314-FE0F-46BC-85D0-ACE8D773FF2C" targetRef="sid-62197CD7-4385-4D76-97EC-4DF2B08406C9" representsUserAction="false" mandateNotes="false"/><serviceTask id="sid-7122C355-EF27-402B-93E7-DCD95A1BDF06" name="Complete Process" activiti:operation="doApprove"/><serviceTask id="sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE" name="Cancel Process" activiti:operation="doReject"/><sequenceFlow id="sid-F9C2F8D9-30F5-4D44-8057-8A3C055D26FE" name="Cancel" sourceRef="sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB" targetRef="sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression></sequenceFlow><endEvent id="sid-16520C59-C11C-4A34-BC99-C32E99A30235" name="Approved"/><sequenceFlow id="sid-2A3B8B2E-6BE1-45EB-B8BF-B10AF4BCC2C6" sourceRef="sid-7122C355-EF27-402B-93E7-DCD95A1BDF06" targetRef="sid-16520C59-C11C-4A34-BC99-C32E99A30235" representsUserAction="false" mandateNotes="false"/><endEvent id="sid-3C05AC27-9552-40C7-9199-4CF94AA9319F" name="Rejected"/><sequenceFlow id="sid-33A05361-67E5-4840-8AFF-4EE031BA06E0" sourceRef="sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE" targetRef="sid-3C05AC27-9552-40C7-9199-4CF94AA9319F" representsUserAction="false" mandateNotes="false"/><sequenceFlow id="sid-C74D85AE-C331-4EA1-A402-5953D537438F" name="Resubmit" sourceRef="sid-62197CD7-4385-4D76-97EC-4DF2B08406C9" targetRef="sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-D026A55F-B1E7-4C7B-86A0-56B74E46320F" name="Reject" sourceRef="sid-62197CD7-4385-4D76-97EC-4DF2B08406C9" targetRef="sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><sequenceFlow id="sid-E6C34FDD-1985-4B70-B4FC-AE1CD41660EB" name="Submit" sourceRef="sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB" targetRef="sid-AE387314-FE0F-46BC-85D0-ACE8D773FF2C" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-FA0157BE-EB72-4CF5-880B-52487103D987" name="Approve" sourceRef="sid-62197CD7-4385-4D76-97EC-4DF2B08406C9" targetRef="sid-7122C355-EF27-402B-93E7-DCD95A1BDF06" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow></process><bpmndi:BPMNDiagram id="BPMNDiagram_ELDOMC_COMAP"><bpmndi:BPMNPlane bpmnElement="LINKDELINK_WF" id="BPMNPlane_ELDOMC_COMAP"><bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1"><omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0"/></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB" id="BPMNShape_sid-C7C9E9CD-6D2A-4652-BCE2-2BA951E122BB"><omgdc:Bounds height="80.0" width="100.0" x="175.0" y="138.0"/></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-AE387314-FE0F-46BC-85D0-ACE8D773FF2C" id="BPMNShape_sid-AE387314-FE0F-46BC-85D0-ACE8D773FF2C"><omgdc:Bounds height="80.0" width="100.0" x="375.0" y="138.0"/></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-62197CD7-4385-4D76-97EC-4DF2B08406C9" id="BPMNShape_sid-62197CD7-4385-4D76-97EC-4DF2B08406C9"><omgdc:Bounds height="40.0" width="40.0" x="540.0" y="158.0"/></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-7122C355-EF27-402B-93E7-DCD95A1BDF06" id="BPMNShape_sid-7122C355-EF27-402B-93E7-DCD95A1BDF06"><omgdc:Bounds height="80.0" width="100.0" x="675.0" y="138.0"/></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE" id="BPMNShape_sid-D6BB1BC5-44CF-4D7D-B418-D4D5410182EE"><omgdc:Bounds height="80.0" width="100.0" x="514.760009765625" y="253.45000457763672"/></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-16520C59-C11C-4A34-BC99-C32E99A30235" id="BPMNShape_sid-16520C59-C11C-4A34-BC99-C32E99A30235"><omgdc:Bounds height="28.0" width="28.0" x="820.0" y="164.0"/></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-3C05AC27-9552-40C7-9199-4CF94AA9319F" id="BPMNShape_sid-3C05AC27-9552-40C7-9199-4CF94AA9319F"><omgdc:Bounds height="28.0" width="28.0" x="659.760009765625" y="279.4500045776367"/></bpmndi:BPMNShape><bpmndi:BPMNEdge bpmnElement="sid-FA0157BE-EB72-4CF5-880B-52487103D987" id="BPMNEdge_sid-FA0157BE-EB72-4CF5-880B-52487103D987"><omgdi:waypoint x="579.5579268292682" y="178.4420731707317"/><omgdi:waypoint x="675.0" y="178.15197568389058"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-C74D85AE-C331-4EA1-A402-5953D537438F" id="BPMNEdge_sid-C74D85AE-C331-4EA1-A402-5953D537438F"><omgdi:waypoint x="560.5" y="158.5"/><omgdi:waypoint x="560.5" y="78.45001220703125"/><omgdi:waypoint x="225.0" y="78.45001220703125"/><omgdi:waypoint x="225.0" y="138.0"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-E6C34FDD-1985-4B70-B4FC-AE1CD41660EB" id="BPMNEdge_sid-E6C34FDD-1985-4B70-B4FC-AE1CD41660EB"><omgdi:waypoint x="275.0" y="178.0"/><omgdi:waypoint x="375.0" y="178.0"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-2A3B8B2E-6BE1-45EB-B8BF-B10AF4BCC2C6" id="BPMNEdge_sid-2A3B8B2E-6BE1-45EB-B8BF-B10AF4BCC2C6"><omgdi:waypoint x="775.0" y="178.0"/><omgdi:waypoint x="820.0" y="178.0"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-D026A55F-B1E7-4C7B-86A0-56B74E46320F" id="BPMNEdge_sid-D026A55F-B1E7-4C7B-86A0-56B74E46320F"><omgdi:waypoint x="560.5" y="197.5"/><omgdi:waypoint x="560.5" y="253.45000457763672"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-F9C2F8D9-30F5-4D44-8057-8A3C055D26FE" id="BPMNEdge_sid-F9C2F8D9-30F5-4D44-8057-8A3C055D26FE"><omgdi:waypoint x="225.0" y="218.0"/><omgdi:waypoint x="225.0" y="293.4500045776367"/><omgdi:waypoint x="514.760009765625" y="293.4500045776367"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-27367909-9EE2-4D22-A5B9-7292366D00ED" id="BPMNEdge_sid-27367909-9EE2-4D22-A5B9-7292366D00ED"><omgdi:waypoint x="475.0" y="178.18450184501845"/><omgdi:waypoint x="540.4259259259259" y="178.42592592592592"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-33A05361-67E5-4840-8AFF-4EE031BA06E0" id="BPMNEdge_sid-33A05361-67E5-4840-8AFF-4EE031BA06E0"><omgdi:waypoint x="614.760009765625" y="293.4500045776367"/><omgdi:waypoint x="659.760009765625" y="293.4500045776367"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-7E9BDDFD-3BAA-4DCA-9A9A-A8F9B3AF0C22" id="BPMNEdge_sid-7E9BDDFD-3BAA-4DCA-9A9A-A8F9B3AF0C22"><omgdi:waypoint x="130.0" y="178.0"/><omgdi:waypoint x="175.0" y="178.0"/></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></definitions>]]></column>
+			<where>workflowtype='LINKDELINK_WF' and workflowactive=1
+			</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="16" author="rahul.r">
+		<createTable tableName="DOC_VERIFICATION_HEADER">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="custCif" type="varchar(20)"/>
+			<column name="doctype" type="varchar(50)"/>
+			<column name="docNumber" type="varchar(100)"/>
+			<column name="verified" type="smallint"/>
+			<column name="verifiedon" type="datetime"/>
+			<column name="docReference" type="varchar(50)"/>
+			<column name="clientId" type="varchar(100)"/>
+			<column name="docRequest" type="clob"/>
+			<column name="docResponse" type="clob"/>
+			<column name="status" type="varchar(6)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="16.1" author="rahul.r">
+		<addPrimaryKey tableName="DOC_VERIFICATION_HEADER" columnNames="Id" constraintName="pk_doc_verification_header"/>
+	</changeSet>
+	
+	<changeSet id="17" author="rahul.r">
+		<createTable tableName="DOC_VERIFICATION_DETAILS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="headerId" type="bigint" />
+			<column name="fullName" type="varchar(200)"/>
+			<column name="fatherOrHusbandName" type="varchar(200)"/>
+			<column name="gender" type="varchar(5)"/>
+			<column name="dob" type="varchar(50)"/>
+			<column name="age" type="int"/>
+			<column name="panNumber" type="varchar(15)"/>
+			<column name="aadhaarNumber" type="varchar(20)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="17.1" author="rahul.r">
+		<addPrimaryKey tableName="DOC_VERIFICATION_DETAILS" columnNames="Id" constraintName="pk_doc_verification_details"/>
+	</changeSet>
+	
+	<changeSet id="18" author="rahul.r">
+		<addForeignKeyConstraint constraintName="FK_DOCVERIFDETAIL_ID"
+			referencedTableName="DOC_VERIFICATION_HEADER" baseColumnNames="headerId" baseTableName="DOC_VERIFICATION_DETAILS"
+			referencedColumnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="19" author="rahul.r">
+		<createTable tableName="DOC_VERIFICATION_ADDRESS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="headerId" type="bigint" />
+			<column name="houseNo" type="varchar(100)"/>
+			<column name="street" type="varchar(100)"/>
+			<column name="ditrict" type="varchar(100)"/>
+			<column name="state" type="varchar(50)"/>
+			<column name="country" type="varchar(50)"/>
+			<column name="zip" type="varchar(50)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="19.1" author="rahul.r">
+		<addPrimaryKey tableName="DOC_VERIFICATION_ADDRESS" columnNames="Id" constraintName="pk_doc_verification_address"/>
+	</changeSet>
+	
+	<changeSet id="20" author="rahul.r">
+		<addForeignKeyConstraint constraintName="FK_DOCVERIFADDRESS_ID"
+			referencedTableName="DOC_VERIFICATION_HEADER" baseColumnNames="headerId" baseTableName="DOC_VERIFICATION_ADDRESS"
+			referencedColumnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="21" author="rahul.r">
+		<addColumn tableName="MASTER_DEF">
+			<column name="Validation_Req" type="smallint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="21.1" author="rahul.r">
+		<sql>
+			<![CDATA[
+				UPDATE MASTER_DEF SET VALIDATION_REQ = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="21.2" author="rahul.r" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE MASTER_DEF ADD CONSTRAINT DF_MDF_VALIDATION_REQ DEFAULT 0 FOR VALIDATION_REQ;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="21.2" author="rahul.r" dbms="postgresql, oracle">
+		<addDefaultValue columnName="VALIDATION_REQ" tableName="MASTER_DEF" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="23.1" author="sandeepkumar.m">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'AssetCategory';
+				DELETE FROM REPORTLIST WHERE CODE = 'AreaUnit';
+				DELETE FROM REPORTLIST WHERE CODE = 'SecurityInterestType';
+				DELETE FROM REPORTLIST WHERE CODE = 'AssetSubType';
+				DELETE FROM REPORTLIST WHERE CODE = 'AssetTyp';
+				DELETE FROM REPORTLIST WHERE CODE = 'CityMapping';
+				DELETE FROM REPORTLIST WHERE CODE = 'DistrictMapping';
+				DELETE FROM REPORTLIST WHERE CODE = 'ProvinceMapping';
+				
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('AssetCategory', 'AssetCategory', 'listheader_Id.label,listheader_Description.label', 'id,description', 'String,String', ' ', 'ReportList02', 'Asset Category', 'Cersai Masters', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('AreaUnit', 'AreaUnit', 'listheader_Id.label,listheader_Description.label', 'id,description', 'String,String', ' ', 'ReportList02', 'Area Unit', 'Cersai Masters', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('SecurityInterestType', 'SecurityInterestType', 'listheader_AssetCategoryId.label,listheader_Id.label,listheader_Description.label', 'assetcategoryid,id,description', 'String,String,String',' ','ReportList03','Security Interest Type','Cersai Masters', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('AssetSubType', 'AssetSubType', 'listheader_AssetTypeId.label,listheader_Id.label,listheader_Description.label', 'assettypeid,id,description', 'String,String,String', ' ', 'ReportList03','Asset Sub Type','Cersai Masters', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('AssetTyp', 'AssetTyp', 'listheader_AssetCategoryId.label,listheader_Id.label,listheader_Description.label', 'assetcategoryid,id,description', 'String,String,String', ' ', 'ReportList03','Asset Type','Cersai Masters', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('CityMapping', 'CityMapping', 'listheader_MappingType.label,listheader_CityCode.label,listheader_MappingValue.label', 'mappingtype,citycode,mappingvalue', 'String,String,String', ' ','ReportList03','City Mapping','Cersai Masters', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('DistrictMapping', 'DistrictMapping', 'listheader_MappingType.label,listheader_District.label,listheader_MappingValue.label', 'mappingtype,district,mappingvalue', 'String,String,String', ' ','ReportList03','District Mapping','Cersai Masters', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('ProvinceMapping', 'ProvinceMapping', 'listheader_MappingType.label,listheader_Province.label,listheader_MappingValue.label', 'mappingtype,province,mappingvalue', 'String,String,String', ' ','ReportList03','Province Mapping','Cersai Masters', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="24.1" author="rahul.r">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTDOCUMENTTYPES WHERE DOCTYPECODE = 'CIBIL';
+				INSERT INTO BMTDOCUMENTTYPES (DOCTYPECODE, DOCISMANDATORY, DOCTYPEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, DOCEXPDATEISMAND, DOCISSUEDATEMAND, DOCIDNUMMAND, DOCISSUEDAUTHORITYMAND, DOCTYPEDESC, DOCISPDFEXTREQUIRED, DOCISPASSWORDPROTECTED, PDFMAPPINGREF, CATEGORYID, PDD, OTC, LVREQ, RCUREQ, DOCEXTERNALREF) VALUES ('CIBIL', 0, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 'CIBIL', 0, 0, 0, 1, 0, 0, 0, 0, 'CIBIL');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="25" author="rahul.r">
+		<sql>
+		<![CDATA[
+				UPDATE CUSTOMERS  SET PHONENUMBER =(SELECT CP.PHONENUMBER FROM CUSTOMERS C INNER JOIN CUSTOMERPHONENUMBERS CP ON C.CUSTID=CP.PHONECUSTID AND CP.PHONETYPEPRIORITY=5 AND CUSTOMERS.CUSTID=C.CUSTID);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="26.1" author="rahul.r">
+		<sql>
+		<![CDATA[
+				Drop view facilityreferencedetail_view;
+				Drop view lmtfinrefdetail_finview;
+				Drop view lmtfinrefdetail_peview;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="26" author="rahul.r">
+		<addColumn tableName="RMTScoringGroup_temp">
+			<column name="minscore2" type="varchar(4)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="27" author="rahul.r">
+		<addColumn tableName="RMTScoringGroup">
+			<column name="minscore2" type="varchar(4)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="28" author="rahul.r">
+		<sql>
+		<![CDATA[
+				UPDATE RMTScoringGroup  SET minscore2 =(SELECT C.minscore FROM RMTScoringGroup C  Where RMTScoringGroup.scoregroupid=C.scoregroupid);
+				UPDATE RMTScoringGroup_Temp  SET minscore2 =(SELECT C.minscore FROM RMTScoringGroup_Temp C  Where RMTScoringGroup_Temp.scoregroupid=C.scoregroupid);
+				
+				UPDATE RMTScoringGroup SET minscore=null;
+				UPDATE RMTScoringGroup_Temp SET minscore=null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="29_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtscoringgroup_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="30_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtscoringgroup');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="29" author="rahul.r">
+		<modifyDataType tableName="RMTScoringGroup_temp" columnName="minscore"
+			newDataType="int" />
+	</changeSet>
+	
+	<changeSet id="30" author="rahul.r">
+		<modifyDataType tableName="RMTScoringGroup" columnName="minscore"
+			newDataType="int" />
+	</changeSet>
+
+	<changeSet id="30_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtscoringgroup_temp');
+				select deps_restore_dependencies ('plf', 'rmtscoringgroup');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="31" author="rahul.r" dbms="oracle,postgresql">
+		<sql>
+		<![CDATA[
+				UPDATE RMTScoringGroup  SET minscore = TO_NUMBER((SELECT C.minscore2 FROM RMTScoringGroup C  Where RMTScoringGroup.scoregroupid=C.scoregroupid),'9999');
+				UPDATE RMTScoringGroup_Temp  SET minscore = TO_NUMBER((SELECT C.minscore2 FROM RMTScoringGroup_Temp C  Where RMTScoringGroup_Temp.scoregroupid=C.scoregroupid),'9999');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="32" author="rahul.r" dbms="mssql">
+		<sql>
+		<![CDATA[
+				UPDATE RMTScoringGroup  SET minscore = CAST((SELECT C.minscore2 FROM RMTScoringGroup C  Where RMTScoringGroup.scoregroupid=C.scoregroupid) AS int);
+				UPDATE RMTScoringGroup_Temp  SET minscore = CAST((SELECT C.minscore2 FROM RMTScoringGroup_Temp C  Where RMTScoringGroup_Temp.scoregroupid=C.scoregroupid) As int);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="33" author="rahul.r">
+    	<dropColumn columnName="minscore2"
+            tableName="RMTScoringGroup_temp"/>
+	</changeSet>
+	
+	<changeSet id="34" author="rahul.r">
+    	<dropColumn columnName="minscore2"
+            tableName="RMTScoringGroup"/>
+	</changeSet>
+	<changeSet id="35_pre" author="Sandeepkumar.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'partnerbanks_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="35" author="Sandeepkumar.m">
+		<createView viewName="PARTNERBANKS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.PARTNERBANKID,
+				    T1.PARTNERBANKCODE,
+				    T1.PARTNERBANKNAME,
+				    T1.BANKCODE,
+				    T1.BANKBRANCHCODE,
+				    T1.BRANCHMICRCODE,
+				    T1.BRANCHIFSCCODE,
+				    T1.BRANCHCITY,
+				    T1.UTILITYCODE,
+				    T1.ACCOUNTNO,
+				    T1.ACTYPE,
+				    T1.ALWFILEDOWNLOAD,
+				    T1.ALWDISB,
+				    T1.ALWPAYMENT,
+				    T1.ALWRECEIPT,
+				    T1.INFAVOURLENGTH,
+				    T1.ACTIVE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T2.BANKNAME BANKCODENAME,
+				    T3.BRANCHDESC BANKBRANCHCODENAME,
+				    T4.ACTYPEDESC ACTYPENAME,
+				    T1.HOSTGLCODE,
+				    T1.PROFITCENTERID,
+				    T1.COSTCENTERID,
+				    T1.FILENAME,
+				    T1.ENTITY,
+				    T5.ENTITYDESC,
+				    T1.DOWNLOADTYPE,
+				    T1.DATAENGINECONFIGNAME,
+				    T1.SPONSORBANKCODE,
+				    T1.CLIENTCODE,
+				    T1.VANCODE
+				  FROM PARTNERBANKS_TEMP T1
+				  INNER JOIN BMTBANKDETAIL T2 ON T1.BANKCODE = T2.BANKCODE
+				  INNER JOIN BANKBRANCHES T3 ON T1.BANKBRANCHCODE = T3.BRANCHCODE AND T1.BANKCODE = T3.BANKCODE AND T1.BRANCHMICRCODE = T3.MICR
+				  INNER JOIN RMTACCOUNTTYPES T4 ON T1.ACTYPE = T4.ACTYPE
+				  LEFT JOIN ENTITY T5 ON T1.ENTITY = T5.ENTITYCODE
+				  UNION ALL
+				  SELECT T1.PARTNERBANKID,
+				    T1.PARTNERBANKCODE,
+				    T1.PARTNERBANKNAME,
+				    T1.BANKCODE,
+				    T1.BANKBRANCHCODE,
+				    T1.BRANCHMICRCODE,
+				    T1.BRANCHIFSCCODE,
+				    T1.BRANCHCITY,
+				    T1.UTILITYCODE,
+				    T1.ACCOUNTNO,
+				    T1.ACTYPE,
+				    T1.ALWFILEDOWNLOAD,
+				    T1.ALWDISB,
+				    T1.ALWPAYMENT,
+				    T1.ALWRECEIPT,
+				    T1.INFAVOURLENGTH,
+				    T1.ACTIVE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T2.BANKNAME BANKCODENAME,
+				    T3.BRANCHDESC BANKBRANCHCODENAME,
+				    T4.ACTYPEDESC ACTYPENAME,
+				    T1.HOSTGLCODE,
+				    T1.PROFITCENTERID,
+				    T1.COSTCENTERID,
+				    T1.FILENAME,
+				    T1.ENTITY,
+				    T5.ENTITYDESC,
+				    T1.DOWNLOADTYPE,
+				    T1.DATAENGINECONFIGNAME,
+				    T1.SPONSORBANKCODE,
+				    T1.CLIENTCODE,
+				    T1.VANCODE
+				  FROM PARTNERBANKS T1
+				  INNER JOIN BMTBANKDETAIL T2 ON T1.BANKCODE = T2.BANKCODE
+				  INNER JOIN BANKBRANCHES T3 ON T1.BANKBRANCHCODE = T3.BRANCHCODE AND T1.BANKCODE = T3.BANKCODE AND T1.BRANCHMICRCODE = T3.MICR
+				  INNER JOIN RMTACCOUNTTYPES T4 ON T1.ACTYPE = T4.ACTYPE
+				  LEFT JOIN ENTITY T5 ON T1.ENTITY = T5.ENTITYCODE
+				  WHERE NOT EXISTS (SELECT 1 FROM PARTNERBANKS_TEMP WHERE PARTNERBANKID = T1.PARTNERBANKID)  
+		    ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="35_post" author="Sandeepkumar.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'partnerbanks_view');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="39" author="rahul.r">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLES WHERE ROLECD = 'LINKDELINK_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'LINKDELINK_APPROVER';
+				
+				DELETE FROM SECROLEGROUPS WHERE GRPID= (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'LINKED_FINANCES_MAKER') AND ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'LINKDELINK_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID= (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'LINKED_FINANCES_APPROVER') AND ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'LINKDELINK_APPROVER');
+				
+				
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LINKDELINK_MAKER', 'Role code for Link Delink Maker', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0) ;
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'LINKED_FINANCES_MAKER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'LINKDELINK_MAKER'), 0, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+				
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LINKDELINK_APPROVER', 'Role code for Link Delink Approver', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0) ;
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'LINKED_FINANCES_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'LINKDELINK_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="41" author="rahul.r">
+		<sql>
+			<![CDATA[
+				DELETE FROM CATEGORYWISEEVENTS where CATEGORYCODE= 'F' AND AEEVENTCODE= 'AMZ_REV' ;
+				INSERT INTO CATEGORYWISEEVENTS VALUES('AMZ_REV', 'F', 1, 1, (select Max(SeqOrder)+1 from CATEGORYWISEEVENTS where CATEGORYCODE= 'F'));
+				
+				Delete 	from BMTAEEVENTS where aeeventcode='AMZ_REV'; 
+				Delete 	from BMTAMOUNTCODES where ALLOWEDEVENT='AMZ_REV';
+				
+				INSERT INTO BMTAEEVENTS(aeeventcode, aeeventcodedesc, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, active) VALUES ('AMZ_REV', 'Month End Accrual Reversal', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('AMZ_REV',0,'ae_dAmz','Accrued Amount on Month End',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="42" author="rahul.r">
+		<sql>
+			<![CDATA[
+				UPDATE RMTACCOUNTINGSET SET EVENTCODE='AMZ_REV' WHERE EVENTCODE='AMZ_MON';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="98.2_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'facilityreferencedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="98.2" author="rahul.r">
+		<createView viewName="FACILITYREFERENCEDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFDETAILID,
+				    T1.FINTYPE,
+				    T1.FINREFTYPE,
+				    T1.FINREFID,
+				    T1.ISACTIVE,
+				    T1.SHOWINSTAGE,
+				    T1.MANDINPUTINSTAGE,
+				    T1.ALLOWINPUTINSTAGE,
+				    T1.OVERRIDE,
+				    T1.OVERRIDEVALUE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T2.FACILITYDESC LOVDESCFINTYPEDESCNAME,
+				    COALESCE(T3.AGGNAME, T5.SCOREGROUPNAME, T6.SCOREGROUPNAME) LOVDESCNAMELOV,
+				    COALESCE(T3.AGGDESC, T4.CHECKLISTDESC, T5.SCOREGROUPNAME, T6.SCOREGROUPNAME) LOVDESCREFDESC,
+				    T3.AGGREPORTNAME LOVDESCAGGREPORTNAME,
+				    T3.AGGREPORTPATH LOVDESCAGGREPORTPATH,
+				    T3.AGGIMAGE AS LOVDESCAGGIMAGE,
+				    COALESCE(T3.AGGCODE, T5.SCOREGROUPCODE, T6.SCOREGROUPCODE) LOVDESCCODELOV,
+				    COALESCE(T4.REMARKS, '0') LOVDESCISREMARKSALLOWED,
+				    COALESCE(T4.CHECKMINCOUNT, 0) LOVDESCCHECKMINCOUNT,
+				    COALESCE(T4.CHECKMAXCOUNT, 0) LOVDESCCHECKMAXCOUNT,
+				    T41.SQLRULE AS LOVDESCELGRULEVALUE,
+				    COALESCE(T5.MINSCORE, T6.MINSCORE, 0) LOVDESCMINSCORE,
+				    COALESCE(T5.ISOVERRIDE, T6.ISOVERRIDE, 0) LOVDESCISOVERRIDE,
+				    COALESCE(T5.OVERRIDESCORE, T6.OVERRIDESCORE, '0') LOVDESCOVERRIDESCORE
+				FROM LMTFACILITYREFDETAIL T1
+				JOIN CAFFACILITYTYPES T2 ON T1.FINTYPE = T2.FACILITYTYPE
+			    LEFT JOIN BMTAGGREMENTDEF T3 ON T1.FINREFID = T3.AGGID AND T1.FINREFTYPE = 2
+			    LEFT JOIN BMTCHECKLIST T4 ON T1.FINREFID = T4.CHECKLISTID AND T1.FINREFTYPE = 1
+			    LEFT JOIN RULES T41 ON T41.RULECODE = T4.CHECKRULE AND T41.RULEMODULE = 'CLRULE' AND T41.RULEEVENT = ''
+			    LEFT JOIN RMTSCORINGGROUP T5 ON T1.FINREFID = T5.SCOREGROUPID AND T1.FINREFTYPE = 4 AND T5.CATEGORYTYPE = 'I'
+			    LEFT JOIN RMTSCORINGGROUP T6 ON T1.FINREFID = T6.SCOREGROUPID AND T1.FINREFTYPE = 7 AND T6.CATEGORYTYPE = 'C'
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="98.2_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'facilityreferencedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="18.1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'lmtfinrefdetail_finview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="18.1" author="Gopal.p " dbms="postgresql,mssql">
+		<createView viewName="LMTFINREFDETAIL_FINVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFDETAILID,
+					T1.FINTYPE,
+					T1.FINREFTYPE,
+					T1.FINREFID,
+					T1.ISACTIVE,
+					T1.SHOWINSTAGE,
+					T1.MANDINPUTINSTAGE,
+					T1.ALLOWINPUTINSTAGE,
+					T1.ALLOWDEVIATION,
+					T1.ALLOWWAIVER,
+					T1.ALLOWPOSTPONE,
+					T1.ALLOWEXPIRE,
+					T1.OVERRIDE,
+					T1.OVERRIDEVALUE,
+					T1.FINEVENT,
+					T1.ALERTTYPE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPEDESC LOVDESCFINTYPEDESCNAME,
+					T2.FINCCY LOVDESCFINCCYCODE,
+					T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T3.AGGIMAGE LOVDESCAGGIMAGE,
+					COALESCE(T3.AGGNAME, T4.EVENTCODE, T7.RULECODEDESC, T8.SCOREGROUPNAME, T9.SCOREGROUPNAME, T11.TABDESCRIPTION) LOVDESCNAMELOV,
+					COALESCE(T3.AGGCODE, T7.RULECODE, T8.SCOREGROUPCODE, T9.SCOREGROUPCODE, T11.TABCODE) LOVDESCCODELOV,
+					COALESCE(T3.AGGDESC, T4.ACCOUNTSETCODENAME, T5.CHECKLISTDESC, T7.RULECODE, T8.SCOREGROUPCODE, T9.SCOREGROUPCODE, T10.LIMITCODE, T11.TABCODE) LOVDESCREFDESC,
+					T3.AGGREPORTNAME LOVDESCAGGREPORTNAME,
+					T3.AGGREPORTPATH LOVDESCAGGREPORTPATH,
+					T3.AGRRULE LOVDESCAGGRULENAME,
+					T3.AGGTYPE,
+					T3.MODULETYPE,
+					COALESCE(T3.ALLOWMULTIPLE, 0) ALLOWMULTIPLE,
+					COALESCE(T5.REMARKS, '0') LOVDESCISREMARKSALLOWED,
+					COALESCE(T5.CHECKMINCOUNT, 0) LOVDESCCHECKMINCOUNT,
+					COALESCE(T5.CHECKMAXCOUNT, 0) LOVDESCCHECKMAXCOUNT,
+					COALESCE(T6.SQLRULE, T7.SQLRULE) LOVDESCELGRULEVALUE,
+					COALESCE(T6.RETURNTYPE, T7.RETURNTYPE) LOVDESCRULERETURNTYPE,
+					COALESCE(T8.MINSCORE, T9.MINSCORE, '0') LOVDESCMINSCORE,
+					COALESCE(T8.ISOVERRIDE, T9.ISOVERRIDE, 0) LOVDESCISOVERRIDE,
+					COALESCE(T8.OVERRIDESCORE, T9.OVERRIDESCORE, '0') LOVDESCOVERRIDESCORE,
+					T11.TABCODE
+				FROM LMTFINREFDETAIL T1
+				INNER JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				LEFT JOIN BMTAGGREMENTDEF T3 ON T1.FINREFID = T3.AGGID AND T1.FINREFTYPE = 2
+				LEFT JOIN RMTACCOUNTINGSET T4 ON T1.FINREFID = T4.ACCOUNTSETID AND T1.FINREFTYPE = 5
+				LEFT JOIN BMTCHECKLIST T5 ON T1.FINREFID = T5.CHECKLISTID AND T1.FINREFTYPE = 1
+				LEFT JOIN RULES T6 ON T6.RULECODE = T5.CHECKRULE AND T6.RULEMODULE = 'CLRULE' AND T6.RULEEVENT = 'CLRULE'
+				LEFT JOIN RULES T7 ON T1.FINREFID = T7.RULEID AND T1.FINREFTYPE = 3
+				LEFT JOIN RMTSCORINGGROUP T8 ON T1.FINREFID = T8.SCOREGROUPID AND T1.FINREFTYPE = 4 AND T8.CATEGORYTYPE = 'RETAIL'
+				LEFT JOIN RMTSCORINGGROUP T9 ON T1.FINREFID = T9.SCOREGROUPID AND T1.FINREFTYPE = 7 AND T9.CATEGORYTYPE = 'CORP'
+				LEFT JOIN LIMITCODEDETAIL T10 ON T10.LIMITID = T1.FINREFID
+				LEFT JOIN STAGETABDETAIL T11 ON T1.FINREFID = T11.TABID AND T1.FINREFTYPE = 15
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="18.1" author="Gopal.p " dbms="oracle">
+		<createView viewName="LMTFINREFDETAIL_FINVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFDETAILID,
+					T1.FINTYPE,
+					T1.FINREFTYPE,
+					T1.FINREFID,
+					T1.ISACTIVE,
+					T1.SHOWINSTAGE,
+					T1.MANDINPUTINSTAGE,
+					T1.ALLOWINPUTINSTAGE,
+					T1.ALLOWDEVIATION,
+					T1.ALLOWWAIVER,
+					T1.ALLOWPOSTPONE,
+					T1.ALLOWEXPIRE,
+					T1.OVERRIDE,
+					T1.OVERRIDEVALUE,
+					T1.FINEVENT,
+					T1.ALERTTYPE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPEDESC LOVDESCFINTYPEDESCNAME,
+					T2.FINCCY LOVDESCFINCCYCODE,
+					T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T3.AGGIMAGE LOVDESCAGGIMAGE ,
+					COALESCE(T3.AGGNAME, T4.EVENTCODE, T7.RULECODEDESC, T8.SCOREGROUPNAME, T9.SCOREGROUPNAME, T11.TABDESCRIPTION) LOVDESCNAMELOV ,
+					COALESCE( T3.AGGCODE, T7.RULECODE , T8.SCOREGROUPCODE , T9.SCOREGROUPCODE, cast(T11.TABCODE as NVARCHAR2(50))) LOVDESCCODELOV  ,
+					COALESCE(T3.AGGDESC, T4.ACCOUNTSETCODENAME , T5.CHECKLISTDESC , 
+					cast(T7.RULECODE as varchar(8)), cast(T8.SCOREGROUPCODE as varchar(8)),  cast(T9.SCOREGROUPCODE as varchar(8)), T10.LIMITCODE ,  T11.TABCODE ) LOVDESCREFDESC ,
+					T3.AGGREPORTNAME LOVDESCAGGREPORTNAME,
+					T3.AGGREPORTPATH LOVDESCAGGREPORTPATH,
+					T3.AGRRULE LOVDESCAGGRULENAME,
+					T3.AGGTYPE,
+					T3.MODULETYPE,
+					COALESCE(T3.ALLOWMULTIPLE, 0) ALLOWMULTIPLE,
+					COALESCE(T5.REMARKS, '0') LOVDESCISREMARKSALLOWED,
+					COALESCE(T5.CHECKMINCOUNT, 0) LOVDESCCHECKMINCOUNT,
+					COALESCE(T5.CHECKMAXCOUNT, 0) LOVDESCCHECKMAXCOUNT,
+					COALESCE(T6.SQLRULE, T7.SQLRULE) LOVDESCELGRULEVALUE,
+					COALESCE(T6.RETURNTYPE, T7.RETURNTYPE) LOVDESCRULERETURNTYPE,
+					COALESCE(T8.MINSCORE, T9.MINSCORE, '0') LOVDESCMINSCORE,
+					COALESCE(T8.ISOVERRIDE, T9.ISOVERRIDE, 0) LOVDESCISOVERRIDE,
+					COALESCE(T8.OVERRIDESCORE, T9.OVERRIDESCORE, '0') LOVDESCOVERRIDESCORE,
+					T11.TABCODE
+				FROM LMTFINREFDETAIL T1
+				INNER JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				LEFT JOIN BMTAGGREMENTDEF T3 ON T1.FINREFID = T3.AGGID AND T1.FINREFTYPE = 2
+				LEFT JOIN RMTACCOUNTINGSET T4 ON T1.FINREFID = T4.ACCOUNTSETID AND T1.FINREFTYPE = 5
+				LEFT JOIN BMTCHECKLIST T5 ON T1.FINREFID = T5.CHECKLISTID AND T1.FINREFTYPE = 1
+				LEFT JOIN RULES T6 ON T6.RULECODE = T5.CHECKRULE AND T6.RULEMODULE = 'CLRULE' AND T6.RULEEVENT = 'CLRULE'
+				LEFT JOIN RULES T7 ON T1.FINREFID = T7.RULEID AND T1.FINREFTYPE = 3
+				LEFT JOIN RMTSCORINGGROUP T8 ON T1.FINREFID = T8.SCOREGROUPID AND T1.FINREFTYPE = 4 AND T8.CATEGORYTYPE = 'RETAIL'
+				LEFT JOIN RMTSCORINGGROUP T9 ON T1.FINREFID = T9.SCOREGROUPID AND T1.FINREFTYPE = 7 AND T9.CATEGORYTYPE = 'CORP'
+				LEFT JOIN LIMITCODEDETAIL T10 ON T10.LIMITID = T1.FINREFID
+				LEFT JOIN STAGETABDETAIL T11 ON T1.FINREFID = T11.TABID AND T1.FINREFTYPE = 15
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="18.1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'lmtfinrefdetail_finview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="96.2_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'lmtfinrefdetail_peview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="96.2" author="rahul.r">
+		<createView viewName="LMTFINREFDETAIL_PEVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFDETAILID,
+				    T1.FINTYPE,
+				    T1.FINREFTYPE,
+				    T1.FINREFID,
+				    T1.ISACTIVE,
+				    T1.SHOWINSTAGE,
+				    T1.MANDINPUTINSTAGE,
+				    T1.ALLOWINPUTINSTAGE,
+				    T1.ALLOWDEVIATION,
+				    T1.ALLOWWAIVER,
+				    T1.ALLOWPOSTPONE,
+				    T1.ALLOWEXPIRE,
+				    T1.OVERRIDE,
+				    T1.OVERRIDEVALUE,
+				    T1.FINEVENT,
+				    T1.ALERTTYPE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    COALESCE(T2.FINTYPEDESC, T10.COLLATERALDESC, T11.PRODUCTDESC) LOVDESCFINTYPEDESCNAME,
+				    T2.FINCCY LOVDESCFINCCYCODE,
+				    T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+				    T3.AGGIMAGE LOVDESCAGGIMAGE,
+				    COALESCE(T3.AGGNAME, T4.EVENTCODE, T7.RULECODEDESC, T8.SCOREGROUPNAME, T9.SCOREGROUPNAME) LOVDESCNAMELOV,
+				    COALESCE(T3.AGGCODE, T7.RULECODE, T8.SCOREGROUPCODE, T9.SCOREGROUPCODE) LOVDESCCODELOV,
+				    COALESCE(T3.AGGDESC, T4.ACCOUNTSETCODENAME, T5.CHECKLISTDESC, T7.RULECODE, T8.SCOREGROUPCODE, T9.SCOREGROUPCODE) LOVDESCREFDESC,
+				    T3.AGGREPORTNAME LOVDESCAGGREPORTNAME,
+				    T3.AGGREPORTPATH LOVDESCAGGREPORTPATH,
+				    T3.AGRRULE LOVDESCAGGRULENAME,
+				    T3.AGGTYPE,
+				    T3.MODULETYPE,
+				    COALESCE(T3.ALLOWMULTIPLE, 0) ALLOWMULTIPLE,
+				    COALESCE(T5.REMARKS, '0') LOVDESCISREMARKSALLOWED,
+				    COALESCE(T5.CHECKMINCOUNT, 0) LOVDESCCHECKMINCOUNT,
+				    COALESCE(T5.CHECKMAXCOUNT, 0) LOVDESCCHECKMAXCOUNT,
+				    COALESCE(T6.SQLRULE, T7.SQLRULE) LOVDESCELGRULEVALUE,
+				    COALESCE(T6.RETURNTYPE, T7.RETURNTYPE) LOVDESCRULERETURNTYPE,
+				    COALESCE(T8.MINSCORE, T9.MINSCORE, 0) LOVDESCMINSCORE,
+				    COALESCE(T8.ISOVERRIDE, T9.ISOVERRIDE, 0) LOVDESCISOVERRIDE,
+				    COALESCE(T8.OVERRIDESCORE, T9.OVERRIDESCORE, '0') LOVDESCOVERRIDESCORE
+				FROM LMTFINREFDETAIL T1
+			    LEFT JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+			    LEFT JOIN COLLATERALSTRUCTURE T10 ON T1.FINTYPE = T10.COLLATERALTYPE
+			    LEFT JOIN VASSTRUCTURE T11 ON T1.FINTYPE = T11.PRODUCTCODE
+			    LEFT JOIN BMTAGGREMENTDEF T3 ON T1.FINREFID = T3.AGGID AND T1.FINREFTYPE = 2
+			    LEFT JOIN RMTACCOUNTINGSET T4 ON T1.FINREFID = T4.ACCOUNTSETID AND T1.FINREFTYPE = 5
+			    LEFT JOIN BMTCHECKLIST T5 ON T1.FINREFID = T5.CHECKLISTID AND T1.FINREFTYPE = 1
+			    LEFT JOIN RULES T6 ON T6.RULECODE = T5.CHECKRULE AND T6.RULEMODULE = 'CLRULE' AND T6.RULEEVENT = 'CLRULE'
+			    LEFT JOIN RULES T7 ON T1.FINREFID = T7.RULEID AND T1.FINREFTYPE = 3
+			    LEFT JOIN RMTSCORINGGROUP T8 ON T1.FINREFID = T8.SCOREGROUPID AND T1.FINREFTYPE = 4 AND T8.CATEGORYTYPE = 'RETAIL'
+			    LEFT JOIN RMTSCORINGGROUP T9 ON T1.FINREFID = T9.SCOREGROUPID AND T1.FINREFTYPE = 7 AND T9.CATEGORYTYPE = 'CORP'
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="96.2_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'lmtfinrefdetail_peview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="40_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'linkedFinances_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="40" author="rahul.r">
+		<createView viewName="linkedFinances_aview" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+				    T1.FINID,
+				    T1.FINREFERENCE,
+				    T1.LINKEDREFERENCE,
+				    F.FINTYPE LINKEDFINTYPE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    C.CUSTSHRTNAME,
+				    T1.STATUS
+				FROM LINKEDFINANCES T1
+				INNER JOIN FINANCEMAIN_TEMP F ON T1.LINKEDREFERENCE = F.FINREFERENCE
+				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
+				UNION ALL
+				SELECT T1.ID,
+				    T1.FINID,
+				    T1.FINREFERENCE,
+				    T1.LINKEDREFERENCE,
+				    F.FINTYPE LINKEDFINTYPE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    C.CUSTSHRTNAME,
+				    T1.STATUS
+				FROM LINKEDFINANCES T1
+				INNER JOIN FINANCEMAIN F ON T1.LINKEDREFERENCE = F.FINREFERENCE
+				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID 
+		    ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="40_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'linkedFinances_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="95_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="95" author="rahul.r">
+		<createView viewName="LINKEDFINANCES_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID, 
+					T1.FINID,
+					T1.FINREFERENCE,  
+					T1.LINKEDREFERENCE, 
+					F.FINTYPE LINKEDFINTYPE, 
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE,
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID, 
+					C.CUSTSHRTNAME, 
+					T1.STATUS,
+					F.QUICKDISB
+				FROM LINKEDFINANCES_TEMP T1 
+				INNER JOIN FINANCEMAIN_TEMP F ON T1.LINKEDREFERENCE = F.FINREFERENCE 
+				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
+				UNION ALL 
+				SELECT T1.ID, 
+					T1.FINID,
+					T1.FINREFERENCE,  
+					T1.LINKEDREFERENCE, 
+					F.FINTYPE LINKEDFINTYPE, 
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE,
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID, 
+					C.CUSTSHRTNAME, 
+					T1.STATUS,
+					F.QUICKDISB
+				FROM LINKEDFINANCES_TEMP T1 
+				INNER JOIN FINANCEMAIN F ON T1.LINKEDREFERENCE = F.FINREFERENCE 
+				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="95_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'linkedfinances_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="94_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="94" author="Gopal.p">
+		<createView viewName="LINKEDFINANCES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID, 
+					T1.FINID,
+					T1.FINREFERENCE,  
+					T1.LINKEDREFERENCE, 
+					F.FINTYPE LINKEDFINTYPE, 
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE,
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID, 
+					C.CUSTSHRTNAME, 
+					T1.STATUS
+				FROM LINKEDFINANCES_TEMP T1 
+				INNER JOIN FINANCEMAIN F ON T1.LINKEDREFERENCE = F.FINREFERENCE 
+				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
+				UNION ALL
+				SELECT	T1.ID, 
+					T1.FINID,
+					T1.FINREFERENCE,  
+					T1.LINKEDREFERENCE, 
+					F.FINTYPE LINKEDFINTYPE, 
+					T1.VERSION, T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE,
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,  
+					C.CUSTSHRTNAME, 
+					T1.STATUS
+				FROM LINKEDFINANCES T1 
+				INNER JOIN FINANCEMAIN F ON T1.LINKEDREFERENCE = F.FINREFERENCE 
+				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
+				WHERE NOT EXISTS (SELECT 1 FROM LINKEDFINANCES_TEMP WHERE  FINREFERENCE = T1.FINREFERENCE)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="94_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'linkedfinances_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

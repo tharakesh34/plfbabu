@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.cersai.impl;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -30,7 +31,7 @@ public class AssetSubTypeDAOImpl extends BasicDao<AssetSubType> implements Asset
 	}
 
 	@Override
-	public AssetSubType getAssetSubType(String assetTypeId, int id, String type) {
+	public AssetSubType getAssetSubType(Long assetTypeId, int id, String type) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.

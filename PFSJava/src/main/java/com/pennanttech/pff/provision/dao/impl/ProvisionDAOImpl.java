@@ -294,9 +294,8 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-
-		return BigDecimal.ZERO;
 	}
 
 	@Override

@@ -67,9 +67,12 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
-		return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
-
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new ProfitDetailRowMapper(), finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override

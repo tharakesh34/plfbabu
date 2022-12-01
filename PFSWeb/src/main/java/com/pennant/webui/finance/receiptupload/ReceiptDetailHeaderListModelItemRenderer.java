@@ -37,7 +37,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -86,9 +86,9 @@ public class ReceiptDetailHeaderListModelItemRenderer implements ListitemRendere
 		lc.setParent(item);
 
 		String alocType = rcptDtl.getAllocationType();
-		if (StringUtils.equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_AUTO, rcptDtl.getAllocationType())) {
+		if (StringUtils.equalsIgnoreCase(AllocationType.AUTO, rcptDtl.getAllocationType())) {
 			alocType = Labels.getLabel("label_AllocationMethod_Auto");
-		} else if (StringUtils.equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_MANUAL, rcptDtl.getAllocationType())) {
+		} else if (StringUtils.equalsIgnoreCase(AllocationType.MANUAL, rcptDtl.getAllocationType())) {
 			alocType = Labels.getLabel("label_AllocationMethod_Manual");
 		}
 		lc = new Listcell(alocType);

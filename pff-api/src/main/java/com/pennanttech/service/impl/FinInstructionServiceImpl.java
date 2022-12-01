@@ -20,6 +20,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SessionUserDetails;
@@ -105,6 +106,8 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.core.schd.service.PartCancellationService;
 import com.pennant.pff.dao.subvention.SubventionUploadDAO;
+import com.pennant.pff.document.DocVerificationUtil;
+import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.model.subvention.Subvention;
 import com.pennant.pff.model.subvention.SubventionHeader;
@@ -1394,6 +1397,19 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			ErrorUtil.setError(schdData, "90201", finReference);
 			setReturnStatus(fd);
 			return fd;
+		}
+
+		if (MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
+			DocVerificationHeader header = new DocVerificationHeader();
+			header.setDocNumber(fsi.getPanNumber());
+			header.setCustCif(fsi.getCustCIF());
+			header.setDocReference(fsi.getFinReference());
+
+			ErrorDetail error = DocVerificationUtil.doValidatePAN(header, true);
+
+			if (error != null) {
+				logger.error(error.getMessage());
+			}
 		}
 
 		FinReceiptDetail rd = fsi.getReceiptDetail();

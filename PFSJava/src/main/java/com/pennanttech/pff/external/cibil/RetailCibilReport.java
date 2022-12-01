@@ -238,7 +238,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 					processedRecords++;
 					EXTRACT_STATUS.setProcessedRecords(processedRecords);
 					long finID = rs.getLong("FinID");
-					String finreference = rs.getString("FINREFERENCE");
 					long customerId = rs.getLong("CUSTID");
 
 					try {
@@ -303,7 +302,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 						public void processRow(ResultSet rs) throws SQLException {
 							EXTRACT_STATUS.setProcessedRecords(processedRecords++);
 							xlsxRowCount++;
-							String finreference = rs.getString("FINREFERENCE");
 							long finID = rs.getLong("FinID");
 							long customerId = rs.getLong("CUSTID");
 							try {
@@ -1510,10 +1508,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 			odDays = 900;
 		}
 		return String.valueOf(odDays);
-	}
-
-	private BigDecimal getAmount(BigDecimal amount) {
-		return amount == null ? BigDecimal.ZERO : amount;
 	}
 
 	private void writeCustomerName(StringBuilder writer, Customer customer) throws Exception {

@@ -42,11 +42,11 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class FeeCalculator {
 	private static Logger logger = LogManager.getLogger(FeeCalculator.class);
@@ -897,11 +897,11 @@ public class FeeCalculator {
 	public static Map<String, BigDecimal> getFeeRuleMap(FinFeeDetail fd, String payType) {
 		Map<String, BigDecimal> dataMap = getFeeRuleMap(fd);
 
-		if (RepayConstants.RECEIPTMODE_EXCESS.equals(payType)) {
+		if (ReceiptMode.EXCESS.equals(payType)) {
 			payType = "EX_";
-		} else if (RepayConstants.RECEIPTMODE_EMIINADV.equals(payType)) {
+		} else if (ReceiptMode.EMIINADV.equals(payType)) {
 			payType = "EA_";
-		} else if (RepayConstants.RECEIPTMODE_PAYABLE.equals(payType)) {
+		} else if (ReceiptMode.PAYABLE.equals(payType)) {
 			payType = "PA_";
 		} else {
 			payType = "PB_";

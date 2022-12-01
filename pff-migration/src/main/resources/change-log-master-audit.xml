@@ -29,7 +29,5 @@
 	<include file="change-logs/change-log-6.0.0-pt-audit.xml" />
 	<include file="change-logs/change-log-db-cleanup-audit.xml" />
 	<include file="change-logs/change-log-6.1.0-audit.xml" />
-	<include file="change-logs/change-log-6.2.0-audit.xml" /> 
-	<include file="change-logs/change-log-hdfc-audit.xml" />
-	
+	<include file="change-logs/change-log-6.2.0-audit.xml" />
 </databaseChangeLog>

@@ -68,7 +68,6 @@ import com.pennant.backend.service.finance.ReceiptRealizationService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -77,6 +76,8 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.rits.cloning.Cloner;
 
 /**
@@ -332,7 +333,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 		logger.debug("Entering");
 
 		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select)
-				|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+				|| StringUtils.equals(recMode, ReceiptMode.EXCESS)) {
 			this.gb_ReceiptDetails.setVisible(false);
 			this.receiptAmount.setMandatory(false);
 			this.receiptAmount.setReadonly(true);
@@ -346,8 +347,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 			this.row_remarks.setVisible(true);
 			this.row_fundingAcNo.setVisible(true);
 
-			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
-					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
+			if (StringUtils.equals(recMode, ReceiptMode.CHEQUE) || StringUtils.equals(recMode, ReceiptMode.DD)) {
 
 				this.row_favourNo.setVisible(true);
 				this.row_BankCode.setVisible(true);
@@ -355,7 +355,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
 
-				if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
+				if (StringUtils.equals(recMode, ReceiptMode.CHEQUE)) {
 					this.row_ChequeAcNo.setVisible(true);
 					this.label_ReceiptRealizationDialog_favourNo
 							.setValue(Labels.getLabel("label_ReceiptRealizationDialog_ChequeFavourNo.value"));
@@ -365,7 +365,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 							.setValue(Labels.getLabel("label_ReceiptRealizationDialog_DDFavourNo.value"));
 				}
 
-			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
+			} else if (StringUtils.equals(recMode, ReceiptMode.CASH)) {
 
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);
@@ -482,7 +482,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 
 		String allocateMthd = header.getAllocationType();
 		if (StringUtils.isEmpty(allocateMthd)) {
-			allocateMthd = RepayConstants.ALLOCATIONTYPE_AUTO;
+			allocateMthd = AllocationType.AUTO;
 		}
 		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(),
@@ -493,9 +493,9 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 		if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+				if (!StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EXCESS)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EMIINADV)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.PAYABLE)) {
 					this.receiptAmount
 							.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
 					this.favourNo.setValue(receiptDetail.getFavourNumber());

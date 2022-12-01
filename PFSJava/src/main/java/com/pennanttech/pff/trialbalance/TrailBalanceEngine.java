@@ -89,7 +89,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		String sql = "Select count (*) from POSTINGS where POSTDATE <= :END_DATE and POSTAMOUNT <>0  AND ENTITYCODE = :ENTITYCODE and account not in(select account from AccountMapping) ";
 		logger.trace(Literal.SQL + sql.toString());
 
-		if (parameterJdbcTemplate.queryForObject(sql, paramMap, Integer.class) > 0) {
+		if (parameterJdbcTemplate.queryForObject(sql, paramMap, Integer.class) <= 0) {
 			EXTRACT_STATUS.setStatus("F");
 			EXTRACT_STATUS.setRemarks(
 					"Account mapping is not configured, please check the Account Mapping report and configure the missing accounts.");

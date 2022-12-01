@@ -375,6 +375,7 @@ public class FetchCustomerDedupDetails {
 		String passPort = masterDefDAO.getMasterCode("DOC_TYPE", "PASSPORT");
 		String panNumber = masterDefDAO.getMasterCode("DOC_TYPE", "PAN");
 		StringBuilder custAddress = new StringBuilder("");
+		String custAddress1 = "";
 
 		String phoneType = "";
 		String emailType = "";
@@ -458,6 +459,9 @@ public class FetchCustomerDedupDetails {
 					custAddress.append(address.getCustAddrProvince()).append(", ");
 					custAddress.append(address.getCustAddrZIP()).append(", ");
 					custAddress.append(address.getCustAddrCountry());
+
+					custAddress1 = StringUtils.isNotBlank(address.getCustAddrStreet()) ? address.getCustAddrStreet()
+							: "";
 					break;
 				}
 			}
@@ -541,7 +545,7 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setVoterID(voterId);
 		customerDedup.setDrivingLicenceNo(drivingLicenseNo);
 		customerDedup.setAddress(custAddress.toString());
-		customerDedup.setAddress(custAddress.toString());
+		customerDedup.setAddress1(custAddress1);
 		if (alwExtCustDedup) {
 			customerDedup.setGender(customer.getCustGenderCode());
 		} else {
@@ -556,6 +560,7 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setLikeCustMName(customer.getCustMName());
 		customerDedup.setAddressType(addressType);
 		customerDedup.setDrivingLicenceNo(drivingLicenceNo);
+		customerDedup.setCustMotherMaiden(customer.getCustMotherMaiden());
 
 		if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
 			Map<String, Object> mapValues = customerDetails.getExtendedFieldRender().getMapValues();

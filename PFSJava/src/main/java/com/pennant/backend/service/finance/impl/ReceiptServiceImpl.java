@@ -1498,9 +1498,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EXCESS)
 					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EMIINADV)
 					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.ADVINT)
-					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVEMI)
-					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CASHCLT)
-					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DSF)) {
+					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.ADVEMI)
+					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.CASHCLT)
+					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.DSF)) {
 
 				// Excess Amount make utilization
 				FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(receiptSeqID,
@@ -4890,8 +4890,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		boolean bounceOrCancel = RepayConstants.PAYSTATUS_BOUNCE.equals(status)
 				|| RepayConstants.PAYSTATUS_CANCEL.equals(status);
-		boolean chequeOrDD = RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(receiptMode)
-				|| RepayConstants.RECEIPTMODE_DD.equalsIgnoreCase(receiptMode);
+		boolean chequeOrDD = ReceiptMode.CHEQUE.equalsIgnoreCase(receiptMode)
+				|| ReceiptMode.DD.equalsIgnoreCase(receiptMode);
 
 		String receiptPurpose = rud.getReceiptPurpose();
 		if ("A".equals(status)) {
@@ -6150,6 +6150,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		doReceiptTransaction(rd, eventCode);
+
+		if (CollectionUtils.isNotEmpty(rd.getReceiptHeader().getAllocations())) {
+			fd.getFinScheduleData().setReceiptAllocationList(rd.getReceiptHeader().getAllocations());
+		}
 
 		logger.info(Literal.LEAVING);
 		return fd;

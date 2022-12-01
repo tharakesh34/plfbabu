@@ -60,7 +60,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.util.ErrorControl;
@@ -74,6 +73,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesDialog.zul file.
@@ -245,8 +245,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		if (this.excludeAppFeeCodes) {
 			Filter[] filters = new Filter[3];
 			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-			filters[1] = new Filter("FeeTypeCode", RepayConstants.ALLOCATION_BOUNCE, Filter.OP_NOT_EQUAL);
-			filters[2] = new Filter("FeeTypeCode", RepayConstants.ALLOCATION_ODC, Filter.OP_NOT_EQUAL);
+			filters[1] = new Filter("FeeTypeCode", Allocation.BOUNCE, Filter.OP_NOT_EQUAL);
+			filters[2] = new Filter("FeeTypeCode", Allocation.ODC, Filter.OP_NOT_EQUAL);
 			this.feeType.setFilters(filters);
 		} else {
 			this.feeType.setFilters(new Filter[] { new Filter("Active", 1, Filter.OP_EQUAL) });

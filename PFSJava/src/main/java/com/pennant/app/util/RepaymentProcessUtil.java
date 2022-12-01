@@ -110,6 +110,7 @@ import com.pennanttech.pff.payment.service.LoanPaymentService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
@@ -263,7 +264,7 @@ public class RepaymentProcessUtil {
 		BigDecimal priPaynow = BigDecimal.ZERO;
 
 		for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
-			if (RepayConstants.ALLOCATION_PRI.equals(allocate.getAllocationType())) {
+			if (Allocation.PRI.equals(allocate.getAllocationType())) {
 				priPaynow = allocate.getPaidAmount();
 				break;
 			}
@@ -320,8 +321,7 @@ public class RepaymentProcessUtil {
 		doSaveReceipts(rch, null, true);
 
 		// OD DETAILS UPDATE AND PFTDETAILS UPDATE
-		if (RepayConstants.RECEIPTMODE_PRESENTMENT.equals(rch.getReceiptMode())
-				&& ImplementationConstants.ALLOW_OLDEST_DUE) {
+		if (ReceiptMode.PRESENTMENT.equals(rch.getReceiptMode()) && ImplementationConstants.ALLOW_OLDEST_DUE) {
 			repaymentPostingsUtil.recalOldestDueKnockOff(fm, profitDetail, valuedate, scheduleDetails);
 		}
 
@@ -389,11 +389,11 @@ public class RepaymentProcessUtil {
 		BigDecimal bounceAmount = BigDecimal.ZERO;
 
 		for (ReceiptAllocationDetail allocate : allocationDetails) {
-			if (RepayConstants.ALLOCATION_BOUNCE.equalsIgnoreCase(allocate.getAllocationType())) {
+			if (Allocation.BOUNCE.equalsIgnoreCase(allocate.getAllocationType())) {
 				allocate.setPaidAmount(allocate.getTotalDue());
 				allocate.setTotalPaid(allocate.getTotalDue());
 				bounceAmount = bounceAmount.add(allocate.getTotalDue());
-			} else if (RepayConstants.ALLOCATION_ODC.equalsIgnoreCase(allocate.getAllocationType())) {
+			} else if (Allocation.ODC.equalsIgnoreCase(allocate.getAllocationType())) {
 				allocate.setPaidAmount(allocate.getTotalDue());
 				allocate.setTotalPaid(allocate.getTotalDue());
 				lppAmount = lppAmount.add(allocate.getTotalDue());
@@ -495,13 +495,10 @@ public class RepaymentProcessUtil {
 			receiptAmount = receiptAmount.add(rcd.getAmount());
 			String paymentType = rcd.getPaymentType();
 			movements.addAll(rcd.getAdvMovements());
-			if (!RepayConstants.RECEIPTMODE_EMIINADV.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_EXCESS.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_PAYABLE.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_CASHCLT.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_DSF.equals(paymentType)) {
+			if (!ReceiptMode.EMIINADV.equals(paymentType) && !ReceiptMode.EXCESS.equals(paymentType)
+					&& !ReceiptMode.PAYABLE.equals(paymentType) && !ReceiptMode.ADVINT.equals(paymentType)
+					&& !ReceiptMode.ADVEMI.equals(paymentType) && !ReceiptMode.CASHCLT.equals(paymentType)
+					&& !ReceiptMode.DSF.equals(paymentType)) {
 				receiptFromBank = receiptFromBank.add(rcd.getAmount());
 			}
 		}
@@ -619,7 +616,7 @@ public class RepaymentProcessUtil {
 
 		// FIXME: NO SURE ON GOLD LOAN. SO FOR LOOP KEPT AS IS
 		for (FinReceiptDetail frd : rcdList) {
-			if (RepayConstants.RECEIPTMODE_REPLEDGE.equals(frd.getPaymentType())) {
+			if (ReceiptMode.REPLEDGE.equals(frd.getPaymentType())) {
 				extDataMap.put("PR_ReceiptAmount", frd.getAmount());
 			}
 		}
@@ -739,12 +736,12 @@ public class RepaymentProcessUtil {
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extDataMap.put("ae_toExcessAmt", toExcess);
 				break;
-			case RepayConstants.RECEIPTMODE_DSF:
+			case ReceiptMode.DSF:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extDataMap.put("ae_toDSFAmt", toExcess);
 				dataMap.put("ae_toDSFAmt", toExcess);
 				break;
-			case RepayConstants.RECEIPTMODE_CASHCLT:
+			case ReceiptMode.CASHCLT:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extDataMap.put("ae_toCashCollAmt", toExcess);
 				dataMap.put("ae_toCashCollAmt", toExcess);
@@ -1206,7 +1203,7 @@ public class RepaymentProcessUtil {
 			if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 				for (ReceiptAllocationDetail rad : rch.getAllocations()) {
 					String allocationType = rad.getAllocationType();
-					if (RepayConstants.ALLOCATION_FUT_TDS.equals(allocationType)) {
+					if (Allocation.FUT_TDS.equals(allocationType)) {
 						toExcess = toExcess.subtract(rad.getDueAmount());
 						toExcess = toExcess.subtract(rad.getDueAmount());
 					}
@@ -1233,7 +1230,7 @@ public class RepaymentProcessUtil {
 		addAmountToMap(movementMap, "bounceCharge_UGST_W", BigDecimal.ZERO);
 		addAmountToMap(movementMap, "bounceCharge_CESS_W", BigDecimal.ZERO);
 
-		String bounceComponent = feeTypeDAO.getTaxComponent(RepayConstants.ALLOCATION_BOUNCE);
+		String bounceComponent = feeTypeDAO.getTaxComponent(Allocation.BOUNCE);
 
 		for (ManualAdviseMovements movement : movements) {
 			TaxHeader taxHeader = movement.getTaxHeader();
@@ -1290,7 +1287,7 @@ public class RepaymentProcessUtil {
 			String feeTypeCode = movement.getFeeTypeCode();
 			String taxComponent = feeTypeDAO.getTaxComponent(feeTypeCode);
 
-			if (StringUtils.isEmpty(feeTypeCode) || RepayConstants.ALLOCATION_BOUNCE.equals(feeTypeCode)) {
+			if (StringUtils.isEmpty(feeTypeCode) || Allocation.BOUNCE.equals(feeTypeCode)) {
 
 				if (taxComponent == null) {
 					taxComponent = bounceComponent;
@@ -1400,7 +1397,7 @@ public class RepaymentProcessUtil {
 					allocationWaivedMap.put(allocationType + "_" + allocationTo, allocation.getWaivedAmount());
 
 					// Manual Advises update
-					if (RepayConstants.ALLOCATION_MANADV.equals(allocationType)) {
+					if (Allocation.MANADV.equals(allocationType)) {
 						if (allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0
 								|| allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 
@@ -1466,7 +1463,7 @@ public class RepaymentProcessUtil {
 					}
 
 					// Bounce Charges Update
-					if (RepayConstants.ALLOCATION_BOUNCE.equals(allocationType)) {
+					if (Allocation.BOUNCE.equals(allocationType)) {
 						if (allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0
 								|| allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 							/*
@@ -1569,12 +1566,11 @@ public class RepaymentProcessUtil {
 			long receiptSeqID = finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
 
 			// Excess Amounts
-			if (RepayConstants.RECEIPTMODE_EXCESS.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_EMIINADV.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_ADVINT.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_CASHCLT.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_DSF.equals(rcd.getPaymentType())) {
+			if (ReceiptMode.EXCESS.equals(rcd.getPaymentType()) || ReceiptMode.EMIINADV.equals(rcd.getPaymentType())
+					|| ReceiptMode.ADVINT.equals(rcd.getPaymentType())
+					|| ReceiptMode.ADVEMI.equals(rcd.getPaymentType())
+					|| ReceiptMode.CASHCLT.equals(rcd.getPaymentType())
+					|| ReceiptMode.DSF.equals(rcd.getPaymentType())) {
 
 				long payAgainstID = rcd.getPayAgainstID();
 
@@ -1620,7 +1616,7 @@ public class RepaymentProcessUtil {
 			}
 
 			// Payable Advise Amounts
-			if (StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+			if (StringUtils.equals(rcd.getPaymentType(), ReceiptMode.PAYABLE)) {
 
 				long payAgainstID = rcd.getPayAgainstID();
 
@@ -1945,8 +1941,8 @@ public class RepaymentProcessUtil {
 
 		// If allocation map is present then Paid adjustment based on Allocations only
 		if (allocationPaidMap != null) {
-			if (allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID())) {
-				BigDecimal remPaidBal = allocationPaidMap.get(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID());
+			if (allocationPaidMap.containsKey(Allocation.FEE + "_" + feeSchd.getFeeID())) {
+				BigDecimal remPaidBal = allocationPaidMap.get(Allocation.FEE + "_" + feeSchd.getFeeID());
 				if (feeBal.compareTo(remPaidBal) > 0) {
 					feeBal = remPaidBal;
 				}
@@ -1962,9 +1958,8 @@ public class RepaymentProcessUtil {
 
 			// If allocation map is present then Waived adjustment based on Allocations only
 			if (allocationWaivedMap != null) {
-				if (allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID())) {
-					BigDecimal remWaivedBal = allocationWaivedMap
-							.get(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID());
+				if (allocationWaivedMap.containsKey(Allocation.FEE + "_" + feeSchd.getFeeID())) {
+					BigDecimal remWaivedBal = allocationWaivedMap.get(Allocation.FEE + "_" + feeSchd.getFeeID());
 					if (feeBal.compareTo(remWaivedBal) > 0) {
 						feeBal = remWaivedBal;
 					}
@@ -1983,11 +1978,9 @@ public class RepaymentProcessUtil {
 
 			// Allocation map Balance adjustment after Collection(Paid/waived)
 			if (allocationWaivedMap != null) {
-				if (allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID())) {
-					BigDecimal remWaivedBal = allocationWaivedMap
-							.get(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID());
-					allocationWaivedMap.put(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID(),
-							remWaivedBal.subtract(feeBal));
+				if (allocationWaivedMap.containsKey(Allocation.FEE + "_" + feeSchd.getFeeID())) {
+					BigDecimal remWaivedBal = allocationWaivedMap.get(Allocation.FEE + "_" + feeSchd.getFeeID());
+					allocationWaivedMap.put(Allocation.FEE + "_" + feeSchd.getFeeID(), remWaivedBal.subtract(feeBal));
 				}
 			}
 
@@ -2003,11 +1996,9 @@ public class RepaymentProcessUtil {
 
 			// Allocation map Balance adjustment after Collection(Paid/waived)
 			if (allocationPaidMap != null) {
-				if (allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID())) {
-					BigDecimal remPaidBal = allocationPaidMap
-							.get(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID());
-					allocationPaidMap.put(RepayConstants.ALLOCATION_FEE + "_" + feeSchd.getFeeID(),
-							remPaidBal.subtract(feeBal));
+				if (allocationPaidMap.containsKey(Allocation.FEE + "_" + feeSchd.getFeeID())) {
+					BigDecimal remPaidBal = allocationPaidMap.get(Allocation.FEE + "_" + feeSchd.getFeeID());
+					allocationPaidMap.put(Allocation.FEE + "_" + feeSchd.getFeeID(), remPaidBal.subtract(feeBal));
 				}
 			}
 		}
@@ -2404,7 +2395,7 @@ public class RepaymentProcessUtil {
 		switch (finEvent) {
 		case FinServiceEvent.SCHDRPY:
 			if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
-				if (RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptMode)) {
+				if (ReceiptMode.PRESENTMENT.equals(receiptMode)) {
 					return AccountingEvent.PRSNT;
 				}
 			}
@@ -2495,7 +2486,7 @@ public class RepaymentProcessUtil {
 		BigDecimal priPaynow = BigDecimal.ZERO;
 
 		for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
-			if (RepayConstants.ALLOCATION_PRI.equals(allocate.getAllocationType())) {
+			if (Allocation.PRI.equals(allocate.getAllocationType())) {
 				priPaynow = allocate.getPaidAmount();
 				break;
 			}
@@ -2753,7 +2744,7 @@ public class RepaymentProcessUtil {
 			FinDueData dueData = new FinDueData();
 
 			switch (allocationType) {
-			case RepayConstants.ALLOCATION_MANADV:
+			case Allocation.MANADV:
 				dueData.setAllocType(RepayConstants.DUETYPE_MANUALADVISE);
 				dueData.setAdviseId(rad.getAllocationTo());
 				dueData.setDueDate(rad.getValueDate());
@@ -2761,7 +2752,7 @@ public class RepaymentProcessUtil {
 
 				duesList.add(dueData);
 				break;
-			case RepayConstants.ALLOCATION_BOUNCE:
+			case Allocation.BOUNCE:
 				dueData.setAllocType(RepayConstants.DUETYPE_BOUNCE);
 				dueData.setAdviseId(rad.getAllocationTo());
 				dueData.setDueDate(rad.getValueDate());
@@ -2769,7 +2760,7 @@ public class RepaymentProcessUtil {
 
 				duesList.add(dueData);
 				break;
-			case RepayConstants.ALLOCATION_FEE:
+			case Allocation.FEE:
 				dueData.setAllocType(RepayConstants.DUETYPE_FEES);
 				dueData.setFeeTypeCode(rad.getFeeTypeCode());
 				dueData.setDueDate(rad.getValueDate());

@@ -2377,6 +2377,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			disbursementDetails.setDisbDate(aFinanceMain.getFinStartDate());
 			disbursementDetails.setDisbAmount(aFinanceMain.getFinAmount());
 			disbursementDetails.setFeeChargeAmt(aFinanceSchData.getFinanceMain().getFeeChargeAmt());
+			disbursementDetails.setDisbSeq(1);
 			aFinanceSchData.getDisbursementDetails().add(disbursementDetails);
 		}
 

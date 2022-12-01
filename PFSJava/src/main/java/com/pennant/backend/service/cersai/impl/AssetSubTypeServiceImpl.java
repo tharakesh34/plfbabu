@@ -1,6 +1,7 @@
 package com.pennant.backend.service.cersai.impl;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -134,7 +135,7 @@ public class AssetSubTypeServiceImpl extends GenericService<AssetSubType> implem
 	 * @return CERSAI_AssetSubType
 	 */
 	@Override
-	public AssetSubType getAssetSubType(String assetTypeId, int id) {
+	public AssetSubType getAssetSubType(Long assetTypeId, int id) {
 		return getAssetSubTypeDAO().getAssetSubType(assetTypeId, id, "_View");
 	}
 
@@ -146,7 +147,7 @@ public class AssetSubTypeServiceImpl extends GenericService<AssetSubType> implem
 	 * @param id          id of the AssetSubType. (String)
 	 * @return CERSAI_AssetSubType
 	 */
-	public AssetSubType getApprovedAssetSubType(String assetTypeId, int id) {
+	public AssetSubType getApprovedAssetSubType(Long assetTypeId, int id) {
 		return getAssetSubTypeDAO().getAssetSubType(assetTypeId, id, "_AView");
 	}
 

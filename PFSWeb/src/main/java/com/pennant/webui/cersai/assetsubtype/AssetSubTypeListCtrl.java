@@ -2,7 +2,8 @@ package com.pennant.webui.cersai.assetsubtype;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -150,10 +151,10 @@ public class AssetSubTypeListCtrl extends GFCBaseListCtrl<AssetSubType> {
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxAssetSubType.getSelectedItem();
-		final String assetTypeId = (String) selectedItem.getAttribute("assetTypeId");
+		final Long tmpAssetTypeId = (Long) selectedItem.getAttribute("assetTypeId");
 
 		final int id = (int) selectedItem.getAttribute("id");
-		AssetSubType assetsubtype = assetSubTypeService.getAssetSubType(assetTypeId, id);
+		AssetSubType assetsubtype = assetSubTypeService.getAssetSubType(tmpAssetTypeId, id);
 
 		if (assetsubtype == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

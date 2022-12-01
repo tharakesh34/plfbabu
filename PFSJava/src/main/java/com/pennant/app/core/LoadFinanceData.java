@@ -143,7 +143,6 @@ public class LoadFinanceData extends ServiceHelper {
 		Date businessDate = custEODEvent.getEventProperties().getBusinessDate();
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
-		long finID = fm.getFinID();
 
 		boolean isAmountDue = false;
 		String custBranch = custEODEvent.getCustomer().getCustAddrProvince();
@@ -540,7 +539,7 @@ public class LoadFinanceData extends ServiceHelper {
 		for (Provision provision : finEODEvent.getProvisions()) {
 
 			long finID = provision.getFinID();
-			String finReference = provision.getFinReference();
+
 			logger.warn("Checking Old provision Details in PROVISIONS table..");
 			Provision oldProvision = provisionDAO.getProvisionByFinId(finID, TableType.MAIN_TAB, false);
 
@@ -609,8 +608,6 @@ public class LoadFinanceData extends ServiceHelper {
 	 */
 	public void saveProjAccruals(CustEODEvent custEODEvent) {
 		for (FinEODEvent finEODEvent : custEODEvent.getFinEODEvents()) {
-			String finReference = finEODEvent.getFinanceMain().getFinReference();
-
 			List<ProjectedAccrual> projAccrualList = finEODEvent.getProjectedAccrualList();
 			if (CollectionUtils.isEmpty(projAccrualList)) {
 				continue;
@@ -813,7 +810,6 @@ public class LoadFinanceData extends ServiceHelper {
 	private void listDeletion(FinEODEvent finEODEvent, String finEvent, String tableType) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		if (CollectionUtils.isNotEmpty(schedules)) {

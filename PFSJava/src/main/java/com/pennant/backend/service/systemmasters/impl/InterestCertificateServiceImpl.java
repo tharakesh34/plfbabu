@@ -69,6 +69,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 /**
@@ -324,7 +325,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 				.getAllocationsByReceiptID(receiptID, "");
 		for (ReceiptAllocationDetail allocationDetail : allocationDetails) {
 			// Part Payment
-			if (RepayConstants.ALLOCATION_PP.equals(allocationDetail.getAllocationType())) {
+			if (Allocation.PP.equals(allocationDetail.getAllocationType())) {
 				ppAmount = ppAmount.add(allocationDetail.getPaidAmount());
 			}
 		}

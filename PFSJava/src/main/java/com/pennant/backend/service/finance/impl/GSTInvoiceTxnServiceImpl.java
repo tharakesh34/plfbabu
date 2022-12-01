@@ -52,12 +52,12 @@ import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	private static final Logger logger = LogManager.getLogger(GSTInvoiceTxnServiceImpl.class);
@@ -216,7 +216,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			} else {
 
 				BigDecimal gstAmount = BigDecimal.ZERO;
-				if (origination || RepayConstants.ALLOCATION_ODC.equals(fee.getFeeTypeCode())
+				if (origination || Allocation.ODC.equals(fee.getFeeTypeCode())
 						|| AccountingEvent.RESTRUCTURE.equals(fee.getFinEvent())) {
 					if (fee.isPaidFromLoanApproval()) {
 						BigDecimal netGstAmt = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())

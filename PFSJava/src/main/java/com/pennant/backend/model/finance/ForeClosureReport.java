@@ -110,6 +110,7 @@ public class ForeClosureReport implements Serializable {
 	private List<Map<String, Object>> collAddressList = new ArrayList<>();
 	private String valueDate;
 	private BigDecimal oneDayInterest;
+	private String custMobile;
 
 	public ForeClosureReport() {
 		super();
@@ -777,6 +778,14 @@ public class ForeClosureReport implements Serializable {
 
 	public void setValueDate(String valueDate) {
 		this.valueDate = valueDate;
+	}
+
+	public String getCustMobile() {
+		return custMobile;
+	}
+
+	public void setCustMobile(String custMobile) {
+		this.custMobile = custMobile;
 	}
 
 }

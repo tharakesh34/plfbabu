@@ -32,6 +32,7 @@ public class MasterDef {
 	private String masterType;
 	private String keyType;
 	private String keyCode;
+	private boolean validationReq;
 
 	public String getMasterType() {
 		return masterType;
@@ -56,4 +57,13 @@ public class MasterDef {
 	public void setKeyCode(String keyCode) {
 		this.keyCode = keyCode;
 	}
+
+	public boolean isValidationReq() {
+		return validationReq;
+	}
+
+	public void setValidationReq(boolean validationReq) {
+		this.validationReq = validationReq;
+	}
+
 }

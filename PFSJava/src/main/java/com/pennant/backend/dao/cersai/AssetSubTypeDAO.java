@@ -14,7 +14,7 @@ public interface AssetSubTypeDAO extends BasicCrudDao<AssetSubType> {
 	 * @param tableType   The type of the table.
 	 * @return AssetSubType
 	 */
-	AssetSubType getAssetSubType(String assetTypeId, int id, String type);
+	AssetSubType getAssetSubType(Long assetTypeId, int id, String type);
 
 	boolean isDuplicateKey(int id, TableType tableType);
 }

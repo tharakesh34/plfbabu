@@ -21,8 +21,6 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomerCrmService {
-
-	private static final long serialVersionUID = 8556168885363682933L;
 	private static final Logger logger = LogManager.getLogger(CustomerCrmService.class);
 
 	static final String authorization = App.getProperty("CrmAuthorizationToken");

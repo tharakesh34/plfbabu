@@ -131,7 +131,6 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Listheader listheader_RequestStage; // autoWired
 	protected Listheader listheader_RecordStatus; // autoWired
 	private String moduleDefiner = "";
-	private String workflowCode = "";
 	private String eventCodeRef = "";
 	private String menuItemRightName = null;
 	private Tab tab;
@@ -149,7 +148,6 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private boolean isEnquiry = true;
 
 	private FinanceMain financeMain;
-	private String buildedWhereCondition = "";
 	final Map<String, Object> map = getDefaultArguments();
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 

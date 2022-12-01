@@ -173,15 +173,20 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap, String eligibilityMethod) {
 		String custCIF = (String) dataMap.get("CIF");
+		String sheetName = sheetNamePrefix;
 
-		String sheetName = sheetNamePrefix.concat("_").concat(eligibilityMethod);
+		/*
+		 * if (StringUtils.isNoneEmpty(eligibilityMethod)) { sheetName =
+		 * sheetNamePrefix.concat("_").concat(eligibilityMethod); }
+		 */
+
 		Sheet sourceSheet = book.getSheet(sheetName);
 
 		if (sourceSheet == null) {
 			throw new AppException(sheetName + " Sheet not found.");
 		}
 
-		sheetName = sheetName.concat("_").concat(custCIF);
+		sheetName = sheetName.concat("_").concat(eligibilityMethod).concat("_").concat(custCIF);
 
 		return SheetCopier.clone(sheetName, sourceSheet);
 	}
@@ -239,7 +244,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			 * Setting applicant data to corresponding cell based on the configuration, either from Fields or FieldKeys
 			 */
 			try {
-				Sheet sheet = getSheet("APP", book, applicantDataMap, eligibilityMethod);
+				Sheet sheet = getSheet("APP", book, applicantDataMap, "");
 
 				doSetData(sheet);
 
@@ -475,7 +480,12 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			String sheetName = sheet.getSheetName();
 			key = sheetName + "_" + fieldName;
 		}
-
+		
+		Object obj = dataMap.get(key);
+		if (obj == null) {
+			return;
+		}
+		
 		setCellValue(sheet, fieldName, dataMap.get(key));
 	}
 
@@ -977,6 +987,8 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		dataMap.put("CUST_EXPOS_LESS2", PennantApplicationUtil.formateAmount(lessThan2years, format));
 		dataMap.put("CUST_EXPOS_GREATER2", PennantApplicationUtil.formateAmount(greaterThan2years, format));
 
+		BigDecimal custObligation = lessThan2years.add(greaterThan2years);
+		dataMap.put("CUST_OBLIGATION", PennantApplicationUtil.formateAmount(custObligation, format));
 	}
 
 	private void setCollateralData(Map<String, Object> dataMap) {

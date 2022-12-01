@@ -129,7 +129,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		PaymentHeader ph = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
 
 		long finID = ph.getFinID();
-		String finReference = ph.getFinReference();
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (ph.isWorkflow()) {

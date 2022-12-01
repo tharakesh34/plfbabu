@@ -78,6 +78,7 @@ import com.pennanttech.pennapps.web.menu.MenuItem;
 import com.pennanttech.pennapps.web.menu.TreeMenuBuilder;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.GlemCollateralProcess;
 import com.pennapps.core.access.log.UserAccess;
 import com.pennapps.core.access.log.UserAccessDAO;
 
@@ -97,8 +98,9 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 	private TreeMenuBuilder menuBuilder;
 	private transient UserWorkspace userWorkspace;
-
 	private UserAccessDAO userAccessDAO;
+	@Autowired(required = false)
+	private GlemCollateralProcess glemsCollateralProcess;
 
 	/**
 	 * Creates a new main menu controller.
@@ -281,6 +283,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		case "menu_Item_CersaiModificationReport":
 		case "menu_Item_CersaiSatisfactionReport":
 			return ImplementationConstants.ALLOW_CERSAI;
+		case "menu_Item_CollateralDownload":
+			return this.glemsCollateralProcess != null;
 		default:
 			break;
 		}

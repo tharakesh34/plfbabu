@@ -80,7 +80,6 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 		// validate Instruction details
 		boolean isWIF = fsi.isWif();
 		long finID = fsi.getFinID();
-		String finReference = fsi.getFinReference();
 
 		Date appDate = SysParamUtil.getAppDate();
 		if (DateUtility.compare(fsi.getRecalFromDate(), appDate) <= 0) {

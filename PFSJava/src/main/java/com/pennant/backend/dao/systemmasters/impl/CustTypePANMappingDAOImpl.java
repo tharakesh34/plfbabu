@@ -24,6 +24,8 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -222,11 +224,25 @@ public class CustTypePANMappingDAOImpl extends SequenceDao<CustTypePANMapping> i
 	}
 
 	@Override
-	public boolean isValidPANLetter(String custType, String custCategory, String panLetter) {
-		String sql = "Select count(MappingID) From CustTypePANMapping Where CustType = ? and CustCategory = ? and PANLetter = ? and Active = ?";
+	public List<CustTypePANMapping> getPANLetterMapping(String custType, String custCategory) {
+		String sql = "Select MappingID, PANLetter, CustType, CustCategory From CustTypePANMapping Where CustType = ? and CustCategory = ? and Active = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return jdbcOperations.queryForObject(sql, Integer.class, custType, custCategory, panLetter, 1) > 0;
+		return jdbcOperations.query(sql, ps -> {
+			ps.setString(1, custType);
+			ps.setString(2, custCategory);
+			ps.setInt(3, 1);
+		}, (rs, rowNum) -> {
+			CustTypePANMapping pm = new CustTypePANMapping();
+
+			pm.setMappingID(rs.getLong("MappingID"));
+			pm.setPanLetter(rs.getString("PANLetter"));
+			pm.setCustType(rs.getString("CustType"));
+			pm.setCustCategory(rs.getString("CustCategory"));
+
+			return pm;
+		});
 	}
+
 }

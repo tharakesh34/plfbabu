@@ -46,7 +46,7 @@ public class AccountingEvent {
 	public static final String ADDDBSN = "ADDDBSN";
 	public static final String ADDDBSP = "ADDDBSP";
 	public static final String AMZ = "AMZ";
-	public static final String AMZ_MON = "AMZ_MON";
+	public static final String AMZ_MON = "AMZ_REV";
 	public static final String AMZSUSP = "AMZSUSP";
 	public static final String AMZPD = "AMZPD";
 	public static final String CMTDISB = "CMTDISB";
