@@ -1219,11 +1219,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.finReference);
 		}
 
-		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())
-				&& !MandateStatus.isFinance(this.mandate.getStatus())) {
-			readOnlyComponent(true, this.openMandate);
-		}
-
 		if (StringUtils.isEmpty(this.mandate.getRecordType())
 				&& StringUtils.isNotEmpty(this.mandate.getRecordStatus())) {
 			readOnlyComponent(true, this.mandateType);
