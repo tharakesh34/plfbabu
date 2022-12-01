@@ -2749,8 +2749,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		logger.info(Literal.ENTERING.concat(event.getName()));
 
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
-			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
-			cb.setChecked(listHeaderCheckBoxComp.isChecked());
+			Checkbox cb = (Checkbox) listitem.getChildren().get(Field.CHECK_BOX.index()).getChildren().get(0);
+			Combobox chequeSts = (Combobox) listitem.getChildren().get(Field.CHEQUE_STATUS.index()).getFirstChild();
+
+			String status = getComboboxValue(chequeSts);
+			if (!(ChequeSatus.CANCELLED.equals(status) || ChequeSatus.PRESENT.equals(status))) {
+				cb.setChecked(listHeaderCheckBoxComp.isChecked());
+			}
 		}
 
 		logger.info(Literal.LEAVING.concat(event.getName()));
