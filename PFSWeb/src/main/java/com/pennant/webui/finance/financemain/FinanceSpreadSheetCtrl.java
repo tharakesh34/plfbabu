@@ -197,7 +197,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		try {
 
 			String templateName = this.creditReviewDetails.getTemplateName();
-			String eligibilityMethod = this.creditReviewDetails.getEligibilityMethod();
 
 			// Loading Template
 			Book book = null;
