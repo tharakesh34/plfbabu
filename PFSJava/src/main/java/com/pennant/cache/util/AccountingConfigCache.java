@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -29,7 +30,17 @@ public class AccountingConfigCache {
 	private static FinTypeAccountingDAO finTypeAccountingDAO;
 	private static TransactionEntryDAO transactionEntryDAO;
 	private static RuleDAO ruleDAO;
+	private static AccountMappingDAO accountMappingDAO;
+
 	private static final Logger logger = LogManager.getLogger(AccountingConfigCache.class);
+
+	private static LoadingCache<String, String> accountMappingCache = CacheBuilder.newBuilder()
+			.expireAfterAccess(12, TimeUnit.HOURS).build(new CacheLoader<String, String>() {
+				@Override
+				public String load(String account) throws Exception {
+					return getAccountMappingByAccount(account);
+				}
+			});
 
 	private static LoadingCache<String, AccountType> accountTypeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(12, TimeUnit.HOURS).build(new CacheLoader<String, AccountType>() {
@@ -62,6 +73,10 @@ public class AccountingConfigCache {
 					return getRule(ruleKey);
 				}
 			});
+
+	private static String getAccountMappingByAccount(String account) {
+		return accountMappingDAO.getAccountMappingByAccount(account);
+	}
 
 	private static AccountType getAccountTypeById(String acType) {
 		return accountTypeDAO.getAccountTypeById(acType, "");
@@ -237,6 +252,27 @@ public class AccountingConfigCache {
 
 	}
 
+	public static void clearAccountMappingCache(String account) {
+		try {
+			accountMappingCache.invalidate(account);
+		} catch (Exception ex) {
+			logger.warn("Error clearing data from Account type cache: ", ex);
+		}
+	}
+
+	public static String getCacheAccountMapping(String account) {
+		try {
+			return accountMappingCache.get(account);
+		} catch (ExecutionException e) {
+			logger.warn("Unable to load data from Rule cache: ", e);
+			return accountMappingDAO.getAccountMappingByAccount(account);
+		}
+	}
+
+	public static String getAccountMapping(String account) {
+		return accountMappingDAO.getAccountMappingByAccount(account);
+	}
+
 	public static void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
 		AccountingConfigCache.accountTypeDAO = accountTypeDAO;
 	}
@@ -254,6 +290,10 @@ public class AccountingConfigCache {
 
 	public static void setRuleDAO(RuleDAO ruleDAO) {
 		AccountingConfigCache.ruleDAO = ruleDAO;
+	}
+
+	public static void setAccountMappingDAO(AccountMappingDAO accountMappingDAO) {
+		AccountingConfigCache.accountMappingDAO = accountMappingDAO;
 	}
 
 }

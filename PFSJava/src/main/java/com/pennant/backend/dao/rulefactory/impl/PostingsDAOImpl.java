@@ -85,8 +85,8 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ValueDate, PostDate, AppDate, AppValueDate, TranCode, RevTranCode, TranDesc");
-		sql.append(", RevTranCode, DrOrCr, Account, PostAmount");
-		sql.append(", FinEvent, AcCcy, PostBranch, UserBranch ");
+		sql.append(", RevTranCode, DrOrCr, p.Account, PostAmount");
+		sql.append(", FinEvent, AcCcy, PostBranch, UserBranch, am.HostAccount GlCode");
 
 		if (StringUtils.isNotBlank(type)) {
 			sql.append(", LovDescEventCodeName");
@@ -102,8 +102,10 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		if (StringUtils.isNotBlank(type)) {
 			sql.append(type);
+			sql.append(" p");
 		}
 
+		sql.append(" Left join AccountMapping am on am.Account = p.Account");
 		sql.append(" Where FinReference = ? and FinEvent in (");
 		List<String> asList = Arrays.asList(finEvent.split(","));
 		sql.append(JdbcUtil.getInCondition(asList));
@@ -155,6 +157,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			rds.setAcCcy(rs.getString("AcCcy"));
 			rds.setPostBranch(rs.getString("PostBranch"));
 			rds.setUserBranch(rs.getString("UserBranch"));
+			rds.setGlCode(rs.getString("GlCode"));
 			rds.setLovDescEventCodeName(rs.getString("LovDescEventCodeName"));
 
 			return rds;
@@ -535,12 +538,14 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 	private StringBuilder getSelectQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" LinkedTranId, Postref, PostingId, FinID, FinReference, FinEvent");
-		sql.append(", PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr");
-		sql.append(", Account,  ShadowPosting, PostAmount, AmountType, PostStatus, ErrorId");
-		sql.append(", ErrorMsg, AcCcy, TranOrderId, TransOrder, PostToSys, ExchangeRate");
-		sql.append(", PostBranch, AppDate, AppValueDate, UserBranch, AccountType, PostAmountLcCcy, CustAppDate");
-		sql.append(" From Postings");
+		sql.append(" p.LinkedTranId, p.Postref, p.PostingId, p.FinID, p.FinReference, p.FinEvent");
+		sql.append(", p.PostDate, p.ValueDate, p.TranCode, p.TranDesc, p.RevTranCode, p.DrOrCr");
+		sql.append(", p.Account, p.ShadowPosting, p.PostAmount, p.AmountType, p.PostStatus, p.ErrorId");
+		sql.append(", p.ErrorMsg, p.AcCcy, p.TranOrderId, p.TransOrder, p.PostToSys, p.ExchangeRate");
+		sql.append(", p.PostBranch, p.AppDate, p.AppValueDate, p.UserBranch, p.AccountType");
+		sql.append(", p.PostAmountLcCcy, p.CustAppDate, am.HostAccount glCode");
+		sql.append(" From Postings p");
+		sql.append(" Left join AccountMapping am on am.Account = p.Account");
 		return sql;
 	}
 
@@ -584,6 +589,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			rd.setAccountType(rs.getString("AccountType"));
 			rd.setPostAmountLcCcy(rs.getBigDecimal("PostAmountLcCcy"));
 			rd.setCustAppDate(rs.getDate("CustAppDate"));
+			rd.setGlCode(rs.getString("GlCode"));
 
 			return rd;
 		}

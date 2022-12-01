@@ -41,6 +41,7 @@ public class TransactionDetail implements Serializable {
 	private String postDate;
 	private String valueDate;
 	private String revTranCode;
+	private String glCode;
 
 	public TransactionDetail() {
 
@@ -136,6 +137,14 @@ public class TransactionDetail implements Serializable {
 
 	public void setRevTranCode(String revTranCode) {
 		this.revTranCode = revTranCode;
+	}
+
+	public String getGlCode() {
+		return glCode;
+	}
+
+	public void setGlCode(String glCode) {
+		this.glCode = glCode;
 	}
 
 }

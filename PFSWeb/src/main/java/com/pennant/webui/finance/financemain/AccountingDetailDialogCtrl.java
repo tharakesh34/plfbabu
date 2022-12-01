@@ -379,6 +379,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						lc.setParent(item);
 						lc = new Listcell(entry.getRvsTransactionCode());
 						lc.setParent(item);
+						lc = new Listcell(entry.getGlCode());
+						lc.setParent(item);
 						lc = new Listcell(entry.getAccount());
 						lc.setParent(item);
 						lc = new Listcell("");
@@ -446,6 +448,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 							}
 							lc = new Listcell(entry.getAccountType());
 							lc.setStyle(sClassStyle);
+							lc.setParent(item);
+							lc = new Listcell(entry.getGlCode());
 							lc.setParent(item);
 							lc = new Listcell(PennantApplicationUtil.formatAccountNumber(entry.getAccount()));
 							lc.setStyle("font-weight:bold;");
@@ -565,6 +569,9 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					lc.setStyle(sClassStyle);
 					lc.setParent(item);
 				}
+
+				lc = new Listcell(postAccountSet.getGlCode());
+				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.formatAccountNumber(postAccountSet.getAccount()));
 				lc.setStyle("font-weight:bold;");
 				lc.setStyle(sClassStyle);

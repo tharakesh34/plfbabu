@@ -305,4 +305,18 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 	private void log(String sql) {
 		logger.debug(Literal.SQL.concat(sql));
 	}
+
+	@Override
+	public String getAccountMappingByAccount(String account) {
+		String sql = "Select HostAccount From AccountMapping Where Account = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql, String.class, account);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

@@ -80,6 +80,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	private int receivableOrPayable;
 	private boolean assignmentEntry = false;
 	private boolean bulking = false;
+	private String glCode;
 
 	/*
 	 * TransactionEntry singleFeeCGSTTxn = null; TransactionEntry singleFeeSGSTTxn = null; TransactionEntry
@@ -136,6 +137,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 		entity.setReceivableOrPayable(this.receivableOrPayable);
 		entity.setAssignmentEntry(this.assignmentEntry);
 		entity.setBulking(this.bulking);
+		entity.setGlCode(this.glCode);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -478,6 +480,14 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 
 	public void setBulking(boolean bulking) {
 		this.bulking = bulking;
+	}
+
+	public String getGlCode() {
+		return glCode;
+	}
+
+	public void setGlCode(String glCode) {
+		this.glCode = glCode;
 	}
 	/*
 	 * public TransactionEntry getSingleFeeCGSTTxn() { return singleFeeCGSTTxn; }

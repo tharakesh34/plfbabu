@@ -427,6 +427,9 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			lc = new Listcell(returnData.getRevTranCode());
 			lc.setParent(item);
 
+			lc = new Listcell(returnData.getGlCode());
+			lc.setParent(item);
+
 			// Reserved Amount
 			lc = new Listcell(returnData.getAccount());
 			lc.setParent(item);

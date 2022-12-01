@@ -231,12 +231,14 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	@Override
 	public List<TransactionEntry> getListTranEntryForBatch(final long id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" AccountSetid, TransOrder, TransDesc, Debitcredit, ShadowPosting, Account, AccountType");
-		sql.append(", AccountBranch, AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule");
-		sql.append(", ChargeType, FeeCode, OpenNewFinAc, PostToSys, DerivedTranOrder, FeeRepeat");
-		sql.append(", ReceivableOrPayable, AssignmentEntry, Bulking");
-		sql.append(" from RMTTransactionEntry");
+		sql.append(" te.AccountSetid, te.TransOrder, te.TransDesc, te.Debitcredit, te.ShadowPosting");
+		sql.append(", te.Account, te.AccountType, te.AccountBranch, te.AccountSubHeadRule, te.TranscationCode");
+		sql.append(", te.RvsTransactionCode, te.AmountRule, te.ChargeType, te.FeeCode, te.OpenNewFinAc");
+		sql.append(", te.PostToSys, te.DerivedTranOrder, te.FeeRepeat, te.ReceivableOrPayable");
+		sql.append(", te.AssignmentEntry, te.Bulking, am.HostAccount GlCode");
+		sql.append(" From RMTTransactionEntry");
 		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" te Left join AccountMapping am on am.Account = te.Account");
 		sql.append(" Where AccountSetid = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -269,6 +271,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 			te.setReceivableOrPayable(rs.getInt("ReceivableOrPayable"));
 			te.setAssignmentEntry(rs.getBoolean("AssignmentEntry"));
 			te.setBulking(rs.getBoolean("Bulking"));
+			te.setGlCode(rs.getString("GlCode"));
 			return te;
 
 		});
@@ -289,19 +292,21 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" AccountSetid, TransOrder, TransDesc, Debitcredit, ShadowPosting, Account, AccountType");
-		sql.append(", AccountBranch, AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule");
-		sql.append(", ChargeType, FeeCode, EntryByInvestment, OpenNewFinAc, PostToSys, DerivedTranOrder");
-		sql.append(", FeeRepeat, ReceivableOrPayable, AssignmentEntry, Bulking ");
+		sql.append(" te.AccountSetid, te.TransOrder, te.TransDesc, te.Debitcredit, te.ShadowPosting");
+		sql.append(", te.Account, te.AccountType, te.AccountBranch, te.AccountSubHeadRule");
+		sql.append(", te.TranscationCode, te.RvsTransactionCode, te.AmountRule, te.ChargeType, te.FeeCode");
+		sql.append(", te.EntryByInvestment, te.OpenNewFinAc, te.PostToSys, te.DerivedTranOrder");
+		sql.append(", te.FeeRepeat, te.ReceivableOrPayable, te.AssignmentEntry, te.Bulking, am.HostAccount GlCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", LovDescEventCodeName, LovDescAccSetCodeName");
+			sql.append(", te.LovDescEventCodeName, te.LovDescAccSetCodeName");
 
 			if (!postingsProcess) {
-				sql.append(", LovDescAccountTypeName, LovDescAccountSubHeadRuleName"); // LovDescAccountTypeName column
-																						// is not availble in table and
-																						// AEView
-				sql.append(", LovDescTranscationCodeName, LovDescRvsTransactionCodeName");
-				sql.append(", LovDescAccountBranchName, LovDescSysInAcTypeName, LovDescAccSetCodeDesc");
+				sql.append(", te.LovDescAccountTypeName, te.LovDescAccountSubHeadRuleName"); // LovDescAccountTypeName
+																								// column
+				// is not availble in table and
+				// AEView
+				sql.append(", te.LovDescTranscationCodeName, te.LovDescRvsTransactionCodeName");
+				sql.append(", te.LovDescAccountBranchName, te.LovDescSysInAcTypeName, te.LovDescAccSetCodeDesc");
 			}
 		}
 
@@ -312,6 +317,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		sql.append(" from RMTTransactionEntry");
 		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" te Left join AccountMapping am on am.Account = te.Account");
 		sql.append("  Where AccountSetid in (");
 		sql.append(" Select FinRefId from LMTFinRefDetail");
 		sql.append(" Where Fintype = ? and FinEvent = ?");
@@ -352,6 +358,11 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 				te.setOpenNewFinAc(rs.getBoolean("OpenNewFinAc"));
 				te.setPostToSys(rs.getString("PostToSys"));
 				te.setDerivedTranOrder(rs.getInt("DerivedTranOrder"));
+				te.setFeeRepeat(rs.getBoolean("FeeRepeat"));
+				te.setReceivableOrPayable(rs.getInt("ReceivableOrPayable"));
+				te.setAssignmentEntry(rs.getBoolean("AssignmentEntry"));
+				te.setBulking(rs.getBoolean("Bulking"));
+				te.setGlCode(rs.getString("GlCode"));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					te.setLovDescEventCodeName(rs.getString("LovDescEventCodeName"));

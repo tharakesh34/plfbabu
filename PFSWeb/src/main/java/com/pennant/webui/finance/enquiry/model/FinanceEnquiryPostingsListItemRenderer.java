@@ -84,6 +84,8 @@ public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<
 			lc.setParent(item);
 			lc = new Listcell(dataSet.getRevTranCode());
 			lc.setParent(item);
+			lc = new Listcell(dataSet.getGlCode());
+			lc.setParent(item);
 			lc = new Listcell(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
 			lc.setStyle("font-weight:bold;");
 			lc.setParent(item);

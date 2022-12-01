@@ -400,6 +400,7 @@ public class AccountEngineExecution implements Serializable {
 			}
 
 			returnDataSet.setTranOrderId(String.valueOf(txnEntry.getTransOrder()));
+			returnDataSet.setGlCode(txnEntry.getGlCode());
 			returnDataSet.setAccount(txnEntry.getAccount());
 			// returnDataSet.setPostStatus(acc.getFlagPostStatus());
 			// returnDataSet.setErrorId(acc.getErrorCode());
@@ -567,6 +568,7 @@ public class AccountEngineExecution implements Serializable {
 
 		txnEntry.setAccountType(accountType);
 		txnEntry.setAccountSubHeadRule(subHeadRule);
+		txnEntry.setGlCode(txnEntry.getGlCode());
 		txnEntry.setAccount(txnEntry.getAccount());
 
 		Rule rule = null;
@@ -584,6 +586,12 @@ public class AccountEngineExecution implements Serializable {
 			String sqlRule = rule.getSQLRule();
 			String ccy = aeEvent.getCcy();
 			txnEntry.setAccount((String) RuleExecutionUtil.executeRule(sqlRule, dataMap, ccy, RuleReturnType.STRING));
+
+			if (aeEvent.isEOD()) {
+				txnEntry.setGlCode(AccountingConfigCache.getCacheAccountMapping(txnEntry.getAccount()));
+			} else {
+				txnEntry.setGlCode(AccountingConfigCache.getAccountMapping(txnEntry.getAccount()));
+			}
 		}
 	}
 

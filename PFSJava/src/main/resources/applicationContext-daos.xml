@@ -7651,6 +7651,7 @@
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
+		<property name="accountMappingDAO" ref="accountMappingDAO" />
 	</bean>
 	<bean id="financeConfigCache" class="com.pennant.cache.util.FinanceConfigCache">
 		<property name="financeTypeDAO" ref="financeTypeDAO" />

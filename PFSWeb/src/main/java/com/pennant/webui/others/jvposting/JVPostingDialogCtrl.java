@@ -1716,6 +1716,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		Listcell lc;
 		for (JVPostingEntry accountingEntry : acEntryList) {
 			item = new Listitem();
+			lc = new Listcell(accountingEntry.getGlCode());
+			lc.setParent(item);
 			lc = new Listcell(PennantApplicationUtil.formatAccountNumber(accountingEntry.getAccount()));
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getAccountName());
@@ -1756,6 +1758,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				item = new Listitem();
 				lc = new Listcell(String.valueOf(jvPostingEntry.getTxnReference()));
 				lc.setParent(item);
+				lc = new Listcell(String.valueOf(StringUtils.trimToEmpty(jvPostingEntry.getGlCode())));
+				lc.setParent(item);
+
 				if (jvPostingEntry.getTxnEntry().equalsIgnoreCase(AccountConstants.TRANTYPE_CREDIT)) {
 					lc = new Listcell(PennantApplicationUtil.formatAccountNumber(jvPostingEntry.getAccount()));
 
