@@ -33,6 +33,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
@@ -99,5 +100,7 @@ public interface MandateService {
 
 	List<BankBranch> getBankBranchByMICR(String micr);
 
-	public List<Entity> getEntities();
+	List<Entity> getEntities();
+
+	FinanceMain getEntityByRef(String finReference);
 }

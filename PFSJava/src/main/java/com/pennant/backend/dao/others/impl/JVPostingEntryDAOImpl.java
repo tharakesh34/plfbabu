@@ -645,20 +645,22 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 	private StringBuilder sqlSelectQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FileName, BatchReference, AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy");
-		sql.append(", TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1");
-		sql.append(", NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac");
-		sql.append(", ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
-		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, TDSAdjReq");
-		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" p.FileName, p.BatchReference, p.AcEntryRef, p.HostSeqNo, p.Account, p.AcType");
+		sql.append(", p.AccountName, p.TxnCCy, p.TxnEntry, p.AccCCy, p.TxnCode, p.PostingDate");
+		sql.append(", p.ValueDate, p.TxnAmount, p.TxnReference, p.NarrLine1, p.NarrLine2, p.NarrLine3");
+		sql.append(", p.NarrLine4, p.ExchRate_Batch, p.ExchRate_Ac, p.TxnAmount_Batch, p.TxnAmount_Ac");
+		sql.append(", p.ModifiedFlag, p.DeletedFlag, p.ValidationStatus, p.PostingStatus, p.ExternalAccount");
+		sql.append(", p.LinkedTranId, p.LastMntBy, p.LastMntOn, p.RecordStatus, p.RoleCode, p.NextRoleCode");
+		sql.append(", p.TaskId, p.TDSAdjReq, p.NextTaskId, p.RecordType, p.WorkflowId, am.HostAccount GlCode");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", TxnDesc, DerivedTxnRef");
+			sql.append(", p.TxnDesc, p.DerivedTxnRef");
 		}
 
 		sql.append(" From JVPostingEntry");
 		sql.append(StringUtils.trimToEmpty(type));
-
+		sql.append(" p");
+		sql.append(" Left join AccountMapping am on am.Account = p.Account");
 		return sql;
 	}
 
@@ -711,6 +713,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			jve.setNextTaskId(rs.getString("NextTaskId"));
 			jve.setRecordType(rs.getString("RecordType"));
 			jve.setWorkflowId(rs.getLong("WorkflowId"));
+			jve.setGlCode(rs.getString("GlCode"));
 			jve.setTDSAdjReq(rs.getBoolean("TDSAdjReq"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {

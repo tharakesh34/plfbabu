@@ -4,11 +4,7 @@ import com.pennant.pff.batch.job.model.BatchJobQueue;
 
 public interface BatchJobQueueDAO {
 
-	Long getJobId(String jobName);
-
-	void logQueue(BatchJobQueue jobQueue);
-
-	void deleteQueue(BatchJobQueue jobQueue);
+	int getQueueCount();
 
 	int prepareQueue(BatchJobQueue jobQueue);
 
@@ -17,6 +13,8 @@ public interface BatchJobQueueDAO {
 	int getQueueCount(BatchJobQueue jobQueue);
 
 	void updateProgress(BatchJobQueue jobQueue);
+
+	void clearQueue();
 
 	long getNextValue();
 

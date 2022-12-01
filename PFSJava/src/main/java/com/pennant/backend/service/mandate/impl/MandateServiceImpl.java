@@ -902,6 +902,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		mandate.setMandateID(Long.MIN_VALUE);
 		mandate.setCustID(fm.getCustID());
+		mandate.setLoanMaturityDate(fm.getMaturityDate());
 
 		ErrorDetail errordetail = basicValidation(mandate, repaymentMethod);
 
@@ -919,11 +920,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		case SI:
 			errordetail = validateAccountDetail(mandate);
 
-			if (errordetail != null) {
-				return errordetail;
-			}
-
-			if (!InstrumentType.isSI(mandateType)) {
+			if (errordetail == null && !InstrumentType.isSI(mandateType)) {
 				errordetail = otherDetailValidation(mandate);
 			}
 
@@ -975,7 +972,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		case EMANDATE:
 			ErrorDetail errordetail = validateAccountDetail(mandate);
 
-			if (errordetail != null && !InstrumentType.isSI(mandateType)) {
+			if (errordetail == null && !InstrumentType.isSI(mandateType)) {
 				errordetail = otherDetailValidation(mandate);
 			}
 
@@ -1053,6 +1050,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				String strStartDate = DateUtil.formatToLongDate(mandbackDate);
 				return ErrorUtil.getError("90318", "mandate start date", strStartDate, strEndDate);
 			}
+		}
+
+		if (mandate.getExpiryDate() != null && mandate.getExpiryDate().before(mandate.getLoanMaturityDate())) {
+
+			String maturityDate = DateUtil.formatToLongDate(mandate.getLoanMaturityDate());
+			return ErrorUtil.getError("30509", "mandate Expiry date", maturityDate, strEndDate);
 		}
 
 		if (StringUtils.isNotBlank(mandate.getMandateType())) {
@@ -1279,6 +1282,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	@Override
+	public FinanceMain getEntityByRef(String finReference) {
+		return financeMainDAO.getEntityByRef(finReference);
+	}
+
+	@Override
 	public long saveStatus(com.pennant.backend.model.mandate.MandateStatus mandateStatus) {
 		return mandateStatusDAO.save(mandateStatus, "");
 	}
@@ -1357,4 +1365,5 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private MandateProcesses getMandateProcess() {
 		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
 	}
+
 }

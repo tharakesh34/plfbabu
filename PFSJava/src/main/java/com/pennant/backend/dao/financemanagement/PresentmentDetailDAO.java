@@ -174,5 +174,7 @@ public interface PresentmentDetailDAO {
 
 	void updateReceptIdAndAmounts(PresentmentDetail pd);
 
+	void updateProgess(long importHeaderId, int i);
+
 	PresentmentDetail getRePresentmentDetail(String finReference, Date SchDate);
 }

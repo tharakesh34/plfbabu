@@ -468,10 +468,10 @@ public class FeeCalculator {
 			ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
 		}
 
-		Date appDate = SysParamUtil.getAppDate();
+		Date valDate = rd.getValueDate();
 		int finAge = 0;
 		if (fm.getFinStartDate() != null) {
-			finAge = DateUtility.getMonthsBetween(appDate, fm.getFinStartDate());
+			finAge = DateUtility.getMonthsBetween(valDate, fm.getFinStartDate());
 		}
 
 		dataMap.put("finAgetilldate", finAge);
@@ -479,7 +479,7 @@ public class FeeCalculator {
 
 		int instNO = 0;
 		for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
-			if (detail.getSchDate().compareTo(appDate) <= 0) {
+			if (detail.getSchDate().compareTo(valDate) <= 0) {
 				instNO = detail.getInstNumber();
 			} else {
 				break;

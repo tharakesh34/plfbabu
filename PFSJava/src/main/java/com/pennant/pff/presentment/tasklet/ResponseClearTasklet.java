@@ -1,7 +1,5 @@
 package com.pennant.pff.presentment.tasklet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -10,33 +8,34 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.presentment.dao.PresentmentDAO;
 
-public class ExtractionQueueTasklet implements Tasklet {
-	private Logger logger = LogManager.getLogger(ExtractionQueueTasklet.class);
+public class ResponseClearTasklet implements Tasklet {
 
-	private static final String LITERAL_1 = "Queueing preparation for presentment extraction completed with total records  {}";
+	private PresentmentDAO presentmentDAO;
+	private BatchJobQueueDAO ebjqDAO;
 
-	private BatchJobQueueDAO bjqDAO;
-
-	public ExtractionQueueTasklet(BatchJobQueueDAO bjqDAO) {
+	public ResponseClearTasklet(PresentmentDAO presentmentDAO, BatchJobQueueDAO ebjqDAO) {
 		super();
-		this.bjqDAO = bjqDAO;
+		this.presentmentDAO = presentmentDAO;
+		this.ebjqDAO = ebjqDAO;
 	}
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
 
+		Long batchId = jobParameters.getLong("BATCH_ID");
+		String batchType = jobParameters.getString("BATCH_TYPE");
+
 		BatchJobQueue jobQueue = new BatchJobQueue();
-		jobQueue.setBatchId(jobParameters.getLong("BATCH_ID"));
-		jobQueue.setJobName("EXTRACTION");
+		jobQueue.setBatchId(batchId);
 
-		bjqDAO.clearQueue();
-
-		int totalRecords = bjqDAO.prepareQueue(jobQueue);
-
-		logger.info(LITERAL_1, totalRecords);
+		presentmentDAO.logRespDetail(batchId, batchType);
+		presentmentDAO.clearRespDetail(batchId, batchType);
+		ebjqDAO.clearQueue();
 
 		return RepeatStatus.FINISHED;
 	}
+
 }

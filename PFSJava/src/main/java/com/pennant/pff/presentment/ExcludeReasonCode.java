@@ -1,5 +1,11 @@
 package com.pennant.pff.presentment;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.pennant.backend.model.ValueLabel;
+
 public enum ExcludeReasonCode {
 	EMI_INCLUDE(0, ""),
 
@@ -49,4 +55,31 @@ public enum ExcludeReasonCode {
 		return description;
 	}
 
+	public static String reasonCode(int excludeReason) {
+		List<ExcludeReasonCode> list = Arrays.asList(ExcludeReasonCode.values());
+
+		for (ExcludeReasonCode ec : list) {
+			if (ec.id() == excludeReason) {
+				return ec.code();
+			}
+		}
+
+		return null;
+	}
+
+	private static List<ValueLabel> excludeCodes;
+
+	public static List<ValueLabel> getExcludeCodes() {
+		if (excludeCodes != null) {
+			return excludeCodes;
+		}
+
+		excludeCodes = new ArrayList<>(4);
+
+		for (ExcludeReasonCode item : ExcludeReasonCode.values()) {
+			excludeCodes.add(new ValueLabel(item.name(), item.code()));
+		}
+
+		return excludeCodes;
+	}
 }

@@ -27,7 +27,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -57,7 +56,6 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ExtendedCombobox finReference;
 	protected Textbox custCIF;
 	protected Combobox mandateTypes;
-	protected ExtendedCombobox entityCode;
 
 	protected Button btnProceed;
 	protected Label customerNameLabel;
@@ -169,26 +167,6 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 		this.finReference.setFilters(filters);
 
-		List<Entity> entity = mandateService.getEntities();
-
-		if (entity.size() == 1) {
-			this.entityCode.setValue(entity.get(0).getEntityCode());
-			this.entityCode.setDescColumn(entity.get(0).getEntityDesc());
-			this.entityCode.setVisible(false);
-		}
-
-		this.entityCode.setMaxlength(8);
-		this.entityCode.setDisplayStyle(2);
-		this.entityCode.setMandatoryStyle(true);
-		this.entityCode.setModuleName("Entity");
-		this.entityCode.setValueColumn("EntityCode");
-		this.entityCode.setDescColumn("EntityDesc");
-		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
-
-		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-
-		this.entityCode.setFilters(filter);
 	}
 
 	@Override
@@ -272,10 +250,10 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 			}
 
-			if (customerLoans.isEmpty()) {
-				MessageUtil.showError("There are no active loans for the selected Customer and Instrument Type.");
-				return;
-			}
+			FinanceMain finMain = mandateService.getEntityByRef(this.mandate.getFinReference());
+
+			this.mandate.setEntityCode(finMain.getEntityCode());
+			this.mandate.setEntityDesc(finMain.getEntityDesc());
 
 			arg.put("mandate", this.mandate);
 			arg.put("mandatedata", this);
@@ -323,13 +301,6 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		try {
-			mandate.setEntityCode(this.entityCode.getValue());
-			mandate.setEntityDesc(this.entityCode.getDescription());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
 			mandate.setMandateType(getComboboxValue(this.mandateTypes));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -353,9 +324,6 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptPayment_LoanReference.value"),
 						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 
-		this.entityCode.setConstraint(
-				new PTStringValidator(Labels.getLabel("label_MandateDialog_EntityCode.value"), null, true, true));
-
 		String label = Labels.getLabel("label_SelectMandate_MandateTypes.value");
 		label = label.concat(" is Mandatory ");
 		this.mandateTypes.setConstraint(new StaticListValidator(mandateTypeList, label));
@@ -364,12 +332,10 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private void doRemoveValidation() {
 		this.custCIF.setConstraint("");
-		this.entityCode.setConstraint("");
 		this.mandateTypes.setConstraint("");
 		this.finReference.setConstraint("");
 
 		this.custCIF.clearErrorMessage();
-		this.entityCode.clearErrorMessage();
 		this.mandateTypes.clearErrorMessage();
 		this.finReference.clearErrorMessage();
 	}
@@ -446,6 +412,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.custCIF.setValue(String.valueOf(fm.getCustCIF()));
 				this.customerNameLabel.setValue(fm.getCustShrtName());
 				this.finType = fm.getFinType();
+				this.mandate.setLoanMaturityDate(fm.getMaturityDate());
 			}
 		}
 

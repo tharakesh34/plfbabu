@@ -300,7 +300,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		List<Object> list = null;
 
 		list = new ArrayList<Object>();
-		List<TransactionDetail> accountingDetails = new ArrayList<TransactionDetail>();
+		List<TransactionDetail> accountingDetails = new ArrayList<>();
 		for (ReturnDataSet dataSet : postingDetails) {
 			TransactionDetail detail = new TransactionDetail();
 			detail.setEventCode(dataSet.getFinEvent());
@@ -309,6 +309,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			detail.setTransactionCode(dataSet.getTranCode());
 			detail.setTransDesc(dataSet.getTranDesc());
 			detail.setCcy(dataSet.getAcCcy());
+			detail.setGlCode(dataSet.getGlCode());
 			detail.setAccount(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
 			detail.setPostAmount(
 					CurrencyUtil.format(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));

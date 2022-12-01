@@ -14,7 +14,6 @@ public class PresentmentExcludeCode extends AbstractWorkflowEntity {
 	private String code;
 	private Long bounceId;
 	private String description;
-	private boolean createBounceOnDueDate;
 	private int excludeId;
 	private long createdBy;
 	private Timestamp createdOn;
@@ -25,6 +24,7 @@ public class PresentmentExcludeCode extends AbstractWorkflowEntity {
 	private PresentmentExcludeCode befImage;
 	private String bounceCode;
 	private String returnCode;
+	private String instrumentType;
 
 	public PresentmentExcludeCode() {
 		super();
@@ -69,14 +69,6 @@ public class PresentmentExcludeCode extends AbstractWorkflowEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public boolean isCreateBounceOnDueDate() {
-		return createBounceOnDueDate;
-	}
-
-	public void setCreateBounceOnDueDate(boolean createBounceOnDueDate) {
-		this.createBounceOnDueDate = createBounceOnDueDate;
 	}
 
 	public int getExcludeId() {
@@ -157,6 +149,14 @@ public class PresentmentExcludeCode extends AbstractWorkflowEntity {
 
 	public void setReturnCode(String returnCode) {
 		this.returnCode = returnCode;
+	}
+
+	public String getInstrumentType() {
+		return instrumentType;
+	}
+
+	public void setInstrumentType(String instrumentType) {
+		this.instrumentType = instrumentType;
 	}
 
 }

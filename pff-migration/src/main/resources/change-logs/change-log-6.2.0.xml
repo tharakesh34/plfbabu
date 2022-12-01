@@ -1198,7 +1198,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#84.46" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3194,7 +3194,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.18" author="saikiran.n" dbms="mssql">
 		<createView viewName="BANK_INSTRUMENT_MAPPING" replaceIfExists="true">
 			<![CDATA[
@@ -3251,7 +3251,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.19" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3281,7 +3281,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.20" author="saikiran.n" dbms="oracle,postgresql">
 		<sql>
 			<![CDATA[
@@ -3294,7 +3294,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#94.20" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3680,6 +3680,11 @@
 		</createIndex>
 	</changeSet>
 
+	<changeSet id="ST#112.0" author="saikrishna.b">
+		<createSequence sequenceName="SEQ_Presentment_Exclude_Codes" minValue="1"
+			maxValue="9223372036854775807" incrementBy="1" startValue="1" />
+	</changeSet>
+
 	<changeSet id="ST#112.1" author="sandeepkumar.m">
 		<createTable tableName="Presentment_Exclude_Codes">
 			<column name="ID" type="bigint">
@@ -3726,13 +3731,24 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="ST#112.1.1" author="saikrishna.b">
+		<addColumn tableName="Presentment_Exclude_Codes">
+			<column name="InstrumentType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
 	<changeSet id="ST#112.2" author="sandeepkumar.m">
 		<addPrimaryKey tableName="Presentment_Exclude_Codes" columnNames="ID" constraintName="pk_Pec" />
 	</changeSet>
 
-	<changeSet id="ST#112.3" author="sandeepkumar.m">
-		<addUniqueConstraint tableName="Presentment_Exclude_Codes" columnNames="Code"
+	<changeSet id="ST#112.3.1" author="saikrishna.b">
+		<dropUniqueConstraint tableName="Presentment_Exclude_Codes" uniqueColumns="Code"
 			constraintName="uk_pec_code" />
+	</changeSet>
+
+	<changeSet id="ST#112.3.2" author="sandeepkumar.m">
+		<addUniqueConstraint tableName="Presentment_Exclude_Codes" columnNames="Code,InstrumentType"
+			constraintName="uk_pec_codeinstrumentType" />
 	</changeSet>
 
 	<changeSet id="ST#112.4" author="sandeepkumar.m" dbms="postgresql, oracle">
@@ -3819,13 +3835,24 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="ST#112.7.1" author="saikrishna.b">
+		<addColumn tableName="Presentment_Exclude_Codes_temp">
+			<column name="InstrumentType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
 	<changeSet id="ST#112.8" author="sandeepkumar.m">
 		<addPrimaryKey tableName="Presentment_Exclude_Codes_temp" columnNames="ID" constraintName="pk_pec_t_id" />
 	</changeSet>
 
-	<changeSet id="ST#112.9" author="sandeepkumar.m">
-		<addUniqueConstraint tableName="Presentment_Exclude_Codes_temp" columnNames="Code"
+	<changeSet id="ST#112.9.1" author="saikrishna.b">
+		<dropUniqueConstraint tableName="Presentment_Exclude_Codes_temp" uniqueColumns="Code"
 			constraintName="uk_pec_t_code" />
+	</changeSet>
+
+	<changeSet id="ST#112.9.2" author="sandeepkumar.m">
+		<addUniqueConstraint tableName="Presentment_Exclude_Codes_temp" columnNames="Code,InstrumentType"
+			constraintName="uk_pec_t_codeinstrumentType" />
 	</changeSet>
 
 	<changeSet id="ST#112.10" author="sandeepkumar.m" dbms="postgresql, oracle">
@@ -3851,7 +3878,7 @@
 			baseColumnNames="BounceId" />
 	</changeSet>
 
-	<changeSet id="ST#112.12" author="sandeepkumar.m">
+	<changeSet id="ST#112.12.1" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
 			    DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER');
@@ -3867,11 +3894,26 @@
 				DELETE FROM SECGROUPS WHERE GRPCODE ='PRESENTMENT_EXCLUDE_CODES_APPROVER';
 				
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menuItem_PresentmentExcludeCodes';
-				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='PresentmentExcludeCodes_BounceOnDueDate';
+				DELETE FROM SECRIGHTS WHERE RightName ='button_PresentmentExcludeCode_btnPresentmentExcludeCode';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='PresentmentExcludeCodeDialog_Code';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='PresentmentExcludeCodeDialog_Description';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='PresentmentExcludeCodeDialog_BounceOnDueDate';
+				DELETE FROM SECRIGHTS WHERE RightName ='PresentmentExcludeCodeDialog_InstrumentType';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='PresentmentExcludeCodeDialog_BounceCode';
 				
 				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_PresentmentExcludeCodes', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 				
-		    	INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodes_BounceOnDueDate', 'PresentmentExcludeCodesDialog', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_PresentmentExcludeCode_btnPresentmentExcludeCode', 'PresentmentExcludeCodeDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodeDialog_Code', 'PresentmentExcludeCodeDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodeDialog_Description', 'PresentmentExcludeCodeDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+		    	INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodeDialog_BounceOnDueDate', 'PresentmentExcludeCodesDialog', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	
+		    	INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodeDialog_InstrumentType', 'PresentmentExcludeCodeDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		    	
+		    	INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PresentmentExcludeCodeDialog_BounceCode', 'PresentmentExcludeCodeDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 		    
 		    	INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'PRESENTMENT_EXCLUDE_CODES_MAKER', 'WF Maker for BounceCode', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'PRESENTMENT_EXCLUDE_CODES_APPROVER', 'WF Approver for BounceCode', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
@@ -3879,7 +3921,13 @@
 		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'),    (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentExcludeCodes'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentExcludeCodes'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		   		
-		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCodes_BounceOnDueDate'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_PresentmentExcludeCode_btnPresentmentExcludeCode'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		   		
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCodeDialog_Code'), 			1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCodeDialog_Description'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCodeDialog_BounceOnDueDate'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCodeDialog_instrumentType'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		   		INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'PresentmentExcludeCodeDialog_BounceCode'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		   		
 		  		INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'PRESENTMENT_EXCLUDE_CODES_MAKER', 'Maker role from Presentment Exclude Codes', '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
 		  		INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'PRESENTMENT_EXCLUDE_CODES_APPROVER', 'Approver role from Presentment Exclude Codes',	'', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
@@ -3890,6 +3938,68 @@
 		   		INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_MAKER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENT_EXCLUDE_CODES_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#112.17" author="sandeepkumar.m">
+		<addColumn tableName="INSTRUMENT_TYPES">
+			<column name="BatchSize" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#112.18" author="sandeepkumar.m">
+		<addColumn tableName="Instrument_Types_Temp">
+			<column name="BatchSize" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#112.19" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE INSTRUMENT_TYPES ADD CONSTRAINT DF_IT_BATCHSIZE DEFAULT 0 FOR BATCHSIZE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#112.19" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="BatchSize" tableName="INSTRUMENT_TYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#112.20" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE INSTRUMENT_TYPES_TEMP ADD CONSTRAINT DF_ITT_BATCHSIZE DEFAULT 0 FOR BATCHSIZE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#112.20" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="BatchSize" tableName="Instrument_Types_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#112.21" author="sandeepkumar.m">
+		<dropColumn tableName="Presentment_Exclude_Codes" columnName="CreateBounceOnDueDate" />
+	</changeSet>
+
+	<changeSet id="ST#112.22" author="sandeepkumar.m">
+		<dropColumn tableName="Presentment_Exclude_Codes_TEMP" columnName="CreateBounceOnDueDate" />
+	</changeSet>
+
+	<changeSet id="ST#112.23" author="saikrishna.b">
+		<sql>
+			<![CDATA[	
+				DELETE FROM Presentment_Exclude_Codes;
+				DELETE FROM Presentment_Exclude_Codes_TEMP;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#112.002" author="sandeep">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM REPORTLIST WHERE CODE = 'PresentmentExcludeCode';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('PresentmentExcludeCode', 'PresentmentExcludeCode', 'code,codeDesc,bounceCode,instrumentType' ,'code,description,bounceCode,instrumentType', 'String,String,String,String', null, 'ReportList04', 'PresentmentExcludeCode', 'System Masters', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+        	 ]]>
 		</sql>
 	</changeSet>
 
@@ -4533,15 +4643,6 @@
 				
 				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('MNDT01', 'EN', 'E', 'Employer Id {0} not matched with Customer Current Employer Id.', 'error', 'Approved', null, null, null, null, null, 0, null, 1000, 0);
 			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#112.001" author="sandeep">
-		<sql>
-			<![CDATA[
-   		     	DELETE FROM REPORTLIST WHERE CODE = 'PresentmentExcludeCode';
-				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('PresentmentExcludeCode', 'PresentmentExcludeCode', 'code,codeDesc,bounceCode,createBounceOnDueDate' ,'code,description,bounceCode,createBounceOnDueDate', 'String,String,String,Boolean', null, 'ReportList04', 'PresentmentExcludeCode', 'System Masters', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
-        	 ]]>
 		</sql>
 	</changeSet>
 
@@ -5833,8 +5934,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="PSD#208851.2.0_pre" author="saikrishna.b" >
+
+	<changeSet id="PSD#208851.2.0_pre" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				update MANDATES set HOLDREASON = null;
@@ -5842,12 +5943,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208851.2.1_pre" author="saikrishna.b">
 		<dropForeignKeyConstraint baseTableName="MANDATES" constraintName="fk_mandates_holdreason" />
-		<dropForeignKeyConstraint baseTableName="MANDATES_TEMP" constraintName="fk_mandates_temp_holdreason" />
-	</changeSet> 
-	
+		<dropForeignKeyConstraint baseTableName="MANDATES_TEMP"
+			constraintName="fk_mandates_temp_holdreason" />
+	</changeSet>
+
 	<changeSet id="PSD#208851.2_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5864,7 +5966,7 @@
 	<changeSet id="PSD#208851.3" author="saikrishna.b">
 		<modifyDataType tableName="MANDATES_TEMP" columnName="HOLDREASON" newDataType="varchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#208851.2_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5931,7 +6033,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#209101.03.1" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -5947,11 +6049,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#209101.03" author="Gopal.p">
-		<modifyDataType tableName="Presentment_Extraction_Stage " columnName="ChequeAmount" newDataType="decimal(18,0)" />
+		<modifyDataType tableName="Presentment_Extraction_Stage " columnName="ChequeAmount"
+			newDataType="decimal(18,0)" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#209101.03_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5959,7 +6062,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#209101.04" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -5967,7 +6070,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#210561_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5976,22 +6079,23 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#210561" author="saikiran.n">
 		<modifyDataType tableName="QUERYDETAIL_TEMP" columnName="NOTIFYTO" newDataType="VARCHAR(2000)" />
 		<modifyDataType tableName="QUERYDETAIL_TEMP" columnName="RESPONSNOTES" newDataType="VARCHAR(2000)" />
 		<modifyDataType tableName="QUERYDETAIL" columnName="NOTIFYTO" newDataType="VARCHAR(2000)" />
 		<modifyDataType tableName="QUERYDETAIL" columnName="RESPONSNOTES" newDataType="VARCHAR(2000)" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#210561_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
+					select deps_restore_dependencies ('plf', 'querydetail_temp');
 					select deps_restore_dependencies ('plf', 'querydetail');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.23" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -6000,10 +6104,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.23.1" author="saikrishna.b">
-		<createSequence sequenceName="SEQ_PRMNT_EXTRACTION_QUEUE" minValue="1"
-			maxValue="9223372036854775807" incrementBy="1" startValue="1" ordered="true"/>
+		<createSequence sequenceName="SEQ_PRMNT_EXTRACTION_QUEUE" minValue="1" maxValue="9223372036854775807"
+			incrementBy="1" startValue="1" ordered="true" />
 	</changeSet>
 
 	<changeSet id="ST#99.23.2" author="saikrishna.b">
@@ -6023,7 +6127,7 @@
 			<column name="ResetCounterId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.23.3" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -6037,30 +6141,31 @@
 	</changeSet>
 
 	<changeSet id="ST#99.23.4" author="saikrishna.b">
-		<addPrimaryKey tableName="PRMNT_EXTRACTION_QUEUE" columnNames="ID, BatchId" constraintName="pk_prmnt_extraction_queue" />
+		<addPrimaryKey tableName="PRMNT_EXTRACTION_QUEUE" columnNames="ID, BatchId"
+			constraintName="pk_prmnt_extraction_queue" />
 	</changeSet>
-	
+
 	<changeSet id="ST#99.23.5" author="saikrishna.b">
 		<createIndex tableName="PRMNT_EXTRACTION_QUEUE" indexName="idx_prmnt_extraction_queue_rid">
 			<column name="ReferenceId" type="bigint" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.24" author="saikrishna.b">
-		<renameTable newTableName="PRMNT_EXTRACTION_STAGE" oldTableName="Presentment_Extraction_Stage"/>
+		<renameTable newTableName="PRMNT_EXTRACTION_STAGE" oldTableName="Presentment_Extraction_Stage" />
 	</changeSet>
-	
+
 	<changeSet id="ST#99.25" author="saikrishna.b">
-		<dropTable tableName="PRESENTMENT_BATCH_JOB"/>
+		<dropTable tableName="PRESENTMENT_BATCH_JOB" />
 	</changeSet>
-	
+
 	<changeSet id="ST#99.25.1" author="saikrishna.b">
 		<createTable tableName="PRMNT_BATCH_JOBS">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
 			<column name="Batch_Type" type="varchar(20)" />
-			<column name="Created_By" type="bigint"/>
+			<column name="Created_By" type="bigint" />
 			<column name="Start_Time" type="datetime" />
 			<column name="End_Time" type="datetime" />
 			<column name="Total_Records" type="int" />
@@ -6073,16 +6178,16 @@
 			<column name="Remarks" type="varchar(1000)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#99.25.2" author="saikrishna.b">
-		<addPrimaryKey tableName="PRMNT_BATCH_JOBS" columnNames="ID" constraintName="PK_PRMNT_BATCH_JOBS"/>
+		<addPrimaryKey tableName="PRMNT_BATCH_JOBS" columnNames="ID" constraintName="PK_PRMNT_BATCH_JOBS" />
 	</changeSet>
 	<changeSet id="ST#99.25.3" author="saikrishna.b">
 		<createIndex tableName="PRMNT_BATCH_JOBS" indexName="IDX_PRMNT_BATCH_JOBS_BTYPE">
 			<column name="Batch_Type" type="varchar(20)" />
 		</createIndex>
 	</changeSet>
-		
+
 	<changeSet id="ST#665" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -6100,7 +6205,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#670_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6109,12 +6214,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#670" author="saikiran.n">
 		<modifyDataType tableName="RMTBranches_temp" columnName="BranchSwiftBrnCde" newDataType="varchar(5)" />
 		<modifyDataType tableName="RMTBranches" columnName="BranchSwiftBrnCde" newDataType="varchar(5)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#670_post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6123,24 +6228,24 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#113" author="Gireesh.G">
 		<createSequence sequenceName="SEQ_FILE_UPLOAD_HEADER" incrementBy="1" startValue="1" minValue="1"
 			maxValue="999999999999999999" />
 	</changeSet>
-	
+
 	<changeSet id="ST#113.1" author="Gireesh.G">
 		<createTable tableName="FILE_UPLOAD_HEADER_TEMP">
-			<column name="Id" type="bigint" >
+			<column name="Id" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="EntityCode" type="varchar(8)" >
+			<column name="EntityCode" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
 			<column name="Type" type="varchar(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="FileName" type="varchar(100)" >
+			<column name="FileName" type="varchar(100)">
 				<constraints nullable="false" />
 			</column>
 			<column name="TotalRecords" type="int" />
@@ -6165,27 +6270,27 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.2" author="Gireesh.G">
-		<addPrimaryKey tableName="FILE_UPLOAD_HEADER_TEMP" columnNames="Id"/>
+		<addPrimaryKey tableName="FILE_UPLOAD_HEADER_TEMP" columnNames="Id" />
 	</changeSet>
-	
+
 	<changeSet id="ST#113.3" author="Gireesh.G">
-		<addUniqueConstraint tableName="FILE_UPLOAD_HEADER_TEMP" columnNames="EntityCode, Type, FileName"/>
+		<addUniqueConstraint tableName="FILE_UPLOAD_HEADER_TEMP" columnNames="EntityCode, Type, FileName" />
 	</changeSet>
-	
+
 	<changeSet id="ST#113.4" author="Gireesh.G">
 		<createTable tableName="FILE_UPLOAD_HEADER">
-			<column name="Id" type="bigint" >
+			<column name="Id" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="EntityCode" type="varchar(8)" >
+			<column name="EntityCode" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
 			<column name="Type" type="varchar(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="FileName" type="varchar(100)" >
+			<column name="FileName" type="varchar(100)">
 				<constraints nullable="false" />
 			</column>
 			<column name="TotalRecords" type="int" />
@@ -6210,15 +6315,15 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.5" author="Gireesh.G">
-		<addPrimaryKey tableName="FILE_UPLOAD_HEADER" columnNames="Id"/>
+		<addPrimaryKey tableName="FILE_UPLOAD_HEADER" columnNames="Id" />
 	</changeSet>
-	
+
 	<changeSet id="ST#113.6" author="Gireesh.G">
-		<addUniqueConstraint tableName="FILE_UPLOAD_HEADER" columnNames="EntityCode, Type, FileName"/>
+		<addUniqueConstraint tableName="FILE_UPLOAD_HEADER" columnNames="EntityCode, Type, FileName" />
 	</changeSet>
-	
+
 	<changeSet id="ST#113.7.1" author="Gireesh.G">
 		<createTable tableName="REPRESENT_UPLOADS">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -6233,11 +6338,11 @@
 			<column name="Remarks" type="varchar(2000)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.8" author="Gireesh.G">
-		<addPrimaryKey tableName="REPRESENT_UPLOADS" columnNames="Id"/>
+		<addPrimaryKey tableName="REPRESENT_UPLOADS" columnNames="Id" />
 	</changeSet>
-	
+
 	<changeSet id="ST#113.9_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6283,7 +6388,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.10_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6353,7 +6458,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.11_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6399,7 +6504,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.13" author="Gireesh.G">
 		<insert tableName="WorkFlowDetails">
 			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
@@ -6431,7 +6536,7 @@
 			<where>workflowtype='REPRESENT_UPLOAD'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.15" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -6472,13 +6577,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.16" author="Gireesh.G">
 		<addColumn tableName="PRMNT_EXTRACTION_STAGE">
 			<column name="RePresentUploadID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.17" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -6488,5 +6593,328 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
+	<changeSet id="PSD#211274_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'otp_messages');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#211274" author="Gopal.p">
+		<modifyDataType tableName="OTP_Messages" columnName="MobileNo" newDataType="varchar(20)" />
+	</changeSet>
+
+	<changeSet id="PSD#211274_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'otp_messages');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.26" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_RESPONSE_THREAD_COUNT';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC,SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PRESENTMENT_RESPONSE_THREAD_COUNT', 'Presentment Response Thread Count', 'int', 0, '10', 3, 0, NULL, NULL, 'Presentment Response Thread Count', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.26.1" author="saikrishna.b">
+		<createSequence sequenceName="SEQ_PRMNT_RESP_SUCCESS_QUEUE" minValue="1" maxValue="9223372036854775807"
+			incrementBy="1" startValue="1" ordered="true" />
+	</changeSet>
+
+	<changeSet id="ST#99.26.2" author="saikrishna.b">
+		<createTable tableName="PRMNT_RESP_SUCCESS_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" />
+			<column name="ThreadId" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="ResetCounterId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#99.26.3" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRMNT_RESP_SUCCESS_QUEUE ADD CONSTRAINT DF_PESQ_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.26.3" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Progress" tableName="PRMNT_RESP_SUCCESS_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#99.26.4" author="saikrishna.b">
+		<addPrimaryKey tableName="PRMNT_RESP_SUCCESS_QUEUE" columnNames="ID, BatchId"
+			constraintName="PK_PRMNT_RESP_SUCCESS_QUEUE" />
+	</changeSet>
+
+	<changeSet id="ST#99.26.5" author="saikrishna.b">
+		<createIndex tableName="PRMNT_RESP_SUCCESS_QUEUE" indexName="IDX_PRMNT_RESP_SUCCESS_Q_RID">
+			<column name="ReferenceId" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#99.26.6" author="saikrishna.b">
+		<dropPrimaryKey tableName="PRMNT_RESP_SUCCESS_QUEUE" />
+	</changeSet>
+
+	<changeSet id="ST#99.26.7" author="saikrishna.b">
+		<addPrimaryKey tableName="PRMNT_RESP_SUCCESS_QUEUE" columnNames="ID"
+			constraintName="PK_PRMNT_RESP_SUCCESS_QUEUE" />
+	</changeSet>
+
+	<changeSet id="ST#99.27.1" author="saikrishna.b">
+		<createSequence sequenceName="SEQ_PRMNT_RESP_BOUNCE_QUEUE" minValue="1" maxValue="9223372036854775807"
+			incrementBy="1" startValue="1" ordered="true" />
+	</changeSet>
+
+	<changeSet id="ST#99.27.2" author="saikrishna.b">
+		<createTable tableName="PRMNT_RESP_BOUNCE_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" />
+			<column name="ThreadId" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="ResetCounterId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#99.27.3" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRMNT_RESP_BOUNCE_QUEUE ADD CONSTRAINT DF_PEBQ_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.27.3" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Progress" tableName="PRMNT_RESP_BOUNCE_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#99.27.4" author="saikrishna.b">
+		<addPrimaryKey tableName="PRMNT_RESP_BOUNCE_QUEUE" columnNames="ID, BatchId"
+			constraintName="PK_PRMNT_RESP_BOUNCE_QUEUE" />
+	</changeSet>
+
+	<changeSet id="ST#99.27.5" author="saikrishna.b">
+		<createIndex tableName="PRMNT_RESP_BOUNCE_QUEUE" indexName="IDX_PRMNT_RESP_BOUNCE_Q_RID">
+			<column name="ReferenceId" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#99.27.6" author="saikrishna.b">
+		<dropPrimaryKey tableName="PRMNT_RESP_BOUNCE_QUEUE" />
+	</changeSet>
+
+	<changeSet id="ST#99.27.7" author="saikrishna.b">
+		<addPrimaryKey tableName="PRMNT_RESP_BOUNCE_QUEUE" columnNames="ID"
+			constraintName="PK_PRMNT_RESP_BOUNCE_QUEUE" />
+	</changeSet>
+
+
+	<changeSet id="ST#99.28" author="saikrishna.b">
+		<addColumn tableName="PRESENTMENT_RESP_HEADER">
+			<column name="Progress" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#99.28.1" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PRESENTMENT_RESP_HEADER ADD CONSTRAINT DF_PRH_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#99.28.1" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Progress" tableName="PRESENTMENT_RESP_HEADER" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#99.28.2" author="saikrishna.b">
+		<addColumn tableName="PRESENTMENT_RESP_DTLS">
+			<column name="ERROR_CODE" type="varchar(10)" />
+			<column name="ERROR_DESCRIPTION" type="varchar(2000)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="PSD#210986_pre" author="Alekhya.T" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'postings_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#210986" author="Alekhya.T">
+		<createView viewName="POSTINGS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.LINKEDTRANID
+					, T1.POSTREF
+					, T1.POSTINGID
+					, T1.FINREFERENCE
+					, T1.FINEVENT
+					, T1.POSTDATE
+					, T1.VALUEDATE
+					, T1.APPVALUEDATE
+					, T1.APPDATE
+					, T1.TRANCODE
+					, T1.REVTRANCODE
+					, T1.DRORCR
+					, T1.ACCOUNT
+					, T1.POSTAMOUNT
+					, T1.POSTSTATUS
+					, T1.ERRORID
+					, T1.ERRORMSG
+					, T2.AEEVENTCODEDESC LOVDESCEVENTCODENAME
+					, T1.SHADOWPOSTING
+					, T1.TRANDESC
+					, T1.AMOUNTTYPE
+					, T1.ACCCY
+					, T1.POSTBRANCH
+					, T1.USERBRANCH
+					, T1.TRANORDERID
+					, T1.TRANSORDER
+					, AM.HOSTACCOUNT GLCODE
+				FROM POSTINGS T1
+				INNER JOIN BMTAEEVENTS T2 ON T1.FINEVENT = T2.AEEVENTCODE
+				INNER JOIN (SELECT FINREFERENCE FROM FINANCEMAIN
+					  UNION ALL
+					  SELECT FINREFERENCE FROM FINANCEMAIN_TEMP) T3 ON T3.FINREFERENCE = T1.FINREFERENCE
+				LEFT JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = T1.ACCOUNT
+            	WHERE T1.FINEVENT  NOT IN ('VASFEE', 'JVPOST')
+				UNION ALL
+				SELECT T1.LINKEDTRANID
+					, T1.POSTREF
+					, T1.POSTINGID
+					, T3.PRIMARYLINKREF FINREFERENCE
+					, T1.FINEVENT
+					, T1.POSTDATE
+					, T1.VALUEDATE
+					, T1.APPVALUEDATE
+					, T1.APPDATE
+					, T1.TRANCODE
+					, T1.REVTRANCODE
+					, T1.DRORCR
+					, T1.ACCOUNT
+					, T1.POSTAMOUNT
+					, T1.POSTSTATUS
+					, T1.ERRORID
+					, T1.ERRORMSG
+					, T2.AEEVENTCODEDESC LOVDESCEVENTCODENAME
+					, T1.SHADOWPOSTING
+					, T1.TRANDESC
+					, T1.AMOUNTTYPE
+					, T1.ACCCY
+					, T1.POSTBRANCH
+					, T1.USERBRANCH
+					, T1.TRANORDERID
+					, T1.TRANSORDER
+					, AM.HOSTACCOUNT GLCODE
+				FROM POSTINGS T1
+				INNER JOIN BMTAEEVENTS T2 ON T1.FINEVENT = T2.AEEVENTCODE
+				INNER JOIN VASRECORDING T3 ON T3.VASREFERENCE = T1.FINREFERENCE
+				LEFT JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = T1.ACCOUNT
+        		WHERE T1.FINEVENT = 'VASFEE'
+				UNION ALL
+				SELECT T1.LINKEDTRANID
+					, T1.POSTREF
+					, T1.POSTINGID
+					, CAST(T3.REFERENCE VARCHAR(20)) FINREFERENCE
+					, T1.FINEVENT
+					, T1.POSTDATE
+					, T1.VALUEDATE
+					, T1.APPVALUEDATE
+					, T1.APPDATE
+					, T1.TRANCODE
+					, T1.REVTRANCODE
+					, T1.DRORCR
+					, T1.ACCOUNT
+					, T1.POSTAMOUNT
+					, T1.POSTSTATUS
+					, T1.ERRORID
+					, T1.ERRORMSG
+					, T2.AEEVENTCODEDESC LOVDESCEVENTCODENAME
+					, T1.SHADOWPOSTING
+					, T1.TRANDESC
+					, T1.AMOUNTTYPE
+					, T1.ACCCY
+					, T1.POSTBRANCH
+					, T1.USERBRANCH
+					, T1.TRANORDERID
+					, T1.TRANSORDER
+					, AM.HOSTACCOUNT GLCODE
+				FROM POSTINGS T1
+				INNER JOIN BMTAEEVENTS T2 ON T1.FINEVENT = T2.AEEVENTCODE
+				INNER JOIN JVPOSTINGS T3 ON CAST(T3.BATCHREFERENCE AS VARCHAR(20))= T1.FINREFERENCE
+				INNER JOIN FINANCEMAIN T4 ON T3.REFERENCE = T4.FINREFERENCE
+        		LEFT JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = T1.ACCOUNT
+       			WHERE T1.FINEVENT = 'JVPOST'
+				UNION ALL
+				SELECT T1.LINKEDTRANID
+					, T1.POSTREF
+					, T1.POSTINGID
+					, T4.FINREFERENCE
+					, T1.FINEVENT
+					, T1.POSTDATE
+					, T1.VALUEDATE
+					, T1.APPVALUEDATE
+					, T1.APPDATE
+					, T1.TRANCODE
+					, T1.REVTRANCODE
+					, T1.DRORCR
+					, T1.ACCOUNT
+					, T1.POSTAMOUNT
+					, T1.POSTSTATUS
+					, T1.ERRORID
+					, T1.ERRORMSG
+					, T2.AEEVENTCODEDESC LOVDESCEVENTCODENAME
+					, T1.SHADOWPOSTING
+					, T1.TRANDESC
+					, T1.AMOUNTTYPE
+					, T1.ACCCY
+					, T1.POSTBRANCH
+					, T1.USERBRANCH
+					, T1.TRANORDERID
+					, T1.TRANSORDER
+					, AM.HOSTACCOUNT GLCODE
+				FROM POSTINGS T1
+				INNER JOIN BMTAEEVENTS T2 ON T1.FINEVENT = T2.AEEVENTCODE
+				INNER JOIN FEEPOSTINGS T3 ON CAST(T3.POSTID VARCHAR(20)) = T1.FINREFERENCE
+				INNER JOIN FINANCEMAIN T4 ON T3.REFERENCE = T4.FINREFERENCE
+				LEFT JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = T1.ACCOUNT
+				WHERE T1.FINEVENT = 'MANFEE'
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#210986_post" author="Alekhya.T" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'postings_view');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

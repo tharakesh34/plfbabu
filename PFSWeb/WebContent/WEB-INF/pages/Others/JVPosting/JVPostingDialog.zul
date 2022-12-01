@@ -156,6 +156,7 @@
 											width="100%" multiple="false" emptyMessage="${c:l('listEmptyMessage.title')}">
 											<listhead sizable="true">
 												<listheader id="listheader_TxnRef" label="${c:l('listheader_TxnRef.label')}" sort="auto" hflex="min" />
+												<listheader label="${c:l('label_GL_Account')}" sort="auto" hflex="min" />
 												<listheader id="listheader_Account" label="${c:l('listheader_Account.label')}" sort="auto" hflex="min" />
 												<listheader id="listheader_PostingDate" label="${c:l('listheader_PostingDate.label')}" sort="auto"
 													hflex="min" />
@@ -180,6 +181,7 @@
 										<listbox id="listBoxJVPostingAccounting" span="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}"
 											width="100%" multiple="false" emptyMessage="${c:l('listEmptyMessage.title')}">
 											<listhead sizable="true">
+												<listheader label="${c:l('label_GL_Account')}" sort="auto" hflex="min" />
 												<listheader id="listheader_AEAccountNo" label="${c:l('listheader_Account.label')}" sort="auto"
 													hflex="min" />
 												<listheader id="listheader_AEAccountName" label="${c:l('listheader_AccountName.label')}" sort="auto"

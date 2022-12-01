@@ -89,6 +89,7 @@ public class ReturnDataSet implements Serializable {
 	private long invoiceId;
 	private BigDecimal invoiceAmt;
 	private long transactionId;
+	private String glCode;
 
 	private EventProperties eventProperties = new EventProperties();
 
@@ -151,7 +152,8 @@ public class ReturnDataSet implements Serializable {
 		entity.setInvoiceId(this.invoiceId);
 		entity.setInvoiceAmt(this.invoiceAmt);
 		entity.setTransactionId(this.transactionId);
-		
+		entity.setGlCode(this.glCode);
+
 		return entity;
 	}
 
@@ -587,4 +589,11 @@ public class ReturnDataSet implements Serializable {
 		this.transactionId = transactionId;
 	}
 
+	public String getGlCode() {
+		return glCode;
+	}
+
+	public void setGlCode(String glCode) {
+		this.glCode = glCode;
+	}
 }

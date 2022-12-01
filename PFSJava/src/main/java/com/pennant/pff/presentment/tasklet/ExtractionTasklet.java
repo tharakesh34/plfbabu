@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,9 +45,9 @@ public class ExtractionTasklet implements Tasklet {
 	private static final String EXCEPTION_MSG = "Presentment extraction Process failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
-	int successRecords;
-	int processRecords;
-	int failedRecords;
+	public static AtomicInteger processRecords = new AtomicInteger(0);
+	public static AtomicInteger successRecords = new AtomicInteger(0);
+	public static AtomicInteger failedRecords = new AtomicInteger(0);
 
 	public ExtractionTasklet(BatchJobQueueDAO ebjqDAO, PresentmentEngine presentmentEngine,
 			DataSourceTransactionManager transactionManager, PresentmentDAO presentmentDAO) {
@@ -67,8 +68,6 @@ public class ExtractionTasklet implements Tasklet {
 		Map<String, Object> stepExecutionContext = chunkContext.getStepContext().getStepExecutionContext();
 
 		int threadID = Integer.parseInt(stepExecutionContext.get("THREAD_ID").toString());
-
-		ebjqDAO.resetSequence();
 
 		long queueID = ebjqDAO.getNextValue();
 		long batchId = jobParameters.getLong("BATCH_ID");
@@ -91,8 +90,7 @@ public class ExtractionTasklet implements Tasklet {
 			jobQueue.setBatchId(batchId);
 			jobQueue.setId(queueID);
 			jobQueue.setThreadId(threadID);
-			++processRecords;
-			jobQueue.setProcessedRecords(processRecords);
+			jobQueue.setProcessedRecords(processRecords.incrementAndGet());
 
 			try {
 				jobQueue.setProgress(EodConstants.PROGRESS_IN_PROCESS);
@@ -106,15 +104,13 @@ public class ExtractionTasklet implements Tasklet {
 					jobQueue.setProgress(EodConstants.PROGRESS_SUCCESS);
 					ebjqDAO.updateProgress(jobQueue);
 
-					++successRecords;
-					jobQueue.setSuccessRecords(successRecords);
+					jobQueue.setSuccessRecords(successRecords.incrementAndGet());
 					presentmentDAO.updateBatch(jobQueue);
 				} else {
 					jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 					ebjqDAO.updateProgress(jobQueue);
 
-					++failedRecords;
-					jobQueue.setFailedRecords(failedRecords);
+					jobQueue.setFailedRecords(failedRecords.incrementAndGet());
 					presentmentDAO.updateBatch(jobQueue);
 				}
 
@@ -130,8 +126,7 @@ public class ExtractionTasklet implements Tasklet {
 				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 				ebjqDAO.updateProgress(jobQueue);
 
-				++failedRecords;
-				jobQueue.setFailedRecords(failedRecords);
+				jobQueue.setFailedRecords(failedRecords.incrementAndGet());
 				presentmentDAO.updateBatch(jobQueue);
 			}
 

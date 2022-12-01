@@ -45,4 +45,5 @@ public interface AccountMappingDAO extends BasicCrudDao<AccountMapping> {
 
 	List<AccountMapping> getAccountMappingFinType(String finType, String type);
 
+	String getAccountMappingByAccount(String account);
 }

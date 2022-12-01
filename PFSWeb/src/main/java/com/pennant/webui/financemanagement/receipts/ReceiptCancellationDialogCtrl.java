@@ -1694,6 +1694,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				lc.setParent(item);
 				lc = new Listcell("");
 				lc.setParent(item);
+				lc = new Listcell(returnDataSet.getGlCode());
+				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.formatAccountNumber(returnDataSet.getAccount()));
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getAcCcy());

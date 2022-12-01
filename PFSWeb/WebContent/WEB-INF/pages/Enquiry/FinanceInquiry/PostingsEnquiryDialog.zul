@@ -72,6 +72,7 @@
 										hflex="min" />
 									<listheader id="listheader_Acc_RevTranCode" label="${c:l('listheader_Acc_RevTranCode.label')}" sort="false"
 										hflex="min" />
+									<listheader label="${c:l('label_GL_Account')}" sort="false" hflex="min" />
 									<listheader id="listheader_Acc_AccountNo" label="${c:l('listheader_Acc_AccountNo.label')}" sort="false"
 										hflex="min" />
 									<listheader id="listheader_Acc_AcCcy" label="${c:l('listheader_Acc_AcCcy.label')}" sort="false"

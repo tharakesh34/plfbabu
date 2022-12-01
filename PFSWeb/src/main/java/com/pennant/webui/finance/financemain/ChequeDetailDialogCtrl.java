@@ -1681,6 +1681,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				cheque.setAmount(getEmiAmount(listItem));
 			}
 
+			if (ChequeSatus.PRESENT.equals(cheque.getChequeStatus())) {
+				cheques.add(cheque);
+				continue;
+			}
+
 			if (!checkbox.isChecked()) {
 				if (fromLoan) {
 					cheque.seteMIRefNo(cheque.geteMIRefNo() - count);
@@ -2744,8 +2749,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		logger.info(Literal.ENTERING.concat(event.getName()));
 
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
-			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
-			cb.setChecked(listHeaderCheckBoxComp.isChecked());
+			Checkbox cb = (Checkbox) listitem.getChildren().get(Field.CHECK_BOX.index()).getChildren().get(0);
+			Combobox chequeSts = (Combobox) listitem.getChildren().get(Field.CHEQUE_STATUS.index()).getFirstChild();
+
+			String status = getComboboxValue(chequeSts);
+			if (!(ChequeSatus.CANCELLED.equals(status) || ChequeSatus.PRESENT.equals(status))) {
+				cb.setChecked(listHeaderCheckBoxComp.isChecked());
+			}
 		}
 
 		logger.info(Literal.LEAVING.concat(event.getName()));
@@ -2772,7 +2782,16 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	}
 
 	private boolean isDeleteVisible() {
-		return !(CollectionUtils.isEmpty(chequeDetailList) || this.btnGen.isDisabled() || enqiryModule
+		List<ChequeDetail> list = new ArrayList<>();
+
+		for (ChequeDetail cd : chequeDetailList) {
+			String status = cd.getChequeStatus();
+			if (!(PennantConstants.RCD_STATUS_CANCELLED.equals(status) || ChequeSatus.PRESENT.equals(status))) {
+				list.add(cd);
+			}
+		}
+
+		return !(CollectionUtils.isEmpty(list) || this.btnGen.isDisabled() || enqiryModule
 				|| this.deleteCheques.isDisabled());
 	}
 

@@ -110,6 +110,7 @@ public class JVPostingEntry extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private String finSourceID;
 	private boolean tDSAdjReq;
+	private String glCode;
 
 	public JVPostingEntry() {
 		super();
@@ -156,6 +157,7 @@ public class JVPostingEntry extends AbstractWorkflowEntity {
 		excludeFields.add("debitAcType");
 		excludeFields.add("debitAcname");
 		excludeFields.add("finSourceID");
+		excludeFields.add("glCode");
 		return excludeFields;
 	}
 
@@ -609,6 +611,14 @@ public class JVPostingEntry extends AbstractWorkflowEntity {
 
 	public void setTDSAdjReq(boolean tDSAdjReq) {
 		this.tDSAdjReq = tDSAdjReq;
+	}
+
+	public String getGlCode() {
+		return glCode;
+	}
+
+	public void setGlCode(String glCode) {
+		this.glCode = glCode;
 	}
 
 }

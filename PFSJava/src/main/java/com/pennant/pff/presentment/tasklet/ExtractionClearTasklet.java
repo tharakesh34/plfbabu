@@ -10,12 +10,12 @@ import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 
-public class ClearQueueTasklet implements Tasklet {
+public class ExtractionClearTasklet implements Tasklet {
 
 	private PresentmentDAO presentmentDAO;
 	private BatchJobQueueDAO ebjqDAO;
 
-	public ClearQueueTasklet(PresentmentDAO presentmentDAO, BatchJobQueueDAO ebjqDAO) {
+	public ExtractionClearTasklet(PresentmentDAO presentmentDAO, BatchJobQueueDAO ebjqDAO) {
 		super();
 		this.presentmentDAO = presentmentDAO;
 		this.ebjqDAO = ebjqDAO;
@@ -31,7 +31,7 @@ public class ClearQueueTasklet implements Tasklet {
 		jobQueue.setBatchId(batchId);
 
 		this.presentmentDAO.clearQueue(batchId);
-		this.ebjqDAO.deleteQueue(jobQueue);
+		this.ebjqDAO.clearQueue();
 
 		return RepeatStatus.FINISHED;
 	}

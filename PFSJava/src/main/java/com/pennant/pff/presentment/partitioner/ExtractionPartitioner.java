@@ -1,4 +1,4 @@
-package com.pennant.pff.presentment.tasklet;
+package com.pennant.pff.presentment.partitioner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,19 +16,16 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
-import com.pennant.pff.presentment.dao.PresentmentDAO;
 
 public class ExtractionPartitioner implements Partitioner, StepExecutionListener {
 	private Logger logger = LogManager.getLogger(ExtractionPartitioner.class);
 
 	private BatchJobQueueDAO bjqDAO;
-	private PresentmentDAO presentmentDAO;
 	private Long batchId;
 
-	public ExtractionPartitioner(BatchJobQueueDAO bjqDAO, PresentmentDAO presentmentDAO) {
+	public ExtractionPartitioner(BatchJobQueueDAO bjqDAO) {
 		super();
 		this.bjqDAO = bjqDAO;
-		this.presentmentDAO = presentmentDAO;
 	}
 
 	@Override
@@ -39,6 +36,8 @@ public class ExtractionPartitioner implements Partitioner, StepExecutionListener
 
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchId);
+
+		bjqDAO.resetSequence();
 
 		bjqDAO.handleFailures(jobQueue);
 
@@ -79,38 +78,6 @@ public class ExtractionPartitioner implements Partitioner, StepExecutionListener
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
-		ExitStatus exitStatus = stepExecution.getExitStatus();
-
-		String exitCode = exitStatus.getExitCode();
-		String exitDescription = exitStatus.getExitDescription();
-
-		JobParameters jobParameters = stepExecution.getJobParameters();
-		batchId = jobParameters.getLong("BATCH_ID");
-
-		BatchJobQueue jobQueue = new BatchJobQueue();
-		jobQueue.setBatchId(batchId);
-
-		if ("FAILED".equals(exitCode)) {
-			jobQueue.setFailedStep(stepExecution.getStepName());
-			jobQueue.setError(exitDescription);
-
-			presentmentDAO.updateFailureError(jobQueue);
-		} else {
-			jobQueue = presentmentDAO.getBatch(jobQueue);
-
-			int total = jobQueue.getTotalRecords();
-			int processed = jobQueue.getProcessRecords();
-			int success = jobQueue.getSuccessRecords();
-			int failed = jobQueue.getFailedRecords();
-			String msg = String.format(
-					"Presentment extraction completed successfully with, total Records: %d, processed: %d, success: %d, failed: %d",
-					total, success, processed, failed);
-
-			jobQueue.setBatchId(batchId);
-			jobQueue.setRemarks(msg);
-			presentmentDAO.updateRemarks(jobQueue);
-		}
-
-		return exitStatus;
+		return null;
 	}
 }

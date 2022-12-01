@@ -2,8 +2,10 @@ package com.pennant.pff.presentment.tasklet;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,12 +49,14 @@ public class ApprovalTasklet implements Tasklet {
 	private static final String EXCEPTION_MSG = "Presentment approval Process failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
-	int successRecords;
-	int processRecords;
-	int failedRecords;
+	public static AtomicInteger processRecords = new AtomicInteger(0);
+	public static AtomicInteger successRecords = new AtomicInteger(0);
+	public static AtomicInteger failedRecords = new AtomicInteger(0);
 
 	private EventPropertiesService eventPropertiesService;
 	private EventProperties eventProperties;
+
+	Map<String, String> bounceForPD = new HashMap<String, String>();
 
 	public ApprovalTasklet(BatchJobQueueDAO bjqDAO, PresentmentEngine presentmentEngine, PresentmentDAO presentmentDAO,
 			DataSourceTransactionManager transactionManager) {
@@ -74,8 +78,6 @@ public class ApprovalTasklet implements Tasklet {
 
 		int threadID = Integer.parseInt(stepExecutionContext.get("THREAD_ID").toString());
 
-		bjqDAO.resetSequence();
-
 		long queueID = bjqDAO.getNextValue();
 		long batchId = jobParameters.getLong("BATCH_ID");
 		Long presentmentID = bjqDAO.getIdBySequence(queueID);
@@ -85,6 +87,8 @@ public class ApprovalTasklet implements Tasklet {
 		}
 
 		eventProperties = eventPropertiesService.getEventProperties(EventType.EOD);
+
+		bounceForPD = presentmentDAO.getUpfrontBounceCodes();
 
 		Date appDate = SysParamUtil.getAppDate();
 		String strAppDate = DateUtil.formatToLongDate(appDate);
@@ -101,8 +105,7 @@ public class ApprovalTasklet implements Tasklet {
 			jobQueue.setBatchId(batchId);
 			jobQueue.setId(queueID);
 			jobQueue.setThreadId(threadID);
-			++processRecords;
-			jobQueue.setProcessedRecords(processRecords);
+			jobQueue.setProcessedRecords(processRecords.incrementAndGet());
 
 			try {
 
@@ -117,15 +120,13 @@ public class ApprovalTasklet implements Tasklet {
 					jobQueue.setProgress(EodConstants.PROGRESS_SUCCESS);
 					bjqDAO.updateProgress(jobQueue);
 
-					++successRecords;
-					jobQueue.setSuccessRecords(successRecords);
+					jobQueue.setSuccessRecords(successRecords.incrementAndGet());
 					presentmentDAO.updateBatch(jobQueue);
 				} else {
 					jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 					bjqDAO.updateProgress(jobQueue);
 
-					++failedRecords;
-					jobQueue.setFailedRecords(failedRecords);
+					jobQueue.setFailedRecords(failedRecords.incrementAndGet());
 					presentmentDAO.updateBatch(jobQueue);
 				}
 
@@ -140,8 +141,7 @@ public class ApprovalTasklet implements Tasklet {
 				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 				bjqDAO.updateProgress(jobQueue);
 
-				++failedRecords;
-				jobQueue.setFailedRecords(failedRecords);
+				jobQueue.setFailedRecords(failedRecords.incrementAndGet());
 				presentmentDAO.updateBatch(jobQueue);
 			}
 
@@ -175,7 +175,7 @@ public class ApprovalTasklet implements Tasklet {
 			pd.setAppDate(ph.getAppDate());
 			pd.setEventProperties(eventProperties);
 
-			presentmentEngine.approve(pd);
+			presentmentEngine.approve(pd, bounceForPD);
 			transactionManager.commit(transactionStatus);
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);

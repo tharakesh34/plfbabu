@@ -262,7 +262,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private boolean issecurityMandate = false;
 	private transient BankAccountValidation bankAccountValidations;
 
-	private List<Mandate> customerLoans = new ArrayList<>();
 	private List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 	private List<ValueLabel> securityMandateTypeList = MandateUtil.getSecurityInstrumentTypes();
 	private final List<ValueLabel> accTypeList = MandateUtil.getAccountTypes();
@@ -471,10 +470,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.finReference.setModuleName("FinanceManagement");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-
-		if (!fromLoan) {
-			this.finReference.setList(customerLoans);
-		}
 
 		this.accHolderName.setMaxlength(100);
 		this.jointAccHolderName.setMaxlength(50);
@@ -959,9 +954,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (instrumentType == InstrumentType.DAS) {
-			if (!fromLoan && customerLoans.size() > 1) {
-				readOnlyComponent(false, this.finReference);
-			}
 			this.dasGroupbox.setVisible(true);
 			this.dasRow.setVisible(true);
 
@@ -979,10 +971,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (instrumentType == InstrumentType.SI) {
-
-			if (!fromLoan && customerLoans.size() > 1) {
-				readOnlyComponent(false, this.finReference);
-			}
 
 			this.accDetailsGroupbox.setVisible(true);
 
@@ -1217,11 +1205,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.remarksRow.setVisible(true);
 
 			readOnlyComponent(true, this.finReference);
-		}
-
-		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())
-				&& !MandateStatus.isFinance(this.mandate.getStatus())) {
-			readOnlyComponent(true, this.openMandate);
 		}
 
 		if (StringUtils.isEmpty(this.mandate.getRecordType())
@@ -2105,6 +2088,20 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.expiryDate.setConstraint(new PTDateValidator(
 						Labels.getLabel("label_MandateDialog_ExpiryDate.value"), validate, true, null, false));
 			}
+		}
+
+		if (this.expiryDate.getValue() != null && (this.expiryDate.getValue().compareTo(this.startDate.getValue()) <= 0
+				|| this.expiryDate.getValue().after(appExpiryDate))) {
+			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
+					validate, this.startDate.getValue(), appExpiryDate, true));
+		}
+
+		Date lanMatDate = this.mandate.getLoanMaturityDate();
+		Date expDate = this.expiryDate.getValue();
+
+		if (expDate != null && expDate.before(lanMatDate)) {
+			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
+					validate, lanMatDate, appExpiryDate, true));
 		}
 
 		if (!this.maxLimit.isReadonly()) {

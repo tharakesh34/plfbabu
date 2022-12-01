@@ -17,6 +17,8 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.payment.PaymentHeader;
@@ -29,6 +31,7 @@ import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
+import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -159,7 +162,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public void updateFailureError(BatchJobQueue jobQueue) {
-		String sql = "Update PRMNT_BATCH_JOBS Set Failed_Step = ? , Error = ? Where ID = ?";
+		String sql = "Update PRMNT_BATCH_JOBS Set Failed_Step = ?, Error = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -172,7 +175,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public void updateEndTimeStatus(BatchJobQueue jobQueue) {
-		String sql = "Update PRMNT_BATCH_JOBS Set End_Time = ? , Status = ? Where ID = ?";
+		String sql = "Update PRMNT_BATCH_JOBS Set End_Time = ?, Status = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -1134,7 +1137,6 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			}
 			return totals;
 		}, presentmentId);
-
 	}
 
 	@Override
@@ -1274,7 +1276,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.CustId, fm.FinBranch, fm.FinType, pd.Id, pd.PresentmentId");
 		sql.append(", fm.FinID, pd.FinReference, pd.SchDate, pd.MandateId, pd.AdvanceAmt, pd.ExcessID");
-		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, pb.AccountNo, pb.AcType, pb.PartnerBankId");
+		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, ph.MandateType, pb.AccountNo, pb.AcType");
+		sql.append(", pb.PartnerBankId");
 		sql.append(" From PresentmentDetails pd ");
 		sql.append(" Inner join PresentmentHeader ph on ph.Id = pd.PresentmentId");
 		sql.append(" Left join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
@@ -1298,6 +1301,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
 			pd.setExcludeReason(rs.getInt("ExcludeReason"));
 			pd.setBounceID(rs.getLong("BounceID"));
+			pd.setInstrumentType(rs.getString("MandateType"));
 			pd.setAccountNo(rs.getString("AccountNo"));
 			pd.setAcType(rs.getString("AcType"));
 
@@ -1557,6 +1561,287 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		}
 
 		return list.get(0);
+	}
+
+	@Override
+	public Map<String, String> getUpfrontBounceCodes() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" pec.Code, pec.InstrumentType, br.ReturnCode");
+		sql.append(" From Presentment_Exclude_Codes pec");
+		sql.append(" Inner Join BounceReasons br on br.BounceID = pec.BounceID");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		Map<String, String> map = new HashMap<>();
+
+		List<PresentmentExcludeCode> list = this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			PresentmentExcludeCode pec = new PresentmentExcludeCode();
+
+			pec.setCode(rs.getString("Code"));
+			pec.setInstrumentType(rs.getString("InstrumentType"));
+			pec.setReturnCode(rs.getString("ReturnCode"));
+
+			return pec;
+		});
+
+		for (PresentmentExcludeCode pec : list) {
+			map.put(pec.getCode().concat("$").concat(pec.getInstrumentType()), pec.getReturnCode());
+		}
+
+		return map;
+	}
+
+	@Override
+	public Map<String, Integer> batchSizeByInstrumentType() {
+		Map<String, Integer> batchSizeMap = new HashMap<>();
+
+		String sql = "SELECT CODE, BATCHSIZE FROM INSTRUMENT_TYPES";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql.toString(), (ResultSet rs) -> {
+			while (rs.next()) {
+				batchSizeMap.put(rs.getString(1), rs.getInt(2));
+
+			}
+			return batchSizeMap;
+		});
+	}
+
+	@Override
+	@Transactional(isolation = Isolation.READ_COMMITTED)
+	public int getRecordsByWaiting(String clearingStatus) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select count(prd.ID) From PRESENTMENT_RESP_HEADER prh");
+		sql.append(" Inner Join PRESENTMENT_RESP_DTLS prd on prd.Header_ID  = prh.ID");
+		sql.append(" Where prh.Progress = ? and Event = ? and prd.PROCESS_FLAG = ? and CLEARING_STATUS = ? ");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, 1, "IMPORT", 0, clearingStatus);
+	}
+
+	@Override
+	public PresentmentDetail getPresentmenForResponse(Long responseID) {
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" PRD.HEADER_ID, PRD.BRANCH_CODE, FM.FINID, FM.FINREFERENCE, PRD.HOST_REFERENCE, PRD.INSTALMENT_NO");
+		sql.append(", PRD.AMOUNT_CLEARED, PRD.CLEARING_DATE, PRD.CLEARING_STATUS, PRD.BOUNCE_CODE, BOUNCE_REMARKS");
+		sql.append(", PRD.ID RESPONSEID, PD.ID, PD.PRESENTMENTID, PD.MANDATEID, PH.MANDATETYPE");
+		sql.append(", PD.SCHDATE, PD.SCHAMTDUE, PD.SCHPRIDUE, PD.SCHPFTDUE");
+		sql.append(", PD.SCHFEEDUE, PD.SCHINSDUE, PD.SCHPENALTYDUE");
+		sql.append(", PD.ADVANCEAMT, PD.EXCESSID, PD.ADVISEAMT, PD.PRESENTMENTAMT");
+		sql.append(", PD.TDSAMOUNT, PD.EXCLUDEREASON, PD.EMINO, PD.STATUS, PD.PRESENTMENTREF");
+		sql.append(", PD.ECSRETURN, PD.RECEIPTID, PD.ERRORCODE, PD.ERRORDESC, PD.MANUALADVISEID");
+		sql.append(", FM.FINISACTIVE, FM.FINTYPE, PRD.ACCOUNT_NUMBER, PRD.UTR_Number, PRD.FateCorrection");
+		sql.append(" FROM PRESENTMENT_RESP_DTLS PRD");
+		sql.append(" INNER JOIN PRESENTMENTDETAILS PD ON PD.PRESENTMENTREF = PRD.PRESENTMENT_REFERENCE");
+		sql.append(" INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID");
+		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINID = PD.FINID");
+		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID");
+		sql.append(" where PRD.ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setId(rs.getLong("ID"));
+			pd.setResponseId(rs.getLong("RESPONSEID"));
+			pd.setHeaderId(rs.getLong("HEADER_ID"));
+			// pd.setPresentmentID(rs.getLong("PRESENTMENTID"));
+			pd.setFinID(rs.getLong("FINID"));
+			pd.setFinReference(rs.getString("FINREFERENCE"));
+			pd.setHostReference(rs.getString("HOST_REFERENCE"));
+			pd.setFinType(rs.getString("FINTYPE"));
+			pd.setFinisActive(rs.getBoolean("FINISACTIVE"));
+			pd.setSchDate(rs.getDate("SCHDATE"));
+			pd.setMandateId(rs.getLong("MANDATEID"));
+			pd.setMandateType(rs.getString("MANDATETYPE"));
+			pd.setSchAmtDue(rs.getBigDecimal("SCHAMTDUE"));
+			pd.setSchPriDue(rs.getBigDecimal("SCHPRIDUE"));
+			pd.setSchPftDue(rs.getBigDecimal("SCHPFTDUE"));
+			pd.setSchFeeDue(rs.getBigDecimal("SCHFEEDUE"));
+			pd.setSchInsDue(rs.getBigDecimal("SCHINSDUE"));
+			pd.setSchPenaltyDue(rs.getBigDecimal("SCHPENALTYDUE"));
+			pd.setAdvanceAmt(rs.getBigDecimal("ADVANCEAMT"));
+			pd.setExcessID(rs.getLong("EXCESSID"));
+			pd.setAdviseAmt(rs.getBigDecimal("ADVISEAMT"));
+			pd.setPresentmentAmt(rs.getBigDecimal("PRESENTMENTAMT"));
+			pd.settDSAmount(rs.getBigDecimal("TDSAMOUNT"));
+			pd.setExcludeReason(rs.getInt("EXCLUDEREASON"));
+			pd.setEmiNo(rs.getInt("EMINO"));
+			pd.setStatus(rs.getString("STATUS"));
+			pd.setBounceCode(rs.getString("BOUNCE_CODE"));
+			pd.setBounceRemarks(rs.getString("BOUNCE_REMARKS"));
+			pd.setClearingStatus(rs.getString("CLEARING_STATUS"));
+			pd.setPresentmentRef(rs.getString("PRESENTMENTREF"));
+			pd.setEcsReturn(rs.getString("ECSRETURN"));
+			pd.setReceiptID(rs.getLong("RECEIPTID"));
+			pd.setErrorCode(rs.getString("ERRORCODE"));
+			pd.setErrorDesc(rs.getString("ERRORDESC"));
+			pd.setManualAdviseId(JdbcUtil.getLong(rs.getObject("MANUALADVISEID")));
+			pd.setAccountNo(rs.getString("ACCOUNT_NUMBER"));
+			pd.setUtrNumber(rs.getString("UTR_Number"));
+			pd.setFateCorrection(rs.getString("FateCorrection"));
+
+			return pd;
+		}, responseID);
+	}
+
+	@Override
+	public List<Long> getResponseHeadersByBatch(long batchID, String responseType) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT DISTINCT HEADER_ID");
+		sql.append(" FROM PRESENTMENT_RESP_DTLS PRD");
+
+		if ("S".equals(responseType)) {
+			sql.append(" INNER JOIN PRMNT_RESP_SUCCESS_QUEUE PRSQ ON PRSQ.REFERENCEID = PRD.ID");
+		} else {
+			sql.append(" INNER JOIN PRMNT_RESP_BOUNCE_QUEUE PRSQ ON PRSQ.REFERENCEID = PRD.ID");
+		}
+
+		sql.append(" WHERE PRSQ.BATCHID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForList(sql.toString(), Long.class, batchID);
+	}
+
+	@Override
+	public List<Long> getPresentmentIdListByRespBatch(long headerId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT DISTINCT PH.ID FROM PRESENTMENT_RESP_DTLS PRD");
+		sql.append(" INNER JOIN PRESENTMENTDETAILS PD ON PD.PRESENTMENTREF = PRD.PRESENTMENT_REFERENCE");
+		sql.append(" INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID");
+		sql.append(" WHERE PRD.HEADER_ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForList(sql.toString(), Long.class, headerId);
+
+	}
+
+	@Override
+	public List<String> getStatusByPresentmentHeader(Long id) {
+		String sql = "SELECT STATUS FROM PRESENTMENTDETAILS WHERE PRESENTMENTID = ? AND EXCLUDEREASON = ?";
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForList(sql, String.class, id, 0);
+	}
+
+	@Override
+	public void updateHeaderCounts(Long id, int successCount, int failedCount) {
+		String sql = "UPDATE PRESENTMENTHEADER SET SUCCESSRECORDS = ?, FAILEDRECORDS = ? WHERE ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, successCount);
+			ps.setInt(2, failedCount);
+			ps.setLong(3, id);
+		});
+
+	}
+
+	@Override
+	public void updateHeaderStatus(Long id, int status) {
+		String sql = "UPDATE PresentmentHeader SET STATUS = ? WHERE ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setInt(index++, status);
+			ps.setLong(index, id);
+		});
+	}
+
+	@Override
+	public void updateResponseHeader(long headerId, int totalRecords, int successRecords, int failedRecords,
+			String status, String remarks) {
+
+		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE PRESENTMENT_RESP_HEADER SET");
+		sql.append(" TOTAL_RECORDS = ?, SUCESS_RECORDS = ?, FAILURE_RECORDS = ?,");
+		sql.append(" STATUS = ?, REMARKS = ?, END_TIME = ? WHERE ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setInt(index++, totalRecords);
+			ps.setInt(index++, successRecords);
+			ps.setInt(index++, failedRecords);
+			ps.setString(index++, status);
+			ps.setString(index++, remarks);
+			ps.setTimestamp(index++, curTimeStamp);
+			ps.setLong(index, headerId);
+
+		});
+	}
+
+	@Override
+	public void updateResposeStatus(long responseID, String pexcFailure, String errorMessage, int processFlag) {
+		String sql = "UPDATE PRESENTMENT_RESP_DTLS SET ERROR_CODE = ?, ERROR_DESCRIPTION = ?, PROCESS_FLAG = ?  Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, pexcFailure);
+			ps.setString(2, errorMessage);
+			ps.setInt(3, processFlag);
+			ps.setLong(4, responseID);
+
+		});
+	}
+
+	@Override
+	public int logRespDetail(long batchID, String batchType) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO PRESENTMENT_RESP_DTLS_LOG");
+		sql.append("(HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO, AMOUNT_CLEARED");
+		sql.append(", CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE, BANK_CODE, BANK_NAME");
+		sql.append(", BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
+		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
+		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG, PROCESS_FLAG");
+		sql.append(", THREAD_ID, UTR_Number)");
+		sql.append(" SELECT HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO ");
+		sql.append(", AMOUNT_CLEARED, CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE");
+		sql.append(", BANK_CODE, BANK_NAME, BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
+		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
+		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG , PROCESS_FLAG");
+		sql.append(", THREAD_ID, UTR_Number");
+		sql.append(" From PRESENTMENT_RESP_DTLS PRD");
+		if ("S".equals(batchType)) {
+			sql.append(" INNER JOIN PRMNT_RESP_SUCCESS_QUEUE PRQ ON PRQ.REFERENCEID = PRD.ID");
+		} else {
+			sql.append(" INNER JOIN PRMNT_RESP_BOUNCE_QUEUE PRQ ON PRQ.REFERENCEID = PRD.ID");
+		}
+
+		sql.append(" WHERE PRQ.BATCHID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.update(sql.toString(), ps -> {
+			ps.setLong(1, batchID);
+		});
+	}
+
+	@Override
+	public int clearRespDetail(long batchID, String batchType) {
+		StringBuilder sql = new StringBuilder("Delete From PRESENTMENT_RESP_DTLS");
+		if ("S".equals(batchType)) {
+			sql.append(" Where ID IN (SELECT REFERENCEID FROM PRMNT_RESP_SUCCESS_QUEUE WHERE BATCHID = ?)");
+		} else {
+			sql.append(" Where ID IN (SELECT REFERENCEID FROM PRMNT_RESP_BOUNCE_QUEUE WHERE BATCHID = ?)");
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.update(sql.toString(), batchID);
 	}
 
 	@Override

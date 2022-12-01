@@ -62,6 +62,7 @@
 												sort="false" hflex="min" visible="false" />
 											<listheader id="listheader_Acc_AccountType" label="${c:l('listheader_Acc_AccountType.label')}"
 												sort="false" hflex="min" visible="false" />
+											<listheader label="${c:l('label_GL_Account')}" sort="false" hflex="min" />
 											<listheader id="listheader_Acc_AccountNo" label="${c:l('listheader_Acc_AccountNo.label')}" sort="false"
 												hflex="min" />
 											<listheader id="listheader_Acc_AcCcy" label="${c:l('listheader_Acc_AcCcy.label')}" sort="false"
@@ -108,6 +109,7 @@
 												sort="false" hflex="min" />
 											<listheader id="listheader__PostAcc_RevTranCode" label="${c:l('listheader_PostAcc_RevTranCode.label')}"
 												sort="false" hflex="min" visible="false" />
+											<listheader label="${c:l('label_GL_Account')}" sort="false" hflex="min" />
 											<listheader id="listheader__PostAcc_AccountNo" label="${c:l('listheader_PostAcc_AccountNo.label')}"
 												sort="false" hflex="min" />
 											<listheader id="listheader__PostAcc_AcCcy" label="${c:l('listheader_PostAcc_AcCcy.label')}" sort="false"
