@@ -31,13 +31,13 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
-public class SuccessResponseTasklet implements Tasklet {
-	private final Logger logger = LogManager.getLogger(SuccessResponseTasklet.class);
+public class BounceResponseTasklet implements Tasklet {
+	private final Logger logger = LogManager.getLogger(BounceResponseTasklet.class);
 
-	private static final String START_MSG = "Presentment success response process started at {} for the APP_DATE {} with THREAD_ID {}";
-	private static final String FAILED_MSG = "Presentment success response process failed on {} for the Presentment-ID {}";
-	private static final String SUCCESS_MSG = "Presentment success response process completed at {} for the APP_DATE {} with THREAD_ID {}";
-	private static final String EXCEPTION_MSG = "Presentment success response process failed on {} for the APP_DATE {} with THREAD_ID {}";
+	private static final String START_MSG = "Presentment bounce response process started at {} for the APP_DATE {} with THREAD_ID {}";
+	private static final String FAILED_MSG = "Presentment bounce response process failed on {} for the Presentment-ID {}";
+	private static final String SUCCESS_MSG = "Presentment bounce response process completed at {} for the APP_DATE {} with THREAD_ID {}";
+	private static final String EXCEPTION_MSG = "Presentment bounce response process failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
 	private static final String SUCCESS = RepayConstants.PEXC_SUCCESS;
@@ -48,7 +48,7 @@ public class SuccessResponseTasklet implements Tasklet {
 	private DataSourceTransactionManager transactionManager;
 	private EventPropertiesService eventPropertiesService;
 
-	public SuccessResponseTasklet(BatchJobQueueDAO ebjqDAO, PresentmentEngine presentmentEngine,
+	public BounceResponseTasklet(BatchJobQueueDAO ebjqDAO, PresentmentEngine presentmentEngine,
 			DataSourceTransactionManager transactionManager, EventPropertiesService eventPropertiesService) {
 		super();
 		this.ebjqDAO = ebjqDAO;
@@ -103,7 +103,7 @@ public class SuccessResponseTasklet implements Tasklet {
 					ebjqDAO.updateProgress(jobQueue);
 				}
 
-				presentmentEngine.updateResposeStatus(responseID, "", "", EodConstants.PROGRESS_SUCCESS);
+				presentmentEngine.updateResposeStatus(responseID, SUCCESS, "", EodConstants.PROGRESS_SUCCESS);
 			} catch (Exception e) {
 				String errorMessage = e.getMessage();
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);

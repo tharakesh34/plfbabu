@@ -194,7 +194,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					if (totalRecords > 0) {
 
 						deStatus.setTotalRecords(totalRecords);
-						deStatus.setStatus(ExecutionStatus.I.name());
+						// deStatus.setStatus(ExecutionStatus.I.name());
 
 						long deExecutionId = (long) deStatus.getId();
 						int successRecords = (int) deStatus.getSuccessRecords();
@@ -203,7 +203,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						presentmentDetailDAO.updateHeader(headerId, deExecutionId, totalRecords, successRecords,
 								failedRecords, ExecutionStatus.S.name(), remarks);
 
-						deStatus.setRemarks("File Reading completed...Start processing...");
+						deStatus.setRemarks("File Reading completed. response job's will process the records.");
 						deStatus.setProcessedRecords(recordCount.get());
 						deStatus.setSuccessRecords(successCount.get());
 						deStatus.setFailedRecords(failedCount.get());

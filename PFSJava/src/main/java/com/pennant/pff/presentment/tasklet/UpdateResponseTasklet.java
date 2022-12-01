@@ -40,6 +40,10 @@ public class UpdateResponseTasklet implements Tasklet {
 	private synchronized void updatePresentmentHeader(long headerId) {
 		List<Long> list = presentmentDAO.getPresentmentIdListByRespBatch(headerId);
 
+		if (list.size() == 0) {
+			return;
+		}
+
 		int totalRecords = 0;
 		int successRecords = 0;
 		int failedRecords = 0;
@@ -54,8 +58,6 @@ public class UpdateResponseTasklet implements Tasklet {
 				if (RepayConstants.PEXC_SUCCESS.equals(sts) || RepayConstants.PEXC_BOUNCE.equals(sts)) {
 					successCount++;
 				} else if (RepayConstants.PEXC_FAILURE.equals(sts)) {
-					failedCount++;
-				} else {
 					failedCount++;
 				}
 			}

@@ -1,4 +1,4 @@
-package com.pennant.pff.presentment.tasklet;
+package com.pennant.pff.presentment.partitioner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,25 +17,29 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 
-public class SuccessResponsePartitioner implements Partitioner, StepExecutionListener {
-	private Logger logger = LogManager.getLogger(SuccessResponsePartitioner.class);
+public class ExtractionPartitioner implements Partitioner, StepExecutionListener {
+	private Logger logger = LogManager.getLogger(ExtractionPartitioner.class);
 
 	private BatchJobQueueDAO bjqDAO;
 	private Long batchId;
 
-	public SuccessResponsePartitioner(BatchJobQueueDAO bjqDAO) {
+	public ExtractionPartitioner(BatchJobQueueDAO bjqDAO) {
 		super();
 		this.bjqDAO = bjqDAO;
 	}
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
-		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.PRESENTMENT_RESPONSE_THREAD_COUNT);
+		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.PRESENTMENT_EXTRACTION_THREAD_COUNT);
 
 		Map<String, ExecutionContext> partitionData = new HashMap<>();
 
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchId);
+
+		bjqDAO.resetSequence();
+
+		bjqDAO.handleFailures(jobQueue);
 
 		int totalRecords = bjqDAO.getQueueCount(jobQueue);
 
@@ -74,7 +78,6 @@ public class SuccessResponsePartitioner implements Partitioner, StepExecutionLis
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
-		return stepExecution.getExitStatus();
+		return null;
 	}
-
 }

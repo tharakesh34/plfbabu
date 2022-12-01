@@ -24,7 +24,7 @@ public interface PresentmentDAO {
 	void updateFailureError(BatchJobQueue jobQueue);
 
 	void updateEndTimeStatus(BatchJobQueue jobQueue);
-	
+
 	int extarct(long batchID, Date dueDate);
 
 	int extarct(long batchID, Date fromDate, Date toDate);
@@ -120,7 +120,7 @@ public interface PresentmentDAO {
 	void updateRepresentWithPresentmentId(List<PresentmentDetail> presenetments);
 
 	Long getPreviousMandateID(long finID, Date schDate);
-	
+
 	Map<String, String> getUpfrontBounceCodes();
 
 	int getRecordsByWaiting(String clearingStatus);
@@ -142,7 +142,9 @@ public interface PresentmentDAO {
 
 	void updateResposeStatus(long responseID, String pexcFailure, String errorMessage, int processFlag);
 
-	int logRespDetail(long Id);
+	int logRespDetail(long batchID, String batchType);
 
-	int clearRespDetail(long Id);
+	int clearRespDetail(long batchID, String batchType);
+
+	Map<String, Integer> batchSizeByInstrumentType();
 }

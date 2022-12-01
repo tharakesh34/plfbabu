@@ -3,10 +3,13 @@ package com.pennant.pff.presentment.service;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -72,13 +75,11 @@ import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
-import com.pennant.pff.presentment.dao.PresentmentExcludeCodeDAO;
 import com.pennanttech.external.ExternalPresentmentHook;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -108,7 +109,6 @@ public class PresentmentEngine {
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private CustomerDAO customerDAO;
-	private PresentmentExcludeCodeDAO presentmentExcludeCodeDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
@@ -330,6 +330,49 @@ public class PresentmentEngine {
 		}
 
 		return count;
+	}
+
+	private Map<String, List<PresentmentDetail>> groupByInstrumentType(List<PresentmentDetail> list) {
+		Map<String, List<PresentmentDetail>> map = new HashMap<>();
+
+		for (PresentmentDetail pd : list) {
+			String instrumentType = pd.getInstrumentType();
+
+			List<PresentmentDetail> groupList = map.get(instrumentType);
+
+			if (groupList == null) {
+				groupList = new ArrayList<>();
+				map.put(instrumentType, groupList);
+			}
+
+			groupList.add(pd);
+		}
+
+		return map;
+	}
+
+	private List<List<PresentmentDetail>> getBatchesByInstruentType(List<PresentmentDetail> list) {
+		Map<String, Integer> batchMap = presentmentDAO.batchSizeByInstrumentType();
+
+		Map<String, List<PresentmentDetail>> map = groupByInstrumentType(list);
+		List<List<PresentmentDetail>> batches = new ArrayList<List<PresentmentDetail>>();
+
+		for (Entry<String, List<PresentmentDetail>> itGroup : map.entrySet()) {
+			List<PresentmentDetail> value = itGroup.getValue();
+
+			Integer batchSize = batchMap.get(itGroup.getKey());
+			if (batchSize == null || batchSize == 0) {
+				batches.add(value);
+			} else {
+				AtomicInteger counter = new AtomicInteger();
+				Collection<List<PresentmentDetail>> partitionedList = value.stream()
+						.collect(Collectors.groupingBy(pd -> counter.getAndIncrement() / batchSize)).values();
+
+				batches.addAll(partitionedList);
+			}
+		}
+
+		return batches;
 	}
 
 	public void grouping(PresentmentHeader ph) {
@@ -770,7 +813,6 @@ public class PresentmentEngine {
 		if (ImplementationConstants.OVERDRAFT_REPRESENTMENT_CHARGES_INCLUDE && !odPresentments.isEmpty()) {
 			overdrafLoanService.createCharges(odPresentments.values().stream().collect(Collectors.toList()));
 		}
-
 
 		if (FinanceConstants.FLAG_HOLDEMI.equals(pd.getBpiOrHoliday())) {
 			pd.setSchDate(pd.getOriginalSchDate());
@@ -1500,11 +1542,6 @@ public class PresentmentEngine {
 		presentmentDAO.updateResposeStatus(responseID, pexcFailure, errorMessage, processFlag);
 	}
 
-	public void logRespDetail(Long responseID) {
-		presentmentDAO.logRespDetail(responseID);
-		presentmentDAO.clearRespDetail(responseID);
-	}
-
 	public PresentmentDetail getPresentmentDetail(Long presentmentID) {
 		return presentmentDAO.getPresentmentDetail(presentmentID);
 	}
@@ -1546,11 +1583,6 @@ public class PresentmentEngine {
 	@Autowired
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
-	}
-
-	@Autowired
-	public void setPresentmentExcludeCodeDAO(PresentmentExcludeCodeDAO presentmentExcludeCodeDAO) {
-		this.presentmentExcludeCodeDAO = presentmentExcludeCodeDAO;
 	}
 
 	@Autowired

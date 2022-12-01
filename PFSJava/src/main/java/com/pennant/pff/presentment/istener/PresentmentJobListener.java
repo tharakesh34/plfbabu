@@ -1,13 +1,18 @@
 package com.pennant.pff.presentment.istener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.JobParameters;
 
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class PresentmentJobListener implements JobExecutionListener {
+	private static Logger logger = LogManager.getLogger(PresentmentJobListener.class);
 	private PresentmentDAO presentmentDAO;
 
 	public PresentmentJobListener(PresentmentDAO presentmentDAO) {
@@ -21,8 +26,11 @@ public class PresentmentJobListener implements JobExecutionListener {
 
 	@Override
 	public void afterJob(JobExecution jobExecution) {
+		String jobName = jobExecution.getJobInstance().getJobName();
+
 		JobParameters jobParameters = jobExecution.getJobParameters();
 		String exitStatus = jobExecution.getExitStatus().getExitCode();
+
 		BatchJobQueue jobQueue = new BatchJobQueue();
 
 		long batchId = jobParameters.getLong("BATCH_ID");
@@ -31,6 +39,10 @@ public class PresentmentJobListener implements JobExecutionListener {
 		jobQueue.setBatchStatus(exitStatus);
 
 		presentmentDAO.updateEndTimeStatus(jobQueue);
+
+		String sysDate = DateUtil.getSysDate(DateFormat.LONG_DATE_TIME);
+
+		logger.info("{} completed at {} with Batch_ID {} and Batch_Status {} ", jobName, sysDate, batchId, exitStatus);
 	}
 
 }

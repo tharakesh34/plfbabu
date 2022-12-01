@@ -83,6 +83,15 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 	}
 
 	@Override
+	public int getQueueCount() {
+		String sql = "Select Coalesce(count(Id), 0) From PRMNT_RESP_SUCCESS_QUEUE";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class);
+	}
+
+	@Override
 	public int getQueueCount(BatchJobQueue jobQueue) {
 		String sql = "Select Coalesce(count(Id), 0) From PRMNT_RESP_SUCCESS_QUEUE where BatchID = ? and Progress = ?";
 
@@ -130,24 +139,6 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 				ps.setInt(3, EodConstants.PROGRESS_FAILED);
 				ps.setLong(4, queueId);
 			});
-		}
-	}
-
-	@Override
-	public Long getJobId(String jobName) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" COALESCE(MAX(JOB_EXECUTION_ID), 0) JobId");
-		sql.append(" From BATCH_JOB_EXECUTION je");
-		sql.append(" Inner Join BATCH_JOB_INSTANCE ji on ji.Job_Instance_Id = je.Job_Instance_Id");
-		sql.append(" Where ji.Job_Name = ?");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, jobName);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
 		}
 	}
 

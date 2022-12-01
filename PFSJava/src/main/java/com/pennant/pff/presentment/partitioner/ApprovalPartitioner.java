@@ -1,10 +1,14 @@
-package com.pennant.pff.presentment.tasklet;
+package com.pennant.pff.presentment.partitioner;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 
@@ -13,7 +17,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 
-public class ApprovalPartitioner implements Partitioner {
+public class ApprovalPartitioner implements Partitioner, StepExecutionListener {
 	private Logger logger = LogManager.getLogger(ApprovalPartitioner.class);
 
 	private BatchJobQueueDAO bjqDAO;
@@ -35,9 +39,11 @@ public class ApprovalPartitioner implements Partitioner {
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchId);
 
-		int totalRecords = bjqDAO.getQueueCount(jobQueue);
+		bjqDAO.resetSequence();
 
 		bjqDAO.handleFailures(jobQueue);
+
+		int totalRecords = bjqDAO.getQueueCount(jobQueue);
 
 		if (totalRecords == 0) {
 			return partitionData;
@@ -63,5 +69,17 @@ public class ApprovalPartitioner implements Partitioner {
 		execution.put("THREAD_ID", String.valueOf(threadID));
 
 		return execution;
+	}
+
+	@Override
+	public void beforeStep(StepExecution stepExecution) {
+		JobParameters jobParameters = stepExecution.getJobParameters();
+
+		batchId = jobParameters.getLong("BATCH_ID");
+	}
+
+	@Override
+	public ExitStatus afterStep(StepExecution stepExecution) {
+		return null;
 	}
 }

@@ -4,7 +4,7 @@ import com.pennant.pff.batch.job.model.BatchJobQueue;
 
 public interface BatchJobQueueDAO {
 
-	Long getJobId(String jobName);
+	int getQueueCount();
 
 	int prepareQueue(BatchJobQueue jobQueue);
 

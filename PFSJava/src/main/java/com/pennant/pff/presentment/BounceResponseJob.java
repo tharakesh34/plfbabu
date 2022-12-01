@@ -18,22 +18,22 @@ import com.pennant.pff.batch.job.BatchConfiguration;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
-import com.pennant.pff.presentment.dao.impl.SuccessResponseJobQueueDAOImpl;
+import com.pennant.pff.presentment.dao.impl.BounceResponseJobQueueDAOImpl;
 import com.pennant.pff.presentment.istener.PresentmentJobListener;
 import com.pennant.pff.presentment.partitioner.ResponsePartitioner;
 import com.pennant.pff.presentment.service.PresentmentEngine;
+import com.pennant.pff.presentment.tasklet.BounceResponseTasklet;
 import com.pennant.pff.presentment.tasklet.ResponseClearTasklet;
-import com.pennant.pff.presentment.tasklet.SuccessResponseTasklet;
 import com.pennant.pff.presentment.tasklet.UpdateResponseTasklet;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 @Configuration
-public class SuccessResponseJob extends BatchConfiguration {
+public class BounceResponseJob extends BatchConfiguration {
 
-	public SuccessResponseJob(@Autowired DataSource dataSource) throws Exception {
-		super(dataSource, "PRMNT_", "PRMNT_SUCCESS_RESPONSE");
+	public BounceResponseJob(@Autowired DataSource dataSource) throws Exception {
+		super(dataSource, "PRMNT_", "PRMNT_BOUNCE_RESPONSE");
 	}
 
 	@Autowired
@@ -50,7 +50,7 @@ public class SuccessResponseJob extends BatchConfiguration {
 	@Bean
 	public BatchJobQueueDAO bjqDAO() {
 		if (this.bjqDAO == null) {
-			this.bjqDAO = new SuccessResponseJobQueueDAOImpl(dataSource);
+			this.bjqDAO = new BounceResponseJobQueueDAOImpl(dataSource);
 		}
 
 		return bjqDAO;
@@ -58,15 +58,15 @@ public class SuccessResponseJob extends BatchConfiguration {
 	}
 
 	@Scheduled(cron = "0 */5 * ? * *")
-	public void successResponseJob() throws Exception {
-		logger.info("Presentment Success Response Job invoked at {}", DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
+	public void bounceResponseJob() throws Exception {
+		logger.info("Presentment Bounce Response Job invoked at {}", DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
 
 		if (bjqDAO.getQueueCount() > 0) {
 			logger.info("Previous Job still in progress");
 			return;
 		}
 
-		int totalRecords = presentmentDAO.getRecordsByWaiting("S");
+		int totalRecords = presentmentDAO.getRecordsByWaiting("B");
 
 		if (totalRecords == 0) {
 			logger.info("There is no pending records to process");
@@ -76,7 +76,7 @@ public class SuccessResponseJob extends BatchConfiguration {
 		long batchID = 0;
 		bjqDAO.clearQueue();
 
-		batchID = presentmentDAO.createBatch("RESPONSE_SUCCESS");
+		batchID = presentmentDAO.createBatch("RESPONSE_BOUNCE");
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchID);
 
@@ -91,21 +91,21 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 				.addLong("BATCH_ID", batchID)
 
-				.addString("RESPONSE_TYPE", "S").toJobParameters();
+				.addString("RESPONSE_TYPE", "B").toJobParameters();
 
-		logger.info("Presentment Success Response Job startred with BATCH_ID {}", batchID);
+		logger.info("Presentment Bounce Response Job startred with BATCH_ID {}", batchID);
 
 		try {
 			start(jobParameters);
 		} catch (Exception e) {
 			bjqDAO.clearQueue();
-			throw new AppException("Presentment Succes Response Job failed", e);
+			throw new AppException("Presentment Bounce Response job failed", e);
 		}
 	}
 
 	@Bean
-	public Job peSuccessJob() throws Exception {
-		super.job = this.jobBuilderFactory.get("peSuccessJob")
+	public Job peBounceJob() throws Exception {
+		super.job = this.jobBuilderFactory.get("peBounceJob")
 
 				.listener(new PresentmentJobListener(presentmentDAO))
 
@@ -126,11 +126,11 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 	public Step masterStep() throws Exception {
 		ResponsePartitioner partitioner = new ResponsePartitioner(bjqDAO);
-		return stepBuilderFactory.get("SUCCESS_RESPONSE_MASTER")
+		return stepBuilderFactory.get("BOUNCE_RESPONSE_MASTER")
 
 				.partitioner(masterTasklet())
 
-				.partitioner("successResponseStep", partitioner)
+				.partitioner("bounceResponseStep", partitioner)
 
 				.listener(partitioner)
 
@@ -149,14 +149,14 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 		return this.stepBuilderFactory
 
-				.get("SUCCESS_RESPONSE")
+				.get("BOUNCE_RESPONSE")
 
-				.tasklet(new SuccessResponseTasklet(bjqDAO, presentmentEngine, transactionManager,
+				.tasklet(new BounceResponseTasklet(bjqDAO, presentmentEngine, transactionManager,
 						eventPropertiesService))
 
 				.transactionAttribute(attribute)
 
-				.taskExecutor(taskExecutor("SUCCESS_RESPONSE_"))
+				.taskExecutor(taskExecutor("BOUNCE_RESPONSE_"))
 
 				.allowStartIfComplete(true)
 

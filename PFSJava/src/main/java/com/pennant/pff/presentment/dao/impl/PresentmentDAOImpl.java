@@ -1137,7 +1137,6 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			}
 			return totals;
 		}, presentmentId);
-
 	}
 
 	@Override
@@ -1563,7 +1562,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 		return list.get(0);
 	}
-	
+
 	@Override
 	public Map<String, String> getUpfrontBounceCodes() {
 		StringBuilder sql = new StringBuilder("Select");
@@ -1593,16 +1592,33 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	public Map<String, Integer> batchSizeByInstrumentType() {
+		Map<String, Integer> batchSizeMap = new HashMap<>();
+
+		String sql = "SELECT CODE, BATCHSIZE FROM INSTRUMENT_TYPES";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql.toString(), (ResultSet rs) -> {
+			while (rs.next()) {
+				batchSizeMap.put(rs.getString(1), rs.getInt(2));
+
+			}
+			return batchSizeMap;
+		});
+	}
+
+	@Override
 	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public int getRecordsByWaiting(String clearingStatus) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select count(prd.ID) From PRESENTMENT_RESP_HEADER prh");
 		sql.append(" Inner Join PRESENTMENT_RESP_DTLS prd on prd.Header_ID  = prh.ID");
-		sql.append(" Where prh.Progress = ? and Event = ? and CLEARING_STATUS = ? ");
+		sql.append(" Where prh.Progress = ? and Event = ? and prd.PROCESS_FLAG = ? and CLEARING_STATUS = ? ");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, 1, "IMPORT", clearingStatus);
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, 1, "IMPORT", 0, clearingStatus);
 	}
 
 	@Override
@@ -1783,7 +1799,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public int logRespDetail(long Id) {
+	public int logRespDetail(long batchID, String batchType) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO PRESENTMENT_RESP_DTLS_LOG");
 		sql.append("(HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO, AMOUNT_CLEARED");
@@ -1797,22 +1813,35 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", BANK_CODE, BANK_NAME, BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
 		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
 		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG , PROCESS_FLAG");
-		sql.append(", THREAD_ID, UTR_Number from Presentment_Resp_Dtls Where ID = ? ");
+		sql.append(", THREAD_ID, UTR_Number");
+		sql.append(" From PRESENTMENT_RESP_DTLS PRD");
+		if ("S".equals(batchType)) {
+			sql.append(" INNER JOIN PRMNT_RESP_SUCCESS_QUEUE PRQ ON PRQ.REFERENCEID = PRD.ID");
+		} else {
+			sql.append(" INNER JOIN PRMNT_RESP_BOUNCE_QUEUE PRQ ON PRQ.REFERENCEID = PRD.ID");
+		}
+
+		sql.append(" WHERE PRQ.BATCHID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, Id);
+			ps.setLong(1, batchID);
 		});
 	}
 
 	@Override
-	public int clearRespDetail(long Id) {
-		String sql = "Delete From Presentment_Resp_Dtls Where ID = ?";
+	public int clearRespDetail(long batchID, String batchType) {
+		StringBuilder sql = new StringBuilder("Delete From PRESENTMENT_RESP_DTLS");
+		if ("S".equals(batchType)) {
+			sql.append(" Where ID IN (SELECT REFERENCEID FROM PRMNT_RESP_SUCCESS_QUEUE WHERE BATCHID = ?)");
+		} else {
+			sql.append(" Where ID IN (SELECT REFERENCEID FROM PRMNT_RESP_BOUNCE_QUEUE WHERE BATCHID = ?)");
+		}
 
-		logger.debug(Literal.SQL.concat(sql));
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.update(sql, Id);
+		return this.jdbcOperations.update(sql.toString(), batchID);
 	}
 
 	@Override

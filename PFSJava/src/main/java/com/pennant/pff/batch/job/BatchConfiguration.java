@@ -8,8 +8,8 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -51,7 +51,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public abstract class BatchConfiguration implements BatchConfigurer {
-	protected static final Log logger = LogFactory.getLog(BatchConfiguration.class.getClass());
+	protected static Logger logger = LogManager.getLogger(BatchConfiguration.class.getClass());
 
 	public JobBuilderFactory jobBuilderFactory;
 	public StepBuilderFactory stepBuilderFactory;
@@ -188,7 +188,7 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 
 	protected SimpleAsyncTaskExecutor taskExecutor(String threadNamePrefix) {
 		SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor(threadNamePrefix);
-		taskExecutor.setConcurrencyLimit(1);
+		taskExecutor.setConcurrencyLimit(100);
 		return taskExecutor;
 	}
 
