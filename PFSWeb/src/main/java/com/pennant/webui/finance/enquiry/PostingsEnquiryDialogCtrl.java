@@ -255,7 +255,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		events.append(", ADVDUE,  WRITEBK,  OEMSBV,  MIGR,  PROVSN,  PROVCHG, PRVSN_MN,  FEREFUND,  PRSNT");
 		events.append(", PRSNTRSP,  PARTCAN,  MANSUB, RESTRUCT, NPACHNG, PROVSN");
 		if (this.showAccrual.isChecked()) {
-			events.append(", AMZ, AMZSUSP, AMZ_MON, INDAS, EXPENSE");
+			events.append(", AMZ, AMZSUSP, AMZ_REV, INDAS, EXPENSE");
 		}
 		accEvents = events;
 		if (StringUtils.isNotEmpty(events.toString())) {
