@@ -68,7 +68,7 @@ public class SuccessResponseJob extends BatchConfiguration {
 		long batchID = 0;
 		bjqDAO.clearQueue();
 
-		batchID = presentmentDAO.createBatch("RESPONSE_SUCCESS");
+		batchID = presentmentDAO.createBatch("RESPONSE_SUCCESS", totalRecords);
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchID);
 
@@ -148,8 +148,6 @@ public class SuccessResponseJob extends BatchConfiguration {
 				.transactionAttribute(attribute)
 
 				.taskExecutor(taskExecutor("SUCCESS_RESPONSE_"))
-
-				.allowStartIfComplete(true)
 
 				.build();
 	}

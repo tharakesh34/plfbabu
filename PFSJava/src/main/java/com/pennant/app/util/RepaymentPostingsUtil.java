@@ -662,7 +662,7 @@ public class RepaymentPostingsUtil {
 	}
 
 	public void recalOldestDueKnockOff(FinanceMain fm, FinanceProfitDetail fpd, Date valuedate,
-			List<FinanceScheduleDetail> schedules) throws Exception {
+			List<FinanceScheduleDetail> schedules) {
 
 		List<FinODDetails> odList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
 		List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayList(fm.getFinID());

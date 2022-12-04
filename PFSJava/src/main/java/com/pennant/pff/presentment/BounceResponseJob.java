@@ -68,14 +68,21 @@ public class BounceResponseJob extends BatchConfiguration {
 		long batchID = 0;
 		bjqDAO.clearQueue();
 
-		batchID = presentmentDAO.createBatch("RESPONSE_BOUNCE");
+		batchID = presentmentDAO.createBatch("RESPONSE_BOUNCE", totalRecords);
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchID);
 
 		totalRecords = bjqDAO.prepareQueue(jobQueue);
 
 		if (totalRecords == 0) {
-			logger.info("There is no pending records to process");
+			logger.info("The records are modified by other dupicate job");
+			return;
+		}
+
+		int count = presentmentDAO.updateRespProcessFlag(batchID, "B");
+
+		if (totalRecords != count) {
+			logger.error("The records are modified by other duplicate job");
 			return;
 		}
 
@@ -120,9 +127,9 @@ public class BounceResponseJob extends BatchConfiguration {
 		ResponsePartitioner partitioner = new ResponsePartitioner(bjqDAO);
 		return stepBuilderFactory.get("BOUNCE_RESPONSE_MASTER")
 
-				.partitioner(masterTasklet())
+				.partitioner(bounceRespMasterStep())
 
-				.partitioner("bounceResponseStep", partitioner)
+				.partitioner("bounceRespMasterStep", partitioner)
 
 				.listener(partitioner)
 
@@ -134,7 +141,7 @@ public class BounceResponseJob extends BatchConfiguration {
 
 	}
 
-	private TaskletStep masterTasklet() {
+	private TaskletStep bounceRespMasterStep() {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
@@ -148,8 +155,6 @@ public class BounceResponseJob extends BatchConfiguration {
 				.transactionAttribute(attribute)
 
 				.taskExecutor(taskExecutor("BOUNCE_RESPONSE_"))
-
-				.allowStartIfComplete(true)
 
 				.build();
 	}

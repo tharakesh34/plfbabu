@@ -154,7 +154,7 @@ public class RepaymentProcessUtil {
 		super();
 	}
 
-	public void calcualteAndPayReceipt(ReceiptDTO receiptDTO) throws Exception {
+	public void calcualteAndPayReceipt(ReceiptDTO receiptDTO) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = receiptDTO.getFinanceMain();

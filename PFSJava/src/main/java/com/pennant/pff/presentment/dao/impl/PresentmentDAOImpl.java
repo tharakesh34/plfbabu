@@ -46,8 +46,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public long createBatch(String batchType) {
-		String sql = "Insert into PRMNT_BATCH_JOBS (Batch_Type, Start_Time) values (?, ?)";
+	public long createBatch(String batchType, int totalRecords) {
+		String sql = "Insert into PRMNT_BATCH_JOBS (Batch_Type, Start_Time, Total_Records) values (?, ?, ?)";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -61,6 +61,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 				ps.setString(1, batchType);
 				ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+				ps.setInt(3, totalRecords);
 
 				return ps;
 			}
@@ -1622,6 +1623,21 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	public int updateRespProcessFlag(long batchID, String responseType) {
+		StringBuilder sql = new StringBuilder("UPDATE PRESENTMENT_RESP_DTLS Set PROCESS_FLAG = ? Where ID IN (");
+		if ("S".equals(responseType)) {
+			sql.append("SELECT REFERENCEID FROM PRMNT_RESP_SUCCESS_QUEUE WHERE BATCHID = ?");
+		} else {
+			sql.append("SELECT REFERENCEID FROM PRMNT_RESP_BOUNCE_QUEUE WHERE BATCHID = ?");
+		}
+		sql.append(")");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.update(sql.toString(), 1, batchID);
+	}
+
+	@Override
 	public PresentmentDetail getPresentmenForResponse(Long responseID) {
 		StringBuilder sql = new StringBuilder("SELECT");
 		sql.append(" PRD.HEADER_ID, PRD.BRANCH_CODE, FM.FINID, FM.FINREFERENCE, PRD.HOST_REFERENCE, PRD.INSTALMENT_NO");
@@ -1799,7 +1815,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public int logRespDetail(long batchID, String batchType) {
+	public int logRespDetail(long id) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO PRESENTMENT_RESP_DTLS_LOG");
 		sql.append("(HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO, AMOUNT_CLEARED");
@@ -1807,41 +1823,30 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
 		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
 		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG, PROCESS_FLAG");
-		sql.append(", THREAD_ID, UTR_Number)");
+		sql.append(", THREAD_ID, UTR_NUMBER, FATECORRECTION, ERROR_CODE, ERROR_DESCRIPTION)");
 		sql.append(" SELECT HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO ");
 		sql.append(", AMOUNT_CLEARED, CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE");
 		sql.append(", BANK_CODE, BANK_NAME, BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
 		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
-		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG , PROCESS_FLAG");
-		sql.append(", THREAD_ID, UTR_Number");
+		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG, PROCESS_FLAG");
+		sql.append(", THREAD_ID, UTR_NUMBER, FATECORRECTION, ERROR_CODE, ERROR_DESCRIPTION");
 		sql.append(" From PRESENTMENT_RESP_DTLS PRD");
-		if ("S".equals(batchType)) {
-			sql.append(" INNER JOIN PRMNT_RESP_SUCCESS_QUEUE PRQ ON PRQ.REFERENCEID = PRD.ID");
-		} else {
-			sql.append(" INNER JOIN PRMNT_RESP_BOUNCE_QUEUE PRQ ON PRQ.REFERENCEID = PRD.ID");
-		}
-
-		sql.append(" WHERE PRQ.BATCHID = ?");
+		sql.append(" WHERE ID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, batchID);
+			ps.setLong(1, id);
 		});
 	}
 
 	@Override
-	public int clearRespDetail(long batchID, String batchType) {
-		StringBuilder sql = new StringBuilder("Delete From PRESENTMENT_RESP_DTLS");
-		if ("S".equals(batchType)) {
-			sql.append(" Where ID IN (SELECT REFERENCEID FROM PRMNT_RESP_SUCCESS_QUEUE WHERE BATCHID = ?)");
-		} else {
-			sql.append(" Where ID IN (SELECT REFERENCEID FROM PRMNT_RESP_BOUNCE_QUEUE WHERE BATCHID = ?)");
-		}
+	public int clearRespDetail(long id) {
+		String sql = "DELETE FROM PRESENTMENT_RESP_DTLS WHERE ID = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.update(sql.toString(), batchID);
+		return this.jdbcOperations.update(sql, id);
 	}
 
 	@Override

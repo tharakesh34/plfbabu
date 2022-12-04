@@ -11,7 +11,7 @@ import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public interface PresentmentDAO {
 
-	long createBatch(String batchName);
+	long createBatch(String batchName, int totalRecords);
 
 	BatchJobQueue getBatch(BatchJobQueue jobQueue);
 
@@ -142,9 +142,11 @@ public interface PresentmentDAO {
 
 	void updateResposeStatus(long responseID, String pexcFailure, String errorMessage, int processFlag);
 
-	int logRespDetail(long batchID, String batchType);
+	int logRespDetail(long responseID);
 
-	int clearRespDetail(long batchID, String batchType);
+	int clearRespDetail(long responseID);
 
 	Map<String, Integer> batchSizeByInstrumentType();
+
+	int updateRespProcessFlag(long batchID, String responseType);
 }

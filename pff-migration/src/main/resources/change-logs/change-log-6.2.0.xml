@@ -4756,6 +4756,12 @@
 			<column name="FateCorrection" type="char(1)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="05.1" author="Gopal.p">
+		<addColumn tableName="PRESENTMENT_RESP_DTLS_LOG">
+			<column name="FateCorrection" type="char(1)" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="06" author="saikrishna.b">
 		<sql>
@@ -6784,6 +6790,18 @@
 	
 	<changeSet id="ST#99.28.2.1" author="saikrishna.b">
 		<addColumn tableName="PRESENTMENT_RESP_DTLS">
+			<column name="ERROR_DESCRIPTION" type="varchar(2000)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#99.28.2_01" author="saikrishna.b">
+		<addColumn tableName="PRESENTMENT_RESP_DTLS_LOG">
+			<column name="ERROR_CODE" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#99.28.2.1_01" author="saikrishna.b">
+		<addColumn tableName="PRESENTMENT_RESP_DTLS_LOG">
 			<column name="ERROR_DESCRIPTION" type="varchar(2000)" />
 		</addColumn>
 	</changeSet>

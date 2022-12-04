@@ -24,7 +24,7 @@ public class PresentmentExtension {
 	public static boolean AUTO_APPROVAL;
 
 	static {
-		DUE_DATE_RECEIPT_CREATION = getValueAsBoolean("DUE_DATE_RECEIPT_CREATION", true);
+		DUE_DATE_RECEIPT_CREATION = getValueAsBoolean("DUE_DATE_RECEIPT_CREATION", false);
 		AUTO_EXTRACTION = getValueAsBoolean("AUTO_EXTRACTION", true);
 		AUTO_APPROVAL = getValueAsBoolean("AUTO_APPROVAL", true);
 	}

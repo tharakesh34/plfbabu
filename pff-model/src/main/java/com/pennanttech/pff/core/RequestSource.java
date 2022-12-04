@@ -15,7 +15,7 @@ package com.pennanttech.pff.core;
  * Enumerates the interface types that were used in the data access layer.
  */
 public enum RequestSource {
-	UI(1), API(2), UPLOAD(3);
+	EOD(0), UI(1), API(2), UPLOAD(3), PRMNT_RESP(4);
 
 	private int source;
 

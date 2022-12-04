@@ -65,6 +65,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.eod.cache.BounceConfigCache;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.extension.PresentmentExtension;
@@ -72,9 +73,12 @@ import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
+import com.pennant.pff.presentment.PresentmentStatus;
 import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
 import com.pennant.pff.presentment.dao.DueExtractionConfigDAO;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
+import com.pennant.pff.presentment.exception.PresentmentError;
+import com.pennant.pff.presentment.exception.PresentmentException;
 import com.pennanttech.external.ExternalPresentmentHook;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.AppException;
@@ -86,6 +90,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.external.PresentmentRequest;
@@ -888,6 +893,9 @@ public class PresentmentEngine {
 
 		ReceiptDTO receiptDTO = new ReceiptDTO();
 
+		receiptDTO.setRequestSource(RequestSource.PRMNT_RESP);
+		receiptDTO.setCreatePrmntReceipt(!PresentmentExtension.DUE_DATE_RECEIPT_CREATION);
+
 		long finID = pd.getFinID();
 		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, true);
 		FinanceProfitDetail pftDetails = financeProfitDetailDAO.getFinProfitDetailsById(finID);
@@ -1071,16 +1079,13 @@ public class PresentmentEngine {
 		logger.info(info.toString());
 
 		/* Validations */
-		String errorMessage = validate(pd, presentmentReference, clearingStatus, bounceCode, bounceRemarks);
-
-		if (errorMessage != null) {
-			logger.info(Literal.LEAVING);
-			throw new AppException(errorMessage);
-		}
+		validateResponse(pd);
 
 		if (RepayConstants.PEXC_PAID.equals(clearingStatus)) {
 			pd.setStatus(RepayConstants.PEXC_SUCCESS);
 		}
+
+		status = pd.getStatus();
 
 		CustEODEvent custEODEvent = new CustEODEvent();
 		custEODEvent.setEodDate(pd.getAppDate());
@@ -1092,8 +1097,8 @@ public class PresentmentEngine {
 		boolean processReceipt = false;
 		Long linkedTranId;
 
-		if (RepayConstants.PEXC_BOUNCE.equals(pd.getStatus()) && RepayConstants.PEXC_SUCCESS.equals(clearingStatus)
-				&& "Y".equals(pd.getFateCorrection())) {
+		if (PresentmentStatus.BOUNCE.equals(status) && PresentmentStatus.SUCCESS.equals(clearingStatus)
+				&& "Y".equals(fateCorrection)) {
 			receiptID = 0L;
 		}
 
@@ -1168,7 +1173,7 @@ public class PresentmentEngine {
 				if (finIsActive) {
 					pd = receiptCancellationService.presentmentCancellation(pd, custEODEvent);
 				} else {
-					throw new AppException("Loan is closed and cannot update bounce");
+					throw new PresentmentException(PresentmentError.PRMNT5011);
 				}
 			}
 
@@ -1189,12 +1194,10 @@ public class PresentmentEngine {
 			presentmentDetailDAO.updateChequeStatus(mandateID, checkStatus);
 		}
 
-		String errorCode = StringUtils.trimToEmpty(bounceCode);
 		if (StringUtils.isNotEmpty(pd.getBounceCode())) {
-			errorCode = errorCode.concat("-").concat(pd.getBounceCode());
+			pd.setErrorCode(pd.getBounceCode());
+			pd.setErrorDesc(pd.getBounceRemarks());
 		}
-
-		pd.setErrorDesc(errorCode);
 
 		updatePresentmentDetail(pd);
 
@@ -1290,6 +1293,8 @@ public class PresentmentEngine {
 		Customer customer = custEODEvent.getCustomer();
 
 		ReceiptDTO receiptDTO = new ReceiptDTO();
+		receiptDTO.setRequestSource(RequestSource.PRMNT_RESP);
+		receiptDTO.setCreatePrmntReceipt(!PresentmentExtension.DUE_DATE_RECEIPT_CREATION);
 
 		receiptDTO.setFinType(finEODEvent.getFinType());
 		receiptDTO.setPresentmentDetail(pd);
@@ -1358,38 +1363,46 @@ public class PresentmentEngine {
 
 	}
 
-	private String validate(PresentmentDetail pd, String presentmentReference, String clearingStatus, String bounceCode,
-			String bounceRemarks) {
+	private void validateResponse(PresentmentDetail pd) {
+		String status = pd.getClearingStatus();
+		String bounceCode = StringUtils.trimToEmpty(pd.getBounceCode());
+		String bounceRemarks = pd.getBounceRemarks();
 
-		if (StringUtils.trimToNull(clearingStatus) == null) {
-			return "Status should not be empty.";
+		if (StringUtils.trimToNull(status) == null) {
+			throw new PresentmentException(PresentmentError.PRMNT501);
 		}
 
-		if (RepayConstants.PEXC_SUCCESS.equals(pd.getStatus()) && RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
-			return "Presentment response already marked as success.";
-		} else if (RepayConstants.PEXC_BOUNCE.equals(pd.getStatus()) && "N".equals(pd.getFateCorrection())) {
-			return "Presentment response already marked as bounce.";
-		} else if (RepayConstants.PEXC_BOUNCE.equals(pd.getStatus())
-				&& RepayConstants.PEXC_BOUNCE.equals(clearingStatus)) {
-			return "Presentment response already marked as bounce.";
+		if (PresentmentStatus.BOUNCE.equals(status) && StringUtils.isEmpty(bounceCode)) {
+			throw new PresentmentException(PresentmentError.PRMNT502);
 		}
 
-		// Bounce Remarks
-		if (RepayConstants.PEXC_BOUNCE.equals(clearingStatus)
-				&& ImplementationConstants.PRESENT_RESP_BOUNCE_REMARKS_MAN) {
+		if (PresentmentStatus.BOUNCE.equals(status)) {
+			BounceReason br = BounceConfigCache.getCacheBounceReason(bounceCode);
+			if (br == null) {
+				throw new PresentmentException(PresentmentError.PRMNT503);
+			}
+		}
+
+		if (PresentmentStatus.BOUNCE.equals(status) && ImplementationConstants.PRESENT_RESP_BOUNCE_REMARKS_MAN) {
 			if (StringUtils.isNotEmpty(bounceCode) && StringUtils.trimToNull(bounceRemarks) == null) {
-				return "Bounce remarks are mandatory for the bounce reason code: " + bounceCode;
+				throw new PresentmentException(PresentmentError.PRMNT504);
 			}
 			if (bounceRemarks != null && bounceRemarks.length() > 100) {
-				return "Bounce Remarks length should be less than or equal to 100.";
+				throw new PresentmentException(PresentmentError.PRMNT505);
 			}
+		}
+
+		if (PresentmentStatus.SUCCESS.equals(pd.getStatus()) && PresentmentStatus.SUCCESS.equals(status)) {
+			throw new PresentmentException(PresentmentError.PRMNT506);
+		} else if (PresentmentStatus.BOUNCE.equals(pd.getStatus()) && "N".equals(pd.getFateCorrection())) {
+			throw new PresentmentException(PresentmentError.PRMNT507);
+		} else if (PresentmentStatus.BOUNCE.equals(pd.getStatus()) && PresentmentStatus.BOUNCE.equals(status)) {
+			throw new PresentmentException(PresentmentError.PRMNT507);
 		}
 
 		if (pd.getAppDate().compareTo(pd.getSchDate()) < 0) {
-			return "The presentment not proceed with schedule date greater than application bussiness date";
+			throw new PresentmentException(PresentmentError.PRMNT508);
 		}
-
-		return null;
 	}
 
 	private AEEvent doPresentmentStageAccounting(PresentmentDetail pd) {
@@ -1534,12 +1547,37 @@ public class PresentmentEngine {
 		return rch;
 	}
 
-	public void updateResposeStatus(long responseID, String pexcFailure, String errorMessage, int processFlag) {
-		if (StringUtils.trimToNull(errorMessage) != null) {
-			errorMessage = (errorMessage.length() >= 2000) ? errorMessage.substring(0, 1998) : errorMessage;
+	public void updateResponse(long responseID) {
+		presentmentDAO.updateResposeStatus(responseID, null, null, EodConstants.PROGRESS_SUCCESS);
+		presentmentDAO.logRespDetail(responseID);
+		presentmentDAO.clearRespDetail(responseID);
+	}
+
+	public void updateResponse(long responseID, Exception e) {
+		String errorCode = null;
+		String errorDesc = null;
+
+		if (e instanceof PresentmentException) {
+			PresentmentException appException = (PresentmentException) e;
+
+			errorCode = appException.code();
+			errorDesc = appException.description();
+		} else {
+			errorDesc = e.getMessage();
 		}
 
-		presentmentDAO.updateResposeStatus(responseID, pexcFailure, errorMessage, processFlag);
+		if (StringUtils.trimToNull(errorDesc) != null) {
+			errorDesc = (errorDesc.length() >= 2000) ? errorDesc.substring(0, 1998) : errorDesc;
+		}
+
+		if (PresentmentError.isValidation(errorCode)) {
+			presentmentDAO.updateResposeStatus(responseID, errorCode, errorDesc, EodConstants.PROGRESS_FAILED);
+			presentmentDAO.logRespDetail(responseID);
+			presentmentDAO.clearRespDetail(responseID);
+		} else {
+			presentmentDAO.updateResposeStatus(responseID, errorCode, errorDesc, EodConstants.PROGRESS_WAIT);
+		}
+
 	}
 
 	public PresentmentDetail getPresentmentDetail(Long presentmentID) {

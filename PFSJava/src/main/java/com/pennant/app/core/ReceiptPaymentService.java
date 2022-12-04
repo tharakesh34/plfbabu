@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +31,15 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.presentment.ExcludeReasonCode;
+import com.pennant.pff.presentment.exception.PresentmentError;
+import com.pennant.pff.presentment.exception.PresentmentException;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.payment.model.LoanPayment;
@@ -103,14 +105,16 @@ public class ReceiptPaymentService {
 			createEMIInAdvReceipt(receiptDTO);
 		}
 
-		createReceiptAndBounce(receiptDTO);
+		if (receiptDTO.getRequestSource() == RequestSource.EOD) {
+			createReceiptAndBounce(receiptDTO);
+		}
 
-		if (PresentmentExtension.DUE_DATE_RECEIPT_CREATION && pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+		if (receiptDTO.isCreatePrmntReceipt() && pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 			logger.info("Creating Receipts for Presentment...");
 			createPresentmentReceipt(receiptDTO);
-		} else
+		}
 
-			logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void createEMIInAdvReceipt(ReceiptDTO receiptDTO) {
@@ -185,12 +189,19 @@ public class ReceiptPaymentService {
 
 		receiptDTO.setFinReceiptHeader(rch);
 
+		repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
+
 		try {
-			repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
-			financeMainDAO.updateSchdVersion(fm, true);
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new AppException();
+		}
+
+		try {
+			financeMainDAO.updateSchdVersion(fm, true);
+		} catch (ConcurrencyException e) {
+			throw new PresentmentException(PresentmentError.PRMNT512);
 		}
 
 		if (pd.getId() != Long.MIN_VALUE) {
@@ -254,13 +265,6 @@ public class ReceiptPaymentService {
 		receiptCancellationService.presentmentCancellation(pd, custEODEvent);
 
 		fm.setAppDate(appDate);
-
-		String errorDesc = pd.getErrorDesc();
-		if (StringUtils.trimToNull(errorDesc) != null) {
-			logger.error("Unable to create bounce receipt, Error Code {}", errorDesc);
-			presentmentDetailDAO.updatePresentmentDetail(pd);
-			throw new AppException(errorDesc);
-		}
 
 		presentmentDetailDAO.updatePresentmentIdAsZero(pd.getId());
 	}

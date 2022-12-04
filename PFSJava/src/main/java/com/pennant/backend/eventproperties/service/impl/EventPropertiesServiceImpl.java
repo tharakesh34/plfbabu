@@ -208,7 +208,8 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		ep.setParameterLoaded(true);
 		ep.setCacheLoaded(true);
 
-		ep.setAppDate(SysParamUtil.getAppDate());
+		setSystemDates(ep);
+
 		ep.setDpdCalIncludeExcess(SysParamUtil.isAllowed(SMTParameterConstants.DPD_CALC_INCLUDE_EXCESS));
 		ep.setIgnoringBucket(SysParamUtil.getValueAsBigDecimal(SMTParameterConstants.IGNORING_BUCKET));
 		ep.setAccrualCalOn(SysParamUtil.getValueAsInt(SMTParameterConstants.ACCRUAL_CAL_ON));
