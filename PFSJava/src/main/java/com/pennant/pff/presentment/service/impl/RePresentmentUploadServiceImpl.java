@@ -295,6 +295,11 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	}
 
 	@Override
+	public List<RePresentmentUploadDetail> getDataForReport(long fileID) {
+		return representmentUploadDAO.getDataForReport(fileID);
+	}
+
+	@Override
 	public AuditHeader saveOrUpdate(AuditHeader ah) {
 		logger.debug(Literal.ENTERING);
 

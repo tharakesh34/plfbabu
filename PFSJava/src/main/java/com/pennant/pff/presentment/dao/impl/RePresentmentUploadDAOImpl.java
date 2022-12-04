@@ -129,4 +129,31 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 		return pd.getBounceCode();
 	}
+
+	@Override
+	public List<RePresentmentUploadDetail> getDataForReport(long fileID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ru.FinReference, ru.DueDate, ru.PresentmentID, uh.CreatedOn, ru.Progress");
+		sql.append(", ru.Remarks, uh.CreatedBy, uh.ApprovedBy");
+		sql.append(" From REPRESENT_UPLOADS ru");
+		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.ID = ru.HeaderID");
+		sql.append(" Where uh.ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			RePresentmentUploadDetail rud = new RePresentmentUploadDetail();
+
+			rud.setReference(rs.getString("FinReference"));
+			rud.setDueDate(JdbcUtil.getDate(rs.getDate("DueDate")));
+			rud.setPresentmentID(JdbcUtil.getLong(rs.getObject("PresentmentID")));
+			rud.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			rud.setProgress(rs.getInt("Progress"));
+			rud.setRemarks(rs.getString("Remarks"));
+			rud.setCreatedBy(rs.getLong("CreatedBy"));
+			rud.setApprovedBy(rs.getLong("ApprovedBy"));
+
+			return rud;
+		}, fileID);
+	}
 }

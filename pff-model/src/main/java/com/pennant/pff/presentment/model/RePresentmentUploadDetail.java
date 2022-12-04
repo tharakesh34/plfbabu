@@ -11,6 +11,7 @@ public class RePresentmentUploadDetail extends UploadDetails {
 	private Date dueDate;
 	private String strDueDate;
 	private String acBounce;
+	private Long presentmentID;
 	private FinanceMain fm;
 
 	public RePresentmentUploadDetail() {
@@ -39,6 +40,14 @@ public class RePresentmentUploadDetail extends UploadDetails {
 
 	public void setAcBounce(String acBounce) {
 		this.acBounce = acBounce;
+	}
+
+	public Long getPresentmentID() {
+		return presentmentID;
+	}
+
+	public void setPresentmentID(Long presentmentID) {
+		this.presentmentID = presentmentID;
 	}
 
 	public FinanceMain getFm() {
