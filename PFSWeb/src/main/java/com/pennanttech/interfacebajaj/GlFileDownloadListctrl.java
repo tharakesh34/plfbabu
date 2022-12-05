@@ -261,7 +261,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	private void doSetFieldProperties() {
 
 		this.entityCode.setMaxlength(8);
-		this.entityCode.setTextBoxWidth(135);
+		this.entityCode.setTextBoxWidth(100);
 		this.entityCode.setMandatoryStyle(true);
 		this.entityCode.setModuleName("Entity");
 		this.entityCode.setValueColumn("EntityCode");
