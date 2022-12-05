@@ -2116,6 +2116,7 @@
 		<property name="gstDetailDAO" ref="gstDetailDAO" />
 		<property name="vehicleDealerDAO" ref="vehicleDealerDAO" />
 		<property name="genderDAO" ref="genderDAO" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
