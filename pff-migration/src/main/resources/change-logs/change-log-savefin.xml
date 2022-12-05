@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -27,7 +27,7 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="SAV_1" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -71,7 +71,7 @@
  			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="SAV_2" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -102,7 +102,7 @@
  			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="SAV_3" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -130,7 +130,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="SAV_4" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -170,7 +170,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="SAV_5" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -182,7 +182,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="001" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -286,7 +286,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="002" author="Gopal.p">
 		<comment>Giving Rights to ScheduleType </comment>
 		<sql>
@@ -302,7 +302,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="003" author="Gopal.p">
 		<comment>Giving Rights to Upload Button </comment>
 		<sql>
@@ -339,7 +339,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="004" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -356,7 +356,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="005" author="Gopal.p">
 		<sql>
 			<![CDATA[																																		
@@ -397,7 +397,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="006" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -445,7 +445,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="007" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -460,7 +460,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="008" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -488,7 +488,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="009" author="Gopal.p">
 		<sql>
 			<comment>Giving Rights to Upload Button </comment>
@@ -503,7 +503,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="010" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -569,7 +569,7 @@
               ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="011" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -615,7 +615,7 @@
               ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="012" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -648,7 +648,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="13" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
@@ -691,7 +691,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="15" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
@@ -722,8 +722,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="16" author="sandeepkumar.m">
+
+	<changeSet id="16" author="sandeepkumar.m">
 
 		<sql>
             <![CDATA[
@@ -735,7 +735,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="17" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
@@ -744,7 +744,7 @@
         	 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="18" author="sandeepkumar.m">
 		<sql>
 		<![CDATA[
@@ -753,7 +753,7 @@
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="19" author="sandeepkumar.m">
 		<sql>
 		<![CDATA[
@@ -765,7 +765,7 @@
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="20" author="rahul.r">
 		<sql>
 		<![CDATA[
@@ -773,7 +773,7 @@
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="21_pre" author="Sandeepkumar.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -781,7 +781,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="21" author="Sandeepkumar.m">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -1053,15 +1053,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="22" author="rahul.r">
+
+	<changeSet id="22" author="rahul.r">
 		<sql>
 			<![CDATA[
 				UPDATE WIFFINDISBURSEMENTDETAILS SET DISBSEQ=1;
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="23" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
@@ -1091,7 +1091,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="24" author="rahul.r">
 		<sql>
 			<![CDATA[
@@ -1099,7 +1099,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="25" author="rahul.r">
 		<sql>
 			<![CDATA[
@@ -1107,8 +1107,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-    <changeSet id="26" author="sandeepkumar.m">
+
+	<changeSet id="26" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
 				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'T3.CustCIF' WHERE FIELDID = 2 AND REPORTID =(SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_DailyPastduebyCustomer');
@@ -1120,87 +1120,93 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="27.1" author="rahul.r">
 		<createTable tableName="COLLATERAL_LTV_BREACHES">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" primaryKey="true" />
-			</column>	
+			</column>
 			<column name="BatchId" type="bigint">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="FinReference" type="varchar(20)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="CollateralType" type="varchar(20)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="CollateralRef" type="varchar(20)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="Collateralccy" type="char(3)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="MarketValue" type="decimal(18,0)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="UnitPrice" type="decimal(18,0)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="NoOfUnits" type="int">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="CollateralValue" type="decimal(18,0)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="CurrentCollateralValue" type="decimal(18,0)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="BankLTV" type="decimal(5,2)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="CurrentBankLTV" type="decimal(5,2)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="BankValuation" type="decimal(18,0)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="CurrentBankValuation" type="decimal(18,0)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="ThresholdLTV" type="decimal(5,2)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="Pos" type="decimal(18,0)">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 			<column name="CommodityId" type="bigint">
-				<constraints  nullable="false" />
+				<constraints nullable="false" />
 			</column>
 			<column name="ValueDate" type="datetime">
-				<constraints  nullable="false" />
+				<constraints nullable="false" />
 			</column>
 			<column name="SendAlert" type="smallint">
-				<constraints  nullable="false" />
-			</column>			
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="28" author="rahul.r">
-		<addDefaultValue columnDataType="decimal(18,0)" columnName="UnitPrice" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
-		<addDefaultValue columnDataType="int" columnName="NoOfUnits" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
-		<addDefaultValue columnDataType="decimal(18,0)" columnName="CurrentCollateralValue" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
-		<addDefaultValue columnDataType="decimal(5,2)" columnName="CurrentBankLTV" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
-		<addDefaultValue columnDataType="decimal(18,0)" columnName="CurrentBankValuation" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
-		<addDefaultValue columnDataType="smallint" columnName="SendAlert" defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES"/>
+		<addDefaultValue columnDataType="decimal(18,0)" columnName="UnitPrice" defaultValueNumeric="0"
+			tableName="COLLATERAL_LTV_BREACHES" />
+		<addDefaultValue columnDataType="int" columnName="NoOfUnits" defaultValueNumeric="0"
+			tableName="COLLATERAL_LTV_BREACHES" />
+		<addDefaultValue columnDataType="decimal(18,0)" columnName="CurrentCollateralValue"
+			defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES" />
+		<addDefaultValue columnDataType="decimal(5,2)" columnName="CurrentBankLTV" defaultValueNumeric="0"
+			tableName="COLLATERAL_LTV_BREACHES" />
+		<addDefaultValue columnDataType="decimal(18,0)" columnName="CurrentBankValuation"
+			defaultValueNumeric="0" tableName="COLLATERAL_LTV_BREACHES" />
+		<addDefaultValue columnDataType="smallint" columnName="SendAlert" defaultValueNumeric="0"
+			tableName="COLLATERAL_LTV_BREACHES" />
 	</changeSet>
-	
+
 	<changeSet id="29" author="rahul.r">
 		<addColumn tableName="COLLATERAL_LTV_BREACHES">
 			<column name="finid" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="39" author="rahul.r">
 		<sql>
 			<![CDATA[
@@ -1208,7 +1214,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="40" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
@@ -1216,7 +1222,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="41" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
@@ -1232,7 +1238,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="43" author="rahul.r">
 		<sql>
 			<![CDATA[
@@ -1241,7 +1247,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="44" author="rahul.r">
 		<sql>
 			<![CDATA[
@@ -1260,7 +1266,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="45" author="rahul.r">
 		<sql>
 			<![CDATA[
@@ -1347,8 +1353,8 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_DEFAULT_IMPORT')), 'PAYMENT_DATE',         0, 'N', NULL, NULL, NULL, NULL, '25', NULL, NULL, NULL, 'yyyyMMdd', 'O');
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="49" author="rahul.r">
 		<sql>
 			<![CDATA[
@@ -1369,5 +1375,58 @@
 			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CREDIT_ELIGIBILITY_TOTAL','Eligibility total in credit review sheet','String',1,'G10',10,0,null,null,null,1,1000,to_date('01-12-22','DD-MM-RR'),'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
-	</changeSet>		
+	</changeSet>
+
+	<changeSet id="51" author="sandeepkumar.m">
+		<sql>
+			<![CDATA[
+			
+					DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT'));
+					DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT');
+					DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT';
+					
+                    INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'GL_TRANSACTION_SUMMARY_EXPORT', 'Transaction Summary Report', 2, NULL, NULL, '', ',' , 0, 0, NULL, 'LINK, BLDAT, BLART, BUKRS, BUDAT, MONAT, CURRCY, XBLNR, BKTXT', '', 'A', '/opt/SaveFin/PFF/BASE/SAPGL', '${ENTITY_CODE}', '.csv', 0, NULL, NULL, NULL, 0, NULL, 1, 1);
+					INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT'), 'TRANSACTION_SUMMARY_REPORT',  0, 'ID', 'ENTITY=:ENTITY', NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0);
+					           
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT')), 'LINK', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT')), 'BLDAT', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'DATE:YYYYMMDD', 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT')), 'BLART', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT')), 'BUKRS', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT')), 'BUDAT', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'DATE:YYYYMMDD', 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT')), 'MONAT', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT')), 'CURRCY', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT')), 'XBLNR', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT')), 'BKTXT', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+		             
+		           ]]>
+			  </sql>
+		</changeSet>
+
+	<changeSet id="52" author="sandeepkumar.m">
+		<sql>
+			<![CDATA[
+
+					DELETE FROM DATA_ENGINE_COLUMN where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'GL_TRANSACTION_EXPORT'));
+					DELETE FROM DATA_ENGINE_TABLE where CONFIGID IN (select ID from DATA_ENGINE_CONFIG where Name = 'GL_TRANSACTION_EXPORT');
+					DELETE FROM DATA_ENGINE_CONFIG where Name = 'GL_TRANSACTION_EXPORT';
+					
+					INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'GL_TRANSACTION_EXPORT', 'Transaction Detail Report', 2, NULL, NULL, '', ',' , 0, 0, NULL, 'LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT', '', 'A', '/opt/SaveFin/PFF/BASE/SAPGL', '${ENTITY_CODE}', '.csv', 0, NULL, NULL, NULL, 0, NULL, 1, 1);
+					INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT'), 'TRANSACTION_DETAIL_REPORT_VIEW',  0, 'ID', 'ENTITY=:ENTITY', NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0);
+					                   
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'LINK', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'BSCHL', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'HKONT', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'UMSKZ', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'WRBTR', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'GSBER', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'BUPLA', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'KOSTL', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'PRCTR', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'ZUONR', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+					INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'GL_TRANSACTION_EXPORT')), 'SGTXT', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');
+
+                   ]]>
+			   </sql>
+		 </changeSet>
+
 </databaseChangeLog>
