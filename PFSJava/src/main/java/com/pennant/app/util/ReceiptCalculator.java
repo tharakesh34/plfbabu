@@ -1822,8 +1822,13 @@ public class ReceiptCalculator {
 			tempOdList.add(fod.copyEntity());
 		}
 
-		BigDecimal balAmount = rch.getReceiptAmount();
-		rch.setBalAmount(balAmount);
+		BigDecimal balAmount = BigDecimal.ZERO;
+		if (rd.isAdjSchedule()) {
+			balAmount = rch.getBalAmount();
+		} else {
+			balAmount = rch.getReceiptAmount();
+			rch.setBalAmount(balAmount);
+		}
 
 		List<FinDueData> dueDataList = rd.getDueDataList();
 		if (CollectionUtils.isEmpty(dueDataList)) {
