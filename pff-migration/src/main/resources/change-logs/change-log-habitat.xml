@@ -162,5 +162,11 @@
                    ]]>
 			   </sql>
 		 </changeSet>
-	
+		 <changeSet id="9" author="rahul.r">
+			<sql>
+				<![CDATA[
+					UPDATE RMTFINANCETYPES SET DEVELOPERFINANCE = 0;
+				]]>
+			</sql>
+		</changeSet>
 </databaseChangeLog>
