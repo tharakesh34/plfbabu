@@ -16,7 +16,7 @@ public class StageTabConstants {
 	public static final String QueryMangement = "QRYMGMT";
 	public static final String PSLDetails = "PSLDTLS";
 	public static final String CreditReviewDetails = "CRTAB";
-	public static final String LegalDetails = "LegalDet";
+	public static final String LegalDetails = "LEGALTAB";
 	public static final String FinancialSummary = "FinSumry";
 	public static final String DMSInterface = "";
 	public static final String OCR = "OCR";
