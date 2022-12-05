@@ -445,11 +445,13 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 						CreditReviewData creditReviewData = (CreditReviewData) map.get("creditReviewData");
 						if (creditReviewData != null) {
 							Map<String, Object> dataMap = convertStringToMap(creditReviewData.getTemplateData());
+
 							String cellCode = SysParamUtil.getValueAsString("CREDIT_ELIGIBILITY_TOTAL");
 							Double obj = (Double) dataMap.get("FINAL_OFFER_" + cellCode);
-
-							totalEligibiltyAmount = PennantApplicationUtil.formatAmount(new BigDecimal(obj), 2)
-									.toString();
+							if (obj != null) {
+								totalEligibiltyAmount = PennantApplicationUtil.formatAmount(new BigDecimal(obj), 2)
+										.toString();
+							}
 						}
 
 					}
