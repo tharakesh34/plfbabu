@@ -1221,10 +1221,10 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.labelUseExisting.setVisible(false);
 		}
 
-		if (fromLoan && !issecurityMandate) {
-			readOnlyComponent(true, this.mandateType);
-		} else {
+		if (fromLoan) {
 			readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType);
+		} else {
+			readOnlyComponent(true, this.mandateType);
 		}
 
 		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())) {

@@ -237,7 +237,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", NextRoleCode = ?, TaskId = ? ,NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(", InputDate = ?, BarCodeNumber = ?, SwapIsActive = ?, PrimaryMandateId = ?, EntityCode = ?");
 		sql.append(", PartnerBankId = ?, DefaultMandate = ?, EMandateSource = ?, EMandateReferenceNo = ?");
-		sql.append(", HoldReason = ?, SwapEffectiveDate = ?, SecurityMandate = ?, EmployerID = ?, EmployeeNo = ?");
+		sql.append(", HoldReason = ?, SwapEffectiveDate = ?, EmployerID = ?, EmployeeNo = ?");
 		sql.append(" Where MandateID = ?");
 
 		if (!type.endsWith("_Temp")) {
@@ -295,7 +295,6 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.geteMandateReferenceNo());
 			ps.setObject(index++, mdt.getHoldReason());
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
-			ps.setBoolean(index++, mdt.isSecurityMandate());
 			ps.setObject(index++, mdt.getEmployerID());
 			ps.setString(index++, mdt.getEmployeeNo());
 
@@ -324,7 +323,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", NextRoleCode = ?, TaskId = ? ,NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(", BarCodeNumber = ?, SwapIsActive = ?, EntityCode = ?, PartnerBankId = ?, DefaultMandate = ?");
 		sql.append(", EMandateSource = ?, EMandateReferenceNo = ?, HoldReason = ?");
-		sql.append(", SwapEffectivedate = ?, SecurityMandate = ?, EmployerID = ?, EmployeeNo = ?");
+		sql.append(", SwapEffectivedate = ?, EmployerID = ?, EmployeeNo = ?");
 		sql.append("  Where MandateID = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -375,7 +374,6 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.geteMandateReferenceNo());
 			ps.setObject(index++, mdt.getHoldReason());
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
-			ps.setBoolean(index++, mdt.isSecurityMandate());
 			ps.setObject(index++, mdt.getEmployerID());
 			ps.setString(index++, mdt.getEmployeeNo());
 

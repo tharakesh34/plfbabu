@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
@@ -60,6 +61,23 @@ public class MandateController extends AbstractController {
 
 		if (mandate.getReturnStatus() != null) {
 			response.setReturnStatus(mandate.getReturnStatus());
+			
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		if (mandate.isSecurityMandate()
+				&& (InstrumentType.isDAS(mandate.getMandateType()) || InstrumentType.isSI(mandate.getMandateType()))) {
+			WSReturnStatus status = new WSReturnStatus();
+			String[] valueParm = new String[2];
+			valueParm[0] = "Mandate Type,";
+			valueParm[1] = "Possible Values are NACH, ECS, EMANDATE ";
+
+			ErrorDetail err = ErrorUtil.getError("STP0012", valueParm);
+			status.setReturnCode(err.getCode());
+
+			status.setReturnText(ErrorUtil.getErrorMessage(err.getMessage(), err.getParameters()));
+			response.setReturnStatus(status);
 
 			logger.debug(Literal.LEAVING);
 			return response;

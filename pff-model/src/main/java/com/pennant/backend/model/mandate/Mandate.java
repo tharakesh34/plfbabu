@@ -180,6 +180,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date swapEffectiveDate;
 	private String holdReason;
+	@XmlElement
 	private boolean securityMandate;
 	@XmlElement
 	private Long employerID;

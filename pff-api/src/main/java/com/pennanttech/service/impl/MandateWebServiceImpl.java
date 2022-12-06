@@ -2,6 +2,7 @@ package com.pennanttech.service.impl;
 
 import java.util.Date;
 import java.util.List;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -648,6 +649,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		mndt.setEntityCode(mandate.getEntityCode());
 		mndt.setCustCIF(mandate.getCustCIF());
 		mndt.setSourceId(PennantConstants.FINSOURCE_ID_API);
+		mndt.setSecurityMandate(mandate.isSecurityMandate());
 
 		if (InstrumentType.isDAS(mandate.getMandateType())) {
 			mndt.setSwapIsActive(mandate.isSwapIsActive());

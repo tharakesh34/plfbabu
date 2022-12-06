@@ -55,6 +55,14 @@
 										style="padding-left:12px;" />
 									<extendedcombobox id="finReference" width="250px" />
 								</row>
+								
+								<row>
+									<label value="${c:l('label_SelectMandate_SecurityMandate.value')}"
+										style="padding-left:12px;" />
+									<hbox>
+										<checkbox id="securityMandate" />
+									</hbox>
+								</row>
 
 								<row>
 									<label value="${c:l('label_SelectMandate_MandateTypes.value')}"
