@@ -70,6 +70,9 @@ public class PFFJobScheduler extends JobScheduler {
 	private PmayProcess pmayProcess;
 	private SecurityUserService securityUserService;
 
+	@Autowired(required = false)
+	private JobSchedulerExtension jobSchedulerExtension;
+
 	@Override
 	protected List<JobData> loadJobs() {
 		List<JobData> jobDataList = new ArrayList<>();
@@ -355,6 +358,13 @@ public class PFFJobScheduler extends JobScheduler {
 			args.put("pmayProcess", pmayProcess);
 			jobData = new JobData("PMAY_RESPONSE_JOB", PmayJob.class, args);
 			jobDataList.add(jobData);
+		}
+
+		/**
+		 * For client specific jobs
+		 */
+		if (jobSchedulerExtension != null) {
+			jobDataList.addAll(jobSchedulerExtension.loadJobs());
 		}
 
 		return jobDataList;
