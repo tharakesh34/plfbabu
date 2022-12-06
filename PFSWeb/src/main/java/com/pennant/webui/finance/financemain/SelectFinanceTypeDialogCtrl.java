@@ -1831,7 +1831,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				customer.setCustSalutationCode(salutation.getSalutationCode());
 			}
 		}
-		customer.setSalariedCustomer(true);
 
 		Object salutionObj = PennantAppUtil.getSystemDefault("MaritalStatusCode", "", systemDefault);
 		if (salutionObj != null && customerDetails.getCustomer().getCustMaritalSts() == null) {
