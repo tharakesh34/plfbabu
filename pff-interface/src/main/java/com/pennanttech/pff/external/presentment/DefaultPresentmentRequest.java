@@ -48,7 +48,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 
 	@Override
 	public void sendReqest(List<Long> idList, long presentmentId, boolean isError, String mandateType,
-			String presentmentRef, String bankAccNo) throws Exception {
+			String presentmentRef, String bankAccNo, String branchCode) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		boolean isBatchFail = false;
@@ -104,7 +104,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 					String alwPresentmentDwnld = SysParamUtil
 							.getValueAsString(InterfaceConstants.ALLOW_PRESENTMENT_DOWNLOAD);
 					if ("Y".equalsIgnoreCase(alwPresentmentDwnld)) {
-						prepareRequestFile(presentmentId, presentmentRef, bankAccNo);
+						prepareRequestFile(presentmentId, presentmentRef, bankAccNo, branchCode);
 					}
 				}
 			}
@@ -120,7 +120,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	 * 
 	 * @throws Exception
 	 */
-	protected void prepareRequestFile(long presentmentId, String presentmentRef, String bankAccNo) throws Exception {
+	protected void prepareRequestFile(long presentmentId, String presentmentRef, String bankAccNo, String branchCode)
+			throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -173,6 +174,9 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			String entityCode = presentment.getEntCode();
 			parameterMap.put("FILE_NAME", "Presentment_" + presentmentRef.concat(".xlsx"));
 			parameterMap.put("FILE_NAME_PREFIX", entityCode + "_Pennant_Lot_");
+			if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+				parameterMap.put("FILE_PATH_SUFFIX", branchCode);
+			}
 
 			// for new Presentment only total count needs
 			if (smtPaymentModeConfig != null && smtPaymentModeConfig.equals("PRESENTMENT_REQUEST_PDC")) {

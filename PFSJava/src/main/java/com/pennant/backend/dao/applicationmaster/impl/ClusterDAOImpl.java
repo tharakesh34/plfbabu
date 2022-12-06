@@ -38,6 +38,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.ClusterDAO;
 import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
@@ -309,4 +310,57 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 
 		return jdbcOperations.queryForObject(sql, Integer.class, entity, clusterType) > 0;
 	}
+
+	@Override
+	public long getClustersFilter(String branchCode) {
+		logger.debug(Literal.ENTERING);
+		long clusterid = 0;
+		int level = 0;
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("select clusterid from RMTBranches");
+			sql.append(" where BranchCode = ? ");
+
+			logger.trace(Literal.SQL + sql.toString());
+
+			clusterid = this.jdbcOperations.queryForObject(sql.toString(), long.class, branchCode);
+
+			while (clusterid != 0) {
+				sql = new StringBuilder();
+				sql.append("select ID,Code,ClusterType,parent from Clusters");
+				sql.append(" where id = :id ");
+
+				MapSqlParameterSource source = new MapSqlParameterSource();
+				source.addValue("id", clusterid);
+
+				RowMapper<Cluster> rowMapper = BeanPropertyRowMapper.newInstance(Cluster.class);
+				Cluster cluster = jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+
+				if (StringUtils.equalsIgnoreCase(cluster.getClusterType(),
+						ImplementationConstants.PARTNERBANK_MAPPING_CLUSTER)) {
+					cluster.getId();
+					break;
+				}
+
+				level++;
+
+				if (cluster.getParent() != null) {
+					clusterid = cluster.getParent();
+					if (clusterid == 0) {
+						break;
+					}
+				} else {
+					clusterid = 0;
+				}
+
+			}
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return clusterid;
+	}
+
 }

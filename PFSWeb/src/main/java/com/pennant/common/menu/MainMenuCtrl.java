@@ -285,6 +285,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return ImplementationConstants.ALLOW_CERSAI;
 		case "menu_Item_CollateralDownload":
 			return this.glemsCollateralProcess != null;
+		case "menu_Item_FinTypePartnerbankMapping":
+			return ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING;
 		default:
 			break;
 		}

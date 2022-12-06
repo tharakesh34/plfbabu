@@ -590,4 +590,10 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	public Branch getBranch(String code) {
 		return getCachedEntity(code);
 	}
+
+	@Override
+	public List<String> getBranchCodeByClusterId(long clusterId) {
+		return getBranchDAO().getBranchCodeByClusterId(clusterId);
+	}
+
 }

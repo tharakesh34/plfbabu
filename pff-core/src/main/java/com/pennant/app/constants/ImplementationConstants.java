@@ -297,6 +297,9 @@ public class ImplementationConstants {
 		ALLOW_CERSAI = getValueAsBoolean("ALLOW_CERSAI", false);
 		DISB_STP = getValueAsBoolean("DISB_STP", false);
 		COLLECTION_DOWNLOAD_REQ = getValueAsBoolean("COLLECTION_DOWNLOAD_REQ", true);
+		BRANCH_WISE_PARTNERBANK_MAPPING = getValueAsBoolean("BRANCH_WISE_PARTNERBANK_MAPPING", false);
+		PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER = getValueAsString("PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER", "");
+		PARTNERBANK_MAPPING_CLUSTER = getValueAsString("PARTNERBANK_MAPPING_CLUSTER", "");
 
 		setVerificationConstants();
 	}
@@ -627,6 +630,9 @@ public class ImplementationConstants {
 
 	public static boolean CUSTOMIZED_SOAREPORT;
 	public static boolean COLLECTION_DOWNLOAD_REQ;
+	public static boolean BRANCH_WISE_PARTNERBANK_MAPPING;
+	public static String PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER;
+	public static String PARTNERBANK_MAPPING_CLUSTER;
 
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);

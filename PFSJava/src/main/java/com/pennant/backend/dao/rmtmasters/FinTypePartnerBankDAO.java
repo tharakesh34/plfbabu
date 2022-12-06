@@ -52,4 +52,17 @@ public interface FinTypePartnerBankDAO extends BasicCrudDao<FinTypePartnerBank> 
 	FinTypePartnerBank getFinTypePartnerBankByPartnerBankCode(String partnerBankCode, String finType,
 			String paymentMode);
 
+	List<FinTypePartnerBank> getFintypePartnerBankByFinTypeAndPurpose(String finType, String purpose,
+			String paymentType, String branchCode, long clsterId);
+
+	public List<Long> getClusterByPartnerbankCode(long partnerbankId);
+
+	public List<FinTypePartnerBank> getFintypePartnerBankByBranch(List<String> branchCode, long clusterId);
+
+	int getPartnerBankCountByCluster(String finType, String paymentType, String purpose, long partnerBankID,
+			String branchCode, long clusterId);
+
+	List<FinTypePartnerBank> getFinTypePartnerBank(String finType, String type, String mode, String purpose,
+			String entityCode);
+
 }

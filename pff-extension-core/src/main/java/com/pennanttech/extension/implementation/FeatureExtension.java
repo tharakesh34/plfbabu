@@ -140,6 +140,11 @@ public class FeatureExtension implements IFeatureExtension {
 
 		defaultExtensions.put("RECEIPT_ALLOW_FULL_WAIVER", true);
 
+		defaultExtensions.put("BRANCH_WISE_PARTNERBANK_MAPPING", true);
+
+		defaultExtensions.put("PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER", "C");
+
+		defaultExtensions.put("PARTNERBANK_MAPPING_CLUSTER", "ZONES");
 		mandateExtensaions();
 
 	}

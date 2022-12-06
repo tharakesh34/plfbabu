@@ -178,6 +178,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
+import com.pennant.backend.service.applicationmaster.ClusterService;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
@@ -191,6 +192,7 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -536,6 +538,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	Date appDate = SysParamUtil.getAppDate();
 	private transient CustomerDocumentService customerDocumentService;
 	private ManualAdviseService manualAdviseService;
+	private FinTypePartnerBankService finTypePartnerBankService;
+	private ClusterService clusterService;
 
 	/**
 	 * default constructor.<br>
@@ -1921,18 +1925,68 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			// readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"),
 			// this.fundingAccount);
 
-			FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
-			Filter fundingAcFilters[] = new Filter[4];
-			fundingAcFilters[0] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
-			fundingAcFilters[1] = new Filter("FinType", finType.getFinType(), Filter.OP_EQUAL);
-			fundingAcFilters[2] = new Filter("PaymentMode", recMode, Filter.OP_EQUAL);
-			if (ReceiptMode.ONLINE.equals(recMode)) {
-				fundingAcFilters[2] = new Filter("PaymentMode", receiptData.getReceiptHeader().getSubReceiptMode(),
-						Filter.OP_EQUAL);
+			String paymentType = "";
+			if (this.receiptMode.getSelectedItem().getValue().toString().equals("ONLINE")) {
+				paymentType = this.subReceiptMode.getSelectedItem().getValue().toString();
+			} else {
+				paymentType = this.receiptMode.getSelectedItem().getValue().toString();
 			}
-			fundingAcFilters[3] = new Filter("EntityCode", finType.getLovDescEntityCode(), Filter.OP_EQUAL);
-			Filter.and(fundingAcFilters);
-			this.fundingAccount.setFilters(fundingAcFilters);
+
+			FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
+			if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+				if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("B")) {
+					Filter[] filters = new Filter[5];
+					filters[0] = new Filter("FinType", finType.getFinType(), Filter.OP_EQUAL);
+					filters[1] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
+					filters[2] = new Filter("PaymentMode", recMode, Filter.OP_EQUAL);
+					filters[4] = new Filter("BranchCode", this.cashierBranch.getValue(), Filter.OP_EQUAL);
+					this.fundingAccount.setFilters(filters);
+					List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService
+							.getFintypePartnerBankByFinTypeAndPurpose(finType.getFinType(),
+									RepayConstants.RECEIPTTYPE_RECIPT, recMode, this.cashierBranch.getValue(), 0);
+					if (fintypePartnerbank != null) {
+						if (fintypePartnerbank.size() == 1) {
+							this.fundingAccount.setAttribute("partnerBankId",
+									fintypePartnerbank.get(0).getPartnerBankID());
+							this.fundingAccount.setValue(fintypePartnerbank.get(0).getPartnerBankCode());
+							this.fundingAccount.setDescription(fintypePartnerbank.get(0).getPartnerBankName());
+						}
+					}
+				} else if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("C")) {
+					long clusterId = clusterService.getClustersFilter(this.cashierBranch.getValue());
+					Filter[] filters = new Filter[4];
+					filters[0] = new Filter("FinType", finType.getFinType(), Filter.OP_EQUAL);
+					filters[1] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
+					filters[2] = new Filter("PaymentMode", recMode, Filter.OP_EQUAL);
+					filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+					this.fundingAccount.setFilters(filters);
+					List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService
+							.getFintypePartnerBankByFinTypeAndPurpose(finType.getFinType(),
+									RepayConstants.RECEIPTTYPE_RECIPT, recMode, "", clusterId);
+					if (fintypePartnerbank != null) {
+						if (fintypePartnerbank.size() == 1) {
+							this.fundingAccount.setAttribute("partnerBankId",
+									fintypePartnerbank.get(0).getPartnerBankID());
+							this.fundingAccount.setValue(fintypePartnerbank.get(0).getPartnerBankCode());
+							this.fundingAccount.setDescription(fintypePartnerbank.get(0).getPartnerBankName());
+						}
+					}
+				}
+			} else {
+
+				Filter fundingAcFilters[] = new Filter[4];
+				fundingAcFilters[0] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
+				fundingAcFilters[1] = new Filter("FinType", finType.getFinType(), Filter.OP_EQUAL);
+				fundingAcFilters[2] = new Filter("PaymentMode", recMode, Filter.OP_EQUAL);
+				if (ReceiptMode.ONLINE.equals(recMode)) {
+					fundingAcFilters[2] = new Filter("PaymentMode", receiptData.getReceiptHeader().getSubReceiptMode(),
+							Filter.OP_EQUAL);
+				}
+				fundingAcFilters[3] = new Filter("EntityCode", finType.getLovDescEntityCode(), Filter.OP_EQUAL);
+				Filter.and(fundingAcFilters);
+				this.fundingAccount.setFilters(fundingAcFilters);
+			}
+
 			// this.row_fundingAcNo.setVisible(true);
 			this.row_remarks.setVisible(true);
 
@@ -3792,7 +3846,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		String panNumber = this.panNumber.getValue();
 		Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
-		
+
 		try {
 			if (StringUtils.isBlank(panNumber) || !MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
 				logger.debug(Literal.LEAVING);
@@ -8323,4 +8377,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
 	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
+	}
+
+	public void setClusterService(ClusterService clusterService) {
+		this.clusterService = clusterService;
+	}
+
 }

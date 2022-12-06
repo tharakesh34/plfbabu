@@ -2229,6 +2229,8 @@
 		<property name="builderProjcetDAO" ref="builderProjcetDAO" />
 		<property name="bankBranchDAO" ref="bankBranchDAO" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
+		<property name="clusterService" ref="clusterService" />
 	</bean>
 
 	<!--============ Finance Fee Details ============== -->
@@ -2449,6 +2451,8 @@
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
 		<property name="financeMainService" ref="financeMainService" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
+		<property name="clusterService" ref="clusterService" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->
@@ -3477,7 +3481,10 @@
 		parent="basisCtrl" scope="prototype" />
 
 	<bean id="mandateDialogCtrl" class="com.pennant.webui.mandate.mandate.MandateDialogCtrl" parent="basisCtrl"
-		scope="prototype" />
+		scope="prototype" >
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
+		<property name="clusterService" ref="clusterService" />
+	</bean>	
 
 	<bean id="securityMandateDialogCtrl" class="com.pennant.webui.mandate.mandate.SecurityMandateDialogCtrl"
 		parent="basisCtrl" scope="prototype" />
@@ -3492,10 +3499,16 @@
 	<bean id="disbursementRegistrationListCtrl"
 		class="com.pennanttech.interfacebajaj.DisbursementRegistrationListCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="disbursementRequestService" ref="disbursementRequestService" />
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
+		<property name="clusterService" ref="clusterService" />
+		<property name="branchService" ref="branchService" />
 	</bean>
 	<bean id="mandateRegistrationListCtrl" class="com.pennanttech.interfacebajaj.MandateRegistrationListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="mandateService" ref="mandateService" />
+		<property name="clusterService" ref="clusterService" />
+		<property name="branchService" ref="branchService" />
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
 	</bean>
 	<bean id="mandateDataImportCtrl" class="com.pennanttech.interfacebajaj.MandateDataImportCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -4121,6 +4134,7 @@
 	<bean id="paymentInstructionDialogCtrl"
 		class="com.pennant.webui.payment.paymentheader.PaymentInstructionDialogCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="clusterService" ref="clusterService" />
 	</bean>
 
 	<bean id="eODConfigDialogCtrl" class="com.pennant.webui.eod.eodconfig.EODConfigDialogCtrl" parent="basisCtrl"
@@ -6066,4 +6080,14 @@
 	<bean id="rePresentmentUploadDialogCtrl" class="com.pennant.pff.presentment.web.RePresentmentUploadDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
+		
+	<bean id="finTypePartnerbankMappingListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypePartnerbankMappingListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
+	</bean>
+	
+	<bean id="finTypePartnerbankMappingDialogCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypePartnerbankMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
+	</bean>	
+	
 </beans>

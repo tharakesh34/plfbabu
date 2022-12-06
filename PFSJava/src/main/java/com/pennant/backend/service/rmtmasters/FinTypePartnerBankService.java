@@ -56,5 +56,16 @@ public interface FinTypePartnerBankService {
 
 	List<FinTypePartnerBank> getFinTypePartnerBanksList(String finType, String type);
 
+	List<FinTypePartnerBank> getFinTypePartnerBanksList(String finType, String type, String mode, String purpose,
+			String entityCode);
+
 	int getPartnerBankCount(String finType, String paymentType, String purpose, long partnerBankID);
+
+	List<FinTypePartnerBank> getFintypePartnerBankByFinTypeAndPurpose(String finType, String purpose,
+			String paymentType, String branchCode, long clusterId);
+
+	public List<Long> getClusterByPartnerbankCode(long partnerbankId);
+
+	List<FinTypePartnerBank> getFintypePartnerBankByBranch(List<String> branchCode, long clusterId);
+
 }

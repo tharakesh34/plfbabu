@@ -2240,4 +2240,19 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		}
 
 	}
+
+	@Override
+	public String getBackOfficeNameByBranchCode(String branchCode) {
+		String sql = "Select Name from Clusters Where Id in (Select ClusterId from RMTBranches where branchCode = ?)";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, branchCode);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
+
+	}
 }

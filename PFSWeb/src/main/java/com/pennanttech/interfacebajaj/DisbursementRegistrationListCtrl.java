@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,9 +74,14 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
+import com.pennant.backend.service.applicationmaster.BranchService;
+import com.pennant.backend.service.applicationmaster.ClusterService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -90,8 +96,11 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.disbursement.DisbursementRequestService;
 
@@ -138,6 +147,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Cell cellVMFC1;
 	protected Cell cellVMFC2;
 	protected Cell cellVMFC3;
+	protected ExtendedCombobox branchOrCluster;
 
 	protected Listbox sortOperator_DisbType;
 	protected Listbox sortOperator_PartnerBank;
@@ -150,6 +160,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listbox sortOperator_Entity;
 	protected Listbox sortOperator_DisbParty;
 	protected Listbox sortOperator_VasManufacturer;
+	protected Listbox sortOperator_BranchOrCluster;
 
 	protected Listheader listHeader_CheckBox_Name;
 	protected Listcell listCell_Checkbox;
@@ -169,6 +180,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	private int futureDays = 0;
 
 	private transient DisbursementRequestService disbursementRequestService;
+	private transient FinTypePartnerBankService finTypePartnerBankService;
+	private transient ClusterService clusterService;
+	private transient BranchService branchService;
 
 	/**
 	 * default constructor.<br>
@@ -299,13 +313,41 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		fillComboBox(this.channelTypes, "", channelTypesList, "");
 		fillComboBox(this.disbParty, "", paymentDetails, "");
 
-		this.partnerBank.setModuleName("PartnerBank");
-		this.partnerBank.setDisplayStyle(2);
-		this.partnerBank.setValueColumn("PartnerBankCode");
-		this.partnerBank.setDescColumn("PartnerBankName");
-		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
-		this.partnerBank.setMandatoryStyle(false);
+		if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+			this.partnerBank.setModuleName("FinTypePartner");
+			this.partnerBank.setMandatoryStyle(true);
+			this.partnerBank.setValueColumn("PartnerBankCode");
+			this.partnerBank.setDescColumn("PartnerBankName");
+			this.partnerBank.setMaxlength(14);
+			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 
+			if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("C")) {
+				this.branchOrCluster.setButtonDisabled(false);
+				this.branchOrCluster.setModuleName("Cluster");
+				this.branchOrCluster.setValueColumn("Code");
+				this.branchOrCluster.setDescColumn("Name");
+				this.branchOrCluster.setValidateColumns(new String[] { "Code", "Name" });
+				this.branchOrCluster.setMandatoryStyle(true);
+				Filter filter[] = new Filter[1];
+				filter[0] = new Filter("CLUSTERTYPE", ImplementationConstants.PARTNERBANK_MAPPING_CLUSTER,
+						Filter.OP_EQUAL);
+			} else {
+				this.branchOrCluster.setButtonDisabled(false);
+				this.branchOrCluster.setModuleName("FinTypePartnerBankBranch");
+				this.branchOrCluster.setValueColumn("BranchCode");
+				this.branchOrCluster.setDescColumn("BranchDesc");
+				this.branchOrCluster.setValidateColumns(new String[] { "BranchCode", "BranchDesc" });
+				this.branchOrCluster.setMandatoryStyle(true);
+			}
+
+		} else {
+			this.partnerBank.setModuleName("PartnerBank");
+			this.partnerBank.setDisplayStyle(2);
+			this.partnerBank.setValueColumn("PartnerBankCode");
+			this.partnerBank.setDescColumn("PartnerBankName");
+			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+			this.partnerBank.setMandatoryStyle(false);
+		}
 		this.branch.setModuleName("BankBranch");
 		this.branch.setDisplayStyle(2);
 		this.branch.setValueColumn("BranchCode");
@@ -335,6 +377,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.vasManufacturer.setDescColumn("DealerName");
 		this.vasManufacturer.setValueType(DataType.LONG);
 		this.vasManufacturer.setValidateColumns(new String[] { "DealerId" });
+
+		this.branchOrCluster.setButtonDisabled(true);
 
 		if (ImplementationConstants.DISBURSEMENT_AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED)) {
@@ -512,6 +556,22 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			}
 		}
 
+		if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+			if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("C")) {
+				if (this.branchOrCluster.getValue() != null) {
+					String whereCondition = " Finreference In (Select Finreference from Financemain_view where FinBranch in (Select BranchCode from RMTBranches where ClusterId in("
+							+ Long.valueOf(this.branchOrCluster.getId()) + ")))";
+					searchObject.addWhereClause(whereCondition);
+				}
+			} else {
+				if (this.branchOrCluster.getValue() != null) {
+					String whereCondition = " Finreference In (Select Finreference from Financemain_view where FinBranch in (Select BranchCode From FinTypePartnerBanks where BranchCode in ("
+							+ this.branchOrCluster.getValue() + ")))";
+					searchObject.addWhereClause(whereCondition);
+				}
+			}
+		}
+
 		List<FinAdvancePayments> searchList = getPagedListWrapper().getPagedListService()
 				.getBySearchObject(searchObject);
 		List<FinAdvancePayments> resultantList = disbursementRequestService.filterDisbInstructions(searchList);
@@ -600,6 +660,16 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				throw new WrongValueException(this.disbTypes, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_DisbursementList_disbInstrctuionType.value") }));
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (!this.branchOrCluster.isReadonly())
+				this.branchOrCluster.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_BranchOrCluster.value"),
+						PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.branchOrCluster.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -724,7 +794,17 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			button_Search.setDisabled(true);
 
 			com.pennanttech.pff.core.disbursement.model.DisbursementRequest request = new com.pennanttech.pff.core.disbursement.model.DisbursementRequest();
-			PartnerBank partBank = (PartnerBank) partnerBank.getObject();
+			PartnerBank partBank = new PartnerBank();
+			if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+				Search search = new Search(PartnerBank.class);
+				search.addFilterEqual("PartnerBankId", this.partnerBank.getAttribute("Id"));
+
+				SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+				partBank = (PartnerBank) searchProcessor.getResults(search).get(0);
+			} else {
+				partBank = (PartnerBank) partnerBank.getObject();
+			}
+
 			String configName = partBank.getDataEngineConfigName();
 			String fileName = partBank.getFileName();
 			long userId = getUserWorkspace().getLoggedInUser().getUserId();
@@ -813,10 +893,59 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			if (details != null) {
 				this.partnerBank.setButtonDisabled(false);
 				this.partnerBank.setMandatoryStyle(true);
-				Filter[] filters = new Filter[2];
-				filters[0] = new Filter("Entity", details.getEntityCode(), Filter.OP_EQUAL);
-				filters[1] = new Filter("alwDisb", 1, Filter.OP_EQUAL);
-				this.partnerBank.setFilters(filters);
+				if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+					if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("B")) {
+						Filter[] filters = new Filter[2];
+						filters[0] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+						filters[1] = new Filter("BranchCode", getUserWorkspace().getLoggedInUser().getBranchCode(),
+								Filter.OP_EQUAL);
+						this.partnerBank.setFilters(filters);
+						List<String> branchlist = new ArrayList<>();
+						branchlist.add(getUserWorkspace().getLoggedInUser().getBranchCode());
+						List<FinTypePartnerBank> partnerbankData = finTypePartnerBankService
+								.getFintypePartnerBankByBranch(branchlist, 0);
+						if (partnerbankData != null) {
+							if (partnerbankData.size() == 1) {
+								this.partnerBank.setAttribute("Id", partnerbankData.get(0).getPartnerBankID());
+								this.partnerBank.setValue(partnerbankData.get(0).getPartnerBankCode());
+								this.partnerBank.setDescription(partnerbankData.get(0).getPartnerBankName());
+								this.partnerBank.setObject(partnerbankData.get(0));
+								onFullfillPartnerBank();
+							}
+						}
+					} else if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("C")) {
+						long clusterId = clusterService
+								.getClustersFilter(getUserWorkspace().getLoggedInUser().getBranchCode());
+						List<String> branchlist = new ArrayList<String>();
+						branchlist = branchService.getBranchCodeByClusterId(clusterId);
+						if (CollectionUtils.isNotEmpty(branchlist)) {
+							Filter[] filters = new Filter[2];
+							filters[0] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+							filters[1] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+							this.partnerBank.setFilters(filters);
+							List<FinTypePartnerBank> partnerbankData = finTypePartnerBankService
+									.getFintypePartnerBankByBranch(branchlist, clusterId);
+							if (partnerbankData != null) {
+								if (partnerbankData.size() == 1) {
+									this.partnerBank.setAttribute("Id", partnerbankData.get(0).getPartnerBankID());
+									this.partnerBank.setValue(partnerbankData.get(0).getPartnerBankCode());
+									this.partnerBank.setDescription(partnerbankData.get(0).getPartnerBankName());
+									this.partnerBank.setObject(partnerbankData.get(0));
+									onFullfillPartnerBank();
+								}
+							}
+						} else {
+							this.partnerBank.setErrorMessage("please configure the branch with partnerbank.");
+							this.partnerBank.setButtonDisabled(true);
+						}
+
+					}
+
+				} else {
+					Filter[] filters = new Filter[1];
+					filters[0] = new Filter("Entity", details.getEntityCode(), Filter.OP_EQUAL);
+					this.partnerBank.setFilters(filters);
+				}
 			} else {
 				this.partnerBank.setValue("");
 				this.partnerBank.setDescription("");
@@ -828,6 +957,47 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		logger.debug("Leaving");
 	}
 
+	public void onFulfill$partnerBank(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		onFullfillPartnerBank();
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFullfillPartnerBank() {
+		if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+			Object dataObject = partnerBank.getObject();
+			if (dataObject != null && !dataObject.equals("")) {
+				FinTypePartnerBank details = (FinTypePartnerBank) dataObject;
+				this.partnerBank.setAttribute("Id", details.getPartnerBankID());
+				if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("B")) {
+					if (details != null) {
+						Filter[] filters = new Filter[2];
+						filters[0] = new Filter("PartnerbankId", details.getPartnerBankID(), Filter.OP_EQUAL);
+						filters[1] = new Filter("BranchCode", "", Filter.OP_NOT_NULL);
+						this.branchOrCluster.setFilters(filters);
+						this.branchOrCluster.setButtonDisabled(false);
+						this.branchOrCluster.setMandatoryStyle(true);
+					}
+				} else if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("C")) {
+					List<Long> clusterList = new ArrayList<Long>();
+					clusterList = finTypePartnerBankService.getClusterByPartnerbankCode(details.getPartnerBankID());
+					if (CollectionUtils.isNotEmpty(clusterList)) {
+						Filter[] filters = new Filter[1];
+						filters[0] = new Filter("Id", clusterList, Filter.OP_IN);
+						this.branchOrCluster.setFilters(filters);
+						this.branchOrCluster.setButtonDisabled(false);
+						this.branchOrCluster.setMandatoryStyle(true);
+					} else {
+						this.branchOrCluster.setErrorMessage("please configure the cluster with partnerbank.");
+						this.branchOrCluster.setButtonDisabled(true);
+					}
+				}
+			}
+		}
+	}
+
 	public void onChange$disbParty(Event event) {
 		this.vasManufacturer.setValue("");
 		String disbParty = this.disbParty.getSelectedItem().getValue();
@@ -836,6 +1006,26 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.cellVMFC1.setVisible(vasParty);
 		this.cellVMFC2.setVisible(vasParty);
 		this.cellVMFC3.setVisible(vasParty);
+	}
+
+	public void onFulfill$branchOrCluster(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Cluster cluster = (Cluster) this.branchOrCluster.getObject();
+
+		if (cluster == null) {
+			return;
+		}
+		Search search = new Search(Cluster.class);
+		search.addFilterEqual("Id", cluster.getId());
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		Cluster clusterData = (Cluster) searchProcessor.getResults(search).get(0);
+
+		this.branchOrCluster.setId(String.valueOf(clusterData.getId()));
+		this.branchOrCluster.setValue(clusterData.getCode());
+		this.branchOrCluster.setDescription(clusterData.getName());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public List<FinAdvancePayments> getFinAdvancePaymentsList() {
@@ -858,6 +1048,22 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	 */
 	public int getCcyFormat() {
 		return CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
+	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
+	}
+
+	public void setClusterService(ClusterService clusterService) {
+		this.clusterService = clusterService;
+	}
+
+	public BranchService getBranchService() {
+		return branchService;
+	}
+
+	public void setBranchService(BranchService branchService) {
+		this.branchService = branchService;
 	}
 
 }

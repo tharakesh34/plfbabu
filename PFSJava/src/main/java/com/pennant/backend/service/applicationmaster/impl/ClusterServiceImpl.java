@@ -350,4 +350,10 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 	public List<ClusterHierarchy> getClusterHierarcheyList(String entity) {
 		return getClusterDAO().getClusterHierarcheyList(entity);
 	}
+
+	@Override
+	public long getClustersFilter(String branchCode) {
+		return getClusterDAO().getClustersFilter(branchCode);
+	}
+
 }

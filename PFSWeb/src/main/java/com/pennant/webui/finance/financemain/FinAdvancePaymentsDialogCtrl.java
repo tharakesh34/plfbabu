@@ -109,8 +109,10 @@ import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.applicationmaster.ClusterService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.pennydrop.PennyDropService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -299,6 +301,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private BankBranchDAO bankBranchDAO;
 	protected CollateralAssignmentDAO collateralAssignmentDAO;
 	private boolean populateBenfiryDetails = false;
+	private transient FinTypePartnerBankService finTypePartnerBankService;
+	private transient ClusterService clusterService;
 
 	/**
 	 * default constructor.<br>
@@ -2296,15 +2300,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		this.partnerBankID.setButtonDisabled(false);
 		this.partnerBankID.setReadonly(false);
-		Filter[] filters = new Filter[4];
-		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
-		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
-		filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
-		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
-		// filters[4] = new Filter("Entity",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
-		this.partnerBankID.setFilters(filters);
-		this.partnerBankID.setValue("");
-		this.partnerBankID.setDescription("");
+		doLoadPartnerbankData();
 
 		Filter[] filtersPrintLoc = new Filter[1];
 		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(dType)) {
@@ -2322,6 +2318,71 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		checkPaymentType(dType);
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doLoadPartnerbankData() {
+		String dType = this.paymentType.getSelectedItem().getValue().toString();
+
+		if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+			String finBranch = financeMain.getFinBranch();
+			if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("B")) {
+				Filter[] filters = new Filter[4];
+				filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+				filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+				filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
+				filters[3] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
+				this.partnerBankID.setFilters(filters);
+
+				List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService
+						.getFintypePartnerBankByFinTypeAndPurpose(financeMain.getFinType(), "D", dType, finBranch, 0);
+				if (fintypePartnerbank != null) {
+					if (fintypePartnerbank.size() == 1) {
+						this.partnerBankID.setAttribute("partnerBankId", fintypePartnerbank.get(0).getPartnerBankID());
+						this.finAdvancePayments.setPartnerbankCode(fintypePartnerbank.get(0).getPartnerBankCode());
+						this.finAdvancePayments.setPartnerBankName(fintypePartnerbank.get(0).getPartnerBankName());
+						this.partnerBankID.setAttribute("partnerBankAc", fintypePartnerbank.get(0).getAccountNo());
+						this.partnerBankID.setAttribute("partnerBankAcType",
+								fintypePartnerbank.get(0).getAccountType());
+						this.partnerBankID.setValue(fintypePartnerbank.get(0).getPartnerBankCode(),
+								fintypePartnerbank.get(0).getPartnerBankName());
+					}
+				}
+			} else if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("C")) {
+				long clusterId = clusterService.getClustersFilter(finBranch);
+				Filter[] filters = new Filter[4];
+				filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+				filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+				filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
+				filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+				this.partnerBankID.setFilters(filters);
+				List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService
+						.getFintypePartnerBankByFinTypeAndPurpose(financeMain.getFinType(), "D", dType, "", clusterId);
+				if (fintypePartnerbank != null) {
+					if (fintypePartnerbank.size() == 1) {
+						this.partnerBankID.setAttribute("partnerBankId", fintypePartnerbank.get(0).getPartnerBankID());
+						this.finAdvancePayments.setPartnerbankCode(fintypePartnerbank.get(0).getPartnerBankCode());
+						this.finAdvancePayments.setPartnerBankName(fintypePartnerbank.get(0).getPartnerBankName());
+						this.partnerBankID.setAttribute("partnerBankAc", fintypePartnerbank.get(0).getAccountNo());
+						this.partnerBankID.setAttribute("partnerBankAcType",
+								fintypePartnerbank.get(0).getAccountType());
+						this.partnerBankID.setValue(fintypePartnerbank.get(0).getPartnerBankCode(),
+								fintypePartnerbank.get(0).getPartnerBankName());
+					}
+				}
+			}
+		} else {
+			Filter[] filters = new Filter[4];
+			filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+			filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+			filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
+			filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+			this.partnerBankID.setFilters(filters);
+		}
+		this.partnerBankID.setButtonDisabled(false);
+		this.partnerBankID.setReadonly(false);
+		this.partnerBankID.setValue("");
+		this.partnerBankID.setDescription("");
+
 	}
 
 	public void onChange$paymentDetail(Event event) {
@@ -2562,13 +2623,64 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	}
 
 	public void doaddFilter(String payMode) {
-		Filter[] filters = new Filter[4];
-		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
-		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
-		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
-		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
-		// filters[4] = new Filter("EntityCode",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
-		this.partnerBankID.setFilters(filters);
+		if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+			String finBranch = financeMain.getFinBranch();
+			if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("B")) {
+				Filter[] filters = new Filter[5];
+				filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+				filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+				filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
+				filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+				filters[4] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
+				this.partnerBankID.setFilters(filters);
+				List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService
+						.getFintypePartnerBankByFinTypeAndPurpose(financeMain.getFinType(), "D", payMode, finBranch, 0);
+				if (fintypePartnerbank != null) {
+					if (fintypePartnerbank.size() == 1) {
+						this.partnerBankID.setAttribute("partnerBankId", fintypePartnerbank.get(0).getPartnerBankID());
+						this.finAdvancePayments.setPartnerbankCode(fintypePartnerbank.get(0).getPartnerBankCode());
+						this.finAdvancePayments.setPartnerBankName(fintypePartnerbank.get(0).getPartnerBankName());
+						this.partnerBankID.setAttribute("partnerBankAc", fintypePartnerbank.get(0).getAccountNo());
+						this.partnerBankID.setAttribute("partnerBankAcType",
+								fintypePartnerbank.get(0).getAccountType());
+						this.partnerBankID.setValue(fintypePartnerbank.get(0).getPartnerBankCode(),
+								fintypePartnerbank.get(0).getPartnerBankName());
+					}
+				}
+			} else if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("C")) {
+				long clusterId = clusterService.getClustersFilter(finBranch);
+				Filter[] filters = new Filter[5];
+				filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+				filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+				filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
+				filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+				filters[4] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+				this.partnerBankID.setFilters(filters);
+				List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService
+						.getFintypePartnerBankByFinTypeAndPurpose(financeMain.getFinType(), "D", payMode, "",
+								clusterId);
+				if (fintypePartnerbank != null) {
+					if (fintypePartnerbank.size() == 1) {
+						this.partnerBankID.setAttribute("partnerBankId", fintypePartnerbank.get(0).getPartnerBankID());
+						this.finAdvancePayments.setPartnerbankCode(fintypePartnerbank.get(0).getPartnerBankCode());
+						this.finAdvancePayments.setPartnerBankName(fintypePartnerbank.get(0).getPartnerBankName());
+						this.partnerBankID.setAttribute("partnerBankAc", fintypePartnerbank.get(0).getAccountNo());
+						this.partnerBankID.setAttribute("partnerBankAcType",
+								fintypePartnerbank.get(0).getAccountType());
+						this.partnerBankID.setValue(fintypePartnerbank.get(0).getPartnerBankCode(),
+								fintypePartnerbank.get(0).getPartnerBankName());
+					}
+				}
+			}
+		} else {
+			Filter[] filters = new Filter[4];
+			filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+			filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+			filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
+			filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+			// filters[4] = new Filter("Entity",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
+			this.partnerBankID.setFilters(filters);
+		}
 
 	}
 
@@ -3176,6 +3288,14 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
+	}
+
+	public void setClusterService(ClusterService clusterService) {
+		this.clusterService = clusterService;
 	}
 
 }

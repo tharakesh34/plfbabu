@@ -100,9 +100,11 @@ import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.applicationmaster.ClusterService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.pennydrop.PennyDropService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -136,8 +138,11 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.pennanttech.pff.external.BankAccountValidationService;
@@ -274,6 +279,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private transient BankAccountValidationService bankAccountValidationService;
 
 	private List<ValueLabel> mandateHoldList = PennantAppUtil.getMandateHoldReasons();
+	private transient FinTypePartnerBankService finTypePartnerBankService;
+	private transient ClusterService clusterService;
 
 	/**
 	 * default constructor.<br>
@@ -316,7 +323,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandate.setOrgReference(fm.getFinReference());
 		}
 
-		addPartnerBankFilter();
+		addPartnerBankFilter(fm);
 
 		this.mandate.setWorkflowId(0);
 
@@ -357,7 +364,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		this.finType = this.mandate.getFinType();
 
-		addPartnerBankFilter();
+		FinanceMain fm = new FinanceMain();
+		Search search = new Search(FinanceMain.class);
+		search.addFilterEqual("finreference", this.mandate.getFinReference());
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		fm = (FinanceMain) searchProcessor.getResults(search).get(0);
+
+		addPartnerBankFilter(fm);
 
 		fillComboBox(this.mandateType, mandate.getMandateType(), mandateTypeList, "");
 
@@ -531,14 +545,21 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.entityCode.setTextBoxWidth(150);
 
 		this.partnerBankRow.setVisible(MandateExtension.PARTNER_BANK_REQ);
-		this.partnerBank.setMaxlength(8);
+		this.partnerBank.setMaxlength(14);
 		this.partnerBank.setDisplayStyle(2);
 		this.partnerBank.setMandatoryStyle(true);
 		this.partnerBank.setWidth("200px");
-		this.partnerBank.setModuleName("FinTypePartnerBank_Mandates");
-		this.partnerBank.setValueColumn("PartnerBankCode");
-		this.partnerBank.setDescColumn("PartnerBankName");
-		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+		if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+			this.partnerBank.setModuleName("FinTypePartner");
+			this.partnerBank.setValueColumn("PartnerBankCode");
+			this.partnerBank.setDescColumn("PartnerBankName");
+			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+		} else {
+			this.partnerBank.setModuleName("FinTypePartnerBank_Mandates");
+			this.partnerBank.setValueColumn("PartnerBankCode");
+			this.partnerBank.setDescColumn("PartnerBankName");
+			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+		}
 
 		this.eMandateSource.setModuleName("Mandate_Sources");
 		this.eMandateSource.setMandatoryStyle(true);
@@ -2322,14 +2343,60 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void addPartnerBankFilter() {
-		Filter[] filter = new Filter[4];
-		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-		filter[1] = new Filter("Purpose", "R", Filter.OP_EQUAL);
-		filter[2] = new Filter("FinType", finType, Filter.OP_EQUAL);
-		filter[3] = new Filter("PaymentMode", DisbursementConstants.PAYMENT_TYPE_NEFT, Filter.OP_EQUAL);
+	private void addPartnerBankFilter(FinanceMain fm) {
+		if (ImplementationConstants.BRANCH_WISE_PARTNERBANK_MAPPING) {
+			if (finType != null) {
+				if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("B")) {
+					Filter[] flt = new Filter[4];
+					flt[0] = new Filter("Purpose", "R", Filter.OP_EQUAL);
+					flt[1] = new Filter("FinType", finType, Filter.OP_EQUAL);
+					flt[2] = new Filter("PaymentMode", DisbursementConstants.PAYMENT_TYPE_NEFT, Filter.OP_EQUAL);
+					flt[3] = new Filter("BranchCode", fm.getFinBranch(), Filter.OP_EQUAL);
+					this.partnerBank.setFilters(flt);
+					List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService
+							.getFintypePartnerBankByFinTypeAndPurpose(finType, "R",
+									DisbursementConstants.PAYMENT_TYPE_NEFT, fm.getFinBranch(), 0);
+					if (fintypePartnerbank != null) {
+						if (fintypePartnerbank.size() == 1) {
+							this.partnerBank.setAttribute("partnerBankId",
+									fintypePartnerbank.get(0).getPartnerBankID());
+							this.partnerBank.setValue(fintypePartnerbank.get(0).getPartnerBankCode());
+							this.partnerBank.setDescription(fintypePartnerbank.get(0).getPartnerBankName());
+						}
+					}
+				} else if (ImplementationConstants.PARTNERBANK_MAPPING_BRANCH_OR_CLUSTER.equals("C")) {
 
-		this.partnerBank.setFilters(filter);
+					long clusterId = clusterService.getClustersFilter(fm.getFinBranch());
+					Filter[] filters = new Filter[4];
+					filters[0] = new Filter("FinType", finType, Filter.OP_EQUAL);
+					filters[1] = new Filter("Purpose", "R", Filter.OP_EQUAL);
+					filters[2] = new Filter("PaymentMode", DisbursementConstants.PAYMENT_TYPE_NEFT, Filter.OP_EQUAL);
+					filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+					this.partnerBank.setFilters(filters);
+					List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService
+							.getFintypePartnerBankByFinTypeAndPurpose(finType, "R",
+									DisbursementConstants.PAYMENT_TYPE_NEFT, "", clusterId);
+					if (fintypePartnerbank != null) {
+						if (fintypePartnerbank.size() == 1) {
+							this.partnerBank.setAttribute("partnerBankId",
+									fintypePartnerbank.get(0).getPartnerBankID());
+							this.partnerBank.setValue(fintypePartnerbank.get(0).getPartnerBankCode());
+							this.partnerBank.setDescription(fintypePartnerbank.get(0).getPartnerBankName());
+						}
+					}
+				}
+			}
+		} else {
+			if (finType != null) {
+				Filter[] flt = new Filter[4];
+				flt[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+				flt[1] = new Filter("Purpose", "R", Filter.OP_EQUAL);
+				flt[2] = new Filter("FinType", finType, Filter.OP_EQUAL);
+				flt[3] = new Filter("PaymentMode", DisbursementConstants.PAYMENT_TYPE_NEFT, Filter.OP_EQUAL);
+				this.partnerBank.setFilters(flt);
+			}
+		}
+
 	}
 
 	public void onFulfill$finReference(Event event) {
@@ -2337,7 +2404,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		Object dataObject = finReference.getObject();
 
-		Mandate fm = (Mandate) dataObject;
+		FinanceMain fm = (FinanceMain) dataObject;
 
 		this.finType = null;
 		this.finReference.setValue("");
@@ -2349,7 +2416,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (fm != null) {
 			this.finReference.setValue(fm.getFinReference());
 			this.finType = fm.getFinType();
-			addPartnerBankFilter();
+			addPartnerBankFilter(fm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -3014,6 +3081,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
+	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
+	}
+
+	public void setClusterService(ClusterService clusterService) {
+		this.clusterService = clusterService;
 	}
 
 }

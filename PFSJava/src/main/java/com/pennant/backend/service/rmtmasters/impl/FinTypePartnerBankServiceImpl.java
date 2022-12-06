@@ -171,11 +171,6 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		return getFinTypePartnerBankDAO().getFinTypePartnerBank(finType, iD, "_AView");
 	}
 
-	@Override
-	public List<FinTypePartnerBank> getFinTypePartnerBanksList(String finType, String type) {
-		return getFinTypePartnerBankDAO().getFinTypePartnerBank(finType, type);
-	}
-
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
@@ -312,6 +307,27 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) auditDetail.getModelData();
 
 		FinTypePartnerBank tempFinTypePartnerBank = null;
+
+		if (finTypePartnerBank.isNewRecord()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(finTypePartnerBank.getRecordType())) {
+			int count = finTypePartnerBankDAO.getPartnerBankCountByCluster(finTypePartnerBank.getFinType(),
+					finTypePartnerBank.getPaymentMode(), finTypePartnerBank.getPurpose(),
+					finTypePartnerBank.getPartnerBankID(), finTypePartnerBank.getBranchCode(),
+					finTypePartnerBank.getClusterId());
+			if (count > 0) {
+				String[] parameters = new String[4];
+				parameters[0] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_FinType.value")
+						+ ": " + finTypePartnerBank.getFinType();
+				parameters[1] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_PaymentType.value")
+						+ ": " + finTypePartnerBank.getPaymentMode();
+				parameters[2] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_Purpose.value")
+						+ ": " + finTypePartnerBank.getPurpose();
+				parameters[3] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_PartnerBank.value")
+						+ ": " + finTypePartnerBank.getPartnerBankCode();
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+			}
+		}
+
 		if (finTypePartnerBank.isWorkflow()) {
 			tempFinTypePartnerBank = getFinTypePartnerBankDAO().getFinTypePartnerBank(finTypePartnerBank.getFinType(),
 					finTypePartnerBank.getId(), "_Temp");
@@ -522,6 +538,36 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getFinTypePartnerBankDAO().getPartnerBankCount(finType, paymentType, purpose, partnerBankID);
+	}
+
+	@Override
+	public List<FinTypePartnerBank> getFintypePartnerBankByFinTypeAndPurpose(String finType, String purpose,
+			String paymentType, String branchCode, long clusterId) {
+		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
+		return getFinTypePartnerBankDAO().getFintypePartnerBankByFinTypeAndPurpose(finType, purpose, paymentType,
+				branchCode, clusterId);
+	}
+
+	@Override
+	public List<FinTypePartnerBank> getFinTypePartnerBanksList(String finType, String type) {
+		return getFinTypePartnerBankDAO().getFinTypePartnerBank(finType, type);
+	}
+
+	@Override
+	public List<FinTypePartnerBank> getFinTypePartnerBanksList(String finType, String type, String mode, String purpose,
+			String entityCode) {
+		return finTypePartnerBankDAO.getFinTypePartnerBank(finType, type, mode, purpose, entityCode);
+	}
+
+	@Override
+	public List<Long> getClusterByPartnerbankCode(long partnerbankId) {
+		return finTypePartnerBankDAO.getClusterByPartnerbankCode(partnerbankId);
+	}
+
+	@Override
+	public List<FinTypePartnerBank> getFintypePartnerBankByBranch(List<String> branchCode, long clusterId) {
+		return finTypePartnerBankDAO.getFintypePartnerBankByBranch(branchCode, clusterId);
 	}
 
 	// ******************************************************//
