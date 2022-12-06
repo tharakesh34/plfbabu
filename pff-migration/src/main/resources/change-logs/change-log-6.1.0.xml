@@ -1115,4 +1115,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="43" author="rahul.r">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE='WCOLL01';
+				INSERT INTO ERRORDETAILS VALUES('WCOLL01','EN','W','{0} details are used by another customer',null,'Approved',null,null,null,null,null,0,current_timestamp,1000,1);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
