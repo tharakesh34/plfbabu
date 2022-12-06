@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -28,7 +28,7 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1.1" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -36,7 +36,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -118,8 +118,8 @@
  			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="3.1" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -150,7 +150,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="4.1" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -184,7 +184,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="6" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -192,7 +192,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="9" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -200,7 +200,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="10.1" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -230,7 +230,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="11.1" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -261,26 +261,26 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#11864" author="vijaya.a">
-        <sql>
+		<sql>
            <![CDATA[
                 ALTER TABLE PROMOTIONS DROP CONSTRAINT uk_promotions;
                 ALTER TABLE PROMOTIONS_TEMP DROP CONSTRAINT uk_promotions_temp;
             ]]>
-        </sql>
-    </changeSet>
-    
-    <changeSet id="TK#11895" author="vijaya.a">
-        <sql>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#11895" author="vijaya.a">
+		<sql>
            <![CDATA[
                 Delete from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'ADDDBSP' and RBFLDNAME = 'fm_finBranchProvinceCode';
 				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES', 'ADDDBSP', 'fm_finBranchProvinceCode', 'Branch Province Code', 'nvarchar', 8, '0', '1', 'RMTCountryVsProvince', 'dbvalue', 'Province');
             ]]>
-        </sql>
-    </changeSet>
-	
-	 <changeSet id="DE#3831.3 " author="praveena" dbms="oracle">
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#3831.3 " author="praveena" dbms="oracle">
 		<sql>
 			<![CDATA[
                update DATA_ENGINE_COLUMN set ruleforvalue ='if((ACTUALRATE == '''')){Result = 0;  return;}else {Result = ACTUALRATE;  return;}' where name='ACTUALRATE' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'RATE_CHANGE_UPLOAD'));
@@ -294,7 +294,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#3831.5" author="praveena.v">
 		<sql>
 			<![CDATA[
@@ -302,7 +302,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#3831.6" author="praveena.v">
 		<sql>
 			<![CDATA[
@@ -310,7 +310,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#3831.7" author="praveena.v">
 		<sql>
 			<![CDATA[
@@ -318,13 +318,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="01" author="saisandeep.b">
-		<dropNotNullConstraint tableName="COVENANT_TYPES_TEMP" columnName="DOCTYPE" columnDataType="varchar(100)" />
-		<dropNotNullConstraint tableName="COVENANT_TYPES" columnName="DOCTYPE" columnDataType="varchar(100)" />
-    </changeSet>
-    
-    <changeSet id="01.1" author="Gopal.p">
+		<dropNotNullConstraint tableName="COVENANT_TYPES_TEMP" columnName="DOCTYPE"
+			columnDataType="varchar(100)" />
+		<dropNotNullConstraint tableName="COVENANT_TYPES" columnName="DOCTYPE"
+			columnDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="01.1" author="Gopal.p">
 		<sql>
 			<![CDATA[
 				UPDATE INSTRUMENT_TYPES SET EXTRACTIONDAYS = 5, AUTOEXTRACTION = 1 WHERE CODE = 'NACH';
@@ -337,7 +339,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="02" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -345,7 +347,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="03" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -353,7 +355,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="04" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -361,7 +363,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="05" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -369,7 +371,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="06" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -377,7 +379,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="07" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -387,7 +389,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="08" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -396,7 +398,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="09.0" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -428,7 +430,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="10" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -456,7 +458,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="11" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -464,7 +466,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#84.47" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -492,7 +494,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208465" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -501,7 +503,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208579_01" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -509,7 +511,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208579.1" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -518,7 +520,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208852.1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -528,7 +530,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208579.2" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -536,7 +538,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#208579.3" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -544,5 +546,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="002" author="goutham.ch">
+		<sql>
+				<![CDATA[
+					INSERT INTO JOB_DETAILS (ID, JOBKEY, DESCRIPTION, JOBTRIGGER, CRON_EXPRESSION, JOBMODE, STATUS, ENABLED, FAILURE_NOTIFICATION_REQ, HOST_NAME, PORT, JMX_PORT, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_LOG_REQ, EXECUTION_RETENTION_DAYS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MONITORING_REQ) VALUES ((SELECT MAX(ID)+1 FROM JOB_DETAILS), 'EXT_PRMNT_RESPONSE_READING_JOB', 	'Reading SI, SIInternal and ACH response.', 						'EXT_PRMNT_RESPONSE_READING_JOB_TRIGGER', 	        '0 0/1 * 1/1 * ? *', 1, 0, 1, 0, null, null, 0, null, null, 1, 0, 0, null, null, null, null, null, null, null, null, null, 1);
+					INSERT INTO JOB_DETAILS (ID, JOBKEY, DESCRIPTION, JOBTRIGGER, CRON_EXPRESSION, JOBMODE, STATUS, ENABLED, FAILURE_NOTIFICATION_REQ, HOST_NAME, PORT, JMX_PORT, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_LOG_REQ, EXECUTION_RETENTION_DAYS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MONITORING_REQ) VALUES ((SELECT MAX(ID)+1 FROM JOB_DETAILS), 'EXT_PRMNT_FILE_EXTRACTOR_JOB', 	'Reading SI, SIInternal and ACH response file data and process.', 	'EXT_PRMNT_FILE_EXTRACTOR_JOB_TRIGGER', 		    '0 0/2 * 1/1 * ? *', 1, 0, 1, 0, null, null, 0, null, null, 1, 0, 0, null, null, null, null, null, null, null, null, null, 1);
+					INSERT INTO JOB_DETAILS (ID, JOBKEY, DESCRIPTION, JOBTRIGGER, CRON_EXPRESSION, JOBMODE, STATUS, ENABLED, FAILURE_NOTIFICATION_REQ, HOST_NAME, PORT, JMX_PORT, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_LOG_REQ, EXECUTION_RETENTION_DAYS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MONITORING_REQ) VALUES ((SELECT MAX(ID)+1 FROM JOB_DETAILS), 'EXT_PRMNT_FILE_PROCESSOR_JOB', 	'Reading SI, SIInternal and ACH response file record processing.', 	'EXT_PRMNT_FILE_PROCESSOR_JOB', 		            '0 0/3 * 1/1 * ? *', 1, 0, 1, 0, null, null, 0, null, null, 1, 0, 0, null, null, null, null, null, null, null, null, null, 1);
+				]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

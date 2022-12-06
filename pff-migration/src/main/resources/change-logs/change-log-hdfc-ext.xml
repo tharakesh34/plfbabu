@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.maindb" value="PLF.." dbms="mssql" />
+	<property name="call.maindb" value="PLF." dbms="oracle" />
+
+	<changeSet id="pre_run_for_pgp" author="murthy.y" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfext, public, pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="001" author="goutham.ch">
+		<createTable tableName="FILE_INTERFACE_CONFIG ">
+			<column name="INTERFACE_TYPE" type="VARCHAR(100)" />
+			<column name="NO_OF_RECORDS" type="int" />
+			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
+			<column name="HOLD_TYPE" type="int" />
+			<column name="FILE_PREPEND" type="VARCHAR(100)" />
+			<column name="FILE_POSTPEND" type="VARCHAR(100)" />
+			<column name="FILE_EXTENSION" type="VARCHAR(100)" />
+			<column name="DATE_FORMAT" type="VARCHAR(100)" />
+			<column name="SUCCESS_INDICATOR" type="VARCHAR(100)" />
+			<column name="FAIL_INDICATOR" type="VARCHAR(100)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="001.1" author="goutham.ch">
+		<addPrimaryKey tableName="FILE_INTERFACE_CONFIG " columnNames="INTERFACE_TYPE" />
+	</changeSet>
+
+	<changeSet id="002" author="goutham.ch">
+		<sql>
+				<![CDATA[
+					Insert into FILE_INTERFACE_CONFIG  (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR) values ('SI',1,'PRESENTMENT/SI/REQUEST',202,'FI','_ALL','.txt','yyMMdd',null,null);
+					Insert into FILE_INTERFACE_CONFIG  (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR) values ('IPDC',1,'PRESENTMENT/SI_INTERNAL/REQUEST',202,'FI','.','.txt','ddMMyy',null,null);
+					Insert into FILE_INTERFACE_CONFIG  (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR) values ('NACH',1,'PRESENTMENT/ACH/REQUEST',202,'ACH-DR-HDFC-HDFCH2H1-','-','-INP.txt','ddMMyyyy',null,null);
+					Insert into FILE_INTERFACE_CONFIG  (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR) values ('SI_RESP',0,'PRESENTMENT/SI/RESPONSE',202,'GEFUCH',null,'.txt',null,'500','501');
+					Insert into FILE_INTERFACE_CONFIG  (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR) values ('IPDC_RESP',0,'PRESENTMENT/SI_INTERNAL/RESPONSE',202,'GEFUCH',null,'.txt',null,'500','501');
+					Insert into FILE_INTERFACE_CONFIG  (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR) values ('NACH_RESP',0,'PRESENTMENT/ACH/RESPONSE',202,'ACH-DR-HDFC-HDFCH2H1-',null,'-RES.txt',null,'67','44');
+					
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="003" author="goutham.ch">
+		<createTable tableName="PRMNT_HEADER">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="MODULE" type="VARCHAR(200)" />
+			<column name="FILE_NAME" type="VARCHAR(2000)" />
+			<column name="STATUS" type="int" />
+			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="EXTRACTION" type="int" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="005" author="goutham.ch">
+		<createTable tableName="PRMNT_DETAILS">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="HEADER_ID" type="bigint" />
+			<column name="RECORD_DATA" type="VARCHAR2(2000)" />
+			<column name="STATUS" type="bigint" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="ERROR_CODE" type="VARCHAR2(100)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR2(4000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="007" author="goutham.ch">
+		<createSequence sequenceName="SEQ_PRMNT_SI" incrementBy="1" startValue="1" minValue="1"
+			maxValue="9223372036854775807" />
+	</changeSet>
+
+	<changeSet id="008" author="goutham.ch">
+		<createSequence sequenceName="SEQ_PRMNT_SI_INTERNAL" incrementBy="1" startValue="1" minValue="1"
+			maxValue="9223372036854775807" />
+	</changeSet>
+
+	<changeSet id="009" author="goutham.ch">
+		<createSequence sequenceName="SEQ_HDFC_ACH" incrementBy="1" startValue="1" minValue="1"
+			maxValue="9223372036854775807" />
+	</changeSet>
+
+</databaseChangeLog>
