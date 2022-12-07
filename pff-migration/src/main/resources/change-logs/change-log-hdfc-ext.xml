@@ -86,7 +86,7 @@
 	</changeSet>
 
 	<changeSet id="009" author="goutham.ch">
-		<createSequence sequenceName="SEQ_HDFC_ACH" incrementBy="1" startValue="1" minValue="1"
+		<createSequence sequenceName="SEQ_PRMNT_ACH" incrementBy="1" startValue="1" minValue="1"
 			maxValue="9223372036854775807" />
 	</changeSet>
 
