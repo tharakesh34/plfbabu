@@ -2093,7 +2093,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (this.expiryDate.getValue() != null && (this.expiryDate.getValue().compareTo(this.startDate.getValue()) <= 0
 				|| this.expiryDate.getValue().after(appExpiryDate))) {
 			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
-					validate, this.startDate.getValue(), appExpiryDate, true));
+					MandateExtension.EXPIRY_DATE_MANDATORY, this.startDate.getValue(), appExpiryDate, true));
 		}
 
 		Date lanMatDate = this.mandate.getLoanMaturityDate();
@@ -2103,7 +2103,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (expDate != null && lanMatDate != null && expDate.before(lanMatDate)) {
 				this.expiryDate
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
-								validate, lanMatDate, appExpiryDate, true));
+								MandateExtension.EXPIRY_DATE_MANDATORY, lanMatDate, appExpiryDate, true));
 			}
 		}
 
