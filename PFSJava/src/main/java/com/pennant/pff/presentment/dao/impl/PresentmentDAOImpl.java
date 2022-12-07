@@ -394,6 +394,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" From PRMNT_EXTRACTION_STAGE pes");
 		sql.append(" Inner Join Mandates m on m.MandateId = pes.MandateId and m.status in (?, ?, ?)");
 		sql.append(" Inner Join Mandates sm on sm.OrgReference = pes.FinReference and sm.Status = ?");
+		sql.append(" And sm.SecurityMandate = ?");
 		sql.append(" Where BatchID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -405,6 +406,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setString(index++, MandateStatus.AWAITCON);
 			ps.setString(index++, MandateStatus.REJECTED);
 			ps.setString(index++, MandateStatus.APPROVED);
+			ps.setInt(index++, 1);
 
 			ps.setLong(index++, batchID);
 
