@@ -1412,23 +1412,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.label_CustomerDialog_EIDName.setValue(StringUtils.trimToEmpty(aCustomer.getPrimaryIdName()));
 
 		if (!StringUtils.isEmpty(aCustomer.getPrimaryIdName()) && StringUtils.isEmpty(aCustomer.getCustShrtName())) {
-			String[] names = aCustomer.getPrimaryIdName().split(" ");
-
-			this.custFirstName.setValue(names[0]);
-			if (names.length == 3) {
-				this.custMiddleName.setValue(names[1]);
-				this.custLastName.setValue(names[2]);
-			} else if (names.length > 3) {
-				this.custLastName.setValue(names[names.length - 1]);
-				StringBuilder mName = new StringBuilder("");
-				for (int i = 1; i < names.length - 1; i++) {
-					mName.append(names[i]).append(" ");
-				}
-				this.custMiddleName.setValue(mName.toString());
-			} else {
-				this.custLastName.setValue(names[1]);
-			}
-
+			renderCustFullName(aCustomer.getPrimaryIdName());
 		}
 
 		this.custRO1.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustRO1Name()), "");// FIXME
@@ -8412,6 +8396,26 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				&& !getUserWorkspace().getGrantedAuthoritySet().contains(rightName)
 				&& StringUtils.isNotBlank(getRole())) {
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerDialog");
+		}
+	}
+
+	public void renderCustFullName(String fullName) {
+
+		String[] names = fullName.split(" ");
+
+		this.custFirstName.setValue(names[0]);
+		if (names.length == 3) {
+			this.custMiddleName.setValue(names[1]);
+			this.custLastName.setValue(names[2]);
+		} else if (names.length > 3) {
+			this.custLastName.setValue(names[names.length - 1]);
+			StringBuilder mName = new StringBuilder("");
+			for (int i = 1; i < names.length - 1; i++) {
+				mName.append(names[i]).append(" ");
+			}
+			this.custMiddleName.setValue(mName.toString());
+		} else {
+			this.custLastName.setValue(names[1]);
 		}
 	}
 

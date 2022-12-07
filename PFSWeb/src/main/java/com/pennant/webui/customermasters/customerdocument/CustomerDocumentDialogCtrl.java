@@ -1472,6 +1472,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 		if (this.masterDef != null & this.masterDef.isProceedException() & !this.isKYCVerified) {
 			MessageUtil.showError(this.masterDef.getKeyType() + " Document Must Be Verified.");
+			return;
+		} else if (this.masterDef != null && this.masterDef.getKeyType().equals("PAN")) {
+			if (getCustomerDialogCtrl() != null) {
+				getCustomerDialogCtrl().renderCustFullName(this.firstNameAsPerPAN.getValue() + " "
+						+ this.middleNameAsPerPAN.getValue() + " " + this.lastNameAsPerPAN.getValue());
+			}
 		}
 
 		// Write the additional validations as per below example
