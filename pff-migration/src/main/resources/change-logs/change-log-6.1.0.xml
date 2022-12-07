@@ -1123,11 +1123,16 @@
 			]]>
 		</sql>
 	</changeSet>
-		<changeSet id="44" author="sandeepkumar.m">
+	<changeSet id="44" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
 				UPDATE DATA_ENGINE_COLUMN SET SKIP=0 WHERE NAME='HEADER_ID' AND TABLEID = (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID=(SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME='PRESENTMENT_RESPONSE'));
 			]]>
 		</sql>
+	</changeSet>
+	<changeSet id="45" author="rahul.r">
+		<addColumn tableName="master_def">
+			<column name="proceedexception" type="smallint" defaultValueNumeric="0"/>
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

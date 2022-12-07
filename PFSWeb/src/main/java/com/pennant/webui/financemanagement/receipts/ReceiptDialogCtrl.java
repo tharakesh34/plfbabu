@@ -121,6 +121,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.model.MasterDef;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -538,6 +539,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	Date appDate = SysParamUtil.getAppDate();
 	private transient CustomerDocumentService customerDocumentService;
 	private ManualAdviseService manualAdviseService;
+
+	private boolean isPANVerified = true;
 
 	/**
 	 * default constructor.<br>
@@ -2876,6 +2879,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 			}
 
+			// PAN Verification
+			MasterDef md = MasterDefUtil.getMasterDefByType(DocType.PAN);
+			if (md != null && md.isProceedException() && StringUtils.isNotBlank(this.panNumber.getValue())
+					&& !this.isPANVerified) {
+				MessageUtil.showError(md.getKeyType() + " Number Must Be Verified.");
+				return;
+			}
+
 			// Extended Fields
 			if (receiptData.getFinanceDetail().getExtendedFieldHeader() != null) {
 				receiptData.getFinanceDetail().setExtendedFieldRender(extendedFieldCtrl.save(!recSave));
@@ -3792,7 +3803,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void onChangePanNumber(Event event) {
 		logger.debug(Literal.ENTERING);
-
+		isPANVerified = false;
 		String panNumber = this.panNumber.getValue();
 		Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
 		try {
@@ -3814,8 +3825,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					if (Messagebox.ON_YES.equals(evnt.getName())) {
 						ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 						if (err != null) {
+							isPANVerified = false;
 							MessageUtil.showMessage(err.getMessage());
 						} else {
+							isPANVerified = true;
 							MessageUtil.showMessage(String.format("%s PAN validation successfull.",
 									header.getDocVerificationDetail().getFullName()));
 						}
@@ -3827,8 +3840,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 				if (err != null) {
+					isPANVerified = false;
 					MessageUtil.showMessage(err.getMessage());
 				} else {
+					isPANVerified = true;
 					MessageUtil.showMessage(String.format("%s PAN validation successfull.",
 							header.getDocVerificationDetail().getFullName()));
 				}

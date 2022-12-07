@@ -169,4 +169,11 @@
 				]]>
 			</sql>
 		</changeSet>
+		<changeSet id="10" author="rahul.r">
+			<sql>
+				<![CDATA[
+					Update MASTER_DEF Set proceedexception=1 Where Key_type in ('PAN','AADHAAR');
+				]]>
+			</sql>
+		</changeSet>
 </databaseChangeLog>

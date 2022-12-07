@@ -22,6 +22,7 @@ import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.MasterDefUtil;
+import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SessionUserDetails;
@@ -56,6 +57,7 @@ import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.financeservice.RestructureService;
+import com.pennant.backend.model.MasterDef;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.agreement.CovenantAggrement;
@@ -1399,7 +1401,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
-		if (MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
+		MasterDef md = MasterDefUtil.getMasterDefByType(DocType.PAN);
+		if (md != null && md.isValidationReq()) {
 			DocVerificationHeader header = new DocVerificationHeader();
 			header.setDocNumber(fsi.getPanNumber());
 			header.setCustCif(fsi.getCustCIF());
@@ -1409,6 +1412,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			if (error != null) {
 				logger.error(error.getMessage());
+				if (md.isProceedException()) {
+					String[] param = new String[2];
+					param[0] = "PAN Number : ";
+					param[1] = fsi.getPanNumber();
+					ErrorDetail er = ErrorUtil.getError("STP0012", param);
+					schdData.setErrorDetail(er);
+					return fd;
+				}
 			}
 		}
 

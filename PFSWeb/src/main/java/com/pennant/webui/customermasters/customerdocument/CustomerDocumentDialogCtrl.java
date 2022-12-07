@@ -78,6 +78,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.MasterDef;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -230,6 +231,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 	private DocumentValidation defaultDocumentValidation;
 	private DocumentValidation customDocumentValidation;
+
+	private boolean isKYCVerified = true;
+	private MasterDef masterDef;
 
 	/**
 	 * default constructor.<br>
@@ -1466,6 +1470,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			return;
 		}
 
+		if (this.masterDef != null & this.masterDef.isProceedException() & !this.isKYCVerified) {
+			MessageUtil.showError(this.masterDef.getKeyType() + " Document Must Be Verified.");
+		}
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
@@ -2097,6 +2105,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}
 		// ### 01-05-2018 - End
 
+		this.isKYCVerified = false;
+
 		this.gbDetailsAsPerPAN.setVisible(false);
 		this.firstNameAsPerPAN.setValue("");
 		this.middleNameAsPerPAN.setValue("");
@@ -2104,8 +2114,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.lastModified.setValue("");
 		this.verificationStatus.setValue("");
 		this.btnValidate.setVisible(false);
+		this.btnSendOTP.setVisible(false);
+		this.otp.setVisible(false);
+
 		if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.AADHAAR), this.custDocType.getValue())) {
-			if (getDocumentValidation() != null && MasterDefUtil.isValidationReq(DocType.AADHAAR)) {
+			this.masterDef = MasterDefUtil.getMasterDefByType(DocType.AADHAAR);
+			if (getDocumentValidation() != null && this.masterDef.isValidationReq()) {
 				this.btnSendOTP.setVisible(true);
 				this.custDocTitle.setReadonly(false);
 				this.btnValidate.setVisible(false);
@@ -2113,7 +2127,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.otp.setVisible(false);
 			}
 		} else if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.PAN), this.custDocType.getValue())) {
-			if (getDocumentValidation() != null && MasterDefUtil.isValidationReq(DocType.PAN)) {
+			this.masterDef = MasterDefUtil.getMasterDefByType(DocType.PAN);
+			if (getDocumentValidation() != null && this.masterDef.isValidationReq()) {
 				this.btnValidate.setVisible(true);
 				this.custDocTitle.setReadonly(false);
 				this.btnSendOTP.setVisible(false);
@@ -2193,7 +2208,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if (isExistng) {
 			MessageUtil.confirm(msg, evnt -> {
 				if (Messagebox.ON_YES.equals(evnt.getName())) {
-
 					getPANDetails(header, isExistng);
 				}
 			});
@@ -2208,10 +2222,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 		if (err != null) {
+			this.isKYCVerified = false;
 			MessageUtil.showMessage(err.getMessage());
 			return;
 		}
-
+		this.isKYCVerified = true;
 		MessageUtil.showMessage(
 				String.format("%s PAN validation successfull.", header.getDocVerificationDetail().getFullName()));
 
@@ -2250,9 +2265,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.btnSendOTP.setLabel(Labels.getLabel("label_aadhar_sendotp.value"));
 				this.otp.setVisible(false);
 				this.btnValidate.setAttribute("data", null);
+				this.isKYCVerified = true;
 			}
 
 		} catch (InterfaceException ie) {
+			this.isKYCVerified = false;
 			MessageUtil.showMessage(ie.getErrorMessage());
 		} catch (Exception ex) {
 			throw ex;

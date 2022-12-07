@@ -102,6 +102,7 @@ import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.masters.MasterDefDAO;
+import com.pennant.backend.model.MasterDef;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
@@ -611,6 +612,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public String dmsApplicationNo;
 	public String leadId;
+
+	private MasterDef masterDef;
 
 	/**
 	 * default constructor.<br>
@@ -1407,6 +1410,26 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custDOB.setValue(aCustomer.getCustDOB());
 		this.noOfDependents.setValue(aCustomer.getNoOfDependents());
 		this.label_CustomerDialog_EIDName.setValue(StringUtils.trimToEmpty(aCustomer.getPrimaryIdName()));
+
+		if (!StringUtils.isEmpty(aCustomer.getPrimaryIdName()) && StringUtils.isEmpty(aCustomer.getCustShrtName())) {
+			String[] names = aCustomer.getPrimaryIdName().split(" ");
+
+			this.custFirstName.setValue(names[0]);
+			if (names.length == 3) {
+				this.custMiddleName.setValue(names[1]);
+				this.custLastName.setValue(names[2]);
+			} else if (names.length > 3) {
+				this.custLastName.setValue(names[names.length - 1]);
+				StringBuilder mName = new StringBuilder("");
+				for (int i = 1; i < names.length - 1; i++) {
+					mName.append(names[i]).append(" ");
+				}
+				this.custMiddleName.setValue(mName.toString());
+			} else {
+				this.custLastName.setValue(names[1]);
+			}
+
+		}
 
 		this.custRO1.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustRO1Name()), "");// FIXME
 		this.custRO1.setAttribute("DealerId", aCustomer.getCustRO1());
@@ -7628,7 +7651,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private String validatePAN(String panNumber) {
 		String primaryIdName = null;
-		if (!(MasterDefUtil.isValidationReq(DocType.PAN))) {
+		this.masterDef = MasterDefUtil.getMasterDefByType(DocType.PAN);
+
+		if (this.masterDef == null || !this.masterDef.isValidationReq()) {
 			return primaryIdName;
 		}
 
