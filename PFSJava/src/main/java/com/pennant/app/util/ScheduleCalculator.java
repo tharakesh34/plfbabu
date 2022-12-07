@@ -7598,6 +7598,12 @@ public class ScheduleCalculator {
 
 			instructions.get(idxRI).setRepayAmount(newEmiGuess);
 			fm.setAdjustClosingBal(isAdjustClosingBal);
+
+			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
+					&& fm.getAdvTerms() > 0) {
+				fm.setAdjustClosingBal(false);
+			}
+
 			schdData = getRpyInstructDetails(schdData);
 			schdData = graceSchdCal(schdData);
 			schdData = repaySchdCal(schdData, false);
