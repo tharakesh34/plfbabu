@@ -132,6 +132,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 		excludeFields.add("name");
 		excludeFields.add("clusterCode");
 		excludeFields.add("clusterType");
+		excludeFields.add("entityCode");
 
 		return excludeFields;
 	}

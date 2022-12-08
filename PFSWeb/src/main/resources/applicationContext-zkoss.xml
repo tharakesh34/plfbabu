@@ -4135,6 +4135,7 @@
 		class="com.pennant.webui.payment.paymentheader.PaymentInstructionDialogCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="bankDetailService" ref="bankDetailService" />
 		<property name="clusterService" ref="clusterService" />
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
 	</bean>
 
 	<bean id="eODConfigDialogCtrl" class="com.pennant.webui.eod.eodconfig.EODConfigDialogCtrl" parent="basisCtrl"
