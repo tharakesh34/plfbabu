@@ -3766,11 +3766,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			main = financeMain;
 		}
 
-		if (custCreditInformation != null) {
-			customerDetails = custCreditInformation.procesCreditEnquiry(customerDetails, main, false);
-		} else {
-			customerDetails = creditInformation.procesCreditEnquiry(customerDetails, main, false);
-		}
+		customerDetails = getCreditInformation().procesCreditEnquiry(customerDetails, main, false);
 
 		if (customerDetails.isCibilExecuted()) {
 			// show confirmation
@@ -3783,11 +3779,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					final FinanceMain fm = main;
 					MessageUtil.confirm(msg, evnt -> {
 						if (Messagebox.ON_YES.equals(evnt.getName())) {
-							if (custCreditInformation != null) {
-								customerDetails = custCreditInformation.procesCreditEnquiry(customerDetails, fm, true);
-							} else {
-								customerDetails = creditInformation.procesCreditEnquiry(customerDetails, fm, true);
-							}
+							customerDetails = getCreditInformation().procesCreditEnquiry(customerDetails, fm, true);
 							extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
 
 						}
@@ -3799,18 +3791,20 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
 			}
+			MessageUtil.showMessage("CIBIL Enquiry Completed.");
+			/* doFillDocumentDetails(customerDetails.getCustomerDocumentsList()); */
 		} else {
 			String actualError = "";
 			if (customerDetails.getActualError() != null) {
 				actualError = customerDetails.getActualError();
 			}
-			MessageUtil.showError(Labels.getLabel("Cibil_Error") + "\n" + actualError);
+			MessageUtil.showError(actualError);
 		}
 
 	}
 
 	public CreditInformation getCreditInformation() {
-		return creditInformation;
+		return this.custCreditInformation == null ? this.creditInformation : this.custCreditInformation;
 	}
 
 	@Autowired(required = false)
@@ -3819,7 +3813,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.creditInformation = creditInformation;
 	}
 
-	@Autowired
+	@Autowired(required = false)
+	@Qualifier(value = "customCreditInformation")
 	public void setCustCreditInformation(CreditInformation custCreditInformation) {
 		this.custCreditInformation = custCreditInformation;
 	}

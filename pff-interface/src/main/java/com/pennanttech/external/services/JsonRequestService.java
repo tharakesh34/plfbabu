@@ -28,6 +28,9 @@ public class JsonRequestService extends JsonService {
 			}
 		}
 
+		jsonServiceDetail.setCertificateFileName(request.getFileName());
+		jsonServiceDetail.setCertificatePassword(request.getPassword());
+
 		jsonServiceDetail.setHeaders(headers);
 		jsonServiceDetail.setExcludeNull(true);
 		jsonServiceDetail.setExcludeEmpty(true);

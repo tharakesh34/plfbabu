@@ -17,6 +17,8 @@ public class JsonRequestDetail {
 	private MediaType contentType;
 	private HttpMethod method;
 	private Map<String, String> headerMap;
+	private String fileName;
+	private String password;
 
 	public String getName() {
 		return name;
@@ -96,6 +98,22 @@ public class JsonRequestDetail {
 
 	public void setAuthentcationToken(String authentcationToken) {
 		this.authentcationToken = authentcationToken;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }

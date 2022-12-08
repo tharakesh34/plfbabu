@@ -370,6 +370,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private CustomerService customerService;
 	@Autowired(required = false)
 	private CreditInformation creditInformation;
+	private CreditInformation customCreditInformation;
 	private ReasonDetailDAO reasonDetailDAO;
 	private FinTypeExpenseDAO finTypeExpenseDAO;
 	private FinExpenseDetailsDAO finExpenseDetailsDAO;
@@ -5249,7 +5250,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			afinanceMain.setSanctionedDate(null);
 			break;
 		case PennantConstants.WF_CIBIL:
-			creditInformation.getCreditEnquiryDetails(auditHeader, false);
+			getCreditInformation().getCreditEnquiryDetails(auditHeader, false);
 			break;
 
 		case PennantConstants.method_doDms:
@@ -11249,4 +11250,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setExternalFinanceSystemService(ExternalFinanceSystemService externalFinanceSystemService) {
 		this.externalFinanceSystemService = externalFinanceSystemService;
 	}
+
+	public CreditInformation getCreditInformation() {
+		return this.customCreditInformation == null ? this.creditInformation : this.customCreditInformation;
+	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "customCreditInformation")
+	public void setCustomCreditInformation(CreditInformation customCreditInformation) {
+		this.customCreditInformation = customCreditInformation;
+	}
+
 }

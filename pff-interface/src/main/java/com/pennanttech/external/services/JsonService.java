@@ -1,5 +1,6 @@
 package com.pennanttech.external.services;
 
+import java.io.FileInputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -7,17 +8,28 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.DeserializationConfig;
@@ -30,6 +42,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -141,7 +154,11 @@ public abstract class JsonService<T> {
 
 			logDetail.setReqSentOn(reqSentOn);
 			logRequest(logDetail);
-			response = getTemplate(serviceDetail).exchange(url, method, httpEntity, String.class);
+			if (StringUtils.isNotEmpty(serviceDetail.getCertificateFileName())) {
+				response = getTemplateWithCertificate(serviceDetail).exchange(url, method, httpEntity, String.class);
+			} else {
+				response = getTemplate(serviceDetail).exchange(url, method, httpEntity, String.class);
+			}
 			serviceDetail.setResponseHeaders(response.getHeaders());
 			serviceDetail.setResponseString(response.getBody());
 		} catch (ResourceAccessException e) {
@@ -239,6 +256,53 @@ public abstract class JsonService<T> {
 					new InetSocketAddress(jsonServiceDetail.getProxyUrl(), jsonServiceDetail.getProxyPort()));
 			rf.setProxy(proxy);
 			logger.debug("Proxy Details {}", proxy.toString());
+		}
+
+		return restTemplate;
+	}
+
+	private RestTemplate getTemplateWithCertificate(JsonServiceDetail jsonServiceDetail) {
+		RestTemplate restTemplate = null;
+		try {
+
+			KeyStore keyStore = KeyStore.getInstance("PKCS12");
+			keyStore.load(new FileInputStream(jsonServiceDetail.getCertificateFileName()),
+					jsonServiceDetail.getCertificatePassword().toCharArray());
+
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+
+			kmf.init(keyStore, jsonServiceDetail.getCertificatePassword().toCharArray());
+
+			KeyManager[] kms = kmf.getKeyManagers();
+			TrustManager[] tms = new TrustManager[] { new X509TrustManager() {
+				@Override
+				public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+				}
+
+				@Override
+				public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+				}
+
+				@Override
+				public X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+			} };
+
+			final SSLContext sslContext2 = SSLContext.getInstance("SSL");
+			sslContext2.init(kms, tms, new SecureRandom());
+			SSLContext.setDefault(sslContext2);
+
+			HttpClient client = HttpClients.custom().setSSLContext(sslContext2).build();
+			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+			requestFactory.setHttpClient(client);
+
+			requestFactory.setReadTimeout(readTimeout);
+			requestFactory.setConnectTimeout(connTimeout);
+
+			restTemplate = new RestTemplate(requestFactory);
+		} catch (Exception e) {
+			logger.error(e);
 		}
 
 		return restTemplate;
