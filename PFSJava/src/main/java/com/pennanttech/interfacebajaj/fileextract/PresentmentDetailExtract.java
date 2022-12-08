@@ -387,8 +387,9 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					successCount++;
 				} else if (RepayConstants.PEXC_FAILURE.equals(sts)) {
 					failedCount++;
-				} else {
-					failedCount++;
+					/*
+					 * else { failedCount++;
+					 */
 				}
 			}
 
@@ -398,6 +399,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				presentmentDetailDAO.updateHeaderStatus(id, RepayConstants.PEXC_RECEIVED);
 			}
 		}
+
 	}
 
 	private int logUnProcessedRcds(long headerId) {
