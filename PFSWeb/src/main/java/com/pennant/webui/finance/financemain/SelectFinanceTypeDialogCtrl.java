@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,7 +59,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.MasterDef;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -210,7 +208,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	// Properties related to primary identity.
 	private String primaryIdLabel;
 	private String primaryIdRegex;
-	private String primaryIdName;
 	private boolean primaryIdMandatory;
 	private boolean primaryIdMOBMandatory;
 	boolean proceedFurther = false;
@@ -830,25 +827,22 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 		}
 
+		String primaryIdName = null;
 		String primaryIdNumber = this.eidNumber.getValue();
 		// Verifying/Validating the PAN Number
-		MasterDef masterDef = MasterDefUtil.getMasterDefByType(DocType.PAN);
-		if (masterDef.isValidationReq() && StringUtils.isNotEmpty(primaryIdNumber)) {
-			ErrorDetail error = validatePAN(primaryIdNumber, masterDef);
-			if (error != null) {
-				MessageUtil.showMessage(error.getCode() + " : " + error.getMessage());
-				if (masterDef.isProceedException()) {
-					return;
-				}
-			}
+		if (MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN) && StringUtils.isNotEmpty(primaryIdNumber)) {
+			primaryIdName = validatePAN(primaryIdNumber);
 		}
 		processCustomer(false, isNewCustomer, primaryIdName);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private ErrorDetail validatePAN(String panNumber, MasterDef masterDef) {
-		List<ErrorDetail> errorList = new ArrayList<>();
+	private String validatePAN(String panNumber) {
+		String primaryIdName = null;
+		if (!(MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN))) {
+			return primaryIdName;
+		}
 
 		DocVerificationHeader header = new DocVerificationHeader();
 		header.setDocNumber(panNumber);
@@ -858,13 +852,13 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 			if (err != null) {
-				errorList.add(err);
+				MessageUtil.showMessage(err.getMessage());
 			} else {
-				this.primaryIdName = header.getDocVerificationDetail().getFullName();
+				primaryIdName = header.getDocVerificationDetail().getFullName();
 				MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
 			}
 
-			return err;
+			return primaryIdName;
 		}
 
 		String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
@@ -874,7 +868,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 				if (err != null) {
-					errorList.add(err);
+					MessageUtil.showMessage(err.getMessage());
 				} else {
 					String fullName = header.getDocVerificationDetail().getFullName();
 					MessageUtil.showMessage(String.format("%s PAN validation successfull.", fullName));
@@ -886,11 +880,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			primaryIdName = header.getDocVerificationDetail().getFullName();
 		}
 
-		if (CollectionUtils.isEmpty(errorList)) {
-			return null;
-		}
-
-		return errorList.get(0);
+		return primaryIdName;
 	}
 
 	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer, String primaryIdName) {

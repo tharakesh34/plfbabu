@@ -147,8 +147,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private CustomerDedupCheckService customerDedupService;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
-	private String primaryIdName = null;
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -400,13 +398,15 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				// Get the primary identity.
 				String primaryIdNumber = primaryID.getValue();
+				String primaryIdName = null;
 				MasterDef masterDef = MasterDefUtil.getMasterDefByType(DocType.PAN);
 				if (!StringUtils.isEmpty(primaryIdNumber) && masterDef != null) {
-					ErrorDetail error = validatePAN(primaryIdNumber, masterDef);
-					if (error != null) {
-						MessageUtil.showMessage(error.getCode() + " : " + error.getMessage());
+					try {
+						primaryIdName = validatePAN(primaryIdNumber, masterDef);
+					} catch (Exception e) {
+						MessageUtil.showMessage(e.getMessage());
 						if (masterDef.isProceedException()) {
-							/* return; */
+							return;
 						}
 					}
 				}
@@ -503,10 +503,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private ErrorDetail validatePAN(String primaryIdNumber, MasterDef masterDef) {
-		List<ErrorDetail> errorList = new ArrayList<>();
+	private String validatePAN(String primaryIdNumber, MasterDef masterDef) {
+		String primaryIdName = null;
 		if (!(masterDef.isValidationReq() && StringUtils.isNotEmpty(primaryIdNumber))) {
-			return null;
+			return primaryIdName;
 		}
 
 		DocVerificationHeader header = new DocVerificationHeader();
@@ -517,22 +517,23 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 			if (err != null) {
-				errorList.add(err);
+				throw new InterfaceException(err.getCode(), err.getMessage());
 			} else {
-				this.primaryIdName = header.getDocVerificationDetail().getFullName();
+				primaryIdName = header.getDocVerificationDetail().getFullName();
 				MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
 			}
 
-			return err;
+			return primaryIdName;
 		}
 
 		String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
+
 		MessageUtil.confirm(msg, evnt -> {
 			if (Messagebox.ON_YES.equals(evnt.getName())) {
 				ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 				if (err != null) {
-					errorList.add(err);
+					throw new InterfaceException(err.getCode(), err.getMessage());
 				} else {
 					String fullName = header.getDocVerificationDetail().getFullName();
 					MessageUtil.showMessage(String.format("%s PAN validation successfull.", fullName));
@@ -541,14 +542,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		});
 
 		if (header.getDocVerificationDetail() != null) {
-			this.primaryIdName = header.getDocVerificationDetail().getFullName();
+			primaryIdName = header.getDocVerificationDetail().getFullName();
 		}
 
-		if (CollectionUtils.isEmpty(errorList)) {
-			return null;
-		}
-
-		return errorList.get(0);
+		return primaryIdName;
 	}
 
 	private CustomerDetails checkExternalDedup(CustomerDetails customerDetails, String primaryIdNumber) {
