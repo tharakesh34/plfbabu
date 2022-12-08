@@ -1,6 +1,8 @@
 package com.pennant.pff.presentment.web;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +10,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Radio;
@@ -44,6 +49,8 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -64,7 +71,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 	protected Button btnBrowse;
 	protected Space spaceTxtFileName;
 	protected ExtendedCombobox entity;
-	protected Button downloadTemplate;
+	protected A downloadTemplate;
 	private int entitySize;
 
 	private FileUploadHeader header;
@@ -214,7 +221,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 			return;
 		}
 
-		closeDialog();
+		closeDialog(true);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -254,18 +261,9 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 	public void onClick$downloadTemplate(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		String entityCode = this.entity.getValue();
-
-		if (StringUtils.isEmpty(entityCode)) {
-			throw new WrongValueException(this.entity, "Entity Code is mandatory");
-		}
-
-		String module = UploadTypes.RE_PRESENTMENT;
-		String template = PathUtil.TEMPLATES;
-
 		String templateName = "Representment01.xls";
 
-		String path = App.getResourcePath(PathUtil.FILE_UPLOADS_PATH, entityCode, module, template);
+		String path = App.getResourcePath(PathUtil.TEMPLATES, UploadTypes.RE_PRESENTMENT);
 
 		try {
 			ExcelUtil.downloadTemplate(path, templateName, DocType.XLS);
@@ -288,28 +286,68 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 		String name = "";
 		List<WrongValueException> wve = new ArrayList<>();
 
-		try {
-			if (StringUtils.trimToNull(this.fileName.getValue()) == null) {
-				throw new WrongValueException(this.fileName, Labels.getLabel("empty_file"));
-			}
-			name = this.fileName.getDescription();
+		if (StringUtils.trimToNull(this.fileName.getValue()) == null) {
+			throw new WrongValueException(this.fileName, Labels.getLabel("empty_file"));
+		}
+		name = this.fileName.getDescription();
 
-		} catch (WrongValueException we) {
-			wve.add(we);
+		List<RePresentmentUploadDetail> details = rePresentmentUploadService
+				.getDataForReport(Long.valueOf(this.fileName.getValue()));
+
+		Workbook workBook = ExcelUtil.getExcelWriterBook(name);
+
+		Sheet sheet = ExcelUtil.getExcelSheet(workBook, "Representment");
+
+		ExcelUtil.createHeader(sheet, getExcelHeaders(), 0);
+
+		int index = 0;
+		int sNo = 0;
+		for (RePresentmentUploadDetail detail : details) {
+			int valueIndex = -2;
+
+			Row row = sheet.createRow(++index);
+
+			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(++sNo));
+			ExcelUtil.addCellValue(row, ++valueIndex, detail.getReference());
+			ExcelUtil.addCellValue(row, ++valueIndex, DateUtil.format(detail.getDueDate(), DateFormat.LONG_DATE));
+			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getPresentmentID()));
+			ExcelUtil.addCellValue(row, ++valueIndex, DateUtil.format(detail.getCreatedOn(), DateFormat.LONG_DATE));
+			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getProgress()));
+			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getCreatedBy()));
+			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getApprovedBy()));
 		}
 
-		showErrorMessage(wve);
+		String path = App.getResourcePath(PathUtil.TEMPLATES, UploadTypes.RE_PRESENTMENT, "Downloads");
 
-		StringBuilder condition = new StringBuilder();
-		condition.append("Where FILENAME in (" + "'" + name + "'" + ")");
-		String whereCond = new String(condition);
+		File folder = new File(path);
 
-		StringBuilder searchCriteriaDesc = new StringBuilder(" ");
-		searchCriteriaDesc.append("File Name is " + header.getFileName());
+		if (!folder.exists()) {
+			folder.mkdirs();
+		}
 
-		String usrName = getUserWorkspace().getLoggedInUser().getFullName();
+		File file = new File(folder.getPath().concat(File.separator).concat(name));
 
-		// ReportsUtil.generateReport(usrName, "BulkFeeWaiverUploadReport", whereCond, searchCriteriaDesc);
+		if (file.exists()) {
+			file.delete();
+		}
+
+		try (FileOutputStream outputStream = new FileOutputStream(file)) {
+			try (BufferedOutputStream bos = new BufferedOutputStream(outputStream)) {
+				workBook.write(bos);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			if (name.endsWith("xlsx")) {
+				ExcelUtil.downloadTemplate(path, name, DocType.XLSX);
+			} else {
+				ExcelUtil.downloadTemplate(path, name, DocType.XLS);
+			}
+		} catch (AppException e) {
+			MessageUtil.showError(e);
+		}
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
@@ -573,6 +611,22 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 
 		headers.add("LOAN NO");
 		headers.add("DUE DATE");
+
+		return headers;
+	}
+
+	private List<String> getExcelHeaders() {
+		List<String> headers = new ArrayList<>();
+
+		headers.add("S.NO");
+		headers.add("LOAN NO");
+		headers.add("Due Date");
+		headers.add("Presentment ID");
+		headers.add("Upload Date");
+		headers.add("Status");
+		headers.add("Remarks");
+		headers.add("Maker ID");
+		headers.add("Checker ID");
 
 		return headers;
 	}

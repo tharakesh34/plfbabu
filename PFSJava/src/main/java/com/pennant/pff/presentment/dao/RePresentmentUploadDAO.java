@@ -15,4 +15,6 @@ public interface RePresentmentUploadDAO {
 	boolean isProcessed(String reference, Date dueDate);
 
 	String getBounceCode(String reference, Date dueDate);
+
+	List<RePresentmentUploadDetail> getDataForReport(long fileID);
 }

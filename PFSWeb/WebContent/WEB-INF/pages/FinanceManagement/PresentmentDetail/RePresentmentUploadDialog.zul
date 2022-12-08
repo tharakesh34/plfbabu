@@ -2,7 +2,8 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
@@ -51,33 +52,28 @@
 								<columns>
 									<column width="200px" />
 									<column width="450px" />
+									<column width="200px" />
 								</columns>
 								<rows>
 									<row>
 										<label value="${c:l('label_FileName')}" />
 										<extendedcombobox id="fileName" />
+										<hbox>
+											<button id="btnDownload" label="${c:l('label_Download')}"
+												autodisable="btnSave,btnClose,btnDownload,downloadTemplate,btnBrowse"
+												tooltiptext="${c:l('btnDownload.tooltiptext')}" disabled="true" />
+										</hbox>
 									</row>
 								</rows>
 							</grid>
-						</groupbox>
-						<groupbox sclass="gb-dialog">
-							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
-								<toolbar align="center" sclass="toolbar-center">
-									<button id="btnDownload" label="${c:l('label_Download')}"
-										autodisable="btnSave,btnClose,btnDownload,downloadTemplate,btnBrowse"
-										tooltiptext="${c:l('btnDownload.tooltiptext')}" sclass="z-toolbarbutton" />
-									<button id="downloadTemplate" label="${c:l('label_Download_Template')}"
-										autodisable="btnSave,btnClose,btnDownload,downloadTemplate,btnBrowse"
-										tooltiptext="${c:l('label_Sample_Upload_Template')}" sclass="z-toolbarbutton" />
-								</toolbar>
-							</hbox>
 						</groupbox>
 						<groupbox style="border:0px solid #F38C60;">
 							<caption label="${c:l('label_Upload_Details')}" />
 							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 								<columns>
 									<column width="200px" />
-									<column width="650px" />
+									<column width="300px" />
+									<column width="250px" />
 								</columns>
 								<rows>
 									<row visible="true">
@@ -92,6 +88,10 @@
 											<button id="btnBrowse" label="${c:l('btnBrowse.label')}" upload="true"
 												autodisable="btnSave,btnClose,btnDownload,downloadTemplate,btnBrowse"
 												tooltiptext="${c:l('btnBrowse.tooltiptext')}" />
+										</hbox>
+										<hbox>
+											<a id="downloadTemplate" label="${c:l('label_Download_Template')}"
+														style="padding-left:100px; white-space: nowrap;" tooltiptext="${c:l('label_Sample_Upload_Template')}" />
 										</hbox>
 									</row>
 								</rows>

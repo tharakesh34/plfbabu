@@ -44,4 +44,6 @@ public interface UploadService<T> {
 	AuditHeader doReject(AuditHeader ah);
 
 	AuditHeader delete(AuditHeader ah);
+
+	List<T> getDataForReport(long fileID);
 }

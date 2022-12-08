@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -121,7 +122,7 @@ public class ExcelUtil {
 
 		for (String key : fsHeaderKeys) {
 			if (!headers.contains(key)) {
-				throw new AppException("Uploaded File does not contains any Data, Please verify uploaded file.");
+				throw new AppException("Uploaded File does not contains proper Data, Please verify uploaded file.");
 			}
 
 			if (!headerSet.add(key)) {
@@ -170,4 +171,38 @@ public class ExcelUtil {
 		}
 	}
 
+	public static Workbook getExcelWriterBook(String fileName) {
+		if (fileName.toLowerCase().endsWith(".xls")) {
+			return new HSSFWorkbook();
+		}
+
+		return new XSSFWorkbook();
+	}
+
+	public static Sheet getExcelSheet(Workbook workbook, String sheetName) {
+		String worksheet = StringUtils.trimToNull(sheetName);
+		if (worksheet != null) {
+			return workbook.createSheet(worksheet);
+		}
+
+		return workbook.createSheet();
+	}
+
+	public static void createHeader(Sheet sheet, List<String> excelHeaders, int headerIndex) {
+		Row row = sheet.createRow(headerIndex);
+
+		int index = -1;
+		for (String header : excelHeaders) {
+			Cell cell = row.createCell(++index);
+			cell.setCellType(CellType.STRING);
+			cell.setCellValue(header);
+		}
+	}
+
+	public static void addCellValue(Row row, int valueIndex, String value) {
+		Cell cell = row.createCell(++valueIndex);
+		cell.setCellType(CellType.STRING);
+		cell.setCellValue(value);
+
+	}
 }

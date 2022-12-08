@@ -173,6 +173,8 @@ import com.pennant.pff.eod.cache.BounceConfigCache;
 import com.pennant.pff.eod.cache.FeeTypeConfigCache;
 import com.pennant.pff.eod.cache.RuleConfigCache;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.presentment.exception.PresentmentError;
+import com.pennant.pff.presentment.exception.PresentmentException;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -780,28 +782,13 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinReceiptHeader rch = getFinReceiptHeaderById(pd.getReceiptID(), false);
 
 		if (rch == null) {
-			pd.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptHeader_Notavailable"));
-			return pd;
-		}
-
-		if (bounceCode == null) {
-			pd.setErrorDesc("Bounc Code is mandatory..");
-			return pd;
+			throw new PresentmentException(PresentmentError.PRMNT5010);
 		}
 
 		BounceReason br = BounceConfigCache.getCacheBounceReason(bounceCode);
-		if (br == null) {
-			pd.setErrorDesc(PennantJavaUtil.getLabel("label_BounceReason_Notavailable") + bounceCode);
-			return pd;
-		}
 
 		List<FinReceiptDetail> rcdList = rch.getReceiptDetails();
 		FinReceiptDetail rcd = getPDReceipt(rcdList);
-
-		if (rcd == null) {
-			pd.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptDetails_Notavailable") + pd.getMandateType());
-			return pd;
-		}
 
 		prepareManualAdvise(rch, rcd, pd, br);
 

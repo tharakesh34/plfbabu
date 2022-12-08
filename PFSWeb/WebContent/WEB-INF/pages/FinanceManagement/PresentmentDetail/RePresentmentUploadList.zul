@@ -77,6 +77,9 @@
 									<label value="${c:l('label.RecordStatus')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
+									<label value="${c:l('label.RecordType')}" />
+									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
+									<listbox id="recordType" width="100px" mold="select" />
 								</row>
 							</rows>
 						</grid>
@@ -97,6 +100,8 @@
 									sort="auto" hflex="min" align="center" />
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}"
 									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto"
+									hflex="min" />
 							</listhead>
 						</listbox>
 					</div>

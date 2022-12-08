@@ -34,6 +34,8 @@ public class BounceResponseJob extends BatchConfiguration {
 
 	public BounceResponseJob(@Autowired DataSource dataSource) throws Exception {
 		super(dataSource, "PRMNT_", "PRMNT_BOUNCE_RESPONSE");
+
+		initilizeVariables();
 	}
 
 	@Autowired
@@ -47,20 +49,11 @@ public class BounceResponseJob extends BatchConfiguration {
 
 	private BatchJobQueueDAO bjqDAO;
 
-	@Bean
-	public BatchJobQueueDAO bjqDAO() {
-		if (this.bjqDAO == null) {
-			this.bjqDAO = new BounceResponseJobQueueDAOImpl(dataSource);
-		}
-
-		return bjqDAO;
-	}
-
 	@Scheduled(cron = "0 */5 * ? * *")
 	public void bounceResponseJob() throws Exception {
 		logger.info("Presentment Bounce Response Job invoked at {}", DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
 
-		if (bjqDAO().getQueueCount() > 0) {
+		if (bjqDAO.getQueueCount() > 0) {
 			logger.info("Previous Job still in progress");
 			return;
 		}
@@ -75,14 +68,21 @@ public class BounceResponseJob extends BatchConfiguration {
 		long batchID = 0;
 		bjqDAO.clearQueue();
 
-		batchID = presentmentDAO.createBatch("RESPONSE_BOUNCE");
+		batchID = presentmentDAO.createBatch("RESPONSE_BOUNCE", totalRecords);
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchID);
 
 		totalRecords = bjqDAO.prepareQueue(jobQueue);
 
 		if (totalRecords == 0) {
-			logger.info("There is no pending records to process");
+			logger.info("The records are modified by other dupicate job");
+			return;
+		}
+
+		int count = presentmentDAO.updateRespProcessFlag(batchID, "B");
+
+		if (totalRecords != count) {
+			logger.error("The records are modified by other duplicate job");
 			return;
 		}
 
@@ -123,26 +123,25 @@ public class BounceResponseJob extends BatchConfiguration {
 		return super.job;
 	}
 
-	public Step masterStep() throws Exception {
+	private Step masterStep() throws Exception {
 		ResponsePartitioner partitioner = new ResponsePartitioner(bjqDAO);
 		return stepBuilderFactory.get("BOUNCE_RESPONSE_MASTER")
 
-				.partitioner(masterTasklet())
+				.partitioner(bounceRespMasterStep())
 
-				.partitioner("bounceResponseStep", partitioner)
+				.partitioner("bounceRespMasterStep", partitioner)
 
 				.listener(partitioner)
 
 				.build();
 	}
 
-	@Bean
-	public Step updateHeaderStep() throws Exception {
+	private Step updateHeaderStep() throws Exception {
 		return this.stepBuilderFactory.get("UPDATE_HEADER").tasklet(new UpdateResponseTasklet(presentmentDAO)).build();
 
 	}
 
-	public TaskletStep masterTasklet() {
+	private TaskletStep bounceRespMasterStep() {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
@@ -157,16 +156,18 @@ public class BounceResponseJob extends BatchConfiguration {
 
 				.taskExecutor(taskExecutor("BOUNCE_RESPONSE_"))
 
-				.allowStartIfComplete(true)
-
 				.build();
 	}
 
-	public TaskletStep clear() {
+	private TaskletStep clear() {
 		return this.stepBuilderFactory.get("CLEAR").tasklet(clearQueueTasklet()).build();
 	}
 
-	public ResponseClearTasklet clearQueueTasklet() {
+	private ResponseClearTasklet clearQueueTasklet() {
 		return new ResponseClearTasklet(presentmentDAO, bjqDAO);
+	}
+
+	private void initilizeVariables() {
+		this.bjqDAO = new BounceResponseJobQueueDAOImpl(dataSource);
 	}
 }

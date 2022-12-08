@@ -32,7 +32,6 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -134,9 +133,9 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		registerField("fileName", lhFileName, SortOrder.NONE, fileName, soFileName, Operators.STRING);
 		registerField("successRecords", lhSuccessCount, SortOrder.NONE);
 		registerField("failureRecords", lhFailedCount, SortOrder.NONE);
+		registerField("progress", lhProcCount, SortOrder.NONE);
 		registerField("totalRecords", lhTotalCount, SortOrder.NONE);
 		registerField("entityCode", entityCode, SortOrder.NONE, soEntityCode, Operators.STRING);
-		registerField("progress");
 
 		doRenderPage();
 		this.rePresentIdMap.clear();
@@ -197,14 +196,12 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		for (Listitem listitem : listBox.getItems()) {
-			if (listitem instanceof Listgroup) {
-				Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
-				if (cb.isDisabled()) {
-					continue;
-				}
-
-				cb.setChecked(lhCheckBoxComp.isChecked());
+			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
+			if (cb.isDisabled()) {
+				continue;
 			}
+
+			cb.setChecked(lhCheckBoxComp.isChecked());
 		}
 
 		if (lhCheckBoxComp.isChecked()) {
@@ -687,6 +684,9 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 				break;
 			}
 
+			lc.setParent(item);
+
+			lc = new Listcell(String.valueOf(uph.getRecordType()));
 			lc.setParent(item);
 
 			item.setAttribute("id", id);

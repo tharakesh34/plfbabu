@@ -422,6 +422,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		listSPDCHeaderCheckBoxComp = new Checkbox();
 
 		listSPDCHeaderCheckBoxComp.setDisabled(!isDeleteVisible());
+		listSPDCHeaderCheckBoxComp.addForward(Events.ON_CLICK, this.window, "onClickListSPDCHeaderCheckBox");
 
 		listcell.appendChild(listSPDCHeaderCheckBoxComp);
 		listitem.appendChild(listcell);
@@ -2727,7 +2728,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	}
 
 	private List<ChequeDetail> sortedChequeDetails(List<ChequeDetail> details) {
-		return details.stream().sorted((cd1, cd2) -> Long.compare(cd1.getChequeDetailsID(), cd2.getChequeDetailsID()))
+		return details.stream().sorted((cd1, cd2) -> Long.compare(cd1.geteMIRefNo(), cd2.geteMIRefNo()))
 				.collect(Collectors.toList());
 	}
 
@@ -2755,6 +2756,22 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			String status = getComboboxValue(chequeSts);
 			if (!(ChequeSatus.CANCELLED.equals(status) || ChequeSatus.PRESENT.equals(status))) {
 				cb.setChecked(listHeaderCheckBoxComp.isChecked());
+			}
+		}
+
+		logger.info(Literal.LEAVING.concat(event.getName()));
+	}
+
+	public void onClickListSPDCHeaderCheckBox(ForwardEvent event) {
+		logger.info(Literal.ENTERING.concat(event.getName()));
+
+		for (Listitem listitem : listBoxSPDCChequeDetail.getItems()) {
+			Checkbox cb = (Checkbox) listitem.getChildren().get(Field.CHECK_BOX.index()).getChildren().get(0);
+			Combobox chequeSts = (Combobox) listitem.getChildren().get(Field.CHEQUE_STATUS.index()).getFirstChild();
+
+			String status = getComboboxValue(chequeSts);
+			if (!(ChequeSatus.CANCELLED.equals(status) || ChequeSatus.PRESENT.equals(status))) {
+				cb.setChecked(listSPDCHeaderCheckBoxComp.isChecked());
 			}
 		}
 

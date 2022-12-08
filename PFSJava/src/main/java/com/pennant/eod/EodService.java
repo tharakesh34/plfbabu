@@ -34,7 +34,9 @@ import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.PresentmentExtension;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
@@ -132,6 +134,8 @@ public class EodService {
 			}
 
 			ReceiptDTO receiptDTO = new ReceiptDTO();
+			receiptDTO.setRequestSource(RequestSource.EOD);
+			receiptDTO.setCreatePrmntReceipt(PresentmentExtension.DUE_DATE_RECEIPT_CREATION);
 
 			receiptDTO.setFinType(finEODEvent.getFinType());
 			receiptDTO.setPresentmentDetail(pd);
