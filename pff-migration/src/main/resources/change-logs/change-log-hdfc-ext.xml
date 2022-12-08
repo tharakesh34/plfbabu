@@ -67,11 +67,11 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="HEADER_ID" type="bigint" />
-			<column name="RECORD_DATA" type="VARCHAR2(2000)" />
+			<column name="RECORD_DATA" type="VARCHAR(2000)" />
 			<column name="STATUS" type="bigint" />
 			<column name="CREATED_DATE" type="datetime" />
-			<column name="ERROR_CODE" type="VARCHAR2(100)" />
-			<column name="ERROR_MESSAGE" type="VARCHAR2(4000)" />
+			<column name="ERROR_CODE" type="VARCHAR(100)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(4000)" />
 		</createTable>
 	</changeSet>
 
