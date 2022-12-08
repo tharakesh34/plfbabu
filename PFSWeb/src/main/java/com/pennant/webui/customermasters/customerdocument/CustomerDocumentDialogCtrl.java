@@ -1470,7 +1470,17 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			return;
 		}
 
-		if (this.masterDef != null & this.masterDef.isProceedException() & !this.isKYCVerified) {
+		if (this.masterDef != null & this.masterDef.isProceedException()) {
+
+			String oldDocNumber = StringUtils.trimToEmpty((String) this.btnValidate.getAttribute("docId"));
+			String newDocNumber = StringUtils.trimToEmpty(this.custDocTitle.getValue());
+
+			if (!StringUtils.equals(oldDocNumber, newDocNumber)) {
+				MessageUtil.showError("New Document Number Must Be Verified.");
+				return;
+			}
+
+		} else if (this.masterDef != null & this.masterDef.isProceedException() & !this.isKYCVerified) {
 			MessageUtil.showError(this.masterDef.getKeyType() + " Document Must Be Verified.");
 			return;
 		} else if (this.masterDef != null && this.masterDef.getKeyType().equals("PAN")) {
@@ -2163,6 +2173,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (getDocumentValidation().isVerified(aadharNumber, DocType.AADHAAR)) {
 				MessageUtil.confirm(msg, evnt -> {
 					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						this.isKYCVerified = false;
 						getDocumentValidation().validate(DocType.AADHAAR, dh);
 						this.custDocTitle.setReadonly(true);
 						this.btnValidate.setVisible(true);
@@ -2173,6 +2184,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				});
 
 			} else {
+				this.isKYCVerified = false;
 				getDocumentValidation().validate(DocType.AADHAAR, dh);
 				this.custDocTitle.setReadonly(true);
 				this.btnValidate.setVisible(true);
@@ -2241,6 +2253,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.middleNameAsPerPAN.setValue(header.getDocVerificationDetail().getMName());
 		this.lastNameAsPerPAN.setValue(header.getDocVerificationDetail().getLName());
 
+		this.btnValidate.setAttribute("docId", header.getDocNumber());
+
 		if (isExistng) {
 			this.verificationStatus.setValue("Existing & Verified");
 			this.lastModified.setValue(header.getPrevVerifiedOn().toString());
@@ -2272,6 +2286,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.otp.setVisible(false);
 				this.btnValidate.setAttribute("data", null);
 				this.isKYCVerified = true;
+
+				this.btnValidate.setAttribute("docId", dh.getDocNumber());
 			}
 
 		} catch (InterfaceException ie) {
