@@ -614,6 +614,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public String leadId;
 
 	private MasterDef masterDef;
+	private boolean isKYCverified = true;
 
 	/**
 	 * default constructor.<br>
@@ -3766,7 +3767,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			main = financeMain;
 		}
 
-		customerDetails = getCreditInformation().procesCreditEnquiry(customerDetails, main, false);
+		try {
+			customerDetails = getCreditInformation().procesCreditEnquiry(customerDetails, main, false);
+		} catch (InterfaceException ie) {
+			MessageUtil.showError(ie.getErrorMessage());
+			return;
+		}
 
 		if (customerDetails.isCibilExecuted()) {
 			// show confirmation
@@ -3957,6 +3963,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
 					return;
 				}
+			}
+		}
+
+		// verify pan validated or not
+		if (StringUtils.isNotEmpty(this.eidNumber.getValue()) && this.masterDef != null
+				&& this.masterDef.isProceedException()) {
+			if (!this.isKYCverified) {
+				MessageUtil.showError(this.masterDef.getKeyType() + " Number Must Be Verifed.");
 			}
 		}
 		// validate customer PhoneNumber types
@@ -4727,6 +4741,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 				}
 			}
+
+			// verify pan validated or not
+			if (StringUtils.isNotEmpty(this.eidNumber.getValue()) && this.masterDef != null
+					&& this.masterDef.isProceedException()) {
+				if (!this.isKYCverified) {
+					MessageUtil.showError(this.masterDef.getKeyType() + " Number Must Be Verifed.");
+					return false;
+				}
+			}
+
 			if (!isRetailCustomer || ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
 				aCustomerDetails.setCustEmployeeDetail(null);
 			}
@@ -7644,8 +7668,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 			if (err != null) {
+				this.isKYCverified = false;
 				MessageUtil.showMessage(err.getMessage());
 			} else {
+				this.isKYCverified = true;
 				primaryIdName = header.getDocVerificationDetail().getFullName();
 				MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
 			}
@@ -7659,8 +7685,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 					if (err != null) {
+						this.isKYCverified = false;
 						MessageUtil.showMessage(err.getMessage());
 					} else {
+						this.isKYCverified = true;
 						String fullName = header.getDocVerificationDetail().getFullName();
 						MessageUtil.showMessage(String.format("%s PAN validation successfull.", fullName));
 					}
