@@ -547,12 +547,13 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public boolean checkMandates(String orgRef, long mandateId) {
+	public boolean checkMandates(String orgRef, long mandateId, boolean securityMandate) {
 		String sql = "Select Count(MandateID) from Mandates Where OrgReference = ? and Status in (?, ?, ?) and Active = ? and SecurityMandate = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, orgRef, "AC", "INPROCESS", "NEW", 1, 0) > 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, orgRef, "AC", "INPROCESS", "NEW", 1,
+				securityMandate) > 0;
 	}
 
 	@Override
@@ -904,7 +905,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	@Override
 	public List<Mandate> getMandatesForAutoSwap(long custID, Date appDate) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.FinID, m.MandateId, m.MandateType, fm.MandateId OldMandateId");
+		sql.append(" fm.FinID, m.MandateId, m.MandateType");
+		sql.append(", fm.MandateId OldMandateId, fm.SecuritymandateId OldSecMandateId, m.SecurityMandate");
 		sql.append(" From Mandates m");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference and fm.CustID = ?");
 		sql.append(" Where SwapIsActive = ? and SwapEffectivedate = ?");
@@ -921,6 +923,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			m.setFinID(rs.getLong("FinID"));
 			m.setMandateID(rs.getLong("MandateId"));
 			m.setOldMandate(JdbcUtil.getLong(rs.getObject("OldMandateId")));
+			m.setOldSecMandate(JdbcUtil.getLong(rs.getObject("OldSecMandateId")));
+			m.setSecurityMandate(rs.getBoolean("SecurityMandate"));
 			m.setMandateType(rs.getString("MandateType"));
 
 			return m;
@@ -931,6 +935,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	public List<Mandate> getMandatesForAutoSwap(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinID, m.MandateId, m.MandateType, fm.MandateId OldMandateId");
+		sql.append(" fm.SecurityMandateId OldSecmandateId, m.SecurityMandate");
 		sql.append(" From Mandates m");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference and fm.FinID = ?");
 		sql.append(" Where SwapIsActive = ? and m.MandateId <> fm.MandateId ");
@@ -946,6 +951,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			m.setFinID(rs.getLong("FinID"));
 			m.setMandateID(rs.getLong("MandateId"));
 			m.setOldMandate(JdbcUtil.getLong(rs.getObject("OldMandateId")));
+			m.setOldSecMandate(JdbcUtil.getLong(rs.getObject("OldSecmandateId")));
+			m.setSecurityMandate(rs.getBoolean("SecurityMandate"));
 			m.setMandateType(rs.getString("MandateType"));
 
 			return m;

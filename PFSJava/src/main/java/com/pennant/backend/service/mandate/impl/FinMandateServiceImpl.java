@@ -169,6 +169,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			deleteMandate(finReference, mandate, auditDetails);
 			if (!mandate.isSecurityMandate()) {
 				fm.setMandateID(mandate.getMandateID());
+			} else {
+				fm.setSecurityMandateID(mandate.getMandateID());
 			}
 		} else {
 			Mandate oldmandate = mandateDAO.getMandateByOrgReference(finReference, isSecurityMandate, MandateStatus.FIN,
@@ -194,6 +196,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				long mandateID = mandateDAO.save(mandate, tableType);
 				if (!mandate.isSecurityMandate()) {
 					fm.setMandateID(mandateID);
+				} else {
+					fm.setSecurityMandateID(mandateID);
 				}
 				auditDetails.add(getAuditDetails(mandate, 1, PennantConstants.TRAN_ADD));
 			}
@@ -285,6 +289,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 
 			if (!mandate.isSecurityMandate()) {
 				fm.setMandateID(mandateID);
+			} else {
+				fm.setSecurityMandateID(mandateID);
 			}
 			auditDetails.add(getAuditDetails(mandate, 1, PennantConstants.TRAN_ADD));
 
@@ -726,6 +732,11 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			Long oldmandateID = mandate.getOldMandate();
 			String finRepayMethod = mandate.getFinRepayMethod();
 
+			boolean securityMandate = mandate.isSecurityMandate();
+			if (securityMandate) {
+				oldmandateID = mandate.getOldSecMandate();
+			}
+
 			if (oldmandateID == null || oldmandateID == mandateID) {
 				continue;
 			}
@@ -736,10 +747,10 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				boolean relisedAllCheques = chequeDetailDAO.isRelisedAllCheques(mandate.getFinID());
 
 				if (relisedAllCheques) {
-					financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "");
+					financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "", securityMandate);
 				}
 			} else {
-				financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "");
+				financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "", securityMandate);
 			}
 		}
 
@@ -761,6 +772,11 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			Long oldmandateID = mandate.getOldMandate();
 			String finRepayMethod = mandate.getFinRepayMethod();
 
+			boolean securityMandate = mandate.isSecurityMandate();
+			if (securityMandate) {
+				oldmandateID = mandate.getOldSecMandate();
+			}
+
 			if (oldmandateID == null || oldmandateID == mandateID) {
 				continue;
 			}
@@ -768,7 +784,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			String mandateType = mandate.getMandateType();
 
 			if (InstrumentType.isPDC(finRepayMethod)) {
-				financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "");
+				financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "", securityMandate);
 			}
 		}
 	}

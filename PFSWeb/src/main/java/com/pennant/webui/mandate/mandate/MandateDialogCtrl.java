@@ -979,6 +979,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
 			readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
 			readOnlyComponent(isReadOnly("MandateDialog_JointAccHolderName"), this.jointAccHolderName);
+			readOnlyComponent(isReadOnly("MandateDialog_MICR"), this.micr);
 
 			String bankcode = SysParamUtil.getValueAsString("BANK_CODE");
 			Filter[] filters = new Filter[1];

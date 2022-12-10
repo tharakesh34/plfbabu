@@ -649,7 +649,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		mndt.setEntityCode(mandate.getEntityCode());
 		mndt.setCustCIF(mandate.getCustCIF());
 		mndt.setSourceId(PennantConstants.FINSOURCE_ID_API);
-		mndt.setSecurityMandate(mandate.isSecurityMandate());
+		// mndt.setSecurityMandate(mandate.isSecurityMandate());
 
 		if (InstrumentType.isDAS(mandate.getMandateType())) {
 			mndt.setSwapIsActive(mandate.isSwapIsActive());

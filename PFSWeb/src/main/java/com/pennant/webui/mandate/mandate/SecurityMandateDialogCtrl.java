@@ -1005,7 +1005,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateDetailsGroupbox.setVisible(true);
 			this.otherDetailsGroupbox.setVisible(true);
 			this.useExisting.setVisible(true);
-			this.mandateSwapGroupbox.setVisible(false);
+			// this.mandateSwapGroupbox.setVisible(false);
 			this.dasGroupbox.setVisible(false);
 			doEdit();
 		}

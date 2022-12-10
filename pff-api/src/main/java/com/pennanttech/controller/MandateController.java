@@ -61,7 +61,7 @@ public class MandateController extends AbstractController {
 
 		if (mandate.getReturnStatus() != null) {
 			response.setReturnStatus(mandate.getReturnStatus());
-			
+
 			logger.debug(Literal.LEAVING);
 			return response;
 		}
@@ -267,10 +267,33 @@ public class MandateController extends AbstractController {
 		String finReference = md.getFinReference();
 		Long newMandateId = md.getNewMandateId();
 		String mandateType = md.getMandateType();
+		Long oldMandateId = md.getOldMandateId();
+
+		Mandate mandateById = mandateService.getMandateById(oldMandateId);
+
+		if (mandateById == null) {
+
+			return getFailedStatus("93304", "OldMandateId");
+		}
+
+		Mandate newMandateById = mandateService.getMandateById(newMandateId);
+
+		if (newMandateById == null) {
+
+			return getFailedStatus("93304", "NewMandateId");
+		}
+
+		boolean securityMandate = mandateById.isSecurityMandate();
+
+		if (securityMandate == newMandateById.isSecurityMandate()) {
+
+		} else {
+			return getFailedStatus();
+		}
 
 		Long finID = financeMainService.getFinID(finReference, TableType.MAIN_TAB);
 
-		if (financeMainService.loanMandateSwapping(finID, newMandateId, mandateType, "") > 0) {
+		if (financeMainService.loanMandateSwapping(finID, newMandateId, mandateType, "", securityMandate) > 0) {
 			logger.debug(Literal.LEAVING);
 			return getSuccessStatus();
 		}
@@ -325,7 +348,8 @@ public class MandateController extends AbstractController {
 					type = "_Temp";
 				}
 
-				financeMainService.loanMandateSwapping(finID, response.getMandateID(), mandate.getMandateType(), type);
+				financeMainService.loanMandateSwapping(finID, response.getMandateID(), mandate.getMandateType(), type,
+						mandate.isSecurityMandate());
 			}
 
 			doEmptyResponseObject(response);
@@ -371,7 +395,7 @@ public class MandateController extends AbstractController {
 				}
 
 				String mandateType = mandate.getMandateType();
-				financeMainService.loanMandateSwapping(finID, mandateID, mandateType, type);
+				financeMainService.loanMandateSwapping(finID, mandateID, mandateType, type, false);
 			}
 
 			logger.debug(Literal.LEAVING);

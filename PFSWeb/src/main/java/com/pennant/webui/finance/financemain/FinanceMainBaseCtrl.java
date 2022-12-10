@@ -1857,6 +1857,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (ImplementationConstants.ALLOW_DISB_ENQUIRY) {
 			if (StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)) {
 				enquiryList.add(new ValueLabel("FINMANDENQ", Labels.getLabel("label_FINMANDEnquiry")));
+				enquiryList.add(new ValueLabel("FINSECMANDENQ", Labels.getLabel("label_FinSecurityMandateEnquiry")));
 				enquiryList.add(new ValueLabel("ODENQ", Labels.getLabel("label_OverdueEnquiry")));
 				enquiryList.add(new ValueLabel("COVENQ", Labels.getLabel("label_CovenantEnquiry")));
 
@@ -22210,6 +22211,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			map.put("mandate", list.get(0));
 			Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul", null, map);
+		} else if (StringUtils.equals("FINSECMANDENQ", enquiryType)) {
+
+			JdbcSearchObject<Mandate> jdbcSearchObject = new JdbcSearchObject<Mandate>();
+			jdbcSearchObject.addTabelName("Mandates_View");
+			jdbcSearchObject.addFilters(
+					new Filter[] { new Filter("OrgReference", financeMain.getFinReference(), Filter.OP_EQUAL),
+							new Filter("SecurityMandate", 1, Filter.OP_EQUAL) });
+			jdbcSearchObject.setSearchClass(Mandate.class);
+			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+			List<Mandate> list = pagedListService.getBySearchObject(jdbcSearchObject);
+			if (!list.isEmpty()) {
+				map.put("mandate", list.get(0));
+				map.put("fromLoanEnquiry", true);
+				Executions.createComponents("/WEB-INF/pages/Mandate/SecurityMandateDialog.zul", null, map);
+			}
 		} else if (StringUtils.equals("ODENQ", enquiryType)) {
 			JdbcSearchObject<FinODDetails> jdbcSearchObject = new JdbcSearchObject<FinODDetails>();
 			jdbcSearchObject.addTabelName("FinODDetails");

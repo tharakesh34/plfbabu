@@ -72,8 +72,9 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
-	public int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type) {
-		return financeMainDAO.loanMandateSwapping(finID, newMandateID, repayMethod, type);
+	public int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type,
+			boolean securityMandate) {
+		return financeMainDAO.loanMandateSwapping(finID, newMandateID, repayMethod, type, securityMandate);
 	}
 
 	@Override

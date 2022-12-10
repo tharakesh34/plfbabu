@@ -1082,7 +1082,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("cpzPosIntact");
 		excludeFields.add("moduleDefiner");
 		excludeFields.add("resetFromLastStep");
-		excludeFields.add("securityMandateID");
 		excludeFields.add("wifLoan");
 
 		return excludeFields;
