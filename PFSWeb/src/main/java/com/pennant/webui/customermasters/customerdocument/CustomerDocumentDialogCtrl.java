@@ -1470,8 +1470,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			return;
 		}
 
-		if (this.masterDef != null & this.masterDef.isProceedException()) {
-
+		if (this.masterDef != null && this.masterDef.isProceedException() && !this.isKYCVerified) {
+			MessageUtil.showError(this.masterDef.getKeyType() + " Document Must Be Verified.");
+			return;
+		} else if (this.masterDef != null && this.masterDef.isProceedException()) {
 			String oldDocNumber = StringUtils.trimToEmpty((String) this.btnValidate.getAttribute("docId"));
 			String newDocNumber = StringUtils.trimToEmpty(this.custDocTitle.getValue());
 
@@ -1480,9 +1482,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				return;
 			}
 
-		} else if (this.masterDef != null & this.masterDef.isProceedException() & !this.isKYCVerified) {
-			MessageUtil.showError(this.masterDef.getKeyType() + " Document Must Be Verified.");
-			return;
 		} else if (this.masterDef != null && this.masterDef.getKeyType().equals("PAN")) {
 			if (getCustomerDialogCtrl() != null) {
 				getCustomerDialogCtrl().renderCustFullName(this.firstNameAsPerPAN.getValue() + " "
@@ -2132,6 +2131,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.btnValidate.setVisible(false);
 		this.btnSendOTP.setVisible(false);
 		this.otp.setVisible(false);
+		this.masterDef = null;
 
 		if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.AADHAAR), this.custDocType.getValue())) {
 			this.masterDef = MasterDefUtil.getMasterDefByType(DocType.AADHAAR);
