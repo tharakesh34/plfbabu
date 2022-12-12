@@ -406,4 +406,17 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="21" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Delete FROM RBFieldDetails WHERE RBModule = 'LTVRULE' AND RBEvent = 'LTVRULE' and rbfldname='fm_finCurrentAssetValue';
+				Delete FROM RBFieldDetails WHERE RBModule = 'LTVRULE' AND RBEvent = 'LTVRULE' and rbfldname='fm_finAssetValue';
+				Delete From RBFieldDetails WHERE RBModule = 'LTVRULE' AND RBEvent = 'LTVRULE' and rbfldname='fm_finRequestedAmount';
+								
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('LTVRULE','LTVRULE','fm_finCurrentAssetValue','Current Loan Amount','decimal',18,'0','1',NULL,'static,global',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('LTVRULE','LTVRULE','fm_finAssetValue','Total Loan Amount','decimal',18,'0','1',NULL,'static,global',null);
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('LTVRULE','LTVRULE','fm_finRequestedAmount','Requested Loan Amount','decimal',18,'0','1',NULL,'static,global',null);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

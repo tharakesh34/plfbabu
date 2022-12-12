@@ -781,6 +781,19 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 		declaredMap.put("ct_collateralType", aCollateralSetup.getCollateralType());
 		declaredMap.put("ct_collateralCcy", aCollateralSetup.getCollateralCcy());
+
+		if (this.financeDetail != null && this.financeDetail.getFinScheduleData().getFinanceMain() != null) {
+			FinanceMain fm = this.financeDetail.getFinScheduleData().getFinanceMain();
+			int pos = CurrencyUtil.getFormat(fm.getFinCcy());
+			declaredMap.put("fm_finCurrentAssetValue",
+					PennantApplicationUtil.formateAmount(fm.getFinCurrAssetValue(), pos));
+			declaredMap.put("fm_finAssetValue", PennantApplicationUtil.formateAmount(fm.getFinAssetValue(), pos));
+			declaredMap.put("fm_finRequestedAmount", PennantApplicationUtil.formateAmount(fm.getReqLoanAmt(), pos));
+		} else {
+			declaredMap.put("fm_finCurrentAssetValue", 0);
+			declaredMap.put("fm_finAssetValue", 0);
+			declaredMap.put("fm_finRequestedAmount", 0);
+		}
 		if (this.extendedFieldRenderList != null && this.extendedFieldRenderList.size() > 0) {
 
 			ExtendedFieldRender fieldValueDetail = extendedFieldRenderList.get(0);
