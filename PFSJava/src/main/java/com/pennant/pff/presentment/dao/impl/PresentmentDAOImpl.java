@@ -77,6 +77,18 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	public void deleteBatch(long batchID) {
+		String sql = "Delete From PRMNT_BATCH_JOBS Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, batchID);
+		});
+
+	}
+
+	@Override
 	public BatchJobQueue getBatch(BatchJobQueue jobQueue) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select Batch_Type, Total_Records, Process_Records, Success_Records, Failed_Records, Remarks");

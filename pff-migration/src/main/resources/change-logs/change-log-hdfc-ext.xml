@@ -47,6 +47,15 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="002.1" author="goutham.ch">
+		<sql>
+			<![CDATA[
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_PREPEND = 'FS', FILE_POSTPEND = '_ALL.' WHERE INTERFACE_TYPE = 'SI';
+					UPDATE FILE_INTERFACE_CONFIG SET DATE_FORMAT = 'yyMMdd' WHERE INTERFACE_TYPE = 'IPDC';
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="003" author="goutham.ch">
 		<createTable tableName="PRMNT_HEADER">
 			<column name="ID" type="bigint" autoIncrement="true">

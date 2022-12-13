@@ -382,6 +382,7 @@ public class PresentmentEngine {
 
 	public void grouping(PresentmentHeader ph) {
 		logger.debug(Literal.ENTERING);
+
 		long batchID = ph.getBatchID();
 		List<PresentmentDetail> list = null;
 
@@ -661,6 +662,8 @@ public class PresentmentEngine {
 	}
 
 	private void processAdvAmounts(PresentmentHeader ph, PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		AdvanceType advanceType = null;
 		String amountType = "";
 
@@ -677,6 +680,7 @@ public class PresentmentEngine {
 		}
 
 		if (advanceType == null) {
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
@@ -685,6 +689,7 @@ public class PresentmentEngine {
 
 		if (advanceType == AdvanceType.AE) {
 			if (AdvanceStage.getStage(pd.getAdvStage()) == AdvanceStage.FE) {
+				logger.debug(Literal.LEAVING);
 				return;
 			}
 			amountType = RepayConstants.EXAMOUNTTYPE_ADVEMI;
@@ -701,6 +706,7 @@ public class PresentmentEngine {
 		FinExcessAmount finExAmt = finExcessAmountDAO.getExcessAmountsByRefAndType(pd.getFinID(), amountType);
 
 		if (finExAmt == null) {
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
@@ -724,6 +730,7 @@ public class PresentmentEngine {
 
 		if (FinanceConstants.FLAG_BPI.equals(pd.getBpiOrHoliday())) {
 			if (FinanceConstants.BPI_DISBURSMENT.equals(pd.getBpiTreatment()) && ph.isBpiPaidOnInstDate()) {
+				logger.debug(Literal.LEAVING);
 				return;
 			}
 		}
@@ -744,9 +751,13 @@ public class PresentmentEngine {
 		exMovement.setMovementType("I");
 		exMovement.setTranType("I");
 		finExAmt.setExcessMovement(exMovement);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void processEMIInAdvance(PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		long finID = pd.getFinID();
 
 		BigDecimal emiInAdvanceAmt = BigDecimal.ZERO;
@@ -780,9 +791,13 @@ public class PresentmentEngine {
 
 		BigDecimal advAmount = pd.getAdvAdjusted();
 		pd.setAdvanceAmt(advanceAmt.add(advAmount));
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void save(PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		List<FinExcessAmount> excess = new ArrayList<>();
 		List<FinExcessAmount> excessRevarsal = new ArrayList<>();
 		List<FinExcessMovement> excessMovement = new ArrayList<>();
@@ -870,6 +885,7 @@ public class PresentmentEngine {
 			presentmentDAO.updateExcludeReason(pd.getId(), RepayConstants.PEXC_SCHDVERSION);
 		}
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void clearQueue(long batchId) {
@@ -889,6 +905,8 @@ public class PresentmentEngine {
 	}
 
 	private void createReceipt(PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		Date businessDate = pd.getAppDate();
 
 		ReceiptDTO receiptDTO = new ReceiptDTO();
@@ -921,9 +939,13 @@ public class PresentmentEngine {
 		receiptDTO.setPostDate(businessDate);
 
 		receiptPaymentService.processReceipts(receiptDTO, presentmentIndex);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void approve(PresentmentDetail pd, Map<String, String> bounceForPD) {
+		logger.debug(Literal.ENTERING);
+
 		boolean upfronBounceRequired = MapUtils.isNotEmpty(bounceForPD);
 
 		int excludeReason = pd.getExcludeReason();
@@ -940,9 +962,13 @@ public class PresentmentEngine {
 		if (DateUtil.compare(pd.getAppDate(), pd.getSchDate()) >= 0) {
 			createReceipt(pd);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void sendToPresentment(PresentmentHeader ph) {
+		logger.debug(Literal.ENTERING);
+
 		long headerId = ph.getId();
 
 		List<PresentmentDetail> presements = presentmentDAO.getSendToPresentmentDetails(headerId);
@@ -970,9 +996,13 @@ public class PresentmentEngine {
 		}
 
 		presentmentDAO.updateHeader(headerId);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public int preparationForRepresentment(long batchID, List<Long> headerId) {
+		logger.debug(Literal.ENTERING);
+
 		int count = 0;
 
 		List<PresentmentHeader> list = new ArrayList<>();
@@ -990,6 +1020,7 @@ public class PresentmentEngine {
 		count = count - presentmentDAO.clearByNoDues(batchID);
 
 		if (count == 0) {
+			logger.debug(Literal.LEAVING);
 			return 0;
 		}
 
@@ -999,6 +1030,7 @@ public class PresentmentEngine {
 
 		presentmentDAO.updatePartnerBankID(batchID);
 
+		logger.debug(Literal.LEAVING);
 		return count;
 	}
 
@@ -1684,6 +1716,7 @@ public class PresentmentEngine {
 	}
 
 	@Autowired(required = false)
+	@Qualifier(value = "externalPresentmentHook")
 	public void setExternalPresentmentHook(ExternalPresentmentHook externalPresentmentHook) {
 		this.externalPresentmentHook = externalPresentmentHook;
 	}
