@@ -356,6 +356,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private BigDecimal maxPPAmount = BigDecimal.ZERO;
 	private BigDecimal maxPPPercentage = BigDecimal.ZERO;
 	private String maxPPCalOn;
+	private boolean allowAutoRefund;
+	private BigDecimal maxAutoRefund = BigDecimal.ZERO;
+	private BigDecimal minAutoRefund = BigDecimal.ZERO;
 
 	public FinanceType() {
 		super();
@@ -643,6 +646,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setMaxPPAmount(this.maxPPAmount);
 		entity.setMaxPPPercentage(this.maxPPPercentage);
 		entity.setMaxPPCalOn(this.maxPPCalOn);
+		entity.setAllowAutoRefund(this.allowAutoRefund);
+		entity.setMaxAutoRefund(this.maxAutoRefund);
+		entity.setMinAutoRefund(this.minAutoRefund);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -2833,5 +2839,29 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setMaxPPCalOn(String maxPPCalOn) {
 		this.maxPPCalOn = maxPPCalOn;
+	}
+
+	public boolean isAllowAutoRefund() {
+		return allowAutoRefund;
+	}
+
+	public void setAllowAutoRefund(boolean AllowAutoRefund) {
+		this.allowAutoRefund = AllowAutoRefund;
+	}
+
+	public BigDecimal getMaxAutoRefund() {
+		return maxAutoRefund;
+	}
+
+	public void setMaxAutoRefund(BigDecimal maxAutoRefund) {
+		this.maxAutoRefund = maxAutoRefund;
+	}
+
+	public BigDecimal getMinAutoRefund() {
+		return minAutoRefund;
+	}
+
+	public void setMinAutoRefund(BigDecimal minAutoRefund) {
+		this.minAutoRefund = minAutoRefund;
 	}
 }

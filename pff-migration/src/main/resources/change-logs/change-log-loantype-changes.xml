@@ -614,6 +614,162 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="TK#2509.1" author="Anilkumar.G">
+		<addColumn tableName="RMTFINANCETYPES">
+			<column name="AllowAutoRefund" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.1.1" author="Anilkumar.G">
+		<sql>
+			<![CDATA[  
+				UPDATE RMTFINANCETYPES SET ALLOWAUTOREFUND = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.1.2" author="Anilkumar.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AllowAutoRefund" tableName="RMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="TK#2509.1.2" author="Anilkumar.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_FT_ALWAUTOREF DEFAULT 0 FOR ALLOWAUTOREFUND;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.2" author="Anilkumar.G">
+		<addColumn tableName="RMTFINANCETYPES">
+			<column name="MaxAutoRefund" type="Decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.2.1" author="Anilkumar.G">
+		<sql>
+			<![CDATA[  
+				UPDATE RMTFINANCETYPES SET MAXAUTOREFUND = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.2.2" author="Anilkumar.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="MaxAutoRefund" tableName="RMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="TK#2509.2.2" author="Anilkumar.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_FT_MAXAUTOREF DEFAULT 0 FOR MAXAUTOREFUND;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.3" author="Anilkumar.G">
+		<addColumn tableName="RMTFINANCETYPES">
+			<column name="MinAutoRefund" type="Decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.3.1" author="Anilkumar.G">
+		<sql>
+			<![CDATA[  
+				UPDATE RMTFINANCETYPES SET MINAUTOREFUND = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.3.2" author="Anilkumar.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="minAutoRefund" tableName="RMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="TK#2509.3.3" author="Anilkumar.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_FT_MINAUTOREF DEFAULT 0 FOR MINAUTOREFUND;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.4" author="Anilkumar.G">
+		<addColumn tableName="RMTFINANCETYPES_TEMP">
+			<column name="AllowAutoRefund" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.4.1" author="Anilkumar.G">
+		<sql>
+			<![CDATA[  
+				UPDATE RMTFINANCETYPES_TEMP SET ALLOWAUTOREFUND = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.4.2" author="Anilkumar.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AllowAutoRefund" tableName="RMTFINANCETYPES_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="TK#2509.4.2" author="Anilkumar.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_FT_T_ALWAUTOREF DEFAULT 0 FOR ALLOWAUTOREFUND;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.5" author="Anilkumar.G">
+		<addColumn tableName="RMTFINANCETYPES_TEMP">
+			<column name="MaxAutoRefund" type="Decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.5.1" author="Anilkumar.G">
+		<sql>
+			<![CDATA[  
+				UPDATE RMTFINANCETYPES_TEMP SET MAXAUTOREFUND = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.5.2" author="Anilkumar.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="MaxAutoRefund" tableName="RMTFINANCETYPES_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="TK#2509.5.2" author="Anilkumar.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_FT_T_MAXAUTOREF DEFAULT 0 FOR MAXAUTOREFUND;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.6" author="Anilkumar.G">
+		<addColumn tableName="RMTFINANCETYPES_TEMP">
+			<column name="MinAutoRefund" type="Decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.6.1" author="Anilkumar.G">
+		<sql>
+			<![CDATA[  
+				UPDATE RMTFINANCETYPES_TEMP SET MINAUTOREFUND = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.6.2" author="Anilkumar.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="minAutoRefund" tableName="RMTFINANCETYPES_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="TK#2509.6.3" author="Anilkumar.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_FT_T_MINAUTOREF DEFAULT 0 FOR MINAUTOREFUND;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#713.35_pre" author="Sravani.S" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -866,7 +1022,10 @@
 					T1.MAXPPCALTYPE,
 					T1.MAXPPAMOUNT,
 					T1.MAXPPPERCENTAGE,
-					T1.MAXPPCALON
+					T1.MAXPPCALON,
+					T1.ALLOWAUTOREFUND, 
+					T1.MAXAUTOREFUND, 
+					T1.MINAUTOREFUND
 				FROM RMTFINANCETYPES T1
 			    LEFT JOIN BMTPRODUCT T2 ON T1.FINCATEGORY = T2.PRODUCTCODE
 			    LEFT JOIN SMTDIVISIONDETAIL T48 ON T1.FINDIVISION = T48.DIVISIONCODE
@@ -1138,7 +1297,10 @@
 					T1.MAXPPCALTYPE,
 					T1.MAXPPAMOUNT,
 					T1.MAXPPPERCENTAGE,
-					T1.MAXPPCALON
+					T1.MAXPPCALON,
+					T1.ALLOWAUTOREFUND, 
+					T1.MAXAUTOREFUND, 
+					T1.MINAUTOREFUND
 				FROM RMTFINANCETYPES_TEMP T1
 				LEFT JOIN BMTPRODUCT T2 ON T1.FINCATEGORY = T2.PRODUCTCODE
 				LEFT JOIN SMTDIVISIONDETAIL T48 ON T1.FINDIVISION = T48.DIVISIONCODE
@@ -1388,7 +1550,10 @@
 					T1.MAXPPCALTYPE,
 					T1.MAXPPAMOUNT,
 					T1.MAXPPPERCENTAGE,
-					T1.MAXPPCALON
+					T1.MAXPPCALON,
+					T1.ALLOWAUTOREFUND, 
+					T1.MAXAUTOREFUND, 
+					T1.MINAUTOREFUND
 				FROM RMTFINANCETYPES T1
 				LEFT JOIN BMTPRODUCT T2 ON T1.FINCATEGORY = T2.PRODUCTCODE
 				LEFT JOIN SMTDIVISIONDETAIL T48 ON T1.FINDIVISION = T48.DIVISIONCODE
@@ -1635,7 +1800,10 @@
 					T1.MAXPPCALTYPE,
 					T1.MAXPPAMOUNT,
 					T1.MAXPPPERCENTAGE,
-					T1.MAXPPCALON
+					T1.MAXPPCALON,
+					T1.ALLOWAUTOREFUND, 
+					T1.MAXAUTOREFUND, 
+					T1.MINAUTOREFUND
 				FROM RMTFINANCETYPES T1
 				INNER JOIN SMTDIVISIONDETAIL T3 ON T1.FINDIVISION = T3.DIVISIONCODE
 				LEFT JOIN STEPPOLICYHEADER T4 ON T1.DFTSTEPPOLICY = T4.POLICYCODE
@@ -1690,7 +1858,10 @@
 					T1.MAXPPCALTYPE,
 					T1.MAXPPAMOUNT,
 					T1.MAXPPPERCENTAGE,
-					T1.MAXPPCALON
+					T1.MAXPPCALON,
+					T1.ALLOWAUTOREFUND, 
+					T1.MAXAUTOREFUND, 
+					T1.MINAUTOREFUND
 				FROM RMTFINANCETYPES T1	
 			]]>
 		</createView>

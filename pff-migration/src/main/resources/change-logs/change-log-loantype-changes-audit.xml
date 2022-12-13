@@ -333,10 +333,88 @@
 		<addDefaultValue tableName="AdtRMTFinanceTypes" columnName="MaxPPPercentage" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="ST#713.18" author="sunil.b">
+	<changeSet id="ST#713.18" author="Sravani.S">
 		<addColumn tableName="AdtRMTFinanceTypes">
 			<column name="MaxPPCalOn" type="VARCHAR(8)" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.1" author="Anilkumar.G">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="AllowAutoRefund" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.1.1" author="Anilkumar.G">
+		<sql>
+			<![CDATA[  
+				UPDATE ADTRMTFINANCETYPES SET ALLOWAUTOREFUND = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.1.2" author="Anilkumar.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AllowAutoRefund" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="TK#2509.1.2" author="Anilkumar.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_ALWAUTOREF DEFAULT 0 FOR ALLOWAUTOREFUND;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.2" author="Anilkumar.G">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="MaxAutoRefund" type="Decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.2.1" author="Anilkumar.G">
+		<sql>
+			<![CDATA[  
+				UPDATE ADTRMTFINANCETYPES SET MAXAUTOREFUND = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.2.2" author="Anilkumar.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="MaxAutoRefund" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="TK#2509.2.2" author="Anilkumar.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_MAXAUTOREF DEFAULT 0 FOR MAXAUTOREFUND;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.3" author="Anilkumar.G">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="MinAutoRefund" type="Decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.3.1" author="Anilkumar.G">
+		<sql>
+			<![CDATA[  
+				UPDATE ADTRMTFINANCETYPES SET MINAUTOREFUND = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.3.2" author="Anilkumar.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="minAutoRefund" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="TK#2509.3.3" author="Anilkumar.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_MINAUTOREF DEFAULT 0 FOR MINAUTOREFUND;
+			]]>
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>
