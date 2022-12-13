@@ -1,5 +1,9 @@
 package com.pennant.pff.presentment.service.impl;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -36,11 +41,15 @@ import com.pennant.pff.upload.dao.UploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.util.ExcelUtil;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHeader>
 		implements UploadService<RePresentmentUploadDetail> {
@@ -295,11 +304,6 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	}
 
 	@Override
-	public List<RePresentmentUploadDetail> getDataForReport(long fileID) {
-		return representmentUploadDAO.getDataForReport(fileID);
-	}
-
-	@Override
 	public AuditHeader saveOrUpdate(AuditHeader ah) {
 		logger.debug(Literal.ENTERING);
 
@@ -425,6 +429,82 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 
 		logger.debug(Literal.LEAVING);
 		return ah;
+	}
+
+	@Override
+	public void downloadReport(Long fileID, String name, String type) {
+		List<RePresentmentUploadDetail> details = representmentUploadDAO.getDataForReport(fileID, type);
+
+		Workbook workBook = ExcelUtil.getExcelWriterBook(name);
+
+		Sheet sheet = ExcelUtil.getExcelSheet(workBook, "Representment");
+
+		ExcelUtil.createHeader(sheet, getExcelHeaders(), 0);
+
+		int index = 0;
+		int sNo = 0;
+		for (RePresentmentUploadDetail detail : details) {
+			int valueIndex = -2;
+
+			Row row = sheet.createRow(++index);
+
+			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(++sNo));
+			ExcelUtil.addCellValue(row, ++valueIndex, detail.getReference());
+			ExcelUtil.addCellValue(row, ++valueIndex, DateUtil.format(detail.getDueDate(), DateFormat.LONG_DATE));
+			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getPresentmentID()));
+			ExcelUtil.addCellValue(row, ++valueIndex, DateUtil.format(detail.getCreatedOn(), DateFormat.LONG_DATE));
+			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getProgress()));
+			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getCreatedBy()));
+			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getApprovedBy()));
+		}
+
+		String path = App.getResourcePath(PathUtil.TEMPLATES, UploadTypes.RE_PRESENTMENT, "Downloads");
+
+		File folder = new File(path);
+
+		if (!folder.exists()) {
+			folder.mkdirs();
+		}
+
+		File file = new File(folder.getPath().concat(File.separator).concat(name));
+
+		if (file.exists() && !file.delete()) {
+			throw new AppException("Unable to delete the existing file, Please check with system administrator");
+		}
+
+		try (FileOutputStream outputStream = new FileOutputStream(file)) {
+			try (BufferedOutputStream bos = new BufferedOutputStream(outputStream)) {
+				workBook.write(bos);
+			}
+		} catch (Exception e) {
+			//
+		}
+
+		try {
+			if (name.endsWith("xlsx")) {
+				ExcelUtil.downloadTemplate(path, name, DocType.XLSX);
+			} else {
+				ExcelUtil.downloadTemplate(path, name, DocType.XLS);
+			}
+		} catch (AppException e) {
+			throw new AppException(e.getMessage());
+		}
+	}
+
+	private List<String> getExcelHeaders() {
+		List<String> headers = new ArrayList<>();
+
+		headers.add("S.NO");
+		headers.add("LOAN NO");
+		headers.add("Due Date");
+		headers.add("Presentment ID");
+		headers.add("Upload Date");
+		headers.add("Status");
+		headers.add("Remarks");
+		headers.add("Maker ID");
+		headers.add("Checker ID");
+
+		return headers;
 	}
 
 	private AuditHeader businessValidation(AuditHeader ah) {

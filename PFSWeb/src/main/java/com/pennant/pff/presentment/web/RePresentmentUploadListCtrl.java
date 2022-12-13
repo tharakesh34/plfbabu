@@ -1,7 +1,5 @@
 package com.pennant.pff.presentment.web;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,14 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -25,7 +20,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zkmax.zul.Filedownload;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -41,14 +35,11 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.PathUtil;
-import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
 import com.pennant.pff.presentment.service.ExtractionService;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -59,6 +50,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -361,7 +353,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		List<Long> rePresentMentList = getListofRePresentMentUpload();
 
 		if (rePresentMentList.isEmpty()) {
-			MessageUtil.showError(Labels.getLabel("RePresentMentUploadDataList_NoEmpty"));
+			MessageUtil.showError(Labels.getLabel("label_ListNoEmpty"));
 			return;
 		}
 
@@ -689,6 +681,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 			lc = new Listcell(String.valueOf(uph.getRecordType()));
 			lc.setParent(item);
 
+			item.setAttribute("date", uph);
 			item.setAttribute("id", id);
 
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onItemDoubleClicked");
@@ -719,17 +712,6 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		return new ArrayList<>(rePresentIdMap.keySet());
 	}
 
-	private byte[] getExcelData(String id) {
-		String whereCond = " Where t.ID in (" + "'" + id + "'" + ") and  ProcessingStatus ="
-				+ EodConstants.PROGRESS_SUCCESS;
-
-		String path = PathUtil.REPORTS_ORGANIZATION;
-		String name = "RePresentMentUploadApprover";
-		String userName = getUserWorkspace().getLoggedInUser().getFullName();
-
-		return ReportsUtil.getExcelData(path, name, userName, whereCond, new StringBuilder(" "));
-	}
-
 	private AuditHeader getAuditHeader(FileUploadHeader rpuh, String tranType) {
 		AuditDetail ad = new AuditDetail(tranType, 1, rpuh.getBefImage(), rpuh);
 		return new AuditHeader(String.valueOf(rpuh.getId()), null, null, null, ad, rpuh.getUserDetails(),
@@ -742,49 +724,27 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void onClick$btndownload(Event event) throws IOException {
+	public void onClick$btndownload(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		List<Long> list = getHeaderIds();
-
-		if (list.isEmpty()) {
-			MessageUtil.showError(Labels.getLabel("RePresentMentUploadDataList_NoEmpty"));
+		if (this.listBox.getSelectedItems().isEmpty()) {
+			MessageUtil.showError(Labels.getLabel("label_ListNoEmpty"));
 			return;
 		}
 
-		List<FileUploadHeader> listrpuh = doCheckAuthority(list);
-
-		if (listrpuh.isEmpty()) {
+		if (this.listBox.getSelectedCount() > 1) {
+			MessageUtil.showError(Labels.getLabel("MORETHEN_FILE"));
 			return;
 		}
 
-		if (list.size() == 1) {
-			for (long id : list) {
-				byte[] byteArray = getExcelData(String.valueOf(id));
-				Filedownload.save(new AMedia(String.valueOf(id), "xls", "application/vnd.ms-excel", byteArray));
-				this.rePresentmentUploadService.updateProgress(id, Status.DOWNLOADED.getValue());
-			}
-		} else if (list.size() > 1) {
-			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-				try (ZipOutputStream out = new ZipOutputStream(baos)) {
-					for (long id : list) {
-						out.putNextEntry(new ZipEntry(id + ".xls"));
-						out.write(getExcelData(String.valueOf(id)));
-						out.closeEntry();
+		Listitem listitem = this.listBox.getSelectedItem();
+		FileUploadHeader uploadHeader = (FileUploadHeader) listitem.getAttribute("data");
 
-						this.rePresentmentUploadService.updateProgress(id, Status.DOWNLOADED.getValue());
-					}
-					String zipfileName = "RePresentMentUpload.zip";
-
-					byte[] tobytes = baos.toByteArray();
-					Filedownload.save(new AMedia(zipfileName, "zip", "application/*", tobytes));
-				}
-			}
+		try {
+			rePresentmentUploadService.downloadReport(uploadHeader.getId(), uploadHeader.getFileName(), "_Temp");
+		} catch (AppException e) {
+			MessageUtil.showError(e);
 		}
-
-		doRefresh();
-		Clients.showNotification(Labels.getLabel("label_DataExtractionList_DownloadedSuccess.value"), "info", null,
-				null, -1);
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
