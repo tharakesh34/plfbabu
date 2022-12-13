@@ -260,6 +260,10 @@ public class FinanceType extends AbstractWorkflowEntity {
 	// Loan Purpose
 	private String allowedLoanPurposes;
 	private String specificLoanPurposes;
+	// Auto Refund
+	private boolean allowAutoRefund;
+	private BigDecimal maxAutoRefund = BigDecimal.ZERO;
+	private BigDecimal minAutoRefund = BigDecimal.ZERO;
 
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -2672,6 +2676,30 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setIntProvRule(Long intProvRule) {
 		this.intProvRule = intProvRule;
+	}
+
+	public boolean isAllowAutoRefund() {
+		return allowAutoRefund;
+	}
+
+	public void setAllowAutoRefund(boolean AllowAutoRefund) {
+		this.allowAutoRefund = AllowAutoRefund;
+	}
+
+	public BigDecimal getMaxAutoRefund() {
+		return maxAutoRefund;
+	}
+
+	public void setMaxAutoRefund(BigDecimal maxAutoRefund) {
+		this.maxAutoRefund = maxAutoRefund;
+	}
+
+	public BigDecimal getMinAutoRefund() {
+		return minAutoRefund;
+	}
+
+	public void setMinAutoRefund(BigDecimal minAutoRefund) {
+		this.minAutoRefund = minAutoRefund;
 	}
 
 }

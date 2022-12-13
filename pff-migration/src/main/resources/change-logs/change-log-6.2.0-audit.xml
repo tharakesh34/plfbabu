@@ -730,4 +730,12 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="TK#2509.4" author="Anilkumar.G">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="AllowAutoRefund" type="boolean" />
+			<column name="maxAutoRefund" type="Decimal(18,2)" />
+			<column name="minAutoRefund" type="Decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

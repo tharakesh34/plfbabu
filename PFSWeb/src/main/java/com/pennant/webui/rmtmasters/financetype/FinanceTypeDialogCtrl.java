@@ -607,6 +607,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox alwLoanSplit;
 	protected Groupbox gb_autoGraceInc_Details;
 
+	// Auto refund changes
+	protected Checkbox allowAutoRefund;
+	protected CurrencyBox minAutoRefund;
+	protected CurrencyBox maxAutoRefund;
+	protected Row row_AutoRefundLimits;
+
 	// stepping changes
 	protected Combobox calcOfSteps;
 	protected Combobox stepsAppliedFor;
@@ -836,6 +842,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finMinAmount.setMandatory(false);
 		this.finMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.finMinAmount.setScale(format);
+
+		this.maxAutoRefund.setMandatory(false);
+		this.maxAutoRefund.setFormat(PennantApplicationUtil.getAmountFormate(format));
+		this.maxAutoRefund.setScale(format);
+		this.minAutoRefund.setMandatory(false);
+		this.minAutoRefund.setFormat(PennantApplicationUtil.getAmountFormate(format));
+		this.minAutoRefund.setScale(format);
 
 		this.finHistRetension.setMaxlength(3);
 
@@ -1151,6 +1164,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDivision.setValue(aFinanceType.getFinDivision());
 		this.finMinAmount.setValue(CurrencyUtil.parse(aFinanceType.getFinMinAmount(), format));
 		this.finMaxAmount.setValue(CurrencyUtil.parse(aFinanceType.getFinMaxAmount(), format));
+		this.allowAutoRefund.setChecked(aFinanceType.isAllowAutoRefund());
+		if (aFinanceType.isAllowAutoRefund()) {
+			this.row_AutoRefundLimits.setVisible(true);
+			this.minAutoRefund.setValue(CurrencyUtil.parse(aFinanceType.getMinAutoRefund(), format));
+			this.maxAutoRefund.setValue(CurrencyUtil.parse(aFinanceType.getMaxAutoRefund(), format));
+		}
 		Filter[] filters = null;
 
 		filters = new Filter[1];
@@ -2057,6 +2076,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
+			aFinanceType.setMaxAutoRefund(CurrencyUtil.unFormat(this.maxAutoRefund.getValidateValue(), format));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setMinAutoRefund(CurrencyUtil.unFormat(this.minAutoRefund.getValidateValue(), format));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
 			if (isValidComboValue(this.cbfinProductType,
 					Labels.getLabel("label_FinanceTypeDialog_FinProductType.Value"))) {
 				aFinanceType.setFinCategory(this.cbfinProductType.getSelectedItem().getValue().toString());
@@ -2157,6 +2186,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		// To check Maximum Auto Refund amount is greater than Minimum Auto Refunf amount
+		try {
+			mustBeHigher(maxAutoRefund, minAutoRefund, "label_FinanceTypeDialog_MaxAutoRefunds.value",
+					"label_FinanceTypeDialog_MinAutoRefunds.value");
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		aFinanceType.setAlwMultiPartyDisb(this.alwMultiPartyDisb.isChecked());
 		aFinanceType.setTdsApplicable(this.tDSApplicable.isChecked());
 
@@ -2169,6 +2205,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		aFinanceType.setDroplineOD(this.droplineOD.isChecked());
+		aFinanceType.setAllowAutoRefund(this.allowAutoRefund.isChecked());
 		aFinanceType.setFrequencyDays(this.frequencyDays.getValue());
 		aFinanceType.setTaxNoMand(this.taxNoMand.isChecked());
 		aFinanceType.setInstBasedSchd(this.instBasedSchd.isChecked());
@@ -4107,6 +4144,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						Labels.getLabel("label_FinanceTypeDialog_FinMinAmount.value"), format, false, false));
 			}
 		}
+		if (this.allowAutoRefund.isChecked()) {
+			if (this.minAutoRefund.getValidateValue() != null
+					&& this.minAutoRefund.getValidateValue().intValue() != 0) {
+				this.minAutoRefund.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_FinanceTypeDialog_MinAutoRefunds.value"), format, true, false));
+			}
+			if (this.maxAutoRefund.getValidateValue() != null
+					&& this.maxAutoRefund.getValidateValue().intValue() != 0) {
+				this.maxAutoRefund.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_FinanceTypeDialog_MaxAutoRefunds.value"), format, true, false));
+			}
+		}
+
 		// Past due Profit
 
 		if (this.pastduePftMargin.isVisible() && !this.pastduePftMargin.isReadonly()) {
@@ -4299,6 +4349,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finTypeDesc.setConstraint("");
 		this.finMaxAmount.setConstraint("");
 		this.finMinAmount.setConstraint("");
+		this.maxAutoRefund.setConstraint("");
+		this.minAutoRefund.setConstraint("");
 		this.finAssetType.setConstraint("");
 		this.collateralType.setConstraint("");
 		this.splitLoanType.setConstraint("");
@@ -4533,6 +4585,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIsGenRef.setDisabled(isTrue);
 		this.finMaxAmount.setReadonly(isTrue);
 		this.finMinAmount.setReadonly(isTrue);
+		this.maxAutoRefund.setReadonly(isTrue);
+		this.minAutoRefund.setReadonly(isTrue);
 		this.btnSearchfinAssetType.setDisabled(isTrue);
 		this.btnSearchCollateralType.setDisabled(isTrue);
 		this.btnAlwElgMthdDetails.setDisabled(isTrue);
@@ -4566,6 +4620,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.alwMultiPartyDisb.setDisabled(isTrue);
 		this.droppingMethod.setDisabled(isTrue);
 		this.droplineOD.setDisabled(isTrue);
+		this.allowAutoRefund.setDisabled(isTrue);
 		this.alwBpiTreatment.setDisabled(isTrue);
 		this.dftBpiTreatment.setDisabled(isTrue);
 		this.cbBpiPftDaysBasis.setDisabled(isTrue);
@@ -4738,6 +4793,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finCcy.setMandatoryStyle(false);
 			this.finMinAmount.setMandatory(false);
 			this.finMaxAmount.setMandatory(false);
+			this.minAutoRefund.setMandatory(false);
+			this.maxAutoRefund.setMandatory(false);
 			this.finDivision.setMandatoryStyle(false);
 			this.financeBaserate.getBaseComp().setMandatoryStyle(false);
 			this.financeBaserate.getSpecialComp().setMandatoryStyle(false);
@@ -4840,6 +4897,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIsGenRef.setChecked(false);
 		this.finMaxAmount.setValue("");
 		this.finMinAmount.setValue("");
+		this.minAutoRefund.setValue("");
+		this.maxAutoRefund.setValue("");
 		this.finAssetType.setValue("");
 		this.collateralType.setValue("");
 		this.alwEarlyPayMethods.setValue("");
@@ -4897,6 +4956,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finPftUnChanged.setChecked(false);
 		this.planDeferCount.setValue(0);
 		this.droplineOD.setChecked(false);
+		this.allowAutoRefund.setChecked(false);
 		this.tDSApplicable.setChecked(false);
 		this.finIsAlwEarlyRpy.setChecked(false);
 		this.finIsAlwEarlySettle.setChecked(false);
@@ -5398,6 +5458,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				int format = details.getCcyEditField();
 				this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 				this.finMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
+				this.maxAutoRefund.setFormat(PennantApplicationUtil.getAmountFormate(format));
+				this.minAutoRefund.setFormat(PennantApplicationUtil.getAmountFormate(format));
 				this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(format));
 
 			}
@@ -5892,6 +5954,28 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.droppingMethod.setSelectedIndex(0);
 			this.space_DroppingMethod.setClass("");
 		}
+	}
+
+	public void onCheck$allowAutoRefund(Event event) {
+		doSetRefundLimits();
+	}
+
+	private void doSetRefundLimits() {
+		logger.debug(Literal.ENTERING);
+		if (this.allowAutoRefund.isChecked()) {
+			this.row_AutoRefundLimits.setVisible(true);
+			this.minAutoRefund.setDisabled(false);
+			this.maxAutoRefund.setDisabled(false);
+			this.maxAutoRefund.setSclass(PennantConstants.mandateSclass);
+			this.maxAutoRefund.setSclass(PennantConstants.mandateSclass);
+		} else {
+			this.minAutoRefund.setValue(BigDecimal.ZERO);
+			this.maxAutoRefund.setValue(BigDecimal.ZERO);
+			this.minAutoRefund.setDisabled(true);
+			this.maxAutoRefund.setDisabled(true);
+		}
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	public void onCheck$txnCharges(Event event) {
@@ -6962,6 +7046,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.cbfinDaysCalType.setErrorMessage("");
 		this.finMaxAmount.setErrorMessage("");
 		this.finMinAmount.setErrorMessage("");
+		this.maxAutoRefund.setErrorMessage("");
+		this.minAutoRefund.setErrorMessage("");
 		this.finAssetType.setErrorMessage("");
 		this.collateralType.setErrorMessage("");
 		this.alwEarlyPayMethods.setErrorMessage("");
