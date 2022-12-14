@@ -22,6 +22,7 @@ import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -83,6 +84,19 @@ public class ReceiptPaymentService {
 			receiptDTO.setPdDetailsExits(false);
 			pd = preparePD(receiptDTO, idxPresentment);
 			receiptDTO.setPresentmentDetail(pd);
+		} else {
+			receiptDTO.getEmiInAdvance().clear();
+
+			List<FinExcessMovement> excessMovements = pd.getExcessMovements();
+
+			for (FinExcessMovement fem : excessMovements) {
+				FinExcessAmount fea = new FinExcessAmount();
+
+				fea.setExcessID(fem.getReceiptID());
+				fea.setBalanceAmt(fem.getAmount());
+
+				receiptDTO.getEmiInAdvance().add(fea);
+			}
 		}
 
 		if (pd != null) {
@@ -100,7 +114,7 @@ public class ReceiptPaymentService {
 
 		pd.setAppDate(receiptDTO.getValuedate());
 
-		if (pd.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0 && pd.getExcessID() != 0) {
+		if (pd.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0) {
 			logger.info("Creating Receipts for EMI In Advance...");
 			createEMIInAdvReceipt(receiptDTO);
 		}
@@ -121,35 +135,49 @@ public class ReceiptPaymentService {
 		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 		FinanceMain fm = receiptDTO.getFinanceMain();
 
-		FinReceiptHeader rch = prepareRCH(receiptDTO, pd.getAdvanceAmt());
-		rch.setReceiptMode(RepayConstants.PAYTYPE_EXCESS);
-		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-		rch.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
+		List<FinExcessAmount> emiInAdvList = receiptDTO.getEmiInAdvance();
 
-		FinReceiptDetail rcd = prepareRCD(receiptDTO, pd.getAdvanceAmt());
-		rcd.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
-		rcd.setPayAgainstID(pd.getExcessID());
-		rcd.setStatus(RepayConstants.PAYSTATUS_REALIZED);
-		rcd.setNoReserve(receiptDTO.isNoReserve());
+		BigDecimal dueAmount = pd.getAdvanceAmt();
 
-		List<FinReceiptDetail> list = new ArrayList<>();
-		list.add(rcd);
-		rch.setReceiptDetails(list);
+		for (FinExcessAmount fea : emiInAdvList) {
+			BigDecimal advanceAmt = fea.getBalanceAmt();
 
-		XcessPayables xcessPayable = new XcessPayables();
-		xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
-		xcessPayable.setAmount(pd.getAdvanceAmt());
-		xcessPayable.setTotPaidNow(pd.getAdvanceAmt());
+			if (dueAmount.compareTo(advanceAmt) < 0) {
+				advanceAmt = dueAmount;
+			}
 
-		rch.getXcessPayables().add(xcessPayable);
+			FinReceiptHeader rch = prepareRCH(receiptDTO, advanceAmt);
+			rch.setReceiptMode(RepayConstants.PAYTYPE_EXCESS);
+			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+			rch.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
 
-		receiptDTO.setFinReceiptHeader(rch);
+			FinReceiptDetail rcd = prepareRCD(receiptDTO, advanceAmt);
+			rcd.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
+			rcd.setPayAgainstID(fea.getExcessID());
+			rcd.setStatus(RepayConstants.PAYSTATUS_REALIZED);
+			rcd.setNoReserve(receiptDTO.isNoReserve());
 
-		try {
-			repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw new AppException();
+			List<FinReceiptDetail> list = new ArrayList<>();
+			list.add(rcd);
+			rch.setReceiptDetails(list);
+
+			XcessPayables xcessPayable = new XcessPayables();
+			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
+			xcessPayable.setAmount(advanceAmt);
+			xcessPayable.setTotPaidNow(advanceAmt);
+
+			rch.getXcessPayables().add(xcessPayable);
+
+			receiptDTO.setFinReceiptHeader(rch);
+
+			try {
+				repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+				throw new AppException();
+			}
+
+			dueAmount = dueAmount.subtract(advanceAmt);
 		}
 
 		EventProperties ep = fm.getEventProperties();
@@ -266,9 +294,6 @@ public class ReceiptPaymentService {
 		List<FinanceScheduleDetail> schedules = receiptDTO.getSchedules();
 		FinanceScheduleDetail schedule = schedules.get(idxPresentment);
 
-		FinExcessAmount emiInAdvance = receiptDTO.getEmiInAdvance();
-		BigDecimal balanceAmount = emiInAdvance.getBalanceAmt();
-
 		FinanceMain fm = receiptDTO.getFinanceMain();
 		Customer customer = receiptDTO.getCustomer();
 
@@ -299,6 +324,13 @@ public class ReceiptPaymentService {
 			return null;
 		}
 
+		List<FinExcessAmount> emiInAdvance = receiptDTO.getEmiInAdvance();
+
+		BigDecimal balanceAmount = BigDecimal.ZERO;
+		for (FinExcessAmount fea : emiInAdvance) {
+			balanceAmount = balanceAmount.add(fea.getBalanceAmt());
+		}
+
 		if (balanceAmount.compareTo(dueAmount) >= 0) {
 			balanceAmount = dueAmount;
 		}
@@ -309,7 +341,6 @@ public class ReceiptPaymentService {
 		pd.setSchDate(schDate);
 		pd.setAdvanceAmt(balanceAmount);
 		pd.setPresentmentAmt(BigDecimal.ZERO);
-		pd.setExcessID(emiInAdvance.getExcessID());
 
 		logger.info("Presentment Detail Bean Created.");
 		return pd;

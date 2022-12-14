@@ -820,25 +820,17 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			excessAmt = excessAmt.add(detail.getRefundAmount());
 		}
 		if (BigDecimal.ZERO.compareTo(excessAmt) < 0) {
-			FinExcessAmount excess = null;
-			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(refundHeader.getFinID(),
-					RepayConstants.EXCESSADJUSTTO_EXCESS);
-			// Creating Excess
-			if (excess == null) {
-				excess = new FinExcessAmount();
-				excess.setFinID(refundHeader.getFinID());
-				excess.setFinReference(refundHeader.getFinReference());
-				excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
-				excess.setAmount(excessAmt);
-				excess.setUtilisedAmt(BigDecimal.ZERO);
-				excess.setBalanceAmt(excessAmt);
-				excess.setReservedAmt(BigDecimal.ZERO);
-				finExcessAmountDAO.saveExcess(excess);
-			} else {
-				excess.setBalanceAmt(excess.getBalanceAmt().add(excessAmt));
-				excess.setAmount(excess.getAmount().add(excessAmt));
-				finExcessAmountDAO.updateExcess(excess);
-			}
+			FinExcessAmount excess = new FinExcessAmount();
+			excess = new FinExcessAmount();
+			excess.setFinID(refundHeader.getFinID());
+			excess.setFinReference(refundHeader.getFinReference());
+			excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
+			excess.setAmount(excessAmt);
+			excess.setUtilisedAmt(BigDecimal.ZERO);
+			excess.setBalanceAmt(excessAmt);
+			excess.setReservedAmt(BigDecimal.ZERO);
+			finExcessAmountDAO.saveExcess(excess);
+
 			// Creating ExcessMoment
 			FinExcessMovement excessMovement = new FinExcessMovement();
 			excessMovement.setExcessID(excess.getExcessID());

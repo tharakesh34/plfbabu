@@ -1380,7 +1380,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			if (StringUtils.isNotBlank(rch.getExtReference())) {
 				reference = rch.getExtReference();
 			}
-			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, rch.getExcessAdjustTo());
+			excess = finExcessAmountDAO.getExcessAmountsByReceiptId(finID, rch.getExcessAdjustTo(), rch.getReceiptID());
 			// Creating Excess
 			if (excess == null) {
 				excess = new FinExcessAmount();

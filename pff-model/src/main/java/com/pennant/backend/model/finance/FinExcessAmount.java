@@ -2,6 +2,7 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +19,9 @@ public class FinExcessAmount implements Serializable {
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
 	private String rcdAction;
 	private FinExcessMovement excessMovement;
+	private long receiptId = 0;
+	private Date valueDate;
+	private Date postDate;
 
 	public FinExcessAmount() {
 		super();
@@ -131,6 +135,30 @@ public class FinExcessAmount implements Serializable {
 
 	public void setExcessMovement(FinExcessMovement excessMovement) {
 		this.excessMovement = excessMovement;
+	}
+
+	public long getReceiptId() {
+		return receiptId;
+	}
+
+	public void setReceiptId(long receiptId) {
+		this.receiptId = receiptId;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public Date getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate) {
+		this.postDate = postDate;
 	}
 
 }

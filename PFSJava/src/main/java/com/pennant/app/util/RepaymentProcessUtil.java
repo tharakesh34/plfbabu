@@ -1728,6 +1728,8 @@ public class RepaymentProcessUtil {
 					excess.setUtilisedAmt(BigDecimal.ZERO);
 					excess.setBalanceAmt(rph.getExcessAmount());
 					excess.setReservedAmt(BigDecimal.ZERO);
+					excess.setReceiptId(rch.getReceiptID());
+					excess.setValueDate(rch.getValueDate());
 					if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
 						excess.setBalanceAmt(BigDecimal.ZERO);
 						excess.setReservedAmt(rph.getExcessAmount());

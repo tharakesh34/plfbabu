@@ -26,6 +26,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class BounceResponseTasklet implements Tasklet {
 	private final Logger logger = LogManager.getLogger(BounceResponseTasklet.class);
@@ -65,8 +66,7 @@ public class BounceResponseTasklet implements Tasklet {
 			return RepeatStatus.FINISHED;
 		}
 
-		EventProperties eventProperties = eventPropertiesService
-				.getEventProperties(EventType.PRESENTMENT_RESPONSE_UPLOAD);
+		EventProperties eventProperties = eventPropertiesService.getEventProperties(EventType.EOD);
 		Date appDate = SysParamUtil.getAppDate();
 
 		String strAppDate = DateUtil.formatToLongDate(appDate);
@@ -118,12 +118,16 @@ public class BounceResponseTasklet implements Tasklet {
 		pd.setAppDate(appDate);
 		pd.setEventProperties(eventProperties);
 
+		ReceiptDTO receiptDTO = presentmentEngine.prepareReceiptDTO(pd);
+
+		receiptDTO.setValuedate(pd.getAppDate());
+
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
 
 		try {
-			presentmentEngine.processResponse(pd);
+			presentmentEngine.processResponse(receiptDTO);
 			transactionManager.commit(transactionStatus);
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);

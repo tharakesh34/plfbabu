@@ -34,6 +34,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class ApprovalTasklet implements Tasklet {
 	private final Logger logger = LogManager.getLogger(ApprovalTasklet.class);
@@ -167,6 +168,8 @@ public class ApprovalTasklet implements Tasklet {
 	private boolean approvePresentment(Long presentmentID, PresentmentHeader ph) {
 		PresentmentDetail pd = presentmentEngine.getPresentmenToPost(presentmentID);
 
+		ReceiptDTO receiptDTO = presentmentEngine.prepareReceiptDTO(pd);
+
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
@@ -175,7 +178,7 @@ public class ApprovalTasklet implements Tasklet {
 			pd.setAppDate(ph.getAppDate());
 			pd.setEventProperties(eventProperties);
 
-			presentmentEngine.approve(pd, bounceForPD);
+			presentmentEngine.approve(receiptDTO, bounceForPD);
 			transactionManager.commit(transactionStatus);
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);

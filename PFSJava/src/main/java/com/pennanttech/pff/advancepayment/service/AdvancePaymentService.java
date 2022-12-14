@@ -163,7 +163,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 
 			// excess fetch
-			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, amountType);
+			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByReceiptId(finID, amountType, 0);
 
 			BigDecimal excessBal = BigDecimal.ZERO;
 			if (excessAmount == null || excessAmount.getBalanceAmt() == null
@@ -629,7 +629,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		BigDecimal tdsAmount = curSchd.getTDSAmount();
 		String amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
 
-		FinExcessAmount exAmount = this.finExcessAmountDAO.getExcessAmountsByRefAndType(finID, amountType);
+		FinExcessAmount exAmount = this.finExcessAmountDAO.getExcessAmountsByReceiptId(finID, amountType, 0);
 
 		BigDecimal bpiAmt = pftSchd;
 		if (tdsApplicable && !SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {

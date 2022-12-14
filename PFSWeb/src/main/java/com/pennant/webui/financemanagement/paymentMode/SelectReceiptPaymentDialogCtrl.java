@@ -41,6 +41,7 @@ import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -49,6 +50,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -530,6 +532,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		if (isKnockOff) {
 			BigDecimal availableAmount = BigDecimal.ZERO;
+			Date valuedate = null;
 
 			if (!StringUtils.isBlank(this.referenceId.getDescription())) {
 				availableAmount = new BigDecimal(this.referenceId.getDescription());
@@ -537,6 +540,19 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			if (PennantApplicationUtil.formateAmount(receiptAmount, formatter).compareTo(availableAmount) > 0) {
 				this.receiptAmount.setValue(BigDecimal.ZERO);
 				return;
+			}
+
+			if (StringUtils.equals(RepayConstants.PAYTYPE_PAYABLE, receiptData.getReceiptHeader().getReceiptMode())) {
+				ManualAdvise ma = (ManualAdvise) this.referenceId.getObject();
+				valuedate = ma.getValueDate();
+			} else {
+				FinExcessAmount fe = (FinExcessAmount) this.referenceId.getObject();
+				valuedate = fe.getValueDate();
+			}
+
+			if (this.receiptDate.getValue().compareTo(valuedate) < 0) {
+				MessageUtil.showError(Labels.getLabel("label_knockoffValuedate",
+						new String[] { DateUtil.formatToShortDate(valuedate) }));
 			}
 		}
 		if (isForeClosure) {
@@ -692,8 +708,23 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			BigDecimal receiptDues = this.receiptDues.getActualValue();
 			BigDecimal knockOffAmount = this.receiptAmount.getActualValue();
 			String receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
+			Date valuedate = null;
 			if (FinServiceEvent.SCHDRPY.equals(receiptPurpose) && knockOffAmount.compareTo(receiptDues) > 0) {
 				MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff"));
+				return;
+			}
+
+			if (StringUtils.equals(RepayConstants.PAYTYPE_PAYABLE, receiptData.getReceiptHeader().getReceiptMode())) {
+				ManualAdvise ma = (ManualAdvise) this.referenceId.getObject();
+				valuedate = ma.getValueDate();
+			} else {
+				FinExcessAmount fe = (FinExcessAmount) this.referenceId.getObject();
+				valuedate = fe.getValueDate();
+			}
+
+			if (this.receiptDate.getValue().compareTo(valuedate) < 0) {
+				MessageUtil.showError(Labels.getLabel("label_knockoffValuedate",
+						new String[] { DateUtil.formatToShortDate(valuedate) }));
 				return;
 			}
 		}

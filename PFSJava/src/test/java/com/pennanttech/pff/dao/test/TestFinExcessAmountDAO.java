@@ -34,7 +34,7 @@ public class TestFinExcessAmountDAO {
 	@Transactional
 	@Rollback(true)
 	public void testGetExcessAmountsByRef() {
-		List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRef(637);
+		List<FinExcessAmount> list = null;
 
 		finExcessAmountDAO.updateExcess(list.get(0));
 
@@ -43,12 +43,6 @@ public class TestFinExcessAmountDAO {
 
 		finExcessAmountDAO.isFinExcessAmtExists(3468);
 		finExcessAmountDAO.isFinExcessAmtExists(1);
-
-		fe = finExcessAmountDAO.getFinExcessAmount(3468, "E");
-		finExcessAmountDAO.getFinExcessAmount(367, "");
-
-		finExcessAmountDAO.getFinExcessAmount(822, 5088);
-		finExcessAmountDAO.getFinExcessAmount(3032, 10161);
 
 		finExcessAmountDAO.updateUtilise(351, new BigDecimal(100));
 
@@ -74,11 +68,6 @@ public class TestFinExcessAmountDAO {
 
 		finExcessAmountDAO.updateExcessAmount(444, new BigDecimal(10000));
 
-		finExcessAmountDAO.getExcessAmountsByRefAndType(1197, "DSF");
-		finExcessAmountDAO.getExcessAmountsByRefAndType(1197, "A");
-
-		finExcessAmountDAO.getAllExcessAmountsByRef(1197, "");
-
 		finExcessAmountDAO.deductExcessReserve(300, new BigDecimal(10000));
 
 		finExcessAmountDAO.updateExcessReserveByRef(543, "ADVINT", new BigDecimal(10000));
@@ -90,8 +79,6 @@ public class TestFinExcessAmountDAO {
 		finExcessAmountDAO.getFinExcessMovement(518, "UPFRONT", dt);
 		finExcessAmountDAO.getFinExcessMovement(500, "UPFRONT", dt);
 
-		finExcessAmountDAO.getFinExcessByID(298);
-
 		finExcessAmountDAO.deleteMovemntByPrdID(5);
 
 	}
@@ -101,7 +88,6 @@ public class TestFinExcessAmountDAO {
 	@Rollback(true)
 	public void testSaveExcess() {
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(0);
 		fe.setExcessID(fe.getExcessID() + 1);
 		fe.setFinID(5353);
@@ -113,7 +99,6 @@ public class TestFinExcessAmountDAO {
 	@Rollback(true)
 	public void testSaveExcess1() {
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(Long.MIN_VALUE);
 		fe.setExcessID(fe.getExcessID() + 2);
 		fe.setFinID(5353);
@@ -125,7 +110,6 @@ public class TestFinExcessAmountDAO {
 	@Rollback(true)
 	public void testSaveExcess2() {
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(1431);
 		fe.setExcessID(1431);
 		fe.setFinID(5353);
@@ -137,7 +121,6 @@ public class TestFinExcessAmountDAO {
 	@Rollback(true)
 	public void testUpdateUtilizedAndBalance() {
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(Long.MIN_VALUE);
 		fe.setExcessID(fe.getExcessID() + 2);
 		fe.setFinID(5353);
@@ -149,7 +132,6 @@ public class TestFinExcessAmountDAO {
 	@Rollback(true)
 	public void testUpdateExcessReserve1() {
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(Long.MIN_VALUE);
 		fe.setExcessID(fe.getExcessID() + 1);
 		fe.setFinID(5353);
@@ -161,7 +143,6 @@ public class TestFinExcessAmountDAO {
 	@Rollback(true)
 	public void testUpdateReserveUtilization() {
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(Long.MIN_VALUE);
 		fe.setExcessID(fe.getExcessID() + 1);
 		fe.setFinID(5353);
@@ -174,7 +155,6 @@ public class TestFinExcessAmountDAO {
 	public void testsaveExcessList() {
 		List<FinExcessAmount> list = new ArrayList<FinExcessAmount>();
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(Long.MIN_VALUE);
 		fe.setExcessID(fe.getExcessID() + 2);
 		fe.setFinID(5353);
@@ -188,7 +168,6 @@ public class TestFinExcessAmountDAO {
 	public void testUpdateExcessReserveList() {
 		List<FinExcessAmount> list = new ArrayList<FinExcessAmount>();
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(Long.MIN_VALUE);
 		fe.setExcessID(fe.getExcessID() + 2);
 		fe.setFinID(5353);
@@ -202,7 +181,6 @@ public class TestFinExcessAmountDAO {
 	public void testUpdateExcessEMIAmount() {
 		List<FinExcessAmount> list = new ArrayList<FinExcessAmount>();
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(Long.MIN_VALUE);
 		fe.setExcessID(fe.getExcessID() + 2);
 		fe.setFinID(5353);
@@ -216,7 +194,6 @@ public class TestFinExcessAmountDAO {
 	public void testUpdateExcessEMIAmount1() {
 		List<FinExcessAmount> list = new ArrayList<FinExcessAmount>();
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(Long.MIN_VALUE);
 		fe.setExcessID(fe.getExcessID() + 2);
 		fe.setFinID(5353);
@@ -231,7 +208,6 @@ public class TestFinExcessAmountDAO {
 		// Amount Type Not Of U & R
 		List<FinExcessAmount> list = new ArrayList<FinExcessAmount>();
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(Long.MIN_VALUE);
 		fe.setExcessID(fe.getExcessID() + 2);
 		fe.setFinID(5353);
@@ -245,7 +221,6 @@ public class TestFinExcessAmountDAO {
 	public void testUpdateExcessAmtList() {
 		List<FinExcessAmount> list = new ArrayList<FinExcessAmount>();
 		fe = new FinExcessAmount();
-		fe = finExcessAmountDAO.getFinExcessAmount(2671, "CASHCLT");
 		fe.setId(Long.MIN_VALUE);
 		fe.setExcessID(fe.getExcessID() + 2);
 		fe.setFinID(5353);

@@ -66,6 +66,7 @@ import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.dao.ConsecutiveBounceDAO;
+import com.pennant.pff.presentment.service.PresentmentEngine;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
@@ -82,6 +83,15 @@ import com.pennanttech.pff.presentment.model.ConsecutiveBounce;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
+/***
+ * The entire logic is moved to Presentment Engine.
+ * 
+ * use {@link PresentmentEngine}
+ * 
+ * @author gopal.p
+ *
+ */
+@Deprecated
 public class PresentmentResponseProcess implements Runnable {
 	private static final Logger logger = LogManager.getLogger(PresentmentResponseProcess.class);
 
