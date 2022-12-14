@@ -2500,6 +2500,14 @@
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
 
-
+	
+	<menu id="menu_Category_Representment">
+		<menuItem id="menu_Item_RePresentUpload_Maker"
+			zulNavigation="/WEB-INF/pages/Finance/File/Upload/UploadList.zul?stage=M"
+			rightName="menu_Item_RePresentUpload_Maker" />
+		<menuItem id="menu_Item_RePresentUpload_Approver"
+			zulNavigation="/WEB-INF/pages/Finance/File/Upload/UploadList.zul?stage=A"
+			rightName="menu_Item_RePresentUpload_Approver" />
+	</menu>
 
 </ns2:XMLRootMenu>

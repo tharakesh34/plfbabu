@@ -1,5 +1,6 @@
 package com.pennant.pff.upload.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
@@ -12,6 +13,7 @@ import com.pennant.pff.upload.dao.UploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -171,14 +173,13 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	}
 
 	@Override
-	public FileUploadHeader getHeaderData(long id, TableType tableType) {
+	public FileUploadHeader getHeaderData(long id, Date fromDate, Date toDate) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, EntityCode, Type, FileName, TotalRecords, SuccessRecords, FailureRecords");
 		sql.append(", Progress, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntOn, LastMntBy");
 		sql.append(", Version, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FILE_UPLOAD_HEADER");
-		sql.append(tableType.getSuffix());
-		sql.append(" Where Id = ?");
+		sql.append(" Where Id = ? and (CreatedOn <= ? and CreatedOn >= ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -210,7 +211,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 				ruh.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return ruh;
-			}, id);
+			}, id, JdbcUtil.getDate(toDate), JdbcUtil.getDate(fromDate));
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -260,5 +261,29 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		logger.debug(Literal.SQL.concat(sql));
 
 		jdbcOperations.update(sql, headerID);
+	}
+
+	@Override
+	public void update(FileUploadHeader header) {
+		StringBuilder sql = new StringBuilder("Update FILE_UPLOAD_HEADER");
+		sql.append(" Set ExecutionID = ?, TotalRecords = ?, SuccessRecords = ?, FailureRecords = ?");
+		sql.append(", Progress = ?, Status = ?, Remarks = Remarks + ?");
+		sql.append(" Where ID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, header.getExecutionID());
+			ps.setLong(++index, header.getTotalRecords());
+			ps.setLong(++index, header.getSuccessRecords());
+			ps.setLong(++index, header.getFailureRecords());
+			ps.setInt(++index, header.getProgress());
+			ps.setString(++index, header.getStatus());
+			ps.setString(++index, header.getRemarks());
+
+			ps.setLong(++index, header.getId());
+		});
 	}
 }

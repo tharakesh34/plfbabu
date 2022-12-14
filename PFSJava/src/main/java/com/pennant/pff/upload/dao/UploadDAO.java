@@ -1,5 +1,6 @@
 package com.pennant.pff.upload.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.WorkFlowDetails;
@@ -22,11 +23,13 @@ public interface UploadDAO {
 
 	boolean isFileDownlaoded(long id);
 
-	FileUploadHeader getHeaderData(long id, TableType tableType);
+	FileUploadHeader getHeaderData(long id, Date fromDate, Date toDate);
 
 	void deleteHeader(FileUploadHeader header, TableType tableType);
 
 	List<Long> getHeaderStatusCnt(long uploadID, String tableName);
 
 	void deleteDetail(long headerID, String tableName);
+
+	void update(FileUploadHeader header);
 }

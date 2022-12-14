@@ -540,7 +540,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		List<FileUploadHeader> list = new ArrayList<>();
 
 		for (long id : headerIDs) {
-			FileUploadHeader rpuh = rePresentmentUploadService.getUploadHeaderById(id);
+			FileUploadHeader rpuh = null;
 
 			if (rpuh == null || rpuh.getProgress() == Status.IN_PROCESS.getValue()) {
 				continue;
@@ -573,7 +573,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		}
 
 		long id = (long) selectedItem.getAttribute("id");
-		FileUploadHeader header = rePresentmentUploadService.getUploadHeaderById(id);
+		FileUploadHeader header = rePresentmentUploadService.getUploadHeaderById(id, null, null);
 
 		if (header == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

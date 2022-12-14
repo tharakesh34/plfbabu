@@ -1,5 +1,6 @@
 package com.pennant.pff.upload.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.applicationmaster.Entity;
@@ -31,7 +32,7 @@ public interface UploadService<T> {
 
 	void updateStatus(List<Long> headerIds);
 
-	FileUploadHeader getUploadHeaderById(long id);
+	FileUploadHeader getUploadHeaderById(long id, Date fromDate, Date toDate);
 
 	List<T> getUploadDetailById(long headerID);
 
@@ -45,5 +46,7 @@ public interface UploadService<T> {
 
 	AuditHeader delete(AuditHeader ah);
 
-	List<T> getDataForReport(long fileID);
+	List<T> getDataForReport(long id);
+
+	void update(FileUploadHeader uploadHeader);
 }

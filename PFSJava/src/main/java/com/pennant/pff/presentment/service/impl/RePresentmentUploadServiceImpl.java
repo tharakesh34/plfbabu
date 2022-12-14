@@ -65,6 +65,9 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 			header.setWorkflowId(workFlow.getWorkFlowId());
 		}
 
+		header.setRecordStatus("Submitted");
+		header.setAppDate(SysParamUtil.getAppDate());
+
 		return header;
 	}
 
@@ -280,8 +283,8 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	}
 
 	@Override
-	public FileUploadHeader getUploadHeaderById(long id) {
-		return uploadDAO.getHeaderData(id, TableType.TEMP_TAB);
+	public FileUploadHeader getUploadHeaderById(long id, Date fromDate, Date toDate) {
+		return uploadDAO.getHeaderData(id, fromDate, toDate);
 	}
 
 	@Override
@@ -369,7 +372,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 		uploadDAO.deleteHeader(header, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(header.getRecordType())) {
-			ah.getAuditDetail().setBefImage(uploadDAO.getHeaderData(header.getId(), TableType.MAIN_TAB));
+			ah.getAuditDetail().setBefImage(uploadDAO.getHeaderData(header.getId(), null, null));
 		}
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(header.getRecordType())) {
@@ -425,6 +428,11 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 
 		logger.debug(Literal.LEAVING);
 		return ah;
+	}
+
+	@Override
+	public void update(FileUploadHeader uploadHeader) {
+		this.uploadDAO.update(uploadHeader);
 	}
 
 	private AuditHeader businessValidation(AuditHeader ah) {

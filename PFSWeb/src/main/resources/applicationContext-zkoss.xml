@@ -6066,4 +6066,10 @@
 	<bean id="rePresentmentUploadDialogCtrl" class="com.pennant.pff.presentment.web.RePresentmentUploadDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
+	
+	<bean id="uploadList" class="com.pennant.pff.upload.list.AUploadListCtrl" parent="basisListCtrl" scope="prototype" abstract="true"/>
+	
+	<bean id="representmentUploadList" class="com.pennant.pff.upload.list.RepresentmentUploadListCtrl"
+	parent="uploadList" />
+	
 </beans>

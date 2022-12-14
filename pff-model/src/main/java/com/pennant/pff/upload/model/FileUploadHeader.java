@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.zkoss.util.media.Media;
 
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -19,10 +20,13 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 	private String entityCode;
 	private String type;
 	private String fileName;
+	private long executionID;
 	private int totalRecords;
 	private int successRecords;
 	private int failureRecords;
 	private int progress;
+	private String status;
+	private String remarks;
 	private Long createdBy;
 	private Timestamp createdOn;
 	private Long approvedBy;
@@ -30,10 +34,11 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 
 	private FileUploadHeader befImage;
 	private LoggedInUser userDetails;
-	private Media media;
-	private Workbook workBook;
+	private transient Media media;
+	private transient Workbook workBook;
 	private File file;
 	private Date appDate;
+	private DataEngineStatus deStatus = new DataEngineStatus();
 
 	public FileUploadHeader() {
 		super();
@@ -46,6 +51,7 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 		excludeFields.add("workBook");
 		excludeFields.add("file");
 		excludeFields.add("appDate");
+		excludeFields.add("deStatus");
 
 		return excludeFields;
 	}
@@ -82,6 +88,14 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 		this.fileName = fileName;
 	}
 
+	public long getExecutionID() {
+		return executionID;
+	}
+
+	public void setExecutionID(long executionID) {
+		this.executionID = executionID;
+	}
+
 	public int getTotalRecords() {
 		return totalRecords;
 	}
@@ -112,6 +126,22 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 
 	public void setProgress(int progress) {
 		this.progress = progress;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 	public Long getCreatedBy() {
@@ -192,6 +222,14 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 
 	public void setAppDate(Date appDate) {
 		this.appDate = appDate;
+	}
+
+	public DataEngineStatus getDeStatus() {
+		return deStatus;
+	}
+
+	public void setDeStatus(DataEngineStatus deStatus) {
+		this.deStatus = deStatus;
 	}
 
 }
