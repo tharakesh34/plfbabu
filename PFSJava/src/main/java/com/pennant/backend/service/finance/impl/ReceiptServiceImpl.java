@@ -63,6 +63,7 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
@@ -71,24 +72,45 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.applicationmaster.InstrumentwiseLimitDAO;
 import com.pennant.backend.dao.applicationmaster.ReasonCodeDAO;
+import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FeeWaiverHeaderDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
+import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadHeaderDAO;
+import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
+import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
@@ -97,9 +119,13 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
+import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
+import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
+import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -161,11 +187,18 @@ import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidation;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.extendedfieldsExtension.ExtendedFieldExtensionService;
+import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.finance.FeeReceiptService;
+import com.pennant.backend.service.finance.FinCollateralService;
 import com.pennant.backend.service.finance.FinFeeConfigService;
-import com.pennant.backend.service.finance.GenericFinanceDetailService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
+import com.pennant.backend.service.finance.GuarantorDetailService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptRealizationService;
 import com.pennant.backend.service.finance.ReceiptService;
@@ -189,6 +222,9 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.pff.accounting.model.PostingDTO;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.AppException;
@@ -201,6 +237,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
@@ -215,7 +252,7 @@ import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.rits.cloning.Cloner;
 
-public class ReceiptServiceImpl extends GenericFinanceDetailService implements ReceiptService {
+public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> implements ReceiptService {
 	private static final Logger logger = LogManager.getLogger(ReceiptServiceImpl.class);
 
 	private static final String EXCESS_ADJUST_TO = "Excess Adjust to ";
@@ -261,6 +298,42 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private ExtendedFieldExtensionService extendedFieldExtensionService;
 	private BankDetailDAO bankDetailDAO;
 	private FinanceWorkFlowService financeWorkFlowService;
+
+	private AuditHeaderDAO auditHeaderDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceDisbursementDAO financeDisbursementDAO;
+	private RepayInstructionDAO repayInstructionDAO;
+	private FinODPenaltyRateDAO finODPenaltyRateDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private DocumentDetailsDAO documentDetailsDAO;
+	private FinanceProfitDetailDAO profitDetailsDAO;
+	private FinLogEntryDetailDAO finLogEntryDetailDAO;
+	private FinODDetailsDAO finODDetailsDAO;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceRepaymentsDAO financeRepaymentsDAO;
+	private TransactionEntryDAO transactionEntryDAO;
+	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
+	private FinanceStepDetailDAO financeStepDetailDAO;
+	private FinFeeDetailDAO finFeeDetailDAO;
+	private FinanceTaxDetailDAO financeTaxDetailDAO;
+	private CustomerDAO customerDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private AccrualService accrualService;
+	private GuarantorDetailService guarantorDetailService;
+	private JointAccountDetailService jointAccountDetailService;
+	private CheckListDetailService checkListDetailService;
+	private CustomerDetailsService customerDetailsService;
+	private FinCollateralService finCollateralService;
+	private FinFeeDetailService finFeeDetailService;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
+	private CollateralAssignmentValidation collateralAssignmentValidation;
+	private CollateralAssignmentDAO collateralAssignmentDAO;
+	private AdvancePaymentService advancePaymentService;
+	private CustomerQueuingDAO customerQueuingDAO;
+	private FeeTypeDAO feeTypeDAO;
+	private ReceiptCalculator receiptCalculator;
+	private ManualAdviseDAO manualAdviseDAO;
+	private AccountingSetDAO accountingSetDAO;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -788,6 +861,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		boolean changeStatus = false;
+		Date appDate = SysParamUtil.getAppDate();
 
 		// AuditHeader auditHeader = copy(aAuditHeader);
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
@@ -802,7 +876,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		fm.setRcdMaintainSts(FinServiceEvent.RECEIPT);
 
-		auditHeader = executeStageAccounting(auditHeader);
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(appDate);
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
+
 		fm.setRcdMaintainSts("");
 
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
@@ -846,7 +927,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setRcdMaintainSts("R");
 		rch.setActFinReceipt(schdData.getFinanceMain().isFinIsActive());
 		if (RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus())) {
-			rch.setBounceDate(SysParamUtil.getAppDate());
+			rch.setBounceDate(appDate);
 		}
 		if (rch.isNewRecord()) {
 			receiptID = finReceiptHeaderDAO.save(rch, tableType);
@@ -1477,7 +1558,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
-		cancelStageAccounting(fm.getFinID(), rch.getReceiptPurpose());
+		AccountingEngine.cancelStageAccounting(fm.getFinID(), rch.getReceiptPurpose());
 
 		// ScheduleDetails deletion
 		// listDeletion(financeMain.getFinReference(),
@@ -1578,8 +1659,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, TableType.TEMP_TAB.getSuffix(),
-					fd.getFinScheduleData().getFinanceMain(), rch.getReceiptPurpose(), serviceUID);
+			/*
+			 * details = processingDocumentDetailsList(details, TableType.TEMP_TAB.getSuffix(),
+			 * fd.getFinScheduleData().getFinanceMain(), rch.getReceiptPurpose(), serviceUID);
+			 */
 			auditDetails.addAll(details);
 		}
 
@@ -1683,6 +1766,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String roleCode = rd.getReceiptHeader().getRoleCode();
 		String nextRoleCode = rd.getReceiptHeader().getNextRoleCode();
 
+		Date appDate = SysParamUtil.getAppDate();
+
 		ReceiptPurpose receiptPurpose = ReceiptPurpose.purpose(rch.getReceiptPurpose());
 		ReceiptPurpose prvReceiptPurpose = ReceiptPurpose.purpose(rch.getPrvReceiptPurpose());
 		if (FinanceConstants.REALIZATION_APPROVER.equals(roleCode)) {
@@ -1752,7 +1837,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Finance Stage Accounting Process
 		// =======================================
-		auditHeader = executeStageAccounting(auditHeader);
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(appDate);
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
+
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -1819,7 +1911,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		finReceiptHeaderDAO.generatedReceiptID(rch);
 		rch.setPostBranch(auditHeader.getAuditBranchCode());
-		rch.setReceiptDate(SysParamUtil.getAppDate());
+		rch.setReceiptDate(appDate);
 		rch.setRcdMaintainSts(null);
 		rch.setRoleCode("");
 		rch.setNextRoleCode("");
@@ -1865,7 +1957,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		Date curBusDate = SysParamUtil.getAppDate();
+		Date curBusDate = appDate;
 		Date valueDate = rch.getValueDate();
 
 		List<FinanceScheduleDetail> schdList = schedules;
@@ -2021,7 +2113,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, rd.getSourceId()) && !fd.isDirectFinalApprove()) {
 			// Save Document Details
 			if (CollectionUtils.isNotEmpty(fd.getDocumentDetailsList())) {
-				listDocDeletion(fd, TableType.TEMP_TAB.getSuffix());
+				documentDetailsDAO.deleteList(new ArrayList<DocumentDetails>(fd.getDocumentDetailsList()),
+						TableType.TEMP_TAB.getSuffix());
 			}
 
 			// set Check list details Audit
@@ -2351,10 +2444,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
 
-		cancelStageAccounting(finID, receiptHeader.getReceiptPurpose());
+		AccountingEngine.cancelStageAccounting(fm.getFinID(), receiptHeader.getReceiptPurpose());
 
 		// Bounce Charge Due Postings
-		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
+		if (RepayConstants.PAYSTATUS_BOUNCE.equals(receiptHeader.getReceiptModeStatus())) {
 			ManualAdvise bounce = receiptHeader.getManualAdvise();
 			if (bounce != null && bounce.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
 
@@ -2362,16 +2455,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					bounce.setAdviseID(this.manualAdviseDAO.getNewAdviseID());
 				}
 
-				AEEvent aeEvent = executeBounceDueAccounting(fm, receiptHeader.getBounceDate(), bounce,
-						auditHeader.getAuditBranchCode(), Allocation.BOUNCE);
-				if (aeEvent != null && StringUtils.isNotEmpty(aeEvent.getErrorMessage())) {
-					ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-					errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
-							aeEvent.getErrorMessage(), new String[] {}, new String[] {}));
-					logger.debug(Literal.LEAVING);
-					return auditHeader;
-				}
-				receiptHeader.getManualAdvise().setLinkedTranId(aeEvent.getLinkedTranId());
+				PostingDTO postingDTO = new PostingDTO();
+
+				postingDTO.setFinanceMain(fm);
+				postingDTO.setValueDate(receiptHeader.getBounceDate());
+				postingDTO.setManualAdvise(bounce);
+				postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+				AccountingEngine.post(AccountingEvent.MANFEE, postingDTO);
 			}
 		}
 
@@ -2420,13 +2511,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, rceiptData.getSourceId())) {
 
 			// Save Document Details
-			if (CollectionUtils.isNotEmpty(fd.getDocumentDetailsList())) {
-				List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
-				details = processingDocumentDetailsList(details, "", schdData.getFinanceMain(),
-						receiptHeader.getReceiptPurpose(), serviceUID);
-				auditDetails.addAll(details);
-				listDocDeletion(fd, TableType.TEMP_TAB.getSuffix());
-			}
+			/*
+			 * if (CollectionUtils.isNotEmpty(fd.getDocumentDetailsList())) { List<AuditDetail> details =
+			 * fd.getAuditDetailMap().get("DocumentDetails"); details = processingDocumentDetailsList(details, "",
+			 * schdData.getFinanceMain(), receiptHeader.getReceiptPurpose(), serviceUID); auditDetails.addAll(details);
+			 * documentDetailsDAO.deleteList(new ArrayList<DocumentDetails>(fd.getDocumentDetailsList()),
+			 * TableType.TEMP_TAB.getSuffix()); }
+			 */
 
 			// set Check list details Audit
 			// =======================================
@@ -2996,7 +3087,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Finance Document Details
 		if (CollectionUtils.isNotEmpty(financeDetail.getDocumentDetailsList())) {
-			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
+			/*
+			 * auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
+			 */
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
@@ -6426,9 +6519,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 		FinanceMain fm = schdData.getFinanceMain();
 
-		Date appDate = fm.getAppDate();
-		Date sysDate = DateUtil.getSysDate();
-
 		RequestSource requestSource = fsi.getRequestSource();
 
 		rd.setTotalPastDues(receiptCalculator.getTotalNetPastDue(rd));
@@ -7940,6 +8030,187 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	@Autowired
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
+	public CollateralAssignmentValidation getCollateralAssignmentValidation() {
+		if (collateralAssignmentValidation == null) {
+			this.collateralAssignmentValidation = new CollateralAssignmentValidation(collateralAssignmentDAO);
+		}
+		return collateralAssignmentValidation;
+	}
+
+	@Autowired
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+
+	@Autowired
+	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
+		this.repayInstructionDAO = repayInstructionDAO;
+	}
+
+	@Autowired
+	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
+		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
+	}
+
+	@Autowired
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	@Autowired
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
+	@Autowired
+	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
+		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
+	@Autowired
+	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
+		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
+	}
+
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
+
+	@Autowired
+	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
+		this.transactionEntryDAO = transactionEntryDAO;
+	}
+
+	@Autowired
+	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
+		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
+		this.financeStepDetailDAO = financeStepDetailDAO;
+	}
+
+	@Autowired
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	@Autowired
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	@Autowired
+	public void setAccrualService(AccrualService accrualService) {
+		this.accrualService = accrualService;
+	}
+
+	@Autowired
+	public void setGuarantorDetailService(GuarantorDetailService guarantorDetailService) {
+		this.guarantorDetailService = guarantorDetailService;
+	}
+
+	@Autowired
+	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
+		this.jointAccountDetailService = jointAccountDetailService;
+	}
+
+	@Autowired
+	public void setCheckListDetailService(CheckListDetailService checkListDetailService) {
+		this.checkListDetailService = checkListDetailService;
+	}
+
+	@Autowired
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	@Autowired
+	public void setFinCollateralService(FinCollateralService finCollateralService) {
+		this.finCollateralService = finCollateralService;
+	}
+
+	@Autowired
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	@Autowired
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
+
+	@Autowired
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	@Autowired
+	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
+		this.advancePaymentService = advancePaymentService;
+	}
+
+	@Autowired
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
+	}
+
+	@Autowired
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
+
+	@Autowired
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
+		this.accountingSetDAO = accountingSetDAO;
+	}
+
+	public void setCollateralAssignmentValidation(CollateralAssignmentValidation collateralAssignmentValidation) {
+		this.collateralAssignmentValidation = collateralAssignmentValidation;
 	}
 
 }

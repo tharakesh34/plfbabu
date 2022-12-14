@@ -571,7 +571,7 @@
 	</bean>
 
 	<!-- FinMandate service -->
-	<bean id="finMandateService" class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl"/>
+	<bean id="finMandateService" class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl" />
 
 	<bean id="abstractInterface" class="com.pennanttech.pff.external.AbstractInterface" abstract="true">
 		<property name="dataSource" ref="dataSource" />
@@ -612,7 +612,7 @@
 
 	<bean name="documentTypeService" class="com.pennant.backend.service.systemmasters.impl.DocumentTypeServiceImpl" />
 
-	<bean id="manualAdviseService" class="com.pennant.backend.service.finance.impl.ManualAdviseServiceImpl"/>
+	<bean id="manualAdviseService" class="com.pennant.backend.service.finance.impl.ManualAdviseServiceImpl" />
 
 	<bean id="feeTypeService" class="com.pennant.backend.service.feetype.impl.FeeTypeServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
@@ -649,16 +649,16 @@
 	<bean id="provisionDao" class="com.pennanttech.pff.provision.dao.impl.ProvisionDAOImpl" parent="sequenceDao" />
 
 	<bean id="customerDataService" class="com.pennant.backend.service.customermasters.impl.CustomerDataService" />
-	
+
 	<bean id="instrumentwiseLimitDAO"
 		class="com.pennant.backend.dao.applicationmaster.impl.InstrumentwiseLimitDAOImpl" parent="sequenceDao" />
-	
+
 	<bean name="instrumentwiseLimitService"
 		class="com.pennant.backend.service.applicationmaster.impl.InstrumentwiseLimitServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="instrumentwiseLimitDAO" ref="instrumentwiseLimitDAO" />
 	</bean>
-	
+
 	<bean id="limitCheckDetails" class="com.pennant.app.finance.limits.LimitCheckDetails">
 		<property name="notificationService" ref="notificationService" />
 		<property name="notificationsDAO" ref="notificationsDAO" />
@@ -678,8 +678,69 @@
 	<bean id="tdsReceivableDAO" class="com.pennant.backend.dao.tds.receivables.impl.TdsReceivableDAOImpl"
 		parent="sequenceDao" />
 
-
 	<bean name="tdsReceivablesTxnService"
 		class="com.pennant.backend.service.tds.receivables.impl.TdsReceivablesTxnServiceImpl" />
 
+	<bean id="sODService" class="com.pennanttech.pff.sod.service.impl.SODServiceImpl" />
+
+	<bean id="receiptService" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" />
+
+	<bean id="sodDAO" class="com.pennanttech.pff.sod.dao.impl.SodDAOImpl" parent="basicDao" />
+
+	<bean id="depositDetailsDAO" class="com.pennant.backend.dao.receipts.impl.DepositDetailsDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="depositChequesDAO" class="com.pennant.backend.dao.receipts.impl.DepositChequesDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="promotionDAO" class="com.pennant.backend.dao.rmtmasters.impl.PromotionDAOImpl" parent="sequenceDao" />
+
+	<bean id="receiptUploadDetailDAO" class="com.pennant.backend.dao.finance.impl.ReceiptUploadDetailDAOImpl"
+		parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="subventionDetailDAO" class="com.pennant.backend.dao.finance.impl.SubventionDetailDAOImpl"
+		parent="basicDao" />
+	<bean id="receiptRealizationService"
+		class="com.pennant.backend.service.finance.impl.ReceiptRealizationServiceImpl" />
+
+	<bean id="receiptCancellationService"
+		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" />
+	<bean id="receiptResponseDetailDAO" class="com.pennant.backend.dao.finance.impl.ReceiptResponseDetailDAOImpl"
+		parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="receiptUploadHeaderDAO" class="com.pennant.backend.dao.finance.impl.ReceiptUploadHeaderDAOImpl"
+		parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="reasonCodeDAO" class="com.pennant.backend.dao.applicationmaster.impl.ReasonCodeDAOImpl"
+		parent="sequenceDao" />
+	
+	<bean id="feeWaiverHeaderDAO" class="com.pennant.backend.dao.finance.impl.FeeWaiverHeaderDAOImpl"
+		parent="sequenceDao" />
+	<bean id="feeReceiptService" class="com.pennant.backend.service.finance.impl.FeeReceiptServiceImpl"/>
+	<bean id="finFeeConfigService" class="com.pennant.backend.service.finance.impl.FinFeeConfigServiceImpl"/>
+	<bean id="bounceReasonDAO" class="com.pennant.backend.dao.applicationmaster.impl.BounceReasonDAOImpl"
+		parent="sequenceDao" />
+	<bean id="ruleService" class="com.pennant.backend.service.rulefactory.impl.RuleServiceImpl"/>
+	<bean id="manualScheduleService" class="com.pennant.backend.service.finance.manual.schedule.impl.ManualScheduleServiceImpl"/>
+	<bean id="finTypeFeesDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeFeesDAOImpl" parent="sequenceDao" />
+	<bean id="extendedFieldExtensionService"
+		class="com.pennant.backend.service.extendedfieldsExtension.impl.ExtendedFieldExtensionServiceImpl"/>
+	<bean id="bankDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.BankDetailDAOImpl"
+		parent="basicDao" />
+	<bean id="financeWorkFlowService" class="com.pennant.backend.service.lmtmasters.impl.FinanceWorkFlowServiceImpl"/>
+	<bean id="jointAccountDetailService"
+		class="com.pennant.backend.service.finance.impl.JointAccountDetailServiceImpl"/>
+	<bean id="customerDetailsService" class="com.pennant.backend.service.customermasters.impl.CustomerDetailsServiceImpl"/>
+	<bean id="samplingService" class="com.pennanttech.pff.service.sampling.SamplingServiceImpl"/>
+	<bean id="customerIncomeDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerIncomeDAOImpl"
+		parent="sequenceDao" />
+	<bean id="finSamplingService" class="com.pennanttech.pennapps.pff.finsampling.service.FinSamplingServiceImpl"/>
+	<bean id="finSamplingDAO" class="com.pennanttech.pennapps.pff.finsampling.dao.FinSamplingDAOImpl"
+		parent="sequenceDao" />
 </beans>

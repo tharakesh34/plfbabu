@@ -105,6 +105,8 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.accounting.model.PostingDTO;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -309,7 +311,13 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		// Finance Stage Accounting Process
 		// =======================================
-		auditHeader = executeStageAccounting(auditHeader);
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(SysParamUtil.getAppDate());
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -701,7 +709,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
 
-		cancelStageAccounting(finID, fd.getModuleDefiner());
+		AccountingEngine.cancelStageAccounting(finID, fd.getModuleDefiner());
 
 		// Fee charges deletion
 		finFeeChargesDAO.deleteChargesBatch(finID, fd.getModuleDefiner(), false, "_Temp");
@@ -832,18 +840,26 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
 		Date appDate = SysParamUtil.getAppDate();
+
 		// Finance Stage Accounting Process
 		// =======================================
-		auditHeader = executeStageAccounting(auditHeader);
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(appDate);
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
 
 		// Finance Write off Posting Process Execution
 		// =====================================
-		FinScheduleData schdData = fd.getFinScheduleData();
-		FinanceMain fm = schdData.getFinanceMain();
 
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();

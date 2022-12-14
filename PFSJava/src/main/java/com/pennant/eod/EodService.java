@@ -40,6 +40,7 @@ import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.sod.service.SODService;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class EodService {
@@ -65,6 +66,7 @@ public class EodService {
 	private ManualAdviseService manualAdviseService;
 	private AssetClassificationService assetClassificationService;
 	private PresentmentDetailDAO presentmentDetailDAO;
+	private SODService sODService;
 
 	public EodService() {
 		super();
@@ -90,6 +92,7 @@ public class EodService {
 		Date nextDate = custEODEvent.getEventProperties().getNextDate();
 		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus,
 				nextDate);
+		sODService.calculateClosureAmt(custEODEvent);
 	}
 
 	private PresentmentDetail getPresentmentDetail(List<PresentmentDetail> pd, String finReference, Date schDate) {
@@ -406,6 +409,11 @@ public class EodService {
 	@Autowired
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
 		this.presentmentDetailDAO = presentmentDetailDAO;
+	}
+
+	@Autowired
+	public void setSODService(SODService sODService) {
+		this.sODService = sODService;
 	}
 
 }

@@ -85,6 +85,8 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.accounting.model.PostingDTO;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -269,7 +271,14 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		// Finance Stage Accounting Process
 		// =======================================
-		auditHeader = executeStageAccounting(auditHeader);
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(sysData);
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
+
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -458,7 +467,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
-		cancelStageAccounting(finID, fd.getModuleDefiner());
+		AccountingEngine.cancelStageAccounting(finID, fd.getModuleDefiner());
 
 		financeWriteoffDAO.delete(finID, "_Temp");
 
@@ -558,7 +567,14 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		// Finance Stage Accounting Process
 		// =======================================
-		auditHeader = executeStageAccounting(auditHeader);
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(appDate);
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
+
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -702,7 +718,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		amountCodes.setWriteOff(true);
 		aeEvent.getAeAmountCodes().setTotalWriteoff(
 				writeoff.getWriteoffPrincipal().add(writeoff.getWriteoffProfit().add(writeoff.getWrittenoffSchFee())));
-		dataMap = prepareFeeRulesMap(amountCodes, dataMap, fd);
+		dataMap = feeDetailService.prepareFeeRulesMap(amountCodes, dataMap, fd);
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		writeoff.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);

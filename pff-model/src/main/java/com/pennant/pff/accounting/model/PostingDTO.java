@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -19,6 +20,8 @@ public class PostingDTO implements Serializable {
 	private FeeType feeType;
 	private Date valueDate;
 	private TaxHeader taxHeader;
+	private FinReceiptData finReceiptData;
+	private long linkedTranID;
 
 	public PostingDTO() {
 		super();
@@ -78,6 +81,22 @@ public class PostingDTO implements Serializable {
 
 	public void setTaxHeader(TaxHeader taxHeader) {
 		this.taxHeader = taxHeader;
+	}
+
+	public FinReceiptData getFinReceiptData() {
+		return finReceiptData;
+	}
+
+	public void setFinReceiptData(FinReceiptData finReceiptData) {
+		this.finReceiptData = finReceiptData;
+	}
+
+	public long getLinkedTranID() {
+		return linkedTranID;
+	}
+
+	public void setLinkedTranID(long linkedTranID) {
+		this.linkedTranID = linkedTranID;
 	}
 
 }

@@ -81,6 +81,7 @@ public class RepayConstants {
 	public static final String EXCESSADJUSTTO_BOUNCE = "B";
 	public static final String EXCESSADJUSTTO_SETTLEMENT = "S";
 	public static final String EXCESSADJUSTTO_PARTPAY = "S";
+	public static final String EXCESSADJUSTTO_TEXCESS = "T";
 
 	public static final String REQTYPE_INQUIRY = "Inquiry";
 	public static final String REQTYPE_POST = "Post";

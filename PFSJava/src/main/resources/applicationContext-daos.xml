@@ -4466,8 +4466,7 @@
 		</property>
 	</bean>
 
-	<bean name="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl"
-		parent="genericFinanceDetailService" />
+	<bean name="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" />
 
 	<!--============ Finance Excess Amounts Details ============== -->
 	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl"
@@ -10544,6 +10543,7 @@
 		<property name="subventionService" ref="subventionService" />
 		<property name="restructureService" ref="restructureService" />
 		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="feeDetailService" ref="feeDetailService" />
 	</bean>
 
 	<bean id="receiptUploadApprovalProcess" class="com.pennanttech.pff.receipt.upload.ReceiptUploadApprovalProcess">
@@ -11963,11 +11963,15 @@
 		parent="postingEvent" />
 
 	<bean id="postingEventFactory" class="com.pennant.pff.core.engine.accounting.PostingEventFactory" />
+	
+	<bean id="stageAccountingEvent" class="com.pennant.pff.core.engine.accounting.event.StageAccountingEvent"
+		parent="postingEvent" />
 
 	<bean id="accountingEngine" class="com.pennant.pff.core.engine.accounting.AccountingEngine">
 		<property name="factory" ref="postingEventFactory" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="engineExecution" ref="engineExecution" />
+		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 	</bean>
 	<!-- Accounting Engine End -->
 
