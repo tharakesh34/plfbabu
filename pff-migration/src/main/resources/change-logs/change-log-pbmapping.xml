@@ -916,4 +916,92 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#252.10_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintypepartnerbanks_view');
+		 	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#252.10" author="vijaya.a">
+		<createView viewName="FINTYPEPARTNERBANKS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.id,
+					t1.fintype,
+					t5.fintypedesc,
+					t1.purpose,
+					t1.paymentmode,
+					t1.partnerbankid,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid,
+					t2.partnerbankcode,
+					t2.partnerbankname,
+					t1.vanApplicable,
+					t1.branchcode,
+					t3.branchdesc,
+					t1.clusterId,
+					t4.code clusterCode,
+					t4.name,
+					t4.clusterType,
+					t2.accountno suspenseAc
+					FROM fintypepartnerbanks_temp t1
+					LEFT JOIN partnerbanks t2 ON t1.partnerbankid = t2.partnerbankid
+					LEFT JOIN rmtfinancetypes t5 ON t1.fintype = t5.fintype
+					LEFT JOIN RMTBranches t3 ON t1.branchcode = t3.branchcode
+					LEFT JOIN CLUSTERS t4 ON t1.clusterId = t4.Id
+					UNION ALL
+					SELECT t1.id,
+					t1.fintype,
+					t5.fintypedesc,
+					t1.purpose,
+					t1.paymentmode,
+					t1.partnerbankid,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid,
+					t2.partnerbankcode,
+					t2.partnerbankname,
+					t1.vanApplicable,
+					t1.branchcode,
+					t3.branchdesc,
+					t1.clusterId,
+					t4.code clusterCode,
+					t4.name,
+					t4.clusterType,
+					t2.accountno suspenseAc
+					FROM fintypepartnerbanks t1
+					LEFT JOIN rmtfinancetypes t5 ON t1.fintype = t5.fintype
+					LEFT JOIN partnerbanks t2 ON t1.partnerbankid = t2.partnerbankid
+					LEFT JOIN RMTBranches t3 ON t1.branchcode = t3.branchcode
+					LEFT JOIN CLUSTERS t4 ON t1.clusterId = t4.Id
+					WHERE NOT (EXISTS ( SELECT 1
+					FROM fintypepartnerbanks_temp
+					WHERE fintypepartnerbanks_temp.id = t1.id))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#252.10_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintypepartnerbanks_view');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

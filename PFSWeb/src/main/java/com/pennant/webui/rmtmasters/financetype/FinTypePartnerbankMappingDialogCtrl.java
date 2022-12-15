@@ -33,7 +33,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.component.Uppercasebox;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -57,7 +56,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinTypePartnerBankMappingDialog;
-	protected Uppercasebox finType;
+	protected ExtendedCombobox finType;
 	protected Combobox purpose;
 	protected Combobox paymentMode;
 	protected ExtendedCombobox partnerBankID;
@@ -194,6 +193,13 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			this.label_Cluster.setVisible(false);
 			this.cluster.setVisible(false);
 		}
+
+		this.finType.setMaxlength(8);
+		this.finType.setMandatoryStyle(true);
+		this.finType.setModuleName("FinanceType");
+		this.finType.setValueColumn("FinType");
+		this.finType.setDescColumn("FinTypeDesc");
+		this.finType.setValidateColumns(new String[] { "FinType" });
 
 		setStatusDetails();
 
@@ -343,7 +349,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		logger.debug(Literal.ENTERING);
 
 		this.finType.setValue(aFinTypePartnerBank.getFinType());
-		this.label_finTypeDesc.setValue(aFinTypePartnerBank.getFinTypeDesc());
+		this.finType.setDescription(aFinTypePartnerBank.getFinTypeDesc());
 
 		fillComboBox(this.purpose, aFinTypePartnerBank.getPurpose(), purposeList, "");
 		fillComboBox(this.paymentMode, aFinTypePartnerBank.getPaymentMode(), paymentModesList, "");
@@ -399,7 +405,9 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 
 		// Finance Type
 		try {
-			aFinTypePartnerBank.setFinType(this.finType.getValue());
+			String finTypeValue = StringUtils.trimToEmpty(this.finType.getValue());
+			aFinTypePartnerBank.setFinType(finTypeValue);
+			aFinTypePartnerBank.setFinTypeDesc(this.finType.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

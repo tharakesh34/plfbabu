@@ -281,7 +281,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	@Override
 	public List<FinTypePartnerBank> getByFinTypeAndPurpose(FinTypePartnerBank fpb) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, FinType, Purpose, PaymentMode, PartnerBankID, VanApplicable, BranchCode, BranchDesc");
+		sql.append(" Id, FinType, FintypeDesc, Purpose, PaymentMode, PartnerBankID, VanApplicable, BranchCode, BranchDesc");
 		sql.append(", ClusterId, ClusterCode, Name, ClusterType, AccountNo, AccountType, PartnerbankCode");
 		sql.append(", PartnerbankName, Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
@@ -338,6 +338,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 			item.setNextTaskId(rs.getString("NextTaskId"));
 			item.setRecordType(rs.getString("RecordType"));
 			item.setWorkflowId(rs.getLong("WorkflowId"));
+			item.setWorkflowId(rs.getLong("FinTypeDesc"));
 
 			return item;
 		});
@@ -457,6 +458,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 			item.setClusterCode(rs.getString("ClusterCode"));
 			item.setName(rs.getString("Name"));
 			item.setClusterType(rs.getString("ClusterType"));
+			item.setFinTypeDesc(rs.getString("FinTypeDesc"));
 		}
 
 		if (tableType.getSuffix().contains("Aview")) {
@@ -485,7 +487,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		sql.append(" Id, FinType, Purpose, PaymentMode, PartnerBankID, VanApplicable, BranchCode, ClusterId");
 
 		if (tableType.getSuffix().contains("View")) {
-			sql.append(", PartnerBankName, PartnerBankCode, BranchDesc, ClusterCode, Name, ClusterType");
+			sql.append(", PartnerBankName, PartnerBankCode, BranchDesc, ClusterCode, Name, ClusterType, FintypeDesc");
 		}
 
 		if (tableType.getSuffix().contains("Aview")) {

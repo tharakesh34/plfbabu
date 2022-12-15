@@ -48,6 +48,9 @@ public class FinTypePartnerbankListModelItemRenderer implements ListitemRenderer
 			lc.setParent(item);
 		}
 
+		lc = new Listcell(finTypePartnerBank.getSuspenseAc());
+		lc.setParent(item);
+
 		lc = new Listcell(finTypePartnerBank.getRecordStatus());
 		lc.setParent(item);
 

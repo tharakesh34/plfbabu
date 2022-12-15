@@ -73,6 +73,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 	private Long clusterId;
 	private String clusterType;
 	private String entityCode;
+	private String suspenseAc;
 
 	public FinTypePartnerBank() {
 		super();
@@ -114,6 +115,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 		entity.setVersion(super.getVersion());
 		entity.setLastMntBy(super.getLastMntBy());
 		entity.setLastMntOn(super.getLastMntOn());
+		entity.setSuspenseAc(this.suspenseAc);
 
 		return entity;
 	}
@@ -133,6 +135,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 		excludeFields.add("clusterCode");
 		excludeFields.add("clusterType");
 		excludeFields.add("entityCode");
+		excludeFields.add("suspenseAc");
 
 		return excludeFields;
 	}
@@ -339,6 +342,14 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
+	}
+
+	public String getSuspenseAc() {
+		return suspenseAc;
+	}
+
+	public void setSuspenseAc(String suspenseAc) {
+		this.suspenseAc = suspenseAc;
 	}
 
 }
