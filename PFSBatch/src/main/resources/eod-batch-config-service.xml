@@ -681,12 +681,12 @@
 	<bean name="tdsReceivablesTxnService"
 		class="com.pennant.backend.service.tds.receivables.impl.TdsReceivablesTxnServiceImpl" />
 
-	<bean id="sODService" class="com.pennanttech.pff.sod.service.impl.SODServiceImpl" />
+	<bean id="closureService" class="com.pennanttech.pff.sod.service.impl.SODServiceImpl" />
 
 	<bean id="receiptService" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" />
 
-	<bean id="sodDAO" class="com.pennanttech.pff.sod.dao.impl.SodDAOImpl" parent="basicDao" />
-
+	<bean id="closureDAO" class="com.pennanttech.pff.closure.dao.impl.ClosureDAOImpl" parent="basicDao" />
+	
 	<bean id="depositDetailsDAO" class="com.pennant.backend.dao.receipts.impl.DepositDetailsDAOImpl"
 		parent="sequenceDao" />
 

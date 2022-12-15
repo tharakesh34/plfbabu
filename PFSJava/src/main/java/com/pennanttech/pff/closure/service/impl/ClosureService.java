@@ -1,9 +1,11 @@
-package com.pennanttech.pff.sod.service.impl;
+package com.pennanttech.pff.closure.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.CustEODEvent;
@@ -17,27 +19,27 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.closure.dao.ClosureDAO;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.pennanttech.pff.sod.dao.SodDAO;
-import com.pennanttech.pff.sod.service.SODService;
 
-public class SODServiceImpl extends GenericService<FinReceiptData> implements SODService {
-	private SodDAO sodDAO;
+public class ClosureService {
+	private static final Logger logger = LogManager.getLogger(ClosureService.class);
+
 	private ReceiptService receiptService;
+	private ClosureDAO closureDAO;
 
-	Date appDate = SysParamUtil.getAppDate();
-	String eventCode = AccountingEvent.EARLYSTL;
-	ReceiptPurpose rptPurpose = ReceiptPurpose.purpose(FinServiceEvent.EARLYSETTLE);
-	LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+	public ClosureService() {
+		super();
+	}
 
-	public void calculateClosureAmt(CustEODEvent custEODEvent) {
+	public void calculateClosureAmount(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		FinReceiptData receiptData = new FinReceiptData();
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -45,12 +47,29 @@ public class SODServiceImpl extends GenericService<FinReceiptData> implements SO
 				BigDecimal closure = prepareReceiptData(custEODEvent, finEODEvent, receiptData);
 			}
 		}
+		closureDAO.saveClosureAmount(receiptData);
+	}
 
-		sodDAO.saveClosureAmount();
+	public void autoClosure(CustEODEvent custEODEvent) {
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		FinReceiptData receiptData = new FinReceiptData();
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			if (finEODEvent.getFinanceMain().isFinIsActive()) {
+				receiptService.validateThreshHoldLimit(null, null);
+			}
+		}
+		
 	}
 
 	private BigDecimal prepareReceiptData(CustEODEvent custEODEvent, FinEODEvent finEODEvent,
 			FinReceiptData receiptData) {
+		logger.debug(Literal.ENTERING);
+
+		Date appDate = SysParamUtil.getAppDate();
+		String eventCode = AccountingEvent.EARLYSTL;
+		ReceiptPurpose rptPurpose = ReceiptPurpose.purpose(FinServiceEvent.EARLYSETTLE);
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
 		FinanceMain fm = finEODEvent.getFinanceMain();
 
 		FinanceDetail fd = new FinanceDetail();
@@ -103,13 +122,9 @@ public class SODServiceImpl extends GenericService<FinReceiptData> implements SO
 		BigDecimal totalFees = frch.getTotalFees().getTotalDue();
 		BigDecimal excessAvailable = receiptData.getExcessAvailable();
 		BigDecimal totalDues = pastDues.add(totalBounces).add(totalRcvAdvises).add(totalFees).subtract(excessAvailable);
+		logger.debug(Literal.LEAVING);
 
 		return totalDues;
-	}
-
-	@Autowired
-	public void setSodDAO(SodDAO sodDAO) {
-		this.sodDAO = sodDAO;
 	}
 
 	@Autowired
@@ -117,4 +132,8 @@ public class SODServiceImpl extends GenericService<FinReceiptData> implements SO
 		this.receiptService = receiptService;
 	}
 
+	@Autowired
+	public void setClosureDAO(ClosureDAO closureDAO) {
+		this.closureDAO = closureDAO;
+	}
 }

@@ -512,6 +512,14 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		receiptAmount = PennantApplicationUtil.unFormateAmount(receiptAmount, formatter);
 
 		long finID = ComponentUtil.getFinID(this.finReference);
+		
+		errorDetail = receiptService.validateThreshHoldLimit(receiptData.getReceiptHeader(),
+				this.receiptDues.getActualValue());
+
+		if (errorDetail != null) {
+			MessageUtil.showError(errorDetail.getMessage());
+			return;
+		}
 
 		if (!((FinanceMain) this.finReference.getObject()).isFinIsActive()) {
 			ErrorDetail errorDetails = null;
@@ -698,6 +706,12 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		BigDecimal totalFees = rch.getTotalFees().getTotalDue();
 		BigDecimal excessAvailable = receiptData.getExcessAvailable();
 		BigDecimal totalDues = pastDues.add(totalBounces).add(totalRcvAdvises).add(totalFees).subtract(excessAvailable);
+
+		ErrorDetail error = receiptService.validateThreshHoldLimit(rch, totalDues);
+		if (error != null) {
+			MessageUtil.showError(error.getMessage());
+			return;
+		}
 
 		if (BigDecimal.ZERO.compareTo(totalDues) > 0) {
 			totalDues = BigDecimal.ZERO;

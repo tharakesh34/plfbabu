@@ -7836,6 +7836,25 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		return list;
 	}
 
+	public ErrorDetail validateThreshHoldLimit(FinReceiptHeader rch, BigDecimal totalDues) {
+		BigDecimal receiptAmount = rch.getReceiptAmount();
+
+		if (receiptAmount.compareTo(BigDecimal.ZERO) == 0
+				|| !FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			return null;
+		}
+
+		BigDecimal threshHold = rch.getTreshHold();
+
+		if ((totalDues.compareTo(receiptAmount.add(threshHold)) > 0)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Receipt Amount should greater than or equal to Receipt Dues";
+			return new ErrorDetail("9999", valueParm[0], valueParm);
+		}
+
+		return null;
+	}
+
 	@Autowired
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;

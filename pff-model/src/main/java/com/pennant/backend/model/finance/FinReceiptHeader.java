@@ -218,6 +218,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private String receiptSourceAcDesc;
 	private String entityDesc;
 	private String sourceId;
+	private BigDecimal treshHold = new BigDecimal("1000000");
 
 	public FinReceiptHeader() {
 		super();
@@ -1548,7 +1549,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	/*
 	 * public FinRepayHeader getRepayHeader() { return repayHeader; }
 	 * 
-	 * public void setRepayHeader(FinRepayHeader repayHeader) { this.repayHeader = repayHeader; }
+	 * public void setRepayHeader(FinRepayHeader repayHeader) { this.repayHeader =
+	 * repayHeader; }
 	 */
 
 	public String getCollectionAgentCode() {
@@ -1997,6 +1999,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 
 	public void setModuleType(String moduleType) {
 		this.moduleType = moduleType;
+	}
+
+	public BigDecimal getTreshHold() {
+		return treshHold;
+	}
+
+	public void setTreshHold(BigDecimal treshHold) {
+		this.treshHold = treshHold;
 	}
 
 }
