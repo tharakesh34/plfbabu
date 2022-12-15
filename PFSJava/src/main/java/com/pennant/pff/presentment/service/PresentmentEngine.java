@@ -554,7 +554,7 @@ public class PresentmentEngine {
 			}
 		}
 
-		pd.setStatus(RepayConstants.PEXC_IMPORT);
+		pd.setStatus(RepayConstants.PEXC_SEND_TO_PRESENTMENT);
 
 		pd.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
 
@@ -904,15 +904,15 @@ public class PresentmentEngine {
 		return 0;
 	}
 
-	private void createReceipt(PresentmentDetail pd) {
+	private void createReceipt(PresentmentDetail pd, RequestSource requestSource, boolean dueDateCreation) {
 		logger.debug(Literal.ENTERING);
 
 		Date businessDate = pd.getAppDate();
 
 		ReceiptDTO receiptDTO = new ReceiptDTO();
 
-		receiptDTO.setRequestSource(RequestSource.PRMNT_RESP);
-		receiptDTO.setCreatePrmntReceipt(!PresentmentExtension.DUE_DATE_RECEIPT_CREATION);
+		receiptDTO.setRequestSource(requestSource);
+		receiptDTO.setCreatePrmntReceipt(dueDateCreation);
 
 		long finID = pd.getFinID();
 		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, true);
@@ -960,7 +960,7 @@ public class PresentmentEngine {
 		}
 
 		if (DateUtil.compare(pd.getAppDate(), pd.getSchDate()) >= 0) {
-			createReceipt(pd);
+			createReceipt(pd, RequestSource.PRMNT_EXT, false);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1138,7 +1138,7 @@ public class PresentmentEngine {
 			if (!PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
 				if (pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 					pd.setAdvanceAmt(BigDecimal.ZERO);
-					createReceipt(pd);
+					createReceipt(pd, RequestSource.PRMNT_RESP, true);
 				}
 
 			} else if (!finIsActive) {

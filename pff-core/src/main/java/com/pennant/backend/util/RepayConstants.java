@@ -347,6 +347,7 @@ public class RepayConstants {
 	public static final String PEXC_BOUNCE = "B";
 	public static final String PEXC_PAID = "PAID";
 	public static final String PEXC_FAILED = "FAILED";
+	public static final String PEXC_SEND_TO_PRESENTMENT = "P";
 
 	// Receipt Payment Statuses
 	public static final String PAYSTATUS_APPROVED = "A";

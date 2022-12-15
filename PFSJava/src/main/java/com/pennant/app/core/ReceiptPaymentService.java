@@ -106,7 +106,8 @@ public class ReceiptPaymentService {
 		}
 
 		if (pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
-			if (receiptDTO.getRequestSource() == RequestSource.EOD) {
+			RequestSource requestSource = receiptDTO.getRequestSource();
+			if (requestSource == RequestSource.EOD || requestSource == RequestSource.PRMNT_EXT) {
 				createReceiptAndBounce(receiptDTO);
 			}
 
