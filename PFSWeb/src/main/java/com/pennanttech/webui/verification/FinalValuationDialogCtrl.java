@@ -90,10 +90,11 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		this.valuationAmountAsPerPE.setReadonly(true);
+		this.valuationAmountAsPerPE.setReadonly(false);
 		this.valuationAmountAsPerPE.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.finalValuationAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.valuationAsPerCOP.setProperties(false, PennantConstants.defaultCCYDecPos);
+		this.valuationAsPerCOP.setReadonly(false);
 		this.finalValRemarks.setMaxlength(450);
 		for (String collRef : collateralRef) {
 			collateralRefList.add(new ValueLabel(collRef, collRef));
@@ -109,7 +110,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
-		this.finalValuationAmount.setReadonly(true);
+		this.finalValuationAmount.setReadonly(false);
 		if (ImplementationConstants.TV_FINALVAL_AMOUNT_VALD) {
 			this.finalValuationAmount.setReadonly(false);
 		}
