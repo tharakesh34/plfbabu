@@ -1313,7 +1313,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.commitmentRef.setFilters(new Filter[] { new Filter("CustID", financeMain.getCustID(), Filter.OP_EQUAL) });
 
 		this.reqLoanTenor.setMaxlength(4);
-		this.reqLoanAmt.setProperties(false, finFormatter);
+		this.reqLoanAmt.setProperties(true, finFormatter);
 
 		this.lPPRule.setVisible(false);
 		if (isOverdraft) {
