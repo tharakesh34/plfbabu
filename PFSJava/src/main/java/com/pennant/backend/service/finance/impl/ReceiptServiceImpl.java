@@ -5695,7 +5695,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (fsi.isReceiptUpload()) {
-			if (StringUtils.equals(rcd.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
+			String status = rcd.getStatus();
+			if (StringUtils.equals(status, RepayConstants.PAYSTATUS_REALIZED)
+					|| StringUtils.equals(status, RepayConstants.PAYSTATUS_APPROVED)) {
 				rch.setRealizationDate(fsi.getRealizationDate());
 				rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 			} else if ((fsi.getBounceReason() != null || fsi.getCancelReason() != null)
