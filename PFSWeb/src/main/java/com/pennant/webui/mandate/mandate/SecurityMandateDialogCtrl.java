@@ -109,6 +109,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
@@ -528,7 +529,13 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.partnerBank.setDisplayStyle(2);
 		this.partnerBank.setMandatoryStyle(true);
 		this.partnerBank.setWidth("200px");
-		this.partnerBank.setModuleName("FinTypePartnerBank_Mandates");
+
+		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			this.partnerBank.setModuleName("FinTypePartner");
+		} else {
+			this.partnerBank.setModuleName("FinTypePartnerBank_Mandates");
+		}
+
 		this.partnerBank.setValueColumn("PartnerBankCode");
 		this.partnerBank.setDescColumn("PartnerBankName");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });

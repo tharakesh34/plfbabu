@@ -49,7 +49,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(FinTypePartnerBankDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinTypePartnerbankMappingDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -182,9 +182,9 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			this.cluster.setDescColumn("Name");
 			this.cluster.setValidateColumns(new String[] { "Code", "Name" });
 			this.cluster.setMandatoryStyle(true);
-			Filter filter[] = new Filter[1];
-			filter[0] = new Filter("CLUSTERTYPE", PartnerBankExtension.MAPPING, Filter.OP_EQUAL);
-			this.cluster.setFilters(filter);
+			// Filter filter[] = new Filter[1];
+			// filter[0] = new Filter("CLUSTERTYPE", PartnerBankExtension.MAPPING, Filter.OP_EQUAL);
+			// this.cluster.setFilters(filter);
 		} else {
 			this.row_Branch.setVisible(false);
 			this.label_Branch.setVisible(false);
