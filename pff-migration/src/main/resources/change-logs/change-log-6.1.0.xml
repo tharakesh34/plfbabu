@@ -619,7 +619,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="31" author="rahul.r" dbms="oracle,postgresql">
+	<changeSet id="31" author="rahul.r" dbms="mssql,postgresql">
 		<sql>
 		<![CDATA[
 				UPDATE RMTScoringGroup  SET minscore = TO_NUMBER((SELECT C.minscore2 FROM RMTScoringGroup C  Where RMTScoringGroup.scoregroupid=C.scoregroupid),'9999');
@@ -628,7 +628,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="32" author="rahul.r" dbms="mssql">
+	<changeSet id="31" author="rahul.r" dbms="oracle">
 		<sql>
 		<![CDATA[
 				UPDATE RMTScoringGroup  SET minscore = CAST((SELECT C.minscore2 FROM RMTScoringGroup C  Where RMTScoringGroup.scoregroupid=C.scoregroupid) AS int);
