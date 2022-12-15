@@ -135,21 +135,17 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		boolean isMandateReq = InstrumentType.mandateRequired(fm.getFinRepayMethod());
+		boolean isMandateReq = true;
+
+		if (!mandate.isSecurityMandate()) {
+			isMandateReq = InstrumentType.mandateRequired(fm.getFinRepayMethod());
+		}
 
 		String finReference = fm.getFinReference();
 
 		if (!isMandateReq) {
 			deleteMandate(finReference, mandate, auditDetails);
 			fm.setMandateID(0L);
-			addAudit(auditHeader, auditDetails);
-
-			logger.debug(Literal.LEAVING);
-
-			return;
-		}
-
-		if (mandate == null) {
 			addAudit(auditHeader, auditDetails);
 
 			logger.debug(Literal.LEAVING);
@@ -224,20 +220,15 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			customer = fd.getCustomerDetails().getCustomerEMailList();
 		}
 
-		boolean isMandateReq = InstrumentType.mandateRequired(fm.getFinRepayMethod());
+		boolean isMandateReq = true;
+
+		if (!mandate.isSecurityMandate()) {
+			isMandateReq = InstrumentType.mandateRequired(fm.getFinRepayMethod());
+		}
 
 		if (!isMandateReq) {
 			fm.setMandateID(0L);
 
-			deleteMandate(fm.getFinReference(), mandate, auditDetails);
-			addAudit(auditHeader, auditDetails);
-
-			logger.debug(Literal.LEAVING);
-
-			return;
-		}
-
-		if (mandate == null) {
 			deleteMandate(fm.getFinReference(), mandate, auditDetails);
 			addAudit(auditHeader, auditDetails);
 

@@ -15,7 +15,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public class CreateBatchesTasklet implements Tasklet {
-	private final Logger logger = LogManager.getLogger(ExtractionTasklet.class);
+	private final Logger logger = LogManager.getLogger(CreateBatchesTasklet.class);
 
 	private PresentmentEngine presentmentEngine;
 

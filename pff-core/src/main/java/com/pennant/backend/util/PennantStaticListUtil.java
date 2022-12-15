@@ -3334,6 +3334,7 @@ public class PennantStaticListUtil {
 			presentmentsStatusList.add(new ValueLabel("F", Labels.getLabel("label_Presentment_Status_Failed")));
 			presentmentsStatusList.add(new ValueLabel("A", Labels.getLabel("label_Presentment_Status_Approve")));
 			presentmentsStatusList.add(new ValueLabel("B", Labels.getLabel("label_Presentment_Status_Bounce")));
+			presentmentsStatusList.add(new ValueLabel("P", Labels.getLabel("label_Presentment_Status_Approve")));
 		}
 		return presentmentsStatusList;
 	}

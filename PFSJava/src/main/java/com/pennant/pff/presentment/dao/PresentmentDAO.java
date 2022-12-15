@@ -13,6 +13,8 @@ public interface PresentmentDAO {
 
 	long createBatch(String batchName, int totalRecords);
 
+	void deleteBatch(long batchID);
+
 	BatchJobQueue getBatch(BatchJobQueue jobQueue);
 
 	void updateTotalRecords(int count, long batchID);

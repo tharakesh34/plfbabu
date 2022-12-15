@@ -1,8 +1,6 @@
 package com.pennant.pff.presentment.web;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +8,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +45,6 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -221,7 +215,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 			return;
 		}
 
-		closeDialog(true);
+		closeDialog(false);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -230,6 +224,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 
 		this.entity.setConstraint("");
 		this.entity.setErrorMessage("");
+		this.entity.clearErrorMessage();
 
 		if (StringUtils.isBlank(this.entity.getValue())) {
 			this.entity.setValue("", "");
@@ -282,69 +277,14 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 	public void onClick$btnDownload(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		doSetValidation();
-		String name = "";
-		List<WrongValueException> wve = new ArrayList<>();
-
 		if (StringUtils.trimToNull(this.fileName.getValue()) == null) {
 			throw new WrongValueException(this.fileName, Labels.getLabel("empty_file"));
 		}
-		name = this.fileName.getDescription();
 
-		List<RePresentmentUploadDetail> details = rePresentmentUploadService
-				.getDataForReport(Long.valueOf(this.fileName.getValue()));
-
-		Workbook workBook = ExcelUtil.getExcelWriterBook(name);
-
-		Sheet sheet = ExcelUtil.getExcelSheet(workBook, "Representment");
-
-		ExcelUtil.createHeader(sheet, getExcelHeaders(), 0);
-
-		int index = 0;
-		int sNo = 0;
-		for (RePresentmentUploadDetail detail : details) {
-			int valueIndex = -2;
-
-			Row row = sheet.createRow(++index);
-
-			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(++sNo));
-			ExcelUtil.addCellValue(row, ++valueIndex, detail.getReference());
-			ExcelUtil.addCellValue(row, ++valueIndex, DateUtil.format(detail.getDueDate(), DateFormat.LONG_DATE));
-			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getPresentmentID()));
-			ExcelUtil.addCellValue(row, ++valueIndex, DateUtil.format(detail.getCreatedOn(), DateFormat.LONG_DATE));
-			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getProgress()));
-			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getCreatedBy()));
-			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getApprovedBy()));
-		}
-
-		String path = App.getResourcePath(PathUtil.TEMPLATES, UploadTypes.RE_PRESENTMENT, "Downloads");
-
-		File folder = new File(path);
-
-		if (!folder.exists()) {
-			folder.mkdirs();
-		}
-
-		File file = new File(folder.getPath().concat(File.separator).concat(name));
-
-		if (file.exists()) {
-			file.delete();
-		}
-
-		try (FileOutputStream outputStream = new FileOutputStream(file)) {
-			try (BufferedOutputStream bos = new BufferedOutputStream(outputStream)) {
-				workBook.write(bos);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Long fileID = Long.valueOf(this.fileName.getValue());
 
 		try {
-			if (name.endsWith("xlsx")) {
-				ExcelUtil.downloadTemplate(path, name, DocType.XLSX);
-			} else {
-				ExcelUtil.downloadTemplate(path, name, DocType.XLS);
-			}
+			rePresentmentUploadService.downloadReport(fileID, "");
 		} catch (AppException e) {
 			MessageUtil.showError(e);
 		}
@@ -447,37 +387,11 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 	private void doWriteComponentsToBean(FileUploadHeader header) {
 		doRemoveValidation();
 
-		doSetValidation();
-
-		String name = this.txtFileName.getValue();
-
-		try {
-			ExcelUtil.isValidFile(name, 200, "^[a-zA-Z0-9 ._]*$");
-		} catch (AppException e) {
-			throw new WrongValueException(this.txtFileName, e.getMessage());
-		}
-
-		try {
-			if (!this.entity.isReadonly()) {
-				this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
-				header.setEntityCode(this.entity.getValue());
-			}
-		} catch (WrongValueException we) {
-			throw new WrongValueException(this.entity, we.getMessage());
-		}
-
-		header.setFileName(name);
-
-		header.setProgress(Status.DEFAULT.getValue());
-	}
-
-	private void doSetValidation() {
-		logger.debug(Literal.ENTERING);
-
 		List<WrongValueException> wve = new ArrayList<>();
 
+		String name = null;
 		try {
-			String name = StringUtils.trimToNull(this.txtFileName.getValue());
+			name = StringUtils.trimToNull(this.txtFileName.getValue());
 			if (name != null && this.rePresentmentUploadService.isExists(name)) {
 				throw new WrongValueException(this.txtFileName,
 						this.txtFileName.getValue() + Labels.getLabel("label_File_Exits"));
@@ -486,9 +400,28 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 			wve.add(we);
 		}
 
+		try {
+			ExcelUtil.isValidFile(name, 200, "^[a-zA-Z0-9 ._]*$");
+		} catch (AppException e) {
+			wve.add(new WrongValueException(e.getMessage()));
+		}
+
+		try {
+			if (!this.entity.isReadonly()) {
+				this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
+				header.setEntityCode(this.entity.getValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+
 		showErrorMessage(wve);
 
-		logger.debug(Literal.LEAVING);
+		header.setFileName(name);
+
+		header.setProgress(Status.DEFAULT.getValue());
 	}
 
 	private void doRemoveValidation() {

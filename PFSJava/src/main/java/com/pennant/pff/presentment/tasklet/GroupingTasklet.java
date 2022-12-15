@@ -1,5 +1,7 @@
 package com.pennant.pff.presentment.tasklet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -8,9 +10,11 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.pff.presentment.service.PresentmentEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public class GroupingTasklet implements Tasklet {
+	private final Logger logger = LogManager.getLogger(GroupingTasklet.class);
 
 	private PresentmentEngine presentmentEngine;
 
@@ -21,6 +25,8 @@ public class GroupingTasklet implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+		logger.debug(Literal.ENTERING);
+
 		PresentmentHeader ph = new PresentmentHeader();
 
 		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
@@ -43,6 +49,8 @@ public class GroupingTasklet implements Tasklet {
 		ph.setGroupByPartnerBank(ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK);
 
 		presentmentEngine.grouping(ph);
+
+		logger.debug(Literal.LEAVING);
 
 		return RepeatStatus.FINISHED;
 	}

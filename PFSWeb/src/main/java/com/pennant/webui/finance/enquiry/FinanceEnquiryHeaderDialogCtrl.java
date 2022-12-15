@@ -128,6 +128,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
@@ -699,6 +700,12 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finID, false, "_View");
 			}
+
+			feeDetails.forEach(ffd -> {
+				if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(ffd.getFeeTypeCode())) {
+					ffd.setTerms(finScheduleData.getFinanceMain().getAdvTerms());
+				}
+			});
 
 			map.put("feeDetails", feeDetails);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
