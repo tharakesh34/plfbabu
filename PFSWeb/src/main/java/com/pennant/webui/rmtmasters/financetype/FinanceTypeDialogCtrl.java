@@ -120,6 +120,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.PTCKeditor;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
@@ -1876,7 +1877,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		appendExpenseDetailTab();
 		appendAccountingDetailsTab();
-		appendPartnerBankTab();
+
+		if (!PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			appendPartnerBankTab();
+		}
 
 		this.chequeCaptureReq.setChecked(aFinanceType.isChequeCaptureReq());
 

@@ -54,6 +54,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	protected Listheader listheader_Partnerbank;
 	protected Listheader listheader_BranchOrClster;
 	protected Listheader listheader_FinType;
+	protected Listheader listheader_SuspenseAc;
 
 	// checkRights
 	protected Button button_FinTypeParterbankMappingList_NewFinTypeParterbankMapping;
@@ -67,6 +68,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	protected ExtendedCombobox partnerBank;
 	protected ExtendedCombobox branchOrCluster;
 	protected Listbox operation;
+	protected Textbox suspenseAc;
 
 	protected Listbox sortOperator_finType;
 	protected Listbox sortOperator_finTypeDesc;
@@ -74,6 +76,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	protected Listbox sortOperator_partnerBank;
 	protected Listbox sortOperator_purpose;
 	protected Listbox sortOperator_branchOrCluster;
+	protected Listbox sortOperator_SuspenseAc;
 
 	private transient FinTypePartnerBankService finTypePartnerBankService;
 	List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
@@ -123,6 +126,8 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 		registerField("Name");
 		registerField("ClusterId", listheader_BranchOrClster, SortOrder.NONE, branchOrCluster,
 				sortOperator_branchOrCluster, Operators.STRING);
+		registerField("suspenseAc", listheader_SuspenseAc, SortOrder.NONE, suspenseAc, sortOperator_SuspenseAc,
+				Operators.STRING);
 
 		doSetFieldProperties();
 		// fillList(this.category, listCategory, null);
