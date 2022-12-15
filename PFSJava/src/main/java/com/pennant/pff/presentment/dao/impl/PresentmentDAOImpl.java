@@ -393,7 +393,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" From PRMNT_EXTRACTION_STAGE pes");
 		sql.append(" Inner Join Mandates m on m.MandateId = pes.MandateId and m.status in (?, ?, ?)");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = pes.FinReference");
-		sql.append(" Inner Join Mandates sm on sm.MandateId = fm.SecurityMandateId");
+		sql.append(" Inner Join Mandates sm on sm.MandateId = fm.SecurityMandateId and sm.Status = ?");
 		sql.append(" Where BatchID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
