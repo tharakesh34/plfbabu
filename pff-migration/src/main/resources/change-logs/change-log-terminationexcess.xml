@@ -29,7 +29,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#716.3" author="Mounika.M">
+	<changeSet id="ST#716.1" author="Mounika.M">
 		<createTable tableName="LOANS_CLOSURES">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
@@ -40,8 +40,12 @@
 			<column name="ClosureAmount" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="ST#716.2" author="Mounika.M">
+		<addPrimaryKey tableName="LOANS_CLOSURES" columnNames="ID"/>
+	</changeSet>
 
-	<changeSet id="ST#716.1" author="Mounika.M">
+	<changeSet id="ST#716.3" author="Mounika.M">
 		<createTable tableName="LOAN_CLOSURE_AMOUNTS">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
@@ -52,14 +56,14 @@
 			</column>
 			<column name="ReceivableType" type="Varchar(10)"/>
 			<column name="ReceivableAmt" type="decimal(18,0)"/>
+			<column name="GSTAmount" type="decimal(18,0)"/>
+			<column name="TDSAmount" type="decimal(18,0)"/>
 		</createTable>
 	</changeSet>
 
 	<changeSet id="ST#716.2" author="Mounika.M">
 		<addForeignKeyConstraint constraintName="closure_loan_id" referencedTableName="CLOSURE_LOANS" baseColumnNames="ClosureID" baseTableName="CLOSURE_LOAN_AMOUNTS" referencedColumnNames="ID"/>
 	</changeSet>
-	
-	
 	
 	<changeSet id="ST#716.4" author="Mounika.M" dbms="postgresql,mssql">
 		<createSequence sequenceName="SEQ_SOD_LOAN_QUEUE" minValue="1"

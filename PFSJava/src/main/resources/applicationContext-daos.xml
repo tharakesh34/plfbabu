@@ -4297,6 +4297,7 @@
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="taxHeaderDetailsService" ref="taxHeaderDetailsService" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 
 	<!--============ Covenant Type Details ============== -->
@@ -11405,9 +11406,7 @@
 			</props>
 		</property>
 	</bean>
-	<bean name="finFeeConfigServiceTarget" class="com.pennant.backend.service.finance.impl.FinFeeConfigServiceImpl">
-		<property name="finFeeConfigDAO" ref="finFeeConfigDAO" />
-	</bean>
+	<bean name="finFeeConfigServiceTarget" class="com.pennant.backend.service.finance.impl.FinFeeConfigServiceImpl"/>
 
 	<bean id="finFeeConfigDAO" class="com.pennant.backend.dao.finance.impl.FinFeeConfigDAOImpl" parent="sequenceDao" />
 

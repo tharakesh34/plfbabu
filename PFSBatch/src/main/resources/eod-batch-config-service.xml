@@ -743,4 +743,5 @@
 	<bean id="finSamplingService" class="com.pennanttech.pennapps.pff.finsampling.service.FinSamplingServiceImpl"/>
 	<bean id="finSamplingDAO" class="com.pennanttech.pennapps.pff.finsampling.dao.FinSamplingDAOImpl"
 		parent="sequenceDao" />
+	<bean id="finFeeConfigDAO" class="com.pennant.backend.dao.finance.impl.FinFeeConfigDAOImpl" parent="sequenceDao" />
 </beans>

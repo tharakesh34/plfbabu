@@ -3656,6 +3656,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		String excessAdjustTo = fsi.getExcessAdjustTo();
 		if (!RepayConstants.EXCESSADJUSTTO_EXCESS.equals(excessAdjustTo)
 				&& !RepayConstants.EXCESSADJUSTTO_EMIINADV.equals(excessAdjustTo)
+				&& !RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)
 				&& !PennantConstants.List_Select.equals(excessAdjustTo)) {
 			setError(schdData, "90281", "Excess Adjustment", "E/A");
 			return;
@@ -4151,7 +4152,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 
 			if (RepayConstants.EXCESSADJUSTTO_EXCESS.equals(excessAdjustTo)
-					&& RepayConstants.EXCESSADJUSTTO_EMIINADV.equals(alcType)) {
+					&& RepayConstants.EXCESSADJUSTTO_EMIINADV.equals(alcType)
+					&& RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(alcType)) {
 				setError(schdData, "90503", "Allocation Item");
 				logger.info(Literal.LEAVING);
 				return;
