@@ -1158,7 +1158,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onSelect$maxFPPCalType(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.maxFPPAmount.setValue(BigDecimal.ZERO);
 		this.maxFPPPer.setValue(BigDecimal.ZERO);
 		this.maxFPPCalOn.setVisible(true);
@@ -1170,7 +1170,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	private void doSetMaxPartCalType() {
 		String calType = this.maxFPPCalType.getSelectedItem().getValue();
-		
+
 		switch (calType) {
 		case PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT:
 			this.maxFPPAmount.setVisible(true);
@@ -1193,7 +1193,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onSelect$minPPCalType(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.minPPAmount.setValue(BigDecimal.ZERO);
 		this.minPPPercentage.setValue(BigDecimal.ZERO);
 		doSetMinCalculationType();
@@ -1203,7 +1203,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void doSetMinCalculationType() {
 		String calType = this.minPPCalType.getSelectedItem().getValue();
-		
+
 		switch (calType) {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT:
 			this.minPPAmount.setVisible(true);
@@ -1226,12 +1226,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onSelect$maxPPCalType(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.maxPPAmount.setValue(BigDecimal.ZERO);
 		this.maxPPPercentage.setValue(BigDecimal.ZERO);
 		this.minPPEmi.setValue(0);
 		this.minPPPos.setValue(BigDecimal.ZERO);
-		
+
 		doSetMaxCalculationType();
 
 		logger.debug(Literal.LEAVING);
@@ -1239,7 +1239,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void doSetMaxCalculationType() {
 		String calType = this.maxPPCalType.getSelectedItem().getValue();
-		
+
 		switch (calType) {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT:
 			this.maxPPAmount.setVisible(true);
@@ -1969,8 +1969,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			fillComboBox(this.maxFPPCalType, aFinanceType.getMaxFPPCalType(), partialpymtCalType);
 			fillComboBox(this.maxFPPCalOn, aFinanceType.getMaxFPPCalOn(), partialpymtCalOn);
-			fillComboBox(this.minPPCalType, aFinanceType.getMaxFPPCalType(), minpartpymt);
-			fillComboBox(this.maxPPCalType, aFinanceType.getMaxFPPCalType(), maxpartpymt);
+			fillComboBox(this.minPPCalType, aFinanceType.getMinPPCalType(), minpartpymt);
+			fillComboBox(this.maxPPCalType, aFinanceType.getMaxPPCalType(), maxpartpymt);
 			fillComboBox(this.minPPCalOn, aFinanceType.getMinPPCalOn(), partpymt);
 			fillComboBox(this.maxPPCalOn, aFinanceType.getMaxPPCalOn(), partpymt);
 		}
@@ -1989,7 +1989,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doSetMaxPartCalType();
 		doSetMinCalculationType();
 		doSetMaxCalculationType();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -4163,19 +4163,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinanceType.setPpLockInPeriod(this.ppLockinPeriod.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinanceType.setEsLockInPeriod(this.esLockinPeriod.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinanceType
 					.setMinPPAmount(CurrencyUtil.parse(this.minPPAmount.isReadonly() ? this.minPPAmount.getActualValue()
@@ -4183,7 +4183,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (this.minPPPercentage.isVisible() && !this.minPPPercentage.isDisabled()) {
 				BigDecimal percentageValue = this.minPPPercentage.getValue();
@@ -4204,7 +4204,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			String maxCalType = this.maxPPCalType.getSelectedItem().getValue().toString();
 			if ((PennantConstants.PREPYMT_CALCTN_TYPE_MIN_EMI.equals(maxCalType))) {
