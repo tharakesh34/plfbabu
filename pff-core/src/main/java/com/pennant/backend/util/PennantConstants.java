@@ -537,6 +537,7 @@ public class PennantConstants {
 	public static final String FEE_CALCULATION_TYPE_RULE = "RULE";
 	public static final String FEE_CALCULATION_TYPE_FIXEDAMOUNT = "FIXEDAMT";
 	public static final String FEE_CALCULATION_TYPE_PERCENTAGE = "PERCENTG";
+	public static final String PARTPAYMENT_CALCULATEDON_POS = "POS CURRENT FINANCIAL YEAR";
 
 	public static final String FEE_CALCULATEDON_TOTALASSETVALUE = "TOTAST";
 	public static final String FEE_CALCULATEDON_LOANAMOUNT = "LOANAM";
@@ -935,4 +936,10 @@ public class PennantConstants {
 	public static final String UCIC_NEW = "NEW";
 	public static final String UCIC_EXISTING = "EXISTING";
 	public static final String UCIC_RETRIGGER = "RETRIGGER";
+
+	public static final String PREPYMT_CALCTN_TYPE_FIXEDAMT = "FIXEDAMT";
+	public static final String PREPYMT_CALCTN_TYPE_PERCENTAGE = "PERCENTG";
+	public static final String PREPYMT_CALCTN_TYPE_MIN_EMI = "MINEMI";
+	public static final String PREPYMT_CALCTN_TYPE_MIN_POS_AMT = "POSAMT";
+	public static final String PREPYMT_CALCULATEDON_SANCTIONLOANAMOUNT = "SANLAMT";
 }
