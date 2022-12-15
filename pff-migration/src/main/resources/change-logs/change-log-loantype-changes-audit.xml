@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Sravani.S" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#713.2" author="Sravani.S">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="AllowAutoWaiver" type="boolean" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="ST#713.2.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET ALLOWAUTOWAIVER = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.2.2" author="Sravani.S">
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AllowAutoWaiver"
+			columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="ST#713.2.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT ADF_FT_ALLOWAUTOWAIVER DEFAULT 0 FOR ALLOWAUTOWAIVER;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.2.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="ADTRMTFINANCETYPES" columnName="AllowAutoWaiver" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#713.3" author="Sravani.S">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="ClosureThresholdLimit" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.3.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET CLOSURETHRESHOLDLIMIT = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.3.2" author="Sravani.S">
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="ClosureThresholdLimit"
+			columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="ST#713.3.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_CLOSURETHRESHOLDLIMIT DEFAULT 0 FOR CLOSURETHRESHOLDLIMIT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.3.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="ADTRMTFINANCETYPES" columnName="ClosureThresholdLimit" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#713.4" author="Sravani.S">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="MaxFPPCalType" type="Varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.5" author="Sravani.S">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="MaxFPPAmount" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.5.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET MAXFPPAMOUNT = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.5.2" author="Sravani.S">
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="MaxFPPAmount"
+			columnDataType="decimal(18,0)" />
+	</changeSet>
+
+	<changeSet id="ST#713.5.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_FT_MAXFPPAMOUNT DEFAULT 0 FOR MAXFPPAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.5.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="ADTRMTFINANCETYPES" columnName="MaxFPPAmount" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#713.6" author="Sravani.S">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="MaxFPPPer" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.6.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET MAXFPPPER = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.6.2" author="Sravani.S">
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="MaxFPPPer"
+			columnDataType="decimal(5,2)" />
+	</changeSet>
+
+	<changeSet id="ST#713.6.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_FT_MAXFPPPER DEFAULT 0 FOR MAXFPPPER;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.6.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="ADTRMTFINANCETYPES" columnName="MaxFPPAmount" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#713.7" author="Sravani.S">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="MaxFPPCalOn" type="Varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.8" author="sunil.b">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="PPLockinPeriod" type="decimal(3, 0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.9" author="sunil.b">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="ESLockinPeriod" type="decimal(3, 0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.10" author="sunil.b">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="MinPPCalType" type="VARCHAR(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.11" author="Sravani.S">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="MinPPAmount" type="decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.11.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET MINPPAMOUNT = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.11.2" author="Sravani.S">
+		<addNotNullConstraint tableName="AdtRMTFinanceTypes" columnName="MinPPAmount"
+			columnDataType="decimal(18,2)" />
+	</changeSet>
+
+	<changeSet id="ST#713.11.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_FT_MINPPAMOUNT DEFAULT 0 FOR MINPPAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.11.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="AdtRMTFinanceTypes" columnName="MinPPAmount" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#713.12" author="Sravani.S">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="MinPPPercentage" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.13" author="Sravani.S">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="MinPPPercentage" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.13.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET MINPPPERCENTAGE = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.13.2" author="Sravani.S">
+		<addNotNullConstraint tableName="AdtRMTFinanceTypes" columnName="MinPPPercentage"
+			columnDataType="decimal(5,2)" />
+	</changeSet>
+
+	<changeSet id="ST#713.13.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_FT_MINPPPERCENTAGE DEFAULT 0 FOR MINPPPERCENTAGE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.13.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="AdtRMTFinanceTypes" columnName="MinPPPercentage" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#713.14" author="sunil.b">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="MinPPCalOn" type="VARCHAR(8)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="ST#713.15" author="sunil.b">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="MaxPPCalType" type="VARCHAR(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.16" author="Sravani.S">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="MaxPPAmount" type="decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.16.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET MAXPPAMOUNT = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.16.2" author="Sravani.S">
+		<addNotNullConstraint tableName="AdtRMTFinanceTypes" columnName="MaxPPAmount"
+			columnDataType="decimal(18,2)" />
+	</changeSet>
+
+	<changeSet id="ST#713.16.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_FT_MAXPPAMOUNT DEFAULT 0 FOR MAXPPAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.16.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="AdtRMTFinanceTypes" columnName="MaxPPAmount" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#713.17" author="Sravani.S">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="MaxPPPercentage" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#713.17.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET MAXPPPERCENTAGE = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.17.2" author="Sravani.S">
+		<addNotNullConstraint tableName="AdtRMTFinanceTypes" columnName="MaxPPPercentage"
+			columnDataType="decimal(5,2)" />
+	</changeSet>
+
+	<changeSet id="ST#713.17.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_FT_MAXPPPERCENTAGE DEFAULT 0 FOR MAXPPPERCENTAGE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#713.17.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="AdtRMTFinanceTypes" columnName="MaxPPPercentage" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#713.18" author="sunil.b">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="MaxPPCalOn" type="VARCHAR(8)" />
+		</addColumn>
+	</changeSet>
+
+</databaseChangeLog>

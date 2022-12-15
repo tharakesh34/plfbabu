@@ -111,6 +111,10 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", MaxAutoIncrAllowed, AlwLoanSplit, SplitLoanType, TdsType, CalcOfSteps, StepsAppliedFor");
 		sql.append(", IntProvRule, RegProvRule, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType, OverDraftExtGraceDays");
 		sql.append(", OverDraftColChrgFeeType, OverDraftColAmt");
+		sql.append(", AllowAutoWaiver, ClosureThresholdLimit");
+		sql.append(", MaxFPPCalType, MaxFPPAmount, MaxFPPPer, MaxFPPCalOn");
+		sql.append(", PpLockInPeriod, EsLockInPeriod, MinPPCalType, MinPPCalOn");
+		sql.append(", MinPPAmount, MinPPPercentage, MaxPPCalType, MaxPPAmount, MaxPPPercentage, MaxPPCalOn");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc ");
@@ -328,6 +332,22 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setOverDraftExtGraceDays(rs.getInt("OverDraftExtGraceDays"));
 				ft.setOverDraftColChrgFeeType(rs.getLong("OverDraftColChrgFeeType"));
 				ft.setOverDraftColAmt(rs.getBigDecimal("OverDraftColAmt"));
+				ft.setAllowAutoWaiver(rs.getBoolean("AllowAutoWaiver"));
+				ft.setClosureThresholdLimit(rs.getBigDecimal("ClosureThresholdLimit"));
+				ft.setMaxFPPCalType(rs.getString("MaxFPPCalType"));
+				ft.setMaxFPPAmount(rs.getBigDecimal("MaxFPPAmount"));
+				ft.setMaxFPPPer(rs.getBigDecimal("MaxFPPPer"));
+				ft.setMaxFPPCalOn(rs.getString("MaxFPPCalOn"));
+				ft.setPpLockInPeriod(rs.getInt("PpLockInPeriod"));
+				ft.setEsLockInPeriod(rs.getInt("EsLockInPeriod"));
+				ft.setMinPPCalType(rs.getString("MinPPCalType"));
+				ft.setMinPPCalOn(rs.getString("MinPPCalOn"));
+				ft.setMinPPAmount(rs.getBigDecimal("MinPPAmount"));
+				ft.setMinPPPercentage(rs.getBigDecimal("MinPPPercentage"));
+				ft.setMaxPPCalType(rs.getString("MaxPPCalType"));
+				ft.setMaxPPAmount(rs.getBigDecimal("MaxPPAmount"));
+				ft.setMaxPPPercentage(rs.getBigDecimal("MaxPPPercentage"));
+				ft.setMaxPPCalOn(rs.getString("MaxPPCalOn"));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					ft.setFinCategoryDesc(rs.getString("FinCategoryDesc"));
@@ -398,6 +418,11 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed");
 		sql.append(", ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType");
 		sql.append(", InstBasedSchd, TdsType, SubventionReq, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType");
+		sql.append(", AllowAutoWaiver, ClosureThresholdLimit");
+		sql.append(", MaxFPPCalType, MaxFPPAmount, MaxFPPPer, MaxFPPCalOn");
+		sql.append(", PpLockInPeriod, EsLockInPeriod, MinPPCalType, MinPPCalOn");
+		sql.append(", MinPPAmount, MinPPPercentage, MaxPPCalType, MaxPPAmount, MaxPPPercentage, MaxPPCalOn");
+
 		if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 			sql.append(", DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName, LovDescPromoFinTypeDesc");
 			sql.append(", LovDescDftStepPolicyName, GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType");
@@ -593,6 +618,22 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 					ft.setSubventionReq(rs.getBoolean("SubventionReq"));
 					ft.setOverdraftTxnChrgReq(rs.getBoolean("OverdraftTxnChrgReq"));
 					ft.setOverdraftTxnChrgFeeType(rs.getLong("OverdraftTxnChrgFeeType"));
+					ft.setAllowAutoWaiver(rs.getBoolean("AllowAutoWaiver"));
+					ft.setClosureThresholdLimit(rs.getBigDecimal("ClosureThresholdLimit"));
+					ft.setMaxFPPCalType(rs.getString("MaxFPPCalType"));
+					ft.setMaxFPPAmount(rs.getBigDecimal("MaxFPPAmount"));
+					ft.setMaxFPPPer(rs.getBigDecimal("MaxFPPPer"));
+					ft.setMaxFPPCalOn(rs.getString("MaxFPPCalOn"));
+					ft.setPpLockInPeriod(rs.getInt("PpLockInPeriod"));
+					ft.setEsLockInPeriod(rs.getInt("EsLockInPeriod"));
+					ft.setMinPPCalType(rs.getString("MinPPCalType"));
+					ft.setMinPPCalOn(rs.getString("MinPPCalOn"));
+					ft.setMinPPAmount(rs.getBigDecimal("MinPPAmount"));
+					ft.setMinPPPercentage(rs.getBigDecimal("MinPPPercentage"));
+					ft.setMaxPPCalType(rs.getString("MaxPPCalType"));
+					ft.setMaxPPAmount(rs.getBigDecimal("MaxPPAmount"));
+					ft.setMaxPPPercentage(rs.getBigDecimal("MaxPPPercentage"));
+					ft.setMaxPPCalOn(rs.getString("MaxPPCalOn"));
 
 					if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 						ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
@@ -806,6 +847,11 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				", MaxAutoIncrAllowed, ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType,InstBasedSchd, TdsType, SubventionReq");
 		sql.append(", RegProvRule, IntProvRule, OverDraftExtGraceDays");
 		sql.append(", OverDraftColChrgFeeType, OverDraftColAmt, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType");
+		sql.append(", AllowAutoWaiver, ClosureThresholdLimit");
+		sql.append(", MaxFPPCalType, MaxFPPAmount, MaxFPPPer, MaxFPPCalOn");
+		sql.append(", PpLockInPeriod, EsLockInPeriod, MinPPCalType, MinPPCalOn");
+		sql.append(", MinPPAmount, MinPPPercentage, MaxPPCalType, MaxPPAmount, MaxPPPercentage, MaxPPCalOn");
+
 		sql.append(")");
 		sql.append(" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, ");
 		sql.append(" :FinIsGenRef,");
@@ -861,6 +907,10 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				", :MaxAutoIncrAllowed, :ThrldtoMaintainGrcPrd, :CalcOfSteps, :StepsAppliedFor, :AlwLoanSplit, :SplitLoanType,:InstBasedSchd, :TdsType, :SubventionReq");
 		sql.append(", :RegProvRule, :IntProvRule, :OverDraftExtGraceDays");
 		sql.append(", :OverDraftColChrgFeeType, :OverDraftColAmt, :OverdraftTxnChrgReq, :OverdraftTxnChrgFeeType");
+		sql.append(", :AllowAutoWaiver, :ClosureThresholdLimit");
+		sql.append(", :MaxFPPCalType, :MaxFPPAmount, :MaxFPPPer, :MaxFPPCalOn");
+		sql.append(", :PpLockInPeriod, :EsLockInPeriod, :MinPPCalType, :MinPPCalOn");
+		sql.append(", :MinPPAmount, :MinPPPercentage, :MaxPPCalType, :MaxPPAmount, :MaxPPPercentage, :MaxPPCalOn");
 		sql.append(")");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
@@ -983,6 +1033,13 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", OverdraftTxnChrgReq= :OverdraftTxnChrgReq, OverdraftTxnChrgFeeType = :OverdraftTxnChrgFeeType");
 		sql.append(", AlwLoanSplit = :AlwLoanSplit, SplitLoanType = :SplitLoanType,InstBasedSchd=:InstBasedSchd");
 		sql.append(", TdsType = :TdsType, SubventionReq =:SubventionReq");
+		sql.append(", AllowAutoWaiver = :AllowAutoWaiver");
+		sql.append(", ClosureThresholdLimit = :ClosureThresholdLimit, MaxFPPCalType = :MaxFPPCalType");
+		sql.append(", MaxFPPAmount = :MaxFPPAmount, MaxFPPPer = :MaxFPPPer, MaxFPPCalOn = :MaxFPPCalOn");
+		sql.append(", PpLockInPeriod = :PpLockInPeriod, EsLockInPeriod = :EsLockInPeriod");
+		sql.append(", MinPPCalType = :MinPPCalType, MinPPCalOn = :MinPPCalOn, MinPPAmount = :MinPPAmount");
+		sql.append(", MinPPPercentage = :MinPPPercentage, MaxPPCalType = :MaxPPCalType, MaxPPAmount = :MaxPPAmount");
+		sql.append(", MaxPPPercentage = :MaxPPPercentage, MaxPPCalOn = :MaxPPCalOn");
 		sql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {
