@@ -1679,4 +1679,11 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="65" author="sandeepkuamr.m">
+			<sql>
+				<![CDATA[
+					Update EODCONFIG Set INEXTMNTH = 0;
+				]]>
+			</sql>
+		</changeSet>
 </databaseChangeLog>
