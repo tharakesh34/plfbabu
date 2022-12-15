@@ -324,6 +324,7 @@ public class ScheduleCalculator {
 		fm.setRecalIdx(-1);
 		fm.setAppDate(SysParamUtil.getAppDate());
 		fm.setDevFinCalReq(isDeveloperFinance(finScheduleData));
+		finScheduleData.setModuleDefiner(method);
 
 		// re generate original schedule from Flexi Schedule
 		if (fm.isAlwFlexi() && fm.isChgDropLineSchd()) {
@@ -4414,6 +4415,11 @@ public class ScheduleCalculator {
 				&& PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())
 				&& CollectionUtils.isNotEmpty(finScheduleData.getStepPolicyDetails())) {
 			autoCalcLastRepayStepAmt(finScheduleData, fm);
+		}
+
+		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage()) && fm.getAdvTerms() > 0
+				&& !PROC_GETCALSCHD.equals(finScheduleData.getModuleDefiner())) {
+			fm.setAdjustClosingBal(false);
 		}
 
 		finScheduleData = getRpyInstructDetails(finScheduleData);
