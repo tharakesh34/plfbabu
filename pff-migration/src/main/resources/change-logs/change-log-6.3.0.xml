@@ -240,14 +240,33 @@
 
 	<changeSet id="ST#713.11" author="Sravani.S">
 		<addColumn tableName="RMTFinanceTypes_Temp">
-			<column name="PPLockinPeriod" type="decimal(3, 0)" />
+			<column name="PPLockinPeriod" type="int" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#713.11.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE RMTFinanceTypes_Temp SET PPLockinPeriod = 0;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#713.12" author="Sravani.S">
 		<addColumn tableName="RMTFinanceTypes_Temp">
-			<column name="ESLockinPeriod" type="decimal(3, 0)" />
+			<column name="ESLockinPeriod" type="int" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#713.12.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE RMTFinanceTypes_Temp SET ESLockinPeriod = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#713.11.1" author="Sravani.S">
 	</changeSet>
 
 	<changeSet id="ST#713.13" author="Sravani.S">
@@ -258,7 +277,7 @@
 
 	<changeSet id="ST#713.14" author="Sravani.S">
 		<addColumn tableName="RMTFinanceTypes_Temp">
-			<column name="MinPPAmount" type="decimal(18,2)" />
+			<column name="MinPPAmount" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -272,7 +291,7 @@
 
 	<changeSet id="ST#713.14.2" author="Sravani.S">
 		<addNotNullConstraint tableName="RMTFinanceTypes_Temp" columnName="MinPPAmount"
-			columnDataType="decimal(18,2)" />
+			columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="ST#713.14.3" author="Sravani.S" dbms="mssql">
@@ -331,7 +350,7 @@
 
 	<changeSet id="ST#713.18" author="Sravani.S">
 		<addColumn tableName="RMTFinanceTypes_Temp">
-			<column name="MaxPPAmount" type="decimal(18,2)" />
+			<column name="MaxPPAmount" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -345,7 +364,7 @@
 
 	<changeSet id="ST#713.18.2" author="Sravani.S">
 		<addNotNullConstraint tableName="RMTFinanceTypes_Temp" columnName="MaxPPAmount"
-			columnDataType="decimal(18,2)" />
+			columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="ST#713.18.3" author="Sravani.S" dbms="mssql">
@@ -399,14 +418,30 @@
 
 	<changeSet id="ST#713.21" author="Sravani.S">
 		<addColumn tableName="RMTFinanceTypes">
-			<column name="PPLockinPeriod" type="decimal(3, 0)" />
+			<column name="PPLockinPeriod" type="int" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#713.21.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE RMTFinanceTypes SET ESLockinPeriod = 0;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#713.22" author="Sravani.S">
 		<addColumn tableName="RMTFinanceTypes">
-			<column name="ESLockinPeriod" type="decimal(3, 0)" />
+			<column name="ESLockinPeriod" type="int" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#713.22.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE RMTFinanceTypes SET ESLockinPeriod = 0;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#713.23" author="Sravani.S">
@@ -417,7 +452,7 @@
 
 	<changeSet id="ST#713.24" author="Sravani.S">
 		<addColumn tableName="RMTFinanceTypes">
-			<column name="MinPPAmount" type="decimal(18,2)" />
+			<column name="MinPPAmount" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -431,7 +466,7 @@
 
 	<changeSet id="ST#713.24.2" author="Sravani.S">
 		<addNotNullConstraint tableName="RMTFinanceTypes" columnName="MinPPAmount"
-			columnDataType="decimal(18,2)" />
+			columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="ST#713.24.3" author="Sravani.S" dbms="mssql">
@@ -492,7 +527,7 @@
 
 	<changeSet id="ST#713.28" author="Sravani.S">
 		<addColumn tableName="RMTFinanceTypes">
-			<column name="MaxPPAmount" type="decimal(18,2)" />
+			<column name="MaxPPAmount" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -506,7 +541,7 @@
 
 	<changeSet id="ST#713.28.2" author="Sravani.S">
 		<addNotNullConstraint tableName="RMTFinanceTypes" columnName="MaxPPAmount"
-			columnDataType="decimal(18,2)" />
+			columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="ST#713.28.3" author="Sravani.S" dbms="mssql">
@@ -586,7 +621,7 @@
 
 	<changeSet id="TK#2509.2" author="Anilkumar.G">
 		<addColumn tableName="RMTFINANCETYPES">
-			<column name="MaxAutoRefund" type="Decimal(18,2)" />
+			<column name="MaxAutoRefund" type="Decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -612,7 +647,7 @@
 
 	<changeSet id="TK#2509.3" author="Anilkumar.G">
 		<addColumn tableName="RMTFINANCETYPES">
-			<column name="MinAutoRefund" type="Decimal(18,2)" />
+			<column name="MinAutoRefund" type="Decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -664,7 +699,7 @@
 
 	<changeSet id="TK#2509.5" author="Anilkumar.G">
 		<addColumn tableName="RMTFINANCETYPES_TEMP">
-			<column name="MaxAutoRefund" type="Decimal(18,2)" />
+			<column name="MaxAutoRefund" type="Decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -690,7 +725,7 @@
 
 	<changeSet id="TK#2509.6" author="Anilkumar.G">
 		<addColumn tableName="RMTFINANCETYPES_TEMP">
-			<column name="MinAutoRefund" type="Decimal(18,2)" />
+			<column name="MinAutoRefund" type="Decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 

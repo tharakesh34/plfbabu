@@ -164,7 +164,7 @@
 
 	<changeSet id="ST#713.9" author="Sravani.S">
 		<addColumn tableName="AdtRMTFinanceTypes">
-			<column name="MinPPAmount" type="decimal(18,2)" />
+			<column name="MinPPAmount" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -178,7 +178,7 @@
 
 	<changeSet id="ST#713.9.2" author="Sravani.S">
 		<addNotNullConstraint tableName="AdtRMTFinanceTypes" columnName="MinPPAmount"
-			columnDataType="decimal(18,2)" />
+			columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="ST#713.9.3" author="Sravani.S" dbms="mssql">
@@ -238,7 +238,7 @@
 
 	<changeSet id="ST#713.13" author="Sravani.S">
 		<addColumn tableName="AdtRMTFinanceTypes">
-			<column name="MaxPPAmount" type="decimal(18,2)" />
+			<column name="MaxPPAmount" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -252,7 +252,7 @@
 
 	<changeSet id="ST#713.13.2" author="Sravani.S">
 		<addNotNullConstraint tableName="AdtRMTFinanceTypes" columnName="MaxPPAmount"
-			columnDataType="decimal(18,2)" />
+			columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="ST#713.13.3" author="Sravani.S" dbms="mssql">
@@ -332,7 +332,7 @@
 
 	<changeSet id="TK#2509.2" author="Anilkumar.G">
 		<addColumn tableName="ADTRMTFINANCETYPES">
-			<column name="MaxAutoRefund" type="Decimal(18,2)" />
+			<column name="MaxAutoRefund" type="Decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -358,7 +358,7 @@
 
 	<changeSet id="TK#2509.3" author="Anilkumar.G">
 		<addColumn tableName="ADTRMTFINANCETYPES">
-			<column name="MinAutoRefund" type="Decimal(18,2)" />
+			<column name="MinAutoRefund" type="Decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
