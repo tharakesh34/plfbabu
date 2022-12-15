@@ -1139,6 +1139,14 @@
 											<column />
 										</columns>
 										<rows>
+											<row visible="false">
+												<label
+													value="${c:l('label_FinanceTypeDialog_AllowAutoRefunds.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="allowAutoRefund" />
+												</hbox>
+											</row>
 											<row id="rowAutoRefundLimits" visible="false">
 												<label
 													value="${c:l('label_FinanceTypeDialog_MinAutoRefunds.value')}" />
@@ -1493,12 +1501,6 @@
 										</columns>
 										<rows>
 											<row>
-												<label
-													value="${c:l('label_FinanceTypeDialog_AutoWaiverAllowed.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="allowAutoWaiver" checked="false" width="200px"/>
-												</hbox>
 												<label value="${c:l('label_FinanceTypeDialog_ThresholdLimit.value')}" />
 												<hbox>
 													<space sclass="mandatory" spacing="2px" />
