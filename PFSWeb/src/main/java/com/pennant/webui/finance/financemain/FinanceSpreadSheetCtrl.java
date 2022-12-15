@@ -1013,10 +1013,19 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 
 		}
+
+		BigDecimal custObligationExtra = BigDecimal.ZERO;
+		List<FinanceEnquiry> list2 = cd.getCustFinanceExposureList();
+		if (list2 != null) {
+			for (FinanceEnquiry financeEnquiry : list2) {
+				custObligationExtra = custObligationExtra.add(financeEnquiry.getMaxInstAmount());
+			}
+		}
 		dataMap.put("CUST_EXPOS_LESS2", PennantApplicationUtil.formateAmount(lessThan2years, format));
 		dataMap.put("CUST_EXPOS_GREATER2", PennantApplicationUtil.formateAmount(greaterThan2years, format));
 
 		BigDecimal custObligation = lessThan2years.add(greaterThan2years);
+		custObligation = custObligation.add(custObligationExtra);
 		dataMap.put("CUST_OBLIGATION", PennantApplicationUtil.formateAmount(custObligation, format));
 
 	}
