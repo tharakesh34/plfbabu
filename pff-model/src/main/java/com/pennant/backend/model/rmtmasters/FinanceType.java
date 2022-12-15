@@ -339,6 +339,24 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int overDraftExtGraceDays;
 	private long overDraftColChrgFeeType;
 	private BigDecimal overDraftColAmt = BigDecimal.ZERO;
+	private BigDecimal closureThresholdLimit = BigDecimal.ZERO;
+	private String maxFPPCalType;
+	private BigDecimal maxFPPAmount = BigDecimal.ZERO;
+	private BigDecimal maxFPPPer = BigDecimal.ZERO;
+	private String maxFPPCalOn;
+	private int ppLockInPeriod;
+	private int esLockInPeriod;
+	private String minPPCalType;
+	private String minPPCalOn;
+	private BigDecimal minPPAmount = BigDecimal.ZERO;
+	private BigDecimal minPPPercentage = BigDecimal.ZERO;
+	private String maxPPCalType;
+	private BigDecimal maxPPAmount = BigDecimal.ZERO;
+	private BigDecimal maxPPPercentage = BigDecimal.ZERO;
+	private String maxPPCalOn;
+	private boolean allowAutoRefund;
+	private BigDecimal maxAutoRefund = BigDecimal.ZERO;
+	private BigDecimal minAutoRefund = BigDecimal.ZERO;
 
 	public FinanceType() {
 		super();
@@ -610,6 +628,24 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setRegProvRule(this.regProvRule);
 		entity.setIntProvRule(this.intProvRule);
 		entity.setFeetype(this.feetype);
+		entity.setClosureThresholdLimit(this.closureThresholdLimit);
+		entity.setMaxFPPCalType(this.maxFPPCalType);
+		entity.setMaxFPPAmount(this.maxFPPAmount);
+		entity.setMaxFPPPer(this.maxFPPPer);
+		entity.setMaxFPPCalOn(this.maxFPPCalOn);
+		entity.setPpLockInPeriod(this.ppLockInPeriod);
+		entity.setEsLockInPeriod(this.esLockInPeriod);
+		entity.setMinPPCalType(this.minPPCalType);
+		entity.setMinPPCalOn(this.minPPCalOn);
+		entity.setMinPPAmount(this.minPPAmount);
+		entity.setMinPPPercentage(this.minPPPercentage);
+		entity.setMaxPPCalType(this.maxPPCalType);
+		entity.setMaxPPAmount(this.maxPPAmount);
+		entity.setMaxPPPercentage(this.maxPPPercentage);
+		entity.setMaxPPCalOn(this.maxPPCalOn);
+		entity.setAllowAutoRefund(this.allowAutoRefund);
+		entity.setMaxAutoRefund(this.maxAutoRefund);
+		entity.setMinAutoRefund(this.minAutoRefund);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -2674,4 +2710,147 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.intProvRule = intProvRule;
 	}
 
+	public BigDecimal getClosureThresholdLimit() {
+		return closureThresholdLimit;
+	}
+
+	public void setClosureThresholdLimit(BigDecimal closureThresholdLimit) {
+		this.closureThresholdLimit = closureThresholdLimit;
+	}
+
+	public String getMaxFPPCalType() {
+		return maxFPPCalType;
+	}
+
+	public BigDecimal getMaxFPPAmount() {
+		return maxFPPAmount;
+	}
+
+	public BigDecimal getMaxFPPPer() {
+		return maxFPPPer;
+	}
+
+	public String getMaxFPPCalOn() {
+		return maxFPPCalOn;
+	}
+
+	public int getPpLockInPeriod() {
+		return ppLockInPeriod;
+	}
+
+	public int getEsLockInPeriod() {
+		return esLockInPeriod;
+	}
+
+	public String getMinPPCalType() {
+		return minPPCalType;
+	}
+
+	public String getMinPPCalOn() {
+		return minPPCalOn;
+	}
+
+	public BigDecimal getMinPPAmount() {
+		return minPPAmount;
+	}
+
+	public BigDecimal getMinPPPercentage() {
+		return minPPPercentage;
+	}
+
+	public String getMaxPPCalType() {
+		return maxPPCalType;
+	}
+
+	public BigDecimal getMaxPPAmount() {
+		return maxPPAmount;
+	}
+
+	public BigDecimal getMaxPPPercentage() {
+		return maxPPPercentage;
+	}
+
+	public String getMaxPPCalOn() {
+		return maxPPCalOn;
+	}
+
+	public void setMaxFPPCalType(String maxFPPCalType) {
+		this.maxFPPCalType = maxFPPCalType;
+	}
+
+	public void setMaxFPPAmount(BigDecimal maxFPPAmount) {
+		this.maxFPPAmount = maxFPPAmount;
+	}
+
+	public void setMaxFPPPer(BigDecimal maxFPPPer) {
+		this.maxFPPPer = maxFPPPer;
+	}
+
+	public void setMaxFPPCalOn(String maxFPPCalOn) {
+		this.maxFPPCalOn = maxFPPCalOn;
+	}
+
+	public void setPpLockInPeriod(int ppLockInPeriod) {
+		this.ppLockInPeriod = ppLockInPeriod;
+	}
+
+	public void setEsLockInPeriod(int esLockInPeriod) {
+		this.esLockInPeriod = esLockInPeriod;
+	}
+
+	public void setMinPPCalType(String minPPCalType) {
+		this.minPPCalType = minPPCalType;
+	}
+
+	public void setMinPPCalOn(String minPPCalOn) {
+		this.minPPCalOn = minPPCalOn;
+	}
+
+	public void setMinPPAmount(BigDecimal minPPAmount) {
+		this.minPPAmount = minPPAmount;
+	}
+
+	public void setMinPPPercentage(BigDecimal minPPPercentage) {
+		this.minPPPercentage = minPPPercentage;
+	}
+
+	public void setMaxPPCalType(String maxPPCalType) {
+		this.maxPPCalType = maxPPCalType;
+	}
+
+	public void setMaxPPAmount(BigDecimal maxPPAmount) {
+		this.maxPPAmount = maxPPAmount;
+	}
+
+	public void setMaxPPPercentage(BigDecimal maxPPPercentage) {
+		this.maxPPPercentage = maxPPPercentage;
+	}
+
+	public void setMaxPPCalOn(String maxPPCalOn) {
+		this.maxPPCalOn = maxPPCalOn;
+	}
+
+	public boolean isAllowAutoRefund() {
+		return allowAutoRefund;
+	}
+
+	public void setAllowAutoRefund(boolean AllowAutoRefund) {
+		this.allowAutoRefund = AllowAutoRefund;
+	}
+
+	public BigDecimal getMaxAutoRefund() {
+		return maxAutoRefund;
+	}
+
+	public void setMaxAutoRefund(BigDecimal maxAutoRefund) {
+		this.maxAutoRefund = maxAutoRefund;
+	}
+
+	public BigDecimal getMinAutoRefund() {
+		return minAutoRefund;
+	}
+
+	public void setMinAutoRefund(BigDecimal minAutoRefund) {
+		this.minAutoRefund = minAutoRefund;
+	}
 }
