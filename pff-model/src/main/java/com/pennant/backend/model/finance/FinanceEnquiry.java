@@ -73,6 +73,7 @@ public class FinanceEnquiry implements Serializable {
 	private BigDecimal nextDueAmount = BigDecimal.ZERO;
 	private Date nextDueDate;
 	private Long mandateID;
+	private Long securityMandateID;
 	private String finRepayMethod;
 	private Date latestRpyDate;
 	private BigDecimal currentBalance;
@@ -872,5 +873,13 @@ public class FinanceEnquiry implements Serializable {
 
 	public void setCustomerType(String customerType) {
 		this.customerType = customerType;
+	}
+
+	public Long getSecurityMandateID() {
+		return securityMandateID;
+	}
+
+	public void setSecurityMandateID(Long securityMandateID) {
+		this.securityMandateID = securityMandateID;
 	}
 }

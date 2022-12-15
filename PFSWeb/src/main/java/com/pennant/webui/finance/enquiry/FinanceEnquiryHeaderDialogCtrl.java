@@ -1005,6 +1005,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					continue;
 				}
 
+				if ("FINSECMANDENQ".equals(value) && getFinanceEnquiry().getSecurityMandateID() == null) {
+					continue;
+				}
+
 				// skipping the OCR Enquiry menu if not applicable
 				if ("OCRENQ".equals(value) && !getFinanceEnquiry().isFinOcrRequired()) {
 					continue;
