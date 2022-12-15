@@ -724,24 +724,24 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void onClick$btndownload(Event event) {
+	public void onClick$btnDownload(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		if (this.listBox.getSelectedItems().isEmpty()) {
+		List<Long> headerIdList = getListofRePresentMentUpload();
+		rePresentIdMap.clear();
+
+		if (headerIdList.isEmpty()) {
 			MessageUtil.showError(Labels.getLabel("label_ListNoEmpty"));
 			return;
 		}
 
-		if (this.listBox.getSelectedCount() > 1) {
+		if (headerIdList.size() > 1) {
 			MessageUtil.showError(Labels.getLabel("MORETHEN_FILE"));
 			return;
 		}
 
-		Listitem listitem = this.listBox.getSelectedItem();
-		FileUploadHeader uploadHeader = (FileUploadHeader) listitem.getAttribute("data");
-
 		try {
-			rePresentmentUploadService.downloadReport(uploadHeader.getId(), uploadHeader.getFileName(), "_Temp");
+			rePresentmentUploadService.downloadReport(headerIdList.get(0), "_Temp");
 		} catch (AppException e) {
 			MessageUtil.showError(e);
 		}

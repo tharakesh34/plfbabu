@@ -215,7 +215,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 			return;
 		}
 
-		closeDialog(true);
+		closeDialog(false);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -224,6 +224,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 
 		this.entity.setConstraint("");
 		this.entity.setErrorMessage("");
+		this.entity.clearErrorMessage();
 
 		if (StringUtils.isBlank(this.entity.getValue())) {
 			this.entity.setValue("", "");
@@ -276,9 +277,6 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 	public void onClick$btnDownload(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		doRemoveValidation();
-		doSetValidation();
-
 		if (StringUtils.trimToNull(this.fileName.getValue()) == null) {
 			throw new WrongValueException(this.fileName, Labels.getLabel("empty_file"));
 		}
@@ -286,7 +284,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 		Long fileID = Long.valueOf(this.fileName.getValue());
 
 		try {
-			rePresentmentUploadService.downloadReport(fileID, this.fileName.getDescription(), "");
+			rePresentmentUploadService.downloadReport(fileID, "");
 		} catch (AppException e) {
 			MessageUtil.showError(e);
 		}
@@ -389,37 +387,11 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 	private void doWriteComponentsToBean(FileUploadHeader header) {
 		doRemoveValidation();
 
-		doSetValidation();
-
-		String name = this.txtFileName.getValue();
-
-		try {
-			ExcelUtil.isValidFile(name, 200, "^[a-zA-Z0-9 ._]*$");
-		} catch (AppException e) {
-			throw new WrongValueException(this.txtFileName, e.getMessage());
-		}
-
-		try {
-			if (!this.entity.isReadonly()) {
-				this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
-				header.setEntityCode(this.entity.getValue());
-			}
-		} catch (WrongValueException we) {
-			throw new WrongValueException(this.entity, we.getMessage());
-		}
-
-		header.setFileName(name);
-
-		header.setProgress(Status.DEFAULT.getValue());
-	}
-
-	private void doSetValidation() {
-		logger.debug(Literal.ENTERING);
-
 		List<WrongValueException> wve = new ArrayList<>();
 
+		String name = null;
 		try {
-			String name = StringUtils.trimToNull(this.txtFileName.getValue());
+			name = StringUtils.trimToNull(this.txtFileName.getValue());
 			if (name != null && this.rePresentmentUploadService.isExists(name)) {
 				throw new WrongValueException(this.txtFileName,
 						this.txtFileName.getValue() + Labels.getLabel("label_File_Exits"));
@@ -428,9 +400,28 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 			wve.add(we);
 		}
 
+		try {
+			ExcelUtil.isValidFile(name, 200, "^[a-zA-Z0-9 ._]*$");
+		} catch (AppException e) {
+			wve.add(new WrongValueException(e.getMessage()));
+		}
+
+		try {
+			if (!this.entity.isReadonly()) {
+				this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
+				header.setEntityCode(this.entity.getValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+
 		showErrorMessage(wve);
 
-		logger.debug(Literal.LEAVING);
+		header.setFileName(name);
+
+		header.setProgress(Status.DEFAULT.getValue());
 	}
 
 	private void doRemoveValidation() {

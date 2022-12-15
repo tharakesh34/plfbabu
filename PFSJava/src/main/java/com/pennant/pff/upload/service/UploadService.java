@@ -45,5 +45,5 @@ public interface UploadService<T> {
 
 	AuditHeader delete(AuditHeader ah);
 
-	void downloadReport(Long fileID, String name, String type);
+	void downloadReport(Long fileID, String type);
 }

@@ -432,9 +432,13 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	}
 
 	@Override
-	public void downloadReport(Long fileID, String name, String type) {
+	public void downloadReport(Long fileID, String type) {
 		List<RePresentmentUploadDetail> details = representmentUploadDAO.getDataForReport(fileID, type);
 
+		if (details.isEmpty()) {
+			throw new AppException("File not exists, Please check with system administrator");
+		}
+		String name = details.get(0).getName();
 		Workbook workBook = ExcelUtil.getExcelWriterBook(name);
 
 		Sheet sheet = ExcelUtil.getExcelSheet(workBook, "Representment");
