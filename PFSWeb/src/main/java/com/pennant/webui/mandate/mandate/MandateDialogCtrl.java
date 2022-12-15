@@ -943,7 +943,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateSwapGroupbox.setVisible(false);
 			this.mandateDetailsGroupbox.setVisible(false);
 			this.otherDetailsGroupbox.setVisible(false);
-		} else if (!enqModule) {
+		} else if (!enqModule || !fromLoanEnquiry) {
 			doEdit();
 		}
 
@@ -979,6 +979,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
 			readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
 			readOnlyComponent(isReadOnly("MandateDialog_JointAccHolderName"), this.jointAccHolderName);
+			readOnlyComponent(isReadOnly("MandateDialog_MICR"), this.micr);
 
 			String bankcode = SysParamUtil.getValueAsString("BANK_CODE");
 			Filter[] filters = new Filter[1];
@@ -1016,6 +1017,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateSwapGroupbox.setVisible(false);
 			this.dasGroupbox.setVisible(false);
 			doEdit();
+		}
+
+		if (fromLoanEnquiry || enqModule) {
+			readOnlyComponent(true, this.active);
 		}
 	}
 
@@ -1115,7 +1120,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, remarks);
 		}
 
-		if (MandateStatus.isNew(status) || MandateStatus.isInprocess(status)) {
+		if (MandateStatus.isNew(status) || MandateStatus.isInprocess(status) || enqModule || fromLoanEnquiry) {
 			readOnlyComponent(true, this.mandateStatus);
 			readOnlyComponent(true, remarks);
 
@@ -1157,10 +1162,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (MandateStatus.isApproved(status) || MandateStatus.isRelease(status) || MandateStatus.isHold(status)) {
 			holdRow.setVisible(true);
-
-			readOnlyComponent(isReadOnly("MandateDialog_HoldReason"), this.holdReason);
+			if (fromLoanEnquiry || enqModule) {
+				readOnlyComponent(true, this.holdReason);
+			} else {
+				readOnlyComponent(isReadOnly("MandateDialog_HoldReason"), this.holdReason);
+			}
 		}
-
 	}
 
 	private void doDesignByMode() {
@@ -2085,8 +2092,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
 								validate, this.startDate.getValue(), appExpiryDate, this.openMandate.isChecked()));
 			} catch (WrongValueException we) {
-				this.expiryDate.setConstraint(new PTDateValidator(
-						Labels.getLabel("label_MandateDialog_ExpiryDate.value"), validate, true, null, false));
+				this.expiryDate
+						.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
+								MandateExtension.EXPIRY_DATE_MANDATORY, true, null, false));
 			}
 		}
 
