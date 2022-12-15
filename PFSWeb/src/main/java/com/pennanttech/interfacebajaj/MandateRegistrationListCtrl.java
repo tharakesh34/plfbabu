@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,11 +78,16 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
+import com.pennant.backend.service.applicationmaster.BranchService;
+import com.pennant.backend.service.applicationmaster.ClusterService;
 import com.pennant.backend.service.mandate.MandateService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -89,6 +95,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.PennantAppUtil;
@@ -103,7 +110,10 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.service.ExternalInterfaceService;
 import com.pennanttech.pff.model.mandate.MandateData;
@@ -159,6 +169,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	protected Datebox fromDate;
 	protected Datebox toDate;
 	protected ExtendedCombobox bankBranchID;
+	protected ExtendedCombobox branchOrCluster;
 
 	protected Listbox sortOperator_MandateID;
 	protected Listbox sortOperator_bankBranchID;
@@ -180,6 +191,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private ExternalInterfaceService externalInterfaceService;
 	private String extractionType = null;
+
+	private transient ClusterService clusterService;
+	private transient BranchService branchService;
+	private transient FinTypePartnerBankService finTypePartnerBankService;
 
 	/**
 	 * default constructor.<br>
@@ -279,17 +294,46 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			this.space_MandateType.setSclass("");
 		}
 
-		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
+		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
 			this.row_partnerBank.setVisible(true);
-
-			this.partnerBank.setMaxlength(8);
-			this.partnerBank.setTextBoxWidth(135);
-			this.partnerBank.setMandatoryStyle(false);
-			this.partnerBank.setModuleName("PartnerBank");
+			this.partnerBank.setModuleName("FinTypePartner");
+			this.partnerBank.setMandatoryStyle(true);
 			this.partnerBank.setValueColumn("PartnerBankCode");
 			this.partnerBank.setDescColumn("PartnerBankName");
+			this.partnerBank.setMaxlength(14);
 			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
-			this.partnerBank.setButtonDisabled(true);
+
+			this.branchOrCluster.setButtonDisabled(false);
+			this.branchOrCluster.setMandatoryStyle(true);
+
+			String moduleName = "FinTypePartnerBankBranch";
+			String valueColumn = "BranchCode";
+			String descColumn = "BranchDesc";
+
+			if (PartnerBankExtension.MAPPING.equals("C")) {
+				moduleName = "Cluster";
+				valueColumn = "Code";
+				descColumn = "Name";
+			}
+
+			this.branchOrCluster.setModuleName(moduleName);
+			this.branchOrCluster.setValueColumn(valueColumn);
+			this.branchOrCluster.setDescColumn(descColumn);
+			this.branchOrCluster.setValidateColumns(new String[] { valueColumn, descColumn });
+
+		} else {
+			if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
+				this.row_partnerBank.setVisible(true);
+
+				this.partnerBank.setMaxlength(8);
+				this.partnerBank.setTextBoxWidth(135);
+				this.partnerBank.setMandatoryStyle(false);
+				this.partnerBank.setModuleName("PartnerBank");
+				this.partnerBank.setValueColumn("PartnerBankCode");
+				this.partnerBank.setDescColumn("PartnerBankName");
+				this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+				this.partnerBank.setButtonDisabled(true);
+			}
 		}
 
 		this.bankBranchID.setModuleName("Branch");
@@ -305,40 +349,75 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		}
 	}
 
-	/**
-	 * Based On Entity field,Partner Bank will be Filtered
-	 * 
-	 * @param event
-	 */
 	public void onFulfill$entityCode(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Object dataObject = entityCode.getObject();
+
 		if (dataObject instanceof String) {
 			this.partnerBank.setButtonDisabled(true);
 			this.partnerBank.setMandatoryStyle(false);
 			this.partnerBank.setValue("");
 			this.partnerBank.setDescription("");
-		} else {
-			Entity details = (Entity) dataObject;
-			this.partnerBank.setObject("");
+
+			return;
+		}
+
+		Entity details = (Entity) dataObject;
+		this.partnerBank.setObject("");
+		this.partnerBank.setValue("");
+		this.partnerBank.setDescription("");
+
+		if (details == null) {
 			this.partnerBank.setValue("");
 			this.partnerBank.setDescription("");
-			if (details != null) {
-				this.partnerBank.setButtonDisabled(false);
-				this.partnerBank.setMandatoryStyle(true);
-				Filter[] filters = new Filter[1];
-				filters[0] = new Filter("Entity", details.getEntityCode(), Filter.OP_EQUAL);
-				this.partnerBank.setFilters(filters);
-			} else {
-				this.partnerBank.setValue("");
-				this.partnerBank.setDescription("");
-				this.partnerBank.setButtonDisabled(true);
-				this.partnerBank.setMandatoryStyle(false);
-			}
-
+			this.partnerBank.setButtonDisabled(true);
+			this.partnerBank.setMandatoryStyle(false);
 		}
-		logger.debug("Leaving");
+
+		this.partnerBank.setMandatoryStyle(true);
+		if (!PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("Entity", details.getEntityCode(), Filter.OP_EQUAL);
+			this.partnerBank.setFilters(filters);
+
+			return;
+		}
+
+		String branchCode = getUserWorkspace().getLoggedInUser().getBranchCode();
+		Long clusterId = null;
+		List<String> branchlist = new ArrayList<String>();
+
+		Filter[] filters = new Filter[1];
+
+		if (PartnerBankExtension.MAPPING.equals("B")) {
+			filters[0] = new Filter("BranchCode", branchCode, Filter.OP_EQUAL);
+			branchlist.add(branchCode);
+
+		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+			clusterId = clusterService.getClustersFilter(branchCode);
+			branchlist = branchService.getBranchCodeByClusterId(clusterId);
+			if (CollectionUtils.isNotEmpty(branchlist)) {
+				filters[0] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+				this.branchOrCluster.setMandatoryStyle(true);
+			} else {
+				this.partnerBank.setErrorMessage("please configure the branch with partnerbank.");
+				this.partnerBank.setButtonDisabled(true);
+			}
+		}
+
+		List<FinTypePartnerBank> list = finTypePartnerBankService.getFintypePartnerBankByBranch(branchlist, clusterId);
+		if (list.size() == 1) {
+			this.partnerBank.setAttribute("Id", list.get(0).getPartnerBankID());
+			this.partnerBank.setValue(list.get(0).getPartnerBankCode());
+			this.partnerBank.setDescription(list.get(0).getPartnerBankName());
+			onFullfillPartnerBank();
+		}
+
+		this.branchOrCluster.setMandatoryStyle(true);
+		this.partnerBank.setFilters(filters);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$bankBranchID(Event event) {
@@ -361,14 +440,44 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	}
 
 	public void onFulfill$partnerBank(Event event) {
-		Object dataObject = partnerBank.getObject();
-		if (dataObject == null || dataObject instanceof String) {
-			this.partnerBank.setValue("");
-			this.partnerBank.setDescription("");
-			this.partnerBank.setAttribute("PartnerBankId", null);
-		} else {
-			PartnerBank details = (PartnerBank) dataObject;
+		onFullfillPartnerBank();
+	}
+
+	public void onFullfillPartnerBank() {
+		if (!PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			PartnerBank details = (PartnerBank) partnerBank.getObject();
 			this.partnerBank.setAttribute("PartnerBankId", details.getId());
+			onFullfillPartnerBank();
+			return;
+		}
+
+		Object dataObject = partnerBank.getObject();
+
+		if (dataObject == null || dataObject.equals("")) {
+			return;
+		}
+
+		FinTypePartnerBank details = (FinTypePartnerBank) dataObject;
+		if (PartnerBankExtension.MAPPING.equals("B")) {
+			Filter[] filters = new Filter[2];
+			filters[0] = new Filter("PartnerbankId", details.getPartnerBankID(), Filter.OP_EQUAL);
+			filters[1] = new Filter("BranchCode", "", Filter.OP_NOT_NULL);
+			this.branchOrCluster.setFilters(filters);
+			this.branchOrCluster.setButtonDisabled(false);
+			this.branchOrCluster.setMandatoryStyle(true);
+		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+			List<Long> clusterList = new ArrayList<Long>();
+			clusterList = finTypePartnerBankService.getByClusterAndPartnerbank(details.getPartnerBankID());
+			if (CollectionUtils.isNotEmpty(clusterList)) {
+				Filter[] filters = new Filter[1];
+				filters[0] = new Filter("Id", clusterList, Filter.OP_IN);
+				this.branchOrCluster.setFilters(filters);
+				this.branchOrCluster.setButtonDisabled(false);
+				this.branchOrCluster.setMandatoryStyle(true);
+			} else {
+				this.branchOrCluster.setErrorMessage("please configure the cluster with partnerbank.");
+				this.branchOrCluster.setButtonDisabled(true);
+			}
 		}
 	}
 
@@ -584,6 +693,25 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		StringBuilder whereClause = new StringBuilder();
 		whereClause.append("(INPUTDATE >= ").append("'").append(fromDate).append("'").append(" AND INPUTDATE <= ")
 				.append("'").append(toDate).append("'").append(")");
+
+		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			if (PartnerBankExtension.MAPPING.equals("C")) {
+				if (this.branchOrCluster.getValue() != null) {
+					whereClause.append(" And BRANCHCODE In (Select BranchCode from RMTBranches where ClusterId in (");
+					whereClause.append(this.branchOrCluster.getId());
+					whereClause.append("))");
+					searchObject.addWhereClause(whereClause.toString());
+				}
+			} else {
+				if (this.branchOrCluster.getValue() != null) {
+					whereClause.append(" And BRANCHCODE In (Select BranchCode from RMTBranches where ClusterId in (");
+					whereClause.append(this.branchOrCluster.getId());
+					whereClause.append("))");
+					searchObject.addWhereClause(whereClause.toString());
+				}
+			}
+		}
+
 		this.searchObject.addWhereClause(whereClause.toString());
 
 		this.listbox.setItemRenderer(new MandateListModelItemRenderer());
@@ -674,6 +802,16 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 				throw new WrongValueException(this.mandateType, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_MandateList_MandateType.value") }));
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (!this.branchOrCluster.isReadonly())
+				this.branchOrCluster.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_BranchOrCluster.value"),
+						PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.branchOrCluster.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -856,6 +994,11 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			mandateData.setEntity(this.entityCode.getValue());
 			mandateData.setSelectedBranchs(this.bankBranchID.getValue());
 			mandateData.setType(getComboboxValue(this.mandateType));
+
+			if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
+				mandateData.setBranchOrCluster(this.branchOrCluster.getDescription());
+			}
+
 			Object object = this.partnerBank.getAttribute("PartnerBankId");
 			if (object != null) {
 				mandateData.setPartnerBankId(Long.parseLong(object.toString()));
@@ -913,6 +1056,26 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 		Executions.createComponents(uri, tabpanel, args);
 		tab.setSelected(true);
+	}
+
+	public void onFulfill$branchOrCluster(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Cluster cluster = (Cluster) this.branchOrCluster.getObject();
+
+		if (cluster == null) {
+			return;
+		}
+		Search search = new Search(Cluster.class);
+		search.addFilterEqual("Id", cluster.getId());
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		Cluster clusterData = (Cluster) searchProcessor.getResults(search).get(0);
+
+		this.branchOrCluster.setId(String.valueOf(clusterData.getId()));
+		this.branchOrCluster.setValue(clusterData.getCode());
+		this.branchOrCluster.setDescription(clusterData.getName());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void setMandateService(MandateService mandateService) {
@@ -997,6 +1160,18 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	@Autowired
 	public void setExternalInterfaceService(ExternalInterfaceService externalInterfaceService) {
 		this.externalInterfaceService = externalInterfaceService;
+	}
+
+	public void setClusterService(ClusterService clusterService) {
+		this.clusterService = clusterService;
+	}
+
+	public void setBranchService(BranchService branchService) {
+		this.branchService = branchService;
+	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
 	}
 
 }

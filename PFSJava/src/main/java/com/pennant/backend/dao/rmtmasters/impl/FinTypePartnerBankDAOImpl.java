@@ -24,25 +24,23 @@
  */
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
+import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -60,34 +58,16 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	}
 
 	@Override
-	public FinTypePartnerBank getFinTypePartnerBank(String finType, long iD, String type) {
-		logger.debug(Literal.ENTERING);
+	public FinTypePartnerBank getFinTypePartnerBank(String finType, long id, TableType tableType) {
+		StringBuilder sql = getSelectQuery(tableType);
+		sql.append(" Where Id = ? and FinType = ?");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" iD, finType, purpose, paymentMode, partnerBankID, vanApplicable,");
-		if (type.contains("View")) {
-			sql.append("PartnerBankName, PartnerBankCode,");
-		}
-
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FinTypePartnerBanks");
-		sql.append(type);
-		sql.append(" Where iD = :iD and FinType = :FinType");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		FinTypePartnerBank finTypePartnerBank = new FinTypePartnerBank();
-		finTypePartnerBank.setID(iD);
-		finTypePartnerBank.setFinType(finType);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
-		RowMapper<FinTypePartnerBank> rowMapper = BeanPropertyRowMapper.newInstance(FinTypePartnerBank.class);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				return getFinTypePartnerBank(tableType, rs);
+			}, id, finType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -95,88 +75,105 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	}
 
 	@Override
-	public List<FinTypePartnerBank> getFinTypePartnerBank(String finType, String type) {
-		logger.debug(Literal.ENTERING);
+	public List<FinTypePartnerBank> getFinTypePartnerBanks(String finType, TableType tableType) {
+		StringBuilder sql = getSelectQuery(tableType);
+		sql.append(" Where FinType = ?");
 
-		FinTypePartnerBank finTypePartnerBank = new FinTypePartnerBank();
-		finTypePartnerBank.setFinType(finType);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" iD, finType, purpose, paymentMode, partnerBankID, vanApplicable, ");
-		if (type.contains("View")) {
-			sql.append("PartnerBankName, PartnerBankCode,");
-		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FinTypePartnerBanks");
-		sql.append(type);
-		sql.append(" Where FinType = :FinType");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finType);
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypePartnerBank);
-		RowMapper<FinTypePartnerBank> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypePartnerBank.class);
-
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		}, (rs, rowNum) -> {
+			return getFinTypePartnerBank(tableType, rs);
+		});
 	}
 
 	@Override
-	public String save(FinTypePartnerBank finTypePartnerBank, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		if (finTypePartnerBank.getId() == Long.MIN_VALUE) {
-			finTypePartnerBank.setId(getNextValue("SeqFinTypePartnerBanks"));
-			logger.debug("get NextID:" + finTypePartnerBank.getId());
+	public String save(FinTypePartnerBank fpb, TableType tableType) {
+		if (fpb.getId() == Long.MIN_VALUE) {
+			fpb.setId(getNextValue("SeqFinTypePartnerBanks"));
+			logger.debug("NextID {}", fpb.getId());
 		}
-		StringBuilder sql = new StringBuilder(" insert into FinTypePartnerBanks");
-		sql.append(tableType.getSuffix());
-		sql.append(" (iD, finType, purpose, paymentMode, partnerBankID, vanApplicable, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append(" :iD, :finType, :purpose, :paymentMode, :partnerBankID, :vanApplicable,");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
+		StringBuilder sql = new StringBuilder("Insert into FinTypePartnerBanks");
+		sql.append(tableType.getSuffix());
+		sql.append(" (Id, FinType, Purpose, PaymentMode, PartnerBankId, VanApplicable, BranchCode, ClusterId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId)");
+		sql.append(" values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
+				ps.setLong(++index, fpb.getId());
+				ps.setString(++index, fpb.getFinType());
+				ps.setString(++index, fpb.getPurpose());
+				ps.setString(++index, fpb.getPaymentMode());
+				ps.setLong(++index, fpb.getPartnerBankID());
+				ps.setBoolean(++index, fpb.isVanApplicable());
+				ps.setString(++index, fpb.getBranchCode());
+				ps.setObject(++index, fpb.getClusterId());
+				ps.setInt(++index, fpb.getVersion());
+				ps.setLong(++index, fpb.getLastMntBy());
+				ps.setTimestamp(++index, fpb.getLastMntOn());
+				ps.setString(++index, fpb.getRecordStatus());
+				ps.setString(++index, fpb.getRoleCode());
+				ps.setString(++index, fpb.getNextRoleCode());
+				ps.setString(++index, fpb.getTaskId());
+				ps.setString(++index, fpb.getNextTaskId());
+				ps.setString(++index, fpb.getRecordType());
+				ps.setLong(++index, fpb.getWorkflowId());
+
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(finTypePartnerBank.getID());
+		return String.valueOf(fpb.getID());
 	}
 
 	@Override
-	public void update(FinTypePartnerBank finTypePartnerBank, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update FinTypePartnerBanks");
+	public void update(FinTypePartnerBank fpb, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update FinTypePartnerBanks");
 		sql.append(tableType.getSuffix());
-		sql.append("  set finType = :finType, purpose = :purpose, paymentMode = :paymentMode, ");
-		sql.append(" partnerBankID = :partnerBankID, vanApplicable = :vanApplicable, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where iD = :iD ");
-		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Set FinType = ?, Purpose = ?, PaymentMode = ?");
+		sql.append(", PartnerBankID = ?, vanApplicable = ?, BranchCode = ?");
+		sql.append(", ClusterId = ?, LastMntOn = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?");
+		sql.append(" Where Id = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 0;
 
-		// Check for the concurrency failure.
+			ps.setString(++index, fpb.getFinType());
+			ps.setString(++index, fpb.getPurpose());
+			ps.setString(++index, fpb.getPaymentMode());
+			ps.setLong(++index, fpb.getPartnerBankID());
+			ps.setBoolean(++index, fpb.isVanApplicable());
+			ps.setString(++index, fpb.getBranchCode());
+			ps.setObject(++index, fpb.getClusterId());
+			ps.setTimestamp(++index, fpb.getLastMntOn());
+			ps.setString(++index, fpb.getRecordStatus());
+			ps.setString(++index, fpb.getRoleCode());
+			ps.setString(++index, fpb.getNextRoleCode());
+			ps.setString(++index, fpb.getTaskId());
+			ps.setString(++index, fpb.getNextTaskId());
+			ps.setString(++index, fpb.getRecordType());
+			ps.setLong(++index, fpb.getWorkflowId());
+
+			ps.setLong(++index, fpb.getID());
+
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
@@ -185,119 +182,320 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	}
 
 	@Override
-	public void delete(FinTypePartnerBank finTypePartnerBank, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from FinTypePartnerBanks");
+	public void delete(FinTypePartnerBank fpb, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From FinTypePartnerBanks");
 		sql.append(tableType.getSuffix());
-		sql.append(" where iD = :iD ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Where Id = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
 		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+
+			recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
+
+				ps.setLong(++index, fpb.getID());
+				if (tableType == TableType.TEMP_TAB) {
+					ps.setTimestamp(++index, fpb.getPrevMntOn());
+				} else {
+					ps.setInt(++index, fpb.getVersion() - 1);
+				}
+			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 
-		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void deleteByFinType(String finType, String tableType) {
-		logger.debug(Literal.ENTERING);
+	public void deleteByFinType(String finType, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From FinTypePartnerBanks");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where FinType = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		FinTypePartnerBank finTypePartnerBank = new FinTypePartnerBank();
-		finTypePartnerBank.setFinType(finType);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		// Prepare the SQL.
-		StringBuilder deleteSql = new StringBuilder("Delete From FinTypePartnerBanks");
-		deleteSql.append(StringUtils.trimToEmpty(tableType));
-		deleteSql.append(" Where FinType =:FinType");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		int recordCount = 0;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypePartnerBank);
 		try {
-			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-
+			recordCount = jdbcOperations.update(sql.toString(), finType);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
 	}
 
 	@Override
 	public int getPartnerBankCount(String finType, String paymentType, String purpose, long partnerBankID) {
-		String sql = "Select Count(Fintype) From FinTypePartnerBanks Where Fintype = ? and PaymentMode = ? and Purpose = ? and PartnerBankID = ?";
+		StringBuilder sql = new StringBuilder("Select Count(*) From FinTypePartnerBanks");
+		sql.append(" Where Fintype = ? and PaymentMode = ? and Purpose = ? and PartnerBankID = ?");
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, finType, paymentType, purpose, partnerBankID);
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finType, paymentType, purpose,
+				partnerBankID);
 	}
 
-	/**
-	 * Method for Fetching Count for Assigned PartnerBank
-	 */
 	@Override
-	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
-		logger.debug("Entering");
+	public int getAssignedPartnerBankCount(long partnerBankId, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select Count(*)");
+		sql.append(" From FinTypePartnerBanks");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where PartnerBankId = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("PartnerBankId", partnerBankId);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		StringBuilder selectSql = new StringBuilder(" Select Count(1) ");
-		selectSql.append(" From FinTypePartnerBanks");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where PartnerBankId = :PartnerBankId ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, partnerBankId);
 	}
 
 	@Override
 	public FinTypePartnerBank getFinTypePartnerBankByPartnerBankCode(String partnerBankCode, String finType,
 			String paymentMode) {
-		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(
-				"ID, FinType, Purpose, PaymentMode, PARTNERBANKID, PartnerBankCode, PARTNERBANKNAME, ACTIVE, ACCOUNTNO, ACCOUNTTYPE, ENTITYCODE,");
-		sql.append(
-				"VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID");
-		sql.append(" From FinTypePartnerBanks_AView");
-		sql.append(
-				" Where PartnerBankCode = :PartnerBankCode and FinType = :FinType And Purpose = :Purpose And PaymentMode = :PaymentMode");
+		StringBuilder sql = getSelectQuery(TableType.AVIEW);
+		sql.append(" Where PartnerBankCode = ? and FinType = ? and Purpose = ? and PaymentMode = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		FinTypePartnerBank finTypePartnerBank = new FinTypePartnerBank();
-		finTypePartnerBank.setPartnerBankCode(partnerBankCode);
-		finTypePartnerBank.setFinType(finType);
-		finTypePartnerBank.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
-		finTypePartnerBank.setPaymentMode(paymentMode);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
-		RowMapper<FinTypePartnerBank> rowMapper = BeanPropertyRowMapper.newInstance(FinTypePartnerBank.class);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				return getFinTypePartnerBank(TableType.AVIEW, rs);
+			}, partnerBankCode, finType, AccountConstants.PARTNERSBANK_PAYMENT, paymentMode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+
 	}
+
+	@Override
+	public List<FinTypePartnerBank> getByFinTypeAndPurpose(FinTypePartnerBank fpb) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinType, Purpose, PaymentMode, PartnerBankID, VanApplicable, BranchCode, BranchDesc");
+		sql.append(", ClusterId, ClusterCode, Name, ClusterType, AccountNo, AccountType, PartnerbankCode");
+		sql.append(", PartnerbankName, Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FinTypePartnerBanks_AView");
+
+		sql.append(" Where FinType = ? and Purpose = ? and PaymentMode = ?");
+		if (PartnerBankExtension.MAPPING.equals("B")) {
+			sql.append(" and BranchCode = ?");
+		} else {
+			sql.append(" and ClusterId = ?");
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setString(++index, fpb.getFinType());
+			ps.setString(++index, fpb.getPurpose());
+			ps.setString(++index, fpb.getPaymentMode());
+
+			if (PartnerBankExtension.MAPPING.equals("B")) {
+				ps.setString(++index, fpb.getBranchCode());
+			} else {
+				ps.setLong(++index, fpb.getClusterId());
+			}
+
+		}, (rs, rowNum) -> {
+			FinTypePartnerBank item = new FinTypePartnerBank();
+
+			item.setID(rs.getLong("Id"));
+			item.setFinType(rs.getString("FinType"));
+			item.setPurpose(rs.getString("Purpose"));
+			item.setPaymentMode(rs.getString("PaymentMode"));
+			item.setPartnerBankID(rs.getLong("PartnerBankID"));
+			item.setVanApplicable(rs.getBoolean("VanApplicable"));
+			item.setBranchCode(rs.getString("BranchCode"));
+			item.setBranchDesc(rs.getString("BranchDesc"));
+			item.setClusterId(rs.getLong("ClusterId"));
+			item.setClusterCode(rs.getString("ClusterCode"));
+			item.setName(rs.getString("Name"));
+			item.setClusterType(rs.getString("ClusterType"));
+			item.setAccountNo(rs.getString("AccountNo"));
+			item.setAccountType(rs.getString("AccountType"));
+			item.setPartnerBankCode(rs.getString("PartnerBankCode"));
+			item.setPartnerBankName(rs.getString("PartnerBankName"));
+			item.setVersion(rs.getInt("Version"));
+			item.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			item.setLastMntBy(rs.getLong("LastMntBy"));
+			item.setRecordStatus(rs.getString("RecordStatus"));
+			item.setRoleCode(rs.getString("RoleCode"));
+			item.setNextRoleCode(rs.getString("NextRoleCode"));
+			item.setTaskId(rs.getString("TaskId"));
+			item.setNextTaskId(rs.getString("NextTaskId"));
+			item.setRecordType(rs.getString("RecordType"));
+			item.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return item;
+		});
+	}
+
+	@Override
+	public List<Long> getClusterByPartnerbankCode(long partnerbankId) {
+		String sql = "Select Distinct ClusterId From FinTypePartnerBanks Where partnerbankId = ? and ClusterId is not null";
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql, ps -> {
+			ps.setLong(1, JdbcUtil.getLong(partnerbankId));
+		}, (rs, rowNum) -> {
+			return rs.getLong("ClusterId");
+		});
+	}
+
+	@Override
+	public List<FinTypePartnerBank> getFintypePartnerBankByBranch(List<String> branchCodes, Long clusterId) {
+		StringBuilder sql = getSelectQuery(TableType.AVIEW);
+		sql.append(" Where");
+
+		if (PartnerBankExtension.MAPPING.equals("B")) {
+			sql.append(" BranchCode in (").append(JdbcUtil.getInCondition(branchCodes)).append(")");
+		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+			sql.append(" ClusterId = ?");
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			if (PartnerBankExtension.MAPPING.equals("B")) {
+				for (String branchCode : branchCodes) {
+					ps.setString(++index, branchCode);
+				}
+			} else if (PartnerBankExtension.MAPPING.equals("C")) {
+				ps.setLong(++index, clusterId);
+			}
+
+		}, (rs, rowNum) -> {
+			return getFinTypePartnerBank(TableType.AVIEW, rs);
+		});
+	}
+
+	@Override
+	public int getPartnerBankCountByCluster(FinTypePartnerBank fpb) {
+		StringBuilder sql = new StringBuilder("Select Count(*) From FinTypePartnerBanks");
+		sql.append(" Where Fintype = ? and PaymentMode = ? and Purpose = ? and PartnerBankID = ?");
+		if (PartnerBankExtension.MAPPING.equals("B")) {
+			sql.append(" and BranchCode = ?");
+		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+			sql.append(" and ClusterId = ?");
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		Object[] args = null;
+
+		Long partnerBankID = fpb.getPartnerBankID();
+		String purpose = fpb.getPurpose();
+		String paymentMode = fpb.getPaymentMode();
+		String finType = fpb.getFinType();
+
+		if (PartnerBankExtension.MAPPING.equals("B")) {
+			args = new Object[] { finType, paymentMode, purpose, partnerBankID, fpb.getBranchCode() };
+		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+			args = new Object[] { finType, paymentMode, purpose, partnerBankID, fpb.getClusterId() };
+		}
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, args);
+	}
+
+	@Override
+	public List<FinTypePartnerBank> getFinTypePartnerBanks(FinTypePartnerBank fpb, TableType tableType) {
+		StringBuilder sql = getSelectQuery(tableType);
+		sql.append(" Where FinType = ? and PaymentMode = ? and  Purpose = ? and Active= ?");
+
+		if (tableType.getSuffix().contains("Aview")) {
+			sql.append("and  EntityCode = :EntityCode");
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setString(++index, fpb.getFinType());
+			ps.setString(++index, fpb.getPaymentMode());
+			ps.setString(++index, fpb.getPurpose());
+			ps.setString(++index, fpb.getEntityCode());
+			ps.setInt(++index, 1);
+
+		}, (rs, rowNum) -> {
+			return getFinTypePartnerBank(tableType, rs);
+		});
+	}
+
+	private FinTypePartnerBank getFinTypePartnerBank(TableType tableType, ResultSet rs) throws SQLException {
+		FinTypePartnerBank item = new FinTypePartnerBank();
+
+		item.setID(rs.getLong("Id"));
+		item.setFinType(rs.getString("FinType"));
+		item.setPurpose(rs.getString("Purpose"));
+		item.setPaymentMode(rs.getString("PaymentMode"));
+		item.setPartnerBankID(rs.getLong("PartnerBankID"));
+		item.setVanApplicable(rs.getBoolean("VanApplicable"));
+		item.setBranchCode(rs.getString("BranchCode"));
+		item.setClusterId(rs.getLong("ClusterId"));
+
+		if (tableType.getSuffix().contains("View")) {
+			item.setPartnerBankName(rs.getString("PartnerBankName"));
+			item.setPartnerBankCode(rs.getString("PartnerBankCode"));
+			item.setBranchDesc(rs.getString("BranchDesc"));
+			item.setClusterCode(rs.getString("ClusterCode"));
+			item.setName(rs.getString("Name"));
+			item.setClusterType(rs.getString("ClusterType"));
+		}
+
+		if (tableType.getSuffix().contains("Aview")) {
+			item.setEntityCode(rs.getString("EntityCode"));
+			item.setAccountNo(rs.getString("AccountNo"));
+			item.setAccountType(rs.getString("AccountType"));
+			// item.setActive(rs.getBoolean("Active"));
+		}
+
+		item.setVersion(rs.getInt("Version"));
+		item.setLastMntOn(rs.getTimestamp("LastMntOn"));
+		item.setLastMntBy(rs.getLong("LastMntBy"));
+		item.setRecordStatus(rs.getString("RecordStatus"));
+		item.setRoleCode(rs.getString("RoleCode"));
+		item.setNextRoleCode(rs.getString("NextRoleCode"));
+		item.setTaskId(rs.getString("TaskId"));
+		item.setNextTaskId(rs.getString("NextTaskId"));
+		item.setRecordType(rs.getString("RecordType"));
+		item.setWorkflowId(rs.getLong("WorkflowId"));
+
+		return item;
+	}
+
+	private StringBuilder getSelectQuery(TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinType, Purpose, PaymentMode, PartnerBankID, VanApplicable, BranchCode, ClusterId");
+
+		if (tableType.getSuffix().contains("View")) {
+			sql.append(", PartnerBankName, PartnerBankCode, BranchDesc, ClusterCode, Name, ClusterType");
+		}
+
+		if (tableType.getSuffix().contains("Aview")) {
+			sql.append(", EntityCode, AccountNo, AccountType, Active");
+		}
+		sql.append(", Version, LastMntOn, LastMntBy");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FinTypePartnerBanks");
+		sql.append(tableType.getSuffix());
+		return sql;
+	}
+
 }

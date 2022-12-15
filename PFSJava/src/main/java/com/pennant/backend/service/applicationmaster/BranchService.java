@@ -55,4 +55,7 @@ public interface BranchService {
 	String getBranchDesc(String id);
 
 	Branch getBranch(String code);
+
+	List<String> getBranchCodeByClusterId(long clusterId);
+
 }

@@ -6997,16 +6997,7 @@
 		</property>
 	</bean>
 
-	<bean name="partnerBankServiceTarget" class="com.pennant.backend.service.partnerbank.impl.PartnerBankServiceImpl">
-		<property name="partnerBankDAO" ref="partnerBankDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
-		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
-		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
-		<property name="feePostingsDAO" ref="feePostingsDAO" />
-		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
-
-	</bean>
+	<bean name="partnerBankServiceTarget" class="com.pennant.backend.service.partnerbank.impl.PartnerBankServiceImpl"/>
 
 	<!--============ Reference ID Generation Configuration ============== -->
 	<bean name="ReferenceGenerator" class="com.pennant.app.util.ReferenceGenerator">
@@ -7083,8 +7074,6 @@
 
 	<bean name="finTypePartnerBankServiceTarget"
 		class="com.pennant.backend.service.rmtmasters.impl.FinTypePartnerBankServiceImpl">
-		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
 	<!-- Promotions -->
@@ -9168,7 +9157,7 @@
 		</property>
 	</bean>
 
-	<bean name="queryDetailServiceTarget" class="com.pennant.backend.service.loanquery.impl.QueryDetailServiceImpl"/>
+	<bean name="queryDetailServiceTarget" class="com.pennant.backend.service.loanquery.impl.QueryDetailServiceImpl" />
 
 	<!-- Master Definition -->
 	<bean id="masterDefDAO" class="com.pennant.backend.dao.masters.impl.MasterDefDAOImpl" parent="basicDao" />
@@ -13001,7 +12990,7 @@
 
 	<bean id="dueExtractionConfigDAO" class="com.pennant.pff.presentment.dao.impl.DueExtractionConfigDAOImpl"
 		parent="sequenceDao" />
-	
+
 	<bean id="uploadDAO" class="com.pennant.pff.upload.dao.impl.UploadDAOImpl" parent="sequenceDao" />
 
 	<bean id="rePresentmentUploadDAO" class="com.pennant.pff.presentment.dao.impl.RePresentmentUploadDAOImpl"
@@ -13026,7 +13015,8 @@
 			</props>
 		</property>
 	</bean>
-	
-	<bean id="rePresentmentUploadServiceTarget" class="com.pennant.pff.presentment.service.impl.RePresentmentUploadServiceImpl" />
-	
+
+	<bean id="rePresentmentUploadServiceTarget"
+		class="com.pennant.pff.presentment.service.impl.RePresentmentUploadServiceImpl" />
+
 </beans>

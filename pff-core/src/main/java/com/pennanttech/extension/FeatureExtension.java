@@ -32,6 +32,12 @@ public final class FeatureExtension {
 			return extension.getAccountingExtensions();
 		case FEE:
 			return extension.getFeeExtensions();
+		case VAS:
+			return extension.getFeeExtensions();
+		case DPD:
+			return extension.getDPDExtensions();
+		case PARTNERBANK:
+			return extension.getPartnerBankExtensions();
 
 		default:
 			return extension.getCustomConstants();

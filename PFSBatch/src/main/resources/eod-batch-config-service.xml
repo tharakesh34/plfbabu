@@ -401,16 +401,7 @@
 	<bean id="userActivityLogDAO" class="com.pennant.backend.dao.impl.UserActivityLogDAOImpl" parent="basicDao" />
 	<!-- Queue Assignment Details -->
 	<bean id="queueAssignmentDAO" class="com.pennant.backend.dao.impl.QueueAssignmentDAOImpl" parent="basicDao" />
-	<bean name="partnerBankService" class="com.pennant.backend.service.partnerbank.impl.PartnerBankServiceImpl">
-		<property name="partnerBankDAO" ref="partnerBankDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
-		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
-		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
-		<property name="feePostingsDAO" ref="feePostingsDAO" />
-		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
-
-	</bean>
+	<bean name="partnerBankService" class="com.pennant.backend.service.partnerbank.impl.PartnerBankServiceImpl"/>
 	<!-- Fee Postings -->
 	<bean id="feePostingsDAO" class="com.pennant.backend.dao.fees.impl.FeePostingsDAOImpl" parent="sequenceDao" />
 	<bean id="paymentInstructionDAO" class="com.pennant.backend.dao.payment.impl.PaymentInstructionDAOImpl"

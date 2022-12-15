@@ -442,4 +442,20 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 
 		return jdbcOperations.queryForObject(sql, Integer.class, branch, 1) > 0;
 	}
+
+	@Override
+	public List<String> getBranchCodeByClusterId(long clusterId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BranchCode");
+		sql.append(" From RMTBranches");
+		sql.append(" Where ClusterId = ?");
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, JdbcUtil.getLong(clusterId));
+		}, (rs, rowNum) -> {
+			return rs.getString("BranchCode");
+		});
+	}
+
 }

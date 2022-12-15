@@ -92,6 +92,7 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.MandateProcesses;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
@@ -574,7 +575,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				int finTypePartnerBank = 0;
 				if (partnerBank != null) {
 					finTypePartnerBank = finTypePartnerBankDAO.getAssignedPartnerBankCount(mandate.getPartnerBankId(),
-							"");
+							TableType.MAIN_TAB);
 				}
 				if (partnerBank == null || finTypePartnerBank == 0) {
 					String[] valueParm1 = new String[1];

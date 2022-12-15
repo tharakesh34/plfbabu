@@ -147,6 +147,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		parameterMap.put("MMddyyyy", DateUtil.getSysDate("MMddyyyyHHmmss"));
 		parameterMap.put("Remarks", mandateData.getRemarks());
 		parameterMap.put("ROW_NUM", 0);
+		parameterMap.put("FILE_PATH_SUFFIX", mandateData.getBranchOrCluster());
 
 		addCustomParameter(parameterMap);
 
@@ -456,6 +457,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		status.setFileName(name);
 		status.setRemarks("initiated Mandate response file [ " + name + " ] processing..");
 
+		Map<String, Object> parameterMap = new HashMap<>();
 		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, SysParamUtil.getAppValueDate(),
 				status);
 		dataEngine.setFile(file);
@@ -630,7 +632,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		String sql = "Update MANDATE_RESPONSE  set REMARKS = ?, STATUS = ? Where MANDATEID = ?";
 
 		logger.debug(Literal.SQL + sql);
-		
+
 		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
@@ -854,7 +856,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		String sql = "Update FinanceMain Set MandateID = ?, FinRepayMethod = ? Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-		
+
 		jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
@@ -869,7 +871,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		String sql = "UPDATE MANDATES SET ACTIVE = ? WHERE PRIMARYMANDATEID = ?";
 
 		logger.debug(Literal.SQL + sql);
-		
+
 		jdbcOperations.update(sql, ps -> {
 			ps.setInt(1, 0);
 			ps.setLong(2, mandateID);

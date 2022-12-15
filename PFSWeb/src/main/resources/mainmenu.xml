@@ -518,6 +518,9 @@
 			<menuItem id="menu_Item_StepPolicy"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyList.zul"
 				rightName="menuItem_SolutionFactory_StepPolicy" />
+			<menuItem id="menu_Item_FinTypePartnerbankMapping"
+				zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerbankMappingList.zul"
+				rightName="menu_Item_FinTypePartnerbankMapping" />
 		</menu>
 		<menu id="menu_Category_PromotionSetup">
 			<menuItem id="menu_Item_Promotion"

@@ -6514,7 +6514,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public FinanceMain getEntityByRef(String finReference) {
-		StringBuilder sql = new StringBuilder("Select fm.FinID, fm.FinReference, e.EntityCode,e.EntityDesc");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, fm.FinReference, fm.FinBranch, e.EntityCode, e.EntityDesc");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
@@ -6529,6 +6530,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 				fm.setFinID(rs.getLong("FinID"));
 				fm.setFinReference(rs.getString("FinReference"));
+				fm.setFinBranch(rs.getString("FinBranch"));
 				fm.setEntityCode(rs.getString("EntityCode"));
 				fm.setEntityDesc(rs.getString("EntityDesc"));
 				return fm;

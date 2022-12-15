@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -56,17 +57,6 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * FinTypePartnerBanks/FinTypePartnerBanks_Temp by using FinTypePartnerBanksDAO's save method b) Update the Record
-	 * in the table. based on the module workFlow Configuration. by using FinTypePartnerBanksDAO's update method 3)
-	 * Audit the record in to AuditHeader and AdtFinTypePartnerBanks by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -77,37 +67,28 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			return auditHeader;
 		}
 
-		FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) auditHeader.getAuditDetail().getModelData();
+		FinTypePartnerBank fpb = (FinTypePartnerBank) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
-		if (finTypePartnerBank.isWorkflow()) {
+		if (fpb.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (finTypePartnerBank.isNewRecord()) {
-			finTypePartnerBank.setId(Long.parseLong(getFinTypePartnerBankDAO().save(finTypePartnerBank, tableType)));
-			auditHeader.getAuditDetail().setModelData(finTypePartnerBank);
-			auditHeader.setAuditReference(String.valueOf(finTypePartnerBank.getID()));
+		if (fpb.isNewRecord()) {
+			fpb.setId(Long.parseLong(finTypePartnerBankDAO.save(fpb, tableType)));
+			auditHeader.getAuditDetail().setModelData(fpb);
+			auditHeader.setAuditReference(String.valueOf(fpb.getID()));
 		} else {
-			getFinTypePartnerBankDAO().update(finTypePartnerBank, tableType);
+			finTypePartnerBankDAO.update(fpb, tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * FinTypePartnerBanks by using FinTypePartnerBanksDAO's delete method with type as Blank 3) Audit the record in to
-	 * AuditHeader and AdtFinTypePartnerBanks by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -118,79 +99,47 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			return auditHeader;
 		}
 
-		FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) auditHeader.getAuditDetail().getModelData();
-		getFinTypePartnerBankDAO().delete(finTypePartnerBank, TableType.MAIN_TAB);
+		FinTypePartnerBank fpb = (FinTypePartnerBank) auditHeader.getAuditDetail().getModelData();
+		finTypePartnerBankDAO.delete(fpb, TableType.MAIN_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	@Override
-	public List<AuditDetail> delete(List<FinTypePartnerBank> finTypePartnerBankList, String tableType,
-			String auditTranType, String finType) {
+	public List<AuditDetail> delete(List<FinTypePartnerBank> fpbList, TableType tableType, String auditTranType,
+			String finType) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		if (finTypePartnerBankList != null && !finTypePartnerBankList.isEmpty()) {
+		if (fpbList != null && !fpbList.isEmpty()) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypePartnerBank(),
 					new FinTypePartnerBank().getExcludeFields());
-			for (int i = 0; i < finTypePartnerBankList.size(); i++) {
-				FinTypePartnerBank finTypePartnerBank = finTypePartnerBankList.get(i);
-				if (StringUtils.isNotEmpty(finTypePartnerBank.getRecordType()) || StringUtils.isEmpty(tableType)) {
+			for (int i = 0; i < fpbList.size(); i++) {
+				FinTypePartnerBank finTypePartnerBank = fpbList.get(i);
+				if (StringUtils.isNotEmpty(finTypePartnerBank.getRecordType())
+						|| StringUtils.isEmpty(tableType.getSuffix())) {
 					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 							finTypePartnerBank.getBefImage(), finTypePartnerBank));
 				}
 			}
-			getFinTypePartnerBankDAO().deleteByFinType(finType, tableType);
+			finTypePartnerBankDAO.deleteByFinType(finType, tableType);
 		}
 
 		return auditDetails;
 
 	}
 
-	/**
-	 * getFinTypePartnerBanks fetch the details by using FinTypePartnerBanksDAO's getFinTypePartnerBanksById method.
-	 * 
-	 * @param iD iD of the FinTypePartnerBank.
-	 * @return FinTypePartnerBanks
-	 */
 	@Override
-	public FinTypePartnerBank getFinTypePartnerBank(String finType, long iD) {
-		return getFinTypePartnerBankDAO().getFinTypePartnerBank(finType, iD, "_View");
+	public FinTypePartnerBank getPartnerBank(String finType, long id) {
+		return finTypePartnerBankDAO.getFinTypePartnerBank(finType, id, TableType.VIEW);
 	}
 
-	/**
-	 * getApprovedFinTypePartnerBanksById fetch the details by using FinTypePartnerBanksDAO's getFinTypePartnerBanksById
-	 * method . with parameter id and type as blank. it fetches the approved records from the FinTypePartnerBanks.
-	 * 
-	 * @param iD iD of the FinTypePartnerBank. (String)
-	 * @return FinTypePartnerBanks
-	 */
-	public FinTypePartnerBank getApprovedFinTypePartnerBank(String finType, long iD) {
-		return getFinTypePartnerBankDAO().getFinTypePartnerBank(finType, iD, "_AView");
+	public FinTypePartnerBank getApprovedPartnerBank(String finType, long id) {
+		return finTypePartnerBankDAO.getFinTypePartnerBank(finType, id, TableType.AVIEW);
 	}
 
-	@Override
-	public List<FinTypePartnerBank> getFinTypePartnerBanksList(String finType, String type) {
-		return getFinTypePartnerBankDAO().getFinTypePartnerBank(finType, type);
-	}
-
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getFinTypePartnerBankDAO().delete with
-	 * parameters finTypePartnerBank,"" b) NEW Add new record in to main table by using getFinTypePartnerBankDAO().save
-	 * with parameters finTypePartnerBank,"" c) EDIT Update record in the main table by using
-	 * getFinTypePartnerBankDAO().update with parameters finTypePartnerBank,"" 3) Delete the record from the workFlow
-	 * table by using getFinTypePartnerBankDAO().delete with parameters finTypePartnerBank,"_Temp" 4) Audit the record
-	 * in to AuditHeader and AdtFinTypePartnerBanks by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
-	 * the record in to AuditHeader and AdtFinTypePartnerBanks by using auditHeaderDAO.addAudit(auditHeader) based on
-	 * the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -203,59 +152,50 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			return auditHeader;
 		}
 
-		FinTypePartnerBank finTypePartnerBank = new FinTypePartnerBank();
-		BeanUtils.copyProperties((FinTypePartnerBank) auditHeader.getAuditDetail().getModelData(), finTypePartnerBank);
+		FinTypePartnerBank fpb = new FinTypePartnerBank();
+		BeanUtils.copyProperties((FinTypePartnerBank) auditHeader.getAuditDetail().getModelData(), fpb);
 
-		getFinTypePartnerBankDAO().delete(finTypePartnerBank, TableType.TEMP_TAB);
+		finTypePartnerBankDAO.delete(fpb, TableType.TEMP_TAB);
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(finTypePartnerBank.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(finTypePartnerBankDAO
-					.getFinTypePartnerBank(finTypePartnerBank.getFinType(), finTypePartnerBank.getID(), ""));
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(fpb.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(
+					finTypePartnerBankDAO.getFinTypePartnerBank(fpb.getFinType(), fpb.getID(), TableType.MAIN_TAB));
 		}
 
-		if (finTypePartnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (fpb.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getFinTypePartnerBankDAO().delete(finTypePartnerBank, TableType.MAIN_TAB);
+			finTypePartnerBankDAO.delete(fpb, TableType.MAIN_TAB);
 		} else {
-			finTypePartnerBank.setRoleCode("");
-			finTypePartnerBank.setNextRoleCode("");
-			finTypePartnerBank.setTaskId("");
-			finTypePartnerBank.setNextTaskId("");
-			finTypePartnerBank.setWorkflowId(0);
+			fpb.setRoleCode("");
+			fpb.setNextRoleCode("");
+			fpb.setTaskId("");
+			fpb.setNextTaskId("");
+			fpb.setWorkflowId(0);
 
-			if (finTypePartnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (fpb.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				finTypePartnerBank.setRecordType("");
-				getFinTypePartnerBankDAO().save(finTypePartnerBank, TableType.MAIN_TAB);
+				fpb.setRecordType("");
+				finTypePartnerBankDAO.save(fpb, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				finTypePartnerBank.setRecordType("");
-				getFinTypePartnerBankDAO().update(finTypePartnerBank, TableType.MAIN_TAB);
+				fpb.setRecordType("");
+				finTypePartnerBankDAO.update(fpb, TableType.MAIN_TAB);
 			}
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(finTypePartnerBank);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeader.getAuditDetail().setModelData(fpb);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinTypePartnerBankDAO().delete with parameters finTypePartnerBank,"_Temp" 3) Audit the
-	 * record in to AuditHeader and AdtFinTypePartnerBanks by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -269,21 +209,14 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getFinTypePartnerBankDAO().delete(finTypePartnerBank, TableType.TEMP_TAB);
+		finTypePartnerBankDAO.delete(finTypePartnerBank, TableType.TEMP_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -296,65 +229,71 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		return auditHeader;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getFinTypePartnerBankDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
-	 * then assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
-
 	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) auditDetail.getModelData();
+		FinTypePartnerBank fpb = (FinTypePartnerBank) auditDetail.getModelData();
 
-		FinTypePartnerBank tempFinTypePartnerBank = null;
-		if (finTypePartnerBank.isWorkflow()) {
-			tempFinTypePartnerBank = getFinTypePartnerBankDAO().getFinTypePartnerBank(finTypePartnerBank.getFinType(),
-					finTypePartnerBank.getId(), "_Temp");
+		FinTypePartnerBank tfpb = null;
+
+		if (fpb.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(fpb.getRecordType())) {
+			int count = finTypePartnerBankDAO.getPartnerBankCountByCluster(fpb);
+			if (count > 0) {
+				String[] parameters = new String[4];
+				parameters[0] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_FinType.value")
+						+ ": " + fpb.getFinType();
+				parameters[1] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_PaymentType.value")
+						+ ": " + fpb.getPaymentMode();
+				parameters[2] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_Purpose.value")
+						+ ": " + fpb.getPurpose();
+				parameters[3] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_PartnerBank.value")
+						+ ": " + fpb.getPartnerBankCode();
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+			}
 		}
-		FinTypePartnerBank befFinTypePartnerBank = getFinTypePartnerBankDAO()
-				.getFinTypePartnerBank(finTypePartnerBank.getFinType(), finTypePartnerBank.getId(), "");
 
-		FinTypePartnerBank oldFinTypePartnerBank = finTypePartnerBank.getBefImage();
+		if (fpb.isWorkflow()) {
+			tfpb = finTypePartnerBankDAO.getFinTypePartnerBank(fpb.getFinType(), fpb.getId(), TableType.TEMP_TAB);
+		}
+
+		FinTypePartnerBank bfpb = finTypePartnerBankDAO.getFinTypePartnerBank(fpb.getFinType(), fpb.getId(),
+				TableType.MAIN_TAB);
+
+		FinTypePartnerBank oldfpb = fpb.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(finTypePartnerBank.getId());
+		valueParm[0] = String.valueOf(fpb.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_ID") + ":" + valueParm[0];
 
-		if (finTypePartnerBank.isNewRecord()) { // for New record or new record into work flow
-			if (!finTypePartnerBank.isWorkflow()) {// With out Work flow only new records
-				if (befFinTypePartnerBank != null) { // Record Already Exists in the table then error
+		if (fpb.isNewRecord()) {
+			if (!fpb.isWorkflow()) {
+				if (bfpb != null) {
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
-			} else { // with work flow
-				if (finTypePartnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
-					if (befFinTypePartnerBank != null || tempFinTypePartnerBank != null) { // if records already exists
-																							// in the main table
+			} else {
+				if (fpb.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					if (bfpb != null || tfpb != null) {
+
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
-				} else { // if records not exists in the Main flow table
-					if (befFinTypePartnerBank == null || tempFinTypePartnerBank != null) {
+				} else {
+					if (bfpb == null || tfpb != null) {
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
 		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!finTypePartnerBank.isWorkflow()) { // With out Work flow for update and delete
-				if (befFinTypePartnerBank == null) { // if records not exists in the main table
+			if (!fpb.isWorkflow()) {
+				if (bfpb == null) {
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
-					if (oldFinTypePartnerBank != null
-							&& !oldFinTypePartnerBank.getLastMntOn().equals(befFinTypePartnerBank.getLastMntOn())) {
+					if (oldfpb != null && !oldfpb.getLastMntOn().equals(bfpb.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(
@@ -366,13 +305,12 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 					}
 				}
 			} else {
-				if (tempFinTypePartnerBank == null) { // if records not exists in the Work flow table
+				if (tfpb == null) {
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
-				if (tempFinTypePartnerBank != null && oldFinTypePartnerBank != null
-						&& !oldFinTypePartnerBank.getLastMntOn().equals(tempFinTypePartnerBank.getLastMntOn())) {
+				if (tfpb != null && oldfpb != null && !oldfpb.getLastMntOn().equals(tfpb.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
@@ -381,70 +319,73 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if (StringUtils.trimToEmpty(method).equals("doApprove") || !finTypePartnerBank.isWorkflow()) {
-			auditDetail.setBefImage(befFinTypePartnerBank);
+		if (StringUtils.trimToEmpty(method).equals("doApprove") || !fpb.isWorkflow()) {
+			auditDetail.setBefImage(bfpb);
 		}
 
 		return auditDetail;
 	}
 
 	@Override
-	public List<AuditDetail> setFinTypePartnerBankDetailsAuditData(List<FinTypePartnerBank> finTypePartnerBankList,
+	public List<AuditDetail> setAuditData(List<FinTypePartnerBank> fpbList,
 			String auditTranType, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinTypePartnerBank(),
 				new FinTypePartnerBank().getExcludeFields());
 
-		for (int i = 0; i < finTypePartnerBankList.size(); i++) {
-			FinTypePartnerBank finTypePartnerBank = finTypePartnerBankList.get(i);
+		for (int i = 0; i < fpbList.size(); i++) {
+			FinTypePartnerBank fpb = fpbList.get(i);
 
-			if (StringUtils.isEmpty(finTypePartnerBank.getRecordType())) {
+			if (StringUtils.isEmpty(fpb.getRecordType())) {
 				continue;
 			}
 
 			boolean isRcdType = false;
-			if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				finTypePartnerBank.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				fpb.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				isRcdType = true;
-			} else if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				finTypePartnerBank.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			} else if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				fpb.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				isRcdType = true;
-			} else if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				finTypePartnerBank.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			} else if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				fpb.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
+
 			if ("saveOrUpdate".equals(method) && isRcdType) {
-				finTypePartnerBank.setNewRecord(true);
+				fpb.setNewRecord(true);
 			}
+
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| fpb.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-					finTypePartnerBank.getBefImage(), finTypePartnerBank));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], fpb.getBefImage(), fpb));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
 	@Override
-	public List<AuditDetail> processFinTypePartnerBankDetails(List<AuditDetail> auditDetails, String type) {
-		logger.debug("Entering");
+	public List<AuditDetail> processDetails(List<AuditDetail> auditDetails, TableType type) {
+		logger.debug(Literal.ENTERING);
+
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
+
 		for (int i = 0; i < auditDetails.size(); i++) {
-			FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) auditDetails.get(i).getModelData();
+			FinTypePartnerBank fpb = (FinTypePartnerBank) auditDetails.get(i).getModelData();
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -452,38 +393,39 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			String rcdType = "";
 			String recordStatus = "";
 			TableType tableType = TableType.TEMP_TAB;
-			if (StringUtils.isEmpty(type)) {
+
+			if (StringUtils.isEmpty(type.getSuffix())) {
 				tableType = TableType.MAIN_TAB;
 				approveRec = true;
-				finTypePartnerBank.setRoleCode("");
-				finTypePartnerBank.setNextRoleCode("");
-				finTypePartnerBank.setTaskId("");
-				finTypePartnerBank.setNextTaskId("");
-				finTypePartnerBank.setWorkflowId(0);
+				fpb.setRoleCode("");
+				fpb.setNextRoleCode("");
+				fpb.setTaskId("");
+				fpb.setNextTaskId("");
+				fpb.setWorkflowId(0);
 			}
-			if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
-			} else if (finTypePartnerBank.isNewRecord()) {
+			} else if (fpb.isNewRecord()) {
 				saveRecord = true;
-				if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					finTypePartnerBank.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					finTypePartnerBank.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					finTypePartnerBank.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					fpb.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					fpb.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					fpb.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
-			} else if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (fpb.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finTypePartnerBank.isNewRecord()) {
+				} else if (fpb.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -491,68 +433,72 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			}
 
 			if (approveRec) {
-				rcdType = finTypePartnerBank.getRecordType();
-				recordStatus = finTypePartnerBank.getRecordStatus();
-				finTypePartnerBank.setRecordType("");
-				finTypePartnerBank.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				rcdType = fpb.getRecordType();
+				recordStatus = fpb.getRecordStatus();
+				fpb.setRecordType("");
+				fpb.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				getFinTypePartnerBankDAO().save(finTypePartnerBank, tableType);
+				finTypePartnerBankDAO.save(fpb, tableType);
 			}
 			if (updateRecord) {
-				getFinTypePartnerBankDAO().update(finTypePartnerBank, tableType);
+				finTypePartnerBankDAO.update(fpb, tableType);
 			}
 			if (deleteRecord) {
-				getFinTypePartnerBankDAO().delete(finTypePartnerBank, tableType);
+				finTypePartnerBankDAO.delete(fpb, tableType);
 			}
 			if (approveRec) {
-				finTypePartnerBank.setRecordType(rcdType);
-				finTypePartnerBank.setRecordStatus(recordStatus);
+				fpb.setRecordType(rcdType);
+				fpb.setRecordStatus(recordStatus);
 			}
-			auditDetails.get(i).setModelData(finTypePartnerBank);
+			auditDetails.get(i).setModelData(fpb);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditDetails;
 	}
 
 	@Override
 	public int getPartnerBankCount(String finType, String paymentType, String purpose, long partnerBankID) {
-		logger.debug("Entering");
-		logger.debug("Leaving");
-		return getFinTypePartnerBankDAO().getPartnerBankCount(finType, paymentType, purpose, partnerBankID);
+		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
+		return finTypePartnerBankDAO.getPartnerBankCount(finType, paymentType, purpose, partnerBankID);
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
+	@Override
+	public List<FinTypePartnerBank> getByFinTypeAndPurpose(FinTypePartnerBank fab) {
+		return finTypePartnerBankDAO.getByFinTypeAndPurpose(fab);
 	}
 
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
+	@Override
+	public List<FinTypePartnerBank> getPartnerBanks(String finType, TableType tableType) {
+		return finTypePartnerBankDAO.getFinTypePartnerBanks(finType, tableType);
+	}
+
+	@Override
+	public List<FinTypePartnerBank> getPartnerBanksList(FinTypePartnerBank fab, TableType tableType) {
+		return finTypePartnerBankDAO.getFinTypePartnerBanks(fab, tableType);
+	}
+
+	@Override
+	public List<Long> getByClusterAndPartnerbank(long partnerbankId) {
+		return finTypePartnerBankDAO.getClusterByPartnerbankCode(partnerbankId);
+	}
+
+	@Override
+	public List<FinTypePartnerBank> getFintypePartnerBankByBranch(List<String> branchCode, Long clusterId) {
+		return finTypePartnerBankDAO.getFintypePartnerBankByBranch(branchCode, clusterId);
+	}
+
+	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
-	/**
-	 * @return the finTypePartnerBankDAO
-	 */
-	public FinTypePartnerBankDAO getFinTypePartnerBankDAO() {
-		return finTypePartnerBankDAO;
-	}
-
-	/**
-	 * @param finTypePartnerBankDAO the finTypePartnerBankDAO to set
-	 */
+	@Autowired
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
+
 }

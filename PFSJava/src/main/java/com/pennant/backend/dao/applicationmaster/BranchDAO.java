@@ -59,4 +59,7 @@ public interface BranchDAO extends BasicCrudDao<Branch> {
 	String getBranchDesc(String id, String type);
 
 	boolean isActiveBranch(String branch);
+
+	List<String> getBranchCodeByClusterId(long clusterId);
+
 }

@@ -356,7 +356,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			// set vancode
 			if (financeType.isAlwVan() && SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
 				financeType.setFinTypePartnerBankList(
-						finTypePartnerBankService.getFinTypePartnerBanksList(fm.getFinType(), "_AView"));
+						finTypePartnerBankService.getPartnerBanks(fm.getFinType(), TableType.AVIEW));
 				List<FinTypePartnerBank> finTypePartnerBankList = financeType.getFinTypePartnerBankList();
 				if (CollectionUtils.isNotEmpty(finTypePartnerBankList)) {
 					for (FinTypePartnerBank finTypePartnerBank : finTypePartnerBankList) {

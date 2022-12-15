@@ -86,6 +86,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -231,8 +232,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		// FinTypePartnerBank
 		if (financeType.getFinTypePartnerBankList() != null && financeType.getFinTypePartnerBankList().size() > 0) {
 			List<AuditDetail> partnerBankDetails = financeType.getAuditDetailMap().get("FinTypePartnerBank");
-			partnerBankDetails = this.finTypePartnerBankService.processFinTypePartnerBankDetails(partnerBankDetails,
-					tableType);
+			partnerBankDetails = this.finTypePartnerBankService.processDetails(partnerBankDetails,
+					tableType1);
 			auditDetails.addAll(partnerBankDetails);
 		}
 
@@ -274,7 +275,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
 		getFinanceTypeDAO().delete(financeType, "");
 		FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(financeType, "", auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetails(
+				processChildsAudit(deleteChilds(financeType, TableType.MAIN_TAB, auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
@@ -282,95 +284,71 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		return auditHeader;
 	}
 
-	/**
-	 * It fetches the records from RMTFinanceType_View and other details
-	 * 
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return FinanceType
-	 */
 	@Override
 	public FinanceType getFinanceTypeById(String finType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(finType, "_View");
+		FinanceType ft = getFinanceTypeDAO().getFinanceTypeByID(finType, "_View");
 
-		if (financeType != null) {
-			// FinTypeVasProduct Details
-			financeType.setFinTypeVASProductsList(getFinTypeVASProductsDAO().getVASProductsByFinType(finType, "_View"));
-			financeType
-					.setFinTypeReceiptModesList(getFinTypeReceiptModesDAO().getReceiptModesByFinType(finType, "_View"));
-			financeType.setFinTypeFeesList(
-					getFinTypeFeesService().getFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
-			financeType.setFinTypeAccountingList(getFinTypeAccountingService().getFinTypeAccountingListByID(finType,
-					FinanceConstants.MODULEID_FINTYPE));
-			financeType.setFinTypePartnerBankList(
-					getFinTypePartnerBankService().getFinTypePartnerBanksList(finType, "_View"));
-			financeType.setFinTypeExpenseList(getFinTypeExpenseService().getFinTypeExpenseById(finType));
-			financeType.setIrrFinanceTypeList(getIrrFinanceTypeDAO().getIRRFinanceTypeList(finType, "_View"));
-
-			if (ProductUtil.isOverDraft(financeType.getProductCategory())) {
-				financeType.setFeetype(feeTypeService.getApprovedFeeTypeById(financeType.getOverdraftTxnChrgFeeType()));
-			}
+		if (ft == null) {
+			logger.debug(Literal.LEAVING);
+			return ft;
 		}
 
-		logger.debug("Leaving");
+		int moduleID = FinanceConstants.MODULEID_FINTYPE;
 
-		return financeType;
+		ft.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(finType, "_View"));
+		ft.setFinTypeReceiptModesList(finTypeReceiptModesDAO.getReceiptModesByFinType(finType, "_View"));
+
+		ft.setFinTypeFeesList(finTypeFeesService.getFinTypeFeesById(finType, moduleID));
+		ft.setFinTypeAccountingList(finTypeAccountingService.getFinTypeAccountingListByID(finType, moduleID));
+		ft.setFinTypePartnerBankList(finTypePartnerBankService.getPartnerBanks(finType, TableType.VIEW));
+		ft.setFinTypeExpenseList(finTypeExpenseService.getFinTypeExpenseById(finType));
+		ft.setIrrFinanceTypeList(irrFinanceTypeDAO.getIRRFinanceTypeList(finType, "_View"));
+
+		if (ProductUtil.isOverDraft(ft.getProductCategory())) {
+			ft.setFeetype(feeTypeService.getApprovedFeeTypeById(ft.getOverdraftTxnChrgFeeType()));
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return ft;
 	}
 
-	/**
-	 * Method for Fetching List of Allowed VAS Products by Finance Type
-	 * 
-	 * @return
-	 */
 	@Override
 	public List<FinTypeVASProducts> getFinTypeVasProducts(String finType) {
 		return getFinTypeVASProductsDAO().getVASProductsByFinType(finType, "_AView");
 	}
 
-	/**
-	 * It fetches the approved records from RMTFinanceTypesa and other details
-	 * 
-	 * @param id (String)
-	 * @return FinanceType
-	 */
 	@Override
 	public FinanceType getApprovedFinanceTypeById(String finType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(finType, "_AView");
-		if (financeType != null) {
-			financeType.setFinTypeFeesList(
-					getFinTypeFeesService().getApprovedFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
-			financeType.setFinTypeAccountingList(getFinTypeAccountingService()
-					.getApprovedFinTypeAccountingListByID(finType, FinanceConstants.MODULEID_FINTYPE));
-			financeType.setFinTypePartnerBankList(
-					getFinTypePartnerBankService().getFinTypePartnerBanksList(finType, "_AView"));
-			financeType.setFinTypeExpenseList(getFinTypeExpenseService().getApprovedFinTypeExpenseById(finType));
+		FinanceType ft = financeTypeDAO.getFinanceTypeByID(finType, "_AView");
+
+		if (ft == null) {
+			logger.debug(Literal.LEAVING);
 		}
 
-		logger.debug("Leaving");
+		int moduleId = FinanceConstants.MODULEID_FINTYPE;
+		ft.setFinTypeFeesList(finTypeFeesService.getApprovedFinTypeFeesById(finType, moduleId));
+		ft.setFinTypeAccountingList(finTypeAccountingService.getApprovedFinTypeAccountingListByID(finType, moduleId));
+		ft.setFinTypePartnerBankList(finTypePartnerBankService.getPartnerBanks(finType, TableType.AVIEW));
+		ft.setFinTypeExpenseList(finTypeExpenseService.getApprovedFinTypeExpenseById(finType));
 
-		return financeType;
+		logger.debug(Literal.LEAVING);
+
+		return ft;
 	}
 
-	/**
-	 * getApprovedFinanceTypeById fetch the details by using FinanceTypeDAO's getFinanceTypeById method . with parameter
-	 * id and type as blank. it fetches the approved records from the RMTFinanceTypes.
-	 * 
-	 * @param finType (String)
-	 * @return FinanceType
-	 */
 	@Override
 	public FinanceType getOrgFinanceTypeById(String finType) {
-		FinanceType financeTypeDetails = getFinanceTypeDAO().getOrgFinanceTypeByID(finType, "_ORGView");
-		if (financeTypeDetails.isAlwVan() && SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
-			financeTypeDetails.setFinTypePartnerBankList(getFinTypePartnerBankService()
-					.getFinTypePartnerBanksList(financeTypeDetails.getFinType(), "_AView"));
+		FinanceType ft = financeTypeDAO.getOrgFinanceTypeByID(finType, "_ORGView");
+		if (ft.isAlwVan() && SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
+			ft.setFinTypePartnerBankList(
+					finTypePartnerBankService.getPartnerBanks(ft.getFinType(), TableType.AVIEW));
 		}
-		return financeTypeDetails;
+		return ft;
 	}
 
 	/**
@@ -419,7 +397,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (financeType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			// List
-			auditDetails.addAll(deleteChilds(financeType, "", tranType));
+			auditDetails.addAll(deleteChilds(financeType, TableType.MAIN_TAB, tranType));
 			getFinanceTypeDAO().delete(financeType, "");
 		} else {
 			financeType.setRoleCode("");
@@ -507,7 +485,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 				if (finTypePartnerBankDetails != null && !finTypePartnerBankDetails.isEmpty()) {
 					finTypePartnerBankDetails = this.finTypePartnerBankService
-							.processFinTypePartnerBankDetails(finTypePartnerBankDetails, "");
+							.processDetails(finTypePartnerBankDetails, TableType.MAIN_TAB);
 					auditDetails.addAll(finTypePartnerBankDetails);
 				}
 			}
@@ -536,7 +514,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		getFinanceTypeDAO().delete(financeType, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		// List
-		auditHeader.setAuditDetails(deleteChilds(financeType, "_Temp", auditHeader.getAuditTranType()));
+		auditHeader.setAuditDetails(deleteChilds(financeType, TableType.TEMP_TAB, auditHeader.getAuditTranType()));
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceType(), financeType.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				financeType.getBefImage(), financeType));
@@ -913,7 +891,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		getFinanceTypeDAO().delete(financeType, "_Temp");
 		// List
 		auditHeader.setAuditDetails(
-				processChildsAudit(deleteChilds(financeType, "_Temp", auditHeader.getAuditTranType())));
+				processChildsAudit(deleteChilds(financeType, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
@@ -1202,7 +1180,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				finTypePartnerBank.setNextTaskId(financeType.getNextTaskId());
 			}
 
-			auditDetailMap.put("FinTypePartnerBank", finTypePartnerBankService.setFinTypePartnerBankDetailsAuditData(
+			auditDetailMap.put("FinTypePartnerBank", finTypePartnerBankService.setAuditData(
 					financeType.getFinTypePartnerBankList(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypePartnerBank"));
 		}
@@ -1293,8 +1271,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		return auditDetails;
 	}
 
-	public List<AuditDetail> deleteChilds(FinanceType financeType, String tableType, String auditTranType) {
+	public List<AuditDetail> deleteChilds(FinanceType financeType, TableType tableType, String auditTranType) {
 		logger.debug("Entering");
+
+		String table = tableType.getSuffix();
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		// Finance Type VAS Details
@@ -1303,12 +1283,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					new FinTypeVASProducts().getExcludeFields());
 			for (int i = 0; i < financeType.getFinTypeVASProductsList().size(); i++) {
 				FinTypeVASProducts finTypeVASProducts = financeType.getFinTypeVASProductsList().get(i);
-				if (StringUtils.isNotEmpty(finTypeVASProducts.getRecordType()) || StringUtils.isEmpty(tableType)) {
+				if (StringUtils.isNotEmpty(finTypeVASProducts.getRecordType()) || StringUtils.isEmpty(table)) {
 					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 							finTypeVASProducts.getBefImage(), finTypeVASProducts));
 				}
 			}
-			getFinTypeVASProductsDAO().deleteList(financeType.getFinType(), tableType);
+			getFinTypeVASProductsDAO().deleteList(financeType.getFinType(), table);
 		}
 
 		// Finance Type Receipt Modes
@@ -1317,12 +1297,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					new FinTypeReceiptModes().getExcludeFields());
 			for (int i = 0; i < financeType.getFinTypeReceiptModesList().size(); i++) {
 				FinTypeReceiptModes finTypeReceiptModes = financeType.getFinTypeReceiptModesList().get(i);
-				if (StringUtils.isNotEmpty(finTypeReceiptModes.getRecordType()) || StringUtils.isEmpty(tableType)) {
+				if (StringUtils.isNotEmpty(finTypeReceiptModes.getRecordType()) || StringUtils.isEmpty(table)) {
 					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 							finTypeReceiptModes.getBefImage(), finTypeReceiptModes));
 				}
 			}
-			getFinTypeReceiptModesDAO().deleteList(financeType.getFinType(), tableType);
+			getFinTypeReceiptModesDAO().deleteList(financeType.getFinType(), table);
 		}
 
 		// IRRCode Details
@@ -1331,22 +1311,22 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					new IRRFinanceType().getExcludeFields());
 			for (int i = 0; i < financeType.getIrrFinanceTypeList().size(); i++) {
 				IRRFinanceType irrFinanceType = financeType.getIrrFinanceTypeList().get(i);
-				if (StringUtils.isNotEmpty(irrFinanceType.getRecordType()) || StringUtils.isEmpty(tableType)) {
+				if (StringUtils.isNotEmpty(irrFinanceType.getRecordType()) || StringUtils.isEmpty(table)) {
 					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 							irrFinanceType.getBefImage(), irrFinanceType));
 				}
 			}
-			getIrrFinanceTypeDAO().deleteList(financeType.getFinType(), tableType);
+			getIrrFinanceTypeDAO().deleteList(financeType.getFinType(), table);
 		}
 
 		// Fees
 		if (financeType.getFinTypeFeesList() != null && !financeType.getFinTypeFeesList().isEmpty()) {
-			auditDetails.addAll(this.finTypeFeesService.delete(financeType.getFinTypeFeesList(), tableType,
-					auditTranType, financeType.getFinType(), FinanceConstants.MODULEID_FINTYPE));
+			auditDetails.addAll(this.finTypeFeesService.delete(financeType.getFinTypeFeesList(), table, auditTranType,
+					financeType.getFinType(), FinanceConstants.MODULEID_FINTYPE));
 		}
 		// Accounting Deatails
 		if (financeType.getFinTypeAccountingList() != null && !financeType.getFinTypeAccountingList().isEmpty()) {
-			auditDetails.addAll(this.finTypeAccountingService.delete(financeType.getFinTypeAccountingList(), tableType,
+			auditDetails.addAll(this.finTypeAccountingService.delete(financeType.getFinTypeAccountingList(), table,
 					auditTranType, financeType.getFinType(), FinanceConstants.MODULEID_FINTYPE));
 		}
 		// FinTypePartnerBank
@@ -1357,7 +1337,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		// FinTypeExpense
 		if (financeType.getFinTypeExpenseList() != null && !financeType.getFinTypeExpenseList().isEmpty()) {
-			auditDetails.addAll(this.finTypeExpenseService.delete(financeType.getFinTypeExpenseList(), tableType,
+			auditDetails.addAll(this.finTypeExpenseService.delete(financeType.getFinTypeExpenseList(), table,
 					auditTranType, financeType.getFinType()));
 		}
 

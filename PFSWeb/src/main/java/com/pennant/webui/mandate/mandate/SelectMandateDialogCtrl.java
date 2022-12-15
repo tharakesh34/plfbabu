@@ -250,10 +250,11 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 			}
 
-			FinanceMain finMain = mandateService.getEntityByRef(this.mandate.getFinReference());
+			FinanceMain fm = mandateService.getEntityByRef(this.mandate.getFinReference());
 
-			this.mandate.setEntityCode(finMain.getEntityCode());
-			this.mandate.setEntityDesc(finMain.getEntityDesc());
+			this.mandate.setEntityCode(fm.getEntityCode());
+			this.mandate.setEntityDesc(fm.getEntityDesc());
+			this.mandate.setFinBranch(fm.getFinBranch());
 
 			arg.put("mandate", this.mandate);
 			arg.put("mandatedata", this);

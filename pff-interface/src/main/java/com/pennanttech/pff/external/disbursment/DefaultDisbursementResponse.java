@@ -499,8 +499,10 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
 
 		Map<String, Object> filterMap = new HashMap<>();
+		Map<String, Object> parameterMap = new HashMap<>();
 		filterMap.put(DisbursementConstants.STATUS_AWAITCON, DisbursementConstants.STATUS_AWAITCON);
 		dataEngine.setFilterMap(filterMap);
+		dataEngine.setParameterMap(parameterMap);
 
 		try {
 			dataEngine.importData(configName);

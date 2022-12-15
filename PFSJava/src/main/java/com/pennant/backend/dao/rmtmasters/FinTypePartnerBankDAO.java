@@ -28,28 +28,31 @@ import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
+import com.pennanttech.pff.core.TableType;
 
 public interface FinTypePartnerBankDAO extends BasicCrudDao<FinTypePartnerBank> {
 
-	/**
-	 * Fetch the Record Academic Details details by key field
-	 * 
-	 * @param iD        iD of the FinTypePartnerBank.
-	 * @param tableType The type of the table.
-	 * @return FinTypePartnerBank
-	 */
-	FinTypePartnerBank getFinTypePartnerBank(String finType, long iD, String type);
+	FinTypePartnerBank getFinTypePartnerBank(String finType, long iD, TableType tableType);
 
-	void deleteByFinType(String finType, String tableType);
+	void deleteByFinType(String finType, TableType tableType);
 
-	List<FinTypePartnerBank> getFinTypePartnerBank(String finType, String type);
+	List<FinTypePartnerBank> getFinTypePartnerBanks(String finType, TableType tableType);
 
 	int getPartnerBankCount(String finType, String paymentType, String purpose, long partnerBankID);
 
-	int getAssignedPartnerBankCount(long partnerBankId, String type);
+	int getAssignedPartnerBankCount(long partnerBankId, TableType type);
 
-	// Refund Uploads
 	FinTypePartnerBank getFinTypePartnerBankByPartnerBankCode(String partnerBankCode, String finType,
 			String paymentMode);
+
+	List<FinTypePartnerBank> getByFinTypeAndPurpose(FinTypePartnerBank fab);
+
+	public List<Long> getClusterByPartnerbankCode(long partnerbankId);
+
+	public List<FinTypePartnerBank> getFintypePartnerBankByBranch(List<String> branchCode, Long clusterId);
+
+	int getPartnerBankCountByCluster(FinTypePartnerBank fpb);
+
+	List<FinTypePartnerBank> getFinTypePartnerBanks(FinTypePartnerBank fab, TableType tableType);
 
 }

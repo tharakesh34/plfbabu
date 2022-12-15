@@ -958,11 +958,16 @@ public class PresentmentEngine {
 			String presentmentRef = ph.getReference();
 			String bankAccNo = ph.getPartnerAcctNumber();
 
+			String backOfficeName = presentmentDetailDAO
+					.getBackOfficeNameByBranchCode(ph.getUserDetails().getBranchCode());
+
+			String branchCode = ph.getMandateType() + " Presentment Download/" + backOfficeName;
+
 			if (externalPresentmentHook != null) {
 				externalPresentmentHook.processPresentmentRequest(ph);
 			} else {
 				getPresentmentRequest().sendReqest(idList, ph.getId(), false, ph.getMandateType(), presentmentRef,
-						bankAccNo);
+						bankAccNo, branchCode);
 			}
 
 		} catch (Exception e) {
