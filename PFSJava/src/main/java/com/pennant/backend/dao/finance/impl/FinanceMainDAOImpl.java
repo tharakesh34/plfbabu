@@ -578,7 +578,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", SourcingBranch, SourChannelCategory, AsmName, OfferId");
 			sql.append(", Pmay, parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd, AllowSubvention");
 			sql.append(", TdsType, NoOfGrcSteps, CalcOfSteps, StepsAppliedFor");
-
+			sql.append(", SecurityMandateID");
 		}
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
@@ -600,6 +600,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ?, ?, ?, ? , ?, ?");
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+			sql.append(", ?");
 
 		}
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -858,7 +859,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setInt(index++, fm.getNoOfGrcSteps());
 					ps.setString(index++, fm.getCalcOfSteps());
 					ps.setString(index++, fm.getStepsAppliedFor());
-
+					ps.setObject(index++, fm.getSecurityMandateID());
 				}
 				ps.setInt(index++, fm.getVersion());
 				ps.setLong(index++, fm.getLastMntBy());
@@ -1754,14 +1755,23 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type) {
+	public int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type,
+			boolean securityMandate) {
+
 		StringBuilder sql = new StringBuilder("Update FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
 
-		sql.append(" Set MandateID = ?");
+		sql.append(" Set");
+		if (securityMandate) {
+			sql.append(" SecurityMandateID = ?");
+		} else {
+			sql.append(" MandateID = ?");
+		}
+
 		if (StringUtils.isNotBlank(repayMethod)) {
 			sql.append(", FinRepayMethod = ?");
 		}
+
 		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());

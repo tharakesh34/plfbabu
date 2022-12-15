@@ -136,6 +136,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -597,6 +598,23 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
 				path = "/WEB-INF/pages/Mandate/MandateDialog.zul";
 			}
+		} else if ("FINSECMANDENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinSecurityMandateEnquiry"));
+
+			JdbcSearchObject<Mandate> jdbcSearchObject = new JdbcSearchObject<Mandate>();
+			jdbcSearchObject.addTabelName("Mandates_View");
+			jdbcSearchObject
+					.addFilters(new Filter[] { new Filter("OrgReference", enquiry.getFinReference(), Filter.OP_EQUAL),
+							new Filter("SecurityMandate", 1, Filter.OP_EQUAL) });
+			jdbcSearchObject.setSearchClass(Mandate.class);
+			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+			List<Mandate> list = pagedListService.getBySearchObject(jdbcSearchObject);
+			if (!list.isEmpty()) {
+				map.put("mandate", list.get(0));
+				map.put("fromLoanEnquiry", true);
+				map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
+				path = "/WEB-INF/pages/Mandate/SecurityMandateDialog.zul";
+			}
 		} else if ("ODENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OverdueEnquiry"));
 
@@ -986,6 +1004,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if ("FINMANDENQ".equals(value) && !mandate) {
 					continue;
 				}
+
+				if ("FINSECMANDENQ".equals(value) && getFinanceEnquiry().getSecurityMandateID() == null) {
+					continue;
+				}
+
 				// skipping the OCR Enquiry menu if not applicable
 				if ("OCRENQ".equals(value) && !getFinanceEnquiry().isFinOcrRequired()) {
 					continue;

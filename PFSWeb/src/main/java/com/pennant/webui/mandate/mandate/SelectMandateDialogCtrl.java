@@ -19,6 +19,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
@@ -56,6 +57,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ExtendedCombobox finReference;
 	protected Textbox custCIF;
 	protected Combobox mandateTypes;
+	protected Checkbox securityMandate;
 
 	protected Button btnProceed;
 	protected Label customerNameLabel;
@@ -69,6 +71,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private transient MandateService mandateService;
 
 	private final List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
+	private List<ValueLabel> securityMandateTypeList = MandateUtil.getSecurityInstrumentTypes();
 
 	Date appDate = SysParamUtil.getAppDate();
 
@@ -273,6 +276,10 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			String page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
 
+			if (this.securityMandate.isChecked()) {
+				page = "/WEB-INF/pages/Mandate/SecurityMandateDialog.zul";
+			}
+
 			Executions.createComponents(page, null, arg);
 			this.window_SelectMandateDialog.onClose();
 		} catch (Exception e) {
@@ -303,6 +310,12 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		try {
 			mandate.setMandateType(getComboboxValue(this.mandateTypes));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			mandate.setSecurityMandate(this.securityMandate.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -418,6 +431,14 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	public void onCheck$securityMandate(Event event) {
+		fillComboBox(this.mandateTypes, mandate.getMandateType(), mandateTypeList, "");
+
+		if (this.securityMandate.isChecked()) {
+			fillComboBox(this.mandateTypes, mandate.getMandateType(), securityMandateTypeList, "");
+		}
 	}
 
 	@Autowired
