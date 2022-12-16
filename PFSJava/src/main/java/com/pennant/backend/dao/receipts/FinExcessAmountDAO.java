@@ -73,8 +73,6 @@ public interface FinExcessAmountDAO {
 
 	void saveExcessMovementList(List<FinExcessMovement> movements);
 
-	void saveExcessList(List<FinExcessAmount> feaList);
-
 	FinExcessAmount getFinExcessAmount(long finID, long receiptId);
 
 	void batchUpdateExcessAmount(List<PresentmentDetail> presentmentDetails);

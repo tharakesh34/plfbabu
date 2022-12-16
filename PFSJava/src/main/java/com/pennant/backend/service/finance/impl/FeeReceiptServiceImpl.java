@@ -1374,32 +1374,29 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		BigDecimal excessAmt = rch.getReceiptAmount().subtract(paidAmt);
 
 		if (BigDecimal.ZERO.compareTo(excessAmt) < 0) {
-			FinExcessAmount excess = null;
 			String reference = rch.getReference();
+
 			Long finID = rch.getFinID();
+
 			if (StringUtils.isNotBlank(rch.getExtReference())) {
 				reference = rch.getExtReference();
 			}
-			excess = finExcessAmountDAO.getExcessAmountsByReceiptId(finID, rch.getExcessAdjustTo(), rch.getReceiptID());
-			// Creating Excess
-			if (excess == null) {
-				excess = new FinExcessAmount();
 
-				excess.setFinID(finID);
-				excess.setFinReference(reference);
-				excess.setAmountType(rch.getExcessAdjustTo());
-				excess.setAmount(excessAmt);
-				excess.setUtilisedAmt(BigDecimal.ZERO);
-				excess.setBalanceAmt(excessAmt);
-				excess.setReservedAmt(BigDecimal.ZERO);
-				finExcessAmountDAO.saveExcess(excess);
-			} else {
-				excess.setBalanceAmt(excess.getBalanceAmt().add(excessAmt));
-				excess.setAmount(excess.getAmount().add(excessAmt));
-				finExcessAmountDAO.updateExcess(excess);
-			}
+			FinExcessAmount excess = new FinExcessAmount();
 
-			// Creating ExcessMoment
+			excess.setFinID(finID);
+			excess.setFinReference(reference);
+			excess.setAmountType(rch.getExcessAdjustTo());
+			excess.setAmount(excessAmt);
+			excess.setUtilisedAmt(BigDecimal.ZERO);
+			excess.setBalanceAmt(excessAmt);
+			excess.setReservedAmt(BigDecimal.ZERO);
+			excess.setReceiptId(rch.getReceiptID());
+			excess.setValueDate(rch.getValueDate());
+			excess.setPostDate(SysParamUtil.getAppDate());
+
+			finExcessAmountDAO.saveExcess(excess);
+
 			FinExcessMovement excessMovement = new FinExcessMovement();
 			excessMovement.setExcessID(excess.getExcessID());
 			excessMovement.setAmount(excessAmt);
@@ -1407,6 +1404,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
 			excessMovement.setTranType(AccountConstants.TRANTYPE_CREDIT);
 			excessMovement.setMovementFrom("UPFRONT");
+
 			finExcessAmountDAO.saveExcessMovement(excessMovement);
 		}
 	}

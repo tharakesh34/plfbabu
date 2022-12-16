@@ -63,8 +63,8 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" FinExcessAmount ");
-		sql.append(
-				"(ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt,ReceiptId,PostDate,ValueDate");
+		sql.append("(ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt");
+		sql.append(" , ReceiptId, PostDate, ValueDate");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
@@ -824,44 +824,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setString(index++, "I");
 			ps.setString(index, "I");
 		});
-	}
-
-	@Override
-	public void saveExcessList(List<FinExcessAmount> feaList) {
-		StringBuilder sql = saveExcessQuery();
-
-		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
-
-			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				FinExcessAmount ea = feaList.get(i);
-
-				int index = 1;
-
-				ps.setLong(index++, ea.getExcessID());
-				ps.setLong(index++, ea.getFinID());
-				ps.setString(index++, ea.getFinReference());
-				ps.setString(index++, ea.getAmountType());
-				ps.setBigDecimal(index++, ea.getAmount());
-				ps.setBigDecimal(index++, ea.getUtilisedAmt());
-				ps.setBigDecimal(index++, ea.getReservedAmt());
-				ps.setBigDecimal(index, ea.getBalanceAmt());
-
-			}
-
-			@Override
-			public int getBatchSize() {
-				return feaList.size();
-			}
-
-		});
-	}
-
-	private StringBuilder saveExcessQuery() {
-		StringBuilder sql = new StringBuilder("Insert Into FinExcessAmount");
-		sql.append(" (ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
-		return sql;
 	}
 
 	@Override

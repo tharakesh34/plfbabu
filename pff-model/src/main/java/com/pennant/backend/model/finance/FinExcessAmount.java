@@ -19,7 +19,7 @@ public class FinExcessAmount implements Serializable {
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
 	private String rcdAction;
 	private FinExcessMovement excessMovement;
-	private long receiptId = 0;
+	private Long receiptId;
 	private Date valueDate;
 	private Date postDate;
 
@@ -137,11 +137,11 @@ public class FinExcessAmount implements Serializable {
 		this.excessMovement = excessMovement;
 	}
 
-	public long getReceiptId() {
+	public Long getReceiptId() {
 		return receiptId;
 	}
 
-	public void setReceiptId(long receiptId) {
+	public void setReceiptId(Long receiptId) {
 		this.receiptId = receiptId;
 	}
 

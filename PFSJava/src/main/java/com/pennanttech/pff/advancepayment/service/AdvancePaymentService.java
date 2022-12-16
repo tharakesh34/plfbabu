@@ -632,6 +632,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		FinExcessAmount exAmount = this.finExcessAmountDAO.getExcessAmountsByReceiptId(finID, amountType, 0);
 
 		BigDecimal bpiAmt = pftSchd;
+
 		if (tdsApplicable && !SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {
 			bpiAmt = pftSchd.subtract(tdsAmount);
 		}
@@ -640,7 +641,6 @@ public class AdvancePaymentService extends ServiceHelper {
 			return;
 		}
 
-		// Excess Record Creation
 		if (exAmount == null) {
 			exAmount = new FinExcessAmount();
 			exAmount.setFinID(finID);
@@ -648,19 +648,22 @@ public class AdvancePaymentService extends ServiceHelper {
 			exAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_ADVINT);
 			exAmount.setAmount(bpiAmt);
 			exAmount.setBalanceAmt(bpiAmt);
+			exAmount.setReceiptId(null);
+			exAmount.setValueDate(SysParamUtil.getAppDate());
+			exAmount.setPostDate(exAmount.getValueDate());
 
 			this.finExcessAmountDAO.saveExcess(exAmount);
 		} else {
 			this.finExcessAmountDAO.updateExcessBal(exAmount.getExcessID(), bpiAmt);
 		}
 
-		// Excess Movement Creation for Credit
 		FinExcessMovement movement = new FinExcessMovement();
 		movement.setExcessID(exAmount.getExcessID());
 		movement.setReceiptID(null);
 		movement.setMovementType(RepayConstants.RECEIPTTYPE_PAYABLE);
 		movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
 		movement.setAmount(bpiAmt);
+
 		this.finExcessAmountDAO.saveExcessMovement(movement);
 	}
 
@@ -728,6 +731,9 @@ public class AdvancePaymentService extends ServiceHelper {
 		excess.setBalanceAmt(excess.getBalanceAmt().add(amount));
 
 		if (excess.getExcessID() == Long.MIN_VALUE || excess.getExcessID() == 0) {
+			excess.setReceiptId(null);
+			excess.setValueDate(SysParamUtil.getAppDate());
+			excess.setPostDate(excess.getValueDate());
 			finExcessAmountDAO.saveExcess(excess);
 		} else {
 			finExcessAmountDAO.updateExcess(excess);
@@ -737,12 +743,14 @@ public class AdvancePaymentService extends ServiceHelper {
 		movement.setExcessID(excess.getExcessID());
 		movement.setReceiptID(advPay.getInstructionUID());
 		movement.setMovementType(RepayConstants.RECEIPTTYPE_ADJUST);
+
 		if (amount.compareTo(BigDecimal.ZERO) < 0) {
 			movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
 		} else {
 			movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
 		}
 		movement.setAmount(amount.abs());
+
 		finExcessAmountDAO.saveExcessMovement(movement);
 
 		// Create Advise based on Amount for the Excess Type
@@ -1042,7 +1050,6 @@ public class AdvancePaymentService extends ServiceHelper {
 			amount = excess.getAmount().add(reqAmount);
 		} else {
 			amount = excess.getAmount().subtract(reqAmount);
-			// utilisedAmt = utilisedAmt.add(reqAmount);
 		}
 
 		excess.setFinID(finID);
@@ -1054,6 +1061,9 @@ public class AdvancePaymentService extends ServiceHelper {
 		excess.setBalanceAmt(amount.subtract(utilisedAmt).subtract(reservedAmt));
 
 		if (excess.getExcessID() == Long.MIN_VALUE || excess.getExcessID() == 0) {
+			excess.setReceiptId(null);
+			excess.setValueDate(SysParamUtil.getAppDate());
+			excess.setPostDate(excess.getValueDate());
 			finExcessAmountDAO.saveExcess(excess);
 		} else {
 			finExcessAmountDAO.updateExcess(excess);

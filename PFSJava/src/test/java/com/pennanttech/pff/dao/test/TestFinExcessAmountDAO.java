@@ -152,19 +152,6 @@ public class TestFinExcessAmountDAO {
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void testsaveExcessList() {
-		List<FinExcessAmount> list = new ArrayList<FinExcessAmount>();
-		fe = new FinExcessAmount();
-		fe.setId(Long.MIN_VALUE);
-		fe.setExcessID(fe.getExcessID() + 2);
-		fe.setFinID(5353);
-		list.add(fe);
-		finExcessAmountDAO.saveExcessList(list);
-	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
 	public void testUpdateExcessReserveList() {
 		List<FinExcessAmount> list = new ArrayList<FinExcessAmount>();
 		fe = new FinExcessAmount();
