@@ -628,6 +628,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Space space_IntProvRule;
 	protected Combobox intProvRule;
 
+	protected Textbox maxPPText;
+	protected Textbox maxFPPText;
+	protected Textbox minPPText;
 	protected Decimalbox closureThresholdLimit;
 	protected Combobox maxFPPCalType;
 	protected CurrencyBox maxFPPAmount;
@@ -1092,6 +1095,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		// Inst Based Schd
 		this.row_InstBasedSchd.setVisible(ImplementationConstants.SCHD_INST_CAL_ON_DISB_RELIZATION);
+
+		this.maxFPPAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
+		this.maxFPPAmount.setScale(format);
+
+		this.maxPPAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
+		this.maxPPAmount.setScale(format);
+
+		this.minPPAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
+		this.minPPAmount.setScale(format);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1183,13 +1196,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT:
 			this.maxFPPAmount.setVisible(true);
 			this.maxFPPAmount.setMandatory(true);
+			this.maxFPPText.setVisible(false);
 			this.maxFPPPer.setVisible(false);
+			this.maxFPPCalOn.setValue("");
 			this.rowMaxFPPCalOn.setVisible(false);
 			this.spacePercentage.setVisible(false);
 			break;
 		case PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE:
 			this.rowMaxFPPCalOn.setVisible(true);
 			this.maxFPPPer.setVisible(true);
+			this.maxFPPText.setVisible(false);
 			this.spacePercentage.setVisible(true);
 			this.maxFPPAmount.setVisible(false);
 			this.maxFPPAmount.setMandatory(false);
@@ -1216,6 +1232,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT:
 			this.minPPAmount.setVisible(true);
 			this.minPPAmount.setMandatory(true);
+			this.minPPText.setVisible(false);
+			this.minPPCalOn.setValue("");
 			this.minPPPercentage.setVisible(false);
 			this.spaceMinPPPercentage.setVisible(false);
 			this.rowMinPPCalculationOn.setVisible(false);
@@ -1224,6 +1242,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.rowMinPPCalculationOn.setVisible(true);
 			this.minPPPercentage.setVisible(true);
 			this.spaceMinPPPercentage.setVisible(true);
+			this.minPPText.setVisible(false);
 			this.minPPAmount.setVisible(false);
 			this.minPPAmount.setMandatory(false);
 			break;
@@ -1252,8 +1271,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT:
 			this.maxPPAmount.setVisible(true);
 			this.maxPPAmount.setMandatory(true);
+			this.maxPPText.setVisible(false);
 			this.minPPEmi.setVisible(false);
 			this.spaceMinPPEmi.setVisible(false);
+			this.maxPPCalOn.setValue("");
 			this.maxPPPercentage.setVisible(false);
 			this.spaceMaxPPPercentage.setVisible(false);
 			this.rowMaxPPCalculationOn.setVisible(false);
@@ -1264,6 +1285,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.rowMaxPPCalculationOn.setVisible(true);
 			this.maxPPPercentage.setVisible(true);
 			this.spaceMaxPPPercentage.setVisible(true);
+			this.maxPPText.setVisible(false);
 			this.maxPPAmount.setVisible(false);
 			this.maxPPAmount.setMandatory(false);
 			this.minPPEmi.setVisible(false);
@@ -1274,6 +1296,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_MIN_EMI:
 			this.minPPEmi.setVisible(true);
 			this.spaceMinPPEmi.setVisible(true);
+			this.maxPPText.setVisible(false);
+			this.maxPPCalOn.setValue("");
 			this.maxPPPercentage.setVisible(false);
 			this.spaceMaxPPPercentage.setVisible(false);
 			this.maxPPAmount.setVisible(false);
@@ -1285,8 +1309,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_MIN_POS_AMT:
 			this.minPPPos.setVisible(true);
 			this.minPPPos.setMandatory(true);
+			this.maxPPText.setVisible(false);
 			this.maxPPAmount.setVisible(false);
 			this.maxPPAmount.setMandatory(false);
+			this.maxPPCalOn.setValue("");
 			this.maxPPPercentage.setVisible(false);
 			this.spaceMaxPPPercentage.setVisible(false);
 			this.rowMaxPPCalculationOn.setVisible(false);
