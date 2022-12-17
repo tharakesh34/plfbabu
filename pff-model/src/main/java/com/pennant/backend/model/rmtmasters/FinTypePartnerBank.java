@@ -66,6 +66,14 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 	private String sponsorBankCode;
 	private String clientCode;
 	private String utilityCode;
+	private String branchCode;
+	private String branchDesc;
+	private String clusterCode;
+	private String name;
+	private Long clusterId;
+	private String clusterType;
+	private String entityCode;
+	private String suspenseAc;
 
 	public FinTypePartnerBank() {
 		super();
@@ -107,6 +115,8 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 		entity.setVersion(super.getVersion());
 		entity.setLastMntBy(super.getLastMntBy());
 		entity.setLastMntOn(super.getLastMntOn());
+		entity.setSuspenseAc(this.suspenseAc);
+
 		return entity;
 	}
 
@@ -120,6 +130,13 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 		excludeFields.add("sponsorBankCode");
 		excludeFields.add("clientCode");
 		excludeFields.add("utilityCode");
+		excludeFields.add("branchDesc");
+		excludeFields.add("name");
+		excludeFields.add("clusterCode");
+		excludeFields.add("clusterType");
+		excludeFields.add("entityCode");
+		excludeFields.add("suspenseAc");
+
 		return excludeFields;
 	}
 
@@ -269,6 +286,70 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 
 	public void setUtilityCode(String utilityCode) {
 		this.utilityCode = utilityCode;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+	public String getBranchDesc() {
+		return branchDesc;
+	}
+
+	public void setBranchDesc(String branchDesc) {
+		this.branchDesc = branchDesc;
+	}
+
+	public String getClusterCode() {
+		return clusterCode;
+	}
+
+	public void setClusterCode(String clusterCode) {
+		this.clusterCode = clusterCode;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Long getClusterId() {
+		return clusterId;
+	}
+
+	public void setClusterId(Long clusterId) {
+		this.clusterId = clusterId;
+	}
+
+	public String getClusterType() {
+		return clusterType;
+	}
+
+	public void setClusterType(String clusterType) {
+		this.clusterType = clusterType;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public String getSuspenseAc() {
+		return suspenseAc;
+	}
+
+	public void setSuspenseAc(String suspenseAc) {
+		this.suspenseAc = suspenseAc;
 	}
 
 }

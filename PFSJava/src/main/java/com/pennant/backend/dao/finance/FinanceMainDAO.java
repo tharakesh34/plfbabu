@@ -107,7 +107,7 @@ public interface FinanceMainDAO {
 
 	Long getFinIDForMandate(String finReference, long mandateID);
 
-	int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type);
+	int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type, boolean securityMandate);
 
 	FinanceMain getFinanceDetailsForService(long finID, String type, boolean isWIF);
 

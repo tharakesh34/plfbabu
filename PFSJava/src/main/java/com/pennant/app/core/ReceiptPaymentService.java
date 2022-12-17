@@ -119,13 +119,16 @@ public class ReceiptPaymentService {
 			createEMIInAdvReceipt(receiptDTO);
 		}
 
-		if (receiptDTO.getRequestSource() == RequestSource.EOD) {
-			createReceiptAndBounce(receiptDTO);
-		}
+		if (pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+			RequestSource requestSource = receiptDTO.getRequestSource();
+			if (requestSource == RequestSource.EOD || requestSource == RequestSource.PRMNT_EXT) {
+				createReceiptAndBounce(receiptDTO);
+			}
 
-		if (receiptDTO.isCreatePrmntReceipt() && pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
-			logger.info("Creating Receipts for Presentment...");
-			createPresentmentReceipt(receiptDTO);
+			if (receiptDTO.isCreatePrmntReceipt()) {
+				logger.info("Creating Receipts for Presentment...");
+				createPresentmentReceipt(receiptDTO);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);

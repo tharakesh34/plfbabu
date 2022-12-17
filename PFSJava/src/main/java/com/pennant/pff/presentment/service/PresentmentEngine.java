@@ -386,6 +386,7 @@ public class PresentmentEngine {
 
 	public void grouping(PresentmentHeader ph) {
 		logger.debug(Literal.ENTERING);
+
 		long batchID = ph.getBatchID();
 		List<PresentmentDetail> list = null;
 
@@ -557,7 +558,7 @@ public class PresentmentEngine {
 			}
 		}
 
-		pd.setStatus(RepayConstants.PEXC_IMPORT);
+		pd.setStatus(RepayConstants.PEXC_SEND_TO_PRESENTMENT);
 
 		pd.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
 
@@ -665,6 +666,8 @@ public class PresentmentEngine {
 	}
 
 	private void processAdvAmounts(PresentmentHeader ph, PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		AdvanceType advanceType = null;
 		String amountType = "";
 
@@ -681,6 +684,7 @@ public class PresentmentEngine {
 		}
 
 		if (advanceType == null) {
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
@@ -689,6 +693,7 @@ public class PresentmentEngine {
 
 		if (advanceType == AdvanceType.AE) {
 			if (AdvanceStage.getStage(pd.getAdvStage()) == AdvanceStage.FE) {
+				logger.debug(Literal.LEAVING);
 				return;
 			}
 			amountType = RepayConstants.EXAMOUNTTYPE_ADVEMI;
@@ -704,6 +709,7 @@ public class PresentmentEngine {
 
 		if (FinanceConstants.FLAG_BPI.equals(pd.getBpiOrHoliday())) {
 			if (FinanceConstants.BPI_DISBURSMENT.equals(pd.getBpiTreatment()) && ph.isBpiPaidOnInstDate()) {
+				logger.debug(Literal.LEAVING);
 				return;
 			}
 		}
@@ -750,6 +756,8 @@ public class PresentmentEngine {
 	}
 
 	private void processEMIInAdvance(PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		long finID = pd.getFinID();
 
 		List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, SysParamUtil.getAppDate(),
@@ -794,9 +802,13 @@ public class PresentmentEngine {
 
 		BigDecimal advAmount = pd.getAdvAdjusted();
 		pd.setAdvanceAmt(advanceAmt.add(advAmount));
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void save(PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		List<FinExcessAmount> excess = new ArrayList<>();
 		List<FinExcessAmount> excessRevarsal = new ArrayList<>();
 		List<FinExcessMovement> excessMovement = new ArrayList<>();
@@ -884,6 +896,7 @@ public class PresentmentEngine {
 			presentmentDAO.updateExcludeReason(pd.getId(), RepayConstants.PEXC_SCHDVERSION);
 		}
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void clearQueue(long batchId) {
@@ -902,18 +915,26 @@ public class PresentmentEngine {
 		return 0;
 	}
 
-	private void createReceipt(ReceiptDTO receiptDTO) {
+	private void createReceipt(ReceiptDTO receiptDTO, RequestSource requestSource, boolean dueDateCreation) {
+		logger.debug(Literal.ENTERING);
+
 		Date businessDate = receiptDTO.getPresentmentDetail().getAppDate();
 
-		receiptDTO.setRequestSource(RequestSource.PRMNT_RESP);
-		receiptDTO.setCreatePrmntReceipt(!PresentmentExtension.DUE_DATE_RECEIPT_CREATION);
+		Date businessDate = pd.getAppDate();
+
+		receiptDTO.setRequestSource(requestSource);
+		receiptDTO.setCreatePrmntReceipt(dueDateCreation);
 
 		int presentmentIndex = getPresentmentIndex(businessDate, receiptDTO.getSchedules());
 
 		receiptPaymentService.processReceipts(receiptDTO, presentmentIndex);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void approve(ReceiptDTO receiptDTO, Map<String, String> bounceForPD) {
+		logger.debug(Literal.ENTERING);
+
 		boolean upfronBounceRequired = MapUtils.isNotEmpty(bounceForPD);
 		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 
@@ -929,11 +950,15 @@ public class PresentmentEngine {
 		}
 
 		if (DateUtil.compare(pd.getAppDate(), pd.getSchDate()) >= 0) {
-			createReceipt(receiptDTO);
+			createReceipt(receiptDTO, RequestSource.PRMNT_EXT, false);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void sendToPresentment(PresentmentHeader ph) {
+		logger.debug(Literal.ENTERING);
+
 		long headerId = ph.getId();
 
 		List<PresentmentDetail> presements = presentmentDAO.getSendToPresentmentDetails(headerId);
@@ -949,11 +974,16 @@ public class PresentmentEngine {
 			String presentmentRef = ph.getReference();
 			String bankAccNo = ph.getPartnerAcctNumber();
 
+			String backOfficeName = presentmentDetailDAO
+					.getBackOfficeNameByBranchCode(ph.getUserDetails().getBranchCode());
+
+			String branchCode = ph.getMandateType() + " Presentment Download/" + backOfficeName;
+
 			if (externalPresentmentHook != null) {
 				externalPresentmentHook.processPresentmentRequest(ph);
 			} else {
 				getPresentmentRequest().sendReqest(idList, ph.getId(), false, ph.getMandateType(), presentmentRef,
-						bankAccNo);
+						bankAccNo, branchCode);
 			}
 
 		} catch (Exception e) {
@@ -961,9 +991,13 @@ public class PresentmentEngine {
 		}
 
 		presentmentDAO.updateHeader(headerId);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public int preparationForRepresentment(long batchID, List<Long> headerId) {
+		logger.debug(Literal.ENTERING);
+
 		int count = 0;
 
 		List<PresentmentHeader> list = new ArrayList<>();
@@ -981,6 +1015,7 @@ public class PresentmentEngine {
 		count = count - presentmentDAO.clearByNoDues(batchID);
 
 		if (count == 0) {
+			logger.debug(Literal.LEAVING);
 			return 0;
 		}
 
@@ -990,6 +1025,7 @@ public class PresentmentEngine {
 
 		presentmentDAO.updatePartnerBankID(batchID);
 
+		logger.debug(Literal.LEAVING);
 		return count;
 	}
 
@@ -1096,7 +1132,7 @@ public class PresentmentEngine {
 			if (!PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
 				if (pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 					pd.setAdvanceAmt(BigDecimal.ZERO);
-					createReceipt(receiptDTO);
+					createReceipt(receiptDTO, RequestSource.PRMNT_RESP, true);
 				}
 			} else if (!finIsActive) {
 				processReceipt = processInactiveLoan(receiptDTO);
@@ -1659,6 +1695,7 @@ public class PresentmentEngine {
 	}
 
 	@Autowired(required = false)
+	@Qualifier(value = "externalPresentmentHook")
 	public void setExternalPresentmentHook(ExternalPresentmentHook externalPresentmentHook) {
 		this.externalPresentmentHook = externalPresentmentHook;
 	}

@@ -2,6 +2,7 @@ package com.pennant.webui.payment.paymentheader;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,11 +36,14 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.applicationmaster.ClusterService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
@@ -50,6 +54,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 
 public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction> {
 	private static final long serialVersionUID = 1L;
@@ -104,6 +109,8 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	private PaymentHeaderDialogCtrl paymentHeaderDialogCtrl;
 	private PaymentHeader paymentHeader;
 	private FinanceMain financeMain;
+	private FinTypePartnerBankService finTypePartnerBankService;
+	private ClusterService clusterService;
 
 	private int ccyFormatter;
 	private int maxAccNoLength;
@@ -806,13 +813,42 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	}
 
 	public void onChange$paymentType(Event event) {
-		String dType = this.paymentType.getSelectedItem().getValue().toString();
+		String sPaymentType = this.paymentType.getSelectedItem().getValue().toString();
 		this.partnerBankID.setButtonDisabled(false);
 		this.partnerBankID.setReadonly(false);
+
+		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			doAddBranchWiseFilter(sPaymentType);
+			checkPaymentType(sPaymentType);
+			return;
+		}
+
+		FinTypePartnerBank item = new FinTypePartnerBank();
+		item.setFinType(financeMain.getFinType());
+		item.setPaymentMode(sPaymentType);
+		item.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
+		item.setEntityCode(financeMain.getLovDescEntityCode());
+
+		List<FinTypePartnerBank> partnerBanks = finTypePartnerBankService.getPartnerBanksList(item,
+				TableType.AVIEW);
+		if (partnerBanks.size() == 1) {
+			item = partnerBanks.get(0);
+			this.partnerBankID.setAttribute("partnerBankId", item.getPartnerBankID());
+			this.paymentInstruction.setPartnerBankName(item.getPartnerBankName());
+			this.paymentInstruction.setPartnerBankAc(item.getAccountNo());
+			this.paymentInstruction.setPartnerBankAcType(item.getAccountType());
+			this.partnerBankID.setButtonDisabled(true);
+			this.partnerBankID.setValue(item.getPartnerBankCode(), item.getPartnerBankName());
+
+			checkPaymentType(sPaymentType);
+
+			return;
+		}
+
 		Filter[] filters = new Filter[5];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
 		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
-		filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
+		filters[2] = new Filter("PaymentMode", sPaymentType, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 		filters[4] = new Filter("EntityCode", financeMain.getLovDescEntityCode(), Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
@@ -821,7 +857,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.partnerBankID.setValue("");
 		this.partnerBankID.setDescription("");
 
-		checkPaymentType(dType);
+		checkPaymentType(sPaymentType);
 	}
 
 	public void checkPaymentType(String type) {
@@ -874,7 +910,49 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		}
 	}
 
+	private void doAddBranchWiseFilter(String payMode) {
+		String finBranch = financeMain.getFinBranch();
+
+		Filter[] filters = new Filter[4];
+		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
+		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
+
+		Long clusterId = null;
+		if (PartnerBankExtension.MAPPING.equals("B")) {
+			filters[3] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
+		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+			clusterId = clusterService.getClustersFilter(finBranch);
+			filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+		}
+
+		FinTypePartnerBank fpb = new FinTypePartnerBank();
+		fpb.setFinType(financeMain.getFinType());
+		fpb.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
+		fpb.setPaymentMode(payMode);
+		fpb.setBranchCode(finBranch);
+		fpb.setClusterId(clusterId);
+
+		List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService.getByFinTypeAndPurpose(fpb);
+
+		if (fintypePartnerbank.size() == 1) {
+			fpb = fintypePartnerbank.get(0);
+			this.partnerBankID.setAttribute("partnerBankId", fpb.getPartnerBankID());
+			this.partnerBankID.setAttribute("partnerBankAc", fpb.getAccountNo());
+			this.partnerBankID.setAttribute("partnerBankAcType", fpb.getAccountType());
+			this.partnerBankID.setValue(fpb.getPartnerBankCode());
+			this.partnerBankID.setDescription(fpb.getPartnerBankName());
+		}
+
+		this.partnerBankID.setFilters(filters);
+	}
+
 	public void doaddFilter(String payMode) {
+		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			doAddBranchWiseFilter(payMode);
+			return;
+		}
+
 		Filter[] filters = new Filter[5];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
 		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
@@ -912,6 +990,14 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 	public void setPaymentHeader(PaymentHeader paymentHeader) {
 		this.paymentHeader = paymentHeader;
+	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
+	}
+
+	public void setClusterService(ClusterService clusterService) {
+		this.clusterService = clusterService;
 	}
 
 }

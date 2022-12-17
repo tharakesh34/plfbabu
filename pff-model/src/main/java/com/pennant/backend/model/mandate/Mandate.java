@@ -180,6 +180,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date swapEffectiveDate;
 	private String holdReason;
+	@XmlElement
 	private boolean securityMandate;
 	@XmlElement
 	private Long employerID;
@@ -189,6 +190,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String finRepayMethod;
 	private String alwdRpyMethods;
 	private Long oldMandate;
+	private Long oldSecMandate;
 	private boolean allowDAS;
 	// API validation purpose only
 	private Mandate validateMandate = this;
@@ -251,6 +253,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("finRepayMethod");
 		excludeFields.add("alwdRpyMethods");
 		excludeFields.add("oldMandate");
+		excludeFields.add("oldSecMandate");
 		excludeFields.add("validateMandate");
 		excludeFields.add("allowDAS");
 		excludeFields.add("employerName");
@@ -1012,6 +1015,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setLoanMaturityDate(Date loanMaturityDate) {
 		this.loanMaturityDate = loanMaturityDate;
+	}
+
+	public Long getOldSecMandate() {
+		return oldSecMandate;
+	}
+
+	public void setOldSecMandate(Long oldSecMandate) {
+		this.oldSecMandate = oldSecMandate;
 	}
 
 }

@@ -17,6 +17,7 @@ public class MandateData implements Serializable {
 	private String type;
 	private long partnerBankId = Long.MIN_VALUE;
 	private String remarks;
+	private String branchOrCluster;
 
 	public MandateData() {
 		super();
@@ -108,6 +109,14 @@ public class MandateData implements Serializable {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public String getBranchOrCluster() {
+		return branchOrCluster;
+	}
+
+	public void setBranchOrCluster(String branchOrCluster) {
+		this.branchOrCluster = branchOrCluster;
 	}
 
 }

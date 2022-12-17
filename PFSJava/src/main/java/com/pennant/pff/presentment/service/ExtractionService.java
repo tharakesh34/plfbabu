@@ -3,6 +3,8 @@ package com.pennant.pff.presentment.service;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +22,12 @@ import com.pennant.pff.presentment.ExtractionJob;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 @Configuration
 public class ExtractionService {
+	private Logger logger = LogManager.getLogger(ExtractionService.class);
 
 	@Autowired
 	private PresentmentDAO presentmentDAO;
@@ -45,6 +49,8 @@ public class ExtractionService {
 	}
 
 	public int preparePresentment() {
+		logger.debug(Literal.ENTERING);
+
 		extractDueConfig();
 
 		PresentmentHeader ph = new PresentmentHeader();
@@ -59,6 +65,8 @@ public class ExtractionService {
 	}
 
 	private void extractDueConfig() {
+		logger.debug(Literal.ENTERING);
+
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
@@ -70,9 +78,13 @@ public class ExtractionService {
 			transactionManager.rollback(transactionStatus);
 			throw new AppException("Unable to extract presentment due configuration", e);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private int prepare(PresentmentHeader ph) {
+		logger.debug(Literal.ENTERING);
+
 		Date appDate = SysParamUtil.getAppDate();
 		long batchID = presentmentDAO.createBatch("EXTRACTOIN", 0);
 
@@ -103,12 +115,17 @@ public class ExtractionService {
 				presentmentDAO.clearQueue(batchID);
 				throw new AppException("Presentment extraction failed", e);
 			}
+		} else {
+			presentmentDAO.deleteBatch(batchID);
 		}
 
+		logger.debug(Literal.LEAVING);
 		return count;
 	}
 
 	public void start(PresentmentHeader ph) throws Exception {
+		logger.debug(Literal.ENTERING);
+
 		Date appDate = SysParamUtil.getAppDate();
 
 		JobParametersBuilder builder = new JobParametersBuilder();
@@ -142,6 +159,8 @@ public class ExtractionService {
 		} catch (Exception e) {
 			throw e;
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public int extractRePresentment(List<Long> list) {
@@ -149,6 +168,8 @@ public class ExtractionService {
 	}
 
 	public int extract(List<Long> list) {
+		logger.debug(Literal.ENTERING);
+
 		long batchID = presentmentDAO.createBatch("REPRE_EXTR", 0);
 
 		int count = 0;
@@ -184,6 +205,7 @@ public class ExtractionService {
 			}
 		}
 
+		logger.debug(Literal.LEAVING);
 		return count;
 	}
 }

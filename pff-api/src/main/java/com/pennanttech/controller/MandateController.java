@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
@@ -60,6 +61,23 @@ public class MandateController extends AbstractController {
 
 		if (mandate.getReturnStatus() != null) {
 			response.setReturnStatus(mandate.getReturnStatus());
+
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		if (mandate.isSecurityMandate()
+				&& (InstrumentType.isDAS(mandate.getMandateType()) || InstrumentType.isSI(mandate.getMandateType()))) {
+			WSReturnStatus status = new WSReturnStatus();
+			String[] valueParm = new String[2];
+			valueParm[0] = "Mandate Type,";
+			valueParm[1] = "Possible Values are NACH, ECS, EMANDATE ";
+
+			ErrorDetail err = ErrorUtil.getError("STP0012", valueParm);
+			status.setReturnCode(err.getCode());
+
+			status.setReturnText(ErrorUtil.getErrorMessage(err.getMessage(), err.getParameters()));
+			response.setReturnStatus(status);
 
 			logger.debug(Literal.LEAVING);
 			return response;
@@ -249,10 +267,29 @@ public class MandateController extends AbstractController {
 		String finReference = md.getFinReference();
 		Long newMandateId = md.getNewMandateId();
 		String mandateType = md.getMandateType();
+		Long oldMandateId = md.getOldMandateId();
+
+		Mandate mandateById = mandateService.getMandateById(oldMandateId);
+
+		if (mandateById == null) {
+			return getFailedStatus("93304", "OldMandateId");
+		}
+
+		Mandate newMandateById = mandateService.getMandateById(newMandateId);
+
+		if (newMandateById == null) {
+			return getFailedStatus("93304", "NewMandateId");
+		}
+
+		boolean securityMandate = mandateById.isSecurityMandate();
+		
+		if(!securityMandate || !newMandateById.isSecurityMandate()){
+			return getFailedStatus();
+		}
 
 		Long finID = financeMainService.getFinID(finReference, TableType.MAIN_TAB);
 
-		if (financeMainService.loanMandateSwapping(finID, newMandateId, mandateType, "") > 0) {
+		if (financeMainService.loanMandateSwapping(finID, newMandateId, mandateType, "", securityMandate) > 0) {
 			logger.debug(Literal.LEAVING);
 			return getSuccessStatus();
 		}
@@ -307,7 +344,8 @@ public class MandateController extends AbstractController {
 					type = "_Temp";
 				}
 
-				financeMainService.loanMandateSwapping(finID, response.getMandateID(), mandate.getMandateType(), type);
+				financeMainService.loanMandateSwapping(finID, response.getMandateID(), mandate.getMandateType(), type,
+						mandate.isSecurityMandate());
 			}
 
 			doEmptyResponseObject(response);
@@ -353,7 +391,7 @@ public class MandateController extends AbstractController {
 				}
 
 				String mandateType = mandate.getMandateType();
-				financeMainService.loanMandateSwapping(finID, mandateID, mandateType, type);
+				financeMainService.loanMandateSwapping(finID, mandateID, mandateType, type, false);
 			}
 
 			logger.debug(Literal.LEAVING);

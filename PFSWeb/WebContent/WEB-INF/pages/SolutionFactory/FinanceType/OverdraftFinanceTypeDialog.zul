@@ -1501,12 +1501,6 @@
 										</columns>
 										<rows>
 											<row>
-												<label
-													value="${c:l('label_FinanceTypeDialog_AutoWaiverAllowed.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="allowAutoWaiver" checked="false" width="200px"/>
-												</hbox>
 												<label value="${c:l('label_FinanceTypeDialog_ThresholdLimit.value')}" />
 												<hbox>
 													<space sclass="mandatory" spacing="2px" />

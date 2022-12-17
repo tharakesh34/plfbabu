@@ -68,7 +68,7 @@ public interface MandateDAO {
 
 	boolean checkMandateStatus(long mandateID);
 
-	boolean checkMandates(String orgReference, long mandateid);
+	boolean checkMandates(String orgReference, long mandateid, boolean securityMandate);
 
 	int getSecondaryMandateCount(long mandateID);
 

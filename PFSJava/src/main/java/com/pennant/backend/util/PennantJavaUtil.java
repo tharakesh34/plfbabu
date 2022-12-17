@@ -3831,6 +3831,11 @@ public class PennantJavaUtil {
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER_AVIEW" }, WF_REPRESENT_UPLOAD,
 						new String[] { "Id", "FileName", "CreatedOn", "CreatedBy" }, null, 600));
 
+		ModuleUtil.register("FinTypePartnerBankBranch",
+				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
+						new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
+						new String[] { "BranchCode", "BranchDesc" }, null, 300));
+
 		registerCustomModules();
 	}
 

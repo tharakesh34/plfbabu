@@ -1813,12 +1813,6 @@
 										</columns>
 										<rows>
 											<row>
-												<label
-													value="${c:l('label_FinanceTypeDialog_AutoWaiverAllowed.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="allowAutoWaiver" checked="false" width="200px"/>
-												</hbox>
 												<label value="${c:l('label_FinanceTypeDialog_ThresholdLimit.value')}" />
 												<hbox>
 													<space sclass="mandatory" spacing="2px" />
@@ -1848,6 +1842,7 @@
 												<label 
 													value="${c:l('label_FinanceTypeDialog_MaxPartPymt.value')}" />
 												<hbox>
+												<textbox id="maxFPPText" visible="true" disabled="true"/>
 													<currencyBox id="maxFPPAmount" visible="false" />
 													<space id="spacePercentage" spacing="2px" sclass="mandatory"
 														visible="false" />
@@ -1902,6 +1897,7 @@
 												<label 
 													value="${c:l('label_FinanceTypeDialog_MinPPAmtPerc.value')}" />
 												<hbox>
+												<textbox id="minPPText" visible="true" disabled="true"/>
 													<currencyBox id="minPPAmount" visible="false" />
 													<space id="spaceMinPPPercentage" spacing="2px" sclass="mandatory"
 														visible="false" />
@@ -1926,6 +1922,7 @@
 												<label 
 													value="${c:l('label_FinanceTypeDialog_MaxPPAmtPerc.value')}" />
 												<hbox>
+												<textbox id="maxPPText" visible="true" disabled="true"/>
 													<currencyBox id="maxPPAmount" visible="false" />
 													<space id="spaceMaxPPPercentage" spacing="2px" sclass="mandatory"
 														visible="false" />

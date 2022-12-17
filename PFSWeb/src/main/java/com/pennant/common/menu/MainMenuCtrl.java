@@ -63,6 +63,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.extension.Services;
 import com.pennanttech.pennapps.core.App;
@@ -285,6 +286,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return ImplementationConstants.ALLOW_CERSAI;
 		case "menu_Item_CollateralDownload":
 			return this.glemsCollateralProcess != null;
+		case "menu_Item_FinTypePartnerbankMapping":
+			return PartnerBankExtension.BRANCH_WISE_MAPPING;
 		default:
 			break;
 		}

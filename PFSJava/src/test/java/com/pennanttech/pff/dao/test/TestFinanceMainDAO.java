@@ -132,8 +132,8 @@ public class TestFinanceMainDAO {
 
 		// financeMainDAO.getFinanceCountById(5354, 0); //method removed in dao impl
 
-		financeMainDAO.loanMandateSwapping(5354, 1, "MANUAL", "");
-		financeMainDAO.loanMandateSwapping(5354, 1, "", "");
+		financeMainDAO.loanMandateSwapping(5354, 1, "MANUAL", "", false);
+		financeMainDAO.loanMandateSwapping(5354, 1, "", "", false);
 
 		financeMainDAO.getFinanceDetailsForService(5222, "", false);
 		financeMainDAO.getFinanceDetailsForService(5323, "", true);

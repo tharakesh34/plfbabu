@@ -109,8 +109,10 @@ import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.applicationmaster.ClusterService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.pennydrop.PennyDropService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -120,6 +122,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -299,6 +302,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private BankBranchDAO bankBranchDAO;
 	protected CollateralAssignmentDAO collateralAssignmentDAO;
 	private boolean populateBenfiryDetails = false;
+	private transient FinTypePartnerBankService finTypePartnerBankService;
+	private transient ClusterService clusterService;
 
 	/**
 	 * default constructor.<br>
@@ -2296,15 +2301,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		this.partnerBankID.setButtonDisabled(false);
 		this.partnerBankID.setReadonly(false);
-		Filter[] filters = new Filter[4];
-		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
-		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
-		filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
-		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
-		// filters[4] = new Filter("Entity",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
-		this.partnerBankID.setFilters(filters);
-		this.partnerBankID.setValue("");
-		this.partnerBankID.setDescription("");
+		
+		doLoadPartnerbankData();
 
 		Filter[] filtersPrintLoc = new Filter[1];
 		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(dType)) {
@@ -2322,6 +2320,69 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		checkPaymentType(dType);
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doLoadPartnerbankData() {
+		String paymentMode = this.paymentType.getSelectedItem().getValue().toString();
+
+		if (!PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			Filter[] filters = new Filter[4];
+			filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+			filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+			filters[2] = new Filter("PaymentMode", paymentMode, Filter.OP_EQUAL);
+			filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+
+			this.partnerBankID.setFilters(filters);
+
+			this.partnerBankID.setButtonDisabled(false);
+			this.partnerBankID.setReadonly(false);
+			this.partnerBankID.setValue("");
+			this.partnerBankID.setDescription("");
+
+			return;
+		}
+
+		String finBranch = financeMain.getFinBranch();
+		Long clusterId = null;
+
+		Filter[] filters = new Filter[4];
+		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+		filters[2] = new Filter("PaymentMode", paymentMode, Filter.OP_EQUAL);
+
+		if (PartnerBankExtension.MAPPING.equals("B")) {
+			filters[3] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
+
+		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+			clusterId = clusterService.getClustersFilter(finBranch);
+			filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+		}
+
+		FinTypePartnerBank fpb = new FinTypePartnerBank();
+		fpb.setFinType(financeMain.getFinType());
+		fpb.setPurpose("D");
+		fpb.setPaymentMode(paymentMode);
+		fpb.setBranchCode(finBranch);
+		fpb.setClusterId(clusterId);
+
+		List<FinTypePartnerBank> list = finTypePartnerBankService.getByFinTypeAndPurpose(fpb);
+
+		if (list.size() == 1) {
+			fpb = list.get(0);
+			this.partnerBankID.setAttribute("partnerBankId", fpb.getPartnerBankID());
+			this.finAdvancePayments.setPartnerbankCode(fpb.getPartnerBankCode());
+			this.finAdvancePayments.setPartnerBankName(fpb.getPartnerBankName());
+			this.partnerBankID.setAttribute("partnerBankAc", fpb.getAccountNo());
+			this.partnerBankID.setAttribute("partnerBankAcType", fpb.getAccountType());
+			this.partnerBankID.setValue(fpb.getPartnerBankCode(), fpb.getPartnerBankName());
+		}
+
+		this.partnerBankID.setFilters(filters);
+
+		this.partnerBankID.setButtonDisabled(false);
+		this.partnerBankID.setReadonly(false);
+		this.partnerBankID.setValue("");
+		this.partnerBankID.setDescription("");
 	}
 
 	public void onChange$paymentDetail(Event event) {
@@ -2561,15 +2622,55 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 	}
 
-	public void doaddFilter(String payMode) {
-		Filter[] filters = new Filter[4];
+	public void doaddFilter(String paymentMode) {
+		if (!PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			Filter[] filters = new Filter[4];
+			filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+			filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+			filters[2] = new Filter("PaymentMode", paymentMode, Filter.OP_EQUAL);
+			filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+
+			this.partnerBankID.setFilters(filters);
+
+			return;
+		}
+
+		String finBranch = financeMain.getFinBranch();
+		Long clusterId = null;
+
+		Filter[] filters = new Filter[5];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
 		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
-		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
+		filters[2] = new Filter("PaymentMode", paymentMode, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
-		// filters[4] = new Filter("EntityCode",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
-		this.partnerBankID.setFilters(filters);
 
+		if (PartnerBankExtension.MAPPING.equals("B")) {
+			filters[4] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
+
+		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+			clusterId = clusterService.getClustersFilter(finBranch);
+			filters[4] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+		}
+
+		FinTypePartnerBank fpb = new FinTypePartnerBank();
+		fpb.setFinType(financeMain.getFinType());
+		fpb.setPurpose("D");
+		fpb.setPaymentMode(paymentMode);
+		fpb.setBranchCode(finBranch);
+		fpb.setClusterId(clusterId);
+
+		List<FinTypePartnerBank> list = finTypePartnerBankService.getByFinTypeAndPurpose(fpb);
+		if (list.size() == 1) {
+			fpb = list.get(0);
+			this.partnerBankID.setAttribute("partnerBankId", fpb.getPartnerBankID());
+			this.finAdvancePayments.setPartnerbankCode(fpb.getPartnerBankCode());
+			this.finAdvancePayments.setPartnerBankName(fpb.getPartnerBankName());
+			this.partnerBankID.setAttribute("partnerBankAc", fpb.getAccountNo());
+			this.partnerBankID.setAttribute("partnerBankAcType", fpb.getAccountType());
+			this.partnerBankID.setValue(fpb.getPartnerBankCode(), fpb.getPartnerBankName());
+		}
+
+		this.partnerBankID.setFilters(filters);
 	}
 
 	public void onClick$btnGetCustBeneficiary(Event event) {
@@ -3176,6 +3277,14 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
+	}
+
+	public void setClusterService(ClusterService clusterService) {
+		this.clusterService = clusterService;
 	}
 
 }

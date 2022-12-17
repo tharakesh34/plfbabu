@@ -41,6 +41,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.dao.applicationmaster.ClusterDAO;
 import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
+import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -309,4 +310,65 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 
 		return jdbcOperations.queryForObject(sql, Integer.class, entity, clusterType) > 0;
 	}
+
+	@Override
+	public Long getClustersFilter(String branchCode) {
+		Long clusterid = null;
+		int level = 0;
+		String sql = "Select ClusterId From RMTBranches where BranchCode = ?";
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			clusterid = this.jdbcOperations.queryForObject(sql, Long.class, branchCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+
+		if (clusterid == 0) {
+			return null;
+		}
+
+		while (clusterid != 0) {
+			Cluster cluster = null;
+			sql = "Select Id, Code, ClusterType, Parent From Clusters where Id = ?";
+
+			try {
+				cluster = this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+					Cluster item = new Cluster();
+
+					item.setId(rs.getLong("Id"));
+					item.setCode(rs.getString("Code"));
+					item.setClusterType(rs.getString("ClusterType"));
+
+					return item;
+				}, clusterid);
+			} catch (EmptyResultDataAccessException e) {
+				logger.warn(Message.NO_RECORD_FOUND);
+				return null;
+			}
+
+			if (PartnerBankExtension.MAPPING.equals(cluster.getClusterType())) {
+				cluster.getId();
+				break;
+			}
+
+			level++;
+
+			if (cluster.getParent() != null) {
+				if (cluster.getParent() == 0) {
+					break;
+				} else {
+					clusterid = cluster.getParent();
+				}
+			} else {
+				clusterid = 0L;
+			}
+
+		}
+
+		return clusterid;
+	}
+
 }

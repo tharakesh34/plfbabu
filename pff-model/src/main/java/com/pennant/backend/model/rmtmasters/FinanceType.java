@@ -339,8 +339,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int overDraftExtGraceDays;
 	private long overDraftColChrgFeeType;
 	private BigDecimal overDraftColAmt = BigDecimal.ZERO;
-
-	private boolean allowAutoWaiver;
 	private BigDecimal closureThresholdLimit = BigDecimal.ZERO;
 	private String maxFPPCalType;
 	private BigDecimal maxFPPAmount = BigDecimal.ZERO;
@@ -630,7 +628,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setRegProvRule(this.regProvRule);
 		entity.setIntProvRule(this.intProvRule);
 		entity.setFeetype(this.feetype);
-		entity.setAllowAutoWaiver(this.allowAutoWaiver);
 		entity.setClosureThresholdLimit(this.closureThresholdLimit);
 		entity.setMaxFPPCalType(this.maxFPPCalType);
 		entity.setMaxFPPAmount(this.maxFPPAmount);
@@ -2711,14 +2708,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setIntProvRule(Long intProvRule) {
 		this.intProvRule = intProvRule;
-	}
-
-	public boolean isAllowAutoWaiver() {
-		return allowAutoWaiver;
-	}
-
-	public void setAllowAutoWaiver(boolean allowAutoWaiver) {
-		this.allowAutoWaiver = allowAutoWaiver;
 	}
 
 	public BigDecimal getClosureThresholdLimit() {
