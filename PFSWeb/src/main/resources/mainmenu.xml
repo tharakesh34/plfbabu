@@ -2503,10 +2503,10 @@
 	
 	<menu id="menu_Category_Representment">
 		<menuItem id="menu_Item_RePresentUpload_Maker"
-			zulNavigation="/WEB-INF/pages/Finance/File/Upload/UploadList.zul?stage=M"
+			zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=M"
 			rightName="menu_Item_RePresentUpload_Maker" />
 		<menuItem id="menu_Item_RePresentUpload_Approver"
-			zulNavigation="/WEB-INF/pages/Finance/File/Upload/UploadList.zul?stage=A"
+			zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=A"
 			rightName="menu_Item_RePresentUpload_Approver" />
 	</menu>
 

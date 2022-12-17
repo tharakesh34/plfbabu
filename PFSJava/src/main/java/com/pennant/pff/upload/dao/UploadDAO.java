@@ -11,7 +11,7 @@ public interface UploadDAO {
 
 	WorkFlowDetails getWorkFlow(String moduleCode);
 
-	long saveHeader(FileUploadHeader header, TableType tableType);
+	long saveHeader(FileUploadHeader header);
 
 	int update(FileUploadHeader header, TableType tableType);
 
@@ -31,5 +31,5 @@ public interface UploadDAO {
 
 	void deleteDetail(long headerID, String tableName);
 
-	void update(FileUploadHeader header);
+	void updateHeader(FileUploadHeader header);
 }

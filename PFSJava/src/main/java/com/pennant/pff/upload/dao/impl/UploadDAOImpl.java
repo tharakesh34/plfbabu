@@ -1,11 +1,16 @@
 package com.pennant.pff.upload.dao.impl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -28,27 +33,27 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	}
 
 	@Override
-	public long saveHeader(FileUploadHeader header, TableType tableType) {
+	public long saveHeader(FileUploadHeader header) {
 		StringBuilder sql = new StringBuilder("Insert into FILE_UPLOAD_HEADER");
-		sql.append(tableType.getSuffix());
-		sql.append(" (Id, EntityCode, Type, FileName, TotalRecords, SuccessRecords, FailureRecords");
+		sql.append(" (EntityCode, Type, FileName, TotalRecords, SuccessRecords, FailureRecords");
 		sql.append(", Progress, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
 		sql.append(", Version, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
 		sql.append(") Values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		if (header.getId() <= 0) {
-			header.setId(getNextValue("SEQ_FILE_UPLOAD_HEADER"));
-		}
+		KeyHolder keyHolder = new GeneratedKeyHolder();
 
-		try {
-			jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+
 				int index = 0;
 
-				ps.setLong(++index, header.getId());
 				ps.setString(++index, header.getEntityCode());
 				ps.setString(++index, header.getType());
 				ps.setString(++index, header.getFileName());
@@ -70,18 +75,24 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 				ps.setString(++index, header.getNextTaskId());
 				ps.setString(++index, header.getRecordType());
 				ps.setLong(++index, header.getWorkflowId());
-			});
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
+
+				return ps;
+			}
+		}, keyHolder);
+
+		Number key = keyHolder.getKey();
+
+		if (key == null) {
+			return 0;
 		}
 
-		return header.getId();
+		return key.longValue();
 	}
 
 	@Override
 	public int update(FileUploadHeader header, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update");
-		sql.append(" FILE_UPLOAD_HEADER").append(tableType.getSuffix());
+		sql.append(" FILE_UPLOAD_HEADER");
 		sql.append(" Set FileName = ?, SuccessRecords = ?, FailureRecords = ?, TotalRecords = ?");
 		sql.append(", EntityCode = ?, Progress = ?, CreatedBy = ?, CreatedOn = ?");
 		sql.append(", ApprovedBy = ?, ApprovedOn = ?");
@@ -264,7 +275,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	}
 
 	@Override
-	public void update(FileUploadHeader header) {
+	public void updateHeader(FileUploadHeader header) {
 		StringBuilder sql = new StringBuilder("Update FILE_UPLOAD_HEADER");
 		sql.append(" Set ExecutionID = ?, TotalRecords = ?, SuccessRecords = ?, FailureRecords = ?");
 		sql.append(", Progress = ?, Status = ?, Remarks = Remarks + ?");

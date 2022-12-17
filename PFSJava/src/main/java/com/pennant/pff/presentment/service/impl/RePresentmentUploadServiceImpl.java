@@ -73,7 +73,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 
 	@Override
 	public long saveHeader(FileUploadHeader header, TableType type) {
-		return uploadDAO.saveHeader(header, type);
+		return uploadDAO.saveHeader(header);
 	}
 
 	@Override
@@ -320,7 +320,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 		}
 
 		if (header.isNewRecord()) {
-			header.setId(uploadDAO.saveHeader(header, tableType));
+			header.setId(uploadDAO.saveHeader(header));
 
 			ah.getAuditDetail().setModelData(header);
 			ah.setAuditReference(String.valueOf(header.getId()));
@@ -389,7 +389,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 			if (PennantConstants.RECORD_TYPE_NEW.equals(header.getRecordType())) {
 				tranType = PennantConstants.TRAN_ADD;
 				header.setRecordType("");
-				uploadDAO.saveHeader(header, TableType.MAIN_TAB);
+				uploadDAO.saveHeader(header);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				header.setRecordType("");
@@ -432,7 +432,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 
 	@Override
 	public void update(FileUploadHeader uploadHeader) {
-		this.uploadDAO.update(uploadHeader);
+		this.uploadDAO.updateHeader(uploadHeader);
 	}
 
 	private AuditHeader businessValidation(AuditHeader ah) {

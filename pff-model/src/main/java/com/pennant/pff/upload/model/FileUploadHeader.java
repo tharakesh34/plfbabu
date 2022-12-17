@@ -39,6 +39,7 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 	private File file;
 	private Date appDate;
 	private DataEngineStatus deStatus = new DataEngineStatus();
+	private String stage;
 
 	public FileUploadHeader() {
 		super();
@@ -52,6 +53,7 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 		excludeFields.add("file");
 		excludeFields.add("appDate");
 		excludeFields.add("deStatus");
+		excludeFields.add("stage");
 
 		return excludeFields;
 	}
@@ -230,6 +232,14 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 
 	public void setDeStatus(DataEngineStatus deStatus) {
 		this.deStatus = deStatus;
+	}
+
+	public String getStage() {
+		return stage;
+	}
+
+	public void setStage(String stage) {
+		this.stage = stage;
 	}
 
 }
