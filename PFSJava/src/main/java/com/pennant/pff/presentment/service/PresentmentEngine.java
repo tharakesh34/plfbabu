@@ -918,7 +918,7 @@ public class PresentmentEngine {
 	private void createReceipt(ReceiptDTO receiptDTO, RequestSource requestSource, boolean dueDateCreation) {
 		logger.debug(Literal.ENTERING);
 
-		Date businessDate = receiptDTO.getPresentmentDetail().getAppDate();
+		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 
 		Date businessDate = pd.getAppDate();
 
