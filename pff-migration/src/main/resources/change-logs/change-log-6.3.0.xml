@@ -266,9 +266,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#713.11.1" author="Sravani.S">
-	</changeSet>
-
 	<changeSet id="ST#713.13" author="Sravani.S">
 		<addColumn tableName="RMTFinanceTypes_Temp">
 			<column name="MinPPCalType" type="VARCHAR(8)" />
@@ -425,7 +422,7 @@
 	<changeSet id="ST#713.21.1" author="Sravani.S">
 		<sql>
 			<![CDATA[	
-				UPDATE RMTFinanceTypes SET ESLockinPeriod = 0;
+				UPDATE RMTFinanceTypes SET PPLockinPeriod = 0;
 			]]>
 		</sql>
 	</changeSet>
