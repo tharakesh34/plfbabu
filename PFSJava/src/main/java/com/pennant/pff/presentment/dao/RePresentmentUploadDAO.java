@@ -17,4 +17,8 @@ public interface RePresentmentUploadDAO {
 	String getBounceCode(String reference, Date dueDate);
 
 	List<RePresentmentUploadDetail> getDataForReport(long fileID);
+
+	void update(List<RePresentmentUploadDetail> detailsList);
+
+	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
 }

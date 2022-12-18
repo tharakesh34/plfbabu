@@ -46,7 +46,7 @@ public abstract class AUploadListCtrl extends GFCBaseListCtrl<FileUploadHeader> 
 		uploadDTO.setWindow(uploadListWindow);
 		uploadDTO.setUserId(getUserWorkspace().getUserId());
 		uploadDTO.setService(this.uploadService);
-		uploadDTO.setConfigName(module.concat("_UPLOAD"));
+		uploadDTO.setConfigName(this.module);
 		uploadDTO.setDataSource(this.dataSource);
 		uploadDTO.setListWrapper(this.listWrapper);
 		uploadDTO.setStage(stage);

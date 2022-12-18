@@ -15,7 +15,7 @@ public interface UploadDAO {
 
 	int update(FileUploadHeader header, TableType tableType);
 
-	void updateProgress(long headerID, int status, TableType tableType);
+	void updateProgress(long headerID, int status);
 
 	void uploadHeaderStatusCnt(long headerID, int success, int failure);
 
@@ -23,7 +23,7 @@ public interface UploadDAO {
 
 	boolean isFileDownlaoded(long id);
 
-	FileUploadHeader getHeaderData(long id, Date fromDate, Date toDate);
+	List<FileUploadHeader> getHeaderData(String entityCode, Long id, Date fromDate, Date toDate);
 
 	void deleteHeader(FileUploadHeader header, TableType tableType);
 
@@ -32,4 +32,8 @@ public interface UploadDAO {
 	void deleteDetail(long headerID, String tableName);
 
 	void updateHeader(FileUploadHeader header);
+
+	void updateHeader(List<FileUploadHeader> header);
+
+	void updateReject(List<Long> headerIDs, String status);
 }

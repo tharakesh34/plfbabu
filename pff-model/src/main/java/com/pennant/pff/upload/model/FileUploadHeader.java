@@ -25,7 +25,6 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 	private int successRecords;
 	private int failureRecords;
 	private int progress;
-	private String status;
 	private String remarks;
 	private Long createdBy;
 	private Timestamp createdOn;
@@ -128,14 +127,6 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 
 	public void setProgress(int progress) {
 		this.progress = progress;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public String getRemarks() {

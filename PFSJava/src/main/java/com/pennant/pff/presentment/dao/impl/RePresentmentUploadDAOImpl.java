@@ -1,9 +1,12 @@
 package com.pennant.pff.presentment.dao.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.backend.util.RepayConstants;
@@ -20,7 +23,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 	@Override
 	public List<RePresentmentUploadDetail> loadRecordData(long id) {
-		String sql = "Select HeaderId, Id, FinID, FinReference, DueDate, Progress, Remarks From REPRESENT_UPLOADS Where HeaderId = ?";
+		String sql = "Select HeaderId, Id, FinID, FinReference, DueDate, Progress, ErrorCode, ErrorDesc From REPRESENT_UPLOADS Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -33,7 +36,8 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 			rpud.setReference(rs.getString("FinReference"));
 			rpud.setDueDate(rs.getDate("DueDate"));
 			rpud.setProgress(rs.getInt("Progress"));
-			rpud.setRemarks(rs.getString("Remarks"));
+			rpud.setErrorCode(rs.getString("ErrorCode"));
+			rpud.setErrorDesc(rs.getString("ErrorDesc"));
 			return rpud;
 		});
 	}
@@ -52,7 +56,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 			ps.setString(++index, detail.getReference());
 			ps.setDate(++index, JdbcUtil.getDate(detail.getDueDate()));
 			ps.setInt(++index, detail.getProgress());
-			ps.setString(++index, detail.getRemarks());
+			// ps.setString(++index, detail.getRemarks());
 		});
 	}
 
@@ -149,11 +153,66 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 			rud.setPresentmentID(JdbcUtil.getLong(rs.getObject("PresentmentID")));
 			rud.setCreatedOn(rs.getTimestamp("CreatedOn"));
 			rud.setProgress(rs.getInt("Progress"));
-			rud.setRemarks(rs.getString("Remarks"));
+			// rud.setRemarks(rs.getString("Remarks"));
 			rud.setCreatedBy(rs.getLong("CreatedBy"));
 			rud.setApprovedBy(rs.getLong("ApprovedBy"));
 
 			return rud;
 		}, fileID);
+	}
+
+	@Override
+	public void update(List<RePresentmentUploadDetail> detailsList) {
+		String sql = "Update REPRESENT_UPLOADS set Progress = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				int index = 0;
+				RePresentmentUploadDetail detail = detailsList.get(i);
+
+				ps.setInt(++index, detail.getProgress());
+				ps.setString(++index, detail.getErrorCode());
+				ps.setString(++index, detail.getErrorDesc());
+
+				ps.setLong(++index, detail.getId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return detailsList.size();
+			}
+		});
+	}
+
+	@Override
+	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+		String sql = "Update REPRESENT_UPLOADS set Progress = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				int index = 0;
+
+				long headerID = headerIds.get(i);
+
+				ps.setInt(++index, progress);
+				ps.setString(++index, errorCode);
+				ps.setString(++index, errorDesc);
+
+				ps.setLong(++index, headerID);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return headerIds.size();
+			}
+		});
 	}
 }
