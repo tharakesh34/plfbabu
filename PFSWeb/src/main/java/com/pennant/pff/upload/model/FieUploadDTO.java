@@ -1,6 +1,7 @@
 package com.pennant.pff.upload.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -17,9 +18,9 @@ public class FieUploadDTO implements Serializable {
 	private transient DataSource dataSource;
 	private transient UploadService<FileUploadHeader> service;
 	private FileUploadHeader header;
-	private String configName;
 	private String stage;
 	private long userId;
+	private List<String> roleCodes;
 
 	public FieUploadDTO() {
 		super();
@@ -65,14 +66,6 @@ public class FieUploadDTO implements Serializable {
 		this.header = header;
 	}
 
-	public String getConfigName() {
-		return configName;
-	}
-
-	public void setConfigName(String configName) {
-		this.configName = configName;
-	}
-
 	public String getStage() {
 		return stage;
 	}
@@ -87,6 +80,14 @@ public class FieUploadDTO implements Serializable {
 
 	public void setUserId(long userId) {
 		this.userId = userId;
+	}
+
+	public List<String> getRoleCodes() {
+		return roleCodes;
+	}
+
+	public void setRoleCodes(List<String> roleCodes) {
+		this.roleCodes = roleCodes;
 	}
 
 }

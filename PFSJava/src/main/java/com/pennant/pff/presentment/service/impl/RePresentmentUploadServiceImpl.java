@@ -16,6 +16,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.dao.RePresentmentUploadDAO;
@@ -27,6 +28,7 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.file.UploadContants.Status;
 
 public class RePresentmentUploadServiceImpl implements UploadService<RePresentmentUploadDetail> {
 	private static final Logger logger = LogManager.getLogger(RePresentmentUploadServiceImpl.class);
@@ -49,7 +51,7 @@ public class RePresentmentUploadServiceImpl implements UploadService<RePresentme
 			header.setWorkflowId(workFlow.getWorkFlowId());
 		}
 
-		header.setRecordStatus("Submitted");
+		header.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
 		header.setAppDate(SysParamUtil.getAppDate());
 
 		return header;
@@ -165,8 +167,9 @@ public class RePresentmentUploadServiceImpl implements UploadService<RePresentme
 	}
 
 	@Override
-	public List<FileUploadHeader> getUploadHeaderById(String entityCode, Long id, Date fromDate, Date toDate) {
-		return uploadDAO.getHeaderData(entityCode, id, fromDate, toDate);
+	public List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
+			Date toDate) {
+		return uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate);
 	}
 
 	@Override
@@ -211,6 +214,16 @@ public class RePresentmentUploadServiceImpl implements UploadService<RePresentme
 				remarks.append(" Total Records : ").append(header.getTotalRecords());
 				remarks.append(" Success Records : ").append(sucessRecords);
 				remarks.append(" Failed Records : ").append(failRecords);
+
+				header.setRecordType("");
+				header.setWorkflowId(0);
+				header.setTaskId(null);
+				header.setNextTaskId(null);
+				header.setRoleCode(null);
+				header.setNextRoleCode(null);
+				header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				header.setApprovedBy(header.getLastMntBy());
+				header.setApprovedOn(header.getLastMntOn());
 			}
 
 			uploadDAO.updateHeader(headers);
@@ -232,7 +245,23 @@ public class RePresentmentUploadServiceImpl implements UploadService<RePresentme
 
 		representmentUploadDAO.update(headerIdList, errorCode, errorDesc, EodConstants.PROGRESS_FAILED);
 
-		uploadDAO.updateReject(headerIdList, errorDesc);
+		for (FileUploadHeader header : headers) {
+			header.setRecordType("");
+			header.setWorkflowId(0);
+			header.setTaskId(null);
+			header.setNextTaskId(null);
+			header.setRoleCode(null);
+			header.setNextRoleCode(null);
+			header.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
+			header.setFailureRecords(header.getTotalRecords());
+			header.setSuccessRecords(0);
+			header.setApprovedBy(null);
+			header.setApprovedOn(null);
+			header.setRemarks(errorDesc);
+			header.setProgress(Status.REJECTED.getValue());
+		}
+
+		uploadDAO.updateHeader(headers);
 	}
 
 	private void setError(RePresentmentUploadDetail detail, PresentmentError error) {

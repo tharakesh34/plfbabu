@@ -23,7 +23,8 @@ public interface UploadDAO {
 
 	boolean isFileDownlaoded(long id);
 
-	List<FileUploadHeader> getHeaderData(String entityCode, Long id, Date fromDate, Date toDate);
+	List<FileUploadHeader> getHeaderData(List<String> roleCodes, String entityCode, Long id, Date fromDate,
+			Date toDate);
 
 	void deleteHeader(FileUploadHeader header, TableType tableType);
 
@@ -34,6 +35,4 @@ public interface UploadDAO {
 	void updateHeader(FileUploadHeader header);
 
 	void updateHeader(List<FileUploadHeader> header);
-
-	void updateReject(List<Long> headerIDs, String status);
 }

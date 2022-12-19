@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -86,6 +87,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class FileUploadList extends Window implements Serializable {
 	private static final long serialVersionUID = 6151629601007479272L;
@@ -98,6 +100,9 @@ public class FileUploadList extends Window implements Serializable {
 	private Datebox fromDate;
 	private Datebox toDate;
 
+	private UploadTypes type;
+	private List<String> workflowRoles;
+
 	private Listheader listHeader;
 	private Checkbox checkBoxComp;
 
@@ -105,7 +110,6 @@ public class FileUploadList extends Window implements Serializable {
 
 	private transient UploadService<FileUploadHeader> uploadService;
 	private transient DataSource dataSource;
-	private String configName;
 	private String stage;
 
 	private Listbox listbox;
@@ -132,17 +136,18 @@ public class FileUploadList extends Window implements Serializable {
 		super();
 	}
 
-	public FileUploadList(FieUploadDTO object) {
+	public FileUploadList(FieUploadDTO object, UploadTypes type) {
 		super();
 
 		this.window = object.getWindow();
 		this.userId = object.getUserId();
 		this.uploadService = object.getService();
-		this.configName = object.getConfigName();
 		this.dataSource = object.getDataSource();
 		this.listWrapper = object.getListWrapper();
 		this.fileUploadHeader = object.getHeader();
 		this.stage = object.getStage();
+		this.type = type;
+		this.workflowRoles = object.getRoleCodes();
 
 		createBox();
 	}
@@ -286,7 +291,7 @@ public class FileUploadList extends Window implements Serializable {
 	private Div createToolBar() {
 		Hbox hbox = getHbox();
 		hbox.appendChild(getToolbar(ALIGN_START));
-		hbox.appendChild(getToolbar(ALIGN_CENTER, configName.concat(" List Screen")));
+		hbox.appendChild(getToolbar(ALIGN_CENTER, this.type.description()));
 		hbox.appendChild(getButtonInTB(ALIGN_END, "Close", "onClick", event -> onClose()));
 
 		Div div = getDiv();
@@ -503,9 +508,11 @@ public class FileUploadList extends Window implements Serializable {
 		this.fileName.setValueType(DataType.LONG);
 		this.fileName.setValidateColumns(new String[] { "Id" });
 
-		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
-		this.fileName.setFilters(filter);
+		Filter[] filters = new Filter[3];
+		filters[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
+		filters[1] = new Filter("CreatedOn", this.fromDate.getValue(), Filter.OP_GREATER_OR_EQUAL);
+		filters[2] = new Filter("CreatedOn", this.toDate.getValue(), Filter.OP_LESS_OR_EQUAL);
+		this.fileName.setFilters(filters);
 
 		removeSpace(this.fileName);
 
@@ -551,7 +558,7 @@ public class FileUploadList extends Window implements Serializable {
 		}
 
 		DataEngineStatus status = new DataEngineStatus();
-		status.setName(this.configName.concat("_UPLOAD"));
+		status.setName(this.type.name().concat("_UPLOAD"));
 		status.setFileName(this.fileUploadHeader.getFileName());
 
 		this.fileUploadHeader.setDeStatus(status);
@@ -606,48 +613,8 @@ public class FileUploadList extends Window implements Serializable {
 
 				listWrapper.initList(list, listbox, paging);
 			});
-
 		} else {
-			Date dataFrom = null;
-			Date dataTo = null;
-			Long fileID = null;
-			String eCode = null;
-
-			List<WrongValueException> wve = new ArrayList<>();
-
-			setConstraints();
-
-			try {
-				eCode = this.entityCode.getValue();
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				dataFrom = this.fromDate.getValue();
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				dataTo = this.toDate.getValue();
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				if (StringUtils.isNotEmpty(this.fileName.getValue())) {
-					fileID = Long.valueOf(this.fileName.getValue());
-				}
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			doRemoveValidation();
-
-			showErrorMessage(wve);
-
-			List<FileUploadHeader> list = uploadService.getUploadHeaderById(eCode, fileID, dataFrom, dataTo);
+			List<FileUploadHeader> list = getUploadHeaders();
 
 			listbox.clearSelection();
 
@@ -657,6 +624,49 @@ public class FileUploadList extends Window implements Serializable {
 
 			listWrapper.initList(list, listbox, paging);
 		}
+	}
+
+	private List<FileUploadHeader> getUploadHeaders() {
+		Date dataFrom = null;
+		Date dataTo = null;
+		Long fileID = null;
+		String eCode = null;
+
+		List<WrongValueException> wve = new ArrayList<>();
+
+		setConstraints();
+
+		try {
+			eCode = this.entityCode.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			dataFrom = this.fromDate.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			dataTo = this.toDate.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (StringUtils.isNotEmpty(this.fileName.getValue())) {
+				fileID = Long.valueOf(this.fileName.getValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+
+		showErrorMessage(wve);
+
+		return uploadService.getUploadHeaderById(this.workflowRoles, eCode, fileID, dataFrom, dataTo);
 	}
 
 	private void setConstraints() {
@@ -722,7 +732,7 @@ public class FileUploadList extends Window implements Serializable {
 	}
 
 	private void downloadTemplate() {
-		String name = configName.concat("_TEMPLATE");
+		String name = this.type.name().concat("_TEMPLATE");
 		fileDownload(name);
 	}
 
@@ -748,18 +758,22 @@ public class FileUploadList extends Window implements Serializable {
 		File file = new File(configuration.getUploadPath().concat(File.separator).concat(deStatus.getFileName()));
 
 		try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-			try (InputStream inputStream = new FileInputStream(file)) {
-				int data;
-				while ((data = inputStream.read()) >= 0) {
-					stream.write(data);
-				}
-
-				Filedownload.save(stream.toByteArray(), "application/octet-stream", deStatus.getFileName());
-			} catch (Exception e) {
-				//
-			}
+			fileDownload(deStatus, file, stream);
 		} catch (Exception e) {
-			//
+			logger.warn("Unable to download the selected file, Please contact system administrator.");
+		}
+	}
+
+	private void fileDownload(DataEngineStatus deStatus, File file, ByteArrayOutputStream stream) {
+		try (InputStream inputStream = new FileInputStream(file)) {
+			int data;
+			while ((data = inputStream.read()) >= 0) {
+				stream.write(data);
+			}
+
+			Filedownload.save(stream.toByteArray(), "application/octet-stream", deStatus.getFileName());
+		} catch (Exception e) {
+			logger.warn("Unable to download the selected file, Please contact system administrator.");
 		}
 	}
 
@@ -797,6 +811,10 @@ public class FileUploadList extends Window implements Serializable {
 	}
 
 	private void onClickApprove() {
+		for (FileUploadHeader header : selectedHeaders) {
+			header.setLastMntBy(this.userId);
+			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		}
 		uploadService.approve(selectedHeaders);
 	}
 
@@ -1089,7 +1107,7 @@ public class FileUploadList extends Window implements Serializable {
 			lc.setParent(item);
 
 			Button dowButton = getButton(Labels.getLabel("label_Download"));
-			dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload());
+			dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload(uph.getType()));
 
 			lc = new Listcell();
 			lc.appendChild(dowButton);
@@ -1127,7 +1145,7 @@ public class FileUploadList extends Window implements Serializable {
 			return checkBox;
 		}
 
-		private void onClickDownload() {
+		private void onClickDownload(String configName) {
 			String name = configName.concat("_DOWNLOAD");
 			fileDownload(name);
 		}

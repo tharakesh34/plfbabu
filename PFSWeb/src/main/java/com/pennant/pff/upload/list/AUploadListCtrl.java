@@ -18,13 +18,14 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.file.UploadContants.Status;
+import com.pennanttech.pff.file.UploadTypes;
 
 public abstract class AUploadListCtrl extends GFCBaseListCtrl<FileUploadHeader> {
 	private static final long serialVersionUID = 130258732943933059L;
 
 	@Autowired
 	private DataSource dataSource;
-	private String module;
+	private UploadTypes type;
 
 	@Autowired
 	@Qualifier("pagedListWrapper")
@@ -32,10 +33,10 @@ public abstract class AUploadListCtrl extends GFCBaseListCtrl<FileUploadHeader> 
 
 	private transient UploadService<FileUploadHeader> uploadService;
 
-	protected AUploadListCtrl(UploadService<FileUploadHeader> uploadService, String module) {
+	protected AUploadListCtrl(UploadService<FileUploadHeader> uploadService, UploadTypes type) {
 		super();
 		this.uploadService = uploadService;
-		this.module = module;
+		this.type = type;
 	}
 
 	protected void onCreate(String stage, Window uploadListWindow) {
@@ -46,21 +47,21 @@ public abstract class AUploadListCtrl extends GFCBaseListCtrl<FileUploadHeader> 
 		uploadDTO.setWindow(uploadListWindow);
 		uploadDTO.setUserId(getUserWorkspace().getUserId());
 		uploadDTO.setService(this.uploadService);
-		uploadDTO.setConfigName(this.module);
 		uploadDTO.setDataSource(this.dataSource);
 		uploadDTO.setListWrapper(this.listWrapper);
 		uploadDTO.setStage(stage);
+		uploadDTO.setRoleCodes(getWorkFlowRoles());
 
 		FileUploadHeader header = new FileUploadHeader();
 		if ("M".equals(stage)) {
 			header = getUploadHeader();
 		} else {
-			header.setType(module);
+			header.setType(this.type.name());
 		}
 
 		uploadDTO.setHeader(header);
 
-		new FileUploadList(uploadDTO);
+		new FileUploadList(uploadDTO, this.type);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -109,7 +110,7 @@ public abstract class AUploadListCtrl extends GFCBaseListCtrl<FileUploadHeader> 
 			}
 		}
 
-		header.setType(this.module);
+		header.setType(this.type.name());
 		header.setRoleCode(getRole());
 		header.setTaskId(taskId);
 		header.setNextTaskId(nextTaskId);

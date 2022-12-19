@@ -62,7 +62,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 	@Override
 	public List<String> isDuplicateExists(String reference, Date dueDate, long headerID) {
-		StringBuilder sql = new StringBuilder("Select FileName From FILE_UPLOAD_HEADER_TEMP");
+		StringBuilder sql = new StringBuilder("Select FileName From FILE_UPLOAD_HEADER");
 		sql.append(" Where Type = ? and Id IN (");
 		sql.append(" Select HeaderId From REPRESENT_UPLOADS");
 		sql.append(" Where FinReference = ?  and DueDate = ?");
@@ -74,7 +74,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
 
-			ps.setString(++index, UploadTypes.RE_PRESENTMENT);
+			ps.setString(++index, UploadTypes.RE_PRESENTMENT.name());
 			ps.setString(++index, reference);
 			ps.setDate(++index, JdbcUtil.getDate(dueDate));
 			ps.setLong(++index, headerID);
@@ -163,7 +163,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 	@Override
 	public void update(List<RePresentmentUploadDetail> detailsList) {
-		String sql = "Update REPRESENT_UPLOADS set Progress = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
+		String sql = "Update REPRESENT_UPLOADS set FinID = ?, Progress = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -174,6 +174,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 				int index = 0;
 				RePresentmentUploadDetail detail = detailsList.get(i);
 
+				ps.setLong(++index, detail.getReferenceID());
 				ps.setInt(++index, detail.getProgress());
 				ps.setString(++index, detail.getErrorCode());
 				ps.setString(++index, detail.getErrorDesc());
