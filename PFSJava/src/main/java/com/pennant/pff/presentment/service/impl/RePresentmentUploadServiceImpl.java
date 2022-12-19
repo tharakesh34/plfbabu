@@ -457,7 +457,23 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 			ExcelUtil.addCellValue(row, ++valueIndex, DateUtil.format(detail.getDueDate(), DateFormat.LONG_DATE));
 			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getPresentmentID()));
 			ExcelUtil.addCellValue(row, ++valueIndex, DateUtil.format(detail.getCreatedOn(), DateFormat.LONG_DATE));
-			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getProgress()));
+
+			switch (Status.value(detail.getProgress())) {
+			case IMPORTED:
+				ExcelUtil.addCellValue(row, ++valueIndex, "Imported");
+				break;
+			case IMPORT_IN_PROCESS:
+				ExcelUtil.addCellValue(row, ++valueIndex, "In Progress..");
+				break;
+			case IMPORT_FAILED:
+				ExcelUtil.addCellValue(row, ++valueIndex, "Import Failed");
+				break;
+			default:
+				ExcelUtil.addCellValue(row, ++valueIndex, detail.getRecordStatus());
+				break;
+			}
+
+			ExcelUtil.addCellValue(row, ++valueIndex, detail.getRemarks());
 			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getCreatedBy()));
 			ExcelUtil.addCellValue(row, ++valueIndex, String.valueOf(detail.getApprovedBy()));
 		}
