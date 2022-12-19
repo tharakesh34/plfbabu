@@ -1,8 +1,6 @@
 package com.pennant.pff.presentment.tasklet;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +18,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.eventproperties.service.EventPropertiesService;
 import com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceImpl.EventType;
 import com.pennant.backend.model.eventproperties.EventProperties;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
@@ -37,11 +34,7 @@ public class SuccessResponseTasklet implements Tasklet {
 	private static final String START_MSG = "Presentment success response process started at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String FAILED_MSG = "Presentment success response process failed on {} for the Presentment-ID {}";
 	private static final String SUCCESS_MSG = "Presentment success response process completed at {} for the APP_DATE {} with THREAD_ID {}";
-	private static final String EXCEPTION_MSG = "Presentment success response process failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
-
-	private static final String SUCCESS = RepayConstants.PEXC_SUCCESS;
-	private static final String FAILURE = RepayConstants.PEXC_FAILURE;
 
 	private PresentmentEngine presentmentEngine;
 	private BatchJobQueueDAO ebjqDAO;
@@ -60,8 +53,6 @@ public class SuccessResponseTasklet implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		logger.debug(Literal.ENTERING);
-
-		List<Exception> exceptions = new ArrayList<>(1);
 
 		Map<String, Object> stepExecutionContext = chunkContext.getStepContext().getStepExecutionContext();
 
@@ -103,14 +94,9 @@ public class SuccessResponseTasklet implements Tasklet {
 					ebjqDAO.updateProgress(jobQueue);
 				}
 
-				presentmentEngine.updateResposeStatus(responseID, "", "", EodConstants.PROGRESS_SUCCESS);
+				presentmentEngine.updateResponse(responseID);
 			} catch (Exception e) {
-				String errorMessage = e.getMessage();
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
-
-				if (exceptions.isEmpty()) {
-					exceptions.add(e);
-				}
 
 				strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 				logger.info(FAILED_MSG, strSysDate, responseID);
@@ -118,18 +104,11 @@ public class SuccessResponseTasklet implements Tasklet {
 				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 				ebjqDAO.updateProgress(jobQueue);
 
-				presentmentEngine.updateResposeStatus(responseID, FAILURE, errorMessage, EodConstants.PROGRESS_FAILED);
+				presentmentEngine.updateResponse(responseID, e);
 			}
 
 			queueID = ebjqDAO.getNextValue();
 			responseID = ebjqDAO.getIdBySequence(queueID);
-		}
-
-		if (!exceptions.isEmpty()) {
-			String sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
-			logger.info(EXCEPTION_MSG, sysDate, strAppDate, threadID);
-
-			throw exceptions.get(0);
 		}
 
 		String sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);

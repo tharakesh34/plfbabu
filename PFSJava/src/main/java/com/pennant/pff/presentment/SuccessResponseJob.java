@@ -34,6 +34,8 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 	public SuccessResponseJob(@Autowired DataSource dataSource) throws Exception {
 		super(dataSource, "PRMNT_", "PRMNT_SUCCESS_RESPONSE");
+
+		initilizeVariables();
 	}
 
 	@Autowired
@@ -47,21 +49,11 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 	private BatchJobQueueDAO bjqDAO;
 
-	@Bean
-	public BatchJobQueueDAO bjqDAO() {
-		if (this.bjqDAO == null) {
-			this.bjqDAO = new SuccessResponseJobQueueDAOImpl(dataSource);
-		}
-
-		return bjqDAO;
-
-	}
-
 	@Scheduled(cron = "0 */5 * ? * *")
 	public void successResponseJob() throws Exception {
 		logger.info("Presentment Success Response Job invoked at {}", DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
 
-		if (bjqDAO().getQueueCount() > 0) {
+		if (bjqDAO.getQueueCount() > 0) {
 			logger.info("Previous Job still in progress");
 			return;
 		}
@@ -76,7 +68,7 @@ public class SuccessResponseJob extends BatchConfiguration {
 		long batchID = 0;
 		bjqDAO.clearQueue();
 
-		batchID = presentmentDAO.createBatch("RESPONSE_SUCCESS");
+		batchID = presentmentDAO.createBatch("RESPONSE_SUCCESS", totalRecords);
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchID);
 
@@ -124,7 +116,7 @@ public class SuccessResponseJob extends BatchConfiguration {
 		return super.job;
 	}
 
-	public Step masterStep() throws Exception {
+	private Step masterStep() throws Exception {
 		ResponsePartitioner partitioner = new ResponsePartitioner(bjqDAO);
 		return stepBuilderFactory.get("SUCCESS_RESPONSE_MASTER")
 
@@ -137,13 +129,12 @@ public class SuccessResponseJob extends BatchConfiguration {
 				.build();
 	}
 
-	@Bean
-	public Step updateHeaderStep() throws Exception {
+	private Step updateHeaderStep() throws Exception {
 		return this.stepBuilderFactory.get("UPDATE_HEADER").tasklet(new UpdateResponseTasklet(presentmentDAO)).build();
 
 	}
 
-	public TaskletStep masterTasklet() {
+	private TaskletStep masterTasklet() {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
@@ -158,16 +149,18 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 				.taskExecutor(taskExecutor("SUCCESS_RESPONSE_"))
 
-				.allowStartIfComplete(true)
-
 				.build();
 	}
 
-	public TaskletStep clear() {
+	private TaskletStep clear() {
 		return this.stepBuilderFactory.get("CLEAR").tasklet(clearQueueTasklet()).build();
 	}
 
-	public ResponseClearTasklet clearQueueTasklet() {
+	private ResponseClearTasklet clearQueueTasklet() {
 		return new ResponseClearTasklet(presentmentDAO, bjqDAO);
+	}
+
+	private void initilizeVariables() {
+		this.bjqDAO = new SuccessResponseJobQueueDAOImpl(dataSource);
 	}
 }

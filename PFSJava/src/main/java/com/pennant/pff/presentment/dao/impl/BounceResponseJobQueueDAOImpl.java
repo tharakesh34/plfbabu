@@ -52,7 +52,7 @@ public class BounceResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> im
 			ps.setInt(2, 1);
 			ps.setString(3, "IMPORT");
 			ps.setInt(4, 0);
-			ps.setString(5, "S");
+			ps.setString(5, "B");
 		});
 	}
 

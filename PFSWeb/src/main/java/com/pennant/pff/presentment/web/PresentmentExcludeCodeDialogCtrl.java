@@ -122,6 +122,8 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 		this.btnSave.setVisible(true);
 		this.btnCancel.setVisible(false);
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_PresentmentExcludeCode_btnPresentmentExcludeCode"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_PresentmentExcludeCode_btnDelete"));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -227,6 +229,10 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		doClose(this.btnSave.isVisible());
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
+	}
+
+	public void onClick$btnDelete(Event event) throws InterruptedException {
+		doDelete();
 	}
 
 	public void doWriteBeanToComponents(PresentmentExcludeCode aBounceCode) {
@@ -389,6 +395,20 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void doDelete() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		final PresentmentExcludeCode aBounceCode = new PresentmentExcludeCode();
+		BeanUtils.copyProperties(getExcludeCode(), aBounceCode);
+
+		String keyReference = "Exlcude Code : " + aBounceCode.getCode() + " And Instrument Type: "
+				+ aBounceCode.getInstrumentType();
+
+		doDelete(keyReference, aBounceCode);
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
@@ -402,6 +422,9 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 			this.btnCancel.setVisible(true);
 		}
 
+		this.bounceId.setReadonly(isReadOnly("PresentmentExcludeCodeDialog_BounceCode"));
+		this.description.setReadonly(isReadOnly("PresentmentExcludeCodeDialog_Description"));
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);

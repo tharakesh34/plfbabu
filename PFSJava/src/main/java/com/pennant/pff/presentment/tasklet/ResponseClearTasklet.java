@@ -26,13 +26,10 @@ public class ResponseClearTasklet implements Tasklet {
 		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
 
 		Long batchId = jobParameters.getLong("BATCH_ID");
-		String batchType = jobParameters.getString("BATCH_TYPE");
 
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchId);
 
-		presentmentDAO.logRespDetail(batchId, batchType);
-		presentmentDAO.clearRespDetail(batchId, batchType);
 		ebjqDAO.clearQueue();
 
 		return RepeatStatus.FINISHED;

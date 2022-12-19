@@ -39,6 +39,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -70,6 +71,13 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 	private MapJobRegistry jobRegistry;
 	private JobOperator jobOperator;
 
+	public BatchConfiguration(String tablePrefix, String threadNamePrefix) throws Exception {
+		this.tablePrefix = tablePrefix;
+		this.threadNamePrefix = threadNamePrefix;
+
+		initilize();
+	}
+
 	public BatchConfiguration(DataSource dataSource, String tablePrefix, String threadNamePrefix) throws Exception {
 		this.dataSource = dataSource;
 		this.tablePrefix = tablePrefix;
@@ -79,6 +87,7 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 	}
 
 	public void initilize() throws Exception {
+		getTransactionManager();
 		serializer();
 		lobHandler();
 		getJobRepository();
@@ -94,6 +103,12 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 	@Override
 	public JobRepository getJobRepository() throws Exception {
 		JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+
+		if (dataSource == null) {
+			factory.setTransactionManager(getTransactionManager());
+			return this.jobRepository = factory.getObject();
+		}
+
 		factory.setDataSource(dataSource);
 		factory.setSerializer(serializer);
 		factory.setTablePrefix(tablePrefix);
@@ -108,8 +123,10 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 
 	@Override
 	public PlatformTransactionManager getTransactionManager() throws Exception {
-		if (transactionManager == null) {
-			transactionManager = new DataSourceTransactionManager(this.dataSource);
+		if (transactionManager == null && this.dataSource != null) {
+			this.transactionManager = new DataSourceTransactionManager(this.dataSource);
+		} else {
+			return new ResourcelessTransactionManager();
 		}
 
 		return transactionManager;
@@ -128,6 +145,11 @@ public abstract class BatchConfiguration implements BatchConfigurer {
 	@Override
 	public JobExplorer getJobExplorer() throws Exception {
 		JobExplorerFactoryBean factory = new JobExplorerFactoryBean();
+
+		if (dataSource == null) {
+			this.jobExplorer = factory.getObject();
+		}
+
 		factory.setDataSource(dataSource);
 		factory.setTablePrefix(tablePrefix);
 		factory.setSerializer(serializer);

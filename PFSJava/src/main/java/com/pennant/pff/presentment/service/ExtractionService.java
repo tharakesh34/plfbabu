@@ -74,7 +74,7 @@ public class ExtractionService {
 
 	private int prepare(PresentmentHeader ph) {
 		Date appDate = SysParamUtil.getAppDate();
-		long batchID = presentmentDAO.createBatch("EXTRACTOIN");
+		long batchID = presentmentDAO.createBatch("EXTRACTOIN", 0);
 
 		ph.setBatchID(batchID);
 		ph.setAppDate(appDate);
@@ -149,7 +149,7 @@ public class ExtractionService {
 	}
 
 	public int extract(List<Long> list) {
-		long batchID = presentmentDAO.createBatch("REPRE_EXTR");
+		long batchID = presentmentDAO.createBatch("REPRE_EXTR", 0);
 
 		int count = 0;
 

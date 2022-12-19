@@ -1,59 +1,45 @@
 package com.pennant.pff.presentment.service.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.Entity;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.dao.RePresentmentUploadDAO;
+import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
+import com.pennant.pff.presentment.service.ExtractionService;
 import com.pennant.pff.upload.dao.UploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
-import com.pennanttech.dataengine.util.ExcelUtil;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
 
-public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHeader>
-		implements UploadService<RePresentmentUploadDetail> {
+public class RePresentmentUploadServiceImpl implements UploadService<RePresentmentUploadDetail> {
 	private static final Logger logger = LogManager.getLogger(RePresentmentUploadServiceImpl.class);
+
+	private ExtractionService extractionService;
 
 	private UploadDAO uploadDAO;
 	private RePresentmentUploadDAO representmentUploadDAO;
 	private FinanceMainDAO financeMainDAO;
-	private AuditHeaderDAO auditHeaderDAO;
 	private EntityDAO entityDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
-
-	private static final String TABLE_NAME = "REPRESENT_UPLOADS";
 
 	@Override
 	public FileUploadHeader getUploadHeader(String moduleCode) {
@@ -65,79 +51,15 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 			header.setWorkflowId(workFlow.getWorkFlowId());
 		}
 
+		header.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
+		header.setAppDate(SysParamUtil.getAppDate());
+
 		return header;
 	}
 
 	@Override
 	public long saveHeader(FileUploadHeader header, TableType type) {
-		return uploadDAO.saveHeader(header, type);
-	}
-
-	@Override
-	public void importFile(FileUploadHeader header) {
-		try {
-			read(header);
-		} catch (Exception e) {
-			int status = Status.IMPORT_FAILED.getValue();
-			header.setProgress(status);
-			uploadDAO.updateProgress(header.getId(), status, TableType.TEMP_TAB);
-			auditHeaderDAO.addAudit(getAuditHeader(header, PennantConstants.TRAN_WF));
-			return;
-		}
-
-		header.setBefImage(header);
-
-		ExcelUtil.backUpFile(header.getFile());
-
-		updateheader(header);
-
-		auditHeaderDAO.addAudit(getAuditHeader(header, PennantConstants.TRAN_WF));
-	}
-
-	@Override
-	public void read(FileUploadHeader header) {
-		logger.info("Reading the Excel Data...");
-
-		Workbook workBook = header.getWorkBook();
-		Sheet rchSheet = workBook.getSheetAt(0);
-
-		int rowCount = rchSheet.getLastRowNum();
-
-		String acBounce = SysParamUtil.getValueAsString(SMTParameterConstants.BOUNCE_CODES_FOR_ACCOUNT_CLOSED);
-
-		for (int i = 1; i <= rowCount; i++) {
-			RePresentmentUploadDetail detail = new RePresentmentUploadDetail();
-
-			Row row = rchSheet.getRow(i);
-
-			if (row == null) {
-				continue;
-			}
-
-			for (Cell cell : row) {
-				if (cell.getColumnIndex() == 0) {
-					detail.setReference(cell.toString());
-				}
-
-				if (cell.getColumnIndex() == 1) {
-					detail.setStrDueDate(cell.toString());
-				}
-			}
-
-			detail.setAcBounce(acBounce);
-
-			validate(header, detail);
-
-			detail.setHeaderId(header.getId());
-			header.setTotalRecords(header.getTotalRecords() + 1);
-			if (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) {
-				header.setSuccessRecords(header.getSuccessRecords() + 1);
-			} else {
-				header.setFailureRecords(header.getFailureRecords() + 1);
-			}
-
-			saveDetail(detail);
-		}
+		return uploadDAO.saveHeader(header);
 	}
 
 	@Override
@@ -153,58 +75,55 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 		String reference = detail.getReference();
 
 		if (StringUtils.isBlank(reference)) {
-			setError(detail, "[FINREFERENCE] is Mandatary");
+			setError(detail, PresentmentError.REPRMNT513);
 			return;
 		}
 
 		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
 
 		if (fm == null) {
-			setError(detail, "[FINREFERENCE] is invalid");
+			setError(detail, PresentmentError.REPRMNT514);
 			return;
 		}
 
 		if (!fm.isFinIsActive()) {
-			setError(detail, "[FINREFERENCE] is not in active");
+			setError(detail, PresentmentError.REPRMNT515);
 			return;
 		}
 
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
 
-		String strDueDate = detail.getStrDueDate();
-		if (StringUtils.isBlank(strDueDate)) {
-			setError(detail, "[DUEDATE] is Mandatary");
+		Date dueDate = detail.getDueDate();
+		if (dueDate == null) {
+			setError(detail, PresentmentError.REPRMNT516);
 			return;
 		}
 
-		detail.setDueDate(DateUtil.parse(strDueDate, DateFormat.LONG_DATE.getPattern()));
-
-		Date dueDate = detail.getDueDate();
 		if (DateUtil.compare(dueDate, appDate) > 0) {
-			setError(detail, "[DUEDATE] should not be Future Date.");
+			setError(detail, PresentmentError.REPRMNT517);
 			return;
 		}
 
 		String bounceCode = representmentUploadDAO.getBounceCode(reference, dueDate);
 
 		if (bounceCode == null) {
-			setError(detail, "Not a valid representment.");
+			setError(detail, PresentmentError.REPRMNT518);
 			return;
 		}
 
 		if (detail.getAcBounce().contains(bounceCode)) {
-			setError(detail, "Unable to do the re-presenment, since Account is closed");
+			setError(detail, PresentmentError.REPRMNT519);
 			return;
 		}
 
 		if (representmentUploadDAO.isProcessed(reference, dueDate)) {
-			setError(detail, "receipt already proceessed for this schedule.");
+			setError(detail, PresentmentError.REPRMNT520);
 			return;
 		}
 
 		if (profitDetailsDAO.getCurOddays(fm.getFinID()) == 0) {
-			setError(detail, "There is no over dues for the Loan Reference : " + reference);
+			setError(detail, PresentmentError.REPRMNT521);
 			return;
 		}
 
@@ -218,75 +137,28 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 			message.append(", Due Date -").append(dueDate);
 			message.append("with filename").append(fileNames.get(0)).append("already exists");
 
-			setError(detail, message.toString());
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode(PresentmentError.REPRMNT523.name());
+			detail.setErrorDesc(message.toString());
 
-			logger.info("Duplicate RePresentMent found in RePresentUpload_Temp table..");
+			logger.info("Duplicate RePresentment found in RePresentUpload table..");
 			return;
 		}
 
 		int curSchdMonth = DateUtil.getMonth(dueDate);
 		if (curSchdMonth != appDateMonth) {
-			setError(detail, "Due date should be in current month only");
+			setError(detail, PresentmentError.REPRMNT522);
 			return;
 		}
 
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setRemarks("");
+		detail.setErrorCode("");
+		detail.setErrorDesc("");
 	}
 
 	@Override
-	public void saveDetail(RePresentmentUploadDetail detail) {
-		logger.info("Saving RePresentmentUploadDetails...");
-		this.representmentUploadDAO.saveDetail(detail);
-	}
-
-	@Override
-	public void updateheader(FileUploadHeader header) {
-		header.setProgress(Status.IMPORTED.getValue());
-
-		logger.info("Updating RePresentMentHeader as Imported...");
-
-		if (uploadDAO.update(header, TableType.TEMP_TAB) == 1) {
-			logger.info("RePresentMentHeader {} successfully updated with successcount {}, failurecount {} ",
-					header.getId(), header.getSuccessRecords(), header.getFailureRecords());
-		}
-	}
-
-	@Override
-	public boolean isExists(String fileName) {
-		return uploadDAO.isExists(fileName);
-	}
-
-	@Override
-	public boolean isDownloaded(long fileID) {
-		return this.uploadDAO.isFileDownlaoded(fileID);
-	}
-
-	@Override
-	public void updateProgress(long headerID, int status) {
-		this.uploadDAO.updateProgress(headerID, status, TableType.MAIN_TAB);
-	}
-
-	@Override
-	public void updateStatus(List<Long> headerIds) {
-		for (Long id : headerIds) {
-			int[] statuscount = getHeaderStatusCnt(id);
-			uploadDAO.uploadHeaderStatusCnt(id, statuscount[0], statuscount[1]);
-
-			logger.info(
-					"RePresentment creation process completed for the Header -{} with Total success count{}, Total failure count{}",
-					id, statuscount[0], statuscount[1]);
-		}
-	}
-
-	@Override
-	public FileUploadHeader getUploadHeaderById(long id) {
-		return uploadDAO.getHeaderData(id, TableType.TEMP_TAB);
-	}
-
-	@Override
-	public List<RePresentmentUploadDetail> getUploadDetailById(long headerID) {
-		return representmentUploadDAO.loadRecordData(headerID);
+	public void update(FileUploadHeader uploadHeader) {
+		this.uploadDAO.updateHeader(uploadHeader);
 	}
 
 	@Override
@@ -295,183 +167,112 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	}
 
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader ah) {
-		logger.debug(Literal.ENTERING);
-
-		ah = businessValidation(ah);
-		if (!ah.isNextProcess()) {
-			logger.debug(Literal.LEAVING);
-			return ah;
-		}
-
-		FileUploadHeader header = (FileUploadHeader) ah.getAuditDetail().getModelData();
-		TableType tableType = TableType.MAIN_TAB;
-
-		if (header.isWorkflow()) {
-			tableType = TableType.TEMP_TAB;
-		}
-
-		if (header.isNewRecord()) {
-			header.setId(uploadDAO.saveHeader(header, tableType));
-
-			ah.getAuditDetail().setModelData(header);
-			ah.setAuditReference(String.valueOf(header.getId()));
-		} else {
-			uploadDAO.update(header, tableType);
-		}
-
-		auditHeaderDAO.addAudit(ah);
-		logger.debug(Literal.LEAVING);
-		return ah;
+	public List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
+			Date toDate) {
+		return uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate);
 	}
 
 	@Override
-	public AuditHeader doReject(AuditHeader ah) {
-		logger.debug(Literal.ENTERING);
+	public void approve(List<FileUploadHeader> headers) {
+		new Thread(() -> {
 
-		ah = businessValidation(ah);
-		if (!ah.isNextProcess()) {
-			logger.debug(Literal.LEAVING);
-			return ah;
-		}
+			List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
 
-		FileUploadHeader header = (FileUploadHeader) ah.getAuditDetail().getModelData();
-		ah.setAuditTranType(PennantConstants.TRAN_WF);
+			Date appDate = SysParamUtil.getAppDate();
+			String acBounce = SysParamUtil.getValueAsString(SMTParameterConstants.BOUNCE_CODES_FOR_ACCOUNT_CLOSED);
 
-		uploadDAO.deleteDetail(header.getId(), TABLE_NAME);
-		uploadDAO.deleteHeader(header, TableType.TEMP_TAB);
+			for (FileUploadHeader header : headers) {
+				List<RePresentmentUploadDetail> details = representmentUploadDAO.loadRecordData(header.getId());
 
-		auditHeaderDAO.addAudit(ah);
+				header.setAppDate(appDate);
+				header.setTotalRecords(details.size());
+				int sucessRecords = 0;
+				int failRecords = 0;
 
-		logger.debug(Literal.LEAVING);
-		return ah;
+				for (RePresentmentUploadDetail detail : details) {
+					detail.setAcBounce(acBounce);
+					validate(header, detail);
+
+					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
+						failRecords++;
+					} else {
+						sucessRecords++;
+					}
+				}
+
+				representmentUploadDAO.update(details);
+
+				header.setSuccessRecords(sucessRecords);
+				header.setFailureRecords(failRecords);
+
+				StringBuilder remarks = new StringBuilder("Process Completed");
+
+				if (failRecords > 0) {
+					remarks.append(" with exceptions, ");
+				}
+
+				remarks.append(" Total Records : ").append(header.getTotalRecords());
+				remarks.append(" Success Records : ").append(sucessRecords);
+				remarks.append(" Failed Records : ").append(failRecords);
+
+				header.setRecordType("");
+				header.setWorkflowId(0);
+				header.setTaskId(null);
+				header.setNextTaskId(null);
+				header.setRoleCode(null);
+				header.setNextRoleCode(null);
+				header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				header.setApprovedBy(header.getLastMntBy());
+				header.setApprovedOn(header.getLastMntOn());
+			}
+
+			uploadDAO.updateHeader(headers);
+
+			int extractPresentment = extractionService.extractRePresentment(headerIdList);
+
+			if (extractPresentment > 0) {
+				logger.info("RePresentment Process is Initiated");
+			}
+		}).start();
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader ah) {
-		logger.debug(Literal.ENTERING);
+	public void reject(List<FileUploadHeader> headers) {
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
 
-		String tranType = "";
-		ah = businessValidation(ah);
-		if (!ah.isNextProcess()) {
-			logger.debug(Literal.LEAVING);
-			return ah;
-		}
+		String errorCode = PresentmentError.REPRMNT523.name();
+		String errorDesc = PresentmentError.REPRMNT523.description();
 
-		FileUploadHeader header = new FileUploadHeader();
-		BeanUtils.copyProperties(ah.getAuditDetail().getModelData(), header);
+		representmentUploadDAO.update(headerIdList, errorCode, errorDesc, EodConstants.PROGRESS_FAILED);
 
-		uploadDAO.deleteHeader(header, TableType.TEMP_TAB);
-
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(header.getRecordType())) {
-			ah.getAuditDetail().setBefImage(uploadDAO.getHeaderData(header.getId(), TableType.MAIN_TAB));
-		}
-
-		if (PennantConstants.RECORD_TYPE_DEL.equals(header.getRecordType())) {
-			tranType = PennantConstants.TRAN_DEL;
-			uploadDAO.deleteDetail(header.getId(), TABLE_NAME);
-			uploadDAO.deleteHeader(header, TableType.MAIN_TAB);
-		} else {
-			header.setRoleCode("");
-			header.setNextRoleCode("");
-			header.setTaskId("");
-			header.setNextTaskId("");
+		for (FileUploadHeader header : headers) {
+			header.setRecordType("");
 			header.setWorkflowId(0);
-
-			if (PennantConstants.RECORD_TYPE_NEW.equals(header.getRecordType())) {
-				tranType = PennantConstants.TRAN_ADD;
-				header.setRecordType("");
-				uploadDAO.saveHeader(header, TableType.MAIN_TAB);
-			} else {
-				tranType = PennantConstants.TRAN_UPD;
-				header.setRecordType("");
-				uploadDAO.update(header, TableType.MAIN_TAB);
-			}
+			header.setTaskId(null);
+			header.setNextTaskId(null);
+			header.setRoleCode(null);
+			header.setNextRoleCode(null);
+			header.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
+			header.setFailureRecords(header.getTotalRecords());
+			header.setSuccessRecords(0);
+			header.setApprovedBy(null);
+			header.setApprovedOn(null);
+			header.setRemarks(errorDesc);
+			header.setProgress(Status.REJECTED.getValue());
 		}
 
-		ah.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeaderDAO.addAudit(ah);
-
-		ah.setAuditTranType(tranType);
-		ah.getAuditDetail().setAuditTranType(tranType);
-		ah.getAuditDetail().setModelData(header);
-		auditHeaderDAO.addAudit(ah);
-
-		logger.debug(Literal.LEAVING);
-		return ah;
-
+		uploadDAO.updateHeader(headers);
 	}
 
-	@Override
-	public AuditHeader delete(AuditHeader ah) {
-		logger.debug(Literal.ENTERING);
-
-		ah = businessValidation(ah);
-		if (!ah.isNextProcess()) {
-			logger.debug(Literal.LEAVING);
-			return ah;
-		}
-
-		FileUploadHeader header = (FileUploadHeader) ah.getAuditDetail().getModelData();
-		uploadDAO.deleteDetail(header.getId(), TABLE_NAME);
-		uploadDAO.deleteHeader(header, TableType.TEMP_TAB);
-
-		auditHeaderDAO.addAudit(ah);
-
-		logger.debug(Literal.LEAVING);
-		return ah;
-	}
-
-	private AuditHeader businessValidation(AuditHeader ah) {
-		AuditDetail ad = validation(ah.getAuditDetail(), ah.getUsrLanguage());
-		ah.setAuditDetail(ad);
-		ah.setErrorList(ad.getErrorDetails());
-		ah = nextProcess(ah);
-		return ah;
-	}
-
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
-		logger.debug(Literal.ENTERING);
-
-		FileUploadHeader rpuh = (FileUploadHeader) auditDetail.getModelData();
-		String code = rpuh.getFileName();
-		String[] parameters = new String[1];
-		parameters[0] = PennantJavaUtil.getLabel("label_FileName") + ": " + code;
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
-		logger.debug(Literal.LEAVING);
-		return auditDetail;
-	}
-
-	private int[] getHeaderStatusCnt(long uploadID) {
-		List<Long> uploadIDs = uploadDAO.getHeaderStatusCnt(uploadID, TABLE_NAME);
-		int sucessCount = 0;
-		int failCount = 0;
-
-		for (Long receiptId : uploadIDs) {
-			if (receiptId == null) {
-				failCount++;
-			} else {
-				sucessCount++;
-			}
-		}
-
-		int[] val = new int[2];
-		val[0] = sucessCount;
-		val[1] = failCount;
-		return val;
-	}
-
-	private AuditHeader getAuditHeader(FileUploadHeader header, String tranType) {
-		AuditDetail ad = new AuditDetail(tranType, 1, header.getBefImage(), header);
-		return new AuditHeader(String.valueOf(header.getId()), null, null, null, ad, header.getUserDetails(),
-				new HashMap<>());
-	}
-
-	private void setError(RePresentmentUploadDetail detail, String message) {
+	private void setError(RePresentmentUploadDetail detail, PresentmentError error) {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setRemarks(message);
+		detail.setErrorCode(error.name());
+		detail.setErrorDesc(error.description());
+	}
+
+	@Autowired
+	public void setExtractionService(ExtractionService extractionService) {
+		this.extractionService = extractionService;
 	}
 
 	@Autowired
@@ -487,11 +288,6 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Autowired
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
 	@Autowired

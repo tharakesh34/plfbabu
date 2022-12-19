@@ -1,6 +1,7 @@
 package com.pennant.pff.upload.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 public class UploadDetails implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -10,7 +11,12 @@ public class UploadDetails implements Serializable {
 	private Long referenceID;
 	private String reference;
 	private int progress;
-	private String remarks;
+	private String errorCode;
+	private String errorDesc;
+	private Long createdBy;
+	private Timestamp createdOn;
+	private Long approvedBy;
+	private Timestamp approvedOn;
 
 	public UploadDetails() {
 		super();
@@ -56,12 +62,52 @@ public class UploadDetails implements Serializable {
 		this.progress = progress;
 	}
 
-	public String getRemarks() {
-		return remarks;
+	public String getErrorCode() {
+		return errorCode;
 	}
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
+
+	public String getErrorDesc() {
+		return errorDesc;
+	}
+
+	public void setErrorDesc(String errorDesc) {
+		this.errorDesc = errorDesc;
+	}
+
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Long getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(Long approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public Timestamp getApprovedOn() {
+		return approvedOn;
+	}
+
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
 	}
 
 }

@@ -36,8 +36,11 @@ public class RePresentmentListModelItemRenderer implements ListitemRenderer<RePr
 		lc = new Listcell(rpud.getProgress() == 2 ? "SUCCESS" : "FAILED");
 		lc.setParent(item);
 
-		lc = new Listcell(rpud.getRemarks());
-		lc.setParent(item);
+		StringBuilder error = new StringBuilder(rpud.getErrorCode());
+		error.append(" - ");
+		error.append(rpud.getErrorCode());
 
+		lc = new Listcell(error.toString());
+		lc.setParent(item);
 	}
 }

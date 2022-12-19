@@ -197,12 +197,12 @@ public class PresentmentExcludeCodeDAOImpl extends SequenceDao<PresentmentExclud
 	public void delete(PresentmentExcludeCode bc, TableType type) {
 		StringBuilder sql = new StringBuilder("Delete From Presentment_Exclude_Codes");
 		sql.append(type.getSuffix());
-		sql.append(" Where Code = ?");
+		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			if (jdbcOperations.update(sql.toString(), bc.getCode()) == 0) {
+			if (jdbcOperations.update(sql.toString(), bc.getId()) == 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {

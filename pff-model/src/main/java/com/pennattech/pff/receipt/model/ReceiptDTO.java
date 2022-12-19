@@ -13,6 +13,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
@@ -35,6 +36,8 @@ public class ReceiptDTO implements Serializable {
 	private boolean noReserve;
 	private boolean pdDetailsExits;
 	private FinExcessAmount emiInAdvance;
+	private RequestSource requestSource;
+	private boolean createPrmntReceipt;
 
 	public ReceiptDTO() {
 		super();
@@ -166,6 +169,22 @@ public class ReceiptDTO implements Serializable {
 
 	public void setEmiInAdvance(FinExcessAmount emiInAdvance) {
 		this.emiInAdvance = emiInAdvance;
+	}
+
+	public RequestSource getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(RequestSource requestSource) {
+		this.requestSource = requestSource;
+	}
+
+	public boolean isCreatePrmntReceipt() {
+		return createPrmntReceipt;
+	}
+
+	public void setCreatePrmntReceipt(boolean createPrmntReceipt) {
+		this.createPrmntReceipt = createPrmntReceipt;
 	}
 
 }

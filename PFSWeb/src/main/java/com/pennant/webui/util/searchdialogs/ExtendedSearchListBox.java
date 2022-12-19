@@ -586,7 +586,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 				}
 
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
+				logger.error("setLovValue method is not found in bean class.");
 			}
 			setObject(object);
 			this.onClose();
