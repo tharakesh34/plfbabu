@@ -3461,7 +3461,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		// Receipt Mode Details , if FinReceiptDetails Exists
 		setBalances();
-		checkByReceiptMode(rch.getSubReceiptMode(), false);
+		checkByReceiptMode(rch.getReceiptMode(), false);
 		this.valueDate.setValue(rch.getValueDate());
 
 		if (row_knockOff_Type.isVisible()) {
