@@ -4297,7 +4297,6 @@
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="taxHeaderDetailsService" ref="taxHeaderDetailsService" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 
 	<!--============ Covenant Type Details ============== -->

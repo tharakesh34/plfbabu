@@ -672,7 +672,7 @@
 	<bean name="tdsReceivablesTxnService"
 		class="com.pennant.backend.service.tds.receivables.impl.TdsReceivablesTxnServiceImpl" />
 
-	<bean id="closureService" class="com.pennanttech.pff.sod.service.impl.SODServiceImpl" />
+	<bean id="closureService" class="com.pennanttech.pff.closure.service.impl.ClosureService" />
 
 	<bean id="receiptService" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" />
 
