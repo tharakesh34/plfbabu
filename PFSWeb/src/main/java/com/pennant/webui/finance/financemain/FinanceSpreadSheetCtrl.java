@@ -1002,6 +1002,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		Date date = SysParamUtil.getAppDate();
 		BigDecimal lessThan2years = BigDecimal.ZERO;
 		BigDecimal greaterThan2years = BigDecimal.ZERO;
+		BigDecimal greaterThan12months = BigDecimal.ZERO;
 
 		for (FinanceEnquiry financeEnquiry : list) {
 
@@ -1012,21 +1013,26 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				greaterThan2years = greaterThan2years.add(financeEnquiry.getMaxInstAmount());
 			}
 
+			int months = DateUtility.getMonthsBetween(financeEnquiry.getFinStartDate(), date);
+
+			if (months > 12) {
+				greaterThan12months = greaterThan12months.add(financeEnquiry.getMaxInstAmount());
+			}
+
 		}
 
-		BigDecimal custObligationExtra = BigDecimal.ZERO;
 		List<FinanceEnquiry> list2 = cd.getCustFinanceExposureList();
 		if (list2 != null) {
 			for (FinanceEnquiry financeEnquiry : list2) {
-				custObligationExtra = custObligationExtra.add(financeEnquiry.getMaxInstAmount());
+				int months = DateUtility.getMonthsBetween(financeEnquiry.getFinStartDate(), date);
+				if (months > 12) {
+					greaterThan12months = greaterThan12months.add(financeEnquiry.getMaxInstAmount());
+				}
 			}
 		}
 		dataMap.put("CUST_EXPOS_LESS2", PennantApplicationUtil.formateAmount(lessThan2years, format));
 		dataMap.put("CUST_EXPOS_GREATER2", PennantApplicationUtil.formateAmount(greaterThan2years, format));
-
-		BigDecimal custObligation = lessThan2years.add(greaterThan2years);
-		custObligation = custObligation.add(custObligationExtra);
-		dataMap.put("CUST_OBLIGATION", PennantApplicationUtil.formateAmount(custObligation, format));
+		dataMap.put("CUST_OBLIGATION", PennantApplicationUtil.formateAmount(greaterThan12months, format));
 
 	}
 
