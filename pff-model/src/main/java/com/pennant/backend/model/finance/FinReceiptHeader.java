@@ -218,7 +218,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private String receiptSourceAcDesc;
 	private String entityDesc;
 	private String sourceId;
-	private BigDecimal treshHold = new BigDecimal("1000000");
+	private BigDecimal treshHold = new BigDecimal("100000");
 
 	public FinReceiptHeader() {
 		super();
@@ -357,6 +357,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		excludeFields.add("custAcctHolderName");
 		excludeFields.add("taxPercentages");
 		excludeFields.add("moduleType");
+		excludeFields.add("treshHold");
 
 		return excludeFields;
 	}
