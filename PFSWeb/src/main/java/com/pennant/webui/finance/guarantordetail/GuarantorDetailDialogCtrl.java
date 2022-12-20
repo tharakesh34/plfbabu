@@ -1764,7 +1764,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			if (!this.poBox.isReadonly()) {
 				this.poBox
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_POBox.value"),
-								PennantRegularExpressions.REGEX_NUMERIC, true));
+								PennantRegularExpressions.REGEX_NUMERIC, false));
 			}
 
 			if (!this.addrZIP.isReadonly()) {
@@ -1968,7 +1968,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrZIP.setReadonly(isReadOnly("GuarantorDetailDialog_addrZIP"));
 			this.space_addrHNbr.setSclass(PennantConstants.mandateSclass);
 			this.space_addrStreet.setSclass(PennantConstants.mandateSclass);
-			this.space_poBox.setSclass(PennantConstants.mandateSclass);
+			/* this.space_poBox.setSclass(PennantConstants.mandateSclass); */
 			this.addrCountry.setMandatoryStyle(true);
 			this.addrProvince.setMandatoryStyle(true);
 			this.addrCity.setMandatoryStyle(false);
