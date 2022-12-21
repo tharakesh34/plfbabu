@@ -108,7 +108,7 @@ public class FileUploadList extends Window implements Serializable {
 
 	private FileUploadHeader fileUploadHeader;
 
-	private transient UploadService<FileUploadHeader> uploadService;
+	private transient UploadService uploadService;
 	private transient DataSource dataSource;
 	private String stage;
 
@@ -807,7 +807,9 @@ public class FileUploadList extends Window implements Serializable {
 	}
 
 	private void onClickReject() {
-		uploadService.reject(selectedHeaders);
+		uploadService.doReject(selectedHeaders);
+
+		doSearch(false);
 	}
 
 	private void onClickApprove() {
@@ -815,7 +817,9 @@ public class FileUploadList extends Window implements Serializable {
 			header.setLastMntBy(this.userId);
 			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		}
-		uploadService.approve(selectedHeaders);
+		uploadService.doApprove(selectedHeaders);
+
+		doSearch(false);
 	}
 
 	private Space getSpace(String width, boolean mandatory) {
@@ -912,6 +916,17 @@ public class FileUploadList extends Window implements Serializable {
 
 		button.setLabel(label);
 		button.setId(label);
+		button.setTooltiptext(label);
+		button.setAutodisable(getScreenButtons());
+
+		return button;
+	}
+
+	private Button getButton(String label, String id) {
+		Button button = new Button();
+
+		button.setLabel(label);
+		button.setId(label.concat(id));
 		button.setTooltiptext(label);
 		button.setAutodisable(getScreenButtons());
 
@@ -1106,14 +1121,14 @@ public class FileUploadList extends Window implements Serializable {
 			lc = new Listcell(uph.getRecordStatus());
 			lc.setParent(item);
 
-			Button dowButton = getButton(Labels.getLabel("label_Download"));
+			Button dowButton = getButton(Labels.getLabel("label_Download"), String.valueOf(id));
 			dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload(uph.getType()));
 
 			lc = new Listcell();
 			lc.appendChild(dowButton);
 			lc.setParent(item);
 
-			Button viewButton = getButton(Labels.getLabel("label_View"));
+			Button viewButton = getButton(Labels.getLabel("label_View"), String.valueOf(id));
 			viewButton.setDisabled(uph.getFailureRecords() > 0);
 			viewButton.addEventListener(Events.ON_CLICK, event -> onClickView());
 
@@ -1159,7 +1174,7 @@ public class FileUploadList extends Window implements Serializable {
 		private static final long serialVersionUID = -341504661579686922L;
 
 		private FileUploadHeader header;
-		private transient UploadService<FileUploadHeader> service;
+		private transient UploadService service;
 		private transient DataSource dataSource;
 		private long userID;
 
@@ -1175,11 +1190,11 @@ public class FileUploadList extends Window implements Serializable {
 			this.header = header;
 		}
 
-		public UploadService<FileUploadHeader> getService() {
+		public UploadService getService() {
 			return service;
 		}
 
-		public void setService(UploadService<FileUploadHeader> service) {
+		public void setService(UploadService service) {
 			this.service = service;
 		}
 
