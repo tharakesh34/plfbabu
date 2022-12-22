@@ -1253,6 +1253,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setDefSchdDate(rs.getDate("DefSchdDate"));
 			pd.setSchSeq(rs.getInt("SchSeq"));
 			pd.setInstNumber(rs.getInt("InstNumber"));
+			pd.setEmiNo(rs.getInt("InstNumber"));
 			pd.setBpiOrHoliday(rs.getString("BpiOrHoliday"));
 			pd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
 			pd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
