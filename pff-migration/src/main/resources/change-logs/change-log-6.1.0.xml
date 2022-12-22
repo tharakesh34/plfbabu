@@ -1135,4 +1135,22 @@
 			<column name="proceedexception" type="smallint" defaultValueNumeric="0"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="46" author="rahul.r">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAEEVENTS WHERE AEEVENTCODE='IMDFEE' AND ACTIVE=1;
+				INSERT INTO BMTAEEVENTS(aeeventcode, aeeventcodedesc, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, active) VALUES ('IMDFEE', 'IMD Fee validation', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+				
+				DELETE FROM RBFIELDDETAILS WHERE RBMODULE = 'FEES' AND RBEVENT = 'IMDFEE' AND RBFLDNAME = 'fee_IMDPaid';
+				INSERT INTO RBFieldDetails values  ('FEES', 'IMDFEE', 'fee_IMDPaid', 'IMD Fee paid amount', 'bigint', 0, 1, 1, null, 'static,global', null);
+				
+				DELETE FROM RBFIELDDETAILS WHERE RBMODULE = 'FEES' AND RBEVENT = 'IMDFEE' AND RBFLDNAME = 'fee_IMDActualAmount';
+				INSERT INTO RBFieldDetails values  ('FEES', 'IMDFEE', 'fee_IMDActualAmount', 'IMD Fee Actual amount', 'bigint', 0, 1, 1, null, 'static,global', null);
+				
+				DELETE FROM RBFIELDDETAILS WHERE RBMODULE = 'FEES' AND RBEVENT = 'IMDFEE' AND RBFLDNAME = 'fm_finType';
+				INSERT INTO RBFieldDetails values  ('FEES', 'IMDFEE', 'fm_finType', 'Loan Type', 'nvarchar', 0, 1, 1, null, 'static,global', null);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

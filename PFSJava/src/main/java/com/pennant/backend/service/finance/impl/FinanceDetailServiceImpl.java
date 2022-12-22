@@ -270,6 +270,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.fee.service.IMDFeeService;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -472,6 +473,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private ManualScheduleService manualScheduleService;
 	private VariableOverdraftSchdService variableOverdraftSchdService;
 	private OverdrafLoanService overdrafLoanService;
+
+	private IMDFeeService imdFeeService;
 
 	public FinanceDetailServiceImpl() {
 		super();
@@ -5400,6 +5403,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				externalFinanceSystemService.createLoan(afinanceMain, operation);
 			}
 			break;
+		case PennantConstants.method_IMDFEECHECK:
+			imdFeeService.validate(auditHeader);
 		default:
 			// Execute any other custom service tasks
 			if (StringUtils.isNotBlank(task.getOperation())) {
@@ -11259,6 +11264,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Qualifier(value = "customCreditInformation")
 	public void setCustomCreditInformation(CreditInformation customCreditInformation) {
 		this.customCreditInformation = customCreditInformation;
+	}
+
+	public IMDFeeService getImdFeeService() {
+		return imdFeeService;
+	}
+
+	public void setImdFeeService(IMDFeeService imdFeeService) {
+		this.imdFeeService = imdFeeService;
 	}
 
 }
