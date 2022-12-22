@@ -42,6 +42,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CostComponentDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
@@ -1021,12 +1022,16 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		}
 
-		List<FinanceEnquiry> list2 = cd.getCustFinanceExposureList();
+		List<CustomerExtLiability> list2 = cd.getCustomerExtLiabilityList();
 		if (list2 != null) {
-			for (FinanceEnquiry financeEnquiry : list2) {
-				int months = DateUtility.getMonthsBetween(financeEnquiry.getFinStartDate(), date);
+			for (CustomerExtLiability custExt : list2) {
+				int months = DateUtility.getMonthsBetween(custExt.getFinDate(), date);
 				if (months > 12) {
-					greaterThan12months = greaterThan12months.add(financeEnquiry.getMaxInstAmount());
+					BigDecimal installAmount = custExt.getInstalmentAmount();
+					if (installAmount == null) {
+						installAmount = BigDecimal.ZERO;
+					}
+					greaterThan12months = greaterThan12months.add(installAmount);
 				}
 			}
 		}
