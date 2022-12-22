@@ -28,7 +28,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
-import com.pennanttech.pff.file.UploadTypes;
 
 public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements UploadDAO {
 
@@ -190,7 +189,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 	@Override
 	public List<FileUploadHeader> getHeaderData(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate) {
+			Date toDate, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, EntityCode, Type, FileName, TotalRecords, SuccessRecords, FailureRecords");
 		sql.append(", Progress, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntOn, LastMntBy");
@@ -211,7 +210,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
 
-			ps.setString(++index, UploadTypes.RE_PRESENTMENT.name());
+			ps.setString(++index, type);
 
 			if (CollectionUtils.isNotEmpty(roleCodes)) {
 				for (String roleCode : roleCodes) {

@@ -666,7 +666,7 @@ public class FileUploadList extends Window implements Serializable {
 
 		showErrorMessage(wve);
 
-		return uploadService.getUploadHeaderById(this.workflowRoles, eCode, fileID, dataFrom, dataTo);
+		return uploadService.getUploadHeaderById(this.workflowRoles, eCode, fileID, dataFrom, dataTo, type.name());
 	}
 
 	private void setConstraints() {

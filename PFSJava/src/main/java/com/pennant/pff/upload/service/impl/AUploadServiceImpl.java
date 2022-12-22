@@ -47,8 +47,8 @@ public abstract class AUploadServiceImpl implements UploadService {
 
 	@Override
 	public List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate) {
-		return uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate);
+			Date toDate, String type) {
+		return uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate, type);
 	}
 
 	@Override
@@ -81,6 +81,7 @@ public abstract class AUploadServiceImpl implements UploadService {
 				header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				header.setApprovedBy(header.getLastMntBy());
 				header.setApprovedOn(header.getLastMntOn());
+				header.setProgress(Status.APPROVED.getValue());
 			} else {
 				header.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
 				header.setFailureRecords(header.getTotalRecords());

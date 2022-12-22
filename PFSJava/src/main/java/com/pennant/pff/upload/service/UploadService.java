@@ -16,7 +16,7 @@ public interface UploadService {
 	void doValidate(FileUploadHeader header, Object detail);
 
 	List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate);
+			Date toDate, String type);
 
 	List<Entity> getEntities();
 
