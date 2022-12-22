@@ -82,7 +82,7 @@ public class IMDFeeService {
 		BigDecimal bigDecimal = BigDecimal.ZERO;
 
 		if (amount != null) {
-			bigDecimal = amount.divide(new BigDecimal(Math.pow(10, dec)));
+			bigDecimal = amount.divide(BigDecimal.valueOf((Math.pow(10, dec))));
 		}
 		return bigDecimal;
 	}

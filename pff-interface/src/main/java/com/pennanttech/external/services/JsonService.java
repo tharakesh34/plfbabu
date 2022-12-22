@@ -262,12 +262,13 @@ public abstract class JsonService<T> {
 	}
 
 	private RestTemplate getTemplateWithCertificate(JsonServiceDetail jsonServiceDetail) {
-		RestTemplate restTemplate = null;
+		RestTemplate restTemplate = new RestTemplate();
+		FileInputStream fi;
 		try {
 
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
-			keyStore.load(new FileInputStream(jsonServiceDetail.getCertificateFileName()),
-					jsonServiceDetail.getCertificatePassword().toCharArray());
+			fi = new FileInputStream(jsonServiceDetail.getCertificateFileName());
+			keyStore.load(fi, jsonServiceDetail.getCertificatePassword().toCharArray());
 
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 
@@ -303,6 +304,8 @@ public abstract class JsonService<T> {
 			restTemplate = new RestTemplate(requestFactory);
 		} catch (Exception e) {
 			logger.error(e);
+		} finally {
+			fi = null;
 		}
 
 		return restTemplate;

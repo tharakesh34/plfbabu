@@ -1026,7 +1026,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		Verification verification = (Verification) listitem.getAttribute("vrf");
 
 		Label agency = ((Label) getComponent(listitem, "Agency"));
-		if (agency.getAttribute("agencyId") != null) {
+		if (agency != null && agency.getAttribute("agencyId") != null) {
 			verification.setAgency(Long.parseLong(agency.getAttribute("agencyId").toString()));
 		}
 
