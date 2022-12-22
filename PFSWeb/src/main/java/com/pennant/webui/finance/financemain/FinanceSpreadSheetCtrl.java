@@ -1025,8 +1025,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		List<CustomerExtLiability> list2 = cd.getCustomerExtLiabilityList();
 		if (list2 != null) {
 			for (CustomerExtLiability custExt : list2) {
-				int months = DateUtility.getMonthsBetween(custExt.getFinDate(), date);
-				if (months > 12) {
+				if (custExt.getBalanceTenure() >= 12) {
 					BigDecimal installAmount = custExt.getInstalmentAmount();
 					if (installAmount == null) {
 						installAmount = BigDecimal.ZERO;
