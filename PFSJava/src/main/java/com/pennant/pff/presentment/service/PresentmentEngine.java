@@ -1581,8 +1581,8 @@ public class PresentmentEngine {
 
 	public void updateResponse(long responseID) {
 		presentmentDAO.updateResposeStatus(responseID, null, null, EodConstants.PROGRESS_SUCCESS);
-		presentmentDAO.logRespDetail(responseID);
-		presentmentDAO.clearRespDetail(responseID);
+		// presentmentDAO.logRespDetail(responseID);
+		// presentmentDAO.clearRespDetail(responseID);
 	}
 
 	public void updateResponse(long responseID, Exception e) {
@@ -1604,8 +1604,8 @@ public class PresentmentEngine {
 
 		if (PresentmentError.isValidation(errorCode)) {
 			presentmentDAO.updateResposeStatus(responseID, errorCode, errorDesc, EodConstants.PROGRESS_FAILED);
-			presentmentDAO.logRespDetail(responseID);
-			presentmentDAO.clearRespDetail(responseID);
+			// presentmentDAO.logRespDetail(responseID);
+			// presentmentDAO.clearRespDetail(responseID);
 		} else {
 			presentmentDAO.updateResposeStatus(responseID, errorCode, errorDesc, EodConstants.PROGRESS_WAIT);
 		}
