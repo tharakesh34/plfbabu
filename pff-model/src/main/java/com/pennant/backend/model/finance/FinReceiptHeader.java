@@ -218,7 +218,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private String receiptSourceAcDesc;
 	private String entityDesc;
 	private String sourceId;
-	private BigDecimal treshHold = new BigDecimal("100000");
+	private BigDecimal closureThresholdLimit = BigDecimal.ZERO;
 
 	public FinReceiptHeader() {
 		super();
@@ -357,7 +357,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		excludeFields.add("custAcctHolderName");
 		excludeFields.add("taxPercentages");
 		excludeFields.add("moduleType");
-		excludeFields.add("treshHold");
+		excludeFields.add("closureThresholdLimit");
 
 		return excludeFields;
 	}
@@ -559,6 +559,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		entity.setFromState(this.fromState);
 		entity.setClosureWithFullWaiver(this.isClosureWithFullWaiver);
 		entity.setModuleType(this.moduleType);
+		entity.setClosureThresholdLimit(this.closureThresholdLimit);
 
 		return entity;
 	}
@@ -2002,12 +2003,12 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		this.moduleType = moduleType;
 	}
 
-	public BigDecimal getTreshHold() {
-		return treshHold;
+	public BigDecimal getClosureThresholdLimit() {
+		return closureThresholdLimit;
 	}
 
-	public void setTreshHold(BigDecimal treshHold) {
-		this.treshHold = treshHold;
+	public void setClosureThresholdLimit(BigDecimal closureThresholdLimit) {
+		this.closureThresholdLimit = closureThresholdLimit;
 	}
 
 }

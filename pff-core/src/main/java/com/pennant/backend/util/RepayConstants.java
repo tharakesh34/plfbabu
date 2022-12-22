@@ -73,6 +73,7 @@ public class RepayConstants {
 	public static final String EXAMOUNTTYPE_ADVEMI = "ADVEMI";
 	public static final String EXAMOUNTTYPE_CASHCLT = "CASHCLT";
 	public static final String EXAMOUNTTYPE_DSF = "DSF";
+	public static final String EXAMOUNTTYPE_TEXCESS = "T";
 
 	// Excess Adjustment to in Receipts
 	public static final String EXCESSADJUSTTO_EXCESS = "E";

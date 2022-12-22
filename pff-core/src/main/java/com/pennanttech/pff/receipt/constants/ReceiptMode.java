@@ -36,6 +36,7 @@ public class ReceiptMode {
 	public static final String PRESENTMENT = "PRESENT";
 	public static final String CASHCLT = "CASHCLT";
 	public static final String DSF = "DSF";
+	public static final String TEXCESS = "T";
 
 	public static final String BBPS = "BBPS";
 	public static final String RTRNGDS = "RTRNGDS";

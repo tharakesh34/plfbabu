@@ -212,6 +212,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennant.pff.extension.PartnerBankExtension;
@@ -258,6 +259,7 @@ import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 import com.rits.cloning.Cloner;
 
 /**
@@ -665,6 +667,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			// receiptData =
 			// getReceiptCalculator().removeUnwantedManAloc(receiptData);
+
+			if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+				doProcessTerminationExcess(receiptData, rch);
+			}
+
 			setSummaryData(false);
 			// set Read only mode accordingly if the object is new or not.
 			if (StringUtils.isBlank(rch.getRecordType())) {
@@ -8259,6 +8266,41 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doProcessTerminationExcess(FinReceiptData receiptData, FinReceiptHeader rch) {
+		BigDecimal totalClosureAmt = rch.getClosureThresholdLimit().add(rch.getReceiptAmount());
+
+		ReceiptDTO receiptDTO = receiptService.prepareReceiptDTO(receiptData);
+		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
+
+		if (rch.getReceiptAmount().compareTo(calcClosureAmt) > 0) {
+			return;
+		}
+
+		if (totalClosureAmt.compareTo(calcClosureAmt) >= 0) {
+			receiptService.waiveThresholdLimit(receiptData);
+			return;
+		}
+
+		String msg = "Receipt Amount is insuffient to settle the loan, do you wish to move the receipt amount to termination excess?";
+		if (MessageUtil.NO == MessageUtil.confirm(msg)) {
+			return;
+		}
+
+		fillComboBox(this.allocationMethod, "M", PennantStaticListUtil.getAllocationMethods(), ",A,");
+		fillComboBox(this.receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose());
+
+		rch.setAllocationType(AllocationType.MANUAL);
+		receiptData.setEarlySettle(false);
+		receiptData.setValueDate(rch.getReceiptDate());
+		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
+		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+
+		rch.getAllocations().forEach(al -> receiptCalculator.resetPaidAllocations(al));
+
+		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(rch.getReceiptAmount(), formatter));
+		resetAllocationPayments();
 	}
 
 	public Map<String, BigDecimal> getTaxPercMap() {

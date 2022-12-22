@@ -72,19 +72,19 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setLong(index++, fe.getExcessID());
-			ps.setLong(index++, fe.getFinID());
-			ps.setString(index++, fe.getFinReference());
-			ps.setString(index++, fe.getAmountType());
-			ps.setBigDecimal(index++, fe.getAmount());
-			ps.setBigDecimal(index++, fe.getUtilisedAmt());
-			ps.setBigDecimal(index++, fe.getReservedAmt());
-			ps.setBigDecimal(index, fe.getBalanceAmt());
-			ps.setLong(index++, fe.getReceiptId());
-			ps.setDate(index++, JdbcUtil.getDate(fe.getPostDate()));
-			ps.setDate(index++, JdbcUtil.getDate(fe.getValueDate()));
+			ps.setLong(++index, fe.getExcessID());
+			ps.setLong(++index, fe.getFinID());
+			ps.setString(++index, fe.getFinReference());
+			ps.setString(++index, fe.getAmountType());
+			ps.setBigDecimal(++index, fe.getAmount());
+			ps.setBigDecimal(++index, fe.getUtilisedAmt());
+			ps.setBigDecimal(++index, fe.getReservedAmt());
+			ps.setBigDecimal(++index, fe.getBalanceAmt());
+			ps.setLong(++index, fe.getReceiptId());
+			ps.setDate(++index, JdbcUtil.getDate(fe.getPostDate()));
+			ps.setDate(++index, JdbcUtil.getDate(fe.getValueDate()));
 
 		});
 	}

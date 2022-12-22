@@ -39,6 +39,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -169,6 +170,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private int formatter = 2;
 	Date appDate = SysParamUtil.getAppDate();
 	protected FinanceRepaymentsDAO financeRepaymentsDAO;
+	protected FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinanceType finType;
 	private Label label_ReceiptPayment_ReceiptDate;
 	private Label label_ReceiptPayment_ValueDate;
@@ -512,7 +514,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		receiptAmount = PennantApplicationUtil.unFormateAmount(receiptAmount, formatter);
 
 		long finID = ComponentUtil.getFinID(this.finReference);
-		
+
 		errorDetail = receiptService.validateThreshHoldLimit(receiptData.getReceiptHeader(),
 				this.receiptDues.getActualValue());
 
@@ -878,6 +880,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		receiptData.setFinanceDetail(fd);
 
 		FinReceiptHeader rch = new FinReceiptHeader();
+
+		rch.setClosureThresholdLimit(finReceiptHeaderDAO.getClosureAmountByFinType(rch.getFinType()));
+
 		receiptData.setReceiptHeader(rch);
 
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -1183,7 +1188,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				}
 
 				if ("EarlySettlement".equals(this.receiptPurpose.getSelectedItem().getValue())) {
-					if (this.receiptDues.getValidateValue().compareTo(this.receiptAmount.getValidateValue()) > 0) {
+					if (this.receiptDues.getValidateValue().compareTo(this.receiptAmount.getValidateValue()
+							.add(receiptData.getReceiptHeader().getClosureThresholdLimit())) > 0) {
 						wve.add(new WrongValueException(this.receiptAmount.getCcyTextBox(),
 								"Receipt Amount should greater than or equal to Receipt Dues."));
 					}
@@ -1478,6 +1484,11 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 
 }

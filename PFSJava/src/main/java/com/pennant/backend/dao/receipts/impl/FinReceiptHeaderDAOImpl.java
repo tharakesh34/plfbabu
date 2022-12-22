@@ -1626,4 +1626,17 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		}
 	}
 
+	@Override
+	public BigDecimal getClosureAmountByFinType(String finType) {
+		String sql = "Select ClosureThresholdLimit From RMTFinanceTypes Where FinType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finType);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
+	}
 }

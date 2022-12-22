@@ -46,6 +46,10 @@ public class AccountingEngine {
 
 		List<ReturnDataSet> transactions = new ArrayList<>();
 
+		if (events.isEmpty()) {
+			return transactions;
+		}
+
 		events.stream().forEach(aeEvent -> {
 			long linkedTranId = postingsDAO.getLinkedTransId();
 			String acEvent = aeEvent.getAccountingEvent();

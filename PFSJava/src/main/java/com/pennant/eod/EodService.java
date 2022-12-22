@@ -98,7 +98,6 @@ public class EodService {
 		Date nextDate = custEODEvent.getEventProperties().getNextDate();
 		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus,
 				nextDate);
-		closureService.calculateClosureAmount(custEODEvent);
 	}
 
 	private PresentmentDetail getPresentmentDetail(List<PresentmentDetail> pd, String finReference, Date schDate) {
@@ -249,10 +248,9 @@ public class EodService {
 		if (custEODEvent.isDateRollover()) {
 			dateRollOverService.process(custEODEvent);
 		}
-		
-		// EarlySetlement 
-		closureService.calculateClosureAmount(custEODEvent);
-		closureService.autoClosure(custEODEvent);
+
+		// EarlySetlement
+		closureService.processTerminationClosure(custEODEvent);
 
 		// Rate review
 		if (custEODEvent.isRateRvwExist()) {
