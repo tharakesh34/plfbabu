@@ -2,13 +2,16 @@ package com.pennant.pff.upload.model;
 
 import java.io.File;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.zkoss.util.media.Media;
 
+import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -39,6 +42,7 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 	private Date appDate;
 	private DataEngineStatus deStatus = new DataEngineStatus();
 	private String stage;
+	private List<DataEngineLog> dataEngineLog = new ArrayList<>();
 
 	public FileUploadHeader() {
 		super();
@@ -231,6 +235,14 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 
 	public void setStage(String stage) {
 		this.stage = stage;
+	}
+
+	public List<DataEngineLog> getDataEngineLog() {
+		return dataEngineLog;
+	}
+
+	public void setDataEngineLog(List<DataEngineLog> dataEngineLog) {
+		this.dataEngineLog = dataEngineLog;
 	}
 
 }

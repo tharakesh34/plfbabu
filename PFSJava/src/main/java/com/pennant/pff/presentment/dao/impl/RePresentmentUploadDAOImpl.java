@@ -94,7 +94,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, UploadTypes.RE_PRESENTMENT,
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, UploadTypes.RE_PRESENTMENT.name(),
 				RepayConstants.PEXC_BOUNCE, reference, JdbcUtil.getDate(dueDate),
 				ReceiptDetailStatus.SUCCESS.getValue()) > 0;
 	}

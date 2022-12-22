@@ -189,13 +189,13 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 	@Override
 	public List<FileUploadHeader> getHeaderData(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate) {
+			Date toDate, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, EntityCode, Type, FileName, TotalRecords, SuccessRecords, FailureRecords");
+		sql.append(" Id, EntityCode, Type, FileName, TotalRecords, SuccessRecords, FailureRecords, ExecutionID");
 		sql.append(", Progress, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntOn, LastMntBy");
 		sql.append(", Version, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FILE_UPLOAD_HEADER");
-		sql.append(" Where ");
+		sql.append(" Where Type = ?");
 
 		StringBuilder whereClause = prepareWhereClause(roleCodes, entityCode, id, fromDate, toDate);
 
@@ -209,6 +209,15 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
+
+			ps.setString(++index, type);
+
+			if (CollectionUtils.isNotEmpty(roleCodes)) {
+				for (String roleCode : roleCodes) {
+					ps.setString(++index, roleCode);
+				}
+			}
+
 			if (StringUtils.isNotEmpty(entityCode)) {
 				ps.setString(++index, entityCode);
 			}
@@ -231,6 +240,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			ruh.setTotalRecords(rs.getInt("TotalRecords"));
 			ruh.setSuccessRecords(rs.getInt("SuccessRecords"));
 			ruh.setFailureRecords(rs.getInt("FailureRecords"));
+			ruh.setExecutionID(rs.getLong("ExecutionID"));
 			ruh.setProgress(rs.getInt("Progress"));
 			ruh.setCreatedBy(rs.getLong("CreatedBy"));
 			ruh.setCreatedOn(rs.getTimestamp("CreatedOn"));
@@ -256,31 +266,24 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		StringBuilder whereClause = new StringBuilder();
 
 		if (CollectionUtils.isNotEmpty(roleCodes)) {
+			whereClause.append(" and ");
 			whereClause.append("NextRoleCode in (");
 			whereClause.append(JdbcUtil.getInCondition(roleCodes));
 			whereClause.append(")");
 		}
 
 		if (StringUtils.isNotEmpty(entityCode)) {
-			if (whereClause.length() > 0) {
-				whereClause.append(" and ");
-			}
+			whereClause.append(" and ");
 			whereClause.append("EntityCode = ?");
 		}
 
 		if (id != null && id <= 0) {
-			if (whereClause.length() > 0) {
-				whereClause.append(" and ");
-			}
-
+			whereClause.append(" and ");
 			whereClause.append(" ID = ?");
 		}
 
 		if (fromDate != null && toDate != null) {
-			if (whereClause.length() > 0) {
-				whereClause.append(" and ");
-			}
-
+			whereClause.append(" and ");
 			whereClause.append(" (CreatedOn <= ? and CreatedOn >= ?)");
 		}
 
@@ -380,6 +383,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 				ps.setLong(++index, header.getFailureRecords());
 				ps.setInt(++index, header.getProgress());
 				ps.setString(++index, header.getRemarks());
+				ps.setLong(++index, header.getApprovedBy());
 				ps.setTimestamp(++index, header.getApprovedOn());
 				ps.setInt(++index, 1);
 				ps.setLong(++index, header.getLastMntBy());

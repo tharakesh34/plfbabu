@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zul.Window;
 
 import com.pennant.pff.upload.list.AUploadListCtrl;
-import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.pff.file.UploadTypes;
 
@@ -13,7 +12,7 @@ public class RepresentmentUploadListCtrl extends AUploadListCtrl {
 
 	protected Window uploadListWindow;
 
-	protected RepresentmentUploadListCtrl(@Autowired UploadService<FileUploadHeader> rePresentmentUploadService) {
+	protected RepresentmentUploadListCtrl(@Autowired UploadService rePresentmentUploadService) {
 		super(rePresentmentUploadService, UploadTypes.RE_PRESENTMENT);
 	}
 

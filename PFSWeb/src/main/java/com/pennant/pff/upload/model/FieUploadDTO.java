@@ -16,7 +16,7 @@ public class FieUploadDTO implements Serializable {
 	private Window window;
 	private PagedListWrapper<FileUploadHeader> listWrapper;
 	private transient DataSource dataSource;
-	private transient UploadService<FileUploadHeader> service;
+	private transient UploadService service;
 	private FileUploadHeader header;
 	private String stage;
 	private long userId;
@@ -50,11 +50,11 @@ public class FieUploadDTO implements Serializable {
 		this.dataSource = dataSource;
 	}
 
-	public UploadService<FileUploadHeader> getService() {
+	public UploadService getService() {
 		return service;
 	}
 
-	public void setService(UploadService<FileUploadHeader> uploadService) {
+	public void setService(UploadService uploadService) {
 		this.service = uploadService;
 	}
 

@@ -31,9 +31,9 @@ public abstract class AUploadListCtrl extends GFCBaseListCtrl<FileUploadHeader> 
 	@Qualifier("pagedListWrapper")
 	private PagedListWrapper<FileUploadHeader> listWrapper;
 
-	private transient UploadService<FileUploadHeader> uploadService;
+	private transient UploadService uploadService;
 
-	protected AUploadListCtrl(UploadService<FileUploadHeader> uploadService, UploadTypes type) {
+	protected AUploadListCtrl(UploadService uploadService, UploadTypes type) {
 		super();
 		this.uploadService = uploadService;
 		this.type = type;

@@ -9168,7 +9168,7 @@
 		</property>
 	</bean>
 
-	<bean name="queryDetailServiceTarget" class="com.pennant.backend.service.loanquery.impl.QueryDetailServiceImpl"/>
+	<bean name="queryDetailServiceTarget" class="com.pennant.backend.service.loanquery.impl.QueryDetailServiceImpl" />
 
 	<!-- Master Definition -->
 	<bean id="masterDefDAO" class="com.pennant.backend.dao.masters.impl.MasterDefDAOImpl" parent="basicDao" />
@@ -13001,32 +13001,15 @@
 
 	<bean id="dueExtractionConfigDAO" class="com.pennant.pff.presentment.dao.impl.DueExtractionConfigDAOImpl"
 		parent="sequenceDao" />
-	
+
 	<bean id="uploadDAO" class="com.pennant.pff.upload.dao.impl.UploadDAOImpl" parent="sequenceDao" />
 
 	<bean id="rePresentmentUploadDAO" class="com.pennant.pff.presentment.dao.impl.RePresentmentUploadDAOImpl"
 		parent="sequenceDao" />
+		
+	<bean id="aUploadService" class="com.pennant.pff.upload.service.impl.AUploadServiceImpl" abstract="true" />
 
 	<bean id="rePresentmentUploadService"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="rePresentmentUploadServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="import*">PROPAGATION_REQUIRED</prop>
-				<prop key="save*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-	
-	<bean id="rePresentmentUploadServiceTarget" class="com.pennant.pff.presentment.service.impl.RePresentmentUploadServiceImpl" />
-	
+		class="com.pennant.pff.presentment.service.impl.RePresentmentUploadServiceImpl" parent="aUploadService" />
+
 </beans>
