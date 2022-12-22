@@ -191,7 +191,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	public List<FileUploadHeader> getHeaderData(List<String> roleCodes, String entityCode, Long id, Date fromDate,
 			Date toDate, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, EntityCode, Type, FileName, TotalRecords, SuccessRecords, FailureRecords");
+		sql.append(" Id, EntityCode, Type, FileName, TotalRecords, SuccessRecords, FailureRecords, ExecutionID");
 		sql.append(", Progress, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntOn, LastMntBy");
 		sql.append(", Version, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FILE_UPLOAD_HEADER");
@@ -240,6 +240,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			ruh.setTotalRecords(rs.getInt("TotalRecords"));
 			ruh.setSuccessRecords(rs.getInt("SuccessRecords"));
 			ruh.setFailureRecords(rs.getInt("FailureRecords"));
+			ruh.setExecutionID(rs.getLong("ExecutionID"));
 			ruh.setProgress(rs.getInt("Progress"));
 			ruh.setCreatedBy(rs.getLong("CreatedBy"));
 			ruh.setCreatedOn(rs.getTimestamp("CreatedOn"));

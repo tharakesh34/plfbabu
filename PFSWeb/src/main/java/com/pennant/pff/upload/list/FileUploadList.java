@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -922,17 +923,6 @@ public class FileUploadList extends Window implements Serializable {
 		return button;
 	}
 
-	private Button getButton(String label, String id) {
-		Button button = new Button();
-
-		button.setLabel(label);
-		button.setId(label.concat(id));
-		button.setTooltiptext(label);
-		button.setAutodisable(getScreenButtons());
-
-		return button;
-	}
-
 	private North getNorth() {
 		North north = new North();
 		north.setBorder("none");
@@ -1121,25 +1111,37 @@ public class FileUploadList extends Window implements Serializable {
 			lc = new Listcell(uph.getRecordStatus());
 			lc.setParent(item);
 
-			Button dowButton = getButton(Labels.getLabel("label_Download"), String.valueOf(id));
-			dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload(uph.getType()));
+			if (uph.getSuccessRecords() > 0) {
+				Button dowButton = getButton(Labels.getLabel("label_Download"), String.valueOf(id));
+				dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload(uph.getType()));
 
-			lc = new Listcell();
-			lc.appendChild(dowButton);
-			lc.setParent(item);
+				lc = new Listcell();
+				lc.appendChild(dowButton);
+				lc.setParent(item);
+			} else {
+				Button viewButton = getButton(Labels.getLabel("label_View"), String.valueOf(id));
+				viewButton.addEventListener(Events.ON_CLICK, event -> onClickView(uph));
 
-			Button viewButton = getButton(Labels.getLabel("label_View"), String.valueOf(id));
-			viewButton.setDisabled(uph.getFailureRecords() > 0);
-			viewButton.addEventListener(Events.ON_CLICK, event -> onClickView());
-
-			lc = new Listcell();
-			lc.appendChild(viewButton);
-			lc.setParent(item);
+				lc = new Listcell();
+				lc.appendChild(viewButton);
+				lc.setParent(item);
+			}
 
 			item.setAttribute("id", id);
 			item.setAttribute("data", uph);
 
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onItemDoubleClicked");
+		}
+
+		private Button getButton(String label, String id) {
+			Button button = new Button();
+
+			button.setLabel(label);
+			button.setId(label.concat(id));
+			button.setTooltiptext(label);
+			button.setAutodisable(getScreenButtons());
+
+			return button;
 		}
 
 		private Checkbox appendSelectBox() {
@@ -1165,8 +1167,17 @@ public class FileUploadList extends Window implements Serializable {
 			fileDownload(name);
 		}
 
-		private void onClickView() {
-			//
+		private void onClickView(FileUploadHeader uph) {
+			Map<String, Object> map = new HashMap<>();
+
+			map.put("List", uph.getDataEngineLog());
+			map.put("preview", false);
+			map.put("BatchId", uph.getExecutionID());
+			try {
+				Executions.createComponents("~./data-engine/pages/ExceptionLog.zul", null, map);
+			} catch (final Exception e) {
+				e.getMessage();
+			}
 		}
 	}
 
@@ -1281,6 +1292,7 @@ public class FileUploadList extends Window implements Serializable {
 
 			uploadHeader.setRemarks(status.getRemarks());
 			uploadHeader.setExecutionID(status.getId());
+			uploadHeader.setDataEngineLog(status.getDataEngineLogList());
 
 			this.processDTO.getService().update(uploadHeader);
 		}

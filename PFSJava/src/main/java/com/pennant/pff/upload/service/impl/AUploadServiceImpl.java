@@ -14,6 +14,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.upload.dao.UploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
+import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
 
@@ -21,6 +22,7 @@ public abstract class AUploadServiceImpl implements UploadService {
 	private UploadDAO uploadDAO;
 	private EntityDAO entityDAO;
 	protected PlatformTransactionManager transactionManager;
+	private DataEngineConfig dataEngineConfig;
 
 	protected static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
@@ -48,7 +50,15 @@ public abstract class AUploadServiceImpl implements UploadService {
 	@Override
 	public List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
 			Date toDate, String type) {
-		return uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate, type);
+		List<FileUploadHeader> headerList = uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate, type);
+
+		for (FileUploadHeader header : headerList) {
+			if (header.getSuccessRecords() == 0) {
+				header.setDataEngineLog(dataEngineConfig.getExceptions(header.getExecutionID()));
+			}
+		}
+
+		return headerList;
 	}
 
 	@Override
@@ -106,6 +116,11 @@ public abstract class AUploadServiceImpl implements UploadService {
 	@Autowired
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
+	}
+
+	@Autowired
+	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
+		this.dataEngineConfig = dataEngineConfig;
 	}
 
 }

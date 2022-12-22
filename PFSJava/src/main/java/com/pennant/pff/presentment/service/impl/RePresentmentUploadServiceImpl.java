@@ -229,9 +229,11 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		int curSchdMonth = DateUtil.getMonth(dueDate);
-		/*
-		 * if (curSchdMonth != appDateMonth) { setError(detail, PresentmentError.REPRMNT522); return; }
-		 */
+
+		if (curSchdMonth != appDateMonth) {
+			setError(detail, PresentmentError.REPRMNT522);
+			return;
+		}
 
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		detail.setErrorCode("");
