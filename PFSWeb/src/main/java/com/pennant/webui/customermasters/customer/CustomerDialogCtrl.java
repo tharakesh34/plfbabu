@@ -3798,7 +3798,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
 			}
 			MessageUtil.showMessage("CIBIL Enquiry Completed.");
-			/* doFillDocumentDetails(customerDetails.getCustomerDocumentsList()); */
+			doFillDocumentDetails(customerDetails.getCustomerDocumentsList());
 		} else {
 			String actualError = "";
 			if (customerDetails.getActualError() != null) {
