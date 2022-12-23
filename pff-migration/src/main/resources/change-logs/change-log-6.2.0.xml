@@ -7003,4 +7003,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#211957.1" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				UPDATE INSTRUMENT_TYPES SET CODE = 'EMANDATE' WHERE CODE ='EMNDT';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
