@@ -306,7 +306,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 			if (PartnerBankExtension.MAPPING.equals("B")) {
 				ps.setString(++index, fpb.getBranchCode());
 			} else {
-				ps.setLong(++index, fpb.getClusterId());
+				ps.setObject(++index, fpb.getClusterId());
 			}
 
 		}, (rs, rowNum) -> {

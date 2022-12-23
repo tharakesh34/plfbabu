@@ -69,7 +69,7 @@
 										<button id="btnSearchCustCIF" image="/images/icons/more.png" />
 									</hbox>
 								</row>
-								<row>
+								<row id="finreferenceRow">
 									<label value="${c:l('label_MandateDialog_FinReference.value')}" />
 									<extendedcombobox id="finReference" />
 								</row>
