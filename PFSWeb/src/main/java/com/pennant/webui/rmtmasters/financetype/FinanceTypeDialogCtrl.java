@@ -628,10 +628,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Space space_IntProvRule;
 	protected Combobox intProvRule;
 
-	protected Textbox maxPPText;
-	protected Textbox maxFPPText;
-	protected Textbox minPPText;
-	protected Decimalbox closureThresholdLimit;
+	protected CurrencyBox closureThresholdLimit;
 	protected Combobox maxFPPCalType;
 	protected CurrencyBox maxFPPAmount;
 	protected Space spacePercentage;
@@ -1096,6 +1093,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// Inst Based Schd
 		this.row_InstBasedSchd.setVisible(ImplementationConstants.SCHD_INST_CAL_ON_DISB_RELIZATION);
 
+		this.closureThresholdLimit.setFormat(PennantApplicationUtil.getAmountFormate(format));
+		this.closureThresholdLimit.setScale(format);
+
 		this.maxFPPAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.maxFPPAmount.setScale(format);
 
@@ -1196,7 +1196,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT:
 			this.maxFPPAmount.setVisible(true);
 			this.maxFPPAmount.setMandatory(true);
-			this.maxFPPText.setVisible(false);
+			this.maxFPPAmount.setDisabled(false);
 			this.maxFPPPer.setVisible(false);
 			this.maxFPPCalOn.setValue("");
 			this.rowMaxFPPCalOn.setVisible(false);
@@ -1205,12 +1205,22 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE:
 			this.rowMaxFPPCalOn.setVisible(true);
 			this.maxFPPPer.setVisible(true);
-			this.maxFPPText.setVisible(false);
 			this.spacePercentage.setVisible(true);
+			this.maxFPPAmount.setDisabled(true);
 			this.maxFPPAmount.setVisible(false);
 			this.maxFPPAmount.setMandatory(false);
 			break;
 		default:
+			this.maxFPPAmount.setMandatory(false);
+			this.maxFPPAmount.setVisible(true);
+			this.maxFPPAmount.setDisabled(true);
+			this.maxFPPAmount.setValue(BigDecimal.ZERO);
+			this.maxFPPPer.setVisible(false);
+			this.maxFPPPer.setVisible(false);
+			this.maxFPPPer.setVisible(false);
+			this.rowMaxFPPCalOn.setVisible(false);
+			this.maxFPPPer.setValue(BigDecimal.ZERO);
+			this.spacePercentage.setVisible(false);
 			break;
 		}
 	}
@@ -1231,8 +1241,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		switch (calType) {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT:
 			this.minPPAmount.setVisible(true);
+			this.minPPAmount.setDisabled(false);
 			this.minPPAmount.setMandatory(true);
-			this.minPPText.setVisible(false);
 			this.minPPCalOn.setValue("");
 			this.minPPPercentage.setVisible(false);
 			this.spaceMinPPPercentage.setVisible(false);
@@ -1242,11 +1252,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.rowMinPPCalculationOn.setVisible(true);
 			this.minPPPercentage.setVisible(true);
 			this.spaceMinPPPercentage.setVisible(true);
-			this.minPPText.setVisible(false);
 			this.minPPAmount.setVisible(false);
+			this.minPPAmount.setDisabled(true);
 			this.minPPAmount.setMandatory(false);
 			break;
 		default:
+			this.minPPAmount.setVisible(true);
+			this.minPPAmount.setDisabled(true);
+			this.minPPAmount.setMandatory(false);
+			this.minPPAmount.setValue(BigDecimal.ZERO);
+			this.minPPPercentage.setVisible(false);
+			this.minPPPercentage.setValue(BigDecimal.ZERO);
+			this.spaceMinPPPercentage.setVisible(false);
+			this.rowMinPPCalculationOn.setVisible(false);
 			break;
 		}
 	}
@@ -1271,7 +1289,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT:
 			this.maxPPAmount.setVisible(true);
 			this.maxPPAmount.setMandatory(true);
-			this.maxPPText.setVisible(false);
+			this.maxPPAmount.setDisabled(false);
 			this.minPPEmi.setVisible(false);
 			this.spaceMinPPEmi.setVisible(false);
 			this.maxPPCalOn.setValue("");
@@ -1285,7 +1303,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.rowMaxPPCalculationOn.setVisible(true);
 			this.maxPPPercentage.setVisible(true);
 			this.spaceMaxPPPercentage.setVisible(true);
-			this.maxPPText.setVisible(false);
+			this.maxPPAmount.setDisabled(true);
 			this.maxPPAmount.setVisible(false);
 			this.maxPPAmount.setMandatory(false);
 			this.minPPEmi.setVisible(false);
@@ -1296,10 +1314,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_MIN_EMI:
 			this.minPPEmi.setVisible(true);
 			this.spaceMinPPEmi.setVisible(true);
-			this.maxPPText.setVisible(false);
 			this.maxPPCalOn.setValue("");
 			this.maxPPPercentage.setVisible(false);
 			this.spaceMaxPPPercentage.setVisible(false);
+			this.maxPPAmount.setDisabled(true);
 			this.maxPPAmount.setVisible(false);
 			this.maxPPAmount.setMandatory(false);
 			this.rowMaxPPCalculationOn.setVisible(false);
@@ -1309,7 +1327,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_MIN_POS_AMT:
 			this.minPPPos.setVisible(true);
 			this.minPPPos.setMandatory(true);
-			this.maxPPText.setVisible(false);
+			this.maxPPAmount.setDisabled(true);
 			this.maxPPAmount.setVisible(false);
 			this.maxPPAmount.setMandatory(false);
 			this.maxPPCalOn.setValue("");
@@ -1320,6 +1338,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.spaceMinPPEmi.setVisible(false);
 			break;
 		default:
+			this.maxPPAmount.setMandatory(false);
+			this.maxPPAmount.setVisible(true);
+			this.maxPPAmount.setDisabled(true);
+			this.maxPPAmount.setValue(BigDecimal.ZERO);
+			this.maxPPPercentage.setVisible(false);
+			this.spaceMaxPPPercentage.setVisible(false);
+			this.rowMaxPPCalculationOn.setVisible(false);
 			break;
 		}
 	}
@@ -2020,7 +2045,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.maxFPPAmount.setValue(CurrencyUtil.parse(aFinanceType.getMaxFPPAmount(), format));
 		this.maxFPPPer.setValue(aFinanceType.getMaxFPPPer());
-		this.closureThresholdLimit.setValue(aFinanceType.getClosureThresholdLimit());
+		this.closureThresholdLimit.setValue(CurrencyUtil.parse(aFinanceType.getClosureThresholdLimit(), format));
 		this.ppLockinPeriod.setValue(aFinanceType.getPpLockInPeriod());
 		this.esLockinPeriod.setValue(aFinanceType.getEsLockInPeriod());
 		this.minPPAmount.setValue(CurrencyUtil.parse(aFinanceType.getMinPPAmount(), format));
@@ -4104,23 +4129,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		try {
-			if (isValidComboValue(this.maxFPPCalType,
-					Labels.getLabel("label_FinanceTypeDialog_MaxPartPymtCal.Value"))) {
-				aFinanceType.setMaxFPPCalType(getComboboxValue(this.maxFPPCalType));
-			}
+			aFinanceType.setMaxFPPCalType(getComboboxValue(this.maxFPPCalType));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		try {
-			if ("#".equals(getComboboxValue(this.maxFPPCalType))) {
-				throw new WrongValueException(this.maxFPPCalType, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_FinanceTypeDialog_MaxPartPymtCal.value") }));
-			}
-			aFinanceType.setMaxFPPCalType((getComboboxValue(this.maxFPPCalType)));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
 		try {
 			if (this.rowMaxFPPCalOn.isVisible() && "#".equals(getComboboxValue(this.maxFPPCalOn))) {
 				throw new WrongValueException(this.maxFPPCalType, Labels.getLabel("STATIC_INVALID",
@@ -4159,25 +4171,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		try {
-			aFinanceType.setClosureThresholdLimit(new BigDecimal(
-					PennantApplicationUtil.formatRate(this.closureThresholdLimit.getValue().doubleValue(), format)));
+			aFinanceType.setClosureThresholdLimit(
+					CurrencyUtil.unFormat(this.closureThresholdLimit.getActualValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (isValidComboValue(this.minPPCalType,
-					Labels.getLabel("label_FinanceTypeDialog_MinPPCalculationType.Value"))) {
-				aFinanceType.setMinPPCalType(getComboboxValue(this.minPPCalType));
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			if ("#".equals(getComboboxValue(this.minPPCalType))) {
-				throw new WrongValueException(this.minPPCalType, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_FinanceTypeDialog_MinPPCalculationType.value") }));
-			}
-			aFinanceType.setMinPPCalType((getComboboxValue(this.minPPCalType)));
+			aFinanceType.setMinPPCalType(getComboboxValue(this.minPPCalType));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4192,20 +4192,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		try {
-			if (isValidComboValue(this.maxPPCalType,
-					Labels.getLabel("label_FinanceTypeDialog_MaxPPCalculationType.Value"))) {
-				aFinanceType.setMaxPPCalType(getComboboxValue(this.maxPPCalType));
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			if ("#".equals(getComboboxValue(this.maxPPCalType))) {
-				throw new WrongValueException(this.maxPPCalType, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_FinanceTypeDialog_MaxPPCalculationType.value") }));
-			}
-			aFinanceType.setMaxPPCalType((getComboboxValue(this.maxPPCalType)));
+			aFinanceType.setMaxPPCalType(getComboboxValue(this.maxPPCalType));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4233,8 +4220,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		try {
-			aFinanceType
-					.setMinPPAmount(CurrencyUtil.parse(this.minPPAmount.isReadonly() ? this.minPPAmount.getActualValue()
+			aFinanceType.setMinPPAmount(
+					CurrencyUtil.unFormat(this.minPPAmount.isReadonly() ? this.minPPAmount.getActualValue()
 							: this.minPPAmount.getValidateValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4268,12 +4255,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				aFinanceType.setMaxPPAmount(BigDecimal.valueOf(this.minPPEmi.intValue()));
 			} else if ((PennantConstants.PREPYMT_CALCTN_TYPE_MIN_POS_AMT.equals(maxCalType))) {
 				this.minPPPos.setVisible(true);
-				aFinanceType
-						.setMaxPPAmount(CurrencyUtil.parse((this.minPPPos.isReadonly() ? this.minPPPos.getActualValue()
+				aFinanceType.setMaxPPAmount(
+						CurrencyUtil.unFormat((this.minPPPos.isReadonly() ? this.minPPPos.getActualValue()
 								: this.minPPPos.getValidateValue()), format));
 			} else {
 				aFinanceType.setMaxPPAmount(
-						CurrencyUtil.parse(this.maxPPAmount.isReadonly() ? this.maxPPAmount.getActualValue()
+						CurrencyUtil.unFormat(this.maxPPAmount.isReadonly() ? this.maxPPAmount.getActualValue()
 								: this.maxPPAmount.getValidateValue(), format));
 			}
 		} catch (WrongValueException we) {
@@ -5303,6 +5290,24 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.btnSpcLoanPurposes.setDisabled(isTrue);
 		readOnlyComponent(isTrue, this.thrldtoMaintainGrcPrd);
 		readOnlyComponent(isTrue, this.chequeCaptureReq);
+
+		this.closureThresholdLimit.setReadonly(isTrue);
+		readOnlyComponent(isTrue, this.maxFPPCalType);
+		readOnlyComponent(isTrue, this.maxFPPCalOn);
+		this.maxFPPAmount.setReadonly(isTrue);
+		this.maxFPPPer.setReadonly(isTrue);
+		this.ppLockinPeriod.setReadonly(isTrue);
+		this.esLockinPeriod.setReadonly(isTrue);
+		readOnlyComponent(isTrue, this.minPPCalType);
+		readOnlyComponent(isTrue, this.minPPCalOn);
+		readOnlyComponent(isTrue, this.maxPPCalType);
+		readOnlyComponent(isTrue, this.maxPPCalOn);
+		this.minPPAmount.setReadonly(isTrue);
+		this.minPPPercentage.setReadonly(isTrue);
+		this.maxPPAmount.setReadonly(isTrue);
+		this.maxPPPercentage.setReadonly(isTrue);
+		this.minPPEmi.setReadonly(isTrue);
+		this.minPPPos.setReadonly(isTrue);
 
 		logger.debug(Literal.LEAVING);
 	}
