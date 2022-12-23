@@ -1,6 +1,7 @@
 package com.pennanttech.external.services;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -261,9 +262,9 @@ public abstract class JsonService<T> {
 		return restTemplate;
 	}
 
-	private RestTemplate getTemplateWithCertificate(JsonServiceDetail jsonServiceDetail) {
+	private RestTemplate getTemplateWithCertificate(JsonServiceDetail jsonServiceDetail) throws IOException {
 		RestTemplate restTemplate = new RestTemplate();
-		FileInputStream fi;
+		FileInputStream fi = null;
 		try {
 
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
@@ -305,7 +306,9 @@ public abstract class JsonService<T> {
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
-			fi = null;
+			if (fi != null) {
+				fi.close();
+			}
 		}
 
 		return restTemplate;
