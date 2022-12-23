@@ -7884,16 +7884,18 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 	@Override
 	public ErrorDetail validateThreshHoldLimit(FinReceiptHeader rch, BigDecimal totalDues) {
-		BigDecimal receiptAmount = rch.getReceiptAmount();
+		BigDecimal receiptAmount = PennantApplicationUtil.formateAmount(rch.getReceiptAmount(),
+				CurrencyUtil.getFormat(rch.getFinCcy()));
 
 		if (receiptAmount.compareTo(BigDecimal.ZERO) == 0
 				|| !FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			return null;
 		}
 
-		BigDecimal threshHold = rch.getClosureThresholdLimit();
+		BigDecimal threshHold = PennantApplicationUtil.formateAmount(rch.getClosureThresholdLimit(),
+				CurrencyUtil.getFormat(rch.getFinCcy()));
 
-		if ((totalDues.compareTo(receiptAmount.add(threshHold)) > 0)) {
+		if ((totalDues.compareTo(receiptAmount.add(threshHold)) < 0)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Receipt Amount should greater than or equal to Receipt Dues";
 			return new ErrorDetail("9999", valueParm[0], valueParm);
@@ -7906,8 +7908,16 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	public void waiveThresholdLimit(FinReceiptData receiptData) {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		BigDecimal treshHold = rch.getClosureThresholdLimit();
+		List<ReceiptAllocationDetail> allocations = rch.getAllocations();
+		List<ReceiptAllocationDetail> allocationsSummary = rch.getAllocationsSummary();
 
-		for (ReceiptAllocationDetail rad : rch.getAllocations()) {
+		updateWaiverAllocations(receiptData, rch, treshHold, allocations);
+		updateWaiverAllocations(receiptData, rch, treshHold, allocationsSummary);
+	}
+
+	private BigDecimal updateWaiverAllocations(FinReceiptData receiptData, FinReceiptHeader rch, BigDecimal treshHold,
+			List<ReceiptAllocationDetail> allocations) {
+		for (ReceiptAllocationDetail rad : allocations) {
 			String allocationType = rad.getAllocationType();
 			BigDecimal balanceAmt = rad.getDueAmount().subtract(rad.getPaidAmount().add(rad.getWaivedAmount()));
 
@@ -7926,6 +7936,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				treshHold = treshHold.subtract(balanceAmt);
 			}
 		}
+		return treshHold;
 	}
 
 	private boolean isWaiverAllowed(BigDecimal treshHold, String allocationType, BigDecimal balanceAmt) {
@@ -7985,7 +7996,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 			String alType = Allocation.getCode(al.getAllocationType());
 
-			if (Allocation.FUT_PFT.equals(alType) || Allocation.FUT_PRI.equals(alType) || "EM".equals(alType)) {
+			if ("FI".equals(alType) || "FP".equals(alType) || "EM".equals(alType)) {
 				continue;
 			}
 

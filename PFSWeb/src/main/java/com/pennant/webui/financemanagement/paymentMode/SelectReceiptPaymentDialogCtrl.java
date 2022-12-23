@@ -881,15 +881,14 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		FinReceiptHeader rch = new FinReceiptHeader();
 
-		rch.setClosureThresholdLimit(finReceiptHeaderDAO.getClosureAmountByFinType(rch.getFinType()));
-
-		receiptData.setReceiptHeader(rch);
-
 		FinScheduleData schdData = fd.getFinScheduleData();
 
 		FinanceMain fm = financeMainDAO.getFinanceMainForLMSEvent(finID);
 		fm.setAppDate(appDate);
 		fm.setReceiptPurpose(rptPurpose.code());
+		rch.setClosureThresholdLimit(finReceiptHeaderDAO.getClosureAmountByFinType(fm.getFinType()));
+
+		receiptData.setReceiptHeader(rch);
 
 		schdData.setFinanceMain(fm);
 		schdData.setFeeEvent(eventCode);

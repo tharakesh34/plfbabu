@@ -50,7 +50,7 @@ public class ClosureService {
 				ReceiptDTO receiptDTO = prepareReceiptRTO(finEODEvent);
 				receiptDTO.setCustomer(custEODEvent.getCustomer());
 
-				BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
+				BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, false);
 				BigDecimal excessAmt = getAvailableExcessAmt(finEODEvent);
 
 				if (calcClosureAmt.compareTo(excessAmt.add(finEODEvent.getFinType().getClosureThresholdLimit())) <= 0) {
@@ -92,7 +92,7 @@ public class ClosureService {
 	private ReceiptDTO prepareReceiptRTO(FinEODEvent finEODEvent) {
 		FinanceType financeType = finEODEvent.getFinType();
 		FinanceMain fm = finEODEvent.getFinanceMain();
-		Date appDate = fm.getEventProperties().getAppDate();
+		Date appDate = fm.getEventProperties().getBusinessDate();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
 		ReceiptDTO receiptDTO = new ReceiptDTO();
@@ -115,7 +115,7 @@ public class ClosureService {
 	private FinReceiptHeader prepareRCH(FinEODEvent finEODEvent, BigDecimal receiptAmount) {
 		FinReceiptHeader rch = new FinReceiptHeader();
 		FinanceMain fm = finEODEvent.getFinanceMain();
-		Date appDate = fm.getEventProperties().getAppDate();
+		Date appDate = fm.getEventProperties().getBusinessDate();
 
 		rch.setFinID(fm.getFinID());
 		rch.setReference(fm.getFinReference());
@@ -142,7 +142,7 @@ public class ClosureService {
 	}
 
 	private FinReceiptDetail prepareRCD(FinanceMain fm, BigDecimal receiptAmount) {
-		Date appDate = fm.getEventProperties().getAppDate();
+		Date appDate = fm.getEventProperties().getBusinessDate();
 
 		FinReceiptDetail rcd = new FinReceiptDetail();
 

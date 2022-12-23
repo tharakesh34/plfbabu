@@ -39,9 +39,9 @@ public class Allocation {
 		case Allocation.ODC:
 			return "O";
 		case Allocation.FUT_PFT:
-			return "FUTPFT";
+			return "FI";
 		case Allocation.FUT_PRI:
-			return "FUTPRI";
+			return "FP";
 		case Allocation.EMI:
 			return "EM";
 		case Allocation.MANADV:

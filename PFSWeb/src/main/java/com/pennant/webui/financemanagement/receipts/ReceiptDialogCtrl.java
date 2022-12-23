@@ -679,6 +679,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.btnReceipt.setDisabled(true);
 			}
 
+			BigDecimal closureAmount = receiptData.getCalculatedClosureAmt();
+			if (closureAmount.compareTo(rch.getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
+					&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+				receiptService.waiveThresholdLimit(receiptData);
+			}
+
 			doShowDialog(rch);
 
 			// set default data for closed loans
@@ -6967,6 +6973,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (receiptPurposeCtg == 2) {
+			if (balPending.compareTo(BigDecimal.ZERO) > 0
+					&& receiptData.getCalculatedClosureAmt().compareTo(BigDecimal.ZERO) > 0) {
+				balPending = balPending.subtract(receiptData.getReceiptHeader().getClosureThresholdLimit());
+			}
 			if (balPending.compareTo(BigDecimal.ZERO) != 0) {
 				MessageUtil.showError(
 						Labels.getLabel("label_ReceiptDialog_Valid_Settlement", new String[] { PennantApplicationUtil
@@ -8274,12 +8284,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		ReceiptDTO receiptDTO = receiptService.prepareReceiptDTO(receiptData);
 		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 
-		if (rch.getReceiptAmount().compareTo(calcClosureAmt) > 0) {
+		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(calcClosureAmt) > 0) {
 			return;
 		}
 
+		/**
+		 * This Value should be set only when Auto Waiver has to do
+		 */
+		receiptData.setCalculatedClosureAmt(calcClosureAmt);
 		if (totalClosureAmt.compareTo(calcClosureAmt) >= 0) {
-			receiptService.waiveThresholdLimit(receiptData);
 			return;
 		}
 
