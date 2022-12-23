@@ -1402,7 +1402,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		MasterDef md = MasterDefUtil.getMasterDefByType(DocType.PAN);
-		if (md != null && md.isValidationReq()) {
+		if (md != null && md.isValidationReq() && StringUtils.isNotEmpty(fsi.getPanNumber())) {
 			DocVerificationHeader header = new DocVerificationHeader();
 			header.setDocNumber(fsi.getPanNumber());
 			header.setCustCif(fsi.getCustCIF());
@@ -1418,6 +1418,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					param[1] = fsi.getPanNumber();
 					ErrorDetail er = ErrorUtil.getError("STP0012", param);
 					schdData.setErrorDetail(er);
+					setReturnStatus(fd);
 					return fd;
 				}
 			}
