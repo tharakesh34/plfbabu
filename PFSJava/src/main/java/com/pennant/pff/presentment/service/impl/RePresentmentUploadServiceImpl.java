@@ -39,8 +39,8 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 			TransactionStatus txStatus = null;
 
 			List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
@@ -51,7 +51,7 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
 
-				List<RePresentmentUploadDetail> details = representmentUploadDAO.loadRecordData(header.getId());
+				List<RePresentmentUploadDetail> details = representmentUploadDAO.getDetails(header.getId());
 
 				header.setAppDate(appDate);
 				header.setTotalRecords(details.size());
@@ -129,10 +129,25 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 		String errorCode = PresentmentError.REPRMNT523.name();
 		String errorDesc = PresentmentError.REPRMNT523.description();
 
-		representmentUploadDAO.update(headerIdList, errorCode, errorDesc, EodConstants.PROGRESS_FAILED);
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus txStatus = null;
+		try {
+			txStatus = transactionManager.getTransaction(txDef);
 
-		headers.forEach(h1 -> h1.setRemarks(errorDesc));
-		updateHeader(headers, false);
+			representmentUploadDAO.update(headerIdList, errorCode, errorDesc, EodConstants.PROGRESS_FAILED);
+
+			headers.forEach(h1 -> h1.setRemarks(errorDesc));
+			updateHeader(headers, false);
+
+			transactionManager.commit(txStatus);
+		} catch (Exception e) {
+			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+		}
 	}
 
 	@Override
@@ -240,6 +255,11 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 		detail.setErrorDesc("");
 
 		logger.info("Validated the Data for the reference {}", detail.getReference());
+	}
+
+	@Override
+	public String getSqlQuery(long headerID) {
+		return representmentUploadDAO.getSqlQuery(headerID);
 	}
 
 	private void setError(RePresentmentUploadDetail detail, PresentmentError error) {

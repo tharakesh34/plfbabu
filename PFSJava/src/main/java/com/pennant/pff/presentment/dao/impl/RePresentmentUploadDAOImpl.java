@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.dao.RePresentmentUploadDAO;
 import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -22,12 +23,12 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 		implements RePresentmentUploadDAO {
 
 	@Override
-	public List<RePresentmentUploadDetail> loadRecordData(long id) {
+	public List<RePresentmentUploadDetail> getDetails(long headerID) {
 		String sql = "Select HeaderId, Id, FinID, FinReference, DueDate, Progress, ErrorCode, ErrorDesc From REPRESENT_UPLOADS Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, id), (rs, Num) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, Num) -> {
 			RePresentmentUploadDetail rpud = new RePresentmentUploadDetail();
 
 			rpud.setHeaderId(rs.getLong("HeaderId"));
@@ -39,24 +40,6 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 			rpud.setErrorCode(rs.getString("ErrorCode"));
 			rpud.setErrorDesc(rs.getString("ErrorDesc"));
 			return rpud;
-		});
-	}
-
-	@Override
-	public void saveDetail(RePresentmentUploadDetail detail) {
-		String sql = "Insert Into REPRESENT_UPLOADS (HeaderId, FinID, FinReference, DueDate, Progress, Remarks) Values (?, ?, ?, ?, ?, ?)";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		this.jdbcOperations.update(sql, ps -> {
-			int index = 0;
-
-			ps.setLong(++index, detail.getHeaderId());
-			ps.setObject(++index, detail.getReferenceID());
-			ps.setString(++index, detail.getReference());
-			ps.setDate(++index, JdbcUtil.getDate(detail.getDueDate()));
-			ps.setInt(++index, detail.getProgress());
-			// ps.setString(++index, detail.getRemarks());
 		});
 	}
 
@@ -135,35 +118,8 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 	}
 
 	@Override
-	public List<RePresentmentUploadDetail> getDataForReport(long fileID) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ru.FinReference, ru.DueDate, ru.PresentmentID, uh.CreatedOn, ru.Progress");
-		sql.append(", ru.Remarks, uh.CreatedBy, uh.ApprovedBy");
-		sql.append(" From REPRESENT_UPLOADS ru");
-		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.ID = ru.HeaderID");
-		sql.append(" Where uh.ID = ?");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			RePresentmentUploadDetail rud = new RePresentmentUploadDetail();
-
-			rud.setReference(rs.getString("FinReference"));
-			rud.setDueDate(JdbcUtil.getDate(rs.getDate("DueDate")));
-			rud.setPresentmentID(JdbcUtil.getLong(rs.getObject("PresentmentID")));
-			rud.setCreatedOn(rs.getTimestamp("CreatedOn"));
-			rud.setProgress(rs.getInt("Progress"));
-			// rud.setRemarks(rs.getString("Remarks"));
-			rud.setCreatedBy(rs.getLong("CreatedBy"));
-			rud.setApprovedBy(rs.getLong("ApprovedBy"));
-
-			return rud;
-		}, fileID);
-	}
-
-	@Override
 	public void update(List<RePresentmentUploadDetail> detailsList) {
-		String sql = "Update REPRESENT_UPLOADS set FinID = ?, Progress = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
+		String sql = "Update REPRESENT_UPLOADS set FinID = ?, Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -176,6 +132,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 				ps.setLong(++index, detail.getReferenceID());
 				ps.setInt(++index, detail.getProgress());
+				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, detail.getErrorCode());
 				ps.setString(++index, detail.getErrorDesc());
 
@@ -191,7 +148,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 	@Override
 	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
-		String sql = "Update REPRESENT_UPLOADS set Progress = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
+		String sql = "Update REPRESENT_UPLOADS set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -204,6 +161,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 				long headerID = headerIds.get(i);
 
 				ps.setInt(++index, progress);
+				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 
@@ -215,5 +173,17 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 				return headerIds.size();
 			}
 		});
+	}
+
+	@Override
+	public String getSqlQuery(long headerID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ru.FinReference, ru.DueDate, ru.PresentmentID, uh.CreatedOn");
+		sql.append(", ru.Status, ru.ErrorCode, ru.ErrorDesc, uh.CreatedBy, uh.ApprovedBy");
+		sql.append(" From REPRESENT_UPLOADS ru");
+		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.ID = ru.HeaderID");
+		sql.append(" Where uh.ID = :HEADER_ID");
+
+		return sql.toString();
 	}
 }

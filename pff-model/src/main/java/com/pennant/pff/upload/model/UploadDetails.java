@@ -11,6 +11,7 @@ public class UploadDetails implements Serializable {
 	private Long referenceID;
 	private String reference;
 	private int progress;
+	private String status;
 	private String errorCode;
 	private String errorDesc;
 	private Long createdBy;
@@ -60,6 +61,14 @@ public class UploadDetails implements Serializable {
 
 	public void setProgress(int progress) {
 		this.progress = progress;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getErrorCode() {
