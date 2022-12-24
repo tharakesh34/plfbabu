@@ -738,8 +738,22 @@ public class FileUploadList extends Window implements Serializable {
 	}
 
 	private void fileDownload(String name) {
-		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
-				this.fileUploadHeader.getAppDate());
+		DataEngineExport export = null;
+
+		if (name.contains("_DOWNLOAD")) {
+			export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
+					this.fileUploadHeader.getAppDate());
+
+			Map<String, Object> parameterMap = new HashMap<>();
+			parameterMap.put("QUERY", uploadService.getSqlQuery(this.fileUploadHeader.getId()));
+
+			Map<String, Object> filterMap = new HashMap<>();
+			filterMap.put("HEADER_ID", this.fileUploadHeader.getId());
+			export.setParameterMap(parameterMap);
+			export.setFilterMap(filterMap);
+		} else {
+			export = new DataEngineExport(dataSource, App.DATABASE.name());
+		}
 
 		try {
 			export.exportData(name, false);
@@ -1092,15 +1106,14 @@ public class FileUploadList extends Window implements Serializable {
 
 			switch (Status.value(uph.getProgress())) {
 			case IMPORTED:
-				lc = new Listcell("Imported");
+				lc = new Listcell("Import");
 				break;
 			case IMPORT_IN_PROCESS:
 				lc = new Listcell("In Progress..");
 				break;
 			case IMPORT_FAILED:
-				lc = new Listcell("Import Failed");
+				lc = new Listcell("Failed");
 				break;
-
 			default:
 				lc = new Listcell("");
 				break;

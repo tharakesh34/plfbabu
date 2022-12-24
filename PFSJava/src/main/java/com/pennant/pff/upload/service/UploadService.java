@@ -27,4 +27,6 @@ public interface UploadService {
 	void doApprove(List<FileUploadHeader> headers);
 
 	void doReject(List<FileUploadHeader> headers);
+
+	String getSqlQuery(long headerID);
 }
