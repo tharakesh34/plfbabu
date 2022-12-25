@@ -3823,17 +3823,22 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FileUploadHeader",
 				new ModuleMapping("FileUploadHeader", FileUploadHeader.class,
-						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, WF_REPRESENT_UPLOAD,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
 
 		ModuleUtil.register("RepresentUploadHeader",
 				new ModuleMapping("RepresentUploadHeader", FileUploadHeader.class,
-						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, WF_REPRESENT_UPLOAD,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
 
 		ModuleUtil.register("MandateUploadHeader",
 				new ModuleMapping("MandateUploadHeader", FileUploadHeader.class,
-						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, WF_REPRESENT_UPLOAD,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("FateCorrection",
+				new ModuleMapping("FateCorrection", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
 
 		registerCustomModules();

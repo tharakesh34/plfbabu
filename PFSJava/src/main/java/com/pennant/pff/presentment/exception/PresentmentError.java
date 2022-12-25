@@ -46,7 +46,11 @@ public enum PresentmentError {
 
 	REPRMNT522("Due date should be in current month only."),
 
-	REPRMNT523("");
+	REPRMNT523(""),
+
+	FC_601("Fate Correction already proceessed for this schedule."),
+
+	FC_602("Presentment is not found for this respective schedule.");
 
 	private String description;
 

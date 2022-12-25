@@ -6073,4 +6073,7 @@
 	parent="uploadList" />
 	
 	<bean id="mandateUploadList" class="com.pennant.pff.mandate.upload.list.MandateUploadListCtrl" parent="uploadList" />
+	
+	<bean id="fateCorrectionUploadListCtrl" class="com.pennant.pff.presentment.upload.list.FateCorrectionUploadListCtrl"
+	parent="uploadList" />
 </beans>
