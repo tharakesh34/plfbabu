@@ -26,6 +26,9 @@ public abstract class AUploadServiceImpl implements UploadService {
 
 	protected static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
+	protected static final String ERR_CODE = "9999";
+	protected static final String ERR_DESC = "User rejected the record";
+
 	@Override
 	public FileUploadHeader getUploadHeader(String moduleCode) {
 		WorkFlowDetails workFlow = uploadDAO.getWorkFlow(moduleCode);

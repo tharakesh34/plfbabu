@@ -46,9 +46,7 @@ public enum PresentmentError {
 
 	REPRMNT522("Due date should be in current month only."),
 
-	REPRMNT523(""),
-
-	REPRMNT524("User rejected the record");
+	REPRMNT523("");
 
 	private String description;
 

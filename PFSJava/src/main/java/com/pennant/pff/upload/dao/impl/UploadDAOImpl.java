@@ -383,7 +383,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 				ps.setLong(++index, header.getFailureRecords());
 				ps.setInt(++index, header.getProgress());
 				ps.setString(++index, header.getRemarks());
-				ps.setLong(++index, header.getApprovedBy());
+				ps.setObject(++index, header.getApprovedBy());
 				ps.setTimestamp(++index, header.getApprovedOn());
 				ps.setInt(++index, 1);
 				ps.setLong(++index, header.getLastMntBy());

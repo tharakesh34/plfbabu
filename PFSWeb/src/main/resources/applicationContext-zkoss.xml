@@ -6072,4 +6072,5 @@
 	<bean id="representmentUploadList" class="com.pennant.pff.presentment.upload.list.RepresentmentUploadListCtrl"
 	parent="uploadList" />
 	
+	<bean id="mandateUploadList" class="com.pennant.pff.mandate.upload.list.MandateUploadListCtrl" parent="uploadList" />
 </beans>

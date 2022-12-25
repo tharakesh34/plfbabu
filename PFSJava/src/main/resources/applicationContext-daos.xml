@@ -13011,5 +13011,8 @@
 
 	<bean id="rePresentmentUploadService"
 		class="com.pennant.pff.presentment.service.impl.RePresentmentUploadServiceImpl" parent="aUploadService" />
-
+	
+	<bean id="mandateUploadService" class="com.pennant.pff.mandate.service.impl.MandateUploadServiceImpl" parent="aUploadService"/>
+	
+	<bean id="mandateUploadDAO" class="com.pennant.backend.dao.mandate.impl.MandateUploadDAOImpl" parent="sequenceDao" />
 </beans>

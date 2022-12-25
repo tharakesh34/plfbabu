@@ -623,6 +623,8 @@ public class FileUploadList extends Window implements Serializable {
 				this.checkBoxComp.setDisabled(false);
 			}
 
+			list.forEach(h1 -> h1.setUserDetails(this.fileUploadHeader.getUserDetails()));
+
 			listWrapper.initList(list, listbox, paging);
 		}
 	}
@@ -745,7 +747,7 @@ public class FileUploadList extends Window implements Serializable {
 					this.fileUploadHeader.getAppDate());
 
 			Map<String, Object> parameterMap = new HashMap<>();
-			parameterMap.put("QUERY", uploadService.getSqlQuery(this.fileUploadHeader.getId()));
+			parameterMap.put("QUERY", uploadService.getSqlQuery());
 
 			Map<String, Object> filterMap = new HashMap<>();
 			filterMap.put("HEADER_ID", this.fileUploadHeader.getId());

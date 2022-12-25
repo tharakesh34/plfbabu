@@ -18,5 +18,5 @@ public interface RePresentmentUploadDAO {
 
 	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
 
-	String getSqlQuery(long headerID);
+	String getSqlQuery();
 }

@@ -2509,5 +2509,14 @@
 			zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=A"
 			rightName="menu_Item_RePresentUpload_Approver" />
 	</menu>
+	
+	<menu id="menu_Category_Mandate">
+		<menuItem id="menu_Item_MandateUpload_Maker"
+			zulNavigation="/WEB-INF/pages/Mandate/Upload/MandateUploadList.zul?stage=M"
+			rightName="" />
+		<menuItem id="menu_Item_MandateUpload_Approver"
+			zulNavigation="/WEB-INF/pages/Mandate/Upload/MandateUploadList.zul?stage=A"
+			rightName="" />
+	</menu>
 
 </ns2:XMLRootMenu>

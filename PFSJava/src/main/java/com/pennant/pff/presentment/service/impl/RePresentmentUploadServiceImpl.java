@@ -126,18 +126,15 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	public void doReject(List<FileUploadHeader> headers) {
 		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
 
-		String errorCode = PresentmentError.REPRMNT523.name();
-		String errorDesc = PresentmentError.REPRMNT523.description();
-
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
 				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
 		try {
 			txStatus = transactionManager.getTransaction(txDef);
 
-			representmentUploadDAO.update(headerIdList, errorCode, errorDesc, EodConstants.PROGRESS_FAILED);
+			representmentUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(errorDesc));
+			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -258,8 +255,8 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public String getSqlQuery(long headerID) {
-		return representmentUploadDAO.getSqlQuery(headerID);
+	public String getSqlQuery() {
+		return representmentUploadDAO.getSqlQuery();
 	}
 
 	private void setError(RePresentmentUploadDetail detail, PresentmentError error) {
