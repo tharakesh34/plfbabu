@@ -3669,10 +3669,10 @@
 					, FINID
 					, FINREFERENCE
 					, AMOUNTTYPE
-					, cast(round(AMOUNT / 100,2) numeric(36,2)) AMOUNT
-					, cast(round(UTILISEDAMT / 100,2) numeric(36,2)) UTILISEDAMT
-					, cast(round(RESERVEDAMT / 100,2) numeric(36,2)) RESERVEDAMT
-					, cast(round(BALANCEAMT / 100,2) numeric(36,2)) BALANCEAMT
+					, cast(round(AMOUNT / 100,2) as numeric(36,2)) AMOUNT
+					, cast(round(UTILISEDAMT / 100,2) as numeric(36,2)) UTILISEDAMT
+					, cast(round(RESERVEDAMT / 100,2) as numeric(36,2)) RESERVEDAMT
+					, cast(round(BALANCEAMT / 100,2) as numeric(36,2)) BALANCEAMT
 					, RECEIPTID
 					, VALUEDATE
 				FROM FINEXCESSAMOUNT
