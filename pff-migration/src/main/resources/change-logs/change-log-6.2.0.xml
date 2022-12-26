@@ -7011,4 +7011,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#213620.1" author="saikrishna.b">
+		<addColumn tableName="PresentmentHeader">
+			<column name="Resp_Total" type="bigint" />
+			<column name="Resp_Success" type="bigint" />
+			<column name="Resp_Failed" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

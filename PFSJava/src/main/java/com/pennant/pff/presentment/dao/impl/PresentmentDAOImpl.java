@@ -1764,7 +1764,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public void updateHeaderCounts(Long id, int successCount, int failedCount) {
-		String sql = "UPDATE PRESENTMENTHEADER SET SUCCESSRECORDS = ?, FAILEDRECORDS = ? WHERE ID = ?";
+		String sql = "UPDATE PRESENTMENTHEADER SET Resp_Success = ?, Resp_Failed = ? WHERE ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
