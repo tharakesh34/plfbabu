@@ -345,11 +345,6 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 			}
 		}
 
-		if (StringUtils.isNotBlank(micr) && !micr.equals(bankBranch.getMICR())) {
-			bankBranch.setError(getError("90701", "MICR", micr));
-			return bankBranch;
-		}
-
 		if (StringUtils.isNotEmpty(iFSC) && StringUtils.isNotEmpty(micr)) {
 			bankBranch = bankBranchDAO.getBankBranchByIFSCMICR(iFSC, micr);
 			if (bankBranch == null) {

@@ -103,4 +103,22 @@ public interface MandateService {
 	List<Entity> getEntities();
 
 	FinanceMain getEntityByRef(String finReference);
+
+	Mandate createMandates(Mandate mandate);
+
+	Mandate getMandate(long mandateID);
+
+	ErrorDetail updateMandate(Mandate mandate);
+
+	ErrorDetail deleteMandate(long mandateID);
+
+	Mandate approveMandate(Mandate mandate);
+
+	ErrorDetail updateStatus(Mandate mandate);
+
+	ErrorDetail updateApprovedMandate(Mandate copyBeforeImage);
+
+	List<Mandate> getMandatesByCif(String cif);
+
+	ErrorDetail loanMandateSwapping(String finReference, Long oldMandateId, Long newMandateId);
 }

@@ -1459,6 +1459,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setLong(index++, batchID);
 			ps.setLong(index++, rePresentUploadID);
 			ps.setInt(index++, 1);
+			ps.setString(index++, InstrumentType.DAS.name());
 			ps.setLong(index++, finID);
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));

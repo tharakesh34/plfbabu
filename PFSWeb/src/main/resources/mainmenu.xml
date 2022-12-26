@@ -1111,11 +1111,15 @@
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul"
 				rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
 			<menuItem id="menu_Item_RePresentUpload_Maker"
-				 zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadDialog.zul?"
-				 rightName="menu_Item_RePresentUpload_Maker" />
-			<menuItem id="menu_Item_RePresentUpload_Approval"
-		         zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?"
-		         rightName="menu_Item_RePresentUpload_Approver" />
+				zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=M"
+				rightName="menu_Item_RePresentUpload_Maker" />
+			<menuItem id="menu_Item_RePresentUpload_Approver"
+				zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=A"
+				rightName="menu_Item_RePresentUpload_Approver" />
+			<menuItem id="menu_Item_FateCorrectionUpload_Maker"
+				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=M" rightName="" />
+			<menuItem id="menu_Item_FateCorrectionUpload_Approver"
+				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A" rightName="" />
 				
 		</menu>
 		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
@@ -2503,6 +2507,22 @@
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
 
-
+	
+	<menu id="menu_Category_Mandate">
+		<menuItem id="menu_Item_MandateUpload_Maker"
+			zulNavigation="/WEB-INF/pages/Mandate/Upload/MandateUploadList.zul?stage=M"
+			rightName="" />
+		<menuItem id="menu_Item_MandateUpload_Approver"
+			zulNavigation="/WEB-INF/pages/Mandate/Upload/MandateUploadList.zul?stage=A"
+			rightName="" />
+	</menu>
+	
+	
+	<menu id="menu_Category_PDC">
+		<menuItem id="menu_Item_PDCUpload_Maker" zulNavigation="/WEB-INF/pages/PDCDetails/PDCUploadList.zul?stage=M"
+			rightName="" />
+		<menuItem id="menu_Item_PDCUpload_Approver" zulNavigation="/WEB-INF/pages/PDCDetails/PDCUploadList.zul?stage=A"
+			rightName="" />
+	</menu>
 
 </ns2:XMLRootMenu>

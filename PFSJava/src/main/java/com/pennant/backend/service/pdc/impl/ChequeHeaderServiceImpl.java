@@ -24,6 +24,8 @@
  */
 package com.pennant.backend.service.pdc.impl;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -33,12 +35,15 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.customermasters.CustEmployeeDetailDAO;
@@ -56,6 +61,7 @@ import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
 import com.pennant.backend.dao.customermasters.CustomerRatingDAO;
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
@@ -77,6 +83,7 @@ import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
@@ -88,7 +95,9 @@ import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
@@ -125,6 +134,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
 	private CustomerAddresDAO customerAddresDAO;
 	private CustomerDocumentDAO customerDocumentDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -759,6 +769,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		return cd;
 	}
 
+	@Override
 	public ErrorDetail chequeValidation(FinanceDetail fd, String methodName, String tableType) {
 		ChequeHeader ch = fd.getChequeHeader();
 
@@ -787,6 +798,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		return validateChequeDetails(ch.getChequeDetailList());
 	}
 
+	@Override
 	public ErrorDetail chequeValidationInMaintainence(FinanceDetail fd, String methodName, String tableType) {
 		ChequeHeader ch = fd.getChequeHeader();
 
@@ -821,6 +833,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		return validateChequeDetails(ch.getChequeDetailList());
 	}
 
+	@Override
 	public ErrorDetail chequeValidationForUpdate(FinanceDetail fd, String methodName, String tableType) {
 		ChequeHeader ch = fd.getChequeHeader();
 
@@ -861,6 +874,258 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		ch.setTotalAmount(existingCH.getTotalAmount());
 
 		return validateChequeDetails(ch.getChequeDetailList());
+	}
+
+	@Override
+	public ErrorDetail processChequeDetail(FinanceDetail fd, String tableType, LoggedInUser loggedInUser) {
+		logger.debug(Literal.ENTERING);
+
+		ChequeHeader ch = fd.getChequeHeader();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+
+		ch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		if (StringUtils.isNotBlank(tableType)) {
+			ch.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+			ch.setNewRecord(true);
+			ch.setVersion(1);
+		} else {
+			ch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			ch.setNewRecord(false);
+			ch.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+		}
+
+		prepareChequeHeader(ch, fm, loggedInUser);
+
+		List<ChequeDetail> cheques = ch.getChequeDetailList();
+		int serialNum = ch.getChequeSerialNo();
+
+		String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+
+		for (ChequeDetail cheque : cheques) {
+			prepareChequeDetails(tableType, ch, fm, loggedInUser, ccy, cheque);
+
+			cheque.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			cheque.setNewRecord(true);
+			cheque.setChequeSerialNo(serialNum++);
+
+			ch.setTotalAmount(ch.getTotalAmount().add(cheque.getAmount()));
+		}
+
+		return processCheques(tableType, ch);
+	}
+
+	private void prepareChequeHeader(ChequeHeader ch, FinanceMain fm, LoggedInUser loggedInUser) {
+		ch.setLastMntBy(loggedInUser.getUserId());
+		ch.setRecordStatus(fm.getRecordStatus());
+		ch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		ch.setTaskId(fm.getTaskId());
+		ch.setNextTaskId(fm.getNextTaskId());
+		ch.setRoleCode(fm.getRoleCode());
+		ch.setNextRoleCode(fm.getNextRoleCode());
+		ch.setWorkflowId(fm.getWorkflowId());
+		ch.setActive(true);
+		ch.setSourceId(PennantConstants.FINSOURCE_ID_API);
+		ch.setFinID(fm.getFinID());
+		ch.setFinReference(fm.getFinReference());
+	}
+
+	private void prepareChequeDetails(String type, ChequeHeader ch, FinanceMain fm, LoggedInUser loggedInUser,
+			String ccy, ChequeDetail cheque) {
+		if (StringUtils.isNotBlank(type)) {
+			cheque.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			cheque.setNewRecord(true);
+		} else {
+			cheque.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			cheque.setNewRecord(false);
+		}
+
+		cheque.setLastMntBy(loggedInUser.getUserId());
+		cheque.setRecordStatus(fm.getRecordStatus());
+		cheque.setVersion(fm.getVersion());
+		cheque.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		cheque.setTaskId(fm.getTaskId());
+		cheque.setNextTaskId(fm.getNextTaskId());
+		cheque.setRoleCode(fm.getRoleCode());
+		cheque.setNextRoleCode(fm.getNextRoleCode());
+		cheque.setWorkflowId(fm.getWorkflowId());
+
+		cheque.setBankBranchID(ch.getBankBranchID());
+		cheque.setAccHolderName(ch.getAccHolderName());
+		cheque.setAccountNo(ch.getAccountNo());
+
+		cheque.setStatus(ChequeSatus.NEW);
+		cheque.setChequeStatus(ChequeSatus.NEW);
+		cheque.setChequeCcy(ccy);
+		cheque.setActive(true);
+	}
+
+	private ErrorDetail processCheques(String tableType, ChequeHeader ch) {
+		AuditHeader auditHeader = getAuditHeader(ch, PennantConstants.TRAN_WF);
+
+		if (StringUtils.isNotBlank(tableType)) {
+			auditHeader = saveOrUpdate((auditHeader));
+		} else {
+			auditHeader = doApprove(auditHeader);
+		}
+
+		List<ErrorDetail> errors = auditHeader.getErrorMessage();
+		if (CollectionUtils.isEmpty(errors)) {
+			return null;
+		}
+
+		ErrorDetail error = errors.get(errors.size() - 1);
+
+		return error;
+	}
+
+	protected AuditHeader getAuditHeader(ChequeHeader ch, String tranType) {
+		AuditHeader ah = new AuditHeader(ch.getFinReference(), null, null, null, new AuditDetail(tranType, 1, null, ch),
+				ch.getUserDetails(), new HashMap<>());
+
+		ah.setApiHeader(PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY));
+
+		return ah;
+	}
+
+	@Override
+	public ChequeHeader getChequeDetails(String finReference) {
+		ChequeHeader response = new ChequeHeader();
+		if (StringUtils.isBlank(finReference)) {
+			response.setError(getError("90502", "finReference"));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+		if (finID == null) {
+			response.setError(getError("90201", finReference));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		response = chequeHeaderDAO.getChequeHeaderByRef(finID, "_View");
+		if (response == null) {
+			response = new ChequeHeader();
+			response.setError(getError("90201", "No Cheque Details"));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		response.setChequeDetailList(chequeDetailDAO.getChequeDetailList(response.getHeaderID(), "_View"));
+		return response;
+	}
+
+	@Override
+	public ErrorDetail validateBasicDetails(FinanceDetail fd, String type) {
+		String finReference = fd.getFinReference();
+
+		ChequeHeader chequeHeader = fd.getChequeHeader();
+
+		if (chequeHeader == null) {
+			return getError("90502", "Cheque Details ");
+		}
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		if (finReference == null) {
+			return getError("90502", "FinReference");
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+
+		if (finID == null) {
+			return getError("90201", finReference);
+		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
+
+		if (StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
+			return getError("90201", finReference);
+		}
+
+		if (fm.isWriteoffLoan()) {
+			return getError("FWF001", "");
+		}
+
+		schdData.setFinanceMain(fm);
+		fd.setFinID(finID);
+
+		return validateChequeDetails(fd, type, true);
+	}
+
+	private ErrorDetail validateChequeDetails(FinanceDetail fd, String type, boolean validReq) {
+		boolean date = true;
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
+
+		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
+
+		ChequeHeader ch = fd.getChequeHeader();
+		List<ChequeDetail> cheques = ch.getChequeDetailList();
+
+		for (ChequeDetail cheque : cheques) {
+			if (InstrumentType.isPDC(cheque.getChequeType())) {
+				List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
+				for (FinanceScheduleDetail schedule : schedules) {
+					date = false;
+
+					if (DateUtil.compare(schedule.getSchDate(), cheque.getChequeDate()) == 0) {
+						date = true;
+						cheque.seteMIRefNo(schedule.getInstNumber());
+
+						validate(schdData, schedule, cheque, validReq, ch.getHeaderID());
+						break;
+					}
+				}
+
+				if (!date) {
+					setError(schdData, "30570", "Cheque Date", "ScheduleDates");
+					break;
+				}
+			}
+		}
+
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+		if (CollectionUtils.isNotEmpty(errors)) {
+			ErrorDetail ed = errors.get(0);
+			return getError(ed.getCode(), ed.getError());
+		}
+
+		return null;
+	}
+
+	private void validate(FinScheduleData schdData, FinanceScheduleDetail schedule, ChequeDetail cheque,
+			boolean validReq, long headerID) {
+		BigDecimal repayAmount = schedule.getRepayAmount();
+		Date schDate = schedule.getSchDate();
+
+		if (repayAmount.compareTo(cheque.getAmount()) != 0) {
+			setError(schdData, "30570", DateUtil.formatToLongDate(schDate), String.valueOf(repayAmount + "INR"));
+			return;
+		}
+
+		if (validReq && chequeDetailDAO.isChequeExists(headerID, schDate)) {
+			setError(schdData, "41018", "Cheque ", "Cheque Date : " + schDate);
+		}
+	}
+
+	private void setError(FinScheduleData schdData, String code, String... parm) {
+		ErrorDetail error = ErrorUtil.getError(code, parm);
+
+		StringBuilder logMsg = new StringBuilder();
+		logMsg.append("\n");
+		logMsg.append("=======================================================\n");
+		logMsg.append("Error-Code: ").append(error.getCode()).append("\n");
+		logMsg.append("Error-Message: ").append(error.getMessage()).append("\n");
+		logMsg.append("=======================================================");
+		logMsg.append("\n");
+
+		logger.error(Literal.EXCEPTION, logMsg);
+
+		schdData.setErrorDetail(error);
 	}
 
 	private ErrorDetail validateCheques(ChequeHeader ch) {

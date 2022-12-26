@@ -69,7 +69,7 @@ import com.pennapps.core.access.log.UserAccessDAO;
 
 public class AbstractListController<T> extends AbstractController<T> {
 	private static final long serialVersionUID = 6332080471910971732L;
-	private final Logger logger = LogManager.getLogger(getClass());
+	protected final Logger logger = LogManager.getLogger(getClass());
 
 	private static final int SEARCH_ROW_SIZE = 27;
 	private static final int LIST_ROW_SIZE = 26;
