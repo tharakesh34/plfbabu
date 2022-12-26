@@ -3126,6 +3126,8 @@ public class PennantStaticListUtil {
 				excessAdjustTo
 						.add(new ValueLabel(ReceiptMode.DSF, Labels.getLabel("label_RecceiptDialog_ExcessType_DSF")));
 			}
+			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_TEXCESS,
+					Labels.getLabel("label_RecceiptDialog_ExcessType_TEXCESS")));
 
 			// excessAdjustTo.add(new
 			// ValueLabel(RepayConstants.EXCESSADJUSTTO_PAYABLE,

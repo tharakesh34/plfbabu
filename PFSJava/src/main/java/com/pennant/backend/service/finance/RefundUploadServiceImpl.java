@@ -477,23 +477,23 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 		} else {
 			PaymentDetail paymentDetail = new PaymentDetail();
 			paymentDetail.setAmountType(refundUpload.getType());
-			FinExcessAmount finExcessAmount = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finID,
+			List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
 					paymentDetail.getAmountType());
-			if (finExcessAmount == null) {
-				throw new InterfaceException("9999", "Excess details is not available");
+
+			for (FinExcessAmount fea : list) {
+				paymentDetail.setAmount(refundUpload.getPayableAmount());
+				paymentDetail.setAvailableAmount(fea.getBalanceAmt());
+				paymentDetail.setReferenceId(fea.getExcessID());
+				paymentDetail.setRecordType(PennantConstants.RCD_ADD);
+				paymentDetail.setNewRecord(true);
+				paymentDetail.setVersion(1);
+				paymentDetail.setUserDetails(refundUpload.getUserDetails());
+				paymentDetail.setLastMntBy(refundUpload.getLastMntBy());
+				paymentDetail.setLastMntOn(refundUpload.getLastMntOn());
+				paymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				paymentDetail.setApiRequest(true);
+				paymentDetailList.add(paymentDetail);
 			}
-			paymentDetail.setAmount(refundUpload.getPayableAmount());
-			paymentDetail.setAvailableAmount(finExcessAmount.getBalanceAmt());
-			paymentDetail.setReferenceId(finExcessAmount.getExcessID());
-			paymentDetail.setRecordType(PennantConstants.RCD_ADD);
-			paymentDetail.setNewRecord(true);
-			paymentDetail.setVersion(1);
-			paymentDetail.setUserDetails(refundUpload.getUserDetails());
-			paymentDetail.setLastMntBy(refundUpload.getLastMntBy());
-			paymentDetail.setLastMntOn(refundUpload.getLastMntOn());
-			paymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			paymentDetail.setApiRequest(true);
-			paymentDetailList.add(paymentDetail);
 		}
 
 		// Payment Instructions
@@ -1040,10 +1040,14 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 						reason = "Payable Amount should be greater than 0 and less than or equal to available amount";
 					}
 				} else {
-					FinExcessAmount finExcessAmount = getFinExcessAmountDAO()
-							.getExcessAmountsByRefAndType(fm.getFinID(), refundUpload.getType());
-					if (finExcessAmount == null
-							|| finExcessAmount.getBalanceAmt().compareTo(refundUpload.getPayableAmount()) < 0) {
+					List<FinExcessAmount> excessList = finExcessAmountDAO.getExcessAmountsByRefAndType(fm.getFinID(),
+							refundUpload.getType());
+
+					BigDecimal balanceAmt = BigDecimal.ZERO;
+					for (FinExcessAmount fea : excessList) {
+						balanceAmt = balanceAmt.add(fea.getBalanceAmt());
+					}
+					if (balanceAmt.compareTo(refundUpload.getPayableAmount()) < 0) {
 						errorCount++;
 						reason = "Payable Amount should be greater than 0 and less than or equal to available amount";
 					}
@@ -1181,14 +1185,19 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 					payableAmountsMap.put(key, refundUpload.getPayableAmount());
 				}
 			} else {
-				FinExcessAmount finExcessAmount = getFinExcessAmountDAO().getExcessAmountsByRefAndType(fm.getFinID(),
+				List<FinExcessAmount> excessList = finExcessAmountDAO.getExcessAmountsByRefAndType(fm.getFinID(),
 						refundUpload.getType());
+
+				BigDecimal balanceAmt = BigDecimal.ZERO;
+				for (FinExcessAmount fea : excessList) {
+					balanceAmt = balanceAmt.add(fea.getBalanceAmt());
+				}
 
 				key = finReference + "-" + refundUpload.getType();
 
 				if (payableAmountsMap.containsKey(key)) {
 					payAmount = payableAmountsMap.get(key).add(refundUpload.getPayableAmount());
-					if (finExcessAmount.getBalanceAmt().compareTo(payAmount) < 0) {
+					if (balanceAmt.compareTo(payAmount) < 0) {
 						errorCount++;
 						reason = "Payable Amount should be greater than 0 and less than or equal to available amount";
 					} else {

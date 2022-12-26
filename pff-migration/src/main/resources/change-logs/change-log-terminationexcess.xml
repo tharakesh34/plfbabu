@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#716.1" author="Mounika.M">
+		<createTable tableName="LOANS_CLOSURES">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ClosureAmount" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#716.2" author="Mounika.M">
+		<addPrimaryKey tableName="LOANS_CLOSURES" columnNames="ID"/>
+	</changeSet>
+
+	<changeSet id="ST#716.3" author="Mounika.M">
+		<createTable tableName="LOAN_CLOSURE_AMOUNTS">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="ClosureID" type="bigint"/>
+			<column name="FinID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableType" type="Varchar(10)"/>
+			<column name="ReceivableAmt" type="decimal(18,0)"/>
+			<column name="GSTAmount" type="decimal(18,0)"/>
+			<column name="TDSAmount" type="decimal(18,0)"/>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#716.2" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="closure_loan_id" referencedTableName="CLOSURE_LOANS" baseColumnNames="ClosureID" baseTableName="CLOSURE_LOAN_AMOUNTS" referencedColumnNames="ID"/>
+	</changeSet>
+	
+	<changeSet id="ST#716.4" author="Mounika.M" dbms="postgresql,mssql">
+		<createSequence sequenceName="SEQ_SOD_LOAN_QUEUE" minValue="1"
+			maxValue="9223372036854775807" incrementBy="1" startValue="1"  />
+	</changeSet>
+
+	<changeSet id="ST#716.5" author="Mounika.M">
+		<createTable tableName="SOD_LOAN_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="ThreadId" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="ResetCounterId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+</databaseChangeLog>

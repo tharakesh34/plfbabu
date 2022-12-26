@@ -6,9 +6,7 @@ import java.util.List;
 import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
 
 public interface RePresentmentUploadDAO {
-	List<RePresentmentUploadDetail> loadRecordData(long id);
-
-	void saveDetail(RePresentmentUploadDetail detail);
+	List<RePresentmentUploadDetail> getDetails(long headerID);
 
 	List<String> isDuplicateExists(String reference, Date dueDate, long headerID);
 
@@ -16,5 +14,9 @@ public interface RePresentmentUploadDAO {
 
 	String getBounceCode(String reference, Date dueDate);
 
-	List<RePresentmentUploadDetail> getDataForReport(long fileID, String type);
+	void update(List<RePresentmentUploadDetail> detailsList);
+
+	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+
+	String getSqlQuery();
 }

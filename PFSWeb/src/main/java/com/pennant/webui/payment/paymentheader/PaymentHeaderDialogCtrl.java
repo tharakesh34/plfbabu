@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -67,6 +68,7 @@ import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
@@ -113,6 +115,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -138,7 +141,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	protected Tab payTypeInstructions;
 	protected Tabpanel tabDisbInstructionsTabPanel;
 	protected Listbox listBoxPaymentTypeInstructions;
-	protected Decimalbox paymentAmount = null;
 	protected Decimalbox totAmount = null;
 
 	protected Label lbl_LoanReference;
@@ -177,8 +179,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private boolean isAccountingExecuted = false;
 	private long accountsetId;
 	// Add list Manualadvise
-	private boolean buttonVisible = false;
-	private boolean deleteButton = false;
 	private Listheader listheader_PaymentHeaderDialog_button;
 	private Grid grid_basicDetails;
 	private Map<String, BigDecimal> taxPercMap = null;
@@ -656,22 +656,31 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
-		if (this.listBoxPaymentTypeInstructions != null && this.listBoxPaymentTypeInstructions.getItems().size() > 0) {
-
+		if (CollectionUtils.isNotEmpty(listBoxPaymentTypeInstructions.getItems())) {
 			for (int i = 0; i < listBoxPaymentTypeInstructions.getItems().size() - 1; i++) {
-				List<Listcell> listCells = listBoxPaymentTypeInstructions.getItems().get(i).getChildren();
-				Listcell avaibleAmtCell = listCells.get(2);
-				Listcell payAmtCell = listCells.get(3);
-				Decimalbox avaibleAmt = (Decimalbox) avaibleAmtCell.getChildren().get(0);
-				Decimalbox payAmt = (Decimalbox) payAmtCell.getChildren().get(0);
+				Listitem listitem = listBoxPaymentTypeInstructions.getItems().get(i);
+
+				if (!"Y".equals(listitem.getAttribute("index"))) {
+					continue;
+				}
+
+				List<Listcell> listCells = listitem.getChildren();
+
+				Decimalbox avaibleAmt = (Decimalbox) listCells.get(4).getChildren().get(0);
+				Decimalbox payAmt = (Decimalbox) listCells.get(7).getChildren().get(0);
+				Decimalbox gstAmt = (Decimalbox) listCells.get(5).getChildren().get(0);
+
 				Clients.clearWrongValue(payAmt);
-				if ((avaibleAmt.getValue().compareTo(payAmt.getValue())) == -1) {
+
+				BigDecimal total = avaibleAmt.getValue().add(gstAmt.getValue());
+				if ((total.compareTo(payAmt.getValue())) == -1) {
 					throw new WrongValueException(payAmt,
 							Labels.getLabel("label_PaymentHeaderDialog_paymentAmountErrorMsg.value"));
 				}
 			}
+
 		}
 
 		if (this.totAmount != null) {
@@ -679,7 +688,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					Labels.getLabel("label_PaymentHeaderDialog_totalpaymentAmount.value"), ccyFormatter, true));
 		}
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -833,7 +842,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		this.listheader_PaymentHeaderDialog_AvailableAmount.setVisible(!enqiryModule);
 		this.listheader_PaymentHeaderDialog_Balance.setVisible(!enqiryModule);
 
 		logger.debug(Literal.LEAVING);
@@ -1169,33 +1177,24 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/***************************************************
-	 * Payment details Saving, Processing...............* **************************************************
-	 */
 	private void calculatePaymentDetail(PaymentHeader aPaymentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		PaymentDetail pd = null;
 		List<PaymentDetail> detailList = new ArrayList<PaymentDetail>();
 
-		List<FinExcessAmount> finExcessAmountList = new ArrayList<>();
+		List<FinExcessAmount> excessList = processFinExcessAmount(aPaymentHeader);
 
-		if (!this.enqiryModule) {
-			finExcessAmountList = this.paymentHeaderService.getfinExcessAmount(this.financeMain.getFinID());
-		} else if (!DisbursementConstants.STATUS_REJECTED.equals(aPaymentHeader.getPaymentInstruction().getStatus())) {
-			finExcessAmountList = this.paymentHeaderService.getfinExcessAmount(this.financeMain.getFinID());
-		}
+		for (FinExcessAmount fea : excessList) {
+			PaymentDetail pd = new PaymentDetail();
 
-		if (!finExcessAmountList.isEmpty()) {
-			finExcessAmountList = processFinExcessAmount(finExcessAmountList);
-			for (FinExcessAmount finExcessAmount : finExcessAmountList) {
-				pd = new PaymentDetail();
-				pd.setNewRecord(true);
-				pd.setReferenceId(finExcessAmount.getId());
-				pd.setAvailableAmount(finExcessAmount.getBalanceAmt());
-				pd.setAmountType(finExcessAmount.getAmountType());
-				detailList.add(pd);
-			}
+			pd.setNewRecord(true);
+			pd.setReferenceId(fea.getId());
+			pd.setAvailableAmount(fea.getBalanceAmt());
+			pd.setAmountType(fea.getAmountType());
+			pd.setReceiptID(fea.getReceiptID());
+			pd.setValueDate(fea.getValueDate());
+
+			detailList.add(pd);
 		}
 
 		List<ManualAdvise> manualAdviseList = null;
@@ -1205,30 +1204,23 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			manualAdviseList = this.paymentHeaderService.getManualAdvise(this.financeMain.getFinID());
 		}
 
-		if (CollectionUtils.isNotEmpty(manualAdviseList)) {
-			for (ManualAdvise ma : manualAdviseList) {
-				pd = new PaymentDetail();
-				pd.setNewRecord(true);
-				pd.setReferenceId(ma.getAdviseID());
-				pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
-				pd.setAmountType(String.valueOf(ma.getAdviseType()));
-				pd.setFeeTypeCode(ma.getFeeTypeCode());
-				pd.setFeeTypeDesc(ma.getFeeTypeDesc());
-				pd.setAdviseAmount(ma.getAdviseAmount());
+		for (ManualAdvise ma : manualAdviseList) {
+			PaymentDetail pd = new PaymentDetail();
 
-				BigDecimal paidTGST = ma.getPaidCGST().add(ma.getPaidSGST()).add(ma.getPaidIGST()).add(ma.getPaidUGST())
-						.add(ma.getPaidCESS());
-				BigDecimal waivedTGST = ma.getWaivedCGST().add(ma.getWaivedSGST()).add(ma.getWaivedIGST())
-						.add(ma.getWaivedUGST()).add(ma.getWaivedCESS());
+			pd.setNewRecord(true);
+			pd.setReferenceId(ma.getAdviseID());
+			pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
+			pd.setAmountType(String.valueOf(ma.getAdviseType()));
+			pd.setFeeTypeCode(ma.getFeeTypeCode());
+			pd.setFeeTypeDesc(ma.getFeeTypeDesc());
+			pd.setAdviseAmount(ma.getAdviseAmount());
+			pd.setValueDate(ma.getValueDate());
+			pd.setPrvGST(CalculationUtil.getTotalPaidGST(ma).add(CalculationUtil.getTotalWaivedGST(ma)));
+			pd.setManualAdvise(ma);
+			pd.setTaxApplicable(ma.isTaxApplicable());
+			pd.setTaxComponent(ma.getTaxComponent());
 
-				pd.setPrvGST(paidTGST.add(waivedTGST));
-				pd.setManualAdvise(ma);
-				// GST Field details
-				pd.setTaxApplicable(ma.isTaxApplicable());
-				pd.setTaxComponent(ma.getTaxComponent());
-
-				detailList.add(pd);
-			}
+			detailList.add(pd);
 		}
 
 		if (aPaymentHeader.isNewRecord()) {
@@ -1247,10 +1239,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			}
 
 			if (detail.isTaxApplicable()) {
-
 				if (taxPercMap == null) {
-					FinanceDetail financeDetail = new FinanceDetail();
-					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+					FinanceDetail fd = new FinanceDetail();
+					fd.getFinScheduleData().setFinanceMain(financeMain);
 					taxPercMap = GSTCalculator.getTaxPercentages(financeMain);
 				}
 
@@ -1437,31 +1428,29 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		return taxes;
 	}
 
-	/**
-	 * Method for process the FinExcessAmount's
-	 * <li>In case of cancelled loan return a list that contain EXCESS FinExcessAmount.</li>
-	 * <li>In other cases return the complete FinExcessAmount's list.</li> <br>
-	 * In case of loan cancel before disbursement and excess amount are taken from deduct from disbursment in that case
-	 * system is displaying those advance's in payment instruction to avoid this we are validating excess amount's here
-	 * #PSD 153031 </br>
-	 * 
-	 * @param finExcessAmountList
-	 * @return
-	 */
-	private List<FinExcessAmount> processFinExcessAmount(List<FinExcessAmount> finExcessAmountList) {
-		logger.debug(Literal.LEAVING);
-		if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equalsIgnoreCase(this.financeMain.getClosingStatus())) {
-			return finExcessAmountList;
+	private List<FinExcessAmount> processFinExcessAmount(PaymentHeader aPaymentHeader) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinExcessAmount> excessList = new ArrayList<>();
+		if (!this.enqiryModule || (this.enqiryModule
+				|| !DisbursementConstants.STATUS_REJECTED.equals(aPaymentHeader.getPaymentInstruction().getStatus()))) {
+			excessList = this.paymentHeaderService.getfinExcessAmount(this.financeMain.getFinID());
 		}
-		List<FinExcessAmount> excessAmountList = new ArrayList<>(1);
-		for (FinExcessAmount finExcessAmount : finExcessAmountList) {
-			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equalsIgnoreCase(finExcessAmount.getAmountType())) {
-				excessAmountList.add(finExcessAmount);
-				break;
+
+		if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equalsIgnoreCase(this.financeMain.getClosingStatus())) {
+			logger.debug(Literal.LEAVING);
+			return excessList;
+		}
+
+		List<FinExcessAmount> filterList = new ArrayList<>();
+		for (FinExcessAmount fea : excessList) {
+			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equalsIgnoreCase(fea.getAmountType())) {
+				filterList.add(fea);
 			}
 		}
+
 		logger.debug(Literal.LEAVING);
-		return excessAmountList;
+		return filterList;
 	}
 
 	// Update the latest balance amount..
@@ -1476,30 +1465,16 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				if (oldDetail.getReferenceId() == newDetail.getReferenceId()) {
 
 					BigDecimal amount = oldDetail.getAmount();
-					if (oldDetail.getTaxHeader() != null
-							&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(oldDetail.getTaxComponent())) {
-						// GST Calculations
-						TaxHeader taxHeader = oldDetail.getTaxHeader();
-						List<Taxes> taxDetails = taxHeader.getTaxDetails();
-						BigDecimal gstAmount = BigDecimal.ZERO;
-						if (CollectionUtils.isNotEmpty(taxDetails)) {
-							for (Taxes taxes : taxDetails) {
-								gstAmount = gstAmount.add(taxes.getPaidTax());
-							}
-						}
-						amount = amount.subtract(gstAmount);
-					}
+					BigDecimal[] gstAmounts = getGSTAmounts(oldDetail);
+
+					amount = amount.subtract(gstAmounts[1]);
 
 					String amountType = oldDetail.getAmountType();
-					if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(amountType)
-							|| RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(amountType)
-							|| RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)
-							|| RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(amountType)
-							|| RepayConstants.EXAMOUNTTYPE_DSF.equals(amountType)) {
 
-						oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
-					} else {
+					if (AdviseType.isPayable(amountType)) {
 						oldDetail.setAvailableAmount(newDetail.getAvailableAmount());
+					} else {
+						oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
 					}
 
 					oldDetail.setAdviseAmount(newDetail.getAdviseAmount());
@@ -1510,11 +1485,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					oldDetail.setFeeTypeDesc(newDetail.getFeeTypeDesc());
 					oldDetail.setTaxApplicable(newDetail.isTaxApplicable());
 					oldDetail.setTaxComponent(newDetail.getTaxComponent());
+					oldDetail.setValueDate(newDetail.getValueDate());
+					oldDetail.setReceiptID(newDetail.getReceiptID());
 					getPaymentDetailList().add(oldDetail);
 					tempList.remove(newDetail);
 				}
 			}
 		}
+
 		for (PaymentDetail newDetail : tempList) {
 			if (BigDecimal.ZERO.compareTo(newDetail.getAvailableAmount()) == -1) {
 				getPaymentDetailList().add(newDetail);
@@ -1524,11 +1502,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for action Forward event for changing PayAmountChange
-	 * 
-	 * @param event
-	 */
 	public void onPayAmountChange(ForwardEvent event) {
 		logger.debug("Entering");
 
@@ -1542,24 +1515,45 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			amount = BigDecimal.ZERO;
 		}
 
+		String excessType = (String) paymentAmt.getAttribute("excessType");
+
 		BigDecimal avaAmount = BigDecimal.ZERO;
-		for (PaymentDetail detail : getPaymentDetailList()) {
-			if (AdviseType.isPayable(detail.getAmountType())) {
-				avaAmount = detail.getAvailableAmount().add(avaAmount);
-				if (detail.getTaxHeader() != null
-						&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
-					// GST Calculations
-					TaxHeader taxHeader = detail.getTaxHeader();
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
-					BigDecimal gstAmount = BigDecimal.ZERO;
-					if (CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							gstAmount = gstAmount.add(taxes.getNetTax());
-						}
-					}
-					avaAmount = avaAmount.add(gstAmount);
-				}
+		for (PaymentDetail pd : getPaymentDetailList()) {
+
+			if (!excessType.equals(pd.getAmountType())) {
+				continue;
 			}
+
+			avaAmount = pd.getAvailableAmount().add(avaAmount);
+			if (pd.getTaxHeader() != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(pd.getTaxComponent())) {
+				// GST Calculations
+				TaxHeader taxHeader = pd.getTaxHeader();
+				List<Taxes> taxDetails = taxHeader.getTaxDetails();
+				BigDecimal gstAmount = BigDecimal.ZERO;
+				if (CollectionUtils.isNotEmpty(taxDetails)) {
+					for (Taxes taxes : taxDetails) {
+						gstAmount = gstAmount.add(taxes.getNetTax());
+					}
+				}
+				avaAmount = avaAmount.add(gstAmount);
+			}
+
+			if (avaAmount.compareTo(amount) >= 0) {
+				pd.setAmount(amount);
+				avaAmount = avaAmount.subtract(amount);
+				amount = BigDecimal.ZERO;
+			} else if (avaAmount.compareTo(amount) == -1) {
+				amt1 = amount;
+				amt1 = amt1.subtract(avaAmount);
+				if (amt1.compareTo(avaAmount) <= 1) {
+					pd.setAmount(avaAmount);
+				} else {
+					pd.setAmount(BigDecimal.ZERO);
+				}
+				avaAmount = BigDecimal.ZERO;
+				amount = amt1;
+			}
+
 		}
 
 		if ((amount.compareTo(BigDecimal.ZERO)) < 0) {
@@ -1572,40 +1566,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			paymentAmt.setValue(PennantApplicationUtil.formateAmount(avaAmount, ccyFormatter));
 		}
 
-		for (PaymentDetail detail : getPaymentDetailList()) {
-			if (!AdviseType.isPayable(detail.getAmountType())) {
-				continue;
-			}
-
-			BigDecimal balAmount = detail.getAvailableAmount();
-			if (detail.getTaxHeader() != null
-					&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
-				// GST Calculations
-				TaxHeader taxHeader = detail.getTaxHeader();
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				BigDecimal gstAmount = BigDecimal.ZERO;
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						gstAmount = gstAmount.add(taxes.getNetTax());
-					}
-				}
-				balAmount = balAmount.add(gstAmount);
-			}
-
-			if (balAmount.compareTo(amount) >= 0) {
-				detail.setAmount(amount);
-				amount = BigDecimal.ZERO;
-			} else if (balAmount.compareTo(amount) == -1) {
-				amt1 = amount;
-				amt1 = amt1.subtract(balAmount);
-				if (amt1.compareTo(balAmount) <= 1) {
-					detail.setAmount(balAmount);
-				} else {
-					detail.setAmount(BigDecimal.ZERO);
-				}
-				amount = amt1;
-			}
-		}
 		doFillHeaderList(getPaymentDetailList());
 
 		logger.debug("Leaving");
@@ -1730,441 +1690,327 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		return detail;
 	}
 
-	// Filling paymeny details list...
-	public void doFillHeaderList(List<PaymentDetail> paymentDetaislList) {
+	private BigDecimal[] getGSTAmounts(PaymentDetail pd) {
+		TaxHeader taxHeader = pd.getTaxHeader();
+
+		BigDecimal[] gstAmounts = new BigDecimal[] { BigDecimal.ZERO, BigDecimal.ZERO };
+
+		if (taxHeader == null) {
+			return gstAmounts;
+		}
+
+		List<Taxes> taxDetails = taxHeader.getTaxDetails();
+
+		if (CollectionUtils.isEmpty(taxDetails)) {
+			return gstAmounts;
+		}
+
+		BigDecimal dueGST = BigDecimal.ZERO;
+		BigDecimal dueGSTExclusive = BigDecimal.ZERO;
+
+		for (Taxes taxes : taxDetails) {
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(pd.getTaxComponent())) {
+				dueGSTExclusive = dueGSTExclusive.add(taxes.getActualTax());
+			} else {
+				dueGST = dueGST.add(taxes.getActualTax());
+			}
+		}
+
+		gstAmounts[0] = dueGST;
+		gstAmounts[1] = dueGSTExclusive;
+
+		return gstAmounts;
+	}
+
+	public void doFillHeaderList(List<PaymentDetail> pdList) {
+		this.listBoxPaymentTypeInstructions.getItems().clear();
+
+		this.listheader_PaymentHeaderDialog_button.setVisible(true);
+
+		if (CollectionUtils.isEmpty(pdList)) {
+			return;
+		}
+
+		Map<String, List<PaymentDetail>> map = new HashMap<>();
+
+		for (PaymentDetail pd : pdList) {
+			String excessType = pd.getAmountType();
+			if (AdviseType.isPayable(pd.getAmountType())) {
+				excessType = String.valueOf(AdviseType.PAYABLE.id());
+			}
+
+			List<PaymentDetail> list = map.get(excessType);
+
+			if (list == null) {
+				list = new ArrayList<>();
+				map.put(excessType, list);
+			}
+
+			list.add(pd);
+		}
+
+		BigDecimal totalPayAmt = BigDecimal.ZERO;
+
+		for (Entry<String, List<PaymentDetail>> paymentDetail : map.entrySet()) {
+			totalPayAmt = totalPayAmt.add(doFillHeaderList(paymentDetail.getKey(), paymentDetail.getValue()));
+		}
+
+		// Total Amount
+		Listitem item = new Listitem();
+		Listcell lc = new Listcell();
+		lc.setSpan(6);
+		item.appendChild(lc);
+
+		lc = new Listcell("Total Pay Amount");
+		lc.setStyle("font-weight:bold;text-align:right;");
+		item.appendChild(lc);
+
+		lc = new Listcell();
+		totAmount = new Decimalbox();
+		totAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		totAmount.setStyle("text-align:right;");
+		totAmount.setReadonly(true);
+		totAmount.setValue(PennantApplicationUtil.formateAmount(totalPayAmt, ccyFormatter));
+
+		lc.appendChild(totAmount);
+		lc.setParent(item);
+
+		if (disbursementInstructionsDialogCtrl != null) {
+			totalPayAmt = PennantApplicationUtil.formateAmount(totalPayAmt, ccyFormatter);
+			disbursementInstructionsDialogCtrl.paymentAmount.setValue(totalPayAmt);
+		}
+
+		this.listBoxPaymentTypeInstructions.appendChild(item);
+	}
+
+	public BigDecimal doFillHeaderList(String excessType, List<PaymentDetail> pdList) {
 		logger.debug("Entering");
 
-		this.listBoxPaymentTypeInstructions.getItems().clear();
-		boolean isReadOnly = isReadOnly("PaymentHeaderDialog_paymentAmount");
 		BigDecimal totalPayAmt = BigDecimal.ZERO;
+
+		boolean isReadOnly = isReadOnly("PaymentHeaderDialog_paymentAmount");
 		Listitem item = null;
-		String amountType = null;
-		String amtType = null;
 		BigDecimal avaAmount = BigDecimal.ZERO;
 		BigDecimal dueGST = BigDecimal.ZERO;
 		BigDecimal dueGSTExclusive = BigDecimal.ZERO;
 		BigDecimal payAmount = BigDecimal.ZERO;
-		this.listheader_PaymentHeaderDialog_button.setVisible(false);
 
-		// Total Avaliable Amount for ManualAdvise
-		if (CollectionUtils.isNotEmpty(paymentDetaislList)) {
+		PaymentDetail temp = null;
+		for (PaymentDetail pd : pdList) {
 
-			for (PaymentDetail paymentDetail : paymentDetaislList) {
-
-				if (AdviseType.isPayable(paymentDetail.getAmountType())) {
-					this.listheader_PaymentHeaderDialog_button.setVisible(true);
-					amtType = paymentDetail.getAmountType();
-					avaAmount = paymentDetail.getAvailableAmount().add(avaAmount);
-					payAmount = paymentDetail.getAmount().add(payAmount);
-
-					// GST Calculations
-					TaxHeader taxHeader = paymentDetail.getTaxHeader();
-
-					if (taxHeader != null) {
-						List<Taxes> taxDetails = taxHeader.getTaxDetails();
-						if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
-							for (Taxes taxes : taxDetails) {
-								dueGST = dueGST.add(taxes.getActualTax());
-								if (StringUtils.equals(paymentDetail.getTaxComponent(),
-										FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-									dueGSTExclusive = dueGSTExclusive.add(taxes.getActualTax());
-								}
-							}
-						}
-					}
-
-				}
-				if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(paymentDetail.getAmountType())
-						|| RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(paymentDetail.getAmountType())
-						|| RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(paymentDetail.getAmountType())
-						|| RepayConstants.EXAMOUNTTYPE_ADVINT.equals(paymentDetail.getAmountType())
-						|| RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(paymentDetail.getAmountType())
-						|| RepayConstants.EXAMOUNTTYPE_DSF.equals(paymentDetail.getAmountType())
-
-				) {
-					item = new Listitem();
-					Listcell lc;
-					lc = new Listcell();
-					lc.setParent(item);
-					if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(paymentDetail.getAmountType())) {
-						amountType = Labels.getLabel("label_PaymentHeaderDialog_ExcessAmount.value");
-					} else if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(paymentDetail.getAmountType())) {
-						amountType = Labels.getLabel("label_PaymentHeaderDialog_EMIinAdvanceAmount.value");
-					} else if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(paymentDetail.getAmountType())) {
-						amountType = Labels.getLabel("label_RecceiptDialog_ExcessType_ADVEMI");
-					} else if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(paymentDetail.getAmountType())) {
-						amountType = Labels.getLabel("label_RecceiptDialog_ExcessType_ADVINT");
-					} else if (RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(paymentDetail.getAmountType())) {
-						amountType = Labels.getLabel("label_RecceiptDialog_ExcessType_CASHCLT");
-					} else if (RepayConstants.EXAMOUNTTYPE_DSF.equals(paymentDetail.getAmountType())) {
-						amountType = Labels.getLabel("label_RecceiptDialog_ExcessType_DSF");
-					}
-					lc = new Listcell(amountType);
-					lc.setParent(item);
-
-					lc = new Listcell();
-					Decimalbox avalableAmt = new Decimalbox();
-					avalableAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-					avalableAmt.setStyle("text-align:right; ");
-					avalableAmt.setReadonly(true);
-					avalableAmt.setValue(
-							PennantApplicationUtil.formateAmount(paymentDetail.getAvailableAmount(), ccyFormatter));
-					lc.appendChild(avalableAmt);
-					lc.setParent(item);
-
-					lc = new Listcell();
-					Decimalbox gstAmount = new Decimalbox();
-					gstAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-					gstAmount.setStyle("text-align:right; ");
-					gstAmount.setReadonly(true);
-					gstAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, ccyFormatter));
-					lc.appendChild(gstAmount);
-					lc.setParent(item);
-
-					lc = new Listcell();
-					Decimalbox totalAvailAmt = new Decimalbox();
-					totalAvailAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-					totalAvailAmt.setStyle("text-align:right; ");
-					totalAvailAmt.setReadonly(true);
-					totalAvailAmt.setValue(
-							PennantApplicationUtil.formateAmount(paymentDetail.getAvailableAmount(), ccyFormatter));
-					lc.appendChild(totalAvailAmt);
-					lc.setParent(item);
-
-					lc = new Listcell();
-					paymentAmount = new Decimalbox();
-					paymentAmount.setReadonly(isReadOnly);
-
-					paymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-					paymentAmount.setStyle("text-align:right; ");
-					paymentAmount
-							.setValue(PennantApplicationUtil.formateAmount(paymentDetail.getAmount(), ccyFormatter));
-					totalPayAmt = totalPayAmt.add(paymentDetail.getAmount());
-					paymentAmount.addForward("onChange", self, "onPayAmountChangeForExcessAndEMI");
-					paymentAmount.setAttribute("object", paymentDetail);
-					lc.appendChild(paymentAmount);
-					lc.setParent(item);
-
-					lc = new Listcell();
-					Decimalbox balanceAmount = new Decimalbox();
-					balanceAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-					balanceAmount.setStyle("text-align:right; ");
-					balanceAmount.setReadonly(true);
-
-					BigDecimal balAmount = paymentDetail.getAvailableAmount().subtract(paymentDetail.getAmount());
-					if (balAmount.compareTo(BigDecimal.ZERO) < 0) {
-						balAmount = BigDecimal.ZERO;
-					}
-					balanceAmount.setValue(PennantApplicationUtil.formateAmount(balAmount, ccyFormatter));
-
-					lc.appendChild(balanceAmount);
-					lc.setParent(item);
-					this.listBoxPaymentTypeInstructions.appendChild(item);
-				}
+			if (temp == null) {
+				temp = pd;
 			}
-			// Manual Advise
-			if (AdviseType.isPayable(amtType)) {
-				Button button = new Button();
-				item = new Listitem();
-				Listcell lc;
-				if (buttonVisible) {
-					lc = new Listcell();
-					button.setImage("/images/icons/delete.png");
-					button.setStyle("background:white;border:0px;");
-					button.addForward("onClick", self, "onDeletePaymentHeader");
-					lc.appendChild(button);
-					lc.setParent(item);
-				} else {
-					lc = new Listcell();
-					button.setImage("/images/icons/add.png");
-					button.setStyle("background:#FFFFFF;border:0px;onMouseOver ");
-					button.addForward("onClick", self, "onAddPaymentHeader");
-					lc.appendChild(button);
-					lc.setParent(item);
-				}
-				amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
-				lc = new Listcell(amountType);
-				lc.setParent(item);
 
-				// Available Amount
-				lc = new Listcell();
-				Decimalbox avalableAmt = new Decimalbox();
-				avalableAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-				avalableAmt.setStyle("text-align:right; ");
-				avalableAmt.setReadonly(true);
-				avalableAmt.setValue(PennantApplicationUtil.formateAmount(avaAmount, ccyFormatter));
-				lc.appendChild(avalableAmt);
-				lc.setParent(item);
+			avaAmount = pd.getAvailableAmount().add(avaAmount);
+			payAmount = pd.getAmount().add(payAmount);
 
-				// GST Amount
-				lc = new Listcell();
-				Decimalbox gstAmount = new Decimalbox();
-				gstAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-				gstAmount.setStyle("text-align:right; ");
-				gstAmount.setReadonly(true);
-				gstAmount.setValue(PennantApplicationUtil.formateAmount(dueGST, ccyFormatter));
-				lc.appendChild(gstAmount);
-				lc.setParent(item);
+			totalPayAmt = payAmount;
 
-				// Total Available
-				lc = new Listcell();
-				Decimalbox totalAvailAmt = new Decimalbox();
-				totalAvailAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-				totalAvailAmt.setStyle("text-align:right; ");
-				totalAvailAmt.setReadonly(true);
-				totalAvailAmt
-						.setValue(PennantApplicationUtil.formateAmount(avaAmount.add(dueGSTExclusive), ccyFormatter));
-				lc.appendChild(totalAvailAmt);
-				lc.setParent(item);
-
-				lc = new Listcell();
-				paymentAmount = new Decimalbox();
-				paymentAmount.setReadonly(isReadOnly);
-				paymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-				paymentAmount.setStyle("text-align:right; ");
-				paymentAmount.setValue(PennantApplicationUtil.formateAmount(payAmount, ccyFormatter));
-				totalPayAmt = totalPayAmt.add(payAmount);
-				paymentAmount.addForward("onChange", self, "onPayAmountChange");
-				lc.appendChild(paymentAmount);
-				lc.setParent(item);
-
-				lc = new Listcell();
-				Decimalbox balanceAmount = new Decimalbox();
-				balanceAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-				balanceAmount.setStyle("text-align:right; ");
-				balanceAmount.setReadonly(true);
-				balanceAmount.setValue(PennantApplicationUtil
-						.formateAmount(avaAmount.add(dueGSTExclusive).subtract(payAmount), ccyFormatter));
-				lc.appendChild(balanceAmount);
-				lc.setParent(item);
-				this.listBoxPaymentTypeInstructions.appendChild(item);
-				// ManualAdvise Events List
-				if (buttonVisible && !deleteButton) {
-					doFillChildDetail(paymentDetaislList);
-				}
+			BigDecimal[] gstAmounts = getGSTAmounts(pd);
+			if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+				avaAmount = avaAmount.subtract(gstAmounts[0]);
 			}
-			// Total Amount
-			item = new Listitem();
-			Listcell lc;
-			if (enqiryModule) {
-				lc = new Listcell();
-				lc.setParent(item);
-				lc = new Listcell(" Total Pay Amount ");
-				lc.setStyle("font-weight:bold;");
 
-			} else {
-				lc = new Listcell();
-				lc.setParent(item);
-				lc = new Listcell();
-			}
-			item.appendChild(lc);
-			lc = new Listcell(" Total Pay Amount ");
-			lc.setSpan(3);
-			lc.setStyle("font-weight:bold;");
-			item.appendChild(lc);
+			dueGST = dueGST.add(gstAmounts[0]);
+			dueGSTExclusive = dueGSTExclusive.add(gstAmounts[1]);
+
+		}
+
+		Button button = new Button();
+		item = new Listitem();
+		item.setAttribute("index", "Y");
+		Listcell lc;
+
+		if (temp.isExpand()) {
 			lc = new Listcell();
-			totAmount = new Decimalbox();
-			totAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-			totAmount.setStyle("text-align:right; ");
-			totAmount.setReadonly(true);
-			totalPayAmt = PennantApplicationUtil.formateAmount(totalPayAmt, ccyFormatter);
-			totAmount.setValue(totalPayAmt);
-			lc.appendChild(totAmount);
+			button.setImage("/images/icons/delete.png");
+			button.setStyle("background:white;border:0px;");
+			button.setAttribute("pd", temp);
+			button.addForward("onClick", self, "onExpand");
+
+			lc.appendChild(button);
 			lc.setParent(item);
+		} else {
 			lc = new Listcell();
+			button.setImage("/images/icons/add.png");
+			button.setStyle("background:#FFFFFF;border:0px;onMouseOver ");
+			button.setAttribute("pd", temp);
+			button.addForward("onClick", self, "onCollapse");
+
+			lc.appendChild(button);
 			lc.setParent(item);
-			if (getDisbursementInstructionsDialogCtrl() != null) {
-				getDisbursementInstructionsDialogCtrl().paymentAmount.setValue(totalPayAmt);
-			}
-			this.listBoxPaymentTypeInstructions.appendChild(item);
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for action Forward event for changing PayAmountChangeForExcessAndEMI
-	 * 
-	 * @param event
-	 */
-	public void onPayAmountChangeForExcessAndEMI(ForwardEvent event) {
-		logger.debug("Entering");
-
-		Decimalbox paymentAmt = (Decimalbox) event.getOrigin().getTarget();
-		Clients.clearWrongValue(paymentAmt);
-		Clients.clearWrongValue(this.totAmount);
-		BigDecimal amount = PennantApplicationUtil.unFormateAmount(paymentAmt.getValue(), ccyFormatter);
-
-		if (BigDecimal.ZERO.compareTo(amount) == 1) {
-			amount = BigDecimal.ZERO;
 		}
 
-		PaymentDetail paymentDetail = (PaymentDetail) paymentAmt.getAttribute("object");
-		for (PaymentDetail detail : getPaymentDetailList()) {
-			if (paymentDetail.getReferenceId() == detail.getReferenceId()) {
-				if ((amount.compareTo(BigDecimal.ZERO)) < 0) {
-					paymentAmt.setValue(BigDecimal.ZERO);
-					throw new WrongValueException(paymentAmt,
-							Labels.getLabel("label_PaymentHeaderDialog_payAmountErrorMsg.value"));
-				}
+		String amountType = null;
 
-				if ((detail.getAvailableAmount().compareTo(amount)) == -1) {
-					throw new WrongValueException(paymentAmt,
-							Labels.getLabel("label_PaymentHeaderDialog_paymentAmountErrorMsg.value"));
-				} else {
-					detail.setAmount(amount);
-				}
-			}
+		if (String.valueOf(AdviseType.PAYABLE.id()).equals(excessType)) {
+			amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
+		} else {
+			amountType = Labels.getLabel("label_Excess_Type_" + excessType);
 		}
-		doFillHeaderList(getPaymentDetailList());
+
+		lc = new Listcell(amountType);
+		lc.setParent(item);
+
+		lc = new Listcell();
+		lc.setParent(item);
+
+		lc = new Listcell();
+		lc.setParent(item);
+
+		// Available Amount
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(avaAmount, true));
+		lc.setParent(item);
+
+		// GST Amount
+		BigDecimal totalGST = dueGST.add(dueGSTExclusive);
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(totalGST, true));
+		lc.setParent(item);
+
+		// Total Available
+		BigDecimal totalAvailable = avaAmount.add(totalGST);
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(totalAvailable, true));
+		lc.setParent(item);
+
+		// Pay Amount
+		Decimalbox paymentAmount = getDecimalbox(payAmount, isReadOnly);
+		paymentAmount.setAttribute("excessType", excessType);
+		paymentAmount.addForward("onChange", self, "onPayAmountChange");
+
+		lc = new Listcell();
+		lc.appendChild(paymentAmount);
+		lc.setParent(item);
+
+		// Balance Amount
+		BigDecimal balanceAmount = totalAvailable.subtract(payAmount);
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(balanceAmount, true));
+		lc.setParent(item);
+
+		this.listBoxPaymentTypeInstructions.appendChild(item);
+
+		if (temp.isExpand() && !temp.isCollapse()) {
+			doFillChildDetail(pdList);
+		}
 
 		logger.debug("Leaving");
+
+		return totalPayAmt;
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the Plus button.
-	 * 
-	 * @param event An event sent to the event handler of the component.
-	 */
-	public void onAddPaymentHeader(Event event) {
-		logger.debug("Entering " + event.toString());
-		this.deleteButton = false;
-		this.buttonVisible = true;
-		doFillHeaderList(getPaymentDetailList());
-		logger.debug("Leaving " + event.toString());
+	private Decimalbox getDecimalbox(BigDecimal amount, boolean isReadOnly) {
+		Decimalbox decimalbox = new Decimalbox();
+		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		decimalbox.setStyle("text-align:right; ");
+		decimalbox.setReadonly(isReadOnly);
+		decimalbox.setValue(PennantApplicationUtil.formateAmount(amount, ccyFormatter));
+
+		return decimalbox;
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the minus button.
-	 * 
-	 * @param event An event sent to the event handler of the component.
-	 */
-	public void onDeletePaymentHeader(Event event) {
-
-		logger.debug("Entering " + event.toString());
-		this.buttonVisible = false;
-		this.deleteButton = true;
-		doFillHeaderList(paymentDetailList);
-		logger.debug("Leaving " + event.toString());
-	}
-
-	// Filling paymeny details list for Manual Advise
-	public List<Listitem> doFillChildDetail(List<PaymentDetail> paymentDetail) {
+	private void doFillChildDetail(List<PaymentDetail> paymentDetail) {
 		logger.debug("Entering");
 
 		boolean isReadOnly = isReadOnly("PaymentHeaderDialog_paymentAmount");
+
 		BigDecimal totalPayAmt = BigDecimal.ZERO;
-		List<Listitem> items = new ArrayList<Listitem>();
 		Listitem item = null;
-		if (paymentDetail != null && !paymentDetail.isEmpty()) {
 
-			for (PaymentDetail advise : paymentDetail) {
-				if (AdviseType.isPayable(advise.getAmountType())) {
-					item = new Listitem();
-					Listcell lc;
-					lc = new Listcell();
-					lc.setParent(item);
+		for (PaymentDetail pd : paymentDetail) {
+			item = new Listitem();
+			Listcell lc;
+			lc = new Listcell();
+			lc.setParent(item);
 
-					BigDecimal calGST = BigDecimal.ZERO;
-					BigDecimal availAmount = advise.getAvailableAmount();
-					BigDecimal paidAmount = advise.getAmount();
-					String desc = advise.getFeeTypeDesc();
+			BigDecimal calGST = BigDecimal.ZERO;
+			BigDecimal availAmount = pd.getAvailableAmount();
+			BigDecimal paidAmount = pd.getAmount();
+			String desc = pd.getFeeTypeDesc();
 
-					// GST Calculations
-					TaxHeader taxHeader = advise.getTaxHeader();
-					if (taxHeader != null) {
-						List<Taxes> taxDetails = taxHeader.getTaxDetails();
-						if (CollectionUtils.isNotEmpty(taxDetails)) {
-							for (Taxes taxes : taxDetails) {
-								calGST = calGST.add(taxes.getActualTax());
-							}
-
-							if (StringUtils.equals(advise.getTaxComponent(),
-									FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-								availAmount = availAmount.subtract(calGST);
-								desc = desc.concat(" (Inclusive)");
-							} else if (StringUtils.equals(advise.getTaxComponent(),
-									FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-								desc = desc.concat(" (Exclusive)");
-							}
-						}
+			// GST Calculations
+			TaxHeader taxHeader = pd.getTaxHeader();
+			if (taxHeader != null) {
+				List<Taxes> taxDetails = taxHeader.getTaxDetails();
+				if (CollectionUtils.isNotEmpty(taxDetails)) {
+					for (Taxes taxes : taxDetails) {
+						calGST = calGST.add(taxes.getActualTax());
 					}
 
-					lc = new Listcell();
-					Hbox hbox = new Hbox();
-					Space space = new Space();
-					space.setSpacing("20px");
-					space.setParent(hbox);
-					Label label = new Label();
-					label.setValue(desc);
-					label.setParent(hbox);
-					lc.appendChild(hbox);
-					lc.setParent(item);
-
-					lc = new Listcell();
-					Decimalbox availAmt = new Decimalbox();
-					availAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-					availAmt.setStyle("text-align:right; ");
-					availAmt.setReadonly(true);
-					availAmt.setValue(PennantApplicationUtil.formateAmount(availAmount, ccyFormatter));
-					lc.appendChild(availAmt);
-					lc.setParent(item);
-
-					lc = new Listcell();
-					Decimalbox gstAmount = new Decimalbox();
-					gstAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-					gstAmount.setStyle("text-align:right; ");
-					gstAmount.setReadonly(true);
-					gstAmount.setValue(PennantApplicationUtil.formateAmount(calGST, ccyFormatter));
-					lc.appendChild(gstAmount);
-					lc.setParent(item);
-
-					lc = new Listcell();
-					Decimalbox totalAmt = new Decimalbox();
-					totalAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-					totalAmt.setStyle("text-align:right; ");
-					totalAmt.setReadonly(true);
-					totalAmt.setValue(PennantApplicationUtil.formateAmount(availAmount.add(calGST), ccyFormatter));
-					lc.appendChild(totalAmt);
-					lc.setParent(item);
-
-					lc = new Listcell();
-					paymentAmount = new Decimalbox();
-					paymentAmount.setReadonly(isReadOnly);
-					paymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-					paymentAmount.setStyle("text-align:right; ");
-					paymentAmount.setValue(PennantApplicationUtil.formateAmount(paidAmount, ccyFormatter));
-					paymentAmount.addForward("onChange", self, "onPayAmountForEventChanges");
-					paymentAmount.setAttribute("object", advise);
-					paymentAmount.setConstraint("NO NEGATIVE");
-					lc.appendChild(paymentAmount);
-					lc.setParent(item);
-					lc = new Listcell();
-					Decimalbox balanceAmount = new Decimalbox();
-					balanceAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-					balanceAmount.setStyle("text-align:right; ");
-					balanceAmount.setReadonly(true);
-					balanceAmount.setValue(PennantApplicationUtil
-							.formateAmount(availAmount.add(calGST).subtract(paidAmount), ccyFormatter));
-					lc.appendChild(balanceAmount);
-					lc.setParent(item);
-					this.listBoxPaymentTypeInstructions.appendChild(item);
+					if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+						availAmount = availAmount.subtract(calGST);
+						desc = desc.concat(" (Inclusive)");
+					} else if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+						desc = desc.concat(" (Exclusive)");
+					}
 				}
 			}
-			if (getDisbursementInstructionsDialogCtrl() != null) {
-				getDisbursementInstructionsDialogCtrl().paymentAmount.setValue(totalPayAmt);
+
+			lc = new Listcell();
+			Hbox hbox = new Hbox();
+			Space space = new Space();
+			space.setSpacing("20px");
+			space.setParent(hbox);
+			Label label = new Label();
+			label.setValue(desc);
+			label.setParent(hbox);
+			lc.appendChild(hbox);
+			lc.setParent(item);
+
+			String receiptID = "";
+			String valueDate = DateUtil.formatToLongDate(pd.getValueDate());
+
+			if (!AdviseType.isPayable(pd.getAmountType())) {
+				receiptID = pd.getReceiptID() == null ? "" : String.valueOf(pd.getReceiptID());
 			}
 
-		}
-		logger.debug("Leaving");
-		return items;
+			item.appendChild(new Listcell(receiptID));
+			item.appendChild(new Listcell(valueDate));
 
+			// Available Amount
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(availAmount, true));
+			lc.setParent(item);
+
+			// GST Amount
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(calGST, true));
+			lc.setParent(item);
+
+			// Total Available
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(availAmount.add(calGST), true));
+			lc.setParent(item);
+
+			// Pay Amount
+			Decimalbox paymentAmount = getDecimalbox(paidAmount, isReadOnly);
+			paymentAmount.addForward("onChange", self, "onPayAmountForEventChanges");
+			paymentAmount.setAttribute("object", pd);
+			paymentAmount.setConstraint("NO NEGATIVE");
+
+			lc = new Listcell();
+			lc.appendChild(paymentAmount);
+			lc.setParent(item);
+
+			// Balance Amount
+			BigDecimal balanceAmount = availAmount.add(calGST).subtract(paidAmount);
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(balanceAmount, true));
+			lc.setParent(item);
+
+			this.listBoxPaymentTypeInstructions.appendChild(item);
+		}
+
+		if (getDisbursementInstructionsDialogCtrl() != null) {
+			getDisbursementInstructionsDialogCtrl().paymentAmount.setValue(totalPayAmt);
+		}
+
+		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for action Forward event for changing onPayAmountFoEventChanges
-	 * 
-	 * @param event
-	 */
 	public void onPayAmountForEventChanges(ForwardEvent event) {
 		logger.debug("Entering");
 
@@ -2208,6 +2054,26 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		doFillHeaderList(getPaymentDetailList());
 		logger.debug("Leaving");
+	}
+
+	public void onExpand(ForwardEvent event) {
+		Button button = (Button) event.getOrigin().getTarget();
+		PaymentDetail pd = (PaymentDetail) button.getAttribute("pd");
+
+		pd.setExpand(false);
+		pd.setCollapse(true);
+
+		doFillHeaderList(paymentDetailList);
+	}
+
+	public void onCollapse(ForwardEvent event) {
+		Button button = (Button) event.getOrigin().getTarget();
+		PaymentDetail pd = (PaymentDetail) button.getAttribute("pd");
+
+		pd.setExpand(true);
+		pd.setCollapse(false);
+
+		doFillHeaderList(paymentDetailList);
 	}
 
 	// Setters and getters

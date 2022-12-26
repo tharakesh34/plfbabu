@@ -273,7 +273,6 @@
 			<artifactId>UserAgentUtils</artifactId>
 			<version>1.21</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.pennanttech.framework.components</groupId>
 			<artifactId>data-engine</artifactId>

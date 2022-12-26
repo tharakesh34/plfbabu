@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
@@ -196,6 +197,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private Mandate validateMandate = this;
 
 	private Date loanMaturityDate;
+	private ErrorDetail error;
 
 	public Mandate() {
 		super();
@@ -258,6 +260,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("allowDAS");
 		excludeFields.add("employerName");
 		excludeFields.add("loanMaturityDate");
+		excludeFields.add("error");
 
 		return excludeFields;
 	}
@@ -1023,6 +1026,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setOldSecMandate(Long oldSecMandate) {
 		this.oldSecMandate = oldSecMandate;
+	}
+
+	public ErrorDetail getError() {
+		return error;
+	}
+
+	public void setError(ErrorDetail error) {
+		this.error = error;
 	}
 
 }

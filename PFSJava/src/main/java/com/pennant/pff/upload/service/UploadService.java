@@ -1,49 +1,32 @@
 package com.pennant.pff.upload.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.applicationmaster.Entity;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.pff.core.TableType;
 
-public interface UploadService<T> {
+public interface UploadService {
 
 	FileUploadHeader getUploadHeader(String moduleCode);
 
 	long saveHeader(FileUploadHeader header, TableType type);
 
-	void importFile(FileUploadHeader header);
+	void doValidate(FileUploadHeader header, Object detail);
 
-	void read(FileUploadHeader header);
-
-	void validate(FileUploadHeader header, T detail);
-
-	void saveDetail(T detail);
-
-	void updateheader(FileUploadHeader header);
-
-	boolean isExists(String fileName);
-
-	boolean isDownloaded(long fileID);
-
-	void updateProgress(long headerID, int status);
-
-	void updateStatus(List<Long> headerIds);
-
-	FileUploadHeader getUploadHeaderById(long id);
-
-	List<T> getUploadDetailById(long headerID);
+	List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
+			Date toDate, String type);
 
 	List<Entity> getEntities();
 
-	AuditHeader saveOrUpdate(AuditHeader ah);
+	void update(FileUploadHeader uploadHeader);
 
-	AuditHeader doApprove(AuditHeader ah);
+	void updateHeader(List<FileUploadHeader> uploadHeaders, boolean isApprove);
 
-	AuditHeader doReject(AuditHeader ah);
+	void doApprove(List<FileUploadHeader> headers);
 
-	AuditHeader delete(AuditHeader ah);
+	void doReject(List<FileUploadHeader> headers);
 
-	void downloadReport(Long fileID, String type);
+	String getSqlQuery();
 }

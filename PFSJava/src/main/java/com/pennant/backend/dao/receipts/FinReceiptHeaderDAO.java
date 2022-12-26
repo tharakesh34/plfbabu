@@ -141,4 +141,6 @@ public interface FinReceiptHeaderDAO {
 	void updateReceiptHeader(long receiptId, String utrNum);
 
 	String getReceiptMode(long receiptId);
+
+	BigDecimal getClosureAmountByFinType(String finType);
 }

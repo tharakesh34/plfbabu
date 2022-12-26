@@ -60,6 +60,8 @@ import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.accounting.model.PostingDTO;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -218,7 +220,14 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		// Finance Stage Accounting Process
 		// =======================================
-		auditHeader = executeStageAccounting(auditHeader);
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(appDate);
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
+
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -325,7 +334,14 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		// Finance Stage Accounting Process
 		// =======================================
-		auditHeader = executeStageAccounting(auditHeader);
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(appData);
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
+
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -448,7 +464,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
-		cancelStageAccounting(finID, FinServiceEvent.SUSPHEAD);
+		AccountingEngine.cancelStageAccounting(finID, FinServiceEvent.SUSPHEAD);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		financeSuspHeadDAO.delete(suspHead, "_Temp");

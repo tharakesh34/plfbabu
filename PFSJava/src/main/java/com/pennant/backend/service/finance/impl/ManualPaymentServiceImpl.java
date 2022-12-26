@@ -105,6 +105,8 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.pff.accounting.model.PostingDTO;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -284,11 +286,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail fd = repayData.getFinanceDetail();
 
-		auditHeader = executeStageAccounting(auditHeader);
-		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
-			return auditHeader;
-		}
-
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 		FinRepayHeader rph = repayData.getFinRepayHeader();
@@ -296,6 +293,18 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 		Date appDate = SysParamUtil.getAppDate();
+
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(appDate);
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
+
+		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+			return auditHeader;
+		}
 
 		long serviceUID = Long.MIN_VALUE;
 
@@ -498,7 +507,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		FinRepayHeader rph = repayData.getFinRepayHeader();
-		cancelStageAccounting(finID, rph.getFinEvent());
+		AccountingEngine.cancelStageAccounting(finID, rph.getFinEvent());
 
 		listDeletion(finID, "_Temp", false);
 		finFeeChargesDAO.deleteChargesBatch(finID, rph.getFinEvent(), false, "_Temp");
@@ -551,7 +560,17 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 		Date appDate = SysParamUtil.getAppDate();
 
-		auditHeader = executeStageAccounting(auditHeader);
+		FinanceDetail fd = repayData.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(appDate);
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -559,10 +578,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		long linkedTranId = 0;
 		boolean partialPay = false;
 		List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
-
-		FinanceDetail fd = repayData.getFinanceDetail();
-		FinScheduleData schdData = fd.getFinScheduleData();
-		FinanceMain fm = schdData.getFinanceMain();
 
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();

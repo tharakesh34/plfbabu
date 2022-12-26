@@ -91,8 +91,8 @@ public class PresentmentDetailExtractService {
 			pd.setHeaderId(headerId);
 
 			if (pd.getExcessAmountReversal() != null) {
-				excessRevarsal.add(pd.getExcessAmountReversal());
-				excessMovement.add(pd.getExcessAmountReversal().getExcessMovement());
+				excessRevarsal.addAll(pd.getExcessAmountReversal());
+				excessMovement.addAll(pd.getExcessMovements());
 			}
 
 			if (pd.getExcessAmount() != null) {
@@ -674,11 +674,9 @@ public class PresentmentDetailExtractService {
 			}
 		}
 
-		FinExcessAmount finExAmt = finExcessAmountDAO.getExcessAmountsByRefAndType(pd.getFinID(), amountType);
+		// FinExcessAmount finExAmt = finExcessAmountDAO.getExcessAmountsByRefAndType(pd.getFinID(), amountType);
 
-		if (finExAmt == null) {
-			return;
-		}
+		FinExcessAmount finExAmt = new FinExcessAmount();
 
 		BigDecimal excessBal = finExAmt.getBalanceAmt();
 		BigDecimal adjAmount = BigDecimal.ZERO;
@@ -710,7 +708,7 @@ public class PresentmentDetailExtractService {
 		BigDecimal reservedAmt = finExAmt.getReservedAmt();
 		BigDecimal utilisedAmt = finExAmt.getUtilisedAmt();
 		finExAmt.setBalanceAmt(amount.subtract(reservedAmt).subtract(utilisedAmt));
-		pd.setExcessAmountReversal(finExAmt);
+		pd.getExcessAmountReversal().add(finExAmt);
 		// finExcessAmountDAO.updateExcessReserve(finExAmt);
 
 		// movement
@@ -730,8 +728,12 @@ public class PresentmentDetailExtractService {
 		long finID = pd.getFinID();
 
 		BigDecimal emiInAdvanceAmt = BigDecimal.ZERO;
-		FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
-				RepayConstants.EXAMOUNTTYPE_EMIINADV);
+		/*
+		 * FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
+		 * RepayConstants.EXAMOUNTTYPE_EMIINADV);
+		 */
+
+		FinExcessAmount excessAmount = new FinExcessAmount();
 
 		if (excessAmount != null) {
 			emiInAdvanceAmt = excessAmount.getBalanceAmt();

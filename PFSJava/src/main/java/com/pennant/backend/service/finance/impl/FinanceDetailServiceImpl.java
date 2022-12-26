@@ -271,6 +271,8 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.accounting.model.PostingDTO;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.AppException;
@@ -2028,7 +2030,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Finance Stage Accounting Process
 			// =======================================
-			auditHeader = executeStageAccounting(auditHeader);
+
+			PostingDTO postingDTO = new PostingDTO();
+			postingDTO.setFinanceMain(fm);
+			postingDTO.setFinanceDetail(fd);
+			postingDTO.setValueDate(curBDay);
+			postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+			AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
 			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 				return auditHeader;
 			}
@@ -6176,7 +6185,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
-		cancelStageAccounting(finID, fd.getModuleDefiner());
+		AccountingEngine.cancelStageAccounting(finID, fd.getModuleDefiner());
 
 		String recordStatus = fm.getRecordStatus();
 		if (FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {

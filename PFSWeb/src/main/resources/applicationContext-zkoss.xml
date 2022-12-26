@@ -6074,13 +6074,6 @@
 	<bean id="dueExtractionConfigList" class ="com.pennant.pff.presentment.web.DueExtractionConfigListCtrl" parent="basisListCtrl" scope="prototype" />
 	
 	<bean id="dueExtractionConfigDialog" class="com.pennant.pff.presentment.web.DueExtractionConfigDialogCtrl" parent="basisCtrl" scope="prototype"/>
-	
-	<bean id="rePresentmentUploadListCtrl" class="com.pennant.pff.presentment.web.RePresentmentUploadListCtrl"
-	parent="basisListCtrl" scope="prototype" />
-	
-	<bean id="rePresentmentUploadDialogCtrl" class="com.pennant.pff.presentment.web.RePresentmentUploadDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-	</bean>
 		
 	<bean id="finTypePartnerbankMappingListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypePartnerbankMappingListCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
@@ -6091,4 +6084,15 @@
 		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
 	</bean>	
 	
+	<bean id="uploadList" class="com.pennant.pff.upload.list.AUploadListCtrl" parent="basisListCtrl" scope="prototype" abstract="true"/>
+	
+	<bean id="representmentUploadList" class="com.pennant.pff.presentment.upload.list.RepresentmentUploadListCtrl"
+	parent="uploadList" />
+	
+	<bean id="mandateUploadList" class="com.pennant.pff.mandate.upload.list.MandateUploadListCtrl" parent="uploadList" />
+	
+	<bean id="fateCorrectionUploadListCtrl" class="com.pennant.pff.presentment.upload.list.FateCorrectionUploadListCtrl"
+	parent="uploadList" />
+	
+	<bean id="chequeUploadListCtrl" class="com.pennant.pff.pdc.upload.list.PDCUploadListCtrl" parent="uploadList" />
 </beans>

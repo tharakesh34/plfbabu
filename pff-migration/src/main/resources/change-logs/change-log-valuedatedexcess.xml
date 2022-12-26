@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2649.1" author="Mounika.M">
+		<addColumn tableName="FinExcessAmount">
+			<column name="ReceiptId" type="bigint"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#2649.2" author="Mounika.M">
+		<addColumn tableName="FinExcessAmount">
+			<column name="PostDate" type="datetime"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#2649.3" author="Mounika.M">
+		<addColumn tableName="FinExcessAmount">
+			<column name="ValueDate" type="datetime"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2644_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finexcessamount_lovview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2644" author="saikiran.n">
+		<createView viewName="FINEXCESSAMOUNT_LOVVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT EXCESSID
+					,FINREFERENCE
+					,AMOUNTTYPE
+					,cast(round(AMOUNT / 100,2) numeric(36,2)) AMOUNT
+					,cast(round(UTILISEDAMT / 100,2) numeric(36,2)) UTILISEDAMT
+					,cast(round(RESERVEDAMT / 100,2) numeric(36,2)) RESERVEDAMT
+					,cast(round(BALANCEAMT / 100,2) numeric(36,2)) BALANCEAMT
+					,RECEIPTID
+					,VALUEDATE
+				FROM FINEXCESSAMOUNT
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="TK#2644__post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finexcessamount_lovview');
+			]]>
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>
