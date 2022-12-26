@@ -46,7 +46,6 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			Mandate mndts = new Mandate();
 			mndts.setCustID(rs.getLong("CustID"));
 			mndts.setCustCIF(rs.getString("CustCIF"));
-			mndts.setMandateID(rs.getLong("MandateID"));
 			mndts.setMandateRef(rs.getString("MandateRef"));
 			mndts.setMandateType(rs.getString("MandateType"));
 			mndts.setBankBranchID(JdbcUtil.getLong(rs.getObject("BankBranchID")));
@@ -77,7 +76,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			mndts.setSwapIsActive(rs.getBoolean("SwapIsActive"));
 			mndts.setPrimaryMandateId(rs.getLong("PrimaryMandateId"));
 			mndts.setEntityCode(rs.getString("EntityCode"));
-			mndts.setPartnerBankId(JdbcUtil.getLong(rs.getObject("PartnerBankId")));
+			mndts.setPartnerBankId(rs.getLong("PartnerBankId"));
 			mndts.setDefaultMandate(rs.getBoolean("DefaultMandate"));
 			mndts.seteMandateSource(rs.getString("EMandateSource"));
 			mndts.seteMandateReferenceNo(rs.getString("EMandateReferenceNo"));
@@ -161,7 +160,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 		sql.append(", mu.OpenMandate, mu.StartDate, mu.ExpiryDate, mu.PartnerBankID, mu.MandateRef");
 		sql.append(", mu.ExternalMandate, mu.SwapIsActive, mu.SwapEffectiveDate, mu.EmandateSource");
 		sql.append(", mu.EmandateReferenceNo, mu.EmployerID, mu.EmployeeNo, mu.MandateStatus, mu.Reason");
-		sql.append(", uh.CreatedOn, uh.ApprovedOn, uh.CreatedBy, uh.ApprovedBy, uh.Status, uh.ErrorCode, uh.ErrorDesc");
+		sql.append(", uh.CreatedOn, uh.ApprovedOn, uh.CreatedBy, uh.ApprovedBy, uh.Status, mu.ErrorCode, mu.ErrorDesc");
 		sql.append(" From Mandates_Upload mu");
 		sql.append(" Inner Join File_Upload_Header uh on uh.ID = mu.HeaderID");
 		sql.append(" Where uh.ID = :HEADER_ID");
