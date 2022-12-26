@@ -13014,4 +13014,6 @@
 
 	<bean id="chequeUploadService" class="com.pennant.pff.cheques.service.impl.ChequeUploadServiceImpl"
 		parent="aUploadService" />
+		
+	<bean id="partPayAndEarlySettleValidator" class="com.pennant.backend.service.finance.PartPayAndEarlySettleValidator"/>
 </beans>
