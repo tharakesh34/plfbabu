@@ -341,7 +341,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 
 		lhCheckBoxComp.setChecked(false);
 		search();
-		Clients.showNotification("RePresentMent Process initialized.", "info", null, null, -1);
+		Clients.showNotification("RePresentment Process initialized.", "info", null, null, -1);
 		lhCheckBoxComp.setDisabled(false);
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
@@ -728,7 +728,6 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		List<Long> headerIdList = getListofRePresentMentUpload();
-		rePresentIdMap.clear();
 
 		if (headerIdList.isEmpty()) {
 			MessageUtil.showError(Labels.getLabel("label_ListNoEmpty"));
