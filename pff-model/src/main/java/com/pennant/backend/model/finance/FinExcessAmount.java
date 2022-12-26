@@ -19,9 +19,11 @@ public class FinExcessAmount implements Serializable {
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
 	private String rcdAction;
 	private FinExcessMovement excessMovement;
-	private Long receiptId;
+	private Long receiptID;
 	private Date valueDate;
 	private Date postDate;
+	private boolean expand;
+	private boolean collapse;
 
 	public FinExcessAmount() {
 		super();
@@ -46,6 +48,9 @@ public class FinExcessAmount implements Serializable {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("rcdAction");
 		excludeFields.add("excessMovement");
+		excludeFields.add("expand");
+		excludeFields.add("collapse");
+
 		return excludeFields;
 	}
 
@@ -137,12 +142,12 @@ public class FinExcessAmount implements Serializable {
 		this.excessMovement = excessMovement;
 	}
 
-	public Long getReceiptId() {
-		return receiptId;
+	public Long getReceiptID() {
+		return receiptID;
 	}
 
-	public void setReceiptId(Long receiptId) {
-		this.receiptId = receiptId;
+	public void setReceiptID(Long receiptID) {
+		this.receiptID = receiptID;
 	}
 
 	public Date getValueDate() {
@@ -159,6 +164,22 @@ public class FinExcessAmount implements Serializable {
 
 	public void setPostDate(Date postDate) {
 		this.postDate = postDate;
+	}
+
+	public boolean isExpand() {
+		return expand;
+	}
+
+	public void setExpand(boolean expand) {
+		this.expand = expand;
+	}
+
+	public boolean isCollapse() {
+		return collapse;
+	}
+
+	public void setCollapse(boolean collapse) {
+		this.collapse = collapse;
 	}
 
 }

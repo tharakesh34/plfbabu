@@ -82,7 +82,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(++index, fe.getUtilisedAmt());
 			ps.setBigDecimal(++index, fe.getReservedAmt());
 			ps.setBigDecimal(++index, fe.getBalanceAmt());
-			ps.setLong(++index, fe.getReceiptId());
+			ps.setLong(++index, fe.getReceiptID());
 			ps.setDate(++index, JdbcUtil.getDate(fe.getPostDate()));
 			ps.setDate(++index, JdbcUtil.getDate(fe.getValueDate()));
 
@@ -878,7 +878,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ea.setUtilisedAmt(rs.getBigDecimal("UtilisedAmt"));
 			ea.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
 			ea.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-			ea.setReceiptId(rs.getLong("ReceiptID"));
+			ea.setReceiptID(rs.getLong("ReceiptID"));
 			ea.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 
 			return ea;
@@ -957,7 +957,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				ea.setUtilisedAmt(rs.getBigDecimal("UtilisedAmt"));
 				ea.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
 				ea.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-				ea.setReceiptId(rs.getLong("ReceiptID"));
+				ea.setReceiptID(rs.getLong("ReceiptID"));
 				ea.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 
 				return ea;
@@ -989,7 +989,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				ea.setUtilisedAmt(rs.getBigDecimal("UtilisedAmt"));
 				ea.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
 				ea.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-				ea.setReceiptId(rs.getLong("ReceiptID"));
+				ea.setReceiptID(rs.getLong("ReceiptID"));
 				ea.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 
 				return ea;

@@ -833,7 +833,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			excess.setUtilisedAmt(BigDecimal.ZERO);
 			excess.setBalanceAmt(excessAmt);
 			excess.setReservedAmt(BigDecimal.ZERO);
-			excess.setReceiptId(null);
+			excess.setReceiptID(null);
 			excess.setValueDate(SysParamUtil.getAppDate());
 			excess.setPostDate(excess.getValueDate());
 

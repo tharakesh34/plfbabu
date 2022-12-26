@@ -648,7 +648,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			exAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_ADVINT);
 			exAmount.setAmount(bpiAmt);
 			exAmount.setBalanceAmt(bpiAmt);
-			exAmount.setReceiptId(null);
+			exAmount.setReceiptID(null);
 			exAmount.setValueDate(SysParamUtil.getAppDate());
 			exAmount.setPostDate(exAmount.getValueDate());
 
@@ -731,7 +731,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		excess.setBalanceAmt(excess.getBalanceAmt().add(amount));
 
 		if (excess.getExcessID() == Long.MIN_VALUE || excess.getExcessID() == 0) {
-			excess.setReceiptId(null);
+			excess.setReceiptID(null);
 			excess.setValueDate(SysParamUtil.getAppDate());
 			excess.setPostDate(excess.getValueDate());
 			finExcessAmountDAO.saveExcess(excess);
@@ -1061,7 +1061,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		excess.setBalanceAmt(amount.subtract(utilisedAmt).subtract(reservedAmt));
 
 		if (excess.getExcessID() == Long.MIN_VALUE || excess.getExcessID() == 0) {
-			excess.setReceiptId(null);
+			excess.setReceiptID(null);
 			excess.setValueDate(SysParamUtil.getAppDate());
 			excess.setPostDate(excess.getValueDate());
 			finExcessAmountDAO.saveExcess(excess);

@@ -281,8 +281,8 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	@Override
 	public List<FinTypePartnerBank> getByFinTypeAndPurpose(FinTypePartnerBank fpb) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, FinType, FintypeDesc, Purpose, PaymentMode, PartnerBankID, VanApplicable, BranchCode, BranchDesc");
-		sql.append(", ClusterId, ClusterCode, Name, ClusterType, AccountNo, AccountType, PartnerbankCode");
+		sql.append(" Id, FinType, FintypeDesc, Purpose, PaymentMode, PartnerBankID, VanApplicable, BranchCode");
+		sql.append(", BranchDesc, ClusterId, ClusterCode, Name, ClusterType, AccountNo, AccountType, PartnerbankCode");
 		sql.append(", PartnerbankName, Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinTypePartnerBanks_AView");
@@ -306,7 +306,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 			if (PartnerBankExtension.MAPPING.equals("B")) {
 				ps.setString(++index, fpb.getBranchCode());
 			} else {
-				ps.setLong(++index, fpb.getClusterId());
+				ps.setObject(++index, fpb.getClusterId());
 			}
 
 		}, (rs, rowNum) -> {
@@ -338,7 +338,6 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 			item.setNextTaskId(rs.getString("NextTaskId"));
 			item.setRecordType(rs.getString("RecordType"));
 			item.setWorkflowId(rs.getLong("WorkflowId"));
-			item.setWorkflowId(rs.getLong("FinTypeDesc"));
 
 			return item;
 		});

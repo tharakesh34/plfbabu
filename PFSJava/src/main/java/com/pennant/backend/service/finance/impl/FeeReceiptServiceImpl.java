@@ -1391,7 +1391,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			excess.setUtilisedAmt(BigDecimal.ZERO);
 			excess.setBalanceAmt(excessAmt);
 			excess.setReservedAmt(BigDecimal.ZERO);
-			excess.setReceiptId(rch.getReceiptID());
+			excess.setReceiptID(rch.getReceiptID());
 			excess.setValueDate(rch.getValueDate());
 			excess.setPostDate(SysParamUtil.getAppDate());
 

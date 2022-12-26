@@ -1718,7 +1718,7 @@ public class RepaymentProcessUtil {
 				excess.setUtilisedAmt(BigDecimal.ZERO);
 				excess.setBalanceAmt(rph.getExcessAmount());
 				excess.setReservedAmt(BigDecimal.ZERO);
-				excess.setReceiptId(rch.getReceiptID());
+				excess.setReceiptID(rch.getReceiptID());
 				excess.setValueDate(rch.getValueDate());
 				excess.setPostDate(SysParamUtil.getAppDate());
 
