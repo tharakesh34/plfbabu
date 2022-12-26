@@ -116,6 +116,8 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 				int sucessRecords = 0;
 				int failRecords = 0;
 
+				List<PresentmentRespUpload> list = new ArrayList<>();
+
 				for (PresentmentRespUpload fc : details) {
 					doValidate(header, fc);
 
@@ -123,13 +125,14 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 						failRecords++;
 					} else {
 						sucessRecords++;
+						list.add(fc);
 					}
 				}
 
 				try {
 					txStatus = transactionManager.getTransaction(txDef);
 
-					presentmentRespUploadDAO.update(details);
+					presentmentRespUploadDAO.update(list);
 
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);
@@ -144,10 +147,10 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 					remarks.append(" Success Records : ").append(sucessRecords);
 					remarks.append(" Failed Records : ").append(failRecords);
 
-					List<FileUploadHeader> list = new ArrayList<>();
-					list.add(header);
+					List<FileUploadHeader> headerList = new ArrayList<>();
+					headerList.add(header);
 
-					updateHeader(list, true);
+					updateHeader(headerList, true);
 
 					logger.info("Fate Correction Process is Initiated");
 

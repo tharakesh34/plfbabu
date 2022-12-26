@@ -35,7 +35,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 		sql.append(", Bank_Name, Branch_Code, Branch_Name, Partner_Bank_Code, Partner_Bank_Name, Bank_Address");
 		sql.append(", Account_Number, Ifsc_Code, Umrn_No, Micr_Code, Cheque_Serial_No, Corporate_User_No");
 		sql.append(", Corporate_User_Name, Dest_Acc_Holder, Debit_Credit_Flag, Process_Flag, Thread_Id, Utr_Number");
-		sql.append(", FateCorrection, Error_Code, Error_Description, Progress");
+		sql.append(", FateCorrection, Error_Code, Error_Description, Progress, Status");
 		sql.append(" From PRESENTMENT_RESP_UPLOAD");
 		sql.append(" Where Header_ID = ?");
 
@@ -82,6 +82,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 			fc.setErrorCode(rs.getString("Error_Code"));
 			fc.setErrorDesc(rs.getString("Error_Description"));
 			fc.setProgress(rs.getInt("Progress"));
+			fc.setStatus(rs.getString("Status"));
 
 			return fc;
 		});
@@ -163,7 +164,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 
 	@Override
 	public void saveRespDetails(long uploadID, long headerID) {
-		StringBuilder sql = new StringBuilder("Insert Into PRESENTMENT_RESP_DTLS (Header_Id");
+		StringBuilder sql = new StringBuilder("Insert Into PRESENTMENT_RESP_DTLS (Header_ID");
 		sql.append(", FinId, FinReference, Presentment_Reference, Host_Reference, Instalment_No, Amount_Cleared");
 		sql.append(", Clearing_Date, Clearing_Status, Bounce_Code, Bounce_Remarks, Reason_Code, Bank_Code");
 		sql.append(", Bank_Name, Branch_Code, Branch_Name, Partner_Bank_Code, Partner_Bank_Name, Bank_Address");
@@ -226,12 +227,12 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 	@Override
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, Presentment_Reference, Amount_Cleared, Clearing_Date");
-		sql.append(", Clearing_Status, Umrn_No, FateCorrection, Status, Error_Code, Error_Description");
-		sql.append(" CreatedBy, ApprovedBy");
+		sql.append(" ru.FinReference, ru.Presentment_Reference, ru.Amount_Cleared, ru.Clearing_Date");
+		sql.append(", ru.Clearing_Status, ru.Umrn_No, ru.FateCorrection, ru.Status, ru.Error_Code");
+		sql.append(", ru.Error_Description, uh.CreatedBy, uh.ApprovedBy");
 		sql.append(" From PRESENTMENT_RESP_UPLOAD ru");
-		sql.append(" Inner Join File_Upload_Header uh on uh.Id = ru.Header_ID");
-		sql.append(" Where uh.Id = :HEADER_ID");
+		sql.append(" Inner Join File_Upload_Header uh on uh.ID = ru.Header_ID");
+		sql.append(" Where uh.ID = :HEADER_ID");
 
 		return sql.toString();
 	}
