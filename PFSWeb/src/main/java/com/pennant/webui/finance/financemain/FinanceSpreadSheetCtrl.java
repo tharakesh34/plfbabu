@@ -1014,18 +1014,13 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				greaterThan2years = greaterThan2years.add(financeEnquiry.getMaxInstAmount());
 			}
 
-			int months = DateUtility.getMonthsBetween(financeEnquiry.getFinStartDate(), date);
-
-			if (months > 12) {
-				greaterThan12months = greaterThan12months.add(financeEnquiry.getMaxInstAmount());
-			}
-
 		}
+		greaterThan12months = greaterThan12months.add(lessThan2years).add(greaterThan2years);
 
 		List<CustomerExtLiability> list2 = cd.getCustomerExtLiabilityList();
 		if (list2 != null) {
 			for (CustomerExtLiability custExt : list2) {
-				if (custExt.getBalanceTenure() >= 12) {
+				if (custExt.getBalanceTenure() > 12) {
 					BigDecimal installAmount = custExt.getInstalmentAmount();
 					if (installAmount == null) {
 						installAmount = BigDecimal.ZERO;
