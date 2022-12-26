@@ -199,6 +199,7 @@ import com.pennant.backend.service.finance.FinFeeConfigService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
+import com.pennant.backend.service.finance.PartPayAndEarlySettleValidator;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptRealizationService;
 import com.pennant.backend.service.finance.ReceiptService;
@@ -336,6 +337,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private ReceiptCalculator receiptCalculator;
 	private ManualAdviseDAO manualAdviseDAO;
 	private AccountingSetDAO accountingSetDAO;
+	private PartPayAndEarlySettleValidator partPayAndEarlySettleValidator;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -1555,11 +1557,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 		List<AuditDetail> auditDetails = new ArrayList<>();
-
-		long serviceUID = Long.MIN_VALUE;
-		for (FinServiceInstruction finServInst : fd.getFinScheduleData().getFinServiceInstructions()) {
-			serviceUID = finServInst.getInstructionUID();
-		}
 
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
@@ -6159,6 +6156,21 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return fd;
 		}
 
+		// Max and Min PartPayment Validation & Lock in Period
+		int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
+		BigDecimal receiptAmount = PennantApplicationUtil.formateAmount(fsi.getAmount(), ccyFormat);
+
+		ErrorDetail error = null;
+		if (ReceiptPurpose.EARLYRPY == receiptPurpose) {
+			error = partPayAndEarlySettleValidator.validatePartPay(schdData, receiptAmount);
+		} else if (ReceiptPurpose.EARLYSETTLE == receiptPurpose) {
+			error = partPayAndEarlySettleValidator.validateEarlyPay(schdData);
+		}
+
+		if (error != null) {
+			schdData.setErrorDetail(error);
+			return fd;
+		}
 		schdData.setFinServiceInstruction(fsi);
 
 		doBasicValidations(schdData);
@@ -8382,6 +8394,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 	public void setCollateralAssignmentValidation(CollateralAssignmentValidation collateralAssignmentValidation) {
 		this.collateralAssignmentValidation = collateralAssignmentValidation;
+	}
+
+	@Autowired
+	public void setPartPayAndEarlySettleValidator(PartPayAndEarlySettleValidator partPayAndEarlySettleValidator) {
+		this.partPayAndEarlySettleValidator = partPayAndEarlySettleValidator;
 	}
 
 }
