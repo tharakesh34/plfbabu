@@ -46,5 +46,38 @@
 			<column name="ValueDate" type="datetime"></column>
 		</addColumn>
 	</changeSet>
-
+	
+	<changeSet id="TK#2644_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finexcessamount_lovview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2644" author="saikiran.n">
+		<createView viewName="FINEXCESSAMOUNT_LOVVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT EXCESSID
+					,FINREFERENCE
+					,AMOUNTTYPE
+					,cast(round(AMOUNT / 100,2) numeric(36,2)) AMOUNT
+					,cast(round(UTILISEDAMT / 100,2) numeric(36,2)) UTILISEDAMT
+					,cast(round(RESERVEDAMT / 100,2) numeric(36,2)) RESERVEDAMT
+					,cast(round(BALANCEAMT / 100,2) numeric(36,2)) BALANCEAMT
+					,RECEIPTID
+					,VALUEDATE
+				FROM FINEXCESSAMOUNT
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="TK#2644__post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finexcessamount_lovview');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

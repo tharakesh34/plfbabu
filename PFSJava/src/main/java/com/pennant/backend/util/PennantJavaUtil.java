@@ -3189,10 +3189,10 @@ public class PennantJavaUtil {
 						new String[] { "COLLECTION_AGENCIES", "COLLECTION_AGENCIES" }, BUSINESS_VERTICAL,
 						new String[] { "id", "code", "Description" }, null, 600));
 
-		ModuleUtil.register("Excess",
-				new ModuleMapping("ExcessAmount", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" },
-						null, new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
-						new String[][] { { "AmountType", "0", "E" } }, 750));
+		ModuleUtil.register("Excess", new ModuleMapping("ExcessAmount", FinExcessAmount.class,
+				new String[] { "FinExcessAmount_LovView" }, null, new String[] { "ExcessID", "ReceiptID", "ValueDate",
+						"Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
+				new String[][] { { "AmountType", "0", "E" } }, 850));
 
 		ModuleUtil.register("EMIInAdvance",
 				new ModuleMapping("EMIINadvanceAmount", FinExcessAmount.class,

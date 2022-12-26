@@ -514,12 +514,14 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		long finID = ComponentUtil.getFinID(this.finReference);
 
-		errorDetail = receiptService.validateThreshHoldLimit(receiptData.getReceiptHeader(),
-				this.receiptDues.getActualValue());
+		if (!FinanceConstants.CLOSURE_MAKER.equals(this.module)) {
+			errorDetail = receiptService.validateThreshHoldLimit(receiptData.getReceiptHeader(),
+					this.receiptDues.getActualValue());
 
-		if (errorDetail != null) {
-			MessageUtil.showError(errorDetail.getMessage());
-			return;
+			if (errorDetail != null) {
+				MessageUtil.showError(errorDetail.getMessage());
+				return;
+			}
 		}
 
 		if (!((FinanceMain) this.finReference.getObject()).isFinIsActive()) {
