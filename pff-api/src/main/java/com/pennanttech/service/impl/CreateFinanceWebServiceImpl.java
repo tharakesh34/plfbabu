@@ -667,16 +667,25 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	public FinanceDetail getFinanceDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
+		FinanceDetail response = new FinanceDetail();
+
 		if (StringUtils.isNotBlank(finReference)) {
 			APIErrorHandlerService.logReference(finReference);
 		}
 
-		long finID = financeMainDAO.getFinID(finReference);
+		Long finID = financeMainDAO.getFinID(finReference);
 
-		FinanceDetail fd = createFinanceController.getFinanceDetails(finID);
+		if (finID == null) {
+			String valueParam[] = new String[1];
+			valueParam[0] = finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
+			return response;
+		}
+
+		response = createFinanceController.getFinanceDetails(finID);
 
 		logger.debug(Literal.LEAVING);
-		return fd;
+		return response;
 	}
 
 	@Override

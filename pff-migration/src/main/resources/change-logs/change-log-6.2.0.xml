@@ -6977,4 +6977,46 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#211957_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'filebatchstatus_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#211957" author="saikrishna.b">
+		<createView viewName="FILEBATCHSTATUS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT ID,
+			  		BATCH_NAME FILENAME
+				FROM PRESENTMENT_RESP_HEADER WHERE EVENT = 'IMPORT'
+			]]>
+      	</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#211957_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'filebatchstatus_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#211957.1" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				UPDATE INSTRUMENT_TYPES SET CODE = 'EMANDATE' WHERE CODE ='EMNDT';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#213620.1" author="saikrishna.b">
+		<addColumn tableName="PresentmentHeader">
+			<column name="Resp_Total" type="bigint" />
+			<column name="Resp_Success" type="bigint" />
+			<column name="Resp_Failed" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -134,7 +134,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 	public List<RePresentmentUploadDetail> getDataForReport(long fileID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ru.FinReference, ru.DueDate, ru.PresentmentID, uh.CreatedOn, ru.Progress");
-		sql.append(", ru.Remarks, uh.CreatedBy, uh.ApprovedBy, uh.FileName");
+		sql.append(", ru.Remarks, uh.CreatedBy, uh.ApprovedBy, uh.FileName, uh.RecordStatus");
 		sql.append(" From REPRESENT_UPLOADS ru");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER").append(type);
 		sql.append(" uh on uh.ID = ru.HeaderID");
@@ -154,6 +154,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 			rud.setCreatedBy(rs.getLong("CreatedBy"));
 			rud.setApprovedBy(rs.getLong("ApprovedBy"));
 			rud.setName(rs.getString("FileName"));
+			rud.setRecordStatus(rs.getString("RecordStatus"));
 
 			return rud;
 		}, fileID);
