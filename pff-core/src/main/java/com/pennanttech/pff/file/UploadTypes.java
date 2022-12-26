@@ -5,7 +5,9 @@ public enum UploadTypes {
 
 	MANDATES("Mandate Upload Details Screen"),
 
-	FATE_CORRECTION("Fate Correction Upload Details Screen");
+	FATE_CORRECTION("Fate Correction Upload Details Screen"),
+
+	CHEQUE("Cheque Upload Details Screen");
 
 	private String description;
 

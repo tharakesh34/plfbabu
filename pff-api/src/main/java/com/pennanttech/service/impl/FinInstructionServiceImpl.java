@@ -19,7 +19,6 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -35,11 +34,8 @@ import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
-import com.pennant.backend.dao.pdc.ChequeDetailDAO;
-import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
@@ -65,7 +61,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
@@ -79,7 +74,6 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
@@ -108,7 +102,6 @@ import com.pennant.pff.core.schd.service.PartCancellationService;
 import com.pennant.pff.dao.subvention.SubventionUploadDAO;
 import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
-import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.model.subvention.Subvention;
 import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.pff.service.subvention.SubventionKnockOffService;
@@ -140,6 +133,7 @@ import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -149,7 +143,6 @@ import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.model.external.collection.CollectionAPIDetail;
-import com.pennanttech.pff.overdraft.dao.OverdraftLoanDAO;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pffws.FinServiceInstRESTService;
@@ -196,10 +189,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private CustomerDetailsService customerDetailsService;
 	private BranchDAO branchDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private ChequeHeaderService chequeHeaderService;
-	private ChequeHeaderDAO chequeHeaderDAO;
-	private ChequeDetailDAO chequeDetailDAO;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private VASRecordingDAO vASRecordingDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
@@ -220,7 +210,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private CollectionAPIDetailDAO collectionAPIDetailDAO;
-	private OverdraftLoanDAO overdraftLoanDAO;
 	private FinTypePartnerBankService finTypePartnerBankService;
 
 	/**
@@ -2312,87 +2301,88 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public ChequeHeader getChequeDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		ChequeHeader response = new ChequeHeader();
-
 		if (StringUtils.isBlank(finReference)) {
 			validationUtility.fieldLevelException();
 		}
 
 		APIErrorHandlerService.logReference(finReference);
 
-		if (StringUtils.isBlank(finReference)) {
-			response.setReturnStatus(getError("90502", "finReference"));
-			logger.debug(Literal.LEAVING);
-			return response;
+		ChequeHeader response = chequeHeaderService.getChequeDetails(finReference);
+
+		ErrorDetail error = response.getError();
+
+		if (error != null) {
+			response.setReturnStatus(getError(error.getCode(), error.getError()));
 		}
 
-		Long finID = financeMainDAO.getActiveFinID(finReference);
-		if (finID == null) {
-			response.setReturnStatus(getError("90201", finReference));
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		response = chequeHeaderDAO.getChequeHeaderByRef(finID, "_View");
-		if (response == null) {
-			response = new ChequeHeader();
-			response.setReturnStatus(getError("90201", "No Cheque Details"));
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		response.setChequeDetailList(chequeDetailDAO.getChequeDetailList(response.getHeaderID(), "_View"));
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
 	@Override
 	public WSReturnStatus saveChequeDetails(FinanceDetail fd) {
-		WSReturnStatus wsStatus = validateBasicDetails(fd, "");
-
-		if (wsStatus != null) {
-			return wsStatus;
-		}
-
-		ErrorDetail error = chequeHeaderService.chequeValidationForUpdate(fd, PennantConstants.method_save, "");
+		ErrorDetail error = chequeHeaderService.validateBasicDetails(fd, "");
 
 		if (error != null) {
 			return getError(error.getCode(), error.getParameters());
 		}
 
-		return finServiceInstController.processChequeDetail(fd, "");
+		error = chequeHeaderService.chequeValidationForUpdate(fd, PennantConstants.method_save, "");
+
+		if (error != null) {
+			return getError(error.getCode(), error.getParameters());
+		}
+
+		LoggedInUser loggedInUser = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
+		error = chequeHeaderService.processChequeDetail(fd, "", loggedInUser);
+
+		if (error != null) {
+			return getError(error.getCode(), error.getParameters());
+		}
+
+		return APIErrorHandlerService.getSuccessStatus();
 	}
 
 	@Override
 	public WSReturnStatus createChequeDetails(FinanceDetail fd) {
 		String type = "_Temp";
 
-		WSReturnStatus wsStatus = validateBasicDetails(fd, type);
+		APIErrorHandlerService.logReference(fd.getFinReference());
 
-		if (wsStatus != null) {
-			return wsStatus;
-		}
-
-		ErrorDetail error = chequeHeaderService.chequeValidation(fd, PennantConstants.method_save, type);
+		ErrorDetail error = chequeHeaderService.validateBasicDetails(fd, type);
 
 		if (error != null) {
 			return getError(error.getCode(), error.getParameters());
 		}
 
-		return finServiceInstController.processChequeDetail(fd, type);
+		error = chequeHeaderService.chequeValidation(fd, PennantConstants.method_save, type);
+
+		if (error != null) {
+			return getError(error.getCode(), error.getParameters());
+		}
+
+		LoggedInUser loggedInUser = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
+		error = chequeHeaderService.processChequeDetail(fd, type, loggedInUser);
+
+		if (error != null) {
+			return getError(error.getCode(), error.getParameters());
+		}
+
+		return APIErrorHandlerService.getSuccessStatus();
 	}
 
 	@Override
 	public WSReturnStatus updateChequeDetails(FinanceDetail fd) {
 		String type = "_Temp";
 
-		WSReturnStatus wsStatus = validateBasicDetails(fd, type);
+		ErrorDetail error = chequeHeaderService.validateBasicDetails(fd, type);
 
-		if (wsStatus != null) {
-			return wsStatus;
+		if (error != null) {
+			return getError(error.getCode(), error.getParameters());
 		}
-
-		ErrorDetail error = chequeHeaderService.chequeValidationForUpdate(fd, PennantConstants.method_Update, type);
+		error = chequeHeaderService.chequeValidationForUpdate(fd, PennantConstants.method_Update, type);
 
 		if (error != null) {
 			return getError(error.getCode(), error.getParameters());
@@ -2403,133 +2393,19 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	@Override
 	public WSReturnStatus updateChequeDetailsInMaintainence(FinanceDetail fd) {
-		WSReturnStatus wsStatus = validateBasicDetails(fd, "");
+		ErrorDetail error = chequeHeaderService.validateBasicDetails(fd, "");
 
-		if (wsStatus != null) {
-			return wsStatus;
+		if (error != null) {
+			return getError(error.getCode(), error.getParameters());
 		}
 
-		ErrorDetail error = chequeHeaderService.chequeValidationInMaintainence(fd, PennantConstants.method_Update, "");
+		error = chequeHeaderService.chequeValidationInMaintainence(fd, PennantConstants.method_Update, "");
 
 		if (error != null) {
 			return getError(error.getCode(), error.getParameters());
 		}
 
 		return finServiceInstController.updateChequeDetailsinMaintainence(fd, "");
-	}
-
-	private WSReturnStatus validateBasicDetails(FinanceDetail fd, String type) {
-		String finReference = fd.getFinReference();
-
-		APIErrorHandlerService.logReference(finReference);
-
-		ChequeHeader chequeHeader = fd.getChequeHeader();
-
-		if (chequeHeader == null) {
-			return getError("90502", "Cheque Details ");
-		}
-
-		FinScheduleData schdData = fd.getFinScheduleData();
-
-		if (finReference == null) {
-			return getError("90502", "FinReference");
-		}
-
-		Long finID = financeMainDAO.getActiveFinID(finReference);
-
-		if (finID == null) {
-			return getError("90201", finReference);
-		}
-
-		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
-
-		if (StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
-			return getError("90201", finReference);
-		}
-
-		if (fm.isWriteoffLoan()) {
-			return getError("FWF001", "");
-		}
-
-		schdData.setFinanceMain(fm);
-		fd.setFinID(finID);
-
-		return validateChequeDetails(fd, type, true);
-	}
-
-	private WSReturnStatus validateChequeDetails(FinanceDetail fd, String type, boolean validReq) {
-		boolean date = true;
-
-		FinScheduleData schdData = fd.getFinScheduleData();
-		FinanceMain fm = schdData.getFinanceMain();
-
-		long finID = fm.getFinID();
-
-		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
-
-		ChequeHeader ch = fd.getChequeHeader();
-		List<ChequeDetail> cheques = ch.getChequeDetailList();
-
-		for (ChequeDetail cheque : cheques) {
-			if (InstrumentType.isPDC(cheque.getChequeType())) {
-				List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
-				for (FinanceScheduleDetail schedule : schedules) {
-					date = false;
-
-					if (DateUtil.compare(schedule.getSchDate(), cheque.getChequeDate()) == 0) {
-						date = true;
-						cheque.seteMIRefNo(schedule.getInstNumber());
-
-						validate(schdData, schedule, cheque, validReq, ch.getHeaderID());
-						break;
-					}
-				}
-
-				if (!date) {
-					setError(schdData, "30570", "Cheque Date", "ScheduleDates");
-					break;
-				}
-			}
-		}
-
-		List<ErrorDetail> errors = schdData.getErrorDetails();
-		if (CollectionUtils.isNotEmpty(errors)) {
-			ErrorDetail ed = errors.get(0);
-			return getError(ed.getCode(), ed.getError());
-		}
-
-		return null;
-	}
-
-	private void validate(FinScheduleData schdData, FinanceScheduleDetail schedule, ChequeDetail cheque,
-			boolean validReq, long headerID) {
-		BigDecimal repayAmount = schedule.getRepayAmount();
-		Date schDate = schedule.getSchDate();
-
-		if (repayAmount.compareTo(cheque.getAmount()) != 0) {
-			setError(schdData, "30570", DateUtil.formatToLongDate(schDate), String.valueOf(repayAmount + "INR"));
-			return;
-		}
-
-		if (validReq && chequeDetailDAO.isChequeExists(headerID, schDate)) {
-			setError(schdData, "41018", "Cheque ", "Cheque Date : " + schDate);
-		}
-	}
-
-	private void setError(FinScheduleData schdData, String code, String... parm) {
-		ErrorDetail error = ErrorUtil.getError(code, parm);
-
-		StringBuilder logMsg = new StringBuilder();
-		logMsg.append("\n");
-		logMsg.append("=======================================================\n");
-		logMsg.append("Error-Code: ").append(error.getCode()).append("\n");
-		logMsg.append("Error-Message: ").append(error.getMessage()).append("\n");
-		logMsg.append("=======================================================");
-		logMsg.append("\n");
-
-		logger.error(Literal.EXCEPTION, logMsg);
-
-		schdData.setErrorDetail(error);
 	}
 
 	/**
@@ -3373,136 +3249,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 
-	private WSReturnStatus setOverdraftDetails(FinServiceInstruction fsi, FinanceMain fm) {
-		FinanceMain overDraft = overdraftLoanDAO.getLoanBasicDetails(fsi.getFinID());
-
-		if (overDraft == null) {
-			return null;
-		}
-
-		fm.setProductCategory(overDraft.getProductCategory());
-
-		if (fsi.isOverdraftTxnChrgReq()) {
-			WSReturnStatus status = setOverdrafTxnCharges(fsi, fm, overDraft);
-
-			if (status != null) {
-				return status;
-			}
-		} else {
-			if ((StringUtils.isNotBlank(fsi.getOverdraftCalcChrg())) || (fsi.getOverdraftChrgAmtOrPerc()) == null
-					|| (StringUtils.isNotBlank(fsi.getOverdraftChrCalOn()))) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Transaction Charge is not selected,ChargeDetails";
-
-				return getErrorDetails("RU0039", valueParm);
-			}
-		}
-
-		if ((fsi.getFinAssetValue() == null) || (fsi.getFinAssetValue()).compareTo(BigDecimal.ZERO) <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "FinAssetValue";
-			valueParm[1] = "Zero";
-
-			return getErrorDetails("91121", valueParm);
-		} else {
-			fm.setFinAssetValue(fsi.getFinAssetValue());
-		}
-
-		if (fsi.getNumberOfTerms() <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "NumberOfTerms";
-			valueParm[1] = "Zero";
-
-			return getErrorDetails("91121", valueParm);
-		} else {
-			fm.setNumberOfTerms(fsi.getNumberOfTerms());
-		}
-
-		if (StringUtils.isNotBlank(fsi.getRepayFrq())) {
-			ErrorDetail errorDetail = FrequencyUtil.validateFrequency(fsi.getRepayFrq());
-			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = fsi.getRepayFrq();
-
-				return getErrorDetails("91123", valueParm);
-			} else {
-				fm.setRepayFrq(fsi.getRepayFrq());
-			}
-		} else {
-			fm.setRepayFrq(overDraft.getRepayFrq());
-		}
-
-		return null;
-	}
-
-	private WSReturnStatus setOverdrafTxnCharges(FinServiceInstruction fsi, FinanceMain fm, FinanceMain overDraft) {
-		fm.setOverdraftTxnChrgReq(true);
-
-		if (StringUtils.isNotBlank(fsi.getOverdraftCalcChrg())) {
-			String odCalCharge = fsi.getOverdraftCalcChrg();
-			List<ValueLabel> odCalChargeFor = PennantStaticListUtil.getOverdraftCalcChrg();
-			boolean isodCalChargeForfor = false;
-
-			for (ValueLabel value : odCalChargeFor) {
-				if (StringUtils.equals(value.getValue(), odCalCharge)) {
-					isodCalChargeForfor = true;
-					break;
-				}
-			}
-
-			if (!isodCalChargeForfor) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "oDCalculatedCharge";
-				valueParm[1] = FinanceConstants.FIXED_AMOUNT + "," + FinanceConstants.PERCENTAGE;
-				return getErrorDetails("90281", valueParm);
-			}
-
-			fm.setOverdraftCalcChrg(fsi.getOverdraftCalcChrg());
-		} else {
-			fm.setOverdraftCalcChrg(overDraft.getOverdraftCalcChrg());
-		}
-
-		if (fsi.getOverdraftChrgAmtOrPerc() == null) {
-			fsi.setOverdraftChrgAmtOrPerc(BigDecimal.ZERO);
-		}
-
-		if (StringUtils.isNotBlank(fsi.getOverdraftCalcChrg())
-				&& ((fsi.getOverdraftChrgAmtOrPerc()).compareTo(BigDecimal.ZERO) <= 0)) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "oDChargeAmtOrPerc";
-			valueParm[1] = "Zero";
-			return getErrorDetails("91121", valueParm);
-		} else if ((fsi.getOverdraftChrgAmtOrPerc()).compareTo(BigDecimal.ZERO) > 0) {
-			fm.setOverdraftChrgAmtOrPerc(fsi.getOverdraftChrgAmtOrPerc());
-		} else {
-			fm.setOverdraftChrgAmtOrPerc(overDraft.getOverdraftChrgAmtOrPerc());
-		}
-
-		if (StringUtils.isNotBlank(fsi.getOverdraftChrCalOn())) {
-			String oDChargeCalOn = fsi.getOverdraftChrCalOn();
-			List<ValueLabel> oDChargeCalOnList = PennantStaticListUtil.getODChargeCalculatedOn();
-			boolean isoDChargeCalOn = false;
-			for (ValueLabel value : oDChargeCalOnList) {
-				if (StringUtils.equals(value.getValue(), oDChargeCalOn)) {
-					isoDChargeCalOn = true;
-					break;
-				}
-			}
-			if (!isoDChargeCalOn) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "oDChargeCalOn";
-				valueParm[1] = FinanceConstants.OD_TRANCHE_AMOUNT;
-				return getErrorDetails("90281", valueParm);
-			}
-
-			fm.setOverdraftChrCalOn(fsi.getOverdraftChrCalOn());
-		} else {
-			fm.setOverdraftChrCalOn(overDraft.getOverdraftChrCalOn());
-		}
-
-		return null;
-	}
-
 	@Override
 	public WSReturnStatus updateUTRNum(ReceiptTransaction transaction) throws ServiceException {
 		logger.debug(Literal.ENTERING);
@@ -3667,23 +3413,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Autowired
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	@Autowired
 	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
 		this.chequeHeaderService = chequeHeaderService;
-	}
-
-	@Autowired
-	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
-		this.chequeHeaderDAO = chequeHeaderDAO;
-	}
-
-	@Autowired
-	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
-		this.chequeDetailDAO = chequeDetailDAO;
 	}
 
 	@Autowired
@@ -3784,11 +3515,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Autowired
 	public void setCollectionAPIDetailDAO(CollectionAPIDetailDAO collectionAPIDetailDAO) {
 		this.collectionAPIDetailDAO = collectionAPIDetailDAO;
-	}
-
-	@Autowired
-	public void setOverdraftLoanDAO(OverdraftLoanDAO overdraftLoanDAO) {
-		this.overdraftLoanDAO = overdraftLoanDAO;
 	}
 
 	@Autowired

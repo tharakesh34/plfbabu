@@ -13019,4 +13019,9 @@
 	<bean id="fateCorrectionUploadService" class="com.pennant.pff.presentment.service.impl.FateCorrectionUploadServiceImpl" />
 	
 	<bean id="presentmentRespUploadDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentRespUploadDAOImpl" parent="sequenceDao"/>
+	
+	<bean id="chequeUploadDAO" class="com.pennant.pff.cheques.dao.impl.ChequeUploadDAOImpl" parent="sequenceDao" />
+
+	<bean id="chequeUploadService" class="com.pennant.pff.cheques.service.impl.ChequeUploadServiceImpl"
+		parent="aUploadService" />
 </beans>

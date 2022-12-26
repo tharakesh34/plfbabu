@@ -6076,4 +6076,6 @@
 	
 	<bean id="fateCorrectionUploadListCtrl" class="com.pennant.pff.presentment.upload.list.FateCorrectionUploadListCtrl"
 	parent="uploadList" />
+	
+	<bean id="chequeUploadListCtrl" class="com.pennant.pff.pdc.upload.list.PDCUploadListCtrl" parent="uploadList" />
 </beans>
