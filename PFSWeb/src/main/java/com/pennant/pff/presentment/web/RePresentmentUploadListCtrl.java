@@ -651,7 +651,7 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 			lc = new Listcell(String.valueOf(uph.getTotalRecords()));
 			lc.setParent(item);
 
-			lc = new Listcell(String.valueOf(uph.getProgress()));
+			lc = new Listcell(String.valueOf(uph.getSuccessRecords() + uph.getFailureRecords()));
 			lc.setParent(item);
 
 			lc = new Listcell(String.valueOf(uph.getSuccessRecords()));
