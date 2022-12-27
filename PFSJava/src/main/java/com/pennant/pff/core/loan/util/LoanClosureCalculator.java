@@ -101,7 +101,7 @@ public class LoanClosureCalculator {
 		BigDecimal pos = BigDecimal.ZERO;
 
 		for (FinanceScheduleDetail schedule : schedules) {
-			pos = pos.add(schedule.getPrincipalSchd().subtract(schedule.getSchdPriPaid()));
+			pos = pos.add(schedule.getPrincipalSchd().subtract(schedule.getSchdPriPaid().add(schedule.getTDSAmount())));
 		}
 
 		return pos;
@@ -252,11 +252,14 @@ public class LoanClosureCalculator {
 	}
 
 	private static BigDecimal calculateFees(ReceiptDTO receiptDTO) {
-		BigDecimal feeAmount = new BigDecimal("50000");
+		BigDecimal feeAmount = BigDecimal.ZERO;
 
 		List<FinFeeDetail> fees = receiptDTO.getFees();
+		if (fees.isEmpty()) {
+			return feeAmount;
+		}
 		for (FinFeeDetail fee : fees) {
-
+			feeAmount = feeAmount.add(fee.getRemainingFeeOriginal().add(fee.getRemainingFeeGST()));
 		}
 
 		return feeAmount;
