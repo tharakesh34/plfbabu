@@ -132,7 +132,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" cu.ACTION, cu.CHEQUETYPE, cu.FINREFERENCE");
 		sql.append(", cu.CHEQUESERIALNO, cu.ACCOUNTTYPE, cu.ACCHOLDERNAME, cu.ACCOUNTNO");
-		sql.append(",cu.IFSCCODE, cu.MICR, cu.AMOUNT,cu.ID UPLOADID, cu.CHEQUEDETAILSID");
+		sql.append(",cu.IFSCCODE, cu.MICR, cu.AMOUNT,cu.ID, cu.CHEQUEDETAILSID");
 		sql.append(", uh.APPROVEDON, uh.CREATEDON, cu.STATUS, cu.ERRORCODE, cu.ERRORDESC");
 		sql.append(" ,uh.CREATEDBY,uh.APPROVEDBY");
 		sql.append(" From CHEQUES_UPLOAD cu");
