@@ -403,7 +403,7 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 		try {
 			ExcelUtil.isValidFile(name, 200, "^[a-zA-Z0-9 ._]*$");
 		} catch (AppException e) {
-			wve.add(new WrongValueException(e.getMessage()));
+			wve.add(new WrongValueException(this.txtFileName, e.getMessage()));
 		}
 
 		try {
