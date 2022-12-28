@@ -3452,7 +3452,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#708.1" author="sainaveen.y">
+	<changeSet id="ST#708.01" author="sainaveen.y">
 		<createTable tableName="CHEQUES_UPLOAD">
 			<column name="ID" type="bigint" autoIncrement="true" >
 				<constraints nullable="false" />
@@ -3464,7 +3464,7 @@
 			<column name="FinReference" type="varchar(20)" />
 			<column name="FinID" type="bigint" />
 			<column name="AccountNo" type="varchar(50)" />
-			<column name="ChequeSerialNo" type="varchar(20)" />
+			<column name="ChequeSerialNo" type="int" />
 			<column name="ChequeDate" type="datetime" />
 			<column name="EmiRefNo" type="int" />
 			<column name="Amount" type="bigint" />
