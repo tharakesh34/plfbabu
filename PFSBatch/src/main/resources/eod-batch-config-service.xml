@@ -116,8 +116,7 @@
 		<property name="accrualService" ref="accrualService" />
 	</bean>
 	<!-- Date Service -->
-	<bean id="dateService" class="com.pennant.app.core.DateService" parent="serviceHelper">
-	</bean>
+	<bean id="dateService" class="com.pennant.app.core.DateService" parent="sequenceDao"/>
 	<!-- Date rollover -->
 	<bean id="dateRollOverService" class="com.pennant.app.core.DateRollOverService" parent="serviceHelper">
 	</bean>

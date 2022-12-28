@@ -14,7 +14,6 @@ import com.pennant.app.core.DateService;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
@@ -61,29 +60,11 @@ public class DatesUpdate extends SequenceDao<Object> implements Tasklet {
 		/* Check extended month end and update the dates. */
 		dateService.doUpdateAftereod(true);
 
-		resetSequences("SeqCollateralSetup", 1);
-		resetSequences("SeqVasReference", 1);
-		resetSequences("SeqInvestment", 1);
-
 		EODUtil.updateEventProperties(context, eventProperties);
 		EODUtil.setDatesReload(true);
 
 		logger.info("COMPLETE Update Dates On {}", valueDate);
 		return RepeatStatus.FINISHED;
-	}
-
-	private void resetSequences(String seqName, long sequence) {
-		switch (App.DATABASE) {
-		case ORACLE:
-		case MY_SQL:
-			jdbcOperations.execute("ALTER SEQUENCE " + seqName + " RESTART START WITH " + sequence);
-			break;
-		case POSTGRES:
-			jdbcOperations.execute("ALTER SEQUENCE " + seqName + " RESTART WITH " + sequence);
-			break;
-		default:
-			//
-		}
 	}
 
 	@Autowired
