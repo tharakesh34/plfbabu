@@ -1304,4 +1304,13 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
+
+	@Override
+	public Date getNextSchdDate(long finID, Date appDate) {
+		String sql = "Select min(SchDate) from FinScheduleDetails Where FinID = ? and SchDate > ? and RepayOnSchDate = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Date.class, finID, appDate, 1);
+	}
 }

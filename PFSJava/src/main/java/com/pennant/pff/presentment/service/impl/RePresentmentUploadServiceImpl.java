@@ -25,6 +25,7 @@ import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -61,6 +62,7 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	private AuditHeaderDAO auditHeaderDAO;
 	private EntityDAO entityDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	private static final String TABLE_NAME = "REPRESENT_UPLOADS";
 
@@ -233,9 +235,10 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 			return;
 		}
 
-		int curSchdMonth = DateUtil.getMonth(dueDate);
-		if (curSchdMonth != appDateMonth) {
-			setError(detail, "Due date should be in current month only");
+		Date nextSchdDate = financeScheduleDetailDAO.getNextSchdDate(fm.getFinID(), dueDate);
+
+		if (nextSchdDate != null && nextSchdDate.compareTo(appDate) <= 0) {
+			setError(detail, "Due date reached the next installment date.");
 			return;
 		}
 
@@ -607,6 +610,11 @@ public class RePresentmentUploadServiceImpl extends GenericService<FileUploadHea
 	@Autowired
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 }
