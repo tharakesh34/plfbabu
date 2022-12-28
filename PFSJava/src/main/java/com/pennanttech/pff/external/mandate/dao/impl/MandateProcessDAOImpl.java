@@ -110,6 +110,11 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		paramMap.addValue("MANDATEID", Arrays.asList(mandateIds));
 		final ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
 
+		Date appDate = SysParamUtil.getAppDate();
+
+		Date extractionDate = DateUtil.getDatePart(appDate);
+		String mandateDate = DateUtil.formatToShortDate(appDate);
+
 		try {
 			jdbcTemplate.query(sql.toString(), paramMap, new RowMapper<Long>() {
 				@Override
@@ -121,10 +126,11 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 						bankCode = rowMap.get("BANK_CODE").toString();
 					}
 
+					rowMap.put("MANDATE_DATE", mandateDate);
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("PROCESS_ID", processId);
 					rowMap.put("BANK_SEQ", getSequence(bankCode, bankCodeSeq));
-					rowMap.put("EXTRACTION_DATE", DateUtil.getDatePart(SysParamUtil.getAppDate()));
+					rowMap.put("EXTRACTION_DATE", extractionDate);
 
 					String frequency = null;
 

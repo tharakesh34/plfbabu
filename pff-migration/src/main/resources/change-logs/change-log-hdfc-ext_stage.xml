@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.maindb" value="PLF.." dbms="mssql" />
+	<property name="call.maindb" value="PLF." dbms="oracle" />
+
+	<changeSet id="pre_run_for_pgp" author="murthy.y" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfext, public, pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="001" author="goutham.ch">
+		<createTable tableName="PDC_BATCH_D_STG">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FINNONE_BATCHID" type="bigint" />
+			<column name="PDC_BATCHID" type="VARCHAR(29)" />
+			<column name="AGREEMENTID" type="bigint" />
+			<column name="CHEQUESNO" type="VARCHAR(30)" />
+			<column name="CHEQUEDATE" type="datetime" />
+			<column name="CHEQUEAMOUNT" type="bigint" />
+			<column name="CHEQUESTATUS" type="VARCHAR(1)" />
+			<column name="BOUNCE_REASON" type="VARCHAR(100)" />
+			<column name="CITYID" type="VARCHAR(6)" />
+			<column name="BANKID" type="VARCHAR(6)" />
+			<column name="BANKBRANCHID" type="VARCHAR(3)" />
+			<column name="MICR_CODE" type="VARCHAR(9)" />
+			<column name="CASHIN_FLOW_DATE" type="datetime" />
+			<column name="FINNONE_PICK_DATE" type="datetime" />
+			<column name="PICK_FINNONE" type="VARCHAR(1)" />
+			<column name="EXCEPTION_FLAG" type="VARCHAR(1)" />
+			<column name="EXCEPTION_DESC" type="VARCHAR(200)" />
+			<column name="STATUS" type="VARCHAR(1)" />
+			<column name="LIQUIDATION_DATE" type="datetime" />
+			<column name="DEPOSIT_NUMBER" type="VARCHAR(12)" />
+			<column name="CLIENT_CODE" type="VARCHAR(10)" />
+			<column name="PRODUCT_CODE" type="VARCHAR(10)" />
+			<column name="DEPOSIT_DATE" type="datetime" />
+			<column name="TYPE_OF_LIQUIDATION" type="VARCHAR(1)" />
+		</createTable>
+	</changeSet>
+
+</databaseChangeLog>

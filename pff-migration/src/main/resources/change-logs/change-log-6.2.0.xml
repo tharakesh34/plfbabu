@@ -7029,4 +7029,46 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="ST#822.1" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="MANDATE_DATE" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.2" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="NAME_OF_COMPANY" type="VARCHAR(500)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.3" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="ACTION" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.4" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="AMOUNT" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.5" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="TELEPHONE_NO" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.6" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="IMAGE_NAME" type="VARCHAR(500)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.7" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="CAT_CODE" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
