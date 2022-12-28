@@ -179,11 +179,11 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 		sql.append(", Corporate_User_Name, Dest_Acc_Holder, Debit_Credit_Flag, Process_Flag, Thread_Id, Utr_Number");
 		sql.append(", FateCorrection, Error_Code, Error_Description");
 		sql.append(" From PRESENTMENT_RESP_UPLOAD");
-		sql.append(" Where Header_ID = ?");
+		sql.append(" Where Header_ID = ? and Progress = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		this.jdbcOperations.update(sql.toString(), headerID, uploadID);
+		this.jdbcOperations.update(sql.toString(), headerID, uploadID, EodConstants.PROGRESS_SUCCESS);
 	}
 
 	@Override
@@ -238,33 +238,33 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 	}
 
 	@Override
-	public boolean isProcessed(String reference, Date dueDate) {
+	public boolean isProcessed(String reference, Date clearingDate) {
 		StringBuilder sql = new StringBuilder("Select count(ID) From FILE_UPLOAD_HEADER Where Type = ? and Id IN (");
 		sql.append("Select Header_Id From PRESENTMENT_RESP_UPLOAD ru");
 		sql.append(" Inner Join PresentmentDetails pd on pd.PRESENTMENTID = ru.PRESENTMENTID");
-		sql.append("and pd.FateCorrection = ? Where ru.FinReference = ? and ru.DueDate = ? and ru.Progress = ?)");
-
+		sql.append(" and pd.FateCorrection = ? Where ru.FinReference = ?");
+		sql.append(" and ru.CLEARING_DATE = ? and ru.Progress = ?)");
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, UploadTypes.FATE_CORRECTION.name(),
-				"Y", reference, JdbcUtil.getDate(dueDate), ReceiptDetailStatus.SUCCESS.getValue()) > 0;
+				"Y", reference, JdbcUtil.getDate(clearingDate), ReceiptDetailStatus.SUCCESS.getValue()) > 0;
 	}
 
 	@Override
-	public PresentmentDetail getPresentmentDetail(String reference, Date dueDate) {
+	public PresentmentDetail getPresentmentDetail(String reference, Date clearingDate) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinID, pd.PresentmentRef, pd.Status, b.BranchSwiftBrnCde");
 		sql.append(" From PresentmentDetails pd");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = pd.FinID");
 		sql.append(" Inner Join RMTBranches b on b.BranchCode = fm.FinBranch");
-		sql.append(" Where FinReference = ? and SchDate = ?");
+		sql.append(" Where fm.FinReference = ? and SchDate = ?");
 		sql.append(" Order by PresentmentID desc");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		List<PresentmentDetail> list = this.jdbcOperations.query(sql.toString(), ps -> {
 			ps.setString(1, reference);
-			ps.setDate(2, JdbcUtil.getDate(dueDate));
+			ps.setDate(2, JdbcUtil.getDate(clearingDate));
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 

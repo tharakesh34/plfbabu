@@ -116,8 +116,6 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 				int sucessRecords = 0;
 				int failRecords = 0;
 
-				List<PresentmentRespUpload> list = new ArrayList<>();
-
 				for (PresentmentRespUpload fc : details) {
 					doValidate(header, fc);
 
@@ -125,14 +123,13 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 						failRecords++;
 					} else {
 						sucessRecords++;
-						list.add(fc);
 					}
 				}
 
 				try {
 					txStatus = transactionManager.getTransaction(txDef);
 
-					presentmentRespUploadDAO.update(list);
+					presentmentRespUploadDAO.update(details);
 
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);

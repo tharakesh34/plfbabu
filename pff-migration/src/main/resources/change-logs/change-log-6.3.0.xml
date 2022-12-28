@@ -3316,6 +3316,12 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#5.33" author="bhaskara.k">
+		<addColumn tableName="PRESENTMENT_RESP_UPLOAD">
+			<column name="PresentmentId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
 	<changeSet id="ST#711.2" author="bhaskara.k">
 		<addPrimaryKey constraintName="PK_PRE_RESPONCE_UPLOAD_Id" tableName="PRESENTMENT_RESP_UPLOAD" columnNames="Id" />
 	</changeSet>
