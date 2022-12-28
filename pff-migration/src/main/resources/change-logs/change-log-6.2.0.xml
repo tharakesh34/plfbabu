@@ -7014,7 +7014,17 @@
 	<changeSet id="PSD#213620.1" author="saikrishna.b">
 		<addColumn tableName="PresentmentHeader">
 			<column name="Resp_Total" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="PSD#213620.2" author="saikrishna.b">
+		<addColumn tableName="PresentmentHeader">
 			<column name="Resp_Success" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="PSD#213620.3" author="saikrishna.b">
+		<addColumn tableName="PresentmentHeader">
 			<column name="Resp_Failed" type="bigint" />
 		</addColumn>
 	</changeSet>

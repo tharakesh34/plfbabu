@@ -3028,7 +3028,7 @@
 			<column name="OpenMandate"			type="boolean"/>
 			<column name="StartDate"			type="datetime"/>
 			<column name="ExpiryDate"			type="datetime"/>
-			<column name="MaxLimit"				type="number(15,2)"/>
+			<column name="MaxLimit"				type="decimal(18,0)"/>
 			<column name="Periodicity"			type="varchar(20)"/>
 			<column name="PhoneCountryCode"		type="varchar(5)"/>
 			<column name="PhoneAreaCode"		type="varchar(8)"/>
@@ -3042,7 +3042,7 @@
 			<column name="OrgReference"			type="varchar(25)"/>
 			<column name="ExternalRef"			type="varchar(2000)"/>
 			<column name="DocumentName"			type="varchar(200)"/>
-			<column name="DocumentRef"			type="number"/>
+			<column name="DocumentRef"			type="bigint"/>
 			<column name="BarCodeNumber"		type="varchar(10)"/>
 			<column name="SwapIsActive"			type="boolean"/>
 			<column name="PrimaryMandateID"		type="bigint"/>
@@ -3458,9 +3458,11 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#708.1" author="sainaveen.y">
+	<changeSet id="ST#708.01" author="sainaveen.y">
 		<createTable tableName="CHEQUES_UPLOAD">
-			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="ID" type="bigint" autoIncrement="true" >
+				<constraints nullable="false" />
+			</column>
 			<column name="HeaderId" type="bigint" />
 			<column name="ChequeDetailsId" type="bigint" />
 			<column name="ChequeHeaderId" type="bigint" />
@@ -3468,7 +3470,7 @@
 			<column name="FinReference" type="varchar(20)" />
 			<column name="FinID" type="bigint" />
 			<column name="AccountNo" type="varchar(50)" />
-			<column name="ChequeSerialNo" type="varchar(20)" />
+			<column name="ChequeSerialNo" type="int" />
 			<column name="ChequeDate" type="datetime" />
 			<column name="EmiRefNo" type="int" />
 			<column name="Amount" type="bigint" />
@@ -3485,7 +3487,7 @@
 			<column name="recordtype" type="varchar(50)" />
 			<column name="workflowid" type="bigint" />
 			<column name="DocumentName" type="varchar(200)" />
-			<column name="DocumentRef" type="numeric(38,0)" />
+			<column name="DocumentRef" type="bigint" />
 			<column name="ChequeType" type="varchar(8)" />
 			<column name="ChequeStatus" type="varchar(10)" />
 			<column name="AccountType" type="varchar(20)" />
