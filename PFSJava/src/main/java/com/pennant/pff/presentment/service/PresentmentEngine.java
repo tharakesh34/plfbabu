@@ -654,10 +654,6 @@ public class PresentmentEngine {
 		BigDecimal advAmount = pd.getAdvAdjusted();
 		pd.setPresentmentAmt(pd.getPresentmentAmt().subtract(advAmount));
 
-		if (InstrumentType.isPDC(pd.getInstrumentType()) || InstrumentType.isIPDC(pd.getInstrumentType())) {
-			pd.setPresentmentAmt(pd.getChequeAmount());
-		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
