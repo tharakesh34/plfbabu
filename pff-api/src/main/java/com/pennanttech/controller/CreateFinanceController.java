@@ -143,6 +143,7 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
@@ -245,6 +246,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private CovenantTypeDAO covenantTypeDAO;
 	private PromotionDAO promotionDAO;
 	private RuleDAO ruleDAO;
+	private FinFeeDetailService finFeeDetailService;
 
 	public FinanceDetail doCreateFinance(FinanceDetail fd, boolean loanWithWIF) {
 		logger.info(Literal.ENTERING);
@@ -450,6 +452,14 @@ public class CreateFinanceController extends SummaryDetailService {
 						response.setReturnStatus(
 								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 						return response;
+					}
+				}
+
+				if (!"#".equals(fm.getAdvType()) || !"#".equals(fm.getGrcAdvType())) {
+					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getCustID(),
+							fm.getFinCcy(), null, fm.getFinBranch());
+					for (FinFeeDetail finfee : schdData.getFinFeeDetailList()) {
+						finFeeDetailService.calculateFees(finfee, schdData, taxPercentages);
 					}
 				}
 
@@ -4788,4 +4798,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
 	}
+
+	@Autowired
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
 }

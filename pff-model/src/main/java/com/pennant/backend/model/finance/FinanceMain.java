@@ -702,8 +702,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Long businessVertical;
 	private String businessVerticalCode;
 	private String businessVerticalDesc;
-
+	@XmlElement
 	private String grcAdvType;
+	@XmlElement(name = "grcadvEMITerms")
 	private int grcAdvTerms;
 	@XmlElement
 	private String advType;

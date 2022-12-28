@@ -3874,7 +3874,8 @@ public class FinanceDataValidation {
 				break;
 			}
 
-			if (advTerms >= numberOfTerms) {
+			if (fm.getAdvTerms() >= fm.getNumberOfTerms() && AdvanceType.UT.name().equals(fm.getAdvType())
+					&& fm.getMaturityDate() == null) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Advance Intrest/EMI" + String.valueOf(advTerms);
 				valueParm[1] = " Number of terms : " + String.valueOf(numberOfTerms);
