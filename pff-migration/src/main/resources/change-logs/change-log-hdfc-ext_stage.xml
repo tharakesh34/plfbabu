@@ -8,12 +8,6 @@
 	<property name="call.maindb" value="PLF.." dbms="mssql" />
 	<property name="call.maindb" value="PLF." dbms="oracle" />
 
-	<changeSet id="pre_run_for_pgp" author="murthy.y" runAlways="true" dbms="postgresql">
-		<sql>
-			Set search_path = plfext, public, pg_catalog;
-		</sql>
-	</changeSet>
-
 	<changeSet id="001" author="goutham.ch">
 		<createTable tableName="PDC_BATCH_D_STG">
 			<column name="ID" type="bigint" autoIncrement="true">

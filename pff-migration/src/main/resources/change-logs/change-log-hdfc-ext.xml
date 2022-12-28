@@ -8,12 +8,6 @@
 	<property name="call.maindb" value="PLF.." dbms="mssql" />
 	<property name="call.maindb" value="PLF." dbms="oracle" />
 
-	<changeSet id="pre_run_for_pgp" author="murthy.y" runAlways="true" dbms="postgresql">
-		<sql>
-			Set search_path = plfext, public, pg_catalog;
-		</sql>
-	</changeSet>
-
 	<changeSet id="001" author="goutham.ch">
 		<createTable tableName="FILE_INTERFACE_CONFIG ">
 			<column name="INTERFACE_TYPE" type="VARCHAR(100)" />
@@ -151,6 +145,14 @@
 	<changeSet id="012" author="goutham.ch">
 		<createSequence sequenceName="SEQ_PRMNT_PDC" incrementBy="1" startValue="1" minValue="1"
 			maxValue="9223372036854775807" />
+	</changeSet>
+	
+	<changeSet id="002.3" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				INSERT INTO FILE_INTERFACE_CONFIG (INTERFACE_TYPE, NO_OF_RECORDS, FILE_LOCATION, HOLD_TYPE, FILE_PREPEND, FILE_POSTPEND, FILE_EXTENSION, DATE_FORMAT, SUCCESS_INDICATOR, FAIL_INDICATOR) VALUES ('PDC', 1, 'PRESENTMENT/PDC/REQUEST', 202, 'PLF_Exernal_PDC_', '_', '.csv', 'ddMMyyyy', NULL, NULL);
+			]]>
+		</sql>
 	</changeSet>
 	
 </databaseChangeLog>
