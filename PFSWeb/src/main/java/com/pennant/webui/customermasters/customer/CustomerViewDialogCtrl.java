@@ -2818,12 +2818,34 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return aruments;
 	}
 
+	private FinanceEnquiry prepareEqnuiry(FinanceMain fm) {
+		FinanceEnquiry finEnqy = new FinanceEnquiry();
+
+		finEnqy.setFinID(fm.getFinID());
+		finEnqy.setCustID(fm.getCustID());
+		finEnqy.setFinType(fm.getFinType());
+		finEnqy.setFinReference(fm.getFinReference());
+		finEnqy.setFinStartDate(fm.getFinStartDate());
+		finEnqy.setFinApprovedDate(fm.getFinApprovedDate());
+		finEnqy.setLatestRpyDate(fm.getLastRepayDate());
+		finEnqy.setRepayFrq(fm.getRepayFrq());
+		finEnqy.setFinAssetValue(fm.getFinAssetValue());
+		finEnqy.setInstalmentPaid(fm.getSchPriDue().add(fm.getSchPftDue()));
+		finEnqy.setMaturityDate(fm.getMaturityDate());
+		finEnqy.setClosingStatus(fm.getClosingStatus());
+		finEnqy.setNumberOfTerms(fm.getNumberOfTerms());
+		// finEnqy.setCurODDays(fm.getOd);
+		// finEnqy.setOwnership(rs.getString("OwnerShip"));
+
+		return finEnqy;
+	}
+
 	public void onCustomerLoanDetailsItemDoubleClicked(Event event) {
 		Listitem selectedItem = this.listBoxCustomerLoanDetails.getSelectedItem();
-		FinanceEnquiry financeEnquiry = (FinanceEnquiry) selectedItem.getAttribute("financeEnquiry");
+		FinanceMain fm = (FinanceMain) selectedItem.getAttribute("data");
 
 		Map<String, Object> map = getDefaultArguments();
-		map.put("financeEnquiry", financeEnquiry);
+		map.put("financeEnquiry", prepareEqnuiry(fm));
 		map.put("enquiryType", "FINENQ");
 		map.put("fromApproved", true);
 		map.put("childDialog", true);
