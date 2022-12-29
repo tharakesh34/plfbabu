@@ -7049,7 +7049,7 @@
 	
 	<changeSet id="ST#822.4" author="goutham.ch">
 		<addColumn tableName="MANDATE_REQUESTS">
-			<column name="AMOUNT" type="VARCHAR(50)" />
+			<column name="AMOUNT" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 	
