@@ -407,6 +407,9 @@ public class ExtendedCombobox extends Hbox {
 
 		if (this.filters != null) {
 			for (int i = 0; i < filters.length; i++) {
+				if (filters[i] == null) {
+					continue;
+				}
 				search.addFilter(filters[i]);
 			}
 		}

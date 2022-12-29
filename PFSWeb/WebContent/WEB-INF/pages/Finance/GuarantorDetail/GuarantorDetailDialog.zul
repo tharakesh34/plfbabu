@@ -179,12 +179,9 @@
 											<textbox id="cityName" width="180px" />
 										</hbox>
 
-										<label id="label_GuarantorDetailDialog_AddrZIP" value="${c:l('label_GuarantorDetailDialog_AddrZIP.value')}"
-											visible="true" />
-										<hlayout spacing="2px">
-											<space spacing="2px" sclass="mandatory" />
-											<textbox id="addrZIP" width="155px" />
-										</hlayout>
+										<label id="label_GuarantorDetailDialog_AddrZIP"
+											value="${c:l('label_GuarantorDetailDialog_AddrZIP.value')}" />
+										<extendedcombobox id="addrPIN" />
 									</row>
 									<row id="row6">
 										<label value="Status" />

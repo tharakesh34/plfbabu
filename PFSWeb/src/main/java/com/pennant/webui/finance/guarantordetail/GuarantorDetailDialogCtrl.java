@@ -69,6 +69,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -76,6 +77,9 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
+import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -97,6 +101,7 @@ import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -189,7 +194,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	protected ExtendedCombobox addrCity; // autoWired
 	protected ExtendedCombobox addrProvince; // autoWired
 	protected ExtendedCombobox addrCountry; // autoWired
-	protected Textbox addrZIP; // autoWired
+	protected ExtendedCombobox addrPIN; // autoWired
 	protected Textbox cityName; // autoWired
 
 	protected Row row7;
@@ -230,8 +235,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private String cif[] = null;
 	Customer customer = null;
 	private FinanceMain financeMain;
-	private String addrCountryTemp;
-	private String addrProvinceTemp;
 	private BigDecimal totSharePerc;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private boolean isEnqProcess = false;
@@ -789,7 +792,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrProvince.setReadonly(true);
 			this.addrCity.setReadonly(true);
 			this.cityName.setReadonly(true);
-			this.addrZIP.setReadonly(true);
+			this.addrPIN.setReadonly(true);
 		}
 
 		logger.debug("Leaving");
@@ -839,7 +842,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrProvince.setValue("");
 			this.addrCity.setValue("");
 			this.cityName.setValue("");
-			this.addrZIP.setValue("");
+			this.addrPIN.setValue("");
 			// Address Details
 			if (finsumryGurnatorEnq) {
 				this.addrHNbr.setReadonly(true);
@@ -852,7 +855,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				this.addrProvince.setReadonly(true);
 				this.addrCity.setReadonly(true);
 				this.cityName.setReadonly(true);
-				this.addrZIP.setReadonly(true);
+				this.addrPIN.setReadonly(true);
 			}
 		}
 	}
@@ -935,7 +938,16 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.addrCity.setDescColumn("PCCityName");
 		this.addrCity.setValidateColumns(new String[] { "PCCity" });
 		this.cityName.setMaxlength(8);
-		this.addrZIP.setMaxlength(50);
+
+		this.addrPIN.setMaxlength(50);
+		this.addrPIN.setTextBoxWidth(121);
+		this.addrPIN.setMandatoryStyle(true);
+		this.addrPIN.setModuleName("PinCode");
+		this.addrPIN.setValueColumn("PinCodeId");
+		this.addrPIN.setDescColumn("AreaName");
+		this.addrPIN.setValueType(DataType.LONG);
+		this.addrPIN.setValidateColumns(new String[] { "PinCodeId" });
+		this.addrPIN.setInputAllowed(false);
 
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
@@ -979,7 +991,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrCountry.setValue(aGuarantorDetail.getAddrCountry());
 			this.addrProvince.setValue(aGuarantorDetail.getAddrProvince());
 			this.addrCity.setValue(aGuarantorDetail.getAddrCity());
-			this.addrZIP.setValue(aGuarantorDetail.getAddrZIP());
+			this.addrPIN.setValue(aGuarantorDetail.getAddrZIP());
+			this.addrPIN.setDescription(aGuarantorDetail.getLovDescAddrZip());
 			this.addrCountry.setDescription(aGuarantorDetail.getLovDescAddrCountryName());
 			this.addrProvince.setDescription(aGuarantorDetail.getLovDescAddrProvinceName());
 			this.addrCity.setDescription(aGuarantorDetail.getLovDescAddrCityName());
@@ -991,16 +1004,30 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.recordType.setValue(PennantJavaUtil.getLabel(aGuarantorDetail.getRecordType()));
 
 		getguarantorIdNumber();
-		addrCountryTemp = this.addrCountry.getValue();
-		Filter[] provinceFilters = new Filter[1];
-		provinceFilters[0] = new Filter("CPCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
-		this.addrProvince.setFilters(provinceFilters);
 
-		addrProvinceTemp = this.addrProvince.getValue();
-		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("PCCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
-		filters[1] = new Filter("PCProvince", this.addrProvince.getValue(), Filter.OP_EQUAL);
-		this.addrCity.setFilters(filters);
+		if (!StringUtils.isEmpty(this.addrCountry.getValue())) {
+			Filter[] filter = new Filter[1];
+			filter[0] = new Filter("CPCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
+			this.addrCountry.setFilters(filter);
+		}
+
+		if (!StringUtils.isEmpty(this.addrProvince.getValue())) {
+			Filter[] filter = new Filter[1];
+			filter[0] = new Filter("CPProvince", this.addrProvince.getValue(), Filter.OP_EQUAL);
+			this.addrProvince.setFilters(filter);
+		}
+
+		if (!StringUtils.isEmpty(this.addrCity.getValue())) {
+			Filter[] filter = new Filter[1];
+			filter[0] = new Filter("PCCity", this.addrCity.getValue(), Filter.OP_EQUAL);
+			this.addrCity.setFilters(filter);
+		}
+
+		if (!StringUtils.isEmpty(this.addrPIN.getValue())) {
+			Filter[] filter = new Filter[1];
+			filter[0] = new Filter("PinCode", this.addrPIN.getValue(), Filter.OP_EQUAL);
+			this.addrPIN.setFilters(filter);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1619,8 +1646,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+
 			try {
-				aGuarantorDetail.setAddrZIP(this.addrZIP.getValue());
+				aGuarantorDetail.setLovDescAddrZip(this.addrPIN.getDescription());
+				aGuarantorDetail.setAddrZIP(this.addrPIN.getValidatedValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -1767,12 +1796,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 								PennantRegularExpressions.REGEX_NUMERIC, false));
 			}
 
-			if (!this.addrZIP.isReadonly()) {
-				this.addrZIP.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrZIP.value"),
-								PennantRegularExpressions.REGEX_ZIP, true));
-			}
-
 			if (PennantConstants.CITY_FREETEXT) {
 				if (!this.cityName.isReadonly()) {
 					this.cityName.setConstraint(
@@ -1807,7 +1830,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.addrLine1.setConstraint("");
 		this.addrLine2.setConstraint("");
 		this.poBox.setConstraint("");
-		this.addrZIP.setConstraint("");
 		this.cityName.setConstraint("");
 		logger.debug("Leaving");
 	}
@@ -1867,10 +1889,11 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.addrLine1.setErrorMessage("");
 		this.addrLine2.setErrorMessage("");
 		this.poBox.setErrorMessage("");
-		this.addrZIP.setErrorMessage("");
+		this.addrPIN.setErrorMessage("");
 		this.addrCountry.setErrorMessage("");
 		this.addrProvince.setErrorMessage("");
 		this.addrCity.setErrorMessage("");
+		this.addrPIN.setErrorMessage("");
 		this.cityName.setErrorMessage("");
 		logger.debug("Leaving");
 	}
@@ -1922,7 +1945,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrCountry.setReadonly(true);
 			this.addrProvince.setReadonly(true);
 			this.addrCity.setReadonly(true);
-			this.addrZIP.setReadonly(true);
+			this.addrPIN.setReadonly(true);
 			this.cityName.setReadonly(true);
 			this.space_GuarantorCIF.setSclass(PennantConstants.mandateSclass);
 			this.space_GuarantorIDNumber.setSclass(PennantConstants.mandateSclass);
@@ -1965,7 +1988,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrProvince.setReadonly(isReadOnly("GuarantorDetailDialog_addrProvince"));
 			this.addrCity.setReadonly(isReadOnly("GuarantorDetailDialog_addrCity"));
 			this.cityName.setReadonly(isReadOnly("GuarantorDetailDialog_addrCity"));
-			this.addrZIP.setReadonly(isReadOnly("GuarantorDetailDialog_addrZIP"));
+			this.addrPIN.setReadonly(isReadOnly("GuarantorDetailDialog_addrZIP"));
 			this.space_addrHNbr.setSclass(PennantConstants.mandateSclass);
 			this.space_addrStreet.setSclass(PennantConstants.mandateSclass);
 			/* this.space_poBox.setSclass(PennantConstants.mandateSclass); */
@@ -2009,7 +2032,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrProvince.setReadonly(!isReadOnly("GuarantorDetailDialog_addrProvince"));
 			this.addrCity.setReadonly(!isReadOnly("GuarantorDetailDialog_addrCity"));
 			this.cityName.setReadonly(!isReadOnly("GuarantorDetailDialog_addrCity"));
-			this.addrZIP.setReadonly(!isReadOnly("GuarantorDetailDialog_addrZIP"));
+			this.addrPIN.setReadonly(!isReadOnly("GuarantorDetailDialog_addrZIP"));
 		}
 		logger.debug("Leaving");
 	}
@@ -2107,7 +2130,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.addrProvince.setDescription("");
 		this.addrCity.setValue("");
 		this.addrCity.setDescription("");
-		this.addrZIP.setValue("");
+		this.addrPIN.setValue("");
 		this.remarks.setValue("");
 		this.cityName.setValue("");
 		logger.debug("Leaving");
@@ -2381,34 +2404,191 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 
 	public void onFulfill$addrCountry(Event event) {
 		logger.debug("Entering" + event.toString());
-		if (!StringUtils.trimToEmpty(addrCountryTemp).equals(this.addrCountry.getValue())) {
-			this.addrProvince.setObject("");
+
+		Object dataObject = addrCountry.getObject();
+		if (dataObject instanceof String) {
 			this.addrProvince.setValue("");
 			this.addrProvince.setDescription("");
-			this.addrCity.setObject("");
 			this.addrCity.setValue("");
 			this.addrCity.setDescription("");
+			this.addrPIN.setValue("");
+			this.addrPIN.setDescription("");
+		} else {
+			Country country = (Country) dataObject;
+			if (country != null) {
+
+				String countryCode = country.getCountryCode();
+
+				fillProvinceDetails(countryCode);
+				fillCitydetails(countryCode, null);
+				fillPindetails(null, null, countryCode);
+
+			} else {
+				fillProvinceDetails(null);
+				fillCitydetails(null, null);
+				fillPindetails(null, null, null);
+			}
 		}
-		addrCountryTemp = this.addrCountry.getValue();
-		Filter[] provinceFilters = new Filter[1];
-		provinceFilters[0] = new Filter("CPCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
-		this.addrProvince.setFilters(provinceFilters);
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onFulfill$addrProvince(Event event) {
 		logger.debug("Entering" + event.toString());
-		if (!StringUtils.trimToEmpty(addrProvinceTemp).equals(this.addrProvince.getValue())) {
-			this.addrCity.setObject("");
+
+		Object dataObject = addrProvince.getObject();
+		if (dataObject instanceof String) {
 			this.addrCity.setValue("");
 			this.addrCity.setDescription("");
+			this.addrPIN.setValue("");
+			this.addrPIN.setDescription("");
+		} else {
+			Province province = (Province) dataObject;
+			if (province == null) {
+				fillCitydetails(this.addrCountry.getValue(), null);
+				fillPindetails(null, null, this.addrCountry.getValue());
+			} else if (province != null) {
+				this.addrProvince.setErrorMessage("");
+				String state = this.addrProvince.getValue();
+				String countryCode = province.getCPCountry();
+
+				this.addrCity.setValue(countryCode);
+				fillCitydetails(countryCode, state);
+				fillPindetails(null, state, countryCode);
+			}
 		}
-		addrProvinceTemp = this.addrProvince.getValue();
-		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("PCCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
-		filters[1] = new Filter("PCProvince", this.addrProvince.getValue(), Filter.OP_EQUAL);
-		this.addrCity.setFilters(filters);
+
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onFulfill$addrCity(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = addrCity.getObject();
+		if (dataObject instanceof String) {
+			this.addrCity.setValue(String.valueOf(dataObject));
+			this.addrCity.setDescription("");
+			this.addrPIN.setValue("");
+			this.addrPIN.setDescription("");
+		} else {
+			City city = (City) dataObject;
+			if (city != null) {
+				this.addrCity.setErrorMessage("");
+
+				this.addrProvince.setValue(city.getPCProvince());
+				this.addrProvince.setDescription(city.getLovDescPCProvinceName());
+				this.addrCountry.setValue(city.getPCCountry());
+				this.addrCountry.setDescription(city.getLovDescPCCountryName());
+
+				String cityValue = this.addrCity.getValue();
+				String countryCode = city.getPCCountry();
+				String state = city.getPCProvince();
+
+				fillPindetails(cityValue, state, countryCode);
+			} else {
+				fillPindetails(null, this.addrProvince.getValue(), this.addrCountry.getValue());
+			}
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onFulfill$addrPIN(Event event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Object dataObject = addrPIN.getObject();
+		if (dataObject instanceof String) {
+			this.addrPIN.setValue("");
+			this.addrPIN.setDescription("");
+
+		} else {
+			PinCode pinCode = (PinCode) dataObject;
+			if (pinCode != null) {
+				this.addrCity.setValue(pinCode.getCity());
+				this.addrCity.setDescription(pinCode.getPCCityName());
+				this.addrProvince.setValue(pinCode.getPCProvince());
+				this.addrProvince.setDescription(pinCode.getLovDescPCProvinceName());
+				this.addrCountry.setValue(pinCode.getpCCountry());
+				this.addrCountry.setDescription(pinCode.getLovDescPCCountryName());
+
+				this.addrCity.setErrorMessage("");
+				this.addrProvince.setErrorMessage("");
+				this.addrPIN.setErrorMessage("");
+				this.addrPIN.setAttribute("pinCodeId", pinCode.getPinCodeId());
+				this.addrPIN.setValue(pinCode.getPinCode());
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
+	private void fillProvinceDetails(String country) {
+		this.addrProvince.setValue("");
+		this.addrProvince.setObject(null);
+		this.addrProvince.setDescription("");
+		this.addrProvince.setErrorMessage("");
+
+		Filter[] filters = new Filter[2];
+
+		if (!StringUtils.isEmpty(country)) {
+			filters[0] = new Filter("CPCountry", country, Filter.OP_EQUAL);
+		}
+		filters[1] = new Filter("CPIsActive", 1, Filter.OP_EQUAL);
+
+		this.addrProvince.setFilters(filters);
+	}
+
+	private void fillCitydetails(String country, String state) {
+		logger.debug("Entering");
+
+		this.addrCity.setValue("");
+		this.addrCity.setObject(null);
+		this.addrCity.setDescription("");
+		this.addrCity.setErrorMessage("");
+
+		Filter[] filters = new Filter[3];
+
+		if (!StringUtils.isEmpty(country)) {
+			filters[0] = new Filter("PCCountry", country, Filter.OP_EQUAL);
+		}
+
+		if (!StringUtils.isEmpty(state)) {
+
+			filters[1] = new Filter("PCProvince", state, Filter.OP_EQUAL);
+		}
+
+		filters[2] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
+		this.addrCity.setFilters(filters);
+
+		logger.debug("Leaving");
+	}
+
+	public void fillPindetails(String city, String state, String country) {
+		logger.debug("Entering");
+
+		this.addrPIN.setValue("");
+		this.addrPIN.setObject(null);
+		this.addrPIN.setDescription("");
+		this.addrPIN.setErrorMessage("");
+
+		Filter[] filters = new Filter[4];
+
+		if (!StringUtils.isEmpty(city)) {
+			filters[0] = new Filter("City", city, Filter.OP_EQUAL);
+		}
+
+		if (!StringUtils.isEmpty(state)) {
+			filters[1] = new Filter("PCProvince", state, Filter.OP_EQUAL);
+		}
+
+		if (!StringUtils.isEmpty(country)) {
+			filters[2] = new Filter("PCCountry", country, Filter.OP_EQUAL);
+		}
+
+		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+
+		this.addrPIN.setFilters(filters);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void dosetCustAddress(long custID) {
@@ -2425,7 +2605,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrLine2.setValue(customerAddress.getCustAddrLine2());
 			this.poBox.setValue(customerAddress.getCustPOBox());
 			this.flatNbr.setValue(customerAddress.getCustFlatNbr());
-			this.addrZIP.setValue(customerAddress.getCustAddrZIP());
+			this.addrPIN.setValue(customerAddress.getCustAddrZIP(), customerAddress.getLovDescCustAddrZip());
 
 		}
 	}
@@ -2465,7 +2645,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrProvince.setReadonly(true);
 			this.addrCity.setReadonly(true);
 			this.cityName.setReadonly(true);
-			this.addrZIP.setReadonly(true);
+			this.addrPIN.setReadonly(true);
 		}
 
 		logger.debug("Leaving");
