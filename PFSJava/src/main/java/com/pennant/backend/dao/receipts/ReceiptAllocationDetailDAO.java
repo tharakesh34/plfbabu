@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.receipts;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
@@ -16,4 +18,6 @@ public interface ReceiptAllocationDetailDAO {
 	List<ReceiptAllocationDetail> getDMAllocationsByReference(String reference, String type);
 
 	List<ReceiptAllocationDetail> getManualAllocationsByRef(long finID, long curReceiptID);
+
+	BigDecimal getPartPayAmount(long finID, Date fromDate, Date toDate);
 }

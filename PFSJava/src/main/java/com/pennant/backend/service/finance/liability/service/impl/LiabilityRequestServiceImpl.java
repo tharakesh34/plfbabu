@@ -65,8 +65,11 @@ import com.pennant.backend.service.finance.liability.service.LiabilityRequestSer
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.accounting.model.PostingDTO;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
@@ -167,7 +170,14 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 		// Finance Stage Accounting Process
 		// =======================================
-		auditHeader = executeStageAccounting(auditHeader);
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(SysParamUtil.getAppDate());
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
+
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -304,7 +314,14 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 		// Finance Stage Accounting Process
 		// =======================================
-		auditHeader = executeStageAccounting(auditHeader);
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceMain(fm);
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setValueDate(SysParamUtil.getAppDate());
+		postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+
+		AccountingEngine.post(AccountingEvent.STAGE, postingDTO);
+
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -436,7 +453,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		}
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
-		cancelStageAccounting(fm.getFinID(), fd.getModuleDefiner());
+		AccountingEngine.cancelStageAccounting(fm.getFinID(), fd.getModuleDefiner());
 
 		// Liability Request details
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);

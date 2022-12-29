@@ -29,7 +29,9 @@ public interface FinExcessAmountDAO {
 
 	void deleteExcessReserve(long receiptID, long payAgainstID, String paymentType);
 
-	FinExcessAmount getExcessAmountsByRefAndType(long finID, String amountType);
+	FinExcessAmount getExcessAmountsByRefAndType1(long finID, String amountType);
+
+	List<FinExcessAmount> getExcessAmountsByRefAndType(long finID, Date valueDate, String amountType);
 
 	void updateExcessAmount(long excessID, String amountType, BigDecimal amount);
 
@@ -71,8 +73,6 @@ public interface FinExcessAmountDAO {
 
 	void saveExcessMovementList(List<FinExcessMovement> movements);
 
-	void saveExcessList(List<FinExcessAmount> feaList);
-
 	FinExcessAmount getFinExcessAmount(long finID, long receiptId);
 
 	void batchUpdateExcessAmount(List<PresentmentDetail> presentmentDetails);
@@ -87,4 +87,15 @@ public interface FinExcessAmountDAO {
 
 	boolean isFinExcessAmtExists(long finID);
 
+	List<FinExcessAmount> getExcessAmountsByRefAndType(long finID);
+
+	List<FinExcessAmount> getFinExcessByRefForAutoRefund(long finID);
+
+	List<FinExcessAmount> getExcessAmountsByRefAndType(long finID, String amountType);
+
+	FinExcessAmount getExcessAmountsByReceiptId(long receiptId);
+
+	FinExcessAmount getExcessAmountsByReceiptId(long finID, String amountType, long receiptId);
+
+	List<FinExcessMovement> getExcessMovementList(long id, String movementType);
 }

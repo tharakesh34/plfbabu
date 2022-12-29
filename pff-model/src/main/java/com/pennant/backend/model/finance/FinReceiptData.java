@@ -120,6 +120,8 @@ public class FinReceiptData implements Serializable {
 	private List<FinDueData> dueDataList = new ArrayList<>();
 	private FinDueData dueData;
 	private boolean isClosrMaturedLAN = false;
+	private String excessType;
+	private BigDecimal calculatedClosureAmt = BigDecimal.ZERO;;
 
 	public FinReceiptData() {
 		super();
@@ -221,6 +223,8 @@ public class FinReceiptData implements Serializable {
 		entity.setDueDataList(this.dueDataList);
 		entity.setDueData(this.dueData);
 		entity.setClosrMaturedLAN(this.isClosrMaturedLAN);
+		entity.setExcessType(this.excessType);
+		entity.setCalculatedClosureAmt(this.calculatedClosureAmt);
 
 		return entity;
 	}
@@ -769,4 +773,19 @@ public class FinReceiptData implements Serializable {
 		this.isClosrMaturedLAN = isClosrMaturedLAN;
 	}
 
+	public String getExcessType() {
+		return excessType;
+	}
+
+	public void setExcessType(String excessType) {
+		this.excessType = excessType;
+	}
+
+	public BigDecimal getCalculatedClosureAmt() {
+		return calculatedClosureAmt;
+	}
+
+	public void setCalculatedClosureAmt(BigDecimal calculatedClosureAmt) {
+		this.calculatedClosureAmt = calculatedClosureAmt;
+	}
 }

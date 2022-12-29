@@ -357,19 +357,10 @@ public class ReceiptCalculator {
 					if (allocate.getAllocationType().equals(alloc.getAllocationType())
 							&& allocate.getAllocationTo() == alloc.getAllocationTo()) {
 						if (!receiptData.isForeClosure()) {
-							if (allocate.getAllocationType().equals(Allocation.FEE)) {
-								allocate.setWaivedAmount(alloc.getWaivedAmount());
-								allocate.setPaidAmount(alloc.getTotalDue());
-								allocate.setPaidGST(allocate.getDueGST());
-								allocate.setTotalPaid(alloc.getTotalDue().add(alloc.getTdsPaid()));
-								allocate.setTdsPaid(alloc.getTdsPaid());
-							} else {
-								allocate.setPaidAmount(alloc.getPaidAmount());
-								allocate.setPaidGST(alloc.getPaidGST());
-								allocate.setTotalPaid(alloc.getPaidAmount().add(alloc.getTdsPaid()));
-								allocate.setTdsPaid(alloc.getTdsPaid());
-							}
-
+							allocate.setPaidAmount(alloc.getPaidAmount());
+							allocate.setTotalPaid(alloc.getPaidAmount().add(alloc.getTdsPaid()));
+							allocate.setPaidGST(allocate.getDueGST());
+							allocate.setTdsPaid(alloc.getTdsPaid());
 							allocate.setWaivedAmount(alloc.getWaivedAmount());
 							allocate.setWaivedGST(alloc.getWaivedGST());
 						} else {
@@ -4709,9 +4700,10 @@ public class ReceiptCalculator {
 		BigDecimal excessAmount = BigDecimal.ZERO;
 
 		for (XcessPayables payable : xcessPayables) {
-			// if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(payable.getPayableType())) {
+			if (RepayConstants.EXAMOUNTTYPE_TEXCESS.equals(payable.getPayableType())) {
+				continue;
+			}
 			excessAmount = excessAmount.add(payable.getBalanceAmt());
-			// }
 		}
 
 		return excessAmount;
@@ -5052,6 +5044,10 @@ public class ReceiptCalculator {
 		allocate.setTotalPaid(BigDecimal.ZERO);
 		allocate.setWaivedAmount(BigDecimal.ZERO);
 		allocate.setWaivedGST(BigDecimal.ZERO);
+		allocate.setWaivedCGST(BigDecimal.ZERO);
+		allocate.setWaivedSGST(BigDecimal.ZERO);
+		allocate.setWaivedIGST(BigDecimal.ZERO);
+		allocate.setWaivedUGST(BigDecimal.ZERO);
 		allocate.setTdsPaid(BigDecimal.ZERO);
 		allocate.setTdsWaived(BigDecimal.ZERO);
 	}

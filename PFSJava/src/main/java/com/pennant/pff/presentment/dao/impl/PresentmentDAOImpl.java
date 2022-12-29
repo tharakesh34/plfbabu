@@ -1251,6 +1251,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setDefSchdDate(rs.getDate("DefSchdDate"));
 			pd.setSchSeq(rs.getInt("SchSeq"));
 			pd.setInstNumber(rs.getInt("InstNumber"));
+			pd.setEmiNo(rs.getInt("InstNumber"));
 			pd.setBpiOrHoliday(rs.getString("BpiOrHoliday"));
 			pd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
 			pd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
@@ -1459,6 +1460,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			ps.setLong(index++, batchID);
 			ps.setLong(index++, rePresentUploadID);
 			ps.setInt(index++, 1);
+			ps.setString(index++, InstrumentType.DAS.name());
 			ps.setLong(index++, finID);
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
@@ -1760,7 +1762,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public void updateHeaderCounts(Long id, int successCount, int failedCount) {
-		String sql = "UPDATE PRESENTMENTHEADER SET SUCCESSRECORDS = ?, FAILEDRECORDS = ? WHERE ID = ?";
+		String sql = "UPDATE PRESENTMENTHEADER SET Resp_Success = ?, Resp_Failed = ? WHERE ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

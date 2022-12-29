@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -162,11 +163,13 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private FinanceDetail financeDetail;
 	private FinExcessAmount excessAmount;
-	private FinExcessAmount excessAmountReversal;
+	private List<FinExcessAmount> excessAmountReversal;
 	private List<PresentmentDetail> presements = new ArrayList<>();
 	private FinExcessAmount emiInAdvance;
 	private List<PresentmentCharge> presentmentCharges = new ArrayList<>();
 	private EventProperties eventProperties = new EventProperties();
+
+	private List<FinExcessMovement> excessMovements = new ArrayList<>();
 
 	public PresentmentDetail() {
 		super();
@@ -980,11 +983,11 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.excessAmount = excessAmount;
 	}
 
-	public FinExcessAmount getExcessAmountReversal() {
+	public List<FinExcessAmount> getExcessAmountReversal() {
 		return excessAmountReversal;
 	}
 
-	public void setExcessAmountReversal(FinExcessAmount excessAmountReversal) {
+	public void setExcessAmountReversal(List<FinExcessAmount> excessAmountReversal) {
 		this.excessAmountReversal = excessAmountReversal;
 	}
 
@@ -1018,5 +1021,13 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setEventProperties(EventProperties eventProperties) {
 		this.eventProperties = eventProperties;
+	}
+
+	public List<FinExcessMovement> getExcessMovements() {
+		return excessMovements;
+	}
+
+	public void setExcessMovements(List<FinExcessMovement> excessMovements) {
+		this.excessMovements = excessMovements;
 	}
 }

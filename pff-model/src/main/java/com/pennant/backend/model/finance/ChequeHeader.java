@@ -42,6 +42,7 @@ import javax.xml.bind.annotation.XmlType;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
@@ -85,6 +86,7 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 
 	@XmlElement
 	public WSReturnStatus returnStatus = null;
+	private ErrorDetail error;
 
 	public ChequeHeader() {
 		super();
@@ -104,6 +106,7 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 		excludeFields.add("chequeSerialNo");
 		excludeFields.add("sourceId");
 		excludeFields.add("returnStatus");
+		excludeFields.add("error");
 		return excludeFields;
 	}
 
@@ -250,4 +253,13 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
 	}
+
+	public ErrorDetail getError() {
+		return error;
+	}
+
+	public void setError(ErrorDetail error) {
+		this.error = error;
+	}
+
 }

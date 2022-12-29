@@ -168,6 +168,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Checkbox externalMandate;
 	protected Textbox umrNumber;
 	protected Row emandateRow;
+	protected Row finreferenceRow;
 	protected Textbox eMandateReferenceNo;
 	protected ExtendedCombobox eMandateSource;
 	private Checkbox securityMandate;
@@ -1170,6 +1171,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void doDesignByMode() {
 		if (fromLoanEnquiry) {
 			this.north_mandate.setVisible(false);
+			this.finreferenceRow.setVisible(false);
 		}
 
 		if (enqModule) {

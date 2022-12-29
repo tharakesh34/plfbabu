@@ -107,6 +107,10 @@
 											<listhead sizable="true">
 												<listheader width="40px" id="listheader_PaymentHeaderDialog_button" />
 												<listheader label="${c:l('listheader_PaymentHeaderDialog_Type.label')}" sort="false" hflex="min" />
+												<listheader label="${c:l('listheader_PaymentHeaderDialog_ReceiptID.label')}"
+													align="right" sort="false" hflex="min" />
+												<listheader label="${c:l('listheader_PaymentHeaderDialog_ValueDate.label')}"
+													align="right" sort="false" hflex="min" />
 												<listheader id="listheader_PaymentHeaderDialog_AvailableAmount" label="${c:l('listheader_PaymentHeaderDialog_AvailableAmount.label')}"
 													align="right" sort="false" hflex="min" />
 												<listheader id="listheader_PaymentHeaderDialog_GSTAmount" label="${c:l('listheader_PaymentHeaderDialog_GSTAmount.label')}"

@@ -26,4 +26,28 @@ public class Allocation {
 		super();
 	}
 
+	public static String getCode(String code) {
+		switch (code) {
+		case Allocation.PFT:
+			return "I";
+		case Allocation.PRI:
+			return "P";
+		case Allocation.LPFT:
+			return "L";
+		case Allocation.FEE:
+			return "F";
+		case Allocation.ODC:
+			return "O";
+		case Allocation.FUT_PFT:
+			return "FI";
+		case Allocation.FUT_PRI:
+			return "FP";
+		case Allocation.EMI:
+			return "EM";
+		case Allocation.MANADV:
+			return "M";
+		default:
+			return "B";
+		}
+	}
 }

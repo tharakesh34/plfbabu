@@ -560,31 +560,26 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				}
 			}
 
-			// If we have any excess Amount
 			BigDecimal assginExcessAmt = BigDecimal.ZERO;
-			FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
+			List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
 					RepayConstants.EXAMOUNTTYPE_EXCESS);
-			if (finExcessAmount != null) {
-				assginExcessAmt = assginExcessAmt.add(finExcessAmount.getBalanceAmt());
-				assginExcessAmt = assginExcessAmt.multiply(sharePercent).divide(new BigDecimal(100), 9,
-						RoundingMode.HALF_DOWN);
-				assginExcessAmt = CalculationUtil.roundAmount(assginExcessAmt, RoundingMode.HALF_DOWN.name(), 0); // if
-																													// rounding
-																													// required
+			for (FinExcessAmount fea : list) {
+				assginExcessAmt = assginExcessAmt.add(fea.getBalanceAmt());
 			}
 
-			// If we have any EMI Advance Amount
+			assginExcessAmt = assginExcessAmt.multiply(sharePercent).divide(new BigDecimal(100), 9,
+					RoundingMode.HALF_DOWN);
+			assginExcessAmt = CalculationUtil.roundAmount(assginExcessAmt, RoundingMode.HALF_DOWN.name(), 0);
+
 			BigDecimal assignEMIAdvAmt = BigDecimal.ZERO;
-			FinExcessAmount emiAdvanceAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
-					RepayConstants.EXAMOUNTTYPE_EMIINADV);
-			if (emiAdvanceAmount != null) {
-				assignEMIAdvAmt = assignEMIAdvAmt.add(emiAdvanceAmount.getBalanceAmt());
-				assignEMIAdvAmt = assignEMIAdvAmt.multiply(sharePercent).divide(new BigDecimal(100), 9,
-						RoundingMode.HALF_DOWN);
-				assignEMIAdvAmt = CalculationUtil.roundAmount(assignEMIAdvAmt, RoundingMode.HALF_DOWN.name(), 0); // if
-																													// rounding
-																													// required
+			list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, RepayConstants.EXAMOUNTTYPE_EMIINADV);
+
+			for (FinExcessAmount fea : list) {
+				assignEMIAdvAmt = assignEMIAdvAmt.add(fea.getBalanceAmt());
 			}
+			assignEMIAdvAmt = assignEMIAdvAmt.multiply(sharePercent).divide(new BigDecimal(100), 9,
+					RoundingMode.HALF_DOWN);
+			assignEMIAdvAmt = CalculationUtil.roundAmount(assignEMIAdvAmt, RoundingMode.HALF_DOWN.name(), 0);
 
 			// BPI amount calculation
 			BigDecimal bpi1Amount = bpi1Calculation(schedules, assignUpload, sharePercent);

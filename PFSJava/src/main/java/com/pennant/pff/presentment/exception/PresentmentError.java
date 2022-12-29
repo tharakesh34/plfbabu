@@ -24,7 +24,33 @@ public enum PresentmentError {
 
 	PRMNT5011("Unable to update the fate correstion as bounce since loan is closed."),
 
-	PRMNT512("Schedule has been changed");
+	PRMNT512("Schedule has been changed"),
+
+	REPRMNT513("Fin Reference should not be empty."),
+
+	REPRMNT514("Fin Reference is not valid."),
+
+	REPRMNT515("Fin Reference is not in active."),
+
+	REPRMNT516("Due Date should not be empty."),
+
+	REPRMNT517("Due Date should not be Future Date."),
+
+	REPRMNT518("Not a valid representment."),
+
+	REPRMNT519("Unable to do the re-presenment, since Account is closed."),
+
+	REPRMNT520("Receipt already proceessed for this schedule."),
+
+	REPRMNT521("There is no over dues for this Reference."),
+
+	REPRMNT522("Due date should be in current month only."),
+
+	REPRMNT523(""),
+
+	FC_601("Fate Correction already proceessed for this schedule."),
+
+	FC_602("Presentment is not found for this respective schedule.");
 
 	private String description;
 

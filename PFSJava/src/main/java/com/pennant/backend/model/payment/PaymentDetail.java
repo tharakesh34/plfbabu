@@ -26,6 +26,7 @@ package com.pennant.backend.model.payment;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -75,6 +76,10 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private BigDecimal prvGST = BigDecimal.ZERO;
 	private ManualAdvise manualAdvise;
+	private Long receiptID;
+	private Date valueDate;
+	private boolean expand;
+	private boolean collapse;
 
 	public PaymentDetail() {
 		super();
@@ -102,6 +107,11 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 		excludeFields.add("adviseAmount");
 		excludeFields.add("prvGST");
 		excludeFields.add("manualAdvise");
+		excludeFields.add("receiptID");
+		excludeFields.add("valueDate");
+		excludeFields.add("expand");
+		excludeFields.add("collapse");
+
 		return excludeFields;
 	}
 
@@ -291,6 +301,38 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 
 	public void setManualAdvise(ManualAdvise manualAdvise) {
 		this.manualAdvise = manualAdvise;
+	}
+
+	public Long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(Long receiptID) {
+		this.receiptID = receiptID;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public boolean isExpand() {
+		return expand;
+	}
+
+	public void setExpand(boolean expand) {
+		this.expand = expand;
+	}
+
+	public boolean isCollapse() {
+		return collapse;
+	}
+
+	public void setCollapse(boolean collapse) {
+		this.collapse = collapse;
 	}
 
 }

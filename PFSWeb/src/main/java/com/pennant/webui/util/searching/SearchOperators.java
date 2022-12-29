@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -460,6 +461,25 @@ public class SearchOperators implements Serializable {
 		} else if (filter.getOperator() == Filter.OP_NOT_EQUAL) {
 			listbox.setSelectedIndex(2);
 		}
+	}
+
+	public static ListModelList<SearchOperators> getOperators(Integer... filters) {
+		List<SearchOperators> result = new ArrayList<>();
+		for (Integer filter : filters) {
+			switch (filter) {
+			case Filter.OP_EQUAL:
+				result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
+				break;
+			case Filter.OP_LIKE:
+				result.add(new SearchOperators(Filter.OP_LIKE, "%", "like"));
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		return new ListModelList<SearchOperators>(result);
 	}
 
 }

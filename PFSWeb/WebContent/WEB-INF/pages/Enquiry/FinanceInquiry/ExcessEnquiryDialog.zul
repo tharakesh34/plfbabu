@@ -16,10 +16,16 @@
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel id="tabpanel_FeeDetail" style="overflow:auto">
 								<div style="border:none;">
-									<listbox id="listBoxExcess" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
-										sizedByContent="true" span="true" multiple="false">
-										<listhead sizable="false">
+									<listbox id="listBoxExcess" emptyMessage="${c:l('listbox.emptyMessage')}"
+											tooltiptext="${c:l('listbox.tooltiptext')}" style="text-align:left;border:none;" mold="default" multiple="false"
+											sizedByContent="true" span="true">
+											<listhead sizable="true">
+											<listheader width="60px" id="listheaderExcessHeaderDialogButton" />
 											<listheader label="${c:l('listheader_ExcessType.label')}" sort="false" hflex="min" />
+											<listheader label="${c:l('listheader_Excess_ReceiptID.label')}"
+													align="right" sort="false" hflex="min" />
+												<listheader label="${c:l('listheader_Excess_ValueDate.label')}"
+													align="right" sort="false" hflex="min" />
 											<listheader label="${c:l('listheader_ExcessAmt.label')}" sort="false" hflex="min" align="Right" />
 											<listheader label="${c:l('listheader_UtilizedAmt.label')}" sort="false" hflex="min" align="Right" />
 											<listheader label="${c:l('listheader_ReservedAmt.label')}" sort="false" hflex="min" align="Right" />

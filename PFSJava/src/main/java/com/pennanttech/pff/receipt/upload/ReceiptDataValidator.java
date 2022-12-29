@@ -111,7 +111,8 @@ public class ReceiptDataValidator {
 			execssAdjust = "E";
 		}
 
-		if (!"E".equals(execssAdjust) && !"A".equals(execssAdjust) && !"#".equals(execssAdjust)) {
+		if (!"E".equals(execssAdjust) && !"T".equals(execssAdjust) && !"A".equals(execssAdjust)
+				&& !"#".equals(execssAdjust)) {
 			setError(rud, "Values other than E/A/ /# in [EXCESSADJUSTTO] ");
 			return;
 		} else {

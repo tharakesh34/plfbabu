@@ -10,6 +10,7 @@ public class PostingEventFactory {
 	private PostingEvent disbInsPostingEvent;
 	private PostingEvent vasFeePostingEvent;
 	private PostingEvent bouncePostingEvent;
+	private PostingEvent stageAccountingEvent;
 
 	public PostingEvent getAccountingEventEvent(String accEvent) {
 		switch (accEvent) {
@@ -19,6 +20,8 @@ public class PostingEventFactory {
 			return vasFeePostingEvent;
 		case AccountingEvent.MANFEE:
 			return bouncePostingEvent;
+		case AccountingEvent.STAGE:
+			return stageAccountingEvent;
 		default:
 			break;
 		}
@@ -40,6 +43,11 @@ public class PostingEventFactory {
 	@Autowired
 	public void setBouncePostingEvent(PostingEvent bouncePostingEvent) {
 		this.bouncePostingEvent = bouncePostingEvent;
+	}
+
+	@Autowired
+	public void setStageAccountingEvent(PostingEvent stageAccountingEvent) {
+		this.stageAccountingEvent = stageAccountingEvent;
 	}
 
 }

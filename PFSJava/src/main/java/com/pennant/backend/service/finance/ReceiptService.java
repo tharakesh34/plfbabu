@@ -25,6 +25,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public interface ReceiptService {
 
@@ -131,4 +132,10 @@ public interface ReceiptService {
 	BigDecimal getReceiptAmountPerMonthByFinreference(Date receiptDate, List<String> finreference);
 
 	FinReceiptHeader getInititatedReceipts(String reference);
+
+	ErrorDetail validateThreshHoldLimit(FinReceiptHeader rch, BigDecimal totalDues);
+
+	void waiveThresholdLimit(FinReceiptData receiptData);
+
+	ReceiptDTO prepareReceiptDTO(FinReceiptData rd);
 }

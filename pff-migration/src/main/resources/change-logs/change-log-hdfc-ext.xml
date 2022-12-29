@@ -28,6 +28,10 @@
 			<column name="FAIL_INDICATOR" type="VARCHAR(100)" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="001_post" author="goutham.ch">
+		<addNotNullConstraint tableName="FILE_INTERFACE_CONFIG" columnName="INTERFACE_TYPE" columnDataType="VARCHAR(100)" />
+	</changeSet>	
 
 	<changeSet id="001.1" author="goutham.ch">
 		<addPrimaryKey tableName="FILE_INTERFACE_CONFIG " columnNames="INTERFACE_TYPE" />
@@ -125,21 +129,21 @@
 	<changeSet id="011" author="goutham.ch">
 		<sql>
 			<![CDATA[
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F600','Invalid Lien account number.',1,to_date('13-12-22','DD-MM-RR'),'INVALID_LIEN_ACCOUONT');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F601','Invalid or no Lien status received.',1,to_date('13-12-22','DD-MM-RR'),'INVALID_LIEN_STATUS');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F602','Invalid Lien response file.',1,to_date('13-12-22','DD-MM-RR'),'INVALID_LIEN_FILE');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F603','Invalid Lien response file name.',1,to_date('13-12-22','DD-MM-RR'),'INVALID_LIEN_FILE_NAME');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F604','Exception caught in processing Lien response file.',1,to_date('13-12-22','DD-MM-RR'),'INVALID_LIEN_FILE_EXCEPTION');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F605','Exception caught while writing record to request file.',1,to_date('13-12-22','DD-MM-RR'),'LIEN_FILE_WRITING_EXCEPTION');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F702','Exception while saving record.',1,to_date('13-12-22','DD-MM-RR'),'EXCEPTION');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F703','Invalid File record.',1,to_date('13-12-22','DD-MM-RR'),'INVALID_FILE_RECORD');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F801','Invalid record id/txn reference received.',1,to_date('13-12-22','DD-MM-RR'),'INVALID_TXN_REF');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F802','Invalid success flag received for ACH record.',1,to_date('13-12-22','DD-MM-RR'),'INVALID_ACH_SUCCESS_FLAG');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F803','Invalid reject/bounce flag received for ACH record.',1,to_date('13-12-22','DD-MM-RR'),'INVALID_ACH_REJECT_FLAG');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F804','Invalid ACH record not starting with valid data.',1,to_date('13-12-22','DD-MM-RR'),'INVALID_ACH_START_FLAG');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F900','Bounce code is Empty.',1,to_date('13-12-22','DD-MM-RR'),'BOUNCE_CODE_F900');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F901','Invalid bounce code.',1,to_date('13-12-22','DD-MM-RR'),'BOUNCE_CODE_F901');
-				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F902','Bounce code not available in PLF.',1,to_date('13-12-22','DD-MM-RR'),'NO_PLF_BOUNCE_CODE_F902');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F600','Invalid Lien account number.',1,current_timestamp,'INVALID_LIEN_ACCOUONT');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F601','Invalid or no Lien status received.',1,current_timestamp,'INVALID_LIEN_STATUS');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F602','Invalid Lien response file.',1,current_timestamp,'INVALID_LIEN_FILE');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F603','Invalid Lien response file name.',1,current_timestamp,'INVALID_LIEN_FILE_NAME');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F604','Exception caught in processing Lien response file.',1,current_timestamp,'INVALID_LIEN_FILE_EXCEPTION');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F605','Exception caught while writing record to request file.',1,current_timestamp,'LIEN_FILE_WRITING_EXCEPTION');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F702','Exception while saving record.',1,current_timestamp,'EXCEPTION');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F703','Invalid File record.',1,current_timestamp,'INVALID_FILE_RECORD');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F801','Invalid record id/txn reference received.',1,current_timestamp,'INVALID_TXN_REF');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F802','Invalid success flag received for ACH record.',1,current_timestamp,'INVALID_ACH_SUCCESS_FLAG');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F803','Invalid reject/bounce flag received for ACH record.',1,current_timestamp,'INVALID_ACH_REJECT_FLAG');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F804','Invalid ACH record not starting with valid data.',1,current_timestamp,'INVALID_ACH_START_FLAG');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F900','Bounce code is Empty.',1,current_timestamp,'BOUNCE_CODE_F900');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F901','Invalid bounce code.',1,current_timestamp,'BOUNCE_CODE_F901');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F902','Bounce code not available in PLF.',1,current_timestamp,'NO_PLF_BOUNCE_CODE_F902');
 			]]>
 		</sql>
 	</changeSet>

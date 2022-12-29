@@ -24,23 +24,33 @@
  */
 package com.pennant.webui.finance.enquiry;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -50,22 +60,15 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	private static final long serialVersionUID = 3184249234920071313L;
 	private static final Logger logger = LogManager.getLogger(ExcessEnquiryDialogCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	protected Window window_ExcessEnquiryDialog;
 	protected Listbox listBoxExcess;
 	protected Borderlayout borderlayoutExcessEnquiry;
 	private Tabpanel tabPanel_dialogWindow;
-
-	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
-	private List<FinExcessAmount> excessAmtList;
+	private Listheader listheaderExcessHeaderDialogButton;
+	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl;
+	private List<FinExcessAmount> paymentDetailList = new ArrayList<>();
 	private int ccyFormatter = 0;
 
-	/**
-	 * default constructor.<br>
-	 */
 	public ExcessEnquiryDialogCtrl() {
 		super();
 	}
@@ -75,17 +78,10 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		super.pageRightName = "";
 	}
 
-	// Component Events
-
-	/**
-	 * 
-	 * @param event
-	 */
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_ExcessEnquiryDialog(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
-		// Set the page level components.
 		setPageComponents(window_ExcessEnquiryDialog);
 
 		if (event.getTarget().getParent().getParent() != null) {
@@ -93,9 +89,9 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		}
 
 		if (arguments.containsKey("excessDetails")) {
-			this.excessAmtList = (List<FinExcessAmount>) arguments.get("excessDetails");
+			this.paymentDetailList = (List<FinExcessAmount>) arguments.get("excessDetails");
 		} else {
-			this.excessAmtList = null;
+			this.paymentDetailList = new ArrayList<>();
 		}
 		if (arguments.containsKey("ccyFormatter")) {
 			this.ccyFormatter = (int) arguments.get("ccyFormatter");
@@ -105,23 +101,18 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
 					.get("financeEnquiryHeaderDialogCtrl");
 		}
+
 		doShowDialog();
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Opens the Dialog window modal.
-	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
-	 */
 	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
+
 		try {
-			// fill the components with the data
-			doFillExcessList(this.excessAmtList);
+			doFillHeaderList(this.paymentDetailList);
 
 			if (tabPanel_dialogWindow != null) {
-
 				getBorderLayoutHeight();
 				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
 				this.listBoxExcess.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
@@ -131,70 +122,208 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method to fill the Finance Document Details List
-	 * 
-	 * @param docDetails
-	 */
-	public void doFillExcessList(List<FinExcessAmount> excessAmtList) {
-		logger.debug(Literal.ENTERING);
-		Listitem item = null;
-		for (FinExcessAmount excessAmt : excessAmtList) {
-			item = new Listitem();
-			Listcell lc;
-			String amountType = excessAmt.getAmountType();
-			switch (ExcessType.valueOf(amountType)) {
-			case ADVEMI:
-				lc = new Listcell(PennantJavaUtil.getLabel("label_ReceiptPaymentMode_ADVEMI"));
-				lc.setParent(item);
-				break;
-			case ADVINT:
-				lc = new Listcell(PennantJavaUtil.getLabel("label_ReceiptPaymentMode_ADVINT"));
-				lc.setParent(item);
-				break;
-			case DSF:
-				lc = new Listcell(PennantJavaUtil.getLabel("label_DSF"));
-				lc.setParent(item);
-				break;
-			case CASHCLT:
-				lc = new Listcell(PennantJavaUtil.getLabel("label_CASHCLT"));
-				lc.setParent(item);
-				break;
-			case E:
-				lc = new Listcell(PennantJavaUtil.getLabel("label_Excess"));
-				lc.setParent(item);
-				break;
-			case A:
-				lc = new Listcell(PennantJavaUtil.getLabel("label_EMI_Advance"));
-				lc.setParent(item);
-				break;
+	public void onExpand(ForwardEvent event) {
+		Button button = (Button) event.getOrigin().getTarget();
+		FinExcessAmount pd = (FinExcessAmount) button.getAttribute("pd");
+
+		pd.setExpand(false);
+		pd.setCollapse(true);
+
+		doFillHeaderList(paymentDetailList);
+	}
+
+	public void onCollapse(ForwardEvent event) {
+		Button button = (Button) event.getOrigin().getTarget();
+		FinExcessAmount pd = (FinExcessAmount) button.getAttribute("pd");
+
+		pd.setExpand(true);
+		pd.setCollapse(false);
+
+		doFillHeaderList(paymentDetailList);
+	}
+
+	private void doFillHeaderList(List<FinExcessAmount> excesslist) {
+		this.listBoxExcess.getItems().clear();
+
+		this.listheaderExcessHeaderDialogButton.setVisible(true);
+
+		Map<String, List<FinExcessAmount>> map = new HashMap<>();
+
+		for (FinExcessAmount fa : excesslist) {
+			String excessType = fa.getAmountType();
+
+			if (AdviseType.isPayable(fa.getAmountType())) {
+				excessType = String.valueOf(AdviseType.PAYABLE.id());
 			}
 
-			lc = new Listcell(CurrencyUtil.format(excessAmt.getAmount(), ccyFormatter));
-			lc.setStyle("text-align:right;");
-			lc.setParent(item);
+			List<FinExcessAmount> feaList = map.get(excessType);
 
-			lc = new Listcell(CurrencyUtil.format(excessAmt.getUtilisedAmt(), ccyFormatter));
-			lc.setStyle("text-align:right;");
-			lc.setParent(item);
+			if (feaList == null) {
+				feaList = new ArrayList<>();
+				map.put(excessType, feaList);
+			}
 
-			lc = new Listcell(CurrencyUtil.format(excessAmt.getReservedAmt(), ccyFormatter));
-			lc.setStyle("text-align:right;");
-			lc.setParent(item);
-
-			lc = new Listcell(CurrencyUtil.format(excessAmt.getBalanceAmt(), ccyFormatter));
-			lc.setStyle("text-align:right;");
-			lc.setParent(item);
-			this.listBoxExcess.appendChild(item);
+			feaList.add(fa);
 		}
+
+		for (Entry<String, List<FinExcessAmount>> fea : map.entrySet()) {
+			doFillHeaderList(fea.getKey(), fea.getValue());
+		}
+	}
+
+	private void doFillHeaderList(String excessType, List<FinExcessAmount> feList) {
+		logger.debug(Literal.ENTERING);
+
+		BigDecimal totalPayAmt = BigDecimal.ZERO;
+		BigDecimal avaAmount = BigDecimal.ZERO;
+		BigDecimal utilizedAmount = BigDecimal.ZERO;
+		BigDecimal reservedAmount = BigDecimal.ZERO;
+		BigDecimal balanceAmount = BigDecimal.ZERO;
+		BigDecimal payAmount = BigDecimal.ZERO;
+
+		FinExcessAmount temp = null;
+
+		for (FinExcessAmount pd : feList) {
+			if (temp == null) {
+				temp = pd;
+			}
+
+			avaAmount = pd.getAmount().add(avaAmount);
+			utilizedAmount = pd.getUtilisedAmt().add(utilizedAmount);
+			balanceAmount = pd.getBalanceAmt().add(balanceAmount);
+			reservedAmount = pd.getReservedAmt().add(reservedAmount);
+
+			payAmount = pd.getAmount().add(payAmount);
+			totalPayAmt = totalPayAmt.add(payAmount);
+		}
+
+		Listitem item = new Listitem();
+
+		// Button
+		Listcell lc = new Listcell();
+		lc.appendChild(getButton(temp));
+		lc.setParent(item);
+
+		// Amount Type
+		String amountType = Labels.getLabel("label_Excess_Type_" + excessType);
+		if (String.valueOf(AdviseType.PAYABLE.id()).equals(excessType)) {
+			amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
+		}
+
+		lc = new Listcell(amountType);
+		lc.setSpan(3);
+		lc.setParent(item);
+
+		// Amount
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(avaAmount));
+		lc.setParent(item);
+
+		// Utilized Amount
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(utilizedAmount));
+		lc.setParent(item);
+
+		// Reserved Amount
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(reservedAmount));
+		lc.setParent(item);
+
+		// Balanced Amount
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(balanceAmount));
+		lc.setParent(item);
+
+		this.listBoxExcess.appendChild(item);
+
+		if (temp.isExpand() && !temp.isCollapse()) {
+			doFillChildDetail(feList);
+		}
+
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(totalPayAmt));
+		lc.setParent(item);
+
+		lc = new Listcell();
+		lc.setParent(item);
+
 		logger.debug(Literal.LEAVING);
 	}
 
-	// Excess Amount Types Enum
-	public enum ExcessType {
-		ADVEMI, ADVINT, DSF, CASHCLT, E, A
+	private void doFillChildDetail(List<FinExcessAmount> feDetail) {
+		logger.debug(Literal.ENTERING);
+
+		for (FinExcessAmount pd : feDetail) {
+			BigDecimal availAmount = pd.getAmount();
+			BigDecimal paidAmount = pd.getUtilisedAmt();
+			BigDecimal reserveAmt = pd.getReservedAmt();
+			BigDecimal balAmt = pd.getBalanceAmt();
+
+			Listitem item = new Listitem();
+
+			Listcell lc = new Listcell();
+			lc.setParent(item);
+
+			// Amount Type
+			lc = new Listcell("");
+			lc.setParent(item);
+			item.appendChild(new Listcell(pd.getReceiptID() == null ? "" : String.valueOf(pd.getReceiptID())));
+			item.appendChild(new Listcell(DateUtil.formatToLongDate(pd.getValueDate())));
+
+			// Available Amount
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(availAmount));
+			lc.setParent(item);
+
+			// utilized amount
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(paidAmount));
+			lc.setParent(item);
+
+			// reserve amount
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(reserveAmt));
+			lc.setParent(item);
+
+			// balance amount
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(balAmt));
+			lc.setParent(item);
+
+			this.listBoxExcess.appendChild(item);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private Button getButton(FinExcessAmount temp) {
+		Button button = new Button();
+
+		if (temp.isExpand()) {
+			button.setImage("/images/icons/delete.png");
+			button.setStyle("background:white;border:0px;");
+			button.addForward("onClick", self, "onExpand");
+		} else {
+			button.setImage("/images/icons/add.png");
+			button.setStyle("background:#FFFFFF;border:0px;onMouseOver ");
+			button.addForward("onClick", self, "onCollapse");
+		}
+
+		button.setAttribute("pd", temp);
+		return button;
+	}
+
+	private Decimalbox getDecimalbox(BigDecimal amount) {
+		Decimalbox decimalbox = new Decimalbox();
+		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		decimalbox.setStyle("text-align:right; ");
+		decimalbox.setReadonly(true);
+		decimalbox.setValue(PennantApplicationUtil.formateAmount(amount, ccyFormatter));
+
+		return decimalbox;
 	}
 }
