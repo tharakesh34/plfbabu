@@ -4466,8 +4466,7 @@
 		</property>
 	</bean>
 
-	<bean name="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl"
-		parent="genericFinanceDetailService" />
+	<bean name="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" />
 
 	<!--============ Finance Excess Amounts Details ============== -->
 	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl"
@@ -6997,16 +6996,7 @@
 		</property>
 	</bean>
 
-	<bean name="partnerBankServiceTarget" class="com.pennant.backend.service.partnerbank.impl.PartnerBankServiceImpl">
-		<property name="partnerBankDAO" ref="partnerBankDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
-		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
-		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
-		<property name="feePostingsDAO" ref="feePostingsDAO" />
-		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
-
-	</bean>
+	<bean name="partnerBankServiceTarget" class="com.pennant.backend.service.partnerbank.impl.PartnerBankServiceImpl"/>
 
 	<!--============ Reference ID Generation Configuration ============== -->
 	<bean name="ReferenceGenerator" class="com.pennant.app.util.ReferenceGenerator">
@@ -7083,8 +7073,6 @@
 
 	<bean name="finTypePartnerBankServiceTarget"
 		class="com.pennant.backend.service.rmtmasters.impl.FinTypePartnerBankServiceImpl">
-		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
 	<!-- Promotions -->
@@ -10544,6 +10532,7 @@
 		<property name="subventionService" ref="subventionService" />
 		<property name="restructureService" ref="restructureService" />
 		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="feeDetailService" ref="feeDetailService" />
 	</bean>
 
 	<bean id="receiptUploadApprovalProcess" class="com.pennanttech.pff.receipt.upload.ReceiptUploadApprovalProcess">
@@ -11405,9 +11394,7 @@
 			</props>
 		</property>
 	</bean>
-	<bean name="finFeeConfigServiceTarget" class="com.pennant.backend.service.finance.impl.FinFeeConfigServiceImpl">
-		<property name="finFeeConfigDAO" ref="finFeeConfigDAO" />
-	</bean>
+	<bean name="finFeeConfigServiceTarget" class="com.pennant.backend.service.finance.impl.FinFeeConfigServiceImpl"/>
 
 	<bean id="finFeeConfigDAO" class="com.pennant.backend.dao.finance.impl.FinFeeConfigDAOImpl" parent="sequenceDao" />
 
@@ -11963,11 +11950,15 @@
 		parent="postingEvent" />
 
 	<bean id="postingEventFactory" class="com.pennant.pff.core.engine.accounting.PostingEventFactory" />
+	
+	<bean id="stageAccountingEvent" class="com.pennant.pff.core.engine.accounting.event.StageAccountingEvent"
+		parent="postingEvent" />
 
 	<bean id="accountingEngine" class="com.pennant.pff.core.engine.accounting.AccountingEngine">
 		<property name="factory" ref="postingEventFactory" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="engineExecution" ref="engineExecution" />
+		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 	</bean>
 	<!-- Accounting Engine End -->
 
@@ -13009,7 +13000,20 @@
 		
 	<bean id="aUploadService" class="com.pennant.pff.upload.service.impl.AUploadServiceImpl" abstract="true" />
 
-	<bean id="rePresentmentUploadService"
-		class="com.pennant.pff.presentment.service.impl.RePresentmentUploadServiceImpl" parent="aUploadService" />
+	<bean id="rePresentmentUploadService" class="com.pennant.pff.presentment.service.impl.RePresentmentUploadServiceImpl" parent="aUploadService" />
+	
+	<bean id="mandateUploadService" class="com.pennant.pff.mandate.service.impl.MandateUploadServiceImpl" parent="aUploadService"/>
+	
+	<bean id="mandateUploadDAO" class="com.pennant.backend.dao.mandate.impl.MandateUploadDAOImpl" parent="sequenceDao" />
+	
+	<bean id="fateCorrectionUploadService" class="com.pennant.pff.presentment.service.impl.FateCorrectionUploadServiceImpl" />
+	
+	<bean id="presentmentRespUploadDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentRespUploadDAOImpl" parent="sequenceDao"/>
+	
+	<bean id="chequeUploadDAO" class="com.pennant.pff.cheques.dao.impl.ChequeUploadDAOImpl" parent="sequenceDao" />
 
+	<bean id="chequeUploadService" class="com.pennant.pff.cheques.service.impl.ChequeUploadServiceImpl"
+		parent="aUploadService" />
+		
+	<bean id="partPayAndEarlySettleValidator" class="com.pennant.backend.service.finance.PartPayAndEarlySettleValidator"/>
 </beans>

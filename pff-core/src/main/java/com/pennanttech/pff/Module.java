@@ -16,5 +16,7 @@ public enum Module {
 
 	VAS,
 
-	DPD;
+	DPD,
+
+	PARTNERBANK
 }

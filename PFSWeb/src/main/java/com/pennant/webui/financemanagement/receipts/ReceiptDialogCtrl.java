@@ -178,6 +178,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
+import com.pennant.backend.service.applicationmaster.ClusterService;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
@@ -191,6 +192,7 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -210,8 +212,10 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
+import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
@@ -255,6 +259,7 @@ import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 import com.rits.cloning.Cloner;
 
 /**
@@ -536,6 +541,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	Date appDate = SysParamUtil.getAppDate();
 	private transient CustomerDocumentService customerDocumentService;
 	private ManualAdviseService manualAdviseService;
+	private FinTypePartnerBankService finTypePartnerBankService;
+	private ClusterService clusterService;
 
 	/**
 	 * default constructor.<br>
@@ -660,11 +667,22 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			// receiptData =
 			// getReceiptCalculator().removeUnwantedManAloc(receiptData);
+
+			if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+				doProcessTerminationExcess(receiptData, rch);
+			}
+
 			setSummaryData(false);
 			// set Read only mode accordingly if the object is new or not.
 			if (StringUtils.isBlank(rch.getRecordType())) {
 				doEdit();
 				this.btnReceipt.setDisabled(true);
+			}
+
+			BigDecimal closureAmount = receiptData.getCalculatedClosureAmt();
+			if (closureAmount.compareTo(rch.getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
+					&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+				receiptService.waiveThresholdLimit(receiptData);
 			}
 
 			doShowDialog(rch);
@@ -1921,18 +1939,31 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			// readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"),
 			// this.fundingAccount);
 
-			FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
-			Filter fundingAcFilters[] = new Filter[4];
-			fundingAcFilters[0] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
-			fundingAcFilters[1] = new Filter("FinType", finType.getFinType(), Filter.OP_EQUAL);
-			fundingAcFilters[2] = new Filter("PaymentMode", recMode, Filter.OP_EQUAL);
-			if (ReceiptMode.ONLINE.equals(recMode)) {
-				fundingAcFilters[2] = new Filter("PaymentMode", receiptData.getReceiptHeader().getSubReceiptMode(),
-						Filter.OP_EQUAL);
+			String paymentType = "";
+			if (this.receiptMode.getSelectedItem().getValue().toString().equals("ONLINE")) {
+				paymentType = this.subReceiptMode.getSelectedItem().getValue().toString();
+			} else {
+				paymentType = this.receiptMode.getSelectedItem().getValue().toString();
 			}
-			fundingAcFilters[3] = new Filter("EntityCode", finType.getLovDescEntityCode(), Filter.OP_EQUAL);
-			Filter.and(fundingAcFilters);
-			this.fundingAccount.setFilters(fundingAcFilters);
+
+			FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
+			if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
+				branchWisePartnerBank(recMode, finType);
+			} else {
+
+				Filter fundingAcFilters[] = new Filter[4];
+				fundingAcFilters[0] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
+				fundingAcFilters[1] = new Filter("FinType", finType.getFinType(), Filter.OP_EQUAL);
+				fundingAcFilters[2] = new Filter("PaymentMode", recMode, Filter.OP_EQUAL);
+				if (ReceiptMode.ONLINE.equals(recMode)) {
+					fundingAcFilters[2] = new Filter("PaymentMode", receiptData.getReceiptHeader().getSubReceiptMode(),
+							Filter.OP_EQUAL);
+				}
+				fundingAcFilters[3] = new Filter("EntityCode", finType.getLovDescEntityCode(), Filter.OP_EQUAL);
+				Filter.and(fundingAcFilters);
+				this.fundingAccount.setFilters(fundingAcFilters);
+			}
+
 			// this.row_fundingAcNo.setVisible(true);
 			this.row_remarks.setVisible(true);
 
@@ -2029,6 +2060,42 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			resetAllocationPayments();
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void branchWisePartnerBank(String paymentMode, FinanceType finType) {
+		String branchCode = this.cashierBranch.getValue();
+		Long clusterId = null;
+
+		Filter[] filters = new Filter[5];
+		filters[0] = new Filter("FinType", finType.getFinType(), Filter.OP_EQUAL);
+		filters[1] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
+		filters[2] = new Filter("PaymentMode", paymentMode, Filter.OP_EQUAL);
+
+		if (PartnerBankExtension.MAPPING.equals("B")) {
+			filters[4] = new Filter("BranchCode", branchCode, Filter.OP_EQUAL);
+		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+			clusterId = clusterService.getClustersFilter(branchCode);
+			filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+		}
+
+		FinTypePartnerBank fpb = new FinTypePartnerBank();
+
+		fpb.setFinType(finType.getFinType());
+		fpb.setPurpose(RepayConstants.RECEIPTTYPE_RECIPT);
+		fpb.setPaymentMode(paymentMode);
+		fpb.setBranchCode(branchCode);
+		fpb.setClusterId(clusterId);
+
+		List<FinTypePartnerBank> list = finTypePartnerBankService.getByFinTypeAndPurpose(fpb);
+
+		if (list.size() == 1) {
+			fpb = list.get(0);
+			this.fundingAccount.setAttribute("partnerBankId", fpb.getPartnerBankID());
+			this.fundingAccount.setValue(fpb.getPartnerBankCode());
+			this.fundingAccount.setDescription(fpb.getPartnerBankName());
+		}
+
+		this.fundingAccount.setFilters(filters);
 	}
 
 	/**
@@ -3792,7 +3859,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		String panNumber = this.panNumber.getValue();
 		Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
-		
+
 		try {
 			if (StringUtils.isBlank(panNumber) || !MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
 				logger.debug(Literal.LEAVING);
@@ -6906,6 +6973,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (receiptPurposeCtg == 2) {
+			if (balPending.compareTo(BigDecimal.ZERO) > 0
+					&& receiptData.getCalculatedClosureAmt().compareTo(BigDecimal.ZERO) > 0) {
+				balPending = balPending.subtract(receiptData.getReceiptHeader().getClosureThresholdLimit());
+			}
 			if (balPending.compareTo(BigDecimal.ZERO) != 0) {
 				MessageUtil.showError(
 						Labels.getLabel("label_ReceiptDialog_Valid_Settlement", new String[] { PennantApplicationUtil
@@ -8207,6 +8278,44 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void doProcessTerminationExcess(FinReceiptData receiptData, FinReceiptHeader rch) {
+		BigDecimal totalClosureAmt = rch.getClosureThresholdLimit().add(rch.getReceiptAmount());
+
+		ReceiptDTO receiptDTO = receiptService.prepareReceiptDTO(receiptData);
+		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
+
+		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(calcClosureAmt) > 0) {
+			return;
+		}
+
+		/**
+		 * This Value should be set only when Auto Waiver has to do
+		 */
+		receiptData.setCalculatedClosureAmt(calcClosureAmt);
+		if (totalClosureAmt.compareTo(calcClosureAmt) >= 0) {
+			return;
+		}
+
+		String msg = "Receipt Amount is insuffient to settle the loan, do you wish to move the receipt amount to termination excess?";
+		if (MessageUtil.NO == MessageUtil.confirm(msg)) {
+			return;
+		}
+
+		fillComboBox(this.allocationMethod, "M", PennantStaticListUtil.getAllocationMethods(), ",A,");
+		fillComboBox(this.receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose());
+
+		rch.setAllocationType(AllocationType.MANUAL);
+		receiptData.setEarlySettle(false);
+		receiptData.setValueDate(rch.getReceiptDate());
+		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
+		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+
+		rch.getAllocations().forEach(al -> receiptCalculator.resetPaidAllocations(al));
+
+		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(rch.getReceiptAmount(), formatter));
+		resetAllocationPayments();
+	}
+
 	public Map<String, BigDecimal> getTaxPercMap() {
 		return taxPercMap;
 	}
@@ -8323,4 +8432,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
 	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
+	}
+
+	public void setClusterService(ClusterService clusterService) {
+		this.clusterService = clusterService;
+	}
+
 }

@@ -3189,10 +3189,10 @@ public class PennantJavaUtil {
 						new String[] { "COLLECTION_AGENCIES", "COLLECTION_AGENCIES" }, BUSINESS_VERTICAL,
 						new String[] { "id", "code", "Description" }, null, 600));
 
-		ModuleUtil.register("Excess",
-				new ModuleMapping("ExcessAmount", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" },
-						null, new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
-						new String[][] { { "AmountType", "0", "E" } }, 750));
+		ModuleUtil.register("Excess", new ModuleMapping("ExcessAmount", FinExcessAmount.class,
+				new String[] { "FinExcessAmount_LovView" }, null, new String[] { "ExcessID", "ReceiptID", "ValueDate",
+						"Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
+				new String[][] { { "AmountType", "0", "E" } }, 850));
 
 		ModuleUtil.register("EMIInAdvance",
 				new ModuleMapping("EMIINadvanceAmount", FinExcessAmount.class,
@@ -3823,13 +3823,33 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FileUploadHeader",
 				new ModuleMapping("FileUploadHeader", FileUploadHeader.class,
-						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, WF_REPRESENT_UPLOAD,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
 
 		ModuleUtil.register("RepresentUploadHeader",
 				new ModuleMapping("RepresentUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("MandateUploadHeader",
+				new ModuleMapping("MandateUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("FateCorrection",
+				new ModuleMapping("FateCorrection", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("ChequeUpload",
+				new ModuleMapping("ChequeUpload", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, WF_REPRESENT_UPLOAD,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("FinTypePartnerBankBranch",
+				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
+						new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
+						new String[] { "BranchCode", "BranchDesc" }, null, 300));
 
 		registerCustomModules();
 	}

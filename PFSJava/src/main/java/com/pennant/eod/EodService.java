@@ -1,9 +1,11 @@
 package com.pennant.eod;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +28,20 @@ import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.extension.PresentmentExtension;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
+import com.pennanttech.pff.closure.service.impl.ClosureService;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
@@ -65,6 +71,8 @@ public class EodService {
 	private ManualAdviseService manualAdviseService;
 	private AssetClassificationService assetClassificationService;
 	private PresentmentDetailDAO presentmentDetailDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
+	private ClosureService closureService;
 
 	public EodService() {
 		super();
@@ -114,24 +122,34 @@ public class EodService {
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			FinanceMain fm = finEODEvent.getFinanceMain();
 			String finReference = fm.getFinReference();
-			FinExcessAmount emiInAdvance = null;
+			List<FinExcessAmount> emiInAdvance = new ArrayList<>();
 
 			if (finEODEvent.getIdxPresentment() < 0) {
 				continue;
 			}
 
+			FinanceScheduleDetail schedule = finEODEvent.getFinanceScheduleDetails()
+					.get(finEODEvent.getIdxPresentment());
+
+			BigDecimal balanceAmt = BigDecimal.ZERO;
+
 			List<FinExcessAmount> finExcessAmounts = finEODEvent.getFinExcessAmounts();
 			for (FinExcessAmount fea : finExcessAmounts) {
-				if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(fea.getAmountType())) {
-					emiInAdvance = fea;
+				if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(fea.getAmountType())
+						&& DateUtil.compare(schedule.getSchDate(), fea.getValueDate()) > 0) {
+					emiInAdvance.add(fea);
+					balanceAmt = balanceAmt.add(fea.getBalanceAmt());
 				}
 			}
 
 			PresentmentDetail pd = getPresentmentDetail(presentments, finReference, businessDate);
 
-			if (pd == null && (emiInAdvance == null || emiInAdvance.getBalanceAmt().compareTo(BigDecimal.ZERO) <= 0)) {
+			if (pd == null && (CollectionUtils.isEmpty(emiInAdvance) || balanceAmt.compareTo(BigDecimal.ZERO) <= 0)) {
 				continue;
 			}
+
+			pd.setExcessMovements(
+					finExcessAmountDAO.getExcessMovementList(pd.getId(), RepayConstants.RECEIPTTYPE_PRESENTMENT));
 
 			ReceiptDTO receiptDTO = new ReceiptDTO();
 			receiptDTO.setRequestSource(RequestSource.EOD);
@@ -230,6 +248,9 @@ public class EodService {
 		if (custEODEvent.isDateRollover()) {
 			dateRollOverService.process(custEODEvent);
 		}
+
+		// EarlySetlement
+		closureService.processTerminationClosure(custEODEvent);
 
 		// Rate review
 		if (custEODEvent.isRateRvwExist()) {
@@ -406,6 +427,11 @@ public class EodService {
 	@Autowired
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
 		this.presentmentDetailDAO = presentmentDetailDAO;
+	}
+
+	@Autowired
+	public void setClosureService(ClosureService closureService) {
+		this.closureService = closureService;
 	}
 
 }

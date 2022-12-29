@@ -177,4 +177,7 @@ public interface PresentmentDetailDAO {
 	void updateProgess(long importHeaderId, int i);
 
 	PresentmentDetail getRePresentmentDetail(String finReference, Date SchDate);
+
+	String getBackOfficeNameByBranchCode(String branchCode);
+
 }

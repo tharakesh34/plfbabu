@@ -368,6 +368,11 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> reportFormatList;
 	private static List<ValueLabel> custCtgList;
 	private static List<ValueLabel> maCategories;
+	private static List<ValueLabel> partpaymentCalculationTypes;
+	private static List<ValueLabel> partpaymentCalculatedOn;
+	private static List<ValueLabel> minPrePaymentCalculationTypes;
+	private static List<ValueLabel> maxPrePaymentCalculationTypes;
+	private static List<ValueLabel> prePaymentCalculatedOn;
 
 	/**
 	 * Gets the list of applications.
@@ -1298,6 +1303,7 @@ public class PennantStaticListUtil {
 			enquiryTypes.add(new ValueLabel("TDSCERENQ", Labels.getLabel("label_TdsCertificateEnquiry")));
 
 			enquiryTypes.add(new ValueLabel("FINMANDENQ", Labels.getLabel("label_FINMANDEnquiry")));
+			enquiryTypes.add(new ValueLabel("FINSECMANDENQ", Labels.getLabel("label_FinSecurityMandateEnquiry")));
 			// Module to display Loan extended details where label will be
 			// replaced with tab heading
 			enquiryTypes.add(new ValueLabel("LOANEXTDET", Labels.getLabel("label_ExtendedFieldsEnquiry")));
@@ -3120,6 +3126,8 @@ public class PennantStaticListUtil {
 				excessAdjustTo
 						.add(new ValueLabel(ReceiptMode.DSF, Labels.getLabel("label_RecceiptDialog_ExcessType_DSF")));
 			}
+			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_TEXCESS,
+					Labels.getLabel("label_RecceiptDialog_ExcessType_TEXCESS")));
 
 			// excessAdjustTo.add(new
 			// ValueLabel(RepayConstants.EXCESSADJUSTTO_PAYABLE,
@@ -3328,6 +3336,7 @@ public class PennantStaticListUtil {
 			presentmentsStatusList.add(new ValueLabel("F", Labels.getLabel("label_Presentment_Status_Failed")));
 			presentmentsStatusList.add(new ValueLabel("A", Labels.getLabel("label_Presentment_Status_Approve")));
 			presentmentsStatusList.add(new ValueLabel("B", Labels.getLabel("label_Presentment_Status_Bounce")));
+			presentmentsStatusList.add(new ValueLabel("P", Labels.getLabel("label_Presentment_Status_Approve")));
 		}
 		return presentmentsStatusList;
 	}
@@ -5523,4 +5532,70 @@ public class PennantStaticListUtil {
 
 		return maCategories;
 	}
+
+	public static List<ValueLabel> getPartPaymentCalculationTypes() {
+		if (partpaymentCalculationTypes == null) {
+			partpaymentCalculationTypes = new ArrayList<>(2);
+
+			partpaymentCalculationTypes.add(new ValueLabel(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT,
+					Labels.getLabel("label_PartPayment_FixedAmount.value")));
+			partpaymentCalculationTypes.add(new ValueLabel(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE,
+					Labels.getLabel("label_PartPayment_Percentage.value")));
+		}
+
+		return partpaymentCalculationTypes;
+	}
+
+	public static List<ValueLabel> getPartPaymentCalculatedOnList() {
+		if (partpaymentCalculatedOn == null) {
+			partpaymentCalculatedOn = new ArrayList<>(1);
+
+			partpaymentCalculatedOn.add(new ValueLabel(PennantConstants.PARTPAYMENT_CALCULATEDON_POS,
+					Labels.getLabel("label_PartPayment_POS.value")));
+		}
+
+		return partpaymentCalculatedOn;
+	}
+
+	public static List<ValueLabel> getMaxPrePaymentCalculationTypes() {
+		if (maxPrePaymentCalculationTypes == null) {
+			maxPrePaymentCalculationTypes = new ArrayList<>(4);
+
+			maxPrePaymentCalculationTypes.add(new ValueLabel(PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT,
+					Labels.getLabel("PrePayment_Calculation_Type_FixedAmount")));
+			maxPrePaymentCalculationTypes.add(new ValueLabel(PennantConstants.PREPYMT_CALCTN_TYPE_PERCENTAGE,
+					Labels.getLabel("PrePayment_Calculation_Type_Percentage")));
+			maxPrePaymentCalculationTypes.add(new ValueLabel(PennantConstants.PREPYMT_CALCTN_TYPE_MIN_EMI,
+					Labels.getLabel("PrePayment_Calculation_Type_Min_EMI")));
+			maxPrePaymentCalculationTypes.add(new ValueLabel(PennantConstants.PREPYMT_CALCTN_TYPE_MIN_POS_AMT,
+					Labels.getLabel("PrePayment_Calculation_Type_Min_Pos_Amt")));
+		}
+
+		return maxPrePaymentCalculationTypes;
+	}
+
+	public static List<ValueLabel> getPrePaymentCalculatedOnList() {
+		if (prePaymentCalculatedOn == null) {
+			prePaymentCalculatedOn = new ArrayList<>(1);
+
+			prePaymentCalculatedOn.add(new ValueLabel(PennantConstants.PREPYMT_CALCULATEDON_SANCTIONLOANAMOUNT,
+					Labels.getLabel("PrePayment_CalculatedOn_SanctionLoanAmount")));
+		}
+
+		return prePaymentCalculatedOn;
+	}
+
+	public static List<ValueLabel> getMinPrePaymentCalculationTypes() {
+		if (minPrePaymentCalculationTypes == null) {
+			minPrePaymentCalculationTypes = new ArrayList<>(2);
+
+			minPrePaymentCalculationTypes.add(new ValueLabel(PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT,
+					Labels.getLabel("PrePayment_Calculation_Type_FixedAmount")));
+			minPrePaymentCalculationTypes.add(new ValueLabel(PennantConstants.PREPYMT_CALCTN_TYPE_PERCENTAGE,
+					Labels.getLabel("PrePayment_Calculation_Type_Percentage")));
+		}
+
+		return minPrePaymentCalculationTypes;
+	}
+
 }

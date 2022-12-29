@@ -34,6 +34,8 @@ public class ExtractionJob extends BatchConfiguration {
 
 	public ExtractionJob(@Autowired DataSource dataSource) throws Exception {
 		super(dataSource, "PRMNT_", "PRMNT_EXTRACTION");
+
+		initilizeVariables();
 	}
 
 	@Autowired
@@ -46,14 +48,6 @@ public class ExtractionJob extends BatchConfiguration {
 	private EventPropertiesService eventPropertiesService;
 
 	private BatchJobQueueDAO ebjqDAO;
-
-	public BatchJobQueueDAO ebjqDAO() {
-		if (this.ebjqDAO == null) {
-			this.ebjqDAO = new ExtractionJobQueueDAOImpl(dataSource);
-		}
-
-		return ebjqDAO;
-	}
 
 	public PresentmentJobListener presentmentJobListener() {
 		return new PresentmentJobListener(presentmentDAO);
@@ -93,11 +87,11 @@ public class ExtractionJob extends BatchConfiguration {
 	}
 
 	public TaskletStep extractionQueueStep() {
-		return this.stepBuilderFactory.get("EXTRACTION_QUIENG").tasklet(new ExtractionQueueTasklet(ebjqDAO())).build();
+		return this.stepBuilderFactory.get("EXTRACTION_QUIENG").tasklet(new ExtractionQueueTasklet(ebjqDAO)).build();
 	}
 
 	public Step extractionMasterStep() throws Exception {
-		ExtractionPartitioner partitioner = new ExtractionPartitioner(ebjqDAO());
+		ExtractionPartitioner partitioner = new ExtractionPartitioner(ebjqDAO);
 		return stepBuilderFactory.get("EXTRACTION_MASTER")
 
 				.partitioner(extractionStep())
@@ -117,7 +111,7 @@ public class ExtractionJob extends BatchConfiguration {
 
 				.get("EXTRACTION")
 
-				.tasklet(new ExtractionTasklet(ebjqDAO(), presentmentEngine, transactionManager, presentmentDAO))
+				.tasklet(new ExtractionTasklet(ebjqDAO, presentmentEngine, transactionManager, presentmentDAO))
 
 				.transactionAttribute(attribute)
 
@@ -129,12 +123,12 @@ public class ExtractionJob extends BatchConfiguration {
 	}
 
 	public TaskletStep approvalQueueStep() {
-		return this.stepBuilderFactory.get("APPROVAL_QUIENG")
-				.tasklet(new ApprovalQueueTasklet(ebjqDAO(), presentmentDAO)).build();
+		return this.stepBuilderFactory.get("APPROVAL_QUIENG").tasklet(new ApprovalQueueTasklet(ebjqDAO, presentmentDAO))
+				.build();
 	}
 
 	public Step approvalMasterStep() throws Exception {
-		ApprovalPartitioner partitioner = new ApprovalPartitioner(ebjqDAO());
+		ApprovalPartitioner partitioner = new ApprovalPartitioner(ebjqDAO);
 		return stepBuilderFactory.get("APPROVAL_MASTER")
 
 				.partitioner(approvalStep())
@@ -150,7 +144,7 @@ public class ExtractionJob extends BatchConfiguration {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
-		ApprovalTasklet tasklet = new ApprovalTasklet(ebjqDAO(), presentmentEngine, presentmentDAO, transactionManager);
+		ApprovalTasklet tasklet = new ApprovalTasklet(ebjqDAO, presentmentEngine, presentmentDAO, transactionManager);
 		tasklet.setEventPropertiesService(eventPropertiesService);
 		return this.stepBuilderFactory
 
@@ -177,7 +171,11 @@ public class ExtractionJob extends BatchConfiguration {
 	}
 
 	public ExtractionClearTasklet clearQueueTasklet() {
-		return new ExtractionClearTasklet(presentmentDAO, ebjqDAO());
+		return new ExtractionClearTasklet(presentmentDAO, ebjqDAO);
+	}
+
+	private void initilizeVariables() {
+		this.ebjqDAO = new ExtractionJobQueueDAOImpl(dataSource);
 	}
 
 }

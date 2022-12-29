@@ -47,4 +47,7 @@ public interface ClusterService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	List<Cluster> getClustersByEntity(String selectedEntity);
+
+	Long getClustersFilter(String branchCode);
+
 }

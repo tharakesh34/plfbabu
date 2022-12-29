@@ -119,6 +119,10 @@
 									<label id="label_PartnerBank" value="${c:l('label_MandateList_PartnerBank.value')}" />
 									<listbox id="sortOperator_partnerBank" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="partnerBank" />
+									<label id="label_LoanTypePartnerbankMappingDialogue_BranchOrCluster"
+										value="${c:l('label_LoanTypePartnerbankMappingDialogue_BranchOrCluster.value')}" />
+									<listbox id="sortOperator_BranchOrCluster" width="43px" mold="select" rows="1" />
+									<extendedcombobox id="branchOrCluster" />
 								</row>
 							</rows>
 						</grid>

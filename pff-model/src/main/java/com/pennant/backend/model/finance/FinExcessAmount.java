@@ -2,6 +2,7 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +19,11 @@ public class FinExcessAmount implements Serializable {
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
 	private String rcdAction;
 	private FinExcessMovement excessMovement;
+	private Long receiptID;
+	private Date valueDate;
+	private Date postDate;
+	private boolean expand;
+	private boolean collapse;
 
 	public FinExcessAmount() {
 		super();
@@ -42,6 +48,9 @@ public class FinExcessAmount implements Serializable {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("rcdAction");
 		excludeFields.add("excessMovement");
+		excludeFields.add("expand");
+		excludeFields.add("collapse");
+
 		return excludeFields;
 	}
 
@@ -131,6 +140,46 @@ public class FinExcessAmount implements Serializable {
 
 	public void setExcessMovement(FinExcessMovement excessMovement) {
 		this.excessMovement = excessMovement;
+	}
+
+	public Long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(Long receiptID) {
+		this.receiptID = receiptID;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public Date getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate) {
+		this.postDate = postDate;
+	}
+
+	public boolean isExpand() {
+		return expand;
+	}
+
+	public void setExpand(boolean expand) {
+		this.expand = expand;
+	}
+
+	public boolean isCollapse() {
+		return collapse;
+	}
+
+	public void setCollapse(boolean collapse) {
+		this.collapse = collapse;
 	}
 
 }

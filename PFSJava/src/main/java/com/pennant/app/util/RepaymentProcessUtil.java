@@ -1710,32 +1710,25 @@ public class RepaymentProcessUtil {
 			rph.setFinEvent(rch.getReceiptPurpose());
 
 			if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-				int recordCount = 0;
-				if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
-					recordCount = finExcessAmountDAO.updateExcessReserveByRef(rch.getFinID(), rch.getExcessAdjustTo(),
-							rph.getExcessAmount());
-				} else {
-					recordCount = finExcessAmountDAO.updateExcessBalByRef(rch.getFinID(), rch.getExcessAdjustTo(),
-							rph.getExcessAmount());
-				}
-				// If record Not found then record count should be zero. Need to create new Excess Record
-				if (recordCount <= 0) {
-					FinExcessAmount excess = new FinExcessAmount();
-					excess.setFinID(rch.getFinID());
-					excess.setFinReference(rch.getReference());
-					excess.setAmountType(rch.getExcessAdjustTo());
-					excess.setAmount(rph.getExcessAmount());
-					excess.setUtilisedAmt(BigDecimal.ZERO);
-					excess.setBalanceAmt(rph.getExcessAmount());
-					excess.setReservedAmt(BigDecimal.ZERO);
-					if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
-						excess.setBalanceAmt(BigDecimal.ZERO);
-						excess.setReservedAmt(rph.getExcessAmount());
-						excess.setAmount(rph.getExcessAmount());
+				FinExcessAmount excess = new FinExcessAmount();
+				excess.setFinID(rch.getFinID());
+				excess.setFinReference(rch.getReference());
+				excess.setAmountType(rch.getExcessAdjustTo());
+				excess.setAmount(rph.getExcessAmount());
+				excess.setUtilisedAmt(BigDecimal.ZERO);
+				excess.setBalanceAmt(rph.getExcessAmount());
+				excess.setReservedAmt(BigDecimal.ZERO);
+				excess.setReceiptID(rch.getReceiptID());
+				excess.setValueDate(rch.getValueDate());
+				excess.setPostDate(SysParamUtil.getAppDate());
 
-					}
-					finExcessAmountDAO.saveExcess(excess);
+				if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
+					excess.setBalanceAmt(BigDecimal.ZERO);
+					excess.setReservedAmt(rph.getExcessAmount());
+					excess.setAmount(rph.getExcessAmount());
 				}
+
+				finExcessAmountDAO.saveExcess(excess);
 			}
 
 			// Saving record while doing receipt for OD loans

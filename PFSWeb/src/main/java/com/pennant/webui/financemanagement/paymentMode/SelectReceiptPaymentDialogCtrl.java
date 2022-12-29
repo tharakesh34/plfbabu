@@ -34,13 +34,14 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -49,11 +50,13 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennant.backend.service.finance.PartPayAndEarlySettleValidator;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -134,9 +137,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	public transient SecurityUserDAO securityUserDAO;
 
 	@Autowired
-	private transient ReceiptCalculator receiptCalculator;
-
-	@Autowired
 	private transient FinanceMainService financeMainService;
 
 	private transient CustomerDetailsService customerDetailsService;
@@ -167,9 +167,12 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private int formatter = 2;
 	Date appDate = SysParamUtil.getAppDate();
 	protected FinanceRepaymentsDAO financeRepaymentsDAO;
+	protected FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinanceType finType;
 	private Label label_ReceiptPayment_ReceiptDate;
 	private Label label_ReceiptPayment_ValueDate;
+
+	private PartPayAndEarlySettleValidator partPayAndEarlySettleValidator;
 
 	/**
 	 * default constructor.<br>
@@ -511,6 +514,16 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		long finID = ComponentUtil.getFinID(this.finReference);
 
+		if (!FinanceConstants.CLOSURE_MAKER.equals(this.module)) {
+			errorDetail = receiptService.validateThreshHoldLimit(receiptData.getReceiptHeader(),
+					this.receiptDues.getActualValue());
+
+			if (errorDetail != null) {
+				MessageUtil.showError(errorDetail.getMessage());
+				return;
+			}
+		}
+
 		if (!((FinanceMain) this.finReference.getObject()).isFinIsActive()) {
 			ErrorDetail errorDetails = null;
 			String[] valueParm = new String[1];
@@ -530,6 +543,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		if (isKnockOff) {
 			BigDecimal availableAmount = BigDecimal.ZERO;
+			Date valuedate = null;
 
 			if (!StringUtils.isBlank(this.referenceId.getDescription())) {
 				availableAmount = new BigDecimal(this.referenceId.getDescription());
@@ -537,6 +551,19 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			if (PennantApplicationUtil.formateAmount(receiptAmount, formatter).compareTo(availableAmount) > 0) {
 				this.receiptAmount.setValue(BigDecimal.ZERO);
 				return;
+			}
+
+			if (StringUtils.equals(RepayConstants.PAYTYPE_PAYABLE, receiptData.getReceiptHeader().getReceiptMode())) {
+				ManualAdvise ma = (ManualAdvise) this.referenceId.getObject();
+				valuedate = ma.getValueDate();
+			} else {
+				FinExcessAmount fe = (FinExcessAmount) this.referenceId.getObject();
+				valuedate = fe.getValueDate();
+			}
+
+			if (this.receiptDate.getValue().compareTo(valuedate) < 0) {
+				MessageUtil.showError(Labels.getLabel("label_knockoffValuedate",
+						new String[] { DateUtil.formatToShortDate(valuedate) }));
 			}
 		}
 		if (isForeClosure) {
@@ -658,6 +685,20 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			return;
 		}
 
+		// Validate the Part Payment and Early Settelment validations
+		String purpose = this.receiptPurpose.getSelectedItem().getValue();
+
+		if (FinServiceEvent.EARLYRPY.equals(purpose)) {
+			errorDetail = this.partPayAndEarlySettleValidator.validatePartPay(fsd, this.receiptAmount.getActualValue());
+		} else if (FinServiceEvent.EARLYRPY.equals(purpose)) {
+			errorDetail = this.partPayAndEarlySettleValidator.validateEarlyPay(fsd);
+		}
+
+		if (errorDetail != null) {
+			MessageUtil.showError(errorDetail);
+			return;
+		}
+
 		errorDetail = receiptService.getWaiverValidation(finMain.getFinID(),
 				this.receiptPurpose.getSelectedItem().getValue(), valueDate.getValue());
 
@@ -683,6 +724,12 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		BigDecimal excessAvailable = receiptData.getExcessAvailable();
 		BigDecimal totalDues = pastDues.add(totalBounces).add(totalRcvAdvises).add(totalFees).subtract(excessAvailable);
 
+		ErrorDetail error = receiptService.validateThreshHoldLimit(rch, totalDues);
+		if (error != null) {
+			MessageUtil.showError(error.getMessage());
+			return;
+		}
+
 		if (BigDecimal.ZERO.compareTo(totalDues) > 0) {
 			totalDues = BigDecimal.ZERO;
 		}
@@ -692,8 +739,23 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			BigDecimal receiptDues = this.receiptDues.getActualValue();
 			BigDecimal knockOffAmount = this.receiptAmount.getActualValue();
 			String receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
+			Date valuedate = null;
 			if (FinServiceEvent.SCHDRPY.equals(receiptPurpose) && knockOffAmount.compareTo(receiptDues) > 0) {
 				MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff"));
+				return;
+			}
+
+			if (StringUtils.equals(RepayConstants.PAYTYPE_PAYABLE, receiptData.getReceiptHeader().getReceiptMode())) {
+				ManualAdvise ma = (ManualAdvise) this.referenceId.getObject();
+				valuedate = ma.getValueDate();
+			} else {
+				FinExcessAmount fe = (FinExcessAmount) this.referenceId.getObject();
+				valuedate = fe.getValueDate();
+			}
+
+			if (this.receiptDate.getValue().compareTo(valuedate) < 0) {
+				MessageUtil.showError(Labels.getLabel("label_knockoffValuedate",
+						new String[] { DateUtil.formatToShortDate(valuedate) }));
 				return;
 			}
 		}
@@ -833,13 +895,15 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		receiptData.setFinanceDetail(fd);
 
 		FinReceiptHeader rch = new FinReceiptHeader();
-		receiptData.setReceiptHeader(rch);
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 
 		FinanceMain fm = financeMainDAO.getFinanceMainForLMSEvent(finID);
 		fm.setAppDate(appDate);
 		fm.setReceiptPurpose(rptPurpose.code());
+		rch.setClosureThresholdLimit(finReceiptHeaderDAO.getClosureAmountByFinType(fm.getFinType()));
+
+		receiptData.setReceiptHeader(rch);
 
 		schdData.setFinanceMain(fm);
 		schdData.setFeeEvent(eventCode);
@@ -1138,7 +1202,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				}
 
 				if ("EarlySettlement".equals(this.receiptPurpose.getSelectedItem().getValue())) {
-					if (this.receiptDues.getValidateValue().compareTo(this.receiptAmount.getValidateValue()) > 0) {
+					if (this.receiptDues.getValidateValue().compareTo(this.receiptAmount.getValidateValue()
+							.add(receiptData.getReceiptHeader().getClosureThresholdLimit())) > 0) {
 						wve.add(new WrongValueException(this.receiptAmount.getCcyTextBox(),
 								"Receipt Amount should greater than or equal to Receipt Dues."));
 					}
@@ -1433,6 +1498,16 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	@Autowired
+	public void setPartPayAndEarlySettleValidator(PartPayAndEarlySettleValidator partPayAndEarlySettleValidator) {
+		this.partPayAndEarlySettleValidator = partPayAndEarlySettleValidator;
 	}
 
 }

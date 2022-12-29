@@ -29,14 +29,15 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
+import com.pennanttech.pff.core.TableType;
 
 public interface FinTypePartnerBankService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	FinTypePartnerBank getFinTypePartnerBank(String finType, long iD);
+	FinTypePartnerBank getPartnerBank(String finType, long iD);
 
-	FinTypePartnerBank getApprovedFinTypePartnerBank(String finType, long iD);
+	FinTypePartnerBank getApprovedPartnerBank(String finType, long iD);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -44,17 +45,25 @@ public interface FinTypePartnerBankService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	List<AuditDetail> setFinTypePartnerBankDetailsAuditData(List<FinTypePartnerBank> finTypePartnerBankList,
-			String auditTranType, String method);
+	List<AuditDetail> setAuditData(List<FinTypePartnerBank> fpbList, String auditTranType, String method);
 
-	List<AuditDetail> processFinTypePartnerBankDetails(List<AuditDetail> auditDetails, String type);
+	List<AuditDetail> processDetails(List<AuditDetail> auditDetails, TableType tableType);
 
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method);
 
-	List<AuditDetail> delete(List<FinTypePartnerBank> finTypePartnerBankList, String tableType, String auditTranType,
+	List<AuditDetail> delete(List<FinTypePartnerBank> fpbList, TableType tableType, String auditTranType,
 			String finType);
 
-	List<FinTypePartnerBank> getFinTypePartnerBanksList(String finType, String type);
+	List<FinTypePartnerBank> getPartnerBanks(String finType, TableType tableType);
+
+	List<FinTypePartnerBank> getPartnerBanksList(FinTypePartnerBank fab, TableType tableType);
 
 	int getPartnerBankCount(String finType, String paymentType, String purpose, long partnerBankID);
+
+	List<FinTypePartnerBank> getByFinTypeAndPurpose(FinTypePartnerBank fpb);
+
+	public List<Long> getByClusterAndPartnerbank(long partnerbankId);
+
+	List<FinTypePartnerBank> getFintypePartnerBankByBranch(List<String> branchCode, Long clusterId);
+
 }

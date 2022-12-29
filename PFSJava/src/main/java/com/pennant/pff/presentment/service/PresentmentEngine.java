@@ -22,12 +22,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -41,9 +41,12 @@ import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.eventproperties.service.EventPropertiesService;
+import com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceImpl.EventType;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -137,6 +140,7 @@ public class PresentmentEngine {
 	private ReceiptCalculator receiptCalculator;
 	private PresentmentImportProcess presentmentImportProcess;
 	private FinMandateService finMandateService;
+	private EventPropertiesService eventPropertiesService;
 
 	public PresentmentEngine() {
 		super();
@@ -382,6 +386,7 @@ public class PresentmentEngine {
 
 	public void grouping(PresentmentHeader ph) {
 		logger.debug(Literal.ENTERING);
+
 		long batchID = ph.getBatchID();
 		List<PresentmentDetail> list = null;
 
@@ -553,7 +558,7 @@ public class PresentmentEngine {
 			}
 		}
 
-		pd.setStatus(RepayConstants.PEXC_IMPORT);
+		pd.setStatus(RepayConstants.PEXC_SEND_TO_PRESENTMENT);
 
 		pd.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
 
@@ -661,6 +666,8 @@ public class PresentmentEngine {
 	}
 
 	private void processAdvAmounts(PresentmentHeader ph, PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		AdvanceType advanceType = null;
 		String amountType = "";
 
@@ -677,6 +684,7 @@ public class PresentmentEngine {
 		}
 
 		if (advanceType == null) {
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
@@ -685,6 +693,7 @@ public class PresentmentEngine {
 
 		if (advanceType == AdvanceType.AE) {
 			if (AdvanceStage.getStage(pd.getAdvStage()) == AdvanceStage.FE) {
+				logger.debug(Literal.LEAVING);
 				return;
 			}
 			amountType = RepayConstants.EXAMOUNTTYPE_ADVEMI;
@@ -698,91 +707,108 @@ public class PresentmentEngine {
 			}
 		}
 
-		FinExcessAmount finExAmt = finExcessAmountDAO.getExcessAmountsByRefAndType(pd.getFinID(), amountType);
-
-		if (finExAmt == null) {
-			return;
-		}
-
-		BigDecimal excessBal = finExAmt.getBalanceAmt();
-		BigDecimal adjAmount = BigDecimal.ZERO;
-
-		if (dueAmt.compareTo(BigDecimal.ZERO) > 0) {
-			if (excessBal != null && excessBal.compareTo(BigDecimal.ZERO) > 0) {
-				if (dueAmt.compareTo(excessBal) >= 0) {
-					adjAmount = excessBal;
-				} else {
-					adjAmount = dueAmt;
-				}
-			}
-		}
-
-		pd.setAdvAdjusted(adjAmount);
-		if (adjAmount.compareTo(dueAmt) == 0) {
-			pd.setExcludeReason(exculdeReason);
-		}
-
 		if (FinanceConstants.FLAG_BPI.equals(pd.getBpiOrHoliday())) {
 			if (FinanceConstants.BPI_DISBURSMENT.equals(pd.getBpiTreatment()) && ph.isBpiPaidOnInstDate()) {
+				logger.debug(Literal.LEAVING);
 				return;
 			}
 		}
 
-		finExAmt.setReservedAmt(adjAmount);
-		BigDecimal amount = finExAmt.getAmount();
-		BigDecimal reservedAmt = finExAmt.getReservedAmt();
-		BigDecimal utilisedAmt = finExAmt.getUtilisedAmt();
-		finExAmt.setBalanceAmt(amount.subtract(reservedAmt).subtract(utilisedAmt));
-		pd.setExcessAmountReversal(finExAmt);
+		List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRefAndType(pd.getFinID(), amountType);
 
-		FinExcessMovement exMovement = new FinExcessMovement();
-		exMovement.setExcessID(finExAmt.getExcessID());
-		exMovement.setReceiptID(Long.MIN_VALUE);
-		exMovement.setMovementFrom(RepayConstants.PAYTYPE_PRESENTMENT);
-		exMovement.setAmount(adjAmount);
-		exMovement.setSchDate(pd.getSchDate());
-		exMovement.setMovementType("I");
-		exMovement.setTranType("I");
-		finExAmt.setExcessMovement(exMovement);
+		for (FinExcessAmount finExAmt : list) {
+			BigDecimal excessBal = finExAmt.getBalanceAmt();
+			BigDecimal adjAmount = BigDecimal.ZERO;
+
+			if (dueAmt.compareTo(BigDecimal.ZERO) > 0) {
+				if (excessBal != null && excessBal.compareTo(BigDecimal.ZERO) > 0) {
+					if (dueAmt.compareTo(excessBal) >= 0) {
+						adjAmount = excessBal;
+					} else {
+						adjAmount = dueAmt;
+					}
+				}
+			}
+
+			pd.setAdvAdjusted(adjAmount);
+			if (adjAmount.compareTo(dueAmt) == 0) {
+				pd.setExcludeReason(exculdeReason);
+			}
+
+			finExAmt.setReservedAmt(adjAmount);
+			BigDecimal amount = finExAmt.getAmount();
+			BigDecimal reservedAmt = finExAmt.getReservedAmt();
+			BigDecimal utilisedAmt = finExAmt.getUtilisedAmt();
+			finExAmt.setBalanceAmt(amount.subtract(reservedAmt).subtract(utilisedAmt));
+			pd.getExcessAmountReversal().add(finExAmt);
+
+			FinExcessMovement exMovement = new FinExcessMovement();
+			exMovement.setExcessID(finExAmt.getExcessID());
+			exMovement.setReceiptID(Long.MIN_VALUE);
+			exMovement.setMovementFrom(RepayConstants.PAYTYPE_PRESENTMENT);
+			exMovement.setAmount(adjAmount);
+			exMovement.setSchDate(pd.getSchDate());
+			exMovement.setMovementType("I");
+			exMovement.setTranType("I");
+
+			pd.getExcessMovements().add(exMovement);
+		}
 	}
 
 	private void processEMIInAdvance(PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		long finID = pd.getFinID();
 
-		BigDecimal emiInAdvanceAmt = BigDecimal.ZERO;
-		FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
+		List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, SysParamUtil.getAppDate(),
 				RepayConstants.EXAMOUNTTYPE_EMIINADV);
 
-		if (excessAmount != null) {
-			emiInAdvanceAmt = excessAmount.getBalanceAmt();
-			pd.setEmiInAdvance(excessAmount);
-		}
+		BigDecimal dueAmount = pd.getSchAmtDue();
 
-		if (emiInAdvanceAmt.compareTo(BigDecimal.ZERO) > 0) {
-			pd.setExcessID(excessAmount.getExcessID());
+		for (FinExcessAmount excess : list) {
+			if (dueAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				break;
+			}
+			BigDecimal excessBal = excess.getBalanceAmt();
+			BigDecimal adjAmount = BigDecimal.ZERO;
+
+			if (dueAmount.compareTo(excessBal) > 0) {
+				adjAmount = excessBal;
+			} else {
+				adjAmount = dueAmount;
+			}
+
+			dueAmount = dueAmount.subtract(adjAmount);
+			FinExcessMovement exMovement = new FinExcessMovement();
+			exMovement.setExcessID(excess.getExcessID());
+			exMovement.setReceiptID(pd.getId());
+			exMovement.setAmount(adjAmount);
+			exMovement.setMovementType("I");
+			exMovement.setTranType("R");
+			pd.getExcessMovements().add(exMovement);
 		}
 
 		BigDecimal advanceAmt = BigDecimal.ZERO;
-		if (emiInAdvanceAmt.compareTo(pd.getSchAmtDue()) >= 0) {
+		if (dueAmount.compareTo(pd.getSchAmtDue()) >= 0) {
 			pd.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
 			pd.setPresentmentAmt(BigDecimal.ZERO);
 			pd.setAdvanceAmt(pd.getSchAmtDue());
 			pd.setStatus(RepayConstants.PEXC_APPROV);
 			advanceAmt = pd.getAdvanceAmt();
 		} else {
-			advanceAmt = emiInAdvanceAmt;
+			advanceAmt = dueAmount;
 			pd.setPresentmentAmt(pd.getSchAmtDue().subtract(advanceAmt));
-		}
-
-		if (excessAmount != null) {
-			excessAmount.setAmount(advanceAmt);
 		}
 
 		BigDecimal advAmount = pd.getAdvAdjusted();
 		pd.setAdvanceAmt(advanceAmt.add(advAmount));
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void save(PresentmentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
 		List<FinExcessAmount> excess = new ArrayList<>();
 		List<FinExcessAmount> excessRevarsal = new ArrayList<>();
 		List<FinExcessMovement> excessMovement = new ArrayList<>();
@@ -794,8 +820,8 @@ public class PresentmentEngine {
 		setPresentmentRef(pd);
 
 		if (pd.getExcessAmountReversal() != null) {
-			excessRevarsal.add(pd.getExcessAmountReversal());
-			excessMovement.add(pd.getExcessAmountReversal().getExcessMovement());
+			excessRevarsal.addAll(pd.getExcessAmountReversal());
+			excessMovement.addAll(pd.getExcessMovements());
 		}
 
 		if (pd.getExcessAmount() != null) {
@@ -870,6 +896,7 @@ public class PresentmentEngine {
 			presentmentDAO.updateExcludeReason(pd.getId(), RepayConstants.PEXC_SCHDVERSION);
 		}
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void clearQueue(long batchId) {
@@ -888,43 +915,28 @@ public class PresentmentEngine {
 		return 0;
 	}
 
-	private void createReceipt(PresentmentDetail pd) {
+	private void createReceipt(ReceiptDTO receiptDTO, RequestSource requestSource, boolean dueDateCreation) {
+		logger.debug(Literal.ENTERING);
+
+		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
+
 		Date businessDate = pd.getAppDate();
 
-		ReceiptDTO receiptDTO = new ReceiptDTO();
+		receiptDTO.setRequestSource(requestSource);
+		receiptDTO.setCreatePrmntReceipt(dueDateCreation);
 
-		receiptDTO.setRequestSource(RequestSource.PRMNT_RESP);
-		receiptDTO.setCreatePrmntReceipt(!PresentmentExtension.DUE_DATE_RECEIPT_CREATION);
-
-		long finID = pd.getFinID();
-		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, true);
-		FinanceProfitDetail pftDetails = financeProfitDetailDAO.getFinProfitDetailsById(finID);
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
-		Customer customer = customerDAO.getCustomerEOD(fm.getCustID());
-
-		FinExcessAmount emiInAdvance = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
-				RepayConstants.EXAMOUNTTYPE_EMIINADV);
-
-		int presentmentIndex = getPresentmentIndex(businessDate, schedules);
-
-		fm.setEventProperties(pd.getEventProperties());
-
-		receiptDTO.setFinType(FinanceConfigCache.getCacheFinanceType(fm.getFinType()));
-		receiptDTO.setPresentmentDetail(pd);
-		receiptDTO.setBussinessDate(businessDate);
-		receiptDTO.setCustomer(customer);
-		receiptDTO.setFinanceMain(fm);
-		receiptDTO.setEmiInAdvance(emiInAdvance);
-		receiptDTO.setProfitDetail(pftDetails);
-		receiptDTO.setSchedules(schedules);
-		receiptDTO.setValuedate(businessDate);
-		receiptDTO.setPostDate(businessDate);
+		int presentmentIndex = getPresentmentIndex(businessDate, receiptDTO.getSchedules());
 
 		receiptPaymentService.processReceipts(receiptDTO, presentmentIndex);
+
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void approve(PresentmentDetail pd, Map<String, String> bounceForPD) {
+	public void approve(ReceiptDTO receiptDTO, Map<String, String> bounceForPD) {
+		logger.debug(Literal.ENTERING);
+
 		boolean upfronBounceRequired = MapUtils.isNotEmpty(bounceForPD);
+		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 
 		int excludeReason = pd.getExcludeReason();
 
@@ -938,11 +950,15 @@ public class PresentmentEngine {
 		}
 
 		if (DateUtil.compare(pd.getAppDate(), pd.getSchDate()) >= 0) {
-			createReceipt(pd);
+			createReceipt(receiptDTO, RequestSource.PRMNT_EXT, false);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void sendToPresentment(PresentmentHeader ph) {
+		logger.debug(Literal.ENTERING);
+
 		long headerId = ph.getId();
 
 		List<PresentmentDetail> presements = presentmentDAO.getSendToPresentmentDetails(headerId);
@@ -958,11 +974,16 @@ public class PresentmentEngine {
 			String presentmentRef = ph.getReference();
 			String bankAccNo = ph.getPartnerAcctNumber();
 
+			String backOfficeName = presentmentDetailDAO
+					.getBackOfficeNameByBranchCode(ph.getUserDetails().getBranchCode());
+
+			String branchCode = ph.getMandateType() + " Presentment Download/" + backOfficeName;
+
 			if (externalPresentmentHook != null) {
 				externalPresentmentHook.processPresentmentRequest(ph);
 			} else {
 				getPresentmentRequest().sendReqest(idList, ph.getId(), false, ph.getMandateType(), presentmentRef,
-						bankAccNo);
+						bankAccNo, branchCode);
 			}
 
 		} catch (Exception e) {
@@ -970,9 +991,13 @@ public class PresentmentEngine {
 		}
 
 		presentmentDAO.updateHeader(headerId);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public int preparationForRepresentment(long batchID, List<Long> headerId) {
+		logger.debug(Literal.ENTERING);
+
 		int count = 0;
 
 		List<PresentmentHeader> list = new ArrayList<>();
@@ -990,6 +1015,7 @@ public class PresentmentEngine {
 		count = count - presentmentDAO.clearByNoDues(batchID);
 
 		if (count == 0) {
+			logger.debug(Literal.LEAVING);
 			return 0;
 		}
 
@@ -999,11 +1025,16 @@ public class PresentmentEngine {
 
 		presentmentDAO.updatePartnerBankID(batchID);
 
+		logger.debug(Literal.LEAVING);
 		return count;
 	}
 
 	public PresentmentDetail getPresentmenToPost(Long presentmentID) {
-		return presentmentDAO.getPresentmenToPost(presentmentID);
+		PresentmentDetail pd = presentmentDAO.getPresentmenToPost(presentmentID);
+		String receiptType = RepayConstants.RECEIPTTYPE_PRESENTMENT;
+		pd.setExcessMovements(finExcessAmountDAO.getExcessMovementList(pd.getId(), receiptType));
+
+		return pd;
 	}
 
 	public List<PresentmentHeader> getPresentmenHeaders(Long batchId) {
@@ -1032,8 +1063,10 @@ public class PresentmentEngine {
 		return presentmentDAO.getPresentmenForResponse(responseID);
 	}
 
-	public void processResponse(PresentmentDetail pd) {
+	public void processResponse(ReceiptDTO receiptDTO) {
 		logger.info(Literal.ENTERING);
+
+		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 
 		String presentmentReference = pd.getPresentmentRef();
 
@@ -1087,13 +1120,6 @@ public class PresentmentEngine {
 
 		status = pd.getStatus();
 
-		CustEODEvent custEODEvent = new CustEODEvent();
-		custEODEvent.setEodDate(pd.getAppDate());
-		custEODEvent.setEventProperties(pd.getEventProperties());
-
-		setLoanDetails(custEODEvent, finID, finIsActive);
-		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(0);
-
 		boolean processReceipt = false;
 		Long linkedTranId;
 
@@ -1106,18 +1132,15 @@ public class PresentmentEngine {
 			if (!PresentmentExtension.DUE_DATE_RECEIPT_CREATION) {
 				if (pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 					pd.setAdvanceAmt(BigDecimal.ZERO);
-					createReceipt(pd);
+					createReceipt(receiptDTO, RequestSource.PRMNT_RESP, true);
 				}
-
 			} else if (!finIsActive) {
-				processReceipt = processInactiveLoan(custEODEvent, pd);
+				processReceipt = processInactiveLoan(receiptDTO);
 			}
 
+			receiptDTO = prepareReceiptDTO(pd);
+
 			logger.info("Re-loading finance data...");
-
-			setLoanDetails(custEODEvent, finID, finIsActive);
-
-			finEODEvent = custEODEvent.getFinEODEvents().get(0);
 
 			receiptID = pd.getReceiptID();
 		}
@@ -1153,7 +1176,7 @@ public class PresentmentEngine {
 		}
 
 		if (RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
-			updateFinanceDetails(finEODEvent, pd);
+			updateFinanceDetails(receiptDTO);
 			if (rh != null) {
 				updateFinReceiptHeader(rh, pd.getAppDate());
 			}
@@ -1166,6 +1189,10 @@ public class PresentmentEngine {
 		} else {
 			status = RepayConstants.PEXC_BOUNCE;
 			pd.setStatus(status);
+
+			CustEODEvent custEODEvent = new CustEODEvent();
+			custEODEvent.setEodDate(pd.getAppDate());
+			custEODEvent.setEventProperties(pd.getEventProperties());
 
 			if ("N".equals(fateCorrection)) {
 				pd = receiptCancellationService.presentmentCancellation(pd, custEODEvent);
@@ -1285,82 +1312,64 @@ public class PresentmentEngine {
 		mandateStatusDAO.save(mandateStatus, "");
 	}
 
-	private boolean processInactiveLoan(CustEODEvent custEODEvent, PresentmentDetail pd) {
+	private boolean processInactiveLoan(ReceiptDTO receiptDTO) {
 		logger.info(Literal.ENTERING);
-		Long receiptID = pd.getReceiptID();
 
-		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(0);
-		Customer customer = custEODEvent.getCustomer();
-
-		ReceiptDTO receiptDTO = new ReceiptDTO();
-		receiptDTO.setRequestSource(RequestSource.PRMNT_RESP);
-		receiptDTO.setCreatePrmntReceipt(!PresentmentExtension.DUE_DATE_RECEIPT_CREATION);
-
-		receiptDTO.setFinType(finEODEvent.getFinType());
-		receiptDTO.setPresentmentDetail(pd);
-		receiptDTO.setBussinessDate(pd.getSchDate());
-		receiptDTO.setCustomer(customer);
-		receiptDTO.setFinanceMain(finEODEvent.getFinanceMain());
-		receiptDTO.setProfitDetail(finEODEvent.getFinProfitDetail());
-		receiptDTO.setSchedules(finEODEvent.getFinanceScheduleDetails());
 		receiptDTO.setNoReserve(false);
 		receiptDTO.setPdDetailsExits(true);
-		receiptDTO.setValuedate(pd.getSchDate());
-		receiptDTO.setPostDate(pd.getSchDate());
+		receiptDTO.setRequestSource(RequestSource.PRMNT_RESP);
+		receiptDTO.setCreatePrmntReceipt(!PresentmentExtension.DUE_DATE_RECEIPT_CREATION);
 
 		logger.info("Creating presentment receipt for inactive loan.");
 
 		receiptPaymentService.createReceipt(receiptDTO);
-		receiptID = pd.getReceiptID();
 
+		long receiptID = receiptDTO.getPresentmentDetail().getReceiptID();
 		logger.info("Presentment receipt creation completed with the Receipt-ID: {}", receiptID);
 
 		logger.info(Literal.LEAVING);
 		return true;
-
 	}
 
-	private void setLoanDetails(CustEODEvent custEODEvent, long finID, boolean finIsActive) {
+	public ReceiptDTO prepareReceiptDTO(PresentmentDetail pd) {
 		logger.info("Loading finance data...");
 
-		FinEODEvent finEODEvent = new FinEODEvent();
+		String receiptType = RepayConstants.RECEIPTTYPE_PRESENTMENT;
+		pd.setExcessMovements(finExcessAmountDAO.getExcessMovementList(pd.getId(), receiptType));
 
-		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, finIsActive);
+		ReceiptDTO receiptDTO = new ReceiptDTO();
+
+		long finID = pd.getFinID();
+
+		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, pd.isFinisActive());
 
 		if (fm == null) {
 			fm = financeMainDAO.getFinMainsForEODByFinRef(finID, false);
 		}
 
-		fm.setEventProperties(custEODEvent.getEventProperties());
-
-		FinanceType financeType = FinanceConfigCache.getCacheFinanceType(fm.getFinType());
-		Customer customer = custEODEvent.getCustomer();
-
-		if (customer == null) {
-			customer = customerDAO.getCustomerEOD(fm.getCustID());
+		EventProperties eventProperties = pd.getEventProperties();
+		if (eventProperties == null) {
+			eventProperties = eventPropertiesService.getEventProperties(EventType.EOD);
 		}
 
-		List<FinODDetails> finODDetails = finODDetailsDAO.getFinODBalByFinRef(finID);
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
+		fm.setEventProperties(eventProperties);
+		pd.setEventProperties(eventProperties);
 
-		/* The last parameter false will get the records irrespective of status */
+		FinanceType financeType = FinanceConfigCache.getCacheFinanceType(fm.getFinType());
+		Customer customer = customerDAO.getCustomerEOD(fm.getCustID());
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
+		List<FinODDetails> finODDetails = finODDetailsDAO.getFinODBalByFinRef(finID);
 		FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsByFinRef(finID);
 
-		finEODEvent.setFinType(financeType);
-		finEODEvent.setFinanceMain(fm);
-		finEODEvent.setFinProfitDetail(fpd);
-		finEODEvent.setFinanceScheduleDetails(schedules);
-		finEODEvent.setFinODDetails(finODDetails);
+		receiptDTO.setFinType(financeType);
+		receiptDTO.setCustomer(customer);
+		receiptDTO.setFinanceMain(fm);
+		receiptDTO.setProfitDetail(fpd);
+		receiptDTO.setSchedules(schedules);
+		receiptDTO.setPresentmentDetail(pd);
+		receiptDTO.setOdDetails(finODDetails);
 
-		List<FinEODEvent> list = new ArrayList<>();
-		list.add(finEODEvent);
-
-		custEODEvent.setCustomer(customer);
-
-		custEODEvent.setFinEODEvents(list);
-
-		logger.info("Finance data loading completed.");
-
+		return receiptDTO;
 	}
 
 	private void validateResponse(PresentmentDetail pd) {
@@ -1466,15 +1475,17 @@ public class PresentmentEngine {
 		return aeEvent;
 	}
 
-	private void updateFinanceDetails(FinEODEvent finEODEvent, PresentmentDetail pd) {
+	private void updateFinanceDetails(ReceiptDTO receiptDTO) {
 		logger.debug(Literal.ENTERING);
+
+		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 
 		Date appDate = pd.getAppDate();
 
-		FinanceMain fm = finEODEvent.getFinanceMain();
-		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
-		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
-		List<FinODDetails> overDueList = finEODEvent.getFinODDetails();
+		FinanceMain fm = receiptDTO.getFinanceMain();
+		FinanceProfitDetail pftDetail = receiptDTO.getProfitDetail();
+		List<FinanceScheduleDetail> schedules = receiptDTO.getSchedules();
+		List<FinODDetails> overDueList = receiptDTO.getOdDetails();
 
 		long finID = pd.getFinID();
 
@@ -1549,8 +1560,8 @@ public class PresentmentEngine {
 
 	public void updateResponse(long responseID) {
 		presentmentDAO.updateResposeStatus(responseID, null, null, EodConstants.PROGRESS_SUCCESS);
-		presentmentDAO.logRespDetail(responseID);
-		presentmentDAO.clearRespDetail(responseID);
+		// presentmentDAO.logRespDetail(responseID);
+		// presentmentDAO.clearRespDetail(responseID);
 	}
 
 	public void updateResponse(long responseID, Exception e) {
@@ -1572,8 +1583,8 @@ public class PresentmentEngine {
 
 		if (PresentmentError.isValidation(errorCode)) {
 			presentmentDAO.updateResposeStatus(responseID, errorCode, errorDesc, EodConstants.PROGRESS_FAILED);
-			presentmentDAO.logRespDetail(responseID);
-			presentmentDAO.clearRespDetail(responseID);
+			// presentmentDAO.logRespDetail(responseID);
+			// presentmentDAO.clearRespDetail(responseID);
 		} else {
 			presentmentDAO.updateResposeStatus(responseID, errorCode, errorDesc, EodConstants.PROGRESS_WAIT);
 		}
@@ -1684,6 +1695,7 @@ public class PresentmentEngine {
 	}
 
 	@Autowired(required = false)
+	@Qualifier(value = "externalPresentmentHook")
 	public void setExternalPresentmentHook(ExternalPresentmentHook externalPresentmentHook) {
 		this.externalPresentmentHook = externalPresentmentHook;
 	}
@@ -1732,6 +1744,11 @@ public class PresentmentEngine {
 
 	private PresentmentRequest getPresentmentRequest() {
 		return presentmentRequest == null ? defaultPresentmentRequest : presentmentRequest;
+	}
+
+	@Autowired
+	public void setEventPropertiesService(EventPropertiesService eventPropertiesService) {
+		this.eventPropertiesService = eventPropertiesService;
 	}
 
 }

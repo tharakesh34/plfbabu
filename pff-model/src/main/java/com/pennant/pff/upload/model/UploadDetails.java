@@ -18,6 +18,8 @@ public class UploadDetails implements Serializable {
 	private Timestamp createdOn;
 	private Long approvedBy;
 	private Timestamp approvedOn;
+	private String name;
+	private String recordStatus;
 
 	public UploadDetails() {
 		super();
@@ -117,6 +119,22 @@ public class UploadDetails implements Serializable {
 
 	public void setApprovedOn(Timestamp approvedOn) {
 		this.approvedOn = approvedOn;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getRecordStatus() {
+		return recordStatus;
+	}
+
+	public void setRecordStatus(String recordStatus) {
+		this.recordStatus = recordStatus;
 	}
 
 }

@@ -556,5 +556,13 @@
 				]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#212858" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_COLUMN SET CONSTRAINTTYPE = 'M' WHERE NAME = 'MANDATE_REG_NO' AND  TABLEID = (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANDATES_IMPORT'));
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

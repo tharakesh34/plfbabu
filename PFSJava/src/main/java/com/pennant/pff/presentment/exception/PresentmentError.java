@@ -48,7 +48,9 @@ public enum PresentmentError {
 
 	REPRMNT523(""),
 
-	REPRMNT524("User rejected the record");
+	FC_601("Fate Correction already proceessed for this schedule."),
+
+	FC_602("Presentment is not found for this respective schedule.");
 
 	private String description;
 

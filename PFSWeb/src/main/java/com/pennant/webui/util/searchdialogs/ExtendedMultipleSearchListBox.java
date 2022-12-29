@@ -211,7 +211,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		// textbox for inserting the search parameter
 		this._textbox = new Uppercasebox();
 		this._textbox.setWidth("100%");
-		this._textbox.setMaxlength(20);
+		this._textbox.setMaxlength(100);
 		this._textbox.addForward("onOK", this, "onSearchListener");
 		this._textbox.setParent(hbox);
 		this._textbox.setFocus(true);

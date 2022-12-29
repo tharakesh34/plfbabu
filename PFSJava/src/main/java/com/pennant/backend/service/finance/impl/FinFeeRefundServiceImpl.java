@@ -809,45 +809,46 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processExcessAmount(FinFeeRefundHeader refundHeader) {
+	private void processExcessAmount(FinFeeRefundHeader frh) {
 		logger.debug(Literal.ENTERING);
-		List<FinFeeRefundDetails> refundDetails = refundHeader.getFinFeeRefundDetails();
+		List<FinFeeRefundDetails> refundDetails = frh.getFinFeeRefundDetails();
+
 		if (CollectionUtils.isEmpty(refundDetails)) {
 			return;
 		}
+
 		BigDecimal excessAmt = BigDecimal.ZERO;
+
 		for (FinFeeRefundDetails detail : refundDetails) {
 			excessAmt = excessAmt.add(detail.getRefundAmount());
 		}
+
 		if (BigDecimal.ZERO.compareTo(excessAmt) < 0) {
-			FinExcessAmount excess = null;
-			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(refundHeader.getFinID(),
-					RepayConstants.EXCESSADJUSTTO_EXCESS);
-			// Creating Excess
-			if (excess == null) {
-				excess = new FinExcessAmount();
-				excess.setFinID(refundHeader.getFinID());
-				excess.setFinReference(refundHeader.getFinReference());
-				excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
-				excess.setAmount(excessAmt);
-				excess.setUtilisedAmt(BigDecimal.ZERO);
-				excess.setBalanceAmt(excessAmt);
-				excess.setReservedAmt(BigDecimal.ZERO);
-				finExcessAmountDAO.saveExcess(excess);
-			} else {
-				excess.setBalanceAmt(excess.getBalanceAmt().add(excessAmt));
-				excess.setAmount(excess.getAmount().add(excessAmt));
-				finExcessAmountDAO.updateExcess(excess);
-			}
-			// Creating ExcessMoment
+			FinExcessAmount excess = new FinExcessAmount();
+			excess = new FinExcessAmount();
+			excess.setFinID(frh.getFinID());
+			excess.setFinReference(frh.getFinReference());
+			excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
+			excess.setAmount(excessAmt);
+			excess.setUtilisedAmt(BigDecimal.ZERO);
+			excess.setBalanceAmt(excessAmt);
+			excess.setReservedAmt(BigDecimal.ZERO);
+			excess.setReceiptID(null);
+			excess.setValueDate(SysParamUtil.getAppDate());
+			excess.setPostDate(excess.getValueDate());
+
+			finExcessAmountDAO.saveExcess(excess);
+
 			FinExcessMovement excessMovement = new FinExcessMovement();
 			excessMovement.setExcessID(excess.getExcessID());
 			excessMovement.setAmount(excessAmt);
-			excessMovement.setReceiptID(refundHeader.getHeaderId());
+			excessMovement.setReceiptID(frh.getHeaderId());
 			excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
 			excessMovement.setTranType(AccountConstants.TRANTYPE_CREDIT);
 			excessMovement.setMovementFrom("UPFRONT");
+
 			finExcessAmountDAO.saveExcessMovement(excessMovement);
+
 			logger.debug(Literal.LEAVING);
 		}
 	}

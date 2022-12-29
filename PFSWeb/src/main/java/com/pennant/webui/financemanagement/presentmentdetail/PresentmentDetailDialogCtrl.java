@@ -534,11 +534,10 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			addCell(item, PennantApplicationUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
 			addCell(item, presentmentDetail.getPresentmentRef());
 
-			if (InstrumentType.isPDC(presentmentDetail.getMandateType())) {
-				addCell(item, Labels.getLabel("label_Mandate_PDC"));
-			}
 			if (InstrumentType.isIPDC(presentmentDetail.getMandateType())) {
 				addCell(item, Labels.getLabel("label_Mandate_IPDC"));
+			} else if (InstrumentType.isPDC(presentmentDetail.getMandateType())) {
+				addCell(item, Labels.getLabel("label_Mandate_PDC"));
 			} else {
 				addCell(item, presentmentDetail.getMandateType());
 			}

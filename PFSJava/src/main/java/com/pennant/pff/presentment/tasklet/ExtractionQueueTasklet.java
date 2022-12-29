@@ -10,6 +10,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtractionQueueTasklet implements Tasklet {
 	private Logger logger = LogManager.getLogger(ExtractionQueueTasklet.class);
@@ -25,6 +26,8 @@ public class ExtractionQueueTasklet implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+		logger.debug(Literal.ENTERING);
+
 		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
 
 		BatchJobQueue jobQueue = new BatchJobQueue();
@@ -36,6 +39,8 @@ public class ExtractionQueueTasklet implements Tasklet {
 		int totalRecords = bjqDAO.prepareQueue(jobQueue);
 
 		logger.info(LITERAL_1, totalRecords);
+
+		logger.debug(Literal.LEAVING);
 
 		return RepeatStatus.FINISHED;
 	}

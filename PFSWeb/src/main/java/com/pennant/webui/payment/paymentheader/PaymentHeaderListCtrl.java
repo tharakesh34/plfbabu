@@ -100,7 +100,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		super.pageRightName = "PaymentHeaderList";
 		super.tableName = "PaymentHeader_AView";
 		super.queueTableName = "PaymentHeader_View";
-		super.enquiryTableName = "PaymentHeader_View";
+		super.enquiryTableName = "PaymentHeader_AView";
 	}
 
 	@Override
@@ -108,6 +108,8 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		super.doAddFilters();
 		if (!enqiryModule) {
 			this.searchObject.addFilterNotEqual("recordStatus", PennantConstants.RCD_STATUS_APPROVED);
+		} else {
+			this.searchObject.addFilterEqual("recordStatus", PennantConstants.RCD_STATUS_APPROVED);
 		}
 	}
 

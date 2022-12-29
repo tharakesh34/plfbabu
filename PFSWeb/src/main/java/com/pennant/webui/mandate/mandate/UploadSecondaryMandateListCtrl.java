@@ -387,7 +387,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 					Long finID = financeMainService.getFinID(curMandate.getOrgReference());
 
 					financeMainService.loanMandateSwapping(finID, curMandate.getMandateID(),
-							curMandate.getMandateType(), "");
+							curMandate.getMandateType(), "", false);
 					UploadSecondaryMandate mandateStatus = prepareMandateStatus(mandate, true, "Success");
 					successCount++;
 					mandateStatus.setUploadId(uploadId);

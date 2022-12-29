@@ -995,8 +995,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					if (rpyHeader.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 						// Fetch Excess Amount Details
-						FinExcessAmount excess = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
-								rch.getExcessAdjustTo());
+						FinExcessAmount excess = finExcessAmountDAO.getExcessAmountsByReceiptId(finID);
+
+						if (excess == null) {
+							excess = finExcessAmountDAO.getExcessAmountsByReceiptId(finID, rch.getExcessAdjustTo(), 0);
+						}
 
 						if (StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
 							if (excess == null || excess.getReservedAmt().compareTo(rpyHeader.getExcessAmount()) < 0) {
@@ -2530,32 +2533,31 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 	private void processExcessAmount(BigDecimal excessAmt, long finID, long receiptId) {
 		logger.debug(Literal.ENTERING);
-		if (BigDecimal.ZERO.compareTo(excessAmt) < 0) {
-			FinExcessAmount excess = null;
-			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, RepayConstants.EXCESSADJUSTTO_EXCESS);
-			// Creating Excess
-			if (excess == null) {
-				// TODO:
-				// Throw Exception
-			} else {
-				excess.setBalanceAmt(excess.getBalanceAmt().subtract(excessAmt));
-				excess.setAmount(excess.getAmount().subtract(excessAmt));
-				finExcessAmountDAO.updateExcess(excess);
 
-				// Creating ExcessMoment
-				FinExcessMovement excessMovement = new FinExcessMovement();
-				excessMovement.setExcessID(excess.getExcessID());
-				excessMovement.setAmount(excessAmt);
-				excessMovement.setReceiptID(receiptId);
-				excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
-				excessMovement.setTranType(AccountConstants.TRANTYPE_DEBIT);
-				excessMovement.setMovementFrom("UPFRONT");
-
-				finExcessAmountDAO.saveExcessMovement(excessMovement);
-			}
-
-			logger.debug(Literal.LEAVING);
+		if (excessAmt.compareTo(BigDecimal.ZERO) <= 0) {
+			return;
 		}
+
+		FinExcessAmount excess = finExcessAmountDAO.getExcessAmountsByReceiptId(finID,
+				RepayConstants.EXCESSADJUSTTO_EXCESS, receiptId);
+
+		if (excess != null) {
+			excess.setBalanceAmt(excess.getBalanceAmt().subtract(excessAmt));
+			excess.setAmount(excess.getAmount().subtract(excessAmt));
+			finExcessAmountDAO.updateExcess(excess);
+
+			FinExcessMovement excessMovement = new FinExcessMovement();
+			excessMovement.setExcessID(excess.getExcessID());
+			excessMovement.setAmount(excessAmt);
+			excessMovement.setReceiptID(receiptId);
+			excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+			excessMovement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+			excessMovement.setMovementFrom("UPFRONT");
+
+			finExcessAmountDAO.saveExcessMovement(excessMovement);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

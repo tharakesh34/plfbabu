@@ -288,8 +288,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	@Override
 	public List<FinExcessAmount> getfinExcessAmount(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, BalanceAmt, ReservedAmt");
-		sql.append(" From finexcessamount Where FinID = ?");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, BalanceAmt, ReservedAmt, ReceiptID, ValueDate");
+		sql.append(" From FinExcessAmount Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -303,6 +303,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			fea.setAmount(rs.getBigDecimal("Amount"));
 			fea.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
 			fea.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+			fea.setReceiptID(JdbcUtil.getLong(rs.getObject("ReceiptID")));
+			fea.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 
 			return fea;
 		});

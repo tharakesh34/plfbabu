@@ -6,12 +6,15 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
@@ -35,9 +38,13 @@ public class ReceiptDTO implements Serializable {
 	private Date bussinessDate;
 	private boolean noReserve;
 	private boolean pdDetailsExits;
-	private FinExcessAmount emiInAdvance;
+	private List<FinExcessAmount> emiInAdvance;
 	private RequestSource requestSource;
 	private boolean createPrmntReceipt;
+	private List<FinODDetails> odDetails = new ArrayList<>();
+	private List<ManualAdvise> manualAdvises = new ArrayList<>();
+	private String roundAdjMth;
+	private FeeType lppFeeType;
 
 	public ReceiptDTO() {
 		super();
@@ -163,11 +170,11 @@ public class ReceiptDTO implements Serializable {
 		this.pdDetailsExits = pdDetailsExits;
 	}
 
-	public FinExcessAmount getEmiInAdvance() {
+	public List<FinExcessAmount> getEmiInAdvance() {
 		return emiInAdvance;
 	}
 
-	public void setEmiInAdvance(FinExcessAmount emiInAdvance) {
+	public void setEmiInAdvance(List<FinExcessAmount> emiInAdvance) {
 		this.emiInAdvance = emiInAdvance;
 	}
 
@@ -185,6 +192,38 @@ public class ReceiptDTO implements Serializable {
 
 	public void setCreatePrmntReceipt(boolean createPrmntReceipt) {
 		this.createPrmntReceipt = createPrmntReceipt;
+	}
+
+	public List<FinODDetails> getOdDetails() {
+		return odDetails;
+	}
+
+	public void setOdDetails(List<FinODDetails> odDetails) {
+		this.odDetails = odDetails;
+	}
+
+	public List<ManualAdvise> getManualAdvises() {
+		return manualAdvises;
+	}
+
+	public void setManualAdvises(List<ManualAdvise> manualAdvises) {
+		this.manualAdvises = manualAdvises;
+	}
+
+	public String getRoundAdjMth() {
+		return roundAdjMth;
+	}
+
+	public void setRoundAdjMth(String roundAdjMth) {
+		this.roundAdjMth = roundAdjMth;
+	}
+
+	public FeeType getLppFeeType() {
+		return lppFeeType;
+	}
+
+	public void setLppFeeType(FeeType lppFeeType) {
+		this.lppFeeType = lppFeeType;
 	}
 
 }

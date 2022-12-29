@@ -324,6 +324,7 @@ public class ScheduleCalculator {
 		fm.setRecalIdx(-1);
 		fm.setAppDate(SysParamUtil.getAppDate());
 		fm.setDevFinCalReq(isDeveloperFinance(finScheduleData));
+		finScheduleData.setModuleDefiner(method);
 
 		// re generate original schedule from Flexi Schedule
 		if (fm.isAlwFlexi() && fm.isChgDropLineSchd()) {
@@ -4355,6 +4356,11 @@ public class ScheduleCalculator {
 			autoCalcLastRepayStepAmt(finScheduleData, fm);
 		}
 
+		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage()) && fm.getAdvTerms() > 0
+				&& !PROC_GETCALSCHD.equals(finScheduleData.getModuleDefiner())) {
+			fm.setAdjustClosingBal(false);
+		}
+
 		finScheduleData = getRpyInstructDetails(finScheduleData);
 
 		/* Grace Schedule calculation */
@@ -7304,6 +7310,12 @@ public class ScheduleCalculator {
 
 			instructions.get(idxRI).setRepayAmount(newEmiGuess);
 			fm.setAdjustClosingBal(isAdjustClosingBal);
+
+			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
+					&& fm.getAdvTerms() > 0) {
+				fm.setAdjustClosingBal(false);
+			}
+
 			schdData = getRpyInstructDetails(schdData);
 			schdData = graceSchdCal(schdData);
 			schdData = repaySchdCal(schdData, false);

@@ -112,11 +112,4 @@ public class BouncePostingEvent extends PostingEvent {
 		}
 	}
 
-	private Taxes getTaxDetail(String taxType, BigDecimal taxPerc) {
-		Taxes taxes = new Taxes();
-		taxes.setTaxType(taxType);
-		taxes.setTaxPerc(taxPerc);
-		return taxes;
-	}
-
 }

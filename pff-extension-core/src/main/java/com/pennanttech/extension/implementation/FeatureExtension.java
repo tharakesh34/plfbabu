@@ -14,6 +14,7 @@ public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> accountingExtensions = new HashMap<>();
 	static Map<String, Object> feeExtensions = new HashMap<>();
 	static Map<String, Object> dpdExtensions = new HashMap<>();
+	static Map<String, Object> partnerBankExtensions = new HashMap<>();
 
 	/**
 	 * <p>
@@ -142,6 +143,16 @@ public class FeatureExtension implements IFeatureExtension {
 
 		mandateExtensaions();
 
+		getPresentmentExtensions();
+
+		getAccountingExtensions();
+
+		getFeeExtensions();
+
+		getDPDExtensions();
+
+		getPartnerBankExtensions();
+
 	}
 
 	private void mandateExtensaions() {
@@ -178,5 +189,13 @@ public class FeatureExtension implements IFeatureExtension {
 	@Override
 	public Map<String, Object> getDPDExtensions() {
 		return dpdExtensions;
+	}
+
+	@Override
+	public Map<String, Object> getPartnerBankExtensions() {
+		partnerBankExtensions.put("BRANCH_WISE_MAPPING", true);
+		partnerBankExtensions.put("MAPPING", "B");
+
+		return partnerBankExtensions;
 	}
 }

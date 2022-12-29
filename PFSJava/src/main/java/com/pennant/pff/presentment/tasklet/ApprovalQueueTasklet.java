@@ -11,6 +11,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ApprovalQueueTasklet implements Tasklet {
 	private Logger logger = LogManager.getLogger(ApprovalQueueTasklet.class);
@@ -26,6 +27,7 @@ public class ApprovalQueueTasklet implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+		logger.debug(Literal.ENTERING);
 
 		JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
 
@@ -43,6 +45,8 @@ public class ApprovalQueueTasklet implements Tasklet {
 		presentmentDAO.updateTotalRecords(totalRecords, batchId);
 
 		logger.info("Queueing preparation for presentment Approval job completed with total records  {}", totalRecords);
+
+		logger.debug(Literal.LEAVING);
 
 		return RepeatStatus.FINISHED;
 	}

@@ -176,7 +176,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 	}
 
 	@Override
-	public String getSqlQuery(long headerID) {
+	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ru.FinReference, ru.DueDate, ru.PresentmentID, uh.CreatedOn");
 		sql.append(", ru.Status, ru.ErrorCode, ru.ErrorDesc, uh.CreatedBy, uh.ApprovedBy");

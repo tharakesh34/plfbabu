@@ -560,12 +560,16 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		try {
 			String presentmentRef = presentmentHeader.getReference();
 			String bankAccNo = presentmentHeader.getPartnerAcctNumber();
+			String backOfficeName = presentmentDetailDAO
+					.getBackOfficeNameByBranchCode(presentmentHeader.getUserDetails().getBranchCode());
+
+			String branchCode = presentmentHeader.getMandateType() + " Presentment Download/" + backOfficeName;
 
 			if (externalPresentmentHook != null) {
 				externalPresentmentHook.processPresentmentRequest(presentmentHeader);
 			} else {
 				getPresentmentRequest().sendReqest(idList, headerId, isError, presentmentHeader.getMandateType(),
-						presentmentRef, bankAccNo);
+						presentmentRef, bankAccNo, branchCode);
 			}
 
 		} catch (Exception e) {

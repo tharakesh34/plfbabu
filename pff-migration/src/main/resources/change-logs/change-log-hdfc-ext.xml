@@ -28,6 +28,10 @@
 			<column name="FAIL_INDICATOR" type="VARCHAR(100)" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="001_post" author="goutham.ch">
+		<addNotNullConstraint tableName="FILE_INTERFACE_CONFIG" columnName="INTERFACE_TYPE" columnDataType="VARCHAR(100)" />
+	</changeSet>	
 
 	<changeSet id="001.1" author="goutham.ch">
 		<addPrimaryKey tableName="FILE_INTERFACE_CONFIG " columnNames="INTERFACE_TYPE" />
@@ -44,6 +48,24 @@
 					Insert into FILE_INTERFACE_CONFIG  (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR) values ('NACH_RESP',0,'PRESENTMENT/ACH/RESPONSE',202,'ACH-DR-HDFC-HDFCH2H1-',null,'-RES.txt',null,'67','44');
 					
 				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="002.1" author="goutham.ch">
+		<sql>
+			<![CDATA[
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_PREPEND = 'FS', FILE_POSTPEND = '_ALL.' WHERE INTERFACE_TYPE = 'SI';
+					UPDATE FILE_INTERFACE_CONFIG SET DATE_FORMAT = 'yyMMdd' WHERE INTERFACE_TYPE = 'IPDC';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="002.2" author="goutham.ch">
+		<sql>
+			<![CDATA[
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_EXTENSION = '' WHERE INTERFACE_TYPE = 'SI';
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_EXTENSION = '' WHERE INTERFACE_TYPE = 'IPDC';
+			]]>
 		</sql>
 	</changeSet>
 
@@ -67,11 +89,11 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="HEADER_ID" type="bigint" />
-			<column name="RECORD_DATA" type="VARCHAR2(2000)" />
+			<column name="RECORD_DATA" type="VARCHAR(2000)" />
 			<column name="STATUS" type="bigint" />
 			<column name="CREATED_DATE" type="datetime" />
-			<column name="ERROR_CODE" type="VARCHAR2(100)" />
-			<column name="ERROR_MESSAGE" type="VARCHAR2(4000)" />
+			<column name="ERROR_CODE" type="VARCHAR(100)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(4000)" />
 		</createTable>
 	</changeSet>
 
@@ -86,8 +108,44 @@
 	</changeSet>
 
 	<changeSet id="009" author="goutham.ch">
-		<createSequence sequenceName="SEQ_HDFC_ACH" incrementBy="1" startValue="1" minValue="1"
+		<createSequence sequenceName="SEQ_PRMNT_ACH" incrementBy="1" startValue="1" minValue="1"
 			maxValue="9223372036854775807" />
+	</changeSet>
+
+
+	<changeSet id="010" author="goutham.ch">
+		<createTable tableName="INTERFACE_ERROR_CODES">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ERROR_CODE" type="VARCHAR(200)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(2000)" />
+			<column name="ERROR_DESC" type="VARCHAR(4000)" />
+			<column name="STATUS" type="int" />
+			<column name="CREATED_DATE" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="011" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F600','Invalid Lien account number.',1,current_timestamp,'INVALID_LIEN_ACCOUONT');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F601','Invalid or no Lien status received.',1,current_timestamp,'INVALID_LIEN_STATUS');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F602','Invalid Lien response file.',1,current_timestamp,'INVALID_LIEN_FILE');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F603','Invalid Lien response file name.',1,current_timestamp,'INVALID_LIEN_FILE_NAME');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F604','Exception caught in processing Lien response file.',1,current_timestamp,'INVALID_LIEN_FILE_EXCEPTION');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F605','Exception caught while writing record to request file.',1,current_timestamp,'LIEN_FILE_WRITING_EXCEPTION');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F702','Exception while saving record.',1,current_timestamp,'EXCEPTION');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F703','Invalid File record.',1,current_timestamp,'INVALID_FILE_RECORD');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F801','Invalid record id/txn reference received.',1,current_timestamp,'INVALID_TXN_REF');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F802','Invalid success flag received for ACH record.',1,current_timestamp,'INVALID_ACH_SUCCESS_FLAG');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F803','Invalid reject/bounce flag received for ACH record.',1,current_timestamp,'INVALID_ACH_REJECT_FLAG');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F804','Invalid ACH record not starting with valid data.',1,current_timestamp,'INVALID_ACH_START_FLAG');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F900','Bounce code is Empty.',1,current_timestamp,'BOUNCE_CODE_F900');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F901','Invalid bounce code.',1,current_timestamp,'BOUNCE_CODE_F901');
+				Insert into INTERFACE_ERROR_CODES (ERROR_CODE,ERROR_MESSAGE,STATUS,CREATED_DATE,ERROR_DESC) values ('F902','Bounce code not available in PLF.',1,current_timestamp,'NO_PLF_BOUNCE_CODE_F902');
+			]]>
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>

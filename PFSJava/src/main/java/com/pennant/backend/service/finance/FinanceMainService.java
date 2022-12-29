@@ -40,7 +40,7 @@ public interface FinanceMainService {
 
 	List<FinanceEnquiry> getFinanceDetailsByCustId(long custId);
 
-	int loanMandateSwapping(long finID, long newMandateId, String repayMethod, String type);
+	int loanMandateSwapping(long finID, long newMandateId, String repayMethod, String type, boolean securityMandate);
 
 	int updateFinanceBasicDetails(FinanceMain financeMain);
 

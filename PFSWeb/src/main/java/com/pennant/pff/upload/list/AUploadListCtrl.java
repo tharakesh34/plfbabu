@@ -53,8 +53,13 @@ public abstract class AUploadListCtrl extends GFCBaseListCtrl<FileUploadHeader> 
 		uploadDTO.setRoleCodes(getWorkFlowRoles());
 
 		FileUploadHeader header = new FileUploadHeader();
+
+		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
+		header.setUserDetails(loggedInUser);
+		header.setLastMntBy(loggedInUser.getUserId());
 		if ("M".equals(stage)) {
 			header = getUploadHeader();
+			header.setCreatedBy(loggedInUser.getUserId());
 		} else {
 			header.setType(this.type.name());
 		}
@@ -119,10 +124,5 @@ public abstract class AUploadListCtrl extends GFCBaseListCtrl<FileUploadHeader> 
 		header.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		header.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-
-		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
-		header.setUserDetails(loggedInUser);
-		header.setLastMntBy(loggedInUser.getUserId());
-		header.setCreatedBy(loggedInUser.getUserId());
 	}
 }

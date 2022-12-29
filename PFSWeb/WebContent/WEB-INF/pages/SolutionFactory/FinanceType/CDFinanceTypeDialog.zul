@@ -1351,7 +1351,7 @@
 										</rows>
 									</grid>
 								</groupbox>
-								<groupbox id="gb_autoRefund" visible="false">
+								<groupbox visible="false">
 									<caption
 										label="${c:l('label_FinanceTypeDialog_AutoRefunds')}" />
 									<grid sclass="GridLayoutNoBorder">
@@ -1366,20 +1366,20 @@
 												<label
 													value="${c:l('label_FinanceTypeDialog_AllowAutoRefunds.value')}" />
 												<hbox>
-													<space id="space_AllowAutoRefund" spacing="2px" />
+													<space spacing="2px" />
 													<checkbox id="allowAutoRefund" />
 												</hbox>
 											</row>
-											<row id="row_AutoRefundLimits" visible="false">
-												<label id="label_FinanceTypeDialog_MinAutoRefunds"
+											<row id="rowAutoRefundLimits" visible="false">
+												<label
 													value="${c:l('label_FinanceTypeDialog_MinAutoRefunds.value')}" />
 												<currencyBox id="minAutoRefund" />
-												<label id="label_FinanceTypeDialog_MaxAutoRefunds"
+												<label
 													value="${c:l('label_FinanceTypeDialog_MaxAutoRefunds.value')}" />
 												<currencyBox id="maxAutoRefund" />
 											</row>
-											</rows>
-										</grid>
+										</rows>
+									</grid>
 								</groupbox>
 							</div>
 						</tabpanel>
@@ -1833,6 +1833,145 @@
 									</rows>
 								</grid>
 							</groupbox>
+							<groupbox height="auto">
+									<caption label="${c:l('label_FinanceTypeDialog_AutoWaiver_Details.value')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="300px" />
+											<column />
+											<column width="300px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label value="${c:l('label_FinanceTypeDialog_ThresholdLimit.value')}" />
+												<hbox>
+													<space sclass="mandatory" spacing="2px" />
+													<decimalbox id="closureThresholdLimit" width="170px" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox height="auto">
+									<caption label="${c:l('label_FinanceTypeDialog_PartialPayment_Details.value')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="300px" />
+											<column />
+											<column width="300px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label 
+													value="${c:l('label_FinanceTypeDialog_MaxPartPymtCal.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="maxFPPCalType" readonly="true" width="200px"/>
+												</hbox>
+												<label 
+													value="${c:l('label_FinanceTypeDialog_MaxPartPymt.value')}" />
+												<hbox>
+													<currencyBox id="maxFPPAmount" visible="false" />
+													<space id="spacePercentage" spacing="2px" sclass="mandatory"
+														visible="false" />
+													<decimalbox id="maxFPPPer" visible="false" />
+												</hbox>
+											</row>
+											<row id="rowMaxFPPCalOn" visible="false">
+												<label
+													value="${c:l('label_FinanceTypeDialog_MaxPartPymtCalOn.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="maxFPPCalOn" readonly="true" width="200px" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox height="auto">
+									<caption
+										label="${c:l('label_FinanceTypeDialog_PrePaymentAndForeClosure_Details.value')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="260px" />
+											<column />
+											<column width="260px" />
+											<column />
+										</columns>
+										<rows>
+											<row visible="true">
+												<label 
+													value="${c:l('label_FinanceTypeDialog_PrepaymentLockPeriod.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<intbox id="ppLockinPeriod" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+												<label 
+													value="${c:l('label_FinanceTypeDialog_foreClosureLockPeriod.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<intbox id="esLockinPeriod" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_MinPPCalculationType.value')}" />
+												<hbox>
+													<space spacing="1px" sclass="mandatory" />
+													<combobox id="minPPCalType" readonly="true" width="200px" />
+												</hbox>
+												<label 
+													value="${c:l('label_FinanceTypeDialog_MinPPAmtPerc.value')}" />
+												<hbox>
+													<currencyBox id="minPPAmount" visible="false" />
+													<space id="spaceMinPPPercentage" spacing="2px" sclass="mandatory"
+														visible="false" />
+													<decimalbox id="minPPPercentage" visible="false" />
+												</hbox>
+											</row>
+											<row id="rowMinPPCalculationOn" visible="false">
+												<label
+													value="${c:l('label_FinanceTypeDialog_MinPPCalculationOn.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="minPPCalOn" readonly="true" width="200px" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_MaxPPCalculationType.value')}" />
+												<hbox>
+													<space spacing="1px" sclass="mandatory" />
+													<combobox id="maxPPCalType" width="200px" readonly="true" />
+												</hbox>
+												<label 
+													value="${c:l('label_FinanceTypeDialog_MaxPPAmtPerc.value')}" />
+												<hbox>
+													<currencyBox id="maxPPAmount" visible="false" />
+													<space id="spaceMaxPPPercentage" spacing="2px" sclass="mandatory"
+														visible="false" />
+													<decimalbox id="maxPPPercentage" visible="false" />
+													<space id="spaceMinPPEmi" spacing="2px" sclass="mandatory"
+														visible="false" />
+													<intbox id="minPPEmi" width="45px" maxlength="3" visible="false" />
+													<currencyBox id="minPPPos" visible="false" />
+												</hbox>
+											</row>
+											<row id="rowMaxPPCalculationOn" visible="false">
+												<label 
+													value="${c:l('label_FinanceTypeDialog_MaxPPCalculationOn.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="maxPPCalOn" readonly="true" width="200px" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
 						</tabpanel>
 						<tabpanel>
 							<groupbox>

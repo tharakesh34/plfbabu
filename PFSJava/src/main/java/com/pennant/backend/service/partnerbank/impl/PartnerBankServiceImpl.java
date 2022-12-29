@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -73,53 +74,12 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 	private PresentmentDetailDAO presentmentDetailDAO;
 
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the partnerBankDAO
-	 */
-	public PartnerBankDAO getPartnerBankDAO() {
-		return partnerBankDAO;
-	}
-
-	/**
-	 * @param partnerBankDAO the partnerBankDAO to set
-	 */
-	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
-		this.partnerBankDAO = partnerBankDAO;
-	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table PartnerBank/PartnerBank_Temp by
-	 * using PartnerBankDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
-	 * by using PartnerBankDAO's update method 3) Audit the record in to AuditHeader and AdtPartnerBank by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
-
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -130,114 +90,75 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 			tableType = TableType.TEMP_TAB;
 		}
 
+		List<PartnerBankModes> modes = partnerBank.getPartnerBankModesList();
+		List<PartnerBranchModes> branches = partnerBank.getPartnerBranchModesList();
+		long partnerBankId = partnerBank.getPartnerBankId();
+
 		if (partnerBank.isNewRecord()) {
-			getPartnerBankDAO().save(partnerBank, tableType);
-			if (partnerBank.getPartnerBankModesList() != null && partnerBank.getPartnerBankModesList().size() > 0) {
-				getPartnerBankDAO().deletePartner(partnerBank);
-				getPartnerBankDAO().saveList(partnerBank.getPartnerBankModesList(), partnerBank.getPartnerBankId());
+			partnerBankDAO.save(partnerBank, tableType);
+			if (modes != null && modes.size() > 0) {
+				partnerBankDAO.deletePartner(partnerBank);
+				partnerBankDAO.saveList(modes, partnerBankId);
 
 			}
-			if (partnerBank.getPartnerBranchModesList() != null && partnerBank.getPartnerBranchModesList().size() > 0) {
-				getPartnerBankDAO().deletePartnerBranch(partnerBank);
-				getPartnerBankDAO().saveBranchList(partnerBank.getPartnerBranchModesList(),
-						partnerBank.getPartnerBankId());
+			if (branches != null && branches.size() > 0) {
+				partnerBankDAO.deletePartnerBranch(partnerBank);
+				partnerBankDAO.saveBranchList(branches, partnerBankId);
 			}
 
 		} else {
-			getPartnerBankDAO().update(partnerBank, tableType);
-			if (partnerBank.getPartnerBankModesList() != null && partnerBank.getPartnerBankModesList().size() > 0) {
-				getPartnerBankDAO().deletePartner(partnerBank);
-				getPartnerBankDAO().saveList(partnerBank.getPartnerBankModesList(), partnerBank.getPartnerBankId());
+			partnerBankDAO.update(partnerBank, tableType);
+			if (modes != null && modes.size() > 0) {
+				partnerBankDAO.deletePartner(partnerBank);
+				partnerBankDAO.saveList(modes, partnerBankId);
 			}
-			if (partnerBank.getPartnerBranchModesList() != null && partnerBank.getPartnerBranchModesList().size() > 0) {
-				getPartnerBankDAO().deletePartnerBranch(partnerBank);
-				getPartnerBankDAO().saveBranchList(partnerBank.getPartnerBranchModesList(),
-						partnerBank.getPartnerBankId());
+			if (branches != null && branches.size() > 0) {
+				partnerBankDAO.deletePartnerBranch(partnerBank);
+				partnerBankDAO.saveBranchList(branches, partnerBankId);
 			}
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * PartnerBank by using PartnerBankDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtPartnerBank by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		PartnerBank partnerBank = (PartnerBank) auditHeader.getAuditDetail().getModelData();
-		getPartnerBankDAO().delete(partnerBank, TableType.MAIN_TAB);
-		getPartnerBankDAO().deletePartner(partnerBank);
-		getPartnerBankDAO().deletePartnerBranch(partnerBank);
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		partnerBankDAO.delete(partnerBank, TableType.MAIN_TAB);
+		partnerBankDAO.deletePartner(partnerBank);
+		partnerBankDAO.deletePartnerBranch(partnerBank);
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * getPartnerBankById fetch the details by using PartnerBankDAO's getPartnerBankById method.
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return PartnerBank
-	 */
-
 	@Override
 	public PartnerBank getPartnerBankById(long id) {
-		return getPartnerBankDAO().getPartnerBankById(id, "_View");
+		return partnerBankDAO.getPartnerBankById(id, "_View");
 	}
 
 	@Override
 	public List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) {
-		return getPartnerBankDAO().getPartnerBankModesId(partnerBankId);
+		return partnerBankDAO.getPartnerBankModesId(partnerBankId);
 
 	}
-
-	/**
-	 * getApprovedPartnerBankById fetch the details by using PartnerBankDAO's getPartnerBankById method . with parameter
-	 * id and type as blank. it fetches the approved records from the PartnerBank.
-	 * 
-	 * @param id (String)
-	 * @return PartnerBank
-	 */
 
 	public PartnerBank getApprovedPartnerBankById(long id) {
-		return getPartnerBankDAO().getPartnerBankById(id, "_AView");
+		return partnerBankDAO.getPartnerBankById(id, "_AView");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getPartnerBankDAO().delete with
-	 * parameters partnerBank,"" b) NEW Add new record in to main table by using getPartnerBankDAO().save with
-	 * parameters partnerBank,"" c) EDIT Update record in the main table by using getPartnerBankDAO().update with
-	 * parameters partnerBank,"" 3) Delete the record from the workFlow table by using getPartnerBankDAO().delete with
-	 * parameters partnerBank,"_Temp" 4) Audit the record in to AuditHeader and AdtPartnerBank by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtPartnerBank by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
@@ -246,7 +167,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 		PartnerBank partnerBank = new PartnerBank();
 		BeanUtils.copyProperties((PartnerBank) auditHeader.getAuditDetail().getModelData(), partnerBank);
-		getPartnerBankDAO().delete(partnerBank, TableType.TEMP_TAB);
+		partnerBankDAO.delete(partnerBank, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(partnerBank.getRecordType())) {
 			auditHeader.getAuditDetail()
@@ -256,7 +177,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		if (partnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getPartnerBankDAO().delete(partnerBank, TableType.MAIN_TAB);
+			partnerBankDAO.delete(partnerBank, TableType.MAIN_TAB);
 
 		} else {
 			partnerBank.setRoleCode("");
@@ -268,39 +189,29 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 			if (partnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				partnerBank.setRecordType("");
-				getPartnerBankDAO().save(partnerBank, TableType.MAIN_TAB);
+				partnerBankDAO.save(partnerBank, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				partnerBank.setRecordType("");
-				getPartnerBankDAO().update(partnerBank, TableType.MAIN_TAB);
+				partnerBankDAO.update(partnerBank, TableType.MAIN_TAB);
 			}
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(partnerBank);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getPartnerBankDAO().delete with parameters partnerBank,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtPartnerBank by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
@@ -309,43 +220,24 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		PartnerBank partnerBank = (PartnerBank) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getPartnerBankDAO().delete(partnerBank, TableType.TEMP_TAB);
+		partnerBankDAO.delete(partnerBank, TableType.TEMP_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
-	 * assign the to auditHeader 3) identify the nextprocess
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
-
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
-	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from getPartnerBankDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
@@ -385,63 +277,22 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 	@Override
 	public boolean getPartnerCodeExist(String partnerBankCodeValue, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean codeExist = false;
 
-		if (getPartnerBankDAO().geBankCodeCount(partnerBankCodeValue, type) != 0) {
+		if (partnerBankDAO.geBankCodeCount(partnerBankCodeValue, type) != 0) {
 			codeExist = true;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return codeExist;
 	}
 
-	/**
-	 * Checking wile record deletion if partnerBank used in other area's or not. If it used we cannot allow to delete
-	 * that record.
-	 * 
-	 * @param partnerBankId
-	 * @return
-	 */
-	public boolean checkDependencyValidation(long partnerBankId) {
-		logger.debug("Entering");
-
-		int count = 0;
-
-		count = getFinTypePartnerBankDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
-		if (count > 0) {
-			return true;
-		}
-
-		count = getFinAdvancePaymentsDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
-		if (count > 0) {
-			return true;
-		}
-
-		count = getPaymentInstructionDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
-		if (count > 0) {
-			return true;
-		}
-
-		count = getFeePostingsDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
-		if (count > 0) {
-			return true;
-		}
-
-		count = getPresentmentDetailDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
-		if (count > 0) {
-			return true;
-		}
-
-		logger.debug("Leaving");
-		return false;
-	}
-
 	@Override
 	public List<PartnerBranchModes> getPartnerBranchModesId(long id) {
-		return getPartnerBankDAO().getPartnerBranchModesId(id);
+		return partnerBankDAO.getPartnerBranchModesId(id);
 	}
 
 	@Override
@@ -449,43 +300,73 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		return partnerBankDAO.getBankCodeById(partnerBankId);
 	}
 
-	public FinAdvancePaymentsDAO getFinAdvancePaymentsDAO() {
-		return finAdvancePaymentsDAO;
+	private boolean checkDependencyValidation(long partnerBankId) {
+		logger.debug(Literal.ENTERING);
+
+		int count = 0;
+
+		count = finTypePartnerBankDAO.getAssignedPartnerBankCount(partnerBankId, TableType.VIEW);
+		if (count > 0) {
+			return true;
+		}
+
+		count = finAdvancePaymentsDAO.getAssignedPartnerBankCount(partnerBankId, "_View");
+		if (count > 0) {
+			return true;
+		}
+
+		count = paymentInstructionDAO.getAssignedPartnerBankCount(partnerBankId, "_View");
+		if (count > 0) {
+			return true;
+		}
+
+		count = feePostingsDAO.getAssignedPartnerBankCount(partnerBankId, "_View");
+		if (count > 0) {
+			return true;
+		}
+
+		count = presentmentDetailDAO.getAssignedPartnerBankCount(partnerBankId, "_View");
+		if (count > 0) {
+			return true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return false;
 	}
 
+	@Autowired
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Autowired
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
+	}
+
+	@Autowired
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
 
-	public FinTypePartnerBankDAO getFinTypePartnerBankDAO() {
-		return finTypePartnerBankDAO;
-	}
-
+	@Autowired
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
 
-	public PaymentInstructionDAO getPaymentInstructionDAO() {
-		return paymentInstructionDAO;
-	}
-
+	@Autowired
 	public void setPaymentInstructionDAO(PaymentInstructionDAO paymentInstructionDAO) {
 		this.paymentInstructionDAO = paymentInstructionDAO;
 	}
 
-	public FeePostingsDAO getFeePostingsDAO() {
-		return feePostingsDAO;
-	}
-
+	@Autowired
 	public void setFeePostingsDAO(FeePostingsDAO feePostingsDAO) {
 		this.feePostingsDAO = feePostingsDAO;
 	}
 
-	public PresentmentDetailDAO getPresentmentDetailDAO() {
-		return presentmentDetailDAO;
-	}
-
+	@Autowired
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
 		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
+
 }

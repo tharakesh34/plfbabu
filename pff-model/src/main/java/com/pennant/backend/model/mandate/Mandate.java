@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
@@ -180,6 +181,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date swapEffectiveDate;
 	private String holdReason;
+	@XmlElement
 	private boolean securityMandate;
 	@XmlElement
 	private Long employerID;
@@ -189,11 +191,13 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String finRepayMethod;
 	private String alwdRpyMethods;
 	private Long oldMandate;
+	private Long oldSecMandate;
 	private boolean allowDAS;
 	// API validation purpose only
 	private Mandate validateMandate = this;
 
 	private Date loanMaturityDate;
+	private ErrorDetail error;
 
 	public Mandate() {
 		super();
@@ -251,10 +255,12 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("finRepayMethod");
 		excludeFields.add("alwdRpyMethods");
 		excludeFields.add("oldMandate");
+		excludeFields.add("oldSecMandate");
 		excludeFields.add("validateMandate");
 		excludeFields.add("allowDAS");
 		excludeFields.add("employerName");
 		excludeFields.add("loanMaturityDate");
+		excludeFields.add("error");
 
 		return excludeFields;
 	}
@@ -1012,6 +1018,22 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setLoanMaturityDate(Date loanMaturityDate) {
 		this.loanMaturityDate = loanMaturityDate;
+	}
+
+	public Long getOldSecMandate() {
+		return oldSecMandate;
+	}
+
+	public void setOldSecMandate(Long oldSecMandate) {
+		this.oldSecMandate = oldSecMandate;
+	}
+
+	public ErrorDetail getError() {
+		return error;
+	}
+
+	public void setError(ErrorDetail error) {
+		this.error = error;
 	}
 
 }

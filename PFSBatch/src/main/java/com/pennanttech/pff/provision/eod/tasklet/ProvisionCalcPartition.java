@@ -20,6 +20,10 @@ public class ProvisionCalcPartition implements Partitioner {
 
 	private ProvisionService provisionService;
 
+	public ProvisionCalcPartition() {
+		super();
+	}
+
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
 		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_THREAD_COUNT);
