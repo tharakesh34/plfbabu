@@ -676,8 +676,6 @@
 
 	<bean id="receiptService" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" />
 
-	<bean id="closureDAO" class="com.pennanttech.pff.closure.dao.impl.ClosureDAOImpl" parent="basicDao" />
-
 	<bean id="depositDetailsDAO" class="com.pennant.backend.dao.receipts.impl.DepositDetailsDAOImpl"
 		parent="sequenceDao" />
 
