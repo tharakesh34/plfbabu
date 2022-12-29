@@ -352,6 +352,8 @@ public class AgreementDetail {
 	private String processingFeeWaivedAmt = "0.00";
 	private String processingFeeSchdMeth = "";
 
+	private String disbursementDate = "";
+
 	/**
 	 * Provides Total Eligibility Amount from CreditReview Sheet
 	 */
@@ -434,6 +436,14 @@ public class AgreementDetail {
 
 	public void setProcessingFeeSchdMeth(String processingFeeSchdMeth) {
 		this.processingFeeSchdMeth = processingFeeSchdMeth;
+	}
+
+	public String getDisbursementDate() {
+		return disbursementDate;
+	}
+
+	public void setDisbursementDate(String disbursementDate) {
+		this.disbursementDate = disbursementDate;
 	}
 
 	public String getActualProcessingFee() {
@@ -5916,6 +5926,7 @@ public class AgreementDetail {
 		private String remainingAmount = "";
 		private String feeTreatment = "";
 		private String feeTreatmentDesc = "";
+		private String isDeductFromDisb = "";
 
 		public CusCharge() {
 		}
@@ -5975,6 +5986,15 @@ public class AgreementDetail {
 		public void setFeeTreatment(String feeTreatment) {
 			this.feeTreatment = feeTreatment;
 		}
+
+		public String getIsDeductFromDisb() {
+			return isDeductFromDisb;
+		}
+
+		public void setIsDeductFromDisb(String isDeductFromDisb) {
+			this.isDeductFromDisb = isDeductFromDisb;
+		}
+
 	}
 
 	// ------------- Disbursement Details ------------//
@@ -6041,6 +6061,7 @@ public class AgreementDetail {
 		private String fileNamePrefix = "";
 		private String channel = "";
 		private String entityCode = "";
+		private String accountNumber = "";
 
 		public Disbursement() {
 		}
@@ -6452,6 +6473,15 @@ public class AgreementDetail {
 		public void setEntityCode(String entityCode) {
 			this.entityCode = entityCode;
 		}
+
+		public String getAccountNumber() {
+			return accountNumber;
+		}
+
+		public void setAccountNumber(String accountNumber) {
+			this.accountNumber = accountNumber;
+		}
+
 	}
 
 	// ---------- Dcument details ---------//

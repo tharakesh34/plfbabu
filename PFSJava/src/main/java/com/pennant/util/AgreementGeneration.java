@@ -215,6 +215,7 @@ import com.pennant.backend.service.masters.MasterDefService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DeviationConstants;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -3466,6 +3467,17 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					disbursement.setDisbursementAcct(StringUtils.trimToEmpty(value));
 				} else {
 					disbursement.setDisbursementAcct(StringUtils.trimToEmpty(advancePayment.getBeneficiaryAccNo()));
+				}
+
+				if (StringUtils.isEmpty(agreement.getDisbursementDate())) {
+					agreement.setDisbursementDate(disbursement.getDisbursementDate());
+				}
+
+				if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(advancePayment.getPaymentType())
+						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(advancePayment.getPaymentType())) {
+					disbursement.setAccountNumber(advancePayment.getLlReferenceNo());
+				} else {
+					disbursement.setAccountNumber(advancePayment.getBeneficiaryAccNo());
 				}
 
 				disbursement.setIfscCode(StringUtils.trimToEmpty(advancePayment.getiFSC()));
