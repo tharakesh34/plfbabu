@@ -14,7 +14,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.dao.PresentmentRespUploadDAO;
 import com.pennant.pff.presentment.exception.PresentmentError;
@@ -78,15 +77,14 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		detail.setPresentmentReference(pd.getPresentmentRef());
-
-		if (RepayConstants.PEXC_BOUNCE.equals(pd.getStatus())) {
-			detail.setClearingStatus(RepayConstants.PEXC_SUCCESS);
-		} else {
-			detail.setClearingStatus(RepayConstants.PEXC_BOUNCE);
-			detail.setBounceCode(null); // FIXME
-			detail.setBounceRemarks(null);
+		if (StringUtils.equals(detail.getClearingStatus(), pd.getStatus())) {
+			setError(detail, PresentmentError.FC_603);
+			return;
 		}
+
+		detail.setPresentmentReference(pd.getPresentmentRef());
+		detail.setBounceCode(detail.getBounceCode());
+		detail.setBounceRemarks(detail.getBounceRemarks());
 
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		detail.setErrorCode("");

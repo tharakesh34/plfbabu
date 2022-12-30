@@ -50,7 +50,9 @@ public enum PresentmentError {
 
 	FC_601("Fate Correction already proceessed for this schedule."),
 
-	FC_602("Presentment is not found for this respective schedule.");
+	FC_602("Presentment is not found for this respective schedule."),
+
+	FC_603("Clearing status in invalid in Fate Correction Upload File");
 
 	private String description;
 
