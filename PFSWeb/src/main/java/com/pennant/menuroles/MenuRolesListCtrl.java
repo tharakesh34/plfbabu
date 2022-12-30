@@ -204,13 +204,13 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 			cell.setCellType(CellType.STRING);
 			cell.setCellValue("Level3");
 
-			cell = row.createCell(4);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue("Right");
+			// cell = row.createCell(4);
+			// cell.setCellType(CellType.STRING);
+			// cell.setCellValue("Right");
 
-			cell = row.createCell(5);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue("Groups");
+			// cell = row.createCell(5);
+			// cell.setCellType(CellType.STRING);
+			// cell.setCellValue("Groups");
 
 			cell = row.createCell(6);
 			cell.setCellType(CellType.STRING);
@@ -247,15 +247,14 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 			cell.setCellType(CellType.STRING);
 			cell.setCellValue(org.zkoss.util.resource.Labels.getLabel(menuItem.getId()));
 
-			cell = row.createCell(4);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue(menuItem.getRightName());
+			// cell = row.createCell(4);
+			// cell.setCellType(CellType.STRING);
+			// cell.setCellValue(menuItem.getRightName());
 
-			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
-				cell = row.createCell(5);
-				cell.setCellType(CellType.STRING);
-				cell.setCellValue(getGroups(menuItem.getRightName(), ","));
-			}
+			/*
+			 * if (StringUtils.isNotEmpty(menuItem.getRightName())) { cell = row.createCell(5);
+			 * cell.setCellType(CellType.STRING); cell.setCellValue(getGroups(menuItem.getRightName(), ",")); }
+			 */
 
 			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
 				cell = row.createCell(6);
@@ -272,15 +271,12 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 			cell.setCellType(CellType.STRING);
 			cell.setCellValue(org.zkoss.util.resource.Labels.getLabel(menuItem.getId()));
 
-			cell = row.createCell(4);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue(menuItem.getRightName());
-
-			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
-				cell = row.createCell(5);
-				cell.setCellType(CellType.STRING);
-				cell.setCellValue(getGroups(menuItem.getRightName(), ","));
-			}
+			/*
+			 * cell = row.createCell(4); cell.setCellType(CellType.STRING); cell.setCellValue(menuItem.getRightName());
+			 * 
+			 * if (StringUtils.isNotEmpty(menuItem.getRightName())) { cell = row.createCell(5);
+			 * cell.setCellType(CellType.STRING); cell.setCellValue(getGroups(menuItem.getRightName(), ",")); }
+			 */
 
 			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
 				cell = row.createCell(6);
