@@ -128,6 +128,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	protected ExtendedCombobox pinCode;
 	protected ExtendedCombobox entity;
 	protected ExtendedCombobox cluster;
+	protected ExtendedCombobox defChequeDDPrintLoc;
+	protected ExtendedCombobox defDDPrintLoc;
 	protected Row row_org_struct;
 
 	// not autoWired Var's
@@ -319,6 +321,13 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.entity.addForward(ExtendedCombobox.ON_FUL_FILL, self, "onChangeEntity", null);
 		this.entity.setValidateColumns(new String[] { "EntityCode" });
 
+		this.defChequeDDPrintLoc.setMaxlength(12);
+		this.defChequeDDPrintLoc.setMandatoryStyle(true);
+		this.defChequeDDPrintLoc.setModuleName("BankBranch");
+		this.defChequeDDPrintLoc.setValueColumn("BranchCode");
+		this.defChequeDDPrintLoc.setDescColumn("BranchDesc");
+		this.defChequeDDPrintLoc.setValidateColumns(new String[] { "BranchCode" });
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -464,6 +473,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchIsActive.setChecked(aBranch.isBranchIsActive());
 		this.newBranchCode.setValue(aBranch.getNewBranchCode());
 		this.miniBranch.setChecked(aBranch.isMiniBranch());
+		this.defChequeDDPrintLoc.setValue(aBranch.getDefChequeDDPrintLoc());
 		fillComboBox(this.branchType, aBranch.getBranchType(), branchTypeList, "");
 		fillComboBox(this.region, aBranch.getRegion(), regionList, "");
 
@@ -726,6 +736,15 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		try {
+			this.defChequeDDPrintLoc.getValidatedValue();
+			String defChequeDDPrintLoc = String.valueOf(this.defChequeDDPrintLoc.getAttribute("branchCode"));
+			aBranch.setDefChequeDDPrintLoc(defChequeDDPrintLoc);
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		try {
 			Object obj = this.pinCode.getAttribute("pinCodeId");
 			if (obj != null) {
@@ -1034,6 +1053,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.pinCode.setConstraint("");
 		this.entity.setConstraint("");
 		this.cluster.setConstraint("");
+		this.defChequeDDPrintLoc.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1074,6 +1094,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.pinCode.setErrorMessage("");
 		this.entity.setErrorMessage("");
 		this.cluster.setErrorMessage("");
+		this.defChequeDDPrintLoc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1154,6 +1175,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.pinCode.setReadonly(isReadOnly("BranchDialog_PinCode"));
 		this.entity.setReadonly(isReadOnly("BranchDialog_Entity"));
 		this.cluster.setReadonly(isReadOnly("BranchDialog_ClusterType"));
+		this.defChequeDDPrintLoc.setReadonly(isReadOnly("BranchDialog_DefChequeDDPrintLoc"));
 		if (this.miniBranch.isChecked()) {
 			this.parentBranch.setReadonly(isReadOnly("BranchDialog_ParentBranch"));
 		} else {

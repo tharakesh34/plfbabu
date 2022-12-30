@@ -399,5 +399,23 @@
 			<column name="SecurityMandateID" type="bigint" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="TK#2509.12" author="Anilkumar.G">
+		<addColumn tableName="ADTFEETYPES">
+			<column name="AllowAutoRefund" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.28" author="AnilKumar.G">
+	<addColumn tableName="ADTRMTBRANCHES">
+		<column name="DefDDPrintLoc" type="varchar(15)" />
+	</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.29" author="AnilKumar.G">
+	<addColumn tableName="ADTRMTBRANCHES">
+		<column name="DefChequePrintLoc" type="varchar(15)" />
+	</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

@@ -480,6 +480,8 @@
 		<menuItem id="menu_Item_DueDateLogicRule"
 			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/DueDateRuleList.zul"
 			rightName="menuItem_RulesFactory_DueDateLogicRule" />
+		<menuItem id="menu_Item_AutoRefundRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AutoRefundRuleList.zul"
+			rightName="menuItem_RulesFactory_AutoRefundRule" />
 	</menu>
 
 	<!-- Solution Factory -->
