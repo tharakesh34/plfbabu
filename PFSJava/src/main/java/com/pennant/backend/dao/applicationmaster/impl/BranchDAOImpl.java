@@ -75,7 +75,8 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(", BranchProvince, BranchCountry, BranchFax, BranchTel, BranchSwiftBankCde, BranchSwiftCountry");
 		sql.append(", BranchSwiftLocCode, BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode");
 		sql.append(", MiniBranch, BranchType, ParentBranch, Region, BankRefNo, BranchAddrHNbr, BranchFlatNbr");
-		sql.append(", BranchAddrStreet, PinCode, Entity, ClusterId, Version, LastMntBy, LastMntOn");
+		sql.append(
+				", BranchAddrStreet, PinCode, DefChequeDDPrintLoc, Entity, ClusterId, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PinCodeId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -120,6 +121,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 				b.setBranchFlatNbr(rs.getString("BranchFlatNbr"));
 				b.setBranchAddrStreet(rs.getString("BranchAddrStreet"));
 				b.setPinCode(rs.getString("PinCode"));
+				b.setDefChequeDDPrintLoc(rs.getString("DefChequeDDPrintLoc"));
 				b.setEntity(rs.getString("Entity"));
 				b.setClusterId(JdbcUtil.getLong(rs.getObject("ClusterId")));
 				b.setVersion(rs.getInt("Version"));
@@ -205,7 +207,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(" BranchSwiftBankCde, BranchSwiftCountry, BranchSwiftLocCode,");
 		sql.append(" BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode, MiniBranch,");
 		sql.append(" BranchType, ParentBranch, Region, BankRefNo, BranchAddrHNbr, BranchFlatNbr,");
-		sql.append(" BranchAddrStreet, PinCode, PinCodeId, ");
+		sql.append(" BranchAddrStreet, PinCode, PinCodeId, DefChequeDDPrintLoc,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, Entity, ClusterId)");
 		sql.append(" values(:BranchCode, :BranchDesc, :BranchAddrLine1, :BranchAddrLine2,");
@@ -213,7 +215,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(" :BranchTel, :BranchSwiftBankCde, :BranchSwiftCountry, :BranchSwiftLocCode,");
 		sql.append(" :BranchSwiftBrnCde, :BranchSortCode, :BranchIsActive, :NewBranchCode, :MiniBranch,");
 		sql.append(" :BranchType, :ParentBranch, :Region, :BankRefNo, :BranchAddrHNbr, :BranchFlatNbr,");
-		sql.append(" :BranchAddrStreet, :PinCode, :PinCodeId,");
+		sql.append(" :BranchAddrStreet, :PinCode, :PinCodeId, :DefChequeDDPrintLoc,");
 		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :Entity, :ClusterId)");
 
@@ -250,7 +252,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(" BranchFlatNbr = :BranchFlatNbr, BranchAddrStreet = :BranchAddrStreet, MiniBranch = :MiniBranch,");
 		sql.append(" BranchType = :BranchType, ParentBranch = :ParentBranch, Region = :Region,");
 		sql.append(" BankRefNo = :BankRefNo, PinCode = :PinCode, Entity = :Entity, ClusterId = :ClusterId,");
-		sql.append(" PinCodeId = :PinCodeId,");
+		sql.append(" PinCodeId = :PinCodeId, DefChequeDDPrintLoc = :DefChequeDDPrintLoc");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
