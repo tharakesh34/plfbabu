@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="nagavamsi.p" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#712_01" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update Customers set CustCoreBank = -1*CustID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#712_02" author="murthy.y">
+		<addNotNullConstraint tableName="Customers" columnName="CustCoreBank" />
+	</changeSet>
+
+	<changeSet id="ST#712_03" author="murthy.y">
+		<createIndex tableName="Customers" indexName="idx_Customers_CustCoreBank">
+			<column name="CustCoreBank" type="varchar(50)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#712_04" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update Customers_Temp set CustCoreBank = -1*CustID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#712_05" author="murthy.y">
+		<addNotNullConstraint tableName="Customers_Temp" columnName="CustCoreBank" />
+	</changeSet>
+
+	<changeSet id="ST#712_06" author="murthy.y">
+		<createIndex tableName="Customers_Temp" indexName="idx_Customers_T_CustCoreBank">
+			<column name="CustCoreBank" type="varchar(50)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#712_07" author="saikrishna.b">
+		<createTable tableName="EOD_CUSTOMER_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CutsID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CoreBankID" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LoanExist" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="RebuildLimits" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="ThreadId" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="ResetCounterId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+	</changeSet>
+
+</databaseChangeLog>

@@ -32,125 +32,9 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	private static final String UPDATE_ORCL_RC = "update CustomerQueuing set ThreadId = ? where ROWNUM <= ? AND ThreadId = ?";
 	private static final String START_CID_RC = "update CustomerQueuing set Progress = ? ,StartTime = ? Where CustID = ? AND Progress = ?";
 	private static final String UPDATE_LOANCOUNT = "update CustomerQueuing set ThreadId = ? Where FinRunningCount > ? AND FinRunningCount <= ?  AND ThreadId = ?";
-	private static final String UPDATE_SQL_RUNCOUNT = " update customerqueuing  set fincount = t2.fincount, finrunningcount = t2.finrunningcount"
-			+ " from ( select  custid,fincount, sum(fincount) over (order by custid) finrunningcount from"
-			+ " (select fm.custid, count(*) fincount from financemain fm  inner join customerqueuing cq on fm.custid = cq.custid"
-			+ " where finisactive = 1 and cq.threadid = 0 group by fm.custid)t) t2 where customerqueuing.custid = t2.custid ";
-
-	private static final String UPDATE_ORCL_RUNCOUNT = " MERGE INTO CUSTOMERQUEUING T1 USING ( select  CustID,FinCount, sum(FinCount) over (order by custid) FinRunningCount "
-			+ " FROM (select FM.CustID, count(*) FinCount FROM FinanceMain FM  INNER JOIN CUSTOMERQUEUING CQ ON FM.CustID = CQ.CustId where FinIsActive = 1 "
-			+ " AND CQ.threadid = 0 group by FM.CustID)) T2 ON (T1.CustID = T2.CustID) WHEN MATCHED THEN UPDATE SET T1.FinCount = T2.FinCount, T1.FinRunningCount = T2.FinRunningCount";
 
 	public CustomerQueuingDAOImpl() {
 		super();
-	}
-
-	@Override
-	public int prepareCustomerQueue(Date date) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO CustomerQueuing");
-		sql.append("(CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
-		sql.append(" select  distinct CustID, ?, ?, ?, ?, ?, ? FROM FinanceMain where FinIsActive = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		int financeRecords = this.jdbcOperations.update(sql.toString(), ps -> {
-
-			if (App.DATABASE == Database.POSTGRES) {
-				ps.setObject(1, LocalDateTime.now());
-			} else {
-				ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
-			}
-			ps.setInt(2, 0);
-			ps.setInt(3, 0);
-			ps.setBoolean(4, true);
-			ps.setBoolean(5, false);
-			ps.setBoolean(6, true);
-			ps.setBoolean(7, true);
-
-		});
-
-		sql = new StringBuilder();
-		sql.append("INSERT INTO CustomerQueuing");
-		sql.append("(CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
-		sql.append(" select distinct CustomerID, ?, ?, ?, ?, ?, ? from LimitHeader lh");
-		sql.append(" inner Join LIMITSTRUCTURE ls on ls.StructureCode = lh.LimitStructureCode");
-		sql.append(" Where ls.Rebuild = ?");
-		sql.append(" and CustomerID not in (Select Distinct CustId from CustomerQueuing) and CustomerID <> ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		int nonFinacerecords = this.jdbcOperations.update(sql.toString(), ps -> {
-			if (App.DATABASE == Database.POSTGRES) {
-				ps.setObject(1, LocalDateTime.now());
-			} else {
-				ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
-			}
-			ps.setInt(2, 0);
-			ps.setInt(3, 0);
-			ps.setBoolean(4, false);
-			ps.setBoolean(5, false);
-			ps.setBoolean(6, true);
-			ps.setInt(7, 1);
-			ps.setInt(8, 0);
-
-		});
-
-		return financeRecords + nonFinacerecords;
-	}
-
-	@Override
-	public int prepareCustomerQueueByLoanCount(Date date) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO CustomerQueuing");
-		sql.append("(CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess , FinCount)");
-		sql.append(" select  CustID, ?, ?, ?, ?, ?, ? , FinCount FROM");
-		sql.append(" (select CustID, count(*) FinCount FROM FinanceMain where FinIsActive = ? group by CustID) c ");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		int financeRecords = this.jdbcOperations.update(sql.toString(), ps -> {
-			if (App.DATABASE == Database.POSTGRES) {
-				ps.setObject(1, LocalDateTime.now());
-			} else {
-				ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
-			}
-			ps.setInt(2, 0);
-			ps.setInt(3, 0);
-			ps.setBoolean(4, true);
-			ps.setBoolean(5, false);
-			ps.setBoolean(6, true);
-			ps.setBoolean(7, true);
-		});
-
-		sql = new StringBuilder();
-		sql.append("INSERT INTO CustomerQueuing");
-		sql.append("(CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess");
-		sql.append(", FinCount, FinRunningCount)");
-		sql.append(" select distinct CustomerID, ?, ?, ?, ?, ?, ?, 0, 0 from LimitHeader lh");
-		sql.append(" inner Join LIMITSTRUCTURE ls on ls.StructureCode = lh.LimitStructureCode");
-		sql.append(" Where ls.Rebuild = ?");
-		sql.append(" and CustomerID not in (Select Distinct CustId from CustomerQueuing) and CustomerID <> ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		int nonFinacerecords = this.jdbcOperations.update(sql.toString(), ps -> {
-			if (App.DATABASE == Database.POSTGRES) {
-				ps.setObject(1, LocalDateTime.now());
-			} else {
-				ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
-			}
-			ps.setInt(2, 0);
-			ps.setInt(3, 0);
-			ps.setBoolean(4, false);
-			ps.setBoolean(5, false);
-			ps.setBoolean(6, true);
-			ps.setInt(7, 1);
-			ps.setInt(8, 0);
-
-		});
-
-		return financeRecords + nonFinacerecords;
 	}
 
 	@Override
@@ -169,17 +53,6 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 		return this.jdbcOperations.queryForObject(sql, new Object[] { custID, EodConstants.PROGRESS_IN_PROCESS },
 				Integer.class);
-	}
-
-	@Override
-	public void updateFinRunningCount() {
-		if (App.DATABASE == Database.SQL_SERVER || App.DATABASE == Database.POSTGRES) {
-			logger.trace(Literal.SQL + UPDATE_SQL_RUNCOUNT);
-			this.jdbcOperations.update(UPDATE_SQL_RUNCOUNT);
-		} else if (App.DATABASE == Database.ORACLE) {
-			logger.trace(Literal.SQL + UPDATE_ORCL_RUNCOUNT);
-			this.jdbcOperations.update(UPDATE_ORCL_RUNCOUNT);
-		}
 	}
 
 	@Override

@@ -457,6 +457,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			c.setCustID(getNextValue("SeqCustomers"));
 		}
 
+		if (StringUtils.trimToNull(c.getCustCoreBank()) == null) {
+			c.setCustCoreBank(String.valueOf(-1 * c.getCustID()));
+		}
+
 		StringBuilder sql = new StringBuilder("Insert Into Customers");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustSalutationCode, CustFName");
