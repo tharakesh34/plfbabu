@@ -4036,7 +4036,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="TK#2509.11" author="Anilkumar.G">
+	<changeSet id="TK#2509.32" author="Anilkumar.G">
 		<sql>
 		    <![CDATA[
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'FeeTypeDialog_AllowAutoRefund';	
@@ -4558,7 +4558,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="TK#2509.11" author="Anilkumar.G">
+	<changeSet id="TK#2509.33" author="Anilkumar.G">
 		<sql>
 		    <![CDATA[
 		        DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'AUTO_REFUND_THROUGH_CHEQUE';
