@@ -3851,6 +3851,11 @@ public class PennantJavaUtil {
 						new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
 						new String[] { "BranchCode", "BranchDesc" }, null, 300));
 
+		ModuleUtil.register("PaymentInstructionUploadHeader",
+				new ModuleMapping("PaymentInstructionUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
 		registerCustomModules();
 	}
 

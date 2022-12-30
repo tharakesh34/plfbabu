@@ -79,6 +79,10 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 	private Beneficiary defaultBeneficiary;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private String finSource;
+	private BigDecimal odAgainstLoan = BigDecimal.ZERO;
+	private BigDecimal odAgainstCustomer = BigDecimal.ZERO;
+	private long custID;
+	private String custCoreBank;
 
 	public PaymentHeader() {
 		super();
@@ -91,6 +95,10 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 		excludeFields.add("paymentInstrType");
 		excludeFields.add("defaultBeneficiary");
 		excludeFields.add("finSource");
+		excludeFields.add("odAgainstLoan");
+		excludeFields.add("odAgainstCustomer");
+		excludeFields.add("custID");
+		excludeFields.add("custCoreBank");
 		return excludeFields;
 	}
 
@@ -253,6 +261,38 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 
 	public void setFinSource(String finSource) {
 		this.finSource = finSource;
+	}
+
+	public BigDecimal getOdAgainstLoan() {
+		return odAgainstLoan;
+	}
+
+	public void setOdAgainstLoan(BigDecimal odAgainstLoan) {
+		this.odAgainstLoan = odAgainstLoan;
+	}
+
+	public BigDecimal getOdAgainstCustomer() {
+		return odAgainstCustomer;
+	}
+
+	public void setOdAgainstCustomer(BigDecimal odAgainstCustomer) {
+		this.odAgainstCustomer = odAgainstCustomer;
+	}
+
+	public long getCustID() {
+		return custID;
+	}
+
+	public void setCustID(long custID) {
+		this.custID = custID;
+	}
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
 	}
 
 }

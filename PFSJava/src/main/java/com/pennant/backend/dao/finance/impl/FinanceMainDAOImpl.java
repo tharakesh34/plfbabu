@@ -6488,7 +6488,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public FinanceMain getFinanceMain(String finReference, String entity) {
-		StringBuilder sql = new StringBuilder("Select fm.FinID, fm.FinReference, fm.FinIsActive");
+		StringBuilder sql = new StringBuilder("Select fm.FinID, fm.FinReference, fm.FinIsActive ");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
@@ -6550,4 +6550,53 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			return null;
 		}
 	}
+
+	@Override
+	public List<Long> getInactiveLoansOnHold(Date closureDate) {
+
+		StringBuilder sql = new StringBuilder(" SELECT ");
+		sql.append(" FinId FROM FINANCEMAIN F ");
+		sql.append(" INNER JOIN FINANCEHOLDDETAIL H ON F.FinID = H.FinID ");
+		sql.append(" WHERE F.FINISACTIVE = ? AND H.HoldStatus = ? AND F.CLOSEDDATE <= ? ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForList(sql.toString(), Long.class,
+					new Object[] { 0, FinanceConstants.FIN_HOLDSTATUS_HOLD, closureDate });
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+
+	}
+
+	@Override
+	public void releaseHoldOnLoans(List<Long> finIds) {
+
+		StringBuilder sql = new StringBuilder(" UPDATE FINANCEHOLDDETAIL ");
+		sql.append(" SET HOLDSTATUS = ? WHERE FINID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				Long finid = finIds.get(i);
+
+				int index = 1;
+
+				ps.setString(index++, FinanceConstants.FIN_HOLDSTATUS_RELEASE);
+				ps.setLong(index, finid);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return finIds.size();
+			}
+		});
+
+	}
+
 }

@@ -1022,4 +1022,15 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			return fem;
 		}, id, movementType);
 	}
+
+	@Override
+	public BigDecimal getTotalExcessByRefAndType(long finID, String amountType) {
+		StringBuilder sql = new StringBuilder(" SELECT SUM(BALANCEAMOUNT) AMOUNT FROM FINEXCESSAMOUNT");
+		sql.append(" WHERE FINID = ? AND AMOUNTTYPE = ?");
+		sql.append(" GROUP BY FINID,AMOUNTTYPE ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, amountType);
+	}
 }

@@ -35,6 +35,8 @@
 	<bean id="retailcibilTaskLet" class="com.pennant.backend.endofday.tasklet.RetailCibil" />
 
 	<bean id="corporatecibilTaskLet" class="com.pennant.backend.endofday.tasklet.CorporateCibil" />
+	
+	<bean id="financeHoldReleaseTasklet" class="com.pennant.backend.endofday.tasklet.FinanceHoldReleaseTasklet" />
 
 	<bean id="datesUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.DatesUpdate" parent="sequenceDao" />
 

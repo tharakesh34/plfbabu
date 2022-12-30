@@ -207,6 +207,10 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentHeader.getPaymentId(),
 				"_View");
 
+		paymentHeader.setOdAgainstLoan(getDueAgainstLoan(paymentHeader.getFinID()));
+		paymentHeader.setOdAgainstCustomer(
+				getDueAgainstCustomer(paymentHeader.getCustID(), paymentHeader.getCustCoreBank()));
+
 		if (list != null) {
 			paymentHeader.setPaymentDetailList(list);
 			for (PaymentDetail pd : list) {
@@ -229,6 +233,16 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	public PaymentHeader getApprovedPaymentHeader(long paymentId) {
 		return paymentHeaderDAO.getPaymentHeader(paymentId, "_AView");
+	}
+
+	@Override
+	public BigDecimal getDueAgainstLoan(long finId) {
+		return paymentHeaderDAO.getDueAgainstLoan(finId);
+	}
+
+	@Override
+	public BigDecimal getDueAgainstCustomer(long custId, String custCoreBank) {
+		return paymentHeaderDAO.getDueAgainstCustomer(custId, custCoreBank);
 	}
 
 	@Override
@@ -393,6 +407,16 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.debug(Literal.ENTERING);
 
 		// Write the required validation over hear.
+
+		PaymentHeader ph = (PaymentHeader) auditDetail.getModelData();
+
+		// validation for writeoff
+
+		// validation for hold
+
+		// validation for receipt cancel
+
+		// validation for OD amount
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
@@ -860,6 +884,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	}
 
 	@Override
+	public Long getPaymentIdByFinId(long finID, long receiptId, String type) {
+		return this.paymentHeaderDAO.getPaymentIdByFinId(finID, receiptId, type);
+	}
+
+	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId) {
 		return this.paymentInstructionService.getPaymentInstruction(paymentId);
 	}
@@ -867,6 +896,16 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	@Override
 	public boolean isInstructionInProgress(String finReference) {
 		return this.paymentInstructionService.isInstructionInProgress(finReference);
+	}
+
+	@Override
+	public Map<Long, BigDecimal> getAdvisesInProgess(long finId) {
+		return this.paymentHeaderDAO.getAdvisesInProgess(finId);
+	}
+
+	@Override
+	public BigDecimal getInProgressExcessAmt(long finId, long receiptId) {
+		return this.paymentHeaderDAO.getInProgressExcessAmt(finId, receiptId);
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {

@@ -2,6 +2,8 @@ package com.pennanttech.pff.file;
 
 public enum UploadTypes {
 	RE_PRESENTMENT("Representment Upload Details Screen"),
+	
+	PAYINS_REFUND("Payment Instruction Refund"),
 
 	MANDATES("Mandate Upload Details Screen"),
 

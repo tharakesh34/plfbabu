@@ -320,6 +320,26 @@
 		parent="sequenceDao" />
 	<bean id="assignmentDealDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDealDAOImpl"
 		parent="sequenceDao" />
+		
+	<bean id="paymentHeaderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="paymentHeaderServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean name="paymentHeaderServiceTarget" class="com.pennant.backend.service.payment.impl.PaymentHeaderServiceImpl"/>
 
 	<!--============ Finance Excess Amounts Details ============== -->
 	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl"
@@ -855,7 +875,12 @@
 		parent="basicDao" />
 
 	<bean name="receiptCancellationService"
-		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" />
+		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" >
+		<property name="tdsReceivablesTxnService" ref ="tdsReceivablesTxnService"/>
+		<property name="feeReceiptService" ref ="feeReceiptService"/>
+		<property name="extendedFieldExtensionService" ref ="extendedFieldExtensionService"/>
+		<property name="paymentHeaderService" ref="paymentHeaderService"/>
+	</bean>
 
 	<bean id="presentmentExcludeCodeDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentExcludeCodeDAOImpl"
 		parent="sequenceDao" />
@@ -902,4 +927,8 @@
 	<bean id="defaultDocumentValidation" class="com.pennant.pff.document.service.DefaultDocumentValidation" />
 	
 	<bean id="docVerificationDAO" class="com.pennant.pff.document.dao.DocVerificationDAOImpl" parent="basicDao"/>
+	
+	<bean id="financeHoldReleaseProcess" class="com.pennanttech.pff.holdrelease.FinanceHoldReleaseProcess">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+	</bean>
 </beans>

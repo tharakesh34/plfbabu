@@ -410,4 +410,8 @@ public interface FinanceMainDAO {
 	Date getMaturityDate(String finReference);
 
 	FinanceMain getEntityByRef(String finReference);
+	
+	List<Long> getInactiveLoansOnHold(Date closureDate);
+
+	void releaseHoldOnLoans(List<Long> finIds);
 }

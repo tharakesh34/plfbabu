@@ -24,7 +24,9 @@
  */
 package com.pennant.backend.dao.payment;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -55,5 +57,15 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 	List<ManualAdvise> getManualAdviseForEnquiry(long finID);
 
 	long getNewPaymentHeaderId();
+
+	BigDecimal getDueAgainstCustomer(long custId, String coreBankId);
+
+	BigDecimal getDueAgainstLoan(long finId);
+
+	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
+
+	Long getPaymentIdByFinId(long finID, long receiptId, String type);
+
+	BigDecimal getInProgressExcessAmt(long finId, long receiptId);
 
 }

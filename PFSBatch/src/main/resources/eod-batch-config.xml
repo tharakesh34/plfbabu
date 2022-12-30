@@ -233,6 +233,12 @@
 
 		<step id="masterDataPreparation">
 			<tasklet ref="masterDataPreparationTaskLet" />
+			<next on="*" to="financeHoldReleaseTasklet" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="financeHoldRelease">
+			<tasklet ref="financeHoldReleaseTasklet" />
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>

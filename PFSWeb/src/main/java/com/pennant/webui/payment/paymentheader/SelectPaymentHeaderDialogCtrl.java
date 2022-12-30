@@ -26,6 +26,7 @@ package com.pennant.webui.payment.paymentheader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,6 +47,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -64,6 +66,8 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	private PaymentHeader paymentHeader;
 	private PaymentHeaderService paymentHeaderService;
 	private FinanceDetailService financeDetailService;
+
+	List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
 	public SelectPaymentHeaderDialogCtrl() {
 		super();
@@ -113,12 +117,30 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
+		String list = "";
+		int len = allowedExcesTypes.size();
+		for (int i = 0; i < len; i++) {
+			if (i == 0) {
+				list = StringUtils.trimToEmpty(list).concat("'" + allowedExcesTypes.get(i) + "'");
+			} else if (i != 0 && i < len - 1) {
+				list = list.concat("," + "'" + allowedExcesTypes.get(i) + "'");
+			} else if (i == len - 1) {
+				list = list.concat("," + "'" + allowedExcesTypes.get(i) + "'");
+			}
+		}
+
 		// Query for faetching the finreferences only avalable in FinExcessAmount and ManualAdvise.
 		StringBuilder sql = new StringBuilder();
-		sql.append(" FinReference in (Select FinReference from FinExcessAmount  where BalanceAmt > 0 union ");
-		sql.append(" Select FinReference from ManualAdvise Where  AdviseType = ");
+		sql.append(" FinReference in (Select FinReference from FinExcessAmount  where BalanceAmt > 0 ");
+		sql.append(" and AmountType in (");
+		sql.append(list);
+		sql.append(") union ");
+		sql.append(" Select FinReference from ManualAdvise M");
+		sql.append(" Inner JOIN FEETYPES ft on ft.feetypeid = M.FeeTypeId ");
+		sql.append(" Where M.AdviseType = ");
 		sql.append(AdviseType.PAYABLE.id());
-		sql.append(" AND HoldDue=0 And adviseAmount - PaidAmount > 0)");
+		sql.append(" AND HoldDue=0 And adviseAmount - PaidAmount > 0");
+		sql.append(" And ft.Refundable = 1) ");
 
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
@@ -159,6 +181,15 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		}
 
 		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(finID);
+
+		if (financeMain.isWriteoffLoan()) {
+			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_WriteOffLoan"));
+			return;
+		}
+
+		paymentHeader.setOdAgainstLoan(paymentHeaderService.getDueAgainstLoan(finID));
+		paymentHeader.setOdAgainstCustomer(
+				paymentHeaderService.getDueAgainstCustomer(financeMain.getCustID(), paymentHeader.getCustCoreBank()));
 
 		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("paymentHeader", paymentHeader);

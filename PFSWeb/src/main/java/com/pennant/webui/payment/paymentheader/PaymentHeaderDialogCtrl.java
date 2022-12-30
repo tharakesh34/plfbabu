@@ -149,6 +149,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	protected Label lbl_Currency;
 	protected Label lbl_startDate;
 	protected Label lbl_MaturityDate;
+	protected Label lbl_ODAgainstLoan;
+	protected Label lbl_ODAgainstCustomer;
 
 	protected Textbox tranModule;
 	protected Textbox tranReference;
@@ -187,6 +189,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private transient FinAdvancePaymentsService finAdvancePaymentsService;
 	private Button btnSave_payment;
 	private FeeTypeService feeTypeService;
+
+	private List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
 	/**
 	 * default constructor.<br>
@@ -494,7 +498,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				.setValue(DateUtility.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate
 				.setValue(DateUtility.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
-
+		this.lbl_ODAgainstLoan
+				.setValue(PennantApplicationUtil.amountFormate(aPaymentHeader.getOdAgainstLoan(), ccyFormatter));
+		this.lbl_ODAgainstCustomer
+				.setValue(PennantApplicationUtil.amountFormate(aPaymentHeader.getOdAgainstCustomer(), ccyFormatter));
 		// Disbursement Instructions tab.
 		appendDisbursementInstructionTab(aPaymentHeader);
 
@@ -1186,15 +1193,18 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		for (FinExcessAmount fea : excessList) {
 			PaymentDetail pd = new PaymentDetail();
+			if (allowedExcesTypes.contains(fea.getAmountType())) {
+				BigDecimal progressAmt = paymentHeaderService.getInProgressExcessAmt(this.financeMain.getFinID(),
+						fea.getReceiptID());
+				pd.setNewRecord(true);
+				pd.setReferenceId(fea.getId());
+				pd.setAvailableAmount(fea.getBalanceAmt().subtract(progressAmt));
+				pd.setAmountType(fea.getAmountType());
+				pd.setReceiptID(fea.getReceiptID());
+				pd.setValueDate(fea.getValueDate());
 
-			pd.setNewRecord(true);
-			pd.setReferenceId(fea.getId());
-			pd.setAvailableAmount(fea.getBalanceAmt());
-			pd.setAmountType(fea.getAmountType());
-			pd.setReceiptID(fea.getReceiptID());
-			pd.setValueDate(fea.getValueDate());
-
-			detailList.add(pd);
+				detailList.add(pd);
+			}
 		}
 
 		List<ManualAdvise> manualAdviseList = null;
@@ -1204,12 +1214,21 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			manualAdviseList = this.paymentHeaderService.getManualAdvise(this.financeMain.getFinID());
 		}
 
+		Map<Long, BigDecimal> advisesInProgess = new HashMap<Long, BigDecimal>();
+		advisesInProgess = this.paymentHeaderService.getAdvisesInProgess(this.financeMain.getFinID());
+
 		for (ManualAdvise ma : manualAdviseList) {
 			PaymentDetail pd = new PaymentDetail();
 
 			pd.setNewRecord(true);
 			pd.setReferenceId(ma.getAdviseID());
-			pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
+			if (advisesInProgess.containsKey(ma.getAdviseID())) {
+				BigDecimal progressAmt = advisesInProgess.get(ma.getAdviseID());
+				pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount())
+						.subtract(progressAmt));
+			} else {
+				pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
+			}
 			pd.setAmountType(String.valueOf(ma.getAdviseType()));
 			pd.setFeeTypeCode(ma.getFeeTypeCode());
 			pd.setFeeTypeDesc(ma.getFeeTypeDesc());

@@ -4579,7 +4579,12 @@
 	</bean>
 
 	<bean name="receiptCancellationServiceTarget"
-		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" />
+		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" >
+		<property name="tdsReceivablesTxnService" ref ="tdsReceivablesTxnService"/>
+		<property name="feeReceiptService" ref ="feeReceiptService"/>
+		<property name="extendedFieldExtensionService" ref ="extendedFieldExtensionService"/>
+		<property name="paymentHeaderService" ref="paymentHeaderService"/>
+	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
 	<bean id="overdueChargeRecoveryDAO"
@@ -13016,4 +13021,21 @@
 		parent="aUploadService" />
 		
 	<bean id="partPayAndEarlySettleValidator" class="com.pennant.backend.service.finance.PartPayAndEarlySettleValidator"/>
+	
+	<bean id="paymentInstructionUploadDAO"
+		class="com.pennant.backend.dao.payment.impl.PaymentInstructionUploadDAOImpl" parent="sequenceDao" />
+		
+	<bean id="paymentInstructionUploadService"
+		class="com.pennant.backend.service.payment.impl.PaymentInstructionUploadServiceImpl" parent="aUploadService" >
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="paymentInstructionUploadDAO" ref ="paymentInstructionUploadDAO"/>
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO"/>
+		<property name="paymentInstructionDAO" ref="paymentInstructionDAO"/>
+		<property name="paymentHeaderService" ref="paymentHeaderService"/>
+		<property name="auditHeaderDAO" ref="auditHeaderDAO"/>
+	</bean>
+	
+	<bean id="financeHoldReleaseProcess" class="com.pennanttech.pff.holdrelease.FinanceHoldReleaseProcess">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+	</bean>
 </beans>

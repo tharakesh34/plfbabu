@@ -373,6 +373,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> minPrePaymentCalculationTypes;
 	private static List<ValueLabel> maxPrePaymentCalculationTypes;
 	private static List<ValueLabel> prePaymentCalculatedOn;
+	private static List<String> allowedExcessTypeList;
 
 	/**
 	 * Gets the list of applications.
@@ -5597,6 +5598,14 @@ public class PennantStaticListUtil {
 		}
 
 		return minPrePaymentCalculationTypes;
+	}
+
+	public static List<String> getAllowedExcessTypeList() {
+		if (allowedExcessTypeList == null) {
+			allowedExcessTypeList = new ArrayList<>(1);
+			allowedExcessTypeList.add(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		}
+		return allowedExcessTypeList;
 	}
 
 }

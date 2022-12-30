@@ -24,7 +24,9 @@
  */
 package com.pennant.backend.service.payment;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -63,4 +65,14 @@ public interface PaymentHeaderService {
 	void executeAccountingProcess(AEEvent aeEvent, PaymentHeader paymentHeader);
 
 	boolean isInstructionInProgress(String finReference);
+
+	BigDecimal getDueAgainstLoan(long finId);
+
+	BigDecimal getDueAgainstCustomer(long custId, String custCoreBank);
+
+	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
+
+	Long getPaymentIdByFinId(long finID, long receiptId, String type);
+
+	BigDecimal getInProgressExcessAmt(long finId, long excessId);
 }

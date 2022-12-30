@@ -2523,6 +2523,13 @@
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
 
-
+	<menu id="menu_Category_ManualRefunds">
+		<menuItem id="menu_Item_ManualRefunds_Maker"
+			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=M"
+			rightName="" />
+		<menuItem id="menu_Item_ManualRefunds_Approver"
+			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=A"
+			rightName="" />
+	</menu>
 
 </ns2:XMLRootMenu>
