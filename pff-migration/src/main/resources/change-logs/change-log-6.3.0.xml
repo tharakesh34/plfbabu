@@ -3718,13 +3718,13 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="TK#2509.5" author="Anilkumar.G">
+	<changeSet id="TK#2509.51" author="Anilkumar.G">
 		<addColumn tableName="FEETYPES">
 			<column name="AllowAutoRefund" type="boolean" />
 		</addColumn>
 	</changeSet>
 	
-		<changeSet id="TK#2509.5.1_post" author="Anilkumar.G">
+		<changeSet id="TK#2509.51.1_post" author="Anilkumar.G">
 		<sql>
 			<![CDATA[  
 				UPDATE FEETYPES SET AllowAutoRefund = 0;
@@ -3732,11 +3732,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.5_post" author="Anilkumar.G" dbms="postgresql, oracle">
+	<changeSet id="TK#2509.51_post" author="Anilkumar.G" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AllowAutoRefund" tableName="FEETYPES" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="TK#2509.5_post" author="Anilkumar.G" dbms="mssql">
+	<changeSet id="TK#2509.51_post" author="Anilkumar.G" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE FEETYPES ADD CONSTRAINT DF_FET_ALWAUTOREF DEFAULT 0 FOR ALLOWAUTOREFUND;
@@ -3744,13 +3744,13 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="TK#2509.6" author="Anilkumar.G">
+	<changeSet id="TK#2509.61" author="Anilkumar.G">
 		<addColumn tableName="FEETYPES_TEMP">
 			<column name="AllowAutoRefund" type="boolean" />
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="TK#2509.6.1_post" author="Anilkumar.G">
+	<changeSet id="TK#2509.61.1_post" author="Anilkumar.G">
 		<sql>
 			<![CDATA[  
 				UPDATE FEETYPES_TEMP SET AllowAutoRefund = 0;
@@ -3758,11 +3758,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.6_post" author="Anilkumar.G" dbms="postgresql, oracle">
+	<changeSet id="TK#2509.61_post" author="Anilkumar.G" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AllowAutoRefund" tableName="FEETYPES_TEMP" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="TK#2509.6_post" author="Anilkumar.G" dbms="mssql">
+	<changeSet id="TK#2509.61_post" author="Anilkumar.G" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE FEETYPES_TEMP ADD CONSTRAINT DF_FETT_ALWAUTOREF DEFAULT 0 FOR ALLOWAUTOREFUND;
@@ -3770,12 +3770,12 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="TK#2509.7" author="Anilkumar.G">
+	<changeSet id="TK#2509.71" author="Anilkumar.G">
 		<sql>
 		    <![CDATA[
 		        DELETE FROM SECRIGHTS WHERE RIGHTNAME='menuItem_RulesFactory_AutoRefundRule';
 
-				INSERT INTO SECRIGHTS VALUES ((SELECT MAX(RIGHTID)1 FROM SECRIGHTS),0, 'menuItem_RulesFactory_AutoRefundRule','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0, 'menuItem_RulesFactory_AutoRefundRule','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
 
 		     ]]>
 		</sql>
@@ -4058,25 +4058,13 @@
 	
 	<changeSet id="TK#2509.21" author="AnilKumar.G">
 	<addColumn tableName="RMTBRANCHES">
-		<column name="DefChequePrintLoc" type="varchar(15)" />
-	</addColumn>
-	</changeSet>
-	
-	<changeSet id="TK#2509.22" author="AnilKumar.G">
-	<addColumn tableName="RMTBRANCHES">
-		<column name="DefDDPrintLoc" type="varchar(15)" />
+		<column name="DefChequeDDPrintLoc" type="varchar(15)" />
 	</addColumn>
 	</changeSet>
 	
 	<changeSet id="TK#2509.23" author="AnilKumar.G">
 	<addColumn tableName="RMTBRANCHES_TEMP">
-		<column name="DefChequePrintLoc" type="varchar(15)" />
-	</addColumn>
-	</changeSet>
-	
-	<changeSet id="TK#2509.24" author="AnilKumar.G">
-	<addColumn tableName="RMTBRANCHES_TEMP">
-		<column name="DefDDPrintLoc" type="varchar(15)" />
+		<column name="DefChequeDDPrintLoc" type="varchar(15)" />
 	</addColumn>
 	</changeSet>
 	
@@ -4140,8 +4128,7 @@
 			    T9.CODE CLUSTERCODE,
 			    T9.NAME CLUSTERNAME,
 			    T1.PINCODEID,
-			    T1.DEFCHEQUEPRINTLOC,
-			    T1.DEFDDPRINTLOC
+			    T1.DEFCHEQUEDDPRINTLOC
 		   FROM RMTBRANCHES T1
 		     LEFT JOIN BMTCOUNTRIES T2 ON T1.BRANCHCOUNTRY = T2.COUNTRYCODE
 		     LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.BRANCHCOUNTRY = T3.CPCOUNTRY AND T1.BRANCHPROVINCE = T3.CPPROVINCE
@@ -4225,8 +4212,7 @@
 				    T9.CODE CLUSTERCODE,
 				    T9.NAME CLUSTERNAME,
 					T8.PINCODEID,
-					T1.DEFCHEQUEPRINTLOC,
-			    	T1.DEFDDPRINTLOC
+					T1.DEFCHEQUEDDPRINTLOC
 				   	 FROM RMTBRANCHES_TEMP T1
 				     LEFT JOIN BMTCOUNTRIES T2 ON T1.BRANCHCOUNTRY = T2.COUNTRYCODE
 				     LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.BRANCHCOUNTRY = T3.CPCOUNTRY AND T1.BRANCHPROVINCE = T3.CPPROVINCE
@@ -4287,8 +4273,7 @@
 				    T9.CODE CLUSTERCODE,
 				    T9.NAME CLUSTERNAME,
 					T8.PINCODEID,
-					T1.DEFCHEQUEPRINTLOC,
-			    	T1.DEFDDPRINTLOC
+					T1.DEFCHEQUEDDPRINTLOC
 				  FROM RMTBRANCHES T1
 				  LEFT JOIN BMTCOUNTRIES T2 ON T1.BRANCHCOUNTRY = T2.COUNTRYCODE
 				  LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.BRANCHCOUNTRY = T3.CPCOUNTRY AND T1.BRANCHPROVINCE = T3.CPPROVINCE
