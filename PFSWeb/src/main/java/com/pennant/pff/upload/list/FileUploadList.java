@@ -240,6 +240,8 @@ public class FileUploadList extends Window implements Serializable {
 	public void onClickCheckBox(ForwardEvent event) {
 		logger.info(Literal.ENTERING.concat(event.getName()));
 
+		selectedHeaders = new ArrayList<>();
+
 		for (Listitem listitem : listbox.getItems()) {
 			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
 			if (cb.isChecked()) {
@@ -627,6 +629,8 @@ public class FileUploadList extends Window implements Serializable {
 
 			listWrapper.initList(list, listbox, paging);
 		}
+
+		selectedHeaders = new ArrayList<>();
 	}
 
 	private List<FileUploadHeader> getUploadHeaders() {

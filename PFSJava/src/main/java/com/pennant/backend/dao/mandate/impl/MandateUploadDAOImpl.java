@@ -126,7 +126,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 
 	@Override
 	public void update(List<MandateUpload> details) {
-		String sql = "Update Mandates_Upload set  Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
+		String sql = "Update Mandates_Upload set MandateID = ?, Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -137,6 +137,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 				int index = 0;
 				MandateUpload detail = details.get(i);
 
+				ps.setObject(++index, detail.getReferenceID());
 				ps.setInt(++index, detail.getProgress());
 				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, detail.getErrorCode());
@@ -155,12 +156,12 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 	@Override
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" mu.EntityCode, mu.CustID, mu.OrgReference, mu.MandateType, mu.Micr, mu.Ifsc, mu.AccNumber");
+		sql.append(" mu.EntityCode, mu.CustCIF, mu.OrgReference, mu.MandateType, mu.Micr, mu.Ifsc, mu.AccNumber");
 		sql.append(", mu.AccHolderName, mu.JointAccHolderName, mu.AccType, mu.MaxLimit, mu.Periodicity");
 		sql.append(", mu.OpenMandate, mu.StartDate, mu.ExpiryDate, mu.PartnerBankID, mu.MandateRef");
 		sql.append(", mu.ExternalMandate, mu.SwapIsActive, mu.SwapEffectiveDate, mu.EmandateSource");
 		sql.append(", mu.EmandateReferenceNo, mu.EmployerID, mu.EmployeeNo, mu.MandateStatus, mu.Reason");
-		sql.append(", uh.CreatedOn, uh.ApprovedOn, uh.CreatedBy, uh.ApprovedBy, uh.Status, mu.ErrorCode, mu.ErrorDesc");
+		sql.append(", uh.CreatedOn, uh.ApprovedOn, uh.CreatedBy, uh.ApprovedBy, mu.Status, mu.ErrorCode, mu.ErrorDesc");
 		sql.append(" From Mandates_Upload mu");
 		sql.append(" Inner Join File_Upload_Header uh on uh.ID = mu.HeaderID");
 		sql.append(" Where uh.ID = :HEADER_ID");

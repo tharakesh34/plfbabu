@@ -21,6 +21,7 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.RequestSource;
 
 public class MandateUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(MandateUploadServiceImpl.class);
@@ -56,6 +57,7 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 
 						Mandate mandate = detail.getMandate();
 						mandate.setUserDetails(header.getUserDetails());
+						mandate.setSourceId(RequestSource.UPLOAD.name());
 						Mandate response = mandateService.createMandates(mandate);
 
 						ErrorDetail error = response.getError();
@@ -66,6 +68,7 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 							detail.setErrorDesc(error.getError());
 						} else {
 							sucessRecords++;
+							detail.setReferenceID(response.getMandateID());
 						}
 					}
 
