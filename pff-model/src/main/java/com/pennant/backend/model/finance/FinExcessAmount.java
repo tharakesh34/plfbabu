@@ -18,6 +18,7 @@ public class FinExcessAmount implements Serializable {
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
 	private String rcdAction;
 	private FinExcessMovement excessMovement;
+	// private Date Valuedate = null;
 
 	public FinExcessAmount() {
 		super();

@@ -2334,6 +2334,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_Collateral"), "COLL"));
 			events.add(new FinServicingEvent(FinServiceEvent.PRINH,
 					Labels.getLabel("label_FinSerEvent_PrincipleHoliday"), "PRINH"));
+			events.add(new FinServicingEvent(FinServiceEvent.CROSSLOANKNOCKOFF,
+					Labels.getLabel("label_FinSerEvent_CrossLoanKnockOff"), "CROSSLOANKNOCKOFF"));
 		}
 		return events;
 	}

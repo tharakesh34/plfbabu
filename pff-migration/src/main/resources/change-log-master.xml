@@ -43,4 +43,5 @@
 	<include file="change-logs/change-log-security-seq-reseed_post.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />
 	<include file="change-logs/change-log-pbmapping.xml" />
+	<include file="change-logs/change-log-crossLoanKnockOff.xml" />
 </databaseChangeLog>

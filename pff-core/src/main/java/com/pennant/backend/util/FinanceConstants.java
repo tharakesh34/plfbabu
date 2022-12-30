@@ -406,4 +406,9 @@ public class FinanceConstants {
 	public static final String OD_TRANCHE_AMOUNT = "Tranche Amount";
 
 	public static final String ACCOUNTTYPE_FIN = "F";
+
+	public static final String CROSSLOANKNOCKOFF_APPROVER = "CROSSLOANKNOCKOFF_APPROVER";
+	public static final String CROSSLOANKNOCKOFF_MAKER = "CROSSLOANKNOCKOFF_MAKER";
+	public static final String CROSSLOANKNOCKOFF_ENQUIRY = "CROSSLOANKNOCKOFF_ENQUIRY";
+
 }

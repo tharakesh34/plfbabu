@@ -129,6 +129,8 @@ public class AccountingEvent {
 	public static final String CSH2BANK = "CSH2BANK";
 
 	public static final String NPACHNG = "NPACHNG";
+	public static final String ACCEVENT_CROSSLOANFROM = "ACCEVENT_CROSSLOANFROM";
+	public static final String ACCEVENT_CROSSLOANTO = "ACCEVENT_CROSSLOANTO";
 	// Category Code Constants
 	public static final String EVENTCTG_FINANCE = "F";
 	public static final String EVENTCTG_OVERDRAFT = "O";

@@ -221,6 +221,7 @@ import com.pennant.backend.model.finance.CashDenomination;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.CreditReviewData;
+import com.pennant.backend.model.finance.CrossLoanKnockOffHeader;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
@@ -3835,6 +3836,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 						new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
 						new String[] { "BranchCode", "BranchDesc" }, null, 300));
+
+		ModuleUtil.register("CrossLoanKnockOffHeader",
+				new ModuleMapping("CrossLoanKnockOffHeader", CrossLoanKnockOffHeader.class,
+						new String[] { "CrossLoanKnockOffHeader", "RECEIPTDETAILS_TVIEW" }, "RECEIPT_KNOCK_OFF",
+						new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
 
 		registerCustomModules();
 	}

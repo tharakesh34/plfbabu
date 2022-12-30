@@ -13019,4 +13019,41 @@
 	<bean id="rePresentmentUploadServiceTarget"
 		class="com.pennant.pff.presentment.service.impl.RePresentmentUploadServiceImpl" />
 
+	<!-- Cross Loan KnockOff -->
+	<bean id="crossLoanKnockOffDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanKnockOffDAOImpl" parent="sequenceDao"/>
+	
+	<!-- Cross Loan Knock Off -->
+	<bean id="crossLoanKnockOffService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="crossLoanKnockOffServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="saveMultiReceipt*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="crossLoanKnockOffServiceTarget" class="com.pennant.backend.service.finance.impl.CrossLoanKnockOffServiceImpl">
+		<property name="crossLoanKnockOffDAO" ref="crossLoanKnockOffDAO" />
+		<property name="crossLoanTransferDAO" ref="crossLoanTransferDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="accountingSetDAO" ref="accountingSetDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="financeMainService" ref="financeMainService" />
+		<property name="receiptService" ref="receiptService" />
+	</bean>
+	
+	<bean id="crossLoanTransferDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanTransferDAOImpl" parent="sequenceDao"/>
 </beans>

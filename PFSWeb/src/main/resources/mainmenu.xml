@@ -863,7 +863,10 @@
 			<menuItem id="menu_Item_ReceiptUploadApproval"
 				zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=Y"
 				rightName="menu_Item_ReceiptUploadApprover" />
-
+			<menuItem id="menu_Item_CrossLoanKnockoffMaker" 
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSSLOANKNOCKOFF_MAKER" 
+				rightName=""/>
+        	<menuItem id="menu_Item_CrossLoanKnockoffApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSSLOANKNOCKOFF_APPROVER" rightName=""/>
 			<!-- <menuItem id="menu_Item_Receipts" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_Receipts" 
 				/> <menuItem id="menu_Item_ReceiptRealization" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationList.zul" 
 				rightName="menuItem_FinanceManagement_ReceiptRealization" /> <menuItem id="menu_Item_ReceiptBounce" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=B" 

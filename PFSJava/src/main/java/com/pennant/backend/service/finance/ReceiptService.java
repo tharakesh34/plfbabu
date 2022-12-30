@@ -131,4 +131,6 @@ public interface ReceiptService {
 	BigDecimal getReceiptAmountPerMonthByFinreference(Date receiptDate, List<String> finreference);
 
 	FinReceiptHeader getInititatedReceipts(String reference);
+
+	FinReceiptData getExcessAndManualAdviseData(FinReceiptData receiptData, long fromLanFinid);
 }

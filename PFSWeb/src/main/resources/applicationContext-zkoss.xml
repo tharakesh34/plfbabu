@@ -6090,5 +6090,39 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
 	</bean>	
+	<!-- Cross Loan KnocK Off Changes -->
+	<bean id="crossLoanKnockOffListCtrl" class="com.pennant.webui.financemanagement.receipts.CrossLoanKnockOffListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="receiptService" ref="receiptService" />
+		<property name="crossLoanKnockOffService" ref="crossLoanKnockOffService"/>
+	</bean>
 	
+	<bean id="selectCrossLoanKnockOffDialogCtrl" class="com.pennant.webui.financemanagement.receipts.SelectCrossLoanKnockOffDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="customerService" ref="customerServiceTarget" />
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="securityUserDAO" ref="securityUserDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO"/>
+	</bean>
+	
+	<bean id="crossLoanKnockOffDialogCtrl" class="com.pennant.webui.financemanagement.receipts.CrossLoanKnockOffDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="ruleService" ref="ruleService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="receiptService" ref="receiptService" />
+		<property name="receiptCancellationService" ref="receiptCancellationService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="commitmentService" ref="commitmentService" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="accrualService" ref="accrualService" />
+		<property name="partnerBankService" ref="partnerBankService" />
+		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
+		<property name="eventManager" ref="eventManager" />
+		<property name="custTypePANMappingService" ref="custTypePANMappingService" />
+		<property name="branchService" ref="branchService" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="crossLoanKnockOffService" ref="crossLoanKnockOffService"/>
+	</bean>
 </beans>

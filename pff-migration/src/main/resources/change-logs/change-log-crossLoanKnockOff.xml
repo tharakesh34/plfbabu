@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="01" author="Rahul">
+		<createTable tableName="CrossLoanTransfer">
+			<column name="CrossLoanId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptId" type="bigint"/>
+			<column name="fromFinReference" type="varchar2(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="toFinReference" type="varchar2(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcessAmount" type="number(19,0)" />
+			<column name="UtiliseAmount" type="number(19,0)" />
+			<column name="ReserveAmount" type="number(19,0)" />
+			<column name="AvailableAmount" type="number(19,0)" />
+			<column name="TransferAmount" type="number(19,0)" />
+			<column name="ExcessId" type="bigint" />
+			<column name="toLinkedTranId" type="bigint" />
+			<column name="fromLinkedTranId" type="bigint" />
+			<column name="ToExcessId" defaultValue="0" type="bigint"/>
+			<column name="Source" type="Varchar(20)" />
+			<column name="ExcessType" type="Varchar(10)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="02" author="Rahul">
+		<createTable tableName="CrossLoanTransfer_Temp">
+			<column name="CrossLoanId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="fromFinReference" type="varchar2(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="toFinReference" type="varchar2(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcessAmount" type="number(19,0)" />
+			<column name="UtiliseAmount" type="number(19,0)" />
+			<column name="ReserveAmount" type="number(19,0)" />
+			<column name="AvailableAmount" type="number(19,0)" />
+			<column name="TransferAmount" type="number(19,0)" />
+			<column name="ExcessId" type="bigint" />
+			<column name="toLinkedTranId" type="bigint" />
+			<column name="fromLinkedTranId" type="bigint" />
+			<column name="ToExcessId" defaultValue="0" type="bigint"/>
+			<column name="Source" type="Varchar(20)" />
+			<column name="ExcessType" type="Varchar(10)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="03" author="Rahul">
+		<createView viewName="CrossLoanTransfer_Aview" replaceIfExists="true">
+		   Select  T1.CrossLoanId, 
+					T4.CustId, 
+					T4.CustCif, 
+					T4.CustShrtName, 
+					T2.ReceiptId, 
+					T2.ReceiptDate, 
+					T2.ReceiptAmount,
+		            (CASE WHEN T3.PAYMENTTYPE IN ('CHEQUE','DD') THEN T3.FAVOURNUMBER ELSE T3.TRANSACTIONREF END) TRANSACTIONREF,
+		          	T1.FromFinReference, 
+		          	T1.ToFinReference, 
+		          	T1.TransferAmount, 
+		          	T1.ExcessAmount, 
+		          	T1.UtiliseAmount, 
+		          	T1.ReserveAmount, 
+		          	T1.ToExcessId,
+				    T1.AvailableAmount, 
+				    T1.ExcessId, 
+				    T1.ToLinkedTranId, 
+				    T1.FromLinkedTranId, 
+				    T5.FinType FromFinType, 
+				    T6.FinType ToFinType,
+		          	T1.Version, 
+		          	T1.LastMntBy, 
+		          	T1.LastMntOn, 
+		          	T1.RecordStatus, 
+		          	T1.RoleCode, 
+		          	T1.NextRoleCode, 
+		          	T1.TaskId, 
+		          	T1.NextTaskId,
+		          	T1.RecordType, 
+		          	T1.WorkflowId,
+		          	T1.ExcessType,
+		          	T1.Source
+			FROM CrossLoanTransfer T1 
+			LEFT JOIN FInReceiptHeader T2 ON T1.ReceiptId = T2.ReceiptId
+			LEFT JOIN FINRECEIPTDETAIL T3 ON T1.ReceiptId  = T3.ReceiptId 
+			LEFT JOIN Customers T4 ON T1.CustId  = T4.CustId
+			LEFT JOIN FinanceMain T5 ON T1.FromFinReference = T5.FinReference
+		    LEFT JOIN FinanceMain T6 ON T1.ToFinReference = T6.FinReference
+		</createView>
+	</changeSet>
+	
+	<changeSet id="04" author="Rahul">
+		<createView viewName="CrossLoanTransfer_view" replaceIfExists="true">
+			Select  T1.CrossLoanId, 
+					T4.CustId, 
+					T4.CustCif, 
+					T4.CustShrtName, 
+					COALESCE(T2.ReceiptId,0) as ReceiptId, 
+					T2.ReceiptDate, 
+			   		COALESCE(T2.ReceiptAmount,0) ReceiptAmount ,
+		       		T2.TRANSACTIONREF,
+		       		T1.FromFinReference, 
+		       		T1.ToFinReference, 
+		       		T1.TransferAmount, 
+		       		T1.ExcessAmount, 
+		       		T1.UtiliseAmount, 
+		       		T1.ReserveAmount,
+		       		T1.ToExcessId,
+					T1.AvailableAmount, 
+					T1.ExcessId, 
+					T1.ToLinkedTranId, 
+					T1.FromLinkedTranId, 
+					T5.FinType FromFinType, 
+					T6.FinType ToFinType,
+		       		T1.Version, 
+		       		T1.LastMntBy, 
+		       		T1.LastMntOn, 
+		       		T1.RecordStatus, 
+		       		T1.RoleCode, 
+		       		T1.NextRoleCode, 
+		       		T1.TaskId, 
+		       		T1.NextTaskId,
+		       		T1.RecordType, 
+		       		T1.WorkflowId,
+		       		T1.ExcessType,
+		       		T1.Source
+		  	FROM CrossLoanTransfer_Temp T1
+		  	INNER JOIN FinanceMain T6 ON T1.ToFinReference = T6.FinReference 
+		  	INNER JOIN FinanceMain T5 ON T1.FromFinReference = T5.FinReference
+		  	INNER JOIN Customers T4 ON T1.CustId  = T4.CustId
+			LEFT JOIN FInReceiptHeader T2 ON T1.ReceiptId = T2.ReceiptId
+		Union ALL
+			Select  T1.CrossLoanId, 
+					T4.CustId, 
+					T4.CustCif, 
+					T4.CustShrtName, 
+					COALESCE(T2.ReceiptId,0) as ReceiptId, 
+					T2.ReceiptDate,
+					COALESCE(T2.ReceiptAmount,0) as ReceiptAmount,
+		          	T2.TRANSACTIONREF,
+		          	T1.FromFinReference, 
+		          	T1.ToFinReference, 
+		          	T1.TransferAmount, 
+		          	T1.ExcessAmount, 
+		          	T1.UtiliseAmount, 
+		          	T1.ReserveAmount, 
+		          	T1.ToExcessId,
+				  	T1.AvailableAmount, 
+				  	T1.ExcessId, 
+				  	T1.ToLinkedTranId, 
+				  	T1.FromLinkedTranId, 
+				  	T5.FinType FromFinType, 
+				  	T6.FinType ToFinType,
+		          	T1.Version, 
+		          	T1.LastMntBy, 
+		          	T1.LastMntOn, 
+		          	T1.RecordStatus, 
+		          	T1.RoleCode, 
+		          	T1.NextRoleCode, 
+		          	T1.TaskId, 
+		          	T1.NextTaskId,
+		          	T1.RecordType,
+		          	T1.WorkflowId,
+		          	T1.ExcessType,
+		          	T1.Source
+				FROM CrossLoanTransfer T1 
+			INNER JOIN FinanceMain T5 ON T1.FromFinReference = T5.FinReference
+		    INNER JOIN FinanceMain T6 ON T1.ToFinReference = T6.FinReference
+		    INNER JOIN Customers T4 ON T1.CustId  = T4.CustId
+			LEFT JOIN FInReceiptHeader T2 ON T1.ReceiptId = T2.ReceiptId
+			Where NOT EXISTS (SELECT 1 FROM CrossLoanTransfer_Temp WHERE CrossLoanId = T1.CrossLoanId)
+	   
+		</createView>
+	</changeSet>
+	
+	<changeSet id="05" author="Rahul">
+		<createView viewName="CrossLoanTransfer_EView" replaceIfExists="true">
+			  Select  COALESCE(T1.ReceiptId,0) as ReceiptId, 
+		    		T1.ReceiptDate, 
+		    		COALESCE(T1.ReceiptAmount,0) ReceiptAmount,
+	        		(CASE WHEN T2.PAYMENTTYPE IN ('CHEQUE','DD') THEN T2.FAVOURNUMBER ELSE T2.TRANSACTIONREF END) as TRANSACTIONREF,
+	          		T3.FinReference, 
+	          		T3.Amount ExcessAmount, 
+	          		T3.UtilisedAmt UtiliseAmount, 
+	          		T3.ReservedAmt ReserveAmount,
+			  		T3.BalanceAmt AvailableAmount, 
+			  		T3.ExcessId, 
+			  		T3.AmountType
+			  FROM FinExcessAmount T3 
+			  LEFT JOIN FInReceiptHeader T1 ON T3.ReceiptId = T1.ReceiptId
+			  LEFT JOIN FINRECEIPTDETAIL T2 ON T1.ReceiptId = T2.ReceiptId
+		</createView>
+	</changeSet>
+	
+	<changeSet id="06" author="Somasekhar.P">
+		<createTable tableName="CROSSLOANKNOCKOFFHEADER">
+			<column name="CrossLoanHeaderId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CrossLoanId" type="bigint"/>
+			<column name="KnockOffReceiptId" type="bigint"/>
+			<column name="ValueDate" type="datetime"/>
+			<column name="PostDate" type="datetime"/>
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="07" author="Somasekhar.P">
+		<createTable tableName="CROSSLOANKNOCKOFFHEADER_TEMP">
+			<column name="CrossLoanHeaderId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CrossLoanId" type="bigint"/>
+			<column name="KnockOffReceiptId" type="bigint"/>
+			<column name="ValueDate" type="datetime"/>
+			<column name="PostDate" type="datetime"/>
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="08" author="Somasekhar.P">
+		<createView viewName="CROSSLOANKNOCKOFFHEADER_TVIEW" replaceIfExists="true">
+				SELECT 	T4.CUSTCIF,
+						T1.REFERENCE,
+						T3.FINTYPE,
+						T1.RECEIPTID,
+						T1.RECEIPTDATE,
+						T1.RECEIPTAMOUNT,
+						T1.DEPOSITDATE,
+						'' DEPOSITBANK ,
+						(CASE  WHEN T1.RECEIPTPURPOSE IN ('EarlyPayment')  THEN 'Partial Payment'  ELSE T1.RECEIPTPURPOSE END) RECEIPTPURPOSE,
+						T1.RECEIPTMODE,
+						T1.BOUNCEDATE CANCELDATE,
+						T1.VALUEDATE,
+						T1.BOUNCEDATE,
+						T1.REALIZATIONDATE,
+						T1.CANCELREASON,
+						T3.CLOSINGSTATUS,
+						T3.FINBRANCH,
+						T3.FINCURRASSETVALUE,
+						T3.PRODUCTCATEGORY,
+						T1.TRANSACTIONREF,
+						T1.partnerbankId FUNDINGAC,
+						T1.VERSION,
+						T1.LASTMNTBY,
+						T1.LASTMNTON,
+						T1.RECORDSTATUS,
+						T1.ROLECODE,
+						T1.NEXTROLECODE,
+						T1.TASKID,
+						T1.NEXTTASKID,
+						T1.RECORDTYPE,
+						T1.WORKFLOWID,
+						T5.ROLEDESC LOVDESCREQUESTSTAGE,
+						T1.RECEIPTMODESTATUS,
+						T1.REFWAIVERAMT,
+						T1.PRVRECEIPTPURPOSE,
+						T1.RECEIPTSOURCE,
+						T1.subreceiptMode paymentType,
+						FT.FINDIVISION LOVDESCFINDIVISION, 
+						T1.KnockOffType,
+						CF.FROMFINREFERENCE,
+						CF.TOFINREFERENCE
+					FROM CROSSLOANKNOCKOFFHEADER_TEMP CH
+					INNER JOIN CROSSLOANTRANSFER_TEMP CF ON CH.CROSSLOANID=CF.CROSSLOANID
+					INNER JOIN FINRECEIPTHEADER_TEMP T1 ON CH.KNOCKOFFRECEIPTID=T1.ReceiptID
+					INNER JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
+					INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE  = T3.FINTYPE 
+					INNER JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
+					INNER JOIN SECROLES T5 ON CH.NEXTROLECODE = T5.ROLECD
+		</createView>
+	</changeSet>
+	
+	<changeSet id="09" author="Somu">
+		<comment>New View</comment>
+			<createView viewName="Crossloanknockoffheader_AVIEW" replaceIfExists="true">
+			    SELECT  T1.Crossloanheaderid,
+			    		T1.Crossloanid,
+			    		T1.Knockoffreceiptid,
+			    		T1.Valuedate,
+			    		T1.Postdate,
+			    		T1.Version, 
+			    		T1.LastMntBy,
+		   			    T1.LastMntOn, 
+		   			    T1.RecordStatus, 
+		   			    T1.RoleCode, 
+		   			    T1.NextRoleCode, 
+		   			    T1.TaskId, 
+		   			    T1.NextTaskId,
+		   			    T1.RecordType, 
+		   			    T1.WorkflowId 
+				FROM  Crossloanknockoffheader T1
+			</createView>
+	</changeSet>
+	
+	<changeSet id="10" author="Somu">
+		<createView viewName="Crossloanknockoffheader_VIEW" replaceIfExists="true">
+				SELECT  T1.Crossloanheaderid,
+						T1.Crossloanid,
+						T1.Knockoffreceiptid,
+						T1.Valuedate,
+						T1.Postdate,
+						T1.Version, 
+						T1.LastMntBy,
+		  			    T1.LastMntOn, 
+		  			    T1.RecordStatus, 
+		  			    T1.RoleCode,
+		  			    T1.NextRoleCode, 
+		  			    T1.TaskId, 
+		  			    T1.NextTaskId,
+		  			    T1.RecordType, 
+		  			    T1.WorkflowId 
+				FROM  Crossloanknockoffheader_TEMP T1
+				Union ALL
+				SELECT  T1.Crossloanheaderid,
+						T1.Crossloanid,
+						T1.Knockoffreceiptid,
+						T1.Valuedate,
+						T1.Postdate,
+						T1.Version,
+						T1.LastMntBy,
+		   			    T1.LastMntOn, 
+		   			    T1.RecordStatus, 
+		   			    T1.RoleCode, 
+		   			    T1.NextRoleCode, 
+		   			    T1.TaskId, 
+		   			    T1.NextTaskId,
+		   			    T1.RecordType, 
+		   			    T1.WorkflowId 
+				FROM  Crossloanknockoffheader T1
+				Where NOT EXISTS (SELECT 1 FROM Crossloanknockoffheader_TEMP WHERE Crossloanheaderid = T1.Crossloanheaderid)
+   
+		</createView>
+	</changeSet>
+	
+	<changeSet id="11" author="Somasekhar.P">
+	  <createView viewName="CROSSLOANKNOCKOFFHEADER_TVIEW" replaceIfExists="true">
+	     	SELECT  T4.CUSTCIF,
+	     			T1.REFERENCE,
+	     			T3.FINTYPE,
+	     			T1.RECEIPTID,
+	     			T1.RECEIPTDATE,
+	     			T1.RECEIPTAMOUNT,
+	     			T1.DEPOSITDATE,
+	     			'' DEPOSITBANK,
+					(CASE  WHEN T1.RECEIPTPURPOSE IN ('EarlyPayment')  THEN 'Partial Payment'  ELSE T1.RECEIPTPURPOSE END) RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.BOUNCEDATE CANCELDATE,
+					T1.VALUEDATE,
+					T1.BOUNCEDATE,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T3.CLOSINGSTATUS,
+					T3.FINBRANCH,
+					T3.FINCURRASSETVALUE,
+					T3.PRODUCTCATEGORY,
+					T1.TRANSACTIONREF,
+					T1.partnerbankId FUNDINGAC,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T5.ROLEDESC LOVDESCREQUESTSTAGE,
+					T1.RECEIPTMODESTATUS,
+					T1.REFWAIVERAMT,
+					T1.PRVRECEIPTPURPOSE,
+					T1.RECEIPTSOURCE,
+					T1.subreceiptMode paymentType,
+					FT.FINDIVISION LOVDESCFINDIVISION, 
+					T1.KnockOffType,
+					CF.FROMFINREFERENCE,
+                    CF.TOFINREFERENCE,
+                    CH.CROSSLOANHEADERID,
+                    CH.CROSSLOANID,
+                    CH.KNOCKOFFRECEIPTID
+				FROM CROSSLOANKNOCKOFFHEADER_TEMP CH
+				INNER JOIN CROSSLOANTRANSFER_TEMP CF ON CH.CROSSLOANID=CF.CROSSLOANID
+				INNER JOIN FINRECEIPTHEADER_TEMP T1 ON CH.KNOCKOFFRECEIPTID=T1.ReceiptID
+				INNER JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE  = T3.FINTYPE 
+				INNER JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
+				INNER JOIN SECROLES T5 ON CH.NEXTROLECODE = T5.ROLECD
+		</createView>
+	</changeSet>
+
+	<changeSet id="12" author="Somasekhar.P">
+		<createView viewName="FINANCEMAIN_DATAVIEW" replaceIfExists="true">
+		     SELECT T1.FINREFERENCE, 
+		     		T1.FINTYPE,
+		     		T2.CUSTCIF LOVDESCCUSTCIF,
+		     		T1.CUSTID,
+		           	T1.closingstatus,
+		           	T1.Finisactive,
+		           	T1.MaturityDate,
+		           	T1.WriteoffLoan, 
+		           	T1.CALMATURITY,
+		           	T3.FinDivision LovDescFinDivision,
+				    T1.FinBranch,
+				    T1.productcategory
+			FROM FINANCEMAIN T1
+			INNER JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+			INNER JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE where t1.closingstatus IS  NULL OR T1.ClosingStatus != 'C'
+		</createView>
+	</changeSet>
+	
+	<changeSet id="13" author="Somasekhar.P">
+		<createView viewName="CROSSLOANKNOCKOFFHEADER_AVIEW" replaceIfExists="true">
+		    SELECT 	T4.CUSTCIF,
+		    		T1.REFERENCE,
+		    		T3.FINTYPE,
+		    		T1.RECEIPTID,
+		    		T1.RECEIPTDATE,
+		    		T1.RECEIPTAMOUNT,
+		    		T1.DEPOSITDATE,
+		    		'' DEPOSITBANK,
+					(CASE  WHEN T1.RECEIPTPURPOSE IN ('EarlyPayment')  THEN 'Partial Payment'  ELSE T1.RECEIPTPURPOSE END) RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.BOUNCEDATE CANCELDATE,
+					T1.VALUEDATE,
+					T1.BOUNCEDATE,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T3.CLOSINGSTATUS,
+					T3.FINBRANCH,
+					T3.FINCURRASSETVALUE,
+					T3.PRODUCTCATEGORY,
+					T1.TRANSACTIONREF,
+					T1.partnerbankId FUNDINGAC,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.RECEIPTMODESTATUS,
+					T1.REFWAIVERAMT,
+					T1.PRVRECEIPTPURPOSE,
+					T1.RECEIPTSOURCE,
+					T1.subreceiptMode paymentType,
+					FT.FINDIVISION LOVDESCFINDIVISION, 
+					T1.KnockOffType,
+					CF.FROMFINREFERENCE,
+                    CF.TOFINREFERENCE,
+                    CH.CROSSLOANHEADERID,
+                    CH.CROSSLOANID,
+                    CH.KNOCKOFFRECEIPTID
+				FROM CROSSLOANKNOCKOFFHEADER CH
+				INNER JOIN CROSSLOANTRANSFER CF ON CH.CROSSLOANID=CF.CROSSLOANID
+				INNER JOIN FINRECEIPTHEADER T1 ON CH.KNOCKOFFRECEIPTID=T1.ReceiptID
+				INNER JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE  = T3.FINTYPE 
+				INNER JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="14" author="Somasekhar">
+		<createSequence sequenceName="SeqCrossLoanKnockOffHeader" minValue="1" startValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+	
+	<changeSet id="15" author="Rahul">
+		<addPrimaryKey tableName="CrossLoanTransfer" columnNames="CrossLoanId" constraintName="PK_CrossLoanKnockOff_Id"/>
+	</changeSet>
+	
+	<changeSet id="16" author="Rahul">
+		<addPrimaryKey tableName="CrossLoanTransfer_Temp" columnNames="CrossLoanId" constraintName="PK_CrossLoanKnockOff_Temp_Id"/>
+	</changeSet>
+	
+	<changeSet id="17" author="Rahul">
+		<createSequence sequenceName="SeqCrossLoanTransfer" incrementBy="1"  startValue="1"/>
+	</changeSet>
+	
+	<changeSet id="18" author="Rahul">
+		<sql>
+			 Insert into BMTAEEVENTS (AEEVENTCODE,AEEVENTCODEDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,ACTIVE) 
+		     values ('CRSLANFR','Cross Loan Excess Amount Transfer From',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'1');
+		
+		     Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,
+		     TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CRSLANFR',0,'rd_amount','Cross Loan Transfer Amount','1',1,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+		     
+			 Insert into BMTAEEVENTS (AEEVENTCODE,AEEVENTCODEDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,ACTIVE) 
+		     values ('CRSLANTO','Cross Loan Excess Amount Transfer To',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'1');
+		
+		     Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,
+		     TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CRSLANTO',0,'rd_amount','Cross Loan Transfer Amount','1',1,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="19" author="Sateesh">
+		<sql>
+			Delete from REPORTLIST where code='CrossLoanKnockOffEnquiry';
+			Insert into REPORTLIST
+			(CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,
+			LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ)
+			values
+			('CrossLoanKnockOffEnquiry','CrossLoanKnockOffEnquiry','listheader_CrossLoanKnockOff_Customer.label,listheader_CrossLoanKnockOff_ReceiptId.label,listheader_CrossLoanKonckOff_TransferRef.label,listheader_CrossLoanKnockOff_FromFinReference.label,listheader_CrossLoanKnockOff_ToFinReference.label,listheader_CrossLoanKnockOff_TransferAmount.label',
+			'custCif,receiptId,fromFinReference,toFinReference,transactionRef,transferAmount','String,String,String,String,String,BigDecimal',
+			'','ReportList06','Cross Loan KnockOff
+			Enquiry','Receipts',1,1001,current_timestamp,'Approved','
+			',' ',' ',' ',' ',0,0);
+		</sql>
+	</changeSet> 
+       
+</databaseChangeLog>

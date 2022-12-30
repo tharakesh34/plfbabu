@@ -2732,7 +2732,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				if (CollectionUtils.isNotEmpty(errors)) {
 					auditHeader.setErrorDetails(errors.get(0));
 				}
+
 			}
+
 		}
 
 		// check if fee waivers in progress
@@ -7744,6 +7746,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<FinanceScheduleDetail> list = new ArrayList<>();
 		schedules.forEach(schedule -> list.add(schedule.copyEntity()));
 		return list;
+	}
+
+	public FinReceiptData getExcessAndManualAdviseData(FinReceiptData receiptData, long finId) {
+		// Fetch Excess Amount Details
+		receiptData.getReceiptHeader().setExcessAmounts(finExcessAmountDAO.getExcessAmountsByRef(finId));
+
+		// Fetch Payable Advise Amount Details
+		receiptData.getReceiptHeader()
+				.setPayableAdvises(manualAdviseDAO.getPaybleAdvises(finId, SysParamUtil.getAppDate(), "_AView"));
+
+		return receiptData;
 	}
 
 	@Autowired

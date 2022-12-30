@@ -90,5 +90,6 @@ public class FinServiceEvent {
 	public static final String UPFRONT_FEE_CAN = "UpfrontFeeCancel";
 	public static final String EXTENDEDFIELDS_MAINTAIN = "MaintExtendedFields";
 	public static final String PRINH = "PrincipleHoliday";
+	public static final String CROSSLOANKNOCKOFF = "CROSSLOANKNOCKOFF";
 
 }
