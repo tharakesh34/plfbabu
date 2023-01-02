@@ -209,6 +209,11 @@ public class FinanceDataDefaulting {
 			fm.setFinCcy(finCcy);
 		}
 
+		if (StringUtils.isEmpty(fm.getAdvStage()) && StringUtils.equals(fm.getAdvType(), financeType.getAdvType())
+				&& fm.getAdvTerms() > 0) {
+			fm.setAdvStage(financeType.getAdvStage());
+		}
+
 		if (StringUtils.isNotBlank(promotionCode)) {
 			errorDetails.addAll(validatePromotionData(fd));
 			schdData.setErrorDetails(errorDetails);

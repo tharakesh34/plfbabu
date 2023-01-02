@@ -400,8 +400,4 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 	public boolean equals(Object obj) {
 		return this == obj;
 	}
-
-	public static void main(String[] args) {
-		MainMenuCtrl
-	}
 }
