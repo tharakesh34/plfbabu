@@ -919,6 +919,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}
 
 			doCheckEnquiry();
+			doSetVerificatonField();
 
 			if (isNewCustomer()) {
 				this.groupboxWf.setVisible(false);
@@ -1258,6 +1259,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void doSetVerificatonField() {
+		if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.AADHAAR), this.custDocType.getValue())) {
+			this.btnSendOTP.setVisible(!isReadOnly("CustomerDocumentDialog_custDocTitle"));
+		} else if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.PAN), this.custDocType.getValue())) {
+			this.btnValidate.setVisible(!isReadOnly("CustomerDocumentDialog_custDocTitle"));
+		}
+	}
+
 	private void doCheckEnquiry() {
 		if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
 			this.btnDelete.setVisible(false);
@@ -1480,6 +1489,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (!StringUtils.equals(oldDocNumber, newDocNumber)) {
 				MessageUtil.showError("New Document Number Must Be Verified.");
 				return;
+			}
+
+			if (getCustomerDialogCtrl() != null && this.masterDef.getKeyType().equals("PAN")) {
+				getCustomerDialogCtrl().renderCustFullName(this.firstNameAsPerPAN.getValue() + " "
+						+ this.middleNameAsPerPAN.getValue() + " " + this.lastNameAsPerPAN.getValue());
 			}
 
 		} else if (this.masterDef != null && this.masterDef.getKeyType().equals("PAN")) {
