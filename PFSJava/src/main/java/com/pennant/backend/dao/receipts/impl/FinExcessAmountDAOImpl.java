@@ -973,7 +973,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
 		sql.append(" From FinExcessAmount");
-		sql.append("Where FinID = ? and AmountType = ? and ReceiptId = ?");
+		sql.append(" Where FinID = ? and AmountType = ? and ReceiptId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
