@@ -541,4 +541,17 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isRefundInQueue(long finId) {
+		StringBuilder sql = new StringBuilder("Select count(*) From PaymentHeader_Temp");
+		sql.append(" Where FinId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = new Object[] { finId };
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
+	}
+
 }

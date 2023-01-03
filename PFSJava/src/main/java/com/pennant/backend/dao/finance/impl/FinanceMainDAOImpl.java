@@ -65,6 +65,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -74,7 +75,9 @@ import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -6597,6 +6600,56 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			}
 		});
 
+	}
+
+	@Override
+	public List<AutoRefundLoan> getAutoRefundsLoanList() {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" FM.FINID ,FM.FINREFERENCE, FT.MAXAUTOREFUND MAXREFUNDAMT, FT.MINAUTOREFUND MINREFUNDAMT,");
+		sql.append(" FM.FINREPAYMETHOD,FM.FINISACTIVE, FPD.CURODDAYS DPDDAYS ,FM.FINCCY ,FM.CLOSINGSTATUS ,");
+		sql.append(" H.HOLDSTATUS ,FM.FINTYPE ,LOVDESCENTITYCODE FROM FINANCEMAIN_AVIEW FM ");
+		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE ");
+		sql.append(" INNER JOIN FINPFTDETAILS FPD ON FPD.FINID = FM.FINID ");
+		sql.append(" LEFT JOIN FINEXCESSAMOUNT E ON E.FINID = FM.FINID AND E.AMOUNTTYPE IN (?) ");
+		sql.append(" LEFT JOIN MANUALADVISE M ON M.FINID = FM.FINID AND M.HOLDDUE = 0 AND M.ADVISETYPE = ? ");
+		sql.append(
+				" INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID AND F.REFUNDABLE = 1 AND F.ALLOWAUTOREFUND  = 1 ");
+		sql.append(" LEFT JOIN FINANCEHOLDDETAIL H ON FM.FINID = H.FINID ");
+		sql.append(" WHERE COALESCE(H.HOLDSTATUS, 'R') <> ? AND FT.ALLOWAUTOREFUND = ? ");
+		sql.append(" AND  (E.BALANCEAMT > 0 OR  (M.ADVISEAMOUNT - M.PAIDAMOUNT - M.WAIVEDAMOUNT) > 0 )");
+
+		logger.debug(Literal.SQL + sql.toString());
+		List<AutoRefundLoan> autoRefundList = null;
+
+		try {
+			autoRefundList = this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				AutoRefundLoan arl = new AutoRefundLoan();
+
+				arl.setFinID(rs.getLong("FINID"));
+				arl.setFinReference(rs.getString("FINREFERENCE"));
+				arl.setMaxRefundAmt(rs.getBigDecimal("MAXREFUNDAMT"));
+				arl.setMinRefundAmt(rs.getBigDecimal("MINREFUNDAMT"));
+				arl.setFinRepayMethod(rs.getString("FINREPAYMETHOD"));
+				arl.setFinIsActive(rs.getBoolean("FINISACTIVE"));
+				arl.setDpdDays(rs.getInt("DPDDAYS"));
+				arl.setFinCcy(rs.getString("FINCCY"));
+				arl.setClosingStatus(rs.getString("CLOSINGSTATUS"));
+				arl.setHoldStatus(rs.getString("HOLDSTATUS"));
+				arl.setFinType(rs.getString("FINTYPE"));
+				arl.setEntityCode(rs.getString("LOVDESCENTITYCODE"));
+				return arl;
+			}, RepayConstants.EXAMOUNTTYPE_EXCESS, AdviseType.PAYABLE.id(), FinanceConstants.FIN_HOLDSTATUS_HOLD, true);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		} catch (Exception e) {
+			throw e;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return autoRefundList;
 	}
 
 }

@@ -2833,4 +2833,32 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			return 0;
 		}
 	}
+
+	@Override
+	public Customer getCustomerForAutoRefund(long custID) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustCtgCode, custTypeCode");
+		sql.append(" From Customers Where CustId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { custID }, new RowMapper<Customer>() {
+
+				@Override
+				public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Customer c = new Customer();
+					c.setCustCtgCode(rs.getString("CustCtgCode"));
+					c.setCustTypeCode(rs.getString("custTypeCode"));
+
+					return c;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

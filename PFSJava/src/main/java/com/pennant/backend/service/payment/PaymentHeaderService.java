@@ -25,14 +25,17 @@
 package com.pennant.backend.service.payment;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
 
@@ -75,4 +78,7 @@ public interface PaymentHeaderService {
 	Long getPaymentIdByFinId(long finID, long receiptId, String type);
 
 	BigDecimal getInProgressExcessAmt(long finId, long excessId);
+
+	PaymentHeader prepareRefund(AutoRefundLoan refundLoan, List<PaymentDetail> payDtlList,
+			PaymentInstruction paymentInst, Date appDate);
 }

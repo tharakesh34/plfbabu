@@ -1033,4 +1033,21 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		return jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, amountType);
 	}
+
+	@Override
+	public List<FinExcessAmount> getExcessRcdList(long finID, Date maxValueDate) {
+		StringBuilder sql = getExcessAmountSqlQuery();
+		sql.append(" Where FinID = ? AND AmountType = ? AND BalanceAmt > 0 ");
+		sql.append(" AND ValueDate <= ?");
+		logger.debug(Literal.SQL + sql.toString());
+
+		ExcessAmountRowMapper rowMapper = new ExcessAmountRowMapper();
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setString(index++, RepayConstants.EXAMOUNTTYPE_EXCESS);
+			ps.setDate(index++, JdbcUtil.getDate(maxValueDate));
+		}, rowMapper);
+	}
 }

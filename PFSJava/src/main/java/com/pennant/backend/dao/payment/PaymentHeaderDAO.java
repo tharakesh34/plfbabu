@@ -68,4 +68,6 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 
 	BigDecimal getInProgressExcessAmt(long finId, long receiptId);
 
+	boolean isRefundInQueue(long finId);
+
 }
