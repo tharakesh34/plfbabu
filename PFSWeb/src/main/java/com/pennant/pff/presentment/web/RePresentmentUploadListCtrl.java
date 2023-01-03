@@ -412,10 +412,10 @@ public class RePresentmentUploadListCtrl extends GFCBaseListCtrl<FileUploadHeade
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 
-		ruh.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		ruh.setLastMntBy(getUserWorkspace().getUserDetails().getUserId());
 		ruh.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		ruh.setUserDetails(getUserWorkspace().getLoggedInUser());
-		ruh.setApprovedBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		ruh.setApprovedBy(getUserWorkspace().getUserDetails().getUserId());
 		ruh.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 
 		if (isWorkFlowEnabled()) {
