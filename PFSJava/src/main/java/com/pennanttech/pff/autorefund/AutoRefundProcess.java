@@ -155,8 +155,8 @@ public class AutoRefundProcess {
 				if (!errors.isEmpty()) {
 
 					// Need to write bank details for the Payment type cheque
-					PaymentInstruction payInst = autoRefundService.fetchBeneficiaryForRefund(refundLoan, appDate,
-							alwRefundByCheque);
+					PaymentInstruction payInst = autoRefundService.fetchBeneficiaryForRefund(refundLoan.getFinID(),
+							appDate, alwRefundByCheque);
 					if (payInst != null) {
 						errors = autoRefundService.executeAutoRefund(refundLoan, payDtlList, payInst, appDate);
 						if (CollectionUtils.isEmpty(errors)) {
