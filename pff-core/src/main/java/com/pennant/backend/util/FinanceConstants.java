@@ -406,4 +406,9 @@ public class FinanceConstants {
 	public static final String OD_TRANCHE_AMOUNT = "Tranche Amount";
 
 	public static final String ACCOUNTTYPE_FIN = "F";
+
+	// Fee Refund Constants
+	public static final int MANUAL_ADVISE_PAYABLE = 2;
+	public static final String FEE_REFUND_APPROVAL = "FEERFND";
+	
 }

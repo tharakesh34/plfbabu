@@ -14,49 +14,37 @@
  ********************************************************************************************
  * FILE HEADER *
  ********************************************************************************************
- * * FileName : FeeTypeService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-01-2017 * * Modified Date
- * : 03-01-2017 * * Description : * *
+ * * FileName : ProjectedAmortizationDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-01-2018 * *
+ * Modified Date : 23-01-2018 * * Description : * *
  ********************************************************************************************
  * Date Author Version Comments *
  ********************************************************************************************
- * 03-01-2017 PENNANT 0.1 * * * * * * * * *
+ * 23-01-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
-
-package com.pennant.backend.service.feetype;
+package com.pennant.backend.dao.feerefundprocess;
 
 import java.util.List;
 
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FeeType;
+import com.pennant.app.feerefundqueue.FeeRefundProcessQueuing;
 
-public interface FeeTypeService {
+public interface ProjectedFeeRefundProcessDAO {
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	int prepareFeeRefundProcessQueue(long feeRefundId);
 
-	FeeType getFeeTypeById(long id);
+	void insertLogTableAndTruncate();
 
-	FeeType getApprovedFeeTypeById(long id);
+	long getCountByProgress();
 
-	AuditHeader delete(AuditHeader auditHeader);
+	int updateThreadIDByRowNumber(long rowNum, int threadId);
 
-	AuditHeader doApprove(AuditHeader auditHeader);
+	void updateFailedQueue(FeeRefundProcessQueuing auQueuing);
 
-	AuditHeader doReject(AuditHeader auditHeader);
+	int[] prepareFeeRefundProcessQueue(List<FeeRefundProcessQueuing> refundQueuings);
 
-	Long getFinFeeTypeIdByFeeType(String feeTypeCode);
+	long getCountByFinReference();
 
-	String getTaxCompByCode(String feeTypeCode);
+	List<Long> getThreads();
 
-	List<FeeType> getAMZReqFeeTypes();
-
-	List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type);
-
-	List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String string);
-
-	FeeType getFeeTypeByRecvFeeTypeId(long recvFeeTypeId);
-
-	FeeType getRecvFees(String feeTypeCode);
-
-	FeeType getApprovedFeeTypeByFeeCode(String string);
+	void updateStatusQueue(long feeRefundId, int progress);
 }

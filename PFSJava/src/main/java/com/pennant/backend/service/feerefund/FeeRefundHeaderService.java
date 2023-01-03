@@ -14,49 +14,45 @@
  ********************************************************************************************
  * FILE HEADER *
  ********************************************************************************************
- * * FileName : FeeTypeService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-01-2017 * * Modified Date
- * : 03-01-2017 * * Description : * *
+ * * FileName : PaymentHeaderService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2017 * * Modified
+ * Date : 27-05-2017 * * Description : * *
  ********************************************************************************************
  * Date Author Version Comments *
  ********************************************************************************************
- * 03-01-2017 PENNANT 0.1 * * * * * * * * *
+ * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
-
-package com.pennant.backend.service.feetype;
+package com.pennant.backend.service.feerefund;
 
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.feerefund.FeeRefundHeader;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 
-public interface FeeTypeService {
+public interface FeeRefundHeaderService {
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	FinanceMain getFinanceDetails(long finID);
 
-	FeeType getFeeTypeById(long id);
-
-	FeeType getApprovedFeeTypeById(long id);
+	List<ManualAdvise> getManualAdvise(long finID);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader auditHeader);
+	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	Long getFinFeeTypeIdByFeeType(String feeTypeCode);
+	FeeRefundHeader getFeeRefundHeader(long id, String string);
 
-	String getTaxCompByCode(String feeTypeCode);
+	FeeRefundHeader getFeeRefundHeader(long feeRefundId);
 
-	List<FeeType> getAMZReqFeeTypes();
+	AuditHeader doApprove(AuditHeader auditHeader);
 
-	List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type);
+	boolean isFileDownloaded(long id, String isDownloaded);
 
-	List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String string);
+	void updateApprovalStatus(Long id, String downloadStatus);
 
-	FeeType getFeeTypeByRecvFeeTypeId(long recvFeeTypeId);
+	boolean isInstructionInProgress(long finID);
 
-	FeeType getRecvFees(String feeTypeCode);
-
-	FeeType getApprovedFeeTypeByFeeCode(String string);
 }

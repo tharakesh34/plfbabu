@@ -335,7 +335,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			}
 		}
 
-		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentHeader.getFinSource())) {
+		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentHeader.getFinSource())
+				&& !StringUtils.equals(FinanceConstants.FEE_REFUND_APPROVAL, paymentHeader.getFinSource())) {
 			auditHeader
 					.setAuditDetails(deleteChilds(paymentHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType()));
 			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentHeader(), paymentHeader.getExcludeFields());

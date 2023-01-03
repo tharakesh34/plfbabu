@@ -730,10 +730,17 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 			ManualAdvise manualAdvise = manualAdviseDAO.getManualAdviseById(paymentDetail.getReferenceId(), "_AView");
 
-			manualMovement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
-			manualMovement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
-			manualMovement.setTaxApplicable(manualAdvise.isTaxApplicable());
-			manualMovement.setTaxComponent(manualAdvise.getTaxComponent());
+			if (manualAdvise == null) {
+				manualMovement.setFeeTypeCode(paymentDetail.getFeeTypeCode());
+				manualMovement.setFeeTypeDesc(paymentDetail.getFeeTypeDesc());
+				manualMovement.setTaxApplicable(paymentDetail.isTaxApplicable());
+				manualMovement.setTaxComponent(paymentDetail.getTaxComponent());
+			} else {
+				manualMovement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
+				manualMovement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+				manualMovement.setTaxApplicable(manualAdvise.isTaxApplicable());
+				manualMovement.setTaxComponent(manualAdvise.getTaxComponent());
+			}
 
 			logger.debug("Leaving");
 		}

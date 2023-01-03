@@ -44,7 +44,9 @@ import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
@@ -256,6 +258,34 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 					fromDate, toDate);
 		} catch (EmptyResultDataAccessException eda) {
 			return BigDecimal.ZERO;
+		}
+	}
+
+	@Override
+	public List<ReceiptAllocationDetail> getReceiptAllocDetail(long finID, String allocType) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT SUM(PAIDAMOUNT) PAIDAMOUNT,FRD.ALLOCATIONTYPE,FRD.ALLOCATIONTO");
+		sql.append(" ,FRD.RECEIPTID FROM RECEIPTALLOCATIONDETAIL_TEMP FRD");
+		sql.append(" INNER JOIN FINRECEIPTHEADER_TEMP FR ON FR.RECEIPTID = FRD.RECEIPTID");
+		if (Allocation.MANADV.equals(allocType)) {
+			sql.append(" WHERE FRD.ALLOCATIONTYPE in('MANADV','BOUNCE')");
+		} else if (Allocation.ODC.equals(allocType)) {
+			sql.append(" WHERE FRD.ALLOCATIONTYPE = 'ODC'");
+		} else if (Allocation.LPFT.equals(allocType)) {
+			sql.append(" WHERE FRD.ALLOCATIONTYPE = 'LPFT'");
+		} else {
+			sql.append(" WHERE FRD.ALLOCATIONTYPE = 'FEE'");
+		}
+		sql.append(" AND FINID = ? AND FR.RECEIPTMODESTATUS IN ('C', 'B') AND PAIDAMOUNT > 0");
+		sql.append(" GROUP BY FRD.ALLOCATIONTYPE,FRD.ALLOCATIONTO, FRD.RECEIPTID");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForList(sql.toString(), ReceiptAllocationDetail.class, finID);
+		} catch (Exception e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
 	}
 }

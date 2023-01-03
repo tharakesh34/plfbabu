@@ -20,4 +20,6 @@ public interface ReceiptAllocationDetailDAO {
 	List<ReceiptAllocationDetail> getManualAllocationsByRef(long finID, long curReceiptID);
 
 	BigDecimal getPartPayAmount(long finID, Date fromDate, Date toDate);
+
+	List<ReceiptAllocationDetail> getReceiptAllocDetail(long finID, String allocType);
 }

@@ -14,49 +14,38 @@
  ********************************************************************************************
  * FILE HEADER *
  ********************************************************************************************
- * * FileName : FeeTypeService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-01-2017 * * Modified Date
- * : 03-01-2017 * * Description : * *
+ * * FileName : PaymentDetailDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2017 * * Modified
+ * Date : 27-05-2017 * * Description : * *
  ********************************************************************************************
  * Date Author Version Comments *
  ********************************************************************************************
- * 03-01-2017 PENNANT 0.1 * * * * * * * * *
+ * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
+package com.pennant.backend.dao.feerefund;
 
-package com.pennant.backend.service.feetype;
-
+import java.math.BigDecimal;
 import java.util.List;
 
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.feerefund.FeeRefundDetail;
+import com.pennanttech.pff.core.TableType;
 
-public interface FeeTypeService {
+public interface FeeRefundDetailDAO {
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	long save(FeeRefundDetail frd, TableType tableType);
 
-	FeeType getFeeTypeById(long id);
+	int update(FeeRefundDetail frd, TableType tableType);
 
-	FeeType getApprovedFeeTypeById(long id);
+	void delete(FeeRefundDetail header, TableType tableType);
 
-	AuditHeader delete(AuditHeader auditHeader);
+	List<FeeRefundDetail> getFeeRefundDetailList(long feeRefundId, String type);
 
-	AuditHeader doApprove(AuditHeader auditHeader);
+	FeeRefundDetail getFeeRefundDetail(long feeRefundDetailId, String string);
 
-	AuditHeader doReject(AuditHeader auditHeader);
+	void updatePayableRef(long adviseId, long feeRefundDetailId);
 
-	Long getFinFeeTypeIdByFeeType(String feeTypeCode);
+	BigDecimal getPrvRefundAmt(long adviseID, long finID);
 
-	String getTaxCompByCode(String feeTypeCode);
+	void deleteList(FeeRefundDetail frd, TableType tableType);
 
-	List<FeeType> getAMZReqFeeTypes();
-
-	List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type);
-
-	List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String string);
-
-	FeeType getFeeTypeByRecvFeeTypeId(long recvFeeTypeId);
-
-	FeeType getRecvFees(String feeTypeCode);
-
-	FeeType getApprovedFeeTypeByFeeCode(String string);
 }

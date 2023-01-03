@@ -213,6 +213,9 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 import com.pennant.backend.model.facility.Facility;
+import com.pennant.backend.model.feerefund.FeeRefundDetail;
+import com.pennant.backend.model.feerefund.FeeRefundHeader;
+import com.pennant.backend.model.feerefund.FeeRefundInstruction;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.finance.AutoKnockOff;
 import com.pennant.backend.model.finance.AutoKnockOffFeeMapping;
@@ -3855,6 +3858,22 @@ public class PennantJavaUtil {
 				new ModuleMapping("PaymentInstructionUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+		
+		ModuleUtil.register("FeeRefundHeader",
+				new ModuleMapping("FeeRefundHeader", FeeRefundHeader.class,
+						new String[] { "FeeRefundHeader", "FeeRefundHeader_View" }, PaymentWF, new String[] { "CustCif",
+								"CustShrtName", "FinReference", "PaymentAmount", "LoanType", "BranchName" },
+						null, 600));
+
+		ModuleUtil.register("FeeRefundDetail",
+				new ModuleMapping("FeeRefundDetail", FeeRefundDetail.class,
+						new String[] { "FeeRefundDetail", "FeeRefundDetail_AView" }, masterWF,
+						new String[] { "ReceivableType", "ReceivableRefId" }, null, 600));
+
+		ModuleUtil.register("FeeRefundInstruction",
+				new ModuleMapping("FeeRefundInstruction", FeeRefundInstruction.class,
+						new String[] { "FeeRefundInstruction", "FeeRefundInstruction_AView" }, PaymentWF,
+						new String[] { "PaymentType", "PaymentAmount", "BankCode", "PaymentCCy" }, null, 600));
 
 		registerCustomModules();
 	}
