@@ -1685,5 +1685,12 @@
 					Update EODCONFIG Set INEXTMNTH = 0;
 				]]>
 			</sql>
-		</changeSet>
+	</changeSet>
+	<changeSet id="66" author="rahul.r">
+			<sql>
+				<![CDATA[
+					UPDATE JOB_DETAILS SET ENABLED=1,PORT=null, HOST_NAME=null WHERE JOBKEY='NOTIFICATION_SMS_JOB';
+				]]>
+			</sql>
+	</changeSet>
 </databaseChangeLog>

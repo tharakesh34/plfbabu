@@ -1153,4 +1153,25 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="47_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'interfacelogdetails');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet  id="47" author="rahul.r">
+    	<modifyDataType
+        	columnName="endpoint"
+        	newDataType="varchar(2000)"
+        	tableName="interfacelogdetails"/>
+	</changeSet>
+	<changeSet id="47_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'interfacelogdetails');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
