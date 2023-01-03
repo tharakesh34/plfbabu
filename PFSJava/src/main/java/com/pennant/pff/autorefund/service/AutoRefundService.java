@@ -27,7 +27,7 @@ public interface AutoRefundService {
 
 	List<ErrorDetail> validateRefundAmt(BigDecimal feeRuleResult, AutoRefundLoan refundLoan);
 
-	PaymentInstruction fetchBeneficiaryForRefund(AutoRefundLoan refundLoan, Date appDate, boolean alwRefundByCheque);
+	PaymentInstruction fetchBeneficiaryForRefund(long finID, Date appDate, boolean alwRefundByCheque);
 
 	List<ErrorDetail> executeAutoRefund(AutoRefundLoan refundLoan, List<PaymentDetail> payDtlList,
 			PaymentInstruction paymentInst, Date appDate);

@@ -1113,8 +1113,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		StringBuilder sql = new StringBuilder("");
 		sql.append(" SELECT BB.BANKBRANCHID,");
 		sql.append(" BB.BANKCODE  BANKBRANCHCODE,BB.BRANCHDESC,BB.BANKNAME,BB.IFSC BANKBRANCHIFSC,");
-		sql.append(" C.PCCITYNAME, M.ACCNUMBER ACCOUNTNO,CD.ACCHOLDERNAME ACCTHOLDERNAME");
-		sql.append(" FROM CHEQUEDETAIL_AVIEW  CD INNER JOIN ");
+		sql.append(" C.PCCITYNAME, M.ACCNUMBER ACCOUNTNO,CD.ACCHOLDERNAME ACCTHOLDERNAME,BANKBRANCHCODE ISSUINGBANK, ");
+		sql.append(" BRANCHDESC ISSUINGBANKNAME  FROM CHEQUEDETAIL_AVIEW  CD INNER JOIN ");
 		sql.append(" BANKBRANCHES_AVIEW BB ON CD.BANKBRANCHID = BB.BANKBRANCHID");
 		sql.append(" INNER JOIN RMTPROVINCEVSCITY C ON C.PCCITY = CD.CITY");
 		sql.append(" WHERE CHEQUEDETAILSID = ? ");
@@ -1133,6 +1133,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				pi.setpCCityName(rs.getString("PCCITYNAME"));
 				pi.setAccountNo(rs.getString("ACCOUNTNO"));
 				pi.setAcctHolderName(rs.getString("ACCTHOLDERNAME"));
+				pi.setIssuingBank(rs.getString("BANKBRANCHCODE"));
+				pi.setIssuingBankName(rs.getString("BRANCHDESC"));
 				return pi;
 			}, chequeDetailsID);
 		} catch (EmptyResultDataAccessException e) {

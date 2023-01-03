@@ -24,7 +24,6 @@ import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
-import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -62,7 +61,6 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	private MandateDAO mandateDAO;
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private PaymentHeaderService paymentHeaderService;
-	private FinTypePartnerBankDAO finTypePartnerBankDAO;
 
 	/**
 	 * @param Appdate Fetching Loans for the Auto Refund Process
@@ -234,10 +232,8 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	 * @return PaymentInstruction
 	 */
 	@Override
-	public PaymentInstruction fetchBeneficiaryForRefund(AutoRefundLoan refundLoan, Date appDate,
-			boolean alwRefundByCheque) {
+	public PaymentInstruction fetchBeneficiaryForRefund(long finID, Date appDate, boolean alwRefundByCheque) {
 		logger.debug(Literal.ENTERING);
-		long finID = refundLoan.getFinID();
 		PaymentInstruction paymentInst = null;
 
 		// Verification of Successful presentments against Repayment Method (NACH/SI/EMANDATE)
@@ -402,10 +398,6 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 
 	public void setAutoRefundDAO(AutoRefundDAO autoRefundDAO) {
 		this.autoRefundDAO = autoRefundDAO;
-	}
-
-	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
-		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
 
 }
