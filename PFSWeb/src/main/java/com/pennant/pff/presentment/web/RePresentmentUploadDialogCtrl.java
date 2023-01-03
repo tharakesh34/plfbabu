@@ -239,6 +239,8 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 		doClearMessage();
 		doCheckFields();
 
+		this.btnSave.setVisible(false);
+
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
@@ -348,6 +350,8 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 		this.txtFileName.setErrorMessage("");
 		this.fileName.setConstraint("");
 		this.fileName.setErrorMessage("");
+		this.txtFileName.setValue("");
+		this.entity.setValue("");
 
 		logger.debug(Literal.LEAVING);
 	}
