@@ -372,8 +372,20 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			this.postDate.setValue(paymentInstruction.getPostDate());
 		}
 
-		fillComboBox(this.paymentType, paymentInstruction.getPaymentType(), PennantStaticListUtil.getPaymentTypes(),
-				"");
+		if (this.paymentHeader.isNewRecord() && paymentInstruction.getPartnerBankCode() != null) {
+			if (StringUtils.equals(paymentInstruction.getPartnerBankCode(), "HDFC")) {
+				fillComboBox(this.paymentType, DisbursementConstants.PAYMENT_TYPE_IFT,
+						PennantStaticListUtil.getPaymentTypes(), "");
+			} else {
+				fillComboBox(this.paymentType, DisbursementConstants.PAYMENT_TYPE_NEFT,
+						PennantStaticListUtil.getPaymentTypes(), "");
+			}
+			paymentInstruction.setPaymentType(this.paymentType.getSelectedItem().getValue().toString());
+
+		} else {
+			fillComboBox(this.paymentType, paymentInstruction.getPaymentType(), PennantStaticListUtil.getPaymentTypes(),
+					"");
+		}
 		if (paymentInstruction.getPartnerBankId() != Long.MIN_VALUE && paymentInstruction.getPartnerBankId() != 0) {
 			this.partnerBankID.getButton().setDisabled(isReadOnly("PaymentInstructionDialog_partnerBankID"));
 			this.partnerBankID.setAttribute("partnerBankId", paymentInstruction.getPartnerBankId());

@@ -25,6 +25,7 @@
 package com.pennant.backend.service.payment.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,8 +51,10 @@ import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
+import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -74,6 +77,7 @@ import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.service.payment.PaymentInstructionService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -85,6 +89,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -335,7 +340,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			}
 		}
 
-		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentHeader.getFinSource())) {
+		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentHeader.getFinSource())
+				&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentHeader.getFinSource())) {
 			auditHeader
 					.setAuditDetails(deleteChilds(paymentHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType()));
 			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentHeader(), paymentHeader.getExcludeFields());
@@ -962,6 +968,64 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	public void setFeeTypeService(FeeTypeService feeTypeService) {
 		this.feeTypeService = feeTypeService;
+	}
+
+	@Override
+	public PaymentHeader prepareRefund(AutoRefundLoan refundLoan, List<PaymentDetail> payDtlList,
+			PaymentInstruction payInst, Date appDate) {
+		logger.debug(Literal.ENTERING);
+		LoggedInUser userDetails = PFSBatchAdmin.loggedInUser;
+		Timestamp sysDate = new Timestamp(System.currentTimeMillis());
+
+		// Payment Header
+		PaymentHeader ph = new PaymentHeader();
+		ph.setFinID(refundLoan.getFinID());
+		ph.setFinReference(refundLoan.getFinReference());
+		ph.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
+		ph.setCreatedOn(appDate);
+		ph.setApprovedOn(appDate);
+		ph.setStatus(RepayConstants.PAYMENT_APPROVE);
+		ph.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		ph.setNewRecord(true);
+		ph.setVersion(1);
+		ph.setLastMntBy(userDetails.getUserId());
+		ph.setLastMntOn(sysDate);
+		ph.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		ph.setPaymentId(paymentHeaderDAO.getNewPaymentHeaderId());
+		ph.setFinSource(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD);
+
+		// Payment Details
+		BigDecimal totRefund = BigDecimal.ZERO;
+		for (PaymentDetail pd : payDtlList) {
+			pd.setRecordType(PennantConstants.RCD_ADD);
+			pd.setNewRecord(true);
+			pd.setVersion(1);
+			pd.setUserDetails(userDetails);
+			pd.setLastMntBy(userDetails.getUserId());
+			pd.setLastMntOn(sysDate);
+			pd.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+
+			totRefund = totRefund.add(pd.getAmount());
+		}
+
+		// Payment Instructions
+		payInst.setPostDate(appDate);
+		payInst.setPaymentAmount(totRefund);
+		payInst.setValueDate(appDate);
+		payInst.setPaymentCCy(refundLoan.getFinCcy());
+		payInst.setStatus(DisbursementConstants.STATUS_NEW);
+		payInst.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		payInst.setRecordType(PennantConstants.RCD_ADD);
+		payInst.setNewRecord(true);
+		payInst.setVersion(1);
+		payInst.setLastMntBy(userDetails.getUserId());
+		payInst.setLastMntOn(sysDate);
+
+		ph.setPaymentDetailList(payDtlList);
+		ph.setPaymentInstruction(payInst);
+
+		logger.debug(Literal.LEAVING);
+		return ph;
 	}
 
 }

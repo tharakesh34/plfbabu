@@ -183,6 +183,10 @@ public class FinanceConstants {
 	public static final String CLOSE_STATUS_WRITEOFF = "W";
 	public static final String CLOSE_STATUS_EARLYSETTLE = "E";
 
+	// Loan Status of Hold
+	public static final String FIN_HOLDSTATUS_HOLD = "H";
+	public static final String FIN_HOLDSTATUS_RELEASE = "R";
+
 	// Limit Rule
 	public static final String LIMITRULE_CUSTOMER = "Customer";
 	public static final String LIMITRULE_FINTYPE = "FinanceType";

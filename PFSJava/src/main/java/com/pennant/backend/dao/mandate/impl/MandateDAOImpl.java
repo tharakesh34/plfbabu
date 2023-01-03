@@ -37,7 +37,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.MandateStatus;
@@ -1044,6 +1046,226 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			return mndts;
 		}
 
+	}
+
+	@Override
+	public PaymentInstruction getBeneficiatyDetailsByMandateId(Long mandateId) {
+		StringBuilder sql = new StringBuilder("");
+		sql.append(" SELECT M.PARTNERBANKID,PB.PARTNERBANKCODE, PB.PARTNERBANKNAME,BB.BANKBRANCHID,");
+		sql.append(" BB.BANKCODE BANKBRANCHCODE,BB.BRANCHDESC,BB.BANKNAME,BB.IFSC BANKBRANCHIFSC,");
+		sql.append(" BB.PCCITYNAME,M.ACCHOLDERNAME ACCTHOLDERNAME,M.PHONENUMBER,");
+		sql.append(" PB.ACTYPE, PB.ACCOUNTNO FROM MANDATES_AVIEW  M INNER JOIN PARTNERBANKS_AVIEW PB ON");
+		sql.append(" M.PARTNERBANKID = PB.PARTNERBANKID INNER JOIN");
+		sql.append(" INNER JOIN BANKBRANCHES_AVIEW BB ON M.BANKBRANCHID = BB.BANKBRANCHID");
+		sql.append(" WHERE MANDATEID = ? ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PaymentInstruction pi = new PaymentInstruction();
+
+				pi.setPartnerBankId(rs.getLong("PARTNERBANKID"));
+				pi.setPartnerBankCode(rs.getString("PARTNERBANKCODE"));
+				pi.setPartnerBankName(rs.getString("PARTNERBANKNAME"));
+				pi.setBankBranchId(rs.getLong("BANKBRANCHID"));
+				pi.setBankBranchCode(rs.getString("BANKBRANCHCODE"));
+				pi.setBranchDesc(rs.getString("BRANCHDESC"));
+				pi.setBankName(rs.getString("BANKNAME"));
+				pi.setBankBranchIFSC(rs.getString("BANKBRANCHIFSC"));
+				pi.setpCCityName(rs.getString("PCCITYNAME"));
+				pi.setAccountNo(rs.getString("ACCOUNTNO"));
+				pi.setAcctHolderName(rs.getString("ACCTHOLDERNAME"));
+				pi.setPhoneNumber(rs.getString("PHONENUMBER"));
+				pi.setPartnerBankAcType(rs.getString("ACTYPE"));
+				pi.setPartnerBankAc(rs.getString("ACCOUNTNO"));
+				return pi;
+			}, mandateId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+		return null;
+	}
+
+	@Override
+	public List<ChequeDetail> getChequeDetailIDByFinId(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CD.HEADERID, CD.CHEQUEDETAILSID  FROM  CHEQUEHEADER CH INNER JOIN");
+		sql.append(" CHEQUEDETAIL CD ON CD.HEADERID= CH.HEADERID WHERE   CH.FINID= ? ");
+		sql.append(" AND CD.CHEQUETYPE='PDC'  AND CD.CHEQUESTATUS NOT IN ('CANCELLED')");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+		}, (rs, rowNum) -> {
+			ChequeDetail cd = new ChequeDetail();
+
+			cd.setHeaderID(rs.getLong("HEADERID"));
+			cd.setChequeDetailsID(rs.getLong("CHEQUEDETAILSID"));
+			return cd;
+		});
+	}
+
+	@Override
+	public PaymentInstruction getBeneficiatyDetailsByChequeDetailsId(long chequeDetailsID) {
+		StringBuilder sql = new StringBuilder("");
+		sql.append(" SELECT BB.BANKBRANCHID,");
+		sql.append(" BB.BANKCODE  BANKBRANCHCODE,BB.BRANCHDESC,BB.BANKNAME,BB.IFSC BANKBRANCHIFSC,");
+		sql.append(" C.PCCITYNAME, M.ACCNUMBER ACCOUNTNO,CD.ACCHOLDERNAME ACCTHOLDERNAME");
+		sql.append(" FROM CHEQUEDETAIL_AVIEW  CD INNER JOIN ");
+		sql.append(" BANKBRANCHES_AVIEW BB ON CD.BANKBRANCHID = BB.BANKBRANCHID");
+		sql.append(" INNER JOIN RMTPROVINCEVSCITY C ON C.PCCITY = CD.CITY");
+		sql.append(" WHERE CHEQUEDETAILSID = ? ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PaymentInstruction pi = new PaymentInstruction();
+
+				pi.setBankBranchId(rs.getLong("BANKBRANCHID"));
+				pi.setBankBranchCode(rs.getString("BANKBRANCHCODE"));
+				pi.setBranchDesc(rs.getString("BRANCHDESC"));
+				pi.setBankName(rs.getString("BANKNAME"));
+				pi.setBankBranchIFSC(rs.getString("BANKBRANCHIFSC"));
+				pi.setpCCityName(rs.getString("PCCITYNAME"));
+				pi.setAccountNo(rs.getString("ACCOUNTNO"));
+				pi.setAcctHolderName(rs.getString("ACCTHOLDERNAME"));
+				return pi;
+			}, chequeDetailsID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Long> getMandateIDByFinId(long finID) {
+
+		StringBuilder sql = new StringBuilder("");
+		sql.append(" SELECT  M.MANDATEID  FROM FINANCEMAIN FM");
+		sql.append(" INNER JOIN MANDATES M ON FM.MANDATEID = M.MANDATEID WHERE   FM.FINID= ? ");
+		sql.append(" AND M.MANDATETYPE IN ('NACH','SI','EMANDATE') AND M.STATUS IN ('APPROVED')");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+
+		}, (rs, rowNum) -> rs.getLong(1));
+	}
+
+	@Override
+	public List<Long> getChequeDetailIDByAppDate(long finID, Date appDate) {
+
+		StringBuilder sql = new StringBuilder("");
+		sql.append(" Select CD.CHEQUEDETAILSID   FROM  CHEQUEHEADER CH INNER JOIN");
+		sql.append(" CHEQUEDETAIL CD ON CD.HEADERID= CH.HEADERID WHERE   CH.FINID= ?");
+		sql.append(" AND CD.CHEQUEDATE > ? AND CD.CHEQUETYPE='PDC' ORDER BY CH.HEADERID DESC");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+			ps.setDate(index++, JdbcUtil.getDate(appDate));
+
+		}, (rs, rowNum) -> rs.getLong(1));
+	}
+
+	@Override
+	public List<PaymentInstruction> getBeneficiatyDetailsByFinId(long finId) {
+		StringBuilder sql = new StringBuilder("");
+
+		sql.append(" SELECT FAP.PARTNERBANKID,FAP.PAYMENTTYPE ACCOUNTTYPE,PB.PARTNERBANKCODE,PB.PARTNERBANKNAME,");
+		sql.append(" BB.BANKBRANCHID,BB.BANKCODE BANKBRANCHCODE,BB.BRANCHDESC,BB.BANKNAME,BB.IFSC BANKBRANCHIFSC,");
+		sql.append(" BB.PCCITYNAME, FAP.BENEFICIARYACCNO ACCOUNTNO,FAP.BENEFICIARYNAME ACCTHOLDERNAME,");
+		sql.append(
+				" FAP.PHONENUMBER,FAP.BENEFICIARYACCNO PARTNERBANKAC FROM FINADVANCEPAYMENTS  FAP INNER JOIN PARTNERBANKS_AVIEW PB ON");
+		sql.append(" FAP.PARTNERBANKID = PB.PARTNERBANKID INNER JOIN BANKBRANCHES_AVIEW BB ON ");
+		sql.append(" FAP.BANKBRANCHID = BB.BANKBRANCHID WHERE FINID = ?");
+		sql.append(" AND FAP.PAYMENTTYPE IN ('NEFT','RTGS','IMPS','IFT') AND FAP.PAYMENTDETAIL ='CS'");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), ps -> {
+				int index = 1;
+				ps.setLong(index++, finId);
+			}, (rs, rowNum) -> {
+				PaymentInstruction pi = new PaymentInstruction();
+
+				pi.setPartnerBankId(rs.getLong("PARTNERBANKID"));
+				pi.setPartnerBankCode(rs.getString("PARTNERBANKCODE"));
+				pi.setPartnerBankName(rs.getString("PARTNERBANKNAME"));
+				pi.setPartnerBankAcType(rs.getString("ACCOUNTTYPE"));
+				pi.setBankBranchId(rs.getLong("BANKBRANCHID"));
+				pi.setBankBranchCode(rs.getString("BANKBRANCHCODE"));
+				pi.setBranchDesc(rs.getString("BRANCHDESC"));
+				pi.setBankName(rs.getString("BANKNAME"));
+				pi.setBankBranchIFSC(rs.getString("BANKBRANCHIFSC"));
+				pi.setpCCityName(rs.getString("PCCITYNAME"));
+				pi.setAccountNo(rs.getString("ACCOUNTNO"));
+				pi.setAcctHolderName(rs.getString("ACCTHOLDERNAME"));
+				pi.setPhoneNumber(rs.getString("PHONENUMBER"));
+				pi.setPartnerBankAc(rs.getString("ACCOUNTNO"));
+				return pi;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+		return null;
+	}
+
+	@Override
+	public List<PaymentInstruction> getBeneficiatyDetailsRefundCheque(long finID) {
+		StringBuilder sql = new StringBuilder("");
+
+		sql.append(" SELECT FAP.PARTNERBANKID,FAP.PAYMENTTYPE ACCOUNTTYPE,PB.PARTNERBANKCODE,PB.PARTNERBANKNAME,");
+		sql.append(" BB.BANKBRANCHID,BB.BANKCODE BANKBRANCHCODE,BB.BRANCHDESC,BB.BANKNAME,BB.IFSC BANKBRANCHIFSC,");
+		sql.append(" BB.PCCITYNAME, FAP.BENEFICIARYACCNO ACCOUNTNO,FAP.BENEFICIARYNAME ACCTHOLDERNAME,");
+		sql.append(" FAP.PHONENUMBER , RMT.DEFCHEQUEDDPRINTLOC PRINTINGLOC FROM FINADVANCEPAYMENTS ");
+		sql.append(" FAP INNER JOIN PARTNERBANKS_AVIEW PB ON FAP.PARTNERBANKID = PB.PARTNERBANKID ");
+		sql.append(" INNER JOIN BANKBRANCHES_AVIEW BB ON FAP.BANKBRANCHID = BB.BANKBRANCHID INNER JOIN RMTBRANCHES");
+		sql.append(" FAP.PARTNERBANKID = PB.PARTNERBANKID INNER JOIN BANKBRANCHES_AVIEW BB ON ");
+		sql.append(" FAP.BANKBRANCHID = BB.BANKBRANCHID  INNER JOIN RMTBRANCHES RMT ON   ");
+		sql.append(" RMT.DEFCHEQUEDDPRINTLOC = BB.BANKBRANCHID WHERE FINID = ?");
+		sql.append(" FAP.PAYMENTDETAIL ='CS'");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), ps -> {
+				int index = 1;
+				ps.setLong(index++, finID);
+			}, (rs, rowNum) -> {
+				PaymentInstruction pi = new PaymentInstruction();
+
+				pi.setPartnerBankId(rs.getLong("PARTNERBANKID"));
+				pi.setPartnerBankCode(rs.getString("PARTNERBANKCODE"));
+				pi.setPartnerBankName(rs.getString("PARTNERBANKNAME"));
+				pi.setPartnerBankAcType(rs.getString("ACCOUNTTYPE"));
+				pi.setBankBranchId(rs.getLong("BANKBRANCHID"));
+				pi.setBankBranchCode(rs.getString("BANKBRANCHCODE"));
+				pi.setBranchDesc(rs.getString("BRANCHDESC"));
+				pi.setBankName(rs.getString("BANKNAME"));
+				pi.setBankBranchIFSC(rs.getString("BANKBRANCHIFSC"));
+				pi.setpCCityName(rs.getString("PCCITYNAME"));
+				pi.setAccountNo(rs.getString("ACCOUNTNO"));
+				pi.setAcctHolderName(rs.getString("ACCTHOLDERNAME"));
+				pi.setPhoneNumber(rs.getString("PHONENUMBER"));
+				pi.setPrintingLoc(rs.getString("PRINTINGLOC"));
+				return pi;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+		return null;
 	}
 
 }

@@ -37,6 +37,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.payment.PaymentDetailDAO;
@@ -46,7 +47,9 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
@@ -56,7 +59,6 @@ import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.util.FinanceConstants;
@@ -82,7 +84,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
-	private FinanceDetailService financeDetailService;
+	private FinanceMainDAO financeMainDAO;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -482,11 +484,17 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		// GST Invoice preparation for Receivable Advises
 
 		if (CollectionUtils.isNotEmpty(adviseMovements)) {
-			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finID, "", false);
+
+			FinanceDetail fd = new FinanceDetail();
+			FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", false);
+			FinScheduleData schdData = fd.getFinScheduleData();
+			schdData.setFinanceMain(fm);
+			fd.setCustomerDetails(null);
+			fd.setFinanceTaxDetail(null);
 
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setLinkedTranId(linkedTranId);
-			invoiceDetail.setFinanceDetail(financeDetail);
+			invoiceDetail.setFinanceDetail(fd);
 			invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
 			invoiceDetail.setWaiver(false);
 			invoiceDetail.setMovements(adviseMovements);
@@ -692,7 +700,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 			advise.setPaidAmount(amount);
 			advise.setBalanceAmt(amount.negate());
-			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())) {
+			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())
+					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentDetail.getFinSource())) {
 				advise.setReservedAmt(amount.negate());
 				advise.setBalanceAmt(BigDecimal.ZERO);
 			}
@@ -700,7 +709,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			manualAdviseDAO.updateAdvPayment(advise, TableType.MAIN_TAB);
 
 			// Delete Reserved Log against Advise and Receipt Seq ID
-			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())) {
+			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())
+					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentDetail.getFinSource())) {
 				manualAdviseDAO.deletePayableReserve(paymentDetail.getPaymentDetailId(),
 						paymentDetail.getReferenceId());
 			}
@@ -808,8 +818,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

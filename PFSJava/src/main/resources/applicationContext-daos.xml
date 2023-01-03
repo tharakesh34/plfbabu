@@ -7867,7 +7867,7 @@
 		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
-		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<bean name="paymentInstructionService"
@@ -13038,4 +13038,26 @@
 	<bean id="financeHoldReleaseProcess" class="com.pennanttech.pff.holdrelease.FinanceHoldReleaseProcess">
 		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
+	
+	<bean id="autoRefundService" class="com.pennant.pff.autorefund.serviceimpl.AutoRefundServiceImpl">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="autoRefundDAO" ref="autoRefundDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="mandateDAO" ref="mandateDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+	</bean>
+	
+	<bean id="autoRefundProcess" class="com.pennanttech.pff.autorefund.AutoRefundProcess">
+		<property name="autoRefundService" ref="autoRefundService" />
+	</bean>
+	
+	<bean id="autoRefundDAO" class="com.pennant.backend.dao.finance.impl.AutoRefundDAOImpl"  parent="basicDao" />
+	
 </beans>

@@ -530,7 +530,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
 			break;
 		case RuleConstants.MODULE_AUTOREFUND:
-			this.rule.setReturnType(RuleConstants.RETURNTYPE_BOOLEAN);
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;
 		}
 

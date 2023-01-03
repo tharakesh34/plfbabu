@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
+import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -410,8 +411,10 @@ public interface FinanceMainDAO {
 	Date getMaturityDate(String finReference);
 
 	FinanceMain getEntityByRef(String finReference);
-	
+
 	List<Long> getInactiveLoansOnHold(Date closureDate);
 
 	void releaseHoldOnLoans(List<Long> finIds);
+
+	List<AutoRefundLoan> getAutoRefundsLoanList();
 }

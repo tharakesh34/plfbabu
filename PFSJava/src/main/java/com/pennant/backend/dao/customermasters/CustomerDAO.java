@@ -197,4 +197,6 @@ public interface CustomerDAO {
 	String getCustDefaulBranchByCIF(String custCIF);
 
 	long getCustIDByCIF(String custCIF);
+
+	Customer getCustomerForAutoRefund(long custID);
 }

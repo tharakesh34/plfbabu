@@ -28,7 +28,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
@@ -113,5 +115,19 @@ public interface MandateDAO {
 	List<Mandate> getMandatesForAutoSwap(long custID, Date appDate);
 
 	List<Mandate> getMandatesForAutoSwap(long finID);
+
+	PaymentInstruction getBeneficiatyDetailsByMandateId(Long mandateId);
+
+	List<ChequeDetail> getChequeDetailIDByFinId(long finID);
+
+	PaymentInstruction getBeneficiatyDetailsByChequeDetailsId(long chequeDetailsID);
+
+	List<Long> getMandateIDByFinId(long finID);
+
+	List<Long> getChequeDetailIDByAppDate(long finID, Date appDate);
+
+	List<PaymentInstruction> getBeneficiatyDetailsByFinId(long finID);
+
+	List<PaymentInstruction> getBeneficiatyDetailsRefundCheque(long finID);
 
 }

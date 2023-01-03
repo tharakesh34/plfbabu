@@ -24,6 +24,7 @@
 		<listeners>
 			<listener ref="eodJobListener" />
 		</listeners>
+	
 
 		<step id="beforeEOD">
 			<tasklet ref="beforeEODTaskLet" />
@@ -233,12 +234,18 @@
 
 		<step id="masterDataPreparation">
 			<tasklet ref="masterDataPreparationTaskLet" />
-			<next on="*" to="financeHoldReleaseTasklet" />
+			<next on="*" to="financeHoldRelease" />
 			<fail on="FAILED" />
 		</step>
 		
 		<step id="financeHoldRelease">
 			<tasklet ref="financeHoldReleaseTasklet" />
+			<next on="*" to="autoRefundExecution" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="autoRefundExecution">
+			<tasklet ref="autoRefundProcessTasklet" />
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>
@@ -294,15 +301,15 @@
 	<bean id="effAssetClassificationPartition"
 		class="com.pennanttech.pff.npa.eod.tasklet.EffAssetClassificationPartition" />
 	<bean id="provisionCalcPartition" class="com.pennanttech.pff.provision.eod.tasklet.ProvisionCalcPartition" />
-	
-		
+
+
 	<step id="ledgerDownloadProcess" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="ledgerDownloadProcessTaskLet" allow-start-if-complete="true">
 			<transaction-attributes propagation="NEVER" />
 		</tasklet>
 	</step>
-	
-	<bean id ="ledgerDownloadPartition" class ="com.pennant.backend.ledger.eod.tasklet.LedgerDownloadPartition"/>
-	
+
+	<bean id="ledgerDownloadPartition" class="com.pennant.backend.ledger.eod.tasklet.LedgerDownloadPartition" />
+
 
 </beans>

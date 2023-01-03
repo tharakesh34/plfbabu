@@ -100,4 +100,6 @@ public interface FinExcessAmountDAO {
 	List<FinExcessMovement> getExcessMovementList(long id, String movementType);
 
 	BigDecimal getTotalExcessByRefAndType(long finID, String amountType);
+
+	List<FinExcessAmount> getExcessRcdList(long finID, Date activeNDate);
 }

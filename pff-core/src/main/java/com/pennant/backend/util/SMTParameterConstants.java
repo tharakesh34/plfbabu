@@ -87,12 +87,6 @@ public class SMTParameterConstants {
 	public static final String CUST_CHANGE_ROLES = "CUST_CHANGE_ROLES";
 	public static final String CREDITREVIEW_TAB = "CREDITREVIEW_TAB";
 	public static final String CUST_EXT_DEVIATIONS = "CUST_EXT_DEVIATIONS";
-	public static final String AUTO_REFUND_N_DAYS_CLOSED_LAN = "AUTO_REFUND_N_DAYS_CLOSED_LAN";
-	public static final String AUTO_REFUND_N_DAYS_ACTIVE_LAN = "AUTO_REFUND_N_DAYS_ACTIVE_LAN";
-	public static final String REMOVE_HOLD_FLAG_N_DAYS_CLOSED_LAN = "REMOVE_HOLD_FLAG_N_DAYS_CLOSED_LAN";
-	public static final String HOLD_AUTO_REFUND_DPD = "HOLD_AUTO_REFUND_DPD";
-	public static final String CHECK_OVERDUE_AUTO_REFUND = "CHECK_OVERDUE_AUTO_REFUND";
-	public static final String AUTO_REFUND_THROUGH_CHEQUE = "AUTO_REFUND_THROUGH_CHEQUE";
 
 	/**
 	 * NO_ADJ = No Adjustment, leave the Profit Fraction ADJ_LAST_INST = All Profit Fractions adjust to last schedule
@@ -438,4 +432,12 @@ public class SMTParameterConstants {
 	public static final String BOUNCE_CODES_FOR_ACCOUNT_CLOSED = "BOUNCE_CODES_FOR_ACCOUNT_CLOSED";
 	public static final String PRESENTMENT_RESPONSE_THREAD_COUNT = "PRESENTMENT_RESPONSE_THREAD_COUNT";
 	public static final String PRESENTMENT_EXTRACTION_THREAD_COUNT = "PRESENTMENT_EXTRACTION_THREAD_COUNT";
+
+	// Refund Module Constants
+	public static final String AUTO_REFUND_N_DAYS_CLOSED_LAN = "AUTO_REFUND_N_DAYS_CLOSED_LAN";
+	public static final String AUTO_REFUND_N_DAYS_ACTIVE_LAN = "AUTO_REFUND_N_DAYS_ACTIVE_LAN";
+	public static final String REMOVE_HOLD_FLAG_N_DAYS_CLOSED_LAN = "REMOVE_HOLD_FLAG_N_DAYS_CLOSED_LAN";
+	public static final String AUTO_REFUND_THROUGH_CHEQUE = "AUTO_REFUND_THROUGH_CHEQUE";
+	public static final String AUTO_REFUND_HOLD_DPD = "HOLD_AUTO_REFUND_DPD";
+	public static final String AUTO_REFUND_OVERDUE_CHECK = "CHECK_OVERDUE_AUTO_REFUND";
 }
