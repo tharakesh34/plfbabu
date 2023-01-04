@@ -903,12 +903,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		} else {
 			// Customer Data Fetching
 			customerDetails = fetchCustomerData(isRetail);
-
-			if (customerDetails == null) {
-				logger.debug(Literal.LEAVING);
-				return false;
-			}
-
 			if (primaryIdName != null) {
 				customerDetails.getCustomer().setPrimaryIdName(primaryIdName);
 			}
@@ -1701,36 +1695,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				}
 
 			} else if (this.newCust.isChecked()) {
-				// Check whether any other customer exists with the same primary
-				// identity.
-				Customer customer = null;
-				String primaryIdNumber = StringUtils.trimToEmpty(eidNumber.getValue());
-
-				if (StringUtils.isNotBlank(primaryIdNumber)
-						&& "Y".equals(SysParamUtil.getValueAsString("CUST_PAN_VALIDATION"))) {
-					cif = this.customerDetailsService.getEIDNumberById(primaryIdNumber,
-							this.custCtgType.getSelectedItem().getValue(), "_View");
-				}
-
-				if (StringUtils.isNotBlank(cif)) {
-					if (!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
-						String msg = Labels.getLabel("label_CoreCustomerDialog_ProspectExist",
-								new String[] { Labels.getLabel(primaryIdLabel), cif + ". \n" });
-
-						if (MessageUtil.confirm(msg) != MessageUtil.YES) {
-							customerDetails = null;
-							return customerDetails;
-						}
-					}
-
-					customer = this.customerDetailsService.getCheckCustomerByCIF(cif);
-					if (customer == null) {
-						throw new InterfaceException("9999", "Customer Not found.");
-					}
-					customerDetails = this.customerDetailsService.getCustomerById(customer.getId());
-				} else {
-					customerDetails = getNewCustomerDetail(customerDetails);
-				}
+				customerDetails = getNewCustomerDetail(customerDetails);
 			}
 
 		} catch (InterfaceException pfe) {
