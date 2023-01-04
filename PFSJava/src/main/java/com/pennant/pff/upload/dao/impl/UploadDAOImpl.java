@@ -26,6 +26,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
 
@@ -228,7 +229,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 			if (fromDate != null && toDate != null) {
 				ps.setDate(++index, JdbcUtil.getDate(fromDate));
-				ps.setDate(++index, JdbcUtil.getDate(toDate));
+				ps.setDate(++index, JdbcUtil.getDate(DateUtil.addDays(toDate, 1)));
 			}
 		}, (rs, rowNum) -> {
 			FileUploadHeader ruh = new FileUploadHeader();
@@ -267,9 +268,9 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 		if (CollectionUtils.isNotEmpty(roleCodes)) {
 			whereClause.append(" and ");
-			whereClause.append("NextRoleCode in (");
+			whereClause.append("(NextRoleCode in (");
 			whereClause.append(JdbcUtil.getInCondition(roleCodes));
-			whereClause.append(")");
+			whereClause.append("))"); // or NextRoleCode is null
 		}
 
 		if (StringUtils.isNotEmpty(entityCode)) {
@@ -284,7 +285,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 		if (fromDate != null && toDate != null) {
 			whereClause.append(" and ");
-			whereClause.append(" (CreatedOn <= ? and CreatedOn >= ?)");
+			whereClause.append(" (CreatedOn >= ? and CreatedOn < ?)");
 		}
 
 		return whereClause;

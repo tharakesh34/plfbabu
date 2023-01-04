@@ -304,9 +304,10 @@ public class FileUploadList extends Window implements Serializable {
 	}
 
 	private Hbox createUploadToolBar() {
+		FileUploadHeader fuph = new FileUploadHeader();
 		Hbox hbox = getHbox();
 		hbox.appendChild(
-				getHyperLinkInTB(ALIGN_START, "Download Template", Events.ON_CLICK, event -> downloadTemplate()));
+				getHyperLinkInTB(ALIGN_START, "Download Template", Events.ON_CLICK, event -> downloadTemplate(fuph)));
 		hbox.appendChild(getButtonInTB(ALIGN_CENTER, "IMPORT", Events.ON_CLICK, event -> onClickButtonImport()));
 		hbox.appendChild(getToolbar(ALIGN_END));
 
@@ -625,7 +626,10 @@ public class FileUploadList extends Window implements Serializable {
 				this.checkBoxComp.setDisabled(false);
 			}
 
-			list.forEach(h1 -> h1.setUserDetails(this.fileUploadHeader.getUserDetails()));
+			list.forEach(h1 -> {
+				h1.setUserDetails(this.fileUploadHeader.getUserDetails());
+				h1.setStage(this.stage);
+			});
 
 			listWrapper.initList(list, listbox, paging);
 		}
@@ -738,12 +742,12 @@ public class FileUploadList extends Window implements Serializable {
 		header.setProgress(Status.DEFAULT.getValue());
 	}
 
-	private void downloadTemplate() {
+	private void downloadTemplate(FileUploadHeader fuph) {
 		String name = this.type.name().concat("_TEMPLATE");
-		fileDownload(name);
+		fileDownload(name, fuph);
 	}
 
-	private void fileDownload(String name) {
+	private void fileDownload(String name, FileUploadHeader fuph) {
 		DataEngineExport export = null;
 
 		if (name.contains("_DOWNLOAD")) {
@@ -754,7 +758,7 @@ public class FileUploadList extends Window implements Serializable {
 			parameterMap.put("QUERY", uploadService.getSqlQuery());
 
 			Map<String, Object> filterMap = new HashMap<>();
-			filterMap.put("HEADER_ID", this.fileUploadHeader.getId());
+			filterMap.put("HEADER_ID", fuph.getId());
 			export.setParameterMap(parameterMap);
 			export.setFilterMap(filterMap);
 		} else {
@@ -814,6 +818,7 @@ public class FileUploadList extends Window implements Serializable {
 		this.fileUploadHeader.setFailureRecords(0);
 		this.fileUploadHeader.setProgress(0);
 		this.fileUploadHeader.setRemarks(null);
+		this.fileUploadHeader.setStage(this.stage);
 
 		this.fromDate.setValue(null);
 		this.toDate.setValue(null);
@@ -821,10 +826,13 @@ public class FileUploadList extends Window implements Serializable {
 		listbox.clearSelection();
 
 		if (!"M".equals(this.stage)) {
+			this.entityCode.setValue(null);
 			this.checkBoxComp.setDisabled(true);
 		}
 
-		listWrapper.initList(new ArrayList<>(), listbox, paging);
+		List<FileUploadHeader> list = new ArrayList<>();
+		list.add(this.fileUploadHeader);
+		listWrapper.initList(list, listbox, paging);
 	}
 
 	private void onClickReject() {
@@ -1132,7 +1140,7 @@ public class FileUploadList extends Window implements Serializable {
 
 			if (uph.getSuccessRecords() > 0) {
 				Button dowButton = getButton(Labels.getLabel("label_Download"), String.valueOf(id));
-				dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload(uph.getType()));
+				dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload(uph));
 
 				lc = new Listcell();
 				lc.appendChild(dowButton);
@@ -1181,9 +1189,9 @@ public class FileUploadList extends Window implements Serializable {
 			return checkBox;
 		}
 
-		private void onClickDownload(String configName) {
-			String name = configName.concat("_DOWNLOAD");
-			fileDownload(name);
+		private void onClickDownload(FileUploadHeader fuph) {
+			String name = fuph.getType().concat("_DOWNLOAD");
+			fileDownload(name, fuph);
 		}
 
 		private void onClickView(FileUploadHeader uph) {
