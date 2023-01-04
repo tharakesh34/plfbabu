@@ -38,6 +38,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.core.RequestSource;
 
 public class FinReceiptData implements Serializable {
 	private static final long serialVersionUID = -6980706459904425002L;
@@ -121,7 +122,8 @@ public class FinReceiptData implements Serializable {
 	private FinDueData dueData;
 	private boolean isClosrMaturedLAN = false;
 	private String excessType;
-	private BigDecimal calculatedClosureAmt = BigDecimal.ZERO;;
+	private BigDecimal calculatedClosureAmt = BigDecimal.ZERO;
+	private RequestSource requestSource;
 
 	public FinReceiptData() {
 		super();
@@ -225,6 +227,7 @@ public class FinReceiptData implements Serializable {
 		entity.setClosrMaturedLAN(this.isClosrMaturedLAN);
 		entity.setExcessType(this.excessType);
 		entity.setCalculatedClosureAmt(this.calculatedClosureAmt);
+		entity.setRequestSource(this.requestSource);
 
 		return entity;
 	}
@@ -788,4 +791,13 @@ public class FinReceiptData implements Serializable {
 	public void setCalculatedClosureAmt(BigDecimal calculatedClosureAmt) {
 		this.calculatedClosureAmt = calculatedClosureAmt;
 	}
+
+	public RequestSource getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(RequestSource requestSource) {
+		this.requestSource = requestSource;
+	}
+
 }
