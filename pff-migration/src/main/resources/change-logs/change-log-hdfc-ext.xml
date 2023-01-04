@@ -155,4 +155,152 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="002.4" author="goutham.ch">
+		<sql>
+				<![CDATA[
+					Insert into FILE_INTERFACE_CONFIG  (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR) values ('SILIEN',1,'PRESENTMENT/SILIEN/REQUEST',202,'SILIEN_','','.EBF','ddMMyy',null,null);
+					Insert into FILE_INTERFACE_CONFIG  (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR) values ('SILIEN_RESP',0,'PRESENTMENT/SILIEN/RESPONSE',202,'GEFUCH',null,'.txt',null,'175','177');
+				
+				]]>
+		</sql>
+	</changeSet>
+
+
+	
+	
+	<changeSet id="013" author="goutham.ch">
+		<createTable tableName="EXT_MANDATE_ERRORS">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CODE" type="VARCHAR(20)" />
+			<column name="NAME" type="VARCHAR(200)" />
+			<column name="STATUS" type="int" />
+		</createTable>
+	</changeSet>
+	
+
+	<changeSet id="014" author="goutham.ch">
+		<sql>
+				<![CDATA[
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M093',	'Aadhaar not mapped to account number'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M090',	'Aadhaar Number mismatch in X509cert and bank CBS'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M089',	'Aadhaar Number mismatch in X509certfic and mandate'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M037',	'Account closed'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M026',	'Account frozen or Blocked'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M057',	'Account Holder Name Mismatch with CBS'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M055',	'Account Inoperative'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M007',	'Alterations require drawers authentication'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M024',	'Amount in words and figures differ'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M034',	'Amount of EMI more than limit allowed for the acct'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M088',	'API Data mismatch with cust info and data mandate'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M094',	'Appropriate NACH Mandate not uploaded'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M008',	'Company for stamp required or Wrong'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M074',	'Data mismatch with image_account number'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M075',	'Data mismatch with image_account type'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M080',	'Data mismatch with image_amount'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M035',	'Data mismatch with image_Corporate name mismatch'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M079',	'Data mismatch with image_debit type'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M084',	'Data mismatch with image_debtor bank name'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M082',	'Data mismatch with image_end date'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M077',	'Data mismatch with image_frequency'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M085',	'Data mismatch with image_more than one field'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M083',	'Data mismatch with image_payer name'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M078',	'Data mismatch with image_period'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M081',	'Data mismatch with image_start date'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('ncfe',	'Default forced not acknowledge acceptance reason'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M006',	'Drawers authority to operate account not received'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M003',	'Drawers signature differs'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M050',	'Drawers signature illegible in mandate form'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M049',	'Drawers signature not updated in Bank CBS'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M004',	'Drawers signature required'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M021',	'Duplicate mandate_first presented mandate already' 	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M091',	'eSign Signature is tampered or corrupt'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M027',	'Image not clear'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M060',	'Invalid frequency'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M066',	'Joint signature required'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M009',	'Mandate not in standard format'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M052',	'Mandate Not Registered_Minor Account'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M056',	'Mandate Not Registered_ not maintaining req balanc'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M051',	'Mandate Not Registered_NRE Account'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M095',	'Mandate Presented with thumb Impression'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M030',	'Mandate registration not allowed for CC account'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M054',	'Mandate registration not allowed for PPF account'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M038',	'No such account'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M011',	'Payment stopped by attachment order'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M012',	'Payment stopped by court order'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M025',	'Present under proper mandate category'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M023',	'Refer to the branch_KYC not completed'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M032',	'Rejected as per customer confirmation'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M092',	'signed Content doesnot tally with data mandate'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('ncex',	'TAT expired'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M067',	'Thumb Impression in CBS but cust sign in mandate'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M013',	'Withdrawal stopped owing to death of account holde'	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M015',	'Withdrawal stopped owing to insolvency of account' 	,1);
+					INSERT INTO EXT_MANDATE_ERRORS(CODE,NAME,STATUS) VALUES('M014',	'Withdrawal stopped owing to lunacy of account hold'	,1);
+					
+				]]>
+		</sql>
+	</changeSet>
+
+
+
+				
+   
+   
+   <changeSet id="015" author="goutham.ch">
+		<createSequence sequenceName="SEQ_SILIEN" incrementBy="1" startValue="1" minValue="1"
+			maxValue="9223372036854775807" />
+	</changeSet>
+
+
+
+
+	<changeSet id="016" author="goutham.ch">
+		<createTable tableName="LOAN_SILIEN">
+			<column name="FINID" type="VARCHAR(200)" >
+			<constraints nullable="false" />
+			</column>
+			<column name="CUSTID" type="bigint" />
+			<column name="ACCNUMBER" type="VARCHAR(50)" />
+			<column name="LIEN_MARK" type="VARCHAR(2)" />
+			<column name="STATUS" type="int" />
+			<column name="CREATED_DATE" type="datetime" />
+		</createTable>
+	</changeSet>
+
+
+
+
+
+	<changeSet id="017" author="goutham.ch">
+		<createTable tableName="SILIEN_STATUS">
+			<column name="ACCNUMBER" type="VARCHAR(50)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="LIEN_MARK" type="VARCHAR(2)" />
+			<column name="FILE_STATUS" type="int" />
+			<column name="INTERFACE_STATUS" type="VARCHAR(50)" />
+			<column name="INTERFACE_REASON" type="VARCHAR(1000)" />
+			<column name="ERROR_CODE" type="VARCHAR(100)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(4000)" />
+		</createTable>
+	</changeSet>
+
+
+
+
+	<changeSet id="018" author="goutham.ch">
+		<createTable tableName="SILIEN_FILE_STATUS">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="VARCHAR(2000)" />
+			<column name="STATUS" type="int" />
+			<column name="ERROR_CODE" type="VARCHAR(50)" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(4000)" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>

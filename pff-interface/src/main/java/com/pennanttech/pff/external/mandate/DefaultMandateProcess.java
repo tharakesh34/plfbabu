@@ -630,7 +630,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		String sql = "Update MANDATE_RESPONSE  set REMARKS = ?, STATUS = ? Where MANDATEID = ?";
 
 		logger.debug(Literal.SQL + sql);
-		
+
 		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
@@ -711,6 +711,14 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				remarks.append(", ");
 			}
 			remarks.append("Account No.");
+		}
+
+		// Added for HDFC
+		if (!StringUtils.equals("N", respMandate.getStatus()) && StringUtils.isEmpty(respMandate.getReason())) {
+			if (remarks.length() > 0) {
+				remarks.append(", ");
+			}
+			remarks.append("Remarks should be mandatory.");
 		}
 	}
 
@@ -854,7 +862,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		String sql = "Update FinanceMain Set MandateID = ?, FinRepayMethod = ? Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-		
+
 		jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
@@ -869,7 +877,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		String sql = "UPDATE MANDATES SET ACTIVE = ? WHERE PRIMARYMANDATEID = ?";
 
 		logger.debug(Literal.SQL + sql);
-		
+
 		jdbcOperations.update(sql, ps -> {
 			ps.setInt(1, 0);
 			ps.setLong(2, mandateID);

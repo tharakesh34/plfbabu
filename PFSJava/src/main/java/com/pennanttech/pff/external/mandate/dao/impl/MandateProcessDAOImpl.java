@@ -27,6 +27,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.mandate.dao.MandateProcessDAO;
 
@@ -59,53 +60,55 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 
 		MapSqlParameterSource paramMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT");
-		sql.append(" MANDATEID,");
-		sql.append(" BANKCODE BANK_CODE,");
-		sql.append(" BANKNAME BANK_NAME,");
-		sql.append(" BRANCHCODE BRANCH_CODE,");
-		sql.append(" BRANCHDESC BRANCH_NAME,");
-		sql.append(" ADDOFBRANCH BRANCH_ADDRESS,");
-		sql.append(" CUSTCIF,");
-		sql.append(" CUSTSHRTNAME CUSTOMER_NAME,");
-		sql.append(" CustCoreBank AUXILIARY_FIELD3,");
-		sql.append(" PHONENUMBER CUSTOMER_PHONE,");
-		sql.append(" CUSTEMAIL CUSTOMER_EMAIL,");
-		sql.append(" FINTYPE,");
-		sql.append(" FINID,");
-		sql.append(" FINREFERENCE,");
-		sql.append(" CUST_EMI,");
-		sql.append(" EMI,");
-		sql.append(" OPENMANDATE OPENFLAG,");
-		sql.append(" ACCNUMBER ACCT_NUMBER,");
-		sql.append(" ACCTYPE ACCT_TYPE,");
-		sql.append(" ACCHOLDERNAME ACCT_HOLDER_NAME,");
-		sql.append(" MICR MICR_CODE,");
-		sql.append(" IFSC IFSC_CODE,");
-		sql.append(" FIRSTDUEDATE EFFECTIVE_DATE,");
-		sql.append(" EMIENDDATE EMI_ENDDATE,");
-		sql.append(" EXPIRYDATE OPEN_ENDDATE,");
-		sql.append(" MAXLIMIT UPPER_LIMIT,");
-		sql.append(" CCYMINORCCYUNITS,");
-		sql.append(" DEBITAMOUNT DEBIT_AMOUNT,");
-		sql.append(" STARTDATE START_DATE,");
-		sql.append(" EXPIRYDATE END_DATE,");
-		sql.append(" APPLICATIONNO APPLICATION_NUMBER,");
-		sql.append(" MANDATETYPE MANDATE_TYPE,");
-		sql.append(" NUMBEROFTERMS NUMBER_OF_TERMS,");
-		sql.append(" PERIODICITY FREQUENCY,");
-		sql.append(" STATUS,");
-		sql.append(" PARTNERBANKNAME PARTNER_BANK,");
-		sql.append(" BRANCHIFSCCODE PARTNER_BANK_IFSC,");
-		sql.append(" LASTMNTON REGISTERED_DATE,");
-		sql.append(" BANK_BRANCH_NAME,");
-		sql.append(" UTILITYCODE UTILITY_CODE,");
-		sql.append(" SPONSORBANKCODE SPONSOR_BANK,");
-		sql.append(" ENTITYDESC ENTITY_CODE,");
-		sql.append(" BANK_BRANCH_NAME,");
-		sql.append(" DOCUMENTNAME");
-		sql.append(" FROM INT_MANDATE_REQUEST_VIEW");
-		sql.append(" WHERE MANDATEID IN (:MANDATEID)");
+		sql.append(" SELECT ");
+		sql.append(" MD.SECURITYMANDATE,");
+		sql.append(" IM.MANDATEID,");
+		sql.append(" IM.BANKCODE BANK_CODE,");
+		sql.append(" IM.BANKNAME BANK_NAME,");
+		sql.append(" IM.BRANCHCODE BRANCH_CODE,");
+		sql.append(" IM.BRANCHDESC BRANCH_NAME,");
+		sql.append(" IM.ADDOFBRANCH BRANCH_ADDRESS,");
+		sql.append(" IM.CUSTCIF,");
+		sql.append(" IM.CUSTSHRTNAME CUSTOMER_NAME,");
+		sql.append(" IM.CustCoreBank AUXILIARY_FIELD3,");
+		sql.append(" IM.PHONENUMBER CUSTOMER_PHONE,");
+		sql.append(" IM.CUSTEMAIL CUSTOMER_EMAIL,");
+		sql.append(" IM.FINTYPE,");
+		sql.append(" IM.FINID,");
+		sql.append(" IM.FINREFERENCE,");
+		sql.append(" IM.CUST_EMI,");
+		sql.append(" IM.EMI,");
+		sql.append(" IM.OPENMANDATE OPENFLAG,");
+		sql.append(" IM.ACCNUMBER ACCT_NUMBER,");
+		sql.append(" IM.ACCTYPE ACCT_TYPE,");
+		sql.append(" IM.ACCHOLDERNAME ACCT_HOLDER_NAME,");
+		sql.append(" IM.MICR MICR_CODE,");
+		sql.append(" IM.IFSC IFSC_CODE,");
+		sql.append(" IM.FIRSTDUEDATE EFFECTIVE_DATE,");
+		sql.append(" IM.EMIENDDATE EMI_ENDDATE,");
+		sql.append(" IM.EXPIRYDATE OPEN_ENDDATE,");
+		sql.append(" IM.MAXLIMIT UPPER_LIMIT,");
+		sql.append(" IM.CCYMINORCCYUNITS,");
+		sql.append(" IM.DEBITAMOUNT DEBIT_AMOUNT,");
+		sql.append(" IM.STARTDATE START_DATE,");
+		sql.append(" IM.EXPIRYDATE END_DATE,");
+		sql.append(" IM.APPLICATIONNO APPLICATION_NUMBER,");
+		sql.append(" IM.MANDATETYPE MANDATE_TYPE,");
+		sql.append(" IM.NUMBEROFTERMS NUMBER_OF_TERMS,");
+		sql.append(" IM.PERIODICITY FREQUENCY,");
+		sql.append(" IM.STATUS,");
+		sql.append(" IM.PARTNERBANKNAME PARTNER_BANK,");
+		sql.append(" IM.BRANCHIFSCCODE PARTNER_BANK_IFSC,");
+		sql.append(" IM.LASTMNTON REGISTERED_DATE,");
+		sql.append(" IM.BANK_BRANCH_NAME,");
+		sql.append(" IM.UTILITYCODE UTILITY_CODE,");
+		sql.append(" IM.SPONSORBANKCODE SPONSOR_BANK,");
+		sql.append(" IM.ENTITYDESC ENTITY_CODE,");
+		sql.append(" IM.BANK_BRANCH_NAME,");
+		sql.append(" IM.DOCUMENTNAME");
+		sql.append(" FROM INT_MANDATE_REQUEST_VIEW IM");
+		sql.append(" INNER JOIN MANDATES MD ON IM.MANDATEID = MD.MANDATEID ");
+		sql.append(" WHERE IM.MANDATEID IN (:MANDATEID)");
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MANDATEID", Arrays.asList(mandateIds));
 		final ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
@@ -113,7 +116,6 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		Date appDate = SysParamUtil.getAppDate();
 
 		Date extractionDate = DateUtil.getDatePart(appDate);
-		String mandateDate = DateUtil.formatToShortDate(appDate);
 
 		try {
 			jdbcTemplate.query(sql.toString(), paramMap, new RowMapper<Long>() {
@@ -126,7 +128,29 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 						bankCode = rowMap.get("BANK_CODE").toString();
 					}
 
-					rowMap.put("MANDATE_DATE", mandateDate);
+					// Extra columns added below for HDFC
+					{
+						String mandateDate = DateUtil.format(appDate, DateFormat.SHORT_DATE);
+						rowMap.put("MANDATE_DATE", mandateDate);
+
+						Date startDate = (Date) rowMap.get("START_DATE");
+						String fStartDate = DateUtil.format(startDate, DateFormat.SHORT_DATE);
+						rowMap.put("START_DATE", fStartDate);
+						rowMap.put("END_DATE", null);
+
+						String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
+						rowMap.put("IMAGE_NAME", "ACH-" + finReference);
+
+						if (rowMap.get("SECURITYMANDATE") != null) {
+							String secureMandate = rowMap.get("SECURITYMANDATE").toString();
+							if (secureMandate != null && "1".equals(secureMandate.trim())) {
+								rowMap.put("CAT_CODE", "O002");
+							} else {
+								rowMap.put("CAT_CODE", "O001");
+							}
+						}
+					}
+
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("PROCESS_ID", processId);
 					rowMap.put("BANK_SEQ", getSequence(bankCode, bankCodeSeq));
