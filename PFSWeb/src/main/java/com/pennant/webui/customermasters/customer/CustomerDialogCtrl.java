@@ -7183,7 +7183,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()), format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(finEnquiry.getLoanStsDesc());
+				lc = new Listcell(finEnquiry.isFinIsActive() ? "Active" : "In Active");
 				lc.setParent(item);
 				lc = new Listcell(
 						finEnquiry.getCustomerType() == null ? "Main Applicant" : finEnquiry.getCustomerType());

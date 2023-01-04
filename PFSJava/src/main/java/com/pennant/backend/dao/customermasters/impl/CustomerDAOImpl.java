@@ -1505,7 +1505,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public List<FinanceEnquiry> getCustomerFinanceDetailById(long custId) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinReference, fm.FinType, fm.FinStatus, fm.FinStartDate, fm.FinCcy, fm.FinAmount");
-		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue ");
+		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue, fm.finIsActive ");
 		sql.append(", fm.FinRepaymentAmount, fm.NumberOfTerms, ft.FintypeDesc as LovDescFinTypeName");
 		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount");
 		sql.append(" from FinanceMain fm");
@@ -1531,6 +1531,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			fm.setDownPayment(rs.getBigDecimal("DownPayment"));
 			fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
 			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 			fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
 			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
 			fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
