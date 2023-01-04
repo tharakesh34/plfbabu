@@ -24,16 +24,13 @@
  */
 package com.pennant.backend.dao.receipts.impl;
 
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -241,21 +238,4 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		});
 	}
 
-	@Override
-	public BigDecimal getPartPayAmount(long finID, Date fromDate, Date toDate) {
-		StringBuilder sql = new StringBuilder("Select  sum(PaidAmount)");
-		sql.append(" From ReceiptAllocationDetail rad");
-		sql.append(" Inner Join FinreceiptHeader rch on rch.receiptid = rad.receiptid");
-		sql.append(" Where rch.ReceiptPurpose = ? and rad.AllocationType = ?");
-		sql.append(" and rch.FinID = ? and rch.receiptdate >= ? and rch.receiptdate <= ?");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		try {
-			return jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, "EarlyPayment", "PP", finID,
-					fromDate, toDate);
-		} catch (EmptyResultDataAccessException eda) {
-			return BigDecimal.ZERO;
-		}
-	}
 }

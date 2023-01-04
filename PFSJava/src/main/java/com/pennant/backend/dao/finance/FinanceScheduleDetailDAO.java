@@ -138,8 +138,4 @@ public interface FinanceScheduleDetailDAO {
 	void updateDueTaxDetail(long oldInvoiceId);
 
 	List<FinanceScheduleDetail> getFinSchdDetailsBtwDates(String finReference, Date fromdate, Date toDate);
-
-	BigDecimal getPartPayDisAmount(long finID, Date fromDate, Date toDate);
-
-	BigDecimal getClosureBalance(long finID, Date date);
 }

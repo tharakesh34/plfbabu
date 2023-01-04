@@ -34,7 +34,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1306,41 +1305,4 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
-	@Override
-	public BigDecimal getPartPayDisAmount(long finID, Date fromDate, Date toDate) {
-		String sql = "Select sum(DisbAmount) From FinscheduleDetails Where FinID = ? and SchDate >= ? and SchDate <= ? and Specifier = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		try {
-			return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, fromDate, toDate, "R");
-		} catch (EmptyResultDataAccessException eda) {
-			return BigDecimal.ZERO;
-		}
-	}
-
-	@Override
-	public BigDecimal getClosureBalance(long finID, Date date) {
-		String sql = "Select ClosingBalance, SchDate From FinscheduleDetails Where FinID = ? And SchDate < ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		List<FinanceScheduleDetail> list = this.jdbcOperations.query(sql, (rs, rowNum) -> {
-			FinanceScheduleDetail fsd = new FinanceScheduleDetail();
-
-			fsd.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
-			fsd.setSchDate(JdbcUtil.getDate(rs.getDate("SchDate")));
-
-			return fsd;
-		}, finID, date);
-
-		if (CollectionUtils.isEmpty(list)) {
-			return BigDecimal.ZERO;
-		}
-
-		list = list.stream().sorted((l1, l2) -> l2.getSchDate().compareTo(l1.getSchDate()))
-				.collect(Collectors.toList());
-
-		return list.get(0).getClosingBalance();
-	}
 }

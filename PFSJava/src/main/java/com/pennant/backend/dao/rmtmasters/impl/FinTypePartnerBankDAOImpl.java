@@ -218,7 +218,6 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		StringBuilder sql = new StringBuilder("Delete From FinTypePartnerBanks");
 		sql.append(tableType.getSuffix());
 		sql.append(" Where FinType = ?");
-		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

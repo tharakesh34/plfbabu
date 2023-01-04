@@ -2838,6 +2838,18 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			auditHeader.setErrorDetails(errors.get(0));
 		}
 
+		// Max and Min PartPayment Validation & Lock in Period
+		ErrorDetail errorDetail = null;
+		if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
+			errorDetail = this.partPayAndEarlySettleValidator.validatePartPay(repayData);
+		} else if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
+			errorDetail = this.partPayAndEarlySettleValidator.validateEarlyPay(fd.getFinScheduleData());
+		}
+
+		if (errorDetail != null) {
+			auditHeader.setErrorDetails(errorDetail);
+		}
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
@@ -5805,6 +5817,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rd.setFinReference(fsi.getFinReference());
 		rd.setValueDate(fsi.getValueDate());
 		rd.setUserDetails(loggedInUser);
+		rd.setRequestSource(fsi.getRequestSource());
 
 		if (receiptPurpose == ReceiptPurpose.SCHDRPY && fsi.isBckdtdWthOldDues()) {
 			Date derivedDate = getDerivedValueDate(rd, fsi, fm.getAppDate());
@@ -6156,21 +6169,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return fd;
 		}
 
-		// Max and Min PartPayment Validation & Lock in Period
-		int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
-		BigDecimal receiptAmount = PennantApplicationUtil.formateAmount(fsi.getAmount(), ccyFormat);
-
-		ErrorDetail error = null;
-		if (ReceiptPurpose.EARLYRPY == receiptPurpose) {
-			error = partPayAndEarlySettleValidator.validatePartPay(schdData, receiptAmount);
-		} else if (ReceiptPurpose.EARLYSETTLE == receiptPurpose) {
-			error = partPayAndEarlySettleValidator.validateEarlyPay(schdData);
-		}
-
-		if (error != null) {
-			schdData.setErrorDetail(error);
-			return fd;
-		}
 		schdData.setFinServiceInstruction(fsi);
 
 		doBasicValidations(schdData);

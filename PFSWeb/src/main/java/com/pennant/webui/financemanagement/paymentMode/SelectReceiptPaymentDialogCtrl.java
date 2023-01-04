@@ -56,7 +56,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceMainService;
-import com.pennant.backend.service.finance.PartPayAndEarlySettleValidator;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -171,8 +170,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private FinanceType finType;
 	private Label label_ReceiptPayment_ReceiptDate;
 	private Label label_ReceiptPayment_ValueDate;
-
-	private PartPayAndEarlySettleValidator partPayAndEarlySettleValidator;
 
 	/**
 	 * default constructor.<br>
@@ -682,20 +679,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue(), FinServiceEvent.EARLYSETTLE)
 				&& DateUtility.compare(valueDate.getValue(), finMain.getMaturityDate()) > 0) {
 			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RM0001", null)));
-			return;
-		}
-
-		// Validate the Part Payment and Early Settelment validations
-		String purpose = this.receiptPurpose.getSelectedItem().getValue();
-
-		if (FinServiceEvent.EARLYRPY.equals(purpose)) {
-			errorDetail = this.partPayAndEarlySettleValidator.validatePartPay(fsd, this.receiptAmount.getActualValue());
-		} else if (FinServiceEvent.EARLYRPY.equals(purpose)) {
-			errorDetail = this.partPayAndEarlySettleValidator.validateEarlyPay(fsd);
-		}
-
-		if (errorDetail != null) {
-			MessageUtil.showError(errorDetail);
 			return;
 		}
 
@@ -1503,11 +1486,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	@Autowired
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
-	@Autowired
-	public void setPartPayAndEarlySettleValidator(PartPayAndEarlySettleValidator partPayAndEarlySettleValidator) {
-		this.partPayAndEarlySettleValidator = partPayAndEarlySettleValidator;
 	}
 
 }
