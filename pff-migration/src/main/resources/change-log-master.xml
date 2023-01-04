@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-	
-	<!-- <include file="change-logs/change-log-cust_core_banking.xml" / -->
+
+	<include file="change-logs/change-log-cust_core_banking.xml" />
 	<include file="change-logs/change-log-security-seq-reseed_pre.xml" />
 	<include file="change-logs/change-log-menu-rights.xml" />
 	<include file="change-logs/change-log-security-seq-reseed_post.xml" />

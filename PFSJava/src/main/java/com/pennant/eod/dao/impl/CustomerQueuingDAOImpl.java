@@ -42,7 +42,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		String sql = "select count(CustID) from CustomerQueuing where Progress = ?";
 		logger.trace(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, new Object[] { EodConstants.PROGRESS_WAIT }, Long.class);
+		return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
 
 	}
 
@@ -51,8 +51,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		String sql = "select coalesce(Count(CustID), 0) from CustomerQueuing where CustID = ? and Progress = ?";
 		logger.trace(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, new Object[] { custID, EodConstants.PROGRESS_IN_PROCESS },
-				Integer.class);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, custID, EodConstants.PROGRESS_IN_PROCESS);
 	}
 
 	@Override
@@ -400,7 +399,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		String sql = "select coalesce(Count(CustID), 0) from CustomerQueuing where CustID = ?";
 		logger.trace(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, new Object[] { custID }, Integer.class);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, custID);
 
 	}
 
@@ -470,7 +469,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		String sql = "select COALESCE(sum(FinCount),0) from CustomerQueuing where Progress = ?";
 		logger.trace(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, new Object[] { EodConstants.PROGRESS_WAIT }, Long.class);
+		return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
 	}
 
 	@Override
@@ -492,8 +491,8 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("Progress", progressList);
 
-		Integer records = jdbcOperations.queryForObject(sql,
-				new Object[] { EodConstants.PROGRESS_IN_PROCESS, EodConstants.PROGRESS_WAIT }, Integer.class);
+		Integer records = jdbcOperations.queryForObject(sql, Integer.class, EodConstants.PROGRESS_IN_PROCESS,
+				EodConstants.PROGRESS_WAIT);
 
 		return records > 0;
 	}

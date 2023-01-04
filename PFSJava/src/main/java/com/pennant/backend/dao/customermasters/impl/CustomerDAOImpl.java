@@ -458,7 +458,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 
 		if (StringUtils.trimToNull(c.getCustCoreBank()) == null) {
-			c.setCustCoreBank(String.valueOf(-1 * c.getCustID()));
+			c.setCustCoreBank(c.getCustCIF());
 		}
 
 		StringBuilder sql = new StringBuilder("Insert Into Customers");
@@ -923,8 +923,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	@Override
-	public Customer getCustomer(String cif) {
-		String sql = "Select CustID, CustCIF, CustShrtName From Customers Where CustCIF = ?";
+	public Customer getCustomer(String coreBankingID) {
+		String sql = "Select CustID, CustCIF, CustCoreBank, CustShrtName From Customers Where CustCoreBank = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -934,10 +934,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 				c.setCustID(rs.getLong("CustID"));
 				c.setCustCIF(rs.getString("CustCIF"));
+				c.setCustCIF(rs.getString("CustCoreBank"));
 				c.setCustShrtName(rs.getString("CustShrtName"));
 
 				return c;
-			}, cif);
+			}, coreBankingID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

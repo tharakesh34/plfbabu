@@ -69,6 +69,9 @@
 			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
+			<column name="AppDate" type="dateTime">
+				<constraints nullable="false" />
+			</column>
 			<column name="CutsID" type="bigint">
 				<constraints nullable="false" />
 			</column>
@@ -78,9 +81,10 @@
 			<column name="LoanExist" type="boolean">
 				<constraints nullable="false" />
 			</column>
-			<column name="RebuildLimits" type="boolean">
+			<column name="LimitRebuild" type="boolean">
 				<constraints nullable="false" />
 			</column>
+			<column name="WorkerHost" type="varchar(50)" />
 			<column name="ThreadId" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -93,8 +97,76 @@
 			<column name="ResetCounterId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-
+			<column name="PickUpFlag" type="boolean">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 	</changeSet>
+
+	<changeSet id="ST#712_07.1" author="murthy.y">
+		<addPrimaryKey tableName="EOD_CUSTOMER_QUEUE" columnNames="ID" constraintName="pk_eod_customer_queue" />
+	</changeSet>
+
+	<changeSet id="ST#712_07.2" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="LoanExist" tableName="EOD_CUSTOMER_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="LimitRebuild" tableName="EOD_CUSTOMER_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="ThreadId" tableName="EOD_CUSTOMER_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="Progress" tableName="EOD_CUSTOMER_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="ResetCounterId" tableName="EOD_CUSTOMER_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="PickUpFlag" tableName="EOD_CUSTOMER_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#712_07.2" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_LOANEXIST DEFAULT 0 FOR LOANEXIST;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_LIMITREBUILD DEFAULT 0 FOR LIMITREBUILD;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_THREADID DEFAULT 0 FOR THREADID;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_PROGRESS DEFAULT 0 FOR PROGRESS;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_RESETCOUNTERID DEFAULT 0 FOR RESETCOUNTERID;
+				ALTER TABLE EOD_CUSTOMER_QUEUE_LOG ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_PICKUPFLAG DEFAULT 0 FOR PICKUPFLAG;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#712_08" author="murthy.y">
+		<createTable tableName="EOD_CUSTOMER_QUEUE_LOG">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AppDate" type="dateTime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CoreBankID" type="varchar(50)" />
+			<column name="LoanExist" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="LimitRebuild" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="WorkerHost" type="varchar(50)" />
+			<column name="ThreadId" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ErrorLog" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#712_08.1" author="murthy.y">
+		<addPrimaryKey tableName="EOD_CUSTOMER_QUEUE_LOG" columnNames="ID"
+			constraintName="pk_eod_customer_queue_log" />
+	</changeSet>
+
 
 </databaseChangeLog>

@@ -722,8 +722,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
-	public Customer getCustomer(String cif) {
-		return customerDAO.getCustomer(cif);
+	public Customer getCustomer(String coreBankingID) {
+		return customerDAO.getCustomer(coreBankingID);
 	}
 
 	/**

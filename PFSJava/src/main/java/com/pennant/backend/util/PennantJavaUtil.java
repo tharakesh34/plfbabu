@@ -1171,28 +1171,15 @@ public class PennantJavaUtil {
 
 		/************* Customer Masters *************/
 
-		ModuleUtil.register("Customer",
-				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AView" },
-						customerWF, new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" },
-						null, 700));
+		ModuleUtil.register("Customer", customerModuleMapping(customerWF));
 
-		ModuleUtil.register("CustomerData",
-				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AEView" }, null,
-						new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" }, null,
-						700));
+		ModuleUtil.register("CustomerData", customerModuleMapping(null));
 
-		ModuleUtil.register("CustomerQDE",
-				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AView" }, null,
-						new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" }, null,
-						700));
+		ModuleUtil.register("CustomerQDE", customerModuleMapping(null));
 
-		ModuleUtil.register("CustomerDetails",
-				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AView" },
-						custDetailWF, new String[] { "CustID", "CustCIF" }, null, 300));
+		ModuleUtil.register("CustomerDetails", customerModuleMapping(custDetailWF));
 
-		ModuleUtil.register("CustomerMaintence",
-				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AView" }, masterWF,
-						new String[] { "CustID", "CustCIF", "CustShrtName" }, null, 300));
+		ModuleUtil.register("CustomerMaintence", customerModuleMapping(masterWF));
 
 		ModuleUtil
 				.register("CustomerAddres",
@@ -3852,6 +3839,12 @@ public class PennantJavaUtil {
 						new String[] { "BranchCode", "BranchDesc" }, null, 300));
 
 		registerCustomModules();
+	}
+
+	private ModuleMapping customerModuleMapping(String workflow) {
+		return new ModuleMapping("Customer", Customer.class, new String[] { "Customers" }, workflow,
+				new String[] { "CustCoreBank", "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" },
+				null, 900);
 	}
 
 	protected void registerCustomModules() {
