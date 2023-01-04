@@ -398,13 +398,17 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		for (ExtendedFieldRender fieldRender : collateralSetup.getExtendedFieldRenderList()) {
 			Map<String, Object> mapValues = fieldRender.getMapValues();
 			if (mapValues != null && mapValues.containsKey(collateralAddrCol)) {
-				collateralCities.add((String) mapValues.get(collateralAddrCol));
+				if (!StringUtils.isEmpty((String) mapValues.get(collateralAddrCol))) {
+					collateralCities.add((String) mapValues.get(collateralAddrCol));
+				}
 			}
 		}
 
 		Filter[] filter = new Filter[2];
 		filter[0] = new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL);
-		filter[1] = new Filter("DealerCity", collateralCities, Filter.OP_IN);
+		if (CollectionUtils.isNotEmpty(collateralCities)) {
+			filter[1] = new Filter("DealerCity", collateralCities, Filter.OP_IN);
+		}
 
 		agency.setFilters(filter);
 	}
