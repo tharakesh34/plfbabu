@@ -50,4 +50,6 @@ public interface LovFieldDetailDAO extends BasicCrudDao<LovFieldDetail> {
 	boolean isDuplicateKey(String fieldCode, String fieldDetail, TableType tableType);
 
 	int getApprovedLovFieldDetailCountById(long fieldCodeId, String fieldCode, String type);
+
+	boolean isfieldCodeValueExists(String fieldCodeValue, boolean isActive);
 }

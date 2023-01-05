@@ -73,6 +73,10 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private String approvalStatus;
+	private BigDecimal odAgainstCustomer = BigDecimal.ZERO;
+	private BigDecimal odAgainstLoan = BigDecimal.ZERO;
+	private long custId = Long.MIN_VALUE;
+	private String custCoreBank;
 
 	private List<FeeRefundDetail> feeRefundDetailList;
 	private FeeRefundInstruction feeRefundInstruction;
@@ -95,6 +99,10 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		excludeFields.add("finReference");
 		excludeFields.add("linkedTranId");
 		excludeFields.add("feeRefundInstruction");
+		excludeFields.add("odAgainstCustomer");
+		excludeFields.add("odAgainstLoan");
+		excludeFields.add("custId");
+		excludeFields.add("custCoreBank");
 		return excludeFields;
 	}
 
@@ -297,6 +305,38 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 
 	public void setApprovalStatus(String approvalStatus) {
 		this.approvalStatus = approvalStatus;
+	}
+
+	public BigDecimal getOdAgainstCustomer() {
+		return odAgainstCustomer;
+	}
+
+	public void setOdAgainstCustomer(BigDecimal odAgainstCustomer) {
+		this.odAgainstCustomer = odAgainstCustomer;
+	}
+
+	public BigDecimal getOdAgainstLoan() {
+		return odAgainstLoan;
+	}
+
+	public void setOdAgainstLoan(BigDecimal odAgainstLoan) {
+		this.odAgainstLoan = odAgainstLoan;
+	}
+
+	public long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(long custId) {
+		this.custId = custId;
+	}
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
 	}
 
 }

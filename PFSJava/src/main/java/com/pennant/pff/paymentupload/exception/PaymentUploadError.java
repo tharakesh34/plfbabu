@@ -18,7 +18,28 @@ public enum PaymentUploadError {
 
 	REFUP007("Payable Advises are not found for the Loan Reference"),
 
-	REFUP008("Receipt Amount Should not be greater than Excess Available Amount");
+	REFUP008("Receipt Amount Should not be greater than Excess Available Amount"),
+
+	// Hold Refund Errors
+	HOLDUP001("Fin Reference is Mandatory"),
+
+	HOLDUP002("Hold Status is Mandatory"),
+
+	HOLDUP003("When Hold Flag is true, Reason is Mandatory"),
+
+	HOLDUP004("Flag already exists against the Loan"),
+
+	HOLDUP005("Hold Flag is not available against the loan"),
+
+	HOLDUP006("Records already exists in the Upload Queue"),
+
+	HOLDUP007("Reason Code is not valid"),
+
+	HOLDUP008("Reason Code not applicable while removing Hold flag"),
+
+	HOLDUP009("FinReference is not valid"),
+
+	HOLDUP0010("HoldStatus is not valid");
 
 	private String description;
 

@@ -47,6 +47,8 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
+import com.pennant.backend.util.UploadConstants;
+import com.pennant.pff.holdrefund.dao.HoldRefundUploadDAO;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -65,6 +67,7 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 	private FeeRefundHeaderService feeRefundHeaderService;
 	private FinanceDetailService financeDetailService;
 	private PaymentHeaderService paymentHeaderService;
+	private HoldRefundUploadDAO holdRefundUploadDAO;
 
 	public SelectFeeRefundHeaderDialogCtrl() {
 		super();
@@ -142,9 +145,15 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 		boolean payInstInProgess = this.feeRefundHeaderService.isInstructionInProgress(finID);
 		payInstInProgess = this.paymentHeaderService.isInstructionInProgress(this.finReference.getValue());
 		FinanceMain financeMain = feeRefundHeaderService.getFinanceDetails(finID);
+		String holdStatus = holdRefundUploadDAO.getHoldRefundStatus(finID);
 
 		if (payInstInProgess) {
 			MessageUtil.showMessage("Not allowed to initiate for the LAN as it is already initiated for Refund");
+			return;
+		}
+
+		if (StringUtils.equals(UploadConstants.HOLD_REFUND_FLAG, holdStatus)) {
+			MessageUtil.showMessage("Cannot approve – Hold flagged for Refund against Loan");
 			return;
 		}
 
@@ -160,9 +169,13 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 		}
 
 		if (payInstInProgess) {
-			MessageUtil.showMessage("Payment instruction already in progress for - " + this.finReference.getValue());
+			MessageUtil.showMessage("Fee Refund already in progress for - " + this.finReference.getValue());
 			return;
 		}
+
+		feeRefundHeader.setOdAgainstLoan(paymentHeaderService.getDueAgainstLoan(finID));
+		feeRefundHeader.setOdAgainstCustomer(
+				paymentHeaderService.getDueAgainstCustomer(financeMain.getCustID(), feeRefundHeader.getCustCoreBank()));
 
 		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("feeRefundHeader", feeRefundHeader);
@@ -246,6 +259,10 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
 		this.paymentHeaderService = paymentHeaderService;
+	}
+
+	public void setHoldRefundUploadDAO(HoldRefundUploadDAO holdRefundUploadDAO) {
+		this.holdRefundUploadDAO = holdRefundUploadDAO;
 	}
 
 }
