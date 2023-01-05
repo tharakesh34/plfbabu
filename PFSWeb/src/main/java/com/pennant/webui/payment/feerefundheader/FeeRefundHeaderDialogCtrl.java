@@ -108,7 +108,6 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -122,6 +121,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.autorefund.RefundBeneficiary;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
 
@@ -196,7 +196,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	private FeeTypeService feeTypeService;
 	private ReceiptService receiptService;
 	private ManualAdviseService manualAdviseService;
-	private AutoRefundService autoRefundService;
+	private RefundBeneficiary refundBeneficiary;
 
 	/**
 	 * default constructor.<br>
@@ -477,8 +477,10 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			Date appDate = SysParamUtil.getAppDate();
 			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
 			if (fri == null) {
-				PaymentInstruction payIns = new PaymentInstruction();
+				PaymentInstruction payIns = null;
 				fri = new FeeRefundInstruction();
+				payIns = refundBeneficiary.fetchBeneficiaryForRefund(this.financeMain.getFinID(), appDate,
+						alwRefundByCheque);
 				if (payIns != null) {
 					fri.setBankBranchId(payIns.getBankBranchId());
 					fri.setBankBranchCode(payIns.getBankBranchCode());
@@ -2408,8 +2410,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		this.manualAdviseService = manualAdviseService;
 	}
 
-	public void setAutoRefundService(AutoRefundService autoRefundService) {
-		this.autoRefundService = autoRefundService;
+	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
+		this.refundBeneficiary = refundBeneficiary;
 	}
 
 }
