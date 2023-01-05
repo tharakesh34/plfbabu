@@ -169,7 +169,6 @@ import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceExposure;
-import com.pennant.backend.model.finance.FinanceHoldDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -275,6 +274,8 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.FeeExtension;
+import com.pennant.pff.holdrefund.dao.HoldRefundUploadDAO;
+import com.pennant.pff.holdrefund.model.FinanceHoldDetail;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -383,6 +384,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private HoldDisbursementDAO holdDisbursementDAO;
 	private PaymentsProcessService paymentsProcessService;
 	private ProvisionDAO provisionDAO;
+	private HoldRefundUploadDAO holdRefundUploadDAO;
 
 	@Autowired(required = false)
 	private Crm crm;
@@ -8318,7 +8320,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinScheduleData schdData = new FinScheduleData();
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
 
-		FinanceHoldDetail financeHoldDetails = financeMainDAO.getFinanceHoldDetails(finID, type, false);
+		FinanceHoldDetail financeHoldDetails = holdRefundUploadDAO.getFinanceHoldDetails(finID, type, false);
 		if (financeHoldDetails != null) {
 			fm.setHoldStatus(financeHoldDetails.getHoldStatus());
 			fm.setReason(financeHoldDetails.getReason());

@@ -68,7 +68,6 @@ import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
-import com.pennant.backend.model.finance.FinanceHoldDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceStatusEnquiry;
@@ -6651,29 +6650,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.LEAVING);
 		return autoRefundList;
-	}
-
-	@Override
-	public FinanceHoldDetail getFinanceHoldDetails(long finID, String type, boolean isWIF) {
-		logger.debug(Literal.ENTERING);
-
-		FinanceHoldDetail financeHoldDetail = new FinanceHoldDetail();
-		financeHoldDetail.setFinID(finID);
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select FinID, HoldStatus, Reason From FinanceHoldDetail ");
-		sql.append(" Where FinID =:FinID");
-
-		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeHoldDetail);
-		RowMapper<FinanceHoldDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceHoldDetail.class);
-
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
-
 	}
 
 }

@@ -3511,6 +3511,7 @@
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="taxHeaderDetailsService" ref="taxHeaderDetailsService" />
+		<property name="holdRefundUploadDAO" ref="holdRefundUploadDAO"/>
 	</bean>
 
 	<!-- Finance Data Validation Service -->

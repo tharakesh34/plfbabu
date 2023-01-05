@@ -3,6 +3,7 @@ package com.pennant.pff.holdrefund.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.pff.holdrefund.model.FinanceHoldDetail;
 import com.pennant.pff.holdrefund.model.HoldRefundUploadDetail;
 import com.pennant.pff.upload.model.FileUploadHeader;
 
@@ -28,5 +29,7 @@ public interface HoldRefundUploadDAO {
 	int updateFinHoldDetail(HoldRefundUploadDetail detail);
 
 	boolean isFinIDExists(long finId);
+
+	FinanceHoldDetail getFinanceHoldDetails(long finID, String type, boolean isWIF);
 
 }

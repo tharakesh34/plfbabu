@@ -33,7 +33,6 @@ import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
-import com.pennant.backend.model.finance.FinanceHoldDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceStatusEnquiry;
@@ -419,5 +418,4 @@ public interface FinanceMainDAO {
 
 	List<AutoRefundLoan> getAutoRefundsLoanList();
 
-	FinanceHoldDetail getFinanceHoldDetails(long finID, String type, boolean isWIF);
 }

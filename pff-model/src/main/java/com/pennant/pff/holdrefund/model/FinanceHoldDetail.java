@@ -3,7 +3,7 @@ package com.pennant.pff.holdrefund.model;
 public class FinanceHoldDetail {
 	private static final long serialVersionUID = 1L;
 
-	private String finReference;
+	private long finID;
 	private String holdStatus;
 	private String reason;
 	private String remarks;
@@ -12,12 +12,12 @@ public class FinanceHoldDetail {
 		super();
 	}
 
-	public String getFinReference() {
-		return finReference;
+	public long getFinID() {
+		return finID;
 	}
 
-	public void setFinReference(String finReference) {
-		this.finReference = finReference;
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getHoldStatus() {

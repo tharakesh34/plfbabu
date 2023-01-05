@@ -8,13 +8,18 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.holdrefund.dao.HoldRefundUploadDAO;
+import com.pennant.pff.holdrefund.model.FinanceHoldDetail;
 import com.pennant.pff.holdrefund.model.HoldRefundUploadDetail;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -282,5 +287,28 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finId) > 0;
+	}
+
+	@Override
+	public FinanceHoldDetail getFinanceHoldDetails(long finID, String type, boolean isWIF) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceHoldDetail financeHoldDetail = new FinanceHoldDetail();
+		financeHoldDetail.setFinID(finID);
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select FinID, HoldStatus, Reason From FinanceHoldDetail ");
+		sql.append(" Where FinID =:FinID");
+
+		logger.debug("selectSql: " + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeHoldDetail);
+		RowMapper<FinanceHoldDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceHoldDetail.class);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+
 	}
 }
