@@ -13157,6 +13157,13 @@
 	
 	<bean id="autoRefundProcess" class="com.pennanttech.pff.autorefund.AutoRefundProcess">
 		<property name="autoRefundService" ref="autoRefundService" />
+	<property name="refundBeneficiary" ref="refundBeneficiary" />
+	</bean>
+	
+	<!--Refund beneficiary  -->
+	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary">
+		<property name="mandateDAO" ref="mandateDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 	</bean>
 	
 	<bean id="autoRefundDAO" class="com.pennant.backend.dao.finance.impl.AutoRefundDAOImpl"  parent="basicDao" />
