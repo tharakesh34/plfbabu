@@ -7071,4 +7071,22 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="ST#822.8" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="SECURITYMANDATE" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.8.1" author="goutham.ch" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE MANDATE_REQUESTS ADD CONSTRAINT DF_M_R_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#822.8.2" author="goutham.ch" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SECURITYMANDATE" tableName="MANDATE_REQUESTS" defaultValue="0" />
+	</changeSet>
+	
 </databaseChangeLog>
