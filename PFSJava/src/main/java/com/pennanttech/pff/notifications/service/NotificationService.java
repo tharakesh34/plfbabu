@@ -1371,7 +1371,7 @@ public class NotificationService extends GenericService<Notification> {
 
 	private void setAttachements(MailTemplate template, String attachmentRule, Map<String, Object> fieldsAndValues,
 			List<DocumentDetails> documents) {
-		if (template.isEmailTemplate()) {
+		if (template.isEmailTemplate() && !StringUtils.isEmpty(attachmentRule)) {
 			String[] documentCodes = getAttachmentCode(attachmentRule, fieldsAndValues);
 
 			for (String documnetCode : documentCodes) {
