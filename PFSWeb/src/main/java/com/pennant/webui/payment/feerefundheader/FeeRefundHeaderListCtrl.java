@@ -192,6 +192,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 
 		if (StringUtils.equals(getArgument("approval"), "Y")) {
 			this.isApprovalMenu = true;
+			this.enqiryModule = true;
 		} else {
 			this.isApprovalMenu = false;
 		}

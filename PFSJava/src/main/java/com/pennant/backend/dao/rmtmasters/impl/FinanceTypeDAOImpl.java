@@ -421,10 +421,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed");
 		sql.append(", ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType");
 		sql.append(", InstBasedSchd, TdsType, SubventionReq, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType");
-		sql.append(", ClosureThresholdLimit");
-		sql.append(", MaxFPPCalType, MaxFPPAmount, MaxFPPPer, MaxFPPCalOn");
-		sql.append(", PpLockInPeriod, EsLockInPeriod, MinPPCalType, MinPPCalOn");
-		sql.append(", MinPPAmount, MinPPPercentage, MaxPPCalType, MaxPPAmount, MaxPPPercentage, MaxPPCalOn");
 		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund");
 
 		if (StringUtils.trimToEmpty(type).contains("ORGView")) {
@@ -622,21 +618,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 					ft.setSubventionReq(rs.getBoolean("SubventionReq"));
 					ft.setOverdraftTxnChrgReq(rs.getBoolean("OverdraftTxnChrgReq"));
 					ft.setOverdraftTxnChrgFeeType(rs.getLong("OverdraftTxnChrgFeeType"));
-					ft.setClosureThresholdLimit(rs.getBigDecimal("ClosureThresholdLimit"));
-					ft.setMaxFPPCalType(rs.getString("MaxFPPCalType"));
-					ft.setMaxFPPAmount(rs.getBigDecimal("MaxFPPAmount"));
-					ft.setMaxFPPPer(rs.getBigDecimal("MaxFPPPer"));
-					ft.setMaxFPPCalOn(rs.getString("MaxFPPCalOn"));
-					ft.setPpLockInPeriod(rs.getInt("PpLockInPeriod"));
-					ft.setEsLockInPeriod(rs.getInt("EsLockInPeriod"));
-					ft.setMinPPCalType(rs.getString("MinPPCalType"));
-					ft.setMinPPCalOn(rs.getString("MinPPCalOn"));
-					ft.setMinPPAmount(rs.getBigDecimal("MinPPAmount"));
-					ft.setMinPPPercentage(rs.getBigDecimal("MinPPPercentage"));
-					ft.setMaxPPCalType(rs.getString("MaxPPCalType"));
-					ft.setMaxPPAmount(rs.getBigDecimal("MaxPPAmount"));
-					ft.setMaxPPPercentage(rs.getBigDecimal("MaxPPPercentage"));
-					ft.setMaxPPCalOn(rs.getString("MaxPPCalOn"));
 					ft.setAllowAutoRefund(rs.getBoolean("AllowAutoRefund"));
 					ft.setMaxAutoRefund(rs.getBigDecimal("MaxAutoRefund"));
 					ft.setMinAutoRefund(rs.getBigDecimal("MinAutoRefund"));

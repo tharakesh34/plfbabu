@@ -148,6 +148,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			ps.setBoolean(index++, ft.isTdsReq());
 			ps.setString(index++, ft.getPayableLinkTo());
 			ps.setObject(index++, ft.getRecvFeeTypeId());
+			ps.setBoolean(index++, ft.isAllowAutoRefund());
 			ps.setInt(index++, ft.getVersion());
 			ps.setLong(index++, ft.getLastMntBy());
 			ps.setTimestamp(index++, ft.getLastMntOn());
@@ -158,7 +159,6 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			ps.setString(index++, ft.getNextTaskId());
 			ps.setString(index++, ft.getRecordType());
 			ps.setLong(index++, ft.getWorkflowId());
-			ps.setBoolean(index++, ft.isAllowAutoRefund());
 
 			ps.setLong(index++, ft.getFeeTypeID());
 			if (tableType == TableType.TEMP_TAB) {

@@ -27,6 +27,7 @@ package com.pennant.webui.payment.feerefundheader;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,15 +87,16 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.service.feerefund.FeeRefundDetailService;
 import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -106,6 +108,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -152,6 +155,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	protected Label lbl_Currency;
 	protected Label lbl_startDate;
 	protected Label lbl_MaturityDate;
+	protected Label lbl_ODAgainstLoan;
+	protected Label lbl_ODAgainstCustomer;
 
 	protected Textbox tranModule;
 	protected Textbox tranReference;
@@ -189,8 +194,9 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	private Grid grid_basicDetails;
 	private Map<String, BigDecimal> taxPercMap = null;
 	private FeeTypeService feeTypeService;
-	private FeeRefundDetailService feeRefundDetailService;
 	private ReceiptService receiptService;
+	private ManualAdviseService manualAdviseService;
+	private AutoRefundService autoRefundService;
 
 	/**
 	 * default constructor.<br>
@@ -421,6 +427,9 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				.setValue(DateUtility.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate
 				.setValue(DateUtility.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_ODAgainstLoan.setValue(PennantApplicationUtil.amountFormate(frh.getOdAgainstLoan(), ccyFormatter));
+		this.lbl_ODAgainstCustomer
+				.setValue(PennantApplicationUtil.amountFormate(frh.getOdAgainstCustomer(), ccyFormatter));
 
 		// Disbursement Instructions tab.
 		appendDisbursementInstructionTab(frh);
@@ -465,8 +474,29 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	private void appendDisbursementInstructionTab(FeeRefundHeader frh) {
 		try {
 			FeeRefundInstruction fri = frh.getFeeRefundInstruction();
+			Date appDate = SysParamUtil.getAppDate();
+			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
 			if (fri == null) {
+				PaymentInstruction payIns = new PaymentInstruction();
 				fri = new FeeRefundInstruction();
+				if (payIns != null) {
+					fri.setBankBranchId(payIns.getBankBranchId());
+					fri.setBankBranchCode(payIns.getBankBranchCode());
+					fri.setBranchDesc(payIns.getBranchDesc());
+					fri.setBankName(payIns.getBankName());
+					fri.setBankBranchIFSC(payIns.getBankBranchIFSC());
+					fri.setpCCityName(payIns.getpCCityName());
+					fri.setAccountNo(payIns.getAccountNo());
+					fri.setAcctHolderName(payIns.getAcctHolderName());
+					fri.setPartnerBankId(payIns.getPartnerBankId());
+					fri.setPartnerBankCode(payIns.getPartnerBankCode());
+					fri.setPartnerBankName(payIns.getPartnerBankName());
+					fri.setPhoneNumber(payIns.getPhoneNumber());
+					fri.setIssuingBank(payIns.getIssuingBank());
+					fri.setIssuingBankName(payIns.getIssuingBankName());
+					fri.setPartnerBankAcType(payIns.getPartnerBankAc());
+					fri.setPartnerBankAc(payIns.getPartnerBankAc());
+				}
 			}
 			Map<String, Object> map = new HashMap<>();
 			map.put("feeRefundInstruction", fri);
@@ -1159,9 +1189,13 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				frd.setFeeTypeCode(ma.getFeeTypeCode());
 				frd.setFeeTypeDesc(ma.getFeeTypeDesc());
 				frd.setAdviseAmount(ma.getAdviseAmount());
-				frd.setPaidAmount(ma.getPaidAmount().subtract(receiptPaidAmt));
+				BigDecimal paidAmount = ma.getPaidAmount().subtract(receiptPaidAmt);
+				BigDecimal paidTGST = ma.getPaidCGST().add(ma.getPaidSGST()).add(ma.getPaidIGST()).add(ma.getPaidUGST())
+						.add(ma.getPaidCESS());
+				frd.setPaidAmount(paidAmount.add(paidTGST));
 
-				BigDecimal prvRefundAmt = feeRefundDetailService.getPrvRefundAmt(ma.getAdviseID(), finID);
+				BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
+
 				frd.setPrevRefundAmount(prvRefundAmt);
 
 				if (feeType != null) {
@@ -1169,8 +1203,6 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 					frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
 				}
 
-				BigDecimal paidTGST = ma.getPaidCGST().add(ma.getPaidSGST()).add(ma.getPaidIGST()).add(ma.getPaidUGST())
-						.add(ma.getPaidCESS());
 				BigDecimal waivedTGST = ma.getWaivedCGST().add(ma.getWaivedSGST()).add(ma.getWaivedIGST())
 						.add(ma.getWaivedUGST()).add(ma.getWaivedCESS());
 
@@ -1218,7 +1250,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				frd.setAdviseAmount(ffd.getActualAmount());
 				frd.setPaidAmount(ffd.getPaidAmount().subtract(receiptPaidAmt));
 
-				BigDecimal prvRefundAmt = feeRefundDetailService.getPrvRefundAmt(ffd.getFeeID(), finID);
+				BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
 				frd.setPrevRefundAmount(prvRefundAmt);
 				frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
 				frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
@@ -1258,7 +1290,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				frd.setFeeTypeDesc(ft.getFeeTypeDesc());
 				frd.setAdviseAmount(fod.getTotPenaltyAmt());
 
-				BigDecimal prvRefundAmt = feeRefundDetailService.getPrvRefundAmt(ft.getFeeTypeID(), finID);
+				BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
 				frd.setPrevRefundAmount(prvRefundAmt);
 				frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
 				frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
@@ -1296,7 +1328,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				frd.setFeeTypeDesc(ft.getFeeTypeDesc());
 				frd.setAdviseAmount(fod.getLPIAmt());
 
-				BigDecimal prvRefundAmt = feeRefundDetailService.getPrvRefundAmt(ft.getFeeTypeID(), finID);
+				BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
 				frd.setPrevRefundAmount(prvRefundAmt);
 				frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
 				frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
@@ -1449,6 +1481,41 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		doFillHeaderList(feeRefundDetailList, null, false);
 		logger.debug(Literal.LEAVING);
+	}
+
+	private BigDecimal setEligibleAmount(FeeType ft) {
+		String linkTo = ft.getPayableLinkTo();
+
+		BigDecimal amount = BigDecimal.ZERO;
+		if (Allocation.ADHOC.equals(linkTo)) {
+			amount = BigDecimal.ZERO;
+		} else if (isValidPayableLink(linkTo, ft.getAdviseType())) {
+			ManualAdvise ma = new ManualAdvise();
+
+			ma.setFinReference(this.financeMain.getFinReference());
+			ma.setValueDate(SysParamUtil.getAppDate());
+
+			amount = manualAdviseService.getEligibleAmount(ma, ft);
+		}
+		return amount;
+	}
+
+	private boolean isValidPayableLink(String linkTo, int adviseType) {
+		if (AdviseType.isReceivable(adviseType) || linkTo == null) {
+			return false;
+		}
+
+		switch (linkTo) {
+		case Allocation.PFT:
+		case Allocation.PRI:
+		case Allocation.MANADV:
+		case Allocation.BOUNCE:
+		case Allocation.ODC:
+		case Allocation.LPFT:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	private void getActualGST(FeeRefundDetail frd, TaxAmountSplit taxSplit) {
@@ -2333,12 +2400,16 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
-	public void setFeeRefundDetailService(FeeRefundDetailService feeRefundDetailService) {
-		this.feeRefundDetailService = feeRefundDetailService;
-	}
-
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
+	}
+
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
+	}
+
+	public void setAutoRefundService(AutoRefundService autoRefundService) {
+		this.autoRefundService = autoRefundService;
 	}
 
 }

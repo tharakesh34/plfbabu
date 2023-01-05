@@ -89,4 +89,8 @@ public class UploadConstants {
 	// Waiver Stages
 	public static final String FEE_WAIVER_MAKER = "FeeWaiverMaker";
 	public static final String FEE_WAIVER_APPROVER = "FeeWaiverApprover";
+
+	// Hold Refund
+	public static final String HOLD_REFUND_FLAG = "H";
+	public static final String HOLD_REFUND_REMOVAL_FLAG = "R";
 }

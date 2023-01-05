@@ -24,6 +24,7 @@
  */
 package com.pennant.backend.service.feerefund.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.feerefund.FeeRefundHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -166,6 +168,8 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	public FeeRefundHeader getFeeRefundHeader(long feeRefundId) {
 		FeeRefundHeader frh = feeRefundHeaderDAO.getFeeRefundHeader(feeRefundId, "_View");
 		List<FeeRefundDetail> list = this.feeRefundDetailService.getFeeRefundDetailList(frh.getFeeRefundId(), "_View");
+		frh.setOdAgainstLoan(getDueAgainstLoan(frh.getFinID()));
+		frh.setOdAgainstCustomer(getDueAgainstCustomer(frh.getCustId(), frh.getCustCoreBank()));
 
 		if (list != null) {
 			frh.setFeeRefundDetailList(list);
@@ -236,6 +240,13 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 		logger.debug(Literal.ENTERING);
 
 		// Write the required validation over hear.
+		FeeRefundHeader frh = (FeeRefundHeader) auditDetail.getModelData();
+
+		if (frh.getOdAgainstCustomer().compareTo(BigDecimal.ZERO) > 0
+				|| frh.getOdAgainstLoan().compareTo(BigDecimal.ZERO) > 0) {
+			auditDetail.setErrorDetail(ErrorUtil
+					.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND014", null, null), usrLanguage));
+		}
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
@@ -515,6 +526,16 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	@Override
 	public boolean isInstructionInProgress(long finID) {
 		return feeRefundInstructionService.isInstructionInProgress(finID);
+	}
+
+	@Override
+	public BigDecimal getDueAgainstLoan(long finId) {
+		return feeRefundHeaderDAO.getDueAgainstLoan(finId);
+	}
+
+	@Override
+	public BigDecimal getDueAgainstCustomer(long custId, String custCoreBank) {
+		return feeRefundHeaderDAO.getDueAgainstCustomer(custId, custCoreBank);
 	}
 
 }
