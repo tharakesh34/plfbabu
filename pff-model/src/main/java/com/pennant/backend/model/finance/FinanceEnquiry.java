@@ -91,6 +91,7 @@ public class FinanceEnquiry implements Serializable {
 	private String repayFrq;
 	private String ownership;
 	private int NOInst = 0;
+	private int NOPaidinst = 0;
 	private BigDecimal maxInstAmount = BigDecimal.ZERO;
 	private Date finApprovedDate;
 	private BigDecimal futureSchedulePrin;
@@ -154,6 +155,7 @@ public class FinanceEnquiry implements Serializable {
 		excludeFields.add("repayFrq");
 		excludeFields.add("ownership");
 		excludeFields.add("NOInst");
+		excludeFields.add("NOPaidinst");
 		excludeFields.add("MaxInstAmount");
 		excludeFields.add("finApprovedDate");
 		excludeFields.add("futureSchedulePrin");
@@ -872,5 +874,13 @@ public class FinanceEnquiry implements Serializable {
 
 	public void setCustomerType(String customerType) {
 		this.customerType = customerType;
+	}
+
+	public int getNOPaidinst() {
+		return NOPaidinst;
+	}
+
+	public void setNOPaidinst(int nOPaidinst) {
+		NOPaidinst = nOPaidinst;
 	}
 }

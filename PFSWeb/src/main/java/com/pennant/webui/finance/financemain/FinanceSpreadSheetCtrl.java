@@ -1014,8 +1014,11 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				greaterThan2years = greaterThan2years.add(financeEnquiry.getMaxInstAmount());
 			}
 
+			if ((financeEnquiry.getNOInst() - financeEnquiry.getNOPaidinst()) > 12) {
+				greaterThan12months = greaterThan12months.add(financeEnquiry.getMaxInstAmount());
+			}
+
 		}
-		greaterThan12months = greaterThan12months.add(lessThan2years).add(greaterThan2years);
 
 		List<CustomerExtLiability> list2 = cd.getCustomerExtLiabilityList();
 		if (list2 != null) {
@@ -1031,7 +1034,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		}
 		dataMap.put("CUST_EXPOS_LESS2", PennantApplicationUtil.formateAmount(lessThan2years, format));
 		dataMap.put("CUST_EXPOS_GREATER2", PennantApplicationUtil.formateAmount(greaterThan2years, format));
-		dataMap.put("CUST_OBLIGATION", PennantApplicationUtil.formateAmount(greaterThan12months, format));
+		dataMap.put("CUST_OBLIGATION",
+				PennantApplicationUtil.formateAmount(lessThan2years.add(greaterThan2years), format));
+
+		dataMap.put("CUST_OBLIGATION_GREATER12", PennantApplicationUtil.formateAmount(greaterThan12months, format));
 
 	}
 

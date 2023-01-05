@@ -1507,10 +1507,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" fm.FinReference, fm.FinType, fm.FinStatus, fm.FinStartDate, fm.FinCcy, fm.FinAmount");
 		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue, fm.finIsActive ");
 		sql.append(", fm.FinRepaymentAmount, fm.NumberOfTerms, ft.FintypeDesc as LovDescFinTypeName");
-		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount");
+		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount, coalesce(t6.NOinst, 0) NOinst");
+		sql.append(", coalesce(t6.NOPaidinst, 0) NOPaidinst");
 		sql.append(" from FinanceMain fm");
 		sql.append(" inner join RMTfinanceTypes ft on ft.Fintype = fm.FinType");
-		sql.append(" left join (select FinReference, (NSchdPri+NSchdPft) MaxInstAmount");
+		sql.append(" left join (select FinReference, (NSchdPri+NSchdPft) MaxInstAmount, NOinst, NOPaidinst");
 		sql.append(" from FinPftdetails) t6 on t6.FinReference = fm.Finreference");
 		sql.append(" where CustID = ?");
 
@@ -1536,7 +1537,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
 			fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
 			fm.setMaxInstAmount(rs.getBigDecimal("MaxInstAmount"));
-
+			fm.setNOInst(rs.getInt("NOinst"));
+			fm.setNOPaidinst(rs.getInt("NOPaidinst"));
 			return fm;
 		});
 	}
