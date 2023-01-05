@@ -477,10 +477,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			Date appDate = SysParamUtil.getAppDate();
 			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
 			if (fri == null) {
-				PaymentInstruction payIns = null;
+				PaymentInstruction payIns = new PaymentInstruction();
 				fri = new FeeRefundInstruction();
-				payIns = autoRefundService.fetchBeneficiaryForRefund(financeMain.getFinID(), appDate,
-						alwRefundByCheque);
 				if (payIns != null) {
 					fri.setBankBranchId(payIns.getBankBranchId());
 					fri.setBankBranchCode(payIns.getBankBranchCode());
