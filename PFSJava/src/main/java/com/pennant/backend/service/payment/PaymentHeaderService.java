@@ -38,6 +38,7 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface PaymentHeaderService {
 
@@ -77,8 +78,11 @@ public interface PaymentHeaderService {
 
 	Long getPaymentIdByFinId(long finID, long receiptId, String type);
 
-	BigDecimal getInProgressExcessAmt(long finId, long excessId);
-
 	PaymentHeader prepareRefund(AutoRefundLoan refundLoan, List<PaymentDetail> payDtlList,
 			PaymentInstruction paymentInst, Date appDate);
+
+	List<ErrorDetail> verifyRefundInitiation(long finId, String closingStatus, int dpdDays, String holdStatus,
+			int autoRefCheckDPD, boolean isEOD);
+
+	BigDecimal getInProgressExcessAmt(long finId, Long receiptId);
 }

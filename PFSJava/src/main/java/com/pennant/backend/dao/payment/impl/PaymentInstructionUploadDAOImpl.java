@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import com.pennant.backend.dao.payment.PaymentInstructionUploadDAO;
 import com.pennant.backend.model.payment.PaymentInstUploadDetail;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -69,8 +70,36 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 	}
 
 	@Override
+	public PaymentInstUploadDetail getDetails(long headerID, long detailId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, Id, FinReference, FinId, ExcessType, FeeType, PayAmount, Remarks");
+		sql.append(" , OverRideOverDue, Progress, ErrorCode, ErrorDesc From PAYMINS_UPLOADS ");
+		sql.append(" Where HeaderId = ? and id = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, Num) -> {
+			PaymentInstUploadDetail piud = new PaymentInstUploadDetail();
+
+			piud.setHeaderId(rs.getLong("HeaderId"));
+			piud.setId(rs.getLong("Id"));
+			piud.setReference(rs.getString("FinReference"));
+			piud.setReferenceID(rs.getLong("FinId"));
+			piud.setExcessType(rs.getString("ExcessType"));
+			piud.setFeeType(rs.getString("FeeType"));
+			piud.setPayAmount(rs.getBigDecimal("PayAmount"));
+			piud.setRemarks(rs.getString("Remarks"));
+			piud.setOverRide(rs.getString("OverRideOverDue"));
+			piud.setProgress(rs.getInt("Progress"));
+			piud.setErrorCode(rs.getString("ErrorCode"));
+			piud.setErrorDesc(rs.getString("ErrorDesc"));
+			return piud;
+		}, headerID, detailId);
+	}
+
+	@Override
 	public void update(List<PaymentInstUploadDetail> detailsList) {
-		String sql = "Update PAYMINS_UPLOADS set Progress = ?, FinId = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
+		String sql = "Update PAYMINS_UPLOADS set Progress = ?, Payamount = ?, FinId = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -82,6 +111,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 				PaymentInstUploadDetail detail = detailsList.get(i);
 
 				ps.setInt(++index, detail.getProgress());
+				ps.setBigDecimal(++index, detail.getPayAmount());
 				ps.setLong(++index, detail.getReferenceID());
 				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, detail.getErrorCode());
@@ -104,7 +134,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 		logger.debug(Literal.SQL.concat(sql));
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 			ps.setInt(++index, detail.getProgress());
 			ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 			ps.setString(++index, detail.getErrorCode());
@@ -124,6 +154,57 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 		sql.append(" Where uh.ID = :HEADER_ID");
 
 		return sql.toString();
+	}
+
+	@Override
+	public List<Integer> getHeaderStatusCnt(long uploadId) {
+		String sql = "Select Progress From  PAYMINS_UPLOADS Where HeaderId = ?";
+
+		logger.trace(Literal.SQL, sql);
+
+		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, uploadId), (rs, rowNum) -> {
+			if (rs.getString("Progress") == null)
+				return null;
+
+			return rs.getInt("Progress");
+		});
+	}
+
+	@Override
+	public void uploadHeaderStatusCnt(FileUploadHeader header) {
+		StringBuilder sql = new StringBuilder("Update FILE_UPLOAD_HEADER");
+		sql.append(" Set TotalRecords = ?, SuccessRecords = ?, FailureRecords = ?");
+		sql.append(", Progress = ?, Remarks = Remarks + ?");
+		sql.append(", ApprovedBy = ?, ApprovedOn = ?");
+		sql.append(", Version = Version + ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where ID = ?");
+
+		logger.trace(Literal.SQL, sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 0;
+			ps.setLong(++index, header.getTotalRecords());
+			ps.setLong(++index, header.getSuccessRecords());
+			ps.setLong(++index, header.getFailureRecords());
+			ps.setInt(++index, header.getProgress());
+			ps.setString(++index, header.getRemarks());
+			ps.setObject(++index, header.getApprovedBy());
+			ps.setTimestamp(++index, header.getApprovedOn());
+			ps.setInt(++index, 1);
+			ps.setLong(++index, header.getLastMntBy());
+			ps.setTimestamp(++index, header.getLastMntOn());
+			ps.setString(++index, header.getRecordStatus());
+			ps.setString(++index, header.getRoleCode());
+			ps.setString(++index, header.getNextRoleCode());
+			ps.setString(++index, header.getTaskId());
+			ps.setString(++index, header.getNextTaskId());
+			ps.setString(++index, header.getRecordType());
+			ps.setLong(++index, header.getWorkflowId());
+
+			ps.setLong(++index, header.getId());
+		});
+
 	}
 
 }

@@ -1643,11 +1643,11 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	@Override
 	public boolean isCancelReceiptInQueue(long finId) {
 		StringBuilder sql = new StringBuilder("Select count(*) From FinReceiptHeader_Temp");
-		sql.append(" Where ReceiptModeStatus = ? and FinId = ?");
+		sql.append(" Where ReceiptModeStatus in (?,?) and FinId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		Object[] parameters = new Object[] { RepayConstants.PAYSTATUS_CANCEL, finId };
+		Object[] parameters = new Object[] { RepayConstants.PAYSTATUS_CANCEL, RepayConstants.PAYSTATUS_BOUNCE, finId };
 
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
 	}

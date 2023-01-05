@@ -652,8 +652,12 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		// Excess Amounts
 		if (!AdviseType.isPayable(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
-			finExcessAmountDAO.updateUtilise(paymentDetail.getReferenceId(), paymentDetail.getAmount());
-
+			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentDetail.getFinSource())
+					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, paymentDetail.getFinSource())) {
+				finExcessAmountDAO.updateUtilise(paymentDetail.getReferenceId(), paymentDetail.getAmount());
+			} else {
+				finExcessAmountDAO.updateUtiliseOnly(paymentDetail.getReferenceId(), paymentDetail.getAmount());
+			}
 			// Delete Reserved Log against Excess and Receipt ID
 			finExcessAmountDAO.deleteExcessReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId(),
 					RepayConstants.RECEIPTTYPE_PAYABLE);
@@ -701,7 +705,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			advise.setPaidAmount(amount);
 			advise.setBalanceAmt(amount.negate());
 			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())
-					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentDetail.getFinSource())) {
+					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentDetail.getFinSource())
+					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, paymentDetail.getFinSource())) {
 				advise.setReservedAmt(amount.negate());
 				advise.setBalanceAmt(BigDecimal.ZERO);
 			}
@@ -710,7 +715,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 			// Delete Reserved Log against Advise and Receipt Seq ID
 			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())
-					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentDetail.getFinSource())) {
+					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentDetail.getFinSource())
+					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, paymentDetail.getFinSource())) {
 				manualAdviseDAO.deletePayableReserve(paymentDetail.getPaymentDetailId(),
 						paymentDetail.getReferenceId());
 			}

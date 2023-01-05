@@ -72,7 +72,9 @@ public class AutoRefundProcess {
 
 			try {
 
-				List<ErrorDetail> errors = autoRefundService.verifyRefundInitiation(refundLoan, autoRefCheckDPD);
+				List<ErrorDetail> errors = autoRefundService.verifyRefundInitiation(refundLoan.getFinID(),
+						refundLoan.getClosingStatus(), refundLoan.getDpdDays(), refundLoan.getHoldStatus(),
+						autoRefCheckDPD, true);
 				if (!errors.isEmpty()) {
 					// Auto Refund Loan bean to be updated as failure with Reason
 					refundLoan.setErrorCode(errors.get(0).getCode());

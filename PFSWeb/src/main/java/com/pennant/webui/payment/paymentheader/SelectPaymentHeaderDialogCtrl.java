@@ -45,8 +45,10 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -66,6 +68,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	private PaymentHeader paymentHeader;
 	private PaymentHeaderService paymentHeaderService;
 	private FinanceDetailService financeDetailService;
+	private FeeRefundHeaderService feeRefundHeaderService;
 
 	List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
@@ -173,6 +176,13 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 			return;
 		}
 
+		boolean feeRefundInProgess = this.feeRefundHeaderService.isInstructionInProgress(finID);
+
+		if (feeRefundInProgess) {
+			MessageUtil.showMessage("Fee Refund already in progress for - " + this.finReference.getValue());
+			return;
+		}
+
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.PAYMENTINST.equals(rcdMntnSts)) {
@@ -183,6 +193,11 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(finID);
 
 		if (financeMain.isWriteoffLoan()) {
+			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_WriteOffLoan"));
+			return;
+		}
+
+		if (FinanceConstants.FIN_HOLDSTATUS_HOLD.equals(financeMain.getHoldStatus())) {
 			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_WriteOffLoan"));
 			return;
 		}
@@ -269,6 +284,10 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
+	}
+
+	public void setFeeRefundHeaderService(FeeRefundHeaderService feeRefundHeaderService) {
+		this.feeRefundHeaderService = feeRefundHeaderService;
 	}
 
 }

@@ -440,4 +440,5 @@ public class SMTParameterConstants {
 	public static final String AUTO_REFUND_THROUGH_CHEQUE = "AUTO_REFUND_THROUGH_CHEQUE";
 	public static final String AUTO_REFUND_HOLD_DPD = "HOLD_AUTO_REFUND_DPD";
 	public static final String AUTO_REFUND_OVERDUE_CHECK = "CHECK_OVERDUE_AUTO_REFUND";
+	public static final String REFUND_UPLOAD_THREAD_COUNT = "REFUND_UPLOAD_THREAD_COUNT";
 }

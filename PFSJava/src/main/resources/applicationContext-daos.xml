@@ -7858,6 +7858,7 @@
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 
 	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
@@ -13032,8 +13033,23 @@
 		<property name="paymentInstructionUploadDAO" ref ="paymentInstructionUploadDAO"/>
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO"/>
 		<property name="paymentInstructionDAO" ref="paymentInstructionDAO"/>
-		<property name="paymentHeaderService" ref="paymentHeaderService"/>
-		<property name="auditHeaderDAO" ref="auditHeaderDAO"/>
+		<property name="paymentInstUploadApprovalProcess" ref="paymentInstUploadApprovalProcess" />
+		<property name="paymentHeaderDAO" ref="paymentHeaderDAO"/>
+		<property name="feeRefundHeaderService" ref="feeRefundHeaderService"/>
+	</bean>
+	
+	<bean id="paymentInstUploadApprovalProcess" class="com.pennant.backend.service.payment.impl.PaymentInstUploadApprovalProcess">
+		<property name="dataSource" ref="dataSource" />
+		<property name="projectedPaymentInstUploadDAO" ref="projectedPaymentInstUploadDAO" />
+		<property name="paymentInstructionUploadDAO" ref="paymentInstructionUploadDAO" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+		<property name="autoRefundService" ref="autoRefundService"/>
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	<bean id="projectedPaymentInstUploadDAO"
+		class="com.pennant.backend.dao.paymentinstupload.ProjectedPaymentInstUploadDAOImpl" parent="sequenceDao" >
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
 	<bean id="financeHoldReleaseProcess" class="com.pennanttech.pff.holdrelease.FinanceHoldReleaseProcess">

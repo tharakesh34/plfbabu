@@ -20,6 +20,10 @@ public enum PaymentUploadError {
 
 	REFUP008("Receipt Amount Should not be greater than Excess Available Amount"),
 
+	REFUP009("Dues Available for knock off"),
+
+	REFUP011("Fee Refund already in progress for Loan"),
+
 	// Hold Refund Errors
 	HOLDUP001("Fin Reference is Mandatory"),
 

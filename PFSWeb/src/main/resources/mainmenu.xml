@@ -2522,5 +2522,14 @@
 			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=A"
 			rightName="" />
 	</menu>
+	
+	<menu id="menu_Category_ManualRefunds">
+		<menuItem id="menu_Item_ManualRefunds_Maker"
+			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=M"
+			rightName="menu_Item_ManualRefUpload_Maker" />
+		<menuItem id="menu_Item_ManualRefunds_Approver"
+			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=A"
+			rightName="menu_Item_ManualRefUpload_Approver" />
+	</menu>
 
 </ns2:XMLRootMenu>

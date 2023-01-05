@@ -1025,7 +1025,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public BigDecimal getTotalExcessByRefAndType(long finID, String amountType) {
-		StringBuilder sql = new StringBuilder(" SELECT SUM(BALANCEAMOUNT) AMOUNT FROM FINEXCESSAMOUNT");
+		StringBuilder sql = new StringBuilder(" SELECT SUM(BALANCEAMT) AMOUNT FROM FINEXCESSAMOUNT");
 		sql.append(" WHERE FINID = ? AND AMOUNTTYPE = ?");
 		sql.append(" GROUP BY FINID,AMOUNTTYPE ");
 

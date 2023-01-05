@@ -15,7 +15,8 @@ public interface AutoRefundService {
 
 	List<AutoRefundLoan> autoRefundsLoanProcess(Date appDate);
 
-	List<ErrorDetail> verifyRefundInitiation(AutoRefundLoan refundLoan, int autoRefCheckDPD);
+	List<ErrorDetail> verifyRefundInitiation(long finId, String closingStatus, int dpdDays, String holdStatus,
+			int autoRefCheckDPD, boolean isEOD);
 
 	List<FinExcessAmount> getExcessRcdList(long finID, Date maxValueDate);
 

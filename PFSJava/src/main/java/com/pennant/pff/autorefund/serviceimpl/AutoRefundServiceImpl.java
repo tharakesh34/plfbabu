@@ -36,7 +36,6 @@ import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.payment.PaymentHeaderService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
@@ -77,45 +76,10 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	 * @return list
 	 */
 	@Override
-	public List<ErrorDetail> verifyRefundInitiation(AutoRefundLoan refundLoan, int autoRefCheckDPD) {
-		logger.debug(Literal.ENTERING);
-		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
-
-		// DPD Days validation against System parameter Configuration
-		if (refundLoan.getDpdDays() > autoRefCheckDPD) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND001", null)));
-			logger.debug(Literal.LEAVING);
-			return errors;
-		}
-
-		// Verification against Receipts , if any of the Cancelled Receipt in Process queue
-		if (finReceiptHeaderDAO.isCancelReceiptInQueue(refundLoan.getFinID())) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND002", null)));
-			logger.debug(Literal.LEAVING);
-			return errors;
-		}
-
-		// Verification against Refunds , if any of the refund against loan in process
-		if (paymentHeaderDAO.isRefundInQueue(refundLoan.getFinID())) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND003", null)));
-			logger.debug(Literal.LEAVING);
-			return errors;
-		}
-
-		// Verifying if the loan is write off or not
-		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(refundLoan.getClosingStatus())) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND010", null)));
-			logger.debug(Literal.LEAVING);
-			return errors;
-		}
-		if (FinanceConstants.FIN_HOLDSTATUS_HOLD.equals(refundLoan.getHoldStatus())) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND011", null)));
-			logger.debug(Literal.LEAVING);
-			return errors;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return errors;
+	public List<ErrorDetail> verifyRefundInitiation(long finId, String closingStatus, int dpdDays, String holdStatus,
+			int autoRefCheckDPD, boolean isEOD) {
+		return paymentHeaderService.verifyRefundInitiation(finId, closingStatus, dpdDays, holdStatus, autoRefCheckDPD,
+				isEOD);
 	}
 
 	/**

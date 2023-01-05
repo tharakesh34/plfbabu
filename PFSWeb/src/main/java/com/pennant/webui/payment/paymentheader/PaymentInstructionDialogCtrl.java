@@ -607,10 +607,10 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 					Labels.getLabel("label_DisbInstructionsDialog_DisbAmount.value"), ccyFormatter, true, false));
 		}
 
-		if (!this.partnerBankID.isReadonly()) {
-			this.partnerBankID.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_DisbInstructionsDialog_Partnerbank.value"), null, true));
-		}
+		/*
+		 * if (!this.partnerBankID.isReadonly()) { this.partnerBankID.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_DisbInstructionsDialog_Partnerbank.value"), null, true)); }
+		 */
 
 		if (!this.remarks.isReadonly()) {
 			this.remarks.setConstraint(
@@ -841,8 +841,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		item.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
 		item.setEntityCode(financeMain.getLovDescEntityCode());
 
-		List<FinTypePartnerBank> partnerBanks = finTypePartnerBankService.getPartnerBanksList(item,
-				TableType.AVIEW);
+		List<FinTypePartnerBank> partnerBanks = finTypePartnerBankService.getPartnerBanksList(item, TableType.AVIEW);
 		if (partnerBanks.size() == 1) {
 			item = partnerBanks.get(0);
 			this.partnerBankID.setAttribute("partnerBankId", item.getPartnerBankID());

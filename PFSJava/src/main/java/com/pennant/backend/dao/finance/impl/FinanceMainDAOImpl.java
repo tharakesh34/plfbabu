@@ -6491,7 +6491,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public FinanceMain getFinanceMain(String finReference, String entity) {
-		StringBuilder sql = new StringBuilder("Select fm.FinID, fm.FinReference, fm.FinIsActive ");
+		StringBuilder sql = new StringBuilder("Select fm.FinID, fm.FinReference, fm.FinIsActive, fm.CustId ");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
@@ -6507,6 +6507,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setFinID(rs.getLong("FinID"));
 				fm.setFinReference(rs.getString("FinReference"));
 				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+				fm.setCustID(rs.getLong("CustId"));
 
 				return fm;
 			}, finReference, entity);

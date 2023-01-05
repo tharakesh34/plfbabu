@@ -971,6 +971,7 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="feeTypeService" ref="feeTypeService" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 
 	<bean name="paymentInstructionService"

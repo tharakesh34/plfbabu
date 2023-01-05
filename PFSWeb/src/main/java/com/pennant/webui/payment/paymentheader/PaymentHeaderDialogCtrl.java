@@ -1219,7 +1219,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		for (FinExcessAmount fea : excessList) {
 			PaymentDetail pd = new PaymentDetail();
-			if (allowedExcesTypes.contains(fea.getAmountType()) && fea.getReceiptID() != null) {
+			if (allowedExcesTypes.contains(fea.getAmountType())) {
 				BigDecimal progressAmt = paymentHeaderService.getInProgressExcessAmt(this.financeMain.getFinID(),
 						fea.getReceiptID());
 				pd.setNewRecord(true);

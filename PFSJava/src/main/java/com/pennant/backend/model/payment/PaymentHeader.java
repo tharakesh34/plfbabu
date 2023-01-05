@@ -26,6 +26,7 @@ package com.pennant.backend.model.payment;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,7 +75,7 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 
-	private List<PaymentDetail> paymentDetailList;
+	private List<PaymentDetail> paymentDetailList = new ArrayList<>();
 	private PaymentInstruction paymentInstruction;
 	private Beneficiary defaultBeneficiary;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();

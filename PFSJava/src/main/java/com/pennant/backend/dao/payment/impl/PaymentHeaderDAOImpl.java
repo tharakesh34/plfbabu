@@ -253,13 +253,14 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append(" fm.FinID, fm.FinReference, ft.FinType, ft.FinTypeDesc, ft.FinDivision");
 		sql.append(", fm.CalRoundingMode, fm.RoundingTarget, fm.FinBranch, fm.CustID, cu.CustCif");
 		sql.append(", cu.CustShrtName, curr.CcyCode, fm.FinStartDate, fm.MaturityDate, div.EntityCode");
-		sql.append(", fm.ClosingStatus, fm.WRITEOFFLOAN ");
+		sql.append(", fm.ClosingStatus, fm.WRITEOFFLOAN, h.HoldStatus ");
 		sql.append(" From FinanceMainMaintenance_View fm");
 		sql.append(" Inner Join Customers cu on cu.CustID = fm.CustID");
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join RMTCurrencies curr on curr.CcyCode = fm.FinCcy");
 		sql.append(" Inner Join SMTDivisionDetail div on div.DivisionCode = ft.FinDivision");
-		sql.append(" Where FinID = ?");
+		sql.append(" LEFT JOIN FINANCEHOLDDETAIL h ON fm.FINID = h.FINID ");
+		sql.append(" Where fm.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -285,6 +286,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				fm.setLovDescEntityCode(rs.getString("EntityCode"));
 				fm.setClosingStatus(rs.getString("ClosingStatus"));
 				fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+				fm.setHoldStatus(rs.getString("HoldStatus"));
 
 				return fm;
 			}, finID);
@@ -483,10 +485,14 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	}
 
 	@Override
-	public BigDecimal getInProgressExcessAmt(long finId, long receiptId) {
+	public BigDecimal getInProgressExcessAmt(long finId, Long receiptId) {
 		StringBuilder sql = new StringBuilder("SELECT");
 		sql.append(" COALESCE(EXCESSAMOUNT,0) AMOUNT,FINID FROM FINREPAYHEADER WHERE RECEIPTSEQID IN ( ");
-		sql.append(" SELECT RECEIPTSEQID FROM FINRECEIPTDETAIL_TEMP WHERE STATUS IN (?, ?) and receiptid = ?)");
+		sql.append(" SELECT RECEIPTSEQID FROM FINRECEIPTDETAIL_TEMP WHERE STATUS IN (?, ?)");
+		if (receiptId != null) {
+			sql.append(" and receiptid = ?");
+		}
+		sql.append(")");
 		sql.append(" AND EXCESSAMOUNT > 0  AND FINID = ? ");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -496,7 +502,9 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				int index = 1;
 				ps.setString(index++, RepayConstants.PAYSTATUS_BOUNCE);
 				ps.setString(index++, RepayConstants.PAYSTATUS_CANCEL);
-				ps.setLong(index++, receiptId);
+				if (receiptId != null) {
+					ps.setLong(index++, receiptId);
+				}
 				ps.setLong(index++, finId);
 			}, new ResultSetExtractor<BigDecimal>() {
 				@Override
