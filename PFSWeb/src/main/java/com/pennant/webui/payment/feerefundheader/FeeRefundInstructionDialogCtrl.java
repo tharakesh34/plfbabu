@@ -239,24 +239,22 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
-		/*
-		 * this.paymentAmount.setDisabled(true isReadOnly("PaymentInstructionDialog_paymentAmount") );
-		 * this.postDate.setDisabled(isReadOnly("FeeRefundInstructionDialog_postDate"));
-		 * this.paymentType.setDisabled(isReadOnly("FeeRefundInstructionDialog_paymentType"));
-		 * this.remarks.setReadonly(isReadOnly("FeeRefundInstructionDialog_remarks"));
-		 * this.bankBranchID.setReadonly(isReadOnly("FeeRefundInstructionDialog_bankBranchID"));
-		 * this.acctNumber.setReadonly(isReadOnly("FeeRefundInstructionDialog_acctNumber"));
-		 * this.acctHolderName.setReadonly(isReadOnly("FeeRefundInstructionDialog_acctHolderName"));
-		 * this.phoneNumber.setReadonly(isReadOnly("FeeRefundInstructionDialog_phoneNumber"));
-		 * this.issuingBank.setReadonly(isReadOnly("FeeRefundInstructionDialog_issuingBank"));
-		 * this.favouringName.setReadonly(isReadOnly("FeeRefundInstructionDialog_favouringName"));
-		 * this.chequeOrDDumber.setReadonly(isReadOnly("FeeRefundInstructionDialog_chequeOrDDumber"));
-		 * this.payableLoc.setReadonly(isReadOnly("FeeRefundInstructionDialog_payableLoc"));
-		 * this.printingLoc.setReadonly(isReadOnly("FeeRefundInstructionDialog_printingLoc"));
-		 * this.valueDate.setReadonly(isReadOnly("FeeRefundInstructionDialog_valueDate"));
-		 * this.partnerBankID.setReadonly(isReadOnly("FeeRefundInstructionDialog_partnerBankID"));
-		 * this.leiNumber.setReadonly(isReadOnly("FeeRefundInstructionDialog_leiNumber"));
-		 */
+		this.paymentAmount.setDisabled(isReadOnly("FeeRefundInstructionDialog_paymentAmount"));
+		this.postDate.setDisabled(isReadOnly("FeeRefundInstructionDialog_postDate"));
+		this.paymentType.setDisabled(isReadOnly("FeeRefundInstructionDialog_paymentType"));
+		this.remarks.setReadonly(isReadOnly("FeeRefundInstructionDialog_remarks"));
+		this.bankBranchID.setReadonly(isReadOnly("FeeRefundInstructionDialog_bankBranchID"));
+		this.acctNumber.setReadonly(isReadOnly("FeeRefundInstructionDialog_acctNumber"));
+		this.acctHolderName.setReadonly(isReadOnly("FeeRefundInstructionDialog_acctHolderName"));
+		this.phoneNumber.setReadonly(isReadOnly("FeeRefundInstructionDialog_phoneNumber"));
+		this.issuingBank.setReadonly(isReadOnly("FeeRefundInstructionDialog_issuingBank"));
+		this.favouringName.setReadonly(isReadOnly("FeeRefundInstructionDialog_favouringName"));
+		this.chequeOrDDumber.setReadonly(isReadOnly("FeeRefundInstructionDialog_chequeOrDDumber"));
+		this.payableLoc.setReadonly(isReadOnly("FeeRefundInstructionDialog_payableLoc"));
+		this.printingLoc.setReadonly(isReadOnly("FeeRefundInstructionDialog_printingLoc"));
+		this.valueDate.setReadonly(isReadOnly("FeeRefundInstructionDialog_valueDate"));
+		this.partnerBankID.setReadonly(isReadOnly("FeeRefundInstructionDialog_partnerBankID"));
+		this.leiNumber.setReadonly(isReadOnly("FeeRefundInstructionDialog_leiNumber"));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -324,7 +322,7 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 		this.partnerBankID.setButtonDisabled(true);
 		this.partnerBankID.setReadonly(true);
 		this.partnerBankID.setModuleName("FinTypePartner");
-		this.partnerBankID.setMandatoryStyle(false);
+		this.partnerBankID.setMandatoryStyle(true);
 		this.partnerBankID.setValueColumn("PartnerBankCode");
 		this.partnerBankID.setDescColumn("PartnerBankName");
 		this.partnerBankID.setMaxlength(8);
@@ -590,7 +588,7 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 
 		if (!this.partnerBankID.isReadonly()) {
 			this.partnerBankID.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_DisbInstructionsDialog_Partnerbank.value"), null, false));
+					Labels.getLabel("label_DisbInstructionsDialog_Partnerbank.value"), null, true));
 		}
 
 		if (!this.remarks.isReadonly()) {

@@ -81,7 +81,6 @@ import com.pennant.backend.model.feerefund.FeeRefundDetail;
 import com.pennant.backend.model.feerefund.FeeRefundHeader;
 import com.pennant.backend.model.feerefund.FeeRefundInstruction;
 import com.pennant.backend.model.finance.FeeType;
-import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -293,9 +292,9 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FeeRefundHeaderDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FeeRefundDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FeeRefundDialog_btnDelete"));
-		this.btnSave.setVisible(true);
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FeeRefundHeaderDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FeeRefundHeaderDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FeeRefundHeaderDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug(Literal.LEAVING);
 	}
@@ -901,7 +900,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			if (doProcess(frh, tranType)) {
 				refreshList();
 				String msg = PennantApplicationUtil.getSavingStatus(frh.getRoleCode(), frh.getNextRoleCode(),
-						frh.getFinReference(), " Payment Instructions ", frh.getRecordStatus(), frh.getNextRoleCode());
+						frh.getFinReference(), " Fee Refund Instructions ", frh.getRecordStatus(),
+						frh.getNextRoleCode());
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				closeDialog();
@@ -1582,33 +1582,6 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		return taxes;
 	}
 
-	/**
-	 * Method for process the FinExcessAmount's
-	 * <li>In case of cancelled loan return a list that contain EXCESS FinExcessAmount.</li>
-	 * <li>In other cases return the complete FinExcessAmount's list.</li> <br>
-	 * In case of loan cancel before disbursement and excess amount are taken from deduct from disbursment in that case
-	 * system is displaying those advance's in payment instruction to avoid this we are validating excess amount's here
-	 * #PSD 153031 </br>
-	 * 
-	 * @param finExcessAmountList
-	 * @return
-	 */
-	private List<FinExcessAmount> processFinExcessAmount(List<FinExcessAmount> finExcessAmountList) {
-		logger.debug(Literal.LEAVING);
-		if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equalsIgnoreCase(this.financeMain.getClosingStatus())) {
-			return finExcessAmountList;
-		}
-		List<FinExcessAmount> excessAmountList = new ArrayList<>(1);
-		for (FinExcessAmount finExcessAmount : finExcessAmountList) {
-			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equalsIgnoreCase(finExcessAmount.getAmountType())) {
-				excessAmountList.add(finExcessAmount);
-				break;
-			}
-		}
-		logger.debug(Literal.LEAVING);
-		return excessAmountList;
-	}
-
 	// Update the latest balance amount..
 	private void updatePaybleAmounts(List<FeeRefundDetail> newList, List<FeeRefundDetail> oldList) {
 		logger.debug(Literal.ENTERING);
@@ -1883,9 +1856,6 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		logger.debug("Entering");
 
 		this.listBoxFeeRefundTypeInstructions.getItems().clear();
-		boolean isReadOnly = false;
-		Listitem item = null;
-
 		this.listheader_FeeRefundHeaderDialog_button.setVisible(false);
 
 		// Total Avaliable Amount for ManualAdvise
@@ -1953,18 +1923,27 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 					}
 				}
 
+				FeeRefundDetail frTemp = new FeeRefundDetail();
+
+				frTemp.setFeeTypeDesc(rcvFeeType);
+				frTemp.setPayableFeeTypeDesc(payFeeType);
+				frTemp.setAdviseAmount(adviseAmt);
+				frTemp.setPaidAmount(payAmount);
+				frTemp.setPrevRefundAmount(prvRefundAmt);
+				frTemp.setCurrRefundAmount(currRefundAmt);
+				frTemp.setTotalAmount(totalPayAmt);
+				frTemp.setReceivableType(frds.get(0).getReceivableType());
+
 				// Manual Advise
 				if (groupReq) {
 
-					totalPayAmt = addGroupRecord(rcvFeeType, payFeeType, adviseAmt, payAmount, prvRefundAmt, isReadOnly,
-							currRefundAmt, totalPayAmt, true, expandClick, frds.get(0).getReceivableType());
+					totalPayAmt = addGroupRecord(frTemp, true, expandClick);
 
 					if (expandClick && StringUtils.equals(rcvType, frds.get(0).getReceivableType())) {
 						doFillChildDetail(frds);
 					}
 				} else {
-					totalPayAmt = addGroupRecord(rcvFeeType, payFeeType, adviseAmt, payAmount, prvRefundAmt, isReadOnly,
-							currRefundAmt, totalPayAmt, false, false, frds.get(0).getReceivableType());
+					totalPayAmt = addGroupRecord(frTemp, false, false);
 				}
 
 			}
@@ -1973,26 +1952,26 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		logger.debug("Leaving");
 	}
 
-	private BigDecimal addGroupRecord(String rcvFeeType, String payFeeType, BigDecimal adviseAmt, BigDecimal payAmount,
-			BigDecimal prvRefundAmt, boolean isReadOnly, BigDecimal currRefundAmt, BigDecimal totalPayAmt,
-			boolean expandReq, boolean expandClick, String rcvType) {
+	private BigDecimal addGroupRecord(FeeRefundDetail frTemp, boolean expandReq, boolean expandClick) {
 		Button button = new Button();
 		Listitem item = new Listitem();
 		Listcell lc;
+		boolean isReadOnly = isReadOnly("FeeRefundHeaderDialog_currRefundAmount");
+		BigDecimal totalPayAmt = frTemp.getTotalAmount();
 
 		if (expandReq) {
 			if (expandClick) {
 				lc = new Listcell();
 				button.setImage("/images/icons/delete.png");
 				button.setStyle("background:white;border:0px;");
-				button.addForward("onClick", self, "onClickCollapse", rcvType);
+				button.addForward("onClick", self, "onClickCollapse", frTemp.getReceivableType());
 				lc.appendChild(button);
 				lc.setParent(item);
 			} else {
 				lc = new Listcell();
 				button.setImage("/images/icons/add.png");
 				button.setStyle("background:#FFFFFF;border:0px;onMouseOver ");
-				button.addForward("onClick", self, "onClickExpand", rcvType);
+				button.addForward("onClick", self, "onClickExpand", frTemp.getReceivableType());
 				lc.appendChild(button);
 				lc.setParent(item);
 			}
@@ -2002,11 +1981,11 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		}
 
 		// Receivable Type
-		lc = new Listcell(rcvFeeType);
+		lc = new Listcell(frTemp.getFeeTypeDesc());
 		lc.setParent(item);
 
 		// Payable Type
-		lc = new Listcell(payFeeType);
+		lc = new Listcell(frTemp.getPayableFeeTypeDesc());
 		lc.setParent(item);
 
 		// Total Amount
@@ -2015,7 +1994,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		totalAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		totalAmt.setStyle("text-align:right; ");
 		totalAmt.setReadonly(true);
-		totalAmt.setValue(PennantApplicationUtil.formateAmount(adviseAmt, ccyFormatter));
+		totalAmt.setValue(PennantApplicationUtil.formateAmount(frTemp.getAdviseAmount(), ccyFormatter));
 		lc.appendChild(totalAmt);
 		lc.setParent(item);
 
@@ -2025,7 +2004,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		paidAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		paidAmt.setStyle("text-align:right; ");
 		paidAmt.setReadonly(true);
-		paidAmt.setValue(PennantApplicationUtil.formateAmount(payAmount, ccyFormatter));
+		paidAmt.setValue(PennantApplicationUtil.formateAmount(frTemp.getPaidAmount(), ccyFormatter));
 		lc.appendChild(paidAmt);
 		lc.setParent(item);
 
@@ -2035,7 +2014,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		prevRfdAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		prevRfdAmt.setStyle("text-align:right; ");
 		prevRfdAmt.setReadonly(true);
-		prevRfdAmt.setValue(PennantApplicationUtil.formateAmount(prvRefundAmt, ccyFormatter));
+		prevRfdAmt.setValue(PennantApplicationUtil.formateAmount(frTemp.getPrevRefundAmount(), ccyFormatter));
 		lc.appendChild(prevRfdAmt);
 		lc.setParent(item);
 
@@ -2044,9 +2023,9 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		paymentAmount.setReadonly(isReadOnly);
 		paymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		paymentAmount.setStyle("text-align:right; ");
-		paymentAmount.setValue(PennantApplicationUtil.formateAmount(currRefundAmt, ccyFormatter));
-		totalPayAmt = totalPayAmt.add(currRefundAmt);
-		paymentAmount.addForward("onChange", self, "onPayAmountChange", rcvType);
+		paymentAmount.setValue(PennantApplicationUtil.formateAmount(frTemp.getCurrRefundAmount(), ccyFormatter));
+		totalPayAmt = totalPayAmt.add(frTemp.getCurrRefundAmount());
+		paymentAmount.addForward("onChange", self, "onPayAmountChange", frTemp.getReceivableType());
 		lc.appendChild(paymentAmount);
 		lc.setParent(item);
 
@@ -2055,8 +2034,9 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		balanceAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		balanceAmount.setStyle("text-align:right; ");
 		balanceAmount.setReadonly(true);
-		balanceAmount.setValue(PennantApplicationUtil
-				.formateAmount(payAmount.subtract(currRefundAmt).subtract(prvRefundAmt), ccyFormatter));
+		balanceAmount.setValue(PennantApplicationUtil.formateAmount(
+				frTemp.getPaidAmount().subtract(frTemp.getCurrRefundAmount()).subtract(frTemp.getPrevRefundAmount()),
+				ccyFormatter));
 		lc.appendChild(balanceAmount);
 		lc.setParent(item);
 		this.listBoxFeeRefundTypeInstructions.appendChild(item);
@@ -2168,7 +2148,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	public List<Listitem> doFillChildDetail(List<FeeRefundDetail> frdList) {
 		logger.debug("Entering");
 
-		boolean isReadOnly = false;
+		boolean isReadOnly = isReadOnly("FeeRefundHeaderDialog_currRefundAmount");
 		BigDecimal totalPayAmt = BigDecimal.ZERO;
 		List<Listitem> items = new ArrayList<Listitem>();
 		Listitem item = null;

@@ -445,4 +445,905 @@
 			<column name="ERRORCODE" type="varchar2(20)" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="TK#2566.1" author="sampath.d">
+		<createTable tableName="FeeRefundHeader">				
+			<column name="FeeRefundId" type="bigint" >
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDHDR_FEEID" />
+			</column>
+			<column name="CustCif" type="VARCHAR(10)" />
+			<column name="FinID" type="bigint" />
+			<column name="PaymentType" type="VARCHAR(5)"/>
+			<column name="FinType" type="VARCHAR(10)"/>
+			<column name="BranchName" type="VARCHAR(20)"/>
+			<column name="PaymentAmount" type="Decimal(18,0)"/>
+			<column name="CreatedOn" type="datetime"/>
+			<column name="ApprovedOn" type="datetime"/>
+			<column name="Status" type="VARCHAR(5)"/>
+			<column name="ApprovalStatus" type="VARCHAR(5)"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2566.2" author="sampath.d">
+		<createSequence sequenceName="SeqFeeRefundHeader" incrementBy="1" maxValue="999999999999999"
+			startValue="1" />
+	</changeSet>
+	
+	<changeSet id="TK#2566.3" author="sampath.d">
+		<createTable tableName="FeeRefundHeader_Temp">				
+			<column name="FeeRefundId" type="bigint" >
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDHDRT_FEEID" />
+			</column>
+			<column name="CustCif" type="VARCHAR(10)" />
+			<column name="FinID" type="bigint" />
+			<column name="PaymentType" type="VARCHAR(5)"/>
+			<column name="FinType" type="VARCHAR(10)"/>
+			<column name="BranchName" type="VARCHAR(20)"/>
+			<column name="PaymentAmount" type="Decimal(18,0)"/>
+			<column name="CreatedOn" type="datetime"/>
+			<column name="ApprovedOn" type="datetime"/>
+			<column name="Status" type="VARCHAR(5)"/>
+			<column name="ApprovalStatus" type="VARCHAR(5)"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2566.4_pre" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'feerefundheader_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2566.4" author="sampath.d">
+		<createView viewName="FEEREFUNDHEADER_AVIEW" replaceIfExists="true">
+			<![CDATA[
+			    SELECT T1.FEEREFUNDID,
+	                   T1.CUSTCIF,
+	                   T2.CUSTSHRTNAME,
+	                   T1.FINID,
+	                   T3.FINREFERENCE,
+	                   T1.PAYMENTTYPE,
+	                   T1.FINTYPE,
+	                   T1.BRANCHNAME,
+	                   T1.PAYMENTAMOUNT,
+	                   T1.CREATEDON,
+	                   T1.APPROVEDON,
+	                   T1.STATUS,
+	                   T1.APPROVALSTATUS,
+	                   T1.VERSION,
+	                   T1.LASTMNTBY,
+	                   T1.LASTMNTON,
+	                   T1.RECORDSTATUS,
+	                   T1.ROLECODE,
+	                   T1.NEXTROLECODE,
+	                   T1.TASKID,
+	                   T1.NEXTTASKID,
+	                   T1.RECORDTYPE,
+	                   T1.WORKFLOWID,
+	                   T2.CUSTID,
+	                   T2.CUSTCOREBANK
+                  FROM FEEREFUNDHEADER T1
+                  INNER JOIN CUSTOMERS T2 ON T2.CUSTCIF = T1.CUSTCIF
+                  INNER JOIN FINANCEMAIN T3 ON T3.FINID = T1.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2566.4_post" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'feerefundheader_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2566.5_pre" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'feerefundheader_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2566.5" author="sampath.d">
+		<createView viewName="FEEREFUNDHEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
+			 	SELECT T1.FEEREFUNDID,
+			 		T1.CUSTCIF,
+	                T2.CUSTSHRTNAME CUSTNAME,
+	                T1.FINID,
+	                T3.FINREFERENCE,
+	                T1.PAYMENTTYPE,
+	                T1.FINTYPE,
+	                T4.BRANCHDESC BRANCHNAME,
+	                T1.PAYMENTAMOUNT,
+	                T1.CREATEDON,
+	                T1.APPROVEDON,
+	                T1.STATUS,
+	                T1.APPROVALSTATUS,
+	                T1.VERSION,
+	                T1.LASTMNTBY,
+	                T1.LASTMNTON,
+	                T1.RECORDSTATUS,
+	                T1.ROLECODE,
+	                T1.NEXTROLECODE,
+	                T1.TASKID,
+	                T1.NEXTTASKID,
+	                T1.RECORDTYPE,
+	                T1.WORKFLOWID,
+	                T2.CUSTID,
+	                T2.CUSTCOREBANK 
+	            FROM FEEREFUNDHEADER_TEMP T1
+                INNER JOIN CUSTOMERS T2 ON T2.CUSTCIF = T1.CUSTCIF
+                INNER JOIN FINANCEMAIN T3 ON T3.FINID = T1.FINID
+                INNER JOIN RMTBRANCHES T4 ON T4.BRANCHCODE = T3.FINBRANCH
+	            UNION ALL
+	            SELECT T1.FEEREFUNDID,
+			 		T1.CUSTCIF,
+	                T2.CUSTSHRTNAME CUSTNAME,
+	                T1.FINID,
+	                T3.FINREFERENCE,
+	                T1.PAYMENTTYPE,
+	                T1.FINTYPE,
+	                T4.BRANCHDESC BRANCHNAME,
+	                T1.PAYMENTAMOUNT,
+	                T1.CREATEDON,
+	                T1.APPROVEDON,
+	                T1.STATUS,
+	                T1.APPROVALSTATUS,
+	                T1.VERSION,
+	                T1.LASTMNTBY,
+	                T1.LASTMNTON,
+	                T1.RECORDSTATUS,
+	                T1.ROLECODE,
+	                T1.NEXTROLECODE,
+	                T1.TASKID,
+	                T1.NEXTTASKID,
+	                T1.RECORDTYPE,
+	                T1.WORKFLOWID,
+	                T2.CUSTID,
+	                T2.CUSTCOREBANK 
+	            FROM FEEREFUNDHEADER T1
+                INNER JOIN CUSTOMERS T2 ON T2.CUSTCIF = T1.CUSTCIF
+                INNER JOIN FINANCEMAIN T3 ON T3.FINID = T1.FINID
+                INNER JOIN RMTBRANCHES T4 ON T4.BRANCHCODE = T3.FINBRANCH
+	            WHERE NOT (EXISTS ( SELECT 1 FROM FEEREFUNDHEADER_TEMP
+	            WHERE FEEREFUNDHEADER_TEMP.FEEREFUNDID = T1.FEEREFUNDID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="TK#2566.5_post" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'feerefundheader_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2566.6" author="sampath.d">
+		<createTable tableName="FeeRefundDetail">				
+			<column name="FeeRefundDetailId" type="bigint" >
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDDTL_FEEDTLID" />
+			</column>
+			<column name="FeeRefundId" type="bigint" >
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDDTL_FEEID" />
+			</column>
+			<column name="ReceivableType" type="VARCHAR(5)" />
+			<column name="TotalAmount" type="Decimal(18,0)" />
+			<column name="PaidAmount" type="Decimal(18,0)"/>
+			<column name="PrevRefundAmount" type="Decimal(18,0)"/>
+			<column name="currRefundAmount" type="Decimal(18,0)"/>
+			<column name="AvailableAmount" type="Decimal(18,0)"/>
+			<column name="ReceivableRefId" type="bigint"/>
+			<column name="FeeTypeCode" type="VARCHAR(10)"/>
+			<column name="FeeTypeDesc" type="VARCHAR(50)"/>
+			<column name="PayableFeeTypeCode" type="VARCHAR(10)"/>
+			<column name="PayableFeeTypeDesc" type="VARCHAR(50)"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2566.7" author="sampath.d">
+		<createSequence sequenceName="SeqFeeRefundDetail" incrementBy="1" maxValue="999999999999999"
+			startValue="1" />
+	</changeSet>
+	
+	<changeSet id="TK#2566.8" author="sampath.d">
+		<createTable tableName="FeeRefundDetail_Temp">				
+			<column name="FeeRefundDetailId" type="bigint" >
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDDTLT_FEEDTLID" />
+			</column>
+			<column name="FeeRefundId" type="bigint" >
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDDTLT_FEEID" />
+			</column>
+			<column name="ReceivableType" type="VARCHAR(5)" />
+			<column name="TotalAmount" type="Decimal(18,0)" />
+			<column name="PaidAmount" type="Decimal(18,0)"/>
+			<column name="PrevRefundAmount" type="Decimal(18,0)"/>
+			<column name="currRefundAmount" type="Decimal(18,0)"/>
+			<column name="AvailableAmount" type="Decimal(18,0)"/>
+			<column name="ReceivableRefId" type="bigint"/>
+			<column name="FeeTypeCode" type="VARCHAR(10)"/>
+			<column name="FeeTypeDesc" type="VARCHAR(50)"/>
+			<column name="PayableFeeTypeCode" type="VARCHAR(10)"/>
+			<column name="PayableFeeTypeDesc" type="VARCHAR(50)"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2566.9" author="sampath.d">
+		<createTable tableName="FeeRefundInstruction">				
+			<column name="FeeRefundInstId" type="bigint" >
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDINST_FEEINSID" />
+			</column>
+			<column name="FeeRefundId" type="bigint" >
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDINST_FEEID" />
+			</column>
+			<column name="PaymentType" type="VARCHAR(5)" />
+			<column name="PaymentAmount" type="Decimal(18,0)" />
+			<column name="Remarks" type="VARCHAR(100)" />
+			<column name="PartnerBankId" type="bigint" />
+			<column name="IssuingBank" type="VARCHAR(8)"/>
+			<column name="FavourName" type="VARCHAR(200)"/>
+			<column name="FavourNumber" type="VARCHAR(100)"/>
+			<column name="PayableLoc" type="VARCHAR(50)"/>
+			<column name="PrintingLoc" type="VARCHAR(50)"/>
+			<column name="ValueDate" type="Datetime"/>
+			<column name="PostDate" type="Datetime"/>
+			<column name="BankBranchId" type="bigint"/>
+			<column name="AcctHolderName" type="VARCHAR(200)"/>
+			<column name="AccountNo" type="VARCHAR(100)"/>
+			<column name="PhoneCountryCode" type="VARCHAR(5)"/>
+			<column name="PhoneNumber" type="VARCHAR(12)"/>
+			<column name="ClearingDate" type="Datetime"/>
+			<column name="Status" type="VARCHAR(50)"/>
+			<column name="Active" type="boolean"/>
+			<column name="PaymentCCy" type="VARCHAR(3)"/>
+			<column name="Lei" type="VARCHAR(100)"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2566.10" author="sampath.d">
+		<createSequence sequenceName="SeqFeeRefundInst" incrementBy="1" maxValue="999999999999999"
+			startValue="1" />
+	</changeSet>
+	
+	<changeSet id="TK#2566.11" author="sampath.d">
+		<createTable tableName="FeeRefundInstruction_Temp">				
+			<column name="FeeRefundInstId" type="bigint" >
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDINSTT_FEEINSID" />
+			</column>
+			<column name="FeeRefundId" type="bigint" >
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDINSTT_FEEID" />
+			</column>
+			<column name="PaymentType" type="VARCHAR(5)" />
+			<column name="PaymentAmount" type="Decimal(18,0)" />
+			<column name="Remarks" type="VARCHAR(100)" />
+			<column name="PartnerBankId" type="bigint" />
+			<column name="IssuingBank" type="VARCHAR(8)"/>
+			<column name="FavourName" type="VARCHAR(200)"/>
+			<column name="FavourNumber" type="VARCHAR(100)"/>
+			<column name="PayableLoc" type="VARCHAR(50)"/>
+			<column name="PrintingLoc" type="VARCHAR(50)"/>
+			<column name="ValueDate" type="Datetime"/>
+			<column name="PostDate" type="Datetime"/>
+			<column name="BankBranchId" type="bigint"/>
+			<column name="AcctHolderName" type="VARCHAR(200)"/>
+			<column name="AccountNo" type="VARCHAR(100)"/>
+			<column name="PhoneCountryCode" type="VARCHAR(5)"/>
+			<column name="PhoneNumber" type="VARCHAR(12)"/>
+			<column name="ClearingDate" type="Datetime"/>
+			<column name="Status" type="VARCHAR(50)"/>
+			<column name="Active" type="boolean"/>
+			<column name="PaymentCCy" type="VARCHAR(3)"/>
+			<column name="Lei" type="VARCHAR(100)"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2566.12_pre" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'feerefunddetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2566.12" author="sampath.d">
+		<createView viewName="FEEREFUNDDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+			 	SELECT T1.FEEREFUNDDETAILID,
+			 	 	T1.FEEREFUNDID,
+					T1.RECEIVABLETYPE,
+					T1.TOTALAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.PREVREFUNDAMOUNT,
+					T1.CURRREFUNDAMOUNT,
+					T1.AVAILABLEAMOUNT,
+					T1.RECEIVABLEREFID,
+					T1.FEETYPECODE,
+					T1.FEETYPEDESC,
+					T1.PAYABLEFEETYPECODE,
+					T1.PAYABLEFEETYPEDESC,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FEEREFUNDDETAIL_TEMP T1	
+				LEFT JOIN MANUALADVISE T2 ON  T1.RECEIVABLEREFID = T2.ADVISEID AND T1.RECEIVABLETYPE = '1'
+				UNION ALL
+				SELECT T1.FEEREFUNDDETAILID,
+			 	 	T1.FEEREFUNDID,
+					T1.RECEIVABLETYPE,
+					T1.TOTALAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.PREVREFUNDAMOUNT,
+					T1.CURRREFUNDAMOUNT,
+					T1.AVAILABLEAMOUNT,
+					T1.RECEIVABLEREFID,
+					T1.FEETYPECODE,
+					T1.FEETYPEDESC,
+					T1.PAYABLEFEETYPECODE,
+					T1.PAYABLEFEETYPEDESC,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FEEREFUNDDETAIL T1
+				LEFT JOIN MANUALADVISE T2 ON  T1.RECEIVABLEREFID = T2.ADVISEID AND T1.RECEIVABLETYPE = '1'
+				WHERE NOT (EXISTS ( SELECT 1 FROM FEEREFUNDDETAIL_TEMP
+				WHERE FEEREFUNDDETAIL_TEMP.FEEREFUNDDETAILID = T1.FEEREFUNDDETAILID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="TK#2566.12_post" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'feerefunddetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2566.13_pre" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'feerefundinstruction_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2566.13" author="sampath.d">
+		<createView viewName="FEEREFUNDINSTRUCTION_VIEW" replaceIfExists="true">
+			<![CDATA[
+			 	SELECT T1.FEEREFUNDINSTID,
+					T1.FEEREFUNDID,
+					T1.PAYMENTTYPE,
+					T1.PAYMENTAMOUNT,
+					T1.REMARKS,
+					T1.PARTNERBANKID,
+					T1.ISSUINGBANK,
+					T1.FAVOURNAME,
+					T1.FAVOURNUMBER,
+					T1.PAYABLELOC,
+					T1.PRINTINGLOC,
+					T1.VALUEDATE,
+					T1.POSTDATE,
+					T1.BANKBRANCHID,
+					T1.ACCTHOLDERNAME,
+					T1.ACCOUNTNO,
+					T1.PHONECOUNTRYCODE,
+					T1.PHONENUMBER,
+					T1.CLEARINGDATE,
+					T1.ACTIVE,
+					T1.PAYMENTCCY,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.STATUS,
+					T5.PARTNERBANKCODE,
+					T5.PARTNERBANKNAME,
+					T3.BANKCODE BRANCHBANKCODE,
+					T3.BRANCHCODE BANKBRANCHCODE,
+					T3.IFSC BANKBRANCHIFSC,
+					T3.CITY,
+					T4.BANKNAME ISSUINGBANKNAME,
+					T6.PCCITYNAME,
+					T3.BRANCHDESC,
+					T2.BANKNAME,
+					T5.ACCOUNTNO PARTNERBANKAC,
+					T5.ACTYPE PARTNERBANKACTYPE,
+					T1.LEI
+				FROM FEEREFUNDINSTRUCTION_TEMP T1
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.ISSUINGBANK = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY
+				UNION ALL
+				SELECT T1.FEEREFUNDINSTID,
+					T1.FEEREFUNDID,
+					T1.PAYMENTTYPE,
+					T1.PAYMENTAMOUNT,
+					T1.REMARKS,
+					T1.PARTNERBANKID,
+					T1.ISSUINGBANK,
+					T1.FAVOURNAME,
+					T1.FAVOURNUMBER,
+					T1.PAYABLELOC,
+					T1.PRINTINGLOC,
+					T1.VALUEDATE,
+					T1.POSTDATE,
+					T1.BANKBRANCHID,
+					T1.ACCTHOLDERNAME,
+					T1.ACCOUNTNO,
+					T1.PHONECOUNTRYCODE,
+					T1.PHONENUMBER,
+					T1.CLEARINGDATE,
+					T1.ACTIVE,
+					T1.PAYMENTCCY,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.STATUS,
+					T5.PARTNERBANKCODE,
+					T5.PARTNERBANKNAME,
+					T3.BANKCODE BRANCHBANKCODE,
+					T3.BRANCHCODE BANKBRANCHCODE,
+					T3.IFSC BANKBRANCHIFSC,
+					T3.CITY,
+					T4.BANKNAME ISSUINGBANKNAME,
+					T6.PCCITYNAME,
+					T3.BRANCHDESC,
+					T2.BANKNAME,
+					T5.ACCOUNTNO PARTNERBANKAC,
+					T5.ACTYPE PARTNERBANKACTYPE,
+					T1.LEI
+				FROM FEEREFUNDINSTRUCTION T1
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.ISSUINGBANK = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY
+				WHERE NOT (EXISTS ( SELECT 1 FROM FEEREFUNDINSTRUCTION_TEMP
+				WHERE FEEREFUNDINSTRUCTION_TEMP.FEEREFUNDINSTID = T1.FEEREFUNDINSTID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="TK#2566.13_post" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'feerefundinstruction_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2566.14" author="sampath.d">
+		<createTable tableName="FeeRefundProcessQueuing">
+			<column name="Id" type="bigint" autoIncrement="true">
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDQUE_ID" />
+			</column>
+			<column name="FeeRefundHeaderId" type="bigint" />
+			<column name="FinReference" type="VARCHAR(16)" />
+			<column name="JsonObject" type="clob" />
+			<column name="EodDate" type="datetime" />
+			<column name="ThreadId" type="int" />
+			<column name="Progress" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="ErrorLog" type="Varchar(2000)" />
+			<column name="EodProcess" type="int"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2566.15" author="sampath.d">
+		<createTable tableName="FeeRefundProcessQueuing_Log">
+			<column name="Id" type="bigint" autoIncrement="true">
+			<constraints nullable="false" primaryKey="true" primaryKeyName="PK_FEERFDQUEL_ID" />
+			</column>
+			<column name="FeeRefundHeaderId" type="bigint" />
+			<column name="FinReference" type="VARCHAR(16)" />
+			<column name="JsonObject" type="clob" />
+			<column name="EodDate" type="datetime" />
+			<column name="ThreadId" type="int" />
+			<column name="Progress" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="ErrorLog" type="Varchar(2000)" />
+			<column name="EodProcess" type="int"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2562.1" author="sampath.d">
+		<createTable tableName="FinanceHoldDetail">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinId" type="bigint" />
+			<column name="HoldStatus" type="char(1)" />
+			<column name="Reason" type="varchar(50)" />
+			<column name="Remarks" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2562.2" author="sampath.d">
+		<addPrimaryKey tableName="FinanceHoldDetail" columnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="TK#2562.3" author="sampath.d">
+		<createTable tableName="HOLD_REFUND_UPLOAD">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="HoldStatus" type="char(1)" />
+			<column name="Reason" type="varchar(50)" />
+			<column name="Remarks" type="varchar(50)" />
+			<column name="Progress" type="int" />
+			<column name="Status" type="char(1)" />
+			<column name="ErrorCode" type="varchar(20)" />
+			<column name="ErrorDesc" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2562.4" author="sampath.d">
+		<addPrimaryKey tableName="HOLD_REFUND_UPLOAD" columnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="TK#2562.5" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='HOLD_REFUND_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='HOLD_REFUND_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='HOLD_REFUND_UPLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_UPLOAD';
+
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'HOLD_REFUND_UPLOAD', 'Hold Refund Upload File.', 12, 'HoldRefund', null, null, ',', 0, 1, null, 'ROW:{LOAN_REFERENCE_NO, STATUS, REASON, REMARKS}', null, 'C', '/opt/pff/hdfc/holdrefund/upload', 'HoldRefund_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', null, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_UPLOAD'), 'HOLD_REFUND_UPLOAD', 1, 'HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, 0);
+
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_UPLOAD')), 'HEADERID',     0, 'N', NULL, NULL, '${HEADER_ID}', NULL, '0', NULL, NULL, NULL, NULL, 'M');								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_UPLOAD')), 'FINREFERENCE',  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_UPLOAD')), 'HOLDSTATUS',       0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_UPLOAD')), 'REASON',       0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_UPLOAD')), 'REMARKS',       0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, NULL, 'O'); 			
+ 			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2562.6" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='HOLD_REFUND_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='HOLD_REFUND_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='HOLD_REFUND_TEMPLATE';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_TEMPLATE';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'HOLD_REFUND_TEMPLATE', 'Hold Refund template download', 3, 'HoldRefund', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{LOAN_REFERENCE_NO, STATUS, REASON, REMARKS}',  '', 'A', '/opt/pff/hdfc/holdrefund/template', 'HoldRefund_', '.xls', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_TEMPLATE'), 'HOLD_REFUND_UPLOAD',  0, 'ID', 'HEADERID = 0', NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_TEMPLATE')), 'LOAN_REFERENCE_NO',  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_TEMPLATE')), 'HOLDSTATUS',       0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_TEMPLATE')), 'REASON',       0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_TEMPLATE')), 'REMARKS',       0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, NULL, 'O'); 	
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2562.7" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='HOLD_REFUND_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='HOLD_REFUND_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='HOLD_REFUND_DOWNLOAD';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'HOLD_REFUND_DOWNLOAD', 'Hold Refund download', 3, 'HoldRefund', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference No,Status,Reason,Remarks,Upload Status,Failure Code,Failure Desc}',  '', 'A', '/opt/pff/hdfc/holdrefund/download', 'HoldRefund_', '.xls', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD'), 'HOLD_REFUND_UPLOAD',  0, 'ID', 'HEADERID = :HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, 9, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'FINREFERENCE',    0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'HOLDSTATUS',	     0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'REASON',	 0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'REMARKS',	 0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'STATUS',	         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'ERRORCODE',	     0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'ERRORDESC',	     0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2562.8" author="sampath.d">
+		<createTable tableName="HOLD_REFUND_UPLOAD_LOG">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_HLDRFNDLOG_ID"/>
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="HoldStatus" type="char(1)" />
+			<column name="Reason" type="varchar(50)" />
+			<column name="Remarks" type="varchar(50)" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2566.16" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FEE_REFUND_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FEE_REFUND_APPROVER');
+
+				DELETE FROM SECROLES WHERE ROLECD = 'FEE_REFUND_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'FEE_REFUND_APPROVER';
+
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FEE_REFUND_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FEE_REFUND_APPROVER');
+
+				DELETE FROM SECGROUPS WHERE GRPCODE ='FEE_REFUND_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='FEE_REFUND_APPROVER';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_FeeRefundMaker';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_FeeRefundApprover';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_FeeRefundHeaderDialog_btnNew';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_FeeRefundHeaderDialog_btnEdit';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_FeeRefundHeaderDialog_btnDelete';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_FeeRefundHeaderDialog_btnSave';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundHeaderDialog_currRefundAmount';
+				
+				INSERT INTO SECROLES (ROLEID,ROLEAPP,ROLECD,ROLEDESC,ROLECATEGORY,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)  VALUES ((select max(roleid)+1 from secroles), 1, 'FEE_REFUND_MAKER', 'Role for Fee Refund Maker', NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID,ROLEAPP,ROLECD,ROLEDESC,ROLECATEGORY,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) VALUES ((select max(roleid)+1 from secroles), 1, 'FEE_REFUND_APPROVER', 'Role for Fee Refund Approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0) ;
+				
+				INSERT INTO SECGROUPS (GRPID,GRPCODE,GRPDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(GrpID)+1 From SecGroups), 'FEE_REFUND_MAKER', 'Group for Fee Refund Group maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SECGROUPS (GRPID,GRPCODE,GRPDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(GrpID)+1 From SecGroups), 'FEE_REFUND_APPROVER', 'Group for Fee Refund Group approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_FeeRefundMaker','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),0, 'menu_Item_FeeRefundApprover','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'button_FeeRefundHeaderList_NewFeeRefundHeader','FeeRefundHeaderList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'button_FeeRefundHeaderDialog_btnNew','FeeRefundHeaderDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'button_FeeRefundHeaderDialog_btnEdit','FeeRefundHeaderDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'button_FeeRefundHeaderDialog_btnDelete','FeeRefundHeaderDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'button_FeeRefundHeaderDialog_btnSave','FeeRefundHeaderDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundHeaderDialog_currRefundAmount','FeeRefundHeaderDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_MAKER'), (Select RightID from SecRights where RightName = 'menu_Item_FeeRefundMaker'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_MAKER'), (Select RightID from SecRights where RightName = 'button_FeeRefundHeaderDialog_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_MAKER'), (Select RightID from SecRights where RightName = 'button_FeeRefundHeaderDialog_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_MAKER'), (Select RightID from SecRights where RightName = 'button_FeeRefundHeaderDialog_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_MAKER'), (Select RightID from SecRights where RightName = 'button_FeeRefundHeaderDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundHeaderDialog_currRefundAmount'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_FeeRefundApprover'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECROLEGROUPS (ROLEGRPID,GRPID,ROLEID,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='FEE_REFUND_MAKER'),(select RoleID from secRoles where RoleCd='FEE_REFUND_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID,GRPID,ROLEID,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='FEE_REFUND_APPROVER'),(select RoleID from secRoles where RoleCd='FEE_REFUND_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2566.17" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FEE_REFUND_INST_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FEE_REFUND_INST_APPROVER');
+
+				DELETE FROM SECROLES WHERE ROLECD = 'FEE_REFUND_INST_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'FEE_REFUND_INST_APPROVER';
+
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FEE_REFUND_INST_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FEE_REFUND_INST_APPROVER');
+
+				DELETE FROM SECGROUPS WHERE GRPCODE ='FEE_REFUND_INST_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='FEE_REFUND_INST_APPROVER';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_paymentAmount';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_postDate';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_paymentType';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_remarks';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_bankBranchID';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_acctNumber';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_acctHolderName';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_phoneNumber';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_issuingBank';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_favouringName';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_chequeOrDDumber';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_payableLoc';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_printingLoc';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_valueDate';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_partnerBankID';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='FeeRefundInstructionDialog_leiNumber';
+				
+				INSERT INTO SECROLES (ROLEID,ROLEAPP,ROLECD,ROLEDESC,ROLECATEGORY,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)  VALUES ((select max(roleid)+1 from secroles), 1, 'FEE_REFUND_INST_MAKER', 'Role for Fee Refund Inst Maker', NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID,ROLEAPP,ROLECD,ROLEDESC,ROLECATEGORY,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) VALUES ((select max(roleid)+1 from secroles), 1, 'FEE_REFUND_INST_APPROVER', 'Role for Fee Refund Inst Approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0) ;
+				
+				INSERT INTO SECGROUPS (GRPID,GRPCODE,GRPDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(GrpID)+1 From SecGroups), 'FEE_REFUND_INST_MAKER', 'Group for Fee Refund Inst Group maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SECGROUPS (GRPID,GRPCODE,GRPDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(GrpID)+1 From SecGroups), 'FEE_REFUND_INST_APPROVER', 'Group for Fee Refund Inst Group approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_paymentAmount','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_postDate','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_paymentType','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_remarks','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_bankBranchID','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_acctNumber','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_acctHolderName','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_phoneNumber','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_issuingBank','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_favouringName','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_chequeOrDDumber','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_payableLoc','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_printingLoc','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_valueDate','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_partnerBankID','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((Select MAX(RightID)+1 From SecRights),2, 'FeeRefundInstructionDialog_leiNumber','FeeRefundInstructionDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_paymentAmount'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_postDate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_paymentType'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_remarks'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_bankBranchID'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_acctNumber'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_acctHolderName'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_phoneNumber'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_issuingBank'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_favouringName'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_chequeOrDDumber'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_payableLoc'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_printingLoc'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_valueDate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_partnerBankID'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values((Select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEE_REFUND_INST_MAKER'), (Select RightID from SecRights where RightName = 'FeeRefundInstructionDialog_leiNumber'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECROLEGROUPS (ROLEGRPID,GRPID,ROLEID,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='FEE_REFUND_INST_MAKER'),(select RoleID from secRoles where RoleCd='FEE_REFUND_INST_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID,GRPID,ROLEID,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='FEE_REFUND_INST_APPROVER'),(select RoleID from secRoles where RoleCd='FEE_REFUND_INST_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2562.9" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'HOLD_REF_UPLOAD_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'HOLD_REF_UPLOAD_APPROVER');
+
+				DELETE FROM SECROLES WHERE ROLECD = 'HOLD_REF_UPLOAD_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'HOLD_REF_UPLOAD_APPROVER';
+
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'HOLD_REF_UPLOAD_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'HOLD_REF_UPLOAD_APPROVER');
+
+				DELETE FROM SECGROUPS WHERE GRPCODE ='HOLD_REF_UPLOAD_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='HOLD_REF_UPLOAD_APPROVER';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_HoldRefundUpload_Maker';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_HoldRefundUpload_Approver';
+
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_HoldRefundUpload_Maker', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_HoldRefundUpload_Approver', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'HOLD_REF_UPLOAD_MAKER', 'WF Maker for Hold Refund Upload', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'HOLD_REF_UPLOAD_APPROVER', 'WF Approver for Hold Refund Upload', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'HOLD_REF_UPLOAD_MAKER'),    (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_HoldRefundUpload_Maker'),    1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'HOLD_REF_UPLOAD_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_HoldRefundUpload_Approver'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'HOLD_REF_UPLOAD_MAKER', 'Maker role from Hold Refund Upload', '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'HOLD_REF_UPLOAD_APPROVER', 'Approver role from Hold Refund Upload',	'', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'HOLD_REF_UPLOAD_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'HOLD_REF_UPLOAD_MAKER'),    0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'HOLD_REF_UPLOAD_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'HOLD_REF_UPLOAD_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -3863,10 +3863,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("PaymentInstructionUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
-		
+
 		ModuleUtil.register("FeeRefundHeader",
 				new ModuleMapping("FeeRefundHeader", FeeRefundHeader.class,
-						new String[] { "FeeRefundHeader", "FeeRefundHeader_View" }, PaymentWF, new String[] { "CustCif",
+						new String[] { "FeeRefundHeader", "FeeRefundHeader_View" }, masterWF, new String[] { "CustCif",
 								"CustShrtName", "FinReference", "PaymentAmount", "LoanType", "BranchName" },
 						null, 600));
 
@@ -3877,7 +3877,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FeeRefundInstruction",
 				new ModuleMapping("FeeRefundInstruction", FeeRefundInstruction.class,
-						new String[] { "FeeRefundInstruction", "FeeRefundInstruction_AView" }, PaymentWF,
+						new String[] { "FeeRefundInstruction", "FeeRefundInstruction_AView" }, masterWF,
 						new String[] { "PaymentType", "PaymentAmount", "BankCode", "PaymentCCy" }, null, 600));
 
 		registerCustomModules();

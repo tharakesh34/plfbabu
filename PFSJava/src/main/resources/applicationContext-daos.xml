@@ -13043,7 +13043,7 @@
 		<property name="projectedPaymentInstUploadDAO" ref="projectedPaymentInstUploadDAO" />
 		<property name="paymentInstructionUploadDAO" ref="paymentInstructionUploadDAO" />
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
-		<property name="autoRefundService" ref="autoRefundService"/>
+		<property name="refundBeneficiary" ref="refundBeneficiary"/>
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	

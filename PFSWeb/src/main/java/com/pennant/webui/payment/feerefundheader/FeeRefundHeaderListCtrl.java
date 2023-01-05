@@ -469,7 +469,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 				frh.setWorkflowId(getWorkFlowId());
 			}
 
-			logUserAccess("menu_Item_PaymentInstructions", frh.getFinReference());
+			logUserAccess("menu_Item_FeeRefundMaker", frh.getFinReference());
 
 			doShowDialogPage(frh);
 		} else {
@@ -822,7 +822,6 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		FeeRefundHeader frh = (FeeRefundHeader) auditHeader.getAuditDetail().getModelData();
 
 		while (retValue == PennantConstants.porcessOVERIDE) {
 			if (StringUtils.isBlank(method)) {
@@ -927,7 +926,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		List<Long> feeRefundIdList = getListofFeeRefundHeader();
 
 		if (feeRefundIdList.isEmpty()) {
-			MessageUtil.showError(Labels.getLabel("AggregatorPaymentUploadDataList_NoEmpty"));
+			MessageUtil.showError(Labels.getLabel("FeeRefundHeaderDataList_NoEmpty"));
 			return;
 		}
 
@@ -958,7 +957,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		List<Long> feeRefundIdList = getListofFeeRefundHeaderList();
 
 		if (feeRefundIdList.isEmpty()) {
-			MessageUtil.showError(Labels.getLabel("AggregatorPaymentUploadDataList_NoEmpty"));
+			MessageUtil.showError(Labels.getLabel("FeeRefundHeaderDataList_NoEmpty"));
 			return;
 		}
 
@@ -1032,7 +1031,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 					PennantConstants.FEE_REFUND_APPROVAL_DOWNLOADED);
 
 			if (!isDownloaded) {
-				MessageUtil.showError("Upload id:" + id + " is not download atleast one time");
+				MessageUtil.showError("FeeRefundId:" + id + " is not download atleast one time");
 				return true;
 			}
 		}

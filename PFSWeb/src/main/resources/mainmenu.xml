@@ -808,9 +808,9 @@
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul?module=PYMT"
 				rightName="menuItem_payment_CustPaymentTransaction" />
 			<menuItem id="menu_Item_FeeRefundMaker" zulNavigation="/WEB-INF/pages/FeeRefund/FeeRefundHeaderList.zul?approval=N"
-				rightName="" />
+				rightName="menu_Item_FeeRefundMaker" />
 			<menuItem id="menu_Item_FeeRefundApprover" zulNavigation="/WEB-INF/pages/FeeRefund/FeeRefundHeaderList.zul?approval=Y"
-				rightName="" />
+				rightName="menu_Item_FeeRefundApprover" />
 		</menu>
 		<menu id="menu_Category_LmsReceipts">
 			<menuItem id="menu_Item_InitMaker"
@@ -2517,10 +2517,10 @@
 	<menu id="menu_Category_HoldRefund">
 		<menuItem id="menu_Item_HoldRefundUpload_Maker"
 			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=M"
-			rightName="" />
+			rightName="menu_Item_HoldRefundUpload_Maker" />
 		<menuItem id="menu_Item_HoldRefundUpload_Approver"
 			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=A"
-			rightName="" />
+			rightName="menu_Item_HoldRefundUpload_Approver" />
 	</menu>
 	
 	<menu id="menu_Category_ManualRefunds">

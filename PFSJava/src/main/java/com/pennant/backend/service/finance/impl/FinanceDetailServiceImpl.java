@@ -11278,4 +11278,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setExternalFinanceSystemService(ExternalFinanceSystemService externalFinanceSystemService) {
 		this.externalFinanceSystemService = externalFinanceSystemService;
 	}
+
+	public void setHoldRefundUploadDAO(HoldRefundUploadDAO holdRefundUploadDAO) {
+		this.holdRefundUploadDAO = holdRefundUploadDAO;
+	}
+
 }
