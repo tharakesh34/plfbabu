@@ -4135,6 +4135,7 @@
 		class="com.pennant.webui.payment.paymentheader.SelectPaymentHeaderDialogCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="feeRefundHeaderService" ref ="feeRefundHeaderService"/>
 	</bean>
 
 	<!-- DisbursementsInstructionsDialogCtrl -->
