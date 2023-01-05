@@ -3,6 +3,7 @@ package com.pennanttech.pff.external.mandate.dao.impl;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -27,7 +28,6 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.mandate.dao.MandateProcessDAO;
 
@@ -128,28 +128,32 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 						bankCode = rowMap.get("BANK_CODE").toString();
 					}
 
-					// Extra columns added below for HDFC
-					{
-						String mandateDate = DateUtil.format(appDate, DateFormat.SHORT_DATE);
-						rowMap.put("MANDATE_DATE", mandateDate);
+					// NEW CHANGES START : Extra columns added below for HDFC
+					String mandateDate = new SimpleDateFormat("dd/MM/yyyy").format(appDate);
+					rowMap.put("MANDATE_DATE", mandateDate);
 
-						Date startDate = (Date) rowMap.get("START_DATE");
-						String fStartDate = DateUtil.format(startDate, DateFormat.SHORT_DATE);
-						rowMap.put("START_DATE", fStartDate);
-						rowMap.put("END_DATE", null);
+					Date startDate = (Date) rowMap.get("START_DATE");
+					String fStartDate = new SimpleDateFormat("dd/MM/yyyy").format(startDate);
+					rowMap.put("START_DATE", fStartDate);
+					rowMap.put("END_DATE", null);
 
-						String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
-						rowMap.put("IMAGE_NAME", "ACH-" + finReference);
+					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
+					rowMap.put("IMAGE_NAME", "ACH-" + finReference);
 
-						if (rowMap.get("SECURITYMANDATE") != null) {
-							String secureMandate = rowMap.get("SECURITYMANDATE").toString();
-							if (secureMandate != null && "1".equals(secureMandate.trim())) {
-								rowMap.put("CAT_CODE", "O002");
-							} else {
-								rowMap.put("CAT_CODE", "O001");
-							}
+					if (rowMap.get("SECURITYMANDATE") != null) {
+						String secureMandate = rowMap.get("SECURITYMANDATE").toString();
+						if (secureMandate != null && "1".equals(secureMandate.trim())) {
+							rowMap.put("CAT_CODE", "O002");
+						} else {
+							rowMap.put("CAT_CODE", "O001");
 						}
+						// rowMap.remove("SECURITYMANDATE");
 					}
+
+					if (rowMap.get("CUSTOMER_EMAIL") != null) {
+						rowMap.put("CUSTOMER_EMAIL", "");
+					}
+					// NEW CHANGES END
 
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("PROCESS_ID", processId);
@@ -184,7 +188,6 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 					}
 
 					String appId = null;
-					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
 
 					if (finReference != null) {
 						appId = StringUtils.substring(finReference, finReference.length() - 7, finReference.length());
@@ -220,7 +223,6 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 							rowMap.put("DEBIT_AMOUNT", custEmi);
 						}
 
-						Date startDate = (Date) rowMap.get("START_DATE");
 						Date firstDueDate = (Date) rowMap.get("FIRSTDUEDATE");
 						Date endDate = DateUtil.addMonths(startDate, 240);
 
