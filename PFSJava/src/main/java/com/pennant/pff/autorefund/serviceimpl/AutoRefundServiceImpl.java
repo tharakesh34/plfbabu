@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +28,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.AutoRefundLoan;
-import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -38,14 +36,12 @@ import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.payment.PaymentHeaderService;
-import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public class AutoRefundServiceImpl implements AutoRefundService {
 	private static final Logger logger = LogManager.getLogger(AutoRefundServiceImpl.class);
@@ -223,81 +219,6 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 		}
 		logger.debug(Literal.LEAVING);
 		return errors;
-	}
-
-	/**
-	 * Preparing Beneficiary details for the Refund process
-	 * 
-	 * @param Loan
-	 * @return PaymentInstruction
-	 */
-	@Override
-	public PaymentInstruction fetchBeneficiaryForRefund(long finID, Date appDate, boolean alwRefundByCheque) {
-		logger.debug(Literal.ENTERING);
-		PaymentInstruction paymentInst = null;
-
-		// Verification of Successful presentments against Repayment Method (NACH/SI/EMANDATE)
-		// Method for the Loan is NACH, E Mandate, PDC or SI
-		List<PresentmentDetail> prsnIdList = presentmentDetailDAO.getPresentmentIdByFinId(finID);
-
-		if (CollectionUtils.isNotEmpty(prsnIdList)) {
-			List<PresentmentDetail> prsntDetail = prsnIdList.stream()
-					.sorted((l1, l2) -> Long.valueOf(l2.getId()).compareTo(Long.valueOf(l1.getId())))
-					.collect(Collectors.toList());
-			// if Success presentment Exists , then Collect beneficiary Details of Mandate from presentment
-			paymentInst = mandateDAO.getBeneficiatyDetailsByMandateId(prsntDetail.get(0).getMandateId());
-		} else {
-			// Mandate (NACH, E Mandate or SI)
-			List<Long> mandateList = mandateDAO.getMandateIDByFinId(finID);
-			if (CollectionUtils.isNotEmpty(mandateList)) {
-				paymentInst = mandateDAO.getBeneficiatyDetailsByMandateId(mandateList.get(0));
-			}
-		}
-
-		if (paymentInst != null) {
-			logger.debug(Literal.LEAVING);
-			return paymentInst;
-		}
-		// Verification of Cheque Details
-		// PDC it will consider Bank Details
-		List<ChequeDetail> chequeList = mandateDAO.getChequeDetailIDByFinId(finID);
-		if (CollectionUtils.isNotEmpty(chequeList)) {
-			List<ChequeDetail> cd = chequeList.stream()
-					.sorted((l1, l2) -> Long.valueOf(l2.getId()).compareTo(Long.valueOf(l1.getId())))
-					.collect(Collectors.toList());
-			paymentInst = mandateDAO.getBeneficiatyDetailsByChequeDetailsId(cd.get(0).getChequeDetailsID());
-
-		} else {
-			// In Case of non-availability of Approved Mandates linked to loan, or non-availability of PDC instruments
-			List<Long> mandateList = mandateDAO.getChequeDetailIDByAppDate(finID, appDate);
-			if (CollectionUtils.isNotEmpty(mandateList)) {
-				paymentInst = mandateDAO.getBeneficiatyDetailsByChequeDetailsId(mandateList.get(0));
-			}
-		}
-
-		if (paymentInst != null) {
-			logger.debug(Literal.LEAVING);
-			return paymentInst;
-		}
-
-		// In case no details available against Presentment & Cheque Details the Use the Mandate presented against Loan
-		List<PaymentInstruction> paymentInstlist = mandateDAO.getBeneficiatyDetailsByFinId(finID);
-		if (paymentInstlist.size() > 0) {
-			paymentInst = paymentInstlist.get(0);
-		}
-
-		// In case any refunds processed earlier then use the same Instruction for processing
-		if (paymentInst == null) {
-			if (alwRefundByCheque) {
-				List<PaymentInstruction> paymentInstlist1 = mandateDAO.getBeneficiatyDetailsRefundCheque(finID);
-				if (paymentInstlist1.size() > 0 && paymentInstlist1.get(0) != null) {
-					paymentInst = paymentInstlist.get(0);
-					paymentInst.setPaymentType(DisbursementConstants.PAYMENT_TYPE_CHEQUE);
-				}
-			}
-		}
-		logger.debug(Literal.LEAVING);
-		return paymentInst;
 	}
 
 	/**

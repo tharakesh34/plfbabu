@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.UnhandledException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +21,7 @@ import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -28,6 +30,7 @@ public class AutoRefundProcess {
 	private static final Logger logger = LogManager.getLogger(AutoRefundProcess.class);
 
 	private AutoRefundService autoRefundService;
+	private RefundBeneficiary refundBeneficiary;
 
 	/**
 	 * Method for Auto Refund process Initiation on EOD execution
@@ -121,7 +124,8 @@ public class AutoRefundProcess {
 					}
 
 					// Payment Details List Addition
-					payDtlList.add(preparePayDetail(excess, refundAvail));
+					payDtlList.add(
+							preparePayDetail(excess.getAmountType(), excess.getExcessID(), null, null, refundAvail));
 				}
 
 				// Payable Advise List to Prepare Payment Details
@@ -138,7 +142,8 @@ public class AutoRefundProcess {
 					}
 
 					// Payment Details List Addition
-					payDtlList.add(preparePayDetail(adv, refundAvail));
+					payDtlList.add(preparePayDetail(String.valueOf(AdviseType.PAYABLE.id()), adv.getAdviseID(),
+							adv.getFeeTypeCode(), adv.getFeeTypeDesc(), refundAvail));
 				}
 
 				if (refundAvail.compareTo(BigDecimal.ZERO) <= 0) {
@@ -152,16 +157,17 @@ public class AutoRefundProcess {
 
 				// Validation of Minimum & Maximum Amounts of Refund against Calculated Refund Amount to proceed further
 				errors = autoRefundService.validateRefundAmt(refundAvail, refundLoan);
-				if (!errors.isEmpty()) {
+				if (errors.isEmpty()) {
 
 					// Need to write bank details for the Payment type cheque
-					PaymentInstruction payInst = autoRefundService.fetchBeneficiaryForRefund(refundLoan.getFinID(),
+					PaymentInstruction payInst = refundBeneficiary.fetchBeneficiaryForRefund(refundLoan.getFinID(),
 							appDate, alwRefundByCheque);
 					if (payInst != null) {
 						errors = autoRefundService.executeAutoRefund(refundLoan, payDtlList, payInst, appDate);
 						if (CollectionUtils.isEmpty(errors)) {
 							refundLoan.setErrorCode("REFUND008");
 							refundLoan.setAppDate(appDate);
+							refundLoan.setRefundAmt(refundAvail);
 							refundLoan.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 							refundLoan.setStatus("S");
 						} else {
@@ -236,20 +242,18 @@ public class AutoRefundProcess {
 	 * @param referenceID
 	 * @return
 	 */
-	private PaymentDetail preparePayDetail(Object object, BigDecimal amount) {
+	private PaymentDetail preparePayDetail(String amountType, long refundAgainst, String feeTypeCode,
+			String feeTypeDesc, BigDecimal amount) {
 
 		// Payment Details preparation
 		PaymentDetail pd = new PaymentDetail();
-		if (object instanceof FinExcessAmount) {
-			pd.setAmountType(((FinExcessAmount) object).getAmountType());
-			pd.setReferenceId(((FinExcessAmount) object).getExcessID());
-		} else if (object instanceof ManualAdvise) {
-			pd.setAmountType(String.valueOf(((ManualAdvise) object).getAdviseType()));
-			pd.setReferenceId(((FinExcessAmount) object).getExcessID());
-			pd.setFeeTypeCode(((ManualAdvise) object).getFeeTypeCode());
-			pd.setFeeTypeCode(((ManualAdvise) object).getFeeTypeDesc());
-		}
+		pd.setReferenceId(refundAgainst);
 		pd.setAmount(amount);
+		pd.setAmountType(amountType);
+		if (StringUtils.isNotBlank(feeTypeCode)) {
+			pd.setFeeTypeCode(feeTypeCode);
+			pd.setFeeTypeDesc(feeTypeDesc);
+		}
 		pd.setFinSource(UploadConstants.FINSOURCE_ID_AUTOPROCESS);
 
 		return pd;
@@ -257,6 +261,10 @@ public class AutoRefundProcess {
 
 	public void setAutoRefundService(AutoRefundService autoRefundService) {
 		this.autoRefundService = autoRefundService;
+	}
+
+	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
+		this.refundBeneficiary = refundBeneficiary;
 	}
 
 }

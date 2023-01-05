@@ -4115,6 +4115,13 @@
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="refundBeneficiary" ref="refundBeneficiary" />
+	</bean>
+	
+	<!-- Refund Beneficiary  -->
+	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary">
+		<property name="mandateDAO" ref="mandateDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 	</bean>
 
 	<!-- DMS DocumentDetails -->

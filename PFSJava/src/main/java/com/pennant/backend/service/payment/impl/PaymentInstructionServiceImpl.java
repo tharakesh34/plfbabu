@@ -339,7 +339,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 			}
 			if (saveRecord) {
 				if (tableType.equals(TableType.MAIN_TAB)) {
-					paymentInstruction.setPaymentProcReq(true);
+					// paymentInstruction.setPaymentProcReq(true);
 				}
 				getPaymentInstructionDAO().save(paymentInstruction, tableType);
 			}

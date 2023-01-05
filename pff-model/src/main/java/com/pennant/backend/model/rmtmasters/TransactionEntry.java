@@ -25,6 +25,9 @@
 
 package com.pennant.backend.model.rmtmasters;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -98,6 +101,13 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("glCode");
+		return excludeFields;
+	}
+	
 	public TransactionEntry copyEntity() {
 		TransactionEntry entity = new TransactionEntry();
 		entity.setAccountSetid(this.accountSetid);

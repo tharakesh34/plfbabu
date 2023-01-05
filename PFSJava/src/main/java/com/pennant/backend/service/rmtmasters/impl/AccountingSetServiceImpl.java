@@ -564,7 +564,6 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new TransactionEntry());
 
 		for (int i = 0; i < accountingSet.getTransactionEntries().size(); i++) {
 			TransactionEntry transactionEntry = accountingSet.getTransactionEntries().get(i);
@@ -606,7 +605,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			transactionEntry.setRecordStatus(accountingSet.getRecordStatus());
 			transactionEntry.setUserDetails(accountingSet.getUserDetails());
 			transactionEntry.setLastMntOn(accountingSet.getLastMntOn());
-
+			String[] fields = PennantJavaUtil.getFieldDetails(new TransactionEntry(), transactionEntry.getExcludeFields());
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], transactionEntry.getBefImage(),
 					transactionEntry));
 		}
