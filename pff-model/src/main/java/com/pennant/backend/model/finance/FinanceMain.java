@@ -842,6 +842,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean resetFromLastStep;
 	private boolean wifLoan = false;
 
+	private String holdStatus;
+	private String reason;
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -1083,7 +1086,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("moduleDefiner");
 		excludeFields.add("resetFromLastStep");
 		excludeFields.add("wifLoan");
-
+		excludeFields.add("holdStatus");
+		excludeFields.add("reason");
 		return excludeFields;
 	}
 
@@ -5551,6 +5555,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setWifLoan(boolean wifLoan) {
 		this.wifLoan = wifLoan;
+	}
+
+	public String getHoldStatus() {
+		return holdStatus;
+	}
+
+	public void setHoldStatus(String holdStatus) {
+		this.holdStatus = holdStatus;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
 }
