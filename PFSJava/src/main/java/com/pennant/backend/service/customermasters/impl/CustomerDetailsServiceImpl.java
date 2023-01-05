@@ -8507,7 +8507,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				if (!StringUtils.equals(customer.getCustCIF(), detail)) {
 					errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
 							+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
-					errorParameters[1] = PennantJavaUtil.getLabel("label_Cif") + ": {" + detail + "}";
+					errorParameters[1] = PennantJavaUtil.getLabel("label_Cif") + ": " + detail;
 
 					auditDetail.setErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errorParameters, null));

@@ -1728,6 +1728,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 						throw new InterfaceException("9999", "Customer Not found.");
 					}
 					customerDetails = this.customerDetailsService.getCustomerById(customer.getId());
+					this.newCust.setChecked(false);
+					this.existingCust.setChecked(true);
 				} else {
 					customerDetails = getNewCustomerDetail(customerDetails);
 				}
