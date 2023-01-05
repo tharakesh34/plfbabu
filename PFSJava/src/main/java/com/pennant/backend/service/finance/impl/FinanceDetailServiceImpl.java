@@ -169,6 +169,7 @@ import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceExposure;
+import com.pennant.backend.model.finance.FinanceHoldDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -8316,6 +8317,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		FinScheduleData schdData = new FinScheduleData();
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
+
+		FinanceHoldDetail financeHoldDetails = financeMainDAO.getFinanceHoldDetails(finID, type, false);
+		if (financeHoldDetails != null) {
+			fm.setHoldStatus(financeHoldDetails.getHoldStatus());
+			fm.setReason(financeHoldDetails.getReason());
+		}
 
 		String productCategory = fm.getProductCategory();
 		String finReference = fm.getFinReference();

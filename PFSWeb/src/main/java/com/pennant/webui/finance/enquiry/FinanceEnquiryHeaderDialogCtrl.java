@@ -68,6 +68,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -95,6 +96,7 @@ import com.pennant.backend.model.finance.FinanceScheduleReportData;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -251,6 +253,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private JointAccountDetailService jointAccountDetailService;
 	@Autowired
 	private CreditApplicationReviewService creditApplicationReviewService;
+	@Autowired
+	private ManualAdviseDAO manualAdviseDAO;
 
 	/**
 	 * default constructor.<br>
@@ -806,7 +810,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("EXCESSENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ExcessEnquiry"));
 			List<FinExcessAmount> excessDetails = getFinExcessAmountDAO().getExcessAmountsByRef(this.finID);
+			List<ManualAdvise> payables = getManualAdviseDAO().getPaybleAdvises(this.finID, "_View");
 			map.put("excessDetails", excessDetails);
+			map.put("payables", payables);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExcessEnquiryDialog.zul";
 		} else if ("OCRENQ".equals(this.enquiryType)) {
@@ -1473,6 +1479,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	public void setTdsReceivablesTxnService(TdsReceivablesTxnService tdsReceivablesTxnService) {
 		this.tdsReceivablesTxnService = tdsReceivablesTxnService;
+	}
+
+	public ManualAdviseDAO getManualAdviseDAO() {
+		return manualAdviseDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 }
