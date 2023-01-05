@@ -1693,4 +1693,12 @@
 				]]>
 			</sql>
 	</changeSet>
+	<changeSet id="67" author="rahul.r">
+			<sql>
+				<![CDATA[
+					INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING (CODE,SEGMENT_TYPE,ADDRESS_TYPE) VALUES ('04','RETAIL','CURRES');
+					INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING (CODE,SEGMENT_TYPE,ADDRESS_TYPE) VALUES ('04','RETAIL','PROPADR');
+				]]>
+			</sql>
+	</changeSet>
 </databaseChangeLog>
