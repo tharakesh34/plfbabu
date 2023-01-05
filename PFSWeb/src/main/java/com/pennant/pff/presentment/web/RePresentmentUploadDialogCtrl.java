@@ -249,6 +249,8 @@ public class RePresentmentUploadDialogCtrl extends GFCBaseCtrl<FileUploadHeader>
 
 		this.fileName.setValue("");
 
+		this.btnSave.setVisible(true);
+
 		doClearMessage();
 		doCheckFields();
 
