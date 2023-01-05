@@ -13168,4 +13168,8 @@
 	
 	<bean id="autoRefundDAO" class="com.pennant.backend.dao.finance.impl.AutoRefundDAOImpl"  parent="basicDao" />
 	
+	<bean id="holdRefundUploadDAO" class="com.pennant.pff.holdrefund.dao.impl.HoldRefundUploadDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="holdRefundUploadService" class="com.pennant.pff.holdrefund.service.impl.HoldRefundUploadServiceImpl" parent="aUploadService" />
 </beans>
