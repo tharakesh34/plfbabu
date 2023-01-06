@@ -1172,9 +1172,12 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 				BigDecimal receiptPaidAmt = BigDecimal.ZERO;
 
-				for (ReceiptAllocationDetail rad : radList) {
-					if (StringUtils.equals(String.valueOf(rad.getAllocationTo()), String.valueOf(ma.getAdviseID()))) {
-						receiptPaidAmt = rad.getPaidAmount();
+				if (CollectionUtils.isNotEmpty(radList)) {
+					for (ReceiptAllocationDetail rad : radList) {
+						if (StringUtils.equals(String.valueOf(rad.getAllocationTo()),
+								String.valueOf(ma.getAdviseID()))) {
+							receiptPaidAmt = rad.getPaidAmount();
+						}
 					}
 				}
 
@@ -1236,9 +1239,12 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 				BigDecimal receiptPaidAmt = BigDecimal.ZERO;
 
-				for (ReceiptAllocationDetail rad : radList) {
-					if (StringUtils.equals(String.valueOf(rad.getAllocationTo()), String.valueOf(ffd.getFeeTypeID()))) {
-						receiptPaidAmt = rad.getPaidAmount();
+				if (CollectionUtils.isNotEmpty(radList)) {
+					for (ReceiptAllocationDetail rad : radList) {
+						if (StringUtils.equals(String.valueOf(rad.getAllocationTo()),
+								String.valueOf(ffd.getFeeTypeID()))) {
+							receiptPaidAmt = rad.getPaidAmount();
+						}
 					}
 				}
 
@@ -1274,9 +1280,11 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 				BigDecimal receiptPaidAmt = BigDecimal.ZERO;
 
-				for (ReceiptAllocationDetail rad : radList) {
-					if (StringUtils.equals(String.valueOf(rad.getAllocationType()), Allocation.ODC)) {
-						receiptPaidAmt = rad.getPaidAmount();
+				if (CollectionUtils.isNotEmpty(radList)) {
+					for (ReceiptAllocationDetail rad : radList) {
+						if (StringUtils.equals(String.valueOf(rad.getAllocationType()), Allocation.ODC)) {
+							receiptPaidAmt = rad.getPaidAmount();
+						}
 					}
 				}
 
@@ -1314,11 +1322,14 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 				BigDecimal receiptPaidAmt = BigDecimal.ZERO;
 
-				for (ReceiptAllocationDetail rad : radList) {
-					if (StringUtils.equals(String.valueOf(rad.getAllocationType()), Allocation.LPFT)) {
-						receiptPaidAmt = rad.getPaidAmount();
+				if (CollectionUtils.isNotEmpty(radList)) {
+					for (ReceiptAllocationDetail rad : radList) {
+						if (StringUtils.equals(String.valueOf(rad.getAllocationType()), Allocation.LPFT)) {
+							receiptPaidAmt = rad.getPaidAmount();
+						}
 					}
 				}
+
 				frd = new FeeRefundDetail();
 				frd.setNewRecord(true);
 				frd.setReceivableRefId(ft.getFeeTypeID());
@@ -1696,7 +1707,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			if (!StringUtils.equals(recType, detail.getReceivableType())) {
 				continue;
 			}
-			BigDecimal balAmount = detail.getPaidAmount();
+			BigDecimal balAmount = detail.getPaidAmount().subtract(detail.getPrevRefundAmount());
 			if (detail.getTaxHeader() != null
 					&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
 				// GST Calculations
@@ -1890,6 +1901,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				BigDecimal currRefundAmt = BigDecimal.ZERO;
 				String rcvFeeType = null;
 				String payFeeType = null;
+				long refID = 0;
 
 				for (FeeRefundDetail frd : frds) {
 
@@ -1920,6 +1932,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 					if (frds.size() > 1) {
 						groupReq = true;
+					} else {
+						refID = frd.getReceivableRefId();
 					}
 				}
 
@@ -1933,6 +1947,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				frTemp.setCurrRefundAmount(currRefundAmt);
 				frTemp.setTotalAmount(totalPayAmt);
 				frTemp.setReceivableType(frds.get(0).getReceivableType());
+				frTemp.setReceivableRefId(refID);
 
 				// Manual Advise
 				if (groupReq) {
@@ -1981,7 +1996,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		}
 
 		// Receivable Type
-		lc = new Listcell(frTemp.getFeeTypeDesc());
+		lc = new Listcell(
+				!expandReq ? frTemp.getReceivableRefId() + "-" + frTemp.getFeeTypeDesc() : frTemp.getFeeTypeDesc());
 		lc.setParent(item);
 
 		// Payable Type
