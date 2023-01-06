@@ -21,7 +21,7 @@ public interface FinExcessAmountDAO {
 
 	void updateExcessReserve(long payAgainstID, BigDecimal reserveAmt);
 
-	FinExcessAmountReserve getExcessReserve(long receiptID, long payAgainstID);
+	FinExcessAmountReserve getExcessReserve(long receiptID, long payAgainstID, String paymentType);
 
 	void saveExcessReserveLog(long receiptID, long payAgainstID, BigDecimal reserveAmt, String paymentType);
 
@@ -98,4 +98,6 @@ public interface FinExcessAmountDAO {
 	FinExcessAmount getExcessAmountsByReceiptId(long finID, String amountType, long receiptId);
 
 	List<FinExcessMovement> getExcessMovementList(long id, String movementType);
+
+	FinExcessAmount getFinExcessAmountById(long excessID, String type);
 }

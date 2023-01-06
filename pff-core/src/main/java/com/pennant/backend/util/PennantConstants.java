@@ -942,4 +942,8 @@ public class PennantConstants {
 	public static final String PREPYMT_CALCTN_TYPE_MIN_EMI = "MINEMI";
 	public static final String PREPYMT_CALCTN_TYPE_MIN_POS_AMT = "POSAMT";
 	public static final String PREPYMT_CALCULATEDON_SANCTIONLOANAMOUNT = "SANLAMT";
+
+	// Cheque Module Status
+	public static final String CHEQUESTATUS_NEW = "NEW";
+	public static final String CHEQUESTATUS_REALISE = "REALISE";
 }

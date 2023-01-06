@@ -95,6 +95,7 @@ public class RepayConstants {
 	public static final String RECEIPTTYPE_PAYABLE = "P";
 	public static final String RECEIPTTYPE_ADJUST = "A";
 	public static final String RECEIPTTYPE_PRESENTMENT = "I";
+	public static final String TRANSFER = "T";
 
 	// Receipt Types
 	public static final String RECEIPTTO_FINANCE = "F";
@@ -211,6 +212,7 @@ public class RepayConstants {
 	public static final String SUB_RECEIPT_MODE = "SUBRCTMODE";
 	public static final String RECEIPT_SOURCE = "RCTSRC";
 	public static final String RECEIPT_CHANNEL_MOBILE = "MOB";
+
 	// Presentment FeeTypes
 	public static final String FEE_TYPE_MANUAL_ADVISE = "MANUAL";
 	public static final String FEE_TYPE_BOUNCE = "BOUNCE";
@@ -229,4 +231,7 @@ public class RepayConstants {
 	public static final String DUETYPE_BOUNCE = "B";
 	public static final String DUETYPE_MANUALADVISE = "M";
 	public static final String DUETYPE_FEES = "F"; //
+
+	// Excess Adjustment to in Receipts
+	public static final String EXCESSADJUSTTO_RECADJ = "R";
 }

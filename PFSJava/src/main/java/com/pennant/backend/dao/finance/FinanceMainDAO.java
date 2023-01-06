@@ -410,4 +410,6 @@ public interface FinanceMainDAO {
 	Date getMaturityDate(String finReference);
 
 	FinanceMain getEntityByRef(String finReference);
+
+	FinanceMain getFinanceMainForExcessTransfer(long finId);
 }

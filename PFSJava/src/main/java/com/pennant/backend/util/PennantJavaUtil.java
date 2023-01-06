@@ -205,6 +205,7 @@ import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.model.excessheadmaster.FinExcessTransfer;
 import com.pennant.backend.model.expenses.FeeWaiverUploadHeader;
 import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.model.expenses.UploadHeader;
@@ -3850,6 +3851,21 @@ public class PennantJavaUtil {
 				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 						new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
 						new String[] { "BranchCode", "BranchDesc" }, null, 300));
+
+		ModuleUtil.register("FinExcessTransfer",
+				new ModuleMapping("FinExcessTransfer", FinExcessTransfer.class,
+						new String[] { "Excess_Transfer_Details", "Excess_Transfer_Details_View" }, masterWF,
+						new String[] { "Id", "FinID" }, null, 300));
+
+		ModuleUtil.register("ExcessTrf",
+				new ModuleMapping("ExcessAmount", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" },
+						null, new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" }, null,
+						750));
+
+		ModuleUtil.register("Excess",
+				new ModuleMapping("ExcessAmount", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" },
+						null, new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
+						new String[][] { { "AmountType", "0", "E" } }, 750));
 
 		registerCustomModules();
 	}

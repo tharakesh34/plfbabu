@@ -13016,4 +13016,40 @@
 		parent="aUploadService" />
 		
 	<bean id="partPayAndEarlySettleValidator" class="com.pennant.backend.service.finance.PartPayAndEarlySettleValidator"/>
+	
+	<!--============ Excess Transfer ============== -->
+	<bean id="finExcessTransferDAO" class="com.pennant.backend.dao.excessheadmaster.impl.FinExcessTransferDAOImpl"
+		parent="basicDao" />
+
+	<bean id="excessTransferService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="excessTransferServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="excessTransferServiceTarget"
+		class="com.pennant.backend.service.excessheadmaster.impl.ExcessTransferServiceImpl">
+		<property name="finExcessTransferDAO" ref="finExcessTransferDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+	</bean>
+	
 </beans>

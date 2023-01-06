@@ -213,14 +213,14 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	@Override
-	public FinExcessAmountReserve getExcessReserve(long receiptSeqID, long payAgainstID) {
-		String sql = "Select ReceiptSeqID, ExcessID, ReservedAmt From FinExcessAmountReserve Where ReceiptSeqID = ? and ExcessID = ?";
+	public FinExcessAmountReserve getExcessReserve(long receiptSeqID, long payAgainstID, String paymentType) {
+		String sql = "Select ReceiptSeqID, ExcessID, ReservedAmt From FinExcessAmountReserve Where ReceiptSeqID = ? and ExcessID = ? and PaymentType=?";
 
 		logger.debug(Literal.SQL + sql);
 
 		ExcessReserveRowMapper rowMapper = new ExcessReserveRowMapper();
 		try {
-			return this.jdbcOperations.queryForObject(sql, rowMapper, receiptSeqID, payAgainstID);
+			return this.jdbcOperations.queryForObject(sql, rowMapper, receiptSeqID, payAgainstID, paymentType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -1021,5 +1021,37 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			return fem;
 		}, id, movementType);
+	}
+
+	@Override
+	public FinExcessAmount getFinExcessAmountById(long excessID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt");
+		sql.append(" From FinExcessAmount");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where ExcessID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinExcessAmount fea = new FinExcessAmount();
+
+				fea.setExcessID(rs.getLong("ExcessID"));
+				fea.setFinID(rs.getLong("FinID"));
+				fea.setFinReference(rs.getString("FinReference"));
+				fea.setAmountType(rs.getString("AmountType"));
+				fea.setAmount(rs.getBigDecimal("Amount"));
+				fea.setUtilisedAmt(rs.getBigDecimal("UtilisedAmt"));
+				fea.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+				fea.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+
+				return fea;
+			}, excessID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
 	}
 }

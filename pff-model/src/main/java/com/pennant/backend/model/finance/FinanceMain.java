@@ -1083,6 +1083,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("moduleDefiner");
 		excludeFields.add("resetFromLastStep");
 		excludeFields.add("wifLoan");
+		excludeFields.add("securityMandateID");
 
 		return excludeFields;
 	}
