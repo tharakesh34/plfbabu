@@ -1472,11 +1472,13 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 		if (isRetailCustomer && !ImplementationConstants.RETAIL_CUST_PAN_MANDATORY
 				&& (this.custDocType.getValue().equalsIgnoreCase(PennantConstants.FORM60))) {
-			Date addMonths = DateUtil.addMonths(this.custDocIssuedOn.getValue(), 72);
-			if (DateUtility.compare(addMonths, this.custDocExpDate.getValue()) < 0) {
-				MessageUtil.showError("Difference Between Issued On & Expiry Date Sholud be Less Than 6 Years");
+			if (this.custDocIssuedOn.getValue() != null && this.custDocExpDate.getValue() != null) {
+				Date addMonths = DateUtil.addMonths(this.custDocIssuedOn.getValue(), 72);
+				if (DateUtility.compare(addMonths, this.custDocExpDate.getValue()) < 0) {
+					MessageUtil.showError("Difference Between Issued On & Expiry Date Sholud be Less Than 6 Years");
+					return;
+				}
 			}
-			return;
 		}
 
 		if (this.masterDef != null && this.masterDef.isProceedException() && !this.isKYCVerified) {
