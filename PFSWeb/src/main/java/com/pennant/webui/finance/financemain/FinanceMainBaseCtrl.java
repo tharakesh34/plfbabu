@@ -19965,10 +19965,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			if (finFeeDetailListCtrl != null) {
-				finFeeDetailListCtrl.doExecuteFeeCharges(true, finScheduleData);
-			}
-
 			if (manualSchedule.isChecked()) {
 				String manualSchdType = getComboboxValue(this.manualSchdType);
 				if (StringUtils.equals(manualSchdType, PennantConstants.MANUALSCHEDULETYPE_SCREEN)
@@ -20165,6 +20161,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							}
 						}
 						financeDetail.setFinScheduleData(finScheduleData);
+					}
+
+					if (finFeeDetailListCtrl != null) {
+						finFeeDetailListCtrl.doExecuteFeeCharges(true, finScheduleData);
 					}
 
 					// Show Error Details in Schedule Calculation
