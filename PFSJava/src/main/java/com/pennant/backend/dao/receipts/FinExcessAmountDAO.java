@@ -98,4 +98,7 @@ public interface FinExcessAmountDAO {
 	FinExcessAmount getExcessAmountsByReceiptId(long finID, String amountType, long receiptId);
 
 	List<FinExcessMovement> getExcessMovementList(long id, String movementType);
+
+	int updateTerminationExcess(String finReference, long excessID, BigDecimal excessAmt, BigDecimal balns,
+			BigDecimal amount);
 }

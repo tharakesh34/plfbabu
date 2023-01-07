@@ -1006,7 +1006,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		sql.append(" ExcessId, MovementType, Amount, fem.ReceiptId, TranType");
 		sql.append(" From FinExcessMovement");
 		sql.append(" Where ReceiptId = ? and MovementType = ?");
-		sql.append(" Order by fem.ExcessID");
+		sql.append(" Order by ExcessID");
 
 		logger.debug("selectSql: " + sql.toString());
 
@@ -1021,5 +1021,21 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			return fem;
 		}, id, movementType);
+	}
+
+	@Override
+	public int updateTerminationExcess(String finReference, long excessID, BigDecimal utilized, BigDecimal balns,
+			BigDecimal amount) {
+		String sql = "Update FinExcessAmount Set BalanceAmt = ?, Amount = ?, UtilisedAmt = ? Where ExcessID = ? And FinReference = ?";
+
+		return this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setBigDecimal(index++, balns);
+			ps.setBigDecimal(index++, amount);
+			ps.setBigDecimal(index++, utilized);
+			ps.setLong(index++, excessID);
+			ps.setString(index, finReference);
+		});
 	}
 }

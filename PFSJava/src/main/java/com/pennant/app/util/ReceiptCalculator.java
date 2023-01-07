@@ -4700,9 +4700,6 @@ public class ReceiptCalculator {
 		BigDecimal excessAmount = BigDecimal.ZERO;
 
 		for (XcessPayables payable : xcessPayables) {
-			if (RepayConstants.EXAMOUNTTYPE_TEXCESS.equals(payable.getPayableType())) {
-				continue;
-			}
 			excessAmount = excessAmount.add(payable.getBalanceAmt());
 		}
 

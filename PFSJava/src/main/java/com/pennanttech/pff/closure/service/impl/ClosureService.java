@@ -1,43 +1,53 @@
 package com.pennanttech.pff.closure.service.impl;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
-import com.pennant.app.util.RepaymentProcessUtil;
+import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptDetail;
-import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptService;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.receipt.constants.Allocation;
-import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class ClosureService {
 	private static final Logger logger = LogManager.getLogger(ClosureService.class);
 
-	private ReceiptService receiptService;
 	private FeeTypeDAO feeTypeDAO;
-	private RepaymentProcessUtil repaymentProcessUtil;
+	private ReceiptService receiptService;
+	private FinExcessAmountDAO finExcessAmountDAO;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private ManualAdviseDAO manualAdviseDAO;
+	private ReceiptCalculator receiptCalculator;
 
 	public ClosureService() {
 		super();
@@ -53,6 +63,10 @@ public class ClosureService {
 				BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, false);
 				BigDecimal excessAmt = getAvailableExcessAmt(finEODEvent);
 
+				if (calcClosureAmt.compareTo(BigDecimal.ZERO) == 0 || excessAmt.compareTo(BigDecimal.ZERO) == 0) {
+					continue;
+				}
+
 				if (calcClosureAmt.compareTo(excessAmt.add(finEODEvent.getFinType().getClosureThresholdLimit())) <= 0) {
 					processReceipt(finEODEvent, calcClosureAmt, receiptDTO);
 				}
@@ -62,19 +76,112 @@ public class ClosureService {
 	}
 
 	private void processReceipt(FinEODEvent finEODEvent, BigDecimal calcClosureAmt, ReceiptDTO receiptDTO) {
-		List<FinReceiptDetail> list = new ArrayList<>();
+		logger.debug(Literal.ENTERING);
 
-		FinReceiptHeader rch = prepareRCH(finEODEvent, calcClosureAmt);
-		FinReceiptDetail rcd = prepareRCD(finEODEvent.getFinanceMain(), calcClosureAmt);
+		FinServiceInstruction fsi = prepareFinInstruction(finEODEvent, calcClosureAmt, receiptDTO);
 
-		rcd.setPayAgainstID(1);
+		FinanceDetail fd = receiptService.receiptTransaction(fsi);
 
-		list.add(rcd);
-		rch.setReceiptDetails(list);
+		FinScheduleData schdData = fd.getFinScheduleData();
 
-		receiptDTO.setFinReceiptHeader(rch);
+		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
+			WSReturnStatus returnStatus = new WSReturnStatus();
+			ErrorDetail error = schdData.getErrorDetails().get(0);
+			returnStatus.setReturnCode(error.getCode());
+			returnStatus.setReturnText(error.getError());
+			fd.setReturnStatus(returnStatus);
+			return;
+		} else {
+			updateTerminationExcessAmount(finEODEvent, calcClosureAmt);
+		}
 
-		repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
+		logger.debug(Literal.ENTERING);
+	}
+
+	private FinServiceInstruction prepareFinInstruction(FinEODEvent finEODEvent, BigDecimal calcClosureAmt,
+			ReceiptDTO receiptDTO) {
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		fm.setAppDate(fm.getEventProperties().getAppDate());
+
+		FinServiceInstruction fsi = new FinServiceInstruction();
+
+		fsi.setFinReference(fm.getFinReference());
+		fsi.setFinID(finEODEvent.getFinanceMain().getFinID());
+		fsi.setFromDate(fm.getAppDate());
+		fsi.setAmount(calcClosureAmt);
+		fsi.setPaymentMode(RepayConstants.PAYTYPE_CASH);
+		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+		fsi.setPanNumber(receiptDTO.getCustomer().getCustCRCPR());
+		fsi.setReqType("Post");
+		fsi.setNonStp(true);
+		fsi.setRequestSource(RequestSource.API);
+		fsi.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
+		fsi.setValueDate(fm.getAppDate());
+		LoggedInUser userDetails = new LoggedInUser();
+		fsi.setLoggedInUser(userDetails);
+
+		FinReceiptDetail rcd = new FinReceiptDetail();
+		rcd.setReceivedDate(fm.getAppDate());
+		fsi.setReceiptDetail(rcd);
+
+		FinReceiptDetail rd = fsi.getReceiptDetail();
+
+		if (fsi.getValueDate() == null) {
+			fsi.setValueDate(rd.getReceivedDate());
+			rd.setValueDate(rd.getReceivedDate());
+		}
+
+		if (fsi.getReceiptDetail().getReceivedDate() == null) {
+			fsi.getReceiptDetail().setReceivedDate(SysParamUtil.getAppDate());
+		}
+
+		fsi.setReceivedDate(rd.getReceivedDate());
+		fsi.setNewReceipt(true);
+
+		String paymentMode = fsi.getPaymentMode();
+		if (fsi.getRealizationDate() == null && ReceiptMode.CHEQUE.equals(paymentMode)
+				|| ReceiptMode.DD.equals(paymentMode)) {
+			fsi.setRealizationDate(SysParamUtil.getAppDate());
+		} else {
+			fsi.setRealizationDate(SysParamUtil.getAppDate());
+		}
+		return fsi;
+	}
+
+	private void updateTerminationExcessAmount(FinEODEvent finEODEvent, BigDecimal receiptAmt) {
+		List<FinExcessAmount> finExcessAmounts = finEODEvent.getFinExcessAmounts();
+		String finReference = finEODEvent.getFinanceMain().getFinReference();
+		BigDecimal balns = BigDecimal.ZERO;
+		BigDecimal amount = BigDecimal.ZERO;
+		BigDecimal utilized = BigDecimal.ZERO;
+
+		for (FinExcessAmount finex : finExcessAmounts) {
+
+			if (receiptAmt.compareTo(BigDecimal.ZERO) == 0) {
+				return;
+			}
+
+			long excessID = finex.getExcessID();
+			BigDecimal excesAmt = finex.getBalanceAmt();
+
+			if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(finex.getAmountType())) {
+				if (receiptAmt.compareTo(excesAmt) >= 0) {
+					balns = BigDecimal.ZERO;
+					utilized = excesAmt;
+					amount = BigDecimal.ZERO;
+					receiptAmt = receiptAmt.subtract(utilized);
+				}
+
+				if (excesAmt.compareTo(receiptAmt) >= 0) {
+					balns = excesAmt.subtract(receiptAmt);
+					amount = balns;
+					utilized = receiptAmt;
+					receiptAmt = receiptAmt.subtract(utilized);
+				}
+
+				finExcessAmountDAO.updateTerminationExcess(finReference, excessID, utilized, balns, amount);
+			}
+		}
 	}
 
 	private BigDecimal getAvailableExcessAmt(FinEODEvent finEODEvent) {
@@ -90,78 +197,30 @@ public class ClosureService {
 	}
 
 	private ReceiptDTO prepareReceiptRTO(FinEODEvent finEODEvent) {
+		FinScheduleData schdData = new FinScheduleData();
 		FinanceType financeType = finEODEvent.getFinType();
 		FinanceMain fm = finEODEvent.getFinanceMain();
-		Date appDate = fm.getEventProperties().getBusinessDate();
+		Date appDate = fm.getEventProperties().getAppDate();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
+		schdData.setFinanceScheduleDetails(schedules);
+		schdData.setFinanceMain(fm);
 
 		ReceiptDTO receiptDTO = new ReceiptDTO();
 
 		receiptDTO.setFinanceMain(fm);
 		receiptDTO.setSchedules(schedules);
-		receiptDTO.setOdDetails(finEODEvent.getFinODDetails());
-		receiptDTO.setManualAdvises(finEODEvent.getPostingManualAdvises());
+		receiptDTO.setOdDetails(
+				receiptCalculator.getValueDatePenalties(schdData, BigDecimal.ZERO, appDate, null, true, schedules));
+		receiptDTO.setManualAdvises(manualAdviseDAO.getReceivableAdvises(fm.getFinID(), appDate, "_AView"));
 		receiptDTO.setFees(null);
 		receiptDTO.setRoundAdjMth(SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD));
 		receiptDTO.setLppFeeType(feeTypeDAO.getTaxDetailByCode(Allocation.ODC));
 		receiptDTO.setFinType(financeType);
 		receiptDTO.setValuedate(appDate);
 		receiptDTO.setPostDate(appDate);
-		receiptDTO.setProfitDetail(finEODEvent.getFinProfitDetail());
+		receiptDTO.setProfitDetail(financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinID()));
 
 		return receiptDTO;
-	}
-
-	private FinReceiptHeader prepareRCH(FinEODEvent finEODEvent, BigDecimal receiptAmount) {
-		FinReceiptHeader rch = new FinReceiptHeader();
-		FinanceMain fm = finEODEvent.getFinanceMain();
-		Date appDate = fm.getEventProperties().getBusinessDate();
-
-		rch.setFinID(fm.getFinID());
-		rch.setReference(fm.getFinReference());
-		rch.setReceiptDate(appDate);
-		rch.setRealizationDate(appDate);
-		rch.setReceiptAmount(receiptAmount);
-		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		rch.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
-		rch.setAllocationType(AllocationType.AUTO);
-		rch.setEffectSchdMethod(PennantConstants.List_Select);
-		rch.setActFinReceipt(true);
-		rch.setReceivedDate(appDate);
-		rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		rch.setVersion(rch.getVersion() + 1);
-		rch.setLogSchInPresentment(true);
-		rch.setPostBranch(PennantConstants.APP_PHASE_EOD);
-		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		rch.setReceiptMode(RepayConstants.PAYTYPE_CASH);
-		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-
-		return rch;
-	}
-
-	private FinReceiptDetail prepareRCD(FinanceMain fm, BigDecimal receiptAmount) {
-		Date appDate = fm.getEventProperties().getBusinessDate();
-
-		FinReceiptDetail rcd = new FinReceiptDetail();
-
-		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-		rcd.setPaymentType(ReceiptMode.TEXCESS);
-		rcd.setAmount(receiptAmount);
-		rcd.setDueAmount(receiptAmount);
-		rcd.setStatus(RepayConstants.PAYSTATUS_REALIZED);
-		rcd.setValueDate(appDate);
-		rcd.setReceivedDate(appDate);
-		rcd.setNoReserve(true);
-
-		return rcd;
-	}
-
-	@Autowired
-	public void setReceiptService(ReceiptService receiptService) {
-		this.receiptService = receiptService;
 	}
 
 	@Autowired
@@ -170,8 +229,28 @@ public class ClosureService {
 	}
 
 	@Autowired
-	public void setRepaymentProcessUtil(RepaymentProcessUtil repaymentProcessUtil) {
-		this.repaymentProcessUtil = repaymentProcessUtil;
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Autowired
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	@Autowired
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
 	}
 
 }

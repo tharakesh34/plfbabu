@@ -469,6 +469,9 @@ public class FeeCalculator {
 		}
 
 		Date valDate = rd.getValueDate();
+		if (valDate == null) {
+			valDate = SysParamUtil.getAppDate();
+		}
 		int finAge = 0;
 		if (fm.getFinStartDate() != null) {
 			finAge = DateUtility.getMonthsBetween(valDate, fm.getFinStartDate());
@@ -1041,10 +1044,7 @@ public class FeeCalculator {
 		this.financeDetailService = financeDetailService;
 	}
 
-	public JointAccountDetailDAO getJointAccountDetailDAO() {
-		return jointAccountDetailDAO;
-	}
-
+	@Autowired
 	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
 		this.jointAccountDetailDAO = jointAccountDetailDAO;
 	}

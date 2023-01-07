@@ -3372,7 +3372,6 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
@@ -5223,7 +5222,6 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
-		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 	</bean>
 
 	<!--============ Receipt Calculator Util ============== -->
@@ -10457,7 +10455,6 @@
 
 	<bean name="genericFinanceDetailService" class="com.pennant.backend.service.finance.GenericFinanceDetailService"
 		abstract="true">
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />

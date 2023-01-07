@@ -430,6 +430,11 @@ public class EodService {
 	}
 
 	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Autowired
 	public void setClosureService(ClosureService closureService) {
 		this.closureService = closureService;
 	}

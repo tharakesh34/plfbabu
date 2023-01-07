@@ -679,10 +679,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.btnReceipt.setDisabled(true);
 			}
 
-			BigDecimal closureAmount = receiptData.getCalculatedClosureAmt();
-			if (closureAmount.compareTo(rch.getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
-					&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
-				receiptService.waiveThresholdLimit(receiptData);
+			if (ImplementationConstants.AUTO_WAIVER_REQUIRED_FROMSCREEN) {
+				BigDecimal closureAmount = receiptData.getCalculatedClosureAmt();
+				if (closureAmount.compareTo(rch.getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
+						&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+					receiptService.waiveThresholdLimit(receiptData);
+				}
 			}
 
 			doShowDialog(rch);
@@ -8284,7 +8286,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		ReceiptDTO receiptDTO = receiptService.prepareReceiptDTO(receiptData);
 		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 
-		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(calcClosureAmt) > 0) {
+		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(calcClosureAmt) >= 0) {
 			return;
 		}
 
@@ -8292,7 +8294,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		 * This Value should be set only when Auto Waiver has to do
 		 */
 		receiptData.setCalculatedClosureAmt(calcClosureAmt);
-		if (totalClosureAmt.compareTo(calcClosureAmt) >= 0) {
+		if (totalClosureAmt.compareTo(calcClosureAmt) >= 0 && ImplementationConstants.AUTO_WAIVER_REQUIRED_FROMSCREEN) {
 			return;
 		}
 

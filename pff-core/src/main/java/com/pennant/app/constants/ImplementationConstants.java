@@ -298,6 +298,8 @@ public class ImplementationConstants {
 		DISB_STP = getValueAsBoolean("DISB_STP", false);
 		COLLECTION_DOWNLOAD_REQ = getValueAsBoolean("COLLECTION_DOWNLOAD_REQ", true);
 
+		AUTO_WAIVER_REQUIRED_FROMSCREEN = getValueAsBoolean("AUTO_WAIVER_REQUIRED_FROMSCREEN", false);
+
 		setVerificationConstants();
 	}
 
@@ -627,6 +629,7 @@ public class ImplementationConstants {
 
 	public static boolean CUSTOMIZED_SOAREPORT;
 	public static boolean COLLECTION_DOWNLOAD_REQ;
+	public static boolean AUTO_WAIVER_REQUIRED_FROMSCREEN;
 
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);

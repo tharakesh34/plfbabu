@@ -70,6 +70,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -301,6 +302,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private ExtendedFieldExtensionService extendedFieldExtensionService;
 	private BankDetailDAO bankDetailDAO;
 	private FinanceWorkFlowService financeWorkFlowService;
+	private FeeCalculator feeCalculator;
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -1728,6 +1730,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (!ReceiptMode.RESTRUCT.equals(receiptMode) && financeScheduleDetailDAO.isScheduleInQueue(finID)) {
 			throw new AppException("Not allowed to approve the receipt, since the loan schedule under maintenance.");
+		}
+
+		if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(rch.getExcessAdjustTo())
+				&& !financeMainDAO.isFinActive(finID)) {
+			throw new AppException("Excess adjustment to termination excess is not allowed for inactive loans");
 		}
 
 		FinReceiptHeader befRch = null;
@@ -3523,6 +3530,13 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				&& !RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)) {
 			setError(schdData, "RU0051");
 			return;
+		}
+
+		if (RequestSource.UPLOAD == requestSource
+				&& totalDues.compareTo(rh.getReceiptAmount().add(rh.getClosureThresholdLimit())) <= 0
+				&& RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)) {
+			fsi.setAllocationType(AllocationType.AUTO);
+			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		}
 	}
 
@@ -6819,6 +6833,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				return;
 			} else if (totalClosureAmt.compareTo(calcClosureAmt) >= 0) {
 				waiveThresholdLimit(rd);
+				rd.setDueAdjusted(true);
 			}
 		}
 
@@ -7896,6 +7911,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	public ErrorDetail validateThreshHoldLimit(FinReceiptHeader rch, BigDecimal totalDues) {
 		BigDecimal receiptAmount = PennantApplicationUtil.formateAmount(rch.getReceiptAmount(),
 				CurrencyUtil.getFormat(rch.getFinCcy()));
+		totalDues = PennantApplicationUtil.formateAmount(totalDues, CurrencyUtil.getFormat(rch.getFinCcy()));
 
 		if (receiptAmount.compareTo(BigDecimal.ZERO) == 0
 				|| !FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
@@ -7905,7 +7921,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		BigDecimal threshHold = PennantApplicationUtil.formateAmount(rch.getClosureThresholdLimit(),
 				CurrencyUtil.getFormat(rch.getFinCcy()));
 
-		if ((totalDues.compareTo(receiptAmount.add(threshHold)) < 0)) {
+		if ((receiptAmount.add(threshHold).compareTo(totalDues) < 0)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Receipt Amount should greater than or equal to Receipt Dues";
 			return new ErrorDetail("9999", valueParm[0], valueParm);
@@ -7981,6 +7997,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		FinanceType financeType = schdData.getFinanceType();
 		FinanceMain fm = schdData.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		feeCalculator.calculateFees(rd);
+		receiptCalculator.fetchManualAdviseDetails(rd, rd.getValueDate());
 
 		ReceiptDTO receiptDTO = new ReceiptDTO();
 
@@ -7988,8 +8006,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		receiptDTO.setSchedules(schedules);
 		receiptDTO.setOdDetails(receiptCalculator.getValueDatePenalties(schdData, rd.getTotReceiptAmount(),
 				rd.getReceiptHeader().getValueDate(), null, true, schedules));
-		receiptDTO.setManualAdvises(rd.getManAdvList());
+		receiptDTO.setManualAdvises(rd.getReceiptHeader().getReceivableAdvises());
 		receiptDTO.setFees(rd.getFinFeeDetails());
+		receiptDTO.getFees().addAll(schdData.getFinFeeDetailList());
 		receiptDTO.setRoundAdjMth(SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD));
 		receiptDTO.setLppFeeType(feeTypeDAO.getTaxDetailByCode(Allocation.ODC));
 		receiptDTO.setFinType(financeType);
@@ -8397,6 +8416,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	@Autowired
 	public void setPartPayAndEarlySettleValidator(PartPayAndEarlySettleValidator partPayAndEarlySettleValidator) {
 		this.partPayAndEarlySettleValidator = partPayAndEarlySettleValidator;
+	}
+
+	@Autowired
+	public void setFeeCalculator(FeeCalculator feeCalculator) {
+		this.feeCalculator = feeCalculator;
 	}
 
 }

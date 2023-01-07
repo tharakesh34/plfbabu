@@ -2316,6 +2316,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
+	@Autowired
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}

@@ -902,4 +902,7 @@
 	<bean id="defaultDocumentValidation" class="com.pennant.pff.document.service.DefaultDocumentValidation" />
 	
 	<bean id="docVerificationDAO" class="com.pennant.pff.document.dao.DocVerificationDAOImpl" parent="basicDao"/>
+	
+	<bean id="jointAccountDetailDAO" class="com.pennant.backend.dao.finance.impl.JointAccountDetailDAOImpl"
+		parent="sequenceDao" />
 </beans>

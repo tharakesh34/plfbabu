@@ -55,7 +55,7 @@ public class LoanClosureCalculator {
 		FinanceMain fm = receiptDTO.getFinanceMain();
 		Date valuedate = receiptDTO.getValuedate();
 
-		BigDecimal pos = calculatePOS(schedules);
+		BigDecimal pos = calculatePOS(schedules, valuedate);
 		BigDecimal pftSchBal = calculateTillDatePftSchdBal(schedules, valuedate);
 		BigDecimal pftBal = calculateTillDatePftBal(schedules, fm, valuedate);
 		BigDecimal pftFraction = BigDecimal.ZERO;
@@ -97,11 +97,16 @@ public class LoanClosureCalculator {
 		return closureAmount;
 	}
 
-	private static BigDecimal calculatePOS(List<FinanceScheduleDetail> schedules) {
+	private static BigDecimal calculatePOS(List<FinanceScheduleDetail> schedules, Date valuedate) {
 		BigDecimal pos = BigDecimal.ZERO;
 
 		for (FinanceScheduleDetail schedule : schedules) {
-			pos = pos.add(schedule.getPrincipalSchd().subtract(schedule.getSchdPriPaid().add(schedule.getTDSAmount())));
+			pos = pos.add(schedule.getPrincipalSchd());
+			pos = pos.subtract(schedule.getSchdPriPaid().add(schedule.getTDSAmount()));
+
+			if (valuedate.compareTo(schedule.getSchDate()) <= 0) {
+				pos = pos.subtract(schedule.getCpzAmount());
+			}
 		}
 
 		return pos;
