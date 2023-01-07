@@ -8437,7 +8437,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				mName.append(names[i]).append(" ");
 			}
 			this.custMiddleName.setValue(mName.toString());
-		} else {
+		} else if(names.length > 1) {
 			this.custLastName.setValue(names[1]);
 		}
 	}
