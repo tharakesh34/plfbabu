@@ -3795,7 +3795,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							+ SysParamUtil.getValueAsInt("CIBIL_REINTI_DAYS") + " days.");
 				}
 			} else {
-				extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
+				if (extendedFieldCtrl != null && customerDetails.getExtendedFieldRender() != null) {
+					extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
+				}
 			}
 			MessageUtil.showMessage("CIBIL Enquiry Completed.");
 			doFillDocumentDetails(customerDetails.getCustomerDocumentsList());
