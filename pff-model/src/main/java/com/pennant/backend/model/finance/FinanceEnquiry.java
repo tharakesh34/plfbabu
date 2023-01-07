@@ -130,6 +130,7 @@ public class FinanceEnquiry implements Serializable {
 	private String entityCode;
 	private BigDecimal odProfit = BigDecimal.ZERO;
 	private String customerType;
+	private BigDecimal advanceEMI = BigDecimal.ZERO;
 
 	public FinanceEnquiry() {
 
@@ -873,4 +874,13 @@ public class FinanceEnquiry implements Serializable {
 	public void setCustomerType(String customerType) {
 		this.customerType = customerType;
 	}
+
+	public BigDecimal getAdvanceEMI() {
+		return advanceEMI;
+	}
+
+	public void setAdvanceEMI(BigDecimal advanceEMI) {
+		this.advanceEMI = advanceEMI;
+	}
+
 }
