@@ -682,17 +682,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		Map<String, BigDecimal> hashMap = new HashMap<>();
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("select fm.FinReference, TotalPriBal");
-		sql.append(" from FinPFTDetails pft");
-		sql.append(" inner join Financemain_view fm on fm.FinReference = pft.FinReference");
-		sql.append(" and fm.ClosingStatus is null");
-		sql.append(" inner join customers c on c.custId = fm.custId");
-		sql.append(" where c.custId = ?");
+		String sql = "Select FinReference, TotalPriBal From FinPFTDetails Where CustID = ? and FinIsActive = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.query(sql.toString(), new ResultSetExtractor<Map<String, BigDecimal>>() {
+		this.jdbcOperations.query(sql, new ResultSetExtractor<Map<String, BigDecimal>>() {
 			@Override
 			public Map<String, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
