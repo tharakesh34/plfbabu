@@ -382,9 +382,31 @@ public class AccountEngineExecution implements Serializable {
 
 			if (StringUtils.isBlank(txnEntry.getAccount())) {
 				if (BigDecimal.ZERO.compareTo(postAmt) != 0) {
+					/**
+					 * Below block is added only for temporary purpose to identify below error while running EOD.
+					 * 
+					 * Caused by: com.pennanttech.pennapps.core.AppException: Accounting for INSTDATE Event is invalid
+					 * for order id : 10 , please contact administrator
+					 */
+					String sqlRule = null;
+					String accountSubHeadRule = StringUtils.trimToEmpty(txnEntry.getAccountSubHeadRule());
+					String moduleSubhead = RuleConstants.MODULE_SUBHEAD;
+					if (aeEvent.isEOD()) {
+						Rule rule = AccountingConfigCache.getCacheRule(accountSubHeadRule, moduleSubhead,
+								moduleSubhead);
+						if (rule != null) {
+							sqlRule = rule.getSQLRule();
+						} else {
+							sqlRule = "Sql Rule is null in Execution";
+						}
+					}
+
+					dataMap.entrySet().forEach(m1 -> logger
+							.debug(String.format("Data Map >> Key : %S  - Value : %S", m1.getKey(), m1.getValue())));
+
 					throw new AppException(String.format(
-							"Accounting for %S Event is invalid for order id : %S , please contact administrator",
-							aeEvent.getAccountingEvent(), txnEntry.getTransOrder()));
+							"Rule (%S) and  Accounting for %S Event is invalid for order id : %S , please contact administrator",
+							sqlRule, aeEvent.getAccountingEvent(), txnEntry.getTransOrder()));
 				}
 				continue;
 			}

@@ -47,9 +47,6 @@ public class ExtractionJob extends BatchConfiguration {
 	@Autowired
 	private EventPropertiesService eventPropertiesService;
 
-	@Autowired
-	private DataSource dataSource;
-
 	private BatchJobQueueDAO ebjqDAO;
 
 	public PresentmentJobListener presentmentJobListener() {

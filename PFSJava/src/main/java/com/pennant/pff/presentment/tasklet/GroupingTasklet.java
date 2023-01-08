@@ -59,8 +59,8 @@ public class GroupingTasklet implements Tasklet {
 		ph.setGroupByBank(Boolean.valueOf(jobParameters.getString("GroupByBank")));
 		ph.setGroupByPartnerBank(ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK);
 
-		jdbcOperations.query(SQL, (rs) -> {
-			presentmentEngine.grouping(rs, ph);
+		jdbcOperations.query(SQL, rs -> {
+			return presentmentEngine.grouping(rs, ph);
 		}, batchId);
 
 		logger.debug(Literal.LEAVING);

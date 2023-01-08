@@ -386,7 +386,7 @@ public class PresentmentEngine {
 		return batches;
 	}
 
-	public void grouping(ResultSet rs, PresentmentHeader ph) throws SQLException {
+	public List<PresentmentDetail> grouping(ResultSet rs, PresentmentHeader ph) throws SQLException {
 		Map<String, Integer> batchMap = presentmentDAO.batchSizeByInstrumentType();
 
 		Map<String, PresentmentHeader> headerMap = new HashMap<>();
@@ -417,6 +417,7 @@ public class PresentmentEngine {
 			PresentmentHeader header = headerMap.get(groupKey);
 			if (header == null) {
 				header = saveHeader(ph, dueDates, pd);
+				headerMap.put(groupKey, header);
 			}
 
 			pd.setHeaderId(header.getId());
@@ -450,6 +451,8 @@ public class PresentmentEngine {
 		if (!list.isEmpty()) {
 			presentmentDAO.updateHeader(list);
 		}
+
+		return new ArrayList<>();
 	}
 
 	private PresentmentHeader saveHeader(PresentmentHeader ph, Map<String, Date> dueDates, PresentmentDetail pd) {
@@ -488,6 +491,20 @@ public class PresentmentEngine {
 			ref = "RE" + ref;
 		}
 
+		Long partnerBankId = pd.getPartnerBankId();
+
+		if (partnerBankId == null || partnerBankId <= 0) {
+			Presentment pb = presentmentDAO.getPartnerBankId(ph.getLoanType(), ph.getMandateType());
+
+			if (pb == null) {
+				pb = new Presentment();
+				pb.setPartnerBankId(621L);
+			}
+
+			partnerBankId = pb.getPartnerBankId();
+			ph.setPartnerBankId(pb.getPartnerBankId());
+		}
+
 		PresentmentHeader header = new PresentmentHeader();
 		header.setStatus(RepayConstants.PEXC_EXTRACT);
 		header.setPresentmentDate(DateUtil.getSysDate());
@@ -500,7 +517,7 @@ public class PresentmentEngine {
 		header.setSchdate(pd.getDefSchdDate());
 		header.setEntityCode(pd.getEntityCode());
 		header.setBankCode(pd.getBankCode());
-		header.setPartnerBankId(pd.getPartnerBankId());
+		header.setPartnerBankId(partnerBankId);
 		header.setDueDate(dueDate);
 		header.setReference(ref);
 		header.setdBStatusId(0);
