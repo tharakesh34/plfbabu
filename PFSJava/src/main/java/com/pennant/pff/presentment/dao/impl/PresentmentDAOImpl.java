@@ -783,6 +783,32 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	public void updateHeader(List<PresentmentDetail> list) {
+		String sql = "Update PRMNT_EXTRACTION_STAGE set HeaderID = ?, DueDate = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				int index = 1;
+				PresentmentDetail pd = list.get(i);
+
+				ps.setLong(index++, pd.getHeaderId());
+				ps.setDate(index++, JdbcUtil.getDate(pd.getDueDate()));
+
+				ps.setLong(index++, pd.getId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
+	}
+
+	@Override
 	public void updateHeaderIdByDefault(long batchID, List<PresentmentDetail> list) {
 		String sql = "Update PRMNT_EXTRACTION_STAGE set HeaderID = ?, DueDate = ? Where BatchID = ? and DefSchdDate = ? and EntityCode = ? and InstrumentType = ?";
 
@@ -795,13 +821,14 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 				int index = 1;
 				PresentmentDetail pd = list.get(i);
 
-				ps.setLong(index++, batchID);
 				ps.setLong(index++, pd.getHeaderId());
 				ps.setDate(index++, JdbcUtil.getDate(pd.getDueDate()));
 
+				ps.setLong(index++, batchID);
 				ps.setDate(index++, JdbcUtil.getDate(pd.getDefSchdDate()));
 				ps.setString(index++, pd.getEntityCode());
 				ps.setString(index, pd.getInstrumentType());
+
 			}
 
 			@Override
@@ -1629,10 +1656,9 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql.toString(), (ResultSet rs) -> {
+		return this.jdbcOperations.query(sql, (ResultSet rs) -> {
 			while (rs.next()) {
 				batchSizeMap.put(rs.getString(1), rs.getInt(2));
-
 			}
 			return batchSizeMap;
 		});

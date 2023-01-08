@@ -122,6 +122,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private boolean autoExtract;
 	private Long finID;
 	private Long rePresentUploadID;
+	private int batchSize;
 
 	public PresentmentHeader(long id) {
 		super();
@@ -137,7 +138,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("bpiPaidOnInstDate");
 		excludeFields.add("groupByBank");
 		excludeFields.add("groupByPartnerBank");
@@ -146,6 +147,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("batchID");
 		excludeFields.add("appDate");
 		excludeFields.add("rePresentUploadID");
+		excludeFields.add("batchSize");
 
 		return excludeFields;
 	}
@@ -554,6 +556,14 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setRePresentUploadID(Long rePresentUploadID) {
 		this.rePresentUploadID = rePresentUploadID;
+	}
+
+	public int getBatchSize() {
+		return batchSize;
+	}
+
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
 	}
 
 }

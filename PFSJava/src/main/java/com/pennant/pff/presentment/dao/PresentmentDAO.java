@@ -69,6 +69,8 @@ public interface PresentmentDAO {
 
 	List<PresentmentDetail> getGroupByPartnerBank(long batchID);
 
+	void updateHeader(List<PresentmentDetail> list);
+
 	void updateHeaderIdByDefault(long batchID, List<PresentmentDetail> list);
 
 	void updateHeaderIdByPartnerBankAndBank(long batchID, List<PresentmentDetail> list);
