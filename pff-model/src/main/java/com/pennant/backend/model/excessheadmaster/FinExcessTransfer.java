@@ -228,16 +228,8 @@ public class FinExcessTransfer extends AbstractWorkflowEntity {
 		return createdBy;
 	}
 
-	public Timestamp getCreatedOn() {
-		return createdOn;
-	}
-
 	public long getApprovedBy() {
 		return approvedBy;
-	}
-
-	public Timestamp getApprovedOn() {
-		return approvedOn;
 	}
 
 	public void setId(long id) {
@@ -248,16 +240,24 @@ public class FinExcessTransfer extends AbstractWorkflowEntity {
 		this.createdBy = createdBy;
 	}
 
-	public void setCreatedOn(Timestamp createdOn) {
-		this.createdOn = createdOn;
-	}
-
 	public void setApprovedBy(long approvedBy) {
 		this.approvedBy = approvedBy;
 	}
 
-	public void setApprovedOn(Timestamp approvedOn) {
-		this.approvedOn = approvedOn;
+	public final Timestamp getApprovedOn() {
+		return approvedOn == null ? null : (Timestamp) approvedOn.clone();
+	}
+
+	public final void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn == null ? null : (Timestamp) approvedOn.clone();
+	}
+
+	public final Timestamp getCreatedOn() {
+		return createdOn == null ? null : (Timestamp) createdOn.clone();
+	}
+
+	public final void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn == null ? null : (Timestamp) createdOn.clone();
 	}
 
 }

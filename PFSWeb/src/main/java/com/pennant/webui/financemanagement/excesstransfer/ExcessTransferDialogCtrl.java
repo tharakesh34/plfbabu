@@ -639,6 +639,13 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 			wve.add(we);
 		}
 
+		finExcessTransfer.setRecordStatus(this.recordStatus.getValue());
+
+		if (finExcessTransfer.isNewRecord()) {
+			finExcessTransfer.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+			finExcessTransfer.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -760,6 +767,13 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+
+						((FinExcessTransfer) auditHeader.getAuditDetail().getModelData())
+								.setApprovedBy(getUserWorkspace().getLoggedInUser().getUserId());
+
+						((FinExcessTransfer) auditHeader.getAuditDetail().getModelData())
+								.setApprovedOn(new Timestamp(System.currentTimeMillis()));
+
 						auditHeader = excessTransferService.doApprove(auditHeader);
 
 						if (finExcessTransfer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
