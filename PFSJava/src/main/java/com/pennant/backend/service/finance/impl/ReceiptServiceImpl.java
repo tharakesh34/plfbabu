@@ -6267,7 +6267,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		if (AllocationType.MANUAL.equals(allocateMthd)) {
-			if (requestSource == RequestSource.API && receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
+			if ((requestSource == RequestSource.API || requestSource == RequestSource.EOD)
+					&& receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
 				rd = validateAllocationsAmount(rd);
 			}
 			rd = updateAllocationsPaid(rd);
@@ -6593,7 +6594,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return;
 		}
 
-		if ((requestSource == RequestSource.UPLOAD || requestSource == RequestSource.API) && dedupCheckRequest(rch)) {
+		if ((requestSource == RequestSource.UPLOAD || requestSource == RequestSource.API
+				|| requestSource == RequestSource.EOD) && dedupCheckRequest(rch)) {
 			long rchID = checkDedupSP(rch);
 
 			if (rchID > 0) {
@@ -6607,7 +6609,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		if (requestSource == RequestSource.API && CollectionUtils.isNotEmpty(rch.getAllocations())) {
+		if ((requestSource == RequestSource.API || requestSource == RequestSource.EOD)
+				&& CollectionUtils.isNotEmpty(rch.getAllocations())) {
 			fd.getFinScheduleData().setReceiptAllocationList(rch.getAllocations());
 		}
 

@@ -55,7 +55,8 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 		BigDecimal recieptAmount = BG_ZERO;
 
 		RequestSource requestSource = receiptData.getRequestSource();
-		if (RequestSource.API == requestSource || RequestSource.UPLOAD == requestSource) {
+		if (RequestSource.API == requestSource || RequestSource.UPLOAD == requestSource
+				|| RequestSource.EOD == requestSource) {
 			List<ReceiptAllocationDetail> allocations = receiptData.getReceiptHeader().getAllocationsSummary();
 			if (CollectionUtils.isNotEmpty(allocations)) {
 				for (ReceiptAllocationDetail alloc : allocations) {

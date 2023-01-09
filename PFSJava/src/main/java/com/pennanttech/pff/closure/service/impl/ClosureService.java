@@ -114,7 +114,7 @@ public class ClosureService {
 		fsi.setPanNumber(receiptDTO.getCustomer().getCustCRCPR());
 		fsi.setReqType("Post");
 		fsi.setNonStp(true);
-		fsi.setRequestSource(RequestSource.API);
+		fsi.setRequestSource(RequestSource.EOD);
 		fsi.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
 		fsi.setValueDate(fm.getAppDate());
 		LoggedInUser userDetails = new LoggedInUser();

@@ -1910,7 +1910,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(", CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry, CustSector");
 		sql.append(", CustSubSector, CustEmpSts, CustSegment, CustSubSegment, CustAppDate, CustParentCountry");
 		sql.append(", CustResdCountry, CustRiskCountry, CustNationality, SalariedCustomer, CustSuspSts");
-		sql.append(", CustSuspDate, CustSuspTrigger, CasteId, ReligionId, SubCategory, CustShrtName");
+		sql.append(", CustSuspDate, CustSuspTrigger, CasteId, ReligionId, SubCategory, CustShrtName, CustCRCPR");
 		sql.append(" From Customers");
 		sql.append(" Where CustID = ?");
 
@@ -1951,6 +1951,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				c.setReligionId(rs.getLong("ReligionId"));
 				c.setSubCategory(rs.getString("SubCategory"));
 				c.setCustShrtName(rs.getString("CustShrtName"));
+				c.setCustCRCPR(rs.getString("CustCRCPR"));
 
 				return c;
 			}, id);
