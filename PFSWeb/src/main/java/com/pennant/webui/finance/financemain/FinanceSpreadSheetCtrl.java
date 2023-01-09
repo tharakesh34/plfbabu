@@ -377,9 +377,9 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		String prefix1 = prefix;
 
-		if (prefix.startsWith("APP")) {
-			prefix1 = "CO_" + prefix;
-		}
+		/*
+		 * if (prefix.startsWith("APP")) { prefix1 = "CO_" + prefix; }
+		 */
 
 		Book book = spreadSheet.getBook();
 		int numberOfSheets = book.getNumberOfSheets();
