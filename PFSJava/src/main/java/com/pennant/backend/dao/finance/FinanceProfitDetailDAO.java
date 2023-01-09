@@ -95,4 +95,6 @@ public interface FinanceProfitDetailDAO {
 	void updateClosingSts(long finID, boolean writeoffLoan);
 
 	FinanceProfitDetail getFinProfitDetailsByFinRef(long finID);
+
+	BigDecimal getOverDueAmountByLoan(long finID);
 }

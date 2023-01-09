@@ -883,7 +883,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			return ea;
 		}
-
 	}
 
 	private class ExcessReserveRowMapper implements RowMapper<FinExcessAmountReserve> {
@@ -1021,5 +1020,31 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			return fem;
 		}, id, movementType);
+	}
+
+	@Override
+	public BigDecimal getTotalExcessByRefAndType(long finID, String amountType) {
+		String sql = "Select sum(BalanceAmt) Amount From FinExcessAmount Where FinID = ? and AmountType = ? Group By FinID, AmountType";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, amountType);
+	}
+
+	@Override
+	public List<FinExcessAmount> getExcessRcdList(long finID, Date maxValueDate) {
+		StringBuilder sql = getExcessAmountSqlQuery();
+		sql.append(" Where FinID = ? and AmountType = ? and BalanceAmt > ? and ValueDate <= ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, finID);
+			ps.setString(++index, RepayConstants.EXAMOUNTTYPE_EXCESS);
+			ps.setBigDecimal(++index, BigDecimal.ZERO);
+			ps.setDate(++index, JdbcUtil.getDate(maxValueDate));
+		}, new ExcessAmountRowMapper());
 	}
 }

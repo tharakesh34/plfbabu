@@ -534,6 +534,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row row_Subvention;
 	protected Combobox subVentionFrom;
 	protected ExtendedCombobox manufacturerDealer;
+	protected Uppercasebox blockRefunds;
+	protected Textbox reasonForBlock;
 	Customer customer = null;
 	@Autowired
 	private JointAccountDetailService jointAccountDetailService;
@@ -1165,6 +1167,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			if (aFinanceMain.isWriteoffLoan()) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
+			}
+			if (aFinanceMain.getHoldStatus() != null && aFinanceMain.getHoldStatus().equals("H")) {
+				this.blockRefunds.setValue(aFinanceMain.getHoldStatus());
+				this.reasonForBlock.setValue(aFinanceMain.getReason());
 			}
 			this.defferments.setDisabled(true);
 			this.defferments.setValue(aFinanceMain.getDefferments());
@@ -2180,6 +2186,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// BPI
 		this.alwBpiTreatment.setDisabled(true);
 		this.dftBpiTreatment.setDisabled(true);
+		this.blockRefunds.setReadonly(true);
+		this.reasonForBlock.setReadonly(true);
 	}
 
 	/** ========================================================= */

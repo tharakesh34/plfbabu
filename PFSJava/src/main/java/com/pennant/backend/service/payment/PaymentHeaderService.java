@@ -24,15 +24,21 @@
  */
 package com.pennant.backend.service.payment;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface PaymentHeaderService {
 
@@ -63,4 +69,20 @@ public interface PaymentHeaderService {
 	void executeAccountingProcess(AEEvent aeEvent, PaymentHeader paymentHeader);
 
 	boolean isInstructionInProgress(String finReference);
+
+	BigDecimal getDueAgainstLoan(long finId);
+
+	BigDecimal getDueAgainstCustomer(long custId, String custCoreBank);
+
+	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
+
+	Long getPaymentIdByFinId(long finID, long receiptId, String type);
+
+	PaymentHeader prepareRefund(AutoRefundLoan refundLoan, List<PaymentDetail> payDtlList,
+			PaymentInstruction paymentInst, Date appDate);
+
+	List<ErrorDetail> verifyRefundInitiation(long finId, String closingStatus, int dpdDays, String holdStatus,
+			int autoRefCheckDPD, boolean isEOD);
+
+	BigDecimal getInProgressExcessAmt(long finId, Long receiptId);
 }

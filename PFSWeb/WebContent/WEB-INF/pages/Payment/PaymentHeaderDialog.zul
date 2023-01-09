@@ -86,6 +86,16 @@
 										<label id="lbl_MaturityDate" style="font-weight:bold;" />
 									</hbox>
 								</row>
+								<row height="24px">
+									<label value="${c:l('label_PaymentHeaderDialog_ODAgainstLoan.value')}" />
+									<hbox>
+										<label id="lbl_ODAgainstLoan" style="font-weight:bold;" />
+									</hbox>
+									<label value="${c:l('label_PaymentHeaderDialog_ODAgainstCustomer.value')}" />
+									<hbox>
+										<label id="lbl_ODAgainstCustomer" style="font-weight:bold;" />
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>
@@ -183,7 +193,7 @@
 														<combobox id="tranStatus" width="250px" />
 													</hbox>
 												</row>
-
+						
 											</rows>
 										</grid>
 									</groupbox>

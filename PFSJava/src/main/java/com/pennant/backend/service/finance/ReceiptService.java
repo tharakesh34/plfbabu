@@ -138,4 +138,6 @@ public interface ReceiptService {
 	void waiveThresholdLimit(FinReceiptData receiptData);
 
 	ReceiptDTO prepareReceiptDTO(FinReceiptData rd);
+
+	List<ReceiptAllocationDetail> getReceiptAllocDetail(long finID, String allocType);
 }

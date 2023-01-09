@@ -74,6 +74,9 @@
 								<row id="refundableFeeRow">
 									<label value="${c:l('label_FeeTypeDialog_RefundableFee.value')}" />
 									<checkbox id="refundableFee" />
+									<label id="label_FeeTypeDialog_AllowAutuRefund"
+										value="${c:l('label_FeeTypeDialog_AllowAutuRefund.value')}" />
+									<checkbox id="allowAutoRefund" />
 								</row>
 								<row id="manualAdviceRow">
 									<label value="${c:l('label_FeeTypeDialog_ManualAdvice.value')}" />

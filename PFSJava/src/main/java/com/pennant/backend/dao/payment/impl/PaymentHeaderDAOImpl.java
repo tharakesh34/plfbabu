@@ -24,9 +24,12 @@
  */
 package com.pennant.backend.dao.payment.impl;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,12 +37,15 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -64,7 +70,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" PaymentId, PaymentType, PaymentAmount, CreatedOn, ApprovedOn, Status, FinID, FinReference");
 		if (type.contains("View")) {
-			sql.append(", PaymentType, Status");
+			sql.append(", PaymentType, Status, CustId, CustCoreBank");
 		}
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -89,6 +95,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				if (type.contains("View")) {
 					ph.setPaymentType(rs.getString("PaymentType"));
 					ph.setStatus(rs.getString("Status"));
+					ph.setCustID(rs.getLong("CustId"));
+					ph.setCustCoreBank(rs.getString("CustCoreBank"));
 				}
 
 				ph.setVersion(rs.getInt("Version"));
@@ -245,13 +253,14 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append(" fm.FinID, fm.FinReference, ft.FinType, ft.FinTypeDesc, ft.FinDivision");
 		sql.append(", fm.CalRoundingMode, fm.RoundingTarget, fm.FinBranch, fm.CustID, cu.CustCif");
 		sql.append(", cu.CustShrtName, curr.CcyCode, fm.FinStartDate, fm.MaturityDate, div.EntityCode");
-		sql.append(", fm.ClosingStatus");
+		sql.append(", fm.ClosingStatus, fm.WRITEOFFLOAN, h.HoldStatus ");
 		sql.append(" From FinanceMainMaintenance_View fm");
 		sql.append(" Inner Join Customers cu on cu.CustID = fm.CustID");
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join RMTCurrencies curr on curr.CcyCode = fm.FinCcy");
 		sql.append(" Inner Join SMTDivisionDetail div on div.DivisionCode = ft.FinDivision");
-		sql.append(" Where FinID = ?");
+		sql.append(" LEFT JOIN Fin_Hold_Detail h ON fm.FINID = h.FINID ");
+		sql.append(" Where fm.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -276,6 +285,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				fm.setEntityCode(rs.getString("EntityCode"));
 				fm.setLovDescEntityCode(rs.getString("EntityCode"));
 				fm.setClosingStatus(rs.getString("ClosingStatus"));
+				fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+				fm.setHoldStatus(rs.getString("HoldStatus"));
 
 				return fm;
 			}, finID);
@@ -313,7 +324,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	@Override
 	public List<ManualAdvise> getManualAdvise(long finID) {
 		StringBuilder sql = getSqlQuery();
-		sql.append(" Where FinID = ? and ma.AdviseType = ? and HoldDue = ?");
+		sql.append(" Where FinID = ? and ma.AdviseType = ? and HoldDue = ? and Refundable = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -321,6 +332,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			ps.setLong(1, finID);
 			ps.setInt(2, 2);
 			ps.setInt(3, 0);
+			ps.setInt(4, 1);
 		}, (rs, i) -> {
 			return getRowMapper(rs);
 		});
@@ -398,6 +410,156 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	@Override
 	public long getNewPaymentHeaderId() {
 		return getNextValue("SeqPaymentHeader");
+	}
+
+	@Override
+	public BigDecimal getDueAgainstLoan(long finId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Sum(ODPRINCIPAL + ODPROFIT + COALESCE(OD.LPPDUE,0) + COALESCE(OD.LPIDUE,0)");
+		sql.append(" + COALESCE(MA.ADVDUE,0)) TotalDue FROM FINPFTDETAILS PFT ");
+		sql.append(" LEFT JOIN (SELECT SUM(TOTPENALTYBAL) LPPDUE,SUM(LPIBAL)LPIDUE,FINID ");
+		sql.append(" FROM FINODDETAILS GROUP BY FINID)OD ON OD.FINID = PFT.FINID ");
+		sql.append(" LEFT JOIN (SELECT SUM(ADVISEAMOUNT - WAIVEDAMOUNT - PAIDAMOUNT) ADVDUE, FINID ");
+		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 2 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
+		sql.append(" WHERE PFT.FinId = ? Group by PFT.FINID");
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finId);
+	}
+
+	@Override
+	public BigDecimal getDueAgainstCustomer(long custId, String coreBankId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Sum(ODPRINCIPAL + ODPROFIT + COALESCE(OD.LPPDUE,0) + COALESCE(OD.LPIDUE,0)");
+		sql.append(" + COALESCE(MA.ADVDUE,0)) TotalDue FROM FINPFTDETAILS PFT ");
+		sql.append(" LEFT JOIN (SELECT SUM(TOTPENALTYBAL) LPPDUE,SUM(LPIBAL)LPIDUE,FINID ");
+		sql.append(" FROM FINODDETAILS GROUP BY FINID)OD ON OD.FINID = PFT.FINID ");
+		sql.append(" LEFT JOIN (SELECT SUM(ADVISEAMOUNT - WAIVEDAMOUNT - PAIDAMOUNT) ADVDUE, FINID ");
+		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 2 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
+		sql.append(" INNER JOIN CUSTOMERS C ON C.CUSTID = PFT.CUSTID ");
+		// if(corebank) {/* Need add based on implementation of custcorebank functionality
+		// sql.append("WHERE pft.custid in");
+		// sql.append(" (Select custid from customers where custcorebank = ?) group by c.custcorebank");
+		// }else {
+		sql.append(" WHERE  PFT.CUSTID = ? GROUP BY PFT.CUSTID ");
+		// }
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		// if(corebank) {/* Need add based on implementation of custcorebank functionality
+		// return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, coreBankId);
+		// }else {
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId);
+		// }
+	}
+
+	@Override
+	public Map<Long, BigDecimal> getAdvisesInProgess(long finId) {
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" SUM(AMOUNT) AMOUNT,FRD.PAYAGAINSTID FROM FINRECEIPTDETAIL_TEMP FRD ");
+		sql.append(" INNER JOIN FINRECEIPTHEADER_TEMP FR ON FR.RECEIPTID = FRD.RECEIPTID ");
+		sql.append(" WHERE FRD.PAYMENTTYPE IN('PAYABLE') AND FINID = ? ");
+		sql.append(" GROUP BY FRD.PAYAGAINSTID");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), ps -> {
+				ps.setLong(1, finId);
+			}, new ResultSetExtractor<Map<Long, BigDecimal>>() {
+
+				@Override
+				public Map<Long, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					Map<Long, BigDecimal> rcMap = new HashMap<>();
+					while (rs.next()) {
+						rcMap.put(rs.getLong("PAYAGAINSTID"), rs.getBigDecimal("AMOUNT"));
+					}
+					return rcMap;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("No advises are inprogress for the finId >> " + finId);
+		}
+
+		return new HashMap<>();
+	}
+
+	@Override
+	public BigDecimal getInProgressExcessAmt(long finId, Long receiptId) {
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" COALESCE(EXCESSAMOUNT,0) AMOUNT,FINID FROM FINREPAYHEADER WHERE RECEIPTSEQID IN ( ");
+		sql.append(" SELECT RECEIPTSEQID FROM FINRECEIPTDETAIL_TEMP WHERE STATUS IN (?, ?)");
+		if (receiptId != null) {
+			sql.append(" and receiptid = ?");
+		}
+		sql.append(")");
+		sql.append(" AND EXCESSAMOUNT > 0  AND FINID = ? ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), ps -> {
+				int index = 1;
+				ps.setString(index++, RepayConstants.PAYSTATUS_BOUNCE);
+				ps.setString(index++, RepayConstants.PAYSTATUS_CANCEL);
+				if (receiptId != null) {
+					ps.setLong(index++, receiptId);
+				}
+				ps.setLong(index++, finId);
+			}, new ResultSetExtractor<BigDecimal>() {
+				@Override
+				public BigDecimal extractData(ResultSet rs) throws SQLException, DataAccessException {
+					BigDecimal amount = BigDecimal.ZERO;
+					while (rs.next()) {
+						amount = rs.getBigDecimal("AMOUNT");
+					}
+					return amount;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("No Excess Receipts are inprogress for the finId >> " + finId);
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public Long getPaymentIdByFinId(long finID, long receiptId, String type) {
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" PH.PAYMENTID FROM PAYMENTHEADER");
+		sql.append(type);
+		sql.append(" PH");
+		sql.append(" INNER JOIN PAYMENTDETAILS");
+		sql.append(type);
+		sql.append(" PD ON PD.PAYMENTID = PH.PAYMENTID ");
+		sql.append(" WHERE PH.FINID = :finId AND PD.AMOUNTTYPE = :excessType ");
+		sql.append(" AND PD.REFERENCEID = (SELECT EXCESSID FROM FINEXCESSAmount WHERE RECEIPTID = :receiptId) ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramsource = new MapSqlParameterSource();
+		paramsource.addValue("finId", finID);
+		paramsource.addValue("excessType", RepayConstants.EXAMOUNTTYPE_EXCESS);
+		paramsource.addValue("receiptId", receiptId);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramsource, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public boolean isRefundInQueue(long finId) {
+		StringBuilder sql = new StringBuilder("Select count(*) From PaymentHeader_Temp");
+		sql.append(" Where FinId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = new Object[] { finId };
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
 	}
 
 }

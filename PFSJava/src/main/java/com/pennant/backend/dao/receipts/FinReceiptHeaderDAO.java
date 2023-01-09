@@ -143,4 +143,6 @@ public interface FinReceiptHeaderDAO {
 	String getReceiptMode(long receiptId);
 
 	BigDecimal getClosureAmountByFinType(String finType);
+
+	boolean isCancelReceiptInQueue(long finId);
 }

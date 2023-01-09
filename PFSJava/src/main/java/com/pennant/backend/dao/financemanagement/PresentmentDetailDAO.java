@@ -180,4 +180,5 @@ public interface PresentmentDetailDAO {
 
 	String getBackOfficeNameByBranchCode(String branchCode);
 
+	List<PresentmentDetail> getPresentmentIdByFinId(long finID);
 }

@@ -326,7 +326,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", sum(FinCurODPri) FinCurODPri, sum(FinCurODPft) FinCurODPft, sum(LpCpzAmount) LpCpzAmount");
 		sql.append(", sum(FinCurODAmt) FinCurODAmt");
 		sql.append(", min(FinODSchdDate) FinODSchdDate, max(FinODSchdDate) FinODTillDate");
-		sql.append(", max(FinCurODDays) FinCurODDays");
+		sql.append(", max(FinCurODDays) FinCurODDays, sum(LpiAmt) LpiAmt, sum(LpiPaid) LpiPaid");
+		sql.append(", sum(LpiBal) LpiBal, sum(LpiWaived) LpiWaived");
 		sql.append(" From FinODDetails");
 		sql.append(" Where FinID = ? group by FinID");
 
@@ -348,6 +349,10 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				od.setFinODSchdDate(rs.getDate("FinODSchdDate"));
 				od.setFinODTillDate(rs.getDate("FinODTillDate"));
 				od.setFinCurODDays(rs.getInt("FinCurODDays"));
+				od.setLPIAmt(rs.getBigDecimal("LpiAmt"));
+				od.setLPIPaid(rs.getBigDecimal("LpiPaid"));
+				od.setLPIBal(rs.getBigDecimal("LpiBal"));
+				od.setLPIWaived(rs.getBigDecimal("LpiWaived"));
 
 				return od;
 			}, finID);

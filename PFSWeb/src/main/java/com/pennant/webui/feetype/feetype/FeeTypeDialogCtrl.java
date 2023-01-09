@@ -115,6 +115,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Row amortzRow;
 	protected Checkbox amortzReq;
 
+	protected Label label_FeeTypeDialog_AllowAutuRefund;
+	protected Checkbox allowAutoRefund;
+
 	protected Row taxApplicableRow;
 	protected Checkbox taxApplicable;
 	protected Combobox taxComponent;
@@ -379,6 +382,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		readOnlyComponent(true, this.taxComponent);
 		readOnlyComponent(true, this.payableLinkTo);
 		readOnlyComponent(true, this.receivableType);
+		readOnlyComponent(true, this.allowAutoRefund);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -460,6 +464,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		recvfilters[2] = new Filter("ADVISETYPE", 1, Filter.OP_EQUAL);
 		this.receivableType.setFilters(recvfilters);
 
+		this.allowAutoRefund.setDisabled(true);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -482,6 +488,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.manualAdvice.setChecked(aFeeType.isManualAdvice());
 		this.hostFeeTypeCode.setValue(aFeeType.getHostFeeTypeCode());
 		this.refundableFee.setChecked(aFeeType.isRefundable());
+		this.allowAutoRefund.setChecked(aFeeType.isAllowAutoRefund());
 
 		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
 		fillComboBox(this.payableLinkTo, aFeeType.getPayableLinkTo(), listAdviseCategory);
@@ -637,6 +644,12 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		}
 		try {
 			aFeeType.setTdsReq(this.tdsReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		// Allow Auto Refunds
+		try {
+			aFeeType.setAllowAutoRefund(this.allowAutoRefund.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -924,6 +937,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.dueAccSet.setReadonly(false);
 			this.payableLinkTo.setDisabled(false);
 			this.receivableType.setReadonly(false);
+			if (this.refundableFee.isChecked()
+					&& StringUtils.equals(Labels.getLabel("label_TransEntry_Payable"), this.adviseType.getValue())
+					&& !isReadOnly("FeeTypeDialog_AllowAutoRefund")) {
+				this.allowAutoRefund.setDisabled(false);
+			}
 		} else {
 			this.dueAccRow.setVisible(false);
 
@@ -946,6 +964,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 			fillComboBox(this.adviseType, null, listAdviseType, "");
 			doSetAdviceType(PennantConstants.List_Select);
+
+			this.allowAutoRefund.setChecked(false);
+			this.allowAutoRefund.setDisabled(true);
 		}
 
 		doSetDueAccReq(this.dueAccReq.isChecked());
@@ -970,6 +991,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 			String payableLinkTo = getComboboxValue(this.payableLinkTo);
 
+			if (this.refundableFee.isChecked() && this.manualAdvice.isChecked()
+					&& !isReadOnly("FeeTypeDialog_AllowAutoRefund")) {
+				this.allowAutoRefund.setDisabled(false);
+			}
+
 			if (StringUtils.isEmpty(payableLinkTo)) {
 				payableLinkTo = Allocation.ADHOC;
 			}
@@ -981,6 +1007,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.payableLinkToRow.setVisible(false);
 			this.payableLinkTo.setValue(null);
 			this.receivableType.setValue(null);
+			this.allowAutoRefund.setChecked(false);
+			this.allowAutoRefund.setDisabled(true);
+			this.refundableFee.setDisabled(true);
 		}
 	}
 
@@ -1029,6 +1058,22 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		doSetTaxApplicable(this.taxApplicable.isChecked());
 	}
 
+	public void onCheck$refundableFee(Event event) {
+		doSetRefundableFee(this.refundableFee.isChecked());
+	}
+
+	private void doSetRefundableFee(boolean refFee) {
+		if (refFee) {
+			if (this.manualAdvice.isChecked()
+					&& StringUtils.equals(Labels.getLabel("label_TransEntry_Payable"), this.adviseType.getValue())) {
+				this.allowAutoRefund.setDisabled(false);
+			}
+		} else {
+			this.allowAutoRefund.setChecked(false);
+			this.allowAutoRefund.setDisabled(true);
+		}
+	}
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -1069,6 +1114,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.feeIncomeOrExpense.setReadonly(isReadOnly("FeeTypeDialog_FeeIncomeOrExpense"));
 
 		this.active.setDisabled(isReadOnly("FeeTypeDialog_Active"));
+		this.allowAutoRefund.setDisabled(isReadOnly("FeeTypeDialog_AllowAutoRefund"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

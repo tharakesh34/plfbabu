@@ -376,6 +376,29 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		}
 	}
 
+	@Override
+	public List<ChequeDetail> getChequeDetailIDByFinId(long finID) {
+		StringBuilder sql = new StringBuilder("Select cd.HeaderID, cd.ChequeDetailsID");
+		sql.append(" From ChequeHeader ch");
+		sql.append(" Inner Join ChequeDetail cd on cd.HeaderID = ch.HeaderID");
+		sql.append(" Where ch.FinID = ? and cd.ChequeType = ? and cd.ChequeStatus != ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+			ps.setLong(++index, finID);
+			ps.setString(++index, "PDC");
+			ps.setString(++index, ChequeSatus.CANCELLED);
+		}, (rs, rowNum) -> {
+			ChequeDetail cd = new ChequeDetail();
+
+			cd.setHeaderID(rs.getLong("HeaderID"));
+			cd.setChequeDetailsID(rs.getLong("ChequeDetailsID"));
+			return cd;
+		});
+	}
+
 	private void log(String sql) {
 		logger.debug(Literal.SQL.concat(sql));
 	}
