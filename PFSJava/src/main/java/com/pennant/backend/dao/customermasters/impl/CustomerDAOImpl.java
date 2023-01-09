@@ -1504,16 +1504,14 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	@Override
 	public List<FinanceEnquiry> getCustomerFinanceDetailById(long custId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.FinReference, fm.FinType, fm.FinStatus, fm.FinStartDate, fm.FinCcy, fm.FinAmount");
-		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue, fm.finIsActive ");
-		sql.append(", fm.FinRepaymentAmount, fm.NumberOfTerms, ft.FintypeDesc as LovDescFinTypeName");
-		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount, coalesce(t6.NOinst, 0) NOinst");
-		sql.append(", coalesce(t6.NOPaidinst, 0) NOPaidinst");
-		sql.append(" from FinanceMain fm");
-		sql.append(" inner join RMTfinanceTypes ft on ft.Fintype = fm.FinType");
-		sql.append(" left join (select FinReference, (NSchdPri+NSchdPft) MaxInstAmount, NOinst, NOPaidinst");
-		sql.append(" from FinPftdetails) t6 on t6.FinReference = fm.Finreference");
-		sql.append(" where CustID = ?");
+		sql.append(" FM.FinReference, FM.FinType, FM.FinStatus, FM.FinStartDate, FM.FinCcy, FM.FinAmount");
+		sql.append(", FM.DownPayment, FM.FeeChargeAmt, FM.FinCurrAssetValue, FM.FinIsActive");
+		sql.append(", FM.FinRepaymentAmount, FM.NumberOfTerms, FT.FintypeDesc AS LovDescFinTypeName");
+		sql.append(", (FP.NSchdPri + FP.NSchdPft) MaxInstAmount, FP.NOinst, FP.NOPaidinst");
+		sql.append(" FROM FinanceMain FM");
+		sql.append(" INNER JOIN RMTfinanceTypes FT ON FT.Fintype = FM.FinType");
+		sql.append(" INNER JOIN FinPftdetails FP ON FP.FinReference = FP.Finreference");
+		sql.append(" WHERE FM.CustID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
