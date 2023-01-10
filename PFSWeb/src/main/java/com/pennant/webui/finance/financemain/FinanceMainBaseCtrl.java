@@ -3396,6 +3396,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				appendExtCreditReviewDetailSummaryTab(true);
 			} else {
 				appendCreditReviewDetailSummaryTab(true);
+				refershCreditReviewDetailSummaryTab();
 			}
 			break;
 		case AssetConstants.UNIQUE_ID_QUERY_MGMT:
@@ -11012,7 +11013,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				eligibilityMethodValue = details.getFieldCodeValue();
 			}
 		}
+		refershCreditReviewDetailSummaryTab();
+		logger.debug(Literal.LEAVING);
+	}
 
+	private void refershCreditReviewDetailSummaryTab() {
+		String eligibilityMethodValue = eligibilityMethod.getValue();
 		String creditReviewTabVersion = SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB);
 		boolean tabVisible = isTabVisible(StageTabConstants.CreditReviewDetails);
 
@@ -11028,7 +11034,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			financeSpreadSheetCtrl.doDisplayTab(eligibilityMethodValue);
 		}
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$parentLoanReference(Event event) {
