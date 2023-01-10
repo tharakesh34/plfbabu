@@ -4,7 +4,7 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-migration</artifactId>
-	<version>6.2.0-HDFC_R1.41</version>
+	<version>6.2.0-HDFC_R1.41.1</version>
 	<packaging>jar</packaging>
 
 	<name>pff-migration</name>
@@ -72,6 +72,16 @@
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
 				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
 				<pfs.liquibase.username>PLF_HDFC_DEV</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>plfext_dev_oracle</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master-ext.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>PLFEXT_HDFC_DEV</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
