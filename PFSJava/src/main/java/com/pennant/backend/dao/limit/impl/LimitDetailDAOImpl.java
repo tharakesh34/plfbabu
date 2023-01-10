@@ -684,16 +684,20 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.query(sql, new ResultSetExtractor<Map<String, BigDecimal>>() {
-			@Override
-			public Map<String, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		try {
+			this.jdbcOperations.query(sql, new ResultSetExtractor<Map<String, BigDecimal>>() {
+				@Override
+				public Map<String, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-				while (rs.next()) {
-					hashMap.put(rs.getString("FinReference"), rs.getBigDecimal("TotalPriBal"));
+					while (rs.next()) {
+						hashMap.put(rs.getString("FinReference"), rs.getBigDecimal("TotalPriBal"));
+					}
+					return hashMap;
 				}
-				return hashMap;
-			}
-		}, id, 1);
+			}, id, 1);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
 
 		return hashMap;
 	}
