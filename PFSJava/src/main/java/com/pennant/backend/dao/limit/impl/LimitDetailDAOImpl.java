@@ -678,8 +678,6 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public Map<String, BigDecimal> getOsPriBal(long id) {
-		logger.debug(Literal.ENTERING);
-
 		Map<String, BigDecimal> hashMap = new HashMap<>();
 
 		String sql = "Select FinReference, TotalPriBal From FinPFTDetails Where CustID = ? and FinIsActive = ?";
@@ -695,7 +693,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 				}
 				return hashMap;
 			}
-		}, id);
+		}, id, 1);
 
 		return hashMap;
 	}

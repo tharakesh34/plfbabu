@@ -401,8 +401,9 @@ public class AccountEngineExecution implements Serializable {
 						}
 					}
 
-					dataMap.entrySet().forEach(m1 -> logger
-							.debug(String.format("Data Map >> Key : %S  - Value : %S", m1.getKey(), m1.getValue())));
+					for (String m1 : dataMap.keySet()) {
+						logger.debug("Data Map >> Key : " + m1 + "  - Value : " + dataMap.get(m1));
+					}
 
 					throw new AppException(String.format(
 							"Rule (%S) and  Accounting for %S Event is invalid for order id : %S , please contact administrator",
