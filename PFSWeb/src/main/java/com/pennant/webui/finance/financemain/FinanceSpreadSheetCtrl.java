@@ -511,6 +511,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		return convertStringToMap(creditReviewDetails.getProtectedCells());
 	}
 
+	private Map<String, Object> getFormulaFieldsBySheet() {
+		return convertStringToMap(creditReviewDetails.getFormulaCells());
+	}
+
 	private String[] getFields(Object object) {
 		String[] fields = null;
 		if (object == null || StringUtils.isEmpty(object.toString())) {
@@ -569,6 +573,16 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				for (String fieldName : getFields(fieldMap.getValue())) {
 					fieldName = StringUtils.trim(fieldName);
 					protectField(sheet, fieldName);
+				}
+			}
+		}
+
+		Map<String, Object> formulaCellsBySheet = getFormulaFieldsBySheet();
+		for (Entry<String, Object> fieldMap : formulaCellsBySheet.entrySet()) {
+			if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
+				for (String fieldName : getFields(fieldMap.getValue())) {
+					fieldName = StringUtils.trim(fieldName);
+					setFormula(sheet, fieldName);
 				}
 			}
 		}

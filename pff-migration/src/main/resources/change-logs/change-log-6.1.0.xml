@@ -1217,4 +1217,10 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="49" author="rahul.r">
+		<addColumn tableName="creditreviewconfig">
+			<column name="formulaCells" type="text" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

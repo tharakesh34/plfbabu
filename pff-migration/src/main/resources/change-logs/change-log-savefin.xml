@@ -1708,4 +1708,11 @@
 				]]>
 			</sql>
 	</changeSet>
+	<changeSet id="69" author="rahul.r">
+			<sql>
+				<![CDATA[
+					UPDATE CREDITREVIEWCONFIG SET FORMULACELLS='{"FINAL_OFFER": "G4","CO_APP":"C56,C57"}' WHERE ELIGIBILITYMETHOD='DEFAULT';
+				]]>
+			</sql>
+	</changeSet>
 </databaseChangeLog>
