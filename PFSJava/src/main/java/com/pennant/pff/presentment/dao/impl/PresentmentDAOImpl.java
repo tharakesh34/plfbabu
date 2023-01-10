@@ -1549,9 +1549,9 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" From FILE_UPLOAD_HEADER rph");
 		sql.append(" Inner Join REPRESENT_UPLOADS rpd on rph.Id = rpd.HeaderId");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = rpd.FinID");
-		sql.append(" Inner Join ChequeHeader ch on ch.FinId = fm.FinId");
-		sql.append(" Inner Join ChequeDetail cd on cd.HeaderId = ch.HeaderId and cd.Chequedate = rpd.DueDate");
-		sql.append(" Inner Join BankBranches bb on bb.BankBranchId = cd.BankBranchId");
+		sql.append(" Left Join ChequeHeader ch on ch.FinId = fm.FinId");
+		sql.append(" Left Join ChequeDetail cd on cd.HeaderId = ch.HeaderId and cd.Chequedate = rpd.DueDate");
+		sql.append(" Left Join BankBranches bb on bb.BankBranchId = cd.BankBranchId");
 		sql.append(" Where rph.Id in (");
 		sql.append(JdbcUtil.getInCondition(headerId));
 		sql.append(") and rpd.Progress = ?");
