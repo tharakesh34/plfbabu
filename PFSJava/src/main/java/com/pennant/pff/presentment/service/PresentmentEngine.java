@@ -485,7 +485,7 @@ public class PresentmentEngine {
 
 		String reference = StringUtils.leftPad(String.valueOf(headerId), 15, "0");
 
-		String ref = ph.getMandateType().concat(reference);
+		String ref = instrumentType.concat(reference);
 
 		if (PennantConstants.PROCESS_REPRESENTMENT.equals(presentmentType)) {
 			ref = "RE" + ref;
