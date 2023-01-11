@@ -455,4 +455,20 @@
 				]]>
 			</sql>
 	</changeSet>
+	<changeSet id="27" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Delete FROM RBFieldDetails WHERE RBModule = 'FEES' AND RBEvent = 'ADDDBSP' and rbfldname='fm_finAssetValue';
+								
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','ADDDBSP','fm_finAssetValue','Total Loan Amount','decimal',18,'0','1',NULL,'static,global',null);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="28" author="rahul.r">
+			<sql>
+				<![CDATA[
+					UPDATE JOB_DETAILS SET ENABLED=1,PORT=null, HOST_NAME=null WHERE JOBKEY='GST_INVOICE_GENERATE_JOB';
+				]]>
+			</sql>
+	</changeSet>
 </databaseChangeLog>
