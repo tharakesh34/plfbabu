@@ -3,7 +3,6 @@ package com.pennanttech.pff.external.mandate.dao.impl;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -30,8 +30,12 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.mandate.dao.MandateProcessDAO;
+import com.pennanttech.pff.mandate.ExtMandateExtension;
 
 public class MandateProcessDAOImpl extends SequenceDao<Object> implements MandateProcessDAO {
+
+	@Autowired(required = false)
+	private ExtMandateExtension extMandateExtension;
 
 	@Override
 	public long saveMandateRequests(List<Long> mandateIds) {
@@ -128,32 +132,9 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 						bankCode = rowMap.get("BANK_CODE").toString();
 					}
 
-					// NEW CHANGES START : Extra columns added below for HDFC
-					String mandateDate = new SimpleDateFormat("dd/MM/yyyy").format(appDate);
-					rowMap.put("MANDATE_DATE", mandateDate);
-
 					Date startDate = (Date) rowMap.get("START_DATE");
-					String fStartDate = new SimpleDateFormat("dd/MM/yyyy").format(startDate);
-					rowMap.put("START_DATE", fStartDate);
-					rowMap.put("END_DATE", null);
 
 					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
-					rowMap.put("IMAGE_NAME", "ACH-" + finReference);
-
-					if (rowMap.get("SECURITYMANDATE") != null) {
-						String secureMandate = rowMap.get("SECURITYMANDATE").toString();
-						if (secureMandate != null && "1".equals(secureMandate.trim())) {
-							rowMap.put("CAT_CODE", "O002");
-						} else {
-							rowMap.put("CAT_CODE", "O001");
-						}
-						// rowMap.remove("SECURITYMANDATE");
-					}
-
-					if (rowMap.get("CUSTOMER_EMAIL") != null) {
-						rowMap.put("CUSTOMER_EMAIL", "");
-					}
-					// NEW CHANGES END
 
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("PROCESS_ID", processId);
@@ -237,6 +218,15 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 					rowMap.remove("CCYMINORCCYUNITS");
 					rowMap.remove("CUST_EMI");
 					rowMap.remove("FIRSTDUEDATE");
+
+					try {
+						if (extMandateExtension != null) {
+							extMandateExtension.processMandateData(rowMap);
+						}
+					} catch (Exception e) {
+						logger.warn(Literal.EXCEPTION, e);
+						throw new AppException(e.getMessage());
+					}
 
 					long id = insertData(rowMap);
 
