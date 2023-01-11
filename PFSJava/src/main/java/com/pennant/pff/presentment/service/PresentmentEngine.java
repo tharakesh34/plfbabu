@@ -394,6 +394,9 @@ public class PresentmentEngine {
 
 		List<PresentmentDetail> list = new ArrayList<>();
 
+		logger.debug("Presentment Engine Grouping started..");
+		logger.info("Presentment Engine Grouping started..");
+
 		Date appDate = ph.getAppDate();
 
 		Map<String, Date> dueDates = null;
@@ -403,6 +406,8 @@ public class PresentmentEngine {
 		}
 
 		while (rs.next()) {
+			logger.debug("Result Set loop started...");
+			logger.info("Result Set loop started...");
 			PresentmentDetail pd = new PresentmentDetail();
 
 			pd.setId(rs.getLong("ID"));
@@ -443,12 +448,22 @@ public class PresentmentEngine {
 			}
 
 			if (list.size() == PennantConstants.CHUNK_SIZE) {
+				logger.debug("Chunk size matched... updating header");
+				logger.info("Chunk size matched... updating header");
 				presentmentDAO.updateHeader(list);
 				list.clear();
 			}
+
+			logger.debug("Result Set loop continue...");
+			logger.info("Result Set loop continue...");
 		}
 
+		logger.debug("Result Set loop completed...");
+		logger.info("Result Set loop completed...");
+
 		if (!list.isEmpty()) {
+			logger.debug("updating header....");
+			logger.info("updating header.....");
 			presentmentDAO.updateHeader(list);
 		}
 
