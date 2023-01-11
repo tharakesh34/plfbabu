@@ -380,7 +380,7 @@ public class AccountEngineExecution implements Serializable {
 				continue;
 			}
 
-			if (StringUtils.isBlank(txnEntry.getAccount())) {
+			if (txnEntry.getAccount() == null || StringUtils.isEmpty(StringUtils.trimToEmpty(txnEntry.getAccount()))) {
 				if (BigDecimal.ZERO.compareTo(postAmt) != 0) {
 					/**
 					 * Below block is added only for temporary purpose to identify below error while running EOD.
@@ -401,12 +401,10 @@ public class AccountEngineExecution implements Serializable {
 						}
 					}
 
-					for (String m1 : dataMap.keySet()) {
-						logger.debug("Data Map >> Key : " + m1 + "  - Value : " + dataMap.get(m1));
-					}
+					logger.debug("Transaction Entry : " + txnEntry.getAccount());
 
 					throw new AppException(String.format(
-							"Rule (%S) and  Accounting for %S Event is invalid for order id : %S , please contact administrator",
+							"Rule (%s) and  Accounting for %S Event is invalid for order id : %S , please contact administrator",
 							sqlRule, aeEvent.getAccountingEvent(), txnEntry.getTransOrder()));
 				}
 				continue;
