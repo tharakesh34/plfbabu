@@ -773,9 +773,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 		logger.info(Literal.ENTERING);
 
 		String genderCode = "";
-		if ("M".equals(customer.getCustGenderCode()) || "MALE".equals(customer.getCustGenderCode())) {
+		if ("M".equals(customer.getCustGenderCode()) || "MALE".equals(customer.getCustGenderCode())
+				|| "MA".equals(customer.getCustGenderCode())) {
 			genderCode = "2";
-		} else if ("F".equals(customer.getCustGenderCode()) || "FEMALE".equals(customer.getCustGenderCode())) {
+		} else if ("F".equals(customer.getCustGenderCode()) || "FEMALE".equals(customer.getCustGenderCode())
+				|| "FE".equals(customer.getCustGenderCode())) {
 			genderCode = "1";
 		}
 
