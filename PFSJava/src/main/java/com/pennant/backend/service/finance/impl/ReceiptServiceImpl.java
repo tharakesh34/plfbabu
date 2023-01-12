@@ -340,6 +340,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private ManualAdviseDAO manualAdviseDAO;
 	private AccountingSetDAO accountingSetDAO;
 	private PartPayAndEarlySettleValidator partPayAndEarlySettleValidator;
+	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -8020,6 +8021,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		return receiptDTO;
 	}
 
+	@Override
+	public List<ReceiptAllocationDetail> getReceiptAllocDetail(long finID, String allocType) {
+		return receiptAllocationDetailDAO.getReceiptAllocDetail(finID, allocType);
+	}
+
 	private List<UploadAlloctionDetail> prepareAllocForTExcess(List<ReceiptAllocationDetail> allocations) {
 		List<UploadAlloctionDetail> ulAllocations = new ArrayList<>();
 
@@ -8410,6 +8416,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	@Autowired
 	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
 		this.accountingSetDAO = accountingSetDAO;
+	}
+
+	@Autowired
+	public void setReceiptAllocationDetailDAO(ReceiptAllocationDetailDAO receiptAllocationDetailDAO) {
+		this.receiptAllocationDetailDAO = receiptAllocationDetailDAO;
 	}
 
 	public void setCollateralAssignmentValidation(CollateralAssignmentValidation collateralAssignmentValidation) {

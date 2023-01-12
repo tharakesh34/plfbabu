@@ -294,4 +294,14 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
+	@Override
+	public boolean isfieldCodeValueExists(String fieldCodeValue, boolean isActive) {
+		StringBuilder sql = new StringBuilder("Select count(*) From RMTLovFieldDetail");
+		sql.append(" Where fieldCodeValue =:fieldCodeValue And IsActive =:IsActive");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, fieldCodeValue, true) > 0;
+	}
+
 }

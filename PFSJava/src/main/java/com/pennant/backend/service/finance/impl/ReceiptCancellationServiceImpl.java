@@ -143,6 +143,7 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
+import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -155,6 +156,7 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
+import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.service.tds.receivables.TdsReceivablesTxnService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -240,6 +242,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
+	private PaymentHeaderService paymentHeaderService;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -495,6 +498,19 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		String errorCode = "";
 
 		long finID = rch.getFinID();
+
+		if (paymentHeaderService != null && !FinServiceEvent.FEEPAYMENT.equals(rch.getReceiptPurpose())) {
+			Long paymentId = paymentHeaderService.getPaymentIdByFinId(finID, receiptID, "_Temp");
+			PaymentHeader ph = null;
+
+			if (paymentId != null) {
+				ph = paymentHeaderService.getPaymentHeader(paymentId);
+				AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, ph.getBefImage(), ph);
+				AuditHeader ah = new AuditHeader(paymentId.toString(), null, null, null, auditDetail,
+						ph.getUserDetails(), null);
+				paymentHeaderService.doReject(ah);
+			}
+		}
 
 		if (FinServiceEvent.FEEPAYMENT.equals(rch.getReceiptPurpose())) {
 			List<FinReceiptDetail> receiptdetails = rch.getReceiptDetails();
@@ -3491,7 +3507,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		this.repaymentPostingsUtil = repaymentPostingsUtil;
 	}
 
-	@Autowired(required = false)
 	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
 		this.feeReceiptService = feeReceiptService;
 	}
@@ -3501,12 +3516,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
-	@Autowired(required = false)
 	public void setExtendedFieldExtensionService(ExtendedFieldExtensionService extendedFieldExtensionService) {
 		this.extendedFieldExtensionService = extendedFieldExtensionService;
 	}
 
-	@Autowired(required = false)
 	public void setTdsReceivablesTxnService(TdsReceivablesTxnService tdsReceivablesTxnService) {
 		this.tdsReceivablesTxnService = tdsReceivablesTxnService;
 	}
@@ -3679,6 +3692,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	@Autowired
 	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
 		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
+
+	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
+		this.paymentHeaderService = paymentHeaderService;
 	}
 
 }

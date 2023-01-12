@@ -58,12 +58,12 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		sql.append(tableType.getSuffix());
 		sql.append(" (FeeTypeID, FeeTypeCode, FeeTypeDesc, ManualAdvice, AdviseType, AccountSetId, Active");
 		sql.append(", TaxComponent, TaxApplicable, Refundable, FeeIncomeOrExpense, HostFeeTypeCode");
-		sql.append(", AmortzReq, DueAccReq, DueAccSet, TdsReq, PayableLinkTo, RecvFeeTypeId");
+		sql.append(", AmortzReq, DueAccReq, DueAccSet, TdsReq, PayableLinkTo, RecvFeeTypeId, AllowAutoRefund");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(")");
 		sql.append(" Values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		if (ft.getId() == Long.MIN_VALUE) {
@@ -94,6 +94,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				ps.setBoolean(index++, ft.isTdsReq());
 				ps.setString(index++, ft.getPayableLinkTo());
 				ps.setObject(index++, ft.getRecvFeeTypeId());
+				ps.setBoolean(index++, ft.isAllowAutoRefund());
 				ps.setInt(index++, ft.getVersion());
 				ps.setLong(index++, ft.getLastMntBy());
 				ps.setTimestamp(index++, ft.getLastMntOn());
@@ -119,7 +120,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		sql.append(" Set FeeTypeCode = ?, FeeTypeDesc = ?, ManualAdvice = ?, AdviseType = ?, AccountSetId = ?");
 		sql.append(", Active = ?, TaxComponent = ?, TaxApplicable = ?, Refundable = ?");
 		sql.append(", FeeIncomeOrExpense = ?, HostFeeTypeCode = ?, AmortzReq = ?, DueAccReq = ?");
-		sql.append(", DueAccSet = ?, TdsReq = ?, PayableLinkTo = ?, RecvFeeTypeId = ?");
+		sql.append(", DueAccSet = ?, TdsReq = ?, PayableLinkTo = ?, RecvFeeTypeId = ?, AllowAutoRefund= ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where FeeTypeId = ?");
@@ -147,6 +148,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			ps.setBoolean(index++, ft.isTdsReq());
 			ps.setString(index++, ft.getPayableLinkTo());
 			ps.setObject(index++, ft.getRecvFeeTypeId());
+			ps.setBoolean(index++, ft.isAllowAutoRefund());
 			ps.setInt(index++, ft.getVersion());
 			ps.setLong(index++, ft.getLastMntBy());
 			ps.setTimestamp(index++, ft.getLastMntOn());
@@ -550,7 +552,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, Refundable");
 		sql.append(", AdviseType, AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense");
-		sql.append(", HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet, TdsReq");
+		sql.append(", HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet, TdsReq, AllowAutoRefund");
 
 		if (type.contains("View")) {
 			sql.append(", AccountSetCode, AccountSetCodeName, DueAcctSetCode, DueAcctSetCodeName, AcType, AcTypeDesc");
@@ -592,6 +594,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			ft.setDueAccReq(rs.getBoolean("DueAccReq"));
 			ft.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
 			ft.setTdsReq(rs.getBoolean("TdsReq"));
+			ft.setAllowAutoRefund(rs.getBoolean("AllowAutoRefund"));
 
 			if (type.contains("View")) {
 				ft.setAccountSetCode(rs.getString("AccountSetCode"));
@@ -683,4 +686,31 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		}
 	}
 
+	@Override
+	public FeeType getRecvFees(String feeTypeCode) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select fe.FeeTypeCode, fe.FeeTypeDesc, fe.Refundable");
+		sql.append(" From FeeTypes fee");
+		sql.append(" inner join (select case when PAYABLELINKTO = 'MANADV'");
+		sql.append(" then (Select feetypecode from feetypes where feetypeid = f.recvfeetypeid)");
+		sql.append(" else PAYABLELINKTO end type,feetypecode, feetypedesc, refundable from feetypes f) fe");
+		sql.append(" on fee.feetypecode = fe.type and fee.feetypecode = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FeeType ft = new FeeType();
+
+				ft.setRecvFeeTypeCode(rs.getString("FeeTypeCode"));
+				ft.setRecvFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				ft.setRefundable(rs.getBoolean("Refundable"));
+
+				return ft;
+			}, feeTypeCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

@@ -2255,4 +2255,33 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		}
 
 	}
+
+	@Override
+	public List<PresentmentDetail> getPresentmentIdByFinId(long finID) {
+		StringBuilder sql = new StringBuilder("Select pd.ID, pd.MandateID");
+		sql.append(" From PresentmentHeader ph");
+		sql.append(" Inner Join PresentmentDetails_AView pd on pd.PresentmentID = ph.ID");
+		sql.append(" Where pd.FinID = ? and pd.MandateType in (?, ?, ?, ?) and pd.Status not in (?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, finID);
+			ps.setString(++index, "NACH");
+			ps.setString(++index, "SI");
+			ps.setString(++index, "EMANDATE");
+			ps.setString(++index, "PDC");
+			ps.setString(++index, "I");
+			ps.setString(++index, "F");
+		}, (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setId(rs.getLong("ID"));
+			pd.setMandateId(rs.getLong("MandateID"));
+
+			return pd;
+		});
+	}
 }

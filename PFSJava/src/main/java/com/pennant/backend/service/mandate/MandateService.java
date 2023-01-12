@@ -25,15 +25,18 @@
 
 package com.pennant.backend.service.mandate;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
@@ -121,4 +124,16 @@ public interface MandateService {
 	List<Mandate> getMandatesByCif(String cif);
 
 	ErrorDetail loanMandateSwapping(String finReference, Long oldMandateId, Long newMandateId);
+
+	PaymentInstruction getBeneficiatyDetailsByMandateId(Long mandateId);
+
+	List<ChequeDetail> getChequeDetailIDByFinId(long finID);
+
+	PaymentInstruction getBeneficiatyDetailsByChequeDetailsId(long chequeDetailsID);
+
+	List<Long> getMandateIDByFinId(long finID);
+
+	List<Long> getChequeDetailIDByAppDate(long finID, Date appDate);
+
+	List<PaymentInstruction> getBeneficiatyDetailsByFinId(long finID);
 }

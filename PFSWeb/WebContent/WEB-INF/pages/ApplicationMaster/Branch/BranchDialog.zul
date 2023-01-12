@@ -218,6 +218,11 @@
 								<label id="label_BranchDialog_NewBranchCode" value="${c:l('label_BranchDialog_NewBranchCode.value')}" />
 								<extendedcombobox id="newBranchCode" />
 							</row>
+							
+							<row visible="true">
+								<label id="label_BranchDialog_DefChequeDDPrintLoc" value="${c:l('label_BranchDialog_DefChequeDDPrintLoc.value')}" />
+								<extendedcombobox id="defChequeDDPrintLoc" />
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

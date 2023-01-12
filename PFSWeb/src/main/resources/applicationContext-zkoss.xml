@@ -4115,6 +4115,13 @@
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="refundBeneficiary" ref="refundBeneficiary" />
+	</bean>
+	
+	<!-- Refund Beneficiary  -->
+	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary">
+		<property name="mandateDAO" ref="mandateDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 	</bean>
 
 	<!-- DMS DocumentDetails -->
@@ -4128,6 +4135,7 @@
 		class="com.pennant.webui.payment.paymentheader.SelectPaymentHeaderDialogCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="feeRefundHeaderService" ref ="feeRefundHeaderService"/>
 	</bean>
 
 	<!-- DisbursementsInstructionsDialogCtrl -->
@@ -6095,4 +6103,41 @@
 	parent="uploadList" />
 	
 	<bean id="chequeUploadListCtrl" class="com.pennant.pff.pdc.upload.list.PDCUploadListCtrl" parent="uploadList" />
+
+	<bean id="paymentInstructionUploadList" class="com.pennant.pff.paymentInstruction.upload.list.PaymentInstructionUploadListCtrl"
+	parent="uploadList" />
+	
+	<!-- FeeRefundHeader -->
+	<bean id="feeRefundHeaderListCtrl" class="com.pennant.webui.payment.feerefundheader.FeeRefundHeaderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
+		<property name="feeRefundApprovalProcess" ref="feeRefundApprovalProcess" />
+	</bean>
+	<bean id="feeRefundHeaderDialogCtrl" class="com.pennant.webui.payment.feerefundheader.FeeRefundHeaderDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="eventManager" ref="eventManager" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="refundBeneficiary" ref="refundBeneficiary" />
+		<property name="receiptService" ref="receiptService" />
+		<property name="manualAdviseService" ref="manualAdviseService" />
+	</bean>
+	<bean id="selectFeeRefundHeaderDialogCtrl" class="com.pennant.webui.payment.feerefundheader.SelectFeeRefundHeaderDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+		<property name="holdRefundUploadDAO" ref="holdRefundUploadDAO" />
+	</bean>
+	<bean id="feeRefundInstructionDialogCtrl" class="com.pennant.webui.payment.feerefundheader.FeeRefundInstructionDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="bankDetailService" ref="bankDetailService" />
+	</bean>
+	
+	<bean id="holdRefundUploadList" class="com.pennant.pff.holdrefund.upload.list.HoldRefundUploadListCtrl"
+	parent="uploadList" />
 </beans>

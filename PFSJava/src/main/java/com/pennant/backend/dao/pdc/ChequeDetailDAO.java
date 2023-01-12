@@ -54,4 +54,6 @@ public interface ChequeDetailDAO {
 	boolean isChequeExists(long headerID, Date chequeDate);
 
 	boolean isRelisedAllCheques(long finId);
+
+	List<ChequeDetail> getChequeDetailIDByFinId(long finID);
 }

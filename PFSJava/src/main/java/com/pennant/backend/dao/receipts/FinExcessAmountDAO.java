@@ -101,4 +101,8 @@ public interface FinExcessAmountDAO {
 
 	int updateTerminationExcess(String finReference, long excessID, BigDecimal excessAmt, BigDecimal balns,
 			BigDecimal amount);
+
+	BigDecimal getTotalExcessByRefAndType(long finID, String amountType);
+
+	List<FinExcessAmount> getExcessRcdList(long finID, Date activeNDate);
 }

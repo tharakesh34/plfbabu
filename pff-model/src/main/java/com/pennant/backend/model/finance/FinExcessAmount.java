@@ -24,6 +24,8 @@ public class FinExcessAmount implements Serializable {
 	private Date postDate;
 	private boolean expand;
 	private boolean collapse;
+	private String feeTypeDesc;
+	private String taxComponent;
 
 	public FinExcessAmount() {
 		super();
@@ -50,7 +52,8 @@ public class FinExcessAmount implements Serializable {
 		excludeFields.add("excessMovement");
 		excludeFields.add("expand");
 		excludeFields.add("collapse");
-
+		excludeFields.add("feeTypeDesc");
+		excludeFields.add("taxComponent");
 		return excludeFields;
 	}
 
@@ -180,6 +183,22 @@ public class FinExcessAmount implements Serializable {
 
 	public void setCollapse(boolean collapse) {
 		this.collapse = collapse;
+	}
+
+	public String getFeeTypeDesc() {
+		return feeTypeDesc;
+	}
+
+	public void setFeeTypeDesc(String feeTypeDesc) {
+		this.feeTypeDesc = feeTypeDesc;
+	}
+
+	public String getTaxComponent() {
+		return taxComponent;
+	}
+
+	public void setTaxComponent(String taxComponent) {
+		this.taxComponent = taxComponent;
 	}
 
 }

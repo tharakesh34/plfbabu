@@ -1639,4 +1639,14 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			return BigDecimal.ZERO;
 		}
 	}
+
+	@Override
+	public boolean isCancelReceiptInQueue(long finId) {
+		String sql = "Select count(ReceiptID) From FinReceiptHeader_Temp Where ReceiptModeStatus in (?,?) and FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, RepayConstants.PAYSTATUS_CANCEL,
+				RepayConstants.PAYSTATUS_BOUNCE, finId) > 0;
+	}
 }

@@ -211,6 +211,11 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	}
 
 	@Override
+	public FeeType getRecvFees(String feeTypeCode) {
+		return feeTypeDAO.getRecvFees(feeTypeCode);
+	}
+
+	@Override
 	public List<FeeType> getAMZReqFeeTypes() {
 		return feeTypeDAO.getAMZReqFeeTypes();
 	}
@@ -293,6 +298,11 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	@Override
+	public FeeType getApprovedFeeTypeByFeeCode(String feeTyeCode) {
+		return feeTypeDAO.getApprovedFeeTypeByFeeCode(feeTyeCode);
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {

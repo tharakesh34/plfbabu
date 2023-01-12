@@ -2177,4 +2177,34 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			}
 		});
 	}
+
+	@Override
+	public List<ManualAdvise> getPayableAdviseList(long finID, Date maxValueDate) {
+		StringBuilder sql = new StringBuilder(" SELECT MA.ADVISEID, MA.ADVISEAMOUNT,");
+		sql.append(" MA.PAIDAMOUNT, MA.WAIVEDAMOUNT, MA.VALUEDATE, MA.POSTDATE, MA.RESERVEDAMT ,MA.BALANCEAMT, ");
+		sql.append(" MA.FEETYPECODE,MA.FEETYPEDESC FROM MANUALADVISE_Aview MA");
+		sql.append(" INNER JOIN FEETYPES FT ON FT.FEETYPEID = MA.FEETYPEID AND FT.ALLOWAUTOREFUND = '1' ");
+		sql.append(
+				" WHERE MA.FINID = ? AND MA.ADVISETYPE = ? AND MA.VALUEDATE <= ? AND (MA.ADVISEAMOUNT-MA.PAIDAMOUNT-MA.WAIVEDAMOUNT > 0) ");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			ManualAdvise ma = new ManualAdvise();
+
+			ma.setAdviseID(rs.getLong("ADVISEID"));
+			ma.setAdviseAmount(rs.getBigDecimal("ADVISEAMOUNT"));
+			ma.setPaidAmount(rs.getBigDecimal("PAIDAMOUNT"));
+			ma.setWaivedAmount(rs.getBigDecimal("WAIVEDAMOUNT"));
+			ma.setValueDate(rs.getTimestamp("VALUEDATE"));
+			ma.setPostDate(rs.getTimestamp("POSTDATE"));
+			ma.setReservedAmt(rs.getBigDecimal("RESERVEDAMT"));
+			ma.setBalanceAmt(rs.getBigDecimal("BALANCEAMT"));
+			ma.setFeeTypeCode(rs.getString("FEETYPECODE"));
+			ma.setFeeTypeDesc(rs.getString("FEETYPEDESC"));
+
+			return ma;
+		}, finID, AdviseType.PAYABLE.id(), maxValueDate);
+	}
+
 }
