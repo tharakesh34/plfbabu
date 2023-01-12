@@ -6460,6 +6460,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return;
 			}
 
+			rch = rd.getReceiptHeader();
+			if (requestSource == RequestSource.API && FinanceConstants.REALIZATION_APPROVER.equals(rch.getRoleCode())) {
+				rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
+			}
+
 			auditHeader = saveOrUpdate(auditHeader);
 		}
 
