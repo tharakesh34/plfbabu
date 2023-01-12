@@ -47,6 +47,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennant.app.util.DateUtility;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PFSBatchAdmin {
@@ -66,6 +67,7 @@ public class PFSBatchAdmin {
 	private static String runType = "";
 
 	public static String startedBy = null;
+	public static LoggedInUser loggedInUser;
 
 	public PFSBatchAdmin() {
 		logger.debug(Literal.ENTERING);

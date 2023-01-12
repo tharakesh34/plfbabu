@@ -38,7 +38,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class FeeType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long feeTypeID = Long.MIN_VALUE;
 	private String feeTypeCode;
 	private String feeTypeDesc;
@@ -69,6 +69,7 @@ public class FeeType extends AbstractWorkflowEntity {
 	private String recvFeeTypeCode;
 	private String recvFeeTypeDesc;
 	private String allocationtype;
+	private boolean allowAutoRefund;
 
 	public FeeType() {
 		super();
@@ -392,4 +393,13 @@ public class FeeType extends AbstractWorkflowEntity {
 	public void setAllocationtype(String allocationtype) {
 		this.allocationtype = allocationtype;
 	}
+
+	public boolean isAllowAutoRefund() {
+		return allowAutoRefund;
+	}
+
+	public void setAllowAutoRefund(boolean allowAutoRefund) {
+		this.allowAutoRefund = allowAutoRefund;
+	}
+
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                                                                                                                    
-    
+                                                                                                                
     
     
     
@@ -28,8 +27,7 @@
     
     
     <wb-module deploy-name="pff-jobs">
-                                                                                                                                                                                                                                        
-        
+                                                                                                                                                                                                                                
         
         
         
@@ -57,8 +55,7 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-                                                                                                                                                                                                                                        
-        
+                                                                                                                                                                                                                                
         
         
         
@@ -86,8 +83,7 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-                                                                                                                                                                                                                                        
-        
+                                                                                                                                                                                                                                
         
         
         
@@ -115,8 +111,7 @@
         
         
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                                                                                                                                                                                                                                        
-        
+                                                                                                                                                                                                                                
         
         
         
@@ -162,14 +157,13 @@
         <dependent-module archiveName="PFSBatch-6.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/PFSBatch/PFSBatch">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-interface-core-6.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface-core/pff-interface-core">
+        <dependent-module archiveName="pff-interface-hdfc-6.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface-core/pff-interface-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-extension-core-6.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension-core/pff-extension-core">
+        <dependent-module archiveName="pff-extension-hdfc-6.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension-core/pff-extension-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-                                                                                                                                                                                                                                        
-        
+                                                                                                                                                                                                                                
         
         
         
@@ -197,8 +191,7 @@
         
         
         <property name="context-root" value="pff-jobs"/>
-                                                                                                                                                                                                                                        
-        
+                                                                                                                                                                                                                                
         
         
         
@@ -226,8 +219,7 @@
         
         
         <property name="java-output-path" value="/pff-jobs/target/classes"/>
-                                                                                                                                                                                                                                    
-    
+                                                                                                                                                                                                                            
     
     
     
@@ -255,8 +247,7 @@
     
     
     </wb-module>
-                                                                                                                
-
+                                                                                                            
 
 
 

@@ -518,9 +518,6 @@
 			<menuItem id="menu_Item_StepPolicy"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyList.zul"
 				rightName="menuItem_SolutionFactory_StepPolicy" />
-			<menuItem id="menu_Item_FinTypePartnerbankMapping"
-				zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerbankMappingList.zul"
-				rightName="menu_Item_FinTypePartnerbankMapping" />
 		</menu>
 		<menu id="menu_Category_PromotionSetup">
 			<menuItem id="menu_Item_Promotion"
@@ -610,14 +607,6 @@
 			rightName="menuItem_CustomerMasters_Customer" />
 		<menuItem id="menu_Item_Mandate" zulNavigation="/WEB-INF/pages/Mandate/MandateList.zul"
 			rightName="menuItem_Mandate" />
-		<menu id="menu_Category_Mandate">
-			<menuItem id="menu_Item_MandateUpload_Maker"
-				zulNavigation="/WEB-INF/pages/Mandate/Upload/MandateUploadList.zul?stage=M"
-				rightName="menu_Item_MandateUpload_Maker" />
-			<menuItem id="menu_Item_MandateUpload_Approver"
-				zulNavigation="/WEB-INF/pages/Mandate/Upload/MandateUploadList.zul?stage=A"
-				rightName="menu_Item_MandateUpload_Approver" />
-		</menu>
 		<menuItem id="menu_Item_Beneficiary" zulNavigation="/WEB-INF/pages/Beneficiary/BeneficiaryList.zul"
 			rightName="menuItem_Beneficiary" />
 		<menuItem id="menu_Item_CollateralSetup"
@@ -818,6 +807,10 @@
 			<menuItem id="menu_Item_CustomerPaymentTransactions"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul?module=PYMT"
 				rightName="menuItem_payment_CustPaymentTransaction" />
+			<menuItem id="menu_Item_FeeRefundMaker" zulNavigation="/WEB-INF/pages/FeeRefund/FeeRefundHeaderList.zul?approval=N"
+				rightName="menu_Item_FeeRefundMaker" />
+			<menuItem id="menu_Item_FeeRefundApprover" zulNavigation="/WEB-INF/pages/FeeRefund/FeeRefundHeaderList.zul?approval=Y"
+				rightName="menu_Item_FeeRefundApprover" />
 		</menu>
 		<menu id="menu_Category_LmsReceipts">
 			<menuItem id="menu_Item_InitMaker"
@@ -996,12 +989,6 @@
 				rightName="menuItem_FinanceManagement_HoldEMI" />
 			<menuItem id="menu_Item_ChequeHeader" zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderList.zul"
 				rightName="menuItem_pdc_ChequeHeader" />
-			<menu id="menu_Category_Cheque">
-				<menuItem id="menu_Item_ChequeUpload_Maker" zulNavigation="/WEB-INF/pages/PDCDetails/PDCUploadList.zul?stage=M"
-					rightName="menu_Item_ChequeUpload_Maker" />
-				<menuItem id="menu_Item_ChequeUpload_Approver" zulNavigation="/WEB-INF/pages/PDCDetails/PDCUploadList.zul?stage=A"
-					rightName="menu_Item_ChequeUpload_Approver" />
-			</menu>
 			<menuItem id="menu_Item_RegenerateAgreement"
 				zulNavigation="/WEB-INF/pages/Finance/RegenerateAgreement/RegenerateAgreement.zul"
 				rightName="menuItem_FinanceManagement_RegenerateAgreement" />
@@ -1125,15 +1112,11 @@
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul"
 				rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
 			<menuItem id="menu_Item_RePresentUpload_Maker"
-				zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=M"
-				rightName="menu_Item_RePresentUpload_Maker" />
-			<menuItem id="menu_Item_RePresentUpload_Approver"
-				zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=A"
-				rightName="menu_Item_RePresentUpload_Approver" />
-			<menuItem id="menu_Item_FateCorrectionUpload_Maker"
-				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=M" rightName="menu_Item_FateCorrectionUpload_Maker" />
-			<menuItem id="menu_Item_FateCorrectionUpload_Approver"
-				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A" rightName="menu_Item_FateCorrectionUpload_Approver" />
+				 zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadDialog.zul?"
+				 rightName="menu_Item_RePresentUpload_Maker" />
+			<menuItem id="menu_Item_RePresentUpload_Approval"
+		         zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?"
+		         rightName="menu_Item_RePresentUpload_Approver" />
 				
 		</menu>
 		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
@@ -2521,6 +2504,32 @@
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
 
-
+	
+	<menu id="menu_Category_Representment">
+		<menuItem id="menu_Item_RePresentUpload_Maker"
+			zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=M"
+			rightName="menu_Item_RePresentUpload_Maker" />
+		<menuItem id="menu_Item_RePresentUpload_Approver"
+			zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=A"
+			rightName="menu_Item_RePresentUpload_Approver" />
+	</menu>
+	
+	<menu id="menu_Category_HoldRefund">
+		<menuItem id="menu_Item_HoldRefundUpload_Maker"
+			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=M"
+			rightName="menu_Item_HoldRefundUpload_Maker" />
+		<menuItem id="menu_Item_HoldRefundUpload_Approver"
+			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=A"
+			rightName="menu_Item_HoldRefundUpload_Approver" />
+	</menu>
+	
+	<menu id="menu_Category_ManualRefunds">
+		<menuItem id="menu_Item_ManualRefunds_Maker"
+			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=M"
+			rightName="menu_Item_ManualRefUpload_Maker" />
+		<menuItem id="menu_Item_ManualRefunds_Approver"
+			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=A"
+			rightName="menu_Item_ManualRefUpload_Approver" />
+	</menu>
 
 </ns2:XMLRootMenu>

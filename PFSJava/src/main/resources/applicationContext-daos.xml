@@ -3510,6 +3510,7 @@
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="taxHeaderDetailsService" ref="taxHeaderDetailsService" />
+		<property name="holdRefundUploadDAO" ref="holdRefundUploadDAO"/>
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -4578,7 +4579,12 @@
 	</bean>
 
 	<bean name="receiptCancellationServiceTarget"
-		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" />
+		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" >
+		<property name="tdsReceivablesTxnService" ref ="tdsReceivablesTxnService"/>
+		<property name="feeReceiptService" ref ="feeReceiptService"/>
+		<property name="extendedFieldExtensionService" ref ="extendedFieldExtensionService"/>
+		<property name="paymentHeaderService" ref="paymentHeaderService"/>
+	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
 	<bean id="overdueChargeRecoveryDAO"
@@ -7850,6 +7856,7 @@
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 
 	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
@@ -7860,7 +7867,7 @@
 		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
-		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<bean name="paymentInstructionService"
@@ -13013,4 +13020,155 @@
 		parent="aUploadService" />
 		
 	<bean id="partPayAndEarlySettleValidator" class="com.pennant.backend.service.finance.PartPayAndEarlySettleValidator"/>
+	
+	<bean id="paymentInstructionUploadDAO"
+		class="com.pennant.backend.dao.payment.impl.PaymentInstructionUploadDAOImpl" parent="sequenceDao" />
+		
+	<bean id="paymentInstructionUploadService"
+		class="com.pennant.backend.service.payment.impl.PaymentInstructionUploadServiceImpl" parent="aUploadService" >
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="paymentInstructionUploadDAO" ref ="paymentInstructionUploadDAO"/>
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO"/>
+		<property name="paymentInstructionDAO" ref="paymentInstructionDAO"/>
+		<property name="paymentInstUploadApprovalProcess" ref="paymentInstUploadApprovalProcess" />
+		<property name="paymentHeaderDAO" ref="paymentHeaderDAO"/>
+		<property name="feeRefundHeaderService" ref="feeRefundHeaderService"/>
+	</bean>
+	
+	<bean id="paymentInstUploadApprovalProcess" class="com.pennant.backend.service.payment.impl.PaymentInstUploadApprovalProcess">
+		<property name="dataSource" ref="dataSource" />
+		<property name="projectedPaymentInstUploadDAO" ref="projectedPaymentInstUploadDAO" />
+		<property name="paymentInstructionUploadDAO" ref="paymentInstructionUploadDAO" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+		<property name="refundBeneficiary" ref="refundBeneficiary"/>
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	<bean id="projectedPaymentInstUploadDAO"
+		class="com.pennant.backend.dao.paymentinstupload.ProjectedPaymentInstUploadDAOImpl" parent="sequenceDao" >
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="financeHoldReleaseProcess" class="com.pennanttech.pff.holdrelease.FinanceHoldReleaseProcess"/>
+	
+	<bean id="feeRefundHeaderDAO" class="com.pennant.backend.dao.feerefund.impl.FeeRefundHeaderDAOImpl" parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="feeRefundInstructionDAO" class="com.pennant.backend.dao.feerefund.impl.FeeRefundInstructionDAOImpl" parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="feeRefundDetailDAO" class="com.pennant.backend.dao.feerefund.impl.FeeRefundDetailDAOImpl" parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="feeRefundHeaderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="feeRefundHeaderServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="feeRefundHeaderServiceTarget" class="com.pennant.backend.service.feerefund.impl.FeeRefundHeaderServiceImpl">
+		<property name="feeRefundHeaderDAO" ref="feeRefundHeaderDAO" />
+		<property name="feeRefundDetailService" ref="feeRefundDetailService" />
+		<property name="feeRefundInstructionService" ref="feeRefundInstructionService" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
+	</bean>
+	
+	<bean id="feeRefundDetailService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="feeRefundDetailServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="feeRefundDetailServiceTarget" class="com.pennant.backend.service.feerefund.impl.FeeRefundDetailServiceImpl">
+		<property name="feeRefundDetailDAO" ref="feeRefundDetailDAO" />
+	</bean>
+	
+	<bean id="feeRefundInstructionService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="feeRefundInstructionServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="feeRefundInstructionServiceTarget" class="com.pennant.backend.service.feerefund.impl.FeeRefundInstructionServiceImpl">
+		<property name="feeRefundInstructionDAO" ref="feeRefundInstructionDAO" />
+	</bean>
+	
+	<bean id="feeRefundApprovalProcess" class="com.pennant.backend.service.feerefund.impl.FeeRefundApprovalProcess">
+		<property name="dataSource" ref="dataSource" />
+		<property name="projectedFeeRefundProcessDAO" ref="projectedFeeRefundProcessDAO" />
+		<property name="feeRefundHeaderDAO" ref="feeRefundHeaderDAO" />
+		<property name="feeRefundDetailDAO" ref="feeRefundDetailDAO" />
+		<property name="feeRefundInstructionDAO" ref="feeRefundInstructionDAO" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+		<property name="manualAdviseService" ref="manualAdviseService" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
+		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
+	</bean>
+	
+	<bean id="projectedFeeRefundProcessDAO"
+		class="com.pennant.backend.dao.feerefundprocess.ProjectedFeeRefundProcessDAOImpl" parent="sequenceDao" >
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="autoRefundService" class="com.pennant.pff.autorefund.serviceimpl.AutoRefundServiceImpl"/>
+	
+	<bean id="autoRefundProcess" class="com.pennanttech.pff.autorefund.AutoRefundProcess">
+		<property name="autoRefundService" ref="autoRefundService" />
+	<property name="refundBeneficiary" ref="refundBeneficiary" />
+	</bean>
+	
+	<!--Refund beneficiary  -->
+	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary">
+		<property name="mandateDAO" ref="mandateDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
+	</bean>
+	
+	<bean id="autoRefundDAO" class="com.pennant.backend.dao.finance.impl.AutoRefundDAOImpl"  parent="basicDao" />
+	
+	<bean id="holdRefundUploadDAO" class="com.pennant.pff.holdrefund.dao.impl.HoldRefundUploadDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="holdRefundUploadService" class="com.pennant.pff.holdrefund.service.impl.HoldRefundUploadServiceImpl" parent="aUploadService" />
 </beans>

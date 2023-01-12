@@ -27,6 +27,7 @@ package com.pennant.webui.payment.paymentheader;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,6 +119,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.autorefund.RefundBeneficiary;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
@@ -149,6 +151,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	protected Label lbl_Currency;
 	protected Label lbl_startDate;
 	protected Label lbl_MaturityDate;
+	protected Label lbl_ODAgainstLoan;
+	protected Label lbl_ODAgainstCustomer;
 
 	protected Textbox tranModule;
 	protected Textbox tranReference;
@@ -187,6 +191,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private transient FinAdvancePaymentsService finAdvancePaymentsService;
 	private Button btnSave_payment;
 	private FeeTypeService feeTypeService;
+	private RefundBeneficiary refundBeneficiary;
+
+	private List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
 	/**
 	 * default constructor.<br>
@@ -494,7 +501,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				.setValue(DateUtility.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate
 				.setValue(DateUtility.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
-
+		this.lbl_ODAgainstLoan
+				.setValue(PennantApplicationUtil.amountFormate(aPaymentHeader.getOdAgainstLoan(), ccyFormatter));
+		this.lbl_ODAgainstCustomer
+				.setValue(PennantApplicationUtil.amountFormate(aPaymentHeader.getOdAgainstCustomer(), ccyFormatter));
 		// Disbursement Instructions tab.
 		appendDisbursementInstructionTab(aPaymentHeader);
 
@@ -538,8 +548,31 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private void appendDisbursementInstructionTab(PaymentHeader aPaymentHeader) {
 		try {
 			PaymentInstruction paymentInstruction = aPaymentHeader.getPaymentInstruction();
+			Date appDate = SysParamUtil.getAppDate();
+			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
 			if (paymentInstruction == null) {
+				PaymentInstruction payIns = null;
 				paymentInstruction = new PaymentInstruction();
+				payIns = refundBeneficiary.fetchBeneficiaryForRefund(financeMain.getFinID(), appDate,
+						alwRefundByCheque);
+				if (payIns != null) {
+					paymentInstruction.setBankBranchId(payIns.getBankBranchId());
+					paymentInstruction.setBankBranchCode(payIns.getBankBranchCode());
+					paymentInstruction.setBranchDesc(payIns.getBranchDesc());
+					paymentInstruction.setBankName(payIns.getBankName());
+					paymentInstruction.setBankBranchIFSC(payIns.getBankBranchIFSC());
+					paymentInstruction.setpCCityName(payIns.getpCCityName());
+					paymentInstruction.setAccountNo(payIns.getAccountNo());
+					paymentInstruction.setAcctHolderName(payIns.getAcctHolderName());
+					paymentInstruction.setPartnerBankId(payIns.getPartnerBankId());
+					paymentInstruction.setPartnerBankCode(payIns.getPartnerBankCode());
+					paymentInstruction.setPartnerBankName(payIns.getPartnerBankName());
+					paymentInstruction.setPhoneNumber(payIns.getPhoneNumber());
+					paymentInstruction.setIssuingBank(payIns.getIssuingBank());
+					paymentInstruction.setIssuingBankName(payIns.getIssuingBankName());
+					paymentInstruction.setPartnerBankAcType(payIns.getPartnerBankAc());
+					paymentInstruction.setPartnerBankAc(payIns.getPartnerBankAc());
+				}
 			}
 			Map<String, Object> map = new HashMap<>();
 			map.put("paymentInstruction", paymentInstruction);
@@ -1186,15 +1219,18 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		for (FinExcessAmount fea : excessList) {
 			PaymentDetail pd = new PaymentDetail();
+			if (allowedExcesTypes.contains(fea.getAmountType())) {
+				BigDecimal progressAmt = paymentHeaderService.getInProgressExcessAmt(this.financeMain.getFinID(),
+						fea.getReceiptID());
+				pd.setNewRecord(true);
+				pd.setReferenceId(fea.getId());
+				pd.setAvailableAmount(fea.getBalanceAmt().subtract(progressAmt));
+				pd.setAmountType(fea.getAmountType());
+				pd.setReceiptID(fea.getReceiptID());
+				pd.setValueDate(fea.getValueDate());
 
-			pd.setNewRecord(true);
-			pd.setReferenceId(fea.getId());
-			pd.setAvailableAmount(fea.getBalanceAmt());
-			pd.setAmountType(fea.getAmountType());
-			pd.setReceiptID(fea.getReceiptID());
-			pd.setValueDate(fea.getValueDate());
-
-			detailList.add(pd);
+				detailList.add(pd);
+			}
 		}
 
 		List<ManualAdvise> manualAdviseList = null;
@@ -1204,12 +1240,21 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			manualAdviseList = this.paymentHeaderService.getManualAdvise(this.financeMain.getFinID());
 		}
 
+		Map<Long, BigDecimal> advisesInProgess = new HashMap<Long, BigDecimal>();
+		advisesInProgess = this.paymentHeaderService.getAdvisesInProgess(this.financeMain.getFinID());
+
 		for (ManualAdvise ma : manualAdviseList) {
 			PaymentDetail pd = new PaymentDetail();
 
 			pd.setNewRecord(true);
 			pd.setReferenceId(ma.getAdviseID());
-			pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
+			if (advisesInProgess.containsKey(ma.getAdviseID())) {
+				BigDecimal progressAmt = advisesInProgess.get(ma.getAdviseID());
+				pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount())
+						.subtract(progressAmt));
+			} else {
+				pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
+			}
 			pd.setAmountType(String.valueOf(ma.getAdviseType()));
 			pd.setFeeTypeCode(ma.getFeeTypeCode());
 			pd.setFeeTypeDesc(ma.getFeeTypeDesc());
@@ -2147,6 +2192,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	public void setFeeTypeService(FeeTypeService feeTypeService) {
 		this.feeTypeService = feeTypeService;
+	}
+
+	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
+		this.refundBeneficiary = refundBeneficiary;
 	}
 
 }

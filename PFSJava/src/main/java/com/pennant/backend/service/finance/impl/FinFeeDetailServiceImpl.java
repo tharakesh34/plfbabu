@@ -1768,4 +1768,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
+	@Override
+	public List<FinFeeDetail> getFinFeeDetailByFinRef(long finID, boolean isWIF, String type) {
+		return finFeeDetailDAO.getFinFeeDetailByFinRef(finID, isWIF, type);
+	}
+
 }

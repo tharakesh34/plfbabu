@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+	
+	 <changeSet id="pre_run_for_pgp1" author="Adarsh" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2509.12" author="Anilkumar.G">
+		<addColumn tableName="ADTFEETYPES">
+			<column name="AllowAutoRefund" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2509.29" author="AnilKumar.G">
+	<addColumn tableName="ADTRMTBRANCHES">
+		<column name="DefChequeDDPrintLoc" type="varchar(15)" />
+	</addColumn>
+	</changeSet>
+	
+	
+	<changeSet id="TK#2566.1" author="sampath.d">
+		<createTable tableName="AdtFee_Refund_Header">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>				
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustCif" type="varchar(10)" />
+			<column name="FinID" type="bigint" />
+			<column name="PaymentType" type="varchar(5)" />
+			<column name="FinType" type="varchar(10)" />
+			<column name="BranchName" type="varchar(20)" />
+			<column name="PaymentAmount" type="Decimal(18,0)" />
+			<column name="Status" type="varchar(5)" />
+			<column name="ApprovalStatus" type="varchar(5)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2566.2" author="sampath.d">
+		<createTable tableName="AdtFee_Refund_Details">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>				
+			<column name="Id" type="bigint" >
+			<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint" >
+			<constraints nullable="false" />
+			</column>
+			<column name="ReceivableType" type="VARCHAR(5)" />
+			<column name="TotalAmount" type="Decimal(18,0)" />
+			<column name="PaidAmount" type="Decimal(18,0)"/>
+			<column name="PrevRefundAmount" type="Decimal(18,0)"/>
+			<column name="currRefundAmount" type="Decimal(18,0)"/>
+			<column name="AvailableAmount" type="Decimal(18,0)"/>
+			<column name="ReceivableRefId" type="bigint"/>
+			<column name="FeeTypeCode" type="VARCHAR(10)"/>
+			<column name="FeeTypeDesc" type="VARCHAR(50)"/>
+			<column name="PayableFeeTypeCode" type="VARCHAR(10)"/>
+			<column name="PayableFeeTypeDesc" type="VARCHAR(50)"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#2566.3" author="sampath.d">
+		<createTable tableName="AdtFee_Refund_Instructions">	
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>			
+			<column name="Id" type="bigint" >
+			<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint" >
+			<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="VARCHAR(5)" />
+			<column name="PaymentAmount" type="Decimal(18,0)" />
+			<column name="Remarks" type="VARCHAR(100)" />
+			<column name="PartnerBankId" type="bigint" />
+			<column name="IssuingBank" type="VARCHAR(8)"/>
+			<column name="FavourName" type="VARCHAR(200)"/>
+			<column name="FavourNumber" type="VARCHAR(100)"/>
+			<column name="PayableLoc" type="VARCHAR(50)"/>
+			<column name="PrintingLoc" type="VARCHAR(50)"/>
+			<column name="ValueDate" type="Datetime"/>
+			<column name="PostDate" type="Datetime"/>
+			<column name="BankBranchId" type="bigint"/>
+			<column name="AcctHolderName" type="VARCHAR(200)"/>
+			<column name="AccountNo" type="VARCHAR(100)"/>
+			<column name="PhoneCountryCode" type="VARCHAR(5)"/>
+			<column name="PhoneNumber" type="VARCHAR(12)"/>
+			<column name="ClearingDate" type="Datetime"/>
+			<column name="Status" type="VARCHAR(50)"/>
+			<column name="Active" type="boolean"/>
+			<column name="PaymentCCy" type="VARCHAR(3)"/>
+			<column name="Lei" type="VARCHAR(100)"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+</databaseChangeLog>

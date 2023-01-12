@@ -372,8 +372,20 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			this.postDate.setValue(paymentInstruction.getPostDate());
 		}
 
-		fillComboBox(this.paymentType, paymentInstruction.getPaymentType(), PennantStaticListUtil.getPaymentTypes(),
-				"");
+		if (this.paymentHeader.isNewRecord() && paymentInstruction.getPartnerBankCode() != null) {
+			if (StringUtils.equals(paymentInstruction.getPartnerBankCode(), "HDFC")) {
+				fillComboBox(this.paymentType, DisbursementConstants.PAYMENT_TYPE_IFT,
+						PennantStaticListUtil.getPaymentTypes(), "");
+			} else {
+				fillComboBox(this.paymentType, DisbursementConstants.PAYMENT_TYPE_NEFT,
+						PennantStaticListUtil.getPaymentTypes(), "");
+			}
+			paymentInstruction.setPaymentType(this.paymentType.getSelectedItem().getValue().toString());
+
+		} else {
+			fillComboBox(this.paymentType, paymentInstruction.getPaymentType(), PennantStaticListUtil.getPaymentTypes(),
+					"");
+		}
 		if (paymentInstruction.getPartnerBankId() != Long.MIN_VALUE && paymentInstruction.getPartnerBankId() != 0) {
 			this.partnerBankID.getButton().setDisabled(isReadOnly("PaymentInstructionDialog_partnerBankID"));
 			this.partnerBankID.setAttribute("partnerBankId", paymentInstruction.getPartnerBankId());
@@ -595,10 +607,10 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 					Labels.getLabel("label_DisbInstructionsDialog_DisbAmount.value"), ccyFormatter, true, false));
 		}
 
-		if (!this.partnerBankID.isReadonly()) {
-			this.partnerBankID.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_DisbInstructionsDialog_Partnerbank.value"), null, true));
-		}
+		/*
+		 * if (!this.partnerBankID.isReadonly()) { this.partnerBankID.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_DisbInstructionsDialog_Partnerbank.value"), null, true)); }
+		 */
 
 		if (!this.remarks.isReadonly()) {
 			this.remarks.setConstraint(
@@ -829,8 +841,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		item.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
 		item.setEntityCode(financeMain.getLovDescEntityCode());
 
-		List<FinTypePartnerBank> partnerBanks = finTypePartnerBankService.getPartnerBanksList(item,
-				TableType.AVIEW);
+		List<FinTypePartnerBank> partnerBanks = finTypePartnerBankService.getPartnerBanksList(item, TableType.AVIEW);
 		if (partnerBanks.size() == 1) {
 			item = partnerBanks.get(0);
 			this.partnerBankID.setAttribute("partnerBankId", item.getPartnerBankID());
