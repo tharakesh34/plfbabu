@@ -306,8 +306,8 @@ public class FeeRefundInstructionDAOImpl extends SequenceDao<FeeRefundInstructio
 
 	@Override
 	public boolean isInstructionInProgress(long finID) {
-		StringBuilder sql = new StringBuilder("select count(ID)");
-		sql.append(" From Fee_Refund_Instruction_Temp fri");
+		StringBuilder sql = new StringBuilder("select count(fri.ID)");
+		sql.append(" From Fee_Refund_Instructions_Temp fri");
 		sql.append(" Left Join Fee_Refund_Header_Temp frh on frh.ID = fri.HeaderID");
 		sql.append(" Left Join Fee_Refund_Details_Temp frd on frd.HeaderID = frh.ID");
 		sql.append(" Where frh.FinID = ?");
