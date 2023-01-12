@@ -1921,7 +1921,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#704.7_pre" author="vijaya.a" dbms="postgresql">
+	<changeSet id="ST#704.7.1_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintypepartnerbanks_view');
@@ -1929,7 +1929,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#704.7" author="vijaya.a">
+	<changeSet id="ST#704.7.1" author="vijaya.a">
 		<createView viewName="FINTYPEPARTNERBANKS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
@@ -1961,8 +1961,8 @@
 				FROM FINTYPEPARTNERBANKS_TEMP T1
 				INNER JOIN PARTNERBANKS T2 ON T1.PARTNERBANKID = T2.PARTNERBANKID
 				INNER JOIN RMTFINANCETYPES T5 ON T1.FINTYPE = T5.FINTYPE
-				INNER JOIN RMTBRANCHES T3 ON T1.BRANCHCODE = T3.BRANCHCODE
-				INNER JOIN CLUSTERS T4 ON T1.CLUSTERID = T4.ID
+				LEFT JOIN RMTBRANCHES T3 ON T1.BRANCHCODE = T3.BRANCHCODE
+				LEFT JOIN CLUSTERS T4 ON T1.CLUSTERID = T4.ID
 				UNION ALL
 				SELECT T1.ID,
 					T1.FINTYPE,
@@ -1993,14 +1993,14 @@
 				FROM FINTYPEPARTNERBANKS T1
 				INNER JOIN RMTFINANCETYPES T5 ON T1.FINTYPE = T5.FINTYPE
 				INNER JOIN PARTNERBANKS T2 ON T1.PARTNERBANKID = T2.PARTNERBANKID
-				INNER JOIN RMTBRANCHES T3 ON T1.BRANCHCODE = T3.BRANCHCODE
-				INNER JOIN CLUSTERS T4 ON T1.CLUSTERID = T4.ID
+				LEFT JOIN RMTBRANCHES T3 ON T1.BRANCHCODE = T3.BRANCHCODE
+				LEFT JOIN CLUSTERS T4 ON T1.CLUSTERID = T4.ID
 				WHERE NOT EXISTS (SELECT 1 FROM FINTYPEPARTNERBANKS_TEMP WHERE FINTYPEPARTNERBANKS_TEMP.ID = T1.ID)
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#704.7_post" author="vijaya.a" dbms="postgresql">
+	<changeSet id="ST#704.7.1_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintypepartnerbanks_view');
@@ -2008,7 +2008,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#704.8_pre" author="vijaya.a" dbms="postgresql">
+	<changeSet id="ST#704.8.1_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintypepartnerbanks_aview');
@@ -2016,7 +2016,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#704.8" author="vijaya.a">
+	<changeSet id="ST#704.8.1" author="vijaya.a">
 		<createView viewName="FINTYPEPARTNERBANKS_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
@@ -2052,13 +2052,13 @@
 				INNER JOIN PARTNERBANKS T2 ON T1.PARTNERBANKID = T2.PARTNERBANKID
 				INNER JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
 				INNER JOIN SMTDIVISIONDETAIL T4 ON T3.FINDIVISION = T4.DIVISIONCODE
-				INNER JOIN RMTBRANCHES T5 ON T1.BRANCHCODE = T5.BRANCHCODE
-				INNER JOIN CLUSTERS T6 ON T1.CLUSTERID = T6.ID
+				LEFT JOIN RMTBRANCHES T5 ON T1.BRANCHCODE = T5.BRANCHCODE
+				LEFT JOIN CLUSTERS T6 ON T1.CLUSTERID = T6.ID
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#704.8_post" author="vijaya.a" dbms="postgress">
+	<changeSet id="ST#704.8.1_post" author="vijaya.a" dbms="postgress">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintypepartnerbanks_aview');
@@ -3741,7 +3741,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.4" author="AnilKumar.G">
+	<changeSet id="TK#2509.10.1" author="AnilKumar.G">
 		<sql>
             <![CDATA[
               	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEE_AUTO_REFUND' and RBEVENT = 'FEE_AUTO_REFUND';
