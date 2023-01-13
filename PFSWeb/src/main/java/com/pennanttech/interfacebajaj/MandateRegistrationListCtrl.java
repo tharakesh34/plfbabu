@@ -821,6 +821,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		logger.debug(Literal.ENTERING);
 
 		List<Long> mandateIdList;
+		String mandateCount = String.valueOf(MandateExtension.MANDATE_SPLIT_COUNT);
 
 		if (listHeader_CheckBox_Comp.isChecked()) {
 			mandateIdList = getMandateList();
@@ -830,6 +831,12 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 		if (mandateIdList.isEmpty()) {
 			MessageUtil.showError(Labels.getLabel("MandateDataList_NoEmpty"));
+			return;
+		}
+
+		if (MandateExtension.MANDATE_SPLIT_COUNT > 0
+				&& this.mandateIdMap.size() > MandateExtension.MANDATE_SPLIT_COUNT) {
+			MessageUtil.showError(Labels.getLabel("MandateDataList_TooLong", new String[] { mandateCount }));
 			return;
 		}
 
