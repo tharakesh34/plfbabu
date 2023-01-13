@@ -32,11 +32,6 @@
 			<name>Central Repository</name>
 			<url>http://nexus-pennant-services/nexus/content/groups/public/</url>
 		</repository>
-		<repository>
-			<id>Shibboleth</id>
-			<name>Shibboleth</name>
-			<url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
-		</repository>
 	</repositories>
 
 	<pluginRepositories>
