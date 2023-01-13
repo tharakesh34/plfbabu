@@ -1186,7 +1186,9 @@ public class NotificationService extends GenericService<Notification> {
 			if (StringUtils.isNotEmpty(roleCode)) {
 				fm.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(roleCode));
 				fm.setSecUsrFullName(PennantApplicationUtil.getUserDesc(fm.getLastMntBy()));
-				fm.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(fm.getWorkflowId()));
+				if (fm.getWorkflowId() > 0) {
+					fm.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(fm.getWorkflowId()));
+				}
 			}
 		}
 
