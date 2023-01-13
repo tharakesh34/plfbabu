@@ -13016,4 +13016,93 @@
 		parent="aUploadService" />
 		
 	<bean id="partPayAndEarlySettleValidator" class="com.pennant.backend.service.finance.PartPayAndEarlySettleValidator"/>
+
+	<!-- Settlement Type Detail -->
+	<bean id="settlementTypeDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.SettlementTypeDetailDAOImpl" parent="sequenceDao" />
+
+	<bean id="settlementTypeDetailService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="settlementTypeDetailServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="settlementTypeDetailServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.SettlementTypeDetailServiceImpl">
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="settlementTypeDetailDAO" ref="settlementTypeDetailDAO" />
+	</bean>
+	
+	<!-- Settlement Detail -->
+	<bean id="settlementDAO" class="com.pennant.backend.dao.settlement.impl.SettlementDAOImpl" parent="sequenceDao" />
+	<bean id="settlementScheduleDAO" class="com.pennant.backend.dao.settlementschedule.impl.SettlementScheduleDAOImpl" parent="sequenceDao" />
+
+	<bean id="settlementService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="settlementServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="settlementServiceTarget" class="com.pennant.backend.service.settlement.impl.SettlementServiceImpl">
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="settlementDAO" ref="settlementDAO" />
+		<property name="settlementScheduleDAO" ref="settlementScheduleDAO" />
+		<property name="receiptService" ref="receiptService" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+	</bean>
+	
+	
+	<bean id="feeWaiverCancelService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="feeWaiverCancelServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="feeWaiverCancelServiceTarget" class="com.pennant.backend.service.finance.impl.FeeWaiverCancelServiceImpl">
+	<property name="feeWaiverHeaderDAO" ref="feeWaiverHeaderDAO" />
+	<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+	<property name="postingsDAO" ref="postingsDAO" />
+	<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+	</bean>
 </beans>

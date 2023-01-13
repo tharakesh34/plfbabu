@@ -2177,4 +2177,37 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			}
 		});
 	}
+
+	@Override
+	public List<ManualAdviseMovements> getAdviseMovementsByWaiver(long waiverId, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
+		sql.append(", Status, WaiverId, ReceiptSeqID, TaxHeaderId");
+		sql.append(" From ManualAdviseMovements");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where WaiverId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, waiverId);
+		}, (rs, rowNum) -> {
+			ManualAdviseMovements ma = new ManualAdviseMovements();
+
+			ma.setMovementID(rs.getLong("MovementID"));
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setMovementDate(rs.getTimestamp("MovementDate"));
+			ma.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setStatus(rs.getString("Status"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+			ma.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
+
+			return ma;
+		});
+	}
+
 }

@@ -124,6 +124,7 @@ import com.pennant.backend.model.applicationmaster.ReasonTypes;
 import com.pennant.backend.model.applicationmaster.RejectDetail;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.applicationmaster.SalesOfficer;
+import com.pennant.backend.model.applicationmaster.SettlementTypeDetail;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.applicationmaster.StageTabDetail;
@@ -376,6 +377,8 @@ import com.pennant.backend.model.rulefactory.LimitFilterQuery;
 import com.pennant.backend.model.rulefactory.NFScoreRuleDetail;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.model.settlement.FinSettlementHeader;
+import com.pennant.backend.model.settlement.SettlementSchedule;
 import com.pennant.backend.model.smtmasters.HolidayMaster;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
@@ -3850,6 +3853,43 @@ public class PennantJavaUtil {
 				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 						new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
 						new String[] { "BranchCode", "BranchDesc" }, null, 300));
+
+		ModuleUtil.register("SettlementTypeDetail",
+				new ModuleMapping("SettlementTypeDetail", SettlementTypeDetail.class,
+						new String[] { "Settlement_Types", "Settlement_Types_View" }, masterWF,
+						new String[] { "settlementCode", "settlementDesc" }, null, 750));
+
+		ModuleUtil.register("Settlement",
+				new ModuleMapping("Settlement", FinSettlementHeader.class,
+						new String[] { "Settlement", "Settlement_View" }, masterWF,
+						new String[] { "settlementHeaderID", "finReference", "FinId" }, null, 750));
+
+		ModuleUtil.register("FinSettlementHeader",
+				new ModuleMapping("FinSettlementHeader", FinSettlementHeader.class,
+						new String[] { "Fin_Settlement_Header", "Fin_Settlement_Header_VIEW" }, masterWF,
+						new String[] { "id", "finReference", "FinId" }, null, 750));
+
+		/*
+		 * ModuleUtil.register("SETTLEMENT", new ModuleMapping("Settlement", FinSettlementHeader.class, new String[] {
+		 * "Settlement", "Settlement_View" }, masterWF, new String[] { "settlementHeaderID", "finReference", "FinId" },
+		 * null, 750));
+		 */
+
+		ModuleUtil.register("SettlementSchedule",
+				new ModuleMapping("SettlementSchedule", SettlementSchedule.class,
+						new String[] { "Settlement_Schedule", "Settlement_Schedule_View" }, masterWF,
+						new String[] { "ID", "settlementDetailID", "settlementAmount" }, null, 750));
+
+		ModuleUtil.register("SettlementCancelReasons",
+				new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons", "Reasons_AView" }, masterWF,
+						new String[] { "Id", "Code", "Description" }, new Object[][] { { "Active", "0", 1 },
+								{ "REASONCATEGORYCODE", "0", "SETCANC" }, { "ReasonTypeCode", "0", "SETCANC" } },
+						600));
+
+		ModuleUtil.register("SettlementFinanceMain",
+				new ModuleMapping("SettlementFinanceMain", FinanceMain.class,
+						new String[] { "FM_SettlementVIEW", "FM_SettlementVIEW" }, null,
+						new String[] { "FinReference", "FinType" }, null, 350));
 
 		registerCustomModules();
 	}

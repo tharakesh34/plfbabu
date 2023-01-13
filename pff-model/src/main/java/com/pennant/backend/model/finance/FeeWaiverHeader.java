@@ -1,5 +1,6 @@
 package com.pennant.backend.model.finance;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +43,14 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity {
 	private String lovValue;
 	private LoggedInUser userDetails;
 	private boolean isAlwtoProceed = true;
+
+	private boolean alwCondWaiver;
+
+	private BigDecimal waiverFullFillAmount = BigDecimal.ZERO;
+	private Date waiverFullFillDate;
+	private long linkedTranId;
+	private String status;
+
 	@XmlElementWrapper(name = "feeWaiverDetails")
 	@XmlElement
 	private List<FeeWaiverDetail> feeWaiverDetails = new ArrayList<FeeWaiverDetail>();
@@ -239,5 +248,45 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity {
 			}
 			this.finServiceInstructions.add(finServiceInstruction);
 		}
+	}
+
+	public boolean isAlwCondWaiver() {
+		return alwCondWaiver;
+	}
+
+	public void setAlwCondWaiver(boolean alwCondWaiver) {
+		this.alwCondWaiver = alwCondWaiver;
+	}
+
+	public Date getWaiverFullFillDate() {
+		return waiverFullFillDate;
+	}
+
+	public void setWaiverFullFillDate(Date waiverFullFillDate) {
+		this.waiverFullFillDate = waiverFullFillDate;
+	}
+
+	public BigDecimal getWaiverFullFillAmount() {
+		return waiverFullFillAmount;
+	}
+
+	public void setWaiverFullFillAmount(BigDecimal waiverFullFillAmount) {
+		this.waiverFullFillAmount = waiverFullFillAmount;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(long linkedTranId) {
+		this.linkedTranId = linkedTranId;
 	}
 }

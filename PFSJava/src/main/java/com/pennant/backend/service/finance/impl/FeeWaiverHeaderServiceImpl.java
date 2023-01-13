@@ -591,6 +591,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			tableType = TableType.TEMP_TAB;
 		}
 
+		fwh.setStatus("I");
+		fwh.setLinkedTranId(0);
 		if (fwh.isNewRecord()) {
 			fwh.setWaiverId(Long.parseLong(feeWaiverHeaderDAO.save(fwh, tableType)));
 			auditHeader.getAuditDetail().setModelData(fwh);
@@ -836,6 +838,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			fwh.setNextTaskId("");
 			fwh.setWorkflowId(0);
 
+			fwh.setStatus("R");
+
+			// update the waiver amounts to the respective tables
+			allocateWaiverAmounts(fwh);
+
 			if (PennantConstants.RECORD_TYPE_NEW.equals(fwh.getRecordType())) {
 				tranType = PennantConstants.TRAN_ADD;
 				feeWaiverHeaderDAO.save(fwh, TableType.MAIN_TAB);
@@ -870,11 +877,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 			}
 
-			fwh.setRecordType("");
-
-			// update the waiver amounts to the respective tables
-			allocateWaiverAmounts(fwh);
 		}
+		fwh.setRecordType("");
 
 		if (!PennantConstants.FINSOURCE_ID_API.equals(fwh.getFinSourceID())
 				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(fwh.getFinSourceID())) {
@@ -1531,6 +1535,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				gstInvoiceTxnService.schdDueTaxInovicePrepration(invoiceDetail);
 			}
 		}
+		fwh.setLinkedTranId(aeEvent.getLinkedTranId());
 
 		logger.debug(Literal.LEAVING);
 		return fd;
@@ -1768,6 +1773,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		aeEvent = this.postingsPreparationUtil.postAccounting(aeEvent);
 
+		fwh.setLinkedTranId(aeEvent.getLinkedTranId());
+
 		logger.debug(Literal.LEAVING);
 		return aeEvent;
 	}
@@ -1784,6 +1791,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		aeEvent.setBranch(fm.getFinBranch());
 		aeEvent.setCcy(fm.getFinCcy());
 		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setPostRefId(feeWaiverHeader.getWaiverId());
 		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.WAIVER,
 				FinanceConstants.MODULEID_FINTYPE));
 
@@ -2448,6 +2456,16 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	@Override
+	public List<FeeWaiverHeader> getFeeWaiverHeaderByFinReference(long finID, String type) {
+		List<FeeWaiverHeader> fwh = feeWaiverHeaderDAO.getFeeWaiverHeaderByFinReference(finID, type);
+
+		if (CollectionUtils.isEmpty(fwh)) {
+			return null;
+		}
+		return fwh;
+	}
+
+	@Override
 	public List<ManualAdvise> getManualAdviseByFinRef(long finID) {
 		return this.manualAdviseDAO.getManualAdvise(finID);
 	}
@@ -2553,4 +2571,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	public void setLoanPaymentService(LoanPaymentService loanPaymentService) {
 		this.loanPaymentService = loanPaymentService;
 	}
+
+	@Override
+	public Date getMaxFullFillDate(long finID) {
+		// TODO Auto-generated method stub
+		return feeWaiverHeaderDAO.getMaxFullFillDate(finID);
+	}
+
 }

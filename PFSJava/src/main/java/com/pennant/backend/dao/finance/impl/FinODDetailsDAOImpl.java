@@ -1140,4 +1140,41 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		ps.setLong(index++, fd.getFinID());
 		ps.setDate(index, JdbcUtil.getDate(fd.getFinODSchdDate()));
 	}
+
+	@Override
+	public void updateFinODTotals(List<FinODDetails> list) {
+		StringBuilder sql = new StringBuilder("Update FinODDetails");
+		sql.append(" Set  LPIBal = LPIBal + ?, LPIWaived = LPIWaived + ?,");
+		sql.append(" TotWaived = TotWaived +? ,TotPenltyBal = TotPenltyBal + ? ,");
+		sql.append(" PriPenaltyWaived = PriPenaltyWaived +? ,PriPenaltyBal = PriPenaltyBal + ?, ");
+		sql.append(" PftPenaltyWaived = PftPenaltyWaived +? ,PftPenaltyBal = PftPenaltyBal + ? ");
+		sql.append(" Where FinID = ? and FinODSchdDate = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinODDetails od = list.get(i);
+				int index = 1;
+				ps.setBigDecimal(index++, od.getLPIBal());
+				ps.setBigDecimal(index++, od.getLPIWaived());
+				ps.setBigDecimal(index++, od.getTotWaived());
+				ps.setBigDecimal(index++, od.getTotPenaltyBal());
+				ps.setBigDecimal(index++, od.getPriPenaltyWaived());
+				ps.setBigDecimal(index++, od.getPriPenaltyBal());
+				ps.setBigDecimal(index++, od.getPftPenaltyWaived());
+				ps.setBigDecimal(index++, od.getPftPenaltyBal());
+
+				ps.setLong(index++, od.getFinID());
+				ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
+	}
 }

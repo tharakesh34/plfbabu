@@ -4383,7 +4383,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, AppliedLoanAmt");
 		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus, WriteoffLoan, Restructure");
-		sql.append(", OverdraftTxnChrgReq, OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn");
+		sql.append(
+				", OverdraftTxnChrgReq, OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn, UnderSettlement");
 
 		if (!wif) {
 			sql.append(", DmaCode, TdsPercentage, FinStsReason, Connector, samplingRequired, LimitApproved");
@@ -4611,6 +4612,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setOverdraftCalcChrg(rs.getString("OverdraftCalcChrg"));
 			fm.setOverdraftChrgAmtOrPerc(rs.getBigDecimal("OverdraftChrgAmtOrPerc"));
 			fm.setOverdraftChrCalOn(rs.getString("OverdraftChrCalOn"));
+			fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 
 			if (!wIf) {
 				fm.setDmaCode(rs.getString("DmaCode"));
@@ -5962,7 +5964,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.InvestmentRef, fm.FinPreApprovedRef, fm.LastRepay, fm.EmployeeName, fm.EffectiveRateOfReturn");
 		sql.append(", fm.RoleCode, fm.DownPaySupl, fm.RateChgAnyDay, fm.AvailedReAgeH, fm.NextRoleCode, fm.LimitValid");
 		sql.append(", fm.AvailedDefRpyChange, fm.DroppingMethod, fm.PftServicingODLimit");
-		sql.append(", fm.ReAgeBucket, fm.AvailedDefFrqChange, fm.LegalRequired, ft.FinTypeDesc, b.BranchDesc");
+		sql.append(
+				", fm.ReAgeBucket, fm.AvailedDefFrqChange, fm.LegalRequired, ft.FinTypeDesc, b.BranchDesc, fm.UnderSettlement");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On fm.FinType = ft.FinType");
 		sql.append(" Inner Join Customers c On fm.CustID = c.CustID");
@@ -6180,6 +6183,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setLegalRequired(rs.getBoolean("LegalRequired"));
 				fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
 				fm.setLovDescFinBranchName(rs.getString("BranchDesc"));
+				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 
 				return fm;
 			}, finID);
@@ -6549,5 +6553,20 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public void updateSettlementFlag(long finID, boolean isUnderSettlement) {
+		String sql = "Update FinanceMain Set UnderSettlement = ? Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setBoolean(index++, isUnderSettlement);
+			ps.setLong(index++, finID);
+
+		});
 	}
 }

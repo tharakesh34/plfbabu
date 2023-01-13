@@ -232,6 +232,10 @@ public class ScheduleCalculator {
 				.getFinScheduleData();
 	}
 
+	public static FinScheduleData recalLPISchedule(FinScheduleData finScheduleData, Date lpiMinDate, Date lpiMaxDate) {
+		return new ScheduleCalculator(finScheduleData, lpiMinDate, lpiMaxDate).getFinScheduleData();
+	}
+
 	public static FinScheduleData addSubSchedule(FinScheduleData finScheduleData, int noOfTerms, Date subSchStartDate,
 			String frqNewSchd) {
 		return new ScheduleCalculator(PROC_SUBSCHEDULE, finScheduleData, noOfTerms, subSchStartDate, frqNewSchd)
@@ -868,6 +872,17 @@ public class ScheduleCalculator {
 	 * time of initial schedule creation by BUILD SCHEDULE FUNCTION
 	 * ========================================================================= =======================================
 	 */
+
+	public ScheduleCalculator(FinScheduleData finScheduleData, Date lpiMinDate, Date lpiMaxDate) {
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		finMain.setRecalFromDate(lpiMinDate);
+		finMain.setRecalToDate(lpiMaxDate);
+		finMain.setEventFromDate(lpiMinDate);
+		finMain.setEventToDate(lpiMaxDate);
+		finScheduleData = calSchdProcess(finScheduleData, false, false);
+		setFinScheduleData(finScheduleData);
+
+	}
 
 	private FinScheduleData procGetCalSchd(FinScheduleData finScheduleData) {
 		logger.debug("Entering");

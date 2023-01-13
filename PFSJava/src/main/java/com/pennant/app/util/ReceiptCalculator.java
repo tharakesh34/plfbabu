@@ -2376,7 +2376,7 @@ public class ReceiptCalculator {
 				if (allocate.getAllocationTo() <= 0) {
 					continue;
 				}
-				if (dueData.getAdviseId() != allocate.getAllocationTo()) {
+				if (dueData != null && dueData.getAdviseId() != allocate.getAllocationTo()) {
 					continue;
 				}
 			}

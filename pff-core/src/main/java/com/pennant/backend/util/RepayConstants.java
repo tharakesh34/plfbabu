@@ -89,6 +89,7 @@ public class RepayConstants {
 
 	public static final String ALLOCTYPE_AUTO = "Auto";
 	public static final String ALLOCTYPE_MANUAL = "Manual";
+	public static final String ALLOCATIONTYPE_NO = "N";
 
 	// Receipt process Types
 	public static final String RECEIPTTYPE_RECIPT = "R";
@@ -229,4 +230,17 @@ public class RepayConstants {
 	public static final String DUETYPE_BOUNCE = "B";
 	public static final String DUETYPE_MANUALADVISE = "M";
 	public static final String DUETYPE_FEES = "F"; //
+
+	/*
+	 * public static final String ALLOCATION_PP = "PP"; public static final String ALLOCATION_EMI = "EMI"; public static
+	 * final String ALLOCATION_FUT_PRI = "FUTPRI"; public static final String ALLOCATION_FUT_PFT = "FUTPFT"; public
+	 * static final String ALLOCATION_FUT_NPFT = "FUTNPFT"; public static final String ALLOCATION_FUT_TDS = "FUTTDS";
+	 */
+	public static final String SETTLEMENT_STATUS_INITIATED = "I";
+	public static final String SETTLEMENT_STATUS_PROCESSED = "P";
+	public static final String SETTLEMENT_STATUS_CANCELLED = "C";
+
+	public static final String SETTLEMENT_STATUS_INIT_MSG = "Initiated";
+	public static final String SETTLEMENT_STATUS_PROC_MSG = "Processed";
+	public static final String SETTLEMENT_STATUS_CANC_MSG = "Cancelled";
 }

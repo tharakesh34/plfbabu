@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1029,4 +1030,181 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		return list.stream().map(l1 -> l1).max(Date::compareTo).get();
 	}
+
+	@Override
+	public void updateLinkedTranId(FinRepayHeader rph) {
+		StringBuilder sql = new StringBuilder("Update FinRepayHeader");
+
+		sql.append(" LinkedTranId = ?");
+		sql.append(" Where FinID = ? and RepayId=?");
+
+		logger.debug(Literal.SQL, sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, rph.getLinkedTranId());
+
+			ps.setLong(index++, rph.getFinID());
+			ps.setLong(index++, rph.getRepayID());
+
+		});
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public List<FinanceRepayments> getByFinRefAndWaiverId(long finID, long waiverId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, FinPostDate, FinSchdDate, FinValueDate, FinSchdPriPaid, FinSchdPftPaid");
+		sql.append(", FinSchdTdsPaid, FinTotSchdPaid, LpftWaived, PenaltyWaived");
+		sql.append(" From FinRepayDetails");
+		sql.append(" Where FinID = ? and WaiverId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<FinanceRepayments> repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setLong(index++, waiverId);
+
+		}, (rs, rowNum) -> {
+			FinanceRepayments rpd = new FinanceRepayments();
+
+			rpd.setFinID(rs.getLong("FinID"));
+			rpd.setFinReference(rs.getString("FinReference"));
+			rpd.setFinPostDate(rs.getTimestamp("FinPostDate"));
+			rpd.setFinSchdDate(rs.getTimestamp("FinSchdDate"));
+			rpd.setFinValueDate(rs.getTimestamp("FinValueDate"));
+			rpd.setFinSchdPriPaid(rs.getBigDecimal("FinSchdPriPaid"));
+			rpd.setFinSchdPftPaid(rs.getBigDecimal("FinSchdPftPaid"));
+			rpd.setFinSchdTdsPaid(rs.getBigDecimal("FinSchdTdsPaid"));
+			rpd.setFinTotSchdPaid(rs.getBigDecimal("FinTotSchdPaid"));
+			rpd.setLpftWaived(rs.getBigDecimal("LpftWaived"));
+			rpd.setPenaltyWaived(rs.getBigDecimal("PenaltyWaived"));
+
+			return rpd;
+
+		});
+
+		return sortByFinValueDate(repaymentList);
+	}
+
+	@Override
+	public List<FinanceRepayments> getFinRepayListByFinRef(long finID, boolean isRpyCancelProc, String type) {
+		StringBuilder sql = getRepayListQuery(isRpyCancelProc, type);
+		sql.append(" Where FinID = ?");
+		if (isRpyCancelProc) {
+			sql.append(" and LinkedTranId = (Select max(LinkedTranId) From FinRepayDetails Where FinID = ?)");
+			sql.append(" and LinkedTranId != ?");
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinRepayListRowMapper rowMapper = new FinRepayListRowMapper(isRpyCancelProc);
+
+		List<FinanceRepayments> repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+
+			if (isRpyCancelProc) {
+				ps.setLong(index++, finID);
+				ps.setInt(index++, 0);
+			}
+
+		}, rowMapper);
+
+		if (CollectionUtils.isEmpty(repaymentList)) {
+			sql = new StringBuilder();
+			sql = getRepayListQuery(isRpyCancelProc, type);
+			sql.append(" Where FinID = ?");
+			if (isRpyCancelProc) {
+				sql.append(" and FinPostDate = (Select max(FinPostDate) From FinRepayDetails Where FinID = ?)");
+				sql.append(" and LinkedTranId = ?");
+			}
+
+			logger.debug(Literal.SQL + sql.toString());
+
+			repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
+				int index = 1;
+				ps.setLong(index++, finID);
+				if (isRpyCancelProc) {
+					ps.setLong(index++, finID);
+					ps.setInt(index++, 0);
+				}
+
+			}, rowMapper);
+
+		}
+
+		return repaymentList.stream().sorted((rp1, rp2) -> DateUtil.compare(rp2.getFinSchdDate(), rp1.getFinSchdDate()))
+				.collect(Collectors.toList());
+	}
+
+	private class FinRepayListRowMapper implements RowMapper<FinanceRepayments> {
+		private boolean isRpyCancelProc;
+
+		private FinRepayListRowMapper(boolean isRpyCancelProc) {
+			this.isRpyCancelProc = isRpyCancelProc;
+		}
+
+		@Override
+		public FinanceRepayments mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinanceRepayments rd = new FinanceRepayments();
+
+			rd.setFinID(rs.getLong("FinID"));
+			rd.setFinReference(rs.getString("FinReference"));
+			rd.setFinPostDate(rs.getTimestamp("FinPostDate"));
+			rd.setFinRpyFor(rs.getString("FinRpyFor"));
+			rd.setFinPaySeq(rs.getLong("FinPaySeq"));
+			rd.setFinRpyAmount(rs.getBigDecimal("FinRpyAmount"));
+			rd.setFinSchdDate(rs.getTimestamp("FinSchdDate"));
+			rd.setFinValueDate(rs.getTimestamp("FinValueDate"));
+			rd.setFinBranch(rs.getString("FinBranch"));
+			rd.setFinType(rs.getString("FinType"));
+			rd.setFinCustID(rs.getLong("FinCustID"));
+			rd.setFinSchdPriPaid(rs.getBigDecimal("FinSchdPriPaid"));
+			rd.setFinSchdPftPaid(rs.getBigDecimal("FinSchdPftPaid"));
+			rd.setFinSchdTdsPaid(rs.getBigDecimal("FinSchdTdsPaid"));
+			rd.setFinTotSchdPaid(rs.getBigDecimal("FinTotSchdPaid"));
+			rd.setFinFee(rs.getBigDecimal("FinFee"));
+			rd.setFinWaiver(rs.getBigDecimal("FinWaiver"));
+			rd.setFinRefund(rs.getBigDecimal("FinRefund"));
+			rd.setSchdFeePaid(rs.getBigDecimal("SchdFeePaid"));
+			rd.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
+			rd.setPenaltyWaived(rs.getBigDecimal("PenaltyWaived"));
+			/*
+			 * rd.setRecoveryChargesPaid(rs.getBigDecimal("RecoveryChargesPaid"));
+			 * rd.setRecoveryChargesWaived(rs.getBigDecimal("RecoveryChargesWaived"));
+			 */
+
+			if (isRpyCancelProc) {
+				rd.setLinkedTranId(rs.getLong("LinkedTranId"));
+			}
+
+			return rd;
+		}
+	}
+
+	private StringBuilder getRepayListQuery(boolean isRpyCancelProc, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FInID, FinReference, FinPostDate, FinRpyFor, FinPaySeq, FinRpyAmount");
+		sql.append(", FinSchdDate, FinValueDate, FinBranch, FinType, FinCustID");
+		sql.append(", FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid, FinTotSchdPaid");
+		sql.append(", FinFee, FinWaiver, FinRefund, SchdFeePaid, PenaltyPaid");
+		sql.append(", PenaltyWaived");
+		// sql.append(", PenaltyWaived, RecoveryChargesPaid, RecoveryChargesWaived");
+
+		if (isRpyCancelProc) {
+			sql.append(", LinkedTranId");
+		}
+
+		sql.append(" From FinRepayDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
 }

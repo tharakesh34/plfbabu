@@ -2787,6 +2787,7 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="feeTypeService" ref="feeTypeService" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="settlementService" ref="settlementService" />
 	</bean>
 
 	<bean id="chequePrintingDialogCtrl" class="com.pennant.webui.finance.enquiry.ChequePrintingDialogCtrl"
@@ -6095,4 +6096,37 @@
 	parent="uploadList" />
 	
 	<bean id="chequeUploadListCtrl" class="com.pennant.pff.pdc.upload.list.PDCUploadListCtrl" parent="uploadList" />
+
+		<!-- Settlement Type Details  -->
+	<bean id="settlementTypeDetailListCtrl" class="com.pennant.webui.applicationmaster.settlementTypeDetail.SettlementTypeDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="settlementTypeDetailService" ref="settlementTypeDetailService" />
+	</bean>
+
+	<bean id="settlementTypeDetailDialogCtrl" class="com.pennant.webui.applicationmaster.settlementTypeDetail.SettlementTypeDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="settlementTypeDetailService" ref="settlementTypeDetailService" />
+	</bean>
+	
+	<!-- Settlement Details  -->
+	<bean id="settlementListCtrl" class="com.pennant.webui.settlement.SettlementListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="settlementService" ref="settlementService" />
+	</bean>
+
+	<bean id="settlementDialogCtrl" class="com.pennant.webui.settlement.SettlementDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="settlementService" ref="settlementService" />
+		<property name="settlementScheduleInlineEditCtrl" ref="settlementScheduleInlineEditCtrl" />
+		<property name="financeDetailService" ref="financeDetailService" />
+	</bean>
+	
+	<bean id="settlementScheduleInlineEditCtrl"
+		class="com.pennant.webui.settlement.SettlementScheduleInlineEditCtrl" parent="basisCtrl" scope="prototype" />
+		
+	<bean id="selectSettlementDialogCtrl" class="com.pennant.webui.settlement.SelectSettlementDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
+	</bean>
+	
 </beans>

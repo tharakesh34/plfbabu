@@ -202,6 +202,8 @@
 		class="com.pennanttech.pff.npa.eod.tasklet.EffAssetClassificationQueue" />
 	<bean id="effAssetClassificationTaskLet" class="com.pennanttech.pff.npa.eod.tasklet.EffAssetClassificationTaskLet" />
 
+	<bean id="waivercancellationTasklet" class="com.pennant.backend.endofday.tasklet.lic.WaivercancellationTasklet" />
+
 	<bean id="provisionCalcQueueTasklet" class="com.pennanttech.pff.provision.eod.tasklet.ProvisionCalcQueue" />
 	<bean id="provisionClacTaskLet" class="com.pennanttech.pff.provision.eod.tasklet.ProvisionClacTaskLet" />
 

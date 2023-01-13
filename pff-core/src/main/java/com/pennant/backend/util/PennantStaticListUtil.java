@@ -373,6 +373,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> minPrePaymentCalculationTypes;
 	private static List<ValueLabel> maxPrePaymentCalculationTypes;
 	private static List<ValueLabel> prePaymentCalculatedOn;
+	private static List<ValueLabel> enqSettlementStatus;
 
 	/**
 	 * Gets the list of applications.
@@ -3119,6 +3120,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExcessAdjustTo_ExcessAmount")));
 			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EMIINADV,
 					Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
+			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_SETTLEMENT,
+					Labels.getLabel("label_ExcessAdjustTo_Settlement")));
 
 			if (ImplementationConstants.ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS) {
 				excessAdjustTo.add(new ValueLabel(ReceiptMode.CASHCLT,
@@ -3218,6 +3221,8 @@ public class PennantStaticListUtil {
 			allocationMethods.add(new ValueLabel(AllocationType.AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
 			allocationMethods
 					.add(new ValueLabel(AllocationType.MANUAL, Labels.getLabel("label_AllocationMethod_Manual")));
+			allocationMethods.add(
+					new ValueLabel(RepayConstants.ALLOCATIONTYPE_NO, Labels.getLabel("label_AllocationMethod_NO")));
 		}
 		return allocationMethods;
 	}
@@ -5596,6 +5601,19 @@ public class PennantStaticListUtil {
 		}
 
 		return minPrePaymentCalculationTypes;
+	}
+
+	public static List<ValueLabel> getEnquirySettlementStatus() {
+		if (enqSettlementStatus == null) {
+			enqSettlementStatus = new ArrayList<ValueLabel>(3);
+			enqSettlementStatus.add(new ValueLabel(RepayConstants.SETTLEMENT_STATUS_INITIATED,
+					Labels.getLabel("label_ReceiptModeStatus_Initiated")));
+			enqSettlementStatus.add(new ValueLabel(RepayConstants.SETTLEMENT_STATUS_PROCESSED,
+					Labels.getLabel("label_SettlementStatus_Processed")));
+			enqSettlementStatus.add(new ValueLabel(RepayConstants.SETTLEMENT_STATUS_CANCELLED,
+					Labels.getLabel("label_ReceiptModeStatus_Cancel")));
+		}
+		return enqSettlementStatus;
 	}
 
 }

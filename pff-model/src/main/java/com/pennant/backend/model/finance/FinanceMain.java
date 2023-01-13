@@ -842,6 +842,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean resetFromLastStep;
 	private boolean wifLoan = false;
 
+	private boolean alwLPIInIntDue = true;
+
+	private boolean underSettlement;
+	private List<FinLPIRateChange> lpiRateChangeList = new ArrayList<FinLPIRateChange>();
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -5551,6 +5556,30 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setWifLoan(boolean wifLoan) {
 		this.wifLoan = wifLoan;
+	}
+
+	public boolean isAlwLPIInIntDue() {
+		return alwLPIInIntDue;
+	}
+
+	public void setAlwLPIInIntDue(boolean alwLPIInIntDue) {
+		this.alwLPIInIntDue = alwLPIInIntDue;
+	}
+
+	public boolean isUnderSettlement() {
+		return underSettlement;
+	}
+
+	public void setUnderSettlement(boolean underSettlement) {
+		this.underSettlement = underSettlement;
+	}
+
+	public List<FinLPIRateChange> getLpiRateChangeList() {
+		return lpiRateChangeList;
+	}
+
+	public void setLpiRateChangeList(List<FinLPIRateChange> lpiRateChangeList) {
+		this.lpiRateChangeList = lpiRateChangeList;
 	}
 
 }

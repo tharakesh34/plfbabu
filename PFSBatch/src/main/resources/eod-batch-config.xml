@@ -233,6 +233,12 @@
 
 		<step id="masterDataPreparation">
 			<tasklet ref="masterDataPreparationTaskLet" />
+			<next on="*" to="waivercancellation" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="waivercancellation">
+			<tasklet ref="waivercancellationTasklet" />
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>

@@ -1022,4 +1022,17 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			return fem;
 		}, id, movementType);
 	}
+
+	@Override
+	public BigDecimal getSettlementAmountReceived(long finId) {
+		String sql = "Select sum(BalanceAmt) From FinExcessAmount Where FinID = ? and AmountType='S'";
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finId);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return BigDecimal.ZERO;
+	}
 }

@@ -115,4 +115,6 @@ public class AssetConstants {
 
 	public static final String UNIQUE_ID_PMAY = "PMAY";
 
+	public static final String UNIQUE_ID_BASICDETAILS = "LOANBASICDETAILS";
+
 }

@@ -636,6 +636,8 @@
 	<bean id="assetClassificationDAO" class="com.pennanttech.pff.npa.dao.impl.AssetClassificationDAOImpl"
 		parent="sequenceDao" />
 	<bean id="assetClassificationService" class="com.pennanttech.pff.npa.service.impl.AssetClassificationServiceImpl" />
+	<bean id="feeWaiverCancelService" class="com.pennant.backend.service.finance.impl.FeeWaiverCancelServiceImpl"/>
+	
 	<bean id="provisionService" class="com.pennanttech.pff.provision.service.impl.ProvisionServiceImpl" />
 	<bean id="provisionDao" class="com.pennanttech.pff.provision.dao.impl.ProvisionDAOImpl" parent="sequenceDao" />
 

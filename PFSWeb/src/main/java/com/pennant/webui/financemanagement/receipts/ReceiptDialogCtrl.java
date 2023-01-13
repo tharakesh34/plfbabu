@@ -709,6 +709,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.excessAdjustTo.setReadonly(true);
 				this.allocationMethod.setDisabled(true);
 			}
+
+			if (financeMain.isUnderSettlement()) {
+				this.excessAdjustTo.setDisabled(true);
+				fillComboBox(allocationMethod, "N", PennantStaticListUtil.getAllocationMethods(), "");
+				this.excessAdjustTo.setDisabled(true);
+				this.excessAdjustTo.setReadonly(true);
+				this.allocationMethod.setDisabled(true);
+			}
+
 			if (isForeClosure || isEarlySettle) {
 				this.gb_Payable.setVisible(true);
 			}

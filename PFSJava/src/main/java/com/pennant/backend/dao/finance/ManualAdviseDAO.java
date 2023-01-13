@@ -169,4 +169,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	boolean isDuplicatePayble(long finID, long feeTypeId, String payablelinkTo);
 
 	boolean isPaybleExist(long finID, long feeTypeId, String payablelinkTo);
+
+	List<ManualAdviseMovements> getAdviseMovementsByWaiver(long waiverId, String type);
 }

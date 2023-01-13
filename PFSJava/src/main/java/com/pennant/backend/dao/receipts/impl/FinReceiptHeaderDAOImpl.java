@@ -38,11 +38,13 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -1638,5 +1640,64 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;
 		}
+	}
+
+	@Override
+	public List<FinReceiptHeader> getSettlementReceipts(long finID, Date fromDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ReceiptId, ReceiptModeStatus from FinReceiptHeader");
+
+		sql.append(" Where FinId = ? and receiptDate >= ? and excessAdjustTo='S' and ReceiptModeStatus  in ('R','D') ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+		}, (rs, rowNum) -> {
+			FinReceiptHeader rch = new FinReceiptHeader();
+			rch.setReceiptID(rs.getLong("ReceiptId"));
+			rch.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
+			return rch;
+		});
+	}
+
+	public BigDecimal getReceiptAmount(Date fromDate, Date toDate) {
+		MapSqlParameterSource source = null;
+
+		StringBuilder selectSql = new StringBuilder("Select sum(receiptAmount)  from FinReceiptHeader where ");
+		selectSql.append(" receiptDate >=:fromDate and receiptDate <=:toDate");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("fromDate", fromDate);
+		source.addValue("toDate", toDate);
+
+		try {
+			return this.jdbcOperations.queryForObject(selectSql.toString(), BigDecimal.class, fromDate, toDate);
+
+		} catch (DataAccessException e) {
+			logger.error(e);
+			return BigDecimal.ZERO;
+		}
+
+	}
+
+	@Override
+	public void updateExcessAdjustTo(long receiptID, String excessAdjustTo) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+		source.addValue("ExcessAdjustTo", excessAdjustTo);
+
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptHeader");
+		updateSql.append(" Set ExcessAdjustTo=:ExcessAdjustTo ");
+		updateSql.append(" Where ReceiptID =:ReceiptID  ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcOperations.update(updateSql.toString(), source);
+		logger.debug("Leaving");
 	}
 }

@@ -48,6 +48,7 @@
  */
 package com.pennant.backend.service.finance;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -78,5 +79,9 @@ public interface FeeWaiverHeaderService {
 	FeeWaiverHeader getFeeWaiverHeaderByFinRef(long finID, String type);
 
 	FeeWaiverHeader getFeeWiaverEnquiryList(FeeWaiverHeader feeWaiverHeader);
+
+	List<FeeWaiverHeader> getFeeWaiverHeaderByFinReference(long finID, String type);
+
+	Date getMaxFullFillDate(long finID);
 
 }

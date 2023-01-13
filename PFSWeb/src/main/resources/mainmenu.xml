@@ -403,6 +403,9 @@
 			<menuItem id="menu_Item_ProvinceMapping"
 				zulNavigation="/WEB-INF/pages/Interface/ProvinceMapping/ProvinceMappingList.zul"
 				rightName="menuItem_interface_ProvinceMapping" />
+			<menuItem id="menu_Item_SettlementTypeDetails"
+				zulNavigation="/WEB-INF/pages/SettlementDetails/SettlementTypeDetailList.zul"
+				rightName="menuItem_SettlementTypeDetailMaster_SettlementTypeDetail" />
 		</menu>
 
 		<menuItem id="menu_Item_LovFieldDetail"
@@ -1044,6 +1047,13 @@
 			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/DMSRetrievalProcess.zul" rightName="menuItem_DMSRetrievalProcess" />
 		<menuItem id="menu_Item_PartCancellation"
 			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/PartCancellationProcess.zul" rightName="menu_Item_PartCancellation" />
+		<menu id="menu_Category_Settlement">
+			<menuItem id="menu_Item_Settlement" zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT"
+				rightName="menuItem_SettlementMaster_Settlement" />
+			<menuItem id="menu_Item_SettlementCancellation" zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT_CANCEL"
+				rightName="menuItem_SettlementMaster_Settlement" />
+		</menu>
+		
 	</menu>
 
 	<!-- Menu for Receipts -->

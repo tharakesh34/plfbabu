@@ -106,6 +106,7 @@ import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.settlement.FinSettlementHeader;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.feetype.FeeTypeService;
@@ -113,6 +114,7 @@ import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
+import com.pennant.backend.service.settlement.SettlementService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -555,6 +557,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox subventionEndDate_two;
 
 	private FinanceDetailService financeDetailService;
+	private SettlementService settlementService;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -2467,6 +2470,24 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
+	public void onClick$settlementEnq(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		FinSettlementHeader settlement = settlementService.getSettlementByRef(this.finReference.getValue(), "_View");
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("isEnqProcess", true);
+		arg.put("settlement", settlement);
+		arg.put("financeDetail", financeDetail);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Settlement/SettlementDialog.zul", null, arg);
+
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
@@ -2545,5 +2566,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public void setSettlementService(SettlementService settlementService) {
+		this.settlementService = settlementService;
 	}
 }

@@ -160,6 +160,10 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				excessType = String.valueOf(AdviseType.PAYABLE.id());
 			}
 
+			if (AdviseType.isSettlement(fa.getAmountType())) {
+				excessType = String.valueOf(AdviseType.Settlement.id());
+			}
+
 			List<FinExcessAmount> feaList = map.get(excessType);
 
 			if (feaList == null) {
@@ -208,10 +212,18 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		lc.appendChild(getButton(temp));
 		lc.setParent(item);
 
+		String amountType = null;
 		// Amount Type
-		String amountType = Labels.getLabel("label_Excess_Type_" + excessType);
-		if (String.valueOf(AdviseType.PAYABLE.id()).equals(excessType)) {
-			amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
+		if (excessType.equals("E")) {
+			amountType = Labels.getLabel("label_Excess_Type_" + excessType);
+			if (String.valueOf(AdviseType.PAYABLE.id()).equals(excessType)) {
+				amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
+			}
+		} else {
+			amountType = Labels.getLabel("label_Settlement_" + excessType);
+			if (String.valueOf(AdviseType.Settlement.id()).equals(excessType)) {
+				amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
+			}
 		}
 
 		lc = new Listcell(amountType);

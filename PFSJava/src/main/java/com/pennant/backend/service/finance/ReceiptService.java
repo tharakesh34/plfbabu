@@ -138,4 +138,6 @@ public interface ReceiptService {
 	void waiveThresholdLimit(FinReceiptData receiptData);
 
 	ReceiptDTO prepareReceiptDTO(FinReceiptData rd);
+
+	FinReceiptData doApproveReceipt(FinReceiptData rd) throws Exception;
 }

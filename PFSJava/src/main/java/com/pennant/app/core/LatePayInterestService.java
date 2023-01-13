@@ -35,21 +35,26 @@ package com.pennant.app.core;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.finance.FinLPIRateChange;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class LatePayInterestService extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(LatePayInterestService.class);
@@ -201,6 +206,36 @@ public class LatePayInterestService extends ServiceHelper {
 		}
 		penaltyRate = penaltyRate.add(lpiMargin);
 		return penaltyRate;
+	}
+
+
+	private List<FinanceRepayments> sortRpdListByValueDate(List<FinanceRepayments> rpdList) {
+
+		if (rpdList != null && rpdList.size() > 0) {
+			Collections.sort(rpdList, new Comparator<FinanceRepayments>() {
+				@Override
+				public int compare(FinanceRepayments detail1, FinanceRepayments detail2) {
+					return DateUtil.compare(detail1.getFinValueDate(), detail2.getFinValueDate());
+				}
+			});
+		}
+
+		return rpdList;
+	}
+
+	private List<Date> getRateChangeDates(List<FinLPIRateChange> rateChanges, Date fromDate, Date toDate) {
+		List<Date> datesList = new ArrayList<Date>();
+		if (CollectionUtils.isEmpty(rateChanges)) {
+			return datesList;
+		}
+
+		for (FinLPIRateChange rc : rateChanges) {
+			if (rc.getEffectiveDate().compareTo(fromDate) >= 0 && rc.getEffectiveDate().compareTo(toDate) <= 0) {
+				datesList.add(rc.getEffectiveDate());
+			}
+		}
+		return datesList;
+
 	}
 
 }

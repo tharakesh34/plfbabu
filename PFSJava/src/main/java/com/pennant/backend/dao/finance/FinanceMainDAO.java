@@ -410,4 +410,6 @@ public interface FinanceMainDAO {
 	Date getMaturityDate(String finReference);
 
 	FinanceMain getEntityByRef(String finReference);
+
+	void updateSettlementFlag(long finID, boolean isUnderSettlement);
 }

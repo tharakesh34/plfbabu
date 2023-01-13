@@ -143,4 +143,11 @@ public interface FinReceiptHeaderDAO {
 	String getReceiptMode(long receiptId);
 
 	BigDecimal getClosureAmountByFinType(String finType);
+
+	List<FinReceiptHeader> getSettlementReceipts(long finID, Date fromDate);
+
+	BigDecimal getReceiptAmount(Date fromDate, Date toDate);
+
+	void updateExcessAdjustTo(long receiptID, String excessAdjustTo);
+
 }
