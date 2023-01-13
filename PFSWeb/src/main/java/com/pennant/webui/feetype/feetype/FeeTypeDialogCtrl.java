@@ -981,6 +981,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.payableLinkTo.setValue(null);
 			this.receivableType.setValue(null);
 			this.payableLinkToRow.setVisible(false);
+			this.refundableFee.setDisabled(false);
 			return;
 		}
 
@@ -1003,13 +1004,19 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			fillComboBox(this.payableLinkTo, payableLinkTo, listAdviseCategory);
 			doSetPayableLinkTo(payableLinkTo);
 
+			this.refundableFee.setDisabled(false);
+
+		} else if (AdviseType.isReceivable(adviseCtgry)) {
+			this.allowAutoRefund.setDisabled(true);
+			this.allowAutoRefund.setChecked(false);
+			this.refundableFee.setDisabled(true);
+			this.refundableFee.setChecked(false);
 		} else {
 			this.payableLinkToRow.setVisible(false);
 			this.payableLinkTo.setValue(null);
 			this.receivableType.setValue(null);
 			this.allowAutoRefund.setChecked(false);
 			this.allowAutoRefund.setDisabled(true);
-			this.refundableFee.setDisabled(true);
 		}
 	}
 
