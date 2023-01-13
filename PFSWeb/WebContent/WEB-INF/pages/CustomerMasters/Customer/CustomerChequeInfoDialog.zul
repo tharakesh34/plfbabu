@@ -50,7 +50,7 @@
 								<hbox>
 									<space spacing="2px" />
 									<longbox id="custID" width="150px" maxlength="26" visible="false" />
-									<textbox id="custCIF" width="148px" readonly="true" maxlength="50" style="overflow: hidden;" />
+									<textbox id="custCIF" width="148px" readonly="true" style="overflow: hidden;" />
 
 									<button id="btnSearchPRCustid" image="/images/icons/LOVSearch.png" />
 									<space spacing="2px" />

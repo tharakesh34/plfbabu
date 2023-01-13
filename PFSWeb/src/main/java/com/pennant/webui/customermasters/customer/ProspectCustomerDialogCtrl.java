@@ -45,7 +45,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -142,7 +141,6 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		filters[0] = new Filter("custCoreBank", "", Filter.OP_EQUAL);
 
 		this.lovDescCustCIF.setFilters(filters);
-		this.custCoreBank.setMaxlength(LengthConstants.LEN_CIF);
 
 		logger.debug("Leaving");
 	}

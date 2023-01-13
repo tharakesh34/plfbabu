@@ -44,7 +44,6 @@ public class LengthConstants {
 	public static final int LEN_CURRENCY = 3;
 	public static final int LEN_ACHEADCODE = 4;
 	public static final int LEN_ACCOUNT = 50;
-	public static final int LEN_CIF = 8;
 	public static final int LEN_EID = 18;
 	public static final int LEN_CORP_ID = 15;
 	public static final int LEN_MASTER_CODE = 8;

@@ -19,7 +19,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -150,7 +149,6 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering ");
-		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.chequeNo.setMaxlength(50);
 		this.returnDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.custCIF.setMandatoryStyle(true);

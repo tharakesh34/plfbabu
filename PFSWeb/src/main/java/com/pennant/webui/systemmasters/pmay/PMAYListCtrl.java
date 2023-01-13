@@ -164,7 +164,6 @@ public class PMAYListCtrl extends GFCBaseListCtrl<PMAY> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		this.cif.setMaxlength(LengthConstants.LEN_CIF);
 		this.finReference.setMaxlength(LengthConstants.LEN_REF);
 		logger.debug(Literal.LEAVING);
 	}

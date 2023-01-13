@@ -20,7 +20,7 @@
 										<hbox>
 											<space spacing="2px" />
 											<longbox id="custID" width="150px" maxlength="26" visible="false" />
-											<textbox id="custCIF" width="150px" maxlength="50" style="overflow: hidden;" />
+											<textbox id="custCIF" width="150px" style="overflow: hidden;" />
 											<button id="btnSearchCustCIF" image="/images/icons/LOVSearch.png" />
 											<vbox style="padding-top:3px;">
 												<label id="custShrtName" width="150px" style="padding-left:5px;" />

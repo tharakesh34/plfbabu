@@ -864,7 +864,6 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.row_custCtgType.setVisible(true);
 		} else {
 			this.custCIF.setDisabled(false);
-			this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 			this.customerRow.setVisible(true);
 			this.row_EIDNumber.setVisible(false);
 			this.row_MobileNumber.setVisible(false);

@@ -1377,8 +1377,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.custID.setMaxlength(LengthConstants.LEN_CIF);
-		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.finReference.setMaxlength(LengthConstants.LEN_REF);
 		this.fincustName.setMaxlength(50);
 		this.finMobileNumber.setMaxlength(LengthConstants.LEN_MOBILE);

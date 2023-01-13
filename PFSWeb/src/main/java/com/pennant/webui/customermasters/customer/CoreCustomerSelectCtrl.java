@@ -56,7 +56,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -691,7 +690,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		custNationality.setValueColumn("NationalityCode");
 		custNationality.setDescColumn("NationalityDesc");
 		custNationality.setValidateColumns(new String[] { "NationalityCode" });
-		custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		logger.debug("Leaving");
 	}
 
