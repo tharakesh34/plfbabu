@@ -458,7 +458,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 
 		if (StringUtils.trimToNull(c.getCustCoreBank()) == null) {
-			c.setCustCoreBank(c.getCustCIF());
+			c.setCustCoreBank(String.valueOf(-1 * c.getCustID()));
 		}
 
 		StringBuilder sql = new StringBuilder("Insert Into Customers");
@@ -884,7 +884,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	private StringBuilder selectCustomerBasicInfo(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustID, CustCIF, CustFName, CustMName, CustLName, CustDOB, CustShrtName, CustCRCPR");
+		sql.append(" CustID, CustCoreBank, CustCIF, CustFName, CustMName, CustLName, CustDOB, CustShrtName, CustCRCPR");
 		sql.append(", CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy");
 		sql.append(", PhoneNumber, EmailID, CustRO1, CasteId, ReligionId, SubCategory");
 
@@ -2563,6 +2563,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			Customer c = new Customer();
 
 			c.setCustID(rs.getLong("CustID"));
+			c.setCustCoreBank(rs.getString("CustCoreBank"));
 			c.setCustCIF(rs.getString("CustCIF"));
 			c.setCustFName(rs.getString("CustFName"));
 			c.setCustMName(rs.getString("CustMName"));

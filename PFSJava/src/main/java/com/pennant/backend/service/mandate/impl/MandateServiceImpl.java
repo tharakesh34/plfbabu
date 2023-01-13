@@ -1265,11 +1265,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		String fmCustCIF = fm.getLovDescCustCIF();
-		if (!PennantConstants.VLD_UPD_LOAN.equals(vldGroup) && !curMandate.getCustCIF().equals(fmCustCIF)) {
+		String fmCustCoreBank = fm.getLovDescCustCoreBank();
+		if (!PennantConstants.VLD_UPD_LOAN.equals(vldGroup) && (!curMandate.getCustCIF().equals(fmCustCIF)
+				&& !curMandate.getCustCoreBank().equals(fmCustCoreBank))) {
 			return ErrorUtil.getError("90310", fmCustCIF, curMandate.getCustCIF());
 		}
 
-		if (curMandate.getCustID() != fm.getCustID()) {
+		if (curMandate.getCustID() != fm.getCustID() && !curMandate.getCustCoreBank().equals(fmCustCoreBank)) {
 			return ErrorUtil.getError("90310", fmCustCIF, curMandate.getCustCIF());
 		}
 

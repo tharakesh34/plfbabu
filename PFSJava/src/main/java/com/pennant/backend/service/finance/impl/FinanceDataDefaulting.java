@@ -99,6 +99,7 @@ public class FinanceDataDefaulting {
 			}
 
 			fm.setLovDescCustCIF(custCIF);
+			fm.setLovDescCustCoreBank(customer.getCustCoreBank());
 			fm.setCustID(customer.getCustID());
 			fd.getCustomerDetails().setCustomer(customer);
 		}
