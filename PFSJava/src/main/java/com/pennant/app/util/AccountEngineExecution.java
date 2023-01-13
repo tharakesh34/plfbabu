@@ -401,11 +401,9 @@ public class AccountEngineExecution implements Serializable {
 						}
 					}
 
-					logger.debug("Transaction Entry : " + txnEntry.getAccount());
-
 					throw new AppException(String.format(
-							"Rule (%s) and  Accounting for %S Event is invalid for order id : %S , please contact administrator",
-							sqlRule, aeEvent.getAccountingEvent(), txnEntry.getTransOrder()));
+							"Account (%s) and Rule (%s) and  Accounting for %S Event is invalid for order id : %S , please contact administrator",
+							txnEntry.getAccount(), sqlRule, aeEvent.getAccountingEvent(), txnEntry.getTransOrder()));
 				}
 				continue;
 			}

@@ -161,6 +161,10 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 							frequency = "Week";
 						} else if (temp.contains("Q")) {
 							frequency = "QURT";
+						} else if (temp.contains("H")) {
+							frequency = "HALF";
+						} else if (temp.contains("Y")) {
+							frequency = "YEAR";
 						} else {
 							frequency = "";
 						}
