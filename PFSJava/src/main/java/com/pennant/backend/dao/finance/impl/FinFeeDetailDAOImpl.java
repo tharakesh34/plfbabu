@@ -177,8 +177,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(" FinID, FinReference, FeeID, FeeOrder, FinEvent, CalculatedAmount, ActualAmountOriginal");
 		sql.append(", ActualAmount, WaivedAmount, WaivedGST, NetAmountOriginal, NetAmountGST, NetAmount");
 		sql.append(", PaidAmount, PaidAmountGST, PaidAmountOriginal, RemainingFee, RemainingFeeGST");
-		sql.append(", RemainingFeeOriginal, VasReference, Status, ReferenceId");
-		sql.append(", FeeScheduleMethod, ActPercentage, PaidTDS, RemTDS, NetTDS");
+		sql.append(", RemainingFeeOriginal, VasReference, Status, ReferenceId, CalculationType");
+		sql.append(", FeeScheduleMethod, ActPercentage, PaidTDS, RemTDS, NetTDS, RuleCode");
 		sql.append(", TaxHeaderId, TaxApplicable, ActualAmount, RecordType, LastMntOn, RecordStatus");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -226,11 +226,13 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ffd.setVasReference(rs.getString("VasReference"));
 			ffd.setStatus(rs.getString("Status"));
 			ffd.setReferenceId(rs.getLong("ReferenceId"));
+			ffd.setCalculationType(rs.getString("CalculationType"));
 			ffd.setFeeScheduleMethod(rs.getString("FeeScheduleMethod"));
 			ffd.setActPercentage(rs.getBigDecimal("ActPercentage"));
 			ffd.setPaidTDS(rs.getBigDecimal("PaidTDS"));
 			ffd.setRemTDS(rs.getBigDecimal("RemTDS"));
 			ffd.setNetTDS(rs.getBigDecimal("NetTDS"));
+			ffd.setRuleCode(rs.getString("RuleCode"));
 			ffd.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 			ffd.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 			ffd.setActualAmount(rs.getBigDecimal("ActualAmount"));
