@@ -228,8 +228,6 @@ public class RuleExecutionUtil implements Serializable {
 			return PRESENTMENT_RESP_SCRIPT_ENGINE_MAP.computeIfAbsent(threadName, abc -> getScriptEngine(true));
 		}
 
-		logger.info("Script Engine created for EOD....");
-
 		return new ScriptEngine();
 	}
 
