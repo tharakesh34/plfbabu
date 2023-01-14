@@ -401,6 +401,15 @@ public class AccountEngineExecution implements Serializable {
 						}
 					}
 
+					logger.info("ACCOUNT NOT FOUND");
+					dataMap.forEach((k, v) -> logger.info("Key = {}, Value = {}", k, v));
+
+					logger.debug("ACCOUNT NOT FOUND");
+					dataMap.forEach((k, v) -> logger.debug("Key = {}, Value = {}", k, v));
+
+					logger.error("ACCOUNT NOT FOUND");
+					dataMap.forEach((k, v) -> logger.error("Key = {}, Value = {}", k, v));
+
 					throw new AppException(String.format(
 							"Account (%s) and Rule (%s) and  Accounting for %S Event is invalid for order id : %S , please contact administrator",
 							txnEntry.getAccount(), sqlRule, aeEvent.getAccountingEvent(), txnEntry.getTransOrder()));
