@@ -106,7 +106,16 @@ public class RuleExecutionUtil implements Serializable {
 				break;
 			case STRING:
 			case CALCSTRING:
-				result = scriptEngine.getResultAsString(rule, dataMap);
+				try {
+					result = scriptEngine.getResultAsString(rule, dataMap);
+				} catch (Exception e) {
+					logger.error("RULE EXECUTION ISSUE", e);
+				}
+
+				if (result == null) {
+					logger.info("ACCOUNT NOT FOUND");
+					dataMap.forEach((k, v) -> logger.info("Key = {}, Value = {}", k, v));
+				}
 				break;
 			case INTEGER:
 				result = scriptEngine.getResultAsInt(rule, dataMap);
