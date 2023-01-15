@@ -125,8 +125,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Row tdsRow;
 	protected Checkbox tdsReq;
 
-	protected Row feeIncomeOrExpenseRow;
-	protected ExtendedCombobox feeIncomeOrExpense;
+	protected Row incomeOrExpenseAcTypeRow;
+	protected ExtendedCombobox incomeOrExpenseAcType;
+	protected ExtendedCombobox waiverOrRefundAcType;
 
 	protected Checkbox active;
 
@@ -444,13 +445,20 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.groupboxWf.setVisible(false);
 		}
 
-		this.feeIncomeOrExpenseRow.setVisible(FeeExtension.ALLOW_SINGLE_FEE_CONFIG);
-		this.feeIncomeOrExpense.setWidth("200px");
-		this.feeIncomeOrExpense.setModuleName("AccountType");
-		this.feeIncomeOrExpense.setValueColumn("AcType");
-		this.feeIncomeOrExpense.setDescColumn("AcTypeDesc");
-		this.feeIncomeOrExpense.setDisplayStyle(2);
-		this.feeIncomeOrExpense.setValidateColumns(new String[] { "AcType" });
+		this.incomeOrExpenseAcTypeRow.setVisible(FeeExtension.ALLOW_SINGLE_FEE_CONFIG);
+		this.incomeOrExpenseAcType.setWidth("200px");
+		this.incomeOrExpenseAcType.setModuleName("AccountType");
+		this.incomeOrExpenseAcType.setValueColumn("AcType");
+		this.incomeOrExpenseAcType.setDescColumn("AcTypeDesc");
+		this.incomeOrExpenseAcType.setDisplayStyle(2);
+		this.incomeOrExpenseAcType.setValidateColumns(new String[] { "AcType" });
+
+		this.waiverOrRefundAcType.setWidth("200px");
+		this.waiverOrRefundAcType.setModuleName("AccountType");
+		this.waiverOrRefundAcType.setValueColumn("AcType");
+		this.waiverOrRefundAcType.setDescColumn("AcTypeDesc");
+		this.waiverOrRefundAcType.setDisplayStyle(2);
+		this.waiverOrRefundAcType.setValidateColumns(new String[] { "AcType" });
 
 		this.receivableType.setModuleName("FeeType");
 		this.receivableType.setValueColumn("FeeTypeCode");
@@ -523,8 +531,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.taxApplicable.setChecked(aFeeType.isTaxApplicable());
 		fillComboBox(this.taxComponent, String.valueOf(aFeeType.getTaxComponent()), listTaxComponent, "");
 
-		this.feeIncomeOrExpense.setValue(aFeeType.getFeeIncomeOrExpense());
-		this.feeIncomeOrExpense.setObject(new AccountType(aFeeType.getFeeIncomeOrExpense()));
+		this.incomeOrExpenseAcType.setValue(aFeeType.getIncomeOrExpenseAcType());
+		this.incomeOrExpenseAcType.setObject(new AccountType(aFeeType.getIncomeOrExpenseAcType()));
+
+		this.waiverOrRefundAcType.setValue(aFeeType.getWaiverOrRefundAcType());
+		this.waiverOrRefundAcType.setObject(new AccountType(aFeeType.getWaiverOrRefundAcType()));
 
 		this.recordStatus.setValue(aFeeType.getRecordStatus());
 
@@ -697,13 +708,26 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		}
 
 		try {
-			if (this.feeIncomeOrExpense.getObject() instanceof AccountType) {
-				AccountType accountType = (AccountType) this.feeIncomeOrExpense.getObject();
+			if (this.incomeOrExpenseAcType.getObject() instanceof AccountType) {
+				AccountType accountType = (AccountType) this.incomeOrExpenseAcType.getObject();
 				if (accountType != null) {
-					aFeeType.setFeeIncomeOrExpense(accountType.getAcType());
+					aFeeType.setIncomeOrExpenseAcType(accountType.getAcType());
 				}
 			} else {
-				aFeeType.setFeeIncomeOrExpense(null);
+				aFeeType.setIncomeOrExpenseAcType(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (this.waiverOrRefundAcType.getObject() instanceof AccountType) {
+				AccountType accountType = (AccountType) this.waiverOrRefundAcType.getObject();
+				if (accountType != null) {
+					aFeeType.setWaiverOrRefundAcType(accountType.getAcType());
+				}
+			} else {
+				aFeeType.setWaiverOrRefundAcType(null);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -796,6 +820,16 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 					Labels.getLabel("label_FeeTypeDialog_PayableLinkTo.value")));
 		}
 
+		if (!this.incomeOrExpenseAcType.isReadonly() && this.incomeOrExpenseAcTypeRow.isVisible()) {
+			this.incomeOrExpenseAcType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FeeTypeDialog_IncomeOrExpenseAcType.value"), null, true, true));
+		}
+
+		if (!this.waiverOrRefundAcType.isReadonly() && this.incomeOrExpenseAcTypeRow.isVisible()) {
+			this.waiverOrRefundAcType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FeeTypeDialog_WaiverOrRefundAcType.value"), null, true, true));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -810,7 +844,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.adviseType.setConstraint("");
 		this.taxComponent.setConstraint("");
 		this.payableLinkTo.setConstraint("");
-		this.feeIncomeOrExpense.setConstraint("");
+		this.incomeOrExpenseAcType.setConstraint("");
+		this.waiverOrRefundAcType.setConstraint("");
 	}
 
 	/**
@@ -1118,7 +1153,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		this.tdsReq.setDisabled(isReadOnly("FeeTypeDialog_TaxApplicable"));
 
-		this.feeIncomeOrExpense.setReadonly(isReadOnly("FeeTypeDialog_FeeIncomeOrExpense"));
+		this.incomeOrExpenseAcType.setReadonly(isReadOnly("FeeTypeDialog_IncomeOrExpenseAcType"));
+		this.incomeOrExpenseAcType.setReadonly(isReadOnly("FeeTypeDialog_WaiverOrRefundAcType"));
 
 		this.active.setDisabled(isReadOnly("FeeTypeDialog_Active"));
 		this.allowAutoRefund.setDisabled(isReadOnly("FeeTypeDialog_AllowAutoRefund"));
@@ -1186,7 +1222,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.taxApplicable.setChecked(false);
 		this.taxComponent.setSelectedIndex(0);
 		this.amortzReq.setChecked(false);
-		this.feeIncomeOrExpense.setValue("");
+		this.incomeOrExpenseAcType.setValue("");
+		this.waiverOrRefundAcType.setValue("");
 
 		logger.debug(Literal.LEAVING);
 	}

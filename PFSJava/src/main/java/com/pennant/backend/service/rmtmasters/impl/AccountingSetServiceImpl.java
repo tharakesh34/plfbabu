@@ -605,9 +605,9 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			transactionEntry.setRecordStatus(accountingSet.getRecordStatus());
 			transactionEntry.setUserDetails(accountingSet.getUserDetails());
 			transactionEntry.setLastMntOn(accountingSet.getLastMntOn());
-			String[] fields = PennantJavaUtil.getFieldDetails(new TransactionEntry(), transactionEntry.getExcludeFields());
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], transactionEntry.getBefImage(),
-					transactionEntry));
+			String[] fields = PennantJavaUtil.getFieldDetails(new TransactionEntry(),
+					transactionEntry.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, transactionEntry.getBefImage(), transactionEntry));
 		}
 		logger.debug("Leaving");
 		return auditDetails;

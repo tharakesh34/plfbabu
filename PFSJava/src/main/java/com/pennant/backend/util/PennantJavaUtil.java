@@ -3911,7 +3911,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("SettlementFinanceMain",
 				new ModuleMapping("SettlementFinanceMain", FinanceMain.class,
-						new String[] { "FM_SettlementVIEW", "FM_SettlementVIEW" }, null,
+						new String[] { "FM_Settlement_VIEW", "FM_Settlement_VIEW" }, null,
 						new String[] { "FinReference", "FinType" }, null, 350));
 
 		registerCustomModules();
