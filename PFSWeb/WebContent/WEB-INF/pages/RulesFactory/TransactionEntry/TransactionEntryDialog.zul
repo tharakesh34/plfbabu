@@ -297,6 +297,11 @@
 											<space spacing="2px" />
 											<checkbox id="bulking" visible="false"/>
 										</hbox>
+										<label id="label_TransactionEntryDialog_AssignmentEntry" value="${c:l('label_TransactionEntryDialog_AssignmentEntry.value')}" visible="false"/>
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="assignmentEntry" visible="false"/>
+										</hbox>
 									</row>
 									<!-- ### END SFA_20210405 -->
 									
