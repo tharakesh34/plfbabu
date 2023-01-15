@@ -244,10 +244,16 @@ public class AccountEngineExecution implements Serializable {
 		List<TransactionEntry> txnEntries = new ArrayList<>();
 
 		for (Long accountSetId : acSetList) {
+			List<TransactionEntry> tempExnEntries = new ArrayList<>();
+
 			if (aeEvent.isEOD()) {
-				txnEntries.addAll(AccountingConfigCache.getCacheTransactionEntry(accountSetId));
+				tempExnEntries = AccountingConfigCache.getCacheTransactionEntry(accountSetId);
 			} else {
-				txnEntries.addAll(AccountingConfigCache.getTransactionEntry(accountSetId));
+				tempExnEntries = AccountingConfigCache.getTransactionEntry(accountSetId);
+			}
+
+			for (TransactionEntry entry : tempExnEntries) {
+				txnEntries.add(entry.copyEntity());
 			}
 		}
 
