@@ -63,7 +63,7 @@
 							<row>
 								<label id="label_CustomerAddresSearch_CustCIF" value="${c:l('label_CustomerAddresSearch_CustAddrCIF.value')}" />
 								<listbox id="sortOperator_custCIF" width="43px" mold="select" rows="1" />
-								<textbox id="custCIF" width="150px" maxlength="19" />
+								<textbox id="custCIF" width="150px" />
 
 								<label id="label_CustomerAddresSearch_CustAddrType" value="${c:l('label_CustomerAddresSearch_CustAddrType.value')}" />
 								<listbox id="sortOperator_custAddrType" width="43px" mold="select" rows="1" />

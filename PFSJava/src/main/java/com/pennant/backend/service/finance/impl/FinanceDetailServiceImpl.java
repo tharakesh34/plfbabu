@@ -7357,6 +7357,32 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
+		if (StringUtils.isNotEmpty(fm.getAdvType()) && PennantConstants.FINSOURCE_ID_API.equals(fm.getFinSourceID())) {
+			int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
+			BigDecimal actualAmbnt = BigDecimal.ZERO;
+			BigDecimal netfinamnt = BigDecimal.ZERO;
+			BigDecimal disbAmount = BigDecimal.ZERO;
+
+			if (!"#".equals(fm.getAdvType()) || !"#".equals(fm.getGrcAdvType())) {
+				for (FinFeeDetail fee : fd.getFinScheduleData().getFinFeeDetailList()) {
+					actualAmbnt = actualAmbnt.add(fee.getActualAmount());
+					netfinamnt = fm.getFinAmount().subtract(actualAmbnt);
+				}
+
+				fm.setDeductFeeDisb(actualAmbnt);
+
+				for (FinAdvancePayments fap : fd.getAdvancePaymentsList()) {
+					disbAmount = fap.getAmtToBeReleased();
+					if (disbAmount.compareTo(netfinamnt) != 0) {
+						String[] vprm = new String[2];
+						vprm[0] = PennantApplicationUtil.amountFormate(disbAmount, ccyFormat);
+						vprm[1] = PennantApplicationUtil.amountFormate(netfinamnt, ccyFormat);
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60401", vprm)));
+					}
+				}
+			}
+		}
+
 		// Checking , if Customer is in EOD process or not. if Yes, not allowed
 		// to do an action
 		if (!StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, fm.getRecordType())) {

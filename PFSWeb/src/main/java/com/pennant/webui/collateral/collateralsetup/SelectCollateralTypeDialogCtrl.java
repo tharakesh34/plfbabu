@@ -46,7 +46,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -204,7 +203,6 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			}
 		}
 
-		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		if (fromLoan) {
 			Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
 			this.custCIF.setValue(customer.getCustCIF());

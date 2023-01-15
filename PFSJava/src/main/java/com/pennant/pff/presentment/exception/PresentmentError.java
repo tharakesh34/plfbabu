@@ -44,7 +44,7 @@ public enum PresentmentError {
 
 	REPRMNT521("There is no over dues for this Reference."),
 
-	REPRMNT522("Due date should be in current month only."),
+	REPRMNT522("Due date reached the next installment date."),
 
 	REPRMNT523(""),
 

@@ -706,7 +706,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		custNationality.setValueColumn("NationalityCode");
 		custNationality.setDescColumn("NationalityDesc");
 		custNationality.setValidateColumns(new String[] { "NationalityCode" });
-		custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		logger.debug("Leaving");
 	}
 

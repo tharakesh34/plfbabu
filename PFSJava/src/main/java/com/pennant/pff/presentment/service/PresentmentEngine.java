@@ -1,6 +1,8 @@
 package com.pennant.pff.presentment.service;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +36,7 @@ import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
@@ -57,6 +60,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -86,6 +90,7 @@ import com.pennanttech.external.ExternalPresentmentHook;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -126,6 +131,7 @@ public class PresentmentEngine {
 	private ConsecutiveBounceDAO consecutiveBounceDAO;
 	private MandateDAO mandateDAO;
 	private MandateStatusDAO mandateStatusDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 
 	/* Service's */
 	private OverdrafLoanService overdrafLoanService;
@@ -382,6 +388,194 @@ public class PresentmentEngine {
 		}
 
 		return batches;
+	}
+
+	public List<PresentmentDetail> grouping(ResultSet rs, PresentmentHeader ph) throws SQLException {
+		Map<String, Integer> batchMap = presentmentDAO.batchSizeByInstrumentType();
+
+		Map<String, PresentmentHeader> headerMap = new HashMap<>();
+		Map<String, Integer> instrumentBatch = new HashMap<>();
+
+		List<PresentmentDetail> list = new ArrayList<>();
+
+		logger.debug("Presentment Engine Grouping started..");
+		logger.info("Presentment Engine Grouping started..");
+
+		Date appDate = ph.getAppDate();
+
+		Map<String, Date> dueDates = null;
+
+		if (PennantConstants.PROCESS_PRESENTMENT.equals(ph.getPresentmentType())) {
+			dueDates = dueExtractionConfigDAO.getDueDates(appDate);
+		}
+
+		while (rs.next()) {
+			logger.debug("Result Set loop started...");
+			logger.info("Result Set loop started...");
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setId(rs.getLong("ID"));
+			pd.setDefSchdDate(JdbcUtil.getDate(rs.getDate("DefSchdDate")));
+			pd.setEntityCode(rs.getString("EntityCode"));
+			pd.setBankCode(rs.getString("BankCode"));
+			pd.setPartnerBankId(JdbcUtil.getLong(rs.getObject("PartnerBankId")));
+			pd.setInstrumentType(rs.getString("InstrumentType"));
+
+			String groupKey = grouping(ph, pd);
+
+			PresentmentHeader header = headerMap.get(groupKey);
+			if (header == null) {
+				header = saveHeader(ph, dueDates, pd);
+				headerMap.put(groupKey, header);
+			}
+
+			pd.setHeaderId(header.getId());
+			pd.setDueDate(header.getDueDate());
+
+			list.add(pd);
+
+			String mandateType = header.getMandateType();
+
+			Integer batchSize = batchMap.get(mandateType);
+
+			if (batchSize != null && batchSize > 0) {
+				int headerBatchSize = header.getBatchSize();
+				headerBatchSize = headerBatchSize + 1;
+				header.setBatchSize(headerBatchSize);
+
+				instrumentBatch.put(mandateType, headerBatchSize);
+
+				if (headerBatchSize == batchSize) {
+					instrumentBatch.remove(mandateType);
+					headerMap.remove(groupKey);
+				}
+			}
+
+			if (list.size() == PennantConstants.CHUNK_SIZE) {
+				logger.debug("Chunk size matched... updating header");
+				logger.info("Chunk size matched... updating header");
+				presentmentDAO.updateHeader(list);
+				list.clear();
+			}
+
+			logger.debug("Result Set loop continue...");
+			logger.info("Result Set loop continue...");
+		}
+
+		logger.debug("Result Set loop completed...");
+		logger.info("Result Set loop completed...");
+
+		if (!list.isEmpty()) {
+			logger.debug("updating header....");
+			logger.info("updating header.....");
+			presentmentDAO.updateHeader(list);
+		}
+
+		return new ArrayList<>();
+	}
+
+	private PresentmentHeader saveHeader(PresentmentHeader ph, Map<String, Date> dueDates, PresentmentDetail pd) {
+		long batchID = ph.getBatchID();
+
+		String instrumentType = pd.getInstrumentType();
+		String presentmentType = ph.getPresentmentType();
+
+		Date fromDate = ph.getFromDate();
+		Date toDate = ph.getToDate();
+		Date dueDate = null;
+
+		if (fromDate != null && toDate != null) {
+			dueDate = toDate;
+		} else if (dueDates != null) {
+			dueDate = dueDates.get(instrumentType);
+		} else {
+			dueDate = pd.getDefSchdDate();
+		}
+
+		if (fromDate == null) {
+			fromDate = dueDate;
+		}
+
+		if (toDate == null) {
+			toDate = dueDate;
+		}
+
+		long headerId = presentmentDAO.getSeqNumber("SeqPresentmentHeader");
+
+		String reference = StringUtils.leftPad(String.valueOf(headerId), 15, "0");
+
+		String ref = instrumentType.concat(reference);
+
+		if (PennantConstants.PROCESS_REPRESENTMENT.equals(presentmentType)) {
+			ref = "RE" + ref;
+		}
+
+		Long partnerBankId = pd.getPartnerBankId();
+
+		if (partnerBankId == null || partnerBankId <= 0) {
+			Presentment pb = presentmentDAO.getPartnerBankId(ph.getLoanType(), ph.getMandateType());
+
+			if (pb == null) {
+				pb = new Presentment();
+				pb.setPartnerBankId(621L);
+			}
+
+			partnerBankId = pb.getPartnerBankId();
+			ph.setPartnerBankId(pb.getPartnerBankId());
+		}
+
+		PresentmentHeader header = new PresentmentHeader();
+		header.setStatus(RepayConstants.PEXC_EXTRACT);
+		header.setPresentmentDate(DateUtil.getSysDate());
+		header.setId(headerId);
+		header.setBatchID(batchID);
+		header.setFromDate(fromDate);
+		header.setToDate(toDate);
+		header.setMandateType(instrumentType);
+		header.setPresentmentType(presentmentType);
+		header.setSchdate(pd.getDefSchdDate());
+		header.setEntityCode(pd.getEntityCode());
+		header.setBankCode(pd.getBankCode());
+		header.setPartnerBankId(partnerBankId);
+		header.setDueDate(dueDate);
+		header.setReference(ref);
+		header.setdBStatusId(0);
+		header.setImportStatusId(0);
+		header.setTotalRecords(0);
+		header.setProcessedRecords(0);
+		header.setSuccessRecords(0);
+		header.setFailedRecords(0);
+
+		presentmentDAO.savePresentmentHeader(header);
+		return header;
+	}
+
+	private String grouping(PresentmentHeader ph, PresentmentDetail pd) {
+		StringBuilder group = new StringBuilder();
+
+		if (ph.isGroupByBank() && ph.isGroupByPartnerBank()) {
+			group.append(pd.getDefSchdDate());
+			group.append(pd.getBankCode());
+			group.append(pd.getEntityCode());
+			group.append(pd.getPartnerBankId());
+			group.append(pd.getInstrumentType());
+		} else if (ph.isGroupByBank()) {
+			group.append(pd.getDefSchdDate());
+			group.append(pd.getBankCode());
+			group.append(pd.getEntityCode());
+			group.append(pd.getInstrumentType());
+		} else if (ph.isGroupByPartnerBank()) {
+			group.append(pd.getDefSchdDate());
+			group.append(pd.getEntityCode());
+			group.append(pd.getPartnerBankId());
+			group.append(pd.getInstrumentType());
+		} else {
+			group.append(pd.getDefSchdDate());
+			group.append(pd.getEntityCode());
+			group.append(pd.getInstrumentType());
+		}
+
+		return group.toString();
 	}
 
 	public void grouping(PresentmentHeader ph) {
@@ -657,10 +851,6 @@ public class PresentmentEngine {
 
 		BigDecimal advAmount = pd.getAdvAdjusted();
 		pd.setPresentmentAmt(pd.getPresentmentAmt().subtract(advAmount));
-
-		if (InstrumentType.isPDC(pd.getInstrumentType()) || InstrumentType.isIPDC(pd.getInstrumentType())) {
-			pd.setPresentmentAmt(pd.getChequeAmount());
-		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1076,6 +1266,7 @@ public class PresentmentEngine {
 		String mandateType = pd.getMandateType();
 		Long mandateID = pd.getMandateId();
 		Long receiptID = pd.getReceiptID();
+		Long bcReceiptID = pd.getReceiptID();
 
 		String clearingStatus = pd.getClearingStatus();
 		String bounceCode = StringUtils.trimToEmpty(pd.getBounceCode());
@@ -1165,6 +1356,10 @@ public class PresentmentEngine {
 			if (InstrumentType.isPDC(mandateType)) {
 				checkStatus = ChequeSatus.REALISED;
 			}
+
+			if (PresentmentStatus.BOUNCE.equals(status) && "Y".equals(fateCorrection)) {
+				revertBounceCharges(bcReceiptID);
+			}
 		} else {
 			if (InstrumentType.isPDC(mandateType) || InstrumentType.isIPDC(mandateType)) {
 				if (StringUtils.trimToNull(pd.getErrorDesc()) == null) {
@@ -1231,6 +1426,24 @@ public class PresentmentEngine {
 		finMandateService.autoSwapingFromPDC(finID);
 
 		logger.info(Literal.LEAVING);
+	}
+
+	private void revertBounceCharges(Long bcReceiptID) {
+		ManualAdvise ma = manualAdviseDAO.getBounceChargesByReceiptID(bcReceiptID);
+
+		if (ma == null) {
+			logger.info("Bounce Charges are not found for the receipt ID {}", bcReceiptID);
+			return;
+		}
+
+		BigDecimal amount = ma.getAdviseAmount().subtract((ma.getPaidAmount().add(ma.getWaivedAmount())));
+
+		if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+			logger.info("Bounce Charges are already Paid for the receipt ID {}", bcReceiptID);
+			return;
+		}
+
+		manualAdviseDAO.revertBounceCharges(ma.getAdviseID(), amount);
 	}
 
 	private void updatePresentmentDetail(PresentmentDetail pd) {
@@ -1749,6 +1962,11 @@ public class PresentmentEngine {
 	@Autowired
 	public void setEventPropertiesService(EventPropertiesService eventPropertiesService) {
 		this.eventPropertiesService = eventPropertiesService;
+	}
+	
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 }

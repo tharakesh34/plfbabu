@@ -62,7 +62,7 @@
 							<row>
 								<label id="label_CustomerDocumentSearch_CustCIF" value="${c:l('label_CustomerDocumentSearch_CustID.value')}" />
 								<listbox id="sortOperator_custCIF" width="43px" mold="select" rows="1" />
-								<textbox id="custCIF" width="150px" maxlength="19" />
+								<textbox id="custCIF" width="150px" />
 								<label id="label_CustomerDocumentSearch_CustDocType" value="${c:l('label_CustomerDocumentSearch_CustDocType.value')}" />
 								<listbox id="sortOperator_custDocType" width="43px" mold="select" rows="1" />
 								<textbox id="custDocType" width="150px" maxlength="8" />

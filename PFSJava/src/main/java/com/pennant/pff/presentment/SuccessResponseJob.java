@@ -48,11 +48,17 @@ public class SuccessResponseJob extends BatchConfiguration {
 	private EventPropertiesService eventPropertiesService;
 
 	private BatchJobQueueDAO bjqDAO;
+	private boolean initialize = false;
 
 	@Scheduled(cron = "0 */5 * ? * *")
 	public void successResponseJob() throws Exception {
 		logger.info("Presentment Success Response Job invoked at {}", DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
 
+		if (this.initialize) {
+			bjqDAO.clearQueue();
+			this.initialize = false;
+		}
+		
 		if (bjqDAO.getQueueCount() > 0) {
 			logger.info("Previous Job still in progress");
 			return;
@@ -162,5 +168,6 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 	private void initilizeVariables() {
 		this.bjqDAO = new SuccessResponseJobQueueDAOImpl(dataSource);
+		this.initialize = true;
 	}
 }

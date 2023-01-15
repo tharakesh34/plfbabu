@@ -331,7 +331,9 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 				addHeader = false;
 				prvAuditDate = null;
 				fromAuditId = activity.getAuditId();
-				workFlow = WorkFlowUtil.getWorkflow(activity.getWorkflowId());
+				if (activity.getWorkflowId() != 0) {
+					workFlow = WorkFlowUtil.getWorkflow(activity.getWorkflowId());
+				}
 			}
 
 			item = new Listitem();

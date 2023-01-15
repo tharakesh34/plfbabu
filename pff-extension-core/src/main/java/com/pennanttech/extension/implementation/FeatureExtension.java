@@ -141,6 +141,8 @@ public class FeatureExtension implements IFeatureExtension {
 
 		defaultExtensions.put("RECEIPT_ALLOW_FULL_WAIVER", true);
 
+		defaultExtensions.put("MANDATE_SPLIT_COUNT", 2500);
+
 		mandateExtensaions();
 
 		getPresentmentExtensions();

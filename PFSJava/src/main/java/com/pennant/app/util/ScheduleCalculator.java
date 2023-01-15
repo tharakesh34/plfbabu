@@ -7326,7 +7326,7 @@ public class ScheduleCalculator {
 			fm.setAdjustClosingBal(isAdjustClosingBal);
 
 			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
-					&& fm.getAdvTerms() > 0) {
+					&& fm.getAdvTerms() > 0 && !PROC_GETCALSCHD.equals(schdData.getModuleDefiner())) {
 				fm.setAdjustClosingBal(false);
 			}
 

@@ -39,10 +39,10 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -93,7 +93,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Button button_MandateList_NewMandate;
 	protected Button button_MandateList_MandateSearch;
 
-	protected Intbox mandateID;
+	protected Longbox mandateID;
 	protected Textbox custCIF;
 	protected Combobox mandateType;
 	protected Textbox custShrtName;

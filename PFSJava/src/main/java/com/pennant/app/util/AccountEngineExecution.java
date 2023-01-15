@@ -420,7 +420,7 @@ public class AccountEngineExecution implements Serializable {
 				continue;
 			}
 
-			if (StringUtils.isBlank(txnEntry.getAccount())) {
+			if (txnEntry.getAccount() == null || StringUtils.isEmpty(StringUtils.trimToEmpty(txnEntry.getAccount()))) {
 				if (BigDecimal.ZERO.compareTo(postAmt) != 0) {
 					throw new AppException(String.format(
 							"Accounting for %S Event is invalid for order id : %S , please contact administrator",

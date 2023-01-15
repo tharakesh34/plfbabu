@@ -83,7 +83,8 @@ public class ExtractionJob extends BatchConfiguration {
 	}
 
 	public TaskletStep groupingStep() {
-		return this.stepBuilderFactory.get("GROUPING").tasklet(new GroupingTasklet(presentmentEngine)).build();
+		return this.stepBuilderFactory.get("GROUPING").tasklet(new GroupingTasklet(dataSource, presentmentEngine))
+				.build();
 	}
 
 	public TaskletStep extractionQueueStep() {

@@ -62,7 +62,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -888,7 +887,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		// this.finReference.setMaxlength(20);
-		this.guarantorCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.guarantorIDNumber.setMaxlength(20);
 		this.guarantorCIFName.setMaxlength(100);
 		this.guranteePercentage.setMaxlength(5);

@@ -298,7 +298,7 @@
 
 	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
 		<constructor-arg value="PLF_EOD_THREAD_" />
-		<property name="ConcurrencyLimit" value="100" />
+		<property name="ConcurrencyLimit" value="500" />
 	</bean>
 
 	<bean id="partitioningMaster" class="com.pennant.backend.endofday.tasklet.PartitioningMaster" />

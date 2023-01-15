@@ -23,7 +23,6 @@ import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -440,7 +439,6 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		this.customerCif.setMaxlength(LengthConstants.LEN_CIF);
 		this.collateralReference.setMaxlength(20);
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
