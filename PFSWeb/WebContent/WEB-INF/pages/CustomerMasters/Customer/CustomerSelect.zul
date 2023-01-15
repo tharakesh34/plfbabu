@@ -5,16 +5,13 @@
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_CustomerSelect" border="none" apply="${CustomerSelectctrl}" width="80%" height="84%" sizable="false">
+	<window id="window_CustomerSelect" border="none" apply="${CustomerSelectctrl}" width="85%" height="84%" sizable="false">
 
 		<div sclass="z-toolbar" style="padding:0px" height="28px">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start" sclass="toolbar-start" height="15px">
-					<label value="${c:l('window_CustomerSelect.title')}"
-						style="font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
-                            font-size: 11px;font-style: normal;font-weight:bold;"
-						width="auto" />
+					
 				</toolbar>
 				<!-- SEARCH AREA -->
 				<toolbar align="center" sclass="toolbar-center">
@@ -48,42 +45,49 @@
 								<label id="label_CustomerSearch_CustCIF" value="${c:l('label_CustomerSearch_CustCIF.value')}" />
 								<listbox id="sortOperator_custCIF" width="43px" mold="select" rows="1" />
 								<textbox id="custCIF" width="150px" />
+								
+								<label id="label_CustomerSearch_CoreBank" value="${c:l('label_CustomerSearch_CustCoreBank.value')}" />
+								<listbox id="sortOperator_custCoreBank" width="43px" mold="select" rows="1" />
+								<textbox id="custCoreBank" width="150px" />
+								
+							</row>
+							<row>
 								<label id="label_CustomerSearch_CustDOB" value="${c:l('label_CustomerSearch_CustDOB.value')}" />
 								<listbox id="sortOperator_custDob" width="43px" mold="select" rows="1" />
 								<datebox id="custDob" width="100px" />
-							</row>
-							<row>
+								
 								<label id="label_CustomerSearch_CustName" value="${c:l('label_CustomerSearch_CustName.value')}" />
 								<listbox id="sortOperator_custName" width="43px" mold="select" rows="1" />
 								<textbox id="custName" width="150px" />
+								
+							</row>
+							<row>
 								<label id="label_CustomerSearch_CustMobile" value="${c:l('label_CustomerSearch_CustMobile.value')}" />
 								<listbox id="sortOperator_custMobile" width="43px" mold="select" rows="1" />
 								<hbox>
 									<textbox id="custMobile" width="150px" />
 								</hbox>
-							</row>
-							<row>
 								<label id="label_CustomerSearch_CustEID" value="${c:l('label_CustomerSearch_CustEID.value')}" />
 								<listbox id="sortOperator_custEID" width="43px" mold="select" rows="1" />
 								<textbox id="custEid" width="150px" />
+							</row>
+							<row>
 								<!-- <label id="label_CustomerSearch_CustPassport" value="${c:l('label_CustomerSearch_CustPassport.value')}" /> <listbox 
 									id="sortOperator_custPassport" width="43px" mold="select" rows="1" /> <textbox id="custPassport" width="150px" /> -->
 								<label id="label_CustomerSearch_CustType" value="${c:l('label_CustomerSearch_CustType.value')}" />
 								<listbox id="sortOperator_custType" width="43px" mold="select" rows="1" />
 								<textbox id="custType" width="150px" />
-
-							</row>
-							<row>
-
+	
 								<label id="label_CustomerSearch_CustNationality" value="${c:l('label_CustomerSearch_CustNationality.value')}" />
 								<listbox id="sortOperator_custNationality" width="43px" mold="select" rows="1" />
 								<textbox id="custNationality" width="150px" />
 
+								
+							</row>
+							<row>
 								<label id="label_CustomerSearch_CustCategory" value="${c:l('label_CustomerSearch_CustCategory.value')}" />
 								<listbox id="sortOperator_custCategory" width="43px" mold="select" rows="1" />
 								<combobox id="custCategory" width="150px" />
-							</row>
-							<row>
 
 								<label visible="false" id="label_CustomerSearch_CustTarget" value="${c:l('label_CustomerSearch_CustTarget.value')}" />
 								<listbox id="sortOperator_custTarget" visible="false" width="43px" mold="select" rows="1" />
@@ -96,6 +100,8 @@
 						sizedByContent="true">
 						<listhead sizable="true">
 							<listheader id="listheader_CustCIF" label="${c:l('listheader_CustCIF.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_CustCoreBank" label="${c:l('label_CustomerSearch_CustCoreBank.value')}" sort="false"
+								hflex="min" />
 							<listheader id="listheader_CustName" label="${c:l('listheader_CustName.label')}" sort="false" hflex="min" />
 							<listheader id="listheader_CustDob" label="${c:l('listheader_CustDOB.label')}" sort="false" hflex="min" />
 							<listheader id="listheader_CustMobile" label="${c:l('listheader_MobileNumber.label')}" sort="false"
@@ -111,8 +117,6 @@
 								visible="false" />
 							<listheader id="listheader_CustCategory" label="${c:l('listheader_CustCtgCode.label')}" sort="false"
 								hflex="min" />
-							<listheader id="listheader_CustCoreBank" label="${c:l('listheader_CustCoreBank.label')}" sort="false"
-								hflex="min" visible="false" />
 							<listheader id="listheader_CustCtgCode" label="${c:l('listheader_CustCtgCode.label')}" sort="false"
 								hflex="min" visible="false" />
 							<listheader id="listheader_CustomerSearch_CustFName" label="${c:l('label_CustomerSearch_CustFName.value')}"

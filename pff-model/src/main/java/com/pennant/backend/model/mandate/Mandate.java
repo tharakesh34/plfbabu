@@ -72,6 +72,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private long custID;
 	@XmlElement(name = "cif")
 	private String custCIF;
+	private String custCoreBank;
 	private String custShrtName;
 	private Long bankBranchID;
 	@XmlElement
@@ -261,6 +262,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("employerName");
 		excludeFields.add("loanMaturityDate");
 		excludeFields.add("error");
+		excludeFields.add("custCoreBank");
 
 		return excludeFields;
 	}
@@ -466,6 +468,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
+	}
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
 	}
 
 	public String getBranchCode() {

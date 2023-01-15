@@ -71,42 +71,42 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_CustomerSelect; // autowired
+	protected Window window_CustomerSelect;
 
-	protected Textbox custCIF; // autowired
-	protected Listbox sortOperator_custCIF; // autowired
-	protected Datebox custDob; // autowired
-	protected Listbox sortOperator_custDob; // autowired
-	protected Textbox custName; // autowired
-	protected Listbox sortOperator_custName; // autowired
-	protected Textbox custMobile; // autowired
-	protected Listbox sortOperator_custMobile; // autowired
-	protected Textbox custEid; // autowired
-	protected Listbox sortOperator_custEID; // autowired
-	protected Textbox custType; // autowired
-	protected Listbox sortOperator_custType; // autowired
-	protected Textbox custNationality; // autowired
-	protected Listbox sortOperator_custNationality; // autowired
-	protected ExtendedCombobox custTarget; // autowired
-	protected Listbox sortOperator_custTarget; // autowired
-	protected Combobox custCategory; // autowired
-	protected Listbox sortOperator_custCategory; // autowired
-	// protected Textbox phoneCountryCode;
-	// protected Textbox phoneAreaCode;
-	protected Paging pagingCustomerList; // autowired
-	protected Listbox listBoxCustomer; // autowired
-	protected Grid searchGrid; // autowired
+	protected Textbox custCIF;
+	protected Listbox sortOperator_custCIF;
+	protected Textbox custCoreBank;
+	protected Listbox sortOperator_custCoreBank;
+	protected Datebox custDob;
+	protected Listbox sortOperator_custDob;
+	protected Textbox custName;
+	protected Listbox sortOperator_custName;
+	protected Textbox custMobile;
+	protected Listbox sortOperator_custMobile;
+	protected Textbox custEid;
+	protected Listbox sortOperator_custEID;
+	protected Textbox custType;
+	protected Listbox sortOperator_custType;
+	protected Textbox custNationality;
+	protected Listbox sortOperator_custNationality;
+	protected ExtendedCombobox custTarget;
+	protected Listbox sortOperator_custTarget;
+	protected Combobox custCategory;
+	protected Listbox sortOperator_custCategory;
+	protected Paging pagingCustomerList;
+	protected Listbox listBoxCustomer;
+	protected Grid searchGrid;
 
 	// List headers
-	protected Listheader listheader_CustID; // autowired
-	protected Listheader listheader_CustCIF; // autowired
-	protected Listheader listheader_CustCoreBank; // autowired
-	protected Listheader listheader_CustCtgCode; // autowired
-	protected Listheader listheader_RecordStatus; // autowired
+	protected Listheader listheader_CustID;
+	protected Listheader listheader_CustCIF;
+	protected Listheader listheader_CustCoreBank;
+	protected Listheader listheader_CustCtgCode;
+	protected Listheader listheader_RecordStatus;
 	protected Listheader listheader_RecordType;
 
-	protected Label label_CustomerSearch_RecordStatus; // autowired
-	protected Label label_CustomerSearch_RecordType; // autowired
+	protected Label label_CustomerSearch_RecordStatus;
+	protected Label label_CustomerSearch_RecordType;
 
 	protected Borderlayout borderLayout_CustomerSelect;
 
@@ -148,6 +148,9 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		List<SearchOperators> list = new SearchOperators().getSimpleStringOperators();
 		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custCoreBank.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custCoreBank.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custDob
 				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleNumericOperators()));
@@ -218,6 +221,9 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 			if ("CustCIF".equals(filter.getProperty())) {
 				SearchOperators.resetOperator(this.sortOperator_custCIF, filter);
 				this.custCIF.setValue(restoreString(value, this.sortOperator_custCIF));
+			} else if ("CustCoreBank".equals(filter.getProperty())) {
+				SearchOperators.resetOperator(this.sortOperator_custCoreBank, filter);
+				this.custCoreBank.setValue(restoreString(value, this.sortOperator_custCoreBank));
 			} else if ("CustDOB".equals(filter.getProperty())) {
 				SearchOperators.restoreNumericOperator(this.sortOperator_custDob, filter);
 				this.custDob.setValue((Date) filter.getValue());
@@ -338,6 +344,17 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				} else {
 					searchObject.addFilter(new Filter("CustCIF", this.custCIF.getValue(), searchOpId));
 				}
+			}
+		}
+
+		if (StringUtils.isNotBlank(this.custCoreBank.getValue())) {
+
+			// get the search operator
+			final Listitem itemCustCoreBank = this.sortOperator_custCoreBank.getSelectedItem();
+			if (itemCustCoreBank != null) {
+				final int searchOpId = ((SearchOperators) itemCustCoreBank.getAttribute("data")).getSearchOperatorId();
+
+				searchObject.addFilter(new Filter("CustCoreBank", this.custCoreBank.getValue(), searchOpId));
 			}
 		}
 
@@ -524,6 +541,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 
 		this.custCIF.setValue("");
 		this.sortOperator_custCIF.setSelectedIndex(0);
+		this.custCoreBank.setValue("");
+		this.sortOperator_custCoreBank.setSelectedIndex(0);
 		this.custDob.setText("");
 		this.sortOperator_custDob.setSelectedIndex(0);
 		this.custName.setValue("");

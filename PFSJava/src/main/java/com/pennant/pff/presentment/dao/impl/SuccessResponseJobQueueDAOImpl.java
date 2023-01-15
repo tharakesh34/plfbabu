@@ -218,4 +218,16 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 			return jobQueue;
 		});
 	}
+
+	@Override
+	public void updateQueue(BatchJobQueue jobQueue) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int updateThreadID(long from, long to, int i) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

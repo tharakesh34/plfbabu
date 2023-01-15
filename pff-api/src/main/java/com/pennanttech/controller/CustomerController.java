@@ -159,7 +159,7 @@ public class CustomerController extends GenericService<Object> {
 		}
 
 		// prepare create customer response object
-		response = getCreateCustomerResponse(customerDetails.getCustomer().getCustCIF());
+		response = getCreateCustomerResponse(customerDetails.getCustomer());
 		logger.debug(Literal.LEAVING);
 
 		return response;
@@ -205,12 +205,13 @@ public class CustomerController extends GenericService<Object> {
 	 * @param custCIF
 	 * @return
 	 */
-	private CustomerDetails getCreateCustomerResponse(String custCIF) {
+	private CustomerDetails getCreateCustomerResponse(Customer cust) {
 		logger.debug(Literal.ENTERING);
 
 		CustomerDetails customerDetails = new CustomerDetails();
 
-		customerDetails.setCustCIF(custCIF);
+		customerDetails.setCustCIF(cust.getCustCIF());
+		customerDetails.setCustCoreBank(cust.getCustCoreBank());
 		doEmptyResponseObject(customerDetails);
 		customerDetails.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
@@ -281,6 +282,7 @@ public class CustomerController extends GenericService<Object> {
 		if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 			// generate new customer CIF
 			String custCIF = customerDetailsService.getNewProspectCustomerCIF();
+
 			curCustomer.setNewRecord(true);
 			curCustomer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			curCustomer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -295,6 +297,7 @@ public class CustomerController extends GenericService<Object> {
 			}
 			customerDetails.setCustID(prvCustomer.getCustID());
 			curCustomer.setCustCIF(customerDetails.getCustCIF());
+			curCustomer.setCustCoreBank(customerDetails.getCustCoreBank());
 			curCustomer.setCustID(prvCustomer.getCustID());
 			curCustomer.setCustCRCPR(prvCustomer.getCustCRCPR());
 			curCustomer.setNewRecord(false);
