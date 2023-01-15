@@ -172,4 +172,5 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	List<ManualAdvise> getPayableAdviseList(long finID, Date maxValueDate);
 
+	List<ManualAdviseMovements> getAdviseMovementsByWaiver(long waiverId, String type);
 }

@@ -74,4 +74,10 @@ public interface FinanceRepaymentsDAO {
 	List<FinanceRepayments> getFinRepayList(long finID);
 
 	List<FinanceRepayments> getFinRepayListByLinkedTranID(long finID);
+
+	void updateLinkedTranId(FinRepayHeader finRepayHeader);
+
+	List<FinanceRepayments> getByFinRefAndWaiverId(long finID, long waiverId);
+
+	List<FinanceRepayments> getFinRepayListByFinRef(long finID, boolean isRpyCancelProc, String type);
 }

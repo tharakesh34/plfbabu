@@ -145,4 +145,10 @@ public interface FinReceiptHeaderDAO {
 	BigDecimal getClosureAmountByFinType(String finType);
 
 	boolean isCancelReceiptInQueue(long finId);
+
+	List<FinReceiptHeader> getSettlementReceipts(long finID, Date fromDate);
+
+	BigDecimal getReceiptAmount(Date fromDate, Date toDate);
+
+	void updateExcessAdjustTo(long receiptID, String excessAdjustTo);
 }

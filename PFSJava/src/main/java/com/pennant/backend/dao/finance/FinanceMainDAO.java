@@ -413,4 +413,6 @@ public interface FinanceMainDAO {
 	FinanceMain getEntityByRef(String finReference);
 
 	List<AutoRefundLoan> getAutoRefundsLoanList();
+
+	void updateSettlementFlag(long finID, boolean isUnderSettlement);
 }

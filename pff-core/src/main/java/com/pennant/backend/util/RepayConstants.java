@@ -229,4 +229,12 @@ public class RepayConstants {
 	public static final String DUETYPE_BOUNCE = "B";
 	public static final String DUETYPE_MANUALADVISE = "M";
 	public static final String DUETYPE_FEES = "F"; //
+
+	public static final String SETTLEMENT_STATUS_INITIATED = "I";
+	public static final String SETTLEMENT_STATUS_PROCESSED = "P";
+	public static final String SETTLEMENT_STATUS_CANCELLED = "C";
+
+	public static final String SETTLEMENT_STATUS_INIT_MSG = "Initiated";
+	public static final String SETTLEMENT_STATUS_PROC_MSG = "Processed";
+	public static final String SETTLEMENT_STATUS_CANC_MSG = "Cancelled";
 }

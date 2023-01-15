@@ -71,6 +71,18 @@ public class FinODDetails implements Serializable {
 	private BigDecimal totPenaltyPaid = BigDecimal.ZERO;
 	private BigDecimal totPenaltyBal = BigDecimal.ZERO;
 
+	private BigDecimal priPenalty = BigDecimal.ZERO;
+	private BigDecimal pftPenalty = BigDecimal.ZERO;
+	private BigDecimal priPenaltyPaid = BigDecimal.ZERO;
+	private BigDecimal pftPenaltyPaid = BigDecimal.ZERO;
+	private BigDecimal priPenaltyWaived = BigDecimal.ZERO;
+	private BigDecimal pftPenaltyWaived = BigDecimal.ZERO;
+	private BigDecimal priPenaltyBal = BigDecimal.ZERO;
+	private BigDecimal pftPenaltyBal = BigDecimal.ZERO;
+	private BigDecimal pastDuePri = BigDecimal.ZERO;
+	private BigDecimal actPriPenBal = BigDecimal.ZERO;
+	private BigDecimal actPftPenBal = BigDecimal.ZERO;
+
 	@XmlElement(name = "odPft")
 	private BigDecimal lPIAmt = BigDecimal.ZERO;
 	@XmlElement(name = "odPftPaid")
@@ -165,6 +177,17 @@ public class FinODDetails implements Serializable {
 		entity.setPresentmentID(this.presentmentID);
 		entity.setCurOverdraftTxnChrg(this.curOverdraftTxnChrg);
 		entity.setMaxOverdraftTxnChrg(this.maxOverdraftTxnChrg);
+		entity.setPriPenalty(this.getPriPenalty());
+		entity.setPftPenalty(this.getPftPenalty());
+		entity.setPriPenaltyPaid(this.getPriPenaltyPaid());
+		entity.setPriPenaltyWaived(this.getPriPenaltyWaived());
+		entity.setPftPenaltyPaid(this.getPftPenaltyPaid());
+		entity.setPftPenaltyWaived(this.getPftPenaltyWaived());
+		entity.setPriPenaltyBal(this.getPriPenaltyBal());
+		entity.setPftPenaltyBal(this.getPftPenaltyBal());
+		entity.setActPriPenBal(this.getActPriPenBal());
+		entity.setActPftPenBal(this.getActPftPenBal());
+		entity.setPastDuePri(this.getPastDuePri());
 
 		return entity;
 	}
@@ -544,6 +567,94 @@ public class FinODDetails implements Serializable {
 
 	public void setMaxOverdraftTxnChrg(BigDecimal maxOverdraftTxnChrg) {
 		this.maxOverdraftTxnChrg = maxOverdraftTxnChrg;
+	}
+
+	public BigDecimal getPriPenalty() {
+		return priPenalty;
+	}
+
+	public void setPriPenalty(BigDecimal priPenalty) {
+		this.priPenalty = priPenalty;
+	}
+
+	public BigDecimal getPftPenalty() {
+		return pftPenalty;
+	}
+
+	public void setPftPenalty(BigDecimal pftPenalty) {
+		this.pftPenalty = pftPenalty;
+	}
+
+	public BigDecimal getPftPenaltyPaid() {
+		return pftPenaltyPaid;
+	}
+
+	public void setPftPenaltyPaid(BigDecimal pftPenaltyPaid) {
+		this.pftPenaltyPaid = pftPenaltyPaid;
+	}
+
+	public BigDecimal getPriPenaltyWaived() {
+		return priPenaltyWaived;
+	}
+
+	public void setPriPenaltyWaived(BigDecimal priPenaltyWaived) {
+		this.priPenaltyWaived = priPenaltyWaived;
+	}
+
+	public BigDecimal getPftPenaltyWaived() {
+		return pftPenaltyWaived;
+	}
+
+	public void setPftPenaltyWaived(BigDecimal pftPenaltyWaived) {
+		this.pftPenaltyWaived = pftPenaltyWaived;
+	}
+
+	public BigDecimal getPriPenaltyBal() {
+		return priPenaltyBal;
+	}
+
+	public void setPriPenaltyBal(BigDecimal priPenaltyBal) {
+		this.priPenaltyBal = priPenaltyBal;
+	}
+
+	public BigDecimal getPftPenaltyBal() {
+		return pftPenaltyBal;
+	}
+
+	public void setPftPenaltyBal(BigDecimal pftPenaltyBal) {
+		this.pftPenaltyBal = pftPenaltyBal;
+	}
+
+	public BigDecimal getPastDuePri() {
+		return pastDuePri;
+	}
+
+	public void setPastDuePri(BigDecimal pastDuePri) {
+		this.pastDuePri = pastDuePri;
+	}
+
+	public BigDecimal getPriPenaltyPaid() {
+		return priPenaltyPaid;
+	}
+
+	public void setPriPenaltyPaid(BigDecimal priPenaltyPaid) {
+		this.priPenaltyPaid = priPenaltyPaid;
+	}
+
+	public BigDecimal getActPriPenBal() {
+		return actPriPenBal;
+	}
+
+	public void setActPriPenBal(BigDecimal actPriPenBal) {
+		this.actPriPenBal = actPriPenBal;
+	}
+
+	public BigDecimal getActPftPenBal() {
+		return actPftPenBal;
+	}
+
+	public void setActPftPenBal(BigDecimal actPftPenBal) {
+		this.actPftPenBal = actPftPenBal;
 	}
 
 }

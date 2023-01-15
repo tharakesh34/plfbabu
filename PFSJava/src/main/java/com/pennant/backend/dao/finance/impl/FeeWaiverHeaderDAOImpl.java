@@ -27,6 +27,7 @@ package com.pennant.backend.dao.finance.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -255,4 +256,74 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 
 	}
 
+	@Override
+	public List<FeeWaiverHeader> getFeeWaiverHeaderByFinReference(long finID, String type) {
+		String sql = "Select FinID, FinReference, WaiverId, WaiverFullFillAmount, WaiverFullFillDate, AlwCondWaiver From FeeWaiverHeader Where FinId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql, new FeeWaiverHeaderRM(), finID);
+	}
+
+	@Override
+	public List<FeeWaiverHeader> fetchPromisedFeeWaivers(Date promissedDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, WaiverId, WaiverFullFillAmount, WaiverFullFillDate, AlwCondWaiver");
+		sql.append(" From FeeWaiverHeader");
+		sql.append(" Where WaiverFullFillDate = ? and Status = ? and AlwCondWaiver = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), new FeeWaiverHeaderRM(), JdbcUtil.getDate(promissedDate), "R",
+				1);
+	}
+
+	@Override
+	public void updateWaiverStatus(long waiverId, String status) {
+		String sql = "Update FeeWaiverHeader Set Status = ? Where WaiverId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		int recordCount = jdbcOperations.update(sql, status, waiverId);
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public Date getMaxFullFillDate(long finId) {
+		String sql = "Select max(WaiverFullFillDate) From FeeWaiverHeader Where FinID = ? and alwCondWaiver = ? and Status = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Date.class, finId, 1, "R");
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	private class FeeWaiverHeaderRM implements RowMapper<FeeWaiverHeader> {
+
+		private FeeWaiverHeaderRM() {
+			super();
+		}
+
+		@Override
+		public FeeWaiverHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FeeWaiverHeader fwh = new FeeWaiverHeader();
+
+			fwh.setFinID(rs.getLong("FinID"));
+			fwh.setFinReference(rs.getString("FinReference"));
+			fwh.setWaiverId(rs.getLong("WaiverId"));
+			fwh.setWaiverFullFillAmount(rs.getBigDecimal("WaiverFullFillAmount"));
+			fwh.setWaiverFullFillDate(rs.getTimestamp("WaiverFullFillDate"));
+			fwh.setStatus(rs.getString("Status"));
+			fwh.setAlwCondWaiver(rs.getBoolean("AlwCondWaiver"));
+
+			return fwh;
+		}
+	}
 }

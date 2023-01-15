@@ -227,5 +227,6 @@
 	<bean id="autoRefundProcessTasklet" class="com.pennant.backend.endofday.tasklet.AutoRefundProcessTasklet">
 		<property name="autoRefundProcess" ref="autoRefundProcess" />
 	</bean>
-
+	
+	<bean id="waiverCancellationTasklet" class="com.pennant.backend.endofday.tasklet.WaiverCancellationTasklet" />
 </beans>

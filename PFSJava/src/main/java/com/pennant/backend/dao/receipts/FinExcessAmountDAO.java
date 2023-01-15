@@ -105,4 +105,6 @@ public interface FinExcessAmountDAO {
 	BigDecimal getTotalExcessByRefAndType(long finID, String amountType);
 
 	List<FinExcessAmount> getExcessRcdList(long finID, Date activeNDate);
+
+	BigDecimal getSettlementAmountReceived(long finId);
 }

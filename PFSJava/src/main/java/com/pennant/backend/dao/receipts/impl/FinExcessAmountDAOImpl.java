@@ -1063,4 +1063,17 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setDate(++index, JdbcUtil.getDate(maxValueDate));
 		}, new ExcessAmountRowMapper());
 	}
+
+	@Override
+	public BigDecimal getSettlementAmountReceived(long finId) {
+		String sql = "Select sum(BalanceAmt) From FinExcessAmount Where FinID = ? and AmountType= ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finId, "S");
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
+	}
 }

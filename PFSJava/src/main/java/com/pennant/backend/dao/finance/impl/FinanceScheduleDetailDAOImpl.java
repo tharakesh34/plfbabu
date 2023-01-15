@@ -1305,4 +1305,39 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
+	@Override
+	public void updateSchdTotals(List<FinanceScheduleDetail> schdDtls) {
+		StringBuilder sql = new StringBuilder("Update FinScheduleDetails");
+		sql.append(" Set SchdPftPaid = SchdPftPaid + ?, SchPftPaid = SchPftPaid + ?");
+		sql.append(", SchdPriPaid = SchdPriPaid + ?, SchPriPaid = SchPriPaid + ?");
+		sql.append(", TDSPaid = TDSPaid + ?,  SchdPftWaiver = SchdPftWaiver + ?");
+		sql.append(" Where FinID = ? and SchDate = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceScheduleDetail curSchd = schdDtls.get(i);
+				int index = 0;
+
+				ps.setBigDecimal(++index, curSchd.getSchdPftPaid());
+				ps.setBoolean(++index, curSchd.isSchPftPaid());
+				ps.setBigDecimal(++index, curSchd.getSchdPriPaid());
+				ps.setBoolean(++index, curSchd.isSchPriPaid());
+				ps.setBigDecimal(++index, curSchd.getTDSPaid());
+				ps.setBigDecimal(++index, curSchd.getSchdPftWaiver());
+				ps.setLong(++index, curSchd.getFinID());
+				ps.setDate(++index, JdbcUtil.getDate(curSchd.getSchDate()));
+			}
+
+			@Override
+			public int getBatchSize() {
+				return schdDtls.size();
+			}
+
+		});
+	}
+
 }

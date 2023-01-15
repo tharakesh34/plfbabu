@@ -246,6 +246,12 @@
 
 		<step id="autoRefundExecution">
 			<tasklet ref="autoRefundProcessTasklet" />
+			<next on="*" to="waiverCancellation" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="waiverCancellation">
+			<tasklet ref="waiverCancellationTasklet" />
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>

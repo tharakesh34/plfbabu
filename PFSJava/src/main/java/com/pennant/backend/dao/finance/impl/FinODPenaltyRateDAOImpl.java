@@ -1,11 +1,14 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
+import com.pennant.backend.model.finance.FinLPIRateChange;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -222,4 +225,22 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		}
 	}
 
+	@Override
+	public List<FinLPIRateChange> getFinLPIRateChanges(long finID) {
+		String sql = "Select FinID, FinReference, Margin, Rate, EffectiveDate From FinLPIRateChange Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
+			FinLPIRateChange rc = new FinLPIRateChange();
+
+			rc.setFinID(rs.getLong("FinID"));
+			rc.setFinReference(rs.getString("FinReference"));
+			rc.setMargin(rs.getBigDecimal("Margin"));
+			rc.setRate(rs.getBigDecimal("Rate"));
+			rc.setEffectiveDate(rs.getTimestamp("EffectiveDate"));
+
+			return rc;
+		}, finID);
+	}
 }

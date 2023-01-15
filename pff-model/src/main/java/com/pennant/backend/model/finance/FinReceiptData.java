@@ -125,6 +125,10 @@ public class FinReceiptData implements Serializable {
 	private BigDecimal calculatedClosureAmt = BigDecimal.ZERO;
 	private RequestSource requestSource;
 
+	private boolean isOTSByEod = false;
+	private boolean isSettlement = false;
+	private boolean isSettlementGrace = false;
+
 	public FinReceiptData() {
 		super();
 	}
@@ -228,6 +232,9 @@ public class FinReceiptData implements Serializable {
 		entity.setExcessType(this.excessType);
 		entity.setCalculatedClosureAmt(this.calculatedClosureAmt);
 		entity.setRequestSource(this.requestSource);
+		entity.setOTSByEod(this.isOTSByEod);
+		entity.setSettlement(this.isSettlement);
+		entity.setSettlementGrace(this.isSettlementGrace);
 
 		return entity;
 	}
@@ -799,5 +806,49 @@ public class FinReceiptData implements Serializable {
 	public void setRequestSource(RequestSource requestSource) {
 		this.requestSource = requestSource;
 	}
+
+	public boolean isOTSByEod() {
+		return isOTSByEod;
+	}
+
+	public void setOTSByEod(boolean isOTSByEod) {
+		this.isOTSByEod = isOTSByEod;
+	}
+
+	public boolean isSettlement() {
+		return isSettlement;
+	}
+
+	public void setSettlement(boolean isSettlement) {
+		this.isSettlement = isSettlement;
+	}
+
+	public boolean isSettlementGrace() {
+		return isSettlementGrace;
+	}
+
+	public void setSettlementGrace(boolean isSettlementGrace) {
+		this.isSettlementGrace = isSettlementGrace;
+	}
+
+	/*
+	 * public FinRecoveryChargeConfig getRecoveryChargeConfig() { return recoveryChargeConfig; }
+	 * 
+	 * public void setRecoveryChargeConfig(FinRecoveryChargeConfig recoveryChargeConfig) { this.recoveryChargeConfig =
+	 * recoveryChargeConfig; }
+	 * 
+	 * public FinRecoveryCharges getRecoveryCharges() { return recoveryCharges; }
+	 * 
+	 * public void setRecoveryCharges(FinRecoveryCharges recoveryCharges) { this.recoveryCharges = recoveryCharges; }
+	 * 
+	 * public List<FinRecoveryCharges> getFrcList() { return frcList; }
+	 * 
+	 * public void setFrcList(List<FinRecoveryCharges> frcList) { this.frcList = frcList; }
+	 * 
+	 * public List<FinRecoveryDetails> getRecoveryDetails() { return recoveryDetails; }
+	 * 
+	 * public void setRecoveryDetails(List<FinRecoveryDetails> recoveryDetails) { this.recoveryDetails =
+	 * recoveryDetails; }
+	 */
 
 }
