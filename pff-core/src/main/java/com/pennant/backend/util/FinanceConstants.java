@@ -394,15 +394,6 @@ public class FinanceConstants {
 	public static final String FIXED_AMOUNT = "FA";
 	public static final String PERCENTAGE = "P";
 
-	public static final String FEE_IE = "FEE_IE";
-	public static final String FEE_IE_CGST = "FEE_IE_CGST";
-	public static final String FEE_IE_SGST = "FEE_IE_SGST";
-	public static final String FEE_IE_IGST = "FEE_IE_IGST";
-	public static final String FEE_IE_UGST = "FEE_IE_UGST";
-	public static final String FEE_IE_CESS = "FEE_IE_CESS";
-
-	public static final String FEE_WR = "FEE_WR";
-
 	public static final String OD_BILLING_DUE_PRINCIPLE = "ODBDP";
 	public static final String OD_BILLING_DUE_INTEREST = "ODBDI";
 	public static final String OD_BILLING_DUE_PRINCIPLE_AND_INTEREST = "ODBDPAI";

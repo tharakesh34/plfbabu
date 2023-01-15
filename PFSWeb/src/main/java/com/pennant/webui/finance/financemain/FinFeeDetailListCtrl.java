@@ -2972,7 +2972,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 	private Component getComponent(String id, FinFeeDetail fee) {
 		id = getComponentId(id, fee);
-		return this.listBoxFeeDetail.getFellow(id);
+		return this.listBoxFeeDetail.getFellowIfAny(id);
 	}
 
 	private Decimalbox getDecimalbox(String id, FinFeeDetail fee) {
