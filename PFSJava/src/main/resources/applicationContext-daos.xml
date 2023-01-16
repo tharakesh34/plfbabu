@@ -7135,6 +7135,8 @@
 
 	<!-- EOD -->
 	<bean id="customerQueuingDAO" class="com.pennant.eod.dao.impl.CustomerQueuingDAOImpl" parent="basicDao" />
+	
+	<bean id="eodCustomerQueueDAO" class="com.pennant.pff.eod.dao.impl.EODCustomerQueueDAOImpl"  parent="sequenceDao"/>
 
 	<!-- EOD -->
 	<bean id="customerGroupQueuingDAO" class="com.pennant.eod.dao.impl.CustomerGroupQueuingDAOImpl" parent="basicDao" />
@@ -13154,10 +13156,7 @@
 
 	<bean id="autoRefundService" class="com.pennant.pff.autorefund.serviceimpl.AutoRefundServiceImpl"/>
 	
-	<bean id="autoRefundProcess" class="com.pennanttech.pff.autorefund.AutoRefundProcess">
-		<property name="autoRefundService" ref="autoRefundService" />
-	<property name="refundBeneficiary" ref="refundBeneficiary" />
-	</bean>
+	<bean id="autoRefundProcess" class="com.pennanttech.pff.autorefund.AutoRefundProcess"/>
 	
 	<!--Refund beneficiary  -->
 	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary">
@@ -13216,7 +13215,9 @@
 		</property>
 	</bean>
 
-	<bean name="settlementServiceTarget" class="com.pennant.pff.settlement.service.impl.SettlementServiceImpl"/>
+	<bean name="settlementServiceTarget" class="com.pennant.pff.settlement.service.impl.SettlementServiceImpl">
+		<property name="receiptService" ref="receiptService" />
+	</bean>
 	
 	<bean id="feeWaiverCancelService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">

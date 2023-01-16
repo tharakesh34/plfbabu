@@ -20,18 +20,10 @@ import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public class RefundBeneficiary {
 	private static final Logger logger = LogManager.getLogger(RefundBeneficiary.class);
+
 	private MandateDAO mandateDAO;
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private ChequeDetailDAO chequeDetailDAO;
-
-	/**
-	 * Preparing Beneficiary details for the Refund process
-	 * 
-	 * @param finID
-	 * @param appDate
-	 * @param alwRefundByCheque
-	 * @return PaymentInstruction
-	 */
 
 	public PaymentInstruction fetchBeneficiaryForRefund(long finID, Date appDate, boolean alwRefundByCheque) {
 		logger.debug(Literal.ENTERING);
@@ -116,10 +108,12 @@ public class RefundBeneficiary {
 		return paymentInst;
 	}
 
+	@Autowired
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
 	}
 
+	@Autowired
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
 		this.presentmentDetailDAO = presentmentDetailDAO;
 	}

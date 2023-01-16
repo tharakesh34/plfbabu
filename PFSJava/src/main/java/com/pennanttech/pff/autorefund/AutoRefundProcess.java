@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.UnhandledException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.AutoRefundLoan;
@@ -32,11 +33,6 @@ public class AutoRefundProcess {
 	private AutoRefundService autoRefundService;
 	private RefundBeneficiary refundBeneficiary;
 
-	/**
-	 * Method for Auto Refund process Initiation on EOD execution
-	 * 
-	 * @param appDate
-	 */
 	public void startRefundProcess(Date appDate) {
 		logger.debug(Literal.ENTERING);
 		logger.debug("Auto Refund Process Initiating");
@@ -261,10 +257,12 @@ public class AutoRefundProcess {
 		return pd;
 	}
 
+	@Autowired
 	public void setAutoRefundService(AutoRefundService autoRefundService) {
 		this.autoRefundService = autoRefundService;
 	}
 
+	@Autowired
 	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
 		this.refundBeneficiary = refundBeneficiary;
 	}

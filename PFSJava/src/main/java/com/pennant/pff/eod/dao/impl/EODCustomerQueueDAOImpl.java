@@ -19,7 +19,7 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 	public int prepareQueue(BatchJobQueue jobQueue) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into Eod_Customer_Queue (ID, CutsID, CoreBankID, LoanExist)");
-		sql.append(" Select row_number() over(order by CustCoreBank) ID, CustID, CustCoreBank, LoanExist, From (");
+		sql.append(" Select row_number() over(order by CustCoreBank) ID, CustID, CustCoreBank, LoanExist From (");
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 1 LoanExist");
 		sql.append(" From  FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
