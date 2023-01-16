@@ -19,10 +19,6 @@
 
 	<bean id="microEODMonitorTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEODMonitor" />
 
-	<bean id="microEODDecider" class="com.pennant.backend.endofday.limitdecider.MicroEODDecider" />
-
-	<bean id="completeEODDecider" class="com.pennant.backend.endofday.limitdecider.CompleteEOD" />
-
 	<bean id="snapShotPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation" />
 
 	<!-- prepareCustomerGroupQueue -->

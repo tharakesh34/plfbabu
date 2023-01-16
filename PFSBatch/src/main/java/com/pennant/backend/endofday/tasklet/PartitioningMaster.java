@@ -47,14 +47,15 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
-import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
+import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class PartitioningMaster implements Partitioner {
 	private Logger logger = LogManager.getLogger(PartitioningMaster.class);
 
-	private CustomerQueuingDAO customerQueuingDAO;
+	private BatchJobQueueDAO eodCustomerQueueDAO;
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
@@ -78,9 +79,9 @@ public class PartitioningMaster implements Partitioner {
 		/* Configured thread count */
 
 		/* Update Running Count of Loans */
-		customerQueuingDAO.updateFinRunningCount();
+		eodCustomerQueueDAO.handleFailures(new BatchJobQueue());
 
-		long loanCount = customerQueuingDAO.getLoanCountByProgress();
+		long loanCount = eodCustomerQueueDAO.getQueueCount(new BatchJobQueue());
 		long totalCustomers = 0;
 
 		if (loanCount != 0) {
@@ -102,7 +103,7 @@ public class PartitioningMaster implements Partitioner {
 				}
 
 				to = to + noOfRows;
-				customerCount = customerQueuingDAO.updateThreadIDByLoanCount(valueDate, from, to, i);
+				customerCount = eodCustomerQueueDAO.updateThreadID(from, to, i);
 				from = to;
 
 				totalCustomers = totalCustomers + customerCount;
@@ -138,8 +139,8 @@ public class PartitioningMaster implements Partitioner {
 	}
 
 	@Autowired
-	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
-		this.customerQueuingDAO = customerQueuingDAO;
+	public void setEodCustomerQueueDAO(BatchJobQueueDAO eodCustomerQueueDAO) {
+		this.eodCustomerQueueDAO = eodCustomerQueueDAO;
 	}
 
 }

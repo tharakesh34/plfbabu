@@ -46,7 +46,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.BatchUtil;
-import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
+import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
@@ -54,7 +55,7 @@ import com.pennanttech.pff.eod.step.StepUtil;
 public class PrepareCustomerQueue implements Tasklet {
 	private Logger logger = LogManager.getLogger(PrepareCustomerQueue.class);
 
-	private CustomerQueuingDAO customerQueuingDAO;
+	private BatchJobQueueDAO eodCustomerQueueDAO;
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 
 	public PrepareCustomerQueue() {
@@ -83,12 +84,14 @@ public class PrepareCustomerQueue implements Tasklet {
 
 		/* Clear CustomerQueueing */
 		logger.info("Deleting customer queueing from previous run...");
-		this.customerQueuingDAO.delete();
+		this.eodCustomerQueueDAO.clearQueue();
 		logger.info("Preparing customer Queueing for current run...");
-		int count = customerQueuingDAO.prepareCustomerQueueByLoanCount(valueDate);
+
+		BatchJobQueue jobQueue = new BatchJobQueue();
+		int count = eodCustomerQueueDAO.prepareQueue(jobQueue);
 
 		/* Update the LimitRebuild flag as true, if the Limit Structure has been changed */
-		customerQueuingDAO.updateLimitRebuild();
+		eodCustomerQueueDAO.updateQueue(jobQueue);
 
 		StepUtil.PREPARE_CUSTOMER_QUEUE.setTotalRecords(count);
 		StepUtil.PREPARE_CUSTOMER_QUEUE.setProcessedRecords(count);
@@ -100,8 +103,8 @@ public class PrepareCustomerQueue implements Tasklet {
 	}
 
 	@Autowired
-	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
-		this.customerQueuingDAO = customerQueuingDAO;
+	public void setEodCustomerQueueDAO(BatchJobQueueDAO eodCustomerQueueDAO) {
+		this.eodCustomerQueueDAO = eodCustomerQueueDAO;
 	}
 
 	@Autowired

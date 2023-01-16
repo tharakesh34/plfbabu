@@ -817,4 +817,22 @@
 			<column name="Status" type="char(1)" />
 		</addColumn>
 	</changeSet> 
+	
+	<changeSet id="ST#712_01" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update AdtCustomers set CustCoreBank = -1*CustID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#712_02" author="murthy.y">
+		<addNotNullConstraint tableName="AdtCustomers" columnName="CustCoreBank" />
+	</changeSet>
+
+	<changeSet id="ST#712_03" author="murthy.y">
+		<createIndex tableName="AdtCustomers" indexName="idx_Customers_AdtCustCoreBank">
+			<column name="CustCoreBank" type="varchar(50)" />
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
