@@ -14,6 +14,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
@@ -43,6 +44,7 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 	private FinanceTypeDAO financeTypeDAO;
 	private DisbursementController disbursementController;
 	private FinanceMainDAO financeMainDAO;
+	private FinTypePartnerBankDAO finTypePartnerBankDAO;
 
 	@Override
 	public DisbursementRequestDetail getDisbursementInstructions(FinAdvancePayments fap) throws ServiceException {
@@ -131,6 +133,12 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 			valueParm[0] = "PartnerBankCode: " + partnerbankCode + " with";
 			valueParm[1] = "EntityCode: " + entityCode;
 			return APIErrorHandlerService.getFailedStatus("41002", valueParm);
+		}
+
+		long partnerBankID = partnerBankDAO.getPartnerBankID(partnerbankCode);
+		if (partnerBankID > 0 && finTypePartnerBankDAO.getPartnerBankCount(finType, finAdvancePayments.getPaymentType(),
+				finAdvancePayments.getChannel(), partnerBankID) <= 0) {
+			return APIErrorHandlerService.getFailedStatus("90263");
 		}
 
 		/* Validate Disbursement Type */
@@ -538,4 +546,8 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	@Autowired
+	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
+		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
+	}
 }
