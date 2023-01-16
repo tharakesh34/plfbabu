@@ -7,6 +7,13 @@
 	<version>6.1.16</version>
 	<packaging>pom</packaging>
 
+	<licenses>
+		<license>
+			<name>Pennant Technologies</name>
+			<url>https://www.pennanttech.com/</url>
+		</license>
+	</licenses>
+
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
 		<client.code>core</client.code>
@@ -768,7 +775,19 @@
 					<generateBackupPoms>false</generateBackupPoms>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>2.0.0</version>
+				<executions>
+					<execution>
+						<id>download-licenses</id>
+						<goals>
+							<goal>download-licenses</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
