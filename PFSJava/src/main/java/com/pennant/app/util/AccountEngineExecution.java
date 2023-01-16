@@ -578,27 +578,30 @@ public class AccountEngineExecution implements Serializable {
 		txnEntry.setGlCode(txnEntry.getGlCode());
 		txnEntry.setAccount(txnEntry.getAccount());
 
-		Rule rule = null;
+		// Rule rule = null;
 		String accountSubHeadRule = subHeadRule;
 		String moduleSubhead = RuleConstants.MODULE_SUBHEAD;
 
 		dataMap.put("acType", txnEntry.getAccountType());
-		if (aeEvent.isEOD()) {
-			rule = AccountingConfigCache.getCacheRule(accountSubHeadRule, moduleSubhead, moduleSubhead);
-		} else {
-			rule = AccountingConfigCache.getRule(accountSubHeadRule, moduleSubhead, moduleSubhead);
-		}
+
+		Rule rule = AccountingConfigCache.getRule(accountSubHeadRule, moduleSubhead, moduleSubhead);
+		/*
+		 * if (aeEvent.isEOD()) { rule = AccountingConfigCache.getCacheRule(accountSubHeadRule, moduleSubhead,
+		 * moduleSubhead); } else { rule = AccountingConfigCache.getRule(accountSubHeadRule, moduleSubhead,
+		 * moduleSubhead); }
+		 */
 
 		if (rule != null) {
 			String sqlRule = rule.getSQLRule();
 			String ccy = aeEvent.getCcy();
 			txnEntry.setAccount((String) RuleExecutionUtil.executeRule(sqlRule, dataMap, ccy, RuleReturnType.STRING));
 
-			if (aeEvent.isEOD()) {
-				txnEntry.setGlCode(AccountingConfigCache.getCacheAccountMapping(txnEntry.getAccount()));
-			} else {
-				txnEntry.setGlCode(AccountingConfigCache.getAccountMapping(txnEntry.getAccount()));
-			}
+			txnEntry.setGlCode(AccountingConfigCache.getCacheAccountMapping(txnEntry.getAccount()));
+			/*
+			 * if (aeEvent.isEOD()) {
+			 * txnEntry.setGlCode(AccountingConfigCache.getCacheAccountMapping(txnEntry.getAccount())); } else {
+			 * txnEntry.setGlCode(AccountingConfigCache.getAccountMapping(txnEntry.getAccount())); }
+			 */
 		}
 	}
 
