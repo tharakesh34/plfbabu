@@ -39,6 +39,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
@@ -1072,6 +1073,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				for (FinanceScheduleDetail schedule : schedules) {
 					date = false;
 
+					// cheque.setChequeDate(SysParamUtil.getAppDate());
 					if (DateUtil.compare(schedule.getSchDate(), cheque.getChequeDate()) == 0) {
 						date = true;
 						cheque.seteMIRefNo(schedule.getInstNumber());
@@ -1426,4 +1428,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		this.customerDocumentDAO = customerDocumentDAO;
 	}
 
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
 }

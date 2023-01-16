@@ -512,11 +512,16 @@ public class FileUploadList extends Window implements Serializable {
 		this.fileName.setValueType(DataType.LONG);
 		this.fileName.setValidateColumns(new String[] { "Id" });
 
-		Filter[] filters = new Filter[3];
-		filters[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
-		filters[1] = new Filter("CreatedOn", this.fromDate.getValue(), Filter.OP_GREATER_OR_EQUAL);
-		filters[2] = new Filter("CreatedOn", this.toDate.getValue(), Filter.OP_LESS_OR_EQUAL);
-		this.fileName.setFilters(filters);
+		if ("M".equals(this.stage)) {
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
+			this.fileName.setFilters(filters);
+		} else {
+			Filter[] filters = new Filter[2];
+			filters[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
+			filters[1] = new Filter("NextRoleCode", this.workflowRoles, Filter.OP_IN);
+			this.fileName.setFilters(filters);
+		}
 
 		removeSpace(this.fileName);
 

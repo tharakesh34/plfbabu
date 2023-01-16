@@ -223,7 +223,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 				ps.setString(++index, entityCode);
 			}
 
-			if (id != null && id <= 0) {
+			if (id != null && id > 0) {
 				ps.setLong(++index, id);
 			}
 
@@ -270,7 +270,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			whereClause.append(" and ");
 			whereClause.append("(NextRoleCode in (");
 			whereClause.append(JdbcUtil.getInCondition(roleCodes));
-			whereClause.append("))"); // or NextRoleCode is null
+			whereClause.append("))");
 		}
 
 		if (StringUtils.isNotEmpty(entityCode)) {
@@ -278,7 +278,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			whereClause.append("EntityCode = ?");
 		}
 
-		if (id != null && id <= 0) {
+		if (id != null && id > 0) {
 			whereClause.append(" and ");
 			whereClause.append(" ID = ?");
 		}
