@@ -50,7 +50,7 @@ public class SettlementListCtrl extends GFCBaseListCtrl<FinSettlementHeader> {
 	protected ExtendedCombobox finReference;
 	protected ExtendedCombobox type;
 	protected Combobox status;
-	protected Listbox soFinReference;
+	protected Listbox sofinReference;
 	protected Listbox soType;
 	protected Listbox soStatus;
 
@@ -125,7 +125,7 @@ public class SettlementListCtrl extends GFCBaseListCtrl<FinSettlementHeader> {
 		registerButton(btnSearch);
 
 		registerField("ID");
-		registerField("finReference", lhFinReference, SortOrder.NONE, finReference, soFinReference, Operators.STRING);
+		registerField("finReference", lhFinReference, SortOrder.NONE, finReference, sofinReference, Operators.STRING);
 		registerField("settlementType", lhType, SortOrder.NONE, type, soType, Operators.STRING);
 		fillComboBox(this.status, "", PennantStaticListUtil.getEnquirySettlementStatus(), "");
 		registerField("settlementStatus", lhStatus, SortOrder.NONE, status, soStatus, Operators.STRING);

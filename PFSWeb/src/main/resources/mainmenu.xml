@@ -1231,7 +1231,28 @@
 				zulNavigation="/WEB-INF/pages/Finance/UploadFeeWaiver/FeeWaiverUploadList.zul?module=FeeWaiverApprover"
 				rightName="menuItem_FeeWaiverUpload" />
 		</menu>
+
+		<!-- Refunds -->
+		<menu id="menu_Category_HoldRefund">
+			<menuItem id="menu_Item_HoldRefundUpload_Maker"
+				zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=M"
+				rightName="menu_Item_HoldRefundUpload_Maker" />
+			<menuItem id="menu_Item_HoldRefundUpload_Approver"
+				zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=A"
+				rightName="menu_Item_HoldRefundUpload_Approver" />
+		</menu>
+
+		<menu id="menu_Category_ManualRefunds">
+			<menuItem id="menu_Item_ManualRefunds_Maker"
+				zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=M"
+				rightName="menu_Item_ManualRefUpload_Maker" />
+			<menuItem id="menu_Item_ManualRefunds_Approver"
+				zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=A"
+				rightName="menu_Item_ManualRefUpload_Approver" />
+		</menu>
+
 	</menu>
+
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">
 		<menuItem id="menu_Item_InsuranceUpload" zulNavigation="/WEB-INF/pages/Insurance/ImportInsuranceDetails.zul"
@@ -2518,26 +2539,6 @@
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
-
-	<menu id="menu_Category_HoldRefund">
-		<menuItem id="menu_Item_HoldRefundUpload_Maker"
-			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=M"
-			rightName="menu_Item_HoldRefundUpload_Maker" />
-		<menuItem id="menu_Item_HoldRefundUpload_Approver"
-			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=A"
-			rightName="menu_Item_HoldRefundUpload_Approver" />
-	</menu>
-
-	<menu id="menu_Category_ManualRefunds">
-		<menuItem id="menu_Item_ManualRefunds_Maker"
-			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=M"
-			rightName="menu_Item_ManualRefUpload_Maker" />
-		<menuItem id="menu_Item_ManualRefunds_Approver"
-			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=A"
-			rightName="menu_Item_ManualRefUpload_Approver" />
-	</menu>
-
-
 
 	<menu id="menu_Category_ChequeUploads">
 		<menuItem id="menu_Item_ChequesUpload_Maker"
