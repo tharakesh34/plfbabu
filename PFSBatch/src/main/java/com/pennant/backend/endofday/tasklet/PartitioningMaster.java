@@ -43,12 +43,14 @@ import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.script.ScriptEngine;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class PartitioningMaster implements Partitioner {
@@ -133,6 +135,8 @@ public class PartitioningMaster implements Partitioner {
 		status.setTotalRecords(customersPerThread);
 		execution.put(status.getName(), status);
 		execution.put(EodConstants.THREAD, String.valueOf(threadID));
+		RuleExecutionUtil.EOD_SCRIPT_ENGINE_MAP.put("PLF_EOD_THREAD_".concat(String.valueOf(threadID)),
+				new ScriptEngine(true));
 
 		return execution;
 	}
