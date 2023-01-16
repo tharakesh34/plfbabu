@@ -7087,7 +7087,7 @@
 
 	<changeSet id="ST#822.8.2" author="goutham.ch" dbms="postgresql, oracle">
 		<addDefaultValue columnName="SECURITYMANDATE" tableName="MANDATE_REQUESTS" defaultValue="0" />
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="PSD#214482_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
