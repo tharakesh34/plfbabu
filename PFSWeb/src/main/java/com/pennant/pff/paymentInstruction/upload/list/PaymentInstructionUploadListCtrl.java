@@ -1,6 +1,7 @@
 package com.pennant.pff.paymentInstruction.upload.list;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Window;
 
 import com.pennant.pff.upload.list.AUploadListCtrl;
@@ -11,15 +12,21 @@ public class PaymentInstructionUploadListCtrl extends AUploadListCtrl {
 
 	private static final long serialVersionUID = -2963600927230407346L;
 
-	protected Window uploadListWindow;
+	protected Window window;
 
-	protected PaymentInstructionUploadListCtrl(@Autowired UploadService  paymentInstructionUploadService) {
+	protected PaymentInstructionUploadListCtrl(@Autowired UploadService paymentInstructionUploadService) {
 		super(paymentInstructionUploadService, UploadTypes.PAYINS_REFUND);
+	}
+
+	@Override
+	public void doAfterCompose(Component comp) throws Exception {
+		this.window = (Window) comp;
+		super.doAfterCompose(comp);
 	}
 
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "PaymentInstructionUploadHeader";
-		super.onCreate(getArgument("stage"), this.uploadListWindow);
+		super.onCreate(getArgument("stage"), this.window);
 	}
 }
