@@ -1342,6 +1342,40 @@ public class LimitManagement {
 		return blockAmount;
 	}
 
+	public void processLoanRepay(FinanceMain finMain, Customer customer, BigDecimal transAmount, String prodCategory) {
+		logger.debug(Literal.ENTERING);
+
+		Date maturityDate = finMain.getMaturityDate();
+
+		EventProperties eventProperties = finMain.getEventProperties();
+
+		Date valueDate = null;
+		if (eventProperties.isParameterLoaded()) {
+			valueDate = eventProperties.getAppDate();
+		} else {
+			valueDate = SysParamUtil.getAppDate();
+		}
+
+		String tansType = LimitConstants.PRINPAY;
+		if (prodCategory.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+			tansType = LimitConstants.REPAY;
+		}
+
+		LimitHeader limitHeader = new LimitHeader();
+		limitHeader.setLoanMaturityDate(maturityDate);
+		limitHeader.setTranAmt(transAmount);
+		limitHeader.setReserveTranAmt(BigDecimal.ZERO);
+		limitHeader.setDisbSeq(0);
+		limitHeader.setLoanMaturityDate(maturityDate);
+		limitHeader.setValueDate(valueDate);
+		limitHeader.setTranType(tansType);
+		limitHeader.setOverride(false);
+		limitHeader.setValidateOnly(false);
+
+		processLimits(limitHeader, customer, finMain, null, LOAN_REPAY);
+		logger.debug(Literal.LEAVING);
+	}
+
 	public static boolean isRevolving(String limitLine, LimitDetails limitDetail, List<LimitDetails> limitDetails) {
 		if (StringUtils.equals(limitDetail.getLimitLine(), limitLine) && limitDetail.isRevolving()) {
 			return true;

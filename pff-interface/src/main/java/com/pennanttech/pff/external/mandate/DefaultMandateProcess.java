@@ -714,6 +714,14 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			}
 			remarks.append("Account No.");
 		}
+
+		// Added for HDFC
+		if (!StringUtils.equals("N", respMandate.getStatus()) && StringUtils.isEmpty(respMandate.getReason())) {
+			if (remarks.length() > 0) {
+				remarks.append(", ");
+			}
+			remarks.append("Remarks should be mandatory.");
+		}
 	}
 
 	protected void updateMandates(Mandate respmandate) {

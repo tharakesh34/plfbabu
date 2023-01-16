@@ -138,4 +138,8 @@ public interface FinanceScheduleDetailDAO {
 	void updateDueTaxDetail(long oldInvoiceId);
 
 	List<FinanceScheduleDetail> getFinSchdDetailsBtwDates(String finReference, Date fromdate, Date toDate);
+
+	void updateSchdTotals(List<FinanceScheduleDetail> schdDtls);
+	
+	Date getNextSchdDate(long finID, Date appDate);
 }

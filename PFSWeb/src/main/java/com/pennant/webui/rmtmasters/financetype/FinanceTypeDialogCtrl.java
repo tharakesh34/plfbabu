@@ -6400,6 +6400,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.maxAutoRefund.setSclass(PennantConstants.mandateSclass);
 			this.maxAutoRefund.setSclass(PennantConstants.mandateSclass);
 		} else {
+			this.rowAutoRefundLimits.setVisible(false);
 			this.minAutoRefund.setValue(BigDecimal.ZERO);
 			this.maxAutoRefund.setValue(BigDecimal.ZERO);
 			this.minAutoRefund.setDisabled(true);

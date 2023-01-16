@@ -4,13 +4,17 @@ import com.pennant.pff.batch.job.model.BatchJobQueue;
 
 public interface BatchJobQueueDAO {
 
-	int getQueueCount();
-
 	int prepareQueue(BatchJobQueue jobQueue);
+
+	void updateQueue(BatchJobQueue jobQueue);
 
 	void handleFailures(BatchJobQueue jobQueue);
 
+	int getQueueCount();
+
 	int getQueueCount(BatchJobQueue jobQueue);
+
+	int updateThreadID(long from, long to, int i);
 
 	void updateProgress(BatchJobQueue jobQueue);
 

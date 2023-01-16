@@ -85,6 +85,9 @@ public class ExtractionService {
 	private int prepare(PresentmentHeader ph) {
 		logger.debug(Literal.ENTERING);
 
+		logger.debug("Extraction Started...");
+		logger.info("Extraction Started...");
+
 		Date appDate = SysParamUtil.getAppDate();
 		long batchID = presentmentDAO.createBatch("EXTRACTOIN", 0);
 
@@ -97,25 +100,40 @@ public class ExtractionService {
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
 		try {
+			logger.debug("Preparation started....");
+			logger.info("Preparation started....");
+
 			count = presentmentEngine.preparation(ph);
 			transactionManager.commit(transactionStatus);
 		} catch (DuplicateKeyException e) {
 			transactionManager.rollback(transactionStatus);
+			logger.debug(
+					"DuplicateKeyException Presentment extraction failed Transaction rolled back" + e.getMessage());
+			logger.info("DuplicateKeyException Presentment extraction failed Transaction rolled back" + e.getMessage());
 			throw new ConcurrencyException();
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);
+			logger.debug("Exception Presentment extraction failed Transaction rolled back" + e.getMessage());
+			logger.info("Exception Presentment extraction failed Transaction rolled back" + e.getMessage());
 			throw new AppException("Presentment extraction failed", e);
 		}
+
+		logger.debug("Preparation completed with count :" + count);
+		logger.info("Preparation completed with count :" + count);
 
 		if (count > 0) {
 			try {
 				presentmentDAO.updateTotalRecords(count, batchID);
 				start(ph);
 			} catch (Exception e) {
+				logger.debug("Exception found in Total Records Update..." + e.getMessage());
+				logger.info("Exception found in Total Records Update..." + e.getMessage());
 				presentmentDAO.clearQueue(batchID);
 				throw new AppException("Presentment extraction failed", e);
 			}
 		} else {
+			logger.debug("Deleting the batch records....");
+			logger.info("Deleting the batch records....");
 			presentmentDAO.deleteBatch(batchID);
 		}
 
@@ -154,11 +172,19 @@ public class ExtractionService {
 
 		JobParameters jobParameters = builder.toJobParameters();
 
+		logger.debug("Extraction job started....");
+		logger.info("Extraction job started....");
+
 		try {
 			extractionJob.start(jobParameters);
 		} catch (Exception e) {
+			logger.debug("Exception found in Extraction..." + e.getMessage());
+			logger.info("Exception found in Extraction..." + e.getMessage());
 			throw e;
 		}
+
+		logger.debug("Extraction job completed....");
+		logger.info("Extraction job completed....");
 
 		logger.debug(Literal.LEAVING);
 	}

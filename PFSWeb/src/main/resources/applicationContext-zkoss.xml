@@ -2787,6 +2787,7 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="feeTypeService" ref="feeTypeService" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="settlementService" ref="settlementService" />
 	</bean>
 
 	<bean id="chequePrintingDialogCtrl" class="com.pennant.webui.finance.enquiry.ChequePrintingDialogCtrl"
@@ -6140,4 +6141,23 @@
 	
 	<bean id="holdRefundUploadList" class="com.pennant.pff.holdrefund.upload.list.HoldRefundUploadListCtrl"
 	parent="uploadList" />
+
+	<bean id="settlementTypeDetailListCtrl" class="com.pennant.pff.settlement.web.SettlementTypeDetailListCtrl"
+	parent="basisListCtrl" scope="prototype" />
+
+	<bean id="settlementTypeDetailDialogCtrl" class="com.pennant.pff.settlement.web.SettlementTypeDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
+
+	<bean id="settlementListCtrl" class="com.pennant.pff.settlement.web.SettlementListCtrl" parent="basisListCtrl"
+		scope="prototype" />
+
+	<bean id="settlementDialogCtrl" class="com.pennant.pff.settlement.web.SettlementDialogCtrl" parent="basisCtrl"
+		scope="prototype" />
+
+	<bean id="settlementScheduleInlineEditCtrl"
+		class="com.pennant.pff.settlement.web.SettlementScheduleInlineEditCtrl" parent="basisCtrl" scope="prototype" />
+
+	<bean id="selectSettlementDialogCtrl" class="com.pennant.pff.settlement.web.SelectSettlementDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
+	
 </beans>

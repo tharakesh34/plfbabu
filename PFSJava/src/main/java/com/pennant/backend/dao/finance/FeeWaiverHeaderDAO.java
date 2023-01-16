@@ -25,6 +25,7 @@
 package com.pennant.backend.dao.finance;
 
 import java.util.Date;
+import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
@@ -38,5 +39,13 @@ public interface FeeWaiverHeaderDAO extends BasicCrudDao<FeeWaiverHeader> {
 	Date getLastWaiverDate(long finID, Date appDate, Date receiptDate);
 
 	boolean isFeeWaiverInProcess(long finID);
+
+	List<FeeWaiverHeader> getFeeWaiverHeaderByFinReference(long finID, String type);
+
+	List<FeeWaiverHeader> fetchPromisedFeeWaivers(Date promissedDate);
+
+	void updateWaiverStatus(long waiverId, String status);
+
+	Date getMaxFullFillDate(long finId);
 
 }

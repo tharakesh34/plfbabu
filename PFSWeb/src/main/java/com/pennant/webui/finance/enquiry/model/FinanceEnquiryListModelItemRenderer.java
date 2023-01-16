@@ -67,11 +67,12 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 				if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
 					curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
 							.add(enquiry.getTotalCpz()).subtract(enquiry.getFinRepaymentAmount())
-							.subtract(enquiry.getSvAmount());
+							.subtract(enquiry.getSvAmount()).subtract(enquiry.getAdvanceEMI());
 				} else {
 					curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
 							.add(enquiry.getTotalCpz()).subtract(enquiry.getDownPayment())
-							.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
+							.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount())
+							.subtract(enquiry.getAdvanceEMI());
 				}
 			}
 			lc = new Listcell(CurrencyUtil.format(curFinAmountValue, CurrencyUtil.getFormat(enquiry.getFinCcy())));

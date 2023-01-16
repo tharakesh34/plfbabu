@@ -220,7 +220,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 			registerButton(button_FeeRefundHeaderList_NewFeeRefundHeader,
 					"button_FeeRefundHeaderList_NewFeeRefundHeader", false);
 		}
-		registerField("feeRefundId");
+		registerField("Id");
 		registerField("FinID");
 		registerField("CustCif");
 		registerField("custName", listheader_FeeRefundCustName, SortOrder.NONE, custName,

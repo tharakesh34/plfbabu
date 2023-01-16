@@ -140,4 +140,6 @@ public interface ReceiptService {
 	ReceiptDTO prepareReceiptDTO(FinReceiptData rd);
 
 	List<ReceiptAllocationDetail> getReceiptAllocDetail(long finID, String allocType);
+
+	FinReceiptData doApproveReceipt(FinReceiptData rd) throws Exception;
 }

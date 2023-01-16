@@ -7029,4 +7029,159 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="ST#822.1" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="MANDATE_DATE" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.2" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="NAME_OF_COMPANY" type="VARCHAR(500)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.3" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="ACTION" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.4" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="AMOUNT" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.5" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="TELEPHONE_NO" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.6" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="IMAGE_NAME" type="VARCHAR(500)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.7" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="CAT_CODE" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.8" author="goutham.ch">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="SECURITYMANDATE" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#822.8.1" author="goutham.ch" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE MANDATE_REQUESTS ADD CONSTRAINT DF_M_R_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#822.8.2" author="goutham.ch" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SECURITYMANDATE" tableName="MANDATE_REQUESTS" defaultValue="0" />
+	</changeSet> -->
+	
+	<changeSet id="PSD#214482_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_view');
+		 	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#214482" author="Gireesh.G">
+		<createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
+		  <![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.CALTERMS NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.GRCPERIODENDDATE,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.ALLOWGRCPERIOD,
+					T1.DOWNPAYMENT,
+					T1.MIGRATEDFINANCE,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.FINCURRASSETVALUE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.CLOSINGSTATUS,
+					T1.GRACETERMS,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.FINSTATUS ,
+					T1.MANDATEID,
+					T1.FINREPAYMETHOD,
+					T1.FINASSETVALUE,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.SVAMOUNT,
+					T1.CBAMOUNT,
+					(T1.FINCURRASSETVALUE+ T1.FEECHARGEAMT) FINANCINGAMOUNT,
+					(T1.FINCURRASSETVALUE- T1.FINREPAYMENTAMOUNT+ T1.FEECHARGEAMT) CURFINAMOUNT,
+					T2.FINTYPEDESC LOVDESCFINTYPENAME,
+					T2.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+					T2.FINDIVISION LOVDESCFINDIVISION,
+					T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T2.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.CUSTCIF LOVDESCCUSTCIF,
+					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T4.BRANCHDESC LOVDESCFINBRANCHNAME,
+					T5.CUSTTYPECTG,
+					COALESCE(T9.NOINST,0) NOINST,
+					T1.TOTALCPZ,
+					T1.FINOCRREQUIRED,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.RECORDSTATUS,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE,
+					T1.SUBVENTIONFROM,
+					T1.MANUFACTURERDEALERID,
+					T10.DEALERNAME MANUFACTURERDEALERNAME,
+					T10.CODE MANUFACTURERDEALERCODE,
+					T1.ESCROW,
+					T1.CUSTBANKID,
+					CB.ACCOUNTNUMBER CUSTACCTNUMBER,
+					CB.ACCOUNTHOLDERNAME CUSTACCTHOLDERNAME,
+					T1.ADVANCEEMI
+				FROM FINANCEMAIN T1
+				INNER JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				INNER JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
+				INNER JOIN RMTBRANCHES T4 ON T1.FINBRANCH = T4.BRANCHCODE
+				INNER JOIN RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
+				LEFT JOIN FINPFTDETAILS T9 ON T9.FINID = T1.FINID
+				LEFT JOIN AMTVEHICLEDEALER T10 ON T1.MANUFACTURERDEALERID = T10.DEALERID
+				LEFT JOIN CUSTOMERBANKINFO CB ON T1.CUSTBANKID = CB.BANKID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#214482_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financeenquiry_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

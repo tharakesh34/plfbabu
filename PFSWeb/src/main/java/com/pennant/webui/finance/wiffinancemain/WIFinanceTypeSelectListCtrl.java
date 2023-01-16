@@ -242,7 +242,6 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 		filters = new Filter[1];
 		filters[0] = new Filter("ProductCategory", "ODFCLITY", Filter.OP_NOT_EQUAL);
 		this.finType.setFilters(filters);
-		this.lovDescCustCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.eidNumber.setMaxlength(LengthConstants.LEN_EID);
 
 		logger.debug("Leaving");

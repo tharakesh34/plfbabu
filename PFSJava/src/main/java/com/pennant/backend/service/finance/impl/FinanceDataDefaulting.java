@@ -99,6 +99,7 @@ public class FinanceDataDefaulting {
 			}
 
 			fm.setLovDescCustCIF(custCIF);
+			fm.setLovDescCustCoreBank(customer.getCustCoreBank());
 			fm.setCustID(customer.getCustID());
 			fd.getCustomerDetails().setCustomer(customer);
 		}
@@ -207,6 +208,11 @@ public class FinanceDataDefaulting {
 		if (StringUtils.isBlank(finCcy)) {
 			finCcy = SysParamUtil.getAppCurrency();
 			fm.setFinCcy(finCcy);
+		}
+
+		if (StringUtils.isEmpty(fm.getAdvStage()) && StringUtils.equals(fm.getAdvType(), financeType.getAdvType())
+				&& fm.getAdvTerms() > 0) {
+			fm.setAdvStage(financeType.getAdvStage());
 		}
 
 		if (StringUtils.isNotBlank(promotionCode)) {

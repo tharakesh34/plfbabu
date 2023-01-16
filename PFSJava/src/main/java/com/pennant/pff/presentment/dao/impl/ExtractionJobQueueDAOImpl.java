@@ -45,6 +45,11 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 		}
 	}
 
+	@Override
+	public void updateQueue(BatchJobQueue jobQueue) {
+		//
+	}
+
 	private int prepareExtractionQueue(BatchJobQueue jobQueue) {
 		StringBuilder sql = new StringBuilder("Insert into PRMNT_EXTRACTION_QUEUE (Id, ReferenceId, BatchID)");
 		sql.append(" Select row_number() over(order by ID) ID, ID as ReferenceId, BatchID From");
@@ -229,5 +234,11 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 			return null;
 		}
 
+	}
+
+	@Override
+	public int updateThreadID(long from, long to, int i) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

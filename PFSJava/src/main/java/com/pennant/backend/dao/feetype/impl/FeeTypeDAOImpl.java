@@ -57,13 +57,14 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder sql = new StringBuilder("Insert into FeeTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" (FeeTypeID, FeeTypeCode, FeeTypeDesc, ManualAdvice, AdviseType, AccountSetId, Active");
-		sql.append(", TaxComponent, TaxApplicable, Refundable, FeeIncomeOrExpense, HostFeeTypeCode");
-		sql.append(", AmortzReq, DueAccReq, DueAccSet, TdsReq, PayableLinkTo, RecvFeeTypeId, AllowAutoRefund");
+		sql.append(", TaxComponent, TaxApplicable, Refundable, IncomeOrExpenseAcType, WaiverOrRefundAcType");
+		sql.append(", HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet, TdsReq, PayableLinkTo, RecvFeeTypeId");
+		sql.append(", AllowAutoRefund");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(")");
 		sql.append(" Values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		if (ft.getId() == Long.MIN_VALUE) {
@@ -86,7 +87,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				ps.setString(index++, ft.getTaxComponent());
 				ps.setBoolean(index++, ft.isTaxApplicable());
 				ps.setBoolean(index++, ft.isRefundable());
-				ps.setString(index++, ft.getFeeIncomeOrExpense());
+				ps.setString(index++, ft.getIncomeOrExpenseAcType());
+				ps.setString(index++, ft.getWaiverOrRefundAcType());
 				ps.setString(index++, ft.getHostFeeTypeCode());
 				ps.setBoolean(index++, ft.isAmortzReq());
 				ps.setBoolean(index++, ft.isDueAccReq());
@@ -119,8 +121,9 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		sql.append(tableType.getSuffix());
 		sql.append(" Set FeeTypeCode = ?, FeeTypeDesc = ?, ManualAdvice = ?, AdviseType = ?, AccountSetId = ?");
 		sql.append(", Active = ?, TaxComponent = ?, TaxApplicable = ?, Refundable = ?");
-		sql.append(", FeeIncomeOrExpense = ?, HostFeeTypeCode = ?, AmortzReq = ?, DueAccReq = ?");
-		sql.append(", DueAccSet = ?, TdsReq = ?, PayableLinkTo = ?, RecvFeeTypeId = ?, AllowAutoRefund= ?");
+		sql.append(", IncomeOrExpenseAcType = ?, WaiverOrRefundAcType = ?, HostFeeTypeCode = ?, AmortzReq = ?");
+		sql.append(", DueAccReq = ? , DueAccSet = ?, TdsReq = ?, PayableLinkTo = ?, RecvFeeTypeId = ?");
+		sql.append(", AllowAutoRefund= ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where FeeTypeId = ?");
@@ -140,7 +143,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			ps.setString(index++, ft.getTaxComponent());
 			ps.setBoolean(index++, ft.isTaxApplicable());
 			ps.setBoolean(index++, ft.isRefundable());
-			ps.setString(index++, ft.getFeeIncomeOrExpense());
+			ps.setString(index++, ft.getIncomeOrExpenseAcType());
+			ps.setString(index++, ft.getWaiverOrRefundAcType());
 			ps.setString(index++, ft.getHostFeeTypeCode());
 			ps.setBoolean(index++, ft.isAmortzReq());
 			ps.setBoolean(index++, ft.isDueAccReq());
@@ -303,7 +307,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder sql = new StringBuilder("Select FeeTypeID, FeeTypeCode, FeeTypeDesc");
 		sql.append(", Active, ManualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq");
 		sql.append(", TaxApplicable, TaxComponent, Refundable, DueAccReq");
-		sql.append(", DueAccSet, TdsReq, FeeIncomeOrExpense, PayableLinkTo, RecvFeeTypeId");
+		sql.append(", DueAccSet, TdsReq, IncomeOrExpenseAcType, WaiverOrRefundAcType, PayableLinkTo, RecvFeeTypeId");
 		sql.append(" from FeeTypes");
 		sql.append(" Where FeetypeCode = ?");
 
@@ -328,7 +332,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				fee.setDueAccReq(rs.getBoolean("DueAccReq"));
 				fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
 				fee.setTdsReq(rs.getBoolean("TdsReq"));
-				fee.setFeeIncomeOrExpense(rs.getString("FeeIncomeOrExpense"));
+				fee.setIncomeOrExpenseAcType(rs.getString("IncomeOrExpenseAcType"));
+				fee.setWaiverOrRefundAcType(rs.getString("WaiverOrRefundAcType"));
 				fee.setPayableLinkTo(rs.getString("PayableLinkTo"));
 				fee.setRecvFeeTypeId(rs.getLong("RecvFeeTypeId"));
 
@@ -551,8 +556,9 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	private StringBuilder getFeeTypeQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, Refundable");
-		sql.append(", AdviseType, AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense");
-		sql.append(", HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet, TdsReq, AllowAutoRefund");
+		sql.append(", AdviseType, AccountSetId, TaxComponent, TaxApplicable, IncomeOrExpenseAcType");
+		sql.append(", WaiverOrRefundAcType, HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet, TdsReq");
+		sql.append(", AllowAutoRefund");
 
 		if (type.contains("View")) {
 			sql.append(", AccountSetCode, AccountSetCodeName, DueAcctSetCode, DueAcctSetCodeName, AcType, AcTypeDesc");
@@ -588,7 +594,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			ft.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
 			ft.setTaxComponent(rs.getString("TaxComponent"));
 			ft.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-			ft.setFeeIncomeOrExpense(rs.getString("FeeIncomeOrExpense"));
+			ft.setIncomeOrExpenseAcType(rs.getString("IncomeOrExpenseAcType"));
+			ft.setWaiverOrRefundAcType(rs.getString("WaiverOrRefundAcType"));
 			ft.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
 			ft.setAmortzReq(rs.getBoolean("AmortzReq"));
 			ft.setDueAccReq(rs.getBoolean("DueAccReq"));
@@ -713,4 +720,5 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			return null;
 		}
 	}
+
 }

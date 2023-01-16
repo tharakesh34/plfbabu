@@ -88,12 +88,12 @@ import com.pennant.backend.model.rulefactory.AmountCode;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.AccountingSetService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.pff.accounting.SingleFee;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -217,9 +217,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	protected Hbox hbox_receivableOrPayable;
 
 	protected Row row_AssignEntry;
-	protected Label label_TransactionEntryDialog_AssignEntry;
-	// protected Checkbox assignmentEntry;
-	// protected Hbox hbox_assignmentEntry;
+	protected Label label_TransactionEntryDialog_AssignmentEntry;
+	protected Checkbox assignmentEntry;
+	protected Hbox hbox_assignmentEntry;
 
 	protected Label label_TransactionEntryDialog_Bulking;
 	protected Checkbox bulking;
@@ -338,7 +338,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.row_AssignEntry.setVisible(false);
 			this.feeRepeat.setChecked(false);
 			this.receivableOrPayable.setVisible(false);
-			// this.assignmentEntry.setChecked(false);
+			this.assignmentEntry.setChecked(false);
 			this.bulking.setChecked(false);
 		}
 		// ### END SFA_20210405 <--
@@ -564,15 +564,17 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		fillComboBox(this.receivableOrPayable, String.valueOf(aTransactionEntry.getReceivableOrPayable()), listRecOrPay,
 				"");
 
-		if (StringUtils.trimToEmpty(aTransactionEntry.getAccountType()).startsWith(FinanceConstants.FEE_IE)
+		if (StringUtils.trimToEmpty(aTransactionEntry.getAccountType()).startsWith(SingleFee.FEE)
 				|| this.amountRule.getValue().contains("FEE_")) {
 			this.label_TransactionEntryDialog_Bulking.setVisible(true);
 			this.bulking.setVisible(true);
+			// this.label_TransactionEntryDialog_AssignmentEntry.setVisible(true);
+			// this.assignmentEntry.setVisible(true);
 		} else {
 			this.receivableOrPayable.setDisabled(true);
 		}
 
-		// this.assignmentEntry.setChecked(aTransactionEntry.isAssignmentEntry());
+		this.assignmentEntry.setChecked(aTransactionEntry.isAssignmentEntry());
 		this.bulking.setChecked(aTransactionEntry.isBulking());
 		// ### END SFA_20210405 <--
 
@@ -710,11 +712,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			wve.add(we);
 		}
 
-		// try {
-		// aTransactionEntry.setAssignmentEntry(this.assignmentEntry.isChecked());
-		// } catch (WrongValueException we) {
-		// wve.add(we);
-		// }
+		try {
+			aTransactionEntry.setAssignmentEntry(this.assignmentEntry.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		try {
 			aTransactionEntry.setBulking(this.bulking.isChecked());
@@ -1053,7 +1055,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.operator.setVisible(false);
 
 		// ### START SFA_20210405 -->
-		// this.assignmentEntry.setDisabled(this.btnSearchAccountType.isDisabled());
+		this.assignmentEntry.setDisabled(this.btnSearchAccountType.isDisabled());
 		// ### END SFA_20210405 <--
 
 		if (isWorkFlowEnabled()) {
@@ -1097,7 +1099,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		// ### START SFA_20210405 -->
 		this.feeRepeat.setChecked(false);
 		this.receivableOrPayable.setValue("");
-		// this.assignmentEntry.setChecked(false);
+		this.assignmentEntry.setChecked(false);
 		this.bulking.setChecked(false);
 		// ### END SFA_20210405 <--
 
@@ -1453,15 +1455,15 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				this.receivableOrPayable.setValue(Labels.getLabel("Combo.Select"));
 				this.receivableOrPayable.setDisabled(true);
 				this.label_TransactionEntryDialog_Bulking.setVisible(false);
-				// this.assignmentEntry.setDisabled(true);
+				this.assignmentEntry.setDisabled(true);
 				this.bulking.setVisible(false);
 
-				if (details.getAcType().startsWith(FinanceConstants.FEE_IE)) {
+				if (details.getAcType().startsWith(SingleFee.FEE)) {
 					this.feeRepeat.setChecked(true);
 					this.receivableOrPayable.setDisabled(false);
 					this.receivableOrPayable.setValue(Labels.getLabel("Combo.Select"));
 					this.label_TransactionEntryDialog_Bulking.setVisible(true);
-					// this.assignmentEntry.setDisabled(false);
+					this.assignmentEntry.setDisabled(false);
 					this.bulking.setVisible(true);
 					getSingleFeeCodes();
 
@@ -1679,7 +1681,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	// ### START SFA_20210405 -->
 	// Earlier code moved to getAllFeeCodes
 	private void getFeeCodes() {
-		if (FinanceConstants.FEE_IE.equals(this.accountType.getValue())) {
+		if (SingleFee.FEE.equals(this.accountType.getValue())) {
 			getSingleFeeCodes();
 		} else {
 			getAllFeeCodes();
@@ -2076,12 +2078,12 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 						// ### START SFA_20210405 -->
 						hSet = getExcludedAmountCodes();
-						if (this.accountType.getValue().startsWith(FinanceConstants.FEE_IE)
+						if (this.accountType.getValue().startsWith(SingleFee.FEE)
 								&& !variable.get("name").toString().startsWith("FEE_")
 								&& !hSet.contains(variable.get("name").toString())) {
 							noerrors = false;
 							MessageUtil.showError(
-									"Rule shouldn't contain this amount code when Account type is - FEE_IE/FEE_IE_CGST/FEE_IE_SGST/FEE_IE_UGST/FEE_IE_IGST/FEE_IE_CESS");
+									"Rule shouldn't contain this amount code when Account type is - FEE_IE/FEE_IE_WR/FEE_IE_CGST/FEE_IE_SGST/FEE_IE_UGST/FEE_IE_IGST/FEE_IE_CESS");
 							return noerrors;
 						}
 						if (variable.get("name").toString().startsWith("FEE_")) {
@@ -2123,14 +2125,14 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						this.receivableOrPayable.setDisabled(false);
 						this.receivableOrPayable.setValue(this.receivableOrPayable.getValue());
 						this.label_TransactionEntryDialog_Bulking.setVisible(true);
-						// this.assignmentEntry.setDisabled(false);
+						this.assignmentEntry.setDisabled(false);
 						this.bulking.setVisible(true);
 					} else {
 						this.feeRepeat.setChecked(false);
 						this.receivableOrPayable.setValue(Labels.getLabel("Combo.Select"));
 						this.receivableOrPayable.setDisabled(true);
 						this.label_TransactionEntryDialog_Bulking.setVisible(false);
-						// this.assignmentEntry.setDisabled(true);
+						this.assignmentEntry.setDisabled(true);
 						this.bulking.setVisible(false);
 					}
 					// ### END SFA_20210405 <--

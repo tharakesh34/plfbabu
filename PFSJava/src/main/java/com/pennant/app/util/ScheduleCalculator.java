@@ -232,6 +232,10 @@ public class ScheduleCalculator {
 				.getFinScheduleData();
 	}
 
+	public static FinScheduleData recalLPISchedule(FinScheduleData finScheduleData, Date lpiMinDate, Date lpiMaxDate) {
+		return new ScheduleCalculator(finScheduleData, lpiMinDate, lpiMaxDate).getFinScheduleData();
+	}
+
 	public static FinScheduleData addSubSchedule(FinScheduleData finScheduleData, int noOfTerms, Date subSchStartDate,
 			String frqNewSchd) {
 		return new ScheduleCalculator(PROC_SUBSCHEDULE, finScheduleData, noOfTerms, subSchStartDate, frqNewSchd)
@@ -868,6 +872,16 @@ public class ScheduleCalculator {
 	 * time of initial schedule creation by BUILD SCHEDULE FUNCTION
 	 * ========================================================================= =======================================
 	 */
+
+	public ScheduleCalculator(FinScheduleData schdData, Date lpiMinDate, Date lpiMaxDate) {
+		FinanceMain fm = schdData.getFinanceMain();
+		fm.setRecalFromDate(lpiMinDate);
+		fm.setRecalToDate(lpiMaxDate);
+		fm.setEventFromDate(lpiMinDate);
+		fm.setEventToDate(lpiMaxDate);
+		
+		setFinScheduleData(calSchdProcess(schdData, false, false));
+	}
 
 	private FinScheduleData procGetCalSchd(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
@@ -7312,7 +7326,7 @@ public class ScheduleCalculator {
 			fm.setAdjustClosingBal(isAdjustClosingBal);
 
 			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
-					&& fm.getAdvTerms() > 0) {
+					&& fm.getAdvTerms() > 0 && !PROC_GETCALSCHD.equals(schdData.getModuleDefiner())) {
 				fm.setAdjustClosingBal(false);
 			}
 

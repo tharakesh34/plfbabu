@@ -52,7 +52,7 @@
 									<label id="label_collateralEqtnDialog_custCIF" value="${c:l('label_collateralEqtnDialog_custCIF.value')}" />
 									<hlayout>
 										<space spacing="2px" />
-										<textbox id="custCIF" maxlength="12" width="150px" readonly="true" />
+										<textbox id="custCIF" width="150px" readonly="true" />
 									</hlayout>
 									<label id="label_collateralEqtnDialog_collReference" value="${c:l('label_collateralEqtnDialog_collReference.value')}" />
 									<hlayout>

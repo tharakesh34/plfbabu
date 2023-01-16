@@ -678,30 +678,26 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public Map<String, BigDecimal> getOsPriBal(long id) {
-		logger.debug(Literal.ENTERING);
-
 		Map<String, BigDecimal> hashMap = new HashMap<>();
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("select fm.FinReference, TotalPriBal");
-		sql.append(" from FinPFTDetails pft");
-		sql.append(" inner join Financemain_view fm on fm.FinReference = pft.FinReference");
-		sql.append(" and fm.ClosingStatus is null");
-		sql.append(" inner join customers c on c.custId = fm.custId");
-		sql.append(" where c.custId = ?");
+		String sql = "Select FinReference, TotalPriBal From FinPFTDetails Where CustID = ? and FinIsActive = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.query(sql.toString(), new ResultSetExtractor<Map<String, BigDecimal>>() {
-			@Override
-			public Map<String, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		try {
+			this.jdbcOperations.query(sql, new ResultSetExtractor<Map<String, BigDecimal>>() {
+				@Override
+				public Map<String, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-				while (rs.next()) {
-					hashMap.put(rs.getString("FinReference"), rs.getBigDecimal("TotalPriBal"));
+					while (rs.next()) {
+						hashMap.put(rs.getString("FinReference"), rs.getBigDecimal("TotalPriBal"));
+					}
+					return hashMap;
 				}
-				return hashMap;
-			}
-		}, id);
+			}, id, 1);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
 
 		return hashMap;
 	}

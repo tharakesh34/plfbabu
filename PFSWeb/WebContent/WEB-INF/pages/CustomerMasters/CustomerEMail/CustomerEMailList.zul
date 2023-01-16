@@ -62,7 +62,7 @@
 							<row>
 								<label id="label_CustomerEMailSearch_CustCIF" value="${c:l('label_CustomerEMailSearch_CustCIF.value')}" />
 								<listbox id="sortOperator_custCIF" width="43px" mold="select" rows="1" />
-								<textbox id="custCIF" width="150px" maxlength="19" />
+								<textbox id="custCIF" width="150px" />
 								<label id="label_CustomerEMailSearch_CustEMailTypeCode" value="${c:l('label_CustomerEMailSearch_CustEMailTypeCode.value')}" />
 								<listbox id="sortOperator_custEMailTypeCode" width="43px" mold="select" rows="1" />
 								<textbox id="custEMailTypeCode" width="150px" maxlength="8" />

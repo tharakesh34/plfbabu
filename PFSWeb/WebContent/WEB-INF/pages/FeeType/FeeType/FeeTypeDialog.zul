@@ -119,10 +119,13 @@
 									<label value="${c:l('label_FeeTypeDialog_IsTdsReq.value')}" />
 									<checkbox id="tdsReq" checked="false" />
 								</row>
-								<row id="feeIncomeOrExpenseRow">
-									<label value="${c:l('label_FeeTypeDialog_FeeIncomeOrExpense.value')}"
+								<row id="incomeOrExpenseAcTypeRow">
+									<label value="${c:l('label_FeeTypeDialog_IncomeOrExpenseAcType.value')}"
 										visible="true" />
-									<extendedcombobox id="feeIncomeOrExpense" />
+									<extendedcombobox id="incomeOrExpenseAcType" />
+									<label value="${c:l('label_FeeTypeDialog_WaiverOrRefundAcType.value')}"
+										visible="true" />
+									<extendedcombobox id="waiverOrRefundAcType" />
 								</row>
 								<row>
 									<label value="${c:l('label_FeeTypeDialog_Active.value')}" />

@@ -448,6 +448,9 @@ import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.pff.presentment.model.DueExtractionHeader;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
+import com.pennant.pff.settlement.model.FinSettlementHeader;
+import com.pennant.pff.settlement.model.SettlementSchedule;
+import com.pennant.pff.settlement.model.SettlementTypeDetail;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
@@ -1174,28 +1177,15 @@ public class PennantJavaUtil {
 
 		/************* Customer Masters *************/
 
-		ModuleUtil.register("Customer",
-				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AView" },
-						customerWF, new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" },
-						null, 700));
+		ModuleUtil.register("Customer", customerModuleMapping(customerWF));
 
-		ModuleUtil.register("CustomerData",
-				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AEView" }, null,
-						new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" }, null,
-						700));
+		ModuleUtil.register("CustomerData", customerModuleMapping(null));
 
-		ModuleUtil.register("CustomerQDE",
-				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AView" }, null,
-						new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" }, null,
-						700));
+		ModuleUtil.register("CustomerQDE", customerModuleMapping(null));
 
-		ModuleUtil.register("CustomerDetails",
-				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AView" },
-						custDetailWF, new String[] { "CustID", "CustCIF" }, null, 300));
+		ModuleUtil.register("CustomerDetails", customerModuleMapping(custDetailWF));
 
-		ModuleUtil.register("CustomerMaintence",
-				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "Customers_AView" }, masterWF,
-						new String[] { "CustID", "CustCIF", "CustShrtName" }, null, 300));
+		ModuleUtil.register("CustomerMaintence", customerModuleMapping(masterWF));
 
 		ModuleUtil
 				.register("CustomerAddres",
@@ -3880,7 +3870,44 @@ public class PennantJavaUtil {
 						new String[] { "Fee_Refund_Instructions", "Fee_Refund_Instructions_AView" }, masterWF,
 						new String[] { "PaymentType", "PaymentAmount", "BankCode", "PaymentCCy" }, null, 600));
 
+		ModuleUtil.register("SettlementTypeDetail",
+				new ModuleMapping("SettlementTypeDetail", SettlementTypeDetail.class,
+						new String[] { "Settlement_Types", "Settlement_Types_View" }, masterWF,
+						new String[] { "settlementCode", "settlementDesc" }, null, 750));
+
+		ModuleUtil.register("Settlement",
+				new ModuleMapping("Settlement", FinSettlementHeader.class,
+						new String[] { "Settlement", "Settlement_View" }, masterWF,
+						new String[] { "settlementHeaderID", "finReference", "FinId" }, null, 750));
+
+		ModuleUtil.register("FinSettlementHeader",
+				new ModuleMapping("FinSettlementHeader", FinSettlementHeader.class,
+						new String[] { "Fin_Settlement_Header", "Fin_Settlement_Header_VIEW" }, masterWF,
+						new String[] { "id", "finReference", "FinId" }, null, 750));
+
+		ModuleUtil.register("SettlementSchedule",
+				new ModuleMapping("SettlementSchedule", SettlementSchedule.class,
+						new String[] { "Settlement_Schedule", "Settlement_Schedule_View" }, masterWF,
+						new String[] { "ID", "settlementDetailID", "settlementAmount" }, null, 750));
+
+		ModuleUtil.register("SettlementCancelReasons",
+				new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons", "Reasons_AView" }, masterWF,
+						new String[] { "Id", "Code", "Description" }, new Object[][] { { "Active", "0", 1 },
+								{ "REASONCATEGORYCODE", "0", "SETCANC" }, { "ReasonTypeCode", "0", "SETCANC" } },
+						600));
+
+		ModuleUtil.register("SettlementFinanceMain",
+				new ModuleMapping("SettlementFinanceMain", FinanceMain.class,
+						new String[] { "FM_Settlement_VIEW", "FM_Settlement_VIEW" }, null,
+						new String[] { "FinReference", "FinType" }, null, 350));
+
 		registerCustomModules();
+	}
+
+	private ModuleMapping customerModuleMapping(String workflow) {
+		return new ModuleMapping("Customer", Customer.class, new String[] { "Customers" }, workflow,
+				new String[] { "CustCoreBank", "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" },
+				null, 900);
 	}
 
 	protected void registerCustomModules() {

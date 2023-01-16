@@ -1335,8 +1335,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtChargesAccount.setAccountDetails("", AccountConstants.ACTYPES_COMMITCHARGE, "", true);
 		this.cmtChargesAccount.setFormatter(defaultCCYDecPos);
 
-		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
-
 		this.cmtRvwDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.cmtEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.cmtAvailableMonths.setMaxlength(5);

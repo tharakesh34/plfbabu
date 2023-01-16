@@ -64,6 +64,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
+import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
@@ -341,6 +342,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private AccountingSetDAO accountingSetDAO;
 	private PartPayAndEarlySettleValidator partPayAndEarlySettleValidator;
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
+	private LatePayInterestService latePayInterestService;
+	private RepaymentProcessUtil repayProcessUtil;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -6924,6 +6927,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		FinanceDetail fd = rd.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
+		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rch.getReceiptPurpose());
+
+		if (fm.isUnderSettlement() && receiptPurposeCtg == 0) {
+			rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_SETTLEMENT);
+			rch.setAllocationType(AllocationType.NO_ALLOC);
+		}
 
 		Date valueDate = rch.getValueDate();
 
@@ -7253,6 +7262,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			case RepayConstants.EXAMOUNTTYPE_DSF:
 				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_DSF);
 				break;
+			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+				rcd.setPaymentType(RepayConstants.EXCESSADJUSTTO_SETTLEMENT);
 			default:
 				rcd.setPaymentType(ReceiptMode.PAYABLE);
 				break;
@@ -8045,6 +8056,304 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		return ulAllocations;
 	}
 
+	@Override
+	public FinReceiptData doApproveReceipt(FinReceiptData frd) throws Exception {
+		FinanceDetail fd = frd.getFinanceDetail();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceProfitDetail fpd = schdData.getFinPftDeatil();
+
+		fm.setSimulateAccounting(false);
+		boolean isLoanActiveBef = fm.isFinIsActive();
+
+		long finID = fm.getFinID();
+
+		List<FinanceScheduleDetail> finSchdDtls = new ArrayList<>();
+
+		for (FinanceScheduleDetail fsd : schdData.getFinanceScheduleDetails()) {
+			finSchdDtls.add(fsd.copyEntity());
+		}
+
+		FinReceiptHeader rch = frd.getReceiptHeader();
+		rch.setRoleCode("");
+		rch.setNextRoleCode("");
+		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+
+		if (FinanceConstants.DEPOSIT_APPROVER.equals(rch.getRoleCode()) || frd.isPresentment()) {
+			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
+		}
+
+		String receiptPurpose = rch.getReceiptPurpose();
+		String receiptMode = rch.getReceiptMode();
+		if ((FinServiceEvent.SCHDRPY.equals(receiptPurpose))
+				&& (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode))) {
+			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
+		}
+
+		if (!ReceiptMode.CHEQUE.equals(receiptMode)) {
+			rch.setRealizationDate(rch.getValueDate());
+			rch.setReceivedDate(rch.getValueDate());
+		}
+
+		Date appDate = SysParamUtil.getAppDate();
+		finReceiptHeaderDAO.generatedReceiptID(rch);
+		rch.setPostBranch(fm.getFinBranch());
+		rch.setReceiptDate(appDate);
+		rch.setRcdMaintainSts(null);
+		rch.setRoleCode("");
+		rch.setNextRoleCode("");
+		rch.setTaskId("");
+		rch.setNextTaskId("");
+		rch.setWorkflowId(0);
+		rch.setActFinReceipt(fm.isFinIsActive());
+		rch.setValueDate(frd.getValueDate());
+
+		if (rch.getReceiptMode() != null && rch.getSubReceiptMode() == null) {
+			rch.setSubReceiptMode(rch.getReceiptMode());
+		}
+
+		if (frd.isDueAdjusted()) {
+			schdData.setFinanceScheduleDetails(finSchdDtls);
+		} else {
+			schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false));
+		}
+
+		if (!FinanceConstants.PRODUCT_ODFACILITY.equals(fm.getProductCategory()) && !fm.isSanBsdSchdle()) {
+			int size = schdData.getFinanceScheduleDetails().size();
+			for (int i = size - 1; i >= 0; i--) {
+				FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(i);
+				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
+						&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+					fm.setMaturityDate(curSchd.getSchDate());
+					break;
+				} else if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
+						&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
+					schdData.getFinanceScheduleDetails().remove(i);
+				}
+			}
+		}
+
+		Date curBusDate = appDate;
+		Date valueDate = rch.getValueDate();
+
+		List<FinanceScheduleDetail> schdList = schdData.getFinanceScheduleDetails();
+		fpd.setLpiAmount(rch.getLpiAmount());
+		fpd.setGstLpiAmount(rch.getGstLpiAmount());
+		fpd.setLppAmount(rch.getLppAmount());
+		fpd.setGstLppAmount(rch.getGstLppAmount());
+
+		if (fm.isAllowSubvention()) {
+			fpd.setTotalSvnAmount(this.subventionDetailDAO.getTotalSubVentionAmt(finID));
+		}
+
+		if (CollectionUtils.isNotEmpty(rch.getReceiptDetails())) {
+			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
+				rcd.getRepayHeader().setRepayID(financeRepaymentsDAO.getNewRepayID());
+			}
+		}
+
+		List<Object> returnList = repayProcessUtil.doProcessReceipts(fm, schdList, fpd, rch,
+				schdData.getFinFeeDetailList(), schdData, valueDate, curBusDate, fd);
+		schdList = (List<FinanceScheduleDetail>) returnList.get(0);
+
+		BigDecimal totPriPaid = BigDecimal.ZERO;
+		for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
+			FinRepayHeader rh = rcd.getRepayHeader();
+			if (CollectionUtils.isNotEmpty(rh.getRepayScheduleDetails())) {
+				for (RepayScheduleDetail rpySchd : rh.getRepayScheduleDetails()) {
+					totPriPaid = totPriPaid.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
+				}
+			}
+		}
+
+		fm.setFinRepaymentAmount(fm.getFinRepaymentAmount().add(totPriPaid));
+
+		fpd.setAmzTillLBD(fpd.getAmzTillLBD().add((BigDecimal) returnList.get(1)));
+		fpd.setLpiTillLBD(fpd.getLpiTillLBD().add((BigDecimal) returnList.get(2)));
+		fpd.setGstLpiTillLBD(fpd.getGstLpiTillLBD().add((BigDecimal) returnList.get(3)));
+		fpd.setLppTillLBD(fpd.getLppTillLBD().add((BigDecimal) returnList.get(4)));
+		fpd.setGstLppTillLBD(fpd.getGstLppTillLBD().add((BigDecimal) returnList.get(5)));
+
+		if (schdList == null) {
+			schdList = schdData.getFinanceScheduleDetails();
+		}
+
+		schdData.setFinanceScheduleDetails(schdList);
+		Date reqMaxODDate = curBusDate;
+		List<FinODDetails> overdueList = null;
+
+		if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			reqMaxODDate = rch.getValueDate();
+		}
+
+		if (!ImplementationConstants.LPP_CALC_SOD) {
+			reqMaxODDate = DateUtility.addDays(valueDate, -1);
+		}
+
+		overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
+
+		if (fm.isAlwLPIInIntDue() && CollectionUtils.isNotEmpty(overdueList)) {
+			if (CollectionUtils.isEmpty(fm.getLpiRateChangeList())) {
+				fm.setLpiRateChangeList(finODPenaltyRateDAO.getFinLPIRateChanges(finID));
+			}
+
+			for (FinODDetails fod : overdueList) {
+				for (FinanceScheduleDetail fsd : schdList) {
+					if (DateUtil.compare(fsd.getSchDate(), fod.getFinODSchdDate()) == 0) {
+						fod.setFinCurODPri(fsd.getPrincipalSchd().subtract(fsd.getSchdPriPaid()));
+						fod.setFinCurODPft(fsd.getProfitSchd().subtract(fsd.getSchdPftPaid()));
+						fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()));
+					}
+				}
+			}
+
+			if (CollectionUtils.isEmpty(schdData.getRepayInstructions())) {
+				schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, "", false));
+			}
+
+			if (valueDate.compareTo(fm.getMaturityDate()) > 0) {
+				valueDate = fm.getMaturityDate();
+			}
+
+			schdData = ScheduleCalculator.recalLPISchedule(schdData, valueDate, fm.getMaturityDate());
+		}
+
+		overdueList = calPenalty(schdData, frd, reqMaxODDate, overdueList);
+		if (CollectionUtils.isNotEmpty(overdueList)) {
+			finODDetailsDAO.updateList(overdueList);
+		}
+
+		rch.setRecordType("");
+		rch.setRcdMaintainSts(null);
+		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		rch.setRecordType("");
+		rch.setRoleCode("");
+		rch.setNextRoleCode("");
+		rch.setTaskId("");
+		rch.setNextTaskId("");
+		rch.setWorkflowId(0);
+
+		repayProcessUtil.doSaveReceipts(rch, schdData.getFinFeeDetailList(), true);
+		long receiptID = rch.getReceiptID();
+		User logiedInUser = SessionUserDetails.getLogiedInUser();
+
+		if (rch.getUserDetails() == null && logiedInUser != null) {
+			rch.setUserDetails(SessionUserDetails.getUserDetails(logiedInUser));
+		}
+
+		saveDepositDetails(rch, PennantConstants.method_doApprove);
+		BigDecimal prvMthAmz = fpd.getPrvMthAmz();
+
+		boolean isPresentProc = false;
+		if (CollectionUtils.isNotEmpty(rch.getReceiptDetails())) {
+			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
+				if (RepayConstants.PAYTYPE_PRESENTMENT.equals(rcd.getPaymentType())) {
+					isPresentProc = true;
+				}
+			}
+		}
+
+		fm = repayProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose(),
+				isPresentProc);
+
+		String closingStatus = fm.getClosingStatus();
+		if (isLoanActiveBef && !fm.isFinIsActive() && (FinServiceEvent.SCHDRPY.equals(receiptPurpose))
+				&& (RepayConstants.PAYSTATUS_DEPOSITED.equals(frd.getReceiptHeader().getReceiptModeStatus()))) {
+			fm.setFinIsActive(true);
+			fm.setClosedDate(null);
+			fm.setClosingStatus(null);
+			fpd.setFinStatus(fm.getFinStatus());
+			fpd.setFinStsReason(fm.getFinStsReason());
+			fpd.setFinIsActive(fm.isFinIsActive());
+			fpd.setClosingStatus(closingStatus);
+			fpd.setPrvMthAmz(prvMthAmz);
+			profitDetailsDAO.update(fpd, true);
+		}
+
+		if ((FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)
+				|| FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus))
+				&& !(ReceiptMode.PRESENTMENT.equals(rch.getReceiptMode()))) {
+			fm.setClosedDate(valueDate);
+		}
+
+		financeMainDAO.updateFromReceipt(fm, TableType.MAIN_TAB);
+
+		listDeletion(finID, "");
+		listSave(schdData, "", 0, false);
+
+		if (schdData.getFinFeeDetailList() != null && !FinServiceEvent.RESTRUCTURE.equals(rch.getReceiptPurpose())) {
+			approveFees(frd, TableType.MAIN_TAB.getSuffix());
+		}
+
+		if (schdData.getFinFeeDetailList() != null) {
+			for (ReceiptAllocationDetail allocation : rch.getAllocations()) {
+				if (Allocation.FEE.equals(allocation.getAllocationType())) {
+					for (FinFeeDetail feeDtl : schdData.getFinFeeDetailList()) {
+						if (feeDtl.getFeeTypeID() == -(allocation.getAllocationTo())) {
+							allocation.setAllocationTo(feeDtl.getFeeID());
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if (!PennantConstants.FINSOURCE_ID_API.equals(frd.getSourceId())) {
+			listDeletion(finID, TableType.TEMP_TAB.getSuffix());
+
+			finReceiptDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
+
+			deleteTaxHeaderId(receiptID, TableType.TEMP_TAB.getSuffix());
+
+			allocationDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
+
+			manualAdviseDAO.deleteMovementsByReceiptID(receiptID, TableType.TEMP_TAB.getSuffix());
+
+			finReceiptHeaderDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
+		}
+
+		if (fm.isManualSchedule()) {
+			this.manualScheduleService.doApprove(frd.getFinanceDetail());
+		}
+
+		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)
+				&& ImplementationConstants.COLLATERAL_INTERNAL && ImplementationConstants.COLLATERAL_DELINK_AUTO) {
+			getCollateralAssignmentValidation().saveCollateralMovements(fm.getFinReference());
+		}
+
+		if (ImplementationConstants.LIMIT_INTERNAL) {
+			BigDecimal priAmt = BigDecimal.ZERO;
+
+			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
+				FinRepayHeader header = rcd.getRepayHeader();
+				if (CollectionUtils.isNotEmpty(header.getRepayScheduleDetails())) {
+					for (RepayScheduleDetail rpySchd : header.getRepayScheduleDetails()) {
+						priAmt = priAmt.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
+					}
+				} else {
+					priAmt = priAmt.add(header.getPriAmount());
+				}
+			}
+			Customer customer = customerDAO.getCustomerByID(fm.getCustID());
+			limitManagement.processLoanRepay(fm, customer, priAmt, StringUtils.trimToEmpty(fm.getProductCategory()));
+		} else {
+			limitCheckDetails.doProcessLimits(fm, FinanceConstants.AMENDEMENT);
+		}
+
+		if (ImplementationConstants.DEPOSIT_PROC_REQ) {
+			finReceiptHeaderDAO.updateDepositBranchByReceiptID(rch.getReceiptID(), rch.getUserDetails().getBranchCode(),
+					"");
+		}
+
+		if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
+			advancePaymentService.setAdvancePaymentDetails(schdData.getFinanceMain(), schdData);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return frd;
+	}
+
 	@Autowired
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;
@@ -8435,6 +8744,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	@Autowired
 	public void setFeeCalculator(FeeCalculator feeCalculator) {
 		this.feeCalculator = feeCalculator;
+	}
+
+	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
+		this.latePayInterestService = latePayInterestService;
 	}
 
 }

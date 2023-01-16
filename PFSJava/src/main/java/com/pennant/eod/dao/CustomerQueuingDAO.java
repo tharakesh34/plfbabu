@@ -8,8 +8,6 @@ import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 
 public interface CustomerQueuingDAO {
 
-	int prepareCustomerQueue(Date date);
-
 	int getProgressCountByCust(long custID);
 
 	int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId);
@@ -55,13 +53,9 @@ public interface CustomerQueuingDAO {
 
 	long getCustQueuingCount();
 
-	int prepareCustomerQueueByLoanCount(Date date);
-
 	long getLoanCountByProgress();
 
 	int updateThreadIDByLoanCount(Date date, long from, long to, int threadId);
-
-	void updateFinRunningCount();
 
 	boolean isEodRunning();
 }

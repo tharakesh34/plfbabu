@@ -124,6 +124,8 @@ import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.mandate.MandateUtil;
+import com.pennant.pff.settlement.model.FinSettlementHeader;
+import com.pennant.pff.settlement.service.SettlementService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -557,6 +559,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox subventionEndDate_two;
 
 	private FinanceDetailService financeDetailService;
+	private SettlementService settlementService;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -2475,6 +2478,24 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
+	public void onClick$settlementEnq(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		FinSettlementHeader settlement = settlementService.getSettlementByRef(this.finReference.getValue(), "_View");
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("isEnqProcess", true);
+		arg.put("settlement", settlement);
+		arg.put("financeDetail", financeDetail);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Settlement/SettlementDialog.zul", null, arg);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
@@ -2553,5 +2574,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public void setSettlementService(SettlementService settlementService) {
+		this.settlementService = settlementService;
 	}
 }

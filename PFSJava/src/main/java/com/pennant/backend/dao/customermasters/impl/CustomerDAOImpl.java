@@ -457,6 +457,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			c.setCustID(getNextValue("SeqCustomers"));
 		}
 
+		if (StringUtils.trimToNull(c.getCustCoreBank()) == null) {
+			c.setCustCoreBank(String.valueOf(-1 * c.getCustID()));
+		}
+
 		StringBuilder sql = new StringBuilder("Insert Into Customers");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustSalutationCode, CustFName");
@@ -880,7 +884,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	private StringBuilder selectCustomerBasicInfo(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustID, CustCIF, CustFName, CustMName, CustLName, CustDOB, CustShrtName, CustCRCPR");
+		sql.append(" CustID, CustCoreBank, CustCIF, CustFName, CustMName, CustLName, CustDOB, CustShrtName, CustCRCPR");
 		sql.append(", CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy");
 		sql.append(", PhoneNumber, EmailID, CustRO1, CasteId, ReligionId, SubCategory");
 
@@ -920,7 +924,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public Customer getCustomer(String cif) {
-		String sql = "Select CustID, CustCIF, CustShrtName From Customers Where CustCIF = ?";
+		String sql = "Select CustID, CustCIF, CustCoreBank, CustShrtName From Customers Where CustCoreBank = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -930,6 +934,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 				c.setCustID(rs.getLong("CustID"));
 				c.setCustCIF(rs.getString("CustCIF"));
+				c.setCustCIF(rs.getString("CustCoreBank"));
 				c.setCustShrtName(rs.getString("CustShrtName"));
 
 				return c;
@@ -2559,6 +2564,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			Customer c = new Customer();
 
 			c.setCustID(rs.getLong("CustID"));
+			c.setCustCoreBank(rs.getString("CustCoreBank"));
 			c.setCustCIF(rs.getString("CustCIF"));
 			c.setCustFName(rs.getString("CustFName"));
 			c.setCustMName(rs.getString("CustMName"));

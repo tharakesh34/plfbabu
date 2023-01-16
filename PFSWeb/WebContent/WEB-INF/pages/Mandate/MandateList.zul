@@ -48,11 +48,11 @@
 								<row>
 									<label id="label_MandateList_MandateID" value="${c:l('label_MandateList_MandateID.value')}" />
 									<listbox id="sortOperator_MandateID" width="43px" mold="select" rows="1" />
-									<intbox id="mandateID" width="171px" maxlength="5" />
+									<longbox id="mandateID" width="171px" />
 									<label id="label_MandateList_CustCIF" value="${c:l('label_MandateList_CustCIF.value')}" />
 									<listbox id="sortOperator_CustCIF" width="43px" mold="select" rows="1" />
 									<hbox>
-										<textbox id="custCIF" width="171px" maxlength="8" />
+										<textbox id="custCIF" width="171px" />
 										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png"
 											autodisable="btnSearchCustCIF,btnSearchBranch,btnSearchFinType" />
 									</hbox>

@@ -475,7 +475,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finType.setMaxlength(8);
 		this.finReference.setMaxlength(20);
 		this.finCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
-		this.lovDescCustCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.finBranch.setMaxlength(LengthConstants.LEN_BRANCH);
 		this.finStartDate.setFormat(DateFormat.LONG_DATE.getPattern());
 		this.maturityDate.setFormat(DateFormat.LONG_DATE.getPattern());
@@ -497,7 +496,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finType1.setMaxlength(8);
 		this.finReference1.setMaxlength(20);
 		this.finCcy1.setMaxlength(LengthConstants.LEN_CURRENCY);
-		this.lovDescCustCIF1.setMaxlength(LengthConstants.LEN_CIF);
 		this.finBranch1.setMaxlength(LengthConstants.LEN_BRANCH);
 		this.rpyAmount.setMandatory(true);
 		this.rpyAmount.setFormat(PennantApplicationUtil.getAmountFormate(formatter));

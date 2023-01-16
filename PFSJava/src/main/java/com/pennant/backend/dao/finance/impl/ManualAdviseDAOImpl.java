@@ -63,6 +63,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * Data access layer implementation for <code>ManualAdvise</code> with set of CRUD operations.
@@ -2207,4 +2208,73 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		}, finID, AdviseType.PAYABLE.id(), maxValueDate);
 	}
 
+	@Override
+	public List<ManualAdviseMovements> getAdviseMovementsByWaiver(long waiverId, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
+		sql.append(", Status, WaiverId, ReceiptSeqID, TaxHeaderId");
+		sql.append(" From ManualAdviseMovements");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where WaiverId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			ManualAdviseMovements ma = new ManualAdviseMovements();
+
+			ma.setMovementID(rs.getLong("MovementID"));
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setMovementDate(rs.getTimestamp("MovementDate"));
+			ma.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setStatus(rs.getString("Status"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+			ma.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
+
+			return ma;
+		}, waiverId);
+	}
+
+	@Override
+	public ManualAdvise getBounceChargesByReceiptID(Long bcReceiptID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AdviseID, Adviseamount, PaidAmount, WaivedAmount");
+		sql.append(" From ManualAdvise ma");
+		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID and ft.FeeTypeCode = ?");
+		sql.append(" Where ma.receiptid = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ManualAdvise ma = new ManualAdvise();
+
+				ma.setAdviseID(rs.getLong("AdviseID"));
+				ma.setAdviseAmount(rs.getBigDecimal("Adviseamount"));
+				ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+				ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+
+				return ma;
+			}, Allocation.BOUNCE, bcReceiptID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public void revertBounceCharges(long adviseID, BigDecimal remainingAmount) {
+		String sql = "Update ManualAdvise set Adviseamount = Adviseamount - ?, BalanceAmt = BalanceAmt - ? Where AdviseId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+
+			ps.setBigDecimal(1, remainingAmount);
+			ps.setBigDecimal(2, remainingAmount);
+			ps.setLong(3, adviseID);
+		});
+	}
 }

@@ -864,12 +864,14 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		if (netFinAmount.compareTo(totDisbAmt) != 0 && (loanApproved || fm.isQuickDisb())) {
-			String[] valueParm = new String[2];
-			valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmt, ccyFormat);
-			valueParm[1] = PennantApplicationUtil.amountFormate(netFinAmount, ccyFormat);
-			errorList.add(new ErrorDetail("60401", valueParm));
-			return errorList;
+		if (netFinAmount.compareTo(totDisbAmt) != 0 && "#".equals(fm.getAdvType()) && "#".equals(fm.getGrcAdvType())) {
+			if (loanApproved || fm.isQuickDisb()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmt, ccyFormat);
+				valueParm[1] = PennantApplicationUtil.amountFormate(netFinAmount, ccyFormat);
+				errorList.add(new ErrorDetail("60401", valueParm));
+				return errorList;
+			}
 		}
 
 		if (!checkMode && fm.isQuickDisb()) {
@@ -929,7 +931,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		if (singletDisbursment.compareTo(totalGroupAmt) != 0) {
+		if (singletDisbursment.compareTo(totalGroupAmt) != 0 && "#".equals(fm.getAdvType())
+				&& "#".equals(fm.getGrcAdvType())) {
 			String errorDesc = DateUtility.formatToLongDate(disbDate);
 			ErrorDetail error = new ErrorDetail("60404", new String[] { errorDesc });
 			errorList.add(error);

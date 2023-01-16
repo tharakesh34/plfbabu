@@ -902,7 +902,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (!fm.isFinIsActive()) {
 			fsi.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		}
-
+		if (fm.isUnderSettlement()) {
+			fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_SETTLEMENT);
+		}
 		fsi.setReceiptDetail(new FinReceiptDetail());
 		FinReceiptDetail rcd = fsi.getReceiptDetail();
 

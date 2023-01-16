@@ -702,8 +702,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Long businessVertical;
 	private String businessVerticalCode;
 	private String businessVerticalDesc;
-
+	@XmlElement
 	private String grcAdvType;
+	@XmlElement(name = "grcadvEMITerms")
 	private int grcAdvTerms;
 	@XmlElement
 	private String advType;
@@ -844,6 +845,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	private String holdStatus;
 	private String reason;
+	private boolean alwLPIInIntDue = true;
+	private boolean underSettlement;
+	private transient List<FinLPIRateChange> lpiRateChangeList = new ArrayList<>();
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -5573,4 +5577,27 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.reason = reason;
 	}
 
+	public boolean isAlwLPIInIntDue() {
+		return alwLPIInIntDue;
+	}
+
+	public void setAlwLPIInIntDue(boolean alwLPIInIntDue) {
+		this.alwLPIInIntDue = alwLPIInIntDue;
+	}
+
+	public boolean isUnderSettlement() {
+		return underSettlement;
+	}
+
+	public void setUnderSettlement(boolean underSettlement) {
+		this.underSettlement = underSettlement;
+	}
+
+	public List<FinLPIRateChange> getLpiRateChangeList() {
+		return lpiRateChangeList;
+	}
+
+	public void setLpiRateChangeList(List<FinLPIRateChange> lpiRateChangeList) {
+		this.lpiRateChangeList = lpiRateChangeList;
+	}
 }

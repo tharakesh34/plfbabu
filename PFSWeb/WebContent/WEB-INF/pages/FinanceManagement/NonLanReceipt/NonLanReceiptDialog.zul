@@ -85,7 +85,7 @@
 														value="${c:l('label_NonReceiptDialog_CustID.value')}" />
 													<hbox id="hbox_NonReceiptDialog">
 														<space spacing="2px" id="mandStyle" sclass="mandatory" />
-														<extendedcombobox id="custCIF" width="108px" maxlength="6"
+														<extendedcombobox id="custCIF" width="108px"
 															readonly="true" />
 														<!-- <textbox id="custShrtName" width="108px" readonly="true" style="border:0px"/> -->
 													</hbox>

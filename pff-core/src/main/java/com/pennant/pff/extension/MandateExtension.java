@@ -70,6 +70,8 @@ public class MandateExtension {
 	 */
 	public static boolean EXPIRY_DATE_MANDATORY;
 
+	public static int MANDATE_SPLIT_COUNT;
+
 	static {
 		APPROVE_ON_LOAN_ORG = getValueAsBoolean("APPROVE_ON_LOAN_ORG", false);
 		UPLOAD_ENITITY_CODE_MANDATORY = getValueAsBoolean("UPLOAD_ENITITY_CODE_MANDATORY", false);
@@ -83,9 +85,14 @@ public class MandateExtension {
 		ACCOUNT_DETAILS_READONLY = getValueAsBoolean("ACCOUNT_DETAILS_READONLY", false);
 		ALLOW_CONSECUTIVE_BOUNCE = getValueAsBoolean("ALLOW_CONSECUTIVE_BOUNCE", false);
 		EXPIRY_DATE_MANDATORY = getValueAsBoolean("EXPIRY_DATE_MANDATORY", true);
+		MANDATE_SPLIT_COUNT = getValueAsInt("MANDATE_SPLIT_COUNT", 0);
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
 		return FeatureExtension.getValueAsBoolean(Module.MANDATE, key, defaultValue);
+	}
+
+	public static int getValueAsInt(String key, int defaultValue) {
+		return FeatureExtension.getValueAsInt(Module.DEFAULT, key, defaultValue);
 	}
 }

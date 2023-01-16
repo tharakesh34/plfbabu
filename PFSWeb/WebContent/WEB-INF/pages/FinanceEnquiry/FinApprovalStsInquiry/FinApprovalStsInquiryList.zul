@@ -65,7 +65,7 @@
 									<label id="label_FinApprovalStsInquiryList_CustCIF" value="${c:l('label_FinApprovalStsInquiryList_CustCIF.value')}" />
 									<listbox id="sortOperator_custCIF" width="43px" mold="select" rows="1" />
 									<hbox>
-										<textbox id="custCIF" width="108px" maxlength="19" />
+										<textbox id="custCIF" width="108px" />
 										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png"
 											autodisable="btnSearchCustCIF" />
 									</hbox>
