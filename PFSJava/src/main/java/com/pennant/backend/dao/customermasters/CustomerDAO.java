@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.WIFCustomer;
@@ -136,11 +137,13 @@ public interface CustomerDAO {
 
 	String getCustomerStatus(long custId);
 
-	Customer getCustomerEOD(long id);
+	Customer getCustomerEOD(long custId);
+
+	Customer getCustomerEOD(String coreBankId);
 
 	Date getCustAppDate(long custId);
 
-	void updateCustAppDate(long custId, Date custAppDate, String newCustStatus);
+	void updateCustAppDate(CustEODEvent custEODEvent);
 
 	List<Customer> getCustomerByGroupID(long custGroupID);
 

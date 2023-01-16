@@ -7,26 +7,29 @@ public class CustomerQueuing implements Serializable {
 
 	private static final long serialVersionUID = 6724157480105725958L;
 
+	private long id;
 	private long custID;
+	private String CoreBankId;
 	private Date eodDate;
 	private int threadId;
 	private int progress;
-
 	private Date startTime;
 	private Date endTime;
-
 	private boolean loanExist;
 	private boolean limitRebuild;
-
 	private boolean eodProcess;
-
-	// Unused variable for bean parameter. Temporary
 	private boolean active;
 
-	// private String errorLog;
-	// private String status;
 	public CustomerQueuing() {
 		super();
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public long getCustID() {
@@ -37,40 +40,20 @@ public class CustomerQueuing implements Serializable {
 		this.custID = custID;
 	}
 
-	// public String getErrorLog() {
-	// return errorLog;
-	// }
-	//
-	// public void setErrorLog(String errorLog) {
-	// this.errorLog = errorLog;
-	// }
-	//
-	// public String getStatus() {
-	// return status;
-	// }
-	//
-	// public void setStatus(String status) {
-	// this.status = status;
-	// }
-	//
-	public Date getStartTime() {
-		return startTime;
+	public String getCoreBankId() {
+		return CoreBankId;
 	}
 
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
-
-	public Date getEndTime() {
-		return endTime;
-	}
-
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
+	public void setCoreBankId(String coreBankId) {
+		CoreBankId = coreBankId;
 	}
 
 	public Date getEodDate() {
 		return eodDate;
+	}
+
+	public void setEodDate(Date eodDate) {
+		this.eodDate = eodDate;
 	}
 
 	public int getThreadId() {
@@ -89,24 +72,20 @@ public class CustomerQueuing implements Serializable {
 		this.progress = progress;
 	}
 
-	public void setEodDate(Date eodDate) {
-		this.eodDate = eodDate;
+	public Date getStartTime() {
+		return startTime;
 	}
 
-	public boolean isActive() {
-		return active;
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
 	}
 
-	public void setActive(boolean active) {
-		this.active = active;
+	public Date getEndTime() {
+		return endTime;
 	}
 
-	public boolean isEodProcess() {
-		return eodProcess;
-	}
-
-	public void setEodProcess(boolean eodProcess) {
-		this.eodProcess = eodProcess;
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
 	}
 
 	public boolean isLoanExist() {
@@ -124,4 +103,21 @@ public class CustomerQueuing implements Serializable {
 	public void setLimitRebuild(boolean limitRebuild) {
 		this.limitRebuild = limitRebuild;
 	}
+
+	public boolean isEodProcess() {
+		return eodProcess;
+	}
+
+	public void setEodProcess(boolean eodProcess) {
+		this.eodProcess = eodProcess;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 }

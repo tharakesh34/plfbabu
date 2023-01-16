@@ -338,9 +338,10 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 	@Override
 	public List<Long> getInactiveLoansOnHold(Date closureDate) {
-		StringBuilder sql = new StringBuilder("Select FinId From FinanceMain F");
-		sql.append(" Inner Join Fin_Hold_Detail H ON F.FinID = H.FinID");
-		sql.append(" Where F.FinIsActive = ? and H.HoldStatus = ? and F.ClosedDate <= ? ");
+		StringBuilder sql = new StringBuilder("Select fm.FinId");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join Fin_Hold_Detail fh On fh.FinId = fm.FinId");
+		sql.append(" Where fm.FinIsActive = ? and fh.HoldStatus = ? and fm.ClosedDate <= ? ");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

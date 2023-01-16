@@ -1002,7 +1002,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public List<FinExcessMovement> getExcessMovementList(long id, String movementType) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ExcessId, MovementType, Amount, fem.ReceiptId, TranType");
+		sql.append(" ExcessId, MovementType, Amount, ReceiptId, TranType");
 		sql.append(" From FinExcessMovement");
 		sql.append(" Where ReceiptId = ? and MovementType = ?");
 		sql.append(" Order by ExcessID");

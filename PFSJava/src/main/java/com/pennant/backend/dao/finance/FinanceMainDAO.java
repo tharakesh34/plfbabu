@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -136,7 +137,7 @@ public interface FinanceMainDAO {
 
 	BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference);
 
-	List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive);
+	List<FinanceMain> getFinMainsForEODByCustId(Customer customer);
 
 	FinanceMain getFinMainsForEODByFinRef(long finID, boolean isActive);
 

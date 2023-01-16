@@ -39,10 +39,9 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennant.eod.constants.EodConstants;
-import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Database;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -76,48 +75,52 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	}
 
 	@Override
-	public List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID, boolean isActive) {
+	public List<FinanceProfitDetail> getFinProfitDetailsByCustId(Customer customer) {
+		long custID = customer.getCustID();
+		String corBankID = customer.getCustCoreBank();
+
 		StringBuilder sql = getProfitDetailQuery();
 
-		if (App.DATABASE == Database.SQL_SERVER) {
-			sql.append(EodConstants.SQL_NOLOCK);
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" Where c.CustCoreBank = ? and pd.FinIsActive = ?");
+		} else {
+			sql.append(" where c.CustId = ? and pd.FinIsActive = ?");
 		}
 
-		sql.append(" where CustId = ?");
-
-		if (isActive) {
-			sql.append(" and FinIsActive = ?");
-		}
-
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, custID);
-			if (isActive) {
-				ps.setBoolean(2, isActive);
+			if (CustomerExtension.CUST_CORE_BANK_ID) {
+				ps.setString(1, corBankID);
+			} else {
+				ps.setLong(1, custID);
 			}
+			ps.setBoolean(2, true);
 		}, rowMapper);
 
 	}
 
 	private StringBuilder getProfitDetailQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinID, FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive, TotalPftSchd");
-		sql.append(", TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv, TotalPriPaid, TotalPriBal");
-		sql.append(", TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued, PftAccrueSusp");
-		sql.append(", PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal, AcrTillLBD, AmzTillLBD");
-		sql.append(", LpiTillLBD, LppTillLBD, GstLpiTillLBD, GstLppTillLBD, FinWorstStatus, FinStatus");
-		sql.append(", FinStsReason, ClosingStatus, FinCategory, PrvRpySchDate, NSchdDate, PrvRpySchPri");
-		sql.append(", PrvRpySchPft, LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate");
-		sql.append(", PrvODDate, ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate, FullPaidDate");
-		sql.append(", ExcessAmt, EmiInAdvance, PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
-		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPaidInst");
-		sql.append(", NOAutoIncGrcEnd, WriteoffLoan");
-		sql.append(", TotalPriSchd, MaturityDate, ProductCategory, PrvMthAmz, PenaltyPaid, PenaltyDue");
-		sql.append(", PrvMthGapIntAmz, FirstRepayDate, PrvMthAcr");
-		sql.append(" from FinPftDetails");
+		sql.append(" FinID, pd.FinReference, pd.CustId, pd.FinBranch, pd.FinType, pd.FinCcy, pd.LastMdfDate");
+		sql.append(", pd.FinIsActive, pd.TotalPftSchd, pd.TotalPftCpz, pd.TotalPftPaid, pd.TotalPftBal");
+		sql.append(", pd.TotalPftPaidInAdv, pd.TotalPriPaid, pd.TotalPriBal, pd.TdSchdPft, pd.TdPftCpz");
+		sql.append(", pd.TdSchdPftPaid, pd.TdSchdPftBal, pd.PftAccrued, pd.PftAccrueSusp, pd.PftAmz, pd.PftAmzSusp");
+		sql.append(", pd.TdSchdPri, pd.TdSchdPriPaid, pd.TdSchdPriBal, pd.AcrTillLBD, pd.AmzTillLBD, pd.LpiTillLBD");
+		sql.append(", pd.LppTillLBD, pd.GstLpiTillLBD, pd.GstLppTillLBD, pd.FinWorstStatus, pd.FinStatus");
+		sql.append(", pd.FinStsReason, pd.ClosingStatus, pd.FinCategory, pd.PrvRpySchDate, pd.NSchdDate");
+		sql.append(", pd.PrvRpySchPri, pd.PrvRpySchPft, pd.LatestRpyDate, pd.LatestRpyPri, pd.LatestRpyPft");
+		sql.append(", pd.TotalWriteoff, pd.FirstODDate, pd.PrvODDate, pd.ODPrincipal, pd.ODProfit, pd.CurODDays");
+		sql.append(", pd.ActualODDays, pd.FinStartDate, pd.FullPaidDate, pd.ExcessAmt, pd.EmiInAdvance");
+		sql.append(", pd.PayableAdvise, pd.ExcessAmtResv, pd.EmiInAdvanceResv, pd.PayableAdviseResv");
+		sql.append(", pd.AMZMethod, pd.GapIntAmz, pd.GapIntAmzLbd, pd.SvAmount, pd.CbAmount, pd.NOPaidInst");
+		sql.append(", pd.NOAutoIncGrcEnd, pd.WriteoffLoan, pd.TotalPriSchd");
+		sql.append(", pd.MaturityDate, pd.ProductCategory, pd.PrvMthAmz, pd.PenaltyPaid, pd.PenaltyDue");
+		sql.append(", pd.PrvMthGapIntAmz, pd.FirstRepayDate, pd.PrvMthAcr");
+		sql.append(" From FinPftDetails pd");
+		sql.append(" Inner Join Customers c on c.CustID = pd.CustID");
 		return sql;
 	}
 

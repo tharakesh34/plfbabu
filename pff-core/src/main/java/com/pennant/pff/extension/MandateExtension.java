@@ -93,6 +93,6 @@ public class MandateExtension {
 	}
 
 	public static int getValueAsInt(String key, int defaultValue) {
-		return FeatureExtension.getValueAsInt(Module.DEFAULT, key, defaultValue);
+		return FeatureExtension.getValueAsInt(Module.MANDATE, key, defaultValue);
 	}
 }
