@@ -244,16 +244,10 @@ public class AccountEngineExecution implements Serializable {
 		List<TransactionEntry> txnEntries = new ArrayList<>();
 
 		for (Long accountSetId : acSetList) {
-			List<TransactionEntry> tempExnEntries = new ArrayList<>();
-
 			if (aeEvent.isEOD()) {
-				tempExnEntries = AccountingConfigCache.getCacheTransactionEntry(accountSetId);
+				txnEntries.addAll(AccountingConfigCache.getCacheTransactionEntry(accountSetId));
 			} else {
-				tempExnEntries = AccountingConfigCache.getTransactionEntry(accountSetId);
-			}
-
-			for (TransactionEntry entry : tempExnEntries) {
-				txnEntries.add(entry.copyEntity());
+				txnEntries.addAll(AccountingConfigCache.getTransactionEntry(accountSetId));
 			}
 		}
 
@@ -578,30 +572,27 @@ public class AccountEngineExecution implements Serializable {
 		txnEntry.setGlCode(txnEntry.getGlCode());
 		txnEntry.setAccount(txnEntry.getAccount());
 
-		// Rule rule = null;
+		Rule rule = null;
 		String accountSubHeadRule = subHeadRule;
 		String moduleSubhead = RuleConstants.MODULE_SUBHEAD;
 
 		dataMap.put("acType", txnEntry.getAccountType());
-
-		Rule rule = AccountingConfigCache.getRule(accountSubHeadRule, moduleSubhead, moduleSubhead);
-		/*
-		 * if (aeEvent.isEOD()) { rule = AccountingConfigCache.getCacheRule(accountSubHeadRule, moduleSubhead,
-		 * moduleSubhead); } else { rule = AccountingConfigCache.getRule(accountSubHeadRule, moduleSubhead,
-		 * moduleSubhead); }
-		 */
+		if (aeEvent.isEOD()) {
+			rule = AccountingConfigCache.getCacheRule(accountSubHeadRule, moduleSubhead, moduleSubhead);
+		} else {
+			rule = AccountingConfigCache.getRule(accountSubHeadRule, moduleSubhead, moduleSubhead);
+		}
 
 		if (rule != null) {
 			String sqlRule = rule.getSQLRule();
 			String ccy = aeEvent.getCcy();
 			txnEntry.setAccount((String) RuleExecutionUtil.executeRule(sqlRule, dataMap, ccy, RuleReturnType.STRING));
 
-			txnEntry.setGlCode(AccountingConfigCache.getCacheAccountMapping(txnEntry.getAccount()));
-			/*
-			 * if (aeEvent.isEOD()) {
-			 * txnEntry.setGlCode(AccountingConfigCache.getCacheAccountMapping(txnEntry.getAccount())); } else {
-			 * txnEntry.setGlCode(AccountingConfigCache.getAccountMapping(txnEntry.getAccount())); }
-			 */
+			if (aeEvent.isEOD()) {
+				txnEntry.setGlCode(AccountingConfigCache.getCacheAccountMapping(txnEntry.getAccount()));
+			} else {
+				txnEntry.setGlCode(AccountingConfigCache.getAccountMapping(txnEntry.getAccount()));
+			}
 		}
 	}
 

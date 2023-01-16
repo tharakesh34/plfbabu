@@ -217,7 +217,7 @@ public class RuleExecutionUtil implements Serializable {
 		return null;
 	}
 
-	private static ScriptEngine getScriptEngine() {
+	private static synchronized ScriptEngine getScriptEngine() {
 		String threadName = Thread.currentThread().getName();
 
 		if (threadName.startsWith("PLF_EOD_THREAD_")) {
