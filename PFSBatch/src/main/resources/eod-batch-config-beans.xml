@@ -905,45 +905,30 @@
 		parent="abstractInterface" />
 
 	<bean id="defaultDocumentValidation" class="com.pennant.pff.document.service.DefaultDocumentValidation" />
-	
-	<bean id="docVerificationDAO" class="com.pennant.pff.document.dao.DocVerificationDAOImpl" parent="basicDao"/>
-	
+	<bean id="docVerificationDAO" class="com.pennant.pff.document.dao.DocVerificationDAOImpl" parent="basicDao" />
+
 	<bean id="jointAccountDetailDAO" class="com.pennant.backend.dao.finance.impl.JointAccountDetailDAOImpl"
 		parent="sequenceDao" />
 
-	<bean id="financeHoldReleaseProcess" class="com.pennanttech.pff.holdrelease.FinanceHoldReleaseProcess">
-		<property name="financeMainDAO" ref="financeMainDAO" />
-	</bean>
+	<bean id="holdRefundUploadDAO" class="com.pennant.pff.holdrefund.dao.impl.HoldRefundUploadDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="financeHoldReleaseProcess" class="com.pennanttech.pff.holdrelease.FinanceHoldReleaseProcess" />
 
 	<bean id="finTypePartnerBankDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypePartnerBankDAOImpl"
 		parent="sequenceDao" />
 
 	<!-- Auto Refund Process -->
-	<bean id="autoRefundProcess" class="com.pennanttech.pff.autorefund.AutoRefundProcess">
-		<property name="autoRefundService" ref="autoRefundService" />
-		<property name="refundBeneficiary" ref="refundBeneficiary" />
-	</bean>
+	<bean id="autoRefundService" class="com.pennant.pff.autorefund.serviceimpl.AutoRefundServiceImpl"/>
+	
+	<bean id="autoRefundProcess" class="com.pennanttech.pff.autorefund.AutoRefundProcess"/>
 
-	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary">
-		<property name="mandateDAO" ref="mandateDAO" />
-		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
-	</bean>
-
-	<bean id="autoRefundService" class="com.pennant.pff.autorefund.serviceimpl.AutoRefundServiceImpl">
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="autoRefundDAO" ref="autoRefundDAO" />
-		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
-		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
-		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
-		<property name="customerDAO" ref="customerDAO" />
-		<property name="paymentHeaderService" ref="paymentHeaderService" />
-	</bean>
+	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary"/>
 
 	<bean id="autoRefundDAO" class="com.pennant.backend.dao.finance.impl.AutoRefundDAOImpl" parent="basicDao" />
+	
 	<bean id="paymentHeaderDAO" class="com.pennant.backend.dao.payment.impl.PaymentHeaderDAOImpl" parent="sequenceDao" />
+	
 	<bean id="mandateDAO" class="com.pennant.backend.dao.mandate.impl.MandateDAOImpl" parent="sequenceDao" />
 
 	<bean id="paymentHeaderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
