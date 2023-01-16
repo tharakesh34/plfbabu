@@ -378,9 +378,10 @@
 		</menu>
 		<menu id="menu_Item_Presentment">
 			<menuItem id="menuItem_Presentment_ExcludeCode"
-					zulNavigation="/WEB-INF/pages/Presentment/PresentmentExcludeCodeList.zul" rightName="menuItem_PresentmentExcludeCodes" />
+				zulNavigation="/WEB-INF/pages/Presentment/PresentmentExcludeCodeList.zul"
+				rightName="menuItem_PresentmentExcludeCodes" />
 			<menuItem id="menuItem_Due_Extraction_Config"
-					zulNavigation="/WEB-INF/pages/Presentment/DueExtractionConfigList.zul" rightName="menuItem_DueExtractionConfig" />
+				zulNavigation="/WEB-INF/pages/Presentment/DueExtractionConfigList.zul" rightName="menuItem_DueExtractionConfig" />
 		</menu>
 
 		<menu id="menu_Category_CersaiMasters">
@@ -873,7 +874,13 @@
 				rightName="menu_Item_ReceiptUploadApprover" />
 			<menuItem id="menu_Item_ExcessAmountTransfer"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/ExcessTransfer/ExcessTransferList.zul"
-				rightName="menuItem_Receipts_InitMaker" />
+				rightName="menuItem_ExcessTransferMaster_ExcessTransfer" />
+			<menuItem id="menu_Item_ExcessTransferUpload_Maker"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/ExcessTransfer/Upload/ExcessTransferUploadList.zul?stage=M"
+				rightName="menu_Item_ExcessTransferUpload_Maker" />
+			<menuItem id="menu_Item_ExcessTransferUpload_Approver"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/ExcessTransfer/Upload/ExcessTransferUploadList.zul?stage=A"
+				rightName="menu_Item_ExcessTransferUpload_Approver" />
 		</menu>
 
 		<menu id="menu_Category_NonLanReceipts">
@@ -967,10 +974,10 @@
 			<menuItem id="menu_Item_ChequeHeader" zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderList.zul"
 				rightName="menuItem_pdc_ChequeHeader" />
 			<menu id="menu_Category_Cheque">
-				<menuItem id="menu_Item_ChequeUpload_Maker" zulNavigation="/WEB-INF/pages/PDCDetails/PDCUploadList.zul?stage=M"
-					rightName="menu_Item_ChequeUpload_Maker" />
-				<menuItem id="menu_Item_ChequeUpload_Approver" zulNavigation="/WEB-INF/pages/PDCDetails/PDCUploadList.zul?stage=A"
-					rightName="menu_Item_ChequeUpload_Approver" />
+				<menuItem id="menu_Item_ChequeUpload_Maker"
+					zulNavigation="/WEB-INF/pages/PDCDetails/PDCUploadList.zul?stage=M" rightName="menu_Item_ChequeUpload_Maker" />
+				<menuItem id="menu_Item_ChequeUpload_Approver"
+					zulNavigation="/WEB-INF/pages/PDCDetails/PDCUploadList.zul?stage=A" rightName="menu_Item_ChequeUpload_Approver" />
 			</menu>
 			<menuItem id="menu_Item_RegenerateAgreement"
 				zulNavigation="/WEB-INF/pages/Finance/RegenerateAgreement/RegenerateAgreement.zul"
@@ -1101,10 +1108,12 @@
 				zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=A"
 				rightName="menu_Item_RePresentUpload_Approver" />
 			<menuItem id="menu_Item_FateCorrectionUpload_Maker"
-				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=M" rightName="menu_Item_FateCorrectionUpload_Maker" />
+				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=M"
+				rightName="menu_Item_FateCorrectionUpload_Maker" />
 			<menuItem id="menu_Item_FateCorrectionUpload_Approver"
-				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A" rightName="menu_Item_FateCorrectionUpload_Approver" />
-				
+				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A"
+				rightName="menu_Item_FateCorrectionUpload_Approver" />
+
 		</menu>
 		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
 			<menuItem id="menu_Item_FinanceTaxDetailUpload"
@@ -1185,17 +1194,11 @@
 			<menuItem id="menu_Item_MerchantUTRUpload"
 				zulNavigation="/WEB-INF/pages/Finance/MerchantUTR/MerchantUTRUpload.zul" rightName="menu_Item_MerchantUTRUpload" />
 		</menu>
-		
-	<!-- 	<menu id="menu_Category_RePresentUpload">
-	<menuItem id="menu_Item_RePresentUpload_Maker"
-		zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?approval=N"
-		rightName="menu_Item_RePresentUpload" />
 
-	<menuItem id="menu_Item_RePresentUpload_Approval"
-		zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?approval=Y"
-		rightName="menu_Item_RePresentUploadApprover" />
-</menu> -->
-				
+		<!-- <menu id="menu_Category_RePresentUpload"> <menuItem id="menu_Item_RePresentUpload_Maker" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?approval=N" 
+			rightName="menu_Item_RePresentUpload" /> <menuItem id="menu_Item_RePresentUpload_Approval" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?approval=Y" 
+			rightName="menu_Item_RePresentUploadApprover" /> </menu> -->
+
 		<!-- Fee Waiver Upload -->
 		<menu id="menu_Category_FeeWaiverUpload" rightName="menuItem_FeeWaiverUpload">
 			<menuItem id="menu_Item_FeeWaiverUpload_Maker"

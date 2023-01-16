@@ -7,7 +7,9 @@ public enum UploadTypes {
 
 	FATE_CORRECTION("Fate Correction Upload Details Screen"),
 
-	CHEQUE("Cheque Upload Details Screen");
+	CHEQUE("Cheque Upload Details Screen"),
+
+	EXCESS_TRANSFER("Excess Transfer Screen Details");
 
 	private String description;
 

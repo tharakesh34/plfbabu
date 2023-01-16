@@ -50,7 +50,11 @@ public enum PresentmentError {
 
 	FC_601("Fate Correction already proceessed for this schedule."),
 
-	FC_602("Presentment is not found for this respective schedule.");
+	FC_602("Presentment is not found for this respective schedule."),
+
+	EX_607("Transfer amount should be less/equal to Balance Amount"),
+
+	EX_608("File having duplicate records with same Loan Reference and Amount Type");
 
 	private String description;
 

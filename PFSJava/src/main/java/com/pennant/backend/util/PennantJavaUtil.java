@@ -3867,6 +3867,11 @@ public class PennantJavaUtil {
 						null, new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
 						new String[][] { { "AmountType", "0", "E" } }, 750));
 
+		ModuleUtil.register("ExcessTransferUpload",
+				new ModuleMapping("ExcessTransferUpload", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
 		registerCustomModules();
 	}
 

@@ -13052,4 +13052,8 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 	
+	<bean id="excessTransferUploadService" class="com.pennant.backend.service.excessheadmaster.impl.ExcessTransferUploadServiceImpl" />
+	
+	<bean id="excessTransferUploadDAO" class="com.pennant.backend.dao.excessheadmaster.impl.ExcessTransferUploadDAOImpl"
+		parent="sequenceDao" />
 </beans>

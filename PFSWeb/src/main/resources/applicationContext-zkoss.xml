@@ -6120,4 +6120,7 @@
 		<property name="customerService" ref="customerService" />
 		<property name="financeMainService" ref="financeMainService"/>
 	</bean>
+	
+	<bean id="excessTransferUploadListCtrl" class="com.pennant.webui.financemanagement.excesstransferupload.ExcessTransferUploadListCtrl"
+	parent="uploadList" />
 </beans>
