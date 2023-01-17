@@ -2325,17 +2325,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setMaxAutoRefund(CurrencyUtil.unFormat(this.maxAutoRefund.getValidateValue(), format));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			aFinanceType.setMinAutoRefund(CurrencyUtil.unFormat(this.minAutoRefund.getValidateValue(), format));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
 			if (isValidComboValue(this.cbfinProductType,
 					Labels.getLabel("label_FinanceTypeDialog_FinProductType.Value"))) {
 				aFinanceType.setFinCategory(this.cbfinProductType.getSelectedItem().getValue().toString());
@@ -2436,13 +2425,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// To check Maximum Auto Refund amount is greater than Minimum Auto Refunf amount
-		try {
-			mustBeHigher(maxAutoRefund, minAutoRefund, "label_FinanceTypeDialog_MaxAutoRefunds.value",
-					"label_FinanceTypeDialog_MinAutoRefunds.value");
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+
 		aFinanceType.setAlwMultiPartyDisb(this.alwMultiPartyDisb.isChecked());
 		aFinanceType.setTdsApplicable(this.tDSApplicable.isChecked());
 
@@ -3556,6 +3539,26 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					aFinanceType.setRoundingTarget(Integer.valueOf(getComboboxValue(this.roundingTarget)));
 				}
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setMaxAutoRefund(CurrencyUtil.unFormat(this.maxAutoRefund.getValidateValue(), format));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setMinAutoRefund(CurrencyUtil.unFormat(this.minAutoRefund.getValidateValue(), format));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// To check Maximum Auto Refund amount is greater than Minimum Auto Refunf amount
+		try {
+			mustBeHigher(maxAutoRefund, minAutoRefund, "label_FinanceTypeDialog_MaxAutoRefunds.value",
+					"label_FinanceTypeDialog_MinAutoRefunds.value");
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
