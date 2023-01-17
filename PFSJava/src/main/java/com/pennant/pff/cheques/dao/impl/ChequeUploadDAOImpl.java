@@ -134,7 +134,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 		sql.append(", cu.CHEQUESERIALNO, cu.ACCOUNTTYPE, cu.ACCHOLDERNAME, cu.ACCOUNTNO");
 		sql.append(",cu.IFSCCODE, cu.MICR, cu.AMOUNT,cu.ID, cu.CHEQUEDETAILSID");
 		sql.append(", uh.APPROVEDON, uh.CREATEDON, cu.STATUS, cu.ERRORCODE, cu.ERRORDESC");
-		sql.append(" ,uh.CREATEDBY,uh.APPROVEDBY");
+		sql.append(" ,uh.CREATEDBY,uh.APPROVEDBY,cu.CHEQUEDATE");
 		sql.append(" From CHEQUES_UPLOAD cu");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.ID = cu.HeaderID");
 		sql.append(" Where uh.ID = :HEADER_ID");
