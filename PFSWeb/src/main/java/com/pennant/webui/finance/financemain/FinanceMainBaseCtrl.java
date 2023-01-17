@@ -1404,7 +1404,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.rowFacilityNotes.setVisible(false);
 			readOnlyComponent(true, this.finLimitRef);
 		}
-		this.finPurpose.setProperties("LoanPurpose", "LoanPurposeCode", "LoanPurposeDesc", false, 8);
+		this.finPurpose.setProperties("LoanPurpose", "LoanPurposeCode", "LoanPurposeDesc",
+				ImplementationConstants.LOAN_PURPOSE_MANDATORY, 8);
 		// filters for loan purpose based on loantype
 		if (financeType != null) {
 			List<String> detailsList = null;
@@ -6735,8 +6736,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (!this.finPurpose.isReadonly()) {
-			this.finPurpose.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_FinanceMainDialog_FinPurpose.value"), null, false, true));
+			this.finPurpose
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_FinPurpose.value"),
+							null, ImplementationConstants.LOAN_PURPOSE_MANDATORY, true));
 		}
 
 		if (!this.finDivision.equals(FinanceConstants.FIN_DIVISION_CORPORATE) && !recSave && !buildEvent) {
@@ -17303,7 +17305,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.subVentionFrom.setReadonly(true);
 		this.manufacturerDealer.setReadonly(true);
 		this.finPurpose.setReadonly(true);
-		this.finPurpose.setMandatoryStyle(false);
+		this.finPurpose.setMandatoryStyle(ImplementationConstants.LOAN_PURPOSE_MANDATORY);
 		this.commitmentRef.setReadonly(true);
 		this.commitmentRef.setMandatoryStyle(false);
 		readOnlyComponent(true, this.finLimitRef);
