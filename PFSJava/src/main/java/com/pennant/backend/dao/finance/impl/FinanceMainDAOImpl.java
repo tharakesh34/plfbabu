@@ -6605,4 +6605,28 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		this.jdbcOperations.update(sql, isUnderSettlement, finID);
 	}
+	
+	@Override
+	public FinanceMain getFinanceMainForExcessTransfer(long finId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinId, FinReference, FinBranch, PromotionCode, FinType, FinCcy, CustId");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			FinanceMain fm = new FinanceMain();
+
+			fm.setFinID(rs.getLong("FinId"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setFinCcy(rs.getString("FinCCy"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setFinBranch(rs.getString("FinBranch"));
+			fm.setPromotionCode(rs.getString("PromotionCode"));
+			fm.setCustID(rs.getLong("CustId"));
+
+			return fm;
+		}, finId);
+	}
 }

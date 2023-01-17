@@ -378,9 +378,10 @@
 		</menu>
 		<menu id="menu_Item_Presentment">
 			<menuItem id="menuItem_Presentment_ExcludeCode"
-					zulNavigation="/WEB-INF/pages/Presentment/PresentmentExcludeCodeList.zul" rightName="menuItem_PresentmentExcludeCodes" />
+				zulNavigation="/WEB-INF/pages/Presentment/PresentmentExcludeCodeList.zul"
+				rightName="menuItem_PresentmentExcludeCodes" />
 			<menuItem id="menuItem_Due_Extraction_Config"
-					zulNavigation="/WEB-INF/pages/Presentment/DueExtractionConfigList.zul" rightName="menuItem_DueExtractionConfig" />
+				zulNavigation="/WEB-INF/pages/Presentment/DueExtractionConfigList.zul" rightName="menuItem_DueExtractionConfig" />
 		</menu>
 
 		<menu id="menu_Category_CersaiMasters">
@@ -867,39 +868,15 @@
 			<menuItem id="menu_Item_ReceiptUploadApproval"
 				zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=Y"
 				rightName="menu_Item_ReceiptUploadApprover" />
-
-			<!-- <menuItem id="menu_Item_Receipts" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_Receipts" 
-				/> <menuItem id="menu_Item_ReceiptRealization" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationList.zul" 
-				rightName="menuItem_FinanceManagement_ReceiptRealization" /> <menuItem id="menu_Item_ReceiptBounce" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=B" 
-				rightName="menuItem_FinanceManagement_ReceiptBounce" /> <menuItem id="menu_Item_ReceiptCancellation" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=C" 
-				rightName="menuItem_FinanceManagement_ReceiptCancellation" /> -->
-			<!-- <menuItem id="menu_Item_InitMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPT_MAKER" 
-				/> <menuItem id="menu_Item_ForeClosureDepositMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=DEPOSIT_MAKER" 
-				/> <menuItem id="menu_Item_ForeClosureDepositApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=DEPOSIT_APPROVER" 
-				/> <menuItem id="menu_Item_ForeClosureRealizationMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=REALIZATION_MAKER" 
-				/> <menuItem id="menu_Item_ForeClosureRealizationApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=REALIZATION_APPROVER" 
-				/> <menuItem id="menu_Item_KnockoffMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTKNOCKOFF_MAKER" 
-				/> <menuItem id="menu_Item_KnockoffApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTKNOCKOFF_APPROVER" 
-				/> <menuItem id="menu_Item_KnockoffCancelMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTKNOCKOFFCANCEL_MAKER" 
-				rightName="menuItem_FinanceManagement_ReceiptKnockOffCancel" /> <menuItem id="menu_Item_KnockoffCancelApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTKNOCKOFFCANCEL_APPROVER" 
-				rightName="menuItem_FinanceManagement_ReceiptKnockOffCancelApprover" /> <menuItem id="menu_Item_closureMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTCLOSURE_MAKER" 
-				rightName="menuItem_Receipts_ClosureMaker" /> <menuItem id="menu_Item_closureApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTCLOSURE_APPROVER" 
-				rightName="menuItem_Receipts_ClosureApprover" /> -->
-			<!-- <menuItem id="menu_Item_closureMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=CLOSURE_MAKER" 
-				rightName="menuItem_Receipts_KnockoffApprover"/> <menuItem id="menu_Item_closureApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=CLOSURE_APPROVER" 
-				rightName="menuItem_Receipts_KnockoffApprover"/> -->
-			<!-- <menuItem id="menu_Item_ReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?enqiryModule=Y" 
-				/> -->
-			<!-- <menuItem id="menu_Item_clousureApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=CLOSURE_APPROVER" 
-				rightName="menuItem_Receipts_ClosureApprover"/> <menuItem id="menu_Item_BounceMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=BM" 
-				rightName="menuItem_Receipts_BounceMaker"/> <menuItem id="menu_Item_BounceApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/Pa 
-				ymentMode/ReceiptList.zul?module=RECEIPTBOUNCE_APPROVER" rightName="menuItem_Receipts_BounceApprover"/> -->
-			<!-- <menuItem id="menu_Item_FeeReceipts" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptList.zul" 
-				rightName="menuItem_FinanceManagement_FeeReceipts" /> <menuItem id="menu_Item_FeeReceiptCancellation" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=F" 
-				rightName="menuItem_FinanceManagement_FeeReceiptCancellation" /> <menuItem id="menu_Item_DepositDetails" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/DepositDetailsList.zul" 
-				rightName="menuItem_FinanceManagement_DepositDetails" /> <menuItem id="menu_Item_ReceiptUpload" zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=N" 
-				rightName="menu_Item_ReceiptUpload" /> <menuItem id="menu_Item_ReceiptUploadApproval" zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=Y" 
-				rightName="menu_Item_ReceiptUploadApprover" /> -->
+			<menuItem id="menu_Item_ExcessAmountTransfer"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/ExcessTransfer/ExcessTransferList.zul"
+				rightName="menuItem_ExcessTransferMaster_ExcessTransfer" />
+			<menuItem id="menu_Item_ExcessTransferUpload_Maker"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/ExcessTransfer/Upload/ExcessTransferUploadList.zul?stage=M"
+				rightName="menu_Item_ExcessTransferUpload_Maker" />
+			<menuItem id="menu_Item_ExcessTransferUpload_Approver"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/ExcessTransfer/Upload/ExcessTransferUploadList.zul?stage=A"
+				rightName="menu_Item_ExcessTransferUpload_Approver" />
 		</menu>
 
 		<menu id="menu_Category_NonLanReceipts">
@@ -992,6 +969,12 @@
 				rightName="menuItem_FinanceManagement_HoldEMI" />
 			<menuItem id="menu_Item_ChequeHeader" zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderList.zul"
 				rightName="menuItem_pdc_ChequeHeader" />
+			<menu id="menu_Category_Cheque">
+				<menuItem id="menu_Item_ChequeUpload_Maker"
+					zulNavigation="/WEB-INF/pages/PDCDetails/PDCUploadList.zul?stage=M" rightName="menu_Item_ChequeUpload_Maker" />
+				<menuItem id="menu_Item_ChequeUpload_Approver"
+					zulNavigation="/WEB-INF/pages/PDCDetails/PDCUploadList.zul?stage=A" rightName="menu_Item_ChequeUpload_Approver" />
+			</menu>
 			<menuItem id="menu_Item_RegenerateAgreement"
 				zulNavigation="/WEB-INF/pages/Finance/RegenerateAgreement/RegenerateAgreement.zul"
 				rightName="menuItem_FinanceManagement_RegenerateAgreement" />
@@ -1128,9 +1111,12 @@
 				zulNavigation="/WEB-INF/pages/Presentment/Upload/RepresentmentUploadList.zul?stage=A"
 				rightName="menu_Item_RePresentUpload_Approver" />
 			<menuItem id="menu_Item_FateCorrectionUpload_Maker"
-				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=M" rightName="menu_Item_FateCorrectionUpload_Maker" />
+				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=M"
+				rightName="menu_Item_FateCorrectionUpload_Maker" />
 			<menuItem id="menu_Item_FateCorrectionUpload_Approver"
 				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A" rightName="menu_Item_FateCorrectionUpload_Approver" />
+				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A"
+				rightName="menu_Item_FateCorrectionUpload_Approver" />
 		</menu>
 		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
 			<menuItem id="menu_Item_FinanceTaxDetailUpload"
@@ -1211,7 +1197,12 @@
 			<menuItem id="menu_Item_MerchantUTRUpload"
 				zulNavigation="/WEB-INF/pages/Finance/MerchantUTR/MerchantUTRUpload.zul" rightName="menu_Item_MerchantUTRUpload" />
 		</menu>
-		
+
+
+		<!-- <menu id="menu_Category_RePresentUpload"> <menuItem id="menu_Item_RePresentUpload_Maker" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?approval=N" 
+			rightName="menu_Item_RePresentUpload" /> <menuItem id="menu_Item_RePresentUpload_Approval" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?approval=Y" 
+			rightName="menu_Item_RePresentUploadApprover" /> </menu> -->
+
 		<!-- Fee Waiver Upload -->
 		<menu id="menu_Category_FeeWaiverUpload" rightName="menuItem_FeeWaiverUpload">
 			<menuItem id="menu_Item_FeeWaiverUpload_Maker"

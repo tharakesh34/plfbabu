@@ -83,6 +83,7 @@ public class RepayConstants {
 	public static final String EXCESSADJUSTTO_SETTLEMENT = "S";
 	public static final String EXCESSADJUSTTO_PARTPAY = "S";
 	public static final String EXCESSADJUSTTO_TEXCESS = "T";
+	public static final String EXCESSADJUSTTO_RECADJ = "R";
 
 	public static final String REQTYPE_INQUIRY = "Inquiry";
 	public static final String REQTYPE_POST = "Post";
@@ -95,6 +96,7 @@ public class RepayConstants {
 	public static final String RECEIPTTYPE_PAYABLE = "P";
 	public static final String RECEIPTTYPE_ADJUST = "A";
 	public static final String RECEIPTTYPE_PRESENTMENT = "I";
+	public static final String RECEIPTTYPE_TRANSFER = "T";
 
 	// Receipt Types
 	public static final String RECEIPTTO_FINANCE = "F";

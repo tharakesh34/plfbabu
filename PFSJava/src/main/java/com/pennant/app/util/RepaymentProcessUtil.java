@@ -1601,7 +1601,7 @@ public class RepaymentProcessUtil {
 
 						// Excess Amount make utilization
 						FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(receiptSeqID,
-								payAgainstID);
+								payAgainstID, RepayConstants.RECEIPTTYPE_RECIPT);
 						if (exReserve != null) {
 
 							// Update Reserve Amount in FinExcessAmount

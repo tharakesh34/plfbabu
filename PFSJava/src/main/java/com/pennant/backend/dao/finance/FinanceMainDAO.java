@@ -415,4 +415,6 @@ public interface FinanceMainDAO {
 	List<AutoRefundLoan> getAutoRefundsLoanList();
 
 	void updateSettlementFlag(long finID, boolean isUnderSettlement);
+
+	FinanceMain getFinanceMainForExcessTransfer(long finId);
 }

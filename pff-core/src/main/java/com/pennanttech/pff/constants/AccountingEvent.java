@@ -134,6 +134,7 @@ public class AccountingEvent {
 	public static final String EVENTCTG_OVERDRAFT = "O";
 	public static final String EVENTCTG_GOLD = "G";
 	public static final String EVENTCTG_CD = "C";
+	public static final String EXTRF = "EXTRF";
 
 	public static boolean isDisbursementEvent(String eventCode) {
 		if (StringUtils.isEmpty(eventCode)) {

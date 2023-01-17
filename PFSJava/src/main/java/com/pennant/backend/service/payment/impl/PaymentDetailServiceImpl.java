@@ -548,7 +548,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		if (!AdviseType.isPayable(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
 			FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(paymentDetail.getPaymentDetailId(),
-					paymentDetail.getReferenceId());
+					paymentDetail.getReferenceId(), RepayConstants.RECEIPTTYPE_PAYABLE);
 			if (exReserve == null) {
 
 				// Update Excess Amount in Reserve
@@ -617,7 +617,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		if (!AdviseType.isPayable(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
 			FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(paymentDetail.getPaymentDetailId(),
-					paymentDetail.getReferenceId());
+					paymentDetail.getReferenceId(), RepayConstants.RECEIPTTYPE_PAYABLE);
 			if (exReserve != null) {
 				// Update Reserve Amount in FinExcessAmount
 				finExcessAmountDAO.updateExcessReserve(paymentDetail.getReferenceId(),

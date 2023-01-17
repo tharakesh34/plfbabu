@@ -53,9 +53,6 @@ public class TestFinExcessAmountDAO {
 
 		finExcessAmountDAO.updateExcessReserve(377, new BigDecimal(10000));
 
-		finExcessAmountDAO.getExcessReserve(890, 88);
-		finExcessAmountDAO.getExcessReserve(891, 88);
-
 		finExcessAmountDAO.getExcessReserveList(58);
 
 		finExcessAmountDAO.updateExcessReserveLog(646, 107, new BigDecimal(10000), "R");

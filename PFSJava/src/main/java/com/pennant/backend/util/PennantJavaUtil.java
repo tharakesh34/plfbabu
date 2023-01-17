@@ -444,6 +444,7 @@ import com.pennant.backend.model.tds.receivables.TdsReceivable;
 import com.pennant.backend.model.tds.receivables.TdsReceivablesTxn;
 import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
+import com.pennant.pff.excess.model.FinExcessTransfer;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.pff.presentment.model.DueExtractionHeader;
@@ -3900,6 +3901,26 @@ public class PennantJavaUtil {
 				new ModuleMapping("SettlementFinanceMain", FinanceMain.class,
 						new String[] { "FM_Settlement_VIEW", "FM_Settlement_VIEW" }, null,
 						new String[] { "FinReference", "FinType" }, null, 350));
+
+		ModuleUtil.register("FinExcessTransfer",
+				new ModuleMapping("FinExcessTransfer", FinExcessTransfer.class,
+						new String[] { "Excess_Transfer_Details", "Excess_Transfer_Details_View" }, masterWF,
+						new String[] { "Id", "FinID" }, null, 300));
+
+		ModuleUtil.register("ExcessTrf",
+				new ModuleMapping("ExcessAmount", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" },
+						null, new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" }, null,
+						750));
+
+		ModuleUtil.register("Excess",
+				new ModuleMapping("ExcessAmount", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" },
+						null, new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
+						new String[][] { { "AmountType", "0", "E" } }, 750));
+
+		ModuleUtil.register("ExcessTransferUpload",
+				new ModuleMapping("ExcessTransferUpload", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
 
 		registerCustomModules();
 	}

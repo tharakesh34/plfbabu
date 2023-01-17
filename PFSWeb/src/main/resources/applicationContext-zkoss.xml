@@ -6160,4 +6160,31 @@
 	<bean id="selectSettlementDialogCtrl" class="com.pennant.pff.settlement.web.SelectSettlementDialogCtrl"
 		parent="basisCtrl" scope="prototype" />
 	
+	<!--============ FinExcess Transfer ============== -->
+
+	<bean id="excessTransferListCtrl"
+		class = "com.pennant.pff.excess.web.ExcessTransferListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="excessTransferService" ref="excessTransferService" />
+		<property name="financeMainService" ref="financeMainService" />
+	</bean>
+
+	<bean id="excessTransferDialogCtrl"
+		class="com.pennant.pff.excess.web.ExcessTransferDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="excessTransferService" ref="excessTransferService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+	</bean>
+	
+	<bean id="selectExcessTransferCtrl"
+		class="com.pennant.pff.excess.web.SelectExcessTransferCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="excessTransferService" ref="excessTransferService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="customerService" ref="customerService" />
+		<property name="financeMainService" ref="financeMainService"/>
+	</bean>
+	
+	<bean id="excessTransferUploadListCtrl" class="com.pennant.pff.excess.web.ExcessTransferUploadListCtrl"
+	parent="uploadList" />
 </beans>

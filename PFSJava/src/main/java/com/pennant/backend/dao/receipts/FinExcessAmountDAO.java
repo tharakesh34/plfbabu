@@ -15,13 +15,15 @@ public interface FinExcessAmountDAO {
 
 	void saveExcess(FinExcessAmount excess);
 
+	void saveExcessList(List<FinExcessAmount> excess);
+
 	void updateUtilise(long payAgainstID, BigDecimal amount);
 
 	void saveExcessMovement(FinExcessMovement movement);
 
 	void updateExcessReserve(long payAgainstID, BigDecimal reserveAmt);
 
-	FinExcessAmountReserve getExcessReserve(long receiptID, long payAgainstID);
+	FinExcessAmountReserve getExcessReserve(long receiptID, long payAgainstID, String paymentType);
 
 	void saveExcessReserveLog(long receiptID, long payAgainstID, BigDecimal reserveAmt, String paymentType);
 
@@ -107,4 +109,6 @@ public interface FinExcessAmountDAO {
 	List<FinExcessAmount> getExcessRcdList(long finID, Date activeNDate);
 
 	BigDecimal getSettlementAmountReceived(long finId);
+
+	FinExcessAmount getFinExcessAmountById(long excessID, String type);
 }

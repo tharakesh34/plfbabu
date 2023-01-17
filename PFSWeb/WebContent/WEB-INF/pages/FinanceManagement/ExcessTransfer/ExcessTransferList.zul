@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_ExcessTransferList" apply="${excessTransferListCtrl}" border="none" width="100%">
+
+			<div sclass="z-toolbar" style="padding:0" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+					<toolbar align="start" sclass="toolbar-start" />
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<button id="button_ExcessTransferList_ExcessTransferSearchDialog" label="${c:l('label_Filter')}"
+							autodisable="button_ExcessTransferList_Common,print,button_ExcessTransferList_Resubmit,button_ExcessTransferList_ExcessTransferSearchDialog,btnRefresh,help,button_ExcessTransferList_NewExcessTransfer
+							,button_ExcessTransferList_Approve,button_ExcessTransferList_Submit,button_ExcessTransferList_Save"
+							tooltiptext="${c:l('button_ExcessTransferList_ExcessTransferSearchDialog.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+
+						<button id="print" label="${c:l('label_Print')}" visible="false"
+							autodisable="button_ExcessTransferList_Common,print,button_ExcessTransferList_Resubmit,button_ExcessTransferList_ExcessTransferSearchDialog,btnRefresh,help,button_ExcessTransferList_NewExcessTransfer
+							,button_ExcessTransferList_Approve,button_ExcessTransferList_Submit,button_ExcessTransferList_Save"
+							tooltiptext="${c:l('print.tooltiptext')}" sclass="z-toolbarbutton" />
+
+						<button id="btnRefresh" label="${c:l('label_Refresh')}"
+							autodisable="button_ExcessTransferList_Common,print,button_ExcessTransferList_Resubmit,button_ExcessTransferList_ExcessTransferSearchDialog,btnRefresh,help,button_ExcessTransferList_NewExcessTransfer
+							,button_ExcessTransferList_Approve,button_ExcessTransferList_Submit,button_ExcessTransferList_Save"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="button_ExcessTransferList_NewExcessTransfer" label="${c:l('label_New')}"
+							autodisable="button_ExcessTransferList_Common,print,button_ExcessTransferList_Resubmit,button_ExcessTransferList_ExcessTransferSearchDialog,btnRefresh,help,button_ExcessTransferList_NewExcessTransfer
+							,button_ExcessTransferList_Approve,button_ExcessTransferList_Submit,button_ExcessTransferList_Save"
+							tooltiptext="${c:l('button_ExcessTransferList_NewExcessTransfer.tooltiptext')}" sclass="z-toolbarbutton"
+							visible="false" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderLayout_ExcessTransferList">
+				<north border="none" />
+
+				<center border="none">
+					<div>
+						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row id="row_1" visible="true">
+									<label id="label_ExcessTransferList_TransferId"
+										value="${c:l('label_ExcessTransferList_TransferId.value')}" />
+									<listbox id="sortOperator_transferId" width="43px" mold="select" rows="1" />
+									<longbox id="Id" width="50px" maxlength="20" />
+
+									<label id="label_ExcessTransferList_TransferDate"
+										value="${c:l('label_ExcessTransferList_TransferDate.value')}" />
+										<listbox id="sortOperator_transferDate" width="43px" mold="select" rows="1" />
+										<datebox id="transferDate" width="150px" format="dd/MM/yyyy" />
+								</row>
+
+								<row id="row_2" visible="true">
+									<label id="label_ExcessTransferList_Customer"
+										value="${c:l('label_ExcessTransferList_Customer.value')}" />
+									<listbox id="sortOperator_customer" width="43px" mold="select" rows="1" />
+									<extendedcombobox id="customer" />
+
+									<label id="label_ExcessTransferList_FinReference"
+										value="${c:l('label_ExcessTransferList_FinReference.value')}" />
+									<listbox id="sortOperator_loanReference" width="43px" mold="select" rows="1" />
+									<extendedcombobox id="finReference" />
+								</row>
+							</rows>
+						</grid>
+
+						<listbox id="listBoxExcessTransfer" fixedLayout="true" span="true" sizedByContent="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="true">
+							<listhead sizable="true">
+								<listheader id="listheader_TransferId" label="${c:l('listheader_TransferId.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_CustCIF" label="${c:l('listheader_CustomerCIF.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_TransferDate" label="${c:l('listheader_TransferDate.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto"
+									hflex="min" />
+							</listhead>
+
+						</listbox>
+					</div>
+				</center>
+				<south border="none">
+					<paging id="pagingExcessTransferList" />
+				</south>
+
+			</borderlayout>
+		</window>
+	</window>
+</zk>
