@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.backend.dao.limit.LimitStructureDAO;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
-import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
@@ -21,7 +21,7 @@ public class LimitsUpdate implements Tasklet {
 	private Logger logger = LogManager.getLogger(LimitsUpdate.class);
 
 	private LimitStructureDAO limitStructureDAO;
-	private CustomerQueuingDAO customerQueuingDAO;
+	private BatchJobQueueDAO eodCustomerQueueDAO;
 	private CustomerGroupQueuingDAO customerGroupQueuingDAO;
 
 	public LimitsUpdate() {
@@ -42,10 +42,10 @@ public class LimitsUpdate implements Tasklet {
 		this.limitStructureDAO.updateReBuildField("", "", false, "");
 
 		/* Insert the CustomerQueuing table data into CustomerQueuing_Log table */
-		this.customerQueuingDAO.logCustomerQueuing();
+		this.eodCustomerQueueDAO.logQueue();
 
 		/* Delete the CustomerQueuing Data */
-		this.customerQueuingDAO.delete();
+		this.eodCustomerQueueDAO.clearQueue();
 
 		/* Move the CustomerGroupQueing to log */
 		this.customerGroupQueuingDAO.logCustomerGroupQueuing();
@@ -66,12 +66,13 @@ public class LimitsUpdate implements Tasklet {
 	}
 
 	@Autowired
-	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
-		this.customerQueuingDAO = customerQueuingDAO;
+	public void setEodCustomerQueueDAO(BatchJobQueueDAO eodCustomerQueueDAO) {
+		this.eodCustomerQueueDAO = eodCustomerQueueDAO;
 	}
 
 	@Autowired
 	public void setCustomerGroupQueuingDAO(CustomerGroupQueuingDAO customerGroupQueuingDAO) {
 		this.customerGroupQueuingDAO = customerGroupQueuingDAO;
 	}
+
 }
