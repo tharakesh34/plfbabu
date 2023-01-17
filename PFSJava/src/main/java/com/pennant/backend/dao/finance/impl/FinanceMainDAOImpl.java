@@ -4179,7 +4179,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.OverdraftTxnChrgReq, fm.OverdraftCalcChrg, fm.OverdraftChrgAmtOrPerc, fm.OverdraftChrCalOn");
 		sql.append(", fm.StepFinance, fm.AlwManualSteps, fm.CalcOfSteps, fm.NoOfGrcSteps, sdd.EntityCode");
 		sql.append(" From FinanceMain fm");
-		sql.append(" Inner Join Customers cu on cu.CustID = fm.CustID");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join SmtDivisionDetail sdd on sdd.DivisionCode = ft.FinDivision");
 

@@ -18,12 +18,7 @@ import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.Rule;
 
-/**
- * @author pasvarma
- *
- */
 public class AccountingConfigCache {
-
 	private static AccountTypeDAO accountTypeDAO;
 
 	private static FinTypeAccountingDAO finTypeAccountingDAO;
@@ -95,28 +90,9 @@ public class AccountingConfigCache {
 		return ruleDAO.getRuleByID(parmList[0], parmList[1], parmList[2], "");
 	}
 
-	/**
-	 * @param String acType
-	 * @return AccountType
-	 */
 	public static AccountType getAccountType(String acType) {
-		// AccountType accountType;
-		//
-		// try {
-		// accountType = accountTypeCache.get(acType);
-		// } catch (ExecutionException e) {
-		// logger.warn("Unable to load data from Finance Type Accounting cache: ",e);
-		// accountType = getAccountTypeById(acType);
-		// }
 		return getAccountTypeById(acType);
 	}
-
-	/**
-	 * It Clear Account Type Accounting data from cache .
-	 * 
-	 * @param acType
-	 * 
-	 */
 
 	public static void clearAccountTypeCache(String acType) {
 		try {
@@ -126,41 +102,21 @@ public class AccountingConfigCache {
 		}
 	}
 
-	/**
-	 * @param finType
-	 * @param event
-	 * @param moduleId
-	 * @return Long Account setID
-	 */
 	public static Long getAccountSetID(String finType, String event, int moduleId) {
 		return finTypeAccountingDAO.getAccountSetID(finType, event, moduleId);
 	}
 
-	/**
-	 * @param finType
-	 * @param event
-	 * @param moduleId
-	 * @return Long Account setID
-	 */
 	public static Long getCacheAccountSetID(String finType, String event, int moduleId) {
 		String accountSetKey = finType + "@" + event + "@" + moduleId;
 		Long accountSetID = Long.MIN_VALUE;
 		try {
 			accountSetID = finTypeAccountCache.get(accountSetKey);
 		} catch (Exception e) {
-			logger.warn("Unable to load data from  Account Type cache: ", e);
 			accountSetID = getAccountSetID(accountSetKey);
 		}
 		return accountSetID;
 	}
 
-	/**
-	 * It Clear Finance Type Accounting data from cache .
-	 * 
-	 * @param finType
-	 * @param event
-	 * @param moduleId
-	 */
 	public static void clearAccountSetCache(String finType, String event, int moduleId) {
 		String accountSetKey = finType + "@" + event + "@" + moduleId;
 		try {
@@ -170,34 +126,20 @@ public class AccountingConfigCache {
 		}
 	}
 
-	/**
-	 * @param accountSetid
-	 * @return List of TransactionEntry for the Account Set
-	 */
 	public static List<TransactionEntry> getTransactionEntry(long accountSetid) {
 		return transactionEntryDAO.getListTranEntryForBatch(accountSetid, "");
 	}
 
-	/**
-	 * @param accountSetid
-	 * @return List of TransactionEntry for the Account Set
-	 */
 	public static List<TransactionEntry> getCacheTransactionEntry(long accountSetid) {
 		List<TransactionEntry> transactionEntries;
 		try {
 			transactionEntries = transactionEntryCache.get(accountSetid);
 		} catch (Exception e) {
-			logger.warn("Unable to load data from Transaction Entry cache: ", e);
 			transactionEntries = transactionEntryDAO.getListTranEntryForBatch(accountSetid, "");
 		}
 		return transactionEntries;
 	}
 
-	/**
-	 * It Clear TransactionEntry data from cache .
-	 * 
-	 * @param accountSetid
-	 */
 	public static void clearTransactionEntryCache(long accountSetid) {
 		try {
 			transactionEntryCache.invalidate(accountSetid);
@@ -206,41 +148,21 @@ public class AccountingConfigCache {
 		}
 	}
 
-	/**
-	 * @param ruleCode
-	 * @param ruleModule
-	 * @param ruleEvent
-	 * @return Rule
-	 */
 	public static Rule getRule(String ruleCode, String ruleModule, String ruleEvent) {
 		return ruleDAO.getRuleByID(ruleCode, ruleModule, ruleEvent, "");
 	}
 
-	/**
-	 * @param ruleCode
-	 * @param ruleModule
-	 * @param ruleEvent
-	 * @return Rule
-	 */
 	public static Rule getCacheRule(String ruleCode, String ruleModule, String ruleEvent) {
 		String ruleKey = ruleCode + "@" + ruleModule + "@" + ruleEvent;
 		Rule rule;
 		try {
 			rule = ruleCache.get(ruleKey);
 		} catch (Exception e) {
-			logger.warn("Unable to load data from Rule cache: ", e);
 			rule = ruleDAO.getRuleByID(ruleCode, ruleModule, ruleEvent, "");
 		}
 		return rule;
 	}
 
-	/**
-	 * It Clear Rule From Cache .
-	 * 
-	 * @param ruleCode
-	 * @param ruleModule
-	 * @param ruleEvent
-	 */
 	public static void clearRuleCache(String ruleCode, String ruleModule, String ruleEvent) {
 		String ruleKey = ruleCode + "@" + ruleModule + "@" + ruleEvent;
 		try {
@@ -263,7 +185,6 @@ public class AccountingConfigCache {
 		try {
 			return accountMappingCache.get(account);
 		} catch (Exception e) {
-			logger.warn("Unable to load data from Rule cache: ", e);
 			return accountMappingDAO.getAccountMappingByAccount(account);
 		}
 	}
@@ -276,9 +197,6 @@ public class AccountingConfigCache {
 		AccountingConfigCache.accountTypeDAO = accountTypeDAO;
 	}
 
-	/**
-	 * @param finTypeAccountingDAO the finTypeAccountingDAO to set
-	 */
 	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
 		AccountingConfigCache.finTypeAccountingDAO = finTypeAccountingDAO;
 	}
