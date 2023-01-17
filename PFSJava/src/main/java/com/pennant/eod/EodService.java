@@ -79,25 +79,15 @@ public class EodService {
 	}
 
 	public void doUpdate(CustEODEvent custEODEvent) throws Exception {
-		Customer customer = custEODEvent.getCustomer();
-		// update customer EOD
 		loadFinanceData.updateFinEODEvents(custEODEvent);
-		// receipt postings on SOD
+
 		if (custEODEvent.isCheckPresentment()) {
 			createPresentmentReceipts(custEODEvent);
 		}
 
 		limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(), true);
 
-		// customer Date update
-		String newCustStatus = null;
-		if (custEODEvent.isUpdCustomer()) {
-			newCustStatus = customer.getCustSts();
-		}
-
-		Date nextDate = custEODEvent.getEventProperties().getNextDate();
-		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus,
-				nextDate);
+		loadFinanceData.updateCustomerDate(custEODEvent);
 	}
 
 	private PresentmentDetail getPresentmentDetail(List<PresentmentDetail> pd, String finReference, Date schDate) {
@@ -115,9 +105,8 @@ public class EodService {
 
 		Date businessDate = custEODEvent.getEodValueDate();
 		Customer customer = custEODEvent.getCustomer();
-		long custID = customer.getCustID();
 
-		List<PresentmentDetail> presentments = presentmentDetailDAO.getPresentmenToPost(custID, businessDate);
+		List<PresentmentDetail> presentments = presentmentDetailDAO.getPresentmenToPost(customer, businessDate);
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			FinanceMain fm = finEODEvent.getFinanceMain();
@@ -171,7 +160,6 @@ public class EodService {
 	}
 
 	public void doUpdate(CustEODEvent custEODEvent, boolean isLimitRebuild) throws Exception {
-		Customer customer = custEODEvent.getCustomer();
 		// update customer EOD
 		loadFinanceData.updateFinEODEvents(custEODEvent);
 		// receipt postings on SOD
@@ -180,21 +168,15 @@ public class EodService {
 		}
 
 		if (isLimitRebuild) {
+			// FIXME Customer CorBank-ID
 			this.limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(), true);
 		}
 
-		// customer Date update
-		String newCustStatus = null;
-		if (custEODEvent.isUpdCustomer()) {
-			newCustStatus = customer.getCustSts();
-		}
-
-		Date nextDate = custEODEvent.getEventProperties().getNextDate();
-		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus,
-				nextDate);
+		loadFinanceData.updateCustomerDate(custEODEvent);
 	}
 
 	public void processCustomerRebuild(long custID, boolean rebuildOnStrChg) {
+		// FIXME Customer CorBank-ID
 		limitRebuild.processCustomerRebuild(custID, rebuildOnStrChg);
 	}
 
@@ -212,7 +194,7 @@ public class EodService {
 		}
 
 		logger.info("Preparing EOD Events for the Customer ID {} >> started...", custId);
-		loadFinanceData.prepareFinEODEvents(custEODEvent, custId);
+		loadFinanceData.prepareFinEODEvents(custEODEvent);
 		logger.info("Preparing EOD Events for the Customer ID {} >> completed.", custId);
 
 		if (!eventProperties.isSkipLatePay()) {

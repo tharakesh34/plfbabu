@@ -64,7 +64,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
-import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
@@ -342,7 +341,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private AccountingSetDAO accountingSetDAO;
 	private PartPayAndEarlySettleValidator partPayAndEarlySettleValidator;
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
-	private LatePayInterestService latePayInterestService;
 	private RepaymentProcessUtil repayProcessUtil;
 
 	public ReceiptServiceImpl() {
@@ -8745,9 +8743,5 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	public void setFeeCalculator(FeeCalculator feeCalculator) {
 		this.feeCalculator = feeCalculator;
 	}
-
-	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
-		this.latePayInterestService = latePayInterestService;
-	}
-
+	
 }

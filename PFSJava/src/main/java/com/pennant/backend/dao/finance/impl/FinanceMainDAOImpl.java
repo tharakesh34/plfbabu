@@ -64,6 +64,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinCustomerDetails;
@@ -77,6 +78,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
@@ -2148,23 +2150,31 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive) {
-		StringBuilder sql = getFinSelectQueryForEod();
-		sql.append(" where fm.CustID = ?");
+	public List<FinanceMain> getFinMainsForEODByCustId(Customer customer) {
+		long custID = customer.getCustID();
+		String corBankID = customer.getCustCoreBank();
 
-		if (isActive) {
-			sql.append(" and fm.FinIsActive = ?");
+		StringBuilder sql = getFinSelectQueryForEod();
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" Where c.CustCoreBank = ? and fm.FinIsActive = ?");
+		} else {
+			sql.append(" Where fm.CustID = ? and fm.FinIsActive = ?");
 		}
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		FinRowMapperForEod rowMapper = new FinRowMapperForEod();
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, custId);
-			if (isActive) {
-				ps.setBoolean(2, isActive);
+
+			if (CustomerExtension.CUST_CORE_BANK_ID) {
+				ps.setString(1, corBankID);
+			} else {
+				ps.setLong(1, custID);
 			}
+
+			ps.setBoolean(2, true);
 		}, rowMapper);
 
 	}
@@ -4169,6 +4179,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.OverdraftTxnChrgReq, fm.OverdraftCalcChrg, fm.OverdraftChrgAmtOrPerc, fm.OverdraftChrCalOn");
 		sql.append(", fm.StepFinance, fm.AlwManualSteps, fm.CalcOfSteps, fm.NoOfGrcSteps, sdd.EntityCode");
 		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join SmtDivisionDetail sdd on sdd.DivisionCode = ft.FinDivision");
 
@@ -6571,7 +6582,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" LEFT JOIN MANUALADVISE M ON M.FINID = FM.FINID AND M.HOLDDUE = 0 AND M.ADVISETYPE = ? ");
 		sql.append(
 				" INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID AND F.REFUNDABLE = 1 AND F.ALLOWAUTOREFUND  = 1");
-		sql.append(" LEFT JOIN Fin_Hold_Detail H ON FM.FINID = H.FINID ");
+		sql.append(" LEFT JOIN Fin_Hold_Details H ON FM.FINID = H.FINID ");
 		sql.append(" WHERE COALESCE(H.HOLDSTATUS, 'R') <> ? AND FT.ALLOWAUTOREFUND = ? ");
 		sql.append(" AND  (E.BALANCEAMT > 0 OR  (M.ADVISEAMOUNT - M.PAIDAMOUNT - M.WAIVEDAMOUNT) > 0 )");
 

@@ -51,11 +51,6 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	private CustomerDAO customerDAO;
 	private PaymentHeaderService paymentHeaderService;
 
-	/**
-	 * @param Appdate Fetching Loans for the Auto Refund Process
-	 * 
-	 * @return ListofLoans
-	 */
 	@Override
 	public List<AutoRefundLoan> autoRefundsLoanProcess(Date appDate) {
 		logger.debug(Literal.ENTERING);
@@ -109,30 +104,23 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 		return profitDetailsDAO.getOverDueAmountByLoan(finID);
 	}
 
-	/**
-	 * Fetching rule amount of the Loan on FinID
-	 * 
-	 * @param finID
-	 * @return Amount
-	 */
 	@Override
 	public BigDecimal findReserveAmountForAutoRefund(long finID, BigDecimal overDueAmt) {
 		logger.debug(Literal.ENTERING);
+
 		BigDecimal feeResult = BigDecimal.ZERO;
 
 		if (overDueAmt == null) {
 			overDueAmt = getOverDueAmountByLoan(finID);
 		}
 
-		// FinPftDetails for rule mapping
 		FinanceProfitDetail finPftDetails = profitDetailsDAO.getFinProfitDetailsById(finID);
 
-		// customer details for rule mapping
 		Customer customer = customerDAO.getCustomerForAutoRefund(finPftDetails.getCustId());
 
-		// Fetch all the rules againt the Module Name and Event Code
 		List<Rule> rules = ruleDAO.getRuleByModuleAndEvent(RuleConstants.MODULE_AUTOREFUND,
 				RuleConstants.EVENT_AUTOTREFUND, "");
+
 		if (CollectionUtils.isNotEmpty(rules)) {
 			Map<String, Object> executionMap = new HashMap<>();
 

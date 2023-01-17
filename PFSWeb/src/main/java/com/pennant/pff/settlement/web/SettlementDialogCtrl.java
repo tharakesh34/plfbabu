@@ -1358,7 +1358,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		Datebox date = (Datebox) event.getOrigin().getTarget();
 		SettlementSchedule sd = (SettlementSchedule) date.getAttribute("data");
 		sd.setSettlementInstalDate(date.getValue());
-		Listitem selectecListItem = (Listitem) event.getOrigin().getTarget().getParent().getParent();
+		Listitem selectecListItem = (Listitem) event.getOrigin().getTarget().getParent().getParent().getParent();
 		Listcell cellRecordType = (Listcell) selectecListItem.getChildren().get(3);
 
 		if (cellRecordType != null) {
@@ -1372,7 +1372,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		logger.debug(Literal.ENTERING);
 
 		CurrencyBox setAmount = (CurrencyBox) event.getOrigin().getTarget();
-		Listitem selectecListItem = (Listitem) event.getOrigin().getTarget().getParent().getParent();
+		Listitem selectecListItem = (Listitem) event.getOrigin().getTarget().getParent().getParent().getParent();
 		Listcell cellRecordType = (Listcell) selectecListItem.getChildren().get(3);
 		SettlementSchedule settlementSchedule = (SettlementSchedule) setAmount.getAttribute("data");
 		settlementSchedule.setSettlementAmount(setAmount.getActualValue());

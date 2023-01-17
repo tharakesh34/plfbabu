@@ -11,7 +11,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 public class SettlementAllocationDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long id = Long.MIN_VALUE;
+	private long id;
 	private long headerID;
 	@XmlElement
 	private String allocationType;
@@ -29,7 +29,6 @@ public class SettlementAllocationDetail extends AbstractWorkflowEntity {
 	private String typeDesc;
 	private boolean isSubListAvailable = false;
 	private BigDecimal balance = BigDecimal.ZERO;
-	private long allocationID;
 	private BigDecimal waivedReqAmount;
 
 	public SettlementAllocationDetail() {
@@ -55,7 +54,6 @@ public class SettlementAllocationDetail extends AbstractWorkflowEntity {
 		entity.setTypeDesc(this.typeDesc);
 		entity.setSubListAvailable(this.isSubListAvailable);
 		entity.setBalance(this.balance);
-		entity.setAllocationID(this.allocationID);
 		entity.setWaivedReqAmount(this.waivedReqAmount);
 
 		return entity;
@@ -203,14 +201,6 @@ public class SettlementAllocationDetail extends AbstractWorkflowEntity {
 
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
-	}
-
-	public long getAllocationID() {
-		return allocationID;
-	}
-
-	public void setAllocationID(long allocationID) {
-		this.allocationID = allocationID;
 	}
 
 	public BigDecimal getWaivedReqAmount() {

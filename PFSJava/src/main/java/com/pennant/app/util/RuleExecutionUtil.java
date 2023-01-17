@@ -218,14 +218,15 @@ public class RuleExecutionUtil implements Serializable {
 	}
 
 	private static ScriptEngine getScriptEngine() {
-		String threadName = Thread.currentThread().getName();
+		ScriptEngine scriptEngine = EOD_SCRIPT_ENGINE_MAP.get(Thread.currentThread().getName());
 
-		if (threadName.startsWith("PLF_EOD_THREAD_")) {
-			return EOD_SCRIPT_ENGINE_MAP.computeIfAbsent(threadName, abc -> getScriptEngine(true));
+		if (scriptEngine != null) {
+			return scriptEngine;
 		}
 
-		if (threadName.startsWith("PLF_PRESENTMENT_RESP_THREAD_")) {
-			return PRESENTMENT_RESP_SCRIPT_ENGINE_MAP.computeIfAbsent(threadName, abc -> getScriptEngine(true));
+		if (Thread.currentThread().getName().startsWith("PLF_PRESENTMENT_RESP_THREAD_")) {
+			return PRESENTMENT_RESP_SCRIPT_ENGINE_MAP.computeIfAbsent(Thread.currentThread().getName(),
+					abc -> getScriptEngine(true));
 		}
 
 		return new ScriptEngine();

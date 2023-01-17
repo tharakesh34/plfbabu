@@ -29,6 +29,8 @@ import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +44,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -62,6 +65,7 @@ import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -1909,65 +1913,64 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		return jdbcOperations.queryForObject(sql, String.class, custId);
 	}
 
-	public Customer getCustomerEOD(final long id) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch, CustPOB");
-		sql.append(", CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry, CustSector");
-		sql.append(", CustSubSector, CustEmpSts, CustSegment, CustSubSegment, CustAppDate, CustParentCountry");
-		sql.append(", CustResdCountry, CustRiskCountry, CustNationality, SalariedCustomer, CustSuspSts");
-		sql.append(", CustSuspDate, CustSuspTrigger, CasteId, ReligionId, SubCategory, CustShrtName, CustCRCPR");
-		sql.append(" From Customers");
+	public Customer getCustomerEOD(final long custID) {
+		StringBuilder sql = new StringBuilder(getCustomerEODQuery());
 		sql.append(" Where CustID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				Customer c = new Customer();
+		List<Customer> list = this.jdbcOperations.query(sql.toString(), getCustomerEODRowMapper(), custID);
 
-				c.setCustID(rs.getLong("CustID"));
-				c.setCustCIF(rs.getString("CustCIF"));
-				c.setCustCoreBank(rs.getString("CustCoreBank"));
-				c.setCustCtgCode(rs.getString("CustCtgCode"));
-				c.setCustTypeCode(rs.getString("CustTypeCode"));
-				c.setCustDftBranch(rs.getString("CustDftBranch"));
-				c.setCustPOB(rs.getString("CustPOB"));
-				c.setCustCOB(rs.getString("CustCOB"));
-				c.setCustGroupID(rs.getLong("CustGroupID"));
-				c.setCustSts(rs.getString("CustSts"));
-				c.setCustStsChgDate(rs.getTimestamp("CustStsChgDate"));
-				c.setCustIsStaff(rs.getBoolean("CustIsStaff"));
-				c.setCustIndustry(rs.getString("CustIndustry"));
-				c.setCustSector(rs.getString("CustSector"));
-				c.setCustSubSector(rs.getString("CustSubSector"));
-				c.setCustEmpSts(rs.getString("CustEmpSts"));
-				c.setCustSegment(rs.getString("CustSegment"));
-				c.setCustSubSegment(rs.getString("CustSubSegment"));
-				c.setCustAppDate(rs.getTimestamp("CustAppDate"));
-				c.setCustParentCountry(rs.getString("CustParentCountry"));
-				c.setCustResdCountry(rs.getString("CustResdCountry"));
-				c.setCustRiskCountry(rs.getString("CustRiskCountry"));
-				c.setCustNationality(rs.getString("CustNationality"));
-				c.setSalariedCustomer(rs.getBoolean("SalariedCustomer"));
-				c.setCustSuspSts(rs.getBoolean("CustSuspSts"));
-				c.setCustSuspDate(rs.getTimestamp("CustSuspDate"));
-				c.setCustSuspTrigger(rs.getString("CustSuspTrigger"));
-				c.setCasteId(rs.getLong("CasteId"));
-				c.setReligionId(rs.getLong("ReligionId"));
-				c.setSubCategory(rs.getString("SubCategory"));
-				c.setCustShrtName(rs.getString("CustShrtName"));
-				c.setCustCRCPR(rs.getString("CustCRCPR"));
-
-				return c;
-			}, id);
-		} catch (EmptyResultDataAccessException e) {
+		if (list.isEmpty()) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+
+		Collections.sort(list, new Comparator<Customer>() {
+			@Override
+			public int compare(Customer c1, Customer c2) {
+				return Long.valueOf(c2.getCustID()).compareTo(Long.valueOf(c1.getCustID()));
+			}
+		});
+
+		return list.get(0);
+	}
+
+	public Customer getCustomerEOD(final String coreBankId) {
+		StringBuilder sql = new StringBuilder(getCustomerEODQuery());
+		sql.append(" Where CustCoreBank = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		List<Customer> list = this.jdbcOperations.query(sql.toString(), getCustomerEODRowMapper(), coreBankId);
+
+		if (list.isEmpty()) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+
+		Collections.sort(list, new Comparator<Customer>() {
+			@Override
+			public int compare(Customer c1, Customer c2) {
+				return Long.valueOf(c2.getCustID()).compareTo(Long.valueOf(c1.getCustID()));
+			}
+		});
+
+		return list.get(0);
 	}
 
 	@Override
-	public void updateCustAppDate(long custId, Date custAppDate, String newCustStatus) {
+	public void updateCustAppDate(CustEODEvent custEODEvent) {
+		Customer customer = custEODEvent.getCustomer();
+		long custID = customer.getCustID();
+		String corBankID = customer.getCustCoreBank();
+
+		String newCustStatus = null;
+
+		if (custEODEvent.isUpdCustomer()) {
+			newCustStatus = customer.getCustSts();
+		}
+
 		StringBuilder sql = new StringBuilder("Update Customers");
 		sql.append(" set CustAppDate = ?");
 
@@ -1975,20 +1978,32 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			sql.append(", CustSts = ?");
 		}
 
-		sql.append(" WHERE CustId = ?");
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" Where CustCoreBank = ?");
+		} else {
+			sql.append(" Where CustId = ?");
+		}
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setDate(index++, JdbcUtil.getDate(custAppDate));
+			int index = 0;
+			ps.setDate(++index, JdbcUtil.getDate(custEODEvent.getEventProperties().getNextDate()));
 
-			if (newCustStatus != null) {
-				ps.setString(index++, newCustStatus);
+			String updateCustStatus = null;
+			if (custEODEvent.isUpdCustomer()) {
+				updateCustStatus = customer.getCustSts();
 			}
 
-			ps.setLong(index, JdbcUtil.getLong(custId));
+			if (updateCustStatus != null) {
+				ps.setString(++index, updateCustStatus);
+			}
 
+			if (CustomerExtension.CUST_CORE_BANK_ID) {
+				ps.setLong(++index, custID);
+			} else {
+				ps.setString(++index, corBankID);
+			}
 		});
 	}
 
@@ -1996,7 +2011,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public Date getCustAppDate(long custId) {
 		String sql = "select CustAppDate from Customers where CustId = ?";
 		try {
-			return this.jdbcOperations.queryForObject(sql, new Object[] { custId }, Date.class);
+			return this.jdbcOperations.queryForObject(sql, Date.class, custId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -2843,29 +2858,79 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public Customer getCustomerForAutoRefund(long custID) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select CustCtgCode, custTypeCode From Customers Where CustId = ?";
 
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustCtgCode, custTypeCode");
-		sql.append(" From Customers Where CustId = ?");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { custID }, new RowMapper<Customer>() {
+			return jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				Customer c = new Customer();
+				c.setCustCtgCode(rs.getString("CustCtgCode"));
+				c.setCustTypeCode(rs.getString("custTypeCode"));
 
-				@Override
-				public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Customer c = new Customer();
-					c.setCustCtgCode(rs.getString("CustCtgCode"));
-					c.setCustTypeCode(rs.getString("custTypeCode"));
-
-					return c;
-				}
-			});
+				return c;
+			}, custID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
+
+	private String getCustomerEODQuery() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch, CustPOB");
+		sql.append(", CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry, CustSector");
+		sql.append(", CustSubSector, CustEmpSts, CustSegment, CustSubSegment, CustAppDate, CustParentCountry");
+		sql.append(", CustResdCountry, CustRiskCountry, CustNationality, SalariedCustomer, CustSuspSts");
+		sql.append(", CustSuspDate, CustSuspTrigger, CasteId, ReligionId, SubCategory, CustShrtName, CustCRCPR");
+		sql.append(" From Customers");
+
+		return sql.toString();
+	}
+
+	private RowMapper<Customer> getCustomerEODRowMapper() {
+		return new RowMapper<Customer>() {
+			@Override
+			public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Customer c = new Customer();
+
+				c.setCustID(rs.getLong("CustID"));
+				c.setCustCIF(rs.getString("CustCIF"));
+				c.setCustCoreBank(rs.getString("CustCoreBank"));
+				c.setCustCtgCode(rs.getString("CustCtgCode"));
+				c.setCustTypeCode(rs.getString("CustTypeCode"));
+				c.setCustDftBranch(rs.getString("CustDftBranch"));
+				c.setCustPOB(rs.getString("CustPOB"));
+				c.setCustCOB(rs.getString("CustCOB"));
+				c.setCustGroupID(rs.getLong("CustGroupID"));
+				c.setCustSts(rs.getString("CustSts"));
+				c.setCustStsChgDate(rs.getTimestamp("CustStsChgDate"));
+				c.setCustIsStaff(rs.getBoolean("CustIsStaff"));
+				c.setCustIndustry(rs.getString("CustIndustry"));
+				c.setCustSector(rs.getString("CustSector"));
+				c.setCustSubSector(rs.getString("CustSubSector"));
+				c.setCustEmpSts(rs.getString("CustEmpSts"));
+				c.setCustSegment(rs.getString("CustSegment"));
+				c.setCustSubSegment(rs.getString("CustSubSegment"));
+				c.setCustAppDate(rs.getTimestamp("CustAppDate"));
+				c.setCustParentCountry(rs.getString("CustParentCountry"));
+				c.setCustResdCountry(rs.getString("CustResdCountry"));
+				c.setCustRiskCountry(rs.getString("CustRiskCountry"));
+				c.setCustNationality(rs.getString("CustNationality"));
+				c.setSalariedCustomer(rs.getBoolean("SalariedCustomer"));
+				c.setCustSuspSts(rs.getBoolean("CustSuspSts"));
+				c.setCustSuspDate(rs.getTimestamp("CustSuspDate"));
+				c.setCustSuspTrigger(rs.getString("CustSuspTrigger"));
+				c.setCasteId(rs.getLong("CasteId"));
+				c.setReligionId(rs.getLong("ReligionId"));
+				c.setSubCategory(rs.getString("SubCategory"));
+				c.setCustShrtName(rs.getString("CustShrtName"));
+				c.setCustCRCPR(rs.getString("CustCRCPR"));
+
+				return c;
+			}
+		};
+
+	}
+
 }

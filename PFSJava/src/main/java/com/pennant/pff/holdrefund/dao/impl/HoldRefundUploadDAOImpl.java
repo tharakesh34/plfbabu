@@ -152,7 +152,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 	@Override
 	public long save(HoldRefundUploadDetail detail) {
-		StringBuilder sql = new StringBuilder("Insert into Fin_Hold_Detail");
+		StringBuilder sql = new StringBuilder("Insert into Fin_Hold_Details");
 		sql.append(" (FinId, HoldStatus, Reason, Remarks");
 		sql.append(") Values(?, ?, ?, ?)");
 
@@ -229,7 +229,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 	@Override
 	public String getHoldRefundStatus(long finId) {
-		String sql = "Select HoldStatus From Fin_Hold_Detail Where FinID = ?";
+		String sql = "Select HoldStatus From Fin_Hold_Details Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -258,7 +258,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 	@Override
 	public int updateFinHoldDetail(HoldRefundUploadDetail detail) {
 		StringBuilder sql = new StringBuilder("Update");
-		sql.append(" Fin_Hold_Detail");
+		sql.append(" Fin_Hold_Details");
 		sql.append(" Set HoldStatus = ?, Reason = ?, Remarks = ?");
 		sql.append(" Where FinId = ?");
 
@@ -282,7 +282,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 	@Override
 	public boolean isFinIDExists(long finId) {
-		StringBuilder sql = new StringBuilder("Select count(*) From Fin_Hold_Detail");
+		StringBuilder sql = new StringBuilder("Select count(*) From Fin_Hold_Details");
 		sql.append(" Where finID =:finID");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -297,7 +297,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 		FinanceHoldDetail financeHoldDetail = new FinanceHoldDetail();
 		financeHoldDetail.setFinID(finID);
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select FinID, HoldStatus, Reason From Fin_Hold_Detail ");
+		sql.append("Select FinID, HoldStatus, Reason From Fin_Hold_Details ");
 		sql.append(" Where FinID =:FinID");
 
 		logger.debug("selectSql: " + sql.toString());
@@ -315,7 +315,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 	@Override
 	public void releaseHoldOnLoans(List<Long> finIds) {
-		String sql = "UPDATE Fin_Hold_Detail SET HOLDSTATUS = ? WHERE FINID = ?";
+		String sql = "UPDATE Fin_Hold_Details SET HOLDSTATUS = ? WHERE FINID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -338,9 +338,10 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 	@Override
 	public List<Long> getInactiveLoansOnHold(Date closureDate) {
-		StringBuilder sql = new StringBuilder("Select FinId From FinanceMain F");
-		sql.append(" Inner Join Fin_Hold_Detail H ON F.FinID = H.FinID");
-		sql.append(" Where F.FinIsActive = ? and H.HoldStatus = ? and F.ClosedDate <= ? ");
+		StringBuilder sql = new StringBuilder("Select fm.FinId");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join Fin_Hold_Details fh On fh.FinId = fm.FinId");
+		sql.append(" Where fm.FinIsActive = ? and fh.HoldStatus = ? and fm.ClosedDate <= ? ");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

@@ -87,7 +87,9 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 					List<ChequeDetail> cheques = new ArrayList<>();
 
 					for (ChequeUpload upload : chequeUploads) {
+						upload.setReferenceID(finID);
 						doValidate(header, upload);
+
 						if (upload.getProgress() == EodConstants.PROGRESS_FAILED) {
 							failRecords++;
 						} else {
@@ -96,9 +98,11 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						}
 					}
 
-					chequeHeader.setChequeDetailList(cheques);
+					if (!cheques.isEmpty()) {
+						chequeHeader.setChequeDetailList(cheques);
 
-					process(chequeHeader, chequeUploads);
+						process(chequeHeader, chequeUploads);
+					}
 
 					for (ChequeUpload chequeUpload : chequeUploads) {
 						if (chequeUpload.getProgress() == EodConstants.PROGRESS_FAILED) {
@@ -163,18 +167,20 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	public void doReject(List<FileUploadHeader> headers) {
 		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
 
-		String errorCode = "9999";
-		String errorDesc = "User rejected the record";
-
+		/*
+		 * String errorCode = "9999"; String errorDesc = "User rejected the record";
+		 */
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
 
 		try {
 			txStatus = transactionManager.getTransaction(txDef);
-			chequeUploadDAO.update(headerIdList, errorCode, errorDesc, EodConstants.PROGRESS_FAILED);
+			chequeUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
+			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
 			updateHeader(headers, false);
+
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
 			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
@@ -182,8 +188,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
-		} finally {
-			txStatus = null;
 		}
 	}
 
@@ -234,6 +238,8 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 		fd.setFinScheduleData(data);
 		fd.setChequeHeader(header);
+
+		fd.setFinReference(header.getFinReference());
 
 		header.setNoOfCheques(header.getChequeDetailList().size());
 		header.setChequeDetailList(header.getChequeDetailList());

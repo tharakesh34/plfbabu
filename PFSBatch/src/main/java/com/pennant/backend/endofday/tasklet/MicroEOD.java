@@ -54,7 +54,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
@@ -65,7 +64,8 @@ import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
-import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
+import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.eod.cache.RuleConfigCache;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -76,14 +76,14 @@ public class MicroEOD implements Tasklet {
 	private Logger logger = LogManager.getLogger(MicroEOD.class);
 
 	private EodService eodService;
-	private CustomerQueuingDAO customerQueuingDAO;
+	private BatchJobQueueDAO eodCustomerQueueDAO;
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	private CustomerDAO customerDAO;
 	private FinMandateService finMandateService;
 
 	// ##_0.2
-	private static final String CUSTOMER_SQL = "Select CustID, LoanExist, LimitRebuild from CustomerQueuing  Where ThreadID = ? and Progress= ?";
+	private static final String CUSTOMER_SQL = "Select Id, CustID, CoreBankId, LoanExist, LimitRebuild from Eod_Customer_Queue  Where ThreadID = ? and Progress= ?";
 
 	public MicroEOD() {
 		super();
@@ -118,7 +118,9 @@ public class MicroEOD implements Tasklet {
 		cursorItemReader.setRowMapper((rs, rowNum) -> {
 			CustomerQueuing cq = new CustomerQueuing();
 
+			cq.setId(rs.getLong("ID"));
 			cq.setCustID(rs.getLong("CustID"));
+			cq.setCoreBankId(rs.getString("CoreBankID"));
 			cq.setLoanExist(rs.getBoolean("LoanExist"));
 			cq.setLimitRebuild(rs.getBoolean("LimitRebuild"));
 
@@ -150,37 +152,31 @@ public class MicroEOD implements Tasklet {
 		Date provisionEffectiveDate = null;
 		String provisionBooks = null;
 
-		/*
-		 * if (ImplementationConstants.ALLOW_NPA_PROVISION) { logger.info("NPA and Provisining Enabled");
-		 * 
-		 * provisionBooks = eventProperties.getProvisionBooks(); String npaTagging = eventProperties.getNpaTagging();
-		 * 
-		 * if (ProvisionConstants.NPA_TAGGING_CUSTOMER.equals(npaTagging)) { customerProvision = true; }
-		 * 
-		 * String provEffPostDate = eventProperties.getProvEffPostDate();
-		 * 
-		 * if (PennantConstants.NO.equals(provEffPostDate)) { provisionEffectiveDate = eventProperties.getPostDate(); }
-		 * 
-		 * logger.info("ProvisionBooks  {}", provisionBooks); logger.info("NPA Tagging {}", npaTagging);
-		 * logger.info("Customer Provision {}", customerProvision); }
-		 */
-
 		// to hold the exception till the process completed for all the customers
 		List<Exception> exceptions = new ArrayList<Exception>(1);
 
 		cursorItemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
 
 		CustomerQueuing customerQueuing;
+
+		BatchJobQueue jobQueue = new BatchJobQueue();
+		jobQueue.setThreadId(threadId);
+
 		while ((customerQueuing = cursorItemReader.read()) != null) {
 			status.setProcessedRecords(processedCount++);
 			BatchUtil.setExecutionStatus(context, status);
 
 			long custId = customerQueuing.getCustID();
+			String coreBankId = customerQueuing.getCoreBankId();
+
+			jobQueue.setId(customerQueuing.getId());
 
 			try {
 				sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+
 				logger.info("Micro EOD started on {} for the customer ID {}", sysDate, custId);
-				customerQueuingDAO.startEODForCID(custId, appDate);
+
+				eodCustomerQueueDAO.updateProgress(jobQueue);
 
 				txStatus = transactionManager.getTransaction(txDef);
 
@@ -195,7 +191,7 @@ public class MicroEOD implements Tasklet {
 
 				if (customerQueuing.isLoanExist()) {
 					customerQueuing.setLoanExist(false);
-					Customer customer = customerDAO.getCustomerEOD(custId);
+					Customer customer = customerDAO.getCustomerEOD(coreBankId);
 					custEODEvent.setCustomer(customer);
 					custEODEvent.setEodDate(appDate);
 					custEODEvent.setEodValueDate(appDate);
@@ -212,10 +208,14 @@ public class MicroEOD implements Tasklet {
 				finMandateService.autoSwaping(custId);
 
 				logger.info("Updating the EOD status for the customer ID {}", custId);
-				customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_SUCCESS, appDate);
+
+				jobQueue.setProgress(EodConstants.PROGRESS_IN_PROCESS);
+				eodCustomerQueueDAO.updateProgress(jobQueue);
 
 				transactionManager.commit(txStatus);
+
 				sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+
 				logger.info("Micro EOD completed on {} for the customer ID {}", sysDate, custId);
 
 				custEODEvent.getFinEODEvents().clear();
@@ -227,7 +227,9 @@ public class MicroEOD implements Tasklet {
 				exceptions.add(e);
 				sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 				logger.info("Micro EOD failed on {} for the customer ID {}", sysDate, custId);
-				updateFailed(custId);
+
+				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
+				eodCustomerQueueDAO.updateProgress(jobQueue);
 			}
 		}
 
@@ -246,27 +248,6 @@ public class MicroEOD implements Tasklet {
 				threadId);
 
 		return RepeatStatus.FINISHED;
-	}
-
-	public void updateCustQueueStatus(int threadId, long custId, int progress, boolean start) {
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setCustID(custId);
-		customerQueuing.setThreadId(threadId);
-		customerQueuing.setStartTime(DateUtility.getSysDate());
-		customerQueuing.setEndTime(DateUtility.getSysDate());
-		customerQueuing.setProgress(progress);
-		customerQueuingDAO.update(customerQueuing, start);
-	}
-
-	public void updateFailed(long custId) {
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setCustID(custId);
-		customerQueuing.setEndTime(DateUtility.getSysDate());
-		// reset thread for reallocation
-		customerQueuing.setThreadId(0);
-		// reset to "wait", to re run only failed cases.
-		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
-		customerQueuingDAO.updateFailed(customerQueuing);
 	}
 
 	private void logError(Exception exp) {
@@ -288,8 +269,8 @@ public class MicroEOD implements Tasklet {
 	}
 
 	@Autowired
-	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
-		this.customerQueuingDAO = customerQueuingDAO;
+	public void setEodCustomerQueueDAO(BatchJobQueueDAO eodCustomerQueueDAO) {
+		this.eodCustomerQueueDAO = eodCustomerQueueDAO;
 	}
 
 	@Autowired

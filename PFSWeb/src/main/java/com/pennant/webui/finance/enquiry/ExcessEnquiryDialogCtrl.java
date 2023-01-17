@@ -236,20 +236,17 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		lc.appendChild(getButton(temp));
 		lc.setParent(item);
 
-		String amountType = null;
 		// Amount Type
-		if (excessType.equals("E")) {
+		String amountType = null;
+		if (excessType.equals("S")) {
+			amountType = Labels.getLabel("label_Settlement_" + excessType);
+		} else {
 			amountType = Labels.getLabel("label_Excess_Type_" + excessType);
+
 			if (String.valueOf(AdviseType.PAYABLE.id()).equals(excessType)) {
 				amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
 			}
-		} else {
-			amountType = Labels.getLabel("label_Settlement_" + excessType);
-			if (String.valueOf(AdviseType.Settlement.id()).equals(excessType)) {
-				amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
-			}
 		}
-
 		lc = new Listcell(amountType);
 		lc.setSpan(3);
 		lc.setParent(item);

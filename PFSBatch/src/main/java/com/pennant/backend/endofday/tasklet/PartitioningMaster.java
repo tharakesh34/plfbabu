@@ -33,7 +33,6 @@
  */
 package com.pennant.backend.endofday.tasklet;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +42,7 @@ import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -50,6 +50,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.script.ScriptEngine;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class PartitioningMaster implements Partitioner {
@@ -60,14 +61,12 @@ public class PartitioningMaster implements Partitioner {
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
 		EventProperties eventProperties = EODUtil.EVENT_PROPS;
-		Date valueDate = null;
+
 		int threadCount = 0;
 
 		if (eventProperties.isParameterLoaded()) {
-			valueDate = eventProperties.getAppValueDate();
 			threadCount = eventProperties.getEodThreadCount();
 		} else {
-			valueDate = SysParamUtil.getAppValueDate();
 			threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_THREAD_COUNT);
 		}
 
@@ -81,11 +80,11 @@ public class PartitioningMaster implements Partitioner {
 		/* Update Running Count of Loans */
 		eodCustomerQueueDAO.handleFailures(new BatchJobQueue());
 
-		long loanCount = eodCustomerQueueDAO.getQueueCount(new BatchJobQueue());
+		long loanCount = eodCustomerQueueDAO.getQueueCount();
 		long totalCustomers = 0;
 
 		if (loanCount != 0) {
-			long noOfRows = Math.round((new Double(loanCount) / new Double(threadCount)));
+			long noOfRows = Math.round((Long.valueOf(loanCount) / Long.valueOf(threadCount)));
 
 			if (loanCount < threadCount) {
 				recordsLessThanThread = true;
@@ -134,6 +133,8 @@ public class PartitioningMaster implements Partitioner {
 		status.setTotalRecords(customersPerThread);
 		execution.put(status.getName(), status);
 		execution.put(EodConstants.THREAD, String.valueOf(threadID));
+		RuleExecutionUtil.EOD_SCRIPT_ENGINE_MAP.put("PLF_EOD_THREAD_".concat(String.valueOf(threadID)),
+				new ScriptEngine(true));
 
 		return execution;
 	}

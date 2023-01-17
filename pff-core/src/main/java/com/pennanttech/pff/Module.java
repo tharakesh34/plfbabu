@@ -4,6 +4,8 @@ public enum Module {
 
 	DEFAULT,
 
+	CUSTOMER,
+
 	FINANCE,
 
 	MANDATE,

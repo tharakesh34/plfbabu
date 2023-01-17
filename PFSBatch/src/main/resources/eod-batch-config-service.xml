@@ -151,6 +151,8 @@
 	<bean id="customerQueuingDAO" class="com.pennant.eod.dao.impl.CustomerQueuingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
+	<bean id="eodCustomerQueueDAO" class="com.pennant.pff.eod.dao.impl.EODCustomerQueueDAOImpl"  parent="sequenceDao"/>
 
 	<bean id="customerGroupQueuingDAO" class="com.pennant.eod.dao.impl.CustomerGroupQueuingDAOImpl">
 		<property name="dataSource" ref="dataSource" />

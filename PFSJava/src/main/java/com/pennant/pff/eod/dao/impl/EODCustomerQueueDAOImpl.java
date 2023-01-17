@@ -7,19 +7,24 @@ import java.util.List;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implements BatchJobQueueDAO {
+	private static final String SEQUENCE_NAME = "SEQ_EOD_CUSTOMER_QUEUE";
 
 	@Override
 	public int prepareQueue(BatchJobQueue jobQueue) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Insert Into Eod_Customer_Queue (ID, CutsID, CoreBankID, LoanExist)");
-		sql.append(" Select row_number() over(order by CustCoreBank) ID, CustID, CustCoreBank, LoanExist, From (");
+		sql.append("Insert Into Eod_Customer_Queue (ID, AppDate, CustId, CoreBankID, LoanExist)");
+		sql.append(" Select row_number() over(order by CustCoreBank) ID, ?, CustID, CustCoreBank, LoanExist From (");
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 1 LoanExist");
 		sql.append(" From  FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
@@ -38,9 +43,10 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setBoolean(1, true);
+			ps.setDate(1, JdbcUtil.getDate(SysParamUtil.getAppDate()));
 			ps.setBoolean(2, true);
 			ps.setBoolean(3, true);
+			ps.setBoolean(4, true);
 
 		});
 	}
@@ -115,26 +121,103 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 
 	@Override
 	public void updateProgress(BatchJobQueue jobQueue) {
-		// TODO Auto-generated method stub
+		int process = jobQueue.getProgress();
+		long queueId = jobQueue.getId();
 
+		String sql = null;
+		if (process == EodConstants.PROGRESS_IN_PROCESS) {
+			sql = "Update Eod_Customer_Queue Set Progress = ?, StartTime = ?, ThreadId = ? Where Id = ?";
+
+			logger.debug(Literal.SQL.concat(sql));
+
+			this.jdbcOperations.update(sql, ps -> {
+				ps.setInt(1, process);
+				ps.setDate(2, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setLong(3, jobQueue.getThreadId());
+				ps.setLong(4, queueId);
+			});
+		} else if (process == EodConstants.PROGRESS_SUCCESS) {
+			sql = "Update Eod_Customer_Queue Set EndTime = ?, Progress = ? Where Id = ?";
+
+			logger.debug(Literal.SQL.concat(sql));
+
+			this.jdbcOperations.update(sql, ps -> {
+				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setInt(2, EodConstants.PROGRESS_SUCCESS);
+				ps.setLong(3, queueId);
+			});
+		} else if (process == EodConstants.PROGRESS_FAILED) {
+			sql = "Update Eod_Customer_Queue Set EndTime = ?, ThreadId = ?, Progress = ? Where Id = ?";
+
+			logger.debug(Literal.SQL.concat(sql));
+
+			this.jdbcOperations.update(sql, ps -> {
+				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setInt(2, 0);
+				ps.setInt(3, EodConstants.PROGRESS_FAILED);
+				ps.setLong(4, queueId);
+			});
+		}
+
+	}
+
+	@Override
+	public void logQueue() {
+		StringBuilder sql = new StringBuilder("INSERT INTO Eod_Customer_Queue_log (");
+		sql.append("SeqId, AppDate, CustId, CoreBankID, LoanExist, LimitRebuild, WorkerHost, ThreadId");
+		sql.append(", StartTime, EndTime, Progress, ErrorLog");
+		sql.append(") Select ");
+		sql.append(" Id, AppDate, CustId, CoreBankID, LoanExist, LimitRebuild, WorkerHost, ThreadId");
+		sql.append(", StartTime, EndTime, Progress, ErrorLog");
+		sql.append(" From Eod_Customer_Queue");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		this.jdbcOperations.update(sql.toString());
+	}
+
+	@Override
+	public void logQueue(int progress) {
+		StringBuilder sql = new StringBuilder("INSERT INTO Eod_Customer_Queue_log (");
+		sql.append("SeqId, AppDate, CustId, CoreBankID, LoanExist, LimitRebuild, WorkerHost, ThreadId");
+		sql.append(", StartTime, EndTime, Progress, ErrorLog");
+		sql.append(") Select ");
+		sql.append(" SeqId, AppDate, CustId, CoreBankID, LoanExist, LimitRebuild, WorkerHost, ThreadId");
+		sql.append(", StartTime, EndTime, Progress, ErrorLog");
+		sql.append(" From Eod_Customer_Queue Where Progress = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		this.jdbcOperations.update(sql.toString(), EodConstants.PROGRESS_SUCCESS);
 	}
 
 	@Override
 	public void clearQueue() {
-		// TODO Auto-generated method stub
+		String sql = "Truncate table Eod_Customer_Queue";
 
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.update(sql);
 	}
 
 	@Override
 	public long getNextValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getNextValue(SEQUENCE_NAME);
 	}
 
 	@Override
 	public void resetSequence() {
-		// TODO Auto-generated method stub
-
+		switch (App.DATABASE) {
+		case ORACLE:
+		case MY_SQL:
+			jdbcOperations.execute("ALTER SEQUENCE " + SEQUENCE_NAME + " RESTART START WITH " + 1);
+			break;
+		case POSTGRES:
+			jdbcOperations.execute("ALTER SEQUENCE " + SEQUENCE_NAME + " RESTART WITH " + 1);
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override

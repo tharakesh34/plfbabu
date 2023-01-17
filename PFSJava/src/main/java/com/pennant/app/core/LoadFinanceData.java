@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -43,9 +44,11 @@ import com.pennanttech.pff.core.util.ProductUtil;
 public class LoadFinanceData extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(LoadFinanceData.class);
 
-	public void prepareFinEODEvents(CustEODEvent custEODEvent, long custID) throws Exception {
-		List<FinanceMain> custFinMains = financeMainDAO.getFinMainsForEODByCustId(custID, true);
-		List<FinanceProfitDetail> custpftDet = financeProfitDetailDAO.getFinProfitDetailsByCustId(custID, true);
+	public void prepareFinEODEvents(CustEODEvent custEODEvent) throws Exception {
+		Customer customer = custEODEvent.getCustomer();
+
+		List<FinanceMain> custFinMains = financeMainDAO.getFinMainsForEODByCustId(customer);
+		List<FinanceProfitDetail> custpftDet = financeProfitDetailDAO.getFinProfitDetailsByCustId(customer);
 
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 
@@ -652,8 +655,8 @@ public class LoadFinanceData extends ServiceHelper {
 		}
 	}
 
-	public void updateCustomerDate(long custId, Date date, String newCustStatus, Date nextDate) {
-		customerDAO.updateCustAppDate(custId, nextDate, newCustStatus);
+	public void updateCustomerDate(CustEODEvent custEODEvent) {
+		customerDAO.updateCustAppDate(custEODEvent);
 	}
 
 	private long saveFinLogEntryDetail(FinanceMain fm) {

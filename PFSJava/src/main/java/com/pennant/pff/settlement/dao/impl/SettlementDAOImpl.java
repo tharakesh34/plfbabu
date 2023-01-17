@@ -123,7 +123,11 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 			ps.setLong(++index, header.getWorkflowId());
 
 			ps.setLong(++index, header.getId());
-			ps.setInt(++index, header.getVersion() - 1);
+
+			if (!tableType.endsWith("_Temp")) {
+				ps.setInt(++index, header.getVersion() - 1);
+
+			}
 		});
 
 		if (recordCount <= 0) {
