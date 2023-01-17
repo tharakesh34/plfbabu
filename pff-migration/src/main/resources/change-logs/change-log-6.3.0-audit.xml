@@ -582,7 +582,7 @@
 			<column name="AuditImage" type="varchar(2)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="ID" type="bigint">
+			<column name="SettlementTypeID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="SettlementCode" type="VARCHAR(20)" />
@@ -619,7 +619,7 @@
 			<column name="AuditImage" type="varchar(2)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="ID" type="bigint">
+			<column name="settlementHeaderID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="FinId" type="bigint" />
@@ -663,16 +663,13 @@
 			<column name="AuditImage" type="varchar(2)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="HEADERID" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="ID" type="Decimal(10,0)" />
+			<column name="ALLOCATIONID" type="Decimal(10,0)" />
 			<column name="ALLOCATIONTYPE" type="Char(8)" />
 			<column name="ALLOCATIONTO" type="bigint" />
 			<column name="PAIDAMOUNT" type="Decimal(18,0)" />
 			<column name="TOTALDUE" type="Decimal(18,0)" />
 			<column name="WAIVEDAMOUNT" type="Decimal(18,0)" />
-			<column name="ALLOCATIONID" type="bigint" />
+			<column name="SETTLEMENTALLOCATIONID" type="bigint" />
 			<column name="PAIDGST" type="Decimal(18,0)" />
 			<column name="WAIVEDREQAMOUNT" type="Decimal(18,0)" />
 			<column name="WAIVERACCEPTED" type="Char(1)" />
@@ -740,7 +737,6 @@
 		<renameTable newTableName="ADTFinSettlementHeader" oldTableName="ADTSettlement"/>
 	</changeSet>
 	
-	
 	<changeSet id="DE#267.35" author="Sravani.M">
 		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="Version" type="int" />
@@ -770,8 +766,16 @@
 		<renameTable newTableName="ADTSETTLEMENT_TYPES" oldTableName="ADTSETTLEMENTTYPES"/>
 	</changeSet>
 	
+	<changeSet id="OTS#1.1" author="saikiran.n">
+		<renameColumn newColumnName="ID" oldColumnName="SETTLEMENTTYPEID" tableName="ADTSETTLEMENT_TYPES" />
+	</changeSet>
+	
 	<changeSet id="OTS#2" author="saikiran.n">
 		<renameTable newTableName="ADTFIN_SETTLEMENT_HEADER" oldTableName="ADTFINSETTLEMENTHEADER"/>
+	</changeSet>
+	
+	<changeSet id="OTS#2.2" author="saikiran.n">
+		<renameColumn newColumnName="ID" oldColumnName="SETTLEMENTHEADERID" tableName="ADTFIN_SETTLEMENT_HEADER" />
 	</changeSet>
 	
 	<changeSet id="OTS#3" author="saikiran.n">
@@ -780,6 +784,14 @@
 	
 	<changeSet id="OTS#4" author="saikiran.n">
 		<renameTable newTableName="ADTSETTLEMENT_ALLOC_DTLS" oldTableName="ADTSETTLEMENTALLOCATIONDTLS"/>
+	</changeSet>
+	
+	<changeSet id="OTS#4.4" author="saikiran.n">
+		<renameColumn newColumnName="ID" oldColumnName="ALLOCATIONID" tableName="ADTSETTLEMENT_ALLOC_DTLS" />
+		<renameColumn newColumnName="HEADERID" oldColumnName="SETTLEMENTHEADERID"
+			tableName="ADTSETTLEMENT_ALLOC_DTLS" />
+		<renameColumn newColumnName="ALLOCATIONID" oldColumnName="SETTLEMENTALLOCATIONID"
+			tableName="ADTSETTLEMENT_ALLOC_DTLS" />
 	</changeSet>
 	
 	<changeSet id="ST#165.7" author="Sravani.M">

@@ -16,7 +16,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FinSettlementHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long id = Long.MIN_VALUE;
+	private long id;
 	private long settlementType;
 	private String settlementStatus;
 	private Date startDate;

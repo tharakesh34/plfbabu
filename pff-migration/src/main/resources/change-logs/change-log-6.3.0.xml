@@ -243,7 +243,7 @@
 			<column name="PPLockinPeriod" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.11.1" author="Sravani.S">
 		<sql>
 			<![CDATA[	
@@ -257,7 +257,7 @@
 			<column name="ESLockinPeriod" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.12.1" author="Sravani.S">
 		<sql>
 			<![CDATA[	
@@ -265,7 +265,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.13" author="Sravani.S">
 		<addColumn tableName="RMTFinanceTypes_Temp">
 			<column name="MinPPCalType" type="VARCHAR(8)" />
@@ -418,7 +418,7 @@
 			<column name="PPLockinPeriod" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.21.1" author="Sravani.S">
 		<sql>
 			<![CDATA[	
@@ -432,7 +432,7 @@
 			<column name="ESLockinPeriod" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.22.1" author="Sravani.S">
 		<sql>
 			<![CDATA[	
@@ -2847,11 +2847,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#113_pre1" author="Gopal.p">
 		<dropSequence sequenceName="SEQ_FILE_UPLOAD_HEADER" />
 	</changeSet>
-	
+
 	<changeSet id="ST#113_pre2" author="Gopal.p">
 		<dropView viewName="FILE_UPLOAD_HEADER_AVIEW" />
 	</changeSet>
@@ -2871,10 +2871,10 @@
 	<changeSet id="ST#113_pre6" author="Gopal.p">
 		<dropTable tableName="FILE_UPLOAD_HEADER" />
 	</changeSet>
-	
+
 	<changeSet id="ST#113_pre7" author="Gopal.p">
 		<dropTable tableName="REPRESENT_UPLOADS" />
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="ST#113.1" author="Gopal.p">
 		<createTable tableName="FILE_UPLOAD_HEADER">
@@ -2939,7 +2939,7 @@
 	<changeSet id="ST#113.4" author="Gireesh.G">
 		<addPrimaryKey tableName="REPRESENT_UPLOADS" columnNames="Id" />
 	</changeSet>
-	
+
 	<changeSet id="ST#113.5" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -2961,7 +2961,7 @@
  			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.6" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -2982,7 +2982,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#113.7" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -3010,73 +3010,73 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#707.1" author="HariTeja.B">
 		<createTable tableName="MANDATES_UPLOAD">
-			<column name="Id" 					type="bigint"		autoIncrement="true" />
-			<column name="HeaderID"             type="bigint" />
-			<column name="MandateID" 			type="bigint"/>
-			<column name="CustID" 				type="bigint"/>
-			<column name="CustCIF" 				type="varchar(20)"/>
-			<column name="MandateRef" 			type="varchar(50)"/>
-			<column name="MandateType" 			type="varchar(20)"/>
-			<column name="BankBranchID" 		type="bigint"/>
-			<column name="AccNumber"			type="varchar(50)"/>
-			<column name="AccHolderName"		type="varchar(100)"/>
-			<column name="JointAccHolderName"	type="varchar(100)"/>
-			<column name="AccType"				type="varchar(20)"/>
-			<column name="OpenMandate"			type="boolean"/>
-			<column name="StartDate"			type="datetime"/>
-			<column name="ExpiryDate"			type="datetime"/>
-			<column name="MaxLimit"				type="decimal(18,0)"/>
-			<column name="Periodicity"			type="varchar(20)"/>
-			<column name="PhoneCountryCode"		type="varchar(5)"/>
-			<column name="PhoneAreaCode"		type="varchar(8)"/>
-			<column name="PhoneNumber"			type="varchar(12)"/>
-			<column name="MandateStatus"		type="varchar(20)"/>
-			<column name="ApprovalID"			type="varchar(50)"/>
-			<column name="InputDate"			type="datetime"/>
-			<column name="Active"				type="boolean"/>
-			<column name="Reason"				type="varchar(500)"/>
-			<column name="MandateCcy"			type="varchar(10)"/>
-			<column name="OrgReference"			type="varchar(25)"/>
-			<column name="ExternalRef"			type="varchar(2000)"/>
-			<column name="DocumentName"			type="varchar(200)"/>
-			<column name="DocumentRef"			type="bigint"/>
-			<column name="BarCodeNumber"		type="varchar(10)"/>
-			<column name="SwapIsActive"			type="boolean"/>
-			<column name="PrimaryMandateID"		type="bigint"/>
-			<column name="EntityCode"			type="varchar(8)"/>
-			<column name="PartnerBankID"		type="bigint"/>
-			<column name="DefaultMandate"		type="boolean"/>
-			<column name="EmandateSource"		type="varchar(50)"/>
-			<column name="EmandateReferenceNo"	type="varchar(50)"/>
-			<column name="SwapEffectiveDate"	type="datetime"/>
-			<column name="HoldReason"			type="varchar(50)"/>
-			<column name="SecurityMandate"		type="boolean"/>
-			<column name="EmployerID"			type="bigint"/>
-			<column name="EmployeeNo"			type="varchar(50)"/>
-			<column name="Ifsc" 				type="varchar(40)"  />
-			<column name="Micr" 				type="bigint" />
-			<column name="ExternalMandate" 		type="boolean" />
-			<column name="Progress"             type="int" />
-			<column name="Status"               type="char(1)" />
-			<column name="ErrorCode"            type="varchar(20)" />
-			<column name="ErrorDesc"            type="varchar(2000)" />
+			<column name="Id" type="bigint" autoIncrement="true" />
+			<column name="HeaderID" type="bigint" />
+			<column name="MandateID" type="bigint" />
+			<column name="CustID" type="bigint" />
+			<column name="CustCIF" type="varchar(20)" />
+			<column name="MandateRef" type="varchar(50)" />
+			<column name="MandateType" type="varchar(20)" />
+			<column name="BankBranchID" type="bigint" />
+			<column name="AccNumber" type="varchar(50)" />
+			<column name="AccHolderName" type="varchar(100)" />
+			<column name="JointAccHolderName" type="varchar(100)" />
+			<column name="AccType" type="varchar(20)" />
+			<column name="OpenMandate" type="boolean" />
+			<column name="StartDate" type="datetime" />
+			<column name="ExpiryDate" type="datetime" />
+			<column name="MaxLimit" type="decimal(18,0)" />
+			<column name="Periodicity" type="varchar(20)" />
+			<column name="PhoneCountryCode" type="varchar(5)" />
+			<column name="PhoneAreaCode" type="varchar(8)" />
+			<column name="PhoneNumber" type="varchar(12)" />
+			<column name="MandateStatus" type="varchar(20)" />
+			<column name="ApprovalID" type="varchar(50)" />
+			<column name="InputDate" type="datetime" />
+			<column name="Active" type="boolean" />
+			<column name="Reason" type="varchar(500)" />
+			<column name="MandateCcy" type="varchar(10)" />
+			<column name="OrgReference" type="varchar(25)" />
+			<column name="ExternalRef" type="varchar(2000)" />
+			<column name="DocumentName" type="varchar(200)" />
+			<column name="DocumentRef" type="bigint" />
+			<column name="BarCodeNumber" type="varchar(10)" />
+			<column name="SwapIsActive" type="boolean" />
+			<column name="PrimaryMandateID" type="bigint" />
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="PartnerBankID" type="bigint" />
+			<column name="DefaultMandate" type="boolean" />
+			<column name="EmandateSource" type="varchar(50)" />
+			<column name="EmandateReferenceNo" type="varchar(50)" />
+			<column name="SwapEffectiveDate" type="datetime" />
+			<column name="HoldReason" type="varchar(50)" />
+			<column name="SecurityMandate" type="boolean" />
+			<column name="EmployerID" type="bigint" />
+			<column name="EmployeeNo" type="varchar(50)" />
+			<column name="Ifsc" type="varchar(40)" />
+			<column name="Micr" type="bigint" />
+			<column name="ExternalMandate" type="boolean" />
+			<column name="Progress" type="int" />
+			<column name="Status" type="char(1)" />
+			<column name="ErrorCode" type="varchar(20)" />
+			<column name="ErrorDesc" type="varchar(2000)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#707.2" author="HariTeja.B">
 		<addPrimaryKey constraintName="PK_MANDATES_UPLOAD_ID" tableName="MANDATES_UPLOAD" columnNames="id" />
 	</changeSet>
-	
+
 	<changeSet id="ST#707.3" author="HariTeja.B" dbms="postgresql, oracle">
-		<addDefaultValue columnName="SwapIsActive" 		tableName="MANDATES_UPLOAD" defaultValue="0" />
-		<addDefaultValue columnName="PartnerBankID" 	tableName="MANDATES_UPLOAD" defaultValue="0" />
-		<addDefaultValue columnName="DefaultMandate" 	tableName="MANDATES_UPLOAD" defaultValue="0" />
-		<addDefaultValue columnName="SecurityMandate" 	tableName="MANDATES_UPLOAD" defaultValue="0" />
+		<addDefaultValue columnName="SwapIsActive" tableName="MANDATES_UPLOAD" defaultValue="0" />
+		<addDefaultValue columnName="PartnerBankID" tableName="MANDATES_UPLOAD" defaultValue="0" />
+		<addDefaultValue columnName="DefaultMandate" tableName="MANDATES_UPLOAD" defaultValue="0" />
+		<addDefaultValue columnName="SecurityMandate" tableName="MANDATES_UPLOAD" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#707.3" author="HariTeja.B" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -3087,7 +3087,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#707.4" author="HariTeja.B">
 		<sql>
 			<![CDATA[
@@ -3135,8 +3135,8 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANDATES_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANDATES_UPLOAD')), 'EXTERNALMANDATE',      0, 'N', NULL, NULL, NULL, NULL, '17', NULL, NULL, NULL, NULL, 'O');
  			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="ST#707.5" author="HariTeja.B">
 		<sql>
 			<![CDATA[
@@ -3180,9 +3180,9 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANDATES_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANDATES_TEMPLATE')), 'EXTERNALMANDATE',      	0, 'N', NULL, NULL, NULL, NULL, '17', NULL, NULL, NULL, NULL, 'O');
 			]]>
 		</sql>
-	</changeSet> 
-	
-    <changeSet id="ST#707.6" author="HariTeja.B">
+	</changeSet>
+
+	<changeSet id="ST#707.6" author="HariTeja.B">
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANDATES_DOWNLOAD');
@@ -3232,8 +3232,8 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANDATES_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANDATES_DOWNLOAD')), 'ERRORDESC',	            0, 'N', NULL, NULL, NULL, NULL, '34', NULL, NULL, NULL, NULL, 'O');
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="ST#707.7" author="HariTeja.B">
 		<sql>
 			<![CDATA[
@@ -3269,7 +3269,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#711.1" author="bhaskara.k">
 		<createTable tableName="PRESENTMENT_RESP_UPLOAD">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -3306,7 +3306,7 @@
 			<column name="Thread_Id" type="bigint" />
 			<column name="Utr_Number" type="varchar(50)" />
 			<column name="FinId" type="bigint" />
-			<column name="FateCorrection" type="CHAR(1)" >
+			<column name="FateCorrection" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
 			<column name="Error_Code" type="varchar(10)" />
@@ -3315,17 +3315,18 @@
 			<column name="Status" type="char(1)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#5.33" author="bhaskara.k">
 		<addColumn tableName="PRESENTMENT_RESP_UPLOAD">
 			<column name="PresentmentId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#711.2" author="bhaskara.k">
-		<addPrimaryKey constraintName="PK_PRE_RESPONCE_UPLOAD_Id" tableName="PRESENTMENT_RESP_UPLOAD" columnNames="Id" />
+		<addPrimaryKey constraintName="PK_PRE_RESPONCE_UPLOAD_Id" tableName="PRESENTMENT_RESP_UPLOAD"
+			columnNames="Id" />
 	</changeSet>
-		
+
 	<changeSet id="ST#711.3" author="bhaskara.k" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -3335,13 +3336,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#711.3" author="bhaskara.k" dbms="postgresql, oracle">
 		<addDefaultValue columnName="Instalment_No" tableName="PRESENTMENT_RESP_UPLOAD" defaultValue="0" />
 		<addDefaultValue columnName="Process_Flag" tableName="PRESENTMENT_RESP_UPLOAD" defaultValue="0" />
 		<addDefaultValue columnName="Thread_Id" tableName="PRESENTMENT_RESP_UPLOAD" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#711.4" author="bhaskara.k">
 		<sql>
 			<![CDATA[	
@@ -3398,7 +3399,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#711.6" author="bhaskara.k">
 		<sql>
 			<![CDATA[	
@@ -3429,7 +3430,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#711.7" author="bhaskara.k">
 		<sql>
 			<![CDATA[
@@ -3465,10 +3466,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#708.01" author="sainaveen.y">
 		<createTable tableName="CHEQUES_UPLOAD">
-			<column name="ID" type="bigint" autoIncrement="true" >
+			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
 			<column name="HeaderId" type="bigint" />
@@ -3578,7 +3579,7 @@
                 INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CHEQUES_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CHEQUE_TEMPLATE')),  'CHEQUEDATE',            0, 'N', NULL, NULL, NULL, NULL, '10',  NULL, NULL, NULL, 'dd-MMM-yyyy', 'O');
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="ST#708.13" author="sainaveen.y">
 		<sql>
@@ -3617,8 +3618,8 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CHEQUES_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CHEQUE_DOWNLOAD')),  'CHEQUEDATE',	               0, 'N', NULL, NULL, NULL, NULL, '19',  NULL, NULL, NULL,   'dd-MMM-yyyy',         'O');
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="ST#708.7" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -3654,25 +3655,25 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2649.1" author="Mounika.M">
 		<addColumn tableName="FinExcessAmount">
-			<column name="ReceiptId" type="bigint"/>
+			<column name="ReceiptId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2649.2" author="Mounika.M">
 		<addColumn tableName="FinExcessAmount">
-			<column name="PostDate" type="datetime"/>
+			<column name="PostDate" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2649.3" author="Mounika.M">
 		<addColumn tableName="FinExcessAmount">
-			<column name="ValueDate" type="datetime"/>
+			<column name="ValueDate" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="TK#2644_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3680,7 +3681,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#2644" author="saikiran.n">
 		<createView viewName="FINEXCESSAMOUNT_LOVVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -3698,7 +3699,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="TK#2644__post" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3706,7 +3707,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3714,7 +3715,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1_pre" author="Gopal.p" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -3722,12 +3723,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1" author="Gopal.p">
-		<modifyDataType tableName="RBFIELDDETAILS" columnName="RBMODULE" newDataType="varchar(20)"/>
-		<modifyDataType tableName="RBFIELDDETAILS" columnName="RBEVENT" newDataType="varchar(20)"/>
+		<modifyDataType tableName="RBFIELDDETAILS" columnName="RBMODULE" newDataType="varchar(20)" />
+		<modifyDataType tableName="RBFIELDDETAILS" columnName="RBEVENT" newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="1_post" author="Gopal.p" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -3735,7 +3736,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4087,7 +4088,7 @@
 		     ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#2509.32" author="Anilkumar.G">
 		<sql>
 		    <![CDATA[
@@ -4499,7 +4500,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2565.4" author="saisandeep.b">
-		<addPrimaryKey tableName="PAYMINS_UPLOADS" columnNames="Id" constraintName="pk_paymins_uploads_id"/>
+		<addPrimaryKey tableName="PAYMINS_UPLOADS" columnNames="Id" constraintName="pk_paymins_uploads_id" />
 	</changeSet>
 
 	<changeSet id="TK#2565.5" author="saisandeep.b">
@@ -4769,7 +4770,7 @@
 	<changeSet id="TK#2568.2.1" author="Vijayakumar.k">
 		<addPrimaryKey tableName="Auto_Refund_Loans" columnNames="Id" constraintName="PK_Auto_Refund_Loans_ID" />
 	</changeSet>
-		
+
 	<changeSet id="TK#2568.2.2" author="Vijayakumar.k" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -4856,8 +4857,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2566.3.1" author="sampath.d">
-		<addPrimaryKey tableName="Fee_Refund_Header_Temp" columnNames="Id"
-			constraintName="pk_feerfdhdrt_feeid" />
+		<addPrimaryKey tableName="Fee_Refund_Header_Temp" columnNames="Id" constraintName="pk_feerfdhdrt_feeid" />
 	</changeSet>
 
 	<changeSet id="TK#2566.4_pre" author="sampath.d" dbms="postgresql">
@@ -5764,7 +5764,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#2650.0" author="sandeepkumar.m" context="Dropping index">
 		<dropIndex tableName="FINEXCESSAMOUNT" indexName="IDX_FNEXCSSAMN_FINID_AMTTYPE" />
 	</changeSet>
@@ -5777,7 +5777,7 @@
 			<column name="VALUEDATE" type="datetime" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="STLMT#1" author="Shanakr.M">
 		<comment>New Sequence for settlement Type Detail Table</comment>
 		<createSequence sequenceName="SEQSETTLEMENTTYPES" incrementBy="1" startValue="1" minValue="1"
@@ -6773,6 +6773,7 @@
 		</createTable>
 	</changeSet>
 
+	<!-- need to remove STLMT#35 -->
 	<changeSet id="STLMT#35" author="saikiran.n">
 		<addForeignKeyConstraint constraintName="FK_StlmtSchdl_HdrID"
 			referencedTableName="FINSETTLEMENTHEADER" referencedColumnNames="SettlementHeaderID"
@@ -9427,7 +9428,7 @@
          	 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#712_01" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -9567,7 +9568,7 @@
 		<addPrimaryKey tableName="EOD_CUSTOMER_QUEUE_LOG" columnNames="ID"
 			constraintName="pk_eod_customer_queue_log" />
 	</changeSet>
-	
+
 	<changeSet id="ST#712_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
