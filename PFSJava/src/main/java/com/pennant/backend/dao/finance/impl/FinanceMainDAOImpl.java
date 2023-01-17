@@ -6582,7 +6582,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" LEFT JOIN MANUALADVISE M ON M.FINID = FM.FINID AND M.HOLDDUE = 0 AND M.ADVISETYPE = ? ");
 		sql.append(
 				" INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID AND F.REFUNDABLE = 1 AND F.ALLOWAUTOREFUND  = 1");
-		sql.append(" LEFT JOIN Fin_Hold_Detail H ON FM.FINID = H.FINID ");
+		sql.append(" LEFT JOIN Fin_Hold_Details H ON FM.FINID = H.FINID ");
 		sql.append(" WHERE COALESCE(H.HOLDSTATUS, 'R') <> ? AND FT.ALLOWAUTOREFUND = ? ");
 		sql.append(" AND  (E.BALANCEAMT > 0 OR  (M.ADVISEAMOUNT - M.PAIDAMOUNT - M.WAIVEDAMOUNT) > 0 )");
 

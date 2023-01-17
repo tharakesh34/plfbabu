@@ -259,7 +259,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join RMTCurrencies curr on curr.CcyCode = fm.FinCcy");
 		sql.append(" Inner Join SMTDivisionDetail div on div.DivisionCode = ft.FinDivision");
-		sql.append(" LEFT JOIN Fin_Hold_Detail h ON fm.FINID = h.FINID ");
+		sql.append(" LEFT JOIN Fin_Hold_Details h ON fm.FINID = h.FINID ");
 		sql.append(" Where fm.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());

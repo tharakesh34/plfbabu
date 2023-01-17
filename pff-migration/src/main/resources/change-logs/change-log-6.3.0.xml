@@ -5467,7 +5467,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2562.1" author="sampath.d">
-		<createTable tableName="Fin_Hold_Detail">
+		<createTable tableName="Fin_Hold_Details">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
@@ -5479,7 +5479,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2562.2" author="sampath.d">
-		<addPrimaryKey tableName="Fin_Hold_Detail" columnNames="Id" />
+		<addPrimaryKey tableName="Fin_Hold_Details" columnNames="Id" />
 	</changeSet>
 
 	<changeSet id="TK#2562.3" author="sampath.d">
@@ -6773,7 +6773,6 @@
 		</createTable>
 	</changeSet>
 
-	<!-- need to remove STLMT#35 -->
 	<changeSet id="STLMT#35" author="saikiran.n">
 		<addForeignKeyConstraint constraintName="FK_StlmtSchdl_HdrID"
 			referencedTableName="FINSETTLEMENTHEADER" referencedColumnNames="SettlementHeaderID"
