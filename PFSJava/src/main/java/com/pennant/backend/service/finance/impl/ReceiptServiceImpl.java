@@ -3790,13 +3790,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		String panNumber = fsi.getPanNumber();
 
-		if (StringUtils.isEmpty(panNumber)) {
+		if (StringUtils.isEmpty(panNumber) && !"Inquiry".equals(fsi.getReqType())) {
 			if (recAmount.compareTo(cashLimit) > 0
 					&& DisbursementConstants.PAYMENT_TYPE_CASH.equals(fsi.getPaymentMode())) {
 				String valueParm = "PanNumber";
 				setError(schdData, "30561", valueParm);
 			}
-		} else {
+		} else if (!StringUtils.isEmpty(panNumber)) {
 			String panRegex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER);
 			if (!Pattern.compile(panRegex).matcher(panNumber).matches()) {
 				setError(schdData, "90251", panNumber);
