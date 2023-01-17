@@ -8294,6 +8294,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		ReceiptDTO receiptDTO = receiptService.prepareReceiptDTO(receiptData);
 		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
+		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(BigDecimal.ZERO) == 0) {
+			receiptService.calcuateDues(receiptData);
+		}
 
 		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(calcClosureAmt) >= 0) {
 			return;
