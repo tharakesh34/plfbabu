@@ -334,8 +334,6 @@ public class ImplementationConstants {
 		RECEIPT_ALLOW_FULL_WAIVER = getValueAsBoolean(extensions, "RECEIPT_ALLOW_FULL_WAIVER", false);
 		ALLOW_CERSAI = getValueAsBoolean(extensions, "ALLOW_CERSAI", false);
 		DISB_STP = getValueAsBoolean(extensions, "DISB_STP", false);
-		LOAN_PURPOSE_MANDATORY = getValueAsBoolean(extensions, "LOAN_PURPOSE_MANDATORY", false);
-		GUARANTOR_EMAIL_MANDATORY = getValueAsBoolean(extensions, "GUARANTOR_EMAIL_MANDATORY", true);
 	}
 
 	public static boolean LIMIT_INTERNAL;
@@ -558,8 +556,6 @@ public class ImplementationConstants {
 	public static boolean ALLOW_ZERO_STEP_AMOUNT_PERC;
 	public static boolean ALLOW_STEP_RECAL_PRORATA;
 	public static boolean CUSTOMER_PAN_VALIDATION_STOP;
-	public static boolean LOAN_PURPOSE_MANDATORY;
-	public static boolean GUARANTOR_EMAIL_MANDATORY;
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis

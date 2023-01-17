@@ -62,7 +62,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
@@ -1753,8 +1752,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			// Email Id
 			if (!this.emailId.isReadonly()) {
 				this.emailId.setConstraint(
-						new PTEmailValidator(Labels.getLabel("label_GuarantorDetailDialog_EmailId.value"),
-								ImplementationConstants.GUARANTOR_EMAIL_MANDATORY));
+						new PTEmailValidator(Labels.getLabel("label_GuarantorDetailDialog_EmailId.value"), true));
 			}
 
 			if (!this.addrHNbr.isReadonly()) {
@@ -1975,11 +1973,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.space_GuranteePercentage.setVisible(true);
 			this.space_GuarantorIDType.setSclass(PennantConstants.mandateSclass);
 			this.space_GuarantorIDNumber.setSclass(PennantConstants.mandateSclass);
-			if (ImplementationConstants.GUARANTOR_EMAIL_MANDATORY) {
-				this.space_EmailId.setSclass(PennantConstants.mandateSclass);
-			} else {
-				this.space_EmailId.setSclass("");
-			}
+			this.space_EmailId.setSclass(PennantConstants.mandateSclass);
 			this.space_Name.setSclass(PennantConstants.mandateSclass);
 			this.space_MobileNo.setSclass(PennantConstants.mandateSclass);
 			// this.space_GuarantorProof.setSclass(PennantConstants.mandateSclass);
