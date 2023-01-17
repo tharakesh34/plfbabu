@@ -101,7 +101,7 @@
 										</hlayout>
 										<label id="label_EmailId" value="${c:l('label_GuarantorDetailDialog_EmailId.value')}" />
 										<hlayout id="hlayout_EmailId" spacing="2px">
-											<space id="space_EmailId" spacing="2px" sclass="mandatory" />
+											<space id="space_EmailId" spacing="2px"/>
 											<textbox id="emailId" width="200px" />
 										</hlayout>
 									</row>
