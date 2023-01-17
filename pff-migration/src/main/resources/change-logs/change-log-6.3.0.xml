@@ -8514,6 +8514,22 @@
 			tableName="FIN_SETTLEMENT_HEADER_TEMP" />
 	</changeSet>
 
+	<changeSet id="OTS#9" author="saikiran.n">
+		<renameTable newTableName="SETTLEMENT_TYPES" oldTableName="SETTLEMENTTYPES" />
+	</changeSet>
+
+	<changeSet id="OTS#10" author="saikiran.n">
+		<renameTable newTableName="SETTLEMENT_TYPES_TEMP" oldTableName="SETTLEMENTTYPES_TEMP" />
+	</changeSet>
+
+	<changeSet id="OTS#11" author="saikiran.n">
+		<renameColumn newColumnName="ID" oldColumnName="SETTLEMENTTYPEID" tableName="SETTLEMENT_TYPES" />
+	</changeSet>
+
+	<changeSet id="OTS#12" author="saikiran.n">
+		<renameColumn newColumnName="ID" oldColumnName="SETTLEMENTTYPEID" tableName="SETTLEMENT_TYPES_TEMP" />
+	</changeSet>
+	
 	<changeSet id="OTS#5" author="saikiran.n" dbms="postgresql">
 		<dropView viewName="FINSETTLEMENTHEADER_AVIEW" />
 		<dropView viewName="FINSETTLEMENTHEADER_VIEW" />
@@ -8604,7 +8620,7 @@
 					, T1.CANCELREASONCODE
 					, T1.CANCELREMARKS
 					, T2.SETTLEMENTCODE SETTLEMENTCODE
-					, T1.SETTLEMENTREASONID,
+					, T1.SETTLEMENTREASONID
 					, T3.DESCRIPTION SETTLEMENTREASONDESC
 				FROM FIN_SETTLEMENT_HEADER_TEMP T1
 				LEFT JOIN SETTLEMENT_TYPES T2 ON T1.SETTLEMENTTYPE = T2.ID
@@ -8635,10 +8651,10 @@
 					, T1.CANCELREASONCODE
 					, T1.CANCELREMARKS
 					, T2.SETTLEMENTCODE SETTLEMENTCODE
-					, T1.SETTLEMENTREASONID,
+					, T1.SETTLEMENTREASONID
 					, T3.DESCRIPTION SETTLEMENTREASONDESC
 				FROM FIN_SETTLEMENT_HEADER T1
-				LEFT JOIN SETTLEMENTTYPES T2 ON T1.SETTLEMENTTYPE = T2.ID
+				LEFT JOIN SETTLEMENT_TYPES T2 ON T1.SETTLEMENTTYPE = T2.ID
 				LEFT JOIN REASONS T3 ON T1.SETTLEMENTREASONID = T3.ID
 				WHERE NOT EXISTS (SELECT 1 FROM FIN_SETTLEMENT_HEADER_TEMP WHERE ID = T1.ID)
 			]]>
@@ -8700,22 +8716,6 @@
 				select deps_restore_dependencies ('plf', 'fin_settlement_header_tview');
 			]]>
 		</sql>
-	</changeSet>
-
-	<changeSet id="OTS#9" author="saikiran.n">
-		<renameTable newTableName="SETTLEMENT_TYPES" oldTableName="SETTLEMENTTYPES" />
-	</changeSet>
-
-	<changeSet id="OTS#10" author="saikiran.n">
-		<renameTable newTableName="SETTLEMENT_TYPES_TEMP" oldTableName="SETTLEMENTTYPES_TEMP" />
-	</changeSet>
-
-	<changeSet id="OTS#11" author="saikiran.n">
-		<renameColumn newColumnName="ID" oldColumnName="SETTLEMENTTYPEID" tableName="SETTLEMENT_TYPES" />
-	</changeSet>
-
-	<changeSet id="OTS#12" author="saikiran.n">
-		<renameColumn newColumnName="ID" oldColumnName="SETTLEMENTTYPEID" tableName="SETTLEMENT_TYPES_TEMP" />
 	</changeSet>
 
 	<changeSet id="OTS#13" author="saikiran.n" dbms="postgresql">
@@ -10158,7 +10158,9 @@
 			<![CDATA[
 				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'EXCESS_TRANSFER_MAKER');
 				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'EXCESS_TRANSFER_APPROVER');
-				
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'EXCESS_TRANSFER_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'EXCESS_TRANSFER_APPROVER');
+			
 				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'EXCESS_TRANSFER_MAKER');
 				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'EXCESS_TRANSFER_APPROVER');
 					

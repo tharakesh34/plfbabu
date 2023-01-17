@@ -663,6 +663,9 @@
 			<column name="AuditImage" type="varchar(2)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
+			<column name="SETTLEMENTHEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
 			<column name="ALLOCATIONID" type="Decimal(10,0)" />
 			<column name="ALLOCATIONTYPE" type="Char(8)" />
 			<column name="ALLOCATIONTO" type="bigint" />
