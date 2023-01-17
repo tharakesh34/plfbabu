@@ -11,12 +11,14 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implements BatchJobQueueDAO {
+	private static final String SEQUENCE_NAME = "SEQ_EOD_CUSTOMER_QUEUE";
 
 	@Override
 	public int prepareQueue(BatchJobQueue jobQueue) {
@@ -160,21 +162,62 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 	}
 
 	@Override
-	public void clearQueue() {
-		// TODO Auto-generated method stub
+	public void logQueue() {
+		StringBuilder sql = new StringBuilder("INSERT INTO Eod_Customer_Queue_log (");
+		sql.append("SeqId, AppDate, CustId, CoreBankID, LoanExist, LimitRebuild, WorkerHost, ThreadId");
+		sql.append(", StartTime, EndTime, Progress, ErrorLog");
+		sql.append(") Select ");
+		sql.append(" Id, AppDate, CustId, CoreBankID, LoanExist, LimitRebuild, WorkerHost, ThreadId");
+		sql.append(", StartTime, EndTime, Progress, ErrorLog");
+		sql.append(" From Eod_Customer_Queue");
 
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		this.jdbcOperations.update(sql.toString());
+	}
+
+	@Override
+	public void logQueue(int progress) {
+		StringBuilder sql = new StringBuilder("INSERT INTO Eod_Customer_Queue_log (");
+		sql.append("SeqId, AppDate, CustId, CoreBankID, LoanExist, LimitRebuild, WorkerHost, ThreadId");
+		sql.append(", StartTime, EndTime, Progress, ErrorLog");
+		sql.append(") Select ");
+		sql.append(" SeqId, AppDate, CustId, CoreBankID, LoanExist, LimitRebuild, WorkerHost, ThreadId");
+		sql.append(", StartTime, EndTime, Progress, ErrorLog");
+		sql.append(" From Eod_Customer_Queue Where Progress = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		this.jdbcOperations.update(sql.toString(), EodConstants.PROGRESS_SUCCESS);
+	}
+
+	@Override
+	public void clearQueue() {
+		String sql = "Truncate table Eod_Customer_Queue";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.update(sql);
 	}
 
 	@Override
 	public long getNextValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getNextValue(SEQUENCE_NAME);
 	}
 
 	@Override
 	public void resetSequence() {
-		// TODO Auto-generated method stub
-
+		switch (App.DATABASE) {
+		case ORACLE:
+		case MY_SQL:
+			jdbcOperations.execute("ALTER SEQUENCE " + SEQUENCE_NAME + " RESTART START WITH " + 1);
+			break;
+		case POSTGRES:
+			jdbcOperations.execute("ALTER SEQUENCE " + SEQUENCE_NAME + " RESTART WITH " + 1);
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override

@@ -25,4 +25,8 @@ public interface BatchJobQueueDAO {
 	void resetSequence();
 
 	Long getIdBySequence(long sequence);
+
+	void logQueue();
+
+	void logQueue(int progress);
 }

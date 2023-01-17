@@ -9472,7 +9472,7 @@
 			<column name="AppDate" type="dateTime">
 				<constraints nullable="false" />
 			</column>
-			<column name="CutsID" type="bigint">
+			<column name="CustId" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="CoreBankID" type="varchar(50)">
