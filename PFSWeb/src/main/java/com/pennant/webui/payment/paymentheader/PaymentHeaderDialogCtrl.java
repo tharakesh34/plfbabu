@@ -509,13 +509,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		appendDisbursementInstructionTab(aPaymentHeader);
 
 		// Fill PaymentType Instructions.
-		if (this.enqiryModule) {
+	
 			calculatePaymentDetail(aPaymentHeader);
-			setPaymentDetailList(aPaymentHeader.getPaymentDetailList());
-		} else {
-			calculatePaymentDetail(aPaymentHeader);
-		}
-
+		
 		this.recordStatus.setValue(aPaymentHeader.getRecordStatus());
 
 		// Accounting Details Tab Addition
@@ -1220,15 +1216,23 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		for (FinExcessAmount fea : excessList) {
 			PaymentDetail pd = new PaymentDetail();
 			if (allowedExcesTypes.contains(fea.getAmountType())) {
-				BigDecimal progressAmt = paymentHeaderService.getInProgressExcessAmt(this.financeMain.getFinID(),
-						fea.getReceiptID());
-				pd.setNewRecord(true);
-				pd.setReferenceId(fea.getId());
-				pd.setAvailableAmount(fea.getBalanceAmt().subtract(progressAmt));
-				pd.setAmountType(fea.getAmountType());
-				pd.setReceiptID(fea.getReceiptID());
-				pd.setValueDate(fea.getValueDate());
-
+				if (enqiryModule) {
+					pd.setNewRecord(true);
+					pd.setReferenceId(fea.getId());
+					pd.setAvailableAmount(fea.getBalanceAmt());
+					pd.setAmountType(fea.getAmountType());
+					pd.setReceiptID(fea.getReceiptID());
+					pd.setValueDate(fea.getValueDate());
+				} else {
+					BigDecimal progressAmt = paymentHeaderService.getInProgressExcessAmt(this.financeMain.getFinID(),
+							fea.getReceiptID());
+					pd.setNewRecord(true);
+					pd.setReferenceId(fea.getId());
+					pd.setAvailableAmount(fea.getBalanceAmt().subtract(progressAmt));
+					pd.setAmountType(fea.getAmountType());
+					pd.setReceiptID(fea.getReceiptID());
+					pd.setValueDate(fea.getValueDate());
+				}
 				detailList.add(pd);
 			}
 		}
@@ -1518,6 +1522,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 					if (AdviseType.isPayable(amountType)) {
 						oldDetail.setAvailableAmount(newDetail.getAvailableAmount());
+					} else if (this.enqiryModule) {
+						oldDetail.setAvailableAmount((newDetail.getAvailableAmount()));
 					} else {
 						oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
 					}
