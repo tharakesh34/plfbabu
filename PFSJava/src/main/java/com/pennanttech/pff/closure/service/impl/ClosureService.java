@@ -17,6 +17,7 @@ import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -31,7 +32,6 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
@@ -117,8 +117,7 @@ public class ClosureService {
 		fsi.setRequestSource(RequestSource.EOD);
 		fsi.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
 		fsi.setValueDate(fm.getAppDate());
-		LoggedInUser userDetails = new LoggedInUser();
-		fsi.setLoggedInUser(userDetails);
+		fsi.setLoggedInUser(PFSBatchAdmin.loggedInUser);
 
 		FinReceiptDetail rcd = new FinReceiptDetail();
 		rcd.setReceivedDate(fm.getAppDate());

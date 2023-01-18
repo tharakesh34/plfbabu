@@ -1027,7 +1027,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			String paymentType = rcd.getPaymentType();
 			if (ReceiptMode.EXCESS.equals(paymentType) || ReceiptMode.EMIINADV.equals(paymentType)
 					|| ReceiptMode.ADVINT.equals(paymentType) || ReceiptMode.ADVEMI.equals(paymentType)
-					|| ReceiptMode.CASHCLT.equals(paymentType) || ReceiptMode.DSF.equals(paymentType)) {
+					|| ReceiptMode.CASHCLT.equals(paymentType) || ReceiptMode.DSF.equals(paymentType)
+					|| ReceiptMode.TEXCESS.equals(paymentType)) {
 
 				// Excess Amount make utilization
 				FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(receiptSeqID,
@@ -8020,8 +8021,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		receiptDTO.setOdDetails(receiptCalculator.getValueDatePenalties(schdData, rd.getTotReceiptAmount(),
 				rd.getReceiptHeader().getValueDate(), null, true, schedules));
 		receiptDTO.setManualAdvises(rd.getReceiptHeader().getReceivableAdvises());
-		receiptDTO.setFees(rd.getFinFeeDetails());
-		receiptDTO.getFees().addAll(schdData.getFinFeeDetailList());
+		receiptDTO.setFees(schdData.getFinFeeDetailList());
+
+		if (CollectionUtils.isEmpty(receiptDTO.getFees())) {
+			receiptDTO.getFees().addAll(rd.getFinFeeDetails());
+		}
+
 		receiptDTO.setRoundAdjMth(SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD));
 		receiptDTO.setLppFeeType(feeTypeDAO.getTaxDetailByCode(Allocation.ODC));
 		receiptDTO.setFinType(financeType);
