@@ -4617,7 +4617,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			String rm = hdr.getReceiptMode();
 			String tr = hdr.getTransactionRef();
 
-			if (receiptPurpose.equals(rp) && receiptMode.equals(rm) && transactionRef.equals(tr)) {
+			if (receiptPurpose.equals(rp) && receiptMode.equals(rm) && transactionRef != null
+					&& transactionRef.equals(tr)) {
 				if (!cheqOrDD) {
 					return true;
 				}
