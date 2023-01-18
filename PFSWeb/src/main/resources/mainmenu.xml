@@ -484,6 +484,8 @@
 		<menuItem id="menu_Item_DueDateLogicRule"
 			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/DueDateRuleList.zul"
 			rightName="menuItem_RulesFactory_DueDateLogicRule" />
+		<menuItem id="menu_Item_RefundRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"
+			rightName="menuItem_RulesFactory_AutoRefundRule" />
 	</menu>
 
 	<!-- Solution Factory -->
@@ -522,6 +524,9 @@
 			<menuItem id="menu_Item_StepPolicy"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyList.zul"
 				rightName="menuItem_SolutionFactory_StepPolicy" />
+			<menuItem id="menu_Item_FinTypePartnerbankMapping"
+				zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerbankMappingList.zul"
+				rightName="menu_Item_FinTypePartnerbankMapping" />
 		</menu>
 		<menu id="menu_Category_PromotionSetup">
 			<menuItem id="menu_Item_Promotion"
@@ -611,6 +616,14 @@
 			rightName="menuItem_CustomerMasters_Customer" />
 		<menuItem id="menu_Item_Mandate" zulNavigation="/WEB-INF/pages/Mandate/MandateList.zul"
 			rightName="menuItem_Mandate" />
+		<menu id="menu_Category_Mandate">
+			<menuItem id="menu_Item_MandateUpload_Maker"
+				zulNavigation="/WEB-INF/pages/Mandate/Upload/MandateUploadList.zul?stage=M"
+				rightName="menu_Item_MandateUpload_Maker" />
+			<menuItem id="menu_Item_MandateUpload_Approver"
+				zulNavigation="/WEB-INF/pages/Mandate/Upload/MandateUploadList.zul?stage=A"
+				rightName="menu_Item_MandateUpload_Approver" />
+		</menu>
 		<menuItem id="menu_Item_Beneficiary" zulNavigation="/WEB-INF/pages/Beneficiary/BeneficiaryList.zul"
 			rightName="menuItem_Beneficiary" />
 		<menuItem id="menu_Item_CollateralSetup"
@@ -1115,8 +1128,6 @@
 				rightName="menu_Item_FateCorrectionUpload_Maker" />
 			<menuItem id="menu_Item_FateCorrectionUpload_Approver"
 				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A" rightName="menu_Item_FateCorrectionUpload_Approver" />
-				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A"
-				rightName="menu_Item_FateCorrectionUpload_Approver" />
 		</menu>
 		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
 			<menuItem id="menu_Item_FinanceTaxDetailUpload"
@@ -2261,8 +2272,6 @@
 	<!-- <menuItem id="menu_Item_OverdueCharge" zulNavigation="/WEB-INF/pages/RulesFactory/OverdueCharge/OverdueChargeList.zul" 
 		rightName="menuItem_RuleFactory_OverdueCharge"/> -->
 	<!-- <menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/BMTMasters/ScoringType/ScoringTypeList.zul" rightName="menuItem_RulesFactory_Notifications"/> -->
-	<menuItem id="menu_Item_RefundRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"
-		rightName="menuItem_RulesFactory_RefundRules" />
 	<!-- Solution Factory -->
 	<!-- <menuItem id="menu_Item_WeekendMaster" zulNavigation="/WEB-INF/pages/SolutionFactory/WeekendMaster/WeekendMasterList.zul" 
 		rightName="menuItem_SolutionFactory_WeekendMaster" /> -->

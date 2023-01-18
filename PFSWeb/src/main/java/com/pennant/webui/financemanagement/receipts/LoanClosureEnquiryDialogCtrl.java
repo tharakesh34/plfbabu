@@ -1903,6 +1903,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				extDataMap.put("EX_ReceiptAmount", receiptDetail.getAmount());
 			} else if (ReceiptMode.EMIINADV.equals(receiptDetail.getPaymentType())) {
 				extDataMap.put("EA_ReceiptAmount", receiptDetail.getAmount());
+			} else if (ReceiptMode.TEXCESS.equals(receiptDetail.getPaymentType())) {
+				extDataMap.put("ET_ReceiptAmount", receiptDetail.getAmount());
 			} else {
 				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
 			}
@@ -1911,6 +1913,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			addZeroifNotContains(extDataMap, "EX_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "EA_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "ET_ReceiptAmount");
 
 			if (ReceiptMode.PAYABLE.equals(receiptDetail.getPaymentType())) {
 				if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_P")) {

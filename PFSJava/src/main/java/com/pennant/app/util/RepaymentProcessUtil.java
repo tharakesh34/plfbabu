@@ -541,6 +541,7 @@ public class RepaymentProcessUtil {
 		 * Defaulting with ZERO
 		 */
 		extDataMap.put("EX_ReceiptAmount", BigDecimal.ZERO);
+		extDataMap.put("ET_ReceiptAmount", BigDecimal.ZERO);
 		extDataMap.put("EA_ReceiptAmount", BigDecimal.ZERO);
 		extDataMap.put("EAI_ReceiptAmount", BigDecimal.ZERO);
 		extDataMap.put("EAM_ReceiptAmount", BigDecimal.ZERO);
@@ -582,6 +583,9 @@ public class RepaymentProcessUtil {
 			case RepayConstants.EXAMOUNTTYPE_DSF:
 				extDataMap.put("DSF_ReceiptAmount", totPaidNow);
 				break;
+			case RepayConstants.EXAMOUNTTYPE_TEXCESS:
+				extDataMap.put("ET_ReceiptAmount", totPaidNow);
+				break;
 
 			default:
 				extDataMap.put((feeTypeCode + "_P"), totPaidNow);
@@ -622,6 +626,7 @@ public class RepaymentProcessUtil {
 		}
 
 		addZeroifNotContains(extDataMap, "EX_ReceiptAmount");
+		addZeroifNotContains(extDataMap, "ET_ReceiptAmount");
 		addZeroifNotContains(extDataMap, "EA_ReceiptAmount");
 		addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
 		addZeroifNotContains(extDataMap, "Restruct_Bpi");

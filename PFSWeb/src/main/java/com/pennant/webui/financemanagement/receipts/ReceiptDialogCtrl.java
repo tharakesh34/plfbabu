@@ -2647,6 +2647,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_CASHCLT);
 			} else if (RepayConstants.EXAMOUNTTYPE_DSF.equals(payable.getPayableType())) {
 				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_DSF);
+			} else if (RepayConstants.EXAMOUNTTYPE_TEXCESS.equals(payable.getPayableType())) {
+				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_TEXCESS);
 			} else {
 				rcd.setPaymentType(ReceiptMode.PAYABLE);
 			}
@@ -5452,6 +5454,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				extDataMap.put("EAI_ReceiptAmount", receiptDetail.getAmount());
 			} else if (ReceiptMode.ADVEMI.equals(receiptDetail.getPaymentType())) {
 				extDataMap.put("EAE_ReceiptAmount", receiptDetail.getAmount());
+			} else if (ReceiptMode.TEXCESS.equals(receiptDetail.getPaymentType())) {
+				extDataMap.put("ET_ReceiptAmount", receiptDetail.getAmount());
 			} else {
 				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
 			}
@@ -5462,6 +5466,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "EAI_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "EAE_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "ET_ReceiptAmount");
 
 			if (ReceiptMode.PAYABLE.equals(receiptDetail.getPaymentType())) {
 				if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_P")) {
@@ -8294,6 +8299,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		ReceiptDTO receiptDTO = receiptService.prepareReceiptDTO(receiptData);
 		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
+		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(BigDecimal.ZERO) == 0) {
+			receiptService.calcuateDues(receiptData);
+		}
 
 		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(calcClosureAmt) >= 0) {
 			return;

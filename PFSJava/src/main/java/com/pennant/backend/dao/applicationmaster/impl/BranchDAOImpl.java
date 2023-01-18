@@ -252,7 +252,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(" BranchFlatNbr = :BranchFlatNbr, BranchAddrStreet = :BranchAddrStreet, MiniBranch = :MiniBranch,");
 		sql.append(" BranchType = :BranchType, ParentBranch = :ParentBranch, Region = :Region,");
 		sql.append(" BankRefNo = :BankRefNo, PinCode = :PinCode, Entity = :Entity, ClusterId = :ClusterId,");
-		sql.append(" PinCodeId = :PinCodeId, DefChequeDDPrintLoc = :DefChequeDDPrintLoc");
+		sql.append(" PinCodeId = :PinCodeId, DefChequeDDPrintLoc = :DefChequeDDPrintLoc,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

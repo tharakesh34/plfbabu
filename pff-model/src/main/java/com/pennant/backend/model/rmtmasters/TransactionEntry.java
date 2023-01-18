@@ -174,6 +174,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 		excludeFields.add("singleFeeIGSTTxn");
 		excludeFields.add("singleFeeCESSTxn");
 		excludeFields.add("singleFeeTDSTxn");
+		excludeFields.add("singleFeeWaiverOrRefundTxn");
 
 		return excludeFields;
 	}

@@ -129,7 +129,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	protected ExtendedCombobox entity;
 	protected ExtendedCombobox cluster;
 	protected ExtendedCombobox defChequeDDPrintLoc;
-	protected ExtendedCombobox defDDPrintLoc;
 	protected Row row_org_struct;
 
 	// not autoWired Var's
@@ -738,8 +737,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		}
 
 		try {
-			this.defChequeDDPrintLoc.getValidatedValue();
-			String defChequeDDPrintLoc = String.valueOf(this.defChequeDDPrintLoc.getAttribute("branchCode"));
+			String defChequeDDPrintLoc = String.valueOf(this.defChequeDDPrintLoc.getValidatedValue());
 			aBranch.setDefChequeDDPrintLoc(defChequeDDPrintLoc);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1010,6 +1008,11 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		if (this.row_org_struct.isVisible() && !this.cluster.isReadonly()) {
 			this.cluster.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_BranchDialog_Cluster.value"), null, true, true));
+		}
+
+		if (!this.defChequeDDPrintLoc.isReadonly()) {
+			this.defChequeDDPrintLoc.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BranchDialog_DefChequeDDPrintLoc.value"), null, true, true));
 		}
 
 		logger.debug("Leaving");
