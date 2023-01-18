@@ -176,11 +176,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		String custCIF = (String) dataMap.get("CIF");
 		String sheetName = sheetNamePrefix;
 
-		/*
-		 * if (StringUtils.isNoneEmpty(eligibilityMethod)) { sheetName =
-		 * sheetNamePrefix.concat("_").concat(eligibilityMethod); }
-		 */
-
 		Sheet sourceSheet = book.getSheet(sheetName);
 
 		if (sourceSheet == null) {
@@ -376,10 +371,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		String reference = format.split("!")[1];
 
 		String prefix1 = prefix;
-
-		/*
-		 * if (prefix.startsWith("APP")) { prefix1 = "CO_" + prefix; }
-		 */
 
 		Book book = spreadSheet.getBook();
 		int numberOfSheets = book.getNumberOfSheets();

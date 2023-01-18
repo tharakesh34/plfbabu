@@ -11002,7 +11002,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onFulfill$eligibilityMethod(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = eligibilityMethod.getObject();
-		String eligibilityMethodValue = "";
 		if (dataObject == null || dataObject instanceof String) {
 			this.eligibilityMethod.setValue("");
 			this.eligibilityMethod.setDescription("");
@@ -11011,7 +11010,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
 				this.eligibilityMethod.setAttribute("FieldCodeId", details.getFieldCodeId());
-				eligibilityMethodValue = details.getFieldCodeValue();
 			}
 		}
 		refershCreditReviewDetailSummaryTab();

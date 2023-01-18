@@ -1997,7 +1997,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrPIN.setReadonly(isReadOnly("GuarantorDetailDialog_addrZIP"));
 			this.space_addrHNbr.setSclass(PennantConstants.mandateSclass);
 			this.space_addrStreet.setSclass(PennantConstants.mandateSclass);
-			/* this.space_poBox.setSclass(PennantConstants.mandateSclass); */
 			this.addrCountry.setMandatoryStyle(true);
 			this.addrProvince.setMandatoryStyle(true);
 			this.addrCity.setMandatoryStyle(false);
@@ -2442,25 +2441,24 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Entering" + event.toString());
 
 		Object dataObject = addrProvince.getObject();
-		if (dataObject instanceof String) {
+		if (dataObject == null) {
+			fillCitydetails(this.addrCountry.getValue(), null);
+			fillPindetails(null, null, this.addrCountry.getValue());
+		} else if (dataObject instanceof String) {
 			this.addrCity.setValue("");
 			this.addrCity.setDescription("");
 			this.addrPIN.setValue("");
 			this.addrPIN.setDescription("");
-		} else {
+		} else if (dataObject instanceof Province) {
 			Province province = (Province) dataObject;
-			if (province == null) {
-				fillCitydetails(this.addrCountry.getValue(), null);
-				fillPindetails(null, null, this.addrCountry.getValue());
-			} else if (province != null) {
-				this.addrProvince.setErrorMessage("");
-				String state = this.addrProvince.getValue();
-				String countryCode = province.getCPCountry();
+			this.addrProvince.setErrorMessage("");
+			String state = this.addrProvince.getValue();
+			String countryCode = province.getCPCountry();
 
-				this.addrCity.setValue(countryCode);
-				fillCitydetails(countryCode, state);
-				fillPindetails(null, state, countryCode);
-			}
+			this.addrCity.setValue(countryCode);
+			fillCitydetails(countryCode, state);
+			fillPindetails(null, state, countryCode);
+
 		}
 
 		logger.debug("Leaving" + event.toString());

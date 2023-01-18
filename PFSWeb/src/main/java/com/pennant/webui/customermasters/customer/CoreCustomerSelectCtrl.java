@@ -406,7 +406,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					if (error != null) {
 						MessageUtil.showMessage(error.getCode() + " : " + error.getMessage());
 						if (masterDef.isProceedException()) {
-							/* return; */
+							// Made return statement if you want to hard stop
 						}
 					}
 				}

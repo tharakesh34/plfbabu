@@ -279,15 +279,17 @@ public abstract class JsonService<T> {
 			TrustManager[] tms = new TrustManager[] { new X509TrustManager() {
 				@Override
 				public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+					// unused
 				}
 
 				@Override
 				public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+					// unused
 				}
 
 				@Override
 				public X509Certificate[] getAcceptedIssuers() {
-					return null;
+					return new X509Certificate[0];
 				}
 			} };
 
@@ -307,7 +309,11 @@ public abstract class JsonService<T> {
 			logger.error(e);
 		} finally {
 			if (fi != null) {
-				fi.close();
+				try {
+					fi.close();
+				} catch (IOException ie) {
+					// do nothing
+				}
 			}
 		}
 
