@@ -231,7 +231,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	private void doSetFieldProperties() {
 		logger.debug("Entering ");
 		// Empty sent any required attributes
-		this.custCIF.setMaxlength(6);
 		this.custDOB.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.custFName.setMaxlength(350);
 		this.custLName.setMaxlength(350);

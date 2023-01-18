@@ -158,7 +158,6 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 		this.finType.setValue("", "");
 		this.finType.setTextBoxWidth(161);
 		this.custShrtName.setValue("");
-		this.custCIF.setMaxlength(6);
 
 		this.rows_KeyDetails.getChildren().clear();
 		this.gb_KeyDetails.setVisible(false);

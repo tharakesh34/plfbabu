@@ -570,7 +570,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	}
 
 	private void doSetFieldProperties() {
-		this.custCIF.setMaxlength(12);
 		this.custDob.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.custName.setMaxlength(25);
 		this.custMobile.setMaxlength(10);

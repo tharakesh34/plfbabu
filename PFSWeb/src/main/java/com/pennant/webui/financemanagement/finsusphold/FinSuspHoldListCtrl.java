@@ -304,7 +304,6 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		this.custID.setMaxlength(26);
-		this.custCIF.setMaxlength(10);
 		this.finReference.setMaxlength(20);
 		this.product.setMaxlength(8);
 		this.finType.setMaxlength(8);

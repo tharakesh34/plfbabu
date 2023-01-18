@@ -1035,7 +1035,6 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.custCIF.setMaxlength(12);
 		this.custCIFName.setMaxlength(200);
 		this.custCIFName.setReadonly(true);
 		if (!enqModule) {
