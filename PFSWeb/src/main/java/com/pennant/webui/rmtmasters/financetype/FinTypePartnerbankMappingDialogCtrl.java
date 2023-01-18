@@ -540,9 +540,8 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 
 		if (!this.finType.isReadonly()) {
 			this.finType.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_FinType.value.value"),
+					Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_FinType.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
-			this.finType.getValue();
 		}
 
 		if (PartnerBankExtension.MAPPING.equals("B")) {
@@ -550,13 +549,11 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 				this.branch.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_BranchOrCluster.value"),
 						PennantRegularExpressions.REGEX_DESCRIPTION, true));
-			this.branch.getValue();
 		} else if (PartnerBankExtension.MAPPING.equals("C")) {
 			if (!this.cluster.isReadonly())
 				this.cluster.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_BranchOrCluster.value"),
 						PennantRegularExpressions.REGEX_DESCRIPTION, true));
-			this.cluster.getValue();
 		}
 		logger.debug(Literal.LEAVING);
 
