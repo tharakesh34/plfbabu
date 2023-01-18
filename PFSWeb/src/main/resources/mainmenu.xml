@@ -1128,8 +1128,6 @@
 				rightName="menu_Item_FateCorrectionUpload_Maker" />
 			<menuItem id="menu_Item_FateCorrectionUpload_Approver"
 				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A" rightName="menu_Item_FateCorrectionUpload_Approver" />
-				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A"
-				rightName="menu_Item_FateCorrectionUpload_Approver" />
 		</menu>
 		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
 			<menuItem id="menu_Item_FinanceTaxDetailUpload"
