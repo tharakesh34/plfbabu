@@ -86,11 +86,12 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 		super();
 	}
 
-	public void doRenderIncomeList(List<CustomerIncome> customerIncomes, Listbox listbox, int ccyFormatter) {
+	public void doRenderIncomeList(List<CustomerIncome> customerIncomes, Listbox listbox, int ccyFormatter,
+			boolean isEnquiry) {
 
 		Map<String, List<CustomerIncome>> mapData = prepareGroup(customerIncomes);
 		// render
-		renderData(listbox, ccyFormatter, mapData);
+		renderData(listbox, ccyFormatter, mapData, isEnquiry);
 		// Gross Income
 		appendTotalItem(listbox, ccyFormatter, BigDecimal.ZERO, "Gross Income", CUST_GRC_INCOME_CELL);
 		// Gross Expense
@@ -142,7 +143,8 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param ccyFormatter
 	 * @param mapData
 	 */
-	private void renderData(Listbox listbox, int ccyFormatter, Map<String, List<CustomerIncome>> mapData) {
+	private void renderData(Listbox listbox, int ccyFormatter, Map<String, List<CustomerIncome>> mapData,
+			boolean isEnquiry) {
 		// render start
 		listbox.getItems().clear();
 
@@ -156,7 +158,7 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 			addlistGroup(data.get(0), listbox);
 
 			for (CustomerIncome customerIncome2 : data) {
-				doFillIncomeAndExpense(customerIncome2, listbox, ccyFormatter, false);
+				doFillIncomeAndExpense(customerIncome2, listbox, ccyFormatter, false, isEnquiry);
 			}
 			// add sub totals
 			appendTotalItem(listbox, ccyFormatter, BigDecimal.ZERO, "Total", key);
@@ -185,7 +187,8 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param listbox
 	 * @param ccyFormatter
 	 */
-	public void doFillIncomeAndExpense(CustomerIncome custinc, Listbox listbox, int ccyFormatter, boolean isNewRecord) {
+	public void doFillIncomeAndExpense(CustomerIncome custinc, Listbox listbox, int ccyFormatter, boolean isNewRecord,
+			boolean isEnquiry) {
 		logger.debug(Literal.ENTERING);
 		Space space = null;
 		Hbox hbox = null;
@@ -243,7 +246,7 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 		incomeAmount.setScale(ccyFormatter);
 		incomeAmount.setMandatory(true);
 		incomeAmount.setValue(PennantApplicationUtil.formateAmount(custinc.getIncome(), ccyFormatter));
-		incomeAmount.setReadonly(getUserWorkspace().isReadOnly("CustomerDialog_custIncomeType"));
+		incomeAmount.setReadonly(isEnquiry || getUserWorkspace().isReadOnly("CustomerDialog_custIncomeType"));
 		/*
 		 * incomeAmount.setConstraint( new PTDecimalValidator(Labels.getLabel("listheader_CustIncome.label"),
 		 * ccyFormatter, true, false));
@@ -268,7 +271,7 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 		Button button = new Button();
 		button.setSclass("z-toolbarbutton");
 		button.setLabel(Labels.getLabel("btnDelete.label"));
-		button.setDisabled(getUserWorkspace().isReadOnly("CustomerDialog_custIncomeType"));
+		button.setDisabled(isEnquiry || getUserWorkspace().isReadOnly("CustomerDialog_custIncomeType"));
 		button.addForward("onClick", self, "onClickFinancialButtonDelete", item);
 		hbox.appendChild(space);
 		hbox.appendChild(button);
@@ -309,11 +312,12 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param aCustomerDetails
 	 * @param listBoxCustomerIncome
 	 * @param ccyFormatter
+	 * @param isEnquiry
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
 	public Map<String, List> prepareCustomerIncomeExpenseData(CustomerDetails aCustomerDetails,
-			Listbox listBoxCustomerIncome, int ccyFormatter) {
+			Listbox listBoxCustomerIncome, int ccyFormatter, boolean isEnquiry) {
 		logger.debug(Literal.ENTERING);
 		List<Listitem> listItems = listBoxCustomerIncome.getItems();
 		List<CustomerIncome> customerIncomes = new ArrayList<>();

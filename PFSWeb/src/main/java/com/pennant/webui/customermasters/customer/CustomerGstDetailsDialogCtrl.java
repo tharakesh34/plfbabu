@@ -694,7 +694,8 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("this.pageRightName", getRole());
 
-		this.button_CustomerGst_New.setVisible(getUserWorkspace().isAllowed("button_CustomerGstDetailsDialog_btnNew"));
+		this.button_CustomerGst_New.setVisible(
+				!this.enqiryModule || getUserWorkspace().isAllowed("button_CustomerGstDetailsDialog_btnNew"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerGstDetailsDialog_btnSave"));
 
 		logger.debug("Leaving");
