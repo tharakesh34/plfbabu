@@ -976,6 +976,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 					&& StringUtils.equals(Labels.getLabel("label_TransEntry_Payable"), this.adviseType.getValue())
 					&& !isReadOnly("FeeTypeDialog_AllowAutoRefund")) {
 				this.allowAutoRefund.setDisabled(false);
+			} else {
+				this.allowAutoRefund.setDisabled(true);
 			}
 		} else {
 			this.dueAccRow.setVisible(false);

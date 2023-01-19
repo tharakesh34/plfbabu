@@ -218,7 +218,8 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (!lovFieldDetailDAO.isfieldCodeValueExists(detail.getReason(), true)) {
+		if (!lovFieldDetailDAO.isfieldCodeValueExists(detail.getReason(), true)
+				&& UploadConstants.HOLD_REFUND_FLAG.equals(holdStatus)) {
 			setError(detail, PaymentUploadError.HOLDUP007);
 			return;
 		}
