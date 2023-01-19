@@ -558,22 +558,26 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 		}
 
-		Map<String, Object> protectedCellsBySheet = getProtectedFieldsBySheet();
-		for (Entry<String, Object> fieldMap : protectedCellsBySheet.entrySet()) {
-			if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
-				for (String fieldName : getFields(fieldMap.getValue())) {
-					fieldName = StringUtils.trim(fieldName);
-					protectField(sheet, fieldName);
+		if (creditReviewDetails.getProtectedCells() != null) {
+			Map<String, Object> protectedCellsBySheet = getProtectedFieldsBySheet();
+			for (Entry<String, Object> fieldMap : protectedCellsBySheet.entrySet()) {
+				if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
+					for (String fieldName : getFields(fieldMap.getValue())) {
+						fieldName = StringUtils.trim(fieldName);
+						protectField(sheet, fieldName);
+					}
 				}
 			}
 		}
 
-		Map<String, Object> formulaCellsBySheet = getFormulaFieldsBySheet();
-		for (Entry<String, Object> fieldMap : formulaCellsBySheet.entrySet()) {
-			if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
-				for (String fieldName : getFields(fieldMap.getValue())) {
-					fieldName = StringUtils.trim(fieldName);
-					setFormula(sheet, fieldName);
+		if (creditReviewDetails.getFormulaCells() != null) {
+			Map<String, Object> formulaCellsBySheet = getFormulaFieldsBySheet();
+			for (Entry<String, Object> fieldMap : formulaCellsBySheet.entrySet()) {
+				if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
+					for (String fieldName : getFields(fieldMap.getValue())) {
+						fieldName = StringUtils.trim(fieldName);
+						setFormula(sheet, fieldName);
+					}
 				}
 			}
 		}
