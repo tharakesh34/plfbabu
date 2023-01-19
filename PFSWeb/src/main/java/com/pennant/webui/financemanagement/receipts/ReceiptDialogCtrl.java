@@ -2077,13 +2077,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		String branchCode = this.cashierBranch.getValue();
 		Long clusterId = null;
 
-		Filter[] filters = new Filter[5];
+		Filter[] filters = new Filter[4];
 		filters[0] = new Filter("FinType", finType.getFinType(), Filter.OP_EQUAL);
 		filters[1] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", paymentMode, Filter.OP_EQUAL);
 
 		if (PartnerBankExtension.MAPPING.equals("B")) {
-			filters[4] = new Filter("BranchCode", branchCode, Filter.OP_EQUAL);
+			filters[3] = new Filter("BranchCode", branchCode, Filter.OP_EQUAL);
 		} else if (PartnerBankExtension.MAPPING.equals("C")) {
 			clusterId = clusterService.getClustersFilter(branchCode);
 			filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);

@@ -47,6 +47,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -560,6 +561,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private FinanceDetailService financeDetailService;
 	private SettlementService settlementService;
+
+	protected A settlementEnq;
+	protected Label label_LoanBasicDetailsDialog_Settlement;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1197,6 +1201,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 		}
+
+		if (aFinanceMain.isUnderSettlement()) {
+			this.settlementEnq.setVisible(true);
+			this.label_LoanBasicDetailsDialog_Settlement.setVisible(true);
+		}
+
 		if (StringUtils.isNotBlank(aFinanceMain.getLinkedFinRef())) {
 			this.row_LinkedFinRef.setVisible(true);
 			this.linkedFinRef.setValue(aFinanceMain.getLinkedFinRef());
