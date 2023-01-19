@@ -8196,7 +8196,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
 
-		if (fm.isAlwLPIInIntDue() && CollectionUtils.isNotEmpty(overdueList)) {
+		if (CollectionUtils.isNotEmpty(overdueList)) {
 			if (CollectionUtils.isEmpty(fm.getLpiRateChangeList())) {
 				fm.setLpiRateChangeList(finODPenaltyRateDAO.getFinLPIRateChanges(finID));
 			}
@@ -8320,8 +8320,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			this.manualScheduleService.doApprove(frd.getFinanceDetail());
 		}
 
-		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)
-				&& ImplementationConstants.COLLATERAL_INTERNAL && ImplementationConstants.COLLATERAL_DELINK_AUTO) {
+		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus) && ImplementationConstants.COLLATERAL_INTERNAL
+				&& ImplementationConstants.COLLATERAL_DELINK_AUTO) {
 			getCollateralAssignmentValidation().saveCollateralMovements(fm.getFinReference());
 		}
 
@@ -8748,5 +8748,5 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	public void setFeeCalculator(FeeCalculator feeCalculator) {
 		this.feeCalculator = feeCalculator;
 	}
-	
+
 }

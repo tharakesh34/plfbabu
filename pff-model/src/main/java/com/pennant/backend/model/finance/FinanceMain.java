@@ -845,7 +845,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	private String holdStatus;
 	private String reason;
-	private boolean alwLPIInIntDue = true;
 	private boolean underSettlement;
 	private transient List<FinLPIRateChange> lpiRateChangeList = new ArrayList<>();
 
@@ -5575,14 +5574,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setReason(String reason) {
 		this.reason = reason;
-	}
-
-	public boolean isAlwLPIInIntDue() {
-		return alwLPIInIntDue;
-	}
-
-	public void setAlwLPIInIntDue(boolean alwLPIInIntDue) {
-		this.alwLPIInIntDue = alwLPIInIntDue;
 	}
 
 	public boolean isUnderSettlement() {

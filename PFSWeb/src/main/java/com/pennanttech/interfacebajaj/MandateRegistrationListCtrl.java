@@ -293,39 +293,39 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		} else {
 			this.space_MandateType.setSclass("");
 		}
+		
+		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
+			if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
+				this.row_partnerBank.setVisible(true);
+				this.partnerBank.setModuleName("FinTypePartner");
+				this.partnerBank.setMandatoryStyle(true);
+				this.partnerBank.setValueColumn("PartnerBankCode");
+				this.partnerBank.setDescColumn("PartnerBankName");
+				this.partnerBank.setMaxlength(14);
+				this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 
-		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
-			this.row_partnerBank.setVisible(true);
-			this.partnerBank.setModuleName("FinTypePartner");
-			this.partnerBank.setMandatoryStyle(true);
-			this.partnerBank.setValueColumn("PartnerBankCode");
-			this.partnerBank.setDescColumn("PartnerBankName");
-			this.partnerBank.setMaxlength(14);
-			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+				this.branchOrCluster.setButtonDisabled(false);
+				this.branchOrCluster.setMandatoryStyle(true);
 
-			this.branchOrCluster.setButtonDisabled(false);
-			this.branchOrCluster.setMandatoryStyle(true);
+				String moduleName = "FinTypePartnerBankBranch";
+				String valueColumn = "BranchCode";
+				String descColumn = "BranchDesc";
 
-			String moduleName = "FinTypePartnerBankBranch";
-			String valueColumn = "BranchCode";
-			String descColumn = "BranchDesc";
+				if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
+					moduleName = "Cluster";
+					valueColumn = "Code";
+					descColumn = "Name";
 
-			if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
-				moduleName = "Cluster";
-				valueColumn = "Code";
-				descColumn = "Name";
+					this.branchOrCluster.setFilters(new Filter[] {
+							new Filter("CLUSTERTYPE", PartnerBankExtension.CLUSTER_TYPE, Filter.OP_EQUAL) });
+				}
 
-				this.branchOrCluster.setFilters(
-						new Filter[] { new Filter("CLUSTERTYPE", PartnerBankExtension.CLUSTER_TYPE, Filter.OP_EQUAL) });
-			}
+				this.branchOrCluster.setModuleName(moduleName);
+				this.branchOrCluster.setValueColumn(valueColumn);
+				this.branchOrCluster.setDescColumn(descColumn);
+				this.branchOrCluster.setValidateColumns(new String[] { valueColumn, descColumn });
 
-			this.branchOrCluster.setModuleName(moduleName);
-			this.branchOrCluster.setValueColumn(valueColumn);
-			this.branchOrCluster.setDescColumn(descColumn);
-			this.branchOrCluster.setValidateColumns(new String[] { valueColumn, descColumn });
-
-		} else {
-			if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
+			} else {
 				this.row_partnerBank.setVisible(true);
 
 				this.partnerBank.setMaxlength(8);

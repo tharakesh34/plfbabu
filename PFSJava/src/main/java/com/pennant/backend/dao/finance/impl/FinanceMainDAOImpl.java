@@ -4398,7 +4398,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, AppliedLoanAmt");
 		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus, WriteoffLoan, Restructure");
 		sql.append(", OverdraftTxnChrgReq, OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn");
-		sql.append(", UnderSettlement");
 
 		if (!wif) {
 			sql.append(", DmaCode, TdsPercentage, FinStsReason, Connector, samplingRequired, LimitApproved");
@@ -4424,6 +4423,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", AlwLoanSplit, LoanSplitted, Pmay, AllowSubvention, TdsType, NoOfGrcSteps");
 			sql.append(", CalcOfSteps, StepsAppliedFor");
 			sql.append(", ManualSchdType, Isra, SanctionedDate");
+			sql.append(", UnderSettlement");
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -4626,7 +4626,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setOverdraftCalcChrg(rs.getString("OverdraftCalcChrg"));
 			fm.setOverdraftChrgAmtOrPerc(rs.getBigDecimal("OverdraftChrgAmtOrPerc"));
 			fm.setOverdraftChrCalOn(rs.getString("OverdraftChrCalOn"));
-			fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 
 			if (!wIf) {
 				fm.setDmaCode(rs.getString("DmaCode"));
@@ -4733,6 +4732,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setManualSchdType(rs.getString("ManualSchdType"));
 				fm.setIsra(rs.getBoolean("Isra"));
 				fm.setSanctionedDate(rs.getDate("SanctionedDate"));
+				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -6616,7 +6616,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		this.jdbcOperations.update(sql, isUnderSettlement, finID);
 	}
-	
+
 	@Override
 	public FinanceMain getFinanceMainForExcessTransfer(long finId) {
 		StringBuilder sql = new StringBuilder("Select");

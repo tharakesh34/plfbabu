@@ -1878,7 +1878,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	@Override
-	public ErrorDetail deleteMandate(long mandateID) {
+	public ErrorDetail deleteMandate(long mandateID, LoggedInUser loggedInUser) {
 		logger.debug(Literal.ENTERING);
 
 		if (!mandateDAO.isValidMandate(mandateID)) {
@@ -1887,6 +1887,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		Mandate mandate = getApprovedMandateById(mandateID);
 
+		mandate.setUserDetails(loggedInUser);
 		prepareRequiredData(mandate);
 
 		if (mandate.getReturnStatus() != null) {
@@ -1897,6 +1898,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		mandate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 		mandate.setNewRecord(false);
 		mandate.setVersion(mandate.getVersion() + 1);
+		mandate.setSourceId(RequestSource.API.name());
 
 		try {
 			AuditHeader ah = doApprove(getAuditHeader(mandate, PennantConstants.TRAN_WF));
@@ -2110,17 +2112,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			return getError("93304", "OldMandateId");
 		}
 
-		Mandate newMandateById = getMandateById(newMandateId);
+		Mandate mandate = getMandateById(newMandateId);
 
-		if (newMandateById == null) {
+		if (mandate == null) {
 			return getError("93304", "NewMandateId");
 		}
 
 		boolean securityMandate = mandateById.isSecurityMandate();
-
-		if (!securityMandate || !newMandateById.isSecurityMandate()) {
-			return getError("9999", "Unable to process request.");
-		}
 
 		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
 
@@ -2299,13 +2297,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			return getError("90502", "FinReference");
 		}
 
-		mandate.setLoanMaturityDate(financeMainDAO.getMaturityDate(orgReference));
-
 		Mandate loanInfo = mandateDAO.getLoanInfo(orgReference);
 
 		if (loanInfo == null) {
 			return getError("90201", orgReference);
 		}
+
+		mandate.setLoanMaturityDate(financeMainDAO.getMaturityDate(orgReference));
 
 		if (loanInfo.getCustID() != mandate.getCustID()) {
 			return getError("90406", custCIF, orgReference);
@@ -2372,6 +2370,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	private void setOtherDetails(Mandate mandate, Mandate mndt) {
 		mndt.setPennyDropStatus(mandate.getPennyDropStatus());
+		mndt.setPartnerBankId(mandate.getPartnerBankId());
+		mndt.setPartnerBankCode(mandate.getPartnerBankCode());
 	}
 
 	private Mandate prepareMandate(Mandate mandate) {

@@ -37,6 +37,13 @@ public class AbstractService {
 		return status;
 	}
 
+	protected WSReturnStatus getFailedReturnStatus(String code, String message) {
+		WSReturnStatus status = new WSReturnStatus();
+		status.setReturnCode(code);
+		status.setReturnText(message);
+		return status;
+	}
+
 	protected WSReturnStatus getFailedStatus(String code, String... param) {
 		WSReturnStatus status = new WSReturnStatus();
 		ErrorDetail ed = errorDetailService.getErrorDetailById(code);
