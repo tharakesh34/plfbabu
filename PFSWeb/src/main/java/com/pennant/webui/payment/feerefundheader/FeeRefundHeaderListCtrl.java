@@ -720,7 +720,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	private List<Long> getListofFeeRefundHeaderList() {
 
 		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
-		searchObject.addField("feeRefundId");
+		searchObject.addField("Id");
 		searchObject.addTabelName(this.queueTableName);
 
 		for (SearchFilterControl searchControl : searchControls) {
@@ -740,7 +740,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		if (list != null && !list.isEmpty()) {
 			for (int i = 0; i < list.size(); i++) {
 				Map<String, Long> map = (Map<String, Long>) list.get(i);
-				feeRefundHeaderList.add(Long.parseLong(String.valueOf(map.get("feeRefundId"))));
+				feeRefundHeaderList.add(Long.parseLong(String.valueOf(map.get("Id"))));
 			}
 		}
 		return feeRefundHeaderList;
