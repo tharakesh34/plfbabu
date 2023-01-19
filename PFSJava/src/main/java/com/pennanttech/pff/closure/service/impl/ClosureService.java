@@ -11,16 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
+import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -33,6 +37,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.receipt.constants.Allocation;
@@ -48,6 +53,8 @@ public class ClosureService {
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private ReceiptCalculator receiptCalculator;
+	private FeeCalculator feeCalculator;
+	private FinTypeFeesDAO finTypeFeesDAO;
 
 	public ClosureService() {
 		super();
@@ -56,21 +63,31 @@ public class ClosureService {
 	public void processTerminationClosure(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		for (FinEODEvent finEODEvent : finEODEvents) {
-			if (finEODEvent.getFinanceMain().isFinIsActive()) {
-				ReceiptDTO receiptDTO = prepareReceiptRTO(finEODEvent);
-				receiptDTO.setCustomer(custEODEvent.getCustomer());
+			FinanceMain fm = finEODEvent.getFinanceMain();
 
-				BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, false);
-				BigDecimal excessAmt = getAvailableExcessAmt(finEODEvent);
+			if (!fm.isFinIsActive()) {
+				continue;
+			}
 
-				if (calcClosureAmt.compareTo(BigDecimal.ZERO) == 0 || excessAmt.compareTo(BigDecimal.ZERO) == 0) {
-					continue;
+			BigDecimal receiptAmount = BigDecimal.ZERO;
+			ReceiptDTO receiptDTO = prepareReceiptRTO(finEODEvent);
+			receiptDTO.setCustomer(custEODEvent.getCustomer());
+
+			BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
+			BigDecimal excessAmt = getAvailableExcessAmt(finEODEvent);
+
+			if (calcClosureAmt.compareTo(BigDecimal.ZERO) == 0 || excessAmt.compareTo(BigDecimal.ZERO) == 0) {
+				continue;
+			}
+
+			if (calcClosureAmt.compareTo(excessAmt.add(finEODEvent.getFinType().getClosureThresholdLimit())) <= 0) {
+				if (excessAmt.compareTo(calcClosureAmt) <= 0) {
+					receiptAmount = excessAmt;
+				} else {
+					receiptAmount = calcClosureAmt;
 				}
 
-				if (calcClosureAmt.compareTo(excessAmt.add(finEODEvent.getFinType().getClosureThresholdLimit())) <= 0) {
-					processReceipt(finEODEvent, calcClosureAmt, receiptDTO);
-				}
-
+				processReceipt(finEODEvent, receiptAmount, receiptDTO);
 			}
 		}
 	}
@@ -92,7 +109,7 @@ public class ClosureService {
 			fd.setReturnStatus(returnStatus);
 			return;
 		} else {
-			updateTerminationExcessAmount(finEODEvent, calcClosureAmt);
+			// updateTerminationExcessAmount(finEODEvent, calcClosureAmt);
 		}
 
 		logger.debug(Literal.ENTERING);
@@ -203,6 +220,8 @@ public class ClosureService {
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		schdData.setFinanceScheduleDetails(schedules);
 		schdData.setFinanceMain(fm);
+		FinReceiptData rd = setFinReceiptData(finEODEvent);
+		feeCalculator.calculateFees(rd);
 
 		ReceiptDTO receiptDTO = new ReceiptDTO();
 
@@ -211,7 +230,7 @@ public class ClosureService {
 		receiptDTO.setOdDetails(
 				receiptCalculator.getValueDatePenalties(schdData, BigDecimal.ZERO, appDate, null, true, schedules));
 		receiptDTO.setManualAdvises(manualAdviseDAO.getReceivableAdvises(fm.getFinID(), appDate, "_AView"));
-		receiptDTO.setFees(null);
+		receiptDTO.setFees(rd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
 		receiptDTO.setRoundAdjMth(SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD));
 		receiptDTO.setLppFeeType(feeTypeDAO.getTaxDetailByCode(Allocation.ODC));
 		receiptDTO.setFinType(financeType);
@@ -220,6 +239,30 @@ public class ClosureService {
 		receiptDTO.setProfitDetail(financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinID()));
 
 		return receiptDTO;
+	}
+
+	private FinReceiptData setFinReceiptData(FinEODEvent finEODEvent) {
+		String finType = finEODEvent.getFinType().getFinType();
+
+		FinReceiptHeader frh = new FinReceiptHeader();
+		FinReceiptData rd = new FinReceiptData();
+		FinScheduleData fsd = new FinScheduleData();
+		FinanceDetail fd = new FinanceDetail();
+
+		frh.setPartPayAmount(BigDecimal.ZERO);
+		fsd.setFinanceType(finEODEvent.getFinType());
+		fsd.setFinanceScheduleDetails(finEODEvent.getFinanceScheduleDetails());
+		fsd.setFinanceMain(finEODEvent.getFinanceMain());
+		fsd.setFeeEvent(AccountingEvent.EARLYSTL);
+		fsd.setFinPftDeatil(finEODEvent.getFinProfitDetail());
+		fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesForLMSEvent(finType, AccountingEvent.EARLYSTL));
+
+		fd.setFinScheduleData(fsd);
+		rd.setFinanceDetail(fd);
+		rd.setTdPriBal(finEODEvent.getFinProfitDetail().getTdSchdPriBal());
+		rd.setReceiptHeader(frh);
+		
+		return rd;
 	}
 
 	@Autowired
@@ -252,4 +295,13 @@ public class ClosureService {
 		this.receiptCalculator = receiptCalculator;
 	}
 
+	@Autowired
+	public void setFeeCalculator(FeeCalculator feeCalculator) {
+		this.feeCalculator = feeCalculator;
+	}
+
+	@Autowired
+	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
+		this.finTypeFeesDAO = finTypeFeesDAO;
+	}
 }

@@ -6577,9 +6577,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		BigDecimal amount = rch.getReceiptAmount().subtract(rd.getExcessAvailable());
 
-		if (rd.getTotalPastDues().compareTo(amount) >= 0) {
-			rcd.setDueAmount(amount);
-			rd.setTotalPastDues(rd.getTotalPastDues().subtract(amount));
+		if (rd.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
+			rcd.setDueAmount(rch.getReceiptAmount());
+			rd.setTotalPastDues(rd.getTotalPastDues().subtract(rch.getReceiptAmount()));
 		} else {
 			rcd.setDueAmount(rd.getTotalPastDues());
 			rd.setTotalPastDues(BigDecimal.ZERO);

@@ -10,6 +10,7 @@ import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -45,6 +46,7 @@ public class ReceiptDTO implements Serializable {
 	private List<ManualAdvise> manualAdvises = new ArrayList<>();
 	private String roundAdjMth;
 	private FeeType lppFeeType;
+	private FinReceiptData finReceiptData;
 
 	public ReceiptDTO() {
 		super();
@@ -226,4 +228,11 @@ public class ReceiptDTO implements Serializable {
 		this.lppFeeType = lppFeeType;
 	}
 
+	public FinReceiptData getFinReceiptData() {
+		return finReceiptData;
+	}
+
+	public void setFinReceiptData(FinReceiptData finReceiptData) {
+		this.finReceiptData = finReceiptData;
+	}
 }
