@@ -3162,6 +3162,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.bankName.setReadonly(true);
 			this.accountType.setReadonly(true);
 			this.accountNumber.setReadonly(true);
+			this.salaryAccount.setDisabled(true);
+			this.fromDate.setDisabled(true);
+			this.toDate.setDisabled(true);
+			this.typeOfBanks.setDisabled(true);
+			this.button_CustomerBankInfoDialog_btnAccBehaviour.setDisabled(true);
 
 			this.creditTranNo.setReadonly(true);
 			this.creditTranAmt.setReadonly(true);
@@ -3188,6 +3193,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.accountOpeningDate.setReadonly(true);
 			this.toDate.setReadonly(true);
 			this.repaymentFrom.setReadonly(true);
+			this.repaymentFrom.setDisabled(true);
 			this.NoOfMonthsBanking.setReadonly(true);
 			this.lwowRatio.setReadonly(true);
 			this.ccLimit.setReadonly(true);

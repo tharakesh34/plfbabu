@@ -2274,7 +2274,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// HL change for financial
 		@SuppressWarnings("rawtypes")
 		Map<String, List> customerIncomes = incomeAndExpenseCtrl.prepareCustomerIncomeExpenseData(aCustomerDetails,
-				this.listBoxCustomerIncomeInLineEdit, ccyFormatter);
+				this.listBoxCustomerIncomeInLineEdit, ccyFormatter,
+				PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 		if (customerIncomes.get("errorList") != null) {
 			@SuppressWarnings("unchecked")
 			ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerIncomes
@@ -6209,7 +6210,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerIncome.setWorkflowId(0);
 		customerIncome.setRecordType(PennantConstants.RCD_ADD);
 		incomeAndExpenseCtrl.doFillIncomeAndExpense(customerIncome, this.listBoxCustomerIncomeInLineEdit, ccyFormatter,
-				true);
+				true, PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 		logger.debug("Leaving");
 	}
 
@@ -6570,7 +6571,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		reallocateRights("CustomerDialog_custPhoneNumber");
 		customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
 		customerPhoneNumberInLineEditCtrl.doFillPhoneNumbers(customerPhoneNumber,
-				this.listBoxCustomerPhoneNumbersInlineEdit, isFinanceProcess);
+				this.listBoxCustomerPhoneNumbersInlineEdit, isFinanceProcess,
+				PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -6610,7 +6612,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		this.listBoxCustomerPhoneNumbers.getItems().clear();
 		customerPhoneNumberInLineEditCtrl.doRenderPhoneNumberList(customerPhoneNumDetails,
-				listBoxCustomerPhoneNumbersInlineEdit, this.custCIF.getValue(), isFinanceProcess);
+				listBoxCustomerPhoneNumbersInlineEdit, this.custCIF.getValue(), isFinanceProcess,
+				PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 		logger.debug("Leaving");
 	}
 
@@ -6632,7 +6635,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		reallocateRights("CustomerDialog_custEmail");
 		customerEMail.setRecordType(PennantConstants.RCD_ADD);
-		customerEmailInlineEditCtrl.doFillEmails(customerEMail, this.listBoxCustomerEmailsInlineEdit, isFinanceProcess);
+		customerEmailInlineEditCtrl.doFillEmails(customerEMail, this.listBoxCustomerEmailsInlineEdit, isFinanceProcess,
+				PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 
 		logger.debug("Leaving");
 	}
@@ -6672,7 +6676,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.listBoxCustomerEmails.getItems().clear();
 
 		customerEmailInlineEditCtrl.doRenderEmailsList(customerEmailDetails, listBoxCustomerEmailsInlineEdit,
-				this.custCIF.getValue(), isFinanceProcess);
+				this.custCIF.getValue(), isFinanceProcess, PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 
 		logger.debug("Leaving");
 	}
@@ -7215,7 +7219,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doFillCustomerIncome(List<CustomerIncome> incomes) {
 		logger.debug("Entering");
 		setIncomeList(incomes);
-		incomeAndExpenseCtrl.doRenderIncomeList(incomes, this.listBoxCustomerIncomeInLineEdit, ccyFormatter);
+		incomeAndExpenseCtrl.doRenderIncomeList(incomes, this.listBoxCustomerIncomeInLineEdit, ccyFormatter,
+				PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 
 		logger.debug("Leaving");
 	}
@@ -7739,7 +7744,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				cbDefault.setId("GstState_" + gstDetail.getStateCode());
 				cbDefault.setParent(lc);
 				cbDefault.setChecked(gstDetail.isDefaultGST());
-				cbDefault.setDisabled(!getUserWorkspace().isAllowed("btnNew_CustomerDialog_GSTDetails"));
+				cbDefault.setDisabled(
+						this.enqiryModule || !getUserWorkspace().isAllowed("btnNew_CustomerDialog_GSTDetails"));
 				if (!cbDefault.isDisabled()) {
 					cbDefault.addForward("onCheckGstDefault", this.window_CustomerDialog, "onCheckDefault", gstDetail);
 				}

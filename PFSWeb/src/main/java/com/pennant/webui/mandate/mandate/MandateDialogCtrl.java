@@ -486,6 +486,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.maxLimit.setScale(ccyFormatter);
 		this.maxLimit.setTextBoxWidth(200);
 		this.maxLimit.setMandatory(true);
+		this.maxLimit.addForward(Events.ON_CLICK, this.window, "onClickMaxLimit");
 
 		this.periodicity.setMandatoryStyle(true);
 		this.phoneNumber.setMaxlength(10);
@@ -1322,7 +1323,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (bankAccountValidationService != null && !enqiryModule) {
 			btnPennyDropResult.setVisible(true);
 		} else {
-			btnPennyDropResult.setVisible(true);
+			btnPennyDropResult.setVisible(false);
 		}
 
 		if (this.finReference.getValue() == null) {
@@ -2875,7 +2876,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 	}
 
-	public void onChange$maxLimit(Event event) {
+	public void onClickMaxLimit(Event event) {
 		this.amountInWords.setValue(amountInWords());
 	}
 
@@ -2915,6 +2916,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		map.put("dialogCtrl", this);
 		map.put("newRecord", false);
 		map.put("CustomerEnq", "CustomerEnq");
+		map.put("isEnqProcess", true);
 
 		Executions.createComponents(pageName, null, map);
 
