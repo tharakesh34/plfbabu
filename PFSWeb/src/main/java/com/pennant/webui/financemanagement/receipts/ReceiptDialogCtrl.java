@@ -2548,7 +2548,17 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			finRender.render(map, prvSchDetail, false, true, true, aFinScheduleData.getFinFeeDetailList(), showRate,
 					false);
-			if (i == sdSize - 1) {
+
+			boolean lastRecord = false;
+			if (aScheduleDetail.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && !financeMain.isSanBsdSchdle()
+					&& !(financeMain.isInstBasedSchd())) {
+				if (!(financeMain.isManualSchedule())
+						|| aScheduleDetail.getSchDate().compareTo(financeMain.getMaturityDate()) == 0) {
+					lastRecord = true;
+				}
+			}
+
+			if (i == sdSize - 1 || lastRecord) {
 				finRender.render(map, prvSchDetail, true, true, true, aFinScheduleData.getFinFeeDetailList(), showRate,
 						false);
 				break;
