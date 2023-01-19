@@ -2360,9 +2360,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		Long clusterId = null;
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			filters[3] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			clusterId = clusterService.getClustersFilter(finBranch);
 			filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
 		}

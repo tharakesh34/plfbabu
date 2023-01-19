@@ -141,13 +141,13 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 		super.doAddFilters();
 		String id = this.branchOrCluster.getId();
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			if (StringUtils.isNotEmpty(id) && !id.equals("branchOrCluster")) {
 				this.searchObject.addFilterEqual("BRANCHCODE", this.branchOrCluster.getValue());
 			} else {
 				this.searchObject.addFilterNotEqual("BRANCHCODE", "");
 			}
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			if (StringUtils.isNotEmpty(id) && !id.equals("branchOrCluster")) {
 				this.searchObject.addFilterEqual("CLUSTERID", Long.valueOf(id));
 			} else {
@@ -163,19 +163,18 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 		this.partnerBank.setDescColumn("PartnerBankName");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			this.branchOrCluster.setModuleName("Branch");
 			this.branchOrCluster.setValueColumn("BranchCode");
 			this.branchOrCluster.setDescColumn("BranchDesc");
 			this.branchOrCluster.setValidateColumns(new String[] { "BranchCode" });
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			this.branchOrCluster.setModuleName("Cluster");
 			this.branchOrCluster.setValueColumn("Code");
 			this.branchOrCluster.setDescColumn("Name");
 			this.branchOrCluster.setValidateColumns(new String[] { "Code" });
-			Filter filter[] = new Filter[1];
-			filter[0] = new Filter("CLUSTERTYPE", PartnerBankExtension.MAPPING, Filter.OP_EQUAL);
-			this.branchOrCluster.setFilters(filter);
+			this.branchOrCluster.setFilters(
+					new Filter[] { new Filter("CLUSTERTYPE", PartnerBankExtension.CLUSTER_TYPE, Filter.OP_EQUAL) });
 		}
 
 	}
@@ -245,7 +244,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	public void onFulfill$branchOrCluster(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		if (PartnerBankExtension.MAPPING.equals("C")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			Cluster cluster = (Cluster) this.branchOrCluster.getObject();
 
 			if (cluster == null) {

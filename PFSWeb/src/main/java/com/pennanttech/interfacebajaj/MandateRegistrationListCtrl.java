@@ -310,10 +310,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			String valueColumn = "BranchCode";
 			String descColumn = "BranchDesc";
 
-			if (PartnerBankExtension.MAPPING.equals("C")) {
+			if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 				moduleName = "Cluster";
 				valueColumn = "Code";
 				descColumn = "Name";
+
+				this.branchOrCluster.setFilters(
+						new Filter[] { new Filter("CLUSTERTYPE", PartnerBankExtension.CLUSTER_TYPE, Filter.OP_EQUAL) });
 			}
 
 			this.branchOrCluster.setModuleName(moduleName);
@@ -390,12 +393,19 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 		Filter[] filters = new Filter[1];
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			filters[0] = new Filter("BranchCode", branchCode, Filter.OP_EQUAL);
 			branchlist.add(branchCode);
 
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			clusterId = clusterService.getClustersFilter(branchCode);
+
+			if (clusterId == null) {
+				this.branchOrCluster.setErrorMessage("please configure the cluster with Branches.");
+				this.branchOrCluster.setButtonDisabled(true);
+				return;
+			}
+
 			branchlist = branchService.getBranchCodeByClusterId(clusterId);
 			if (CollectionUtils.isNotEmpty(branchlist)) {
 				filters[0] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
@@ -458,14 +468,14 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		}
 
 		FinTypePartnerBank details = (FinTypePartnerBank) dataObject;
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("PartnerbankId", details.getPartnerBankID(), Filter.OP_EQUAL);
 			filters[1] = new Filter("BranchCode", "", Filter.OP_NOT_NULL);
 			this.branchOrCluster.setFilters(filters);
 			this.branchOrCluster.setButtonDisabled(false);
 			this.branchOrCluster.setMandatoryStyle(true);
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			List<Long> clusterList = new ArrayList<Long>();
 			clusterList = finTypePartnerBankService.getByClusterAndPartnerbank(details.getPartnerBankID());
 			if (CollectionUtils.isNotEmpty(clusterList)) {
@@ -695,7 +705,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 				.append("'").append(toDate).append("'").append(")");
 
 		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
-			if (PartnerBankExtension.MAPPING.equals("C")) {
+			if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 				if (this.branchOrCluster.getValue() != null) {
 					whereClause.append(" And BRANCHCODE In (Select BranchCode from RMTBranches where ClusterId in (");
 					whereClause.append(this.branchOrCluster.getId());

@@ -158,7 +158,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		this.partnerBankID.setValidateColumns(new String[] { "PartnerBankCode" });
 		this.partnerBankID.setMandatoryStyle(true);
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			this.row_Branch.setVisible(true);
 			this.label_Branch.setVisible(true);
 			this.branch.setVisible(true);
@@ -170,7 +170,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			this.branch.setDescColumn("BranchDesc");
 			this.branch.setMandatoryStyle(true);
 			this.branch.setValidateColumns(new String[] { "BranchCode" });
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			this.row_Branch.setVisible(false);
 			this.label_Branch.setVisible(false);
 			this.branch.setVisible(false);
@@ -182,9 +182,8 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			this.cluster.setDescColumn("Name");
 			this.cluster.setValidateColumns(new String[] { "Code", "Name" });
 			this.cluster.setMandatoryStyle(true);
-			// Filter filter[] = new Filter[1];
-			// filter[0] = new Filter("CLUSTERTYPE", PartnerBankExtension.MAPPING, Filter.OP_EQUAL);
-			// this.cluster.setFilters(filter);
+			this.cluster.setFilters(
+					new Filter[] { new Filter("CLUSTERTYPE", PartnerBankExtension.CLUSTER_TYPE, Filter.OP_EQUAL) });
 		} else {
 			this.row_Branch.setVisible(false);
 			this.label_Branch.setVisible(false);
@@ -539,17 +538,17 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 						isMandValidate ? this.partnerBankID.isMandatory() : false, true));
 
 		if (!this.finType.isReadonly()) {
-			this.finType.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_FinType.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.finType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_FinType.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			if (!this.branch.isReadonly())
 				this.branch.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_BranchOrCluster.value"),
 						PennantRegularExpressions.REGEX_DESCRIPTION, true));
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			if (!this.cluster.isReadonly())
 				this.cluster.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_BranchOrCluster.value"),
@@ -626,7 +625,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_PaymentMode"), this.paymentMode);
 		readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_PartnerBankID"), this.partnerBankID);
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_branch"), this.branch);
 		} else {
 			readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_branch"), this.cluster);
@@ -663,7 +662,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		readOnlyComponent(true, this.purpose);
 		readOnlyComponent(true, this.paymentMode);
 		readOnlyComponent(true, this.partnerBankID);
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			readOnlyComponent(true, this.branch);
 		} else {
 			readOnlyComponent(true, this.cluster);

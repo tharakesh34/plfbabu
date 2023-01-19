@@ -40,10 +40,10 @@ public class FinTypePartnerbankListModelItemRenderer implements ListitemRenderer
 		lc = new Listcell(String.valueOf(finTypePartnerBank.getPartnerBankCode()));
 		lc.setParent(item);
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			lc = new Listcell(finTypePartnerBank.getBranchDesc());
 			lc.setParent(item);
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			lc = new Listcell(String.valueOf(finTypePartnerBank.getClusterCode()) + "-" + finTypePartnerBank.getName());
 			lc.setParent(item);
 		}

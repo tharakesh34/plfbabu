@@ -287,7 +287,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		sql.append(" From FinTypePartnerBanks_AView");
 
 		sql.append(" Where FinType = ? and Purpose = ? and PaymentMode = ?");
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			sql.append(" and BranchCode = ?");
 		} else {
 			sql.append(" and ClusterId = ?");
@@ -302,7 +302,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 			ps.setString(++index, fpb.getPurpose());
 			ps.setString(++index, fpb.getPaymentMode());
 
-			if (PartnerBankExtension.MAPPING.equals("B")) {
+			if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 				ps.setString(++index, fpb.getBranchCode());
 			} else {
 				ps.setObject(++index, fpb.getClusterId());
@@ -360,9 +360,9 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		StringBuilder sql = getSelectQuery(TableType.AVIEW);
 		sql.append(" Where");
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			sql.append(" BranchCode in (").append(JdbcUtil.getInCondition(branchCodes)).append(")");
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			sql.append(" ClusterId = ?");
 		}
 
@@ -371,12 +371,12 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
 
-			if (PartnerBankExtension.MAPPING.equals("B")) {
+			if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 				for (String branchCode : branchCodes) {
 					ps.setString(++index, branchCode);
 				}
-			} else if (PartnerBankExtension.MAPPING.equals("C")) {
-				ps.setLong(++index, clusterId);
+			} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
+				ps.setObject(++index, clusterId);
 			}
 
 		}, (rs, rowNum) -> {
@@ -388,9 +388,9 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	public int getPartnerBankCountByCluster(FinTypePartnerBank fpb) {
 		StringBuilder sql = new StringBuilder("Select Count(*) From FinTypePartnerBanks");
 		sql.append(" Where Fintype = ? and PaymentMode = ? and Purpose = ? and PartnerBankID = ?");
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			sql.append(" and BranchCode = ?");
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			sql.append(" and ClusterId = ?");
 		}
 
@@ -403,9 +403,9 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		String paymentMode = fpb.getPaymentMode();
 		String finType = fpb.getFinType();
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			args = new Object[] { finType, paymentMode, purpose, partnerBankID, fpb.getBranchCode() };
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			args = new Object[] { finType, paymentMode, purpose, partnerBankID, fpb.getClusterId() };
 		}
 

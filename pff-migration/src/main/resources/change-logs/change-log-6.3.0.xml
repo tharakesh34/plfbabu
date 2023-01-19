@@ -2758,7 +2758,7 @@
 	<comment> Below index is creted for update records faster way </comment>
 		<sql>
 			<![CDATA[
-					create index IX_MD_ORG_SCMD on MANDATES(lower(ORGREFERENCE),lower(SECURITYMANDATE));
+					create index IX_MD_ORG_SCMD on MANDATES(lower(ORGREFERENCE),SECURITYMANDATE);
 				]]>
 		</sql>
 	</changeSet>

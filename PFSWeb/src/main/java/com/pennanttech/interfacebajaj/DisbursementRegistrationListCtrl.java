@@ -377,10 +377,13 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		String valueColumn = "BranchCode";
 		String descColumn = "BranchDesc";
 
-		if (PartnerBankExtension.MAPPING.equals("C")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			moduleName = "Cluster";
 			valueColumn = "Code";
 			descColumn = "Name";
+
+			this.branchOrCluster.setFilters(
+					new Filter[] { new Filter("CLUSTERTYPE", PartnerBankExtension.CLUSTER_TYPE, Filter.OP_EQUAL) });
 		}
 
 		this.branchOrCluster.setModuleName(moduleName);
@@ -560,7 +563,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 
 		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
-			if (PartnerBankExtension.MAPPING.equals("C")) {
+			if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 				if (this.branchOrCluster.getValue() != null) {
 					String whereCondition = " Finreference In (Select Finreference from Financemain_view where FinBranch in (Select BranchCode from RMTBranches where ClusterId in("
 							+ Long.valueOf(this.branchOrCluster.getId()) + ")))";
@@ -929,12 +932,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 		List<String> branchlist = new ArrayList<>();
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			filters[2] = new Filter("BranchCode", branchCode, Filter.OP_EQUAL);
 
 			branchlist.add(branchCode);
 
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			clusterId = clusterService.getClustersFilter(branchCode);
 			branchlist.addAll(branchService.getBranchCodeByClusterId(clusterId));
 
@@ -981,7 +984,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		Long partnerBankID = details.getPartnerBankID();
 		this.partnerBank.setAttribute("Id", partnerBankID);
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("PartnerbankId", partnerBankID, Filter.OP_EQUAL);
 			filters[1] = new Filter("BranchCode", "", Filter.OP_NOT_NULL);
@@ -989,7 +992,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			this.branchOrCluster.setFilters(filters);
 			this.branchOrCluster.setButtonDisabled(false);
 			this.branchOrCluster.setMandatoryStyle(true);
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			List<Long> clusterList = new ArrayList<Long>();
 			clusterList = finTypePartnerBankService.getByClusterAndPartnerbank(partnerBankID);
 
@@ -1020,7 +1023,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 		logger.debug(Literal.ENTERING);
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) this.branchOrCluster.getObject();
 
 			if (finTypePartnerBank == null) {
