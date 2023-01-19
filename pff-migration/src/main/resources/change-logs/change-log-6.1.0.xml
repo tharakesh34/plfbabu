@@ -1223,4 +1223,13 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="50" author="rahul.r">
+		<sql>
+			<![CDATA[
+			Delete from SMTPARAMETERS where SYSPARMCODE ='ALW_CREDIT_EDIT_DATA_STAGES';
+			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('ALW_CREDIT_EDIT_DATA_STAGES','Credit Review Sheet Edit Stages','String',1,'',100,0,null,null,null,1,1000,to_date('19-01-23','DD-MM-RR'),'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

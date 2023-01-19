@@ -5062,6 +5062,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Sessions.getCurrent().setAttribute("ss", spreadSheet);
 		}
 
+		String roles = SysParamUtil.getValueAsString(SMTParameterConstants.ALW_CREDIT_EDIT_DATA_STAGES);
+		roles = StringUtils.trimToEmpty(roles);
+
+		boolean isEdit = false;
+		if (roles.contains(getRole())) {
+			isEdit = true;
+		}
+
+		map.put("Right_Eligibility", isEdit);
+
 		map.put("financeMainDialogCtrl", this);
 		map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY));
 
