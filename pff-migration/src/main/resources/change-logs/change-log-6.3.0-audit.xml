@@ -740,17 +740,62 @@
 		<renameTable newTableName="ADTFinSettlementHeader" oldTableName="ADTSettlement"/>
 	</changeSet>
 	
-	<changeSet id="DE#267.35" author="Sravani.M">
+	<changeSet id="DE#267.35.1" author="Sravani.M">
 		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="Version" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#267.35.2" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="LastMntBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#267.35.3" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="LastMntOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#267.35.4" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="RecordStatus" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#267.35.5" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="RoleCode" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#267.35.6" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="NextRoleCode" type="varchar(200)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#267.35.7" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="TaskId" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#267.35.8" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="NextTaskId" type="varchar(200)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#267.35.9" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="RecordType" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#267.35.10" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
 			<column name="WorkFlowId" type="bigint">
 				<constraints nullable="false" />
 			</column>
@@ -842,7 +887,7 @@
 	</changeSet>
 
 	<changeSet id="ST#712_02" author="murthy.y">
-		<addNotNullConstraint tableName="AdtCustomers" columnName="CustCoreBank" />
+		<addNotNullConstraint tableName="AdtCustomers" columnName="CustCoreBank" columnDataType="varchar(50)"/>
 	</changeSet>
 
 	<changeSet id="ST#712_03" author="murthy.y">

@@ -619,7 +619,16 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="31" author="rahul.r" dbms="mssql,postgresql">
+	<changeSet id="31" author="rahul.r" dbms="mssql">
+		<sql>
+		<![CDATA[
+			UPDATE RMTScoringGroup  SET minscore = (SELECT cast(C.minscore2 as decimal(4,0)) FROM RMTScoringGroup C  Where RMTScoringGroup.scoregroupid=C.scoregroupid);
+			UPDATE RMTScoringGroup_Temp  SET minscore = (SELECT cast(C.minscore2 as decimal(4,0)) FROM RMTScoringGroup_Temp C  Where RMTScoringGroup_Temp.scoregroupid=C.scoregroupid);
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="31" author="rahul.r" dbms="postgresql">
 		<sql>
 		<![CDATA[
 				UPDATE RMTScoringGroup  SET minscore = TO_NUMBER((SELECT C.minscore2 FROM RMTScoringGroup C  Where RMTScoringGroup.scoregroupid=C.scoregroupid),'9999');
