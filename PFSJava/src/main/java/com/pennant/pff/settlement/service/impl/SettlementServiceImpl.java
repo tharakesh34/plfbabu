@@ -864,6 +864,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		this.receiptCalculator = receiptCalculator;
 	}
 
+	@Autowired
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
 	}
