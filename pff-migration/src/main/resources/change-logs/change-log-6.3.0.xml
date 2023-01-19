@@ -192,7 +192,7 @@
 	<changeSet id="ST#713.8.3" author="Sravani.S" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_FT_MAXFPPAMOUNT DEFAULT 0 FOR MAXFPPAMOUNT;
+				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_FT_T_MAXFPPAMOUNT DEFAULT 0 FOR MAXFPPAMOUNT;
 			]]>
 		</sql>
 	</changeSet>
@@ -223,7 +223,7 @@
 	<changeSet id="ST#713.9.3" author="Sravani.S" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_FT_MAXFPPPER DEFAULT 0 FOR MAXFPPPER;
+				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_FT_T_MAXFPPPER DEFAULT 0 FOR MAXFPPPER;
 			]]>
 		</sql>
 	</changeSet>
@@ -469,7 +469,7 @@
 	<changeSet id="ST#713.24.3" author="Sravani.S" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_FT_MINPPAMOUNT DEFAULT 0 FOR MINPPAMOUNT;
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RFT_MINPPAMOUNT DEFAULT 0 FOR MINPPAMOUNT;
 			]]>
 		</sql>
 	</changeSet>
@@ -500,7 +500,7 @@
 	<changeSet id="ST#713.25.3" author="Sravani.S" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_FT_MINPPPERCENTAGE DEFAULT 0 FOR MINPPPERCENTAGE;
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RFT_MINPPPERCENTAGE DEFAULT 0 FOR MINPPPERCENTAGE;
 			]]>
 		</sql>
 	</changeSet>
@@ -544,7 +544,7 @@
 	<changeSet id="ST#713.28.3" author="Sravani.S" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_FT_MAXPPAMOUNT DEFAULT 0 FOR MAXPPAMOUNT;
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RFT_MAXPPAMOUNT DEFAULT 0 FOR MAXPPAMOUNT;
 			]]>
 		</sql>
 	</changeSet>
@@ -575,7 +575,7 @@
 	<changeSet id="ST#713.29.3" author="Sravani.S" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_FT_MAXPPPERCENTAGE DEFAULT 0 FOR MAXPPPERCENTAGE;
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RFT_MAXPPPERCENTAGE DEFAULT 0 FOR MAXPPPERCENTAGE;
 			]]>
 		</sql>
 	</changeSet>
@@ -2745,11 +2745,55 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="ST#710.3_pre" author="Kiran.p" dbms="oracle">
+	<comment> Below index is creted for update records faster way </comment>
+		<sql>
+			<![CDATA[
+					create index IX_MD_ORG_SCMD on MANDATES(NLSSORT("ORGREFERENCE",'nls_sort=''BINARY_CI'''),NLSSORT("SECURITYMANDATE",'nls_sort=''BINARY_CI'''));
+				]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#710.3_pre" author="Kiran.p" dbms="postgresql">
+	<comment> Below index is creted for update records faster way </comment>
+		<sql>
+			<![CDATA[
+					create index IX_MD_ORG_SCMD on MANDATES(lower(ORGREFERENCE),lower(SECURITYMANDATE));
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#710.3_pre" author="Kiran.p" dbms="mssql">
+	<comment> Below index is creted for update records faster way </comment>
+		<sql>
+			<![CDATA[
+					create index IX_MD_ORG_SCMD on MANDATES(ORGREFERENCE,SECURITYMANDATE);
+				]]>
+		</sql>
+	</changeSet>
 	<changeSet id="ST#710.3" author="saikiran.n">
 		<sql>
 			<![CDATA[
 				 UPDATE FINANCEMAIN SET SECURITYMANDATEID = (SELECT M.MANDATEID FROM MANDATES M WHERE FINANCEMAIN.FINREFERENCE = M.ORGREFERENCE AND M.SECURITYMANDATE = 1);
 			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#710.3_post" author="Kiran.p" dbms="oracle,postgresql">
+	<comment> Index not used in applciation so we are dropIndex</comment>
+		<sql>
+			<![CDATA[
+					drop index IX_MD_ORG_SCMD;
+				]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#710.3_post" author="Kiran.p" dbms="mssql">
+	<comment> Index not used in applciation so we are dropIndex</comment>
+		<sql>
+			<![CDATA[
+					drop index IX_MD_ORG_SCMD on MANDATES;
+				]]>
 		</sql>
 	</changeSet>
 
@@ -3013,7 +3057,9 @@
 
 	<changeSet id="ST#707.1" author="HariTeja.B">
 		<createTable tableName="MANDATES_UPLOAD">
-			<column name="Id" type="bigint" autoIncrement="true" />
+			<column name="Id" type="bigint" autoIncrement="true" >
+				<constraints nullable="false" />
+			</column>
 			<column name="HeaderID" type="bigint" />
 			<column name="MandateID" type="bigint" />
 			<column name="CustID" type="bigint" />
@@ -3331,8 +3377,8 @@
 		<sql>
 			<![CDATA[	
 				ALTER TABLE PRESENTMENT_RESP_UPLOAD ADD CONSTRAINT DF_PRU_INSTALMENT_NO DEFAULT 0 FOR INSTALMENT_NO;
-				ALTER TABLE PRESENTMENT_RESP_UPLOAD ADD CONSTRAINT DF_PRU_INSTALMENT_NO DEFAULT 0 FOR PROCESS_FLAG;
-				ALTER TABLE PRESENTMENT_RESP_UPLOAD ADD CONSTRAINT DF_PRU_INSTALMENT_NO DEFAULT 0 FOR THREAD_ID;
+				ALTER TABLE PRESENTMENT_RESP_UPLOAD ADD CONSTRAINT DF_PRU_PROCESS_FLAG DEFAULT 0 FOR PROCESS_FLAG;
+				ALTER TABLE PRESENTMENT_RESP_UPLOAD ADD CONSTRAINT DF_PRU_THREAD_ID DEFAULT 0 FOR THREAD_ID;
 			]]>
 		</sql>
 	</changeSet>
@@ -3515,9 +3561,18 @@
 		<addPrimaryKey constraintName="PK_CU_ID" tableName="CHEQUES_UPLOAD" columnNames="ID" />
 	</changeSet>
 
-	<changeSet id="ST#708.3" author="sainaveen.y">
+	<changeSet id="ST#708.3" author="sainaveen.y" dbms="postgresql,oracle">
 		<addDefaultValue columnName="ChequeStatus" tableName="CHEQUES_UPLOAD" defaultValue="NEW" />
 		<addDefaultValue columnName="Version" tableName="CHEQUES_UPLOAD" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#708.3" author="bhaskara.k" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE CHEQUES_UPLOAD ADD CONSTRAINT DF_CU_CHEQUESTATUS DEFAULT 'NEW' FOR ChequeStatus;
+				ALTER TABLE CHEQUES_UPLOAD ADD CONSTRAINT DF_CU_VERSION 	 DEFAULT 0 FOR Version;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#708.11" author="sainaveen.y">
@@ -3716,17 +3771,31 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1_pre" author="Gopal.p" dbms="oracle">
+	<changeSet id="1.1_pre" author="Gopal.p" dbms="oracle">
 		<sql>
 			<![CDATA[
 				DROP INDEX IX_RBFLDDET_MOD_EVNT_FLDNAME;
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="1_pre" author="Gopal.p" dbms="mssql">
+    	<dropPrimaryKey constraintName="PK_RBFieldDetails" tableName="RBFIELDDETAILS"/>
+	</changeSet>
 
 	<changeSet id="1" author="Gopal.p">
 		<modifyDataType tableName="RBFIELDDETAILS" columnName="RBMODULE" newDataType="varchar(20)" />
 		<modifyDataType tableName="RBFIELDDETAILS" columnName="RBEVENT" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="1.0_post" author="Gopal.p" dbms="mssql">
+		<addNotNullConstraint tableName="RBFIELDDETAILS" columnName="RBModule" columnDataType="varchar(20)" />
+		<addNotNullConstraint tableName="RBFIELDDETAILS" columnName="RBEvent" columnDataType="varchar(20)" />
+		<addNotNullConstraint tableName="RBFIELDDETAILS" columnName="RBFldName" columnDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet id="1.1_post" author="Gopal.p" dbms="mssql">
+    	<addPrimaryKey columnNames="RBModule, RBEvent, RBFldName" constraintName="PK_RBFieldDetails" tableName="RBFIELDDETAILS"/>
 	</changeSet>
 
 	<changeSet id="1_post" author="Gopal.p" dbms="oracle">
@@ -4763,7 +4832,7 @@
 			<column name="AppDate" type="datetime" />
 			<column name="ExecutionTime" type="datetime" />
 			<column name="Status" type="char(1)" />
-			<column name="ErrorCode" type="varchar2(20)" />
+			<column name="ErrorCode" type="varchar(20)" />
 		</createTable>
 	</changeSet>
 
@@ -5479,7 +5548,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2562.2" author="sampath.d">
-		<addPrimaryKey tableName="Fin_Hold_Details" columnNames="Id" />
+		<addPrimaryKey tableName="Fin_Hold_Details" columnNames="Id" constraintName="PK_FIN_HOLD_DETAILS"/>
 	</changeSet>
 
 	<changeSet id="TK#2562.3" author="sampath.d">
@@ -5501,7 +5570,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2562.4" author="sampath.d">
-		<addPrimaryKey tableName="HOLD_REFUND_UPLOAD" columnNames="Id" />
+		<addPrimaryKey tableName="HOLD_REFUND_UPLOAD" columnNames="Id" constraintName="PK_HOLD_REFUND_UPLOAD"/>
 	</changeSet>
 
 	<changeSet id="TK#2562.5" author="sampath.d">
@@ -5595,7 +5664,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2562.8.1" author="sampath.d">
-		<addPrimaryKey tableName="HOLD_REFUND_UPLOAD_LOG" columnNames="Id" constraintName="PK_HLDRFNDLOG_ID" />
+		<addPrimaryKey tableName="HOLD_REFUND_UPLOAD_LOG" columnNames="Id" constraintName="PK_HOLD_REFUND_UPLOAD_LOG" />
 	</changeSet>
 
 	<changeSet id="TK#2566.16" author="sampath.d">
@@ -5766,10 +5835,11 @@
 	</changeSet>
 
 	<changeSet id="TK#2650.0" author="sandeepkumar.m" context="Dropping index">
+		<comment>Dropping index</comment>
 		<dropIndex tableName="FINEXCESSAMOUNT" indexName="IDX_FNEXCSSAMN_FINID_AMTTYPE" />
 	</changeSet>
 
-	<changeSet id="TK#2650.1" author="sandeepkumar.m">
+	<changeSet id="TK#2650.1" author="sandeepkumar.m" >
 		<createIndex tableName="FINEXCESSAMOUNT" indexName="IDX_FNXCSAM_FID_AMTY_VLDT_REID" unique="true">
 			<column name="FINID" type="bigint" />
 			<column name="AMOUNTTYPE" type="varchar(8)" />
@@ -5790,7 +5860,9 @@
 			<column name="SettlementTypeID" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="SettlementCode" type="VARCHAR(20)" />
+			<column name="SettlementCode" type="VARCHAR(20)" >
+				<constraints nullable="false" />
+			</column>
 			<column name="SettlementDesc" type="VARCHAR(200)" />
 			<column name="AlwGracePeriod" type="smallint" />
 			<column name="Active" type="smallint" />
@@ -5836,7 +5908,9 @@
 			<column name="SettlementTypeID" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="SettlementCode" type="VARCHAR(20)" />
+			<column name="SettlementCode" type="VARCHAR(20)" >
+				<constraints nullable="false" />
+			</column>
 			<column name="SettlementDesc" type="VARCHAR(200)" />
 			<column name="AlwGracePeriod" type="smallint" />
 			<column name="Active" type="smallint" />
@@ -6140,10 +6214,10 @@
 	<changeSet id="STLMT#15" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE FinSettlementHeader ADD CONSTRAINT DF_STLMT_AlwGracePeriod DEFAULT 0 FOR FinId;
-				ALTER TABLE FinSettlementHeader ADD CONSTRAINT DF_STLMT_Active DEFAULT 0 FOR settlementType;
-				ALTER TABLE FinSettlementHeader ADD CONSTRAINT DF_STLMT_SettlementAmount DEFAULT 0 FOR SettlementAmount;
-				ALTER TABLE FinSettlementHeader ADD CONSTRAINT DF_STLMT_Active DEFAULT 0 FOR noOfGraceDays;
+				ALTER TABLE FinSettlementHeader ADD CONSTRAINT DF_FSH_FinId DEFAULT 0 FOR FinId;
+				ALTER TABLE FinSettlementHeader ADD CONSTRAINT DF_FSH_settlementType DEFAULT 0 FOR settlementType;
+				ALTER TABLE FinSettlementHeader ADD CONSTRAINT DF_FSH_SettlementAmount DEFAULT 0 FOR SettlementAmount;
+				ALTER TABLE FinSettlementHeader ADD CONSTRAINT DF_FSH_noOfGraceDays DEFAULT 0 FOR noOfGraceDays;
 				ALTER TABLE FINSETTLEMENTHEADER ADD CONSTRAINT DF_FSH_settlementReasonId DEFAULT 0 FOR settlementReasonId;
 			]]>
 		</sql>
@@ -6511,7 +6585,9 @@
 			<column name="SETTLEMENTHEADERID" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="ALLOCATIONID" type="Decimal(10,0)" />
+			<column name="ALLOCATIONID" type="Decimal(10,0)" >
+				<constraints nullable="false" />
+			</column>
 			<column name="ALLOCATIONTYPE" type="Char(8)" />
 			<column name="ALLOCATIONTO" type="bigint" />
 			<column name="PAIDAMOUNT" type="Decimal(18,0)" />
@@ -6574,7 +6650,9 @@
 			<column name="SETTLEMENTHEADERID" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="ALLOCATIONID" type="Decimal(10,0)" />
+			<column name="ALLOCATIONID" type="Decimal(10,0)" >
+				<constraints nullable="false" />
+			</column>
 			<column name="ALLOCATIONTYPE" type="Char(8)" />
 			<column name="ALLOCATIONTO" type="bigint" />
 			<column name="PAIDAMOUNT" type="Decimal(18,0)" />
@@ -6600,10 +6678,8 @@
 	<changeSet id="STLMT#30" author="saikiran.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="PAIDGST" tableName="SettlementAllocationDtls_Temp" defaultValue="0" />
 		<addDefaultValue columnName="TOTALDUE" tableName="SettlementAllocationDtls_Temp" defaultValue="0" />
-		<addDefaultValue columnName="WAIVEDREQAMOUNT" tableName="SettlementAllocationDtls_Temp"
-			defaultValue="0" />
-		<addDefaultValue columnName="WAIVERACCEPTED" tableName="SettlementAllocationDtls_Temp"
-			defaultValue="0" />
+		<addDefaultValue columnName="WAIVEDREQAMOUNT" tableName="SettlementAllocationDtls_Temp" defaultValue="0" />
+		<addDefaultValue columnName="WAIVERACCEPTED" tableName="SettlementAllocationDtls_Temp" defaultValue="0" />
 		<addDefaultValue columnName="WAIVEDGST" tableName="SettlementAllocationDtls_Temp" defaultValue="0" />
 		<addDefaultValue columnName="TAXHEADERID" tableName="SettlementAllocationDtls_Temp" defaultValue="0" />
 		<addDefaultValue columnName="TDSDUE" tableName="SettlementAllocationDtls_Temp" defaultValue="0" />
@@ -6781,7 +6857,7 @@
 
 	<changeSet id="STLMT#36" author="saikiran.n">
 		<addPrimaryKey tableName="SettlementSchedule" columnNames="settlementDetailID"
-			constraintName="PK_DETAILID" />
+			constraintName="PK_SettlementSchedule" />
 	</changeSet>
 
 	<changeSet id="STLMT#37" author="saikiran.n" dbms="postgresql, oracle">
@@ -6824,7 +6900,7 @@
 
 	<changeSet id="STLMT#39" author="saikiran.n">
 		<addPrimaryKey tableName="SettlementSchedule_Temp" columnNames="settlementDetailID"
-			constraintName="PKT_DETAILID" />
+			constraintName="PKT_SettlementSchedule" />
 	</changeSet>
 
 	<changeSet id="STLMT#40" author="saikiran.n" dbms="postgresql, oracle">
@@ -6999,8 +7075,8 @@
 	<changeSet id="DE#267.21" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE FINANCEMAIN_TEMP ADD CONSTRAINT DF_P_T_UNDERSETT DEFAULT 0 FOR UNDERSETTLEMENT;
-				ALTER TABLE FINANCEMAIN ADD CONSTRAINT DF_P_UNDERSETT DEFAULT 0 FOR UNDERSETTLEMENT;
+				ALTER TABLE FINANCEMAIN_TEMP ADD CONSTRAINT DF_F_T_UNDERSETT DEFAULT 0 FOR UNDERSETTLEMENT;
+				ALTER TABLE FINANCEMAIN ADD CONSTRAINT DF_F_UNDERSETT DEFAULT 0 FOR UNDERSETTLEMENT;
 			]]>
 		</sql>
 	</changeSet>
@@ -8495,7 +8571,12 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="OTS#0" author="saikiran.n" dbms="postgresql">
+		<dropView viewName="FINSETTLEMENTHEADER_AVIEW" />
+		<dropView viewName="FINSETTLEMENTHEADER_VIEW" />
+		<dropView viewName="FINSETTLEMENTHEADER_TVIEW" />
+	</changeSet>
 
 	<changeSet id="OTS#1" author="saikiran.n">
 		<renameTable newTableName="FIN_SETTLEMENT_HEADER" oldTableName="FINSETTLEMENTHEADER" />
@@ -8530,11 +8611,6 @@
 		<renameColumn newColumnName="ID" oldColumnName="SETTLEMENTTYPEID" tableName="SETTLEMENT_TYPES_TEMP" />
 	</changeSet>
 	
-	<changeSet id="OTS#5" author="saikiran.n" dbms="postgresql">
-		<dropView viewName="FINSETTLEMENTHEADER_AVIEW" />
-		<dropView viewName="FINSETTLEMENTHEADER_VIEW" />
-		<dropView viewName="FINSETTLEMENTHEADER_TVIEW" />
-	</changeSet>
 
 	<changeSet id="OTS#6_pre" author="saikiran.n" dbms="postgresql">
 		<sql> 
@@ -8867,6 +8943,11 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="OTS#22" author="saikiran.n" dbms="postgresql">
+		<dropView viewName="settlementallocationdtls_aview" />
+		<dropView viewName="settlementallocationdtls_view" />
+	</changeSet>
 
 	<changeSet id="OTS#18" author="saikiran.n">
 		<renameTable newTableName="SETTLEMENT_ALLOC_DTLS" oldTableName="SETTLEMENTALLOCATIONDTLS" />
@@ -8878,23 +8959,14 @@
 
 	<changeSet id="OTS#20" author="saikiran.n">
 		<renameColumn newColumnName="ID" oldColumnName="ALLOCATIONID" tableName="SETTLEMENT_ALLOC_DTLS" />
-		<renameColumn newColumnName="HEADERID" oldColumnName="SETTLEMENTHEADERID"
-			tableName="SETTLEMENT_ALLOC_DTLS" />
-		<renameColumn newColumnName="ALLOCATIONID" oldColumnName="SETTLEMENTALLOCATIONID"
-			tableName="SETTLEMENT_ALLOC_DTLS" />
+		<renameColumn newColumnName="HEADERID" oldColumnName="SETTLEMENTHEADERID" tableName="SETTLEMENT_ALLOC_DTLS" />
+		<renameColumn newColumnName="ALLOCATIONID" oldColumnName="SETTLEMENTALLOCATIONID" tableName="SETTLEMENT_ALLOC_DTLS" />
 	</changeSet>
 
 	<changeSet id="OTS#21" author="saikiran.n">
 		<renameColumn newColumnName="ID" oldColumnName="ALLOCATIONID" tableName="SETTLEMENT_ALLOC_DTLS_TEMP" />
-		<renameColumn newColumnName="ALLOCATIONID" oldColumnName="SETTLEMENTALLOCATIONID"
-			tableName="SETTLEMENT_ALLOC_DTLS_TEMP" />
-		<renameColumn newColumnName="HEADERID" oldColumnName="SETTLEMENTHEADERID"
-			tableName="SETTLEMENT_ALLOC_DTLS_TEMP" />
-	</changeSet>
-
-	<changeSet id="OTS#22" author="saikiran.n" dbms="postgresql">
-		<dropView viewName="settlementallocationdtls_aview" />
-		<dropView viewName="settlementallocationdtls_view" />
+		<renameColumn newColumnName="ALLOCATIONID" oldColumnName="SETTLEMENTALLOCATIONID" tableName="SETTLEMENT_ALLOC_DTLS_TEMP" />
+		<renameColumn newColumnName="HEADERID" oldColumnName="SETTLEMENTHEADERID" tableName="SETTLEMENT_ALLOC_DTLS_TEMP" />
 	</changeSet>
 
 	<changeSet id="OTS#23_pre" author="saikiran.n" dbms="postgresql">
@@ -9010,6 +9082,12 @@
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="OTS#29" author="saikiran.n" dbms="postgresql">
+		<dropView viewName="settlementschedule_aview" />
+		<dropView viewName="settlementschedule_view" />
+		<dropView viewName="settlementschedule_tview" />
+	</changeSet>
 
 	<changeSet id="OTS#25" author="saikiran.n">
 		<renameTable newTableName="SETTLEMENT_SCHEDULE" oldTableName="SETTLEMENTSCHEDULE" />
@@ -9026,14 +9104,7 @@
 
 	<changeSet id="OTS#28" author="saikiran.n">
 		<renameColumn newColumnName="ID" oldColumnName="SETTLEMENTDETAILID" tableName="SETTLEMENT_SCHEDULE_TEMP" />
-		<renameColumn newColumnName="HEADERID" oldColumnName="SETTLEMENTHEADERID"
-			tableName="SETTLEMENT_SCHEDULE_TEMP" />
-	</changeSet>
-
-	<changeSet id="OTS#29" author="saikiran.n" dbms="postgresql">
-		<dropView viewName="settlementschedule_aview" />
-		<dropView viewName="settlementschedule_view" />
-		<dropView viewName="settlementschedule_tview" />
+		<renameColumn newColumnName="HEADERID" oldColumnName="SETTLEMENTHEADERID" tableName="SETTLEMENT_SCHEDULE_TEMP" />
 	</changeSet>
 
 	<changeSet id="OTS#29_pre" author="saikiran.n" dbms="postgresql">
@@ -9044,7 +9115,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OTS#29" author="saikiran.n">
+	<changeSet id="OTS#29.1" author="saikiran.n">
 		<createView viewName="SETTLEMENT_SCHEDULE_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID
@@ -9214,43 +9285,72 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OTS#32" author="Sravani.M">
+	<changeSet id="OTS#32.1" author="Sravani.M">
 		<addColumn tableName="FeeWaiverHeader">
 			<column name="WMDetailId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="OTS#32.2" author="Sravani.M">
+		<addColumn tableName="FeeWaiverHeader">
 			<column name="AlwCondWaiver" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="OTS#32.3" author="Sravani.M">
+		<addColumn tableName="FeeWaiverHeader">
 			<column name="waiverFullFillAmount" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="OTS#32.4" author="Sravani.M">
+		<addColumn tableName="FeeWaiverHeader">
 			<column name="waiverFullFillDate" type="datetime" />
-
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="OTS#33" author="Sravani.M">
+	<changeSet id="OTS#33.1" author="Sravani.M">
 		<addColumn tableName="FeeWaiverHeader_Temp">
 			<column name="WMDetailId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="OTS#33.2" author="Sravani.M">
+		<addColumn tableName="FeeWaiverHeader_Temp">
 			<column name="AlwCondWaiver" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="OTS#33.3" author="Sravani.M">
+		<addColumn tableName="FeeWaiverHeader_Temp">
 			<column name="waiverFullFillAmount" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="OTS#33.4" author="Sravani.M">
+		<addColumn tableName="FeeWaiverHeader_Temp">
 			<column name="waiverFullFillDate" type="datetime" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="OTS#32.1" author="Sravani.M" dbms="postgresql, oracle">
+	<changeSet id="OTS#32.1.1" author="Sravani.M" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AlwCondWaiver" defaultValue="0" tableName="FeeWaiverHeader" />
 		<addDefaultValue columnName="waiverFullFillAmount" defaultValue="0" tableName="FeeWaiverHeader" />
 	</changeSet>
 
-	<changeSet id="OTS#33.1" author="Sravani.M" dbms="postgresql, oracle">
+	<changeSet id="OTS#33.1.1" author="Sravani.M" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AlwCondWaiver" defaultValue="0" tableName="FeeWaiverHeader_Temp" />
 		<addDefaultValue columnName="waiverFullFillAmount" defaultValue="0" tableName="FeeWaiverHeader_Temp" />
 	</changeSet>
 
-	<changeSet id="OTS#32.2" author="Sravani.M">
+	<changeSet id="OTS#32.2.1" author="Sravani.M">
 		<addColumn tableName="FeeWaiverHeader_Temp">
 			<column name="LinkedTranId" type="bigint" />
 			<column name="Status" type="char(1)" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="OTS#33.2" author="Sravani.M">
+	<changeSet id="OTS#33.2.1" author="Sravani.M">
 		<addColumn tableName="FeeWaiverHeader">
 			<column name="LinkedTranId" type="bigint" />
 			<column name="Status" type="char(1)" />
@@ -9281,10 +9381,10 @@
 	<changeSet id="OTS#37.1" author="Sravani.M" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE FEEWAIVERHEADER ADD DEFAULT 0 FOR ALWCONDWAIVER;
-				ALTER TABLE FEEWAIVERHEADER ADD DEFAULT 0 FOR WAIVERFULLFILLAMOUNT;
-				ALTER TABLE FEEWAIVERHEADER_TEMP ADD DEFAULT 0 FOR ALWCONDWAIVER;
-				ALTER TABLE FEEWAIVERHEADER_TEMP ADD DEFAULT 0 FOR WAIVERFULLFILLAMOUNT;
+				ALTER TABLE FEEWAIVERHEADER ADD CONSTRAINT DF_FEWAIVERHEADER_ALWC DEFAULT 0 FOR ALWCONDWAIVER;
+				ALTER TABLE FEEWAIVERHEADER ADD CONSTRAINT DF_FEWAIVERHEADER_WFFA DEFAULT 0 FOR WAIVERFULLFILLAMOUNT;
+				ALTER TABLE FEEWAIVERHEADER_TEMP ADD CONSTRAINT DF_FEWAIVERHEADER_T_ALWC DEFAULT 0 FOR ALWCONDWAIVER;
+				ALTER TABLE FEEWAIVERHEADER_TEMP ADD CONSTRAINT DF_FEWAIVERHEADER_T_WFFA DEFAULT 0 FOR WAIVERFULLFILLAMOUNT;
 				ALTER TABLE FEEWAIVERHEADER ADD CONSTRAINT DF_FEWAIVERHEADER_LNKDTRNID DEFAULT 0 FOR LINKEDTRANID;
 				ALTER TABLE FEEWAIVERHEADER_TEMP ADD CONSTRAINT DF_FEWAIVERHEADER_T_LNKDTRNID DEFAULT 0 FOR LINKEDTRANID;
 			]]>
@@ -9437,7 +9537,7 @@
 	</changeSet>
 
 	<changeSet id="ST#712_02" author="murthy.y">
-		<addNotNullConstraint tableName="Customers" columnName="CustCoreBank" />
+		<addNotNullConstraint tableName="Customers" columnName="CustCoreBank"  columnDataType="varchar(50)" />
 	</changeSet>
 
 	<changeSet id="ST#712_03" author="murthy.y">
@@ -9455,7 +9555,7 @@
 	</changeSet>
 
 	<changeSet id="ST#712_05" author="murthy.y">
-		<addNotNullConstraint tableName="Customers_Temp" columnName="CustCoreBank" />
+		<addNotNullConstraint tableName="Customers_Temp" columnName="CustCoreBank" columnDataType="varchar(50)"/>
 	</changeSet>
 
 	<changeSet id="ST#712_06" author="murthy.y">
@@ -9519,12 +9619,12 @@
 	<changeSet id="ST#712_07.2" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_LOANEXIST DEFAULT 0 FOR LOANEXIST;
-				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_LIMITREBUILD DEFAULT 0 FOR LIMITREBUILD;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_LOANEXST DEFAULT 0 FOR LOANEXIST;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_LMTB DEFAULT 0 FOR LIMITREBUILD;
 				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_THREADID DEFAULT 0 FOR THREADID;
 				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_PROGRESS DEFAULT 0 FOR PROGRESS;
-				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_RESETCOUNTERID DEFAULT 0 FOR RESETCOUNTERID;
-				ALTER TABLE EOD_CUSTOMER_QUEUE_LOG ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_PICKUPFLAG DEFAULT 0 FOR PICKUPFLAG;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_RCID DEFAULT 0 FOR RESETCOUNTERID;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_EOD_CUSTOMER_QUEUE_PCPF DEFAULT 0 FOR PICKUPFLAG;
 			]]>
 		</sql>
 	</changeSet>
@@ -10270,7 +10370,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2658.17.0" author="Sravani">
-		<addPrimaryKey tableName="EXCESS_TRANSFER_DETAILS_UPLOAD" columnNames="Id" />
+		<addPrimaryKey tableName="EXCESS_TRANSFER_DETAILS_UPLOAD" columnNames="Id" constraintName="pk_EXCESS_TRANSFER_DETILS_UPLD"/>
 	</changeSet>
 
 	<changeSet id="TK#2658.18.01" author="Sravani">
@@ -10387,6 +10487,9 @@
 	<changeSet id="ST#717.50" author="Mounika.M">
 		<sql>
 			<![CDATA[
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYSTL' AND AMOUNTCODE = 'ET_ReceiptAmount';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYPAY' AND AMOUNTCODE = 'ET_ReceiptAmount';
+				
 				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES('EARLYSTL', 0, 'ET_ReceiptAmount', 'Termination Receipt Amount', 1, 1, '1005', CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', '0');
 				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES('EARLYPAY', 0, 'ET_ReceiptAmount', 'Termination Receipt Amount', 1, 1, '1005', CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', '0');
 			]]>
