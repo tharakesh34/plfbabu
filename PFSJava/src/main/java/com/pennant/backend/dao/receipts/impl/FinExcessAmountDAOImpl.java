@@ -354,7 +354,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public List<FinExcessAmount> getExcessAmountsByRefAndType(long finID, Date valueDate, String amountType) {
 		StringBuilder sql = getExcessAmountSqlQuery();
-		sql.append(" Where FinID = ? and ValueDate = ? and AmountType = ?");
+		sql.append(" Where FinID = ? and ValueDate <= ? and AmountType = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 

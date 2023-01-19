@@ -1318,7 +1318,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" fm.CustId, fm.FinBranch, fm.FinType, pd.Id, pd.PresentmentId");
 		sql.append(", fm.FinID, pd.FinReference, pd.SchDate, pd.MandateId, pd.AdvanceAmt, pd.ExcessID");
 		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, ph.MandateType, pb.AccountNo, pb.AcType");
-		sql.append(", pb.PartnerBankId");
+		sql.append(", pb.PartnerBankId, fm.finIsActive");
 		sql.append(" From PresentmentDetails pd ");
 		sql.append(" Inner join PresentmentHeader ph on ph.Id = pd.PresentmentId");
 		sql.append(" Left join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
@@ -1345,6 +1345,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setInstrumentType(rs.getString("MandateType"));
 			pd.setAccountNo(rs.getString("AccountNo"));
 			pd.setAcType(rs.getString("AcType"));
+			pd.setFinisActive(rs.getBoolean("finIsActive"));
 
 			return pd;
 		}, presentmentId);

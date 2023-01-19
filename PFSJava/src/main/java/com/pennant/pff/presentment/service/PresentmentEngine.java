@@ -29,7 +29,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -781,6 +780,7 @@ public class PresentmentEngine {
 		}
 
 		if (pd.getSchAmtDue().compareTo(BigDecimal.ZERO) > 0) {
+			pd.setAppDate(ph.getAppDate());
 			doCalculations(ph, pd);
 		}
 
@@ -950,11 +950,12 @@ public class PresentmentEngine {
 
 		long finID = pd.getFinID();
 
-		List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, SysParamUtil.getAppDate(),
+		List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, pd.getAppDate(),
 				RepayConstants.EXAMOUNTTYPE_EMIINADV);
 
 		BigDecimal dueAmount = pd.getSchAmtDue();
 
+		BigDecimal emiInAdvanceAmount = BigDecimal.ZERO;
 		for (FinExcessAmount excess : list) {
 			if (dueAmount.compareTo(BigDecimal.ZERO) <= 0) {
 				break;
@@ -969,6 +970,7 @@ public class PresentmentEngine {
 			}
 
 			dueAmount = dueAmount.subtract(adjAmount);
+			emiInAdvanceAmount = emiInAdvanceAmount.add(adjAmount);
 			FinExcessMovement exMovement = new FinExcessMovement();
 			exMovement.setExcessID(excess.getExcessID());
 			exMovement.setReceiptID(pd.getId());
@@ -979,14 +981,14 @@ public class PresentmentEngine {
 		}
 
 		BigDecimal advanceAmt = BigDecimal.ZERO;
-		if (dueAmount.compareTo(pd.getSchAmtDue()) >= 0) {
+		if (emiInAdvanceAmount.compareTo(pd.getSchAmtDue()) >= 0) {
 			pd.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
 			pd.setPresentmentAmt(BigDecimal.ZERO);
 			pd.setAdvanceAmt(pd.getSchAmtDue());
 			pd.setStatus(RepayConstants.PEXC_APPROV);
 			advanceAmt = pd.getAdvanceAmt();
 		} else {
-			advanceAmt = dueAmount;
+			advanceAmt = emiInAdvanceAmount;
 			pd.setPresentmentAmt(pd.getSchAmtDue().subtract(advanceAmt));
 		}
 
@@ -1164,16 +1166,11 @@ public class PresentmentEngine {
 			String presentmentRef = ph.getReference();
 			String bankAccNo = ph.getPartnerAcctNumber();
 
-			String backOfficeName = presentmentDetailDAO
-					.getBackOfficeNameByBranchCode(ph.getUserDetails().getBranchCode());
-
-			String branchCode = ph.getMandateType() + " Presentment Download/" + backOfficeName;
-
 			if (externalPresentmentHook != null) {
 				externalPresentmentHook.processPresentmentRequest(ph);
 			} else {
 				getPresentmentRequest().sendReqest(idList, ph.getId(), false, ph.getMandateType(), presentmentRef,
-						bankAccNo, branchCode);
+						bankAccNo, null);
 			}
 
 		} catch (Exception e) {
@@ -1963,7 +1960,7 @@ public class PresentmentEngine {
 	public void setEventPropertiesService(EventPropertiesService eventPropertiesService) {
 		this.eventPropertiesService = eventPropertiesService;
 	}
-	
+
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;

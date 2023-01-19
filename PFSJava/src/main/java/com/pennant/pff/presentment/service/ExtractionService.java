@@ -89,7 +89,7 @@ public class ExtractionService {
 		logger.info("Extraction Started...");
 
 		Date appDate = SysParamUtil.getAppDate();
-		long batchID = presentmentDAO.createBatch("EXTRACTOIN", 0);
+		long batchID = presentmentDAO.createBatch("EXTRACTION", 0);
 
 		ph.setBatchID(batchID);
 		ph.setAppDate(appDate);
