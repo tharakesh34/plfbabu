@@ -1841,6 +1841,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (isEnquiryVisible && StringUtils.isEmpty(moduleDefiner)) {
 				this.enquiryLabel.setValue("Enquiry");
 				this.enquiryCombobox.setVisible(true);
+				enquiryList.add(new ValueLabel("1", "Verifications"));
 				fillComboBox(this.enquiryCombobox, "", enquiryList, "");
 				break;
 			}
@@ -5065,9 +5066,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		String roles = SysParamUtil.getValueAsString(SMTParameterConstants.ALW_CREDIT_EDIT_DATA_STAGES);
 		roles = StringUtils.trimToEmpty(roles);
 
-		boolean isEdit = false;
+		boolean isEdit = true;
 		if (roles.contains(getRole())) {
-			isEdit = true;
+			isEdit = false;
 		}
 
 		map.put("Right_Eligibility", isEdit);
