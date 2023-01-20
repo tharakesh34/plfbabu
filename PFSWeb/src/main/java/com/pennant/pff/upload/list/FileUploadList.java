@@ -229,8 +229,7 @@ public class FileUploadList extends Window implements Serializable {
 		listhead.appendChild(getListHeader(Labels.getLabel("label_FailedRecords"), FLEX_MIN, ALIGN_RIGHT));
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_Progress"), FLEX_MIN));
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label.RecordStatus"), FLEX_MIN));
-		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_Download"), FLEX_MIN));
-		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_View"), FLEX_MIN));
+		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_Download_VIEW"), FLEX_MIN));
 
 		box.appendChild(listhead);
 
@@ -295,7 +294,7 @@ public class FileUploadList extends Window implements Serializable {
 		Hbox hbox = getHbox();
 		hbox.appendChild(getToolbar(ALIGN_START));
 		hbox.appendChild(getToolbar(ALIGN_CENTER, this.type.description()));
-		hbox.appendChild(getButtonInTB(ALIGN_END, "Close", "onClick", event -> onClose()));
+		hbox.appendChild(getToolbar(ALIGN_END));
 
 		Div div = getDiv();
 		hbox.setParent(div);
@@ -383,14 +382,12 @@ public class FileUploadList extends Window implements Serializable {
 
 		this.entityCode = new ExtendedCombobox();
 		this.entityCode.setModuleName("Entity");
-		this.entityCode.setMandatoryStyle(!"M".equals(this.stage));
+		this.entityCode.setMandatoryStyle(true);
 		this.entityCode.setDisplayStyle(2);
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 		this.entityCode.addForward(ExtendedCombobox.ON_FUL_FILL, this, "onChangeEntityCode", null);
-
-		removeSpace(this.entityCode);
 
 		Cell cell = new Cell();
 		cell.appendChild(new Label(Labels.getLabel("label_EntityCode")));
@@ -1151,7 +1148,7 @@ public class FileUploadList extends Window implements Serializable {
 				lc.appendChild(dowButton);
 				lc.setParent(item);
 			} else {
-				Button viewButton = getButton(Labels.getLabel("label_View"), String.valueOf(id));
+				Button viewButton = getButton(Labels.getLabel("label_Exceptions"), String.valueOf(id));
 				viewButton.addEventListener(Events.ON_CLICK, event -> onClickView(uph));
 
 				lc = new Listcell();

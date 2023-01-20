@@ -10496,4 +10496,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#216165" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET FILEEXTENSION = '.xlsx' WHERE NAME in ('PAYINS_REFUND_UPLOAD', 'PAYINS_REFUND_TEMPLATE', 'PAYINS_REFUND_DOWNLOAD');
+				UPDATE DATA_ENGINE_CONFIG SET FILEEXTENSION = '.xlsx' WHERE NAME in ('HOLD_REFUND_UPLOAD', 'HOLD_REFUND_TEMPLATE', 'HOLD_REFUND_DOWNLOAD');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

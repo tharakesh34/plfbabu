@@ -142,7 +142,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" hu.FinReference, hu.HoldStatus, hu.Reason, hu.Remarks, uh.CreatedOn");
-		sql.append(", ru.Status, ru.ErrorCode, ru.ErrorDesc, uh.CreatedBy, uh.ApprovedBy");
+		sql.append(", hu.Status, hu.ErrorCode, hu.ErrorDesc, uh.CreatedBy, uh.ApprovedBy");
 		sql.append(" From HOLD_REFUND_UPLOAD hu");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.ID = hu.HeaderID");
 		sql.append(" Where uh.ID = :HEADER_ID");
