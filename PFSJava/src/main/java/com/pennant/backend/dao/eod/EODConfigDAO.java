@@ -56,4 +56,6 @@ public interface EODConfigDAO extends BasicCrudDao<EODConfig> {
 
 	String getDelayFrequency();
 
+	void updateJobDetails(EODConfig eODConfig);
+
 }

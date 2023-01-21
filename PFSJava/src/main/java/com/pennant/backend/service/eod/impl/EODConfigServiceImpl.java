@@ -233,6 +233,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 				eODConfig.setRecordType("");
 				getEODConfigDAO().update(eODConfig, TableType.MAIN_TAB);
 			}
+			getEODConfigDAO().updateJobDetails(eODConfig);
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
