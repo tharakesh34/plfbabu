@@ -80,6 +80,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, SAMLUserDetai
 		SecurityUser user = userService.getUserByLogin(username);
 
 		List<SecurityRole> securityRole = userService.getUserRolesByUserID(user.getId());
+
 		Collection<GrantedAuthority> grantedAuthorities = getGrantedAuthority(user);
 
 		final UserDetails userDetails = new User(user, grantedAuthorities, securityRole);

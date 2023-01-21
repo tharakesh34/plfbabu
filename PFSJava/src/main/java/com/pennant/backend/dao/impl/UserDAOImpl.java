@@ -292,10 +292,10 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	@Override
 	public List<SecurityRole> getUserRolesByUserID(final long userID) {
 		StringBuilder sql = new StringBuilder("select RoleCd, RoleDesc, RoleCategory");
-		sql.append(" from SecUserOperations uo");
-		sql.append(" inner join SecOperationRoles opr on opr.OprID = uo.OprID");
-		sql.append(" inner join SecRoles r on r.RoleID = opr.RoleID");
-		sql.append(" where uo.UsrID = ?");
+		sql.append(" From SecUserOperations uo");
+		sql.append(" Inner join SecOperationRoles opr on opr.OprID = uo.OprID");
+		sql.append(" Inner join SecRoles r on r.RoleID = opr.RoleID");
+		sql.append(" Where uo.UsrID = ? ");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -306,6 +306,31 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 			role.setRoleCategory(rs.getString("RoleCategory"));
 			return role;
 		}, userID);
+	}
+
+	@Override
+	public List<SecurityRole> getMenuRoles(final long userID) {
+		StringBuilder sql = new StringBuilder("select distinct r.RoleCd");
+		sql.append(" From SecUserOperations uo");
+		sql.append(" Inner join SecOperationRoles opr on opr.OprID = uo.OprID");
+		sql.append(" Inner join SecRoles r on r.RoleID = opr.RoleID");
+		sql.append(" Inner join SecRoleGroups rg on rg.RoleID = r.RoleID");
+		sql.append(" Inner join SecGroupRights gr on gr.GrpID = rg.GrpID");
+		sql.append(" Inner join SecRights rt on rt.RightID = gr.RightID and rt.RightType = ?");
+		sql.append(" Where uo.UsrID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setInt(1, 0);
+			ps.setLong(2, userID);
+		}, (rs, rowNum) -> {
+			SecurityRole role = new SecurityRole();
+
+			role.setRoleCd(rs.getString("RoleCd"));
+
+			return role;
+		});
 	}
 
 	/**

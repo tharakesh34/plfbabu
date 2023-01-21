@@ -142,6 +142,12 @@ public class SecurityRoleListCtrl extends GFCBaseListCtrl<SecurityRole> {
 		search();
 	}
 
+	public void search() {
+		this.searchObject.addWhereClause(
+				" RoleID not in (Select RoleID From SecRoleGroups srg Inner Join SecGroupRights sgr on sgr.GrpID = srg.GrpID Inner Join SecRights sr on sr.RightID = sgr.RightID and sr.RightType = 0)");
+		super.search();
+	}
+
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 

@@ -1,6 +1,7 @@
 <!DOCTYPE XMLRootMenu>
 <ns2:XMLRootMenu xmlns:ns2="http://www.pennant.com/menu">
-	<menuItem id="menu_Item_MessageInputBox" zulNavigation="/WEB-INF/pages/Messages/SendMessageDialog.zul" />
+	<menuItem id="menu_Item_MessageInputBox" zulNavigation="/WEB-INF/pages/Messages/SendMessageDialog.zul"
+		rightName="menu_Item_MessageInputBox" />
 
 	<!-- Administration -->
 	<menu id="menu_Category_Administration">
@@ -436,13 +437,11 @@
 		</menu>
 		<menu id="menu_Category_EligibilityScoringRules">
 			<menuItem id="menu_Item_EligibilityRules"
-				zulNavigation="/WEB-INF/pages/RulesFactory/Rule/EligibilityRuleList.zul"
-				rightName="menuItem_RulesFactory_DownpaymentRules" />
+				zulNavigation="/WEB-INF/pages/RulesFactory/Rule/EligibilityRuleList.zul" rightName="menu_Item_EligibilityRules" />
 			<menuItem id="menu_Item_ScoringGroup"
-				zulNavigation="/WEB-INF/pages/RulesFactory/ScoringGroup/ScoringGroupList.zul"
-				rightName="menuItem_RulesFactory_Notifications" />
+				zulNavigation="/WEB-INF/pages/RulesFactory/ScoringGroup/ScoringGroupList.zul" rightName="menu_Item_ScoringGroup" />
 			<menuItem id="menu_Item_ScoringMetrics" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ScoringRuleList.zul"
-				rightName="menuItem_RulesFactory_Notifications" />
+				rightName="menu_Item_ScoringMetrics" />
 			<menuItem id="menu_Item_BRERule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/BRERuleList.zul"
 				rightName="menuItem_RulesFactory_BRERules" />
 		</menu>
@@ -466,8 +465,7 @@
 		<menuItem id="menu_Item_CheckRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/CheckRuleList.zul"
 			rightName="menuItem_RulesFactory_CheckRules" />
 		<menuItem id="menu_Item_DownpaymentRules"
-			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/DownpaymentRuleList.zul"
-			rightName="menuItem_RulesFactory_DownpaymentRules" />
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/DownpaymentRuleList.zul" rightName="menu_Item_DownpaymentRules" />
 		<menuItem id="menu_Item_FeeDetails" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/FeeRuleList.zul"
 			rightName="menuItem_RulesFactory_FeeRules" />
 		<menuItem id="menu_Item_GSTRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/GstRuleList.zul"
@@ -1034,11 +1032,10 @@
 			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/PartCancellationProcess.zul" rightName="menu_Item_PartCancellation" />
 		<menu id="menu_Category_Settlement">
 			<menuItem id="menu_Item_Settlement"
-				zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT"
-				rightName="menuItem_SettlementMaster_Settlement" />
+				zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT" rightName="menu_Item_Settlement" />
 			<menuItem id="menu_Item_SettlementCancellation"
 				zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT_CANCEL"
-				rightName="menuItem_SettlementMaster_Settlement" />
+				rightName="menu_Item_SettlementCancellation" />
 		</menu>
 
 	</menu>
@@ -1219,13 +1216,13 @@
 			rightName="menu_Item_RePresentUploadApprover" /> </menu> -->
 
 		<!-- Fee Waiver Upload -->
-		<menu id="menu_Category_FeeWaiverUpload" rightName="menuItem_FeeWaiverUpload">
+		<menu id="menu_Category_FeeWaiverUpload">
 			<menuItem id="menu_Item_FeeWaiverUpload_Maker"
 				zulNavigation="/WEB-INF/pages/Finance/UploadFeeWaiver/FeeWaiverUploadDialog.zul"
-				rightName="menuItem_FeeWaiverUpload" />
+				rightName="menu_Item_FeeWaiverUpload_Maker" />
 			<menuItem id="menu_Item_FeeWaiverUpload_Approver"
 				zulNavigation="/WEB-INF/pages/Finance/UploadFeeWaiver/FeeWaiverUploadList.zul?module=FeeWaiverApprover"
-				rightName="menuItem_FeeWaiverUpload" />
+				rightName="menu_Item_FeeWaiverUpload_Approver" />
 		</menu>
 	</menu>
 	<!-- Insurance Module -->
@@ -1783,9 +1780,10 @@
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_FinDeptReports_FutureRepaymentSchedule" />
 			<menuItem id="menu_Item_SubventionPendingKnockoff"
-				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_IndASReport" />
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_SubventionPendingKnockoff" />
 			<menuItem id="menu_Item_SubventionPendingDue"
-				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_IndASReport" />
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_SubventionPendingDue" />
 			<menuItem id="menu_Item_InterestAccrualReport"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_InterestAccrualReport" />
 			<menuItem id="menu_Item_InterestAccruedbutnotDueReport"
@@ -1806,7 +1804,7 @@
 		<menu id="menu_Category_SAPGL">
 			<menuItem id="menu_Item_TrailBalanceFileDownloads"
 				zulNavigation="/WEB-INF/pages/InterfaceBajaj/GlFileDownloadList.zul?module=TrailBalance"
-				rightName="menu_Item_SAPGLFileDownloads" />
+				rightName="menu_Item_TrailBalanceFileDownloads" />
 			<menuItem id="menu_Item_SAPGLFileDownloads"
 				zulNavigation="/WEB-INF/pages/InterfaceBajaj/GlFileDownloadList.zul?module=SAPGL"
 				rightName="menu_Item_SAPGLFileDownloads" />
@@ -1956,11 +1954,13 @@
 
 		<menu id="menu_Cersai_Reports">
 			<menuItem id="menu_Item_CersaiReport"
-				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_CersaiReports" />
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_CersaiReport" />
 			<menuItem id="menu_Item_CersaiModificationReport"
-				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_CersaiReports" />
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_CersaiModificationReport" />
 			<menuItem id="menu_Item_CersaiSatisfactionReport"
-				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_CersaiReports" />
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_CersaiSatisfactionReport" />
 		</menu>
 
 		<menu id="menu_Category_Operations">
@@ -2014,7 +2014,7 @@
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_MonthlyCollectionReport" />
 			<menuItem id="menu_Item_GSTReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menuItem_Report_FinGstMonthly" />
+				rightName="menu_Item_GSTReport" />
 			<menuItem id="menu_Item_PDCReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_PDCReport" />
 			<menuItem id="menu_Item_PortfolioDataRpt"
@@ -2508,7 +2508,8 @@
 		zulNavigation="/~./pages/account-updater/AccountUpdaterStatus.zul" rightName="menuItem_AccountUpdater_Engine" />
 	<!--//APPEND AFTER THIS// -->
 
-	<menuItem id="menuItem_MenuRoles" zulNavigation="/WEB-INF/pages/MenuRoles/MenuRolesList.zul" rightName="" />
+	<menuItem id="menuItem_MenuRoles" zulNavigation="/WEB-INF/pages/MenuRoles/MenuRolesList.zul"
+		rightName="menuItem_MenuRoles" />
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
