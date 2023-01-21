@@ -47,6 +47,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
@@ -86,6 +87,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Listheader listheader_AccType;
 	protected Listheader listheader_Amount;
 	protected Listheader listheader_SecurityMandate;
+	protected Listheader listheader_LoanReference;
 	protected Listheader listheader_ExpiryDate;
 	protected Listheader listheader_Status;
 	protected Listheader listheader_InputDate;
@@ -104,6 +106,8 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Datebox expiryDate;
 	protected Datebox inputDate;
 	protected Checkbox securityMandate;
+	protected ExtendedCombobox loanReference;
+	protected Listbox sortOperator_LoanReference;
 
 	protected Listbox sortOperator_MandateID;
 	protected Listbox sortOperator_CustCIF;
@@ -185,6 +189,11 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
 		registerField("securityMandate", listheader_SecurityMandate, SortOrder.NONE, securityMandate,
 				sortOperator_SecurityMandate, Operators.SIMPLE_NUMARIC);
+
+		registerField("orgReference", listheader_LoanReference, SortOrder.NONE, loanReference,
+				sortOperator_LoanReference, Operators.STRING);
+
+		doSetFieldProperties();
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -399,6 +408,14 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 			this.custCIF.setValue("");
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doSetFieldProperties() {
+		this.loanReference.setModuleName("FinanceMain");
+		this.loanReference.setTextBoxWidth(155);
+		this.loanReference.setValueColumn("FinReference");
+		this.loanReference.setDescColumn("FinType");
+		this.loanReference.setValidateColumns(new String[] { "FinReference" });
 	}
 
 	/**
