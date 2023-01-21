@@ -355,6 +355,10 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
+				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
+					continue;
+				}
+
 				// Not allow Before Current Business Date
 				if (appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
 					continue;
