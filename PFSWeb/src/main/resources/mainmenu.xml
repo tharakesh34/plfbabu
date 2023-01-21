@@ -679,7 +679,8 @@
 			zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureCustomerList.zul"
 			rightName="menu_Item_LimitStructureCustomer" />
 		<menuItem id="menu_Item_InstituionLimitDetails"
-			zulNavigation="/WEB-INF/pages/Limit/LimitDetails/OtherLimitDetailsList.zul" rightName="menu_Item_InstituionLimitDetails" />
+			zulNavigation="/WEB-INF/pages/Limit/LimitDetails/OtherLimitDetailsList.zul"
+			rightName="menu_Item_InstituionLimitDetails" />
 		<menuItem id="menu_Item_LimitHeader" zulNavigation="/WEB-INF/pages/Limit/LimitDetails/LimitDetailsList.zul"
 			rightName="menu_Item_LimitHeader" />
 		<menuItem id="menu_Item_LimitUtilization"
@@ -687,7 +688,8 @@
 		<menuItem id="menu_Item_LimitRebuild" zulNavigation="/WEB-INF/pages/Limit/LimitDetails/LimitRebuildList.zul"
 			rightName="menuItem_Limit_Rebuild" />
 		<menuItem id="menu_Item_InstitutionLimitRebuild"
-			zulNavigation="/WEB-INF/pages/Limit/LimitDetails/LimitRebuildProcess.zul" rightName="menu_Item_InstitutionLimitRebuild" />
+			zulNavigation="/WEB-INF/pages/Limit/LimitDetails/LimitRebuildProcess.zul"
+			rightName="menu_Item_InstitutionLimitRebuild" />
 		<menuItem id="menuItem_Limit_ManualBlocking"
 			zulNavigation="/WEB-INF/pages/Limit/LimitDetails/ManualBlockingList.zul" rightName="menuItem_Limit_LimitBlock" />
 	</menu>
@@ -824,10 +826,10 @@
 			<menuItem id="menu_Item_CustomerPaymentTransactions"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul?module=PYMT"
 				rightName="menuItem_payment_CustPaymentTransaction" />
-			<menuItem id="menu_Item_FeeRefundMaker" zulNavigation="/WEB-INF/pages/FeeRefund/FeeRefundHeaderList.zul?approval=N"
-				rightName="menu_Item_FeeRefundMaker" />
-			<menuItem id="menu_Item_FeeRefundApprover" zulNavigation="/WEB-INF/pages/FeeRefund/FeeRefundHeaderList.zul?approval=Y"
-				rightName="menu_Item_FeeRefundApprover" />
+			<menuItem id="menu_Item_FeeRefundMaker"
+				zulNavigation="/WEB-INF/pages/FeeRefund/FeeRefundHeaderList.zul?approval=N" rightName="menu_Item_FeeRefundMaker" />
+			<menuItem id="menu_Item_FeeRefundApprover"
+				zulNavigation="/WEB-INF/pages/FeeRefund/FeeRefundHeaderList.zul?approval=Y" rightName="menu_Item_FeeRefundApprover" />
 		</menu>
 		<menu id="menu_Category_LmsReceipts">
 			<menuItem id="menu_Item_InitMaker"
@@ -1031,12 +1033,14 @@
 		<menuItem id="menu_Item_PartCancellation"
 			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/PartCancellationProcess.zul" rightName="menu_Item_PartCancellation" />
 		<menu id="menu_Category_Settlement">
-			<menuItem id="menu_Item_Settlement" zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT"
+			<menuItem id="menu_Item_Settlement"
+				zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT"
 				rightName="menuItem_SettlementMaster_Settlement" />
-			<menuItem id="menu_Item_SettlementCancellation" zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT_CANCEL"
+			<menuItem id="menu_Item_SettlementCancellation"
+				zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT_CANCEL"
 				rightName="menuItem_SettlementMaster_Settlement" />
 		</menu>
-		
+
 	</menu>
 
 	<!-- Menu for Receipts -->
@@ -1127,7 +1131,8 @@
 				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=M"
 				rightName="menu_Item_FateCorrectionUpload_Maker" />
 			<menuItem id="menu_Item_FateCorrectionUpload_Approver"
-				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A" rightName="menu_Item_FateCorrectionUpload_Approver" />
+				zulNavigation="/WEB-INF/pages/Presentment/Upload/FateCorrectionUploadList.zul?stage=A"
+				rightName="menu_Item_FateCorrectionUpload_Approver" />
 		</menu>
 		<menu id="menu_Category_ExternalUplaods" rightName="menuCat_SystemMaster">
 			<menuItem id="menu_Item_FinanceTaxDetailUpload"
@@ -1208,7 +1213,6 @@
 			<menuItem id="menu_Item_MerchantUTRUpload"
 				zulNavigation="/WEB-INF/pages/Finance/MerchantUTR/MerchantUTRUpload.zul" rightName="menu_Item_MerchantUTRUpload" />
 		</menu>
-
 
 		<!-- <menu id="menu_Category_RePresentUpload"> <menuItem id="menu_Item_RePresentUpload_Maker" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?approval=N" 
 			rightName="menu_Item_RePresentUpload" /> <menuItem id="menu_Item_RePresentUpload_Approval" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/RePresentmentUploadList.zul?approval=Y" 
@@ -1626,7 +1630,8 @@
 			<menuItem id="menu_Item_Presentment" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_Report_Presentment" />
 			<menuItem id="menu_Item_PresentmentExcludeReport"
-				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_Report_PresentmentExclude" />
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_Report_PresentmentExclude" />
 			<menuItem id="menu_Item_LoanbyMaturityDtls"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_LoanbyMaturityDtls" />
 			<menuItem id="menu_Item_PendingFinances"
@@ -1839,7 +1844,8 @@
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Report_Billing" />
 			<!-- This menu should enable in veritas. -->
 			<menuItem id="menu_Item_BounceorClearanceReport"
-				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Report_BounceOrClearance" />
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_Report_BounceOrClearance" />
 
 			<menuItem id="menu_Item_DisbursmentReport"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
@@ -1859,7 +1865,8 @@
 			<menuItem id="menu_UpfrontFeeStatusReport"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Report_UpfrontFeeStatus" />
 			<menuItem id="menu_InstallmentDueReport"
-				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Report_InstallmentDueAmount" />
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_Report_InstallmentDueAmount" />
 			<!-- <menuItem id="menu_Item_ReceiptDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_ReceiptDetails" 
 				/> -->
 			<menuItem id="menu_Item_LMSReceiptReport"
@@ -1962,7 +1969,8 @@
 			<menuItem id="menu_Item_PDCExhaustReport"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Report_PdcExhaust" />
 			<menuItem id="menu_Item_MandateActRejReport"
-				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Report_MandateActiveRejection" />
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_Report_MandateActiveRejection" />
 			<menuItem id="menu_Item_AchRegisFormat"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Report_AchRegistration" />
 			<menuItem id="menu_Item_PDCPResentation"
@@ -2504,7 +2512,7 @@
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
-	
+
 	<menu id="menu_Category_HoldRefund">
 		<menuItem id="menu_Item_HoldRefundUpload_Maker"
 			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=M"
@@ -2513,7 +2521,7 @@
 			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=A"
 			rightName="menu_Item_HoldRefundUpload_Approver" />
 	</menu>
-	
+
 	<menu id="menu_Category_ManualRefunds">
 		<menuItem id="menu_Item_ManualRefunds_Maker"
 			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=M"
