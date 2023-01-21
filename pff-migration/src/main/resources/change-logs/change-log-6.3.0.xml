@@ -10505,4 +10505,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#216213" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET FILEEXTENSION = '.xlsx' WHERE NAME in ('MANDATES_UPLOAD', 'MANDATES_TEMPLATE', 'MANDATES_DOWNLOAD');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
