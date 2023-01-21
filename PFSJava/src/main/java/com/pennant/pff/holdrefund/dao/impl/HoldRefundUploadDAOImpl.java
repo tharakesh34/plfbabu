@@ -93,7 +93,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 				int index = 0;
 				HoldRefundUploadDetail detail = detailsList.get(i);
 
-				ps.setLong(++index, detail.getReferenceID());
+				ps.setObject(++index, detail.getReferenceID());
 				ps.setInt(++index, detail.getProgress());
 				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, detail.getErrorCode());
@@ -168,7 +168,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 				int index = 0;
 
-				ps.setLong(++index, detail.getReferenceID());
+				ps.setObject(++index, detail.getReferenceID());
 				ps.setString(++index, detail.getHoldStatus());
 				ps.setString(++index, detail.getReason());
 				ps.setString(++index, detail.getRemarks());
@@ -204,7 +204,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 				int index = 0;
 
-				ps.setLong(++index, detail.getReferenceID());
+				ps.setObject(++index, detail.getReferenceID());
 				ps.setString(++index, detail.getReference());
 				ps.setString(++index, detail.getHoldStatus());
 				ps.setString(++index, detail.getReason());
@@ -270,7 +270,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 			ps.setString(++index, detail.getHoldStatus());
 			ps.setString(++index, detail.getReason());
 			ps.setString(++index, detail.getRemarks());
-			ps.setLong(++index, detail.getReferenceID());
+			ps.setObject(++index, detail.getReferenceID());
 		});
 
 		if (recordCount == 0) {
