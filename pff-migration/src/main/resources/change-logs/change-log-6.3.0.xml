@@ -10513,4 +10513,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#216303" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET HEADER = 'ROW:{Entity Code, Customer ID, Loan Reference, Mandate Type, MICR, IFSC Code, Account Number, Account Holder Name, Joint Account Holder Name, Account Type, Max Limit, Periodicity, Open Mandate, Start Date, Expiry Date, Partner BankId, UMRN number, External Mandate, Swap, Swap Effective Date,E-mandate Source, E-mandate Reference, EmployerID, Employee ID, Mandate Status, Rejection Reason}' WHERE NAME = 'MANDATES_TEMPLATE';
+				UPDATE DATA_ENGINE_CONFIG SET HEADER = 'ROW:{Entity Code, Customer ID, Loan Reference, Mandate Type, MICR, IFSC Code, Account Number, Account Holder Name, Joint Account Holder Name, Account Type, Max Limit, Periodicity, Open Mandate, Start Date, Expiry Date, Partner BankId, UMRN number, External Mandate, Swap, Swap Effective Date,E-mandate Source, E-mandate Reference, EmployerID, Employee ID, Mandate Status, Rejection Reason}' WHERE NAME = 'MANDATES_UPLOAD';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
