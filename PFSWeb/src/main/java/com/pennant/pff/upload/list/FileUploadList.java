@@ -59,7 +59,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
-import org.zkoss.zul.Timer;
 import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
@@ -82,6 +81,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -259,6 +259,12 @@ public class FileUploadList extends Window implements Serializable {
 			if (cb.isChecked()) {
 				selectedHeaders.add((FileUploadHeader) listitem.getAttribute("data"));
 			}
+
+			if (this.checkBoxComp.isChecked()) {
+				cb.setChecked(true);
+			} else {
+				cb.setChecked(false);
+			}
 		}
 	}
 
@@ -307,7 +313,12 @@ public class FileUploadList extends Window implements Serializable {
 		Hbox hbox = getHbox();
 		hbox.appendChild(
 				getHyperLinkInTB(ALIGN_START, "Download Template", Events.ON_CLICK, event -> downloadTemplate(fuph)));
-		hbox.appendChild(getButtonInTB(ALIGN_CENTER, "IMPORT", Events.ON_CLICK, event -> onClickButtonImport()));
+
+		Toolbar center = getButtonInTB(ALIGN_CENTER, "IMPORT", Events.ON_CLICK, event -> onClickButtonImport());
+		center.appendChild(getSpace("2px", false));
+		center.appendChild(getTollBarButton("REFRESH", Events.ON_CLICK, event -> onClickRefresh(false)));
+		hbox.appendChild(center);
+
 		hbox.appendChild(getToolbar(ALIGN_END));
 
 		return hbox;
@@ -327,7 +338,7 @@ public class FileUploadList extends Window implements Serializable {
 
 		Toolbar center = getButtonInTB(ALIGN_CENTER, "SEARCH", Events.ON_CLICK, event -> onClickSearch());
 		center.appendChild(getSpace("2px", false));
-		center.appendChild(getTollBarButton("REFRESH", Events.ON_CLICK, event -> onClickRefresh()));
+		center.appendChild(getTollBarButton("REFRESH", Events.ON_CLICK, event -> onClickRefresh(true)));
 		hbox.appendChild(center);
 
 		hbox.appendChild(getToolbar(ALIGN_END));
@@ -432,7 +443,7 @@ public class FileUploadList extends Window implements Serializable {
 		Button button = getButton(Labels.getLabel("btnBrowse.label"));
 		button.setUpload("true");
 		button.addEventListener(Events.ON_UPLOAD, event -> {
-			onClickRefresh();
+			onClickRefresh(true);
 
 			Media media = ((UploadEvent) event).getMedia();
 
@@ -579,7 +590,12 @@ public class FileUploadList extends Window implements Serializable {
 
 		doWriteComponentsToBean(this.fileUploadHeader);
 
-		new Process(processDTO).run();
+		try {
+			new Process(processDTO).run();
+		} catch (AppException e) {
+			MessageUtil.showError(e.getMessage());
+			return;
+		}
 
 		do {
 			logger.info("Waiting for Data Engine Response...");
@@ -595,30 +611,22 @@ public class FileUploadList extends Window implements Serializable {
 			this.fileName.setValue(String.valueOf(this.fileUploadHeader.getId()));
 			this.fileName.setDescription(this.fileUploadHeader.getFileName());
 
-			this.fromDate.setValue(this.fileUploadHeader.getAppDate());
-			this.toDate.setValue(this.fileUploadHeader.getAppDate());
+			this.fromDate.setValue(DateUtil.getSysDate());
+			this.toDate.setValue(DateUtil.getSysDate());
 
-			Timer timer = new Timer();
-			timer.setRepeats(true);
-			timer.setDelay(2000);
+			List<FileUploadHeader> list = new ArrayList<>();
 
-			this.window.appendChild(timer);
+			this.fileUploadHeader.setStage(this.stage);
 
-			timer.addEventListener(Events.ON_TIMER, evnt -> {
-				List<FileUploadHeader> list = new ArrayList<>();
+			list.add(this.fileUploadHeader);
 
-				this.fileUploadHeader.setStage(this.stage);
+			listbox.clearSelection();
 
-				list.add(this.fileUploadHeader);
+			if (!"M".equals(this.stage) && !list.isEmpty()) {
+				this.checkBoxComp.setDisabled(false);
+			}
 
-				listbox.clearSelection();
-
-				if (!"M".equals(this.stage) && !list.isEmpty()) {
-					this.checkBoxComp.setDisabled(false);
-				}
-
-				listWrapper.initList(list, listbox, paging);
-			});
+			listWrapper.initList(list, listbox, paging);
 		} else {
 			List<FileUploadHeader> list = getUploadHeaders();
 
@@ -679,7 +687,8 @@ public class FileUploadList extends Window implements Serializable {
 
 		showErrorMessage(wve);
 
-		return uploadService.getUploadHeaderById(this.workflowRoles, eCode, fileID, dataFrom, dataTo, type.name());
+		return uploadService.getUploadHeaderById(this.workflowRoles, eCode, fileID, dataFrom, dataTo, type.name(),
+				this.stage);
 	}
 
 	private void setConstraints() {
@@ -808,7 +817,7 @@ public class FileUploadList extends Window implements Serializable {
 		doSearch(false);
 	}
 
-	private void onClickRefresh() {
+	private void onClickRefresh(boolean isImport) {
 		this.fileUploadHeader.setId(Long.MIN_VALUE);
 		this.fileUploadHeader.setFileName(null);
 		this.fileUploadHeader.setFile(null);
@@ -822,13 +831,22 @@ public class FileUploadList extends Window implements Serializable {
 		this.fileUploadHeader.setRemarks(null);
 		this.fileUploadHeader.setStage(this.stage);
 
-		this.fromDate.setValue(null);
-		this.toDate.setValue(null);
-		this.fileName.setValue("", "");
-		listbox.clearSelection();
+		if (isImport) {
+			this.fromDate.setValue(null);
+			this.toDate.setValue(null);
+			this.fileName.setValue("", "");
+			listbox.clearSelection();
+		}
+
+		if (!isImport) {
+			this.entityCode.setValue(null);
+
+			if ("M".equals(this.stage)) {
+				this.uploadFileName.setValue("");
+			}
+		}
 
 		if (!"M".equals(this.stage)) {
-			this.entityCode.setValue(null);
 			this.checkBoxComp.setDisabled(true);
 		}
 
@@ -838,12 +856,24 @@ public class FileUploadList extends Window implements Serializable {
 	}
 
 	private void onClickReject() {
+
+		if (selectedHeaders.isEmpty()) {
+			MessageUtil.showError(Labels.getLabel("DataList_NoEmpty"));
+			return;
+		}
+
 		uploadService.doReject(selectedHeaders);
 
 		doSearch(false);
 	}
 
 	private void onClickApprove() {
+
+		if (selectedHeaders.isEmpty()) {
+			MessageUtil.showError(Labels.getLabel("DataList_NoEmpty"));
+			return;
+		}
+
 		for (FileUploadHeader header : selectedHeaders) {
 			header.setLastMntBy(this.userId);
 			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1288,6 +1318,11 @@ public class FileUploadList extends Window implements Serializable {
 
 			try {
 				engine.importData(status.getName());
+
+				if ("F".equals(status.getStatus())) {
+					throw new AppException(status.getRemarks());
+				}
+
 			} catch (Exception e) {
 				status.setRemarks(e.getMessage());
 				update(uploadHeader, status);
