@@ -192,7 +192,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				long mandateID = mandateDAO.save(mandate, tableType);
 				if (mandate.isSecurityMandate()) {
 					fm.setSecurityMandateID(mandateID);
-				}else{
+				} else {
 					fm.setMandateID(mandateID);
 				}
 				auditDetails.add(getAuditDetails(mandate, 1, PennantConstants.TRAN_ADD));
@@ -444,8 +444,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 
 			if (mandate.getMaxLimit() != null && mandate.getMaxLimit().compareTo(BigDecimal.ZERO) > 0) {
 				if (mandate.isUseExisting()) {
-					exposure = exposure
-							.add(financeMainDAO.getTotalMaxRepayAmount(mandate.getMandateID(), fm.getFinReference()));
+					exposure = exposure.add(mandateDAO.getMaxRepayAmount(fm.getFinReference()));
 				}
 
 				if (mandate.getMaxLimit().compareTo(exposure) < 0) {

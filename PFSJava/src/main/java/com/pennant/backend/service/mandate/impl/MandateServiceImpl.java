@@ -584,6 +584,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		}
 
+		if (mandate.getMaxLimit() != null && mandate.getMaxLimit().compareTo(BigDecimal.ZERO) > 0) {
+			BigDecimal rpyAmt = mandateDAO.getMaxRepayAmount(mandate.getOrgReference());
+			if (rpyAmt != null && mandate.getMaxLimit().compareTo(rpyAmt) < 0) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90320", null)));
+			}
+		}
+
 		if (MandateExtension.PARTNER_BANK_REQ
 				&& !(InstrumentType.isDAS(mandate.getMandateType()) || InstrumentType.isSI(mandate.getMandateType()))) {
 			if (mandate.getPartnerBankId() == null || mandate.getPartnerBankId() <= 0) {

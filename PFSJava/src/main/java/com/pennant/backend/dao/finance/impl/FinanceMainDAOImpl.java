@@ -2123,33 +2123,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return this.jdbcOperations.queryForObject(sql, String.class, finID);
 	}
 
-	@Override
-	public BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference) {
-		logger.debug(Literal.ENTERING);
-		// FIXME Need to convert this sum of, max of logic to java .since it is
-		// not supported by Postgresql
-		// // Prepare the SQL.
-		// StringBuilder sql = new StringBuilder("select
-		// coalesce(sum(max(RepayAmount)), 0) From FinScheduleDetails_View");
-		// sql.append(" where FinReference in (select FinReference From
-		// FinanceMain_View ");
-		// sql.append(" where MandateId = :MandateId and FinIsActive = 1 and
-		// FinReference != :FinReference)");
-		// sql.append(" group by FinReference");
-		//
-		// // Execute the SQL, binding the arguments.
-		// logger.debug(Literal.SQL + sql);
-		// MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		// paramSource.addValue("MandateId", mandateId);
-		// paramSource.addValue("FinReference", finReference);
-		//
-		// logger.debug(Literal.LEAVING);
-		// return jdbcTemplate.queryForObject(sql.toString(), paramSource,
-		// BigDecimal.class);
-		return BigDecimal.ZERO;
-	}
-
-	@Override
 	public List<FinanceMain> getFinMainsForEODByCustId(Customer customer) {
 		long custID = customer.getCustID();
 		String corBankID = customer.getCustCoreBank();

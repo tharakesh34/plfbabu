@@ -77,6 +77,8 @@ public interface MandateDAO {
 
 	BigDecimal getMaxRepayAmount(Long mandateID);
 
+	BigDecimal getMaxRepayAmount(String finReference);
+
 	boolean entityExistMandate(String entityCode, String type);
 
 	Mandate getMandateStatusById(String finReference, Long mandateID);
