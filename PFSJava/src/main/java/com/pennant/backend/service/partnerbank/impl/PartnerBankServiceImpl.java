@@ -96,6 +96,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 		if (partnerBank.isNewRecord()) {
 			partnerBankDAO.save(partnerBank, tableType);
+			partnerBankId = partnerBank.getPartnerBankId();
 			if (modes != null && modes.size() > 0) {
 				partnerBankDAO.deletePartner(partnerBank);
 				partnerBankDAO.saveList(modes, partnerBankId);
