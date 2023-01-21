@@ -28,7 +28,7 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 
 	@Override
 	public long save(FinSettlementHeader header, String tableType) {
-		if (header.getId() == Long.MIN_VALUE) {
+		if (header.getId() == Long.MIN_VALUE || header.getId() == 0) {
 			header.setId(getNextValue("seqSettlement"));
 		}
 

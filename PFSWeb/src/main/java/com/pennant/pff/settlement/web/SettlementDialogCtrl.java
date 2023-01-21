@@ -211,7 +211,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		this.settlementType.setValueColumn("id");
 		this.settlementType.setDescColumn("settlementCode");
 		this.settlementType.setDisplayStyle(2);
-		this.settlementType.setValidateColumns(new String[] { "id" });
+		this.settlementType.setValidateColumns(new String[] { "settlementCode" });
 
 		this.cancelReasonCode.setModuleName("SettlementCancelReasons");
 		this.cancelReasonCode.setValueColumn("Code");
@@ -385,6 +385,11 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		Date otsDate = this.otsDate.getValue();
+
+		if (otsDate == null) {
+			this.listBoxPastdues.getItems().clear();
+			return;
+		}
 		receiptData = settlementService.getDues(finReference.getValue(), otsDate);
 		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		formatter = CurrencyUtil.getFormat(fm.getFinCcy());

@@ -223,7 +223,7 @@ public class SettlementListCtrl extends GFCBaseListCtrl<FinSettlementHeader> {
 		this.type.setModuleName("SettlementTypeDetail");
 		this.type.setValueColumn("ID");
 		this.type.setDescColumn("SettlementCode");
-		this.type.setValidateColumns(new String[] { "ID" });
+		this.type.setValidateColumns(new String[] { "SettlementCode" });
 
 		logger.debug(Literal.LEAVING);
 	}

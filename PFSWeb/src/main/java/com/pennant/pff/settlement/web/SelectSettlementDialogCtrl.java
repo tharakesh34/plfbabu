@@ -161,6 +161,8 @@ public class SelectSettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader>
 
 		long finID = ComponentUtil.getFinID(this.finReference);
 
+		this.settlement.setFinID(finID);
+
 		String userRole = finMain.getNextRoleCode();
 
 		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finID, eventCode, null, userRole);

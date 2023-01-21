@@ -4466,7 +4466,7 @@
 		</property>
 	</bean>
 
-	<bean name="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" />
+	<bean id="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" />
 
 	<!--============ Finance Excess Amounts Details ============== -->
 	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl"
@@ -13234,7 +13234,9 @@
 		</property>
 	</bean>
 
-	<bean name="settlementServiceTarget" class="com.pennant.pff.settlement.service.impl.SettlementServiceImpl" />
+	<bean name="settlementServiceTarget" class="com.pennant.pff.settlement.service.impl.SettlementServiceImpl" >
+		<property name="receiptService" ref="receiptService" />
+	</bean>
 
 	<bean id="feeWaiverCancelService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">

@@ -375,6 +375,9 @@
 			<menuItem id="menu_Item_PANLetterMapping"
 				zulNavigation="/WEB-INF/pages/SystemMaster/PANMapping/CustTypePANMappingList.zul"
 				rightName="menuItem_applicationmaster_PANLetterMapping" />
+			<menuItem id="menu_Item_SettlementTypeDetails"
+				zulNavigation="/WEB-INF/pages/Settlement/SettlementTypeDetailList.zul"
+				rightName="menuItem_SettlementTypeDetailMaster_SettlementTypeDetail" />
 		</menu>
 		<menu id="menu_Item_Presentment">
 			<menuItem id="menuItem_Presentment_ExcludeCode"
@@ -404,9 +407,6 @@
 			<menuItem id="menu_Item_ProvinceMapping"
 				zulNavigation="/WEB-INF/pages/Interface/ProvinceMapping/ProvinceMappingList.zul"
 				rightName="menuItem_interface_ProvinceMapping" />
-			<menuItem id="menu_Item_SettlementTypeDetails"
-				zulNavigation="/WEB-INF/pages/Settlement/SettlementTypeDetailList.zul"
-				rightName="menuItem_SettlementTypeDetailMaster_SettlementTypeDetail" />
 		</menu>
 
 		<menuItem id="menu_Item_LovFieldDetail"
