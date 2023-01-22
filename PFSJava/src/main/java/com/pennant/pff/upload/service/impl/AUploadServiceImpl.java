@@ -14,6 +14,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.upload.dao.UploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
+import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
@@ -104,6 +105,11 @@ public abstract class AUploadServiceImpl implements UploadService {
 				header.setProgress(Status.REJECTED.getValue());
 			}
 		}
+	}
+
+	@Override
+	public ProcessRecord getProcessRecord() {
+		return null;
 	}
 
 	@Autowired

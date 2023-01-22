@@ -3639,13 +3639,13 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		boolean autoReceipt = ReceiptUtil.isAutoReceipt(receiptMode, productCategory);
 
-		if (!(ReceiptMode.isValidReceiptMode(receiptMode) || autoReceipt)) {
+		if ((!(ReceiptMode.isValidReceiptMode(receiptMode) && !fsi.isKnockOffReceipt()) || autoReceipt)) {
 			setError(schdData, "90281", "Receipt mode", ReceiptMode.getValidReceiptModes());
 			return;
 		}
 
 		String receiptChannel = fsi.getReceiptChannel();
-		if (!ReceiptMode.isValidReceiptChannel(receiptMode, receiptChannel)) {
+		if (!ReceiptMode.isValidReceiptChannel(receiptMode, receiptChannel) && !fsi.isKnockOffReceipt()) {
 			setError(schdData, "90281", "Channel", "OTC / MOB");
 			return;
 		}
@@ -3769,7 +3769,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		FinReceiptDetail rcd = rd.getReceiptHeader().getReceiptDetails().get(0);
 
 		if (fsi.isNewReceipt() && rcd.getFundingAc() != null && rcd.getFundingAc() <= 0
-				&& ReceiptMode.isFundingAccountReq(receiptMode)
+				&& ReceiptMode.isFundingAccountReq(receiptMode) && !fsi.isKnockOffReceipt()
 				|| (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE
 						&& ReceiptMode.CASH.equals(receiptMode))) {
 			if (!"MOB".equals(fsi.getReceiptChannel())) {
@@ -3789,7 +3789,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		boolean autoReceipt = ReceiptUtil.isAutoReceipt(receiptMode, productCategory);
-		if (!ReceiptMode.isOfflineMode(receiptMode) && !autoReceipt && StringUtils.isBlank(rcd.getTransactionRef())) {
+		if (!ReceiptMode.isOfflineMode(receiptMode) && !fsi.isKnockOffReceipt() && !autoReceipt
+				&& StringUtils.isBlank(rcd.getTransactionRef())) {
 			setError(schdData, "90281", "Transaction Reference");
 		}
 
@@ -3861,7 +3862,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		boolean alwCashMode = ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE;
 
 		if (!autoReceipt && fsi.isNewReceipt() && !ReceiptMode.isFundingAccountReq(receiptMode)
-				&& !ReceiptMode.CASH.equals(receiptMode) || (alwCashMode && fundingAccount > 0)) {
+				&& !fsi.isKnockOffReceipt() && !ReceiptMode.CASH.equals(receiptMode)
+				|| (alwCashMode && fundingAccount > 0)) {
 			String receipts = AccountConstants.PARTNERSBANK_RECEIPTS;
 			String finType = fm.getFinType();
 			if (finTypePartnerBankDAO.getPartnerBankCount(finType, receiptMode, receipts, fundingAccount) <= 0) {
@@ -7883,7 +7885,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		logMsg.append("=======================================================");
 		logMsg.append("\n");
 
-		logger.error(Literal.EXCEPTION, logMsg);
+		logger.error(Literal.EXCEPTION, logMsg.toString());
 
 		schdData.setErrorDetail(error);
 	}

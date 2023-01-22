@@ -363,6 +363,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String collectionAgency;
 	@XmlElement
 	private String division;
+	private boolean knockOffReceipt;
 
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction fsi = new FinServiceInstruction();
@@ -551,6 +552,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		fsi.setOverdraftChrgAmtOrPerc(this.overdraftChrgAmtOrPerc);
 		fsi.setFinAssetValue(this.finAssetValue);
 		fsi.setNumberOfTerms(this.numberOfTerms);
+		fsi.setKnockOffReceipt(this.knockOffReceipt);
 
 		fsi.setRecordStatus(super.getRecordStatus());
 		fsi.setRoleCode(super.getRoleCode());
@@ -1522,11 +1524,11 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		this.receiptChannel = receiptChannel;
 	}
 
-	public long getCollectionAgentId() {
+	public Long getCollectionAgentId() {
 		return collectionAgentId;
 	}
 
-	public void setCollectionAgentId(long collectionAgentId) {
+	public void setCollectionAgentId(Long collectionAgentId) {
 		this.collectionAgentId = collectionAgentId;
 	}
 
@@ -1824,6 +1826,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setOldShedules(List<FinanceScheduleDetail> oldShedules) {
 		this.oldShedules = oldShedules;
+	}
+
+	public boolean isKnockOffReceipt() {
+		return knockOffReceipt;
+	}
+
+	public void setKnockOffReceipt(boolean knockOffReceipt) {
+		this.knockOffReceipt = knockOffReceipt;
 	}
 
 }

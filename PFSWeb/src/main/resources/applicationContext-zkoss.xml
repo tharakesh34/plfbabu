@@ -6095,4 +6095,7 @@
 	parent="uploadList" />
 	
 	<bean id="chequeUploadListCtrl" class="com.pennant.pff.pdc.upload.list.PDCUploadListCtrl" parent="uploadList" />
+	
+	<bean id="manualKnockOffUploadListCtrl" class="com.pennant.pff.manualknockoff.upload.list.ManualKnockOffUploadListCtrl"
+	parent="uploadList" />
 </beans>
