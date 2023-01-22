@@ -6185,7 +6185,7 @@
 		<property name="financeMainService" ref="financeMainService"/>
 	</bean>
 	
-	<bean id="excessTransferUploadListCtrl" class="com.pennant.pff.excess.web.ExcessTransferUploadListCtrl"
+	<bean id="excessTransferUploadListCtrl" class="com.pennant.pff.excess.web.ExcessTransferUploadListCtrl" parent="uploadList"/>
 
 	<bean id="manualKnockOffUploadListCtrl" class="com.pennant.pff.manualknockoff.upload.list.ManualKnockOffUploadListCtrl"
 	parent="uploadList" />
