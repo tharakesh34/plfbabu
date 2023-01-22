@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.pff.core.TableType;
 
 public interface UploadService {
@@ -29,4 +30,6 @@ public interface UploadService {
 	void doReject(List<FileUploadHeader> headers);
 
 	String getSqlQuery();
+
+	ProcessRecord getProcessRecord();
 }

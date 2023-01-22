@@ -6186,5 +6186,7 @@
 	</bean>
 	
 	<bean id="excessTransferUploadListCtrl" class="com.pennant.pff.excess.web.ExcessTransferUploadListCtrl"
+
+	<bean id="manualKnockOffUploadListCtrl" class="com.pennant.pff.manualknockoff.upload.list.ManualKnockOffUploadListCtrl"
 	parent="uploadList" />
 </beans>

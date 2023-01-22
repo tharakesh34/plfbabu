@@ -1316,6 +1316,10 @@ public class FileUploadList extends Window implements Serializable {
 
 			engine.setParameterMap(parameterMap);
 
+			if (this.processDTO.getService().getProcessRecord() != null) {
+				engine.setProcessRecord(this.processDTO.getService().getProcessRecord());
+			}
+
 			try {
 				engine.importData(status.getName());
 

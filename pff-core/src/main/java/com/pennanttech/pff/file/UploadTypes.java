@@ -13,7 +13,9 @@ public enum UploadTypes {
 
 	CHEQUE("Cheque Upload Details Screen"),
 
-	EXCESS_TRANSFER("Excess Transfer Screen Details");
+	EXCESS_TRANSFER("Excess Transfer Screen Details"),
+	
+	MANUAL_KNOCKOFF("Manual KnockOff Upload Details Screen");
 
 	private String description;
 

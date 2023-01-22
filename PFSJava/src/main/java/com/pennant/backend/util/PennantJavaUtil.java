@@ -3918,7 +3918,11 @@ public class PennantJavaUtil {
 						new String[][] { { "AmountType", "0", "E" } }, 750));
 
 		ModuleUtil.register("ExcessTransferUpload",
-				new ModuleMapping("ExcessTransferUpload", FileUploadHeader.class,
+				new ModuleMapping("ExcessTransferUpload", FileUploadHeader.class,						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("ManualKnockOff",
+				new ModuleMapping("ManualKnockOff", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
 
