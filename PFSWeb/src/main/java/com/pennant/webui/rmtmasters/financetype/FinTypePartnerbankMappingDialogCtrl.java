@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -516,13 +517,21 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			}
 		}
 
-		if (enqiryModule) {
-			this.btnCtrl.setBtnStatus_Enquiry();
-			this.btnNotes.setVisible(false);
+		try {
+			// fill the components with the data
+            setDialog(DialogType.EMBEDDED);
+		} catch (UiException e) {
+			logger.error("Exception: ", e);
+			this.window_FinTypePartnerBankMappingDialog.onClose();
+		} catch (Exception e) {
+			throw e;
 		}
 
-		this.window_FinTypePartnerBankMappingDialog.doModal();
-
+		
+		 if (enqiryModule) {
+			 this.btnCtrl.setBtnStatus_Enquiry(); 
+			 this.btnNotes.setVisible(false); }
+		 
 		logger.debug(Literal.LEAVING);
 	}
 
