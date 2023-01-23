@@ -577,6 +577,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		this.purpose.setConstraint("");
 		this.paymentMode.setConstraint("");
 		this.partnerBankID.setConstraint("");
+		this.cluster.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -627,9 +628,13 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 	 */
 	private void doEdit() {
 		logger.debug(Literal.LEAVING);
+		if (getFinTypePartnerBank().isNewRecord()) {
+			this.finType.setReadonly(false);
+		} else {
+			this.finType.setReadonly(true);
+		}
 		doWriteBeanToComponents(finTypePartnerBank);
 
-		readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_finType"), this.finType);
 		readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_Purpose"), this.purpose);
 		readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_PaymentMode"), this.paymentMode);
 		readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_PartnerBankID"), this.partnerBankID);
