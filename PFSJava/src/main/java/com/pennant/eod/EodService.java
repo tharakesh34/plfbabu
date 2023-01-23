@@ -137,8 +137,10 @@ public class EodService {
 				continue;
 			}
 
-			pd.setExcessMovements(
-					finExcessAmountDAO.getExcessMovementList(pd.getId(), RepayConstants.RECEIPTTYPE_PRESENTMENT));
+			if (pd != null) {
+				pd.setExcessMovements(
+						finExcessAmountDAO.getExcessMovementList(pd.getId(), RepayConstants.RECEIPTTYPE_PRESENTMENT));
+			}
 
 			ReceiptDTO receiptDTO = new ReceiptDTO();
 			receiptDTO.setRequestSource(RequestSource.EOD);
