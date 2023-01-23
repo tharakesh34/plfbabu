@@ -366,7 +366,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		sql.append(" Left join (SELECT SUM(TOTPENALTYBAL) LPPDUE,SUM(LPIBAL)LPIDUE,FINID ");
 		sql.append(" FROM FINODDETAILS GROUP BY FINID)OD ON OD.FINID = PFT.FINID ");
 		sql.append(" LEFT JOIN (SELECT SUM(ADVISEAMOUNT - WAIVEDAMOUNT - PAIDAMOUNT) ADVDUE, FINID ");
-		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 2 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
+		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 1 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
 		sql.append(" WHERE PFT.FinId = ? Group by PFT.FINID");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -382,7 +382,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		sql.append(" LEFT JOIN (SELECT SUM(TOTPENALTYBAL) LPPDUE,SUM(LPIBAL)LPIDUE,FINID ");
 		sql.append(" FROM FINODDETAILS GROUP BY FINID)OD ON OD.FINID = PFT.FINID ");
 		sql.append(" LEFT JOIN (SELECT SUM(ADVISEAMOUNT - WAIVEDAMOUNT - PAIDAMOUNT) ADVDUE, FINID ");
-		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 2 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
+		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 1 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
 		sql.append(" INNER JOIN CUSTOMERS C ON C.CUSTID = PFT.CUSTID ");
 		// if(corebank) {/* Need add based on implementation of custcorebank functionality
 		// sql.append("WHERE pft.custid in");
