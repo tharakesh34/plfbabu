@@ -222,6 +222,12 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 		movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
 		movement.setAmount(finExcessTransfer.getTransferAmount());
 		finExcessAmountDAO.saveExcessMovement(movement);
+		finExcessTransfer.setRoleCode("");
+		finExcessTransfer.setNextRoleCode("");
+		finExcessTransfer.setTaskId("");
+		finExcessTransfer.setNextTaskId("");
+		finExcessTransfer.setWorkflowId(0);
+		finExcessTransfer.setStatus(ChequeSatus.REALISE);
 
 		long tranferToExcessId = 0;
 
@@ -234,23 +240,12 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 		excess.setBalanceAmt(finExcessTransfer.getTransferAmount());
 		excess.setReservedAmt(BigDecimal.ZERO);
 		excess.setReceiptID(finExcessTransfer.getId());
-		excess.setPostDate(finExcessTransfer.getTransferDate());
-		excess.setValueDate(SysParamUtil.getAppDate());
 		finExcessAmountDAO.saveExcess(excess);
 		tranferToExcessId = excess.getExcessID();
 
 		finExcessTransfer.setTransferToId(tranferToExcessId);
 		finExcessTransfer.setLinkedTranId(linkedTranId);
-
-		finExcessTransfer.setRoleCode("");
-		finExcessTransfer.setNextRoleCode("");
-		finExcessTransfer.setTaskId("");
-		finExcessTransfer.setNextTaskId("");
-		finExcessTransfer.setWorkflowId(0);
-		finExcessTransfer.setRecordType("");
-		finExcessTransfer.setStatus(ChequeSatus.REALISE);
-
-		finExcessTransferDAO.save(finExcessTransfer, TableType.MAIN_TAB);
+		getFinExcessTransferDAO().save(finExcessTransfer, TableType.MAIN_TAB);
 
 		FinExcessMovement toMovement = new FinExcessMovement();
 		toMovement.setExcessID(tranferToExcessId);
