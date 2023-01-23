@@ -10725,4 +10725,32 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#712_11" author="murthy.y">
+		<dropIndex tableName="CUSTOMERS" indexName="idx_customers_custcorebank"/>
+	</changeSet>
+	
+	<changeSet id="ST#712_11.1" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[	
+				CREATE INDEX IDX_CUSTOMERS_CUSTCOREBANK ON CUSTOMERS(NLSSORT("CUSTCOREBANK",'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#712_11.1" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[	
+				CREATE INDEX IDX_CUSTOMERS_CUSTCOREBANK ON CUSTOMERS(lower(CUSTCOREBANK));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#712_11.1" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				CREATE INDEX IDX_CUSTOMERS_CUSTCOREBANK ON CUSTOMERS(CUSTCOREBANK);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
