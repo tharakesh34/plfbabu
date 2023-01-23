@@ -6916,6 +6916,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			payType = RepayConstants.EXAMOUNTTYPE_CASHCLT;
 		} else if (StringUtils.equals(mode, ReceiptMode.DSF)) {
 			payType = RepayConstants.EXAMOUNTTYPE_DSF;
+		} else if (StringUtils.equals(mode, ReceiptMode.TEXCESS)) {
+			payType = RepayConstants.EXAMOUNTTYPE_TEXCESS;
 		}
 		return payType;
 	}
@@ -7262,6 +7264,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				break;
 			case RepayConstants.EXAMOUNTTYPE_DSF:
 				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_DSF);
+				break;
+			case RepayConstants.EXAMOUNTTYPE_TEXCESS:
+				rcd.setPaymentType(ReceiptMode.TEXCESS);
 				break;
 			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
 				rcd.setPaymentType(RepayConstants.EXCESSADJUSTTO_SETTLEMENT);

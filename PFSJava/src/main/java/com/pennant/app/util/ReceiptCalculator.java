@@ -4724,6 +4724,8 @@ public class ReceiptCalculator {
 			payType = ReceiptMode.CASHCLT;
 		} else if (ReceiptMode.DSF.equals(mode)) {
 			payType = ReceiptMode.DSF;
+		} else if (ReceiptMode.TEXCESS.equals(mode)) {
+			payType = ReceiptMode.TEXCESS;
 		} else {
 			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
 		}

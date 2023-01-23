@@ -2617,6 +2617,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			payType = RepayConstants.EXAMOUNTTYPE_CASHCLT;
 		} else if (ReceiptMode.DSF.equals(mode)) {
 			payType = RepayConstants.EXAMOUNTTYPE_DSF;
+		} else if (ReceiptMode.TEXCESS.equals(mode)) {
+			payType = RepayConstants.EXAMOUNTTYPE_TEXCESS;
 		} else {
 			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
 		}

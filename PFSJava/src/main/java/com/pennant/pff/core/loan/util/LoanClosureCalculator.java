@@ -102,7 +102,7 @@ public class LoanClosureCalculator {
 
 		for (FinanceScheduleDetail schedule : schedules) {
 			pos = pos.add(schedule.getPrincipalSchd());
-			pos = pos.subtract(schedule.getSchdPriPaid().add(schedule.getTDSAmount()));
+			pos = pos.subtract(schedule.getSchdPriPaid().add(schedule.getTDSAmount().subtract(schedule.getTDSPaid())));
 
 			if (valuedate.compareTo(schedule.getSchDate()) <= 0) {
 				pos = pos.subtract(schedule.getCpzAmount());
@@ -117,8 +117,8 @@ public class LoanClosureCalculator {
 
 		for (FinanceScheduleDetail schedule : schedules) {
 			if (schedule.getSchDate().compareTo(eodDate) <= 0) {
-				tillDatePftSchdBal = tillDatePftSchdBal
-						.add(schedule.getProfitSchd().subtract(schedule.getSchdPftPaid()));
+				tillDatePftSchdBal = tillDatePftSchdBal.add(schedule.getProfitSchd().subtract(
+						schedule.getSchdPftPaid().add(schedule.getTDSAmount().subtract(schedule.getTDSPaid()))));
 			}
 		}
 
@@ -145,6 +145,7 @@ public class LoanClosureCalculator {
 			if (eodDate.compareTo(prvSchdDate) > 0 && eodDate.compareTo(curSchDate) < 0) {
 				BigDecimal pftBal = CalculationUtil.calInterest(prvSchdDate, eodDate, curSchd.getBalanceForPftCal(),
 						curSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+				pftBal = pftBal.subtract(curSchd.getTDSAmount().subtract(curSchd.getTDSPaid()));
 
 				return CalculationUtil.roundAmount(pftBal, fm.getCalRoundingMode(), fm.getRoundingTarget());
 			}

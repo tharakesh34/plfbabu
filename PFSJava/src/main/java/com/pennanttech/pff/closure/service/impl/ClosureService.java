@@ -64,19 +64,23 @@ public class ClosureService {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			FinanceMain fm = finEODEvent.getFinanceMain();
+			BigDecimal receiptAmount = BigDecimal.ZERO;
+			BigDecimal excessAmt = getAvailableExcessAmt(finEODEvent);
 
 			if (!fm.isFinIsActive()) {
 				continue;
 			}
 
-			BigDecimal receiptAmount = BigDecimal.ZERO;
+			if (excessAmt.compareTo(BigDecimal.ZERO) == 0) {
+				continue;
+			}
+
 			ReceiptDTO receiptDTO = prepareReceiptRTO(finEODEvent);
 			receiptDTO.setCustomer(custEODEvent.getCustomer());
 
 			BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
-			BigDecimal excessAmt = getAvailableExcessAmt(finEODEvent);
 
-			if (calcClosureAmt.compareTo(BigDecimal.ZERO) == 0 || excessAmt.compareTo(BigDecimal.ZERO) == 0) {
+			if (calcClosureAmt.compareTo(BigDecimal.ZERO) == 0) {
 				continue;
 			}
 
@@ -107,9 +111,10 @@ public class ClosureService {
 			returnStatus.setReturnCode(error.getCode());
 			returnStatus.setReturnText(error.getError());
 			fd.setReturnStatus(returnStatus);
+			logger.info(finEODEvent.getFinanceMain().getFinReference() + ":" + error.getMessage());
 			return;
 		} else {
-			// updateTerminationExcessAmount(finEODEvent, calcClosureAmt);
+			updateTerminationExcessAmount(finEODEvent, calcClosureAmt);
 		}
 
 		logger.debug(Literal.ENTERING);
@@ -138,6 +143,7 @@ public class ClosureService {
 
 		FinReceiptDetail rcd = new FinReceiptDetail();
 		rcd.setReceivedDate(fm.getAppDate());
+		rcd.setValueDate(fm.getAppDate());
 		fsi.setReceiptDetail(rcd);
 
 		FinReceiptDetail rd = fsi.getReceiptDetail();
@@ -159,7 +165,7 @@ public class ClosureService {
 				|| ReceiptMode.DD.equals(paymentMode)) {
 			fsi.setRealizationDate(SysParamUtil.getAppDate());
 		} else {
-			fsi.setRealizationDate(SysParamUtil.getAppDate());
+			fsi.setRealizationDate(fm.getAppDate());
 		}
 		return fsi;
 	}
@@ -186,9 +192,7 @@ public class ClosureService {
 					utilized = excesAmt;
 					amount = BigDecimal.ZERO;
 					receiptAmt = receiptAmt.subtract(utilized);
-				}
-
-				if (excesAmt.compareTo(receiptAmt) >= 0) {
+				} else if (excesAmt.compareTo(receiptAmt) >= 0) {
 					balns = excesAmt.subtract(receiptAmt);
 					amount = balns;
 					utilized = receiptAmt;
