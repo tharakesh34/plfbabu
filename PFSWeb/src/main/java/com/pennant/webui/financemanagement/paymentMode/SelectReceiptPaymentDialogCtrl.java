@@ -558,7 +558,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				valuedate = fe.getValueDate();
 			}
 
-			if (this.receiptDate.getValue().compareTo(valuedate) < 0) {
+			if (valuedate != null && this.receiptDate.getValue().compareTo(valuedate) < 0) {
 				MessageUtil.showError(Labels.getLabel("label_knockoffValuedate",
 						new String[] { DateUtil.formatToShortDate(valuedate) }));
 			}
@@ -736,7 +736,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				valuedate = fe.getValueDate();
 			}
 
-			if (this.receiptDate.getValue().compareTo(valuedate) < 0) {
+			if (valuedate != null && this.receiptDate.getValue().compareTo(valuedate) < 0) {
 				MessageUtil.showError(Labels.getLabel("label_knockoffValuedate",
 						new String[] { DateUtil.formatToShortDate(valuedate) }));
 				return;

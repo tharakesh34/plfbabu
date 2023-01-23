@@ -208,7 +208,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	@XmlElement
 	private String receiptChannel;
 	@XmlElement
-	private long collectionAgentId = 0;
+	private Long collectionAgentId;
 	@XmlElement
 	private String receivedFrom;
 	@XmlElement

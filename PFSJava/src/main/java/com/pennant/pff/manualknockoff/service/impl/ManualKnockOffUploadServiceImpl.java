@@ -122,8 +122,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 		String excessType = detail.getExcessType();
 
-		if (!"E".equals(excessType)
-				|| !"A".equals(excessType) && detail.getAdviseId() != null && detail.getAdviseId() <= 0) {
+		if ((!"E".equals(excessType) && !"A".equals(excessType)) || detail.getAdviseId() == null
+				|| detail.getAdviseId() <= 0) {
 			setError(detail, ManualKnockOffUploadError.MKOU_108);
 			return;
 		}
@@ -169,7 +169,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			uad.setRootId(String.valueOf(alloc.getFeeId()));
 			uad.setAllocationType(allocationType);
 			uad.setReferenceCode(alloc.getCode());
-			uad.setPaidAmount(alloc.getAmount());
+			uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
 
 			receiptDataValidator.validateAllocations(uad);
 
@@ -180,6 +180,11 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 		}
+
+		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
+		detail.setErrorCode("");
+		detail.setErrorDesc("");
+
 	}
 
 	private void setError(ManualKnockOffUpload detail, ManualKnockOffUploadError error) {
@@ -210,11 +215,13 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 					doValidate(header, fc);
 					fc.setUserDetails(header.getUserDetails());
 
-					txStatus = transactionManager.getTransaction(txDef);
+					if (fc.getProgress() == EodConstants.PROGRESS_SUCCESS) {
+						txStatus = transactionManager.getTransaction(txDef);
 
-					createReceipt(fc, header.getEntityCode());
+						createReceipt(fc, header.getEntityCode());
 
-					transactionManager.commit(txStatus);
+						transactionManager.commit(txStatus);
+					}
 
 					if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
 						failRecords++;
@@ -288,7 +295,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			uad.setRootId(String.valueOf(alloc.getFeeId()));
 			uad.setAllocationType(Allocation.getCode(alloc.getCode()));
 			uad.setReferenceCode(alloc.getCode());
-			uad.setPaidAmount(alloc.getAmount());
+			uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
 
 			list.add(uad);
 		}

@@ -3668,7 +3668,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		boolean autoReceipt = ReceiptUtil.isAutoReceipt(receiptMode, productCategory);
 
-		if ((!(ReceiptMode.isValidReceiptMode(receiptMode) && !fsi.isKnockOffReceipt()) || autoReceipt)) {
+		if ((!(ReceiptMode.isValidReceiptMode(receiptMode)) && !fsi.isKnockOffReceipt() || autoReceipt)) {
 			setError(schdData, "90281", "Receipt mode", ReceiptMode.getValidReceiptModes());
 			return;
 		}
@@ -3779,7 +3779,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				setError(schdData, "90298", "Status ", parm1);
 			}
 		} else if (!ReceiptMode.DD.equals(receiptMode) && !ReceiptMode.CHEQUE.equals(receiptMode)
-				&& (RepayConstants.PAYSTATUS_REALIZED.equals(instructstatus))) {
+				&& (RepayConstants.PAYSTATUS_REALIZED.equals(instructstatus)) && !fsi.isKnockOffReceipt()) {
 			setError(schdData, "90298", "Status", RepayConstants.PAYSTATUS_APPROVED);
 		}
 	}
