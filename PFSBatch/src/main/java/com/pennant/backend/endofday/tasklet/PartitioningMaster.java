@@ -77,7 +77,6 @@ public class PartitioningMaster implements Partitioner {
 		boolean recordsLessThanThread = false;
 		/* Configured thread count */
 
-		/* Update Running Count of Loans */
 		eodCustomerQueueDAO.handleFailures(new BatchJobQueue());
 
 		long loanCount = eodCustomerQueueDAO.getQueueCount();

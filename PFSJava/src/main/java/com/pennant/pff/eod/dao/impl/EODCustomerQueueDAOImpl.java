@@ -92,7 +92,7 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 
 	@Override
 	public int getQueueCount() {
-		String sql = "Select Coalesce(count(Id), 0) From Eod_Customer_Queue";
+		String sql = "Select Coalesce(count(Id), 0) From Eod_Customer_Queue ecq Inner Join FinanceMain fm on fm.CustId = ecq.CustID Where fm.FinIsActive = 1";
 
 		logger.debug(Literal.SQL.concat(sql));
 
