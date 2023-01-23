@@ -1327,6 +1327,7 @@ public class FileUploadList extends Window implements Serializable {
 				engine.importData(status.getName());
 
 				if ("F".equals(status.getStatus())) {
+					update(uploadHeader, status);
 					throw new AppException(status.getRemarks());
 				}
 
@@ -1364,6 +1365,10 @@ public class FileUploadList extends Window implements Serializable {
 			uploadHeader.setRemarks(status.getRemarks());
 			uploadHeader.setExecutionID(status.getId());
 			uploadHeader.setDataEngineLog(status.getDataEngineLogList());
+
+			if (status.getId() <= 0) {
+				uploadHeader.setExecutionID(0);
+			}
 
 			this.processDTO.getService().update(uploadHeader);
 		}
