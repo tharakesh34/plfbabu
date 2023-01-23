@@ -10718,23 +10718,9 @@
 	<changeSet id="ST#713.40" author="sainaveen.y">
 		<sql>
 			<![CDATA[	
-				UPDATE RMTFINANCETYPES SET MAXPPCALTYPE = '#';
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#713.41" author="sainaveen.y">
-		<sql>
-			<![CDATA[	
-				UPDATE RMTFINANCETYPES SET MINPPCALTYPE = '#';
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#713.42" author="sainaveen.y">
-		<sql>
-			<![CDATA[	
-				UPDATE RMTFINANCETYPES SET MAXFPPCALTYPE = '#';
+				UPDATE RMTFINANCETYPES SET MAXPPCALTYPE = '#' WHERE MAXPPCALTYPE IS NULL;
+				UPDATE RMTFINANCETYPES SET MINPPCALTYPE = '#' WHERE MINPPCALTYPE IS NULL;
+				UPDATE RMTFINANCETYPES SET MAXFPPCALTYPE = '#' WHERE MAXFPPCALTYPE IS NULL;
 			]]>
 		</sql>
 	</changeSet>
