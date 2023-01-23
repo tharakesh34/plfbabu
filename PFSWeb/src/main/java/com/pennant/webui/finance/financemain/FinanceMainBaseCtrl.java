@@ -1683,7 +1683,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!financeMain.isNewRecord() && ImplementationConstants.ALLOW_LOAN_SPLIT) {
 			this.row_AllowLoanTypes.setVisible(true);
 		}
-		this.parentLoanReference.setButtonDisabled(true);
+		/* this.parentLoanReference.setButtonDisabled(true); */
 
 		this.parentLoanReference.setModuleName("FinanceMain");
 		this.parentLoanReference.setValueColumn("FinReference");
