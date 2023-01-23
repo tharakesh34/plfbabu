@@ -64,7 +64,7 @@
 									<label id="label_LoanTypePartnerbankMappingDialogue_FinType"
 										value="${c:l('label_LoanTypePartnerbankMappingDialogue_FinType.value')}" />
 									<listbox id="sortOperator_finType" width="43px" mold="select" rows="1" />
-									<uppercasebox id="finType" width="100px" maxlength="8" />
+									<extendedcombobox id="finType" />
 									<label id="label_LoanTypePartnerbankMappingDialogue_FinTypeDescription"
 										value="${c:l('label_LoanTypePartnerbankMappingDialogue_FinTypeDescription.value')}" />
 									<listbox id="sortOperator_finTypeDesc" width="43px" mold="select" rows="1" />

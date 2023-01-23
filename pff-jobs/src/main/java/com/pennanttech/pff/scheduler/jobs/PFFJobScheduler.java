@@ -246,12 +246,12 @@ public class PFFJobScheduler extends JobScheduler {
 		}
 
 		/**
-		 * 18. MANDATE_AUTO_DOWNLOAD_JOB
+		 * 18. MANDATE_AUTO_UPLOAD_JOB
 		 */
 		if (ImplementationConstants.MANDATE_AUTO_UPLOAD) {
 			args = new JobDataMap();
-			args.put("externalInterfaceService", getMandateProcess());
-			args.put("job", "MANDATES_ACK");
+			args.put("mandateProcess", getMandateProcess());
+			args.put("job", "MANDATES_IMPORT");
 
 			jobData = new JobData("MANDATE_AUTO_UPLOAD_JOB", AutoMandateUploadJob.class, args);
 			jobDataList.add(jobData);

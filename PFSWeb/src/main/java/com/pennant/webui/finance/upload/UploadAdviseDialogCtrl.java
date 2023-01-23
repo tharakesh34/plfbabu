@@ -758,10 +758,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		} else {
 			try {
 				advise = new BigDecimal(manualAdviseAmount);
-				if (advise.compareTo(BigDecimal.ZERO) < 1) {
-					throw new Exception("Advise amount can't be negative.");
-				}
 
+				if (advise.compareTo(BigDecimal.ZERO) < 1) {
+					throw new Exception("Advise amount should be greater than ZERO.");
+				}
 			} catch (NumberFormatException e) {
 				reason.append("Advise Amount is invalid.");
 				error = true;
@@ -1395,7 +1395,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		aUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aUploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aUploadHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 
