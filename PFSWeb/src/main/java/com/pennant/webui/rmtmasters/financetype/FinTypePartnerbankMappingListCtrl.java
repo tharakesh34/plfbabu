@@ -27,7 +27,6 @@ import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.component.Uppercasebox;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -61,7 +60,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	protected Button button_FinTypeParterbankMappingList_FinTypeParterbankMappingSearchDialog;
 
 	// Search Fields
-	protected Uppercasebox finType;
+	protected ExtendedCombobox finType;
 	protected Textbox finTypeDesc;
 	protected Combobox purpose;
 	protected Combobox paymentType;
@@ -162,6 +161,11 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 		this.partnerBank.setValueColumn("PartnerBankCode");
 		this.partnerBank.setDescColumn("PartnerBankName");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+
+		this.finType.setModuleName("FinanceType");
+		this.finType.setValueColumn("FinType");
+		this.finType.setDescColumn("FinTypeDesc");
+		this.finType.setValidateColumns(new String[] { "FinType" });
 
 		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			this.branchOrCluster.setModuleName("Branch");
