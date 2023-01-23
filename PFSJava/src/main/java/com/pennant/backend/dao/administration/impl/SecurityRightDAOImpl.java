@@ -121,9 +121,9 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 	@Override
 	public boolean isRightNameExists(String rightName) {
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("rightName", rightName);
+		paramSource.addValue("RightName", rightName);
 
-		String sql = QueryUtil.getCountQuery(new String[] { "SecRights" }, "rightName = :rightName ");
+		String sql = QueryUtil.getCountQuery(new String[] { "SecRights" }, "RightName = :RightName ");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -152,9 +152,10 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 
 	@Override
 	public void updateSeqSecRights() {
-		logger.debug(Literal.ENTERING);
-		String query = "UPDATE SEQSECRIGHTS SET SEQNO=(SELECT MAX(RIGHTID) FROM SECRIGHTS)";
-		this.jdbcTemplate.getJdbcOperations().update(query);
-		logger.debug(Literal.LEAVING);
+		String sql = "UPDATE SEQSECRIGHTS SET SEQNO=(SELECT MAX(RIGHTID) FROM SECRIGHTS)";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcTemplate.getJdbcOperations().update(sql);
 	}
 }

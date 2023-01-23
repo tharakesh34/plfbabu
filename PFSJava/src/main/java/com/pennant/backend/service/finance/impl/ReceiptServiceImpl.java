@@ -1032,7 +1032,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 				// Excess Amount make utilization
 				FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(receiptSeqID,
-						rcd.getPayAgainstID(), paymentType);
+						rcd.getPayAgainstID(), RepayConstants.RECEIPTTYPE_RECIPT);
 				if (exReserve == null
 						&& !StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 

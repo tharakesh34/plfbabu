@@ -2876,7 +2876,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 	}
 
-	public void onClickMaxLimit(Event event) {
+	public void onFulfill$maxLimit(Event event) {
 		this.amountInWords.setValue(amountInWords());
 	}
 

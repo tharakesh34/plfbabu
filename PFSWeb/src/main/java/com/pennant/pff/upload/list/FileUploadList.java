@@ -229,7 +229,8 @@ public class FileUploadList extends Window implements Serializable {
 		listhead.appendChild(getListHeader(Labels.getLabel("label_FailedRecords"), FLEX_MIN, ALIGN_RIGHT));
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_Progress"), FLEX_MIN));
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label.RecordStatus"), FLEX_MIN));
-		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_Download_VIEW"), FLEX_MIN));
+		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_Download"), FLEX_MIN));
+		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_VIEW"), FLEX_MIN));
 
 		box.appendChild(listhead);
 
@@ -1177,7 +1178,9 @@ public class FileUploadList extends Window implements Serializable {
 				lc = new Listcell();
 				lc.appendChild(dowButton);
 				lc.setParent(item);
-			} else {
+			}
+			
+			if (uph.getFailureRecords() > 0) {
 				Button viewButton = getButton(Labels.getLabel("label_Exceptions"), String.valueOf(id));
 				viewButton.addEventListener(Events.ON_CLICK, event -> onClickView(uph));
 
