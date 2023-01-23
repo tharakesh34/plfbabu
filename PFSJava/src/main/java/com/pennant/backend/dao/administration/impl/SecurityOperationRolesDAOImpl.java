@@ -145,21 +145,21 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 	 * @param securityOperationRoles(SecurityOperationRoles)
 	 */
 	@Override
-	public void save(SecurityOperationRoles securityOperationRoles, String type) {
-		logger.debug("Entering ");
+	public void save(SecurityOperationRoles sor, String type) {
+		sor.setId(getNextValue("SeqSecOperationRoles"));
 
-		securityOperationRoles.setId(getNextValue("SeqSecOperationRoles"));
-		logger.debug("get NextValue:" + securityOperationRoles.getOprRoleID());
-		StringBuilder insertSql = new StringBuilder("INSERT INTO SecOperationRoles");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append("(OprRoleID,OprID,RoleID,Version,LastMntBy");
-		insertSql.append(",LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
-		insertSql.append(" Values( :OprRoleID,:OprID,:RoleID,:Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode");
-		insertSql.append(",:NextRoleCode,:TaskId,:NextTaskId,:RecordType,:WorkflowId) ");
-		logger.debug("insertSql:" + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperationRoles);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving ");
+		StringBuilder sql = new StringBuilder("INSERT INTO SecOperationRoles");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("(OprRoleID, OprID, RoleID, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(:OprRoleID, :OprID, :RoleID, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode");
+		sql.append(",:NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sor);
+
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 	}
 
 	/**
