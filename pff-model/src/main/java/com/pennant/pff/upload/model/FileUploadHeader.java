@@ -43,6 +43,7 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 	private DataEngineStatus deStatus = new DataEngineStatus();
 	private String stage;
 	private List<DataEngineLog> dataEngineLog = new ArrayList<>();
+	private boolean threadInProcess = false;
 
 	public FileUploadHeader() {
 		super();
@@ -57,6 +58,7 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 		excludeFields.add("appDate");
 		excludeFields.add("deStatus");
 		excludeFields.add("stage");
+		excludeFields.add("threadInProcess");
 
 		return excludeFields;
 	}
@@ -243,6 +245,14 @@ public class FileUploadHeader extends AbstractWorkflowEntity {
 
 	public void setDataEngineLog(List<DataEngineLog> dataEngineLog) {
 		this.dataEngineLog = dataEngineLog;
+	}
+
+	public boolean isThreadInProcess() {
+		return threadInProcess;
+	}
+
+	public void setThreadInProcess(boolean threadInProcess) {
+		this.threadInProcess = threadInProcess;
 	}
 
 }

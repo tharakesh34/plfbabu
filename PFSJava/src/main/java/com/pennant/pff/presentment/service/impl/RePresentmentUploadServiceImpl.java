@@ -16,10 +16,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.applicationmaster.Entity;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -123,6 +119,7 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 				}
 			} finally {
 				txStatus = null;
+				headers.get(0).setThreadInProcess(false);
 			}
 
 		}).start();
@@ -168,8 +165,6 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 		logger.info("Validating the Data for the reference {}", detail.getReference());
 
 		Date appDate = header.getAppDate();
-
-		int appDateMonth = DateUtil.getMonth(appDate);
 
 		detail.setHeaderId(header.getId());
 

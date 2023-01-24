@@ -157,6 +157,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 					}
 				} finally {
 					txStatus = null;
+					headers.get(0).setThreadInProcess(false);
 				}
 			}
 		}).start();

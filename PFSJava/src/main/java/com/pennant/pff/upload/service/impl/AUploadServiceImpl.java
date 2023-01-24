@@ -58,7 +58,7 @@ public abstract class AUploadServiceImpl implements UploadService {
 				stage);
 
 		for (FileUploadHeader header : headerList) {
-			if (header.getSuccessRecords() == 0) {
+			if (header.getFailureRecords() > 0) {
 				header.setDataEngineLog(dataEngineConfig.getExceptions(header.getExecutionID()));
 			}
 		}

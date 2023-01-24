@@ -598,9 +598,12 @@ public class FileUploadList extends Window implements Serializable {
 			return;
 		}
 
+		logger.info("Waiting for Data Engine Response...");
 		do {
-			logger.info("Waiting for Data Engine Response...");
+			//
 		} while (this.fileUploadHeader.getId() <= 0);
+
+		logger.info("Received Data Engine Response...");
 
 		doSearch(true);
 
@@ -879,7 +882,16 @@ public class FileUploadList extends Window implements Serializable {
 			header.setLastMntBy(this.userId);
 			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		}
+
+		selectedHeaders.get(0).setThreadInProcess(true);
 		uploadService.doApprove(selectedHeaders);
+
+		logger.info("Waiting for Approval Thread Response...");
+		do {
+			//
+		} while (selectedHeaders.get(0).isThreadInProcess());
+
+		logger.info("Received the Approval Thread Response...");
 
 		doSearch(false);
 	}
