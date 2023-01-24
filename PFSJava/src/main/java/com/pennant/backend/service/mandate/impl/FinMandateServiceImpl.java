@@ -274,6 +274,10 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				break;
 			}
 
+			if (StringUtils.isNotBlank(mandate.getMandateRef())) {
+				mandate.setStatus(MandateStatus.APPROVED);
+			}
+
 			getDocument(mandate);
 
 			long mandateID = mandateDAO.save(mandate, tableType);
