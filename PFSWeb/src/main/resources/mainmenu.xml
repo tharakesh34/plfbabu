@@ -1225,11 +1225,32 @@
 				rightName="menu_Item_FeeWaiverUpload_Approver" />
 		</menu>
 		<menu id="menu_Category_ManualKnockOff">
-			<menuItem id="menu_Item_KnockOffUp_Maker" zulNavigation="/WEB-INF/pages/ManualKnockOff/Upload/ManualKnockOffUploadList.zul?stage=M"
+			<menuItem id="menu_Item_KnockOffUp_Maker"
+				zulNavigation="/WEB-INF/pages/ManualKnockOff/Upload/ManualKnockOffUploadList.zul?stage=M"
 				rightName="menu_Item_KnockOffUp_Maker" />
-			<menuItem id="menu_Item_KnockOffUp_Approver" zulNavigation="/WEB-INF/pages/ManualKnockOff/Upload/ManualKnockOffUploadList.zul?stage=A"
+			<menuItem id="menu_Item_KnockOffUp_Approver"
+				zulNavigation="/WEB-INF/pages/ManualKnockOff/Upload/ManualKnockOffUploadList.zul?stage=A"
 				rightName="menu_Item_KnockOffUp_Approver" />
 		</menu>
+
+		<menu id="menu_Category_HoldRefund">
+			<menuItem id="menu_Item_HoldRefundUpload_Maker"
+				zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=M"
+				rightName="menu_Item_HoldRefundUpload_Maker" />
+			<menuItem id="menu_Item_HoldRefundUpload_Approver"
+				zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=A"
+				rightName="menu_Item_HoldRefundUpload_Approver" />
+		</menu>
+
+		<menu id="menu_Category_ManualRefunds">
+			<menuItem id="menu_Item_ManualRefunds_Maker"
+				zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=M"
+				rightName="menu_Item_ManualRefUpload_Maker" />
+			<menuItem id="menu_Item_ManualRefunds_Approver"
+				zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=A"
+				rightName="menu_Item_ManualRefUpload_Approver" />
+		</menu>
+
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">
@@ -2519,23 +2540,5 @@
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
-
-	<menu id="menu_Category_HoldRefund">
-		<menuItem id="menu_Item_HoldRefundUpload_Maker"
-			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=M"
-			rightName="menu_Item_HoldRefundUpload_Maker" />
-		<menuItem id="menu_Item_HoldRefundUpload_Approver"
-			zulNavigation="/WEB-INF/pages/HoldRefund/HoldRefundUploadList.zul?stage=A"
-			rightName="menu_Item_HoldRefundUpload_Approver" />
-	</menu>
-
-	<menu id="menu_Category_ManualRefunds">
-		<menuItem id="menu_Item_ManualRefunds_Maker"
-			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=M"
-			rightName="menu_Item_ManualRefUpload_Maker" />
-		<menuItem id="menu_Item_ManualRefunds_Approver"
-			zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=A"
-			rightName="menu_Item_ManualRefUpload_Approver" />
-	</menu>
 
 </ns2:XMLRootMenu>

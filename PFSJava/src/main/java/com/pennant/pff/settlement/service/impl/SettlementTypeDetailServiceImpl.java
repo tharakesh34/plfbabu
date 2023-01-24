@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -12,6 +13,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.settlement.dao.SettlementDAO;
 import com.pennant.pff.settlement.dao.SettlementTypeDetailDAO;
 import com.pennant.pff.settlement.model.SettlementTypeDetail;
 import com.pennant.pff.settlement.service.SettlementTypeDetailService;
@@ -26,6 +28,7 @@ public class SettlementTypeDetailServiceImpl extends GenericService<SettlementTy
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private SettlementTypeDetailDAO settlementTypeDetailDAO;
+	private SettlementDAO settlementDAO;
 
 	public SettlementTypeDetailServiceImpl() {
 		super();
@@ -188,7 +191,18 @@ public class SettlementTypeDetailServiceImpl extends GenericService<SettlementTy
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_SettlementCode") + ": " + code;
 
-			ad.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			ad.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+		}
+
+		if (PennantConstants.RECORD_TYPE_DEL.equals(std.getRecordType())) {
+			boolean countrycount = settlementDAO.isSettlementTypeUsed(std.getId(), TableType.BOTH_TAB);
+			if (countrycount) {
+				String[] parameters = new String[1];
+				parameters[0] = Labels.getLabel("label_SettlementCode") + ": " + code;
+
+				ad.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
+
+			}
 		}
 
 		ad.setErrorDetails(ErrorUtil.getErrorDetails(ad.getErrorDetails(), usrLanguage));
@@ -205,6 +219,11 @@ public class SettlementTypeDetailServiceImpl extends GenericService<SettlementTy
 	@Autowired
 	public void setSettlementTypeDetailDAO(SettlementTypeDetailDAO settlementTypeDetailDAO) {
 		this.settlementTypeDetailDAO = settlementTypeDetailDAO;
+	}
+
+	@Autowired
+	public void setSettlementDAO(SettlementDAO settlementDAO) {
+		this.settlementDAO = settlementDAO;
 	}
 
 }

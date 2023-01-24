@@ -396,4 +396,30 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 			return header;
 		}
 	}
+
+	@Override
+	public boolean isSettlementTypeUsed(long settlementType, TableType tableType) {
+		Object[] parameters = new Object[] { settlementType };
+
+		String sql = new String();
+		String whereClause = " settlementType = ? ";
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("FIN_SETTLEMENT_HEADER", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("FIN_SETTLEMENT_HEADER_TEMP", whereClause);
+			break;
+		default:
+			parameters = new Object[] { settlementType, settlementType };
+			sql = QueryUtil.getCountQuery(new String[] { "FIN_SETTLEMENT_HEADER_TEMP", "FIN_SETTLEMENT_HEADER" },
+					whereClause);
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
+
+	}
 }

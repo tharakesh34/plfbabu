@@ -34,4 +34,6 @@ public interface SettlementDAO {
 
 	void updateSettlementStatus(long settlementHeaderID, String status);
 
+	boolean isSettlementTypeUsed(long settlementType, TableType tableType);
+
 }

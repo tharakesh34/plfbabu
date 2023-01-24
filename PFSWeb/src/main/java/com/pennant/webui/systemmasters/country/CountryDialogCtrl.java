@@ -429,12 +429,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		if (!this.countryCode.isReadonly()) {
 			this.countryCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_CountryDialog_CountryCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}
-
-		if (!this.countryCode.isReadonly()) {
-			this.countryCode.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CountryDialog_CountryCode.value"), null, true, 2, 2));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true, 2, 2));
 		}
 
 		if (!this.countryDesc.isReadonly()) {

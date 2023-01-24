@@ -1950,16 +1950,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			// readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"),
 			// this.fundingAccount);
 
-			String paymentType = "";
-			if (this.receiptMode.getSelectedItem().getValue().toString().equals("ONLINE")) {
+			String paymentType = this.receiptMode.getSelectedItem().getValue().toString();
+			if (paymentType.equals("ONLINE")) {
 				paymentType = this.subReceiptMode.getSelectedItem().getValue().toString();
-			} else {
-				paymentType = this.receiptMode.getSelectedItem().getValue().toString();
 			}
 
 			FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
 			if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
-				branchWisePartnerBank(recMode, finType);
+				branchWisePartnerBank(paymentType, finType);
 			} else {
 
 				Filter fundingAcFilters[] = new Filter[4];

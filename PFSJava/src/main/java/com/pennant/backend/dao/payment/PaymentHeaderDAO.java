@@ -70,4 +70,6 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 
 	boolean isRefundInQueue(long finId);
 
+	BigDecimal getDueAgainstselCustomer(long custId, String coreBankId, long finId);
+
 }

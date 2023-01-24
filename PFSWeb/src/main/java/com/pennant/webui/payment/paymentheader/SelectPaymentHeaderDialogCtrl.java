@@ -203,8 +203,8 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		}
 
 		paymentHeader.setOdAgainstLoan(paymentHeaderService.getDueAgainstLoan(finID));
-		paymentHeader.setOdAgainstCustomer(
-				paymentHeaderService.getDueAgainstCustomer(financeMain.getCustID(), paymentHeader.getCustCoreBank()));
+		paymentHeader.setOdAgainstCustomer(paymentHeaderService.getDueAgainstselCustomer(financeMain.getCustID(),
+				paymentHeader.getCustCoreBank(), finID));
 
 		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("paymentHeader", paymentHeader);

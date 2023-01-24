@@ -4377,15 +4377,15 @@ public class ScheduleCalculator {
 
 		finScheduleData = getRpyInstructDetails(finScheduleData);
 
-		/* Grace Schedule calculation */
-		finScheduleData = graceSchdCal(finScheduleData);
-
 		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
 				&& fm.getAdvTerms() > 0) {
 			fm.setAdjustClosingBal(true);
 			int idx = finScheduleData.getFinanceScheduleDetails().size() - fm.getAdvTerms() - 1;
 			fm.setRecalToDate(finScheduleData.getFinanceScheduleDetails().get(idx).getSchDate());
 		}
+
+		/* Grace Schedule calculation */
+		finScheduleData = graceSchdCal(finScheduleData);
 
 		if (isFirstRun) {
 			finScheduleData = prepareFirstSchdCal(finScheduleData);
@@ -7331,6 +7331,12 @@ public class ScheduleCalculator {
 			}
 
 			schdData = getRpyInstructDetails(schdData);
+
+			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
+					&& fm.getAdvTerms() > 0) {
+				fm.setAdjustClosingBal(true);
+			}
+
 			schdData = graceSchdCal(schdData);
 			schdData = repaySchdCal(schdData, false);
 
