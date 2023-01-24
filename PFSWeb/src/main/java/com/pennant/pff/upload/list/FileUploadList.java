@@ -601,7 +601,7 @@ public class FileUploadList extends Window implements Serializable {
 		logger.info("Waiting for Data Engine Response...");
 		do {
 			//
-		} while (this.fileUploadHeader.getId() <= 0);
+		} while (this.fileUploadHeader.getId() <= 0 && this.fileUploadHeader.getExecutionID() <= Long.MIN_VALUE);
 
 		logger.info("Received Data Engine Response...");
 
@@ -844,13 +844,20 @@ public class FileUploadList extends Window implements Serializable {
 			this.entityCode.setConstraint("");
 			this.entityCode.setErrorMessage("");
 			this.entityCode.setValue(null);
-			this.fileName.setValue("", "");
 
+			this.fileName.setValue("", "");
+			this.fromDate.setConstraint("");
+			this.fromDate.setErrorMessage("");
+
+			this.toDate.setConstraint("");
+			this.toDate.setErrorMessage("");
 			if ("M".equals(this.stage)) {
 				this.uploadFileName.setValue("");
 			}
 
-			doSearch(false);
+			if (this.fromDate.getValue() != null && this.toDate.getValue() != null) {
+				doSearch(false);
+			}
 			return;
 		}
 
@@ -1187,22 +1194,28 @@ public class FileUploadList extends Window implements Serializable {
 			lc = new Listcell(uph.getRecordStatus());
 			lc.setParent(item);
 
-			if (uph.getSuccessRecords() > 0) {
-				Button dowButton = getButton(Labels.getLabel("label_Download"), String.valueOf(id));
-				dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload(uph));
+			Button dowButton = getButton(Labels.getLabel("label_Download"), String.valueOf(id));
+			dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload(uph));
+			dowButton.setDisabled(false);
 
-				lc = new Listcell();
-				lc.appendChild(dowButton);
-				lc.setParent(item);
+			lc = new Listcell();
+			lc.appendChild(dowButton);
+			lc.setParent(item);
+
+			if (uph.getSuccessRecords() == 0) {
+				dowButton.setDisabled(true);
 			}
 
-			if (uph.getFailureRecords() > 0) {
-				Button viewButton = getButton(Labels.getLabel("label_Exceptions"), String.valueOf(id));
-				viewButton.addEventListener(Events.ON_CLICK, event -> onClickView(uph));
+			Button viewButton = getButton(Labels.getLabel("label_Exceptions"), String.valueOf(id));
+			viewButton.addEventListener(Events.ON_CLICK, event -> onClickView(uph));
+			viewButton.setDisabled(false);
 
-				lc = new Listcell();
-				lc.appendChild(viewButton);
-				lc.setParent(item);
+			lc = new Listcell();
+			lc.appendChild(viewButton);
+			lc.setParent(item);
+
+			if (uph.getFailureRecords() == 0 && uph.getProgress() == Status.IMPORTED.getValue()) {
+				viewButton.setDisabled(true);
 			}
 
 			item.setAttribute("id", id);
