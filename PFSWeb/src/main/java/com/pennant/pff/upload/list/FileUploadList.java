@@ -1355,6 +1355,9 @@ public class FileUploadList extends Window implements Serializable {
 			try {
 				engine.importData(status.getName());
 
+				DataEngineStatus latestStatus = engine.getLatestExecution(status.getName());
+				status.setDataEngineLogList(latestStatus.getDataEngineLogList());
+
 				if ("F".equals(status.getStatus())) {
 					update(uploadHeader, status);
 					throw new AppException(status.getRemarks());
