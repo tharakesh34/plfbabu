@@ -376,8 +376,6 @@ public class ImplementationConstants {
 	public static boolean INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS;
 	public static boolean DISBURSEMENT_AUTO_DOWNLOAD;
 	public static boolean DISBURSEMENT_AUTO_UPLOAD;
-	public static boolean MANDATE_AUTO_DOWNLOAD;
-	public static boolean MANDATE_AUTO_UPLOAD;
 	public static boolean PRESENTMENT_AUTO_DOWNLOAD;
 	public static boolean PRESENTMENT_AUTO_UPLOAD;
 	public static boolean VALIDATE_BENFICIARY_ACCOUNT;

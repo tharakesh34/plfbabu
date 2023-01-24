@@ -72,7 +72,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -293,7 +292,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		} else {
 			this.space_MandateType.setSclass("");
 		}
-		
+
 		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
 			if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
 				this.row_partnerBank.setVisible(true);
@@ -346,7 +345,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
 
-		if (ImplementationConstants.MANDATE_AUTO_DOWNLOAD
+		if (MandateExtension.AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD_JOB_ENABLED)) {
 			this.btnDownload.setDisabled(true);
 		}

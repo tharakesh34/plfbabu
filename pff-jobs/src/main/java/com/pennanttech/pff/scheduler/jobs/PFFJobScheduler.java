@@ -16,6 +16,7 @@ import com.pennant.backend.service.finance.covenant.impl.CovenantAlerts;
 import com.pennant.backend.service.finance.covenant.impl.PutCallAlerts;
 import com.pennant.backend.service.finance.lmsservicelog.impl.LMSServiceLogAlerts;
 import com.pennant.backend.service.financemanagement.impl.PresentmentJobService;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennanttech.pennapps.core.job.JobDataAccess;
 import com.pennanttech.pennapps.core.job.scheduler.JobData;
 import com.pennanttech.pennapps.core.job.scheduler.JobScheduler;
@@ -237,7 +238,7 @@ public class PFFJobScheduler extends JobScheduler {
 		/**
 		 * 17. MANDATE_AUTO_DOWNLOAD_JOB
 		 */
-		if (ImplementationConstants.MANDATE_AUTO_DOWNLOAD) {
+		if (MandateExtension.AUTO_DOWNLOAD) {
 			args = new JobDataMap();
 			args.put("externalInterfaceService", externalInterfaceService);
 
@@ -248,7 +249,7 @@ public class PFFJobScheduler extends JobScheduler {
 		/**
 		 * 18. MANDATE_AUTO_UPLOAD_JOB
 		 */
-		if (ImplementationConstants.MANDATE_AUTO_UPLOAD) {
+		if (MandateExtension.AUTO_UPLOAD) {
 			args = new JobDataMap();
 			args.put("mandateProcess", getMandateProcess());
 			args.put("job", "MANDATES_IMPORT");
@@ -260,7 +261,7 @@ public class PFFJobScheduler extends JobScheduler {
 		/**
 		 * 19. MANDATE_AUTO_UPLOAD_ACK_JOB
 		 */
-		if (ImplementationConstants.MANDATE_AUTO_UPLOAD) {
+		if (MandateExtension.AUTO_UPLOAD) {
 			args = new JobDataMap();
 			args.put("externalInterfaceService", getMandateProcess());
 			args.put("job", "MANDATES_ACK");
