@@ -85,4 +85,7 @@ public interface PaymentHeaderService {
 			int autoRefCheckDPD, boolean isEOD);
 
 	BigDecimal getInProgressExcessAmt(long finId, Long receiptId);
+
+	BigDecimal getDueAgainstselCustomer(long custId, String custCoreBank, long finId);
+
 }

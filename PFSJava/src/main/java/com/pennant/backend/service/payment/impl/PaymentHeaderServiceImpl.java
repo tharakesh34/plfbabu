@@ -273,6 +273,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	}
 
 	@Override
+	public BigDecimal getDueAgainstselCustomer(long custId, String custCoreBank, long finId) {
+		return paymentHeaderDAO.getDueAgainstselCustomer(custId, custCoreBank, finId);
+	}
+
+	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException {
 		logger.info(Literal.ENTERING);
 
