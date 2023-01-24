@@ -840,14 +840,18 @@ public class FileUploadList extends Window implements Serializable {
 			this.toDate.setValue(null);
 			this.fileName.setValue("", "");
 			listbox.clearSelection();
-		}
-
-		if (!isImport) {
+		} else {
+			this.entityCode.setConstraint("");
+			this.entityCode.setErrorMessage("");
 			this.entityCode.setValue(null);
+			this.fileName.setValue("", "");
 
 			if ("M".equals(this.stage)) {
 				this.uploadFileName.setValue("");
 			}
+
+			doSearch(false);
+			return;
 		}
 
 		if (!"M".equals(this.stage)) {
@@ -1191,7 +1195,7 @@ public class FileUploadList extends Window implements Serializable {
 				lc.appendChild(dowButton);
 				lc.setParent(item);
 			}
-			
+
 			if (uph.getFailureRecords() > 0) {
 				Button viewButton = getButton(Labels.getLabel("label_Exceptions"), String.valueOf(id));
 				viewButton.addEventListener(Events.ON_CLICK, event -> onClickView(uph));
