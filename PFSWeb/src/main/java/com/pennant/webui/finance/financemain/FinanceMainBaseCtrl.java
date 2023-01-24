@@ -8094,8 +8094,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Mandate tab
+		// Avoiding Mandatory validation while Resubmiting
 		Tab mandateTab = getTab(AssetConstants.UNIQUE_ID_MANDATE);
-		if (mandateDialogCtrl != null && mandateTab.isVisible()) {
+		if (mandateDialogCtrl != null && mandateTab.isVisible()
+				&& !this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
 			mandateDialogCtrl.doSave_Mandate(afd, mandateTab, recSave);
 		}
 
