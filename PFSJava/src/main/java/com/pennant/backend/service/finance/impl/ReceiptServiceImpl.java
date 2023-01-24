@@ -2029,6 +2029,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setNextTaskId("");
 		rch.setWorkflowId(0);
 
+		fm.setRcdMaintainSts("");
 		repaymentProcessUtil.doSaveReceipts(rch, scheduleData.getFinFeeDetailList(), true);
 		long receiptID = rch.getReceiptID();
 
