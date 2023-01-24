@@ -33,6 +33,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.configuration.VASConfigurationDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
@@ -47,6 +48,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -117,6 +119,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	private FinanceTypeDAO financeTypeDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldExtensionService extendedFieldExtensionService;
+	private VASConfigurationDAO vASConfigurationDAO;
 
 	public FeeReceiptServiceImpl() {
 		super();
@@ -952,6 +955,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				BigDecimal vasPaidFee = (BigDecimal) dataMap.get("ae_paidVasFee");
 				vasPaidFee = vasPaidFee.add(fd.getPaidAmountOriginal());
 				dataMap.put("ae_paidVasFee", vasPaidFee);
+				dataMap.put("VAS_P", vasPaidFee);
 				totPaidAmt = totPaidAmt.add(fd.getPaidAmount());
 				continue;
 			}
@@ -983,6 +987,31 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			}
 
 			totPaidAmt = totPaidAmt.add(fd.getPaidAmount());
+
+			List<VASConfiguration> vasProdutsList = this.vASConfigurationDAO.getVASConfigurations("_AView");
+
+			for (VASConfiguration vap : vasProdutsList) {
+				String vasProductCode = vap.getProductCode();
+				dataMap.put("VAS_" + vasProductCode + "_DD", BigDecimal.ZERO);
+				dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
+				dataMap.put("VAS_" + vasProductCode + "_W", BigDecimal.ZERO);
+				dataMap.put("VAS_" + vasProductCode + "_P", BigDecimal.ZERO);
+			}
+
+			String vasProductCode = fd.getVasProductCode();
+			if (AccountingEvent.VAS_FEE.equals(fd.getFinEvent())) {
+				if (fd.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+					dataMap.put("VAS_" + vasProductCode + "_DD", fd.getRemainingFee());
+					dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
+
+				} else {
+					dataMap.put("VAS_" + vasProductCode + "_DD", BigDecimal.ZERO);
+					dataMap.put("VAS_" + vasProductCode + "_AF", fd.getRemainingFee());
+				}
+
+				dataMap.put("VAS_" + vasProductCode + "_W", fd.getWaivedAmount());
+				dataMap.put("VAS_" + vasProductCode + "_P", fd.getActualAmount());
+			}
 		}
 
 		BigDecimal excessAmt = finReceiptHeader.getReceiptAmount().subtract(totPaidAmt);
@@ -1766,6 +1795,14 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public VASConfigurationDAO getvASConfigurationDAO() {
+		return vASConfigurationDAO;
+	}
+
+	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
+		this.vASConfigurationDAO = vASConfigurationDAO;
 	}
 
 }
