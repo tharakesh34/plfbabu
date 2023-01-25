@@ -120,11 +120,11 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 		registerField("FinType", listheader_FinType, SortOrder.NONE, finType, sortOperator_finType, Operators.STRING);
 		registerField("finTypeDesc", finTypeDesc, SortOrder.NONE, sortOperator_finTypeDesc, Operators.STRING);
 		registerField("BranchCode");
-		registerField("ClusterCode");
+		registerField("ClusterCode", listheader_BranchOrClster, SortOrder.NONE, branchOrCluster,
+				sortOperator_branchOrCluster, Operators.STRING);
 		registerField("BranchDesc");
 		registerField("Name");
-		registerField("ClusterId", listheader_BranchOrClster, SortOrder.NONE, branchOrCluster,
-				sortOperator_branchOrCluster, Operators.STRING);
+		registerField("ClusterId");
 		registerField("suspenseAc", listheader_SuspenseAc, SortOrder.NONE, suspenseAc, sortOperator_SuspenseAc,
 				Operators.STRING);
 
