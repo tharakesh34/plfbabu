@@ -126,7 +126,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	protected Textbox city;
 	protected Label cityName;
 
-	protected Textbox micr;
+	protected ExtendedCombobox micr;
 	protected Textbox ifsc;
 	protected Combobox chequeStatus;
 
@@ -343,6 +343,14 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.bankBranchID.setValidateColumns(new String[] { "BankBranchID" });
 		this.bankBranchID.setTextBoxWidth(100);
 
+		this.micr.setModuleName("CheckBankBranch");
+		this.micr.setValueColumn("MICR");
+		this.micr.setDisplayStyle(2);
+		this.micr.setValidateColumns(new String[] { "MICR" });
+		this.micr.setTextBoxWidth(100);
+
+		this.micr.setFilters(new Filter[] { new Filter("MICR", "", Filter.OP_NOT_EQUAL) });
+
 		this.chequeSerialNo.setMaxlength(6);
 		this.chequeSerialNo.setFormat("000000");
 
@@ -379,6 +387,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		doSetCustomerFilters();
 
 		this.customer.setReadonly(!this.includeCoAppCust.isChecked());
+
+		this.micr.setReadonly(!getUserWorkspace().isAllowed("ChequeDetailDialog_MICR"));
 
 		appendHeaderCheckbox();
 
@@ -1173,6 +1183,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			cd.setChequeSerialNo(chequeSerialNum++);
 			doFillBankBranch(cd);
 			cd.setAccountNo(this.accNumber.getValue());
+
+			cd.setAmount(BigDecimal.ZERO);
 
 			if (!InstrumentType.isSPDC(typeOfCheque)) {
 				cd.setAmount(PennantApplicationUtil.unFormateAmount(this.amount.getActualValue(), ccyEditField));
@@ -2824,6 +2836,44 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		} else {
 			listSPDCHeaderCheckBoxComp.setDisabled(true);
 		}
+	}
+
+	public void onFulfill$micr(Event event) {
+
+		logger.debug(Literal.ENTERING.concat(event.getName()));
+
+		Object dataObject = this.micr.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.accHolderName.setConstraint("");
+			this.city.setValue("");
+			this.micr.setValue("");
+			this.ifsc.setValue("");
+			this.cityName.setValue("");
+			this.accHolderName.setValue("");
+			this.accNumber.setValue("");
+			this.bankBranchID.setValue("");
+			this.bankBranchID.setDescription("");
+		} else {
+			BankBranch details = (BankBranch) dataObject;
+
+			this.bankBranchID.setAttribute(BANK_BRANCH_ID, details);
+			this.micr.setValue(details.getMICR());
+			this.ifsc.setValue(details.getIFSC());
+			this.city.setValue(details.getCity());
+			this.cityName.setValue(details.getPCCityName());
+			this.bankBranchID.setValue(details.getBranchCode());
+			this.bankBranchID.setDescription(details.getBankName());
+			if (StringUtils.isNotBlank(details.getBankName())) {
+				this.bankDetail = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+			}
+
+			if (bankDetail != null) {
+				this.accNumber.setMaxlength(this.bankDetail.getAccNoLength());
+			}
+		}
+
+		logger.debug(Literal.LEAVING.concat(event.getName()));
+
 	}
 
 	private boolean chequeDuplicate(ChequeDetail cd, String emiRefNum) {

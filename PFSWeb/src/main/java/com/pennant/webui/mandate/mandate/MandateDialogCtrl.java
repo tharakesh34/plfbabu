@@ -200,7 +200,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Textbox bank;
 	protected Textbox city;
 	protected Label cityName;
-	protected Textbox micr;
+	protected ExtendedCombobox micr;
 	protected Textbox ifsc;
 	protected Textbox accNumber;
 	protected Button btnFetchAccountDetails;
@@ -497,6 +497,19 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.bankBranchID.setValueColumn("BranchCode");
 		this.bankBranchID.setDescColumn("BranchDesc");
 		this.bankBranchID.setDisplayStyle(2);
+
+		this.micr.setFilters(new Filter[] { new Filter("MICR", "", Filter.OP_NOT_EQUAL) });
+
+		if (App.DATABASE == Database.POSTGRES) {
+			this.bankBranchID.setValueType(DataType.LONG);
+		}
+
+		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+
+		this.micr.setModuleName("BankBranch");
+		this.micr.setValueColumn("MICR");
+		this.micr.setDisplayStyle(2);
+		this.micr.setValidateColumns(new String[] { "MICR" });
 
 		if (App.DATABASE == Database.POSTGRES) {
 			this.bankBranchID.setValueType(DataType.LONG);
@@ -2313,6 +2326,39 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.accNumber.setMaxlength(maxAccNoLength);
 	}
 
+	public void onFulfill$micr(Event event) {
+		Object dataObject = this.micr.getObject();
+
+		if (dataObject == null || dataObject instanceof String) {
+			this.bank.setValue("");
+			this.city.setValue("");
+			this.micr.setValue("");
+			this.ifsc.setValue("");
+			this.cityName.setValue("");
+			this.bankBranchID.setValue("", "");
+
+			return;
+		}
+
+		BankBranch details = (BankBranch) dataObject;
+
+		this.bankBranchID.setAttribute("bankBranchID", details.getBankBranchID());
+		this.bankBranchID.setValue(details.getBranchCode(), details.getBranchDesc());
+		this.bank.setValue(details.getBankName());
+		this.micr.setValue(details.getMICR());
+		this.ifsc.setValue(details.getIFSC());
+		this.city.setValue(details.getCity());
+		this.cityName.setValue(details.getPCCityName());
+
+		if (StringUtils.isNotBlank(details.getBankCode())) {
+			BankDetail bankDetail = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+			maxAccNoLength = bankDetail.getAccNoLength();
+			minAccNoLength = bankDetail.getMinAccNoLength();
+		}
+
+		this.accNumber.setMaxlength(maxAccNoLength);
+	}
+
 	public void onFulfill$mandateRef(Event event) {
 		logger.debug(Literal.ENTERING);
 
@@ -2939,56 +2985,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.btnFetchAccountDetails.setDisabled(true);
 			}
 		}
-	}
-
-	public void onChange$micr(Event event) {
-		String micr = StringUtils.trimToNull(this.micr.getValue());
-
-		if (micr == null) {
-			this.bank.setValue("");
-			this.city.setValue("");
-			this.micr.setValue("");
-			this.ifsc.setValue("");
-			this.cityName.setValue("");
-			this.bankBranchID.setValue("");
-			this.bankBranchID.setDescription("");
-			return;
-		}
-
-		doSetBankDetails(micr);
-	}
-
-	private void doSetBankDetails(String micr) {
-		this.bank.setValue("");
-		this.city.setValue("");
-		this.micr.setValue("");
-		this.ifsc.setValue("");
-		this.cityName.setValue("");
-		this.bankBranchID.setValue("");
-		this.bankBranchID.setDescription("");
-
-		List<BankBranch> list = mandateService.getBankBranchByMICR(micr);
-
-		if (list.isEmpty()) {
-			MessageUtil.showError("MICR is not valid");
-			return;
-		}
-
-		if (list.size() > 1) {
-			MessageUtil.showError("Multiple Branches exists with same MICR, Please select the details through Branch.");
-			return;
-		}
-
-		BankBranch bb = list.get(0);
-
-		this.city.setValue(bb.getCity());
-		this.ifsc.setValue(bb.getIFSC());
-		this.bank.setValue(bb.getBankName());
-		this.micr.setValue(bb.getMICR());
-		this.bankBranchID.setAttribute("bankBranchID", bb.getBankBranchID());
-		this.cityName.setValue(bb.getPCCityName());
-		this.bankBranchID.setValue(bb.getBranchCode(), bb.getBranchDesc());
-
 	}
 
 	public void doFillManFinanceExposureDetails(List<FinanceEnquiry> manFinanceExposureDetails) {
