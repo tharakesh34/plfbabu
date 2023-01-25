@@ -110,11 +110,11 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 	@Override
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ru.FinReference, ru.TransferFromType, ru.TransferFromId,");
-		sql.append(", ru.TransferToType, ru.TransferToId, ru.TransferAmount");
+		sql.append(" ru.FinReference, ru.TransferFromType");
+		sql.append(", ru.TransferToType, ru.TransferAmount, ru.Progress, ru.Status, ru.ErrorCode, ru.ErrorDesc");
 		sql.append(" From EXCESS_TRANSFER_DETAILS_UPLOAD ru");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.ID = ru.HeaderID");
-		sql.append(" Where uh.ID = :HEADER_ID");
+		sql.append(" Where uh.ID = ru.HeaderID");
 
 		return sql.toString();
 	}
