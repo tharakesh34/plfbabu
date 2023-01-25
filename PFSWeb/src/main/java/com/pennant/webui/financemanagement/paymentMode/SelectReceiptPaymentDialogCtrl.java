@@ -278,7 +278,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.referenceId.setFilters(filter);
 
 		if (StringUtils.equals(getComboboxValue(knockOffFrom), ReceiptMode.EXCESS)) {
-			this.referenceId.setModuleName("Excess");
+			this.referenceId.setModuleName("FinExcess");
 			this.referenceId.setValueColumn("ExcessID");
 			this.referenceId.setDescColumn("BalanceAmt");
 			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
