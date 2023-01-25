@@ -49,7 +49,10 @@
 											style="margin-left:10px;display:inline-block;padding-top:3px;" />
 									</hbox>
 								</row>
-								
+								<row>
+									<label value="${c:l('label_SelectMandate_CustCoreBank.value')}" />
+									<textbox id="custCoreBank" width="150px" />
+								</row>
 								<row>
 									<label value="${c:l('label_SelectMandate_Finreference.value')}"
 										style="padding-left:12px;" />

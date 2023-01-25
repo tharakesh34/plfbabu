@@ -928,6 +928,29 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public Customer getCustomer(String cif) {
+		String sql = "Select CustID, CustCIF, CustCoreBank, CustShrtName From Customers Where CustCIF = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, i) -> {
+				Customer c = new Customer();
+
+				c.setCustID(rs.getLong("CustID"));
+				c.setCustCIF(rs.getString("CustCIF"));
+				c.setCustCoreBank(rs.getString("CustCoreBank"));
+				c.setCustShrtName(rs.getString("CustShrtName"));
+
+				return c;
+			}, cif);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public Customer getCustomerCoreBankID(String custCoreBank) {
 		String sql = "Select CustID, CustCIF, CustCoreBank, CustShrtName From Customers Where CustCoreBank = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -938,11 +961,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 				c.setCustID(rs.getLong("CustID"));
 				c.setCustCIF(rs.getString("CustCIF"));
-				c.setCustCIF(rs.getString("CustCoreBank"));
+				c.setCustCoreBank(rs.getString("CustCoreBank"));
 				c.setCustShrtName(rs.getString("CustShrtName"));
 
 				return c;
-			}, cif);
+			}, custCoreBank);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

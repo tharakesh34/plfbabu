@@ -726,6 +726,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return customerDAO.getCustomer(cif);
 	}
 
+	@Override
+	public Customer getCustomerCoreBankID(String custCoreBank) {
+		return customerDAO.getCustomerCoreBankID(custCoreBank);
+	}
+
 	/**
 	 * Get Customer and Customer Documents
 	 */

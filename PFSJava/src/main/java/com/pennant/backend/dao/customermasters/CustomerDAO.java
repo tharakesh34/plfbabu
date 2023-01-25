@@ -202,4 +202,6 @@ public interface CustomerDAO {
 	long getCustIDByCIF(String custCIF);
 
 	Customer getCustomerForAutoRefund(long custID);
+
+	Customer getCustomerCoreBankID(String cif);
 }

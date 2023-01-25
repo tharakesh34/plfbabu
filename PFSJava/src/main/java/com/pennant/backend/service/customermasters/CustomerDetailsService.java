@@ -126,4 +126,6 @@ public interface CustomerDetailsService {
 	List<FinanceEnquiry> setFinForCoApplicantAndGuarantor(CustomerDetails customerDetails);
 
 	long getCustIDByCIF(String custCIF);
+
+	Customer getCustomerCoreBankID(String custCoreBank);
 }
