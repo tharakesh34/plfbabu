@@ -356,7 +356,8 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 
 		List<ValueLabel> paymentModesList = new ArrayList<>();
 
-		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)) {
+		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)
+				|| StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_PAYMENT)) {
 			paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
 		} else {
 			paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
@@ -380,6 +381,8 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			this.cluster.setValue(aFinTypePartnerBank.getClusterCode());
 			this.cluster.setDescription(aFinTypePartnerBank.getName());
 		}
+		this.recordStatus.setValue(aFinTypePartnerBank.getRecordStatus());
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -717,7 +720,8 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 
 		List<ValueLabel> paymentModesList = new ArrayList<>();
 
-		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)) {
+		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)
+				|| StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_PAYMENT)) {
 			paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
 		} else {
 			paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
