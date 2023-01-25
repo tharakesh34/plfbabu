@@ -248,8 +248,8 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 				parameters[2] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_Purpose.value")
 						+ ": " + fpb.getPurpose();
 				parameters[3] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_PartnerBank.value")
-						+ ": " + fpb.getPartnerBankCode();
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+						+ ": " + fpb.getPartnerBankCode() + " is Already Exists";
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30550", parameters, null));
 			}
 		}
 
@@ -327,8 +327,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	}
 
 	@Override
-	public List<AuditDetail> setAuditData(List<FinTypePartnerBank> fpbList,
-			String auditTranType, String method) {
+	public List<AuditDetail> setAuditData(List<FinTypePartnerBank> fpbList, String auditTranType, String method) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
