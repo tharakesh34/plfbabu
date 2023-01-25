@@ -232,6 +232,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 				recordStatus = ss.getRecordStatus();
 				ss.setRecordType("");
 				ss.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				settlementScheduleDAO.delete(ss, "_Temp");
 			}
 
 			if (saveRecord) {
@@ -301,14 +302,10 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 				}
 			}
 
-			List<SettlementSchedule> settlementSchedules = settlement.getSettlementScheduleList();
-			if (CollectionUtils.isNotEmpty(settlementSchedules)
+			if (CollectionUtils.isNotEmpty(settlement.getSettlementScheduleList())
 					&& StringUtils.isBlank(settlement.getCancelReasonCode())) {
-				for (SettlementSchedule settlementSchedule : settlementSchedules) {
-					settlementSchedule.setSettlementHeaderID(settlement.getId());
-					settlementScheduleDAO.delete(settlementSchedule, "_Temp");
-					settlementScheduleDAO.save(settlementSchedule, "");
-				}
+				settlementScheduleList(settlement.getAuditDetailMap().get("SettlementSchedule"), "",
+						settlement.getId());
 			}
 
 		}
