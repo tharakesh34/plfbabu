@@ -945,6 +945,16 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		dataMap.put("ae_paidVasFee", BigDecimal.ZERO);
 		BigDecimal totPaidAmt = BigDecimal.ZERO;
 
+		List<VASConfiguration> vasProdutsList = this.vASConfigurationDAO.getVASConfigurations("_AView");
+		dataMap.put("VAS_P", BigDecimal.ZERO);
+		for (VASConfiguration vap : vasProdutsList) {
+			String vasProductCode = vap.getProductCode();
+			dataMap.put("VAS_" + vasProductCode + "_DD", BigDecimal.ZERO);
+			dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
+			dataMap.put("VAS_" + vasProductCode + "_W", BigDecimal.ZERO);
+			dataMap.put("VAS_" + vasProductCode + "_P", BigDecimal.ZERO);
+		}
+
 		for (FinFeeDetail fd : tempFinFeeDetails) {
 			if (!fd.isRcdVisible()) {
 				continue;
@@ -957,6 +967,20 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				dataMap.put("ae_paidVasFee", vasPaidFee);
 				dataMap.put("VAS_P", vasPaidFee);
 				totPaidAmt = totPaidAmt.add(fd.getPaidAmount());
+
+				String vasProductCode = fd.getVasProductCode();
+				if (fd.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+					dataMap.put("VAS_" + vasProductCode + "_DD", fd.getRemainingFee());
+					dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
+
+				} else {
+					dataMap.put("VAS_" + vasProductCode + "_DD", BigDecimal.ZERO);
+					dataMap.put("VAS_" + vasProductCode + "_AF", fd.getRemainingFee());
+				}
+
+				dataMap.put("VAS_" + vasProductCode + "_W", fd.getWaivedAmount());
+				dataMap.put("VAS_" + vasProductCode + "_P", fd.getPaidAmountOriginal());
+
 				continue;
 			}
 
@@ -987,31 +1011,6 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			}
 
 			totPaidAmt = totPaidAmt.add(fd.getPaidAmount());
-
-			List<VASConfiguration> vasProdutsList = this.vASConfigurationDAO.getVASConfigurations("_AView");
-
-			for (VASConfiguration vap : vasProdutsList) {
-				String vasProductCode = vap.getProductCode();
-				dataMap.put("VAS_" + vasProductCode + "_DD", BigDecimal.ZERO);
-				dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
-				dataMap.put("VAS_" + vasProductCode + "_W", BigDecimal.ZERO);
-				dataMap.put("VAS_" + vasProductCode + "_P", BigDecimal.ZERO);
-			}
-
-			String vasProductCode = fd.getVasProductCode();
-			if (AccountingEvent.VAS_FEE.equals(fd.getFinEvent())) {
-				if (fd.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-					dataMap.put("VAS_" + vasProductCode + "_DD", fd.getRemainingFee());
-					dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
-
-				} else {
-					dataMap.put("VAS_" + vasProductCode + "_DD", BigDecimal.ZERO);
-					dataMap.put("VAS_" + vasProductCode + "_AF", fd.getRemainingFee());
-				}
-
-				dataMap.put("VAS_" + vasProductCode + "_W", fd.getWaivedAmount());
-				dataMap.put("VAS_" + vasProductCode + "_P", fd.getActualAmount());
-			}
 		}
 
 		BigDecimal excessAmt = finReceiptHeader.getReceiptAmount().subtract(totPaidAmt);
