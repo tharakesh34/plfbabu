@@ -2811,7 +2811,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 	}
 
-	public void onChange$maxLimit(Event event) {
+	public void onFulfill$maxLimit(Event event) {
 		this.amountInWords.setValue(AmtInitialCap());
 	}
 
