@@ -363,7 +363,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
 		}
 
-		fillComboBox(this.paymentMode, "", paymentModesList, "");
+		fillComboBox(this.paymentMode, aFinTypePartnerBank.getPaymentMode(), paymentModesList, "");
 
 		setPartnerBankProperties();
 
