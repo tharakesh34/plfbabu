@@ -79,7 +79,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 
 	private transient FinTypePartnerBankService finTypePartnerBankService;
 	List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
-	List<ValueLabel> paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
+	List<ValueLabel> paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
 
 	/**
 	 * default constructor.<br>
