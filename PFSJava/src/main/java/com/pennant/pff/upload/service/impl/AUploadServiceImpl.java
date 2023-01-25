@@ -16,6 +16,7 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
 
@@ -64,6 +65,11 @@ public abstract class AUploadServiceImpl implements UploadService {
 		}
 
 		return headerList;
+	}
+
+	@Override
+	public DataEngineStatus getDEStatus(long executionID) {
+		return dataEngineConfig.getDataEngineStatus(executionID);
 	}
 
 	@Override

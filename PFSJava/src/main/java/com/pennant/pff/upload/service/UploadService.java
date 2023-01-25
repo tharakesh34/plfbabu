@@ -6,6 +6,7 @@ import java.util.List;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.dataengine.ProcessRecord;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.core.TableType;
 
 public interface UploadService {
@@ -32,4 +33,6 @@ public interface UploadService {
 	String getSqlQuery();
 
 	ProcessRecord getProcessRecord();
+
+	DataEngineStatus getDEStatus(long executionID);
 }

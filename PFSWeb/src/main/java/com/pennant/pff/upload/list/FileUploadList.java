@@ -1196,26 +1196,25 @@ public class FileUploadList extends Window implements Serializable {
 
 			Button dowButton = getButton(Labels.getLabel("label_Download"), String.valueOf(id));
 			dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload(uph));
-			dowButton.setDisabled(false);
+			dowButton.setDisabled(true);
 
 			lc = new Listcell();
 			lc.appendChild(dowButton);
 			lc.setParent(item);
 
-			if (uph.getSuccessRecords() == 0) {
-				dowButton.setDisabled(true);
-			}
-
 			Button viewButton = getButton(Labels.getLabel("label_Exceptions"), String.valueOf(id));
 			viewButton.addEventListener(Events.ON_CLICK, event -> onClickView(uph));
-			viewButton.setDisabled(false);
+			viewButton.setDisabled(true);
 
 			lc = new Listcell();
 			lc.appendChild(viewButton);
 			lc.setParent(item);
 
-			if (uph.getFailureRecords() == 0 && uph.getProgress() == Status.IMPORTED.getValue()) {
-				viewButton.setDisabled(true);
+			DataEngineStatus deStatus = uploadService.getDEStatus(uph.getExecutionID());
+
+			if (deStatus != null) {
+				dowButton.setDisabled(!((int) deStatus.getSuccessRecords() > 0));
+				viewButton.setDisabled(!((int) deStatus.getFailedRecords() > 0));
 			}
 
 			item.setAttribute("id", id);
