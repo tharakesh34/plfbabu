@@ -77,7 +77,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 	private String finDivision = null;
 
 	List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
-	List<ValueLabel> paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
+	List<ValueLabel> paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
 
 	private transient FinTypePartnerbankMappingListCtrl finTypeParterbankMappingListCtrl;
 	FinTypePartnerBankService finTypePartnerBankService;
@@ -519,7 +519,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 
 		try {
 			// fill the components with the data
-            setDialog(DialogType.EMBEDDED);
+			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_FinTypePartnerBankMappingDialog.onClose();
@@ -527,11 +527,11 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			throw e;
 		}
 
-		
-		 if (enqiryModule) {
-			 this.btnCtrl.setBtnStatus_Enquiry(); 
-			 this.btnNotes.setVisible(false); }
-		 
+		if (enqiryModule) {
+			this.btnCtrl.setBtnStatus_Enquiry();
+			this.btnNotes.setVisible(false);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
