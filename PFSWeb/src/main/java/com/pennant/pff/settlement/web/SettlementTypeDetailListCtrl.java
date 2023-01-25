@@ -35,6 +35,7 @@ public class SettlementTypeDetailListCtrl extends GFCBaseListCtrl<SettlementType
 	protected Listbox settlementTypeListBox;
 	protected Listheader lhCode;
 	protected Listheader lhDescription;
+	protected Listheader listheader_isActive;
 	protected Button btnNew;
 	protected Button btnSearch;
 	protected Textbox code;
@@ -69,7 +70,7 @@ public class SettlementTypeDetailListCtrl extends GFCBaseListCtrl<SettlementType
 		registerField("ID");
 		registerField("settlementCode", lhCode, SortOrder.NONE, code, soCode, Operators.STRING);
 		registerField("settlementDesc", lhDescription, SortOrder.NONE, description, soDescription, Operators.STRING);
-		registerField("active");
+		registerField("active", listheader_isActive, SortOrder.NONE);
 
 		doRenderPage();
 		search();
