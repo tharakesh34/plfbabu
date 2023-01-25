@@ -77,7 +77,6 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 	private String finDivision = null;
 
 	List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
-	List<ValueLabel> paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
 
 	private transient FinTypePartnerbankMappingListCtrl finTypeParterbankMappingListCtrl;
 	FinTypePartnerBankService finTypePartnerBankService;
@@ -352,7 +351,18 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		this.finType.setDescription(aFinTypePartnerBank.getFinTypeDesc());
 
 		fillComboBox(this.purpose, aFinTypePartnerBank.getPurpose(), purposeList, "");
-		fillComboBox(this.paymentMode, aFinTypePartnerBank.getPaymentMode(), paymentModesList, "");
+
+		String purposeValue = this.purpose.getSelectedItem().getValue();
+
+		List<ValueLabel> paymentModesList = new ArrayList<>();
+
+		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)) {
+			paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
+		} else {
+			paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
+		}
+
+		fillComboBox(this.paymentMode, "", paymentModesList, "");
 
 		setPartnerBankProperties();
 
@@ -705,10 +715,12 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 
 		String purposeValue = this.purpose.getSelectedItem().getValue();
 
+		List<ValueLabel> paymentModesList = new ArrayList<>();
+
 		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)) {
-			this.paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
+			paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
 		} else {
-			this.paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
+			paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
 		}
 
 		fillComboBox(this.paymentMode, "", paymentModesList, "");
