@@ -802,6 +802,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 	public FinSettlementHeader getSettlementByRef(String finReference, String type) {
 		FinSettlementHeader header = settlementDAO.getSettlementByRef(finReference, "_View");
 		header.setSettlementAllocationDetails(settlementDAO.getSettlementAllcDetailByHdrID(header.getId(), "_View"));
+		header.setSettlementScheduleList(settlementScheduleDAO.getSettlementScheduleDetails(header.getId(), "_View"));
 
 		return header;
 	}
