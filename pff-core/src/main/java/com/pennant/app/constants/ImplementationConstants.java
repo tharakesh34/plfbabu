@@ -336,6 +336,7 @@ public class ImplementationConstants {
 		DISB_STP = getValueAsBoolean(extensions, "DISB_STP", false);
 		LOAN_PURPOSE_MANDATORY = getValueAsBoolean(extensions, "LOAN_PURPOSE_MANDATORY", false);
 		GUARANTOR_EMAIL_MANDATORY = getValueAsBoolean(extensions, "GUARANTOR_EMAIL_MANDATORY", true);
+		ALLOW_IMD_WITHOUT_REALIZED = getValueAsBoolean(extensions, "ALLOW_IMD_WITHOUT_REALIZED", false);
 	}
 
 	public static boolean LIMIT_INTERNAL;
@@ -560,6 +561,7 @@ public class ImplementationConstants {
 	public static boolean CUSTOMER_PAN_VALIDATION_STOP;
 	public static boolean LOAN_PURPOSE_MANDATORY;
 	public static boolean GUARANTOR_EMAIL_MANDATORY;
+	public static boolean ALLOW_IMD_WITHOUT_REALIZED;
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis

@@ -12959,6 +12959,7 @@
    <!-- IMD Fee Validation -->
    <bean id="imdFeeService" class="com.pennant.pff.fee.service.IMDFeeService">
    		<property name="ruleDAO" ref="ruleDAO" />
+   		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
    </bean>
 
 </beans>
