@@ -50,8 +50,12 @@
 									</hbox>
 								</row>
 								<row>
-									<label value="${c:l('label_SelectMandate_CustCoreBank.value')}" />
-									<textbox id="custCoreBank" width="150px" />
+									<label value="${c:l('label_SelectMandate_CustCoreBank.value')}"
+										style="padding-left:12px;" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custCoreBank" width="150px" />
+									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_SelectMandate_Finreference.value')}"

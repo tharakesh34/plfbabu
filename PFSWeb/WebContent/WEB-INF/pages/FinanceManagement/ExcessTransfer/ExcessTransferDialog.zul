@@ -57,13 +57,6 @@
 				</north>
 
 				<center border="none">
-					<tabbox id="tabBoxIndexCenter" width="99%">
-						<tabs id="tabsIndexCenter">
-							<tab id="excessTransferDetailsTab"
-								label="${c:l('label_ExcessTransferDialog_ExcessTransferDetails')}" />
-						</tabs>
-						<tabpanels id="tabpanelsBoxIndexCenter">
-							<tabpanel style="overflow:auto" ca:data-scrollable="true">
 								<div>
 									<groupbox style="border:0px;">
 										<caption label="${c:l('label_ReceiptDialog_LoanSummary')}" />
@@ -164,9 +157,6 @@
 										</grid>
 									</groupbox>
 								</div>
-							</tabpanel>
-						</tabpanels>
-					</tabbox>
 				</center>
 				<south sclass="south-dialog">
 					<groupbox id="groupboxWf" width="99%">

@@ -56,7 +56,6 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -132,8 +131,6 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 	protected Combobox transferTo;
 	protected Longbox transferToId;
 	protected CurrencyBox transferAmount;
-
-	protected Tabbox tabBoxIndexCenter;
 
 	private CustomerDetailsService customerDetailsService;
 	private ExcessTransferService excessTransferService;
@@ -309,11 +306,8 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		this.excessReference.setMandatoryStyle(true);
 		this.transferAmount.setMandatory(true);
 		doWriteBeanToComponents(finExcessTransfer);
-		if (finExcessTransfer.isNewRecord()) {
-			this.window_ExcessTransferDialog.doModal();
-		} else {
-			setDialog(DialogType.EMBEDDED);
-		}
+
+		setDialog(DialogType.EMBEDDED);
 
 		logger.debug(Literal.LEAVING);
 
