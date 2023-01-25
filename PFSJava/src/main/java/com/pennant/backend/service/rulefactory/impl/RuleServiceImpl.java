@@ -314,28 +314,10 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				rule.setRecordType("");
 				getRuleDAO().save(rule, "");
 			} else {
-				if (rule.getRuleModule().equals(RuleConstants.MODULE_FEEPERC)) {
-
-					Rule ruleDts = new Rule();
-					BeanUtils.copyProperties(rule.getBefImage(), ruleDts);
-					ruleDts.setRecordType("");
-					ruleDts.setActive(false);
-					getRuleDAO().updateRuleByID(ruleDts, "");
-
-					rule.setId(Long.MIN_VALUE);
-					rule.setRecordType("");
-					long ruleId = getRuleDAO().save(rule, "");
-
-					rule.setId(ruleId);
-					auditHeader.setModelData(rule);
-					auditHeader.setAuditTranType(PennantConstants.TRAN_UPD);
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
-					rule.setRecordType("");
-					getRuleDAO().update(rule, "");
-					AccountingConfigCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
-				}
-
+				tranType = PennantConstants.TRAN_UPD;
+				rule.setRecordType("");
+				getRuleDAO().update(rule, "");
+				AccountingConfigCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
 			}
 		}
 
