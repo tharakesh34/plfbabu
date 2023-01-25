@@ -198,7 +198,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		}
 
 		if (FinanceConstants.FIN_HOLDSTATUS_HOLD.equals(financeMain.getHoldStatus())) {
-			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_WriteOffLoan"));
+			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_HoldLoan"));
 			return;
 		}
 
