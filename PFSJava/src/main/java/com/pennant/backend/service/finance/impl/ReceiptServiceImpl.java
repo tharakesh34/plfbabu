@@ -1588,11 +1588,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.ADVINT)
 					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.ADVEMI)
 					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.CASHCLT)
-					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.DSF)) {
+					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.DSF)
+					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.TEXCESS)) {
 
 				// Excess Amount make utilization
 				FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(receiptSeqID,
-						receiptDetail.getPayAgainstID(), tranType);
+						receiptDetail.getPayAgainstID(), RepayConstants.RECEIPTTYPE_RECIPT);
 				if (exReserve != null) {
 
 					// Update Reserve Amount in FinExcessAmount
