@@ -151,6 +151,7 @@ import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -248,6 +249,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
+import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
@@ -520,7 +522,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, "_AView", false));
 		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, "_AView", false));
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView"));
+
+		List<FinODPenaltyRate> penaltyRates = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView");
+		fm.setPenaltyRates(penaltyRates);
+		schdData.setFinODPenaltyRate(PenaltyCalculator.getEffectiveRate(valueDate, penaltyRates));
+
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 
 		if (custID != 0 && custID != Long.MIN_VALUE) {
@@ -651,9 +657,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					overdraftScheduleDetailDAO.getOverdraftScheduleDetails(finID, "", false));
 		}
 
+		List<FinODPenaltyRate> penaltyRates = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView");
+		fm.setPenaltyRates(penaltyRates);
+
 		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementForLMSEvent(finID));
 		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructionsForLMSEvent(finID));
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateForLMSEvent(finID));
+		schdData.setFinODPenaltyRate(PenaltyCalculator.getEffectiveRate(rch.getValueDate(), penaltyRates));
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -5305,9 +5314,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					overdraftScheduleDetailDAO.getOverdraftScheduleDetails(finID, "", false));
 		}
 
+		List<FinODPenaltyRate> penaltyRates = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView");
+		fm.setPenaltyRates(penaltyRates);
+
 		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, "_AView", false));
 		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, "_AView", false));
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView"));
+		schdData.setFinODPenaltyRate(PenaltyCalculator.getEffectiveRate(rch.getValueDate(), penaltyRates));
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 
 		if (custID != 0 && custID != Long.MIN_VALUE) {

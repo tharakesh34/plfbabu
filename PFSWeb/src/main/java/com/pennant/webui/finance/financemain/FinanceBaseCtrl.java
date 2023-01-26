@@ -2523,6 +2523,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 							CurrencyUtil.getFormat(aFinanceMain.getFinCcy())));
 				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS
+								.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(penaltyRate.getODChargeAmtOrPerc(), 2));
 				}
@@ -4963,6 +4965,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						&& !getComboboxValue(this.oDChargeType).equals(PennantConstants.List_Select)) {
 					if ((FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 							|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+							|| FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS
+									.equals(getComboboxValue(this.oDChargeType))
 							|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType)))
 							&& this.oDChargeAmtOrPerc.getValue().compareTo(new BigDecimal(100)) > 0) {
 						throw new WrongValueException(this.oDChargeAmtOrPerc,
@@ -4980,6 +4984,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 									.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
 				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS
+								.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					penaltyRate.setODChargeAmtOrPerc(CurrencyUtil.unFormat(this.oDChargeAmtOrPerc.getValue(), 2));
 				}

@@ -53,7 +53,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
@@ -112,9 +111,11 @@ import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.rits.cloning.Cloner;
 
 public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService implements FinanceMaintenanceService {
@@ -239,7 +240,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		fd.setIsraDetail(this.israDetailService.getIsraDetailsByRef(finReference, "_View"));
 
 		// Finance Overdue Penalty Rate Details
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, type));
+		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID, type));
 
 		fd.setDocumentDetailsList(documentDetailsDAO.getDocumentDetailsByRef(finReference, FinanceConstants.MODULE_NAME,
 				procEdtEvent, "_View"));
@@ -349,7 +350,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		penaltyRate.setFinID(finID);
 		penaltyRate.setFinReference(fm.getFinReference());
-		penaltyRate.setFinEffectDate(DateUtility.getSysDate());
+		penaltyRate.setFinEffectDate(SysParamUtil.getAppDate());
 
 		// Finance Main Details Save And Update
 		// =======================================
@@ -357,6 +358,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			financeMainDAO.save(fm, tableType, false);
 
 			// Finance Penalty OD Rate Details
+			finODPenaltyRateDAO.delete(penaltyRate.getFinID(), penaltyRate.getFinEffectDate(), tableType.getSuffix());
 			finODPenaltyRateDAO.save(penaltyRate, tableType.getSuffix());
 
 			if (finWriteoffPay != null) {
@@ -370,12 +372,39 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 			// Finance Penalty OD Rate Details
 			if (tableType == TableType.MAIN_TAB) {
-				FinODPenaltyRate oldPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
-				finODPenaltyRateDAO.saveLog(oldPenaltyRate, "_Log");
+				List<FinODPenaltyRate> list = finODPenaltyRateDAO.getFinODPenaltyRateByRef(penaltyRate.getFinID(), "");
 
-				finODPenaltyRateDAO.delete(finID, "");
-				finODPenaltyRateDAO.save(penaltyRate, tableType.getSuffix());
-				finODPenaltyRateDAO.delete(finID, "_Temp");
+				FinODPenaltyRate effectiveDue = null;
+				FinODPenaltyRate oldFinODRate = null;
+				boolean isExsist = false;
+
+				for (FinODPenaltyRate penalRate : list) {
+					if (ChargeType.PERC_ON_EFF_DUE_DAYS.equals(penalRate.getODChargeType())) {
+						effectiveDue = penalRate;
+
+						String newPenalityEffDate = DateUtil.formatToShortDate(penaltyRate.getFinEffectDate());
+						String finEffectDate = DateUtil.formatToShortDate(effectiveDue.getFinEffectDate());
+
+						if (effectiveDue != null && newPenalityEffDate.equals(finEffectDate)) {
+							isExsist = true;
+						}
+					} else {
+						oldFinODRate = penalRate;
+					}
+				}
+
+				if (isExsist) {
+					finODPenaltyRateDAO.saveLog(effectiveDue, "_Log");
+					finODPenaltyRateDAO.update(penaltyRate, "");
+				} else {
+					if (!ChargeType.PERC_ON_EFF_DUE_DAYS.equals(penaltyRate.getODChargeType())) {
+						finODPenaltyRateDAO.saveLog(oldFinODRate, "_Log");
+						finODPenaltyRateDAO.delete(oldFinODRate.getFinID(), oldFinODRate.getFinEffectDate(), "");
+						finODPenaltyRateDAO.delete(oldFinODRate.getFinID(), oldFinODRate.getFinEffectDate(), "_Temp");
+					}
+					finODPenaltyRateDAO.save(penaltyRate, "");
+					finODPenaltyRateDAO.delete(oldFinODRate.getFinID(), oldFinODRate.getFinEffectDate(), "_Temp");
+				}
 			} else {
 				finODPenaltyRateDAO.update(penaltyRate, tableType.getSuffix());
 			}
@@ -797,7 +826,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		// ScheduleDetails deletion
-		finODPenaltyRateDAO.delete(finID, "_Temp");
+		finODPenaltyRateDAO.delete(finID, fd.getFinScheduleData().getFinODPenaltyRate().getFinEffectDate(), "_Temp");
+
 		if (fd.getFinwriteoffPayment() != null) {
 			financeWriteoffDAO.deletefinWriteoffPayment(finID, fd.getFinwriteoffPayment().getSeqNo(), "_Temp");
 		}
@@ -950,12 +980,39 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		penaltyRate.setFinID(finID);
 		penaltyRate.setFinReference(finReference);
-		penaltyRate.setFinEffectDate(DateUtility.getSysDate());
+		penaltyRate.setFinEffectDate(SysParamUtil.getAppDate());
 
-		FinODPenaltyRate oldPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
-		if (oldPenaltyRate != null) {
-			finODPenaltyRateDAO.saveLog(oldPenaltyRate, "_Log");
-			finODPenaltyRateDAO.delete(finID, "");
+		List<FinODPenaltyRate> list = finODPenaltyRateDAO.getFinODPenaltyRateByRef(penaltyRate.getFinID(), "");
+
+		FinODPenaltyRate effectiveDue = null;
+		FinODPenaltyRate oldFinODRate = null;
+		boolean isExsist = false;
+
+		for (FinODPenaltyRate penalRate : list) {
+			effectiveDue = penalRate;
+
+			String newPenalityEffDate = DateUtil.formatToShortDate(penaltyRate.getFinEffectDate());
+			String finEffectDate = DateUtil.formatToShortDate(effectiveDue.getFinEffectDate());
+
+			if (effectiveDue != null && newPenalityEffDate.equals(finEffectDate)) {
+				isExsist = true;
+				break;
+			} else {
+				oldFinODRate = penalRate;
+			}
+		}
+
+		if (isExsist) {
+			finODPenaltyRateDAO.saveLog(effectiveDue, "_Log");
+			finODPenaltyRateDAO.delete(penaltyRate.getFinID(), penaltyRate.getFinEffectDate(), "_Temp");
+			finODPenaltyRateDAO.update(penaltyRate, "");
+		} else {
+			if (!ChargeType.PERC_ON_EFF_DUE_DAYS.equals(penaltyRate.getODChargeType())) {
+				finODPenaltyRateDAO.saveLog(oldFinODRate, "_Log");
+				finODPenaltyRateDAO.delete(oldFinODRate.getFinID(), oldFinODRate.getFinEffectDate(), "");
+				finODPenaltyRateDAO.delete(oldFinODRate.getFinID(), oldFinODRate.getFinEffectDate(), "_Temp");
+			}
+			finODPenaltyRateDAO.delete(penaltyRate.getFinID(), penaltyRate.getFinEffectDate(), "_Temp");
 			finODPenaltyRateDAO.save(penaltyRate, "");
 		}
 
@@ -1040,7 +1097,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
-		finODPenaltyRateDAO.delete(finID, "_Temp");
+		// finODPenaltyRateDAO.delete(finID, "_Temp");
 
 		if (fd.getFinwriteoffPayment() != null) {
 			financeWriteoffDAO.deletefinWriteoffPayment(finID, fd.getFinwriteoffPayment().getSeqNo(), "_Temp");

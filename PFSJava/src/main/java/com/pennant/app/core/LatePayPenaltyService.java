@@ -70,6 +70,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.eod.EODUtil;
+import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 
 public class LatePayPenaltyService extends ServiceHelper {
 
@@ -239,11 +240,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		List<OverdueChargeRecovery> odcrList = new ArrayList<>();
 
-		odcrList.add(getODChrgRecovery(fod, odDate, odDateIncGrc));
+		odcrList.add(getODChrgRecovery(fod, odDate, odDateIncGrc, fm));
 
 		Date grcDate = DateUtil.addDays(fod.getFinODSchdDate(), fod.getODGraceDays() + extnODGrcDays);
 
-		OverdueChargeRecovery odcRecovery = getODCRecovery(fod, valueDate, rpdList, odDate, odcrList, grcDate);
+		OverdueChargeRecovery odcRecovery = getODCRecovery(fod, valueDate, rpdList, odDate, odcrList, grcDate, fm);
 
 		BigDecimal totPenaltyPaid = fod.getTotPenaltyPaid();
 		BigDecimal totWaived = fod.getTotWaived();
@@ -253,7 +254,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		BigDecimal odPft = odcRecovery.getFinCurODPft();
 
 		if (ProductUtil.isOverDraft(fm)) {
-			odcRecovery = getODCRecovery(fod, valueDate, movements, odDate, odcrList, grcDate, odPri, odPft);
+			odcRecovery = getODCRecovery(fod, valueDate, movements, odDate, odcrList, grcDate, odPri, odPft, fm);
 		}
 
 		odPri = odcRecovery.getFinCurODPri();
@@ -271,6 +272,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odcr.setFinCurODPft(odPft);
 			odcr.setFinCurODTxnChrg(odChrg);
 			odcr.setFinCurODAmt(odPri.add(odPft).add(odChrg));
+			odcr.setoDChargeAmtOrPerc(PenaltyCalculator.getEffectiveODCharge(fm, odcr.getMovementDate()));
 
 			odcrList.add(odcr);
 		}
@@ -374,9 +376,13 @@ public class LatePayPenaltyService extends ServiceHelper {
 					penalty = fixedAmt.multiply(new BigDecimal(dueDays));
 				}
 			} else {
+				BigDecimal odChargeAmtOrPerc = fod.getODChargeAmtOrPerc();
+				if (FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS.equals(fod.getODChargeType())) {
+					odChargeAmtOrPerc = odcrCur.getoDChargeAmtOrPerc();
+				}
 				// Due Days accrual calculation
-				BigDecimal penaltyRate = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), 2,
-						RoundingMode.HALF_DOWN);
+
+				BigDecimal penaltyRate = odChargeAmtOrPerc.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN);
 				penalty = CalculationUtil.calInterest(datePrv, dateCur, balanceForCal, idb, penaltyRate);
 			}
 
@@ -421,7 +427,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 	}
 
 	private OverdueChargeRecovery identifyODCRecovery(List<OverdueChargeRecovery> odcrList, FinODDetails fod,
-			FinanceRepayments rpd, Date finValueDate, Date odDate) {
+			FinanceRepayments rpd, Date finValueDate, Date odDate, FinanceMain fm) {
 
 		OverdueChargeRecovery odcRecovery = new OverdueChargeRecovery();
 
@@ -436,6 +442,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				oldOdcr.setFinCurODAmt(oldOdcr.getFinCurODPri().add(oldOdcr.getFinCurODPft()));
 				oldOdcr.setPenaltyPaid(oldOdcr.getPenaltyPaid().add(rpd.getPenaltyPaid()));
 				oldOdcr.setWaivedAmt(oldOdcr.getWaivedAmt().add(rpd.getPenaltyWaived()));
+				oldOdcr.setoDChargeAmtOrPerc(PenaltyCalculator.getEffectiveODCharge(fm, oldOdcr.getMovementDate()));
 
 				odPri = oldOdcr.getFinCurODPri();
 				odPft = oldOdcr.getFinCurODPft();
@@ -456,6 +463,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 		odcr.setPenaltyPaid(rpd.getPenaltyPaid());
 		odcr.setWaivedAmt(rpd.getPenaltyWaived());
 
+		odcr.setoDChargeAmtOrPerc(PenaltyCalculator.getEffectiveODCharge(fm, odcr.getMovementDate()));
+
 		BigDecimal schdpaid = rpd.getFinSchdPriPaid().add(rpd.getFinSchdPftPaid());
 
 		if (schdpaid.compareTo(BigDecimal.ZERO) > 0) {
@@ -466,7 +475,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 	}
 
 	private OverdueChargeRecovery identifyODCRecovery(List<OverdueChargeRecovery> odcrList, FinODDetails fod,
-			BigDecimal paidAdviseAmt, Date finValueDate, Date odDate, BigDecimal odPri, BigDecimal odPft) {
+			BigDecimal paidAdviseAmt, Date finValueDate, Date odDate, BigDecimal odPri, BigDecimal odPft,
+			FinanceMain fm) {
 		OverdueChargeRecovery odcRecovery = new OverdueChargeRecovery();
 
 		BigDecimal odChrg = fod.getMaxOverdraftTxnChrg();
@@ -477,6 +487,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				oldOdcr.setFinCurODTxnChrg(oldOdcr.getFinCurODTxnChrg().subtract(paidAdviseAmt));
 				oldOdcr.setFinCurODAmt(
 						oldOdcr.getFinCurODPri().add(oldOdcr.getFinCurODPft()).add(oldOdcr.getFinCurODTxnChrg()));
+				oldOdcr.setoDChargeAmtOrPerc(PenaltyCalculator.getEffectiveODCharge(fm, oldOdcr.getMovementDate()));
 
 				odPri = oldOdcr.getFinCurODPri();
 				odPft = oldOdcr.getFinCurODPft();
@@ -496,6 +507,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		odcr.setFinCurODPft(odPft);
 		odcr.setFinCurODTxnChrg(odChrg.subtract(paidAdviseAmt));
 		odcr.setFinCurODAmt(odcr.getFinCurODPri().add(odcr.getFinCurODPft()).add(odcr.getFinCurODTxnChrg()));
+		odcr.setoDChargeAmtOrPerc(PenaltyCalculator.getEffectiveODCharge(fm, odcr.getMovementDate()));
 
 		if (paidAdviseAmt.compareTo(BigDecimal.ZERO) > 0) {
 			odcrList.add(odcr);
@@ -505,7 +517,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 	}
 
 	private OverdueChargeRecovery getODCRecovery(FinODDetails fod, Date valueDate, List<FinanceRepayments> rpdList,
-			Date odDate, List<OverdueChargeRecovery> odcrList, Date grcDate) {
+			Date odDate, List<OverdueChargeRecovery> odcrList, Date grcDate, FinanceMain fm) {
 
 		OverdueChargeRecovery odcRecovery = new OverdueChargeRecovery();
 
@@ -542,7 +554,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				continue;
 			}
 
-			odcRecovery = identifyODCRecovery(odcrList, fod, rpd, finValueDate, odDate);
+			odcRecovery = identifyODCRecovery(odcrList, fod, rpd, finValueDate, odDate, fm);
 
 			BigDecimal schdpaid = rpd.getFinSchdPriPaid().add(rpd.getFinSchdPftPaid());
 			if (odDate.compareTo(valueDate) == 0 && schdpaid.compareTo(BigDecimal.ZERO) > 0) {
@@ -558,7 +570,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	private OverdueChargeRecovery getODCRecovery(FinODDetails fod, Date valueDate,
 			List<ManualAdviseMovements> movements, Date odDate, List<OverdueChargeRecovery> odcrList, Date grcDate,
-			BigDecimal odPri, BigDecimal odPft) {
+			BigDecimal odPri, BigDecimal odPft, FinanceMain fm) {
 
 		OverdueChargeRecovery odcRecovery = new OverdueChargeRecovery();
 
@@ -588,7 +600,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				paidAdviseAmt = BigDecimal.ZERO;
 			}
 
-			odcRecovery = identifyODCRecovery(odcrList, fod, paidAdviseAmt, finValueDate, odDate, odPri, odPft);
+			odcRecovery = identifyODCRecovery(odcrList, fod, paidAdviseAmt, finValueDate, odDate, odPri, odPft, fm);
 
 			if (odDate.compareTo(valueDate) == 0 && paidAdviseAmt.compareTo(BigDecimal.ZERO) > 0) {
 				odcRecovery.setAddTodayRcd(false);
@@ -598,7 +610,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	}
 
-	private OverdueChargeRecovery getODChrgRecovery(FinODDetails fod, Date odDate, Date odDateIncGrc) {
+	private OverdueChargeRecovery getODChrgRecovery(FinODDetails fod, Date odDate, Date odDateIncGrc, FinanceMain fm) {
 		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
 
 		odcr.setFinReference(fod.getFinReference());
@@ -615,6 +627,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		odcr.setFinCurODPft(fod.getFinMaxODPft());
 		odcr.setFinCurODTxnChrg(fod.getMaxOverdraftTxnChrg());
 		odcr.setFinCurODAmt(fod.getFinMaxODPri().add(fod.getFinMaxODPft()).add(fod.getMaxOverdraftTxnChrg()));
+		odcr.setoDChargeAmtOrPerc(PenaltyCalculator.getEffectiveODCharge(fm, odcr.getMovementDate()));
 
 		return odcr;
 	}
@@ -657,6 +670,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odcr.setFinCurODPri(BigDecimal.ZERO);
 			odcr.setFinCurODPft(BigDecimal.ZERO);
 			odcr.setFinCurODAmt(BigDecimal.ZERO);
+			odcr.setoDChargeAmtOrPerc(PenaltyCalculator.getEffectiveODCharge(fm, odcr.getMovementDate()));
 			odcrList.add(odcr);
 		}
 

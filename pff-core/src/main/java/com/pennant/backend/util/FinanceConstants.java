@@ -34,6 +34,8 @@
 
 package com.pennant.backend.util;
 
+import com.pennanttech.pff.overdue.constants.ChargeType;
+
 /**
  * This stores all constants required for running the application
  */
@@ -108,14 +110,22 @@ public class FinanceConstants {
 	public static final String PAY_APPORTIONMENT_TO_SUSPENSE = "SUSPENSE";
 	public static final String PAY_APPORTIONMENT_TO_ALL = "ALL";
 
-	// Schedule Overdue Charge Types
-	public static final String PENALTYTYPE_NA = "N";
-	public static final String PENALTYTYPE_FLAT = "F";
-	public static final String PENALTYTYPE_PERC_ONETIME = "P";
-	public static final String PENALTYTYPE_PERC_ON_DUEDAYS = "D";
-	public static final String PENALTYTYPE_PERC_ON_PD_MTH = "M";
-	public static final String PENALTYTYPE_FLAT_ON_PD_MTH = "A";
-	public static final String PENALTYTYPE_RULEFXDD = "R";
+	@Deprecated
+	public static final String PENALTYTYPE_NA = ChargeType.NA;
+	@Deprecated
+	public static final String PENALTYTYPE_FLAT = ChargeType.FLAT;
+	@Deprecated
+	public static final String PENALTYTYPE_PERC_ONETIME = ChargeType.PERC_ONE_TIME;
+	@Deprecated
+	public static final String PENALTYTYPE_PERC_ON_DUEDAYS = ChargeType.PERC_ON_DUE_DAYS;
+	@Deprecated
+	public static final String PENALTYTYPE_PERC_ON_PD_MTH = ChargeType.PERC_ON_PD_MTH;
+	@Deprecated
+	public static final String PENALTYTYPE_FLAT_ON_PD_MTH = ChargeType.FLAT_ON_PD_MTH;
+	@Deprecated
+	public static final String PENALTYTYPE_RULEFXDD = ChargeType.RULE;
+	@Deprecated
+	public static final String PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS = ChargeType.PERC_ON_EFF_DUE_DAYS;
 
 	// Schedule Types
 	public static final String SCH_TYPE_SCHEDULE = "S";

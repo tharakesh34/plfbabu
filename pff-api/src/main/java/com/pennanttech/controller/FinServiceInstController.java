@@ -1326,20 +1326,35 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	}
 
-	/**
-	 * Method for updateLoanPenaltyDetails
-	 * 
-	 * @param finODPenaltyRate
-	 * @return WSReturnStatus
-	 */
-	public WSReturnStatus updateLoanPenaltyDetails(FinODPenaltyRate finODPenaltyRate) {
+	public WSReturnStatus updateLoanPenaltyDetails(FinODPenaltyRate pr) {
 		logger.debug(Literal.ENTERING);
 		try {
-			// save the OdPenaltyDetais
-			FinODPenaltyRate oldFinODPenaltyRate = finODPenaltyRateDAO
-					.getFinODPenaltyRateByRef(finODPenaltyRate.getFinID(), "");
-			finODPenaltyRateDAO.saveLog(oldFinODPenaltyRate, "_Log");
-			finODPenaltyRateDAO.update(finODPenaltyRate, "");
+			List<FinODPenaltyRate> list = finODPenaltyRateDAO.getFinODPenaltyRateByRef(pr.getFinID(), "");
+
+			FinODPenaltyRate effectiveDue = null;
+			FinODPenaltyRate otherDue = null;
+
+			for (FinODPenaltyRate penaltyRate : list) {
+				if ("E".equals(penaltyRate.getODChargeType())) {
+					effectiveDue = penaltyRate;
+					if (effectiveDue != null && effectiveDue.getFinEffectDate().compareTo(pr.getFinEffectDate()) == 0) {
+						finODPenaltyRateDAO.saveLog(effectiveDue, "_Log");
+						finODPenaltyRateDAO.update(pr, "");
+					} else {
+						finODPenaltyRateDAO.save(pr, "");
+					}
+				} else {
+					otherDue = penaltyRate;
+				}
+			}
+
+			if (otherDue != null) {
+				finODPenaltyRateDAO.saveLog(otherDue, "_Log");
+				finODPenaltyRateDAO.update(pr, "");
+				logger.debug(Literal.LEAVING);
+				return APIErrorHandlerService.getSuccessStatus();
+			}
+
 		} catch (Exception e) {
 			logger.error("Exception:" + e);
 			APIErrorHandlerService.logUnhandledException(e);

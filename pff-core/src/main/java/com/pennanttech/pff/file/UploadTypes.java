@@ -13,8 +13,10 @@ public enum UploadTypes {
 
 	CHEQUE("Cheque Upload Details Screen"),
 
+	LPP("Bulk Overdue Penalty Upload Details"),
+
 	EXCESS_TRANSFER("Excess Transfer Screen Details"),
-	
+
 	MANUAL_KNOCKOFF("Manual KnockOff Upload Details Screen");
 
 	private String description;

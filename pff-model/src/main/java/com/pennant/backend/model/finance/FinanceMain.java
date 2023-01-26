@@ -839,7 +839,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal sanBasedPft = BigDecimal.ZERO;
 	private String moduleDefiner;
 	private Date sanctionedDate;
-	private FinODPenaltyRate penaltyRate = null;
+	private List<FinODPenaltyRate> penaltyRates = null;
 	private boolean resetFromLastStep;
 	private boolean wifLoan = false;
 
@@ -1080,7 +1080,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("overdraftTxnChrgFeeType");
 		excludeFields.add("receiptChannel");
 		excludeFields.add("taxPercentages");
-		excludeFields.add("penaltyRate");
+		excludeFields.add("penaltyRates");
 		excludeFields.add("oldSchedules");
 		excludeFields.add("restructureDate");
 		excludeFields.add("effSchdMethod");
@@ -1582,7 +1582,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setReceiptChannel(this.receiptChannel);
 		entity.setSanctionedDate(this.sanctionedDate);
 		entity.setTaxPercentages(this.taxPercentages);
-		entity.setPenaltyRate(this.penaltyRate);
+		this.penaltyRates.stream().forEach(e -> entity.getPenaltyRates().add(e));
 		entity.setOldSchedules(this.oldSchedules);
 		entity.setRestructureDate(this.restructureDate);
 		entity.setEffSchdMethod(this.effSchdMethod);
@@ -5480,12 +5480,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.sanctionedDate = sanctionedDate;
 	}
 
-	public FinODPenaltyRate getPenaltyRate() {
-		return penaltyRate;
+	public List<FinODPenaltyRate> getPenaltyRates() {
+		return penaltyRates;
 	}
 
-	public void setPenaltyRate(FinODPenaltyRate penaltyRate) {
-		this.penaltyRate = penaltyRate;
+	public void setPenaltyRates(List<FinODPenaltyRate> penaltyRates) {
+		this.penaltyRates = penaltyRates;
 	}
 
 	public List<FinanceScheduleDetail> getOldSchedules() {

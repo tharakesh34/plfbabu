@@ -6189,4 +6189,7 @@
 
 	<bean id="manualKnockOffUploadListCtrl" class="com.pennant.pff.manualknockoff.upload.list.ManualKnockOffUploadListCtrl"
 	parent="uploadList" />
+	
+	<bean id="lppUploadList" class="com.pennant.pff.lpp.upload.list.LPPUploadListCtrl"
+	parent="uploadList" />
 </beans>

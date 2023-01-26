@@ -116,6 +116,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
+import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
@@ -1100,10 +1101,7 @@ public class ReceiptCalculator {
 		// Penalty Tax Details
 		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);
 
-		FinODPenaltyRate finODPenaltyRate = schdData.getFinODPenaltyRate();
-		if (finODPenaltyRate == null && finODPenaltyRateDAO != null) {
-			finODPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinID(), "_AView");
-		}
+		FinODPenaltyRate finODPenaltyRate = PenaltyCalculator.getEffectiveRate(reqMaxODDate, fm.getPenaltyRates());
 
 		if (ObjectUtils.isNotEmpty(finODPenaltyRate)
 				&& (!finODPenaltyRate.isoDTDSReq() || rd.getReceiptHeader().isExcldTdsCal())) {

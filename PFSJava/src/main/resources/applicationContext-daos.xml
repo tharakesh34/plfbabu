@@ -13306,4 +13306,6 @@
 	<bean id="manualKnockOffUploadDAO" class="com.pennant.pff.manualknockoff.dao.impl.ManualKnockOffUploadDAOImpl" parent="sequenceDao" />
 	
 	<bean id="manualKnockOffUploadProcessRecord" class = "com.pennant.pff.manualknockoff.service.impl.ManualKnockOffUploadProcessRecord"/>
+	
+	<bean id="lPPUploadService" class="com.pennant.pff.lpp.service.impl.LPPUploadServiceImpl" parent="aUploadService" />
 </beans>

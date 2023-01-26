@@ -699,16 +699,21 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 
 	@Override
 	public int getGraceDays(FinanceMain fm) {
-		FinODPenaltyRate penaltyRate = fm.getPenaltyRate();
+		List<FinODPenaltyRate> penaltyRates = fm.getPenaltyRates();
 
-		if (penaltyRate == null) {
-			penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinID(), "");
-			fm.setPenaltyRate(penaltyRate);
+		if (CollectionUtils.isEmpty(penaltyRates)) {
+			penaltyRates = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinID(), "");
+			fm.setPenaltyRates(penaltyRates);
 		}
 
-		if (penaltyRate == null) {
-			penaltyRate = new FinODPenaltyRate();
+		if (CollectionUtils.isEmpty(penaltyRates)) {
+			FinODPenaltyRate penaltyRate = new FinODPenaltyRate();
+			penaltyRates = new ArrayList<>();
+			penaltyRates.add(penaltyRate);
+			fm.setPenaltyRates(penaltyRates);
 		}
+
+		FinODPenaltyRate penaltyRate = penaltyRates.get(0);
 
 		if (penaltyRate.isODIncGrcDays()) {
 			return penaltyRate.getODGraceDays();
