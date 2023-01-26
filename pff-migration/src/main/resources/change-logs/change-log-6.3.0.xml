@@ -10854,4 +10854,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#216795" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET FILEEXTENSION = '.xlsx' WHERE NAME in ('CHEQUE_UPLOAD', 'CHEQUE_TEMPLATE', 'CHEQUE_DOWNLOAD');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
