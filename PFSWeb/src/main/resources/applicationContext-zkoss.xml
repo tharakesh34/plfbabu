@@ -3488,7 +3488,10 @@
 	</bean>	
 
 	<bean id="securityMandateDialogCtrl" class="com.pennant.webui.mandate.mandate.SecurityMandateDialogCtrl"
-		parent="basisCtrl" scope="prototype" />
+		parent="basisCtrl" scope="prototype" >
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
+		<property name="clusterService" ref="clusterService" />
+		</bean>
 
 
 	<bean id="mandateRegistrationDialogCtrl" class="com.pennant.webui.mandate.mandate.MandateDialogCtrl"

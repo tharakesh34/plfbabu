@@ -1943,6 +1943,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				} else if (partBank != null && partBank.getId() != 0) {
 					aMandate.setPartnerBankId(partBank.getId());
 				}
+			} else {
+				Object attribute = this.partnerBank.getAttribute("partnerBankId");
+
+				if (attribute != null) {
+					aMandate.setPartnerBankId(Long.valueOf(attribute.toString()));
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
