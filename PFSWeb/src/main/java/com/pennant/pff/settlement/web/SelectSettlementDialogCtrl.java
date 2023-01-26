@@ -31,7 +31,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -191,12 +190,7 @@ public class SelectSettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader>
 				}
 			}
 		} else if (StringUtils.isNotBlank(nextroleCode) && !nextroleCode.equals(userRole)) {
-			String[] errParm = new String[1];
-			String[] valueParm = new String[1];
-			valueParm[0] = fm.getFinReference();
-			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
-
-			MessageUtil.showError(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm).getError());
+			MessageUtil.showError("Not allowed to initiate the settlement as LAN is in maintanance.");
 
 			logger.debug(Literal.LEAVING);
 			return;
