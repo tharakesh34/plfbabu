@@ -49,7 +49,7 @@ public class Allocation {
 		case Allocation.BOUNCE:
 			return "B";
 		default:
-			return code;
+			return "M";
 		}
 	}
 }

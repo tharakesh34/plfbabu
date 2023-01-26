@@ -122,8 +122,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 		String excessType = detail.getExcessType();
 
-		if ((!"E".equals(excessType) && !"A".equals(excessType)) || detail.getAdviseId() == null
-				|| detail.getAdviseId() <= 0) {
+		if ((!"E".equals(excessType) && !"A".equals(excessType)) && detail.getAdviseId() == null
+				&& detail.getAdviseId() <= 0) {
 			setError(detail, ManualKnockOffUploadError.MKOU_108);
 			return;
 		}
@@ -283,7 +283,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		rud.setRealizationDate(appDate);
 		rud.setReceivedDate(appDate);
 		rud.setReceiptAmount(fc.getReceiptAmount());
-		rud.setExcessAdjustTo(fc.getExcessType());
+		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		rud.setReceiptMode(ReceiptMode.EXCESS);
 		rud.setReceiptPurpose("SP");
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
@@ -296,6 +296,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			uad.setAllocationType(Allocation.getCode(alloc.getCode()));
 			uad.setReferenceCode(alloc.getCode());
 			uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
+			uad.setPaidAmount(alloc.getAmount());
 
 			list.add(uad);
 		}
@@ -309,6 +310,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		fsi.setRequestSource(RequestSource.UPLOAD);
 		fsi.setLoggedInUser(fc.getUserDetails());
 		fsi.setKnockOffReceipt(true);
+		fsi.setAdviseId(fc.getAdviseId());
 
 		FinanceDetail fd = receiptService.receiptTransaction(fsi);
 

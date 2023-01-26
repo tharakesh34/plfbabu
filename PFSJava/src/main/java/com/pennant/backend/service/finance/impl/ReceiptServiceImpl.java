@@ -5856,6 +5856,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setReceiptDetail(rcd);
 		}
 
+		if (fsi.isKnockOffReceipt()) {
+			rcd.setPayAgainstID(fsi.getAdviseId());
+			rcd.setNoReserve(true);
+		}
+
 		rch.getReceiptDetails().add(rcd);
 		rcd.setValueDate(rd.getValueDate());
 		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);

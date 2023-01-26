@@ -1,5 +1,6 @@
 package com.pennant.pff.manualknockoff.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,11 +94,13 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 			}
 
 			alloc.setId(uploadID);
-			alloc.setCode(allocationType);
+			alloc.setCode(allocationType.toUpperCase());
 
 			String strAmount = cell.toString();
 			if (strAmount != null) {
 				alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+			} else {
+				alloc.setAmount(BigDecimal.ZERO);
 			}
 
 			allocations.add(alloc);
