@@ -3,7 +3,7 @@ package com.pennanttech.pff.file;
 public enum UploadTypes {
 	RE_PRESENTMENT("Representment Upload Details Screen"),
 
-	HOLD_REFUND("Hold Refund Upload Details Screen"),
+	HOLD_REFUND(""),
 
 	PAYINS_REFUND("Payment Instruction Refund"),
 
@@ -14,7 +14,7 @@ public enum UploadTypes {
 	CHEQUE("Cheque Upload Details Screen"),
 
 	EXCESS_TRANSFER("Excess Transfer Screen Details"),
-	
+
 	MANUAL_KNOCKOFF("Manual KnockOff Upload Details Screen");
 
 	private String description;

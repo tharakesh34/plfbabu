@@ -119,7 +119,6 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 				}
 			} finally {
 				txStatus = null;
-				headers.get(0).setThreadInProcess(false);
 			}
 
 		}).start();

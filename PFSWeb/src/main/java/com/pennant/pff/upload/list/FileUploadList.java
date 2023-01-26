@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -27,7 +28,6 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.A;
@@ -156,7 +156,6 @@ public class FileUploadList extends Window implements Serializable {
 	private void createBox() {
 		logger.debug(Literal.ENTERING);
 
-		window.appendChild(createToolBar());
 		window.appendChild(createBorderlayout());
 
 		try {
@@ -181,6 +180,7 @@ public class FileUploadList extends Window implements Serializable {
 		Center center = getCenter();
 
 		Div div = getDiv();
+		div.setSclass("z-toolbar;background:white");
 
 		if ("M".equals(this.stage)) {
 			div.appendChild(createUploadGroupBox());
@@ -237,43 +237,25 @@ public class FileUploadList extends Window implements Serializable {
 		return box;
 	}
 
-	public void onClickCheckBox(ForwardEvent event) {
-		logger.info(Literal.ENTERING.concat(event.getName()));
-
-		selectedHeaders = new ArrayList<>();
-
+	public void onClickListHeaderCheckBox() {
+		selectedHeaders.clear();
 		for (Listitem listitem : listbox.getItems()) {
 			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
+			cb.setChecked(this.checkBoxComp.isChecked());
+
 			if (cb.isChecked()) {
 				selectedHeaders.add((FileUploadHeader) listitem.getAttribute("data"));
 			}
 		}
 
 		checkBoxComp.setChecked(selectedHeaders.size() == listbox.getItems().size());
-		logger.info(Literal.LEAVING.concat(event.getName()));
-	}
-
-	public void onClickListHeaderCheckBox() {
-		for (Listitem listitem : listbox.getItems()) {
-			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
-
-			if (cb.isChecked()) {
-				selectedHeaders.add((FileUploadHeader) listitem.getAttribute("data"));
-			}
-
-			if (this.checkBoxComp.isChecked()) {
-				cb.setChecked(true);
-			} else {
-				cb.setChecked(false);
-			}
-		}
 	}
 
 	private Groupbox createDownloadGroupBox() {
 		Groupbox groupbox = getGroupBox();
 
 		if ("M".equals(this.stage)) {
-			groupbox.appendChild(getCapion("Download"));
+			groupbox.appendChild(getCaption("Download"));
 		}
 
 		Div div = getDiv();
@@ -287,7 +269,7 @@ public class FileUploadList extends Window implements Serializable {
 	private Groupbox createUploadGroupBox() {
 		Groupbox groupbox = getGroupBox();
 
-		groupbox.appendChild(getCapion("Upload"));
+		groupbox.appendChild(getCaption("Upload"));
 
 		Div div = getDiv();
 		div.appendChild(createUploadToolBar());
@@ -297,30 +279,18 @@ public class FileUploadList extends Window implements Serializable {
 		return groupbox;
 	}
 
-	private Div createToolBar() {
-		Hbox hbox = getHbox();
-		hbox.appendChild(getToolbar(ALIGN_START));
-		hbox.appendChild(getToolbar(ALIGN_CENTER, this.type.description()));
-		hbox.appendChild(getToolbar(ALIGN_END));
-
-		Div div = getDiv();
-		hbox.setParent(div);
-
-		return div;
-	}
-
 	private Hbox createUploadToolBar() {
 		FileUploadHeader fuph = new FileUploadHeader();
 		Hbox hbox = getHbox();
-		hbox.appendChild(
-				getHyperLinkInTB(ALIGN_START, "Download Template", Events.ON_CLICK, event -> downloadTemplate(fuph)));
+		hbox.appendChild(getToolbar(ALIGN_START));
 
 		Toolbar center = getButtonInTB(ALIGN_CENTER, "IMPORT", Events.ON_CLICK, event -> onClickButtonImport());
 		center.appendChild(getSpace("2px", false));
-		center.appendChild(getTollBarButton("REFRESH", Events.ON_CLICK, event -> onClickRefresh(false)));
+		center.appendChild(getTollBarButton("REFRESH", Events.ON_CLICK, event -> uploadRefresh()));
 		hbox.appendChild(center);
 
-		hbox.appendChild(getToolbar(ALIGN_END));
+		hbox.appendChild(
+				getHyperLinkInTB(ALIGN_END, "Download Template", Events.ON_CLICK, event -> downloadTemplate(fuph)));
 
 		return hbox;
 	}
@@ -339,7 +309,7 @@ public class FileUploadList extends Window implements Serializable {
 
 		Toolbar center = getButtonInTB(ALIGN_CENTER, "SEARCH", Events.ON_CLICK, event -> onClickSearch());
 		center.appendChild(getSpace("2px", false));
-		center.appendChild(getTollBarButton("REFRESH", Events.ON_CLICK, event -> onClickRefresh(true)));
+		center.appendChild(getTollBarButton("REFRESH", Events.ON_CLICK, event -> downloadRefresh()));
 		hbox.appendChild(center);
 
 		hbox.appendChild(getToolbar(ALIGN_END));
@@ -444,7 +414,7 @@ public class FileUploadList extends Window implements Serializable {
 		Button button = getButton(Labels.getLabel("btnBrowse.label"));
 		button.setUpload("true");
 		button.addEventListener(Events.ON_UPLOAD, event -> {
-			onClickRefresh(true);
+			downloadRefresh();
 
 			Media media = ((UploadEvent) event).getMedia();
 
@@ -571,10 +541,6 @@ public class FileUploadList extends Window implements Serializable {
 
 		this.entityCode.clearErrorMessage();
 
-		if (StringUtils.isEmpty(this.entityCode.getValue())) {
-			throw new WrongValueException(this.entityCode, "Entity Code cannot be blank");
-		}
-
 		DataEngineStatus status = new DataEngineStatus();
 		status.setName(this.type.name().concat("_UPLOAD"));
 		status.setFileName(this.fileUploadHeader.getFileName());
@@ -610,6 +576,28 @@ public class FileUploadList extends Window implements Serializable {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void search(boolean isApprove) {
+		List<FileUploadHeader> list = getUploadHeaders();
+
+		if (isApprove) {
+			list = sortedHeaders(list);
+		}
+
+		listbox.clearSelection();
+
+		if (!"M".equals(this.stage) && !list.isEmpty()) {
+			this.checkBoxComp.setDisabled(false);
+		}
+
+		list.forEach(h1 -> {
+			h1.setUserDetails(this.fileUploadHeader.getUserDetails());
+			h1.setStage(this.stage);
+		});
+
+		listWrapper.initList(list, listbox, paging);
+
+	}
+
 	private void doSearch(boolean upload) {
 		if (upload) {
 			this.fileName.setValue(String.valueOf(this.fileUploadHeader.getId()));
@@ -632,20 +620,7 @@ public class FileUploadList extends Window implements Serializable {
 
 			listWrapper.initList(list, listbox, paging);
 		} else {
-			List<FileUploadHeader> list = getUploadHeaders();
-
-			listbox.clearSelection();
-
-			if (!"M".equals(this.stage) && !list.isEmpty()) {
-				this.checkBoxComp.setDisabled(false);
-			}
-
-			list.forEach(h1 -> {
-				h1.setUserDetails(this.fileUploadHeader.getUserDetails());
-				h1.setStage(this.stage);
-			});
-
-			listWrapper.initList(list, listbox, paging);
+			search(false);
 		}
 
 		selectedHeaders = new ArrayList<>();
@@ -695,6 +670,20 @@ public class FileUploadList extends Window implements Serializable {
 				this.stage);
 	}
 
+	private List<FileUploadHeader> sortedHeaders(List<FileUploadHeader> headers) {
+		List<FileUploadHeader> list = new ArrayList<>();
+
+		List<Long> selectedIDs = selectedHeaders.stream().map(e -> e.getId()).collect(Collectors.toList());
+
+		for (FileUploadHeader header : headers) {
+			if (!selectedIDs.contains(header.getId())) {
+				list.add(header);
+			}
+		}
+
+		return list;
+	}
+
 	private void setConstraints() {
 		if ("M".equals(this.stage)) {
 			this.fromDate.setConstraint(new PTDateValidator("From Date", true));
@@ -702,6 +691,7 @@ public class FileUploadList extends Window implements Serializable {
 		} else {
 			this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
 		}
+		
 	}
 
 	private void doRemoveValidation() {
@@ -736,10 +726,14 @@ public class FileUploadList extends Window implements Serializable {
 	private void doWriteComponentsToBean(FileUploadHeader header) {
 		String name = this.uploadFileName.getValue();
 
+		List<WrongValueException> wve = new ArrayList<>();
+
+		setConstraints();
+
 		try {
 			ExcelUtil.isValidFile(name, 200, "^[a-zA-Z0-9 ._]*$");
 		} catch (AppException e) {
-			throw new WrongValueException(this.uploadFileName, e.getMessage());
+			wve.add(new WrongValueException(this.uploadFileName, e.getMessage()));
 		}
 
 		try {
@@ -748,9 +742,13 @@ public class FileUploadList extends Window implements Serializable {
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
 				header.setEntityCode(this.entityCode.getValue());
 			}
-		} catch (WrongValueException we) {
-			throw new WrongValueException(this.entityCode, we.getMessage());
+		} catch (WrongValueException e) {
+			wve.add(new WrongValueException(this.entityCode, e.getMessage()));
 		}
+
+		doRemoveValidation();
+
+		showErrorMessage(wve);
 
 		header.setFileName(name);
 
@@ -818,10 +816,52 @@ public class FileUploadList extends Window implements Serializable {
 	}
 
 	private void onClickSearch() {
-		doSearch(false);
+		search(false);
 	}
 
-	private void onClickRefresh(boolean isImport) {
+	private void uploadRefresh() {
+		headerRefresh();
+
+		this.entityCode.clearErrorMessage();
+		this.entityCode.setConstraint("");
+		this.entityCode.setErrorMessage("");
+
+		if ("M".equals(this.stage)) {
+			this.uploadFileName.setValue("");
+		}
+
+		if (this.fromDate.getValue() != null && this.toDate.getValue() != null) {
+			search(false);
+		}
+	}
+
+	private void downloadRefresh() {
+		headerRefresh();
+
+		this.fromDate.setConstraint("");
+		this.fromDate.setErrorMessage("");
+
+		this.toDate.setConstraint("");
+		this.toDate.setErrorMessage("");
+
+		this.fileName.setValue("", "");
+
+		if (!"M".equals(this.stage)) {
+			this.entityCode.clearErrorMessage();
+			this.entityCode.setConstraint("");
+			this.entityCode.setErrorMessage("");
+			this.entityCode.setValue(null);
+
+			listbox.getItems().clear();
+			listbox.clearSelection();
+		}
+
+		if (this.fromDate.getValue() != null && this.toDate.getValue() != null) {
+			search(false);
+		}
+	}
+
+	private void headerRefresh() {
 		this.fileUploadHeader.setId(Long.MIN_VALUE);
 		this.fileUploadHeader.setFileName(null);
 		this.fileUploadHeader.setFile(null);
@@ -834,40 +874,6 @@ public class FileUploadList extends Window implements Serializable {
 		this.fileUploadHeader.setProgress(0);
 		this.fileUploadHeader.setRemarks(null);
 		this.fileUploadHeader.setStage(this.stage);
-
-		if (isImport) {
-			this.fromDate.setValue(null);
-			this.toDate.setValue(null);
-			this.fileName.setValue("", "");
-			listbox.clearSelection();
-		} else {
-			this.entityCode.setConstraint("");
-			this.entityCode.setErrorMessage("");
-			this.entityCode.setValue(null);
-
-			this.fileName.setValue("", "");
-			this.fromDate.setConstraint("");
-			this.fromDate.setErrorMessage("");
-
-			this.toDate.setConstraint("");
-			this.toDate.setErrorMessage("");
-			if ("M".equals(this.stage)) {
-				this.uploadFileName.setValue("");
-			}
-
-			if (this.fromDate.getValue() != null && this.toDate.getValue() != null) {
-				doSearch(false);
-			}
-			return;
-		}
-
-		if (!"M".equals(this.stage)) {
-			this.checkBoxComp.setDisabled(true);
-		}
-
-		List<FileUploadHeader> list = new ArrayList<>();
-		list.add(this.fileUploadHeader);
-		listWrapper.initList(list, listbox, paging);
 	}
 
 	private void onClickReject() {
@@ -894,17 +900,9 @@ public class FileUploadList extends Window implements Serializable {
 			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		}
 
-		selectedHeaders.get(0).setThreadInProcess(true);
 		uploadService.doApprove(selectedHeaders);
 
-		logger.info("Waiting for Approval Thread Response...");
-		do {
-			//
-		} while (selectedHeaders.get(0).isThreadInProcess());
-
-		logger.info("Received the Approval Thread Response...");
-
-		doSearch(false);
+		search(true);
 	}
 
 	private Space getSpace(String width, boolean mandatory) {
@@ -946,9 +944,10 @@ public class FileUploadList extends Window implements Serializable {
 		return groupbox;
 	}
 
-	private Caption getCapion(String label) {
+	private Caption getCaption(String label) {
 		Caption caption = new Caption();
 		caption.setLabel(label);
+		caption.setStyle("padding:0px;height:40px;font-size:15px;");
 
 		return caption;
 	}
@@ -1110,10 +1109,10 @@ public class FileUploadList extends Window implements Serializable {
 		this.listRows = Math.round(listBoxHeight / LIST_ROW_HEIGHT) - 1;
 
 		if ("M".equals(this.stage)) {
-			return listBoxHeight - 145 + "px";
+			return listBoxHeight - 125 + "px";
 		}
 
-		return listBoxHeight + 5 + "px";
+		return listBoxHeight + 30 + "px";
 	}
 
 	private int getContentAreaHeight() {
@@ -1238,7 +1237,7 @@ public class FileUploadList extends Window implements Serializable {
 			Checkbox checkBox = new Checkbox();
 			checkBox.setDisabled(false);
 			checkBox.addEventListener(Events.ON_CLICK, event -> {
-
+				selectedHeaders.clear();
 				for (Listitem listitem : listbox.getItems()) {
 					Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
 					if (cb.isChecked()) {

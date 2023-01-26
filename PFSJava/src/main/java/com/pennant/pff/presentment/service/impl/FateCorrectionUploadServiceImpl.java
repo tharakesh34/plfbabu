@@ -160,7 +160,6 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 					}
 				} finally {
 					txStatus = null;
-					headers.get(0).setThreadInProcess(false);
 				}
 
 				logger.info("Processed the File {}", header.getFileName());

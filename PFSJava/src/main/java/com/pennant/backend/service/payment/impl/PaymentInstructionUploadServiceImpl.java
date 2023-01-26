@@ -133,7 +133,6 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 				paymentInstructionUploadDAO.uploadHeaderStatusCnt(header);
 			}
 
-			headers.get(0).setThreadInProcess(false);
 		}).start();
 	}
 

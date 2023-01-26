@@ -117,7 +117,6 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 				}
 			} finally {
 				txStatus = null;
-				headers.get(0).setThreadInProcess(false);
 			}
 
 		}).start();

@@ -2,6 +2,7 @@ package com.pennant.pff.excess.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -41,7 +43,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
 		ExcessTransferUpload detail = null;
-		FinExcessAmount fem = null;
 
 		if (object instanceof ExcessTransferUpload) {
 			detail = (ExcessTransferUpload) object;
@@ -164,7 +165,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 					}
 				} finally {
 					txStatus = null;
-					headers.get(0).setThreadInProcess(false);
 				}
 
 				logger.info("Processed the File {}", header.getFileName());
@@ -175,9 +175,10 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	private void process(long headerID) {
-		List<FinExcessAmount> amount = new ArrayList<FinExcessAmount>();
+		List<FinExcessAmount> amount = new ArrayList<>();
 		List<ExcessTransferUpload> process = excessTransferUploadDAO.getProcess(headerID);
 
+		Date appDate = SysParamUtil.getAppDate();
 		for (ExcessTransferUpload exc : process) {
 			FinExcessAmount excessamount = new FinExcessAmount();
 
@@ -189,6 +190,8 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			excessamount.setBalanceAmt(exc.getTransferAmount());
 			excessamount.setReservedAmt(BigDecimal.ZERO);
 			excessamount.setReceiptID(exc.getId());
+			excessamount.setValueDate(appDate);
+			excessamount.setPostDate(appDate);
 
 			List<FinExcessAmount> existingExcess = finExcessAmountDAO.getExcessAmountsByRefAndType(exc.getReferenceID(),
 					exc.getTransferFromType());

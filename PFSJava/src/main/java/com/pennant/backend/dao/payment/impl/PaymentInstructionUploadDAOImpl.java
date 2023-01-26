@@ -148,8 +148,8 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 	@Override
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" pu.FinReference,  pu.ExcessType, pu.FeeType, pu.PayAmount, ");
-		sql.append(" pu.Remarks, pu.OverRideOverDue, pu.Status, pu.ErrorDesc ");
+		sql.append(" pu.FinReference, pu.ExcessType, pu.FeeType, pu.PayAmount");
+		sql.append(", pu.Remarks, pu.OverRideOverDue, pu.Status, pu.ErrorDesc");
 		sql.append(" From PAYMINS_UPLOADS pu");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.ID = pu.HeaderID");
 		sql.append(" Where uh.ID = :HEADER_ID");
