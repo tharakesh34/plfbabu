@@ -6,6 +6,7 @@ public class PartnerBankModes {
 	private String paymentMode;
 	private String partnerBankName;
 	private String partnerBankCode;
+	private String divisionCode;
 
 	public PartnerBankModes() {
 		super();
@@ -54,6 +55,14 @@ public class PartnerBankModes {
 
 	public void setPartnerBankCode(String partnerBankCode) {
 		this.partnerBankCode = partnerBankCode;
+	}
+
+	public String getDivisionCode() {
+		return divisionCode;
+	}
+
+	public void setDivisionCode(String divisionCode) {
+		this.divisionCode = divisionCode;
 	}
 
 }
