@@ -315,7 +315,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		}
 
 		if (StringUtils.isNotBlank(settlement.getCancelReasonCode())) {
-			financeMainDAO.updateSettlementFlag(settlement.getFinID(), false);
+			financeMainDAO.updateSettlementFlag(settlement.getFinID(), true);
 			processSettlementCancellation(settlement.getFinID(), settlement.getStartDate());
 		} else {
 			financeMainDAO.updateSettlementFlag(settlement.getFinID(), true);
