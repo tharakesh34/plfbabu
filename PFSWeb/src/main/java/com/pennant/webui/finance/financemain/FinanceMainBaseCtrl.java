@@ -15947,7 +15947,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public boolean doExtendedDetailsValidation() throws ParseException, InterruptedException {
 		logger.debug(Literal.ENTERING);
 		// Extended Field validations
-		if (getFinanceDetail().getExtendedFieldHeader() != null) {
+		if (getFinanceDetail().getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
 			getFinanceDetail().setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 		logger.debug(Literal.LEAVING);
