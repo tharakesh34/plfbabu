@@ -721,4 +721,13 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		}
 	}
 
+	@Override
+	public boolean isValidFeeType(String feeTypeCode) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select count(FeeTypeCode) from feetypes where feetypeCode=? and Active=?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, feeTypeCode, 1) > 0;
+	}
 }

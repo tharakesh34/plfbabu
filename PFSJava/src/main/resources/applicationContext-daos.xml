@@ -13038,6 +13038,7 @@
 		<property name="paymentInstUploadApprovalProcess" ref="paymentInstUploadApprovalProcess" />
 		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
 		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<bean id="paymentInstUploadApprovalProcess"

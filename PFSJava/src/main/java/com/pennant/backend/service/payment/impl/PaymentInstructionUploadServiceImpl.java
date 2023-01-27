@@ -13,6 +13,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
@@ -40,6 +41,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	private PaymentHeaderDAO paymentHeaderDAO;
 	private PaymentInstUploadApprovalProcess paymentInstUploadApprovalProcess;
 	private FeeRefundHeaderService feeRefundHeaderService;
+	private FeeTypeDAO feeTypeDAO;
 
 	protected static final String ERR_CODE = "9999";
 	protected static final String ERR_DESC = "User rejected the record";
@@ -229,7 +231,8 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(detail.getExcessType())) {
-			if (StringUtils.trimToNull(detail.getFeeType()) == null) {
+			if (StringUtils.trimToNull(detail.getFeeType()) == null
+					|| !feeTypeDAO.isValidFeeType(detail.getFeeType())) {
 				setError(detail, PaymentUploadError.REFUP005);
 				return;
 			}
@@ -308,6 +311,10 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 
 	public void setFeeRefundHeaderService(FeeRefundHeaderService feeRefundHeaderService) {
 		this.feeRefundHeaderService = feeRefundHeaderService;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 
 }
