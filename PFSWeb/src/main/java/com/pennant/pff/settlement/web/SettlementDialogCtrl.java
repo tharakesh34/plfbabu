@@ -866,6 +866,10 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 				doReadOnly();
 				btnCancel.setVisible(false);
 			}
+
+			if (!PennantConstants.RECORD_TYPE_NEW.equals(settlement.getRecordType())) {
+				doReadOnly();
+			}
 		}
 
 		if (enqiryModule) {
