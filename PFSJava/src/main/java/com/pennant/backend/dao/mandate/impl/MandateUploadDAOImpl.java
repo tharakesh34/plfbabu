@@ -161,9 +161,12 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 		sql.append(", mu.OpenMandate, mu.StartDate, mu.ExpiryDate, mu.PartnerBankID, mu.MandateRef");
 		sql.append(", mu.ExternalMandate, mu.SwapIsActive, mu.SwapEffectiveDate, mu.EmandateSource");
 		sql.append(", mu.EmandateReferenceNo, mu.EmployerID, mu.EmployeeNo, mu.MandateStatus, mu.Reason");
-		sql.append(", uh.CreatedOn, uh.ApprovedOn, uh.CreatedBy, uh.ApprovedBy, mu.Status, mu.ErrorCode, mu.ErrorDesc");
+		sql.append(", uh.CreatedOn, uh.ApprovedOn, mu.Status, mu.ErrorCode, mu.ErrorDesc");
+		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");
 		sql.append(" From Mandates_Upload mu");
 		sql.append(" Inner Join File_Upload_Header uh on uh.ID = mu.HeaderID");
+		sql.append(" Inner Join SecUsers su1 on su1.USRID = uh.CreatedBy");
+		sql.append(" Inner Join SecUsers su2 on su2.USRID = uh.ApprovedBy");
 		sql.append(" Where uh.ID = :HEADER_ID");
 
 		return sql.toString();
