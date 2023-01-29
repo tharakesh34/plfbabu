@@ -6192,4 +6192,18 @@
 
 	<bean id="manualKnockOffUploadListCtrl" class="com.pennant.pff.manualknockoff.upload.list.ManualKnockOffUploadListCtrl"
 	parent="uploadList" />
+
+	<!-- Cross Loan KnocK Off Changes -->
+	<bean id="crossLoanKnockOffListCtrl" class="com.pennant.webui.financemanagement.receipts.CrossLoanKnockOffListCtrl" parent="basisListCtrl"
+		scope="prototype"/>
+	
+	<bean id="selectCrossLoanKnockOffDialogCtrl" class="com.pennant.webui.financemanagement.receipts.SelectCrossLoanKnockOffDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />		
+	</bean>
+	
+	<bean id="crossLoanKnockOffDialogCtrl" class="com.pennant.webui.financemanagement.receipts.CrossLoanKnockOffDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="receiptService" ref="receiptService"/>	
+	</bean>
 </beans>

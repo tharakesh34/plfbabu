@@ -127,8 +127,9 @@ public class AccountingEvent {
 	public static final String CBRET = "CBRET";
 	public static final String COL2CSH = "COL2CSH";
 	public static final String CSH2BANK = "CSH2BANK";
-
 	public static final String NPACHNG = "NPACHNG";
+	public static final String CROSS_LOAN_FROM = "CROSSLOANFROM";
+	public static final String CROSS_LOAN_TO = "CROSSLOANTO";
 	// Category Code Constants
 	public static final String EVENTCTG_FINANCE = "F";
 	public static final String EVENTCTG_OVERDRAFT = "O";

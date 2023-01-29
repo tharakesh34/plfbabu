@@ -8371,6 +8371,16 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		return frd;
 	}
 
+	@Override
+	public FinReceiptData getExcessAndManualAdviseData(FinReceiptData frd, long finId) {
+		FinReceiptHeader rch = frd.getReceiptHeader();
+
+		rch.setExcessAmounts(finExcessAmountDAO.getExcessAmountsByRef(finId));
+		rch.setPayableAdvises(manualAdviseDAO.getPaybleAdvises(finId, SysParamUtil.getAppDate(), "_AView"));
+
+		return frd;
+	}
+
 	@Autowired
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;
