@@ -1889,24 +1889,11 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		BigDecimal totPayable = BigDecimal.ZERO;
 		for (int rcpt = 0; rcpt < rcptSize; rcpt++) {
 
-			FinReceiptDetail receiptDetail = receiptDetails.get(rcpt);
-			if (!payableLoopProcess && !StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
-					FinServiceEvent.EARLYSETTLE)) {
+			FinReceiptDetail rcd = receiptDetails.get(rcpt);
+			if (!payableLoopProcess
+					&& !FinServiceEvent.EARLYSETTLE.equals(receiptData.getReceiptHeader().getReceiptPurpose())) {
 				extDataMap = new HashMap<>();
 				totPayable = BigDecimal.ZERO;
-			}
-
-			totPayable = totPayable.add(receiptDetail.getAmount());
-			if (ReceiptMode.PAYABLE.equals(receiptDetail.getPaymentType())) {
-				extDataMap.put("PA_ReceiptAmount", totPayable);
-			} else if (ReceiptMode.EXCESS.equals(receiptDetail.getPaymentType())) {
-				extDataMap.put("EX_ReceiptAmount", receiptDetail.getAmount());
-			} else if (ReceiptMode.EMIINADV.equals(receiptDetail.getPaymentType())) {
-				extDataMap.put("EA_ReceiptAmount", receiptDetail.getAmount());
-			} else if (ReceiptMode.TEXCESS.equals(receiptDetail.getPaymentType())) {
-				extDataMap.put("ET_ReceiptAmount", receiptDetail.getAmount());
-			} else {
-				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
 			}
 
 			addZeroifNotContains(extDataMap, "PA_ReceiptAmount");
@@ -1915,16 +1902,30 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "ET_ReceiptAmount");
 
-			if (ReceiptMode.PAYABLE.equals(receiptDetail.getPaymentType())) {
-				if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_P")) {
-					extDataMap.put(receiptDetail.getFeeTypeCode() + "_P",
-							extDataMap.get(receiptDetail.getFeeTypeCode() + "_P").add(receiptDetail.getAmount()));
-				} else {
-					extDataMap.put(receiptDetail.getFeeTypeCode() + "_P", receiptDetail.getAmount());
-				}
-				if (receiptDetail.getPayAdvMovement() != null) {
+			totPayable = totPayable.add(rcd.getAmount());
+			String paymentType = rcd.getPaymentType();
+			if (ReceiptMode.PAYABLE.equals(paymentType)) {
+				extDataMap.put("PA_ReceiptAmount", totPayable);
+			} else if (ReceiptMode.EXCESS.equals(paymentType)) {
+				extDataMap.put("EX_ReceiptAmount", extDataMap.get("EX_ReceiptAmount").add(rcd.getAmount()));
+			} else if (ReceiptMode.EMIINADV.equals(paymentType)) {
+				extDataMap.put("EA_ReceiptAmount", extDataMap.get("EA_ReceiptAmount").add(rcd.getAmount()));
+			} else if (ReceiptMode.TEXCESS.equals(paymentType)) {
+				extDataMap.put("ET_ReceiptAmount", extDataMap.get("ET_ReceiptAmount").add(rcd.getAmount()));
+			} else {
+				extDataMap.put("PB_ReceiptAmount", extDataMap.get("PB_ReceiptAmount").add(rcd.getAmount()));
+			}
 
-					TaxHeader taxHeader = receiptDetail.getPayAdvMovement().getTaxHeader();
+			if (ReceiptMode.PAYABLE.equals(paymentType)) {
+				if (extDataMap.containsKey(rcd.getFeeTypeCode() + "_P")) {
+					extDataMap.put(rcd.getFeeTypeCode() + "_P",
+							extDataMap.get(rcd.getFeeTypeCode() + "_P").add(rcd.getAmount()));
+				} else {
+					extDataMap.put(rcd.getFeeTypeCode() + "_P", rcd.getAmount());
+				}
+				if (rcd.getPayAdvMovement() != null) {
+
+					TaxHeader taxHeader = rcd.getPayAdvMovement().getTaxHeader();
 					Taxes cgstTax = new Taxes();
 					Taxes sgstTax = new Taxes();
 					Taxes igstTax = new Taxes();
@@ -1947,50 +1948,50 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 						}
 					}
 
-					if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_CGST_P")) {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_CGST_P",
-								extDataMap.get(receiptDetail.getFeeTypeCode() + "_CGST_P").add(cgstTax.getPaidTax()));
+					if (extDataMap.containsKey(rcd.getFeeTypeCode() + "_CGST_P")) {
+						extDataMap.put(rcd.getFeeTypeCode() + "_CGST_P",
+								extDataMap.get(rcd.getFeeTypeCode() + "_CGST_P").add(cgstTax.getPaidTax()));
 					} else {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_CGST_P", cgstTax.getPaidTax());
+						extDataMap.put(rcd.getFeeTypeCode() + "_CGST_P", cgstTax.getPaidTax());
 					}
 
-					if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_SGST_P")) {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_SGST_P",
-								extDataMap.get(receiptDetail.getFeeTypeCode() + "_SGST_P").add(sgstTax.getPaidTax()));
+					if (extDataMap.containsKey(rcd.getFeeTypeCode() + "_SGST_P")) {
+						extDataMap.put(rcd.getFeeTypeCode() + "_SGST_P",
+								extDataMap.get(rcd.getFeeTypeCode() + "_SGST_P").add(sgstTax.getPaidTax()));
 					} else {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_SGST_P", sgstTax.getPaidTax());
+						extDataMap.put(rcd.getFeeTypeCode() + "_SGST_P", sgstTax.getPaidTax());
 					}
 
-					if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_UGST_P")) {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_UGST_P",
-								extDataMap.get(receiptDetail.getFeeTypeCode() + "_UGST_P").add(ugstTax.getPaidTax()));
+					if (extDataMap.containsKey(rcd.getFeeTypeCode() + "_UGST_P")) {
+						extDataMap.put(rcd.getFeeTypeCode() + "_UGST_P",
+								extDataMap.get(rcd.getFeeTypeCode() + "_UGST_P").add(ugstTax.getPaidTax()));
 					} else {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_UGST_P", ugstTax.getPaidTax());
+						extDataMap.put(rcd.getFeeTypeCode() + "_UGST_P", ugstTax.getPaidTax());
 					}
 
-					if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_IGST_P")) {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_IGST_P",
-								extDataMap.get(receiptDetail.getFeeTypeCode() + "_IGST_P").add(igstTax.getPaidTax()));
+					if (extDataMap.containsKey(rcd.getFeeTypeCode() + "_IGST_P")) {
+						extDataMap.put(rcd.getFeeTypeCode() + "_IGST_P",
+								extDataMap.get(rcd.getFeeTypeCode() + "_IGST_P").add(igstTax.getPaidTax()));
 					} else {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_IGST_P", igstTax.getPaidTax());
+						extDataMap.put(rcd.getFeeTypeCode() + "_IGST_P", igstTax.getPaidTax());
 					}
 
-					if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_CESS_P")) {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_CESS_P",
-								extDataMap.get(receiptDetail.getFeeTypeCode() + "_CESS_P").add(cessTax.getPaidTax()));
+					if (extDataMap.containsKey(rcd.getFeeTypeCode() + "_CESS_P")) {
+						extDataMap.put(rcd.getFeeTypeCode() + "_CESS_P",
+								extDataMap.get(rcd.getFeeTypeCode() + "_CESS_P").add(cessTax.getPaidTax()));
 					} else {
-						extDataMap.put(receiptDetail.getFeeTypeCode() + "_CESS_P", cessTax.getPaidTax());
+						extDataMap.put(rcd.getFeeTypeCode() + "_CESS_P", cessTax.getPaidTax());
 					}
 				}
 			}
 
-			FinRepayHeader repayHeader = receiptDetail.getRepayHeader();
+			FinRepayHeader repayHeader = rcd.getRepayHeader();
 
 			extDataMap.clear();
 
 			amountCodes.setPenaltyPaid(BigDecimal.ZERO);
 			amountCodes.setPenaltyWaived(BigDecimal.ZERO);
-			amountCodes.setPaymentType(receiptDetail.getPaymentType());
+			amountCodes.setPaymentType(paymentType);
 			amountCodes.setUserBranch(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 
 			// FIXME: FIND THE LOGIC TO SET payableLoopProcess = false; AS PER
@@ -2003,8 +2004,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				// Accounting Postings Process Execution
 				aeEvent.setAccountingEvent(AccountingEvent.REPAY);
-				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
-				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+				amountCodes.setPartnerBankAc(rcd.getPartnerBankAc());
+				amountCodes.setPartnerBankAcType(rcd.getPartnerBankAcType());
 				amountCodes.setToExcessAmt(BigDecimal.ZERO);
 				amountCodes.setToEmiAdvance(BigDecimal.ZERO);
 				if (RepayConstants.EXCESSADJUSTTO_EXCESS.equals(repayHeader.getFinEvent())) {
@@ -2027,7 +2028,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				if (!feesExecuted
 						&& FinServiceEvent.SCHDRPY.equals(receiptData.getReceiptHeader().getReceiptPurpose())) {
 					feesExecuted = true;
-					prepareFeeRulesMap(dataMap, receiptDetail.getPaymentType());
+					prepareFeeRulesMap(dataMap, paymentType);
 				}
 
 				// Receipt Detail external usage Fields Insertion into
@@ -2110,8 +2111,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				amountCodes.setFeeWaived(amountCodes.getFeeWaived().add(rsd.getSchdFeeWaivedNow()));
 			}
 
-			amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
-			amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+			amountCodes.setPartnerBankAc(rcd.getPartnerBankAc());
+			amountCodes.setPartnerBankAcType(rcd.getPartnerBankAcType());
 
 			// If Payable Continue for All Advises
 			if (payableLoopProcess) {
@@ -2406,7 +2407,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			if (!feesExecuted && (FinServiceEvent.SCHDRPY.equals(purpose)
 					|| (!FinServiceEvent.SCHDRPY.equals(purpose) && repayHeader.getFinEvent().equals(purpose)))) {
 				feesExecuted = true;
-				prepareFeeRulesMap(dataMap, receiptDetail.getPaymentType());
+				prepareFeeRulesMap(dataMap, paymentType);
 			}
 			aeEvent.setDataMap(dataMap);
 			engineExecution.getAccEngineExecResults(aeEvent);
@@ -2462,7 +2463,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			amountCodes.setFuturePriPaid(BigDecimal.ZERO);
 
 			// Manual Advise Postings
-			List<ManualAdviseMovements> movements = receiptDetail.getAdvMovements();
+			List<ManualAdviseMovements> movements = rcd.getAdvMovements();
 			if (movements != null && !movements.isEmpty()) {
 
 				// Summing Same Type of Fee Types to Single Field
@@ -2592,9 +2593,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				// Accounting Postings Process Execution
 				aeEvent.setAccountingEvent(AccountingEvent.REPAY);
-				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
-				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
-				amountCodes.setPaymentType(receiptDetail.getPaymentType());
+				amountCodes.setPartnerBankAc(rcd.getPartnerBankAc());
+				amountCodes.setPartnerBankAcType(rcd.getPartnerBankAcType());
+				amountCodes.setPaymentType(paymentType);
 				amountCodes.setUserBranch(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 				aeEvent.getAcSetIDList().clear();
 				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
@@ -2618,7 +2619,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				// if Repay headers not exists on the Receipt, then add Excess
 				// Detail map
-				if (receiptDetail.getRepayHeader() == null) {
+				if (rcd.getRepayHeader() == null) {
 					dataMap.putAll(extDataMap);
 				}
 				aeEvent.setDataMap(dataMap);

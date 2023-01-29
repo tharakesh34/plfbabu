@@ -1348,4 +1348,13 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		return this.jdbcOperations.queryForObject(sql, Date.class, finID, appDate, 1);
 	}
+
+	@Override
+	public Date getSchdDateForKnockOff(long finID, Date appDate) {
+		String sql = "Select Max(Schdate) From FinScheduleDetails Where FinID = ? and SchDate <= ? and RepayAmount > ? and SchdPriPaid = ? and SchdPftPaid = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Date.class, finID, appDate, 0, 0, 0);
+	}
 }

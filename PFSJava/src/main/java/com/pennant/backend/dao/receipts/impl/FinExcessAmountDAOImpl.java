@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 /**
@@ -50,10 +52,13 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		ExcessAmountRowMapper rowMapper = new ExcessAmountRowMapper();
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		List<FinExcessAmount> list = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index, finId);
 		}, rowMapper);
+
+		return list.stream().sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -913,11 +918,12 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public FinExcessAmount getExcessAmountsByReceiptId(long receiptId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt");
+		sql.append(", ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
 		sql.append(" From FinExcessAmount");
 		sql.append(" Where ReceiptId = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {

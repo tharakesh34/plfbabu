@@ -142,4 +142,6 @@ public interface FinanceScheduleDetailDAO {
 	void updateSchdTotals(List<FinanceScheduleDetail> schdDtls);
 	
 	Date getNextSchdDate(long finID, Date appDate);
+
+	Date getSchdDateForKnockOff(long finID, Date appDate);
 }

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,6 +39,8 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
@@ -170,6 +173,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private FinanceType finType;
 	private Label label_ReceiptPayment_ReceiptDate;
 	private Label label_ReceiptPayment_ValueDate;
+	private FinExcessAmountDAO finExcessAmountDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	/**
 	 * default constructor.<br>
@@ -1052,6 +1057,49 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		filter[0] = new Filter("FinReference", this.finReference.getValue(), Filter.OP_EQUAL);
 		filter[1] = new Filter("BalanceAmt", BigDecimal.ZERO, Filter.OP_GREATER_THAN);
 		this.referenceId.setFilters(filter);
+
+		if (FinanceConstants.CLOSURE_MAKER.equals(this.module)) {
+			long finID = ComponentUtil.getFinID(this.finReference);
+			List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finID);
+
+			if (CollectionUtils.isNotEmpty(excessAmounts)) {
+				FinExcessAmount fea = excessAmounts.get(excessAmounts.size() - 1);
+				if (fea != null && fea.getValueDate() != null) {
+					this.receiptDate.setValue(fea.getValueDate());
+					this.receiptDate.setDisabled(true);
+				}
+			}
+		}
+	}
+
+	public void onFulfill$referenceId(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+		
+		boolean isDisabled = false;
+		Date receiptDt = appDate;
+
+		String knockOff = getComboboxValue(knockOffFrom);
+		FinExcessAmount fea = null;
+		if (!ReceiptMode.PAYABLE.equals(knockOff)) {
+			fea = (FinExcessAmount) this.referenceId.getObject();
+		}
+
+		if (fea != null && fea.getValueDate() != null) {
+			receiptDt = fea.getValueDate();
+			isDisabled = true;
+
+			long finID = ComponentUtil.getFinID(this.finReference);
+			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, appDate);
+
+			if (DateUtil.compare(receiptDt, schDate) < 0) {
+				receiptDt = schDate;
+			}
+		}
+
+		this.receiptDate.setValue(receiptDt);
+		this.receiptDate.setDisabled(isDisabled);
+		
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	public void validateFinReference(Event event, boolean isShowSearchList) {
@@ -1488,6 +1536,16 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	@Autowired
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 }

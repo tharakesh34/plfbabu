@@ -1011,10 +1011,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					if (rpyHeader.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 						// Fetch Excess Amount Details
-						FinExcessAmount excess = finExcessAmountDAO.getExcessAmountsByReceiptId(finID);
+						FinExcessAmount excess = finExcessAmountDAO.getExcessAmountsByReceiptId(receiptID);
 
 						if (excess == null) {
-							excess = finExcessAmountDAO.getExcessAmountsByReceiptId(finID, rch.getExcessAdjustTo(), 0);
+							excess = finExcessAmountDAO.getExcessAmountsByReceiptId(finID, rch.getExcessAdjustTo(),
+									receiptID);
 						}
 
 						if (StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
