@@ -168,7 +168,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		fd.setGurantorsDetailList(guarantorDetailService.getGuarantorDetail(finID, "_View"));
 		fd.setJointAccountDetailList(jointAccountDetailService.getJoinAccountDetail(finID, "_View"));
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, type));
+		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID, type));
 		fd.setDocumentDetailsList(documentDetailsDAO.getDocumentDetailsByRef(finReference, FinanceConstants.MODULE_NAME,
 				procEdtEvent, "_View"));
 

@@ -13333,4 +13333,6 @@
 	</bean>
 	
 	<bean id="crossLoanTransferDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanTransferDAOImpl" parent="sequenceDao"/>
+
+	<bean id="lPPUploadService" class="com.pennant.pff.lpp.service.impl.LPPUploadServiceImpl" parent="aUploadService" />
 </beans>

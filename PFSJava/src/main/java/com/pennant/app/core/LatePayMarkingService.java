@@ -91,6 +91,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.eod.EODUtil;
+import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class LatePayMarkingService extends ServiceHelper {
@@ -286,14 +287,15 @@ public class LatePayMarkingService extends ServiceHelper {
 			appDate = SysParamUtil.getAppDate();
 		}
 
-		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
+		List<FinODPenaltyRate> penaltyRates = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
 
-		if (penaltyRate == null) {
+		if (CollectionUtils.isEmpty(penaltyRates)) {
 			logger.warn("Penalty rate not found.");
-			penaltyRate = new FinODPenaltyRate();
+			FinODPenaltyRate penaltyRate = new FinODPenaltyRate();
+			penaltyRates.add(penaltyRate);
 		}
 
-		fm.setPenaltyRate(penaltyRate);
+		fm.setPenaltyRates(penaltyRates);
 
 		Date lppCheckingDate = valueDate;
 		if (ImplementationConstants.LP_MARK_FIRSTDAY) {
@@ -352,7 +354,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			// Current Overdue and No Previous Overdue, create OD create
 			if (isAmountDue && fod == null) {
-				fod = createODDetails(schd, fm, penaltyRate, remBalncAmount);
+				fod = createODDetails(schd, fm, remBalncAmount);
 				finEODEvent.getFinODDetails().add(fod);
 			}
 
@@ -448,7 +450,8 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		int grcDays = 0;
 		Date schDate = fod.getFinODSchdDate();
-		FinODPenaltyRate penaltyRate = fm.getPenaltyRate();
+		List<FinODPenaltyRate> penaltyRates = fm.getPenaltyRates();
+
 		if (ProductUtil.isOverDraft(fm)) {
 			movements = manualAdviseDAO.getAdviseMovements(finID, fod.getFinODSchdDate(), "_AView");
 			String custBranch = customerAddresDAO.getCustHighPriorityAddr(fm.getCustID());
@@ -456,9 +459,9 @@ public class LatePayMarkingService extends ServiceHelper {
 			grcDays = overdrafLoanService.getGraceDays(fm);
 		} else {
 			grcDays = fod.getODGraceDays();
-			if (penaltyRate == null) {
-				penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
-				fm.setPenaltyRate(penaltyRate);
+			if (CollectionUtils.isEmpty(penaltyRates)) {
+				penaltyRates = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
+				fm.setPenaltyRates(penaltyRates);
 			}
 
 		}
@@ -522,6 +525,8 @@ public class LatePayMarkingService extends ServiceHelper {
 		if (ImplementationConstants.LP_MARK_FIRSTDAY && isEODprocess) {
 			odtCaldate = DateUtil.addDays(penaltyCalDate, 1);
 		}
+
+		FinODPenaltyRate penaltyRate = PenaltyCalculator.getEffectiveRate(curSchd, fm.getPenaltyRates());
 
 		setFinCurODDays(penaltyRate, fod, productCategory, odtCaldate);
 
@@ -665,9 +670,9 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 	}
 
-	private FinODDetails createODDetails(FinanceScheduleDetail schd, FinanceMain fm, FinODPenaltyRate pr,
-			BigDecimal balanceAmount) {
+	private FinODDetails createODDetails(FinanceScheduleDetail schd, FinanceMain fm, BigDecimal balanceAmount) {
 		FinODDetails finOD = new FinODDetails();
+		FinODPenaltyRate pr = PenaltyCalculator.getEffectiveRate(schd, fm.getPenaltyRates());
 
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();

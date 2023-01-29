@@ -90,6 +90,7 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 	private BigDecimal totWaived = BigDecimal.ZERO;
 	private BigDecimal finCurODTxnChrg = BigDecimal.ZERO;
 	private boolean addTodayRcd = true;
+	private BigDecimal oDChargeAmtOrPerc = BigDecimal.ZERO;
 
 	public OverdueChargeRecovery() {
 		super();
@@ -519,6 +520,14 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 
 	public void setAddTodayRcd(boolean addTodayRcd) {
 		this.addTodayRcd = addTodayRcd;
+	}
+
+	public BigDecimal getoDChargeAmtOrPerc() {
+		return oDChargeAmtOrPerc;
+	}
+
+	public void setoDChargeAmtOrPerc(BigDecimal oDChargeAmtOrPerc) {
+		this.oDChargeAmtOrPerc = oDChargeAmtOrPerc;
 	}
 
 }

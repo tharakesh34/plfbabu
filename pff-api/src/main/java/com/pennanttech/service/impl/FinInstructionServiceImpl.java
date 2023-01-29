@@ -1103,12 +1103,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return returnStatus;
 	}
 
-	/**
-	 * Method for perform updateLoanPenaltyDetails
-	 * 
-	 * @param fsi
-	 * @throws JaxenException
-	 */
 	@Override
 	public WSReturnStatus updateLoanPenaltyDetails(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
@@ -1121,6 +1115,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+
 		if (finID != null) {
 			fsi.setWif(false);
 		} else {
@@ -1139,7 +1134,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		FinanceMain fm = financeMainDAO.getFinBasicDetails(finID, "");
-		FinODPenaltyRate finOd = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
+		FinODPenaltyRate finOd = finODPenaltyRateDAO.getEffectivePenaltyRate(finID, "");
 
 		FinODPenaltyRate odPenaltyRate = new FinODPenaltyRate();
 

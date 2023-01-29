@@ -376,7 +376,8 @@ public class AutoKnockOffProcessService {
 		schdData.setFeeEvent(eventCode);
 
 		// Overdue Penalty Rates from main veiw
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView"));
+
+		fm.setPenaltyRates(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView"));
 
 		// Profit details from main table
 		FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(finID);

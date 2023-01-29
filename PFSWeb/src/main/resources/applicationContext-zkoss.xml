@@ -6192,6 +6192,9 @@
 
 	<bean id="manualKnockOffUploadListCtrl" class="com.pennant.pff.manualknockoff.upload.list.ManualKnockOffUploadListCtrl"
 	parent="uploadList" />
+	
+	<bean id="lppUploadList" class="com.pennant.pff.lpp.upload.list.LPPUploadListCtrl"
+	parent="uploadList" />
 
 	<!-- Cross Loan KnocK Off Changes -->
 	<bean id="crossLoanKnockOffListCtrl" class="com.pennant.webui.financemanagement.receipts.CrossLoanKnockOffListCtrl" parent="basisListCtrl"

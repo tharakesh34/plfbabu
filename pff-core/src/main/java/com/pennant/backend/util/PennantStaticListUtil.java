@@ -1200,6 +1200,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PercentageOnEveryPastDueMonth")));
 			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS,
 					Labels.getLabel("label_PercentageOnDueDays")));
+			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS,
+					Labels.getLabel("label_PercentageOnDueDaysOnEffectiveDate")));
 			if (ImplementationConstants.ALW_LPP_RULE_FIXED) {
 				overDuechargeTypes.add(
 						new ValueLabel(FinanceConstants.PENALTYTYPE_RULEFXDD, Labels.getLabel("label_FixedByDueDays")));

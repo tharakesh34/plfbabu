@@ -1551,7 +1551,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		schdData.setFinServiceInstructions(finServiceInstructionDAO.getOrgFinServiceInstructions(finID, tableType));
 
 		// Finance Overdue Penalty Rate Details
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, type));
+		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID, type));
 
 		// Plan EMI Holiday Details
 		int sdSize = schdData.getFinanceScheduleDetails().size();
@@ -1714,7 +1714,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Overdue Penalty Rates
-			schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID,
+			schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID,
 					StringUtils.equals(tableType, "") ? type : tableType));
 
 			// Overdraft Schedule Detail
@@ -4238,7 +4238,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				saveLMSServiceLogs(schdData, "");
 
 				if (FinServiceEvent.ADDDISB.equals(fd.getModuleDefiner())) {
-					schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, ""));
+					schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID, ""));
 				}
 
 				listDeletion(schdData, moduleDefiner, "", isWIF);
@@ -8378,7 +8378,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, type, false));
 
 		// od penality details
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, type));
+		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID, type));
 
 		if (summaryRequired) {
 			FinanceType financeType = financeTypeDAO.getFinanceTypeByFinType(fm.getFinType());
@@ -9201,7 +9201,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, type, false));
 
 		// Finance Overdue Penalty Rate Details
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, type));
+		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID, type));
 
 		// Fetch Finance Premium Details
 		// financeDetail.setPremiumDetail(getFinancePremiumDetailDAO().getFinPremiumDetailsById(finReference,

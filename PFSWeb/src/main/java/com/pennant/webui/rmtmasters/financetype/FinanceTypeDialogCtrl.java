@@ -1808,6 +1808,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(aFinanceType.getODChargeAmtOrPerc(), format));
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+				|| FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))
 						&& !FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
 			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(aFinanceType.getODChargeAmtOrPerc(), 2));
@@ -3775,6 +3776,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				aFinanceType.setODChargeAmtOrPerc(CurrencyUtil.unFormat(this.oDChargeAmtOrPerc.getValue(), format));
 			} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+					|| FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS
+							.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 				aFinanceType.setODChargeAmtOrPerc(CurrencyUtil.unFormat(this.oDChargeAmtOrPerc.getValue(), 2));
 			}
@@ -4646,6 +4649,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 								format, true, false, 9999999));
 			} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+					|| FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS
+							.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 				this.oDChargeAmtOrPerc.setConstraint(new PTDecimalValidator(
 						Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value"), 2, true, false, 100));
