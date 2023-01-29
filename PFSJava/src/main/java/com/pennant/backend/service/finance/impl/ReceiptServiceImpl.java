@@ -8315,8 +8315,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			this.manualScheduleService.doApprove(frd.getFinanceDetail());
 		}
 
-		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)
-				&& ImplementationConstants.COLLATERAL_INTERNAL && ImplementationConstants.COLLATERAL_DELINK_AUTO) {
+		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus) && ImplementationConstants.COLLATERAL_INTERNAL
+				&& ImplementationConstants.COLLATERAL_DELINK_AUTO) {
 			getCollateralAssignmentValidation().saveCollateralMovements(fm.getFinReference());
 		}
 
@@ -8349,6 +8349,16 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		logger.debug(Literal.LEAVING);
+		return frd;
+	}
+
+	@Override
+	public FinReceiptData getExcessAndManualAdviseData(FinReceiptData frd, long finId) {
+		FinReceiptHeader rch = frd.getReceiptHeader();
+
+		rch.setExcessAmounts(finExcessAmountDAO.getExcessAmountsByRef(finId));
+		rch.setPayableAdvises(manualAdviseDAO.getPaybleAdvises(finId, SysParamUtil.getAppDate(), "_AView"));
+
 		return frd;
 	}
 
@@ -8743,5 +8753,5 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	public void setFeeCalculator(FeeCalculator feeCalculator) {
 		this.feeCalculator = feeCalculator;
 	}
-	
+
 }

@@ -91,5 +91,6 @@ public class FinServiceEvent {
 	public static final String EXTENDEDFIELDS_MAINTAIN = "MaintExtendedFields";
 	public static final String PRINH = "PrincipleHoliday";
 	public static final String FEEREFUNDINST = "FeeRefundInst";
+	public static final String CROSS_LOAN_KNOCKOFF = "CROSSLOANKNOCKOFF";
 
 }

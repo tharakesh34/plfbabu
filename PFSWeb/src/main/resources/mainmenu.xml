@@ -890,6 +890,13 @@
 			<menuItem id="menu_Item_ExcessTransferUpload_Approver"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/ExcessTransfer/Upload/ExcessTransferUploadList.zul?stage=A"
 				rightName="menu_Item_ExcessTransferUpload_Approver" />
+			<menuItem id="menu_Item_CrossLoanKnockoffMaker"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSS_LOAN_KNOCKOFF_MAKER"
+				rightName="menu_Item_CrossLoanKnockoffMaker" />
+			<menuItem id="menu_Item_CrossLoanKnockoffApprover"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSS_LOAN_KNOCKOFF_APPROVER"
+				rightName="menu_Item_CrossLoanKnockoffApprover" />
+			<menuItem id="menu_Item_CrossLoanKnockoffEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSS_LOAN_KNOCKOFF_ENQUIRY" rightName="menu_Item_NewCrossLoanKnockOffEnquiry"/>
 		</menu>
 
 		<menu id="menu_Category_NonLanReceipts">

@@ -2342,6 +2342,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_Collateral"), "COLL"));
 			events.add(new FinServicingEvent(FinServiceEvent.PRINH,
 					Labels.getLabel("label_FinSerEvent_PrincipleHoliday"), "PRINH"));
+			events.add(new FinServicingEvent(FinServiceEvent.CROSS_LOAN_KNOCKOFF,
+					Labels.getLabel("label_FinSerEvent_CrossLoanKnockOff"), "CROSCROSS_LOAN_KNOCKOFFSLOANKNOCKOFF"));
 		}
 		return events;
 	}
@@ -3223,8 +3225,8 @@ public class PennantStaticListUtil {
 			allocationMethods.add(new ValueLabel(AllocationType.AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
 			allocationMethods
 					.add(new ValueLabel(AllocationType.MANUAL, Labels.getLabel("label_AllocationMethod_Manual")));
-			allocationMethods.add(
-					new ValueLabel(AllocationType.NO_ALLOC, Labels.getLabel("label_AllocationMethod_NO")));
+			allocationMethods
+					.add(new ValueLabel(AllocationType.NO_ALLOC, Labels.getLabel("label_AllocationMethod_NO")));
 		}
 		return allocationMethods;
 	}

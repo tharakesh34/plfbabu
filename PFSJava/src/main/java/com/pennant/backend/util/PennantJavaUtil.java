@@ -224,6 +224,7 @@ import com.pennant.backend.model.finance.CashDenomination;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.CreditReviewData;
+import com.pennant.backend.model.finance.CrossLoanKnockOff;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
@@ -3921,6 +3922,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("ExcessTransferUpload", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("CrossLoanKnockOff",
+				new ModuleMapping("CrossLoanKnockOff", CrossLoanKnockOff.class,
+						new String[] { "CROSS_LOAN_KNOCKOFF", "RECEIPTDETAILS_TVIEW" }, "RECEIPTS_WORKFLOW",
+						new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
 
 		registerCustomModules();
 	}

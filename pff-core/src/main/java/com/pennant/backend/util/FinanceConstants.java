@@ -408,4 +408,7 @@ public class FinanceConstants {
 
 	public static final String SETTLEMENT = "SETTLEMENT";
 	public static final String SETTLEMENT_CANCEL = "SETTLEMENT_CANCEL";
+	public static final String CROSS_LOAN_KNOCKOFF_APPROVER = "CROSS_LOAN_KNOCKOFF_APPROVER";
+	public static final String CROSS_LOAN_KNOCKOFF_MAKER = "CROSS_LOAN_KNOCKOFF_MAKER";
+	public static final String CROSS_LOAN_KNOCKOFF_ENQUIRY = "CROSS_LOAN_KNOCKOFF_ENQUIRY";
 }
