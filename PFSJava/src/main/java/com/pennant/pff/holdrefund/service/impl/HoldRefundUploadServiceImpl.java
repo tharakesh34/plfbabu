@@ -15,6 +15,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.systemmasters.LovFieldDetailDAO;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.holdrefund.dao.HoldRefundUploadDAO;
@@ -159,11 +160,16 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 			throw new AppException("Invalid Data transferred...");
 		}
 
-		logger.info("Validating the Data for the reference {}", detail.getReference());
+		String reference = detail.getReference();
+
+		logger.info("Validating the Data for the reference {}", reference);
 
 		detail.setHeaderId(header.getId());
 
-		String reference = detail.getReference();
+		if (StringUtils.isBlank(reference)) {
+			setError(detail, PaymentUploadError.HOLDUP001);
+			return;
+		}
 
 		Long finID = financeMainDAO.getFinIDByFinReference(reference, "", false);
 
@@ -172,6 +178,18 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		} else if (finID == null) {
 			setError(detail, PaymentUploadError.HOLDUP009);
+			return;
+		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
+
+		if (fm == null) {
+			setError(detail, PaymentUploadError.HOLDUP009);
+			return;
+		}
+
+		if (!fm.isFinIsActive()) {
+			setError(detail, PaymentUploadError.HOLDUP0011);
 			return;
 		}
 
