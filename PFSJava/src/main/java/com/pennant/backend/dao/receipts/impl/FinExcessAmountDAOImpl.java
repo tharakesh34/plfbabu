@@ -1025,7 +1025,12 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, amountType);
+		try {
+			return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, amountType);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
 	}
 
 	@Override

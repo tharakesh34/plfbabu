@@ -3,6 +3,7 @@ package com.pennant.pff.settlement.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
@@ -276,7 +277,7 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		List<SettlementAllocationDetail> list = this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			SettlementAllocationDetail sad = new SettlementAllocationDetail();
 
 			sad.setHeaderID(rs.getLong("HeaderID"));
@@ -295,6 +296,8 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 
 			return sad;
 		}, headerId);
+
+		return list.stream().sorted((l1, l2) -> Long.compare(l1.getId(), l2.getId())).collect(Collectors.toList());
 	}
 
 	@Override

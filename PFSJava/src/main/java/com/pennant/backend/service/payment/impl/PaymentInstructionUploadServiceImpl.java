@@ -230,12 +230,15 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
+		String feeTypeCode = StringUtils.trimToNull(detail.getFeeType());
 		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(detail.getExcessType())) {
-			if (StringUtils.trimToNull(detail.getFeeType()) == null
-					|| !feeTypeDAO.isValidFeeType(detail.getFeeType())) {
+			if (feeTypeCode == null || !feeTypeDAO.isValidFeeType(detail.getFeeType())) {
 				setError(detail, PaymentUploadError.REFUP005);
 				return;
 			}
+		} else if (feeTypeCode != null) {
+			setError(detail, PaymentUploadError.REFUP012);
+			return;
 		}
 
 		BigDecimal dueAganistLoan = paymentHeaderDAO.getDueAgainstLoan(fm.getFinID());
@@ -262,7 +265,8 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		BigDecimal fea = finExcessAmountDAO.getTotalExcessByRefAndType(fm.getFinID(),
 				RepayConstants.EXAMOUNTTYPE_EXCESS);
 
-		if (fea.compareTo(detail.getPayAmount()) < 0) {
+		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(detail.getExcessType())
+				&& fea.compareTo(detail.getPayAmount()) < 0) {
 			setError(detail, PaymentUploadError.REFUP008);
 			return;
 		}

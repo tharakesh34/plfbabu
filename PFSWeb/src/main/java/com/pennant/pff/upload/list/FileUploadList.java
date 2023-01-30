@@ -825,6 +825,7 @@ public class FileUploadList extends Window implements Serializable {
 		this.entityCode.clearErrorMessage();
 		this.entityCode.setConstraint("");
 		this.entityCode.setErrorMessage("");
+		this.entityCode.setValue(null);
 
 		if ("M".equals(this.stage)) {
 			this.uploadFileName.setValue("");
@@ -840,9 +841,11 @@ public class FileUploadList extends Window implements Serializable {
 
 		this.fromDate.setConstraint("");
 		this.fromDate.setErrorMessage("");
+		this.fromDate.setValue(null);
 
 		this.toDate.setConstraint("");
 		this.toDate.setErrorMessage("");
+		this.toDate.setValue(null);
 
 		this.fileName.setValue("", "");
 
@@ -851,6 +854,14 @@ public class FileUploadList extends Window implements Serializable {
 			this.entityCode.setConstraint("");
 			this.entityCode.setErrorMessage("");
 			this.entityCode.setValue(null);
+
+			this.fromDate.setConstraint("");
+			this.fromDate.setErrorMessage("");
+			this.fromDate.setValue(null);
+
+			this.toDate.setConstraint("");
+			this.toDate.setErrorMessage("");
+			this.toDate.setValue(null);
 
 			listbox.getItems().clear();
 			listbox.clearSelection();
