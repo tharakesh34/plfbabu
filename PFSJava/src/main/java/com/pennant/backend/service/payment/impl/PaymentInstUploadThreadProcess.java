@@ -147,6 +147,10 @@ public class PaymentInstUploadThreadProcess {
 				processPayIns(ph, detail);
 			}
 
+			if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
+				this.paymentInstructionUploadDAO.update(detail);
+			}
+
 			this.transactionManager.commit(transactionStatus);
 
 		} catch (Exception e) {
@@ -279,6 +283,7 @@ public class PaymentInstUploadThreadProcess {
 		if (!payableExists) {
 			String ErrorDesc = "Payable Advises are not found for the Loan Reference : " + finreference
 					+ " and Fee Type Code : " + feeType;
+			bud.setProgress(EodConstants.PROGRESS_FAILED);
 			bud.setErrorDesc(ErrorDesc);
 		}
 	}

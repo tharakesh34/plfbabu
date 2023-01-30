@@ -24,6 +24,8 @@ public enum PaymentUploadError {
 
 	REFUP011("Fee Refund already in progress for Loan"),
 
+	REFUP012("Fee Type is not valid if Excess Type is E"),
+
 	// Hold Refund Errors
 	HOLDUP001("Fin Reference is Mandatory"),
 
