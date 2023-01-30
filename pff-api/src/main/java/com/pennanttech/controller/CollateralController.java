@@ -26,6 +26,7 @@ import com.pennant.backend.dao.collateral.CollateralThirdPartyDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CoOwnerDetail;
@@ -39,15 +40,19 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
+import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.collateral.CollateralDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -63,6 +68,7 @@ public class CollateralController extends ExtendedTestClass {
 	private DocumentDetailsDAO documentDetailsDAO;
 	private CoOwnerDetailDAO coOwnerDetailDAO;
 	private CustomerEMailService customerEMailService;
+	private FinanceWorkFlowService financeWorkFlowService;
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
@@ -113,7 +119,7 @@ public class CollateralController extends ExtendedTestClass {
 
 		CollateralSetup response = null;
 		try {
-			doSetRequiredValues(collateralSetup, PROCESS_TYPE_SAVE);
+			doSetRequiredValues(collateralSetup, PROCESS_TYPE_SAVE, false);
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 
@@ -178,7 +184,7 @@ public class CollateralController extends ExtendedTestClass {
 	public WSReturnStatus updateCollateral(CollateralSetup collateralSetup) {
 		logger.debug("Entering");
 		try {
-			doSetRequiredValues(collateralSetup, PROCESS_TYPE_UPDATE);
+			doSetRequiredValues(collateralSetup, PROCESS_TYPE_UPDATE, false);
 
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
@@ -233,7 +239,7 @@ public class CollateralController extends ExtendedTestClass {
 					"", false);
 			if (collateralSetup != null) {
 				// set required values
-				doSetRequiredValues(collateralSetup, PROCESS_TYPE_DELETE);
+				doSetRequiredValues(collateralSetup, PROCESS_TYPE_DELETE, false);
 
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
@@ -263,16 +269,34 @@ public class CollateralController extends ExtendedTestClass {
 	 * @param custID
 	 * @return
 	 */
-	public CollateralDetail getCollaterals(long custID) {
+	public CollateralDetail getCollaterals(long custID, String type) {
 		logger.debug("Entering");
 
 		CollateralDetail collateralDetail = null;
+		List<CollateralSetup> collaterals = null;
+		List<CollateralSetup> pendingCollaterals = null;
 
 		// fetch list of customer collaterals
-		List<CollateralSetup> collaterals = collateralSetupService.getApprovedCollateralByCustId(custID);
-		if (!collaterals.isEmpty()) {
+		if (StringUtils.isNotBlank(type)) {
+			collaterals = collateralSetupService.getPendingCollateralByCustId(custID, type);
+			pendingCollaterals = new ArrayList<>();
+
+			for (CollateralSetup collateralSetup : collaterals) {
+				if (!StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+					continue;
+				}
+				pendingCollaterals.add(collateralSetup);
+			}
+		} else {
+			collaterals = collateralSetupService.getApprovedCollateralByCustId(custID);
+		}
+		if (CollectionUtils.isNotEmpty(collaterals) || CollectionUtils.isNotEmpty(pendingCollaterals)) {
 			collateralDetail = new CollateralDetail();
-			collateralDetail.setCollateralSetup(collaterals);
+			if (StringUtils.isNotBlank(type)) {
+				collateralDetail.setCollateralSetup(pendingCollaterals);
+			} else {
+				collateralDetail.setCollateralSetup(collaterals);
+			}
 		}
 
 		logger.debug("Leaving");
@@ -285,7 +309,7 @@ public class CollateralController extends ExtendedTestClass {
 	 * @param collateralSetup
 	 * @param procType
 	 */
-	private void doSetRequiredValues(CollateralSetup collateralSetup, String procType) {
+	private void doSetRequiredValues(CollateralSetup collateralSetup, String procType, boolean isPendding) {
 		logger.debug("Entering");
 
 		// user details
@@ -324,6 +348,35 @@ public class CollateralController extends ExtendedTestClass {
 			collateralSetup.setDepositorId(collateralDetail.getDepositorId());
 			collateralSetup.setDepositorCif(collateralDetail.getDepositorCif());
 			collateralSetup.setVersion(collateralDetail.getVersion() + 1);
+			if (!isPendding) {
+				collateralSetup.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				collateralSetup.setWorkflowId(0);
+			} else {
+				collateralSetup.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+				if (collateralDetail.getFinReference() != null && collateralDetail.getWorkflowId() == 0) {
+					FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
+							collateralDetail.getCollateralType(), FinServiceEvent.ORG,
+							PennantConstants.WORFLOW_MODULE_COLLATERAL);
+
+					if (financeWorkFlow != null) {
+						WorkFlowDetails workFlowDetails = WorkFlowUtil
+								.getDetailsByType(financeWorkFlow.getWorkFlowType());
+						if (workFlowDetails != null) {
+							collateralSetup.setWorkflowId(workFlowDetails.getWorkFlowId());
+
+						}
+					} else {
+						collateralSetup.setWorkflowId(collateralDetail.getWorkflowId());
+					}
+				} else {
+					collateralSetup.setWorkflowId(collateralDetail.getWorkflowId());
+				}
+				collateralSetup.setNextRoleCode(collateralDetail.getNextRoleCode());
+				collateralSetup.setNextTaskId(collateralDetail.getNextTaskId());
+				collateralSetup.setTaskId(collateralDetail.getTaskId());
+				collateralSetup.setRoleCode(collateralDetail.getRoleCode());
+			}
+
 		} else {
 			collateralSetup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 		}
@@ -677,6 +730,51 @@ public class CollateralController extends ExtendedTestClass {
 		logger.debug("Leaving");
 	}
 
+	public WSReturnStatus pendingUpdateCollateral(CollateralSetup collateralSetup) {
+		logger.debug("Entering");
+		try {
+			doSetRequiredValues(collateralSetup, PROCESS_TYPE_UPDATE, true);
+			collateralSetup.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(collateralSetup, "");
+			auditHeader.setApiHeader(reqHeaderDetails);
+
+			// call collateral create method
+			auditHeader = collateralSetupService.saveOrUpdate(auditHeader);
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+		} catch (BadSqlGrammarException badSqlE) {
+			logger.error(badSqlE);
+			APIErrorHandlerService.logUnhandledException(badSqlE);
+			if (badSqlE.getCause() != null) {
+				return APIErrorHandlerService.getFailedStatus("9999", badSqlE.getCause().getMessage());
+			} else {
+				return APIErrorHandlerService.getFailedStatus();
+			}
+		} catch (NumberFormatException nfe) {
+			logger.error(nfe);
+			APIErrorHandlerService.logUnhandledException(nfe);
+			return APIErrorHandlerService.getFailedStatus("90275");
+		} catch (DataIntegrityViolationException e) {
+			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus("90275");
+		} catch (Exception e) {
+			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		logger.debug("Leaving");
+		return APIErrorHandlerService.getSuccessStatus();
+	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -721,4 +819,9 @@ public class CollateralController extends ExtendedTestClass {
 	public void setCustomerEMailService(CustomerEMailService customerEMailService) {
 		this.customerEMailService = customerEMailService;
 	}
+
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
+		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
 }

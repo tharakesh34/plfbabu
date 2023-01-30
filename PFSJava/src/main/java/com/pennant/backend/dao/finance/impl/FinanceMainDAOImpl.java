@@ -2759,23 +2759,27 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	// FIXME to custom RowMapper
 	@Override
-	public FinanceMain getFinanceDetailsByFinRefence(long finID, String type) {
-		StringBuilder sql = new StringBuilder("Select * From ");
-		sql.append("FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = :FinID");
-		logger.debug(Literal.SQL + sql.toString());
+	public FinanceMain getFinanceDetailsByFinRefence(String finReference) {
 
+		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinID", finID);
+
+		StringBuilder sql = new StringBuilder("Select ");
+		sql.append(" custId, FinReference, LastMntOn, FinStartDate,");
+		sql.append(" RecordStatus, FinAmount, FinAssetValue, finIsActive");
+		sql.append(" From FinanceMain_view");
+		sql.append(" Where FinReference = :FinReference");
+		logger.debug("selectSql: " + sql.toString());
+		source.addValue("FinReference", finReference);
 
 		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), typeRowMapper, source);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
+			logger.warn("Exception: ", e);
 		}
+		logger.debug("Leaving");
+		return null;
 	}
 
 	@Override
@@ -6474,5 +6478,29 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		logger.debug(Literal.LEAVING);
 		return finMains;
+	}
+
+	@Override
+	public List<FinanceMain> getFinDetailsByFinType(String finType) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("Select ");
+		sql.append(" CustID, FinReference, LastMntOn, FinStartDate, RecordStatus,");
+		sql.append(" FinAmount, FinAssetValue, FinType, FinIsActive");
+		sql.append(" From FinanceMain_view ");
+		sql.append(" Where FinType = :FinType ");
+
+		logger.debug("selectSql: " + sql.toString());
+		source.addValue("FinType", finType);
+		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return null;
+
 	}
 }

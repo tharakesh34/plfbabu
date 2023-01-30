@@ -1,5 +1,6 @@
 package com.pennanttech.service.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +12,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.validation.DocumentDetailsGroup;
 import com.pennant.validation.GetFinDocumentDetailsGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennanttech.controller.DocumentController;
@@ -22,6 +22,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pffws.DocumentRestService;
 import com.pennanttech.pffws.DocumentSoapService;
+import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.DocumentList;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -42,7 +43,46 @@ public class DocumentWebServiceImpl extends ExtendedTestClass implements Documen
 		AuditHeader auditHeader = null;
 
 		// basic field Validation
-		validationUtility.validate(documentDetails, DocumentDetailsGroup.class);
+		/* validationUtility.validate(documentDetails, DocumentDetailsGroup.class); */
+
+		if (StringUtils.isEmpty(documentDetails.getFinReference())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		if (StringUtils.isEmpty(documentDetails.getDocCategory())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "docCategory";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else if (documentDetails.getDocCategory().length() > 50) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "docCategory";
+			valueParm[1] = "50";
+			return APIErrorHandlerService.getFailedStatus("90300", valueParm);
+		}
+
+		if (StringUtils.isEmpty(documentDetails.getDoctype())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "docFormat";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else if (documentDetails.getDoctype().length() > 10) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "docFormat";
+			valueParm[1] = "10";
+			return APIErrorHandlerService.getFailedStatus("90300", valueParm);
+		}
+
+		if (StringUtils.isEmpty(documentDetails.getDocName())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "docName";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else if (documentDetails.getDocName().length() > 300) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "docName";
+			valueParm[1] = "300";
+			return APIErrorHandlerService.getFailedStatus("90300", valueParm);
+		}
 
 		// validate finReference
 		if (StringUtils.isNotBlank(documentDetails.getReferenceId())) {
@@ -153,6 +193,35 @@ public class DocumentWebServiceImpl extends ExtendedTestClass implements Documen
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Override
+	public WSReturnStatus addDocuments(DocumentDetails documentDetails) {
+		logger.debug(Literal.ENTERING);
+
+		if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		if (CollectionUtils.isEmpty(documentDetails.getDocuments())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Atleast 1 Document";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		for (DocumentDetails doc : documentDetails.getDocuments()) {
+			doc.setFinReference(documentDetails.getReferenceId());
+			doc.setReferenceId(documentDetails.getReferenceId());
+			WSReturnStatus ws = addDocument(doc);
+			if (!APIConstants.RES_SUCCESS_CODE.equals(ws.getReturnCode())) {
+				return ws;
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return APIErrorHandlerService.getSuccessStatus();
 	}
 
 }

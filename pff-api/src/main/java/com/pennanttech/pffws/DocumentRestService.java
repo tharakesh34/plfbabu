@@ -19,6 +19,10 @@ public interface DocumentRestService {
 	WSReturnStatus addDocument(DocumentDetails documentDetails);
 
 	@POST
+	@Path("/documentService/addDocuments")
+	WSReturnStatus addDocuments(DocumentDetails documentDetails);
+
+	@POST
 	@Path("/documentService/getFinDocument")
 	DocumentDetails getFinanceDocument(DocumentDetails documentDetails);
 
