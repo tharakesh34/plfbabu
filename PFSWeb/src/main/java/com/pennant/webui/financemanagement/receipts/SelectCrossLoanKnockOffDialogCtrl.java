@@ -592,6 +592,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		receiptData.setFinanceDetail(fd);
 
 		FinReceiptHeader rch = new FinReceiptHeader();
+		rch.setValueDate(this.receiptDate.getValue());
 		receiptData.setReceiptHeader(rch);
 
 		FinScheduleData schdData = fd.getFinScheduleData();

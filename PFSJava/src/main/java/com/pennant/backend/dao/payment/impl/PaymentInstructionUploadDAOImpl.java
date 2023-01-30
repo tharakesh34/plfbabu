@@ -113,7 +113,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 
 				ps.setInt(++index, detail.getProgress());
 				ps.setBigDecimal(++index, detail.getPayAmount());
-				ps.setLong(++index, detail.getReferenceID());
+				ps.setObject(++index, detail.getReferenceID());
 				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, detail.getErrorCode());
 				ps.setString(++index, detail.getErrorDesc());
