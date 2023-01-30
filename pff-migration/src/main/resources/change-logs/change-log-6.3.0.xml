@@ -5620,7 +5620,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2562.7" author="sampath.d">
+	<changeSet id="TK#2562.7.1" author="sampath.d">
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='HOLD_REFUND_DOWNLOAD');
@@ -5631,7 +5631,7 @@
 				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD');
 				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD';
 							
-				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'HOLD_REFUND_DOWNLOAD', 'Hold Refund download', 3, 'HoldRefund', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference No,Status,Reason,Remarks,Upload Status,Failure Code,Failure Desc}',  '', 'A', '/opt/pff/hdfc/holdrefund/download', 'HoldRefund_', '.xls', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'HOLD_REFUND_DOWNLOAD', 'Hold Refund download', 3, 'HoldRefund', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference No,Status,Reason,Remarks,Upload Status,Failure Reason}',  '', 'A', '/opt/pff/hdfc/holdrefund/download', 'HoldRefund_', '.xls', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
 
 				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD'), 'HOLD_REFUND_UPLOAD',  0, 'ID', 'HEADERID = :HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, 9, 0, 0);
 				
@@ -5640,7 +5640,6 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'REASON',	         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'REMARKS',	         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'STATUS',	         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'ERRORCODE',	     0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOLD_REFUND_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOLD_REFUND_DOWNLOAD')), 'ERRORDESC',	     0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 			]]>
 		</sql>
@@ -10883,7 +10882,9 @@
 			<column name="CustId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="ReceiptId" type="bigint" />
+			<column name="ReceiptId" type="bigint" >
+			     <constraints nullable="false" />
+		    </column>
 			<column name="FromFinID" type="bigint" />
 			<column name="ToFinID" type="bigint" />
 			<column name="FromFinReference" type="varchar(20)">
@@ -10994,8 +10995,8 @@
 	<changeSet id="ST#722.02.1" author="Rahul" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE CROSS_LOAN_TRANSFER_TEMP ADD CONSTRAINT DF_CLT_TOEXCESSID DEFAULT 0 FOR TOEXCESSID;
-				ALTER TABLE CROSS_LOAN_TRANSFER_TEMP ADD CONSTRAINT DF_CLT_WORKFLOWID DEFAULT 0 FOR WORKFLOWID;
+				ALTER TABLE CROSS_LOAN_TRANSFER_TEMP ADD CONSTRAINT DF_CLT_T_TOEXCESSID DEFAULT 0 FOR TOEXCESSID;
+				ALTER TABLE CROSS_LOAN_TRANSFER_TEMP ADD CONSTRAINT DF_CLT_T_WORKFLOWID DEFAULT 0 FOR WORKFLOWID;
 			]]>
 		</sql>
 	</changeSet>
@@ -11339,7 +11340,7 @@
 	<changeSet id="ST#722.08_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'cross_loan_transfer_tview'); 
+				select deps_save_and_drop_dependencies ('plf', 'cross_loan_knockoff_tview'); 
 			]]>
 		</sql>
 	</changeSet>
@@ -11407,7 +11408,7 @@
 	<changeSet id="ST#722.08_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'cross_loan_transfer_eview');
+				select deps_restore_dependencies ('plf', 'cross_loan_knockoff_tview');
 			]]>
 		</sql>
 	</changeSet>
@@ -11415,7 +11416,7 @@
 	<changeSet id="ST#722.09_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'cross_loan_transfer_aview'); 
+				select deps_save_and_drop_dependencies ('plf', 'cross_loan_knockoff_aview'); 
 			]]>
 		</sql>
 	</changeSet>
@@ -11451,7 +11452,7 @@
 	<changeSet id="ST#722.09_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'cross_loan_transfer_aview');
+				select deps_restore_dependencies ('plf', 'cross_loan_knockoff_aview');
 			]]>
 		</sql>
 	</changeSet>
@@ -11707,7 +11708,7 @@
 				
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_CrossLoanKnockoffMaker';
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_CrossLoanKnockOffDialog_btnReceipt';
-				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_CrossLoanKnockOffList_NewReceipt';, 
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_CrossLoanKnockOffList_NewReceipt';
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_CrossLoanKnockOffDialog_btnChangeReceipt';
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_CrossLoanKnockOffDialog_btnCalcReceipts';
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'CrossLoanKnockOffDialog_excessAdjustTo';
@@ -11817,7 +11818,7 @@
 	</changeSet>
 	
 	<changeSet id="ST#713.2" author="Mounika.M">
-		<addPrimaryKey tableName="LPP_UPLOAD" columnNames="Id" />
+		<addPrimaryKey tableName="LPP_UPLOAD" columnNames="Id" constraintName="PK_LPP_UPLOAD_ID" />
 	</changeSet>
 	
 	<changeSet id="ST#713.3" author="Mounika.M">
@@ -11961,16 +11962,60 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#713.7" author="Mounika.M">
+	<changeSet id="ST#713.7" author="Mounika.M" dbms="mssql,oracle">
 		<dropPrimaryKey constraintName="PK_FinODPenaltyRates" tableName="FinODPenaltyRates" />
+	</changeSet>
+	
+	<changeSet id="ST#713.7" author="Mounika.M" dbms="postgresql">
+		<dropPrimaryKey constraintName="finodpenaltyrates_pkey" tableName="FinODPenaltyRates" />
+	</changeSet>
+	
+	<changeSet id="ST#713.8.0_pre" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[
+					drop index idx_odpenaltyrates_finid on FinODPenaltyRates;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#713.8_pre" author="Mounika.M">
+		<addNotNullConstraint tableName="FinODPenaltyRates" columnName="FinID" columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="ST#713.8.0_post" author="Mounika.M" dbms="mssql">
+		<createIndex tableName="FinODPenaltyRates" indexName="idx_odpenaltyrates_finid" >
+			<column name="FINID" type="bigint" />
+		</createIndex>
 	</changeSet>
 	
 	<changeSet id="ST#713.8" author="Mounika.M">
 		<addPrimaryKey tableName="FinODPenaltyRates" columnNames="FinID,FinEffectDate" constraintName="PK_FinODPenaltyRates"/>
 	</changeSet>
 	
-	<changeSet id="ST#713.9" author="Mounika.M">
-		<dropPrimaryKey constraintName="PK_FinODPenaltyRates" tableName="FinODPenaltyRates_Temp"/>
+	<changeSet id="ST#713.9" author="Mounika.M" dbms="mssql,oracle">
+		<dropPrimaryKey constraintName="PK_FinODPenaltyRates_temp" tableName="FinODPenaltyRates_Temp"/>
+	</changeSet>
+	
+	<changeSet id="ST#713.9" author="Mounika.M" dbms="postgresql">
+		<dropPrimaryKey constraintName="finodpenaltyrates_temp_pkey" tableName="FinODPenaltyRates_Temp"/>
+	</changeSet>
+	
+	<changeSet id="ST#713.10.0_pre" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[
+					drop index idx_odpenaltyrates_t_finid on FinODPenaltyRates_Temp;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#713.10_pre" author="Mounika.M">
+		<addNotNullConstraint tableName="FinODPenaltyRates_Temp" columnName="FinID" columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="ST#713.10.0_post" author="Mounika.M" dbms="mssql">
+		<createIndex tableName="FinODPenaltyRates_Temp" indexName="idx_odpenaltyrates_t_finid" >
+			<column name="FINID" type="bigint" />
+		</createIndex>
 	</changeSet>
 	
 	<changeSet id="ST#713.10" author="Mounika.M">
