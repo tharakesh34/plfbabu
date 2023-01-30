@@ -25,6 +25,8 @@ import com.pennant.CurrencyBox;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.settlement.model.SettlementSchedule;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -235,6 +237,11 @@ public class SettlementScheduleInlineEditCtrl extends GFCBaseCtrl<SettlementSche
 		dateBox.addForward("onChange", self, "onChangesettlementInstalDate");
 
 		item.appendChild(listCell);
+
+		if (!dateBox.isReadonly()) {
+			dateBox.setConstraint(new PTDateValidator(Labels.getLabel("label_SettlementDialog_StartDate.value"), true,
+					true, null, false));
+		}
 	}
 
 	private void appendTransactionAmount(SettlementSchedule schedule, int listCount, Listitem item) {
@@ -253,6 +260,14 @@ public class SettlementScheduleInlineEditCtrl extends GFCBaseCtrl<SettlementSche
 		listCell.appendChild(hbox);
 
 		item.appendChild(listCell);
+
+		if (!amount.isReadonly()) {
+			amount.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_SettlementDialog_SettlementAmount.value"),
+							PennantConstants.defaultCCYDecPos, true, false));
+
+		}
+
 	}
 
 	private void appenedRecordType(SettlementSchedule schedule, Listitem item) {

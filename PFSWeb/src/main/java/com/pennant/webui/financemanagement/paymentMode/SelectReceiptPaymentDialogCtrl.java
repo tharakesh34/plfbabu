@@ -889,6 +889,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		FinanceMain fm = financeMainDAO.getFinanceMainForLMSEvent(finID);
 		fm.setAppDate(appDate);
 		fm.setReceiptPurpose(rptPurpose.code());
+		rch.setValueDate(this.receiptDate.getValue());
 		rch.setClosureThresholdLimit(finReceiptHeaderDAO.getClosureAmountByFinType(fm.getFinType()));
 
 		receiptData.setReceiptHeader(rch);
@@ -1074,7 +1075,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 	public void onFulfill$referenceId(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
-		
+
 		boolean isDisabled = false;
 		Date receiptDt = appDate;
 
@@ -1098,7 +1099,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		this.receiptDate.setValue(receiptDt);
 		this.receiptDate.setDisabled(isDisabled);
-		
+
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 

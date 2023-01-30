@@ -839,7 +839,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal sanBasedPft = BigDecimal.ZERO;
 	private String moduleDefiner;
 	private Date sanctionedDate;
-	private List<FinODPenaltyRate> penaltyRates = null;
+	private List<FinODPenaltyRate> penaltyRates = new ArrayList<>();
 	private boolean resetFromLastStep;
 	private boolean wifLoan = false;
 
