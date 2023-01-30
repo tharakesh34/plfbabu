@@ -23438,6 +23438,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())) {
+				Long instructionUId = Long.MIN_VALUE;
+				if (aFinanceSchData.getDisbursementDetails().size() > 0) {
+					instructionUId = aFinanceSchData.getDisbursementDetails().get(0).getInstructionUID();
+				}
 
 				aFinanceSchData.getDisbursementDetails().clear();
 				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
@@ -23447,6 +23451,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				disbursementDetails.setDisbReqDate(appDate);
 				disbursementDetails.setFeeChargeAmt(aFinanceMain.getFeeChargeAmt());
 				disbursementDetails.setQuickDisb(aFinanceSchData.getFinanceMain().isQuickDisb());
+				disbursementDetails.setInstructionUID(instructionUId);
 				aFinanceSchData.getDisbursementDetails().add(disbursementDetails);
 			} else {
 				if (StringUtils.isEmpty(moduleDefiner)) {
