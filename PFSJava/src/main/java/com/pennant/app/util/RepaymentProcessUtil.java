@@ -564,6 +564,12 @@ public class RepaymentProcessUtil {
 			String payableType = xcess.getPayableType();
 			String feeCode = xcess.getFeeTypeCode();
 
+			addZeroifNotContains(extMap, feeCode + "_P");
+			addZeroifNotContains(extMap, feeCode + "_SGST_P");
+			addZeroifNotContains(extMap, feeCode + "_IGST_P");
+			addZeroifNotContains(extMap, feeCode + "_UGST_P");
+			addZeroifNotContains(extMap, feeCode + "_CESS_P");
+
 			switch (payableType) {
 			case RepayConstants.EXAMOUNTTYPE_EXCESS:
 				extMap.put("EX_ReceiptAmount", extMap.get("EX_ReceiptAmount").add(xcess.getTotPaidNow()));

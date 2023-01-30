@@ -229,11 +229,9 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 	private List<BatchJobQueue> getQueingRecords(BatchJobQueue bJobQueue) {
 		String sql = "Select row_number() over(order by id) ResetCounterId, ID From Eod_Customer_Queue";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, bJobQueue.getBatchId());
-		}, (rs, Num) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			BatchJobQueue jobQueue = new BatchJobQueue();
 			jobQueue.setId(rs.getLong("ID"));
 			jobQueue.setResetCounterId(rs.getLong("ResetCounterId"));
