@@ -258,7 +258,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 
 	@Override
 	public List<FeeWaiverHeader> getFeeWaiverHeaderByFinReference(long finID, String type) {
-		String sql = "Select FinID, FinReference, WaiverId, WaiverFullFillAmount, WaiverFullFillDate, AlwCondWaiver From FeeWaiverHeader Where FinId = ?";
+		String sql = "Select FinID, FinReference, Status, WaiverId, WaiverFullFillAmount, WaiverFullFillDate, AlwCondWaiver From FeeWaiverHeader Where FinId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
