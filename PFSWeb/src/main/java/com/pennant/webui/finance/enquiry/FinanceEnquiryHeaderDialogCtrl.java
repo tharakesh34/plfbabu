@@ -607,7 +607,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinSecurityMandateEnquiry"));
 
 			JdbcSearchObject<Mandate> jdbcSearchObject = new JdbcSearchObject<Mandate>();
-			jdbcSearchObject.addTabelName("Mandates_View");
+			jdbcSearchObject.addTabelName("Mandates_AView");
 			jdbcSearchObject
 					.addFilters(new Filter[] { new Filter("OrgReference", enquiry.getFinReference(), Filter.OP_EQUAL),
 							new Filter("SecurityMandate", 1, Filter.OP_EQUAL) });
