@@ -4431,6 +4431,13 @@ public class CreateFinanceController extends SummaryDetailService {
 		String mobileNum = customerDetailsService.getCustomerPhoneNumberByCustId(customer.getCustID());
 		finInquiryDetail.setMobileNum(mobileNum);
 		finInquiryDetail.setFinAmount(financeMain.getFinAmount());
+		if (financeMain.getLoanCategory() != null) {
+			if (financeMain.getLoanCategory().equals(FinanceConstants.LOAN_CATEGORY_FP)) {
+				finInquiryDetail.setFinCategory(Labels.getLabel("label_FinanceMainDialog_Fresh/Purchase.value"));
+			} else {
+				finInquiryDetail.setFinCategory(financeMain.getLoanCategory());
+			}
+		}
 		if (financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_APPROVED)) {
 			if (financeMain.isFinIsActive()) {
 				finInquiryDetail.setStage(Labels.getLabel("loanStatus_Active.value"));

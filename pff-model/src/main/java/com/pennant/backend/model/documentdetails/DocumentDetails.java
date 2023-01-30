@@ -237,6 +237,7 @@ public class DocumentDetails extends AbstractWorkflowEntity {
 		excludeFields.add("lovDescCustShrtName");
 		excludeFields.add("refId");
 		excludeFields.add("docTypeId");
+		excludeFields.add("documents");
 
 		return excludeFields;
 	}
