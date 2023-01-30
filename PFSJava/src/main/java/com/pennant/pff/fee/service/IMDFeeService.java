@@ -68,7 +68,6 @@ public class IMDFeeService {
 							}
 						}
 						paramMap.put("fee_IMDPaid", formateAmount(paidAmount, 2));
-						paramMap.put("fee_IMDActualAmount", formateAmount(paidAmount, 2));
 					}
 
 					BigDecimal result = RuleExecutionUtil.getRuleResult(ruleList.get(0).getSQLRule(), paramMap, null);
