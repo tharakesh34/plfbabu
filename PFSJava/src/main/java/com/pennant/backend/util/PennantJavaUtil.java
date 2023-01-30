@@ -3875,7 +3875,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("SettlementTypeDetail",
 				new ModuleMapping("SettlementTypeDetail", SettlementTypeDetail.class,
 						new String[] { "Settlement_Types", "Settlement_Types_View" }, masterWF,
-						new String[] { "ID", "settlementCode", "settlementDesc" },
+						new String[] { "Id", "settlementCode", "settlementDesc" },
 						new Object[][] { { "Active", "0", 1 } }, 750));
 
 		ModuleUtil.register("Settlement",
@@ -3891,7 +3891,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("SettlementSchedule",
 				new ModuleMapping("SettlementSchedule", SettlementSchedule.class,
 						new String[] { "Settlement_Schedule", "Settlement_Schedule_View" }, masterWF,
-						new String[] { "ID", "settlementDetailID", "settlementAmount" }, null, 750));
+						new String[] { "id", "settlementDetailID", "settlementAmount" }, null, 750));
 
 		ModuleUtil.register("SettlementCancelReasons",
 				new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons", "Reasons_AView" }, masterWF,
