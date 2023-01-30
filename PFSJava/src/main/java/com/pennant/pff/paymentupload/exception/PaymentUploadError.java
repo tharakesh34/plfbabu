@@ -31,7 +31,7 @@ public enum PaymentUploadError {
 
 	HOLDUP003("When Hold Flag is true, Reason is Mandatory"),
 
-	HOLDUP004("Flag already exists against the Loan"),
+	HOLDUP004("Hold Flag already exists against the Loan"),
 
 	HOLDUP005("Hold Flag is not available against the loan"),
 
@@ -43,7 +43,9 @@ public enum PaymentUploadError {
 
 	HOLDUP009("FinReference is not valid"),
 
-	HOLDUP0010("HoldStatus is not valid");
+	HOLDUP0010("HoldStatus is not valid"),
+
+	HOLDUP0011("Fin Reference is not in active.");
 
 	private String description;
 

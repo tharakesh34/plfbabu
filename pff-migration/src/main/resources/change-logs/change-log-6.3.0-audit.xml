@@ -969,7 +969,9 @@
 			<column name="CustId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="ReceiptId" type="bigint" />
+			<column name="ReceiptId" type="bigint" >
+			 	<constraints nullable="false" />
+			</column>
 			<column name="FromFinID" type="bigint" />
 			<column name="ToFinID" type="bigint" />
 			<column name="FromFinReference" type="varchar(20)">
