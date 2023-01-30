@@ -3872,9 +3872,11 @@ public class PennantJavaUtil {
 						new String[] { "Fee_Refund_Instructions", "Fee_Refund_Instructions_AView" }, masterWF,
 						new String[] { "PaymentType", "PaymentAmount", "BankCode", "PaymentCCy" }, null, 600));
 
-		ModuleUtil.register("SettlementTypeDetail", new ModuleMapping("SettlementTypeDetail",
-				SettlementTypeDetail.class, new String[] { "Settlement_Types", "Settlement_Types_View" }, masterWF,
-				new String[] { "settlementCode", "settlementDesc" }, new Object[][] { { "Active", "0", 1 } }, 750));
+		ModuleUtil.register("SettlementTypeDetail",
+				new ModuleMapping("SettlementTypeDetail", SettlementTypeDetail.class,
+						new String[] { "Settlement_Types", "Settlement_Types_View" }, masterWF,
+						new String[] { "ID", "settlementCode", "settlementDesc" },
+						new Object[][] { { "Active", "0", 1 } }, 750));
 
 		ModuleUtil.register("Settlement",
 				new ModuleMapping("Settlement", FinSettlementHeader.class,
