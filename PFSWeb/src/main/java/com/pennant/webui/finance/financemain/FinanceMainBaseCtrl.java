@@ -15115,6 +15115,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			// Finance Overdue Details set to Penalty Rate Object FIXME:
 			if (!this.buildEvent) {
+				penaltyRate.setFinEffectDate(aFinanceSchData.getFinODPenaltyRate().getFinEffectDate());
 				aFinanceSchData.setFinODPenaltyRate(penaltyRate);
 			}
 
