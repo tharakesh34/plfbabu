@@ -309,7 +309,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "ReceiptDialog";
+		super.pageRightName = "CrossLoanKnockOffDialog";
 	}
 
 	// Component Events

@@ -587,7 +587,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 
 		Date appDate = SysParamUtil.getAppDate();
 
-		long finID = ComponentUtil.getFinID(this.fromFinReference);
+		long finID = ComponentUtil.getFinID(this.toFinReference);
 		FinanceDetail fd = new FinanceDetail();
 		receiptData.setFinanceDetail(fd);
 
