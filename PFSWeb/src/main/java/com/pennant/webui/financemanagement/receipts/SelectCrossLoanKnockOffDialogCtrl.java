@@ -629,7 +629,13 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		rch.setReceiptAmount(PennantApplicationUtil.unFormateAmount(this.receiptAmount.getActualValue(), formatter));
 		rch.setReceiptPurpose(rptPurpose.code());
 
-		rch.setReceiptMode(this.knockOffFrom.getSelectedItem().getValue().toString());
+		String receiptMode = this.knockOffFrom.getSelectedItem().getValue().toString();
+		if (RepayConstants.PAYTYPE_PAYABLE.equals(receiptMode)) {
+			rch.setReceiptMode(RepayConstants.RECEIPTTYPE_PAYABLE);
+		} else {
+			rch.setReceiptMode(receiptMode);
+		}
+
 		rch.setKnockOffRefId(Long.valueOf(this.referenceId.getValue()));
 		rch.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_MANUAL);
 

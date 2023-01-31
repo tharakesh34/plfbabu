@@ -97,18 +97,29 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 			sql.append(" and R.RoleCd = ?");
 		}
 
+		if (StringUtils.isNotBlank(right.getMenuRight())) {
+			sql.append(" and GR.GrpID in (Select TGR.GrpID From SecGroupRights TGR");
+			sql.append(" Inner Join SecRights TR on TR.RightID = TGR.RightID");
+			sql.append(" Where TR.RightName = ?)");
+		}
+
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, right.getUsrID());
-			ps.setLong(2, right.getLoginAppId());
-			ps.setInt(3, 0);
-			ps.setString(4, right.getPage());
+			int index = 0;
+			
+			ps.setLong(++index, right.getUsrID());
+			ps.setLong(++index, right.getLoginAppId());
+			ps.setInt(++index, 0);
+			ps.setString(++index, right.getPage());
 
 			if (StringUtils.isNotBlank(right.getRoleCd())) {
-				ps.setString(5, right.getRoleCd());
+				ps.setString(++index, right.getRoleCd());
 			}
 
+			if (StringUtils.isNotBlank(right.getMenuRight())) {
+				ps.setString(++index, right.getMenuRight());
+			}
 		}, (rs, rowNum) -> {
 			SecurityRight sr = new SecurityRight();
 
