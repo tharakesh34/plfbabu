@@ -697,10 +697,12 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	public FeeType getRecvFees(String feeTypeCode) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select fe.FeeTypeCode, fe.FeeTypeDesc, fe.Refundable");
-		sql.append(" From FeeTypes fee");
+		sql.append(", fe.PayableLinkTo, fe.AdviseType, fe.FeeTypeID, fe.FecvFeeTypeId");
+		sql.append(" From feetypes fee");
 		sql.append(" inner join (select case when PAYABLELINKTO = 'MANADV'");
 		sql.append(" then (Select feetypecode from feetypes where feetypeid = f.recvfeetypeid)");
-		sql.append(" else PAYABLELINKTO end type,feetypecode, feetypedesc, refundable from feetypes f) fe");
+		sql.append(" else PAYABLELINKTO end type,feetypecode, feetypedesc, refundable");
+		sql.append(", PayableLinkTo, AdviseType, FeeTypeID, RecvFeeTypeId from feetypes f) fe");
 		sql.append(" on fee.feetypecode = fe.type and fee.feetypecode = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -712,6 +714,10 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				ft.setRecvFeeTypeCode(rs.getString("FeeTypeCode"));
 				ft.setRecvFeeTypeDesc(rs.getString("FeeTypeDesc"));
 				ft.setRefundable(rs.getBoolean("Refundable"));
+				ft.setPayableLinkTo(rs.getString("PayableLinkTo"));
+				ft.setAdviseType(rs.getInt("AdviseType"));
+				ft.setFeeTypeID(rs.getLong("FeeTypeID"));
+				ft.setRecvFeeTypeId(rs.getLong("FecvFeeTypeId"));
 
 				return ft;
 			}, feeTypeCode);
