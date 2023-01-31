@@ -1995,6 +1995,11 @@ public class ReceiptCalculator {
 			}
 		}
 
+		if (AllocationType.NO_ALLOC.equals(rch.getAllocationType())) {
+			setTotals(rd, 0);
+			return rd;
+		}
+
 		if (receiptPurposeCtg == 2 && !rd.isAdjSchedule()) {
 			rd = earlySettleAllocation(rd);
 			if (rd.isSetPaidValues()) {
