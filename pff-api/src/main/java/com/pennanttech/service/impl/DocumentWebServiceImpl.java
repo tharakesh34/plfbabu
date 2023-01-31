@@ -134,8 +134,8 @@ public class DocumentWebServiceImpl extends ExtendedTestClass implements Documen
 		if (financeMainDAO.getActiveFinID(documentDetails.getReferenceId(), TableType.MAIN_TAB) == null) {
 			response = new DocumentDetails();
 			String[] valueParm = new String[1];
-			valueParm[0] = "finreference: " + documentDetails.getReferenceId();
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			valueParm[0] = documentDetails.getReferenceId();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 			return response;
 		}
 
