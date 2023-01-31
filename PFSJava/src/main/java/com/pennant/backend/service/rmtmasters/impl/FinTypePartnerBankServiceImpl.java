@@ -242,11 +242,11 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			if (count > 0) {
 				String[] parameters = new String[4];
 				parameters[0] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_FinType.value")
-						+ ": " + fpb.getFinType();
+						+ ": " + fpb.getFinType() + ", ";
 				parameters[1] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_PaymentType.value")
-						+ ": " + fpb.getPaymentMode();
+						+ ": " + fpb.getPaymentMode() + ", ";
 				parameters[2] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_Purpose.value")
-						+ ": " + fpb.getPurpose();
+						+ ": " + fpb.getPurpose() + ", ";
 				parameters[3] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_PartnerBank.value")
 						+ ": " + fpb.getPartnerBankCode() + " is Already Exists";
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30550", parameters, null));
