@@ -454,16 +454,19 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 			}
 		}
 
-		if ((priWaived.add(pftWaived)).compareTo(BigDecimal.ZERO) > 0) {
-			for (SettlementAllocationDetail sad : settlement.getSettlementAllocationDetails()) {
-				if (Allocation.EMI.equals(sad.getAllocationType())) {
+		for (SettlementAllocationDetail sad : settlement.getSettlementAllocationDetails()) {
+			if (Allocation.EMI.equals(sad.getAllocationType())) {
+				if ((priWaived.add(pftWaived)).compareTo(BigDecimal.ZERO) > 0) {
 					sad.setWaivedAmount(priWaived.add(pftWaived));
 					sad.setBalance(sad.getTotalDue().subtract(priWaived.add(pftWaived)));
-					break;
+				} else {
+					sad.setWaivedAmount(BigDecimal.ZERO);
+					sad.setBalance(sad.getTotalDue());
 				}
-
+				break;
 			}
 		}
+
 		doFillAllocationDetail(settlement.getSettlementAllocationDetails());
 		logger.debug(Literal.LEAVING);
 	}
@@ -870,6 +873,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 			if (!PennantConstants.RECORD_TYPE_NEW.equals(settlement.getRecordType())) {
 				doReadOnly();
 			}
+
 		}
 
 		if (enqiryModule) {
@@ -1069,7 +1073,6 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 
 	public void doReadOnly() {
 		readOnlyComponent(true, this.settlementType);
-		readOnlyComponent(true, this.cancelReasonCode);
 		readOnlyComponent(true, this.settlementStatus);
 		readOnlyComponent(true, this.startDate);
 		readOnlyComponent(true, this.otsDate);
@@ -1077,6 +1080,12 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		readOnlyComponent(true, this.endDate);
 		readOnlyComponent(true, this.finReference);
 		readOnlyComponent(true, this.cancelRemarks);
+		readOnlyComponent(true, this.cancelReasonCode);
+		if (StringUtils.equals(this.module, "SETTLEMENT_CANCEL")) {
+			readOnlyComponent(isReadOnly("SettlementDialog_CancelReasonCode"), this.cancelReasonCode);
+			readOnlyComponent(isReadOnly("SettlementDialog_CancelRemarks"), this.cancelRemarks);
+		}
+
 		readOnlyComponent(true, this.settlementAmount);
 		readOnlyComponent(true, this.settlementEndAfterGrace);
 		readOnlyComponent(true, this.noOfGraceDays);
