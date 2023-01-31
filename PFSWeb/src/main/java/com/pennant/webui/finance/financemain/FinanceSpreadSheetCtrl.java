@@ -169,6 +169,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap) {
 		String employmentType = (String) dataMap.get("CUST_EMPLOYMENT_TYPE");
 
+		if ("#".equals(employmentType)) {
+			employmentType = "";
+		}
+
 		return getSheet(sheetNamePrefix, book, dataMap, employmentType);
 	}
 
@@ -433,8 +437,12 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		if (range == null || range.isWholeColumn()) {
 			return;
 		}
+		CellData cellData = range.getCellData();
+		CellType cellType = cellData.getType();
 
-		CellType cellType = range.getCellData().getType();
+		if (cellData.isFormula()) {
+			return;
+		}
 
 		if (cellType != null && object == null) {
 			switch (cellType) {
