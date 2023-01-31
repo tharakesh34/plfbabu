@@ -697,7 +697,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	public FeeType getRecvFees(String feeTypeCode) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select fe.FeeTypeCode, fe.FeeTypeDesc, fe.Refundable");
-		sql.append(", fe.PayableLinkTo, fe.AdviseType, fe.FeeTypeID, fe.FecvFeeTypeId");
+		sql.append(", fe.PayableLinkTo, fe.AdviseType, fe.FeeTypeID, fe.RecvFeeTypeId");
 		sql.append(" From feetypes fee");
 		sql.append(" inner join (select case when PAYABLELINKTO = 'MANADV'");
 		sql.append(" then (Select feetypecode from feetypes where feetypeid = f.recvfeetypeid)");
@@ -717,7 +717,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				ft.setPayableLinkTo(rs.getString("PayableLinkTo"));
 				ft.setAdviseType(rs.getInt("AdviseType"));
 				ft.setFeeTypeID(rs.getLong("FeeTypeID"));
-				ft.setRecvFeeTypeId(rs.getLong("FecvFeeTypeId"));
+				ft.setRecvFeeTypeId(rs.getLong("RecvFeeTypeId"));
 
 				return ft;
 			}, feeTypeCode);
