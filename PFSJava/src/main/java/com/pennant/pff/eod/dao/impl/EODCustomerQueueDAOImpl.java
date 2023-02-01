@@ -143,6 +143,7 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 				ps.setInt(1, process);
 				ps.setDate(2, JdbcUtil.getDate(DateUtil.getSysDate()));
 				ps.setLong(3, jobQueue.getThreadId());
+
 				ps.setLong(4, queueId);
 			});
 		} else if (process == EodConstants.PROGRESS_SUCCESS) {
@@ -153,10 +154,11 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 			this.jdbcOperations.update(sql, ps -> {
 				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
 				ps.setInt(2, EodConstants.PROGRESS_SUCCESS);
+
 				ps.setLong(3, queueId);
 			});
 		} else if (process == EodConstants.PROGRESS_FAILED) {
-			sql = "Update Eod_Customer_Queue Set EndTime = ?, ThreadId = ?, Progress = ? Where Id = ?";
+			sql = "Update Eod_Customer_Queue Set EndTime = ?, ThreadId = ?, Progress = ?, ErrorLog = ? Where Id = ?";
 
 			logger.debug(Literal.SQL.concat(sql));
 
@@ -164,7 +166,9 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
 				ps.setInt(2, 0);
 				ps.setInt(3, EodConstants.PROGRESS_FAILED);
-				ps.setLong(4, queueId);
+				ps.setString(4, jobQueue.getError());
+
+				ps.setLong(5, queueId);
 			});
 		}
 
