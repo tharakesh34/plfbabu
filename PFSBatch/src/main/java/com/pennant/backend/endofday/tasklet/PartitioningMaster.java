@@ -79,41 +79,43 @@ public class PartitioningMaster implements Partitioner {
 
 		eodCustomerQueueDAO.handleFailures(new BatchJobQueue());
 
-		long loanCount = eodCustomerQueueDAO.getQueueCount();
+		long loanCount = eodCustomerQueueDAO.getCount();
+		long queueCount = eodCustomerQueueDAO.getQueueCount();
 		long totalCustomers = 0;
 
-		if (loanCount != 0) {
-			long noOfRows = Math.round((Long.valueOf(loanCount) / Long.valueOf(threadCount)));
+		if (queueCount == 0) {
+			return partitionData;
+		}
 
-			if (loanCount < threadCount) {
-				recordsLessThanThread = true;
-				noOfRows = loanCount;
+		long noOfRows = Math.round((Long.valueOf(queueCount) / Long.valueOf(threadCount)));
+
+		if (queueCount < threadCount) {
+			recordsLessThanThread = true;
+			noOfRows = queueCount;
+		}
+
+		long from = 0;
+		long to = 0;
+		for (int i = 1; i <= threadCount; i++) {
+
+			int customerCount = 0;
+			if (i == threadCount) {
+				/* Last thread will have the remaining records */
+				noOfRows = queueCount;
 			}
 
-			long from = 0;
-			long to = 0;
-			for (int i = 1; i <= threadCount; i++) {
+			to = to + noOfRows;
+			customerCount = eodCustomerQueueDAO.updateThreadID(from, to, i);
+			from = to;
 
-				int customerCount = 0;
-				if (i == threadCount) {
-					/* Last thread will have the remaining records */
-					noOfRows = loanCount;
-				}
+			totalCustomers = totalCustomers + customerCount;
 
-				to = to + noOfRows;
-				customerCount = eodCustomerQueueDAO.updateThreadID(from, to, i);
-				from = to;
+			ExecutionContext execution = addExecution(i, loanCount, customerCount);
+			partitionData.put(Integer.toString(i), execution);
 
-				totalCustomers = totalCustomers + customerCount;
-
-				ExecutionContext execution = addExecution(i, loanCount, customerCount);
-				partitionData.put(Integer.toString(i), execution);
-
-				if (recordsLessThanThread && noOfRows == customerCount) {
-					break;
-				}
+			if (recordsLessThanThread && noOfRows == customerCount) {
+				break;
 			}
-
 		}
 
 		logger.info("Thread allocation completed.");

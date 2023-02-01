@@ -242,4 +242,10 @@ public class BounceResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> im
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public int getCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
