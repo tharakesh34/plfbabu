@@ -11,7 +11,8 @@
 		<param-value>
 				classpath:applicationContext-txn.xml,
 				classpath:applicationContext-db.xml,
-				classpath:applicationContext-jobs.xml
+				classpath:applicationContext-jobs.xml,
+				classpath:batch-jobs.xml
 		</param-value>
 	</context-param>
 	<context-param>
