@@ -3874,7 +3874,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("SettlementTypeDetail",
 				new ModuleMapping("SettlementTypeDetail", SettlementTypeDetail.class,
-						new String[] { "Settlement_Types", "Settlement_Types_View" }, masterWF,
+						new String[] { "Settlement_Types", "Settlement_Types_AView" }, masterWF,
 						new String[] { "Id", "settlementCode", "settlementDesc" },
 						new Object[][] { { "Active", "0", 1 } }, 750));
 
