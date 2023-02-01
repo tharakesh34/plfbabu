@@ -115,7 +115,7 @@ public class CrossLoanTransferDAOImpl extends SequenceDao<CrossLoanTransfer> imp
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?");
 		sql.append(", RecordStatus= ?, RoleCode = ?, NextRoleCode = ?");
 		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
-		sql.append(" Where CrossLoanId = ?");
+		sql.append(" Where ID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
