@@ -221,6 +221,11 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
+		if (!"N".equals(detail.getOverRide()) || !"Y".equals(detail.getOverRide())) {
+			setError(detail, PaymentUploadError.REFUP013);
+			return;
+		}
+
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
 
