@@ -396,6 +396,11 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		List<SettlementAllocationDetail> allocations = new ArrayList<SettlementAllocationDetail>();
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocationsSummary();
 
+		for (int i = 0; i < allocationList.size(); i++) {
+			ReceiptAllocationDetail allocation = allocationList.get(i);
+			allocation.setAllocationID(i + 1);
+		}
+
 		for (ReceiptAllocationDetail rad : allocationList) {
 			SettlementAllocationDetail sad = new SettlementAllocationDetail();
 			sad.setId(rad.getAllocationID());

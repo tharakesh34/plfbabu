@@ -46,15 +46,15 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public List<FinExcessAmount> getExcessAmountsByRef(long finId) {
 		StringBuilder sql = getExcessAmountSqlQuery();
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinID = ? and Amount > ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		ExcessAmountRowMapper rowMapper = new ExcessAmountRowMapper();
 
 		List<FinExcessAmount> list = this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-			ps.setLong(index, finId);
+			ps.setLong(1, finId);
+			ps.setInt(2, 0);
 		}, rowMapper);
 
 		return list.stream().sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate()))
