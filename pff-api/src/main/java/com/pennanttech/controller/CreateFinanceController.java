@@ -185,6 +185,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.service.impl.RemarksWebServiceImpl;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.AgreementRequest;
@@ -2698,9 +2699,10 @@ public class CreateFinanceController extends SummaryDetailService {
 			FinODPenaltyRate odPenaltyRate = schdData.getFinODPenaltyRate();
 			String odChargeType = odPenaltyRate.getODChargeType();
 
-			if (odPenaltyRate != null && (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(odChargeType))) {
+			if (odPenaltyRate != null && (ChargeType.PERC_ONE_TIME.equals(odChargeType)
+					|| ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_PD_MTH.equals(odChargeType))) {
 				BigDecimal totPerc = PennantApplicationUtil.formateAmount(odPenaltyRate.getODChargeAmtOrPerc(), 2);
 				odPenaltyRate.setODChargeAmtOrPerc(totPerc);
 			}

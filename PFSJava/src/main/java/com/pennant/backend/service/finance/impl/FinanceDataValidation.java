@@ -181,6 +181,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.staticlist.AppStaticList;
 
 public class FinanceDataValidation {
@@ -1358,11 +1359,12 @@ public class FinanceDataValidation {
 			}
 			if ((StringUtils.isBlank(odChargeCalOn)) && (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odChargeType)
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(odChargeType)
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(odChargeType))) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "odChargeCalOn";
 				valueParm[1] = "odChargeType" + FinanceConstants.PENALTYTYPE_PERC_ONETIME + ","
-						+ FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
+						+ FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + "," + ChargeType.PERC_ON_EFF_DUE_DAYS + ","
 						+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH;
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
 			}
@@ -1391,6 +1393,7 @@ public class FinanceDataValidation {
 
 		if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odChargeType)
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)
+				|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(odChargeType)
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(odChargeType)) {
 			BigDecimal totPerc = PennantApplicationUtil.formateAmount(odChargeAmtOrPerc, 2);
 			if (totPerc.compareTo(new BigDecimal(100)) > 0) {
@@ -1415,8 +1418,9 @@ public class FinanceDataValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = odChargeType;
 				valueParm[1] = FinanceConstants.PENALTYTYPE_FLAT + "," + FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH
-						+ "," + FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
-						+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH + "," + FinanceConstants.PENALTYTYPE_PERC_ONETIME;
+						+ "," + FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + "," + ChargeType.PERC_ON_EFF_DUE_DAYS
+						+ "," + FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH + ","
+						+ FinanceConstants.PENALTYTYPE_PERC_ONETIME;
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90316", valueParm)));
 			}
 		}
@@ -1432,6 +1436,7 @@ public class FinanceDataValidation {
 			}
 			if (!finODCCalculatedOnSts && (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odChargeType)
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(odChargeType)
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(odChargeType))) {
 				String[] valueParm = new String[2];
 				valueParm[0] = odChargeCalOn;

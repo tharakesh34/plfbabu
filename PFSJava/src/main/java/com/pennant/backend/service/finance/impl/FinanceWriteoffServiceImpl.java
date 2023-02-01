@@ -48,15 +48,14 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
-import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
-import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -101,9 +100,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 	private FinanceWriteoffDAO financeWriteoffDAO;
 	private ProvisionDAO provisionDAO;
-	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
-	private ManualAdviseDAO manualAdviseDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	public FinanceWriteoffServiceImpl() {
@@ -1051,27 +1048,24 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		return this.manualAdviseDAO.getPaybleAdvises(finID, type);
 	}
 
-	public void setProvisionDAO(ProvisionDAO provisionDAO) {
-		this.provisionDAO = provisionDAO;
-	}
-
+	@Autowired
 	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
 		this.financeWriteoffDAO = financeWriteoffDAO;
 	}
 
-	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	@Autowired
+	public void setProvisionDAO(ProvisionDAO provisionDAO) {
+		this.provisionDAO = provisionDAO;
 	}
 
+	@Autowired
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
 		this.finTypeFeesDAO = finTypeFeesDAO;
 	}
 
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
+	@Autowired
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
+
 }

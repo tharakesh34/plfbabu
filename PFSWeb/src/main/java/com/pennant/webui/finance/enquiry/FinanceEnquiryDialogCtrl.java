@@ -131,6 +131,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul File
@@ -1674,6 +1675,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+				|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.format(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
 		}

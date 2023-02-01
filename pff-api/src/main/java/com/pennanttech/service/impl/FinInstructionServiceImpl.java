@@ -143,6 +143,7 @@ import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.model.external.collection.CollectionAPIDetail;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pffws.FinServiceInstRESTService;
@@ -1161,10 +1162,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return beanValidation("odChargeType");
 			}
 
-			if (StringUtils.isBlank(pr.getODChargeCalOn())
-					&& FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(pr.getODChargeType())
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(pr.getODChargeType())
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(pr.getODChargeType())) {
+			if (StringUtils.isBlank(pr.getODChargeCalOn()) && ChargeType.PERC_ONE_TIME.equals(pr.getODChargeType())
+					|| ChargeType.PERC_ON_DUE_DAYS.equals(pr.getODChargeType())
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(pr.getODChargeType())
+					|| ChargeType.PERC_ON_PD_MTH.equals(pr.getODChargeType())) {
 				return beanValidation("odChargeCalOn");
 			}
 
@@ -1585,7 +1586,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				valueParm[0] = finODPenaltyRate.getODChargeType();
 				valueParm[1] = FinanceConstants.PENALTYTYPE_FLAT + "," + FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH
 						+ "," + FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
-						+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH + "," + FinanceConstants.PENALTYTYPE_PERC_ONETIME;
+						+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH + "," + FinanceConstants.PENALTYTYPE_PERC_ONETIME
+						+ "," + ChargeType.PERC_ON_EFF_DUE_DAYS;
 				return getErrorDetails("90316", valueParm);
 			}
 		}
@@ -1614,6 +1616,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 		if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)
 				|| StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+				|| StringUtils.equals(finODPenaltyRate.getODChargeType(), ChargeType.PERC_ON_EFF_DUE_DAYS)
 				|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
 						FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
 			if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(100)) > 0) {

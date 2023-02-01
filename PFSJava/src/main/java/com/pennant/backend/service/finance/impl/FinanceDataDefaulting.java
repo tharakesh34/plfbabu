@@ -46,6 +46,7 @@ import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 
 public class FinanceDataDefaulting {
 
@@ -1036,6 +1037,7 @@ public class FinanceDataDefaulting {
 
 			if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odChargeType)
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(odChargeType)
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(odChargeType)) {
 
 				opr.setODChargeAmtOrPerc(PennantApplicationUtil.unFormateAmount(opr.getODChargeAmtOrPerc(), ccyFormat));
