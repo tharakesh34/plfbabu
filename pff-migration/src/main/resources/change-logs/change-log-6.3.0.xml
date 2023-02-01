@@ -12096,9 +12096,17 @@
 		<sql>
 		 	<![CDATA[
 				DELETE FROM REPORTLIST WHERE code='FeeRefundHeader';
-				INSERT INTO REPORTLIST(CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ)VALUES('FeeRefundHeader','FeeRefundHeader','listheader_FeeRefundCustCif.label,listheader_FeeRefundCustName.label,listheader_FeeRefundFinRef.label,listheader_FeeRefundPayAmount.label,listheader_FeeRefundFinType.label,listheader_FeeRefundBranchName.label,label.RecordStatus,label.RecordType','custCif,custName,finReference,paymentAmount,finType,branchName,RECORDSTATUS,RECORDTYPE','String,String,String,decimal,String,String,String,String',null,'ReportList06','Payments','Enquiry',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0);
+				INSERT INTO REPORTLIST(CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES('FeeRefundHeader', 'FeeRefundHeader', 'listheader_FeeRefundCustCif.label,listheader_FeeRefundCustName.label,listheader_FeeRefundFinRef.label,listheader_FeeRefundPayAmount.label,listheader_FeeRefundFinType.label,listheader_FeeRefundBranchName.label,label.RecordStatus,label.RecordType', 'custCif,custName,finReference,paymentAmount,finType,branchName,RECORDSTATUS,RECORDTYPE', 'String,String,String,decimal,String,String,String,String', null, 'ReportList06', 'Payments', 'Enquiry', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
 			]]>
 		</sql>
 	</changeSet>
-
-</databaseChangeLog>
+	
+	<changeSet id="PSD#216832" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET FILEEXTENSION = '.xlsx' WHERE NAME in ('MANUAL_KNOCKOFF_UPLOAD', 'MANUAL_KNOCKOFF_TEMPLATE', 'MANUAL_KNOCKOFF_DOWNLOAD');
+			]]>
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog> 

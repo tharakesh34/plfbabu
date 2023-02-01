@@ -98,7 +98,6 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	protected Row rowReceiptAmount;
 	protected Row rowKnockOffFrom;
 	protected Row rowReferenceId;
-	protected Label labelTitle;
 	protected Label labelCustomerName;
 
 	private transient ReceiptService receiptService;
@@ -298,8 +297,6 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			this.referenceId.setValueColumn("FinReference");
 			this.referenceId.setDescColumn("FinType");
 			this.referenceId.setValidateColumns(new String[] { "FinReference" });
-
-			this.labelTitle.setValue("Knock Off");
 		}
 
 		this.receiptAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
