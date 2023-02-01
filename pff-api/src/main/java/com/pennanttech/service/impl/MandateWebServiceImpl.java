@@ -2,6 +2,7 @@ package com.pennanttech.service.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,8 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		ErrorDetail error = response.getError();
 		if (error != null) {
 			response.setReturnStatus(getFailedReturnStatus(error.getCode(), error.getError()));
+		} else {
+			response.setReturnStatus(getSuccessStatus());
 		}
 
 		doEmptyResponseObject(response);
@@ -168,6 +171,8 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		ErrorDetail error = response.getError();
 		if (error != null) {
 			mandate.setReturnStatus(getFailedReturnStatus(error.getCode(), error.getError()));
+		} else {
+			response.setReturnStatus(getSuccessStatus());
 		}
 
 		if (response.getMandateID() != Long.MIN_VALUE) {
