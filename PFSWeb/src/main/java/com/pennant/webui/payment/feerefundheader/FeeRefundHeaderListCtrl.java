@@ -125,6 +125,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	// checkRights
 	protected Button button_FeeRefundHeaderList_NewFeeRefundHeader;
 	protected Button button_FeeRefundHeaderList_FeeRefundHeaderSearch;
+	protected Button button_FeeRefundHeaderList_PrintList;
 
 	// Search Fields
 	protected Combobox custCif; // autowired
@@ -215,6 +216,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		registerButton(button_FeeRefundHeaderList_FeeRefundHeaderSearch);
 		registerButton(button_FeeRefundHeaderList_NewFeeRefundHeader, "button_FeeRefundHeaderList_NewFeeRefundHeader",
 				true);
+		registerButton(print, "button_FeeRefundHeaderList_PrintList");
 
 		if (enqiryModule) {
 			registerButton(button_FeeRefundHeaderList_NewFeeRefundHeader,
@@ -263,7 +265,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		this.btnApprove.setVisible(true);
 		this.btndownload.setVisible(true);
 		this.btnReject.setVisible(true);
-		this.print.setVisible(false);
+		this.print.setVisible(true);
 		this.listHeader_CheckBox_Name.setVisible(true);
 		this.button_FeeRefundHeaderList_NewFeeRefundHeader.setVisible(false);
 
