@@ -33,9 +33,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.ExternalDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -733,5 +737,27 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		logger.debug(Literal.SQL + sql);
 
 		return jdbcOperations.queryForObject(sql, Integer.class, custId, docType) > 0;
+	}
+
+	@Override
+	public List<Customer> getCustIdByDocTitle(String custDocTitle, String type) {
+		logger.debug("Entering");
+		CustomerDocument customerDocument = new CustomerDocument();
+		customerDocument.setCustDocTitle(custDocTitle);
+		customerDocument.setCustDocCategory("03");
+
+		StringBuilder selectSql = new StringBuilder("Select C.CustID, C.CustCIF,C.CustShrtName ");
+
+		selectSql.append(" From Customers C inner join CustomerDocuments_View CD on CD.CustID=C.CustID ");
+		selectSql.append(" Where CustDocTitle = :CustDocTitle and CustDocCategory=:CustDocCategory");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
+
+		List<Customer> customers = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
+		logger.debug("Leaving");
+		return customers;
 	}
 }

@@ -1290,7 +1290,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		if (!isWIF) {
+		if (!isWIF && fm != null) {
 
 			// Finance Customer Details
 			if (fm.getCustID() != 0 && fm.getCustID() != Long.MIN_VALUE) {
@@ -1309,9 +1309,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Mandate Details
 			fd.setMandate(finMandateService.getMnadateByID(fm.getMandateID()));
-		}
 
-		if (!isWIF && fm != null) {
 			String finReference = fm.getFinReference();
 
 			// Finance Reference Details List
@@ -1364,6 +1362,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finID, "_View"));
 				}
 			}
+
 		}
 
 		// Finance Fee Details
@@ -3882,8 +3881,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processLimitApprove(aAuditHeader, false);
 		}
 
-		long tempWorkflowId = fm.getWorkflowId();
-
 		List<FinFeeDetail> finFeeDetails = schdData.getFinFeeDetailList();
 		String auditTranType = auditHeader.getAuditTranType();
 
@@ -5356,7 +5353,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				externalFinanceSystemService.createLoan(afinanceMain, operation);
 			}
 			break;
-		case PennantConstants.method_IMDFEECHECK:
+		case PennantConstants.METHOD_IMDFEECHECK:
 			imdFeeService.validate(auditHeader);
 		default:
 			// Execute any other custom service tasks

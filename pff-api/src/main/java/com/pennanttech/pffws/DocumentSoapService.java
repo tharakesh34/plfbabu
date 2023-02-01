@@ -15,6 +15,9 @@ public interface DocumentSoapService {
 	WSReturnStatus addDocument(@WebParam(name = "document") DocumentDetails documentDetails);
 
 	@WebResult(name = "document")
+	WSReturnStatus addDocuments(@WebParam(name = "document") DocumentDetails documentDetails);
+
+	@WebResult(name = "document")
 	DocumentDetails getFinanceDocument(@WebParam(name = "document") DocumentDetails documentDetails);
 
 	@WebResult(name = "finReferance")

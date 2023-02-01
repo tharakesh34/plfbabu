@@ -191,7 +191,7 @@ public interface FinanceMainDAO {
 
 	boolean isDeveloperFinance(long finID, String type, boolean wif);
 
-	FinanceMain getFinanceDetailsByFinRefence(long finID, String type);
+	FinanceMain getFinanceDetailsByFinRefence(String finReference);
 
 	List<Long> getFinanceMainbyCustId(long custId, String type);
 
@@ -406,5 +406,7 @@ public interface FinanceMainDAO {
 	int getBucketByFinStatus(long finID);
 
 	List<FinanceMain> getFinanceMainActiveList(Date fromDate, Date toDate, String finType);
+
+	List<FinanceMain> getFinDetailsByFinType(String finType);
 
 }

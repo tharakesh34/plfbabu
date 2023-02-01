@@ -61,6 +61,18 @@ public class FinInquiryDetail {
 	private Date finApprovedDate;
 	@XmlElement
 	private boolean finActive;
+	@XmlElement
+	private String custName;
+	@XmlElement
+	private String mobileNum;
+	@XmlElement
+	private String finCategory;
+	@XmlElement
+	private String stage;
+	@XmlElement
+	private Date approvalRejectionDate;
+	@XmlElement
+	private String encashed;
 
 	public String getFinReference() {
 		return finReference;
@@ -246,4 +258,51 @@ public class FinInquiryDetail {
 		this.finActive = finActive;
 	}
 
+	public String getCustName() {
+		return custName;
+	}
+
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+
+	public String getMobileNum() {
+		return mobileNum;
+	}
+
+	public void setMobileNum(String mobileNum) {
+		this.mobileNum = mobileNum;
+	}
+
+	public String getFinCategory() {
+		return finCategory;
+	}
+
+	public void setFinCategory(String finCategory) {
+		this.finCategory = finCategory;
+	}
+
+	public String getStage() {
+		return stage;
+	}
+
+	public void setStage(String stage) {
+		this.stage = stage;
+	}
+
+	public Date getApprovalRejectionDate() {
+		return approvalRejectionDate;
+	}
+
+	public void setApprovalRejectionDate(Date approvalRejectionDate) {
+		this.approvalRejectionDate = approvalRejectionDate;
+	}
+
+	public String getEncashed() {
+		return encashed;
+	}
+
+	public void setEncashed(String encashed) {
+		this.encashed = encashed;
+	}
 }

@@ -139,6 +139,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	protected Window window_CustomerDocumentDialog;
 	protected Grid grid_basicDetails;
 
+	protected Groupbox gb_basicDetails;
+
 	protected Longbox custID;
 	protected Textbox documnetName;
 	protected ExtendedCombobox custDocType;
@@ -736,6 +738,17 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custDocTitle.setValue(this.custDocTitle.getValue());
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	public void onAfterSize$gb_basicDetails(Event event) {
+		this.finDocumentDiv.setHeight("100%");
+		int dialogHeight = grid_basicDetails.getRows().getVisibleItemCount() * 20 + 80;
+		int listboxHeight = borderLayoutHeight - dialogHeight;
+		if (this.gb_basicDetails.isOpen()) {
+			this.finDocumentPdfView.setHeight(listboxHeight - 10 + "px");
+		} else {
+			this.finDocumentPdfView.setHeight(borderLayoutHeight - 15 + "px");
+		}
 	}
 
 	/**

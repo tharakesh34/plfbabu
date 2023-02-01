@@ -63,4 +63,6 @@ public interface CustomerDocumentService {
 	String getDocTypeByMasterDefByCode(String masterType, String keyCode);
 
 	boolean getCustomerDocExists(long custId, String docType);
+
+	List<Customer> getCustIdByDocTitle(String custDocTitle);
 }

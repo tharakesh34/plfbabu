@@ -1969,7 +1969,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(CollateralSetup collateralSetup, String method) {
+	public AuditDetail doValidations(CollateralSetup collateralSetup, String method, boolean isPendding) {
 		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = new AuditDetail();
@@ -2020,7 +2020,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		if (StringUtils.equals(method, "update")) {
 			// validate collateral reference
 			if (StringUtils.isNotBlank(collateralSetup.getCollateralRef())) {
-				int recordCount = collateralSetupDAO.getCollateralCountByref(collateralSetup.getCollateralRef(), "");
+				int recordCount = 0;
+				if (!isPendding) {
+					recordCount = collateralSetupDAO.getCollateralCountByref(collateralSetup.getCollateralRef(), "");
+				} else {
+					recordCount = collateralSetupDAO.getCollateralCountByref(collateralSetup.getCollateralRef(),
+							"_Temp");
+				}
 				if (recordCount <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = collateralSetup.getCollateralRef();
@@ -2037,8 +2043,12 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			if (StringUtils.isNotBlank(collateralType)) {
 				collateralStructure = getCollateralStructure(collateralType);
 			} else if (StringUtils.isNotBlank(collateralSetup.getCollateralRef())) {
-				CollateralSetup setup = collateralSetupDAO.getCollateralSetupByRef(collateralSetup.getCollateralRef(),
-						"");
+				CollateralSetup setup = null;
+				if (!isPendding) {
+					setup = collateralSetupDAO.getCollateralSetupByRef(collateralSetup.getCollateralRef(), "");
+				} else {
+					setup = collateralSetupDAO.getCollateralSetupByRef(collateralSetup.getCollateralRef(), "_Temp");
+				}
 				if (setup != null) {
 					collateralStructure = getCollateralStructure(setup.getCollateralType());
 				}
@@ -3410,6 +3420,81 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 		logger.debug(Literal.LEAVING);
 		return csList;
+	}
+
+	@Override
+	public List<CollateralSetup> getCollateralSetupList(List<CollateralAssignment> assignments, String type) {
+		List<CollateralSetup> collaterals = new ArrayList<CollateralSetup>();
+		if (!CollectionUtils.isEmpty(assignments)) {
+			for (CollateralAssignment collAssmt : assignments) {
+				CollateralSetup setup = getCollateralSetupDetails(collAssmt.getCollateralRef(), type);
+				if (null != setup) {
+					collaterals.add(setup);
+				}
+			}
+		}
+		return collaterals;
+	}
+
+	/**
+	 * Fetch list of customer collateral by custId
+	 * 
+	 * @param depositorId
+	 * @return List<CollateralSetup>
+	 */
+	@Override
+	public List<CollateralSetup> getPendingCollateralByCustId(long depositorId, String type) {
+		logger.debug("Entering");
+
+		List<CollateralSetup> collaterals = collateralSetupDAO.getApprovedCollateralByCustId(depositorId, type);
+		for (CollateralSetup setup : collaterals) {
+			setup.setCoOwnerDetailList(coOwnerDetailDAO.getCoOwnerDetailByRef(setup.getCollateralRef(), type));
+			setup.setCollateralThirdPartyList(
+					collateralThirdPartyDAO.getCollThirdPartyDetails(setup.getCollateralRef(), type));
+
+			// set document details
+			setup.setDocuments(documentDetailsDAO.getDocumentDetailsByRef(setup.getCollateralRef(),
+					CollateralConstants.MODULE_NAME, "", type));
+
+			CollateralStructure collateralStructure = collateralStructureService
+					.getApprovedCollateralStructureByType(setup.getCollateralType());
+			setup.setCollateralStructure(collateralStructure);
+
+			// set Extended details
+			String reference = setup.getCollateralRef();
+			ExtendedFieldHeader extendedFieldHeader = setup.getCollateralStructure().getExtendedFieldHeader();
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(extendedFieldHeader.getModuleName());
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			tableName.append("_ED");
+			tableName.append(type);
+
+			List<Map<String, Object>> extendedMapValues = extendedFieldRenderDAO.getExtendedFieldMap(reference,
+					tableName.toString(), "");
+			if (extendedMapValues != null) {
+				List<ExtendedField> extendedDetails = new ArrayList<ExtendedField>();
+				for (Map<String, Object> mapValues : extendedMapValues) {
+					List<ExtendedFieldData> extendedFieldDataList = new ArrayList<ExtendedFieldData>();
+					for (Entry<String, Object> entry : mapValues.entrySet()) {
+						ExtendedFieldData exdFieldData = new ExtendedFieldData();
+						if (StringUtils.isNotBlank(String.valueOf(entry.getValue()))
+								|| !StringUtils.equals(String.valueOf(entry.getValue()), "null")) {
+							exdFieldData.setFieldName(entry.getKey());
+							exdFieldData.setFieldValue(entry.getValue());
+							extendedFieldDataList.add(exdFieldData);
+						}
+					}
+					ExtendedField extendedField = new ExtendedField();
+					extendedField.setExtendedFieldDataList(extendedFieldDataList);
+					extendedDetails.add(extendedField);
+				}
+				setup.setExtendedDetails(extendedDetails);
+			}
+		}
+
+		logger.debug("Leaving");
+		return collaterals;
 	}
 
 	@Autowired

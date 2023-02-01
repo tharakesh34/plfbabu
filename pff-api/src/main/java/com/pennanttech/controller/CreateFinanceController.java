@@ -22,6 +22,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountConstants;
@@ -45,7 +46,9 @@ import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
@@ -82,6 +85,7 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -101,6 +105,7 @@ import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceData;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -179,10 +184,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAO;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
+import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetails;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.service.impl.RemarksWebServiceImpl;
 import com.pennanttech.util.APIConstants;
@@ -245,6 +253,9 @@ public class CreateFinanceController extends SummaryDetailService {
 	private CovenantTypeDAO covenantTypeDAO;
 	private PromotionDAO promotionDAO;
 	private RuleDAO ruleDAO;
+	private TechnicalVerificationDAO technicalVerificationDAO;
+	private CollateralAssignmentDAO collateralAssignmentDAO;
+	private DocumentManagerDAO documentManagerDAO;
 
 	public FinanceDetail doCreateFinance(FinanceDetail fd, boolean loanWithWIF) {
 		logger.info(Literal.ENTERING);
@@ -4411,6 +4422,196 @@ public class CreateFinanceController extends SummaryDetailService {
 		return response;
 	}
 
+	public FinInquiryDetail getFinInquiryByFinance(FinanceMain financeMain, Customer customer) {
+		FinInquiryDetail finInquiryDetail = new FinInquiryDetail();
+		finInquiryDetail.setCustName(customer.getCustShrtName());
+		finInquiryDetail.setFinReference(financeMain.getFinReference());
+		finInquiryDetail.setFinType(financeMain.getFinType());
+		finInquiryDetail.setFinAssetValue(financeMain.getFinAssetValue());
+		String mobileNum = customerDetailsService.getCustomerPhoneNumberByCustId(customer.getCustID());
+		finInquiryDetail.setMobileNum(mobileNum);
+		finInquiryDetail.setFinAmount(financeMain.getFinAmount());
+		if (financeMain.getLoanCategory() != null) {
+			if (financeMain.getLoanCategory().equals(FinanceConstants.LOAN_CATEGORY_FP)) {
+				finInquiryDetail.setFinCategory(Labels.getLabel("label_FinanceMainDialog_Fresh/Purchase.value"));
+			} else {
+				finInquiryDetail.setFinCategory(financeMain.getLoanCategory());
+			}
+		}
+		if (financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_APPROVED)) {
+			if (financeMain.isFinIsActive()) {
+				finInquiryDetail.setStage(Labels.getLabel("loanStatus_Active.value"));
+			} else {
+				finInquiryDetail.setStage(Labels.getLabel("loanStatus_Matured.value"));
+			}
+			finInquiryDetail.setApprovalRejectionDate(financeMain.getFinStartDate());
+			finInquiryDetail.setEncashed("Yes");
+		} else if (financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_CANCELLED)
+				|| financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_REJECTED)) {
+			finInquiryDetail.setStage("Rejected");
+			finInquiryDetail.setApprovalRejectionDate(financeMain.getLastMntOn());
+			finInquiryDetail.setEncashed("No");
+		} else {
+			finInquiryDetail.setStage(financeMain.getRecordStatus());
+			finInquiryDetail.setApprovalRejectionDate(financeMain.getLastMntOn());
+			finInquiryDetail.setEncashed("No");
+		}
+		finInquiryDetail.setJointAccountDetailList(null);
+		return finInquiryDetail;
+	}
+
+	public FinanceInquiry getFinanceDetailsByCIF(Customer customer, FinanceData financeData) {
+		logger.debug("Entering");
+		FinanceInquiry response = null;
+
+		List<FinanceMain> financeMainList = financeMainService.getFinanceByCustId(customer.getCustID(), "_View");
+		if (financeMainList != null && !financeMainList.isEmpty()) {
+			response = new FinanceInquiry();
+			List<FinInquiryDetail> finance = new ArrayList<FinInquiryDetail>();
+			for (FinanceMain financeMain : financeMainList) {
+				FinInquiryDetail finInquiryDetail = getFinInquiryByFinance(financeMain, customer);
+				finance.add(finInquiryDetail);
+			}
+			response.setFinance(finance);
+		}
+		logger.debug("Leaving");
+		return response;
+	}
+
+	public FinanceInquiry getFinanceDetailsByParams(List<Customer> custList, FinanceData financeData) {
+		logger.debug("Entering");
+		FinanceInquiry response = null;
+		if (custList != null && !custList.isEmpty()) {
+			response = new FinanceInquiry();
+			List<FinInquiryDetail> finInqList = new ArrayList<FinInquiryDetail>();
+			for (Customer customer : custList) {
+				FinanceInquiry finInquiry = getFinanceDetailsByCIF(customer, financeData);
+				if (finInquiry != null) {
+					finInqList.addAll(finInquiry.getFinance());
+					response.setReturnStatus(finInquiry.getReturnStatus());
+				}
+			}
+			response.setFinance(finInqList);
+		}
+		if (response.getFinance() == null) {
+			response = new FinanceInquiry();
+			String[] valueParm = new String[1];
+			valueParm[0] = "No LAN's found for given details";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+		}
+		logger.debug("Leaving");
+		return response;
+	}
+
+	public FinanceInquiry getFinDetailsByFinType(String reqParam, FinanceData financeData) {
+		logger.debug("Entering");
+		FinanceInquiry finInquiry = null;
+		finInquiry = new FinanceInquiry();
+
+		List<FinInquiryDetail> finance = new ArrayList<FinInquiryDetail>();
+		List<FinanceMain> financeMainList = financeMainDAO.getFinDetailsByFinType(reqParam);
+		if (financeMainList != null) {
+			for (FinanceMain financeMain : financeMainList) {
+				CustomerDetails customerDetails = customerDetailsService.getCustomerDetails(financeMain.getCustID(),
+						"_View", false);
+				FinInquiryDetail finInquiryDetail = getFinInquiryByFinance(financeMain, customerDetails.getCustomer());
+
+				finance.add(finInquiryDetail);
+			}
+			finInquiry.setFinance(finance);
+		} else {
+			finInquiry = new FinanceInquiry();
+			String[] valueParm = new String[1];
+			valueParm[0] = "LAN Details Not Found";
+			finInquiry.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+
+		}
+		return finInquiry;
+	}
+
+	public FinanceDetail getFinDetailsByFinReference(String finReference) {
+		logger.debug("Enetring");
+		FinanceDetail financeDetail = null;
+		try {
+			FinanceMain financeMain = financeDetailService.getFinanceMain(finReference, TableType.VIEW);
+			if (financeMain == null) {
+				financeDetail = new FinanceDetail();
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+				return financeDetail;
+			} else {
+				financeDetail = financeDetailService.getFinanceDetailById(financeMain.getFinID(), false, "", false,
+						FinServiceEvent.ORG, "");
+				setDocUri(financeDetail);
+				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			}
+
+			financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			// Stage
+			if (financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_APPROVED)) {
+				if (financeMain.isFinIsActive()) {
+					financeMain.setStage(Labels.getLabel("loanStatus_Active.value"));
+				} else {
+					financeMain.setStage(Labels.getLabel("loanStatus_Matured.value"));
+				}
+			} else if (financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_CANCELLED)
+					|| financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_REJECTED)) {
+				financeMain.setStage("Rejected");
+
+			} else {
+				financeMain.setStage(financeMain.getRecordStatus());
+			}
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+
+			List<InterfaceServiceDetails> serviceDetailsList = financeDetail.getInterfaceDetailList();
+			List<InterfaceServiceDetails> primaryDetailsList = new ArrayList<InterfaceServiceDetails>();
+			for (InterfaceServiceDetails detail : serviceDetailsList) {
+				if (detail.getCibilType().equals("Primary")) {
+					primaryDetailsList.add(detail);
+				}
+			}
+			financeDetail.setInterfaceDetailList(primaryDetailsList);
+
+			if (financeDetail.getCollateralAssignmentList().isEmpty()) {
+				financeDetail.setCollateralAssignmentList(collateralAssignmentDAO
+						.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "enq_View"));
+			}
+			List<CollateralSetup> collateralSetupList = collateralSetupService
+					.getCollateralSetupList(financeDetail.getCollateralAssignmentList(), "_View");
+
+			for (CollateralSetup setup : collateralSetupList) {
+
+				List<Verification> tvList = technicalVerificationDAO
+						.getTvListByCollRefAndFinRef(setup.getCollateralRef(), finReference);
+
+				setup.setVerificationList(tvList);
+			}
+
+			financeDetail.setCollaterals(collateralSetupList);
+
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			financeDetail = new FinanceDetail();
+			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return financeDetail;
+		}
+		logger.debug("Leaving");
+		return financeDetail;
+	}
+
+	private void setDocUri(FinanceDetail financeDetail) {
+		if (CollectionUtils.isNotEmpty(financeDetail.getDocumentDetailsList())) {
+			for (DocumentDetails docDetails : financeDetail.getDocumentDetailsList()) {
+				if (StringUtils.isBlank(docDetails.getDocUri())) {
+					DocumentManager docManager = documentManagerDAO.getById(docDetails.getDocRefId());
+					if (null != docManager) {
+						docDetails.setDocUri(docManager.getDocURI());
+					}
+				}
+			}
+		}
+	}
+
 	public AuditHeader getAuditHeader(String finreference) {
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		AuditHeader auditHeader = new AuditHeader();
@@ -4680,4 +4881,20 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
 	}
+
+	@Autowired
+	public void setTechnicalVerificationDAO(TechnicalVerificationDAO technicalVerificationDAO) {
+		this.technicalVerificationDAO = technicalVerificationDAO;
+	}
+
+	@Autowired
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	@Autowired
+	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+		this.documentManagerDAO = documentManagerDAO;
+	}
+
 }

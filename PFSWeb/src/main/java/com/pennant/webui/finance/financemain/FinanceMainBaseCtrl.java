@@ -1404,7 +1404,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.rowFacilityNotes.setVisible(false);
 			readOnlyComponent(true, this.finLimitRef);
 		}
-		this.finPurpose.setProperties("LoanPurpose", "LoanPurposeCode", "LoanPurposeDesc", false, 8);
+		this.finPurpose.setProperties("LoanPurpose", "LoanPurposeCode", "LoanPurposeDesc",
+				ImplementationConstants.LOAN_PURPOSE_MANDATORY, 8);
 		// filters for loan purpose based on loantype
 		if (financeType != null) {
 			List<String> detailsList = null;
@@ -1682,7 +1683,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!financeMain.isNewRecord() && ImplementationConstants.ALLOW_LOAN_SPLIT) {
 			this.row_AllowLoanTypes.setVisible(true);
 		}
-		this.parentLoanReference.setButtonDisabled(true);
+		/* this.parentLoanReference.setButtonDisabled(true); */
 
 		this.parentLoanReference.setModuleName("FinanceMain");
 		this.parentLoanReference.setValueColumn("FinReference");
@@ -1840,6 +1841,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (isEnquiryVisible && StringUtils.isEmpty(moduleDefiner)) {
 				this.enquiryLabel.setValue("Enquiry");
 				this.enquiryCombobox.setVisible(true);
+				enquiryList.add(new ValueLabel("1", "Verifications"));
 				fillComboBox(this.enquiryCombobox, "", enquiryList, "");
 				break;
 			}
@@ -5061,6 +5063,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Sessions.getCurrent().setAttribute("ss", spreadSheet);
 		}
 
+		String roles = SysParamUtil.getValueAsString(SMTParameterConstants.ALW_CREDIT_EDIT_DATA_STAGES);
+		roles = StringUtils.trimToEmpty(roles);
+
+		boolean isEdit = true;
+		if (roles.contains(getRole())) {
+			isEdit = false;
+		}
+
+		map.put("Right_Eligibility", isEdit);
+
 		map.put("financeMainDialogCtrl", this);
 		map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY));
 
@@ -6735,8 +6747,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (!this.finPurpose.isReadonly()) {
-			this.finPurpose.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_FinanceMainDialog_FinPurpose.value"), null, false, true));
+			this.finPurpose
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_FinPurpose.value"),
+							null, ImplementationConstants.LOAN_PURPOSE_MANDATORY, true));
 		}
 
 		if (!this.finDivision.equals(FinanceConstants.FIN_DIVISION_CORPORATE) && !recSave && !buildEvent) {
@@ -8081,8 +8094,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Mandate tab
+		// Avoiding Mandatory validation while Resubmiting
 		Tab mandateTab = getTab(AssetConstants.UNIQUE_ID_MANDATE);
-		if (mandateDialogCtrl != null && mandateTab.isVisible()) {
+		if (mandateDialogCtrl != null && mandateTab.isVisible()
+				&& !this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
 			mandateDialogCtrl.doSave_Mandate(afd, mandateTab, recSave);
 		}
 
@@ -11000,7 +11015,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onFulfill$eligibilityMethod(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = eligibilityMethod.getObject();
-		String eligibilityMethodValue = "";
 		if (dataObject == null || dataObject instanceof String) {
 			this.eligibilityMethod.setValue("");
 			this.eligibilityMethod.setDescription("");
@@ -11009,7 +11023,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
 				this.eligibilityMethod.setAttribute("FieldCodeId", details.getFieldCodeId());
-				eligibilityMethodValue = details.getFieldCodeValue();
 			}
 		}
 		refershCreditReviewDetailSummaryTab();
@@ -15934,7 +15947,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public boolean doExtendedDetailsValidation() throws ParseException, InterruptedException {
 		logger.debug(Literal.ENTERING);
 		// Extended Field validations
-		if (getFinanceDetail().getExtendedFieldHeader() != null) {
+		if (getFinanceDetail().getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
 			getFinanceDetail().setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 		logger.debug(Literal.LEAVING);
@@ -17303,7 +17316,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.subVentionFrom.setReadonly(true);
 		this.manufacturerDealer.setReadonly(true);
 		this.finPurpose.setReadonly(true);
-		this.finPurpose.setMandatoryStyle(false);
+		this.finPurpose.setMandatoryStyle(ImplementationConstants.LOAN_PURPOSE_MANDATORY);
 		this.commitmentRef.setReadonly(true);
 		this.commitmentRef.setMandatoryStyle(false);
 		readOnlyComponent(true, this.finLimitRef);
@@ -23425,6 +23438,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())) {
+				Long instructionUId = Long.MIN_VALUE;
+				if (aFinanceSchData.getDisbursementDetails().size() > 0) {
+					instructionUId = aFinanceSchData.getDisbursementDetails().get(0).getInstructionUID();
+				}
 
 				aFinanceSchData.getDisbursementDetails().clear();
 				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
@@ -23434,6 +23451,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				disbursementDetails.setDisbReqDate(appDate);
 				disbursementDetails.setFeeChargeAmt(aFinanceMain.getFeeChargeAmt());
 				disbursementDetails.setQuickDisb(aFinanceSchData.getFinanceMain().isQuickDisb());
+				disbursementDetails.setInstructionUID(instructionUId);
 				aFinanceSchData.getDisbursementDetails().add(disbursementDetails);
 			} else {
 				if (StringUtils.isEmpty(moduleDefiner)) {

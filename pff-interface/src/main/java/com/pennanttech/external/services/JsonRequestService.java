@@ -40,6 +40,8 @@ public class JsonRequestService extends JsonService {
 		jsonServiceDetail.setServiceName(request.getServiceName());
 		jsonServiceDetail.setReference(request.getReference());
 
+		doSetProperties(READ_TIMEOUT, CONNECTION_TIMEOUT);
+
 		jsonServiceDetail.setRequestString(request.getRequestedString());
 		JsonServiceDetail detail = processMessage(jsonServiceDetail);
 		String response = detail.getResponseString();

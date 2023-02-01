@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinCustomerDetails;
+import com.pennant.backend.model.finance.FinReqParams;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.LoanStage;
@@ -133,6 +134,15 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/getLoansStatusEnquiry")
 	FinanceStatusEnquiryDetail getLoansStatusEnquiry(FinanceStatusEnquiryDetail financeStatusEnquiryDetail)
+			throws ServiceException;
+
+	@POST
+	@Path("/finance/getFinanceDetailsByParams")
+	public FinanceInquiry getFinanceDetailsByParams(FinReqParams reqParams) throws ServiceException;
+
+	@GET
+	@Path("/finance/getFinDetailsByFinReference/{finReference}")
+	public FinanceDetail getFinDetailsByFinReference(@PathParam("finReference") String finReference)
 			throws ServiceException;
 
 }

@@ -38,7 +38,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -425,5 +427,45 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 
 		return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
+	}
+
+	@Override
+	public String getCustomerPhoneNumberByCustId(long custID) {
+		logger.debug("Entering");
+		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
+		customerPhoneNumber.setPhoneCustID(custID);
+		customerPhoneNumber.setPhoneTypePriority(Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT  PhoneNumber");
+		selectSql.append(" FROM  CustomerPhoneNumbers");
+		selectSql.append("  Where PhoneCustID =:PhoneCustID and PhoneTypePriority = :PhoneTypePriority");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
+
+		logger.debug("Leaving ");
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+	}
+
+	@Override
+	public List<Customer> getCustomersByPhoneNum(String phoneNum) {
+		logger.debug("Entering");
+		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
+		customerPhoneNumber.setPhoneNumber(phoneNum);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT C.CustID, C.CustCIF,C.CustShrtName ");
+		selectSql.append(" FROM Customers C inner join CustomerPhoneNumbers CP on CP.PhoneCustID=C.CustID");
+		selectSql.append("  Where CP.PhoneNumber =:PhoneNumber");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
+
+		List<Customer> customers = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug("Leaving ");
+		return customers;
+
 	}
 }

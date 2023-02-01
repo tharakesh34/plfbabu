@@ -39,7 +39,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 	public CreditReviewDetails getCreditReviewDetails(CreditReviewDetails creditReviewDetail) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FinCategory, EmploymentType, EligibilityMethod, Section");
-		sql.append(", TemplateName, TemplateVersion, Fields, ProtectedCells");
+		sql.append(", TemplateName, TemplateVersion, Fields, ProtectedCells, FormulaCells");
 		sql.append(" From CreditReviewConfig");
 		sql.append(" Where EligibilityMethod = ?");
 
@@ -58,7 +58,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 				crd.setTemplateVersion(rs.getInt("TemplateVersion"));
 				crd.setFields(rs.getString("Fields"));
 				crd.setProtectedCells(rs.getString("ProtectedCells"));
-
+				crd.setFormulaCells(rs.getString("FormulaCells"));
 				return crd;
 			}, creditReviewDetail.getEligibilityMethod());
 		} catch (EmptyResultDataAccessException e) {
@@ -199,7 +199,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 	public CreditReviewDetails getCreditReviewDetailsbyLoanType(CreditReviewDetails crd) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FinCategory, EmploymentType, EligibilityMethod, Section");
-		sql.append(", TemplateName, TemplateVersion, Fields, ProtectedCells, FieldKeys");
+		sql.append(", TemplateName, TemplateVersion, Fields, ProtectedCells, FieldKeys, FormulaCells");
 		sql.append(" From CreditReviewConfig");
 
 		List<String> list = new ArrayList<>();
@@ -250,6 +250,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 				crdts.setFields(rs.getString("Fields"));
 				crdts.setProtectedCells(rs.getString("ProtectedCells"));
 				crdts.setFieldKeys(rs.getString("FieldKeys"));
+				crdts.setFormulaCells(rs.getString("FormulaCells"));
 
 				return crdts;
 			}, args);

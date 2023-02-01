@@ -268,6 +268,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 				return verificationId;
 			}
 		} catch (Exception e) {
+			return null;
 		}
 
 		logger.debug(Literal.LEAVING);

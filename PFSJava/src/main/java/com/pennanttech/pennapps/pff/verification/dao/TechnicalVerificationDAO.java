@@ -41,4 +41,6 @@ public interface TechnicalVerificationDAO extends BasicCrudDao<TechnicalVerifica
 
 	public String getCollaterlType(long id);
 
+	List<Verification> getTvListByCollRefAndFinRef(String collRef, String finRef);
+
 }

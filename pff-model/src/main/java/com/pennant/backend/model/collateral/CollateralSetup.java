@@ -54,6 +54,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 /**
  * Model class for the <b>CollateralSetup table</b>.<br>
@@ -168,6 +169,9 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	private Long assetId = null;
 	private Long siId = null;
 
+	@XmlElement
+	private List<Verification> VerificationList;
+
 	public CollateralSetup() {
 		super();
 	}
@@ -205,7 +209,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 		excludeFields.add("modified");
 		excludeFields.add("assetId");
 		excludeFields.add("siId");
-
+		excludeFields.add("VerificationList");
 		return excludeFields;
 	}
 
@@ -645,4 +649,13 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public void setSiId(Long siId) {
 		this.siId = siId;
 	}
+
+	public List<Verification> getVerificationList() {
+		return VerificationList;
+	}
+
+	public void setVerificationList(List<Verification> verificationList) {
+		VerificationList = verificationList;
+	}
+
 }

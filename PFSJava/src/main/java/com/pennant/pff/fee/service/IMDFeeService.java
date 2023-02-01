@@ -7,21 +7,26 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class IMDFeeService {
 
 	private RuleDAO ruleDAO;
+	private FinFeeReceiptDAO finFeeReceiptDAO;
 
 	public IMDFeeService() {
 		super();
@@ -48,6 +53,22 @@ public class IMDFeeService {
 					paramMap.put("fee_IMDPaid", formateAmount(finFee.getPaidAmount(), 2));
 					paramMap.put("fee_IMDActualAmount", formateAmount(finFee.getActualAmount(), 2));
 					paramMap.put("fm_finType", fm.getFinType());
+
+					if (finFee.getPaidAmount().compareTo(BigDecimal.ZERO) == 0
+							&& ImplementationConstants.ALLOW_IMD_WITHOUT_REALIZED) {
+
+						List<FinFeeReceipt> finFeeReceipts = this.finFeeReceiptDAO
+								.getFinFeeReceiptByFeeType(fm.getFinReference(), finFee.getFeeTypeCode());
+
+						BigDecimal paidAmount = BigDecimal.ZERO;
+						for (FinFeeReceipt feeReceipt : finFeeReceipts) {
+							if (RepayConstants.PAYTYPE_CHEQUE.equals(feeReceipt.getReceiptType())
+									|| RepayConstants.PAYTYPE_DD.equals(feeReceipt.getReceiptType())) {
+								paidAmount = paidAmount.add(feeReceipt.getPaidAmount());
+							}
+						}
+						paramMap.put("fee_IMDPaid", formateAmount(paidAmount, 2));
+					}
 
 					BigDecimal result = RuleExecutionUtil.getRuleResult(ruleList.get(0).getSQLRule(), paramMap, null);
 
@@ -93,6 +114,14 @@ public class IMDFeeService {
 
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
+	}
+
+	public FinFeeReceiptDAO getFinFeeReceiptDAO() {
+		return finFeeReceiptDAO;
+	}
+
+	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
+		this.finFeeReceiptDAO = finFeeReceiptDAO;
 	}
 
 }

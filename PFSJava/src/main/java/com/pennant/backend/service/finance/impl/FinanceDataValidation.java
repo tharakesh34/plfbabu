@@ -2139,7 +2139,8 @@ public class FinanceDataValidation {
 									return errorDetails;
 								}
 							}
-							AuditDetail auditDetail = collateralSetupService.doValidations(setupDetails, "create");
+							AuditDetail auditDetail = collateralSetupService.doValidations(setupDetails, "create",
+									false);
 
 							if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
 								return auditDetail.getErrorDetails();

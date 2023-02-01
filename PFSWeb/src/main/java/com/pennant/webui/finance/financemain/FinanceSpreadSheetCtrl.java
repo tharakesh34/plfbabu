@@ -169,17 +169,16 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap) {
 		String employmentType = (String) dataMap.get("CUST_EMPLOYMENT_TYPE");
 
+		if ("#".equals(employmentType)) {
+			employmentType = "";
+		}
+
 		return getSheet(sheetNamePrefix, book, dataMap, employmentType);
 	}
 
 	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap, String eligibilityMethod) {
 		String custCIF = (String) dataMap.get("CIF");
 		String sheetName = sheetNamePrefix;
-
-		/*
-		 * if (StringUtils.isNoneEmpty(eligibilityMethod)) { sheetName =
-		 * sheetNamePrefix.concat("_").concat(eligibilityMethod); }
-		 */
 
 		Sheet sourceSheet = book.getSheet(sheetName);
 
@@ -377,10 +376,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		String prefix1 = prefix;
 
-		/*
-		 * if (prefix.startsWith("APP")) { prefix1 = "CO_" + prefix; }
-		 */
-
 		Book book = spreadSheet.getBook();
 		int numberOfSheets = book.getNumberOfSheets();
 
@@ -442,8 +437,12 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		if (range == null || range.isWholeColumn()) {
 			return;
 		}
+		CellData cellData = range.getCellData();
+		CellType cellType = cellData.getType();
 
-		CellType cellType = range.getCellData().getType();
+		if (cellData.isFormula()) {
+			return;
+		}
 
 		if (cellType != null && object == null) {
 			switch (cellType) {
@@ -567,22 +566,26 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 		}
 
-		Map<String, Object> protectedCellsBySheet = getProtectedFieldsBySheet();
-		for (Entry<String, Object> fieldMap : protectedCellsBySheet.entrySet()) {
-			if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
-				for (String fieldName : getFields(fieldMap.getValue())) {
-					fieldName = StringUtils.trim(fieldName);
-					protectField(sheet, fieldName);
+		if (creditReviewDetails.getProtectedCells() != null) {
+			Map<String, Object> protectedCellsBySheet = getProtectedFieldsBySheet();
+			for (Entry<String, Object> fieldMap : protectedCellsBySheet.entrySet()) {
+				if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
+					for (String fieldName : getFields(fieldMap.getValue())) {
+						fieldName = StringUtils.trim(fieldName);
+						protectField(sheet, fieldName);
+					}
 				}
 			}
 		}
 
-		Map<String, Object> formulaCellsBySheet = getFormulaFieldsBySheet();
-		for (Entry<String, Object> fieldMap : formulaCellsBySheet.entrySet()) {
-			if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
-				for (String fieldName : getFields(fieldMap.getValue())) {
-					fieldName = StringUtils.trim(fieldName);
-					setFormula(sheet, fieldName);
+		if (creditReviewDetails.getFormulaCells() != null) {
+			Map<String, Object> formulaCellsBySheet = getFormulaFieldsBySheet();
+			for (Entry<String, Object> fieldMap : formulaCellsBySheet.entrySet()) {
+				if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
+					for (String fieldName : getFields(fieldMap.getValue())) {
+						fieldName = StringUtils.trim(fieldName);
+						setFormula(sheet, fieldName);
+					}
 				}
 			}
 		}

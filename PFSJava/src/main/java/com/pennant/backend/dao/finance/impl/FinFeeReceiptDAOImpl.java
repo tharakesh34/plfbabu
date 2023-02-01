@@ -26,6 +26,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -407,6 +408,34 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 			throw new DependencyFoundException(e);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public List<FinFeeReceipt> getFinFeeReceiptByFeeType(String finrReference, String feeType) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("Finreference", finrReference);
+		mapSqlParameterSource.addValue("FeeTypeCode", feeType);
+
+		StringBuilder selectSql = new StringBuilder(" SELECT ID, FeeID, ReceiptID, PaidAmount,");
+		selectSql.append(" PaidTds,ReceiptAmount, FeeTypeCode, FeeTypeDesc, FeeTypeID,");
+		selectSql.append(" ReceiptType, transactionRef, favourNumber, vasReference,FeeTypeId,");
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" From FinFeeReceipts_Tview");
+		selectSql.append(" Where Finreference =:Finreference And FeeTypeCode =:FeeTypeCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+		try {
+			RowMapper<FinFeeReceipt> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
+			return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException exe) {
+			logger.warn(exe);
+			return new ArrayList<>();
+		}
+
 	}
 
 }

@@ -12,6 +12,7 @@
 
 package com.pennanttech.pennapps.pff.verification.dao;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -436,5 +437,33 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public List<Verification> getTvListByCollRefAndFinRef(String collRef, String finRef) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder(
+				"select finalvalamt,valasperpe finalValAsPerPE,VALUATIONAMOUNT From verification_tv_view");
+		sql.append(" Where collateralRef = :collateralRef and KEYREFERENCE=:KEYREFERENCE");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("collateralRef", collRef);
+		paramSource.addValue("KEYREFERENCE", finRef);
+
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
+
+		try {
+			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 }
