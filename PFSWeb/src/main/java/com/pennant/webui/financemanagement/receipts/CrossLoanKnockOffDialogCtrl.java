@@ -295,7 +295,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	private Date maturityDate;
 
 	private CustomerDetails customerDetails = null;
-	protected Tab custDetailTab;
 	private transient CrossLoanKnockOffService crossLoanKnockOffService;
 	protected CrossLoanKnockOff crossLoanHeader;
 	protected CrossLoanKnockOffListCtrl crossLoanKnockOffListCtrl = null;
@@ -483,42 +482,22 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchCustCIF(Event event) {
+	public void onClick$btnSearchCustCIF(Event event)  {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		Map<String, Object> map = new HashMap<>();
-
-		if (customerDetails == null) {
-			customerDetails = customerDetailsService
-					.getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
-		}
-
+		 Map<String, Object> map = new HashMap<>();
+		CustomerDetails customerDetails = customerDetailsService
+				.getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
+		String pageName = PennantAppUtil.getCustomerPageName();
 		map.put("customerDetails", customerDetails);
 		map.put("enqiryModule", true);
 		map.put("dialogCtrl", this);
 		map.put("newRecord", false);
-		map.put("isEnqProcess", true);
+		map.put("CustomerEnq", "CustomerEnq");
+		
+		Executions.createComponents(pageName, null, map);
 
-		Tabpanel tabpanel = null;
-		if (getTab("custDetailTab") == null) {
-			custDetailTab = new Tab(Labels.getLabel("Customer"));
-			custDetailTab.setId("custDetailTab");
-			tabsIndexCenter.appendChild(custDetailTab);
-
-			tabpanel = new Tabpanel();
-			tabpanel.setId("customerTabPanel");
-			tabpanel.setStyle("overflow:auto;");
-			tabpanel.setParent(tabpanelsBoxIndexCenter);
-			tabpanel.setHeight(this.borderLayoutHeight - 100 - 20 + "px");
-			ComponentsCtrl.applyForward(custDetailTab, "onSelect=onSelectCustomerDetailsTab");
-		} else {
-			tabpanel = getTabpanel("customerTabPanel");
-		}
-		this.custDetailTab.setSelected(true);
-
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", tabpanel, map);
-
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	/**
@@ -2136,6 +2115,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 
 		this.favourName.setValue(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getEntityDesc());
 		this.fromFinReference.setValue(crossLoanHeader.getCrossLoanTransfer().getFromFinReference());
+		this.excessRef.setValue(String.valueOf(crossLoanHeader.getCrossLoanTransfer().getExcessId()));
 		this.toFinReference.setValue(crossLoanHeader.getCrossLoanTransfer().getToFinReference());
 		this.valueDate.setValue(rch.getValueDate());
 		if (StringUtils.isEmpty(rch.getAllocationType())) {
