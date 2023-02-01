@@ -843,12 +843,16 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 	private void doRemoveValidation() {
 		logger.debug("Entering ");
+
+		this.mandateType.setErrorMessage("");
 		this.fromDate.setConstraint("");
 		this.toDate.setConstraint("");
 		this.entityCode.setConstraint("");
 		this.entityCode.setErrorMessage("");
 		this.partnerBank.setConstraint("");
 		this.partnerBank.setErrorMessage("");
+		this.branchOrCluster.setConstraint("");
+		this.branchOrCluster.setErrorMessage("");
 		logger.debug("Leaving ");
 
 	}
