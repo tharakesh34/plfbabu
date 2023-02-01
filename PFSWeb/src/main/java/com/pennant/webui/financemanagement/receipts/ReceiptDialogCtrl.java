@@ -668,7 +668,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			// receiptData =
 			// getReceiptCalculator().removeUnwantedManAloc(receiptData);
 
-			if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			if (!(FinanceConstants.CLOSURE_APPROVER.equals(module) || FinanceConstants.CLOSURE_MAKER.equals(module))
+					&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 				doProcessTerminationExcess(receiptData, rch);
 			}
 
