@@ -3703,42 +3703,7 @@
 	</bean>
 
 	<bean name="financeWriteoffServiceTarget"
-		class="com.pennant.backend.service.finance.impl.FinanceWriteoffServiceImpl">
-		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
-		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
-		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
-		<property name="finFeeChargesDAO" ref="finFeeChargesDAO" />
-		<property name="provisionDAO" ref="provisionDAO" />
-		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
-		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
-		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="checkListDetailService" ref="finCheckListDetailService" />
-		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="engineExecution" ref="engineExecution" />
-		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
-		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="dMSService" ref="dMSService" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
-		<property name="accrualService" ref="accrualService" />
-
-		<!-- EOD -->
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-		<!-- Stage Accounting -->
-		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
-		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
-	</bean>
+		class="com.pennant.backend.service.finance.impl.FinanceWriteoffServiceImpl" parent="genericFinanceDetailService"/>
 
 	<!--============ Finance Schedule Details ============== -->
 	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
