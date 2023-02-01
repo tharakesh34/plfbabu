@@ -1203,10 +1203,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 
-		if (aFinanceMain.isUnderSettlement()) {
-			this.settlementEnq.setVisible(true);
-			this.label_LoanBasicDetailsDialog_Settlement.setVisible(true);
-		}
+		this.settlementEnq.setVisible(true);
+		this.label_LoanBasicDetailsDialog_Settlement.setVisible(true);
 
 		if (StringUtils.isNotBlank(aFinanceMain.getLinkedFinRef())) {
 			this.row_LinkedFinRef.setVisible(true);
@@ -2494,6 +2492,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 
 		FinSettlementHeader settlement = settlementService.getSettlementByRef(this.finReference.getValue(), "_View");
+
+		if (settlement == null) {
+			MessageUtil.showError("There is no Settlement process. ");
+			return;
+		}
+
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("isEnqProcess", true);
 		arg.put("settlement", settlement);

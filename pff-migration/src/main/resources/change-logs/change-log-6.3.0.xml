@@ -12044,7 +12044,7 @@
 			constraintName="PK_FinODPenaltyRates_temp" />
 	</changeSet>
 
-	<changeSet id="OTS#37_pre" author="Saikiran.n" dbms="postgresql">
+	<changeSet id="OTS#37.1_pre" author="Saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fm_settlement_view');
@@ -12052,7 +12052,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OTS#37" author="Saikiran.n">
+	<changeSet id="OTS#37.1" author="Saikiran.n">
 		<createView viewName="FM_SETTLEMENT_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID
@@ -12076,14 +12076,14 @@
 					, T1.MANUALSCHEDULE
 					, T1.SANCTIONEDDATE
 				FROM FINANCEMAIN T1 
-				WHERE T1.FINREFERENCE NOT IN (SELECT T2.REFERENCE FROM FINRECEIPTHEADER_TEMP T2) AND 
-				T1.FINREFERENCE NOT IN (SELECT T3.FINREFERENCE FROM FEEWAIVERHEADER_TEMP T3) AND
-				T1.FINREFERENCE NOT IN (SELECT T4.FINREFERENCE FROM FIN_SETTLEMENT_HEADER_TEMP T4 UNION ALL SELECT T5.FINREFERENCE FROM FIN_SETTLEMENT_HEADER T5)
+				WHERE T1.FINID NOT IN (SELECT T2.FINID FROM FINRECEIPTHEADER_TEMP T2) AND 
+				T1.FINID NOT IN (SELECT T3.FINID FROM FEEWAIVERHEADER_TEMP T3) AND
+				T1.FINID NOT IN (SELECT T4.FINID FROM FIN_SETTLEMENT_HEADER_TEMP T4 UNION ALL SELECT T5.FINID FROM FIN_SETTLEMENT_HEADER T5 WHERE T5.SETTLEMENTSTATUS ='I')
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="OTS#37_post" author="Saikiran.n" dbms="postgresql">
+	<changeSet id="OTS#37_post.1" author="Saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fm_settlement_view');
