@@ -35,4 +35,8 @@ public interface UploadService {
 	ProcessRecord getProcessRecord();
 
 	DataEngineStatus getDEStatus(long executionID);
+
+	void updateDownloadStatus(long headerID, int status);
+
+	int isValidateApprove(List<FileUploadHeader> selectedHeaders);
 }

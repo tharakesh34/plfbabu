@@ -35,4 +35,8 @@ public interface UploadDAO {
 	void updateHeader(FileUploadHeader header);
 
 	void updateHeader(List<FileUploadHeader> header);
+
+	void updateDownloadStatus(long headerID, int status);
+
+	int isValidateApprove(List<FileUploadHeader> selectedHeaders, int status);
 }
