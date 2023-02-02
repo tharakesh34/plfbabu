@@ -1654,36 +1654,6 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		return isDue;
 	}
 
-	private Date validateRestructureDate(FinScheduleData schdData) {
-		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
-
-		if (schedules == null) {
-			return null;
-		}
-
-		Date appDate = SysParamUtil.getAppDate();
-		Date allowedRestrcutureDate = null;
-
-		for (int i = 0; i < schedules.size(); i++) {
-			FinanceScheduleDetail curSchd = schedules.get(i);
-			FinanceScheduleDetail prvSchd = null;
-			if (i != 0) {
-				prvSchd = schedules.get(i - 1);
-			}
-
-			if (prvSchd == null) {
-				continue;
-			}
-
-			if (prvSchd.getSchDate().compareTo(appDate) < 0 && curSchd.getSchDate().compareTo(appDate) > 0) {
-				allowedRestrcutureDate = prvSchd.getSchDate();
-				continue;
-			}
-		}
-
-		return allowedRestrcutureDate;
-	}
-
 	private void stepLoanValidations(FinanceDetail fd, RestructureDetail rd, List<ErrorDetail> errors) {
 		logger.debug(Literal.ENTERING);
 
