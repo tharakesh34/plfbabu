@@ -19870,7 +19870,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (!getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
-				|| !getComboboxValue(this.oDChargeType).equals(ChargeType.PERC_ON_EFF_DUE_DAYS)) {
+				&& !getComboboxValue(this.oDChargeType).equals(ChargeType.PERC_ON_EFF_DUE_DAYS)) {
 			readOnlyComponent(true, this.oDIncGrcDays);
 			if (changeAction) {
 				this.oDIncGrcDays.setChecked(false);
