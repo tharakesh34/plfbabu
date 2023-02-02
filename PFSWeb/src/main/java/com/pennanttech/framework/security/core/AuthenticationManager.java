@@ -57,6 +57,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.saml.SAMLAuthenticationProvider;
+import org.springframework.security.saml.SAMLAuthenticationToken;
+import org.springframework.security.saml.SAMLCredential;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -87,6 +90,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 	private ActiveDirectoryLdapAuthenticationProviderAdapter defaultLdapAuthenticationProviderAdapter;
 	private DaoAuthenticationProvider daoAuthenticationProvider;
 	private ExternalAuthenticationProvider externalAuthenticationProvider;
+	private SAMLAuthenticationProvider samlAuthenticationProvider;
 
 	@Value("${authentication.default}")
 	private String defaultAuthType;
@@ -114,37 +118,48 @@ public class AuthenticationManager implements AuthenticationProvider {
 
 		SecurityUser securityUser = null;
 		try {
-			User user = (User) userDetailsService.loadUserByUsername(authentication.getName());
-			securityUser = user.getSecurityUser();
+			if (authentication instanceof SAMLAuthenticationToken) {
+				result = samlAuthenticationProvider.authenticate(authentication);
+				SAMLCredential credential = (SAMLCredential) result.getCredentials();
+				logger.info("Auhenticating the user {}", credential.getNameID().getValue());
 
-			String authType = securityUser.getAuthType();
-			String domainName = securityUser.getldapDomainName();
-			if ("DAO".equals(StringUtils.trim(authType))) {
-				// DAO.
-				result = daoAuthenticationProvider.authenticate(authentication);
+				User user = (User) result.getDetails();
+
+				securityUser = user.getSecurityUser();
+
 			} else {
-				if (externalAuthenticationProvider != null) {
-					// External.
-					String username = authentication.getPrincipal().toString();
-					Object credentials = authentication.getCredentials();
-					String password = credentials == null ? null : credentials.toString();
+				User user = (User) userDetailsService.loadUserByUsername(authentication.getName());
+				securityUser = user.getSecurityUser();
 
-					externalAuthenticationProvider.authenticate(username, password);
-					result = authentication;
+				String authType = securityUser.getAuthType();
+				String domainName = securityUser.getldapDomainName();
+				if ("DAO".equals(StringUtils.trim(authType))) {
+					// DAO.
+					result = daoAuthenticationProvider.authenticate(authentication);
 				} else {
-					// LDAP.
-					result = defaultLdapAuthenticationProviderAdapter.getAuthenticationProvider(domainName)
-							.authenticate(authentication);
-				}
+					if (externalAuthenticationProvider != null) {
+						// External.
+						String username = authentication.getPrincipal().toString();
+						Object credentials = authentication.getCredentials();
+						String password = credentials == null ? null : credentials.toString();
 
-				if (result != null) {
-					// Get the user details.
-					AbstractAuthenticationToken token = null;
-					token = new UsernamePasswordAuthenticationToken(user, result.getCredentials(),
-							user.getAuthorities());
-					token.setDetails(result.getDetails());
+						externalAuthenticationProvider.authenticate(username, password);
+						result = authentication;
+					} else {
+						// LDAP.
+						result = defaultLdapAuthenticationProviderAdapter.getAuthenticationProvider(domainName)
+								.authenticate(authentication);
+					}
 
-					result = token;
+					if (result != null) {
+						// Get the user details.
+						AbstractAuthenticationToken token = null;
+						token = new UsernamePasswordAuthenticationToken(user, result.getCredentials(),
+								user.getAuthorities());
+						token.setDetails(result.getDetails());
+
+						result = token;
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -369,6 +384,11 @@ public class AuthenticationManager implements AuthenticationProvider {
 	@Autowired(required = false)
 	public void setExternalAuthenticationProvider(ExternalAuthenticationProvider externalAuthenticationProvider) {
 		this.externalAuthenticationProvider = externalAuthenticationProvider;
+	}
+
+	@Autowired(required = false)
+	public void setSamlAuthenticationProvider(SAMLAuthenticationProvider samlAuthenticationProvider) {
+		this.samlAuthenticationProvider = samlAuthenticationProvider;
 	}
 
 }
