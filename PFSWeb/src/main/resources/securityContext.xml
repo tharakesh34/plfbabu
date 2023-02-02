@@ -138,6 +138,14 @@
 		<beans:constructor-arg value="/timeout.zul" />
 		<beans:constructor-arg ref="redirectStrategy" />
 	</beans:bean>
+	
+	<beans:bean id="userService" class="com.pennanttech.framework.security.core.service.UserServiceImpl" />
+
+	<beans:bean id="userDAO" class="com.pennant.backend.dao.impl.UserDAOImpl" parent="secBasicDao" />
+	
+	<beans:bean id="securityRightDAO" class="com.pennant.backend.dao.administration.impl.SecurityRightDAOImpl" parent="secSequenceDao" />
+	
+	<beans:bean id="secLoginlogDAO" class="com.pennant.backend.dao.impl.SecLoginlogDAOImpl" parent="secSequenceDao" />
 
 	<!-- <beans:bean id="httpFirewall" class="org.springframework.security.web.firewall.DefaultHttpFirewall">
 		<beans:property name="allowUrlEncodedSlash" value="true" />
