@@ -248,7 +248,7 @@
 												<extendedcombobox id="employeeName" />
 												<label id="label_LoanBasicDetailsDialog_Settlement" value="${c:l('label_LoanBasicDetailsDialog_Settlement.value')}" visible="false" />
 													<a id="settlementEnq" label="${c:l('label_FinanceMainDialog_settlementEnq.value')}"
-														" tooltiptext="${c:l('settlementEnq.tooltiptext')}" visible="false"/>
+														tooltiptext="${c:l('settlementEnq.tooltiptext')}" visible="false"/>
 													<space />
 											</row>
 											<row id="row_salesDept">
