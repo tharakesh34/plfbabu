@@ -15,7 +15,7 @@
 	
 	<context:annotation-config />
 
-	<context:component-scan base-package="org.springframework.security.saml" />
+	<context:component-scan base-package="org.springframework.security.saml,com.pennanttech.framework.security.core" />
 
 
 	<!-- SAML 2.0 WebSSO Assertion Consumer -->
