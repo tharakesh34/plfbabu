@@ -40,11 +40,9 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
@@ -406,23 +404,27 @@ public class FeeCalculator {
 	}
 
 	private void calculateFeeRules(FinReceiptData rd, Map<String, BigDecimal> taxPercentages) {
-		FinanceDetail financeDetail = rd.getFinanceDetail();
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		List<FinFeeDetail> finFeeDetailsList = finScheduleData.getFinFeeDetailList();
-		List<String> feeRuleCodes = new ArrayList<>();
-		FinanceMain fm = finScheduleData.getFinanceMain();
-		for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
-			if (StringUtils.isNotEmpty(finFeeDetail.getRuleCode())) {
-				feeRuleCodes.add(finFeeDetail.getRuleCode());
+		FinanceDetail fd = rd.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		List<FinFeeDetail> feeList = schdData.getFinFeeDetailList();
+
+		List<String> rules = new ArrayList<>();
+
+		FinanceMain fm = schdData.getFinanceMain();
+
+		for (FinFeeDetail fee : feeList) {
+			if (StringUtils.isNotEmpty(fee.getRuleCode())) {
+				rules.add(fee.getRuleCode());
 			}
 		}
 
-		if (feeRuleCodes.isEmpty()) {
+		if (rules.isEmpty()) {
 			return;
 		}
 
-		String feeEvent = finScheduleData.getFeeEvent();
-		List<Rule> feeRules = ruleDAO.getRuleDetailList(feeRuleCodes, RuleConstants.MODULE_FEES, feeEvent);
+		String feeEvent = schdData.getFeeEvent();
+		List<Rule> feeRules = ruleDAO.getRuleDetailList(rules, RuleConstants.MODULE_FEES, feeEvent);
 
 		if (feeRules.isEmpty()) {
 			return;
@@ -432,7 +434,7 @@ public class FeeCalculator {
 		Map<String, String> ruleSqlMap = new HashMap<>();
 		List<Object> objectList = new ArrayList<>();
 
-		CustomerDetails custDetails = financeDetail.getCustomerDetails();
+		CustomerDetails custDetails = fd.getCustomerDetails();
 		if (custDetails != null) {
 			objectList.add(custDetails.getCustomer());
 			if (custDetails.getCustEmployeeDetail() != null) {
@@ -451,9 +453,9 @@ public class FeeCalculator {
 			dataMap.put("customerProvince", custAddrProvince);
 		}
 
-		if (financeDetail.getFinScheduleData() != null) {
-			objectList.add(finScheduleData.getFinanceMain());
-			objectList.add(financeDetail.getFinScheduleData().getFinanceType());
+		if (fd.getFinScheduleData() != null) {
+			objectList.add(schdData.getFinanceMain());
+			objectList.add(fd.getFinScheduleData().getFinanceType());
 		}
 
 		for (Rule feeRule : feeRules) {
@@ -468,132 +470,31 @@ public class FeeCalculator {
 			ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
 		}
 
-		Date valDate = rd.getValueDate();
-		if (valDate == null) {
-			valDate = SysParamUtil.getAppDate();
-		}
-		int finAge = 0;
-		if (fm.getFinStartDate() != null) {
-			finAge = DateUtility.getMonthsBetween(valDate, fm.getFinStartDate());
-		}
-
-		dataMap.put("finAgetilldate", finAge);
-		dataMap.put("completedTenure", finAge);
-
-		int instNO = 0;
-		for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
-			if (detail.getSchDate().compareTo(valDate) <= 0) {
-				instNO = detail.getInstNumber();
-			} else {
-				break;
-			}
-		}
-
-		dataMap.put("completedInstallments", instNO);
-
-		long finID = fm.getFinID();
-
-		if (StringUtils.isNotBlank(financeDetail.getModuleDefiner())) {
-			FinanceProfitDetail pft = profitDetailsDAO.getFinProfitDetailsById(finID);
-			BigDecimal outStandingFeeBal = financeScheduleDetailDAO.getOutStandingBalFromFees(finID);
-			dataMap.put("totalOutStanding",
-					PennantApplicationUtil.amountFormate(pft.getTotalPftBal(), PennantConstants.defaultCCYDecPos));
-			// PSD: 138255 PrincipalOutStanding will be future
-			// Amount to be paid.
-			dataMap.put("principalOutStanding", PennantApplicationUtil.amountFormate(
-					pft.getTotalpriSchd().subtract(pft.getTdSchdPri()), PennantConstants.defaultCCYDecPos));
-
-			dataMap.put("principalSchdOutstanding", PennantApplicationUtil.amountFormate(
-					pft.getTotalpriSchd().subtract(pft.getTdSchdPri()), PennantConstants.defaultCCYDecPos));
-			// Fore closure charges calculation should be sum of principal amount and future principal amount.
-			dataMap.put("principalAmtFutPrincipalAmt",
-					PennantApplicationUtil.amountFormate(pft.getTotalPriBal(), PennantConstants.defaultCCYDecPos));
-			dataMap.put("totOSExcludeFees", PennantApplicationUtil
-					.amountFormate(pft.getTotalPftBal().add(pft.getTotalPriBal()), PennantConstants.defaultCCYDecPos));
-			dataMap.put("totOSIncludeFees",
-					PennantApplicationUtil.amountFormate(
-							pft.getTotalPftBal().add(pft.getTotalPriBal()).add(outStandingFeeBal),
-							PennantConstants.defaultCCYDecPos));
-			dataMap.put("unearnedAmount",
-					PennantApplicationUtil.amountFormate(pft.getUnearned(), PennantConstants.defaultCCYDecPos));
-			dataMap.put("eligibilityMethod", fm.getEligibilityMethod());
-
-			if (rd.isForeClosureEnq()) {
-				dataMap.put("principalOutStanding",
-						PennantApplicationUtil.amountFormate(
-								pft.getTotalPriBal().subtract(rd.getOrgFinPftDtls().getTdSchdPriBal()),
-								PennantConstants.defaultCCYDecPos));
-				// Fore closure charges calculation should be sum of principal amount and future principal amount.
-				dataMap.put("principalAmtFutPrincipalAmt",
-						PennantApplicationUtil.amountFormate(pft.getTotalPriBal(), PennantConstants.defaultCCYDecPos));
-			}
-		}
-
-		dataMap.put("totalPayment",
-				PennantApplicationUtil.amountFormate(rd.getTotReceiptAmount(), PennantConstants.defaultCCYDecPos));
-
-		BigDecimal totalDues = BigDecimal.ZERO;
-
-		if (rd.getTotalDueAmount().compareTo(BigDecimal.ZERO) > 0) {
-			totalDues = rd.getTotalDueAmount();
-		} else {
-			FinReceiptHeader rch = rd.getReceiptHeader();
-			totalDues = totalDues.add(rch.getTotalPastDues().getTotalDue());
-			totalDues = totalDues.add(rch.getTotalBounces().getTotalDue());
-			totalDues = totalDues.add(rch.getTotalRcvAdvises().getTotalDue());
-			totalDues = totalDues.add(rch.getTotalFees().getTotalDue());
-			totalDues = totalDues.subtract(rd.getExcessAvailable());
-		}
-
-		dataMap.put("totalDueAmount",
-				PennantApplicationUtil.amountFormate(totalDues, PennantConstants.defaultCCYDecPos));
-
-		BigDecimal partialPaymentAmount = BigDecimal.ZERO;
-		BigDecimal partPayAmount = rd.getReceiptHeader().getPartPayAmount();
-		if ((partPayAmount.compareTo(totalDues) > 0)) {
-			partialPaymentAmount = partPayAmount.subtract(totalDues);
-		}
-
-		dataMap.put("partialPaymentAmount",
-				PennantApplicationUtil.amountFormate(partialPaymentAmount, PennantConstants.defaultCCYDecPos));
-
-		Date fixedTenorEndDate = DateUtility.addMonths(fm.getGrcPeriodEndDate(), fm.getFixedRateTenor());
-
-		String financeFixedTenor = PennantConstants.NO;
-		if (fm.getFixedRateTenor() > 0 && fixedTenorEndDate.compareTo(SysParamUtil.getAppDate()) > 0) {
-			financeFixedTenor = PennantConstants.YES;
-		}
-
-		dataMap.put("Finance_Fixed_Tenor", financeFixedTenor);
-
 		prepareExecutionMap(rd, fm, dataMap);
-		String finCcy = fm.getFinCcy();
-		int formatter = CurrencyUtil.getFormat(finCcy);
 
-		for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
-			if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
+		String finCcy = fm.getFinCcy();
+
+		for (FinFeeDetail fee : feeList) {
+			if (StringUtils.isEmpty(fee.getRuleCode())) {
 				continue;
 			}
 
-			BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()),
-					dataMap, finCcy);
-			// unFormating feeResult
-			// feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
+			BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(fee.getRuleCode()), dataMap,
+					finCcy);
 
-			finFeeDetail.setCalculatedAmount(feeResult);
+			fee.setCalculatedAmount(feeResult);
 
-			if (finFeeDetail.isTaxApplicable()) {
-				this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail, taxPercentages,
-						false);
+			if (fee.isTaxApplicable()) {
+				this.finFeeDetailService.processGSTCalForRule(fee, feeResult, fd, taxPercentages, false);
 			} else {
-				if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
-					finFeeDetail.setActualAmountOriginal(feeResult);
-					finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
-					finFeeDetail.setActualAmount(feeResult);
+				if (!fee.isFeeModified() || !fee.isAlwModifyFee()) {
+					fee.setActualAmountOriginal(feeResult);
+					fee.setActualAmountGST(BigDecimal.ZERO);
+					fee.setActualAmount(feeResult);
 				}
 
-				finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
-						.subtract(finFeeDetail.getWaivedAmount()));
+				fee.setRemainingFee(
+						fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 			}
 		}
 
@@ -932,41 +833,96 @@ public class FeeCalculator {
 	}
 
 	private void prepareExecutionMap(FinReceiptData rd, FinanceMain fm, Map<String, Object> dataMap) {
+		FinanceDetail fd = rd.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
 
-		Date appDate = SysParamUtil.getAppDate();
+		Date valDate = rd.getValueDate();
+		if (valDate == null) {
+			valDate = SysParamUtil.getAppDate();
+		}
 
 		if (fm.getFinStartDate() != null) {
-			int finAge = DateUtility.getMonthsBetween(appDate, fm.getFinStartDate());
+			int finAge = DateUtility.getMonthsBetween(valDate, fm.getFinStartDate());
 			dataMap.put("finAgetilldate", finAge);
+			dataMap.put("completedTenure", finAge);
 		}
+
+		int instNO = 0;
+		for (FinanceScheduleDetail detail : schdData.getFinanceScheduleDetails()) {
+			if (detail.getSchDate().compareTo(valDate) <= 0) {
+				instNO = detail.getInstNumber();
+			} else {
+				break;
+			}
+		}
+
+		dataMap.put("completedInstallments", instNO);
 
 		long finID = fm.getFinID();
-		FinanceProfitDetail finPft = profitDetailsDAO.getFinProfitDetailsById(finID);
-		FinanceProfitDetail orgFinPftDtls = rd.getOrgFinPftDtls();
+
+		BigDecimal totReceiptAmount = rd.getTotReceiptAmount();
+
+		FinanceProfitDetail pft = profitDetailsDAO.getFinProfitDetailsById(finID);
+
 		BigDecimal outStandingFeeBal = financeScheduleDetailDAO.getOutStandingBalFromFees(finID);
 
-		dataMap.put("totalOutStanding", finPft.getTotalPftBal());
-		dataMap.put("principalOutStanding", finPft.getTotalpriSchd().subtract(finPft.getTdSchdPri()));
+		BigDecimal totalOutStanding = pft.getTotalPftBal();
+		BigDecimal principalOutStanding = pft.getTotalpriSchd().subtract(pft.getTdSchdPri());
+		BigDecimal principalAmtFutPrincipalAmt = pft.getTotalPriBal();
+		BigDecimal totOSExcludeFees = totalOutStanding.add(principalAmtFutPrincipalAmt);
+		BigDecimal totOSIncludeFees = totOSExcludeFees.add(outStandingFeeBal);
+		BigDecimal unearnedAmount = pft.getUnearned();
+
+		dataMap.put("totalOutStanding", CurrencyUtil.format(totalOutStanding));
+		dataMap.put("principalOutStanding", CurrencyUtil.format(principalOutStanding));
+		dataMap.put("principalSchdOutstanding", CurrencyUtil.format(principalOutStanding));
+		dataMap.put("principalAmtFutPrincipalAmt", CurrencyUtil.format(principalAmtFutPrincipalAmt));
+		dataMap.put("totOSExcludeFees", CurrencyUtil.format(totOSExcludeFees));
+
+		dataMap.put("totOSIncludeFees", CurrencyUtil.format(totOSIncludeFees));
+		dataMap.put("unearnedAmount", CurrencyUtil.format(unearnedAmount));
+		dataMap.put("eligibilityMethod", fm.getEligibilityMethod());
 
 		if (rd.isForeClosureEnq()) {
-			dataMap.put("principalOutStanding", finPft.getTotalPriBal().subtract(orgFinPftDtls.getTdSchdPriBal()));
+			principalOutStanding = principalAmtFutPrincipalAmt.subtract(rd.getOrgFinPftDtls().getTdSchdPriBal());
+			dataMap.put("principalOutStanding", CurrencyUtil.format(principalOutStanding));
+			dataMap.put("principalAmtFutPrincipalAmt", CurrencyUtil.format(principalAmtFutPrincipalAmt));
 		}
-		dataMap.put("principalSchdOutstanding", finPft.getTotalpriSchd().subtract(finPft.getTdSchdPri()));
-		dataMap.put("totOSExcludeFees", finPft.getTotalPftBal().add(finPft.getTotalPriBal()));
-		dataMap.put("totOSIncludeFees", finPft.getTotalPftBal().add(finPft.getTotalPriBal()).add(outStandingFeeBal));
-		dataMap.put("unearnedAmount", finPft.getUnearned());
 
-		dataMap.put("totalPayment", rd.getTotReceiptAmount());
-		dataMap.put("partialPaymentAmount", rd.getReceiptHeader().getPartPayAmount());
-		dataMap.put("totalDueAmount", rd.getTotalDueAmount());
+		dataMap.put("totalPayment", CurrencyUtil.format(totReceiptAmount));
 
-		Date fixedTenorEndDate = DateUtil.addMonths(fm.getGrcPeriodEndDate(), fm.getFixedRateTenor());
+		BigDecimal totalDues = BigDecimal.ZERO;
 
-		if (fm.getFixedRateTenor() > 0 && fixedTenorEndDate.compareTo(appDate) > 0) {
-			dataMap.put("Finance_Fixed_Tenor", PennantConstants.YES);
+		if (rd.getTotalDueAmount().compareTo(BigDecimal.ZERO) > 0) {
+			totalDues = rd.getTotalDueAmount();
 		} else {
-			dataMap.put("Finance_Fixed_Tenor", PennantConstants.NO);
+			FinReceiptHeader rch = rd.getReceiptHeader();
+			totalDues = totalDues.add(rch.getTotalPastDues().getTotalDue());
+			totalDues = totalDues.add(rch.getTotalBounces().getTotalDue());
+			totalDues = totalDues.add(rch.getTotalRcvAdvises().getTotalDue());
+			totalDues = totalDues.add(rch.getTotalFees().getTotalDue());
+			totalDues = totalDues.subtract(rd.getExcessAvailable());
 		}
+
+		dataMap.put("totalDueAmount", CurrencyUtil.format(totalDues));
+
+		BigDecimal partialPaymentAmount = BigDecimal.ZERO;
+		BigDecimal partPayAmount = rd.getReceiptHeader().getPartPayAmount();
+
+		if ((partPayAmount.compareTo(totalDues) > 0)) {
+			partialPaymentAmount = partPayAmount.subtract(totalDues);
+		}
+
+		dataMap.put("partialPaymentAmount", CurrencyUtil.format(partialPaymentAmount));
+
+		Date fixedTenorEndDate = DateUtility.addMonths(fm.getGrcPeriodEndDate(), fm.getFixedRateTenor());
+
+		String financeFixedTenor = PennantConstants.NO;
+		if (fm.getFixedRateTenor() > 0 && fixedTenorEndDate.compareTo(SysParamUtil.getAppDate()) > 0) {
+			financeFixedTenor = PennantConstants.YES;
+		}
+
+		dataMap.put("Finance_Fixed_Tenor", financeFixedTenor);
 
 		if (StringUtils.isBlank(fm.getRepayBaseRate())) {
 			dataMap.put("rateType", "FIXED");
