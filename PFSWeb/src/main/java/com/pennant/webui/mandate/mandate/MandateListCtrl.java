@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -87,7 +88,6 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Listheader listheader_AccType;
 	protected Listheader listheader_Amount;
 	protected Listheader listheader_SecurityMandate;
-	protected Listheader listheader_LoanReference;
 	protected Listheader listheader_ExpiryDate;
 	protected Listheader listheader_Status;
 	protected Listheader listheader_InputDate;
@@ -142,12 +142,49 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 
 	@Override
 	protected void doAddFilters() {
+		searchObject.addWhereClause(null);
 
 		super.doAddFilters();
+
+		this.searchObject = (JdbcSearchObject<Mandate>) searchObject.removeFiltersOnProperty("OrgReference");
+
 		if (!enqiryModule && !searchObject.getFilters().isEmpty()) {
 			searchObject.addFilterEqual("active", 1);
 			searchObject.addFilterNotEqual("Status", MandateStatus.FIN);
 		}
+
+		String frn = this.loanReference.getValue();
+		if (StringUtils.isNotEmpty(frn)) {
+			searchObject.addWhereClause(getWhereClause(frn, securityMandate.isChecked()));
+		}
+	}
+
+	private String getWhereClause(String frn, boolean securityMandate) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" MandateID In (Select MandateID From (");
+		if (securityMandate) {
+			sql.append(" Select MandateID From Mandates Where SecurityMandate = 1 and OrgReference = '");
+			sql.append(frn).append("'");
+			sql.append(" Union All");
+			sql.append(" Select MandateID From Mandates_temp Where SecurityMandate = 1 and OrgReference = '");
+			sql.append(frn).append("'");
+			sql.append(" Union All");
+			sql.append(" Select SecurityMandateID From FinanceMain Where FinReference = '");
+			sql.append(frn).append("'");
+		} else {
+			sql.append(" Select MandateID From Mandates Where SecurityMandate = 0 and OrgReference = '");
+			sql.append(frn).append("'");
+			sql.append(" Union All");
+			sql.append(" Select MandateID From Mandates_temp Where SecurityMandate = 0 and OrgReference = '");
+			sql.append(frn).append("'");
+			sql.append(" Union All");
+			sql.append(" Select MandateID From FinanceMain Where FinReference = '");
+			sql.append(frn).append("'");
+		}
+		sql.append(" ) T )");
+
+		return sql.toString();
 	}
 
 	/**
@@ -190,9 +227,6 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		registerField("securityMandate", listheader_SecurityMandate, SortOrder.NONE, securityMandate,
 				sortOperator_SecurityMandate, Operators.SIMPLE_NUMARIC);
 
-		registerField("orgReference", listheader_LoanReference, SortOrder.NONE, loanReference,
-				sortOperator_LoanReference, Operators.STRING);
-
 		doSetFieldProperties();
 
 		// Render the page and display the data.
@@ -207,6 +241,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_MandateList_MandateSearch(Event event) {
+		this.loanReference.setErrorMessage("");
 		search();
 	}
 
@@ -216,6 +251,9 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
+		this.loanReference.setValue("");
+		this.loanReference.setDescription("");
+		this.loanReference.setErrorMessage("");
 		doReset();
 		search();
 	}
