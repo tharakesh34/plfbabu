@@ -30,6 +30,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -527,7 +528,9 @@ public class FileUploadList extends Window implements Serializable {
 	public void onChangeEntityCode(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		this.entityCode.clearErrorMessage();
+		this.entityCode.setConstraint("");
+		this.entityCode.setErrorMessage("");
+		Clients.clearWrongValue(entityCode);
 
 		if (StringUtils.isBlank(this.entityCode.getValue())) {
 			this.entityCode.setValue("", "");
@@ -829,6 +832,8 @@ public class FileUploadList extends Window implements Serializable {
 		this.entityCode.setConstraint("");
 		this.entityCode.setErrorMessage("");
 		this.entityCode.setValue(null);
+
+		Clients.clearWrongValue(this.entityCode);
 
 		if ("M".equals(this.stage)) {
 			this.uploadFileName.setValue("");
