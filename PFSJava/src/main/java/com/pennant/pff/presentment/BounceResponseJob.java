@@ -9,7 +9,6 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
@@ -29,7 +28,6 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
-@Configuration
 public class BounceResponseJob extends BatchConfiguration {
 
 	public BounceResponseJob(@Autowired DataSource dataSource) throws Exception {

@@ -119,6 +119,16 @@ public abstract class AUploadServiceImpl implements UploadService {
 		return null;
 	}
 
+	@Override
+	public void updateDownloadStatus(long headerID, int status) {
+		this.uploadDAO.updateDownloadStatus(headerID, status);
+	}
+
+	@Override
+	public int isValidateApprove(List<FileUploadHeader> selectedHeaders) {
+		return this.uploadDAO.isValidateApprove(selectedHeaders, Status.DOWNLOADED.getValue());
+	}
+
 	@Autowired
 	public void setUploadDAO(UploadDAO uploadDAO) {
 		this.uploadDAO = uploadDAO;

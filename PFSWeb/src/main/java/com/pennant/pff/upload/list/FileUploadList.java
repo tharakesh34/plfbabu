@@ -799,7 +799,10 @@ public class FileUploadList extends Window implements Serializable {
 			fileDownload(deStatus, file, stream);
 		} catch (Exception e) {
 			logger.warn("Unable to download the selected file, Please contact system administrator.");
+			return;
 		}
+
+		uploadService.updateDownloadStatus(fuph.getId(), Status.DOWNLOADED.getValue());
 	}
 
 	private void fileDownload(DataEngineStatus deStatus, File file, ByteArrayOutputStream stream) {
@@ -894,6 +897,11 @@ public class FileUploadList extends Window implements Serializable {
 			return;
 		}
 
+		if (uploadService.isValidateApprove(selectedHeaders) != selectedHeaders.size()) {
+			MessageUtil.showError(Labels.getLabel("DataList_Download"));
+			return;
+		}
+
 		uploadService.doReject(selectedHeaders);
 
 		doSearch(false);
@@ -903,6 +911,11 @@ public class FileUploadList extends Window implements Serializable {
 
 		if (selectedHeaders.isEmpty()) {
 			MessageUtil.showError(Labels.getLabel("DataList_NoEmpty"));
+			return;
+		}
+
+		if (uploadService.isValidateApprove(selectedHeaders) != selectedHeaders.size()) {
+			MessageUtil.showError(Labels.getLabel("DataList_Download"));
 			return;
 		}
 

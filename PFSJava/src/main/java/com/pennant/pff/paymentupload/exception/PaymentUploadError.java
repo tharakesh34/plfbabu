@@ -26,6 +26,8 @@ public enum PaymentUploadError {
 
 	REFUP012("Fee Type is not valid if Excess Type is E"),
 
+	REFUP013("Possible values should be Y/N "),
+
 	// Hold Refund Errors
 	HOLDUP001("Fin Reference is Mandatory"),
 

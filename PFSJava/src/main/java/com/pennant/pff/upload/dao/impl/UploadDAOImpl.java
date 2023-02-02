@@ -410,4 +410,38 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		});
 	}
 
+	@Override
+	public void updateDownloadStatus(long headerID, int status) {
+		String sql = "Update FILE_UPLOAD_HEADER Set Progress = ? Where Id = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, st -> {
+			st.setInt(1, status);
+			st.setLong(2, headerID);
+		});
+	}
+
+	@Override
+	public int isValidateApprove(List<FileUploadHeader> selectedHeaders, int status) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select count(ID) From FILE_UPLOAD_HEADER");
+		sql.append(" Where ID in (");
+		sql.append(JdbcUtil.getInCondition(selectedHeaders));
+		sql.append(") and Progress = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		Object[] obj = new Object[selectedHeaders.size() + 1];
+
+		int i = 0;
+		for (FileUploadHeader hdr : selectedHeaders) {
+			obj[i++] = hdr.getId();
+		}
+
+		obj[i] = status;
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, obj);
+	}
+
 }

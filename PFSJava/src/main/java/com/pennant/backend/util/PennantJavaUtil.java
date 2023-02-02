@@ -3819,32 +3819,32 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FileUploadHeader",
 				new ModuleMapping("FileUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("RepresentUploadHeader",
 				new ModuleMapping("RepresentUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("HoldRefundUploadHeader",
 				new ModuleMapping("HoldRefundUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("MandateUploadHeader",
 				new ModuleMapping("MandateUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("FateCorrection",
 				new ModuleMapping("FateCorrection", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("ChequeUpload",
 				new ModuleMapping("ChequeUpload", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("FinTypePartnerBankBranch",
 				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
@@ -3854,7 +3854,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PaymentInstructionUploadHeader",
 				new ModuleMapping("PaymentInstructionUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("FeeRefundHeader",
 				new ModuleMapping("FeeRefundHeader", FeeRefundHeader.class,
@@ -3874,7 +3874,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("SettlementTypeDetail",
 				new ModuleMapping("SettlementTypeDetail", SettlementTypeDetail.class,
-						new String[] { "Settlement_Types", "Settlement_Types_View" }, masterWF,
+						new String[] { "Settlement_Types", "Settlement_Types_AView" }, masterWF,
 						new String[] { "Id", "settlementCode", "settlementDesc" },
 						new Object[][] { { "Active", "0", 1 } }, 750));
 
@@ -3921,12 +3921,12 @@ public class PennantJavaUtil {
 		ModuleUtil.register("ExcessTransferUpload",
 				new ModuleMapping("ExcessTransferUpload", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("ManualKnockOff",
 				new ModuleMapping("ManualKnockOff", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("CrossLoanKnockOff",
 				new ModuleMapping("CrossLoanKnockOff", CrossLoanKnockOff.class,

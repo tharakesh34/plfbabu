@@ -18,7 +18,7 @@
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
-								<label id="labelTitle" value="${c:l('window_ReceiptDialog.title')}"
+								<label value="${c:l('window_CrossLoan_KnockOff_Dialog.title')}"
 									sclass="label-heading" />
 							</toolbar>
 							<toolbar align="end" sclass="toolbar-end">

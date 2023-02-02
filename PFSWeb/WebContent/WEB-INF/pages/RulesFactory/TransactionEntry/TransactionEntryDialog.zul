@@ -280,10 +280,10 @@
 									
 									<!-- ### START SFA_20210405 -->
 									<row id="row_FeeRepeat">
-										<label id="label_TransactionEntryDialog_FeeRepeat" value="${c:l('label_TransactionEntryDialog_FeeRepeat.value')}" />
+										<label id="label_TransactionEntryDialog_FeeRepeat" value="${c:l('label_TransactionEntryDialog_FeeRepeat.value')}" visible="false"/>
 										<hbox>
 											<space spacing="2px" />
-											<checkbox id="feeRepeat" disabled="true"/>
+											<checkbox id="feeRepeat" disabled="true" visible="false"/>
 										</hbox>
 										<label id="label_TransactionEntryDialog_RecOrPay" value="${c:l('label_TransactionEntryDialog_RecOrPay.value')}" />
 										<hbox>

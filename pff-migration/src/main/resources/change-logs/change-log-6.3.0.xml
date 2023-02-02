@@ -12044,7 +12044,7 @@
 			constraintName="PK_FinODPenaltyRates_temp" />
 	</changeSet>
 
-	<changeSet id="OTS#37_pre" author="Saikiran.n" dbms="postgresql">
+	<changeSet id="OTS#37.1_pre" author="Saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fm_settlement_view');
@@ -12052,7 +12052,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OTS#37" author="Saikiran.n">
+	<changeSet id="OTS#37.1" author="Saikiran.n">
 		<createView viewName="FM_SETTLEMENT_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID
@@ -12076,14 +12076,14 @@
 					, T1.MANUALSCHEDULE
 					, T1.SANCTIONEDDATE
 				FROM FINANCEMAIN T1 
-				WHERE T1.FINREFERENCE NOT IN (SELECT T2.REFERENCE FROM FINRECEIPTHEADER_TEMP T2) AND 
-				T1.FINREFERENCE NOT IN (SELECT T3.FINREFERENCE FROM FEEWAIVERHEADER_TEMP T3) AND
-				T1.FINREFERENCE NOT IN (SELECT T4.FINREFERENCE FROM FIN_SETTLEMENT_HEADER_TEMP T4 UNION ALL SELECT T5.FINREFERENCE FROM FIN_SETTLEMENT_HEADER T5)
+				WHERE T1.FINID NOT IN (SELECT T2.FINID FROM FINRECEIPTHEADER_TEMP T2) AND 
+				T1.FINID NOT IN (SELECT T3.FINID FROM FEEWAIVERHEADER_TEMP T3) AND
+				T1.FINID NOT IN (SELECT T4.FINID FROM FIN_SETTLEMENT_HEADER_TEMP T4 UNION ALL SELECT T5.FINID FROM FIN_SETTLEMENT_HEADER T5 WHERE T5.SETTLEMENTSTATUS ='I')
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="OTS#37_post" author="Saikiran.n" dbms="postgresql">
+	<changeSet id="OTS#37_post.1" author="Saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fm_settlement_view');
@@ -12096,9 +12096,17 @@
 		<sql>
 		 	<![CDATA[
 				DELETE FROM REPORTLIST WHERE code='FeeRefundHeader';
-				INSERT INTO REPORTLIST(CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ)VALUES('FeeRefundHeader','FeeRefundHeader','listheader_FeeRefundCustCif.label,listheader_FeeRefundCustName.label,listheader_FeeRefundFinRef.label,listheader_FeeRefundPayAmount.label,listheader_FeeRefundFinType.label,listheader_FeeRefundBranchName.label,label.RecordStatus,label.RecordType','custCif,custName,finReference,paymentAmount,finType,branchName,RECORDSTATUS,RECORDTYPE','String,String,String,decimal,String,String,String,String',null,'ReportList06','Payments','Enquiry',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0);
+				INSERT INTO REPORTLIST(CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES('FeeRefundHeader', 'FeeRefundHeader', 'listheader_FeeRefundCustCif.label,listheader_FeeRefundCustName.label,listheader_FeeRefundFinRef.label,listheader_FeeRefundPayAmount.label,listheader_FeeRefundFinType.label,listheader_FeeRefundBranchName.label,label.RecordStatus,label.RecordType', 'custCif,custName,finReference,paymentAmount,finType,branchName,RECORDSTATUS,RECORDTYPE', 'String,String,String,decimal,String,String,String,String', null, 'ReportList06', 'Payments', 'Enquiry', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
 			]]>
 		</sql>
 	</changeSet>
-
-</databaseChangeLog>
+	
+	<changeSet id="PSD#216832" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET FILEEXTENSION = '.xlsx' WHERE NAME in ('MANUAL_KNOCKOFF_UPLOAD', 'MANUAL_KNOCKOFF_TEMPLATE', 'MANUAL_KNOCKOFF_DOWNLOAD');
+			]]>
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog> 
