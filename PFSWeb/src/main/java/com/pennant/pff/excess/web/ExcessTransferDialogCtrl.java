@@ -604,7 +604,7 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 				if (StringUtils.isEmpty(this.excessReference.getDescription())) {
 					this.excessReference.setDescription(String.valueOf(BigDecimal.ZERO));
 				}
-				finExcessTransfer.setTransferToId(Long.parseLong(this.excessReference.getDescription()));
+				finExcessTransfer.setTransferToId((long) Double.parseDouble(this.excessReference.getDescription()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
