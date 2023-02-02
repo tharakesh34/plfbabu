@@ -143,6 +143,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.provision.ProvisionBook;
 
 /**
@@ -7068,7 +7069,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 			this.space_oDChargeAmtOrPerc.setSclass(PennantConstants.mandateSclass);
 			this.space_oDChargeCalOn.setSclass(PennantConstants.mandateSclass);
-			if (!getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)) {
+			if (!getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+					&& !getComboboxValue(this.oDChargeType).equals(ChargeType.PERC_ON_EFF_DUE_DAYS)) {
 				this.oDIncGrcDays.setDisabled(true);
 				if (changeAction) {
 					this.oDIncGrcDays.setChecked(false);
