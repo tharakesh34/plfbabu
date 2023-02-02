@@ -1857,8 +1857,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			penaltyRate.setFinID(finID);
 			penaltyRate.setFinReference(finReference);
-
-			penaltyRate.setFinEffectDate(SysParamUtil.getAppDate());
+			if (FinServiceEvent.ORG.equals(fm.getModuleDefiner()) || StringUtils.isEmpty(fm.getModuleDefiner())) {
+				penaltyRate.setFinEffectDate(fm.getFinStartDate());
+			} else {
+				penaltyRate.setFinEffectDate(curBDay);
+			}
 
 			finODPenaltyRateDAO.save(penaltyRate, tableType);
 		}
