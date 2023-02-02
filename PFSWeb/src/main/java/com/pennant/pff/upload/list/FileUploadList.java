@@ -805,7 +805,9 @@ public class FileUploadList extends Window implements Serializable {
 			return;
 		}
 
-		uploadService.updateDownloadStatus(fuph.getId(), Status.DOWNLOADED.getValue());
+		if ("A".equals(this.stage)) {
+			uploadService.updateDownloadStatus(fuph.getId(), Status.DOWNLOADED.getValue());
+		}
 	}
 
 	private void fileDownload(DataEngineStatus deStatus, File file, ByteArrayOutputStream stream) {

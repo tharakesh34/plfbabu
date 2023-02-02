@@ -39,7 +39,7 @@ public class ReceiptDTO implements Serializable {
 	private Date bussinessDate;
 	private boolean noReserve;
 	private boolean pdDetailsExits;
-	private List<FinExcessAmount> emiInAdvance;
+	private List<FinExcessAmount> emiInAdvance = new ArrayList<>();
 	private RequestSource requestSource;
 	private boolean createPrmntReceipt;
 	private List<FinODDetails> odDetails = new ArrayList<>();
