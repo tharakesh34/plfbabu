@@ -6989,6 +6989,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
+		int defaultClearingDays = SysParamUtil.getValueAsInt("EARLYSETTLE_CHQ_DFT_DAYS");
+		receiptValueDate = DateUtility.addDays(receiptValueDate, -(defaultClearingDays));
+
 		// depositDate should be greater than valuedate
 		if (this.depositDate.getValue() != null && this.depositDate.getValue().compareTo(receiptValueDate) < 0) {
 			MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Invalid_DepositDate",
