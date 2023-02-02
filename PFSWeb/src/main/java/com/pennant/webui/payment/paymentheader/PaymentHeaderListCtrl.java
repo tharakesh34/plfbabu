@@ -108,8 +108,6 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		super.doAddFilters();
 		if (!enqiryModule) {
 			this.searchObject.addFilterNotEqual("recordStatus", PennantConstants.RCD_STATUS_APPROVED);
-		} else {
-			this.searchObject.addFilterEqual("recordStatus", PennantConstants.RCD_STATUS_APPROVED);
 		}
 	}
 
