@@ -2254,6 +2254,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			wve.add(we);
 		}
 		try {
+
+			if (DateUtility.compare(this.accountOpeningDate.getValue(), DateUtil.getSysDate()) > 0) {
+				throw new WrongValueException(this.accountOpeningDate, Labels.getLabel("const_NO_FUTURE",
+						new String[] { Labels.getLabel("label_CustomerBankInfoDialog_AccountOpeningDate.value") }));
+			}
+
 			aCustomerBankInfo.setAccountOpeningDate((this.accountOpeningDate.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
