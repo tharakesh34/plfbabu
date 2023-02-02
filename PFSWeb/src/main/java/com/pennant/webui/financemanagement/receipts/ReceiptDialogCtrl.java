@@ -6416,7 +6416,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 
 				finishedTasks += (method + ";");
-				FinReceiptData tRepayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 				serviceTasks = getServiceTasks(taskId, rch, finishedTasks);
 
 			}
@@ -7859,24 +7858,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.accrualService = accrualService;
 	}
 
-	private Date getFirstInstDate(List<FinanceScheduleDetail> financeScheduleDetail) {
-
-		// Finding First Installment Date
-		Date firstInstDate = null;
-		for (FinanceScheduleDetail scheduleDetail : financeScheduleDetail) {
-
-			BigDecimal repayAmt = scheduleDetail.getProfitSchd().add(scheduleDetail.getPrincipalSchd())
-					.subtract(scheduleDetail.getPartialPaidAmt());
-
-			// InstNumber issue with Partial Settlement before first installment
-			if (repayAmt.compareTo(BigDecimal.ZERO) > 0) {
-				firstInstDate = scheduleDetail.getSchDate();
-				break;
-			}
-		}
-		return firstInstDate;
-	}
-
 	private void addZeroifNotContains(Map<String, BigDecimal> dataMap, String key) {
 		if (dataMap != null) {
 			if (!dataMap.containsKey(key)) {
@@ -8114,7 +8095,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private void createXcessPayableItem(XcessPayables xcessPayable, int idx) {
 		// List Item
 		Listitem item = new Listitem();
-		Listcell lc = null;
 		String payableDesc = xcessPayable.getPayableDesc();
 
 		if (FinServiceEvent.EARLYSETTLE.equals(receiptData.getReceiptHeader().getReceiptPurpose())

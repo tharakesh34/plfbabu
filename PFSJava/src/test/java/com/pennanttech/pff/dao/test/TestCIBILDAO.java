@@ -155,7 +155,6 @@ public class TestCIBILDAO {
 	@Rollback(true)
 	public void testUpdateFileStatus() {
 		CibilFileInfo cfi = new CibilFileInfo();
-		CibilMemberDetail cmd = new CibilMemberDetail();
 		cfi.setId(447);
 		cfi.setStatus("S");
 		cIBILDAO.updateFileStatus(cfi);
@@ -166,10 +165,8 @@ public class TestCIBILDAO {
 	@Rollback(true)
 	public void testUpdateFileStatus1() {
 		CibilFileInfo cfi = new CibilFileInfo();
-		CibilMemberDetail cmd = new CibilMemberDetail();
 		cfi.setId(447);
 		cfi.setStatus("F");
 		cIBILDAO.updateFileStatus(cfi);
 	}
-
 }
