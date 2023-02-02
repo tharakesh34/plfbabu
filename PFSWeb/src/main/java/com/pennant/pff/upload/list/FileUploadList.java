@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -914,7 +915,7 @@ public class FileUploadList extends Window implements Serializable {
 
 	private void onClickApprove() {
 
-		if (selectedHeaders.isEmpty()) {
+		if (CollectionUtils.isEmpty(selectedHeaders)) {
 			MessageUtil.showError(Labels.getLabel("DataList_NoEmpty"));
 			return;
 		}
