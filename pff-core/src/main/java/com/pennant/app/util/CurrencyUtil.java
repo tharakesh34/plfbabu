@@ -43,6 +43,7 @@ import org.apache.commons.lang.WordUtils;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
+import com.pennant.backend.util.PennantConstants;
 
 /**
  * A suite of utilities surrounding the use of the Currency that contain information about the environment for the
@@ -183,6 +184,23 @@ public class CurrencyUtil {
 	 */
 	public static String getString(BigDecimal value) {
 		return value == null ? BigDecimal.ZERO.toString() : value.toString();
+	}
+
+	/**
+	 * Format the amount from major to minor currency.
+	 * 
+	 * <p>
+	 * Examples
+	 * <li>100000 to 1,000.00
+	 * 
+	 * <li>10000050 to 100,000.50
+	 * 
+	 * @param amount   The amount which needs to be format from major to minor
+	 * @param decimals The number of decimal positions.
+	 * @return The formated amount in {@link String} representation
+	 */
+	public static String format(BigDecimal amount) {
+		return format(amount, PennantConstants.defaultCCYDecPos);
 	}
 
 	/**

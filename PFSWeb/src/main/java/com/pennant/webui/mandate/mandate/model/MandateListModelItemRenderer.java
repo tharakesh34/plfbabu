@@ -105,8 +105,6 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
 		lc.setParent(item);
-		lc = new Listcell(mandate.getOrgReference());
-		lc.setParent(item);
 		lc = new Listcell(mandate.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(mandate.getRecordType()));
