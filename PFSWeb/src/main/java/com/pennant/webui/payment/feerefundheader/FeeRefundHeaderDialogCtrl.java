@@ -113,6 +113,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -1349,6 +1350,10 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 				detailList.add(frd);
 			}
+		}
+
+		if (CollectionUtils.isEmpty(detailList) && !this.enqiryModule) {
+			throw new AppException("There is no balance amount to Refund.");
 		}
 
 		if (frh.isNewRecord()) {
