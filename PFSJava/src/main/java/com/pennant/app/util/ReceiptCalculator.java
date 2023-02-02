@@ -2452,32 +2452,46 @@ public class ReceiptCalculator {
 	}
 
 	private FinReceiptData updateFinFeeDetails(FinReceiptData rd, ReceiptAllocationDetail allocate) {
-		List<FinFeeDetail> feeDtls = rd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
+		FinanceDetail fd = rd.getFinanceDetail();
+		List<FinFeeDetail> feeList = fd.getFinScheduleData().getFinFeeDetailList();
 
-		if (CollectionUtils.isNotEmpty(feeDtls)) {
-			FinanceMain fm = rd.getFinanceDetail().getFinScheduleData().getFinanceMain();
-			for (FinFeeDetail feeDtl : feeDtls) {
-				if (allocate.getAllocationTo() == -(feeDtl.getFeeTypeID())) {
-					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-						feeDtl.setPaidAmountOriginal(
-								allocate.getPaidAmount().add(allocate.getTdsPaid()).subtract(allocate.getPaidGST()));
-						feeDtl.setRemainingFeeOriginal(feeDtl.getActualAmountOriginal()
-								.subtract(allocate.getWaivedNow()).subtract(feeDtl.getPaidAmountOriginal()));
-					}
-					feeDtl.setPaidAmount(feeDtl.getPaidAmount().add(allocate.getPaidNow()));
-					feeDtl.setWaivedAmount(feeDtl.getWaivedAmount().add(allocate.getWaivedNow()));
-					feeDtl.setRemainingFee(
-							feeDtl.getActualAmount().subtract(feeDtl.getPaidAmount().add(feeDtl.getWaivedAmount())));
-					feeDtl.setPaidTDS(allocate.getTdsPaid());
-					feeDtl.setPaidCalcReq(true);
-					break;
-				}
-			}
-
-			Map<String, BigDecimal> map = GSTCalculator.getTaxPercentages(fm.getCustID(), fm.getFinCcy(), null,
-					fm.getFinBranch(), rd.getFinanceDetail().getFinanceTaxDetail());
-			feeCalculator.calculateFeeDetail(rd, map);
+		if (CollectionUtils.isEmpty(feeList)) {
+			return rd;
 		}
+
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		for (FinFeeDetail fee : feeList) {
+			if (allocate.getAllocationTo() == -(fee.getFeeTypeID())) {
+				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
+					BigDecimal paidAmountOriginal = BigDecimal.ZERO;
+					paidAmountOriginal = paidAmountOriginal.add(allocate.getPaidAmount());
+					paidAmountOriginal = paidAmountOriginal.add(allocate.getTdsPaid());
+					paidAmountOriginal = paidAmountOriginal.add(allocate.getPaidGST());
+
+					fee.setPaidAmountOriginal(paidAmountOriginal);
+
+					BigDecimal remainingFeeOriginal = BigDecimal.ZERO;
+					remainingFeeOriginal = remainingFeeOriginal.add(fee.getActualAmountOriginal());
+					remainingFeeOriginal = remainingFeeOriginal.subtract(allocate.getWaivedNow());
+					remainingFeeOriginal = remainingFeeOriginal.subtract(fee.getPaidAmountOriginal());
+
+					fee.setRemainingFeeOriginal(remainingFeeOriginal);
+				}
+
+				fee.setPaidAmount(fee.getPaidAmount().add(allocate.getPaidNow()));
+				fee.setWaivedAmount(fee.getWaivedAmount().add(allocate.getWaivedNow()));
+				fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount().add(fee.getWaivedAmount())));
+				fee.setPaidTDS(allocate.getTdsPaid());
+				fee.setPaidCalcReq(true);
+
+				break;
+			}
+		}
+
+		Map<String, BigDecimal> map = GSTCalculator.getTaxPercentages(fm.getCustID(), fm.getFinCcy(), null,
+				fm.getFinBranch(), fd.getFinanceTaxDetail());
+
+		feeCalculator.calculateFeeDetail(rd, map);
 
 		return rd;
 	}
