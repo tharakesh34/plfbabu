@@ -17,10 +17,10 @@
 
 							</toolbar>
 							<!-- SEARCH AREA -->
-							<toolbar align="center" sclass="toolbar-center">
-								<label value="${c:l('window_CrossLoan_KnockOff_Dialog.title')}"
-									sclass="label-heading" />
-							</toolbar>
+						<toolbar align="center" style="toolbar-center">
+							<label value="${c:l('window_CrossLoan_KnockOff_Dialog.title')}" sclass="label-heading" />
+						</toolbar>
+						
 							<toolbar align="end" sclass="toolbar-end">
 								<button id="btnClose" label="Close" tooltiptext="${c:l('btnClose.tooltiptext')}"
 									sclass="z-toolbarbutton" />
