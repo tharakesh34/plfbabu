@@ -496,28 +496,41 @@ public class FeeCalculator {
 		if (StringUtils.isNotBlank(financeDetail.getModuleDefiner())) {
 			FinanceProfitDetail pft = profitDetailsDAO.getFinProfitDetailsById(finID);
 			BigDecimal outStandingFeeBal = financeScheduleDetailDAO.getOutStandingBalFromFees(finID);
-			dataMap.put("totalOutStanding", pft.getTotalPftBal());
+			dataMap.put("totalOutStanding",
+					PennantApplicationUtil.amountFormate(pft.getTotalPftBal(), PennantConstants.defaultCCYDecPos));
 			// PSD: 138255 PrincipalOutStanding will be future
 			// Amount to be paid.
-			dataMap.put("principalOutStanding", pft.getTotalpriSchd().subtract(pft.getTdSchdPri()));
+			dataMap.put("principalOutStanding", PennantApplicationUtil.amountFormate(
+					pft.getTotalpriSchd().subtract(pft.getTdSchdPri()), PennantConstants.defaultCCYDecPos));
 
-			dataMap.put("principalSchdOutstanding", pft.getTotalpriSchd().subtract(pft.getTdSchdPri()));
+			dataMap.put("principalSchdOutstanding", PennantApplicationUtil.amountFormate(
+					pft.getTotalpriSchd().subtract(pft.getTdSchdPri()), PennantConstants.defaultCCYDecPos));
 			// Fore closure charges calculation should be sum of principal amount and future principal amount.
-			dataMap.put("principalAmtFutPrincipalAmt", pft.getTotalPriBal());
-			dataMap.put("totOSExcludeFees", pft.getTotalPftBal().add(pft.getTotalPriBal()));
-			dataMap.put("totOSIncludeFees", pft.getTotalPftBal().add(pft.getTotalPriBal()).add(outStandingFeeBal));
-			dataMap.put("unearnedAmount", pft.getUnearned());
+			dataMap.put("principalAmtFutPrincipalAmt",
+					PennantApplicationUtil.amountFormate(pft.getTotalPriBal(), PennantConstants.defaultCCYDecPos));
+			dataMap.put("totOSExcludeFees", PennantApplicationUtil
+					.amountFormate(pft.getTotalPftBal().add(pft.getTotalPriBal()), PennantConstants.defaultCCYDecPos));
+			dataMap.put("totOSIncludeFees",
+					PennantApplicationUtil.amountFormate(
+							pft.getTotalPftBal().add(pft.getTotalPriBal()).add(outStandingFeeBal),
+							PennantConstants.defaultCCYDecPos));
+			dataMap.put("unearnedAmount",
+					PennantApplicationUtil.amountFormate(pft.getUnearned(), PennantConstants.defaultCCYDecPos));
 			dataMap.put("eligibilityMethod", fm.getEligibilityMethod());
 
 			if (rd.isForeClosureEnq()) {
 				dataMap.put("principalOutStanding",
-						pft.getTotalPriBal().subtract(rd.getOrgFinPftDtls().getTdSchdPriBal()));
+						PennantApplicationUtil.amountFormate(
+								pft.getTotalPriBal().subtract(rd.getOrgFinPftDtls().getTdSchdPriBal()),
+								PennantConstants.defaultCCYDecPos));
 				// Fore closure charges calculation should be sum of principal amount and future principal amount.
-				dataMap.put("principalAmtFutPrincipalAmt", pft.getTotalPriBal());
+				dataMap.put("principalAmtFutPrincipalAmt",
+						PennantApplicationUtil.amountFormate(pft.getTotalPriBal(), PennantConstants.defaultCCYDecPos));
 			}
 		}
 
-		dataMap.put("totalPayment", rd.getTotReceiptAmount());
+		dataMap.put("totalPayment",
+				PennantApplicationUtil.amountFormate(rd.getTotReceiptAmount(), PennantConstants.defaultCCYDecPos));
 
 		BigDecimal totalDues = BigDecimal.ZERO;
 
@@ -532,7 +545,8 @@ public class FeeCalculator {
 			totalDues = totalDues.subtract(rd.getExcessAvailable());
 		}
 
-		dataMap.put("totalDueAmount", totalDues);
+		dataMap.put("totalDueAmount",
+				PennantApplicationUtil.amountFormate(totalDues, PennantConstants.defaultCCYDecPos));
 
 		BigDecimal partialPaymentAmount = BigDecimal.ZERO;
 		BigDecimal partPayAmount = rd.getReceiptHeader().getPartPayAmount();
@@ -540,7 +554,8 @@ public class FeeCalculator {
 			partialPaymentAmount = partPayAmount.subtract(totalDues);
 		}
 
-		dataMap.put("partialPaymentAmount", partialPaymentAmount);
+		dataMap.put("partialPaymentAmount",
+				PennantApplicationUtil.amountFormate(partialPaymentAmount, PennantConstants.defaultCCYDecPos));
 
 		Date fixedTenorEndDate = DateUtility.addMonths(fm.getGrcPeriodEndDate(), fm.getFixedRateTenor());
 
@@ -563,7 +578,7 @@ public class FeeCalculator {
 			BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()),
 					dataMap, finCcy);
 			// unFormating feeResult
-			feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
+			// feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
 
 			finFeeDetail.setCalculatedAmount(feeResult);
 
