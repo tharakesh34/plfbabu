@@ -81,7 +81,7 @@ public class FeeRefundInstructionDAOImpl extends SequenceDao<FeeRefundInstructio
 		sql.append(")");
 
 		if (fri.getId() <= 0) {
-			fri.setId(getNextValue("SeqFee_Refund_Instruction"));
+			fri.setId(getNextValue("SeqFee_Refund_Instructions"));
 		}
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -114,10 +114,10 @@ public class FeeRefundInstructionDAOImpl extends SequenceDao<FeeRefundInstructio
 				ps.setString(index++, fri.getPaymentCCy());
 				ps.setString(index++, fri.getLei());
 				ps.setInt(index++, fri.getVersion());
-				ps.setLong(++index, fri.getCreatedBy());
-				ps.setTimestamp(++index, fri.getCreatedOn());
-				ps.setObject(++index, fri.getApprovedBy());
-				ps.setTimestamp(++index, fri.getApprovedOn());
+				ps.setLong(index++, fri.getCreatedBy());
+				ps.setTimestamp(index++, fri.getCreatedOn());
+				ps.setObject(index++, fri.getApprovedBy());
+				ps.setTimestamp(index++, fri.getApprovedOn());
 				ps.setLong(index++, fri.getLastMntBy());
 				ps.setTimestamp(index++, fri.getLastMntOn());
 				ps.setString(index++, fri.getRecordStatus());
@@ -126,7 +126,7 @@ public class FeeRefundInstructionDAOImpl extends SequenceDao<FeeRefundInstructio
 				ps.setString(index++, fri.getTaskId());
 				ps.setString(index++, fri.getNextTaskId());
 				ps.setString(index++, fri.getRecordType());
-				ps.setLong(index, fri.getWorkflowId());
+				ps.setLong(index++, fri.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -176,7 +176,7 @@ public class FeeRefundInstructionDAOImpl extends SequenceDao<FeeRefundInstructio
 			ps.setString(++index, fri.getPaymentCCy());
 			ps.setString(++index, fri.getLei());
 			ps.setString(++index, fri.getStatus());
-			ps.setInt(index++, fri.getVersion());
+			ps.setInt(++index, fri.getVersion());
 			ps.setObject(++index, fri.getApprovedBy());
 			ps.setTimestamp(++index, fri.getApprovedOn());
 			ps.setObject(++index, fri.getLastMntBy());

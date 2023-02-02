@@ -153,7 +153,7 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 		}
 
 		if (StringUtils.equals(UploadConstants.HOLD_REFUND_FLAG, holdStatus)) {
-			MessageUtil.showMessage("Cannot approve – Hold flagged for Refund against Loan");
+			MessageUtil.showMessage("label_PaymentHeaderDialog_HoldLoan");
 			return;
 		}
 

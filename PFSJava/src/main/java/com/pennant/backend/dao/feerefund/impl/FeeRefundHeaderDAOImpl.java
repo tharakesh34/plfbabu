@@ -282,7 +282,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FinReference, CustName");
+			sql.append(", FinReference, CustName, CustID");
 		}
 
 		sql.append(" From FEE_REFUND_HEADER");
@@ -320,6 +320,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					frh.setFinReference(rs.getString("FinReference"));
 					frh.setCustName(rs.getString("CustName"));
+					frh.setCustId(rs.getLong("CustID"));
 				}
 
 				return frh;

@@ -51,8 +51,8 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 		sql.append("Insert Into FEE_REFUND_DETAILS");
 		sql.append(tableType.getSuffix());
 		sql.append(" (ID, HeaderID, ReceivableType, TotalAmount, PaidAmount, PrevRefundAmount");
-		sql.append(", CurrRefundAmount, PayableFeeTypeCode, AvailableAmount, ReceivableRefId");
-		sql.append(", FeeTypeCode, FeeTypeDesc, PayableFeeTypeDesc");
+		sql.append(", CurrRefundAmount, AvailableAmount, ReceivableRefId");
+		sql.append(", FeeTypeCode, FeeTypeDesc, PayableFeeTypeCode, PayableFeeTypeDesc");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -60,7 +60,7 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		if (frd.getId() <= 0) {
-			frd.setId(getNextValue("SeqFee_Refund_Detail"));
+			frd.setId(getNextValue("SeqFee_Refund_Details"));
 		}
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
