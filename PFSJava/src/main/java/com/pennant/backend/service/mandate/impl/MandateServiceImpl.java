@@ -1629,6 +1629,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		long finID = financeMainDAO.getFinIDByFinReference(mandate.getOrgReference(), "", false);
 		FinanceMain fm = financeMainDAO.getFinanceMain(finID);
+		mandate.setLoanMaturityDate(fm.getMaturityDate());
 		List<FinanceScheduleDetail> fsd = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 		BigDecimal exposure = BigDecimal.ZERO;
 		Date firstRepayDate = null;
@@ -1658,6 +1659,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				return getError("90318", "ExpiryDate", DateUtil.formatToLongDate(DateUtil.addDays(mandateStartDate, 1)),
 						DateUtil.formatToLongDate(dftEndDate));
 			}
+
+			if (mandate.getLoanMaturityDate() != null
+					&& mandate.getExpiryDate().compareTo(mandate.getLoanMaturityDate()) < 0) {
+				return getError("90318", "ExpiryDate", DateUtil.formatToLongDate(DateUtil.addDays(mandateStartDate, 1)),
+						DateUtil.formatToLongDate(mandate.getLoanMaturityDate()));
+			}
 		}
 
 		if (mandateStartDate != null) {
@@ -1665,11 +1672,21 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				dftEndDate = SysParamUtil.getValueAsDate(SMTParameterConstants.APP_DFT_END_DATE);
 			}
 
-			if (mandateStartDate.before(mandbackDate) || mandateStartDate.after(dftEndDate)
-					|| mandate.getStartDate().after(mandate.getLoanMaturityDate())
-					|| (firstRepayDate != null && firstRepayDate.compareTo(mandate.getStartDate()) < 0)) {
-				return getError("90318", "mandate start date " + DateUtil.formatToLongDate(mandbackDate),
-						DateUtil.formatToLongDate(dftEndDate), DateUtil.formatToLongDate(firstRepayDate));
+			if (mandateStartDate.before(mandbackDate) || mandateStartDate.after(dftEndDate)) {
+				return getError("90318", "mandate start date " + DateUtil.formatToLongDate(mandateStartDate),
+						DateUtil.formatToLongDate(mandbackDate), DateUtil.formatToLongDate(dftEndDate));
+			}
+
+			if (mandate.getStartDate().after(mandate.getLoanMaturityDate())) {
+				return getError("90318", "mandate start date " + DateUtil.formatToLongDate(mandateStartDate),
+						DateUtil.formatToLongDate(mandbackDate),
+						DateUtil.formatToLongDate(mandate.getLoanMaturityDate()));
+			}
+
+			if (firstRepayDate != null && mandate.getStartDate().compareTo(firstRepayDate) > 0
+					&& firstRepayDate.compareTo(appDate) >= 0) {
+				return getError("90318", "mandate start date " + DateUtil.formatToLongDate(mandateStartDate),
+						DateUtil.formatToLongDate(appDate), DateUtil.formatToLongDate(firstRepayDate));
 			}
 		}
 
