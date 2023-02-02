@@ -121,7 +121,8 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 	private StringBuilder getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, FinID, FinReference, BalanceAmt, ma.AdviseType, AdviseAmount, ReservedAmt, ValueDate");
-		sql.append(", PaidAmount, WaivedAmount, FeeTypeCode, FeeTypeDesc, ft.TaxApplicable, ft.TaxComponent");
+		sql.append(
+				", PaidAmount, WaivedAmount, ma.FeeTypeId, FeeTypeCode, FeeTypeDesc, ft.TaxApplicable, ft.TaxComponent, ma.BounceID ");
 		sql.append(", PaidCGST, PaidIGST, PaidSGST, PaidUGST, PaidCESS");
 		sql.append(", WaivedCGST, WaivedIGST, WaivedSGST, WaivedUGST, WaivedCESS");
 		sql.append(" From ManualAdvise ma");
@@ -143,10 +144,12 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		ma.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 		ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
 		ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+		ma.setFeeTypeID(rs.getLong("FeeTypeId"));
 		ma.setFeeTypeCode(rs.getString("FeeTypeCode"));
 		ma.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
 		ma.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 		ma.setTaxComponent(rs.getString("TaxComponent"));
+		ma.setBounceID(rs.getLong("BounceID"));
 		ma.setPaidCGST(rs.getBigDecimal("PaidCGST"));
 		ma.setPaidSGST(rs.getBigDecimal("PaidSGST"));
 		ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
@@ -345,7 +348,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 
 	@Override
 	public boolean isFileDownloaded(long id, String isDownloaded) {
-		String sql = "Select count(Id) From FEE_REFUND_HEADER_TEMP Where Id = ? and Progress = ?";
+		String sql = "Select count(Id) From FEE_REFUND_HEADER_TEMP Where Id = ? and ApprovalStatus = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -397,7 +400,12 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		// if(corebank) {/* Need add based on implementation of custcorebank functionality
 		// return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, coreBankId);
 		// }else {
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId);
+		} catch (Exception e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
 		// }
 	}
 }

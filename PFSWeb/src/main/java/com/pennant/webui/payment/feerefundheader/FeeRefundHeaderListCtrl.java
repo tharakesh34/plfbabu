@@ -956,7 +956,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	public void onClick$btndownload(Event event) throws IOException {
 		logger.debug(Literal.ENTERING);
 
-		List<Long> feeRefundIdList = getListofFeeRefundHeaderList();
+		List<Long> feeRefundIdList = getListofFeeRefundHeader();
 
 		if (feeRefundIdList.isEmpty()) {
 			MessageUtil.showError(Labels.getLabel("FeeRefundHeaderDataList_NoEmpty"));
@@ -1010,7 +1010,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	private ByteArrayOutputStream doDownloadFiles(String id) {
 		logger.debug(Literal.ENTERING);
 
-		String whereCond = " where t.FeeRefundId in (" + "'" + id + "'" + ") and  ApprovalStatus in (" + "'"
+		String whereCond = " where frd.FeeRefundId in (" + "'" + id + "'" + ") and  ApprovalStatus in (" + "'"
 				+ PennantConstants.FEE_REFUND_APPROVAL_HOLD + "'" + ")";
 		StringBuilder searchCriteria = new StringBuilder(" ");
 

@@ -819,6 +819,11 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 		this.partnerBankID.setValue("");
 		this.partnerBankID.setDescription("");
 
+		Object obj = this.partnerBankID.getAttribute("partnerBankId");
+		if (obj != null) {
+			this.partnerBankID.setValue(String.valueOf(obj));
+		}
+
 		checkPaymentType(dType);
 	}
 
