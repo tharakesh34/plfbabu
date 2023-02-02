@@ -670,7 +670,14 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		customerDetails.setCustID(fm.getCustID());
 		fd.setCustomerDetails(customerDetails);
 
-		rch.setExcessAmounts(finExcessAmountDAO.getExcessAmountsByRef(finID));
+		List<FinExcessAmount> excessAmount = new ArrayList<>();
+		FinExcessAmount fea = finExcessAmountDAO.getFinExcessAmount(finID, rch.getReceiptID());
+
+		if (fea != null) {
+			excessAmount.add(fea);
+		}
+
+		rch.setExcessAmounts(excessAmount);
 		rch.setPayableAdvises(manualAdviseDAO.getManualAdviseForLMSEvent(finID));
 
 		String type = "_View";
