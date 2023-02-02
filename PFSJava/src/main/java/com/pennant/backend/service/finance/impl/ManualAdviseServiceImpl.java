@@ -992,6 +992,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		BigDecimal eligibleAmt = BigDecimal.ZERO;
 		if (Allocation.MANADV.equals(linkTo) && recvId != null) {
 			eligibleAmt = manualAdviseDAO.getPaidAmountsByFeeType(reference, recvId, valueDate);
+			eligibleAmt = eligibleAmt.add(manualAdviseDAO.getPaidAmountsForOriginalFee(reference, recvId));
 		} else {
 			eligibleAmt = manualAdviseDAO.getPaidAmountsbyAllocation(reference, linkTo, valueDate);
 		}
