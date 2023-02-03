@@ -11,4 +11,6 @@ public interface CrossLoanKnockOffDAO {
 	void deleteHeader(long crossLoanId, String tableType);
 
 	CrossLoanKnockOff getCrossLoanHeaderById(long crossLoanHeaderId, String type);
+
+	boolean cancelReferenceID(long ReceiptID);
 }

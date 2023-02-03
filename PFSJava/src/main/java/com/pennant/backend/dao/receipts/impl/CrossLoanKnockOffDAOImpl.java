@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -169,5 +170,14 @@ public class CrossLoanKnockOffDAOImpl extends SequenceDao<CrossLoanKnockOff> imp
 
 			return clkh;
 		}
+	}
+
+	@Override
+	public boolean cancelReferenceID(long receiptID) {
+		String sql = "Select Count(ReceiptID) From FinReceiptHeader Where ReceiptModeStatus = ? and ReceiptID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, RepayConstants.PAYSTATUS_CANCEL, receiptID) > 0;
 	}
 }

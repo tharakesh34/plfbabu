@@ -29,11 +29,11 @@ import com.pennant.backend.service.finance.CrossLoanKnockOffService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -166,6 +166,11 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), clk);
 		CrossLoanTransfer clt = clk.getCrossLoanTransfer();
 		clt.setUserDetails(clk.getUserDetails());
+
+		if (crossLoanKnockOffDAO.cancelReferenceID(clk.getKnockOffId())) {
+			MessageUtil.showError("Excess Receipt is cancelled");
+			return auditHeader;
+		}
 
 		crossLoanTransferDAO.delete(clk.getTransferID(), TableType.TEMP_TAB.getSuffix());
 		crossLoanKnockOffDAO.deleteHeader(clk.getId(), TableType.TEMP_TAB.getSuffix());
@@ -320,11 +325,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30550", parameters, null));
 			}
 		}
-
-		String[] errParm = new String[1];
-		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(clt.getCustId());
-		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		return auditDetail;
 	}
