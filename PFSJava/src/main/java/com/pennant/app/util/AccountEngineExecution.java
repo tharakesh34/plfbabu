@@ -271,8 +271,10 @@ public class AccountEngineExecution implements Serializable {
 
 			TransactionEntry feeWaiverOrRefundTxn = singleFeeTxn.getSingleFeeWaiverOrRefundTxn();
 
-			index = txnEntries.indexOf(feeWaiverOrRefundTxn);
-			txnEntries.addAll(index, getTxnEntries(feeWaiverOrRefundTxn, feeTypes));
+			if (feeWaiverOrRefundTxn != null) {
+				index = txnEntries.indexOf(feeWaiverOrRefundTxn);
+				txnEntries.addAll(index, getTxnEntries(feeWaiverOrRefundTxn, feeTypes));
+			}
 
 			TransactionEntry cgstTxn = singleFeeTxn.getSingleFeeCGSTTxn();
 			TransactionEntry sgstTxn = singleFeeTxn.getSingleFeeSGSTTxn();
