@@ -680,6 +680,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fea = finExcessAmountDAO.getFinExcessAmount(finID, rch.getReceiptID());
 		} else if (excessID != null && excessID > 0) {
 			fea = finExcessAmountDAO.getFinExcessAmountById(Long.valueOf(rch.getKnockOffRefId()), "");
+		} else {
+			excessAmount = finExcessAmountDAO.getExcessAmountsByRef(finID);
 		}
 
 		if (fea != null) {
