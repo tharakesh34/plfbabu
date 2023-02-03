@@ -903,6 +903,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		fm.setReceiptPurpose(rptPurpose.code());
 		rch.setValueDate(this.receiptDate.getValue());
 		rch.setClosureThresholdLimit(finReceiptHeaderDAO.getClosureAmountByFinType(fm.getFinType()));
+		rch.setKnockOffRefId(Long.valueOf(this.referenceId.getValue()));
 
 		receiptData.setReceiptHeader(rch);
 

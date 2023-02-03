@@ -111,6 +111,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -509,9 +510,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		appendDisbursementInstructionTab(aPaymentHeader);
 
 		// Fill PaymentType Instructions.
-	
-			calculatePaymentDetail(aPaymentHeader);
-		
+
+		calculatePaymentDetail(aPaymentHeader);
+
 		this.recordStatus.setValue(aPaymentHeader.getRecordStatus());
 
 		// Accounting Details Tab Addition
@@ -1280,6 +1281,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			}
 		} else {
 			updatePaybleAmounts(detailList, aPaymentHeader.getPaymentDetailList());
+		}
+
+		if (CollectionUtils.isEmpty(getPaymentDetailList()) && !this.enqiryModule) {
+			throw new AppException("There is no available amount to proceed for Refund.");
 		}
 
 		for (PaymentDetail detail : getPaymentDetailList()) {
