@@ -2297,4 +2297,13 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setLong(3, adviseID);
 		});
 	}
+
+	@Override
+	public boolean isManualAdviseExist(long finID) {
+		String sql = "Select Count(FinID) From ManualAdvise_Temp Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
+	}
 }

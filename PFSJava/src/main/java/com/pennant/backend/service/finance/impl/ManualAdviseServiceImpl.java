@@ -1052,4 +1052,9 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		this.documentManagerDAO = documentManagerDAO;
 	}
 
+	@Override
+	public boolean isManualAdviseExist(long finID) {
+		return manualAdviseDAO.isManualAdviseExist(finID);
+	}
+
 }

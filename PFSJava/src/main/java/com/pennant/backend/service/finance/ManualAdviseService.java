@@ -77,4 +77,6 @@ public interface ManualAdviseService {
 	boolean isDuplicatePayble(long finID, long feeTypeId, String linkTo);
 
 	boolean isPaybleExist(long finID, long feeTypeID, String linkTo);
+
+	boolean isManualAdviseExist(long finID);
 }

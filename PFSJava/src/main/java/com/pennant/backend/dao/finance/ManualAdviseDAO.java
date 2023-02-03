@@ -179,4 +179,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	ManualAdvise getBounceChargesByReceiptID(Long bcReceiptID);
 
 	void revertBounceCharges(long adviseID, BigDecimal remainingAmount);
+
+	boolean isManualAdviseExist(long finID);
 }
