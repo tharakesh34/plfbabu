@@ -143,6 +143,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	protected Listheader listheader_ExpiryDate;
 	protected Listheader listheader_Status;
 	protected Listheader listheader_InputDate;
+	protected Listheader listheader_BranchOrClster;
 
 	protected Listheader listHeader_CheckBox_Name;
 	protected Listcell listCell_Checkbox;
@@ -183,6 +184,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	protected Listbox sortOperator_entityCode;
 	protected ExtendedCombobox partnerBank;
 	protected Listbox sortOperator_partnerBank;
+	protected Listbox sortOperator_BranchOrCluster;
 	protected Row row_partnerBank;
 	private transient MandateService mandateService;
 	private transient boolean validationOn;
@@ -250,6 +252,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			registerField("PartnerBankId");
 			registerField("PartnerBankCode", partnerBank, SortOrder.NONE, sortOperator_partnerBank, Operators.STRING);
 		}
+
+		registerField("branchOrCluster", branchOrCluster, SortOrder.NONE, sortOperator_BranchOrCluster,
+				Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
