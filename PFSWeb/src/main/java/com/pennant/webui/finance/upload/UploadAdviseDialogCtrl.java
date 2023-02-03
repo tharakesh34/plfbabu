@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Path;
@@ -54,8 +55,10 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -110,6 +113,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	private transient boolean validationOn;
 	private transient UploadHeaderService uploadHeaderService;
 	private transient ReceiptUploadHeaderService receiptUploadHeaderService;
+	private transient ManualAdviseService manualAdviseService;
 	private transient FinanceMainService financeMainService;
 
 	private static final String MODULE_NAME = "ManualAdvise";
@@ -692,6 +696,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		// Fee Type
 		String feeType = row.get(2);
+		FeeType fee = uploadHeaderService.getApprovedFeeTypeByFeeCode(feeType);
 		if (StringUtils.isBlank(feeType)) {
 			reason.append("Fee Type is mandatory.");
 			error = true;
@@ -701,7 +706,6 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				error = true;
 				feeType = feeType.substring(0, 8);
 			} else {
-				FeeType fee = uploadHeaderService.getApprovedFeeTypeByFeeCode(feeType);
 				if (fee == null) {
 					reason.append("Fee type doesn't exist.");
 					error = true;
@@ -775,6 +779,19 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			advise = PennantApplicationUtil.unFormateAmount(advise, 2);
 		}
 		adviseUpload.setAdviseAmount(advise);
+
+		// eligibility amount validation
+		ManualAdvise ma = new ManualAdvise();
+
+		ma.setFinReference(finReference);
+		ma.setValueDate(valueDate);
+
+		BigDecimal eblAmount = manualAdviseService.getEligibleAmount(ma, fee);
+
+		if (advise.compareTo(eblAmount) > 0) {
+			reason.append("Advise Amount should be less than or equal to Eligible Amount.");
+			error = true;
+		}
 
 		// Remarks
 		String remarks = row.get(5);
@@ -1623,4 +1640,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		this.financeMainService = financeMainService;
 	}
 
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
+	}
 }
