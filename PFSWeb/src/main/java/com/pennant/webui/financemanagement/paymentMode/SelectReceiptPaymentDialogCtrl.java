@@ -903,7 +903,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		fm.setReceiptPurpose(rptPurpose.code());
 		rch.setValueDate(this.receiptDate.getValue());
 		rch.setClosureThresholdLimit(finReceiptHeaderDAO.getClosureAmountByFinType(fm.getFinType()));
-		rch.setKnockOffRefId(Long.valueOf(this.referenceId.getValue()));
+		if (isKnockOff) {
+			rch.setKnockOffRefId(Long.valueOf(this.referenceId.getValue()));
+		}
 
 		receiptData.setReceiptHeader(rch);
 
@@ -1061,6 +1063,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		validateFinReference(event, false);
 		this.btnValidate.setDisabled(false);
 
+		Date receiptDt = appDate;
+
 		this.referenceId.setMandatoryStyle(true);
 		this.referenceId.setDescColumn("BalanceAmt");
 		this.referenceId.setConstraint("");
@@ -1074,12 +1078,18 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		if (FinanceConstants.CLOSURE_MAKER.equals(this.module)) {
 			long finID = ComponentUtil.getFinID(this.finReference);
+			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, appDate);
 			List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finID);
 
 			if (CollectionUtils.isNotEmpty(excessAmounts)) {
 				FinExcessAmount fea = excessAmounts.get(excessAmounts.size() - 1);
 				if (fea != null && fea.getValueDate() != null) {
-					this.receiptDate.setValue(fea.getValueDate());
+					receiptDt = fea.getValueDate();
+
+					if (DateUtil.compare(receiptDt, schDate) < 0) {
+						receiptDt = schDate;
+					}
+					this.receiptDate.setValue(receiptDt);
 					this.receiptDate.setDisabled(true);
 				}
 			}
