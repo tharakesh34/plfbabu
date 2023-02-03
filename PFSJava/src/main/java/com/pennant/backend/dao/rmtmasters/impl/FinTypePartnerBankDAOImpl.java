@@ -386,7 +386,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 
 	@Override
 	public int getPartnerBankCountByCluster(FinTypePartnerBank fpb) {
-		StringBuilder sql = new StringBuilder("Select Count(*) From FinTypePartnerBanks");
+		StringBuilder sql = new StringBuilder("Select Count(*) From FinTypePartnerBanks_View");
 		sql.append(" Where Fintype = ? and PaymentMode = ? and Purpose = ? and PartnerBankID = ?");
 		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			sql.append(" and BranchCode = ?");
