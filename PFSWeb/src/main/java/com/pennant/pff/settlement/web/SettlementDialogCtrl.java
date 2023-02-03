@@ -52,6 +52,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -248,7 +249,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SettlementDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SettlementDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SettlementDialog_btnDelete"));
+		this.btnDelete.setVisible(false);
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SettlementDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		this.btnNewSettlementSchedule.setVisible(getUserWorkspace().isAllowed("button_SettlementDialog_btnNew"));
@@ -875,8 +876,13 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 				btnCancel.setVisible(false);
 			}
 
-			if (!PennantConstants.RECORD_TYPE_NEW.equals(settlement.getRecordType())) {
-				doReadOnly();
+			if ((!PennantConstants.RECORD_TYPE_NEW.equals(settlement.getRecordType())
+					&& FinanceConstants.SETTLEMENT.equals(this.module))
+					|| (!PennantConstants.RECORD_TYPE_NEW.equals(settlement.getRecordType())
+							&& FinanceConstants.SETTLEMENT_CANCEL.equals(this.module)
+							&& (RepayConstants.SETTLEMENT_STATUS_INITIATED.equals(settlement.getSettlementStatus())
+									&& PennantConstants.RCD_STATUS_APPROVED.equals(settlement.getRecordStatus())))) {
+				doSetFieldEdit();
 			}
 
 		}
@@ -1086,10 +1092,6 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		readOnlyComponent(true, this.finReference);
 		readOnlyComponent(true, this.cancelRemarks);
 		readOnlyComponent(true, this.cancelReasonCode);
-		if (StringUtils.equals(this.module, "SETTLEMENT_CANCEL")) {
-			readOnlyComponent(isReadOnly("SettlementDialog_CancelReasonCode"), this.cancelReasonCode);
-			readOnlyComponent(isReadOnly("SettlementDialog_CancelRemarks"), this.cancelRemarks);
-		}
 
 		readOnlyComponent(true, this.settlementAmount);
 		readOnlyComponent(true, this.settlementEndAfterGrace);
@@ -1098,6 +1100,35 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+		}
+
+		if (isWorkFlowEnabled()) {
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
+		}
+	}
+
+	public void doSetFieldEdit() {
+
+		this.btnSave.setVisible(false);
+		readOnlyComponent(true, this.settlementType);
+		readOnlyComponent(true, this.settlementStatus);
+		readOnlyComponent(true, this.startDate);
+		readOnlyComponent(true, this.otsDate);
+		readOnlyComponent(true, this.settlementReason);
+		readOnlyComponent(true, this.endDate);
+		readOnlyComponent(true, this.finReference);
+		readOnlyComponent(true, this.cancelRemarks);
+		readOnlyComponent(true, this.cancelReasonCode);
+
+		readOnlyComponent(true, this.settlementAmount);
+		readOnlyComponent(true, this.settlementEndAfterGrace);
+		readOnlyComponent(true, this.noOfGraceDays);
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setVisible(false);
 			}
 		}
 
