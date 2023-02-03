@@ -569,8 +569,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.label_TransactionEntryDialog_Bulking.setVisible(true);
 			this.bulking.setVisible(true);
 
-			this.label_TransactionEntryDialog_FeeRepeat.setVisible(true);
-			this.feeRepeat.setVisible(true);
+			this.row_FeeRepeat.setVisible(true);
 			// this.label_TransactionEntryDialog_AssignmentEntry.setVisible(true);
 			// this.assignmentEntry.setVisible(true);
 		} else {
@@ -1460,8 +1459,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				this.label_TransactionEntryDialog_Bulking.setVisible(false);
 				this.assignmentEntry.setDisabled(true);
 				this.bulking.setVisible(false);
-				this.feeRepeat.setVisible(false);
-				this.label_TransactionEntryDialog_FeeRepeat.setVisible(false);
+				this.row_FeeRepeat.setVisible(false);
 
 				if (details.getAcType().startsWith(SingleFee.FEE)) {
 					this.feeRepeat.setChecked(true);
@@ -1470,8 +1468,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 					this.label_TransactionEntryDialog_Bulking.setVisible(true);
 					this.assignmentEntry.setDisabled(false);
 					this.bulking.setVisible(true);
-					this.feeRepeat.setVisible(true);
-					this.label_TransactionEntryDialog_FeeRepeat.setVisible(true);
+					this.row_FeeRepeat.setVisible(true);
 					getSingleFeeCodes();
 
 				} else {
@@ -2135,8 +2132,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						this.label_TransactionEntryDialog_Bulking.setVisible(true);
 						this.assignmentEntry.setDisabled(false);
 						this.bulking.setVisible(true);
-						this.feeRepeat.setVisible(true);
-						this.label_TransactionEntryDialog_FeeRepeat.setVisible(true);
+						this.row_FeeRepeat.setVisible(true);
 					} else {
 						this.feeRepeat.setChecked(false);
 						this.receivableOrPayable.setValue(Labels.getLabel("Combo.Select"));
@@ -2144,8 +2140,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						this.label_TransactionEntryDialog_Bulking.setVisible(false);
 						this.assignmentEntry.setDisabled(true);
 						this.bulking.setVisible(false);
-						this.feeRepeat.setVisible(false);
-						this.label_TransactionEntryDialog_FeeRepeat.setVisible(false);
+						this.row_FeeRepeat.setVisible(false);
 					}
 					// ### END SFA_20210405 <--
 					return validateResult();

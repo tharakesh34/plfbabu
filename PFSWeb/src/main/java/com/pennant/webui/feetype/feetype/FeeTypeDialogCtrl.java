@@ -1156,7 +1156,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.tdsReq.setDisabled(isReadOnly("FeeTypeDialog_TaxApplicable"));
 
 		this.incomeOrExpenseAcType.setReadonly(isReadOnly("FeeTypeDialog_IncomeOrExpenseAcType"));
-		this.incomeOrExpenseAcType.setReadonly(isReadOnly("FeeTypeDialog_WaiverOrRefundAcType"));
+		this.waiverOrRefundAcType.setReadonly(isReadOnly("FeeTypeDialog_WaiverOrRefundAcType"));
 
 		this.active.setDisabled(isReadOnly("FeeTypeDialog_Active"));
 		this.allowAutoRefund.setDisabled(isReadOnly("FeeTypeDialog_AllowAutoRefund"));
