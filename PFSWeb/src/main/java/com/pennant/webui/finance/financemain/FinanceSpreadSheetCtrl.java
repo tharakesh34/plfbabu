@@ -293,7 +293,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 					doSetScreenData(sheet, modicoappData);
 				} catch (Exception e) {
-					//
+					throw e;
 				}
 			}
 
