@@ -947,7 +947,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		List<FinFeeDetail> finFeeDetailList = fetchFeeDetails(schdData, true);
 
-		//For New Loan with New Customer
+		// For New Loan with New Customer
 		CustomerDetails custDetails = financeDetail.getCustomerDetails();
 		if (custDetails != null && custDetails.getCustomer().getCustID() <= 0) {
 			caluclateFeeGST(finFeeDetailList, schdData);
@@ -3177,7 +3177,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
 
 		for (FinFeeDetail finFeeDetail : fees) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, fsd, taxPercentages);
 
 			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
 				this.finFeeDetailService.calculateFees(finFeeDetail, fsd, getDealerTaxPercentages());
