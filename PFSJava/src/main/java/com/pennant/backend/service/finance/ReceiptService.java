@@ -142,6 +142,8 @@ public interface ReceiptService {
 	List<ReceiptAllocationDetail> getReceiptAllocDetail(long finID, String allocType);
 
 	FinReceiptData doApproveReceipt(FinReceiptData rd) throws Exception;
-	
+
 	FinReceiptData getExcessAndManualAdviseData(FinReceiptData receiptData, long fromLanFinid);
+
+	boolean doProcessTerminationExcess(FinReceiptData receiptData);
 }

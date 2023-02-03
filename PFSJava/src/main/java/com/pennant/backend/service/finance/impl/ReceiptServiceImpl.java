@@ -8045,7 +8045,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		FinanceType financeType = schdData.getFinanceType();
 		FinanceMain fm = schdData.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
-		feeCalculator.calculateFees(rd);
+		receiptCalculator.fetchEventFees(rd, false);
 		receiptCalculator.fetchManualAdviseDetails(rd, rd.getValueDate());
 
 		ReceiptDTO receiptDTO = new ReceiptDTO();
@@ -8055,10 +8055,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		receiptDTO.setOdDetails(receiptCalculator.getValueDatePenalties(schdData, rd.getTotReceiptAmount(),
 				rd.getReceiptHeader().getValueDate(), null, true, schedules));
 		receiptDTO.setManualAdvises(rd.getReceiptHeader().getReceivableAdvises());
-		receiptDTO.setFees(schdData.getFinFeeDetailList());
+		receiptDTO.setFees(rd.getFinFeeDetails());
 
 		if (CollectionUtils.isEmpty(receiptDTO.getFees())) {
-			receiptDTO.getFees().addAll(rd.getFinFeeDetails());
+			receiptDTO.getFees().addAll(schdData.getFinFeeDetailList());
 		}
 
 		receiptDTO.setRoundAdjMth(SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD));
@@ -8399,6 +8399,32 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setPayableAdvises(manualAdviseDAO.getPaybleAdvises(finId, SysParamUtil.getAppDate(), "_AView"));
 
 		return frd;
+	}
+
+	@Override
+	public boolean doProcessTerminationExcess(FinReceiptData receiptData) {
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		BigDecimal totalClosureAmt = rch.getClosureThresholdLimit().add(rch.getReceiptAmount());
+		ReceiptDTO receiptDTO = prepareReceiptDTO(receiptData);
+		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
+
+		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(BigDecimal.ZERO) == 0) {
+			calcuateDues(receiptData);
+		}
+
+		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(calcClosureAmt) >= 0) {
+			return false;
+		}
+
+		/**
+		 * This Value should be set only when Auto Waiver has to do
+		 */
+		receiptData.setCalculatedClosureAmt(calcClosureAmt);
+		if (totalClosureAmt.compareTo(calcClosureAmt) >= 0 && ImplementationConstants.AUTO_WAIVER_REQUIRED_FROMSCREEN) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Autowired

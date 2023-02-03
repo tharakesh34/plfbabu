@@ -41,11 +41,13 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
@@ -885,6 +887,11 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					|| StringUtils.equals(rch.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
 
 				logUserAccess(menuItemName, finReceiptData.getReceiptHeader().getReference());
+
+				if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+					validateTerminationExcess(finReceiptData);
+				}
+
 				doShowReceiptView(rch, finReceiptData);
 			} else {
 				MessageUtil.showError(Labels.getLabel("info.not_authorized"));
@@ -894,6 +901,11 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					|| StringUtils.equals(rch.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
 
 				logUserAccess(menuItemName, finReceiptData.getReceiptHeader().getReference());
+
+				if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+					validateTerminationExcess(finReceiptData);
+				}
+
 				doShowReceiptView(rch, finReceiptData);
 			} else {
 				MessageUtil.showError(Labels.getLabel("info.not_authorized"));
@@ -901,6 +913,27 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	private void validateTerminationExcess(FinReceiptData finReceiptData) {
+		if (FinanceConstants.CLOSURE_APPROVER.equals(module) || FinanceConstants.CLOSURE_MAKER.equals(module)) {
+			return;
+		}
+
+		if (receiptService.doProcessTerminationExcess(finReceiptData)) {
+			String msg = "Receipt Amount is insuffient to settle the loan, do you wish to move the receipt amount to termination excess?";
+			if (MessageUtil.YES == MessageUtil.confirm(msg)) {
+				finReceiptData.getReceiptHeader().setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+				finReceiptData.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+				List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
+
+				List<FinTypeFees> finTypeFeesList = new ArrayList<>();
+
+				finReceiptData.getFinanceDetail().setFinTypeFeesList(finTypeFeesList);
+				finReceiptData.getFinanceDetail().getFinScheduleData().setFinFeeDetailList(finFeeDetailList);
+			}
+		}
+
 	}
 
 	private void setWorkflowDetails(String finType, boolean isPromotion) {

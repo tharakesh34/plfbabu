@@ -634,6 +634,18 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				return;
 			}
 
+			FinReceiptHeader rch = receiptData.getReceiptHeader();
+
+			if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+				if (receiptService.doProcessTerminationExcess(receiptData)) {
+					String msg = "Receipt Amount is insuffient to settle the loan, do you wish to move the receipt amount to termination excess?";
+					if (MessageUtil.YES == MessageUtil.confirm(msg)) {
+						receiptData.getReceiptHeader().setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+						receiptData.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+					}
+				}
+			}
+
 			doShowDialog();
 		}
 		logger.debug("Leaving " + event.toString());
