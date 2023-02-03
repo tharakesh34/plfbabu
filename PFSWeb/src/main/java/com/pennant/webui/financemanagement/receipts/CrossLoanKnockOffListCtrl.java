@@ -553,16 +553,11 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		map.put("crossLoanKnockOffListCtrl", this);
 		map.put("isKnockOff", true);
 		map.put("isForeClosure", false);
+		map.put("enqiryModule", enqiryModule);
 
 		try {
-			if (enqiryModule) {
-				map.put("enqiryModule", enqiryModule);
-				Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptsEnquiryDialog.zul", null,
-						map);
-			} else {
-				Executions.createComponents("/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffDialog.zul",
-						null, map);
-			}
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/CrossLoanKnockOffDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
