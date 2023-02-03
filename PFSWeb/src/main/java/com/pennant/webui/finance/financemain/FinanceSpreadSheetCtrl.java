@@ -72,6 +72,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private boolean isReadOnly;
 	private boolean enqiryModule;
+	private boolean isValidationAlw;
 
 	private CreditReviewDetails creditReviewDetails = null;
 	private CreditReviewData creditReviewData = null;
@@ -129,6 +130,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				enqiryModule = (boolean) arguments.get("enqiryModule");
 			}
 
+			if (arguments.containsKey("isValidationAlw")) {
+				this.isValidationAlw = (boolean) arguments.get("isValidationAlw");
+			}
+
 			if (this.creditReviewDetails != null) {
 				doShowDialog();
 			}
@@ -169,16 +174,24 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap) {
 		String employmentType = (String) dataMap.get("CUST_EMPLOYMENT_TYPE");
 
-		if ("#".equals(employmentType)) {
-			employmentType = "";
+		if ("#".equals(employmentType) && isValidationAlw) {
+			throw new AppException("Employment Type rquired for Co-Applicants.");
+		} else if ("#".equals(employmentType)) {
+			return null;
 		}
 
 		return getSheet(sheetNamePrefix, book, dataMap, employmentType);
 	}
 
-	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap, String eligibilityMethod) {
+	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap, String employmentType) {
 		String custCIF = (String) dataMap.get("CIF");
 		String sheetName = sheetNamePrefix;
+
+		if ("#".equals(employmentType) && isValidationAlw) {
+			throw new AppException("Employment Type rquired for Customer.");
+		} else if ("#".equals(employmentType)) {
+			return null;
+		}
 
 		Sheet sourceSheet = book.getSheet(sheetName);
 
@@ -186,7 +199,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			throw new AppException(sheetName + " Sheet not found.");
 		}
 
-		sheetName = sheetName.concat("_").concat(eligibilityMethod).concat("_").concat(custCIF);
+		sheetName = sheetName.concat("_").concat(employmentType).concat("_").concat(custCIF);
 
 		return SheetCopier.clone(sheetName, sourceSheet);
 	}
@@ -243,7 +256,12 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			 * Setting applicant data to corresponding cell based on the configuration, either from Fields or FieldKeys
 			 */
 			try {
-				Sheet sheet = getSheet("APP", book, applicantDataMap, "");
+				String employmentType = (String) applicantDataMap.get("CUST_EMPLOYMENT_TYPE");
+				Sheet sheet = getSheet("APP", book, applicantDataMap, employmentType);
+
+				if (sheet == null) {
+					return;
+				}
 
 				doSetData(sheet);
 
@@ -261,6 +279,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				try {
 					Map<String, Object> coappData = coAppData.getValue();
 					Sheet sheet = getSheet("CO_APP", book, coappData);
+
+					if (sheet == null) {
+						return;
+					}
 
 					doSetData(sheet);
 
