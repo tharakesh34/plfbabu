@@ -132,7 +132,7 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 
 	@Override
 	public BigDecimal getBalanceAmount(long finID, String amountType) {
-		String sql = "Select sum(BalanceAmt) from FinExcessAmount Where FinID = ? and AmountType = ?";
+		String sql = "Select coalesce(sum(BalanceAmt), 0) from FinExcessAmount Where FinID = ? and AmountType = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
