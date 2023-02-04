@@ -896,6 +896,9 @@ public class FileUploadList extends Window implements Serializable {
 		this.fileUploadHeader.setProgress(0);
 		this.fileUploadHeader.setRemarks(null);
 		this.fileUploadHeader.setStage(this.stage);
+
+		listbox.getItems().clear();
+		listbox.clearSelection();
 	}
 
 	private void onClickReject() {
