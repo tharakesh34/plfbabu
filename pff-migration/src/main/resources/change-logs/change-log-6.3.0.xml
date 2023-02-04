@@ -11420,51 +11420,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.09_pre" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'cross_loan_knockoff_aview'); 
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#722.09" author="Somu">
-		<comment>New View</comment>
-		<createView viewName="CROSS_LOAN_KNOCKOFF_AVIEW" replaceIfExists="true">
-			<![CDATA[
-			    SELECT T1.ID,
-				    T1.TRANSFERID,
-				    T1.KNOCKOFFID,
-				    T1.VALUEDATE,
-				    T1.POSTDATE,
-				    T1.VERSION, 
-				    T1.CREATEDBY, 
-			        T1.CREATEDON, 
-			        T1.APPROVEDBY, 
-			        T1.APPROVEDON, 
-			        T1.LASTMNTBY, 
-			        T1.LASTMNTON,
-		   			T1.RECORDSTATUS, 
-		   			T1.ROLECODE, 
-		   			T1.NEXTROLECODE, 
-		   			T1.TASKID, 
-		   			T1.NEXTTASKID,
-		   			T1.RECORDTYPE, 
-		   			T1.WORKFLOWID 
-				FROM CROSS_LOAN_KNOCKOFF T1
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#722.09_post" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'cross_loan_knockoff_aview');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#722.10_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.10.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'cross_loan_knockoff_view'); 
@@ -11472,7 +11428,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.10" author="Somu">
+	<changeSet id="ST#722.10.1" author="Somu">
 		<createView viewName="CROSS_LOAN_KNOCKOFF_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
@@ -11493,8 +11449,11 @@
 					T1.TASKID, 
 					T1.NEXTTASKID,
 					T1.RECORDTYPE, 
-					T1.WORKFLOWID 
+					T1.WORKFLOWID,
+					RH.RECEIPTMODESTATUS  
 				FROM CROSS_LOAN_KNOCKOFF_TEMP T1
+				INNER JOIN CROSS_LOAN_TRANSFER_TEMP CF ON T1.TRANSFERID = CF.ID
+				INNER JOIN FINRECEIPTHEADER_TEMP RH ON T1.KNOCKOFFID = RH.RECEIPTID
 				UNION ALL
 				SELECT T1.ID,
 					T1.TRANSFERID,
@@ -11514,14 +11473,17 @@
 					T1.TASKID, 
 					T1.NEXTTASKID,
 					T1.RECORDTYPE, 
-					T1.WORKFLOWID 
+					T1.WORKFLOWID,
+					RH.RECEIPTMODESTATUS 
 				FROM CROSS_LOAN_KNOCKOFF T1
+				INNER JOIN CROSS_LOAN_TRANSFER CF ON T1.TRANSFERID = CF.ID
+				INNER JOIN FINRECEIPTHEADER RH ON T1.KNOCKOFFID = RH.RECEIPTID
 				WHERE NOT EXISTS (SELECT 1 FROM CROSS_LOAN_KNOCKOFF_TEMP WHERE ID = T1.ID)
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#722.10_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.10.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'cross_loan_knockoff_view');

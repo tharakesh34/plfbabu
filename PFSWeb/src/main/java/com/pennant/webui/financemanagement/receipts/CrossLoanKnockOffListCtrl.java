@@ -63,6 +63,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff> {
 	private static final long serialVersionUID = 778410382420505812L;
@@ -179,6 +180,8 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 
 		registerField("nextRoleCode", lhNextRoleCode);
 		registerField("ID");
+		registerField("recordStatus", listheader_RecordStatus);
+		registerField("receiptModeStatus", lhReceiptModeStatus);
 
 		doSetFieldProperties();
 		doRenderPage();
@@ -403,8 +406,49 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			lc = new Listcell(clk.getRecordStatus());
 			lc.setParent(item);
 
-			lc = new Listcell(clk.getReceiptModeStatus());
-			lc.setParent(item);
+			String mode = clk.getReceiptMode();
+
+			switch (clk.getReceiptModeStatus()) {
+			case RepayConstants.PAYSTATUS_APPROVED:
+				lc = new Listcell("Approved");
+				lc.setParent(item);
+				break;
+			case RepayConstants.PAYSTATUS_FEES:
+				lc = new Listcell("Fees");
+				lc.setParent(item);
+				break;
+			case RepayConstants.PAYSTATUS_REALIZED:
+				if (ReceiptMode.EXCESS.equals(mode) || ReceiptMode.EMIINADV.equals(mode)
+						|| ReceiptMode.PAYABLE.equals(mode) || ReceiptMode.CASHCLT.equals(mode)
+						|| ReceiptMode.DSF.equals(mode)) {
+					lc = new Listcell("Adjusted");
+					lc.setParent(item);
+				} else {
+					lc = new Listcell("Realized");
+					lc.setParent(item);
+				}
+				break;
+			case RepayConstants.PAYSTATUS_BOUNCE:
+				lc = new Listcell("Bounce");
+				lc.setParent(item);
+				break;
+			case RepayConstants.PAYSTATUS_CANCEL:
+				lc = new Listcell("Cancel");
+				lc.setParent(item);
+				break;
+			case RepayConstants.PAYSTATUS_DEPOSITED:
+				lc = new Listcell("Deposited");
+				lc.setParent(item);
+				break;
+			case RepayConstants.PAYSTATUS_INITIATED:
+				lc = new Listcell("Initiated");
+				lc.setParent(item);
+				break;
+			default:
+				lc = new Listcell("");
+				lc.setParent(item);
+				break;
+			}
 
 			lc = new Listcell(clk.getNextRoleCode());
 			lc.setParent(item);
