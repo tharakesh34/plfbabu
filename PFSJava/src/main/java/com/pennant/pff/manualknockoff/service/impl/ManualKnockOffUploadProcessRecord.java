@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -62,7 +63,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 				break;
 			case 4:
 				String strAdviseID = cell.toString();
-				if (strAdviseID != null) {
+				if (StringUtils.isNotEmpty(strAdviseID)) {
 					mku.setAdviseId(Long.valueOf(strAdviseID));
 				}
 				break;
