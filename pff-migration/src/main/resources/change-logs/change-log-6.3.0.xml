@@ -12068,4 +12068,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#217502" author="Gireesh.G">
+		<sql>
+         	<![CDATA[
+            	UPDATE ERRORDETAILS SET MESSAGE = 'Total allocated Paid/Waiver amount for allocationType:{0} should be less than or equal to {1}.' WHERE CODE = 'RU0038';
+         	]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
