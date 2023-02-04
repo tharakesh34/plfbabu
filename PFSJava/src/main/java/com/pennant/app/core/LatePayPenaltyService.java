@@ -110,6 +110,9 @@ public class LatePayPenaltyService extends ServiceHelper {
 			}
 		} else {
 			if (fod.getFinCurODDays() <= 0) {
+				fod.setTotPenaltyAmt(penalty);
+				fod.setTotPenaltyBal(penalty);
+
 				return;
 			}
 		}
