@@ -68,6 +68,9 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 							detail.setErrorDesc(error.getError());
 						} else {
 							sucessRecords++;
+							detail.setProgress(EodConstants.PROGRESS_SUCCESS);
+							detail.setErrorCode("");
+							detail.setErrorDesc("");
 							detail.setReferenceID(response.getMandateID());
 						}
 					}
