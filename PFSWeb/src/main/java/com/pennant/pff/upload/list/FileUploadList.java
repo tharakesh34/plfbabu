@@ -519,6 +519,7 @@ public class FileUploadList extends Window implements Serializable {
 		row.appendChild(cell);
 
 		cell = new Cell();
+		cell.setColspan(4);
 		cell.appendChild(this.fileName);
 
 		row.appendChild(cell);
@@ -695,7 +696,7 @@ public class FileUploadList extends Window implements Serializable {
 		} else {
 			this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
 		}
-		
+
 	}
 
 	private void doRemoveValidation() {
