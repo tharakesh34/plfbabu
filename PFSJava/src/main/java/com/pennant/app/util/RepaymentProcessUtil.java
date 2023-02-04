@@ -2089,7 +2089,13 @@ public class RepaymentProcessUtil {
 
 					curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
 					curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
-
+					
+					curRpySchd.setWaivedAmt(curRpySchd.getWaivedAmt().add(rpySchd.getWaivedAmt()));
+					curRpySchd.setPriSchdWaivedNow(curRpySchd.getPriSchdWaivedNow().add(rpySchd.getPriSchdWaivedNow()));
+					curRpySchd.setPftSchdWaivedNow(curRpySchd.getPftSchdWaivedNow().add(rpySchd.getPftSchdWaivedNow()));
+					curRpySchd.setLatePftSchdWaivedNow(
+							curRpySchd.getLatePftSchdWaivedNow().add(rpySchd.getLatePftSchdWaivedNow()));
+					curRpySchd.setSchdFeeWaivedNow(curRpySchd.getSchdFeeWaivedNow().add(rpySchd.getSchdFeeWaivedNow()));
 					rpySchdMap.remove(rpySchd.getSchDate());
 				} else {
 					curRpySchd = rpySchd;
