@@ -2789,7 +2789,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (partnerBankReq) {
-			Object object = this.fundingAccount.getAttribute("fundingAccID");
+			Object object = this.fundingAccount.getAttribute("partnerBankId");
 			if (object != null) {
 				rcd.setFundingAc(Long.valueOf(object.toString()));
 				PartnerBank partnerBank = getPartnerBankService().getApprovedPartnerBankById(rcd.getFundingAc());
