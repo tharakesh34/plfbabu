@@ -556,8 +556,8 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		map.put("enqiryModule", enqiryModule);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/CrossLoanKnockOffDialog.zul", null,
-					map);
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffDialog.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

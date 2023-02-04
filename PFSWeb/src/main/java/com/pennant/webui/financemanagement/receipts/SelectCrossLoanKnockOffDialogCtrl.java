@@ -854,11 +854,12 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 				this.fromFinReference.setValue(financeMain.getFinReference());
 				this.fromFinReference.setId(String.valueOf(financeMain.getFinID()));
 				this.custCIF.setValue(String.valueOf(financeMain.getCustCIF()));
+				this.custId = financeMain.getCustID();
 				resetDefaults(financeMain);
 			}
 		}
 
-		this.toFinReference.setFilters(new Filter[] { new Filter("CustId", this.custCIF.getValue(), Filter.OP_EQUAL) });
+		this.toFinReference.setFilters(new Filter[] { new Filter("CustId", this.custId, Filter.OP_EQUAL) });
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
