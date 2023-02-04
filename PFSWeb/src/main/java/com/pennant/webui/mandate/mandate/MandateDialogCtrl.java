@@ -969,7 +969,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.otherDetailsGroupbox.setVisible(false);
 			this.openMandate.setChecked(false);
 			this.useExisting.setChecked(false);
-			doClear();
 		} else if (!enqModule || !fromLoanEnquiry) {
 			doEdit();
 		}

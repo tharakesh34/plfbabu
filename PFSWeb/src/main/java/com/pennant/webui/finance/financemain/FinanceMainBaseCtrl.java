@@ -18191,6 +18191,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (mandateDialogCtrl != null) {
+			mandateDialogCtrl.doClear();
 			mandateDialogCtrl.checkTabDisplay(repymethod, true);
 		}
 
