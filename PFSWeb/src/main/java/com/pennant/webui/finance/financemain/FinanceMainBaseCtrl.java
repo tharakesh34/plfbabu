@@ -13547,8 +13547,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				try {
-					if (this.allowGrace.isVisible() && StringUtils.equals(CalculationConstants.RATE_BASIS_R,
-							this.grcRateBasis.getSelectedItem().getValue().toString())
+					if (this.allowGrace.isVisible()
+							&& StringUtils.equals(CalculationConstants.RATE_BASIS_R,
+									this.grcRateBasis.getSelectedItem().getValue().toString())
 							&& StringUtils.isNotEmpty(financeType.getFinGrcBaseRate())) {
 						if (this.finGrcMinRate.getValue() != null && this.finGrcMaxRate.getValue() != null) {
 							if (finGrcMaxRate.getValue().compareTo(finGrcMinRate.getValue()) < 0) {
@@ -15115,6 +15116,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			// Finance Overdue Details set to Penalty Rate Object FIXME:
 			if (!this.buildEvent) {
+
+				if (penaltyRate == null) {
+					penaltyRate = new FinODPenaltyRate();
+				}
+
 				penaltyRate.setFinEffectDate(aFinanceSchData.getFinODPenaltyRate().getFinEffectDate());
 				aFinanceSchData.setFinODPenaltyRate(penaltyRate);
 			}
