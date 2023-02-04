@@ -91,8 +91,7 @@
 									<extendedcombobox id="toFinReference" />
 								</row>
 								<row id="row4" visible="false">
-									<label
-										value="${c:l('label_ReceiptList_ReceiptPurpose.value')}" visible="true" />
+									<label value="${c:l('label_ReceiptList_ReceiptPurpose.value')}" visible="true" />
 									<listbox id="soReceiptPurpose" width="43px" mold="select" visible="true" />
 									<hbox>
 										<space spacing="2px" />
@@ -106,8 +105,7 @@
 									</hbox>
 								</row>
 								<row id="row5" visible="false">
-									<label
-										value="${c:l('label_ReceiptList_transactionRef.value')}" />
+									<label value="${c:l('label_ReceiptList_transactionRef.value')}" />
 									<listbox width="43px" mold="select" rows="1" />
 									<textbox id="transactionRef" width="163px" maxlength="19" />
 								</row>
@@ -123,16 +121,17 @@
 								<listheader id="lhReceiptDate" label="${c:l('listheader_ReceiptDate.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="lhKnockOffType" label="${c:l('listheader_KnockOffType.label')}"
-									sort="auto" hflex="min" visible="false"/>
-								<listheader label="${c:l('listheader_ReceiptMode.label')}" sort="auto" hflex="min" visible="false"/>
+									sort="auto" hflex="min" visible="false" />
+								<listheader label="${c:l('listheader_ReceiptMode.label')}" sort="auto" hflex="min"
+									visible="false" />
 								<listheader label="${c:l('listheader_ReceiptPurpose.label')}" sort="auto" hflex="min" />
 								<listheader id="lhCustCIF" label="${c:l('listheader_Customer.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="lhFinType" label="${c:l('listheader_FinTypeCode.label')}" sort="auto"
 									align="center" hflex="min" />
-								<listheader id="lhToFinReference" label="${c:l('listheader_ToFinReference.label')}"
-									sort="auto" hflex="min" />
 								<listheader id="lhFromFinReference" label="${c:l('listheader_FromFinReference.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="lhToFinReference" label="${c:l('listheader_ToFinReference.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="lhExcessType" visible="false"
 									label="${c:l('listheader_ExcessType.label')}" sort="auto" hflex="min" />

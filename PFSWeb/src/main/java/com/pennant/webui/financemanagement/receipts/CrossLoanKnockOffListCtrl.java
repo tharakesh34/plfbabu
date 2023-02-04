@@ -397,7 +397,13 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
 
+			lc = new Listcell(PennantAppUtil.formateDate(clk.getRealizationDate(), DateFormat.SHORT_DATE.getPattern()));
+			lc.setParent(item);
+
 			lc = new Listcell(clk.getRecordStatus());
+			lc.setParent(item);
+
+			lc = new Listcell(clk.getReceiptModeStatus());
 			lc.setParent(item);
 
 			lc = new Listcell(clk.getNextRoleCode());

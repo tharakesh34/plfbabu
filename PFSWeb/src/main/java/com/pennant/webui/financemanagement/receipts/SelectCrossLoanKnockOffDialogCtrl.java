@@ -384,7 +384,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 
 		// validating value date for knock off
 		Date valuedate = null;
-		if (StringUtils.equals(RepayConstants.PAYTYPE_PAYABLE, receiptData.getReceiptHeader().getReceiptMode())) {
+		if (StringUtils.equals(RepayConstants.RECEIPTTYPE_PAYABLE, receiptData.getReceiptHeader().getReceiptMode())) {
 			ManualAdvise ma = (ManualAdvise) this.referenceId.getObject();
 			valuedate = ma.getValueDate();
 		} else {
@@ -436,7 +436,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		validateReceiptData();
 
 		Date valuedate = null;
-		if (RepayConstants.PAYTYPE_PAYABLE.equals(receiptData.getReceiptHeader().getReceiptMode())) {
+		if (RepayConstants.RECEIPTTYPE_PAYABLE.equals(receiptData.getReceiptHeader().getReceiptMode())) {
 			ManualAdvise ma = (ManualAdvise) this.referenceId.getObject();
 			valuedate = ma.getValueDate();
 		} else {
