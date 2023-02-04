@@ -64,7 +64,7 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 
 				ps.setObject(++index, detail.getReferenceID());
 				ps.setInt(++index, detail.getProgress());
-				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "C" : "R");
 				ps.setString(++index, detail.getErrorCode());
 				ps.setString(++index, detail.getErrorDesc());
 
@@ -93,7 +93,7 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 				long headerID = headerIds.get(i);
 
 				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "C" : "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 
