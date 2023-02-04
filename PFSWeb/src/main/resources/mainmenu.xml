@@ -482,7 +482,7 @@
 		<menuItem id="menu_Item_DueDateLogicRule"
 			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/DueDateRuleList.zul"
 			rightName="menuItem_RulesFactory_DueDateLogicRule" />
-		<menuItem id="menu_Item_RefundRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"
+		<menuItem id="menu_Item_Auto_Refund_Reserve_Rule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"
 			rightName="menuItem_RulesFactory_AutoRefundRule" />
 	</menu>
 
@@ -2553,5 +2553,12 @@
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
+		
+	<menuItem id="menu_Item_CrossLoanKnockOff_Maker"
+				zulNavigation="/WEB-INF/pages/CrossLoanKnockOff/CrossLoanKnockOffList.zul?stage=M"
+				rightName="" />
+	<menuItem id="menu_Item_CrossLoanKnockOff_Approver"
+				zulNavigation="/WEB-INF/pages/CrossLoanKnockOff/CrossLoanKnockOffList.zul?stage=A"
+				rightName="" />
 
 </ns2:XMLRootMenu>
