@@ -107,6 +107,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
+import com.pennant.backend.model.finance.CrossLoanTransfer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -482,10 +483,10 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchCustCIF(Event event)  {
+	public void onClick$btnSearchCustCIF(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		 Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		CustomerDetails customerDetails = customerDetailsService
 				.getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
 		String pageName = PennantAppUtil.getCustomerPageName();
@@ -494,7 +495,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		map.put("dialogCtrl", this);
 		map.put("newRecord", false);
 		map.put("CustomerEnq", "CustomerEnq");
-		
+
 		Executions.createComponents(pageName, null, map);
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
@@ -761,8 +762,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		logger.debug(Literal.ENTERING);
 		receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(receiptData.getReceiptHeader().getReceiptPurpose());
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		this.fromFinReference.setValue(rch.getReference());
-		this.toFinReference.setValue(rch.getReference());
+
 		boolean isClosrMaturedLAN = false;
 		if (receiptPurposeCtg == 2) {
 			isClosrMaturedLAN = !isClosrMaturedLAN && isForeClosure && isClosureMaturedLAN(receiptData);
@@ -836,8 +836,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 
 		// Receipt Basic Details
 		this.custCIF.setValue(custCIFname);
-		this.fromFinReference.setValue(rpyMain.getFinReference());
-		this.toFinReference.setValue(rpyMain.getFinReference());
 
 		setBalances();
 		logger.debug(Literal.LEAVING);
@@ -3313,10 +3311,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		/*
-		 * try { header.setSubReceiptMode(getComboboxValue(receiptType)); } catch (WrongValueException we) {
-		 * wve.add(we); }
-		 */
+
 		try {
 			if (!isKnockOff && !isForeClosure) {
 				header.setReceiptMode(getComboboxValue(receiptMode));
@@ -3367,9 +3362,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			wve.add(we);
 		}
 
-		String status = "";
-
-		// Receipt Mode Details
 		try {
 			this.favourNo.getValue();
 		} catch (WrongValueException we) {
@@ -4698,6 +4690,70 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		addAmountCell(item, balAmt, null, true);
 
 		this.listBoxExcess.appendChild(item);
+	}
+
+	public void onClick$btnSearchFromFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering " + event.toString());
+
+		// Preparation of Finance Enquiry Data
+		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
+		CrossLoanTransfer crossLoanTransfer = crossLoanHeader.getCrossLoanTransfer();
+		FinanceEnquiry aFinanceEnq = new FinanceEnquiry();
+		aFinanceEnq.setFinReference(crossLoanTransfer.getFromFinReference());
+		aFinanceEnq.setFinType(finReceiptHeader.getFinType());
+		aFinanceEnq.setLovDescFinTypeName(finReceiptHeader.getFinTypeDesc());
+		aFinanceEnq.setFinCcy(finReceiptHeader.getFinCcy());
+		aFinanceEnq.setScheduleMethod(finReceiptHeader.getScheduleMethod());
+		aFinanceEnq.setProfitDaysBasis(finReceiptHeader.getPftDaysBasis());
+		aFinanceEnq.setFinBranch(finReceiptHeader.getFinBranch());
+		aFinanceEnq.setLovDescFinBranchName(finReceiptHeader.getFinBranchDesc());
+		aFinanceEnq.setLovDescCustCIF(finReceiptHeader.getCustCIF());
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("moduleCode", moduleCode);
+		map.put("fromApproved", true);
+		map.put("childDialog", true);
+		map.put("financeEnquiry", aFinanceEnq);
+		map.put("ReceiptDialog", this);
+		map.put("enquiryType", "FINENQ");
+		map.put("ReceiptDialogPage", true);
+		map.put("window_ReceiptDialog", this.windowCrossLoanKnockOffDialog);
+		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
+				this.windowCrossLoanKnockOffDialog, map);
+
+		logger.debug("Leaving " + event.toString());
+	}
+
+	public void onClick$btnSearchToFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering " + event.toString());
+
+		// Preparation of Finance Enquiry Data
+		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
+		CrossLoanTransfer crossLoanTransfer = crossLoanHeader.getCrossLoanTransfer();
+		FinanceEnquiry aFinanceEnq = new FinanceEnquiry();
+		aFinanceEnq.setFinReference(crossLoanTransfer.getToFinReference());
+		aFinanceEnq.setFinType(finReceiptHeader.getFinType());
+		aFinanceEnq.setLovDescFinTypeName(finReceiptHeader.getFinTypeDesc());
+		aFinanceEnq.setFinCcy(finReceiptHeader.getFinCcy());
+		aFinanceEnq.setScheduleMethod(finReceiptHeader.getScheduleMethod());
+		aFinanceEnq.setProfitDaysBasis(finReceiptHeader.getPftDaysBasis());
+		aFinanceEnq.setFinBranch(finReceiptHeader.getFinBranch());
+		aFinanceEnq.setLovDescFinBranchName(finReceiptHeader.getFinBranchDesc());
+		aFinanceEnq.setLovDescCustCIF(finReceiptHeader.getCustCIF());
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("moduleCode", moduleCode);
+		map.put("fromApproved", true);
+		map.put("childDialog", true);
+		map.put("financeEnquiry", aFinanceEnq);
+		map.put("ReceiptDialog", this);
+		map.put("enquiryType", "FINENQ");
+		map.put("ReceiptDialogPage", true);
+		map.put("window_ReceiptDialog", this.windowCrossLoanKnockOffDialog);
+		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
+				this.windowCrossLoanKnockOffDialog, map);
+
+		logger.debug("Leaving " + event.toString());
 	}
 
 	public Map<String, BigDecimal> getTaxPercMap() {
