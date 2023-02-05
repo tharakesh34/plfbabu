@@ -1,6 +1,7 @@
 package com.pennant.backend.service.payment.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +69,26 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 				int sucessRecords = 0;
 				int failRecords = 0;
 
+				List<String> key = new ArrayList<>();
+
 				for (PaymentInstUploadDetail detail : details) {
+
+					String reference = detail.getReference();
+					String excessType = detail.getExcessType();
+
+					String keyRef = reference.concat("_").concat(excessType);
+
+					if ("P".equals(excessType)) {
+						keyRef = keyRef.concat("_").concat(detail.getFeeType());
+					}
+
+					if (key.contains(keyRef)) {
+						setError(detail, PaymentUploadError.REFUP014);
+						failRecords++;
+						continue;
+					}
+
+					key.add(keyRef);
 
 					doValidate(header, detail);
 

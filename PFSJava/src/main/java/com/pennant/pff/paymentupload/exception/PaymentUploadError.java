@@ -49,7 +49,9 @@ public enum PaymentUploadError {
 
 	HOLDUP0010("HoldStatus is not valid"),
 
-	HOLDUP0011("Fin Reference is not in active.");
+	HOLDUP0011("Fin Reference is not in active."),
+
+	REFUP014("Duplicate Record is found in File for the Reference and Excess Type");
 
 	private String description;
 
