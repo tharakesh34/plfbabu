@@ -463,7 +463,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  where  FeeRefundId =? ");
+		whereCond.append("  where  ID =? ");
 
 		if (doCheckAuthority(frh, whereCond.toString(), new Object[] { frh.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -550,7 +550,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	private List<Long> getFeeRefundHeaderList() {
 
 		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
-		searchObject.addField("feeRefundId");
+		searchObject.addField("ID");
 		searchObject.addTabelName(this.queueTableName);
 
 		for (SearchFilterControl searchControl : searchControls) {
@@ -570,7 +570,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		if (list != null && !list.isEmpty()) {
 			for (int i = 0; i < list.size(); i++) {
 				Map<String, Long> map = (Map<String, Long>) list.get(i);
-				feeRefundIdList.add(Long.parseLong(String.valueOf(map.get("feeRefundId"))));
+				feeRefundIdList.add(Long.parseLong(String.valueOf(map.get("Id"))));
 			}
 		}
 		return feeRefundIdList;
@@ -903,7 +903,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 			FeeRefundHeader frh = feeRefundHeaderService.getFeeRefundHeader(id);
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " FeeRefundId= :?";
+			String whereCond = " ID= ?";
 
 			if (doCheckAuthority(frh, whereCond, new Object[] { frh.getId() })) {
 				// Set the latest work-flow id for the new maintenance request.
@@ -1010,7 +1010,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	private ByteArrayOutputStream doDownloadFiles(String id) {
 		logger.debug(Literal.ENTERING);
 
-		String whereCond = " where frd.FeeRefundId in (" + "'" + id + "'" + ") and  ApprovalStatus in (" + "'"
+		String whereCond = " where frd.ID in (" + "'" + id + "'" + ") and  ApprovalStatus in (" + "'"
 				+ PennantConstants.FEE_REFUND_APPROVAL_HOLD + "'" + ")";
 		StringBuilder searchCriteria = new StringBuilder(" ");
 
