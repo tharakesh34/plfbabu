@@ -44,7 +44,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -66,14 +65,10 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -85,7 +80,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
@@ -95,18 +89,10 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-/**
- * This is the controller class for thee
- * /PFSWeb/WebContent/WEB-INF/pages/FinanceManagement/ExcessTransfer/ExcessTransferDialog.zul
- */
 public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = LogManager.getLogger(ExcessTransferDialogCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	protected Window window_ExcessTransferDialog;
 	protected Borderlayout borderlayout_ExcessTransfer;
 	protected Label windowTitle;
@@ -136,26 +122,14 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 	private ExcessTransferService excessTransferService;
 	private FinanceDetailService financeDetailService;
 
-	private CustomerDialogCtrl customerDialogCtrl = null;
-	protected FinanceMainListCtrl financeMainListCtrl = null; // over handed per
-	// parameters
+	protected FinanceMainListCtrl financeMainListCtrl = null;
 
 	private FinExcessTransfer finExcessTransfer;
 	private FinanceMain financeMain;
-	private FinanceDetail financeDetail;
 	private ExcessTransferListCtrl excessTransferListCtrl;
 	private Customer customer;
-	private String recordType = "";
-	private FinExcessTransfer befImage;
-	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>();
-	private List<FinanceScheduleDetail> orgScheduleList = new ArrayList<>();
-	private int ccyFormat = 0;
-	private transient boolean validationOn;
 	private FinExcessAmount finExcessAmount;
 
-	/**
-	 * default constructor.<br>
-	 */
 	public ExcessTransferDialogCtrl() {
 		super();
 	}
@@ -165,17 +139,8 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		super.pageRightName = "ExcessTransferDialog";
 	}
 
-	// Component Events
-
-	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected Rule object in a Map.
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onCreate$window_ExcessTransferDialog(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
+	public void onCreate$window_ExcessTransferDialog(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		setPageComponents(window_ExcessTransferDialog);
 
@@ -187,11 +152,7 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 			this.excessTransferListCtrl = (ExcessTransferListCtrl) arguments.get("excessTransferListCtrl");
 
 			if (this.finExcessTransfer == null) {
-				throw new Exception(Labels.getLabel("error.unhandled"));
-			}
-
-			if (arguments.containsKey("ccyFormat")) {
-				setCcyFormat((Integer) arguments.get("ccyFormat"));
+				throw new AppException(Labels.getLabel("error.unhandled"));
 			}
 
 			if (arguments.containsKey("financeMain")) {
@@ -221,39 +182,25 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	/**
-	 * Method for Showing Customer details on Clicking Customer View Button
-	 * 
-	 * @param event
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
-	 */
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnSearchCustCIF(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		final Map<String, Object> map = new HashMap<String, Object>();
-		CustomerDetails customerDetails = getCustomerDetailsService().getCustomerById(getFinanceMain().getCustID());
-		String pageName = PennantAppUtil.getCustomerPageName();
-		map.put("customerDetails", customerDetails);
+		final Map<String, Object> map = new HashMap<>();
+
+		map.put("customerDetails", customerDetailsService.getCustomerById(financeMain.getCustID()));
 		map.put("enqiryModule", true);
 		map.put("dialogCtrl", this);
 		map.put("newRecord", false);
 		map.put("CustomerEnq", "CustomerEnq");
-		Executions.createComponents(pageName, null, map);
 
-		logger.debug(Literal.LEAVING + event.toString());
+		Executions.createComponents(PennantAppUtil.getCustomerPageName(), null, map);
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	/**
-	 * User rights check. <br>
-	 * Only components are set visible=true if the logged-in <br>
-	 * user have the right for it. <br>
-	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
-	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
 		getUserWorkspace().allocateAuthorities(getRole(), super.pageRightName);
@@ -266,9 +213,6 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the properties of the fields, like maxLength.<br>
-	 */
 	protected void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
@@ -277,22 +221,13 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Opens the Dialog window modal.
-	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
-	 * 
-	 * @param Receipt
-	 * @throws Exception
-	 */
-	public void doShowDialog(FinExcessTransfer finExcessTransfer) throws Exception {
+	public void doShowDialog(FinExcessTransfer finExcessTransfer) {
 		logger.debug(Literal.LEAVING);
 
 		if (finExcessTransfer.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
-
 			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(finExcessTransfer.getRecordType())) {
 					this.btnNotes.setVisible(true);
@@ -303,6 +238,7 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 				btnCancel.setVisible(false);
 			}
 		}
+
 		this.excessReference.setMandatoryStyle(true);
 		this.transferAmount.setMandatory(true);
 		doWriteBeanToComponents(finExcessTransfer);
@@ -310,10 +246,9 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug(Literal.LEAVING);
-
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finExcessTransfer);
 	}
 
@@ -322,17 +257,10 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		return String.valueOf(this.finExcessTransfer.getId());
 	}
 
-	/**
-	 * Set the components for edit mode. <br>
-	 */
 	public void doEdit() {
 		logger.debug(Literal.ENTERING);
 
-		if (this.finExcessTransfer.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-		} else {
-			this.btnCancel.setVisible(true);
-		}
+		this.btnCancel.setVisible(!this.finExcessTransfer.isNewRecord());
 		this.excessReference.setReadonly(isReadOnly("ExcessTransferDialog_ExcessReference"));
 		this.transferDate.setReadonly(isReadOnly("ExcessTransferDialog_TransferDate"));
 		this.transferFrom.setReadonly(isReadOnly("ExcessTransferDialog_TransferFrom"));
@@ -354,15 +282,11 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			// btnCancel.setVisible(true);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the components for edit mode. <br>
-	 */
 	public void doReadOnly(boolean isUserAction) {
 		logger.debug(Literal.ENTERING);
 
@@ -378,20 +302,10 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * The Click event is raised when the Close Button control is clicked.
-	 * 
-	 * @param event An event sent to the event handler of a component.
-	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the save button.
-	 * 
-	 * @param event An event sent to the event handler of the component.
-	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSave();
@@ -400,33 +314,34 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 	}
 
 	public void doSave() {
-		logger.debug("Entering");
-		final FinExcessTransfer finExcessTransfer = new FinExcessTransfer();
-		BeanUtils.copyProperties(this.finExcessTransfer, finExcessTransfer);
+		logger.debug(Literal.ENTERING);
+
+		final FinExcessTransfer transfer = new FinExcessTransfer();
+
+		BeanUtils.copyProperties(this.finExcessTransfer, transfer);
 		boolean isNew = false;
 
-		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		doSetLOVValidation();
 
-		doWriteComponentsToBean(finExcessTransfer);
+		doWriteComponentsToBean(transfer);
 
-		isNew = finExcessTransfer.isNewRecord();
+		isNew = transfer.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(finExcessTransfer.getRecordType())) {
-				finExcessTransfer.setVersion(finExcessTransfer.getVersion() + 1);
+			if (StringUtils.isBlank(transfer.getRecordType())) {
+				transfer.setVersion(transfer.getVersion() + 1);
 				if (isNew) {
-					finExcessTransfer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					transfer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					finExcessTransfer.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					finExcessTransfer.setNewRecord(true);
+					transfer.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					transfer.setNewRecord(true);
 				}
 			}
 		} else {
-			finExcessTransfer.setVersion(finExcessTransfer.getVersion() + 1);
+			transfer.setVersion(transfer.getVersion() + 1);
 			if (isNew) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
@@ -435,7 +350,7 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		}
 
 		try {
-			if (doProcess(finExcessTransfer, tranType)) {
+			if (doProcess(transfer, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -443,7 +358,8 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		} catch (final DataAccessException e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -452,8 +368,8 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 	}
 
 	private void doSetValidation() {
-		logger.debug("Entering");
-		setValidationOn(true);
+		logger.debug(Literal.ENTERING);
+
 		if (!this.transferAmount.isReadonly()) {
 			this.transferAmount.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_ExcessTransferDialog_TransferAmount.value"),
@@ -465,7 +381,6 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 
 	private void doRemoveValidation() {
 		logger.debug("Entering");
-		setValidationOn(false);
 		this.transferFrom.setConstraint("");
 		this.transferAmount.setConstraint("");
 		this.transferTo.setConstraint("");
@@ -475,7 +390,6 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 		if (!getComboboxValue(this.transferFrom).equals(PennantConstants.List_Select)) {
-			setValidationOn(true);
 			if (!this.excessReference.isReadonly()) {
 				this.excessReference.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_ExcessTransferDialog_ExcessReference.value"), null, true));
@@ -487,25 +401,19 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		setValidationOn(false);
 		this.excessReference.setConstraint("");
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Writing Data into Fields from Bean
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void doWriteBeanToComponents(FinExcessTransfer finExcessTransfer) throws InterruptedException {
+	private void doWriteBeanToComponents(FinExcessTransfer finExcessTransfer) {
 		logger.debug(Literal.ENTERING);
 		this.finReference.setValue(finExcessTransfer.getFinReference());
 		fillComboBox(this.transferFrom, finExcessTransfer.getTransferFromType(),
-				PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+				PennantStaticListUtil.getExcessTransferTypes(), "");
 
 		if (this.finExcessTransfer.isNewRecord()) {
 			this.transferId.setValue(null);
-			this.custCIF.setValue(getCustomer().getCustCIF());
+			this.custCIF.setValue(customer.getCustCIF());
 		} else {
 			this.transferId.setValue(String.valueOf(finExcessTransfer.getId()));
 			this.custCIF.setValue(finExcessTransfer.getCustCIF());
@@ -522,15 +430,12 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		}
 		this.transferAmount.setValue(CurrencyUtil.parse(finExcessTransfer.getTransferAmount(), 2));
 
-		this.finType.setValue(getFinanceMain().getFinType());
-		this.finBranch.setValue(getFinanceMain().getFinBranch());
+		this.finType.setValue(financeMain.getFinType());
+		this.finBranch.setValue(financeMain.getFinBranch());
 
 		fillComboBox(this.transferTo, finExcessTransfer.getTransferToType(),
-				PennantStaticListUtil.getExcessAdjustmentTypes(), "");
-		/*
-		 * if (!StringUtils.isEmpty(finExcessTransfer.getTransferFromType())) { this.excessReference.setReadonly(false);
-		 * setExcessReference(); }
-		 */
+				PennantStaticListUtil.getExcessTransferTypes(), "");
+
 		this.recordStatus.setValue(finExcessTransfer.getRecordStatus());
 
 		if (StringUtils.equals(finExcessTransfer.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
@@ -540,15 +445,10 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Writes the components values to the bean.<br>
-	 * 
-	 * @param finExcessTransfer
-	 */
 	public void doWriteComponentsToBean(FinExcessTransfer finExcessTransfer) {
 		logger.debug("Entering");
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
 			if (!this.transferFrom.isDisabled()
@@ -611,14 +511,6 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		}
 
 		try {
-			/*
-			 * if (this.transferAmount.getActualValue()
-			 * .compareTo(BigDecimal.valueOf(Long.parseLong(this.excessReference.getDescription()))) > 0 ||
-			 * this.transferAmount.getActualValue() == BigDecimal.ZERO) {
-			 * 
-			 * throw new WrongValueException(this.transferAmount,
-			 * "Amount Should be less than or equals to Excess Amount."); }
-			 */
 			if (StringUtils.isNotEmpty(this.excessReference.getDescription())) {
 				BigDecimal excessRefAmount = new BigDecimal(this.excessReference.getDescription());
 				if (excessRefAmount.compareTo(BigDecimal.ZERO) > 0) {
@@ -733,13 +625,6 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		return processCompleted;
 	}
 
-	/**
-	 * 
-	 * @param auditHeader
-	 * @param method
-	 * @return
-	 * @throws Exception
-	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
@@ -841,7 +726,7 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		setExcessReference();
 	}
 
-	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchFinreference(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		// Preparation of Finance Enquiry Data
@@ -874,13 +759,11 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	public void onClick$btn_LinkedLoan(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING); // FIXME: PV: CODE
-		// REVIEW PENDING
-		// isLinkedBtnClick = true;
-		List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
-		List<FinanceProfitDetail> finpftDetails = new ArrayList<FinanceProfitDetail>();
-		financeMains.addAll(getFinanceDetailService().getFinanceMainForLinkedLoans(finReference.getValue()));
+	public void onClick$btn_LinkedLoan(Event event) {
+		logger.debug(Literal.ENTERING);
+		List<FinanceMain> financeMains = new ArrayList<>();
+		List<FinanceProfitDetail> finpftDetails = new ArrayList<>();
+		financeMains.addAll(financeDetailService.getFinanceMainForLinkedLoans(finReference.getValue()));
 
 		if (CollectionUtils.isNotEmpty(financeMains)) {
 			List<Long> finRefList = new ArrayList<>();
@@ -891,11 +774,11 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 				finRefList.add(finMain.getFinID());
 			}
 			if (CollectionUtils.isNotEmpty(finRefList)) {
-				finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
+				finpftDetails.addAll(financeDetailService.getFinProfitListByFinRefList(finRefList));
 			}
 		}
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("financeMains", financeMains);
 		map.put("finpftDetails", finpftDetails);
 
@@ -929,7 +812,7 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 
 			if (this.transferFrom.getValue() != null) {
 				fillComboBox(this.transferTo, finExcessTransfer.getTransferToType(),
-						PennantStaticListUtil.getExcessAdjustmentTypes(), "," + transferFromType + "," + "P" + ",");
+						PennantStaticListUtil.getExcessTransferTypes(), "," + transferFromType + "," + "P" + ",");
 			}
 		}
 	}
@@ -937,7 +820,6 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 	public void onFulfill$excessReference(Event event) {
 
 		logger.debug("Entering " + event.toString());
-		BigDecimal amount = BigDecimal.ZERO;
 
 		this.excessReference.setConstraint("");
 		this.excessReference.clearErrorMessage();
@@ -947,109 +829,36 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		if (dataObject instanceof String) {
 			this.excessReference.setValue(dataObject.toString());
 			this.excessReference.setDescription("");
-		} else {
-			FinExcessAmount nl = (FinExcessAmount) dataObject;
-			if (nl != null) {
-				amount = nl.getBalanceAmt();
-			}
 		}
 		logger.debug("Leaving " + event.toString());
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public void setFinanceDetail(FinanceDetail financeDetail) {
-		this.financeDetail = financeDetail;
-	}
-
-	public FinanceDetail getFinanceDetail() {
-		return financeDetail;
-	}
-
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
 	}
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
 
-	public ExcessTransferService getExcessTransferService() {
-		return excessTransferService;
-	}
-
 	public void setExcessTransferService(ExcessTransferService excessTransferService) {
 		this.excessTransferService = excessTransferService;
-	}
-
-	public FinanceDetailService getFinanceDetailService() {
-		return financeDetailService;
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
 
-	public CustomerDialogCtrl getCustomerDialogCtrl() {
-		return customerDialogCtrl;
-	}
-
-	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
-		this.customerDialogCtrl = customerDialogCtrl;
-	}
-
-	public FinanceMainListCtrl getFinanceMainListCtrl() {
-		return financeMainListCtrl;
-	}
-
 	public void setFinanceMainListCtrl(FinanceMainListCtrl financeMainListCtrl) {
 		this.financeMainListCtrl = financeMainListCtrl;
-	}
-
-	public ExcessTransferListCtrl getExcessTransferListCtrl() {
-		return excessTransferListCtrl;
 	}
 
 	public void setExcessTransferListCtrl(ExcessTransferListCtrl excessTransferListCtrl) {
 		this.excessTransferListCtrl = excessTransferListCtrl;
 	}
 
-	public FinanceMain getFinanceMain() {
-		return financeMain;
-	}
-
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
 	}
 
-	public Customer getCustomer() {
-		return customer;
-	}
-
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}
-
-	public int getCcyFormat() {
-		return ccyFormat;
-	}
-
-	public void setCcyFormat(int ccyFormat) {
-		this.ccyFormat = ccyFormat;
-	}
-
-	public boolean isValidationOn() {
-		return validationOn;
-	}
-
-	public void setValidationOn(boolean validationOn) {
-		this.validationOn = validationOn;
-	}
-
-	public FinExcessAmount getFinExcessAmount() {
-		return finExcessAmount;
 	}
 
 	public void setFinExcessAmount(FinExcessAmount finExcessAmount) {

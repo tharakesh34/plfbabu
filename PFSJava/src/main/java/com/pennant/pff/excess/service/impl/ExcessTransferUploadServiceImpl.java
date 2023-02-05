@@ -25,9 +25,10 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.excess.ExcessHead;
+import com.pennant.pff.excess.ExcessTransferError;
 import com.pennant.pff.excess.dao.ExcessTransferUploadDAO;
 import com.pennant.pff.excess.model.ExcessTransferUpload;
-import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.AppException;
@@ -57,35 +58,49 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 		logger.info("Validating the Data for the reference {}", reference);
 
 		if (StringUtils.isBlank(reference)) {
-			setError(detail, PresentmentError.REPRMNT513);
+			setError(detail, ExcessTransferError.EXT_001);
 			return;
 		}
 
 		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
 
 		if (fm == null) {
-			setError(detail, PresentmentError.REPRMNT514);
+			setError(detail, ExcessTransferError.EXT_002);
 			return;
 		}
 
 		if (!fm.isFinIsActive()) {
-			setError(detail, PresentmentError.REPRMNT515);
+			setError(detail, ExcessTransferError.EXT_003);
 			return;
 		}
 
 		detail.setReference(reference);
 		detail.setReferenceID(fm.getFinID());
 
-		if (excessTransferUploadDAO.isDuplicateExists(reference, detail.getTransferFromType(), detail.getHeaderId())) {
-			setError(detail, PresentmentError.EX_608);
+		String transferFrom = detail.getTransferFromType();
+		String transferToType = detail.getTransferToType();
+
+		if (!ExcessHead.isValidExcessTransferHead(transferFrom)) {
+			setError(detail, ExcessTransferError.EXT_006);
+		}
+
+		if (!ExcessHead.isValidExcessTransferHead(transferToType)) {
+			setError(detail, ExcessTransferError.EXT_006);
+		}
+
+		if (transferFrom.equals(transferToType)) {
+			setError(detail, ExcessTransferError.EXT_006);
+		}
+
+		if (excessTransferUploadDAO.isDuplicateExists(reference, transferFrom, detail.getHeaderId())) {
+			setError(detail, ExcessTransferError.EXT_004);
 			return;
 		}
 
-		BigDecimal balanceAmount = excessTransferUploadDAO.getBalanceAmount(fm.getFinID(),
-				detail.getTransferFromType());
+		BigDecimal balanceAmount = excessTransferUploadDAO.getBalanceAmount(fm.getFinID(), transferFrom);
 
 		if (balanceAmount.compareTo(detail.getTransferAmount()) < 0) {
-			setError(detail, PresentmentError.EX_607);
+			setError(detail, ExcessTransferError.EXT_005);
 			return;
 		}
 
@@ -95,7 +110,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 		detail.setErrorDesc("");
 	}
 
-	private void setError(ExcessTransferUpload detail, PresentmentError error) {
+	private void setError(ExcessTransferUpload detail, ExcessTransferError error) {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
 		detail.setErrorCode(error.name());
 		detail.setErrorDesc(error.description());

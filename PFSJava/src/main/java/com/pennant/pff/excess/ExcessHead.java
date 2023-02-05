@@ -1,8 +1,13 @@
 package com.pennant.pff.excess;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum ExcessHead {
 
-	EMIINADV("EMIINADV"),
+	EXCESS("E"),
+
+	EMIINADV("A"),
 
 	ADVINT("ADVINT"),
 
@@ -12,7 +17,9 @@ public enum ExcessHead {
 
 	DSF("DSF"),
 
-	TEXCESS("T");
+	TEXCESS("T"),
+
+	SEXCESS("S");
 
 	private String code;
 
@@ -24,4 +31,32 @@ public enum ExcessHead {
 		return code;
 	}
 
+	public static ExcessHead getHead(String code) {
+		List<ExcessHead> list = Arrays.asList(ExcessHead.values());
+
+		for (ExcessHead it : list) {
+			if (it.name().equals(code)) {
+				return it;
+			}
+		}
+
+		return null;
+	}
+
+	public static boolean isValidExcessTransferHead(String code) {
+		ExcessHead excessHead = ExcessHead.getHead(code);
+
+		if (excessHead == null) {
+			return false;
+		}
+
+		switch (excessHead) {
+		case EXCESS:
+		case EMIINADV:
+		case TEXCESS:
+			return true;
+		default:
+			return false;
+		}
+	}
 }

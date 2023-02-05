@@ -52,11 +52,7 @@ public enum PresentmentError {
 
 	FC_602("Presentment is not found for this respective schedule."),
 
-	FC_603("Clearing status in invalid in Fate Correction Upload File"),
-
-	EX_607("Transfer amount should be less/equal to Balance Amount"),
-
-	EX_608("File having duplicate records with same Loan Reference and Amount Type");
+	FC_603("Clearing status in invalid in Fate Correction Upload File");
 
 	private String description;
 

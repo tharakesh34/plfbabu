@@ -375,6 +375,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> prePaymentCalculatedOn;
 	private static List<String> allowedExcessTypeList;
 	private static List<ValueLabel> enqSettlementStatus;
+	private static List<ValueLabel> excessTransferHead;
 
 	/**
 	 * Gets the list of applications.
@@ -5628,5 +5629,18 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ReceiptModeStatus_Cancel")));
 		}
 		return enqSettlementStatus;
+	}
+
+	public static List<ValueLabel> getExcessTransferTypes() {
+		if (excessTransferHead == null) {
+			excessTransferHead = new ArrayList<>(3);
+			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EXCESS,
+					Labels.getLabel("label_ExcessAdjustTo_ExcessAmount")));
+			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EMIINADV,
+					Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
+			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_TEXCESS,
+					Labels.getLabel("label_RecceiptDialog_ExcessType_TEXCESS")));
+		}
+		return excessTransferHead;
 	}
 }
