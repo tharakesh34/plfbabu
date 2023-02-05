@@ -1796,8 +1796,8 @@ public class JavaScriptBuilder extends Groupbox {
 			return operand;
 		} else if (StringUtils.equals(operandTypeValue, RuleConstants.FIELDLIST)) {
 			if (objectFieldList == null || objectFieldList.isEmpty()) {
-				this.objectFieldList = PennantAppUtil
-						.getExtendedFieldForRules(PennantAppUtil.getRBFieldDetails(getModule(), getEvent()));
+				this.objectFieldList = PennantAppUtil.getExtendedFieldForRules(getModule(),
+						PennantAppUtil.getRBFieldDetails(getModule(), getEvent()));
 			}
 
 			Combobox operand = new Combobox();

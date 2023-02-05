@@ -689,10 +689,10 @@ public class PennantAppUtil {
 	 * @return CSSParameter
 	 */
 	public static List<RBFieldDetail> getRBFieldDetails(String ruleModule, String rbEvent) {
-		List<RBFieldDetail> rbFieldDetailsList = new ArrayList<RBFieldDetail>();
+		List<RBFieldDetail> rbFieldDetailsList = new ArrayList<>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
-		JdbcSearchObject<RBFieldDetail> searchObject = new JdbcSearchObject<RBFieldDetail>(RBFieldDetail.class);
+		JdbcSearchObject<RBFieldDetail> searchObject = new JdbcSearchObject<>(RBFieldDetail.class);
 		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("RBModule", ruleModule, Filter.OP_EQUAL);
 		filters[1] = new Filter("RBEvent", rbEvent, Filter.OP_EQUAL);
@@ -711,22 +711,19 @@ public class PennantAppUtil {
 	 * 
 	 * @return CSSParameter
 	 */
-	public static List<RBFieldDetail> getExtendedFieldForRules(List<RBFieldDetail> rbFieldDetailsList) {
+	public static List<RBFieldDetail> getExtendedFieldForRules(String moduleCode,
+			List<RBFieldDetail> rbFieldDetailsList) {
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-
-		String moduleCode = null;
-		if (rbFieldDetailsList == null) {
-			rbFieldDetailsList = new ArrayList<>();
-		} else if (!rbFieldDetailsList.isEmpty()) {
-			moduleCode = rbFieldDetailsList.get(0).getRbEvent();
-		}
 
 		if ("PROVSN".equals(moduleCode)) {
 			return rbFieldDetailsList;
 		}
 
-		JdbcSearchObject<ExtendedFieldDetail> searchObject = new JdbcSearchObject<ExtendedFieldDetail>(
-				ExtendedFieldDetail.class);
+		if ("FEE_AUTO_REFUND".equals(moduleCode)) {
+			return rbFieldDetailsList;
+		}
+
+		JdbcSearchObject<ExtendedFieldDetail> searchObject = new JdbcSearchObject<>(ExtendedFieldDetail.class);
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("AllowInRule", true, Filter.OP_EQUAL);
 		searchObject.addFilters(filters);
