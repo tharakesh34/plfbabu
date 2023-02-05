@@ -28,7 +28,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 	@Override
 	public List<ManualKnockOffUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select Id, HeaderId");
-		sql.append(", FinID, FinReference, ExcessType, AllocationType, ReceiptAmount, AdviseID");
+		sql.append(", FinID, FinReference, ExcessType, AllocationType, (ReceiptAmount/100) ReceiptAmount, AdviseID");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From MANUAL_KNOCKOFF_UPLOAD");
 		sql.append(" Where HeaderId = ?");
