@@ -1651,8 +1651,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			String cdAccountNo = cd.getAccountNo();
 
 			if (cdSerialNo == serialNo && ifscCode.equals(cdIfsc) && accountNumber.equals(cdAccountNo)) {
-				if (!fromLoan) {
-					cd.setNewRecord(StringUtils.isEmpty(cd.getRecordType()));
+				if (cd.isUpload() && !fromLoan) {
+					cd.setNewRecord(true);
 					cd.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
