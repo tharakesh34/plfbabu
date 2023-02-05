@@ -1932,7 +1932,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (!StringUtils.equals(ReceiptMode.CHEQUE, rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
-			rch.setReceivedDate(rch.getReceiptDate());
+			rch.setReceivedDate(rch.getValueDate());
 		}
 
 		finReceiptHeaderDAO.generatedReceiptID(rch);
