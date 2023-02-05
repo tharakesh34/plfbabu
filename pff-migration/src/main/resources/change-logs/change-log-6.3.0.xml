@@ -12076,4 +12076,9 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#217035" author="Gireesh.G">
+		<addUniqueConstraint tableName="FILE_UPLOAD_HEADER" columnNames="Type,FileName"
+			constraintName="UK_FUH_TYPE_FILENAME" />
+	</changeSet>
+	
 </databaseChangeLog> 
