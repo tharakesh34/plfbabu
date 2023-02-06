@@ -780,17 +780,20 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		adviseUpload.setAdviseAmount(advise);
 
-		// eligibility amount validation
-		ManualAdvise ma = new ManualAdvise();
+		if (UploadConstants.UPLOAD_PAYABLE_ADVISE.equals(type)) {
 
-		ma.setFinReference(finReference);
-		ma.setValueDate(valueDate);
+			// eligibility amount validation
+			ManualAdvise ma = new ManualAdvise();
 
-		BigDecimal eblAmount = manualAdviseService.getEligibleAmount(ma, fee);
+			ma.setFinReference(finReference);
+			ma.setValueDate(valueDate);
 
-		if (advise.compareTo(eblAmount) > 0) {
-			reason.append("Advise Amount should be less than or equal to Eligible Amount.");
-			error = true;
+			BigDecimal eblAmount = manualAdviseService.getEligibleAmount(ma, fee);
+
+			if (advise.compareTo(eblAmount) > 0) {
+				reason.append("Advise Amount should be less than or equal to Eligible Amount.");
+				error = true;
+			}
 		}
 
 		// Remarks
