@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -20,6 +21,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.pff.upload.dao.UploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -51,39 +53,43 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
-		this.jdbcOperations.update(new PreparedStatementCreator() {
+		try {
+			this.jdbcOperations.update(new PreparedStatementCreator() {
 
-			@Override
-			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+				@Override
+				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
 
-				int index = 0;
+					int index = 0;
 
-				ps.setString(++index, header.getEntityCode());
-				ps.setString(++index, header.getType());
-				ps.setString(++index, header.getFileName());
-				ps.setInt(++index, header.getTotalRecords());
-				ps.setInt(++index, header.getSuccessRecords());
-				ps.setInt(++index, header.getFailureRecords());
-				ps.setInt(++index, header.getProgress());
-				ps.setLong(++index, header.getCreatedBy());
-				ps.setTimestamp(++index, header.getCreatedOn());
-				ps.setObject(++index, header.getApprovedBy());
-				ps.setTimestamp(++index, header.getApprovedOn());
-				ps.setLong(++index, header.getLastMntBy());
-				ps.setTimestamp(++index, header.getLastMntOn());
-				ps.setInt(++index, header.getVersion());
-				ps.setString(++index, header.getRecordStatus());
-				ps.setString(++index, header.getRoleCode());
-				ps.setString(++index, header.getNextRoleCode());
-				ps.setString(++index, header.getTaskId());
-				ps.setString(++index, header.getNextTaskId());
-				ps.setString(++index, header.getRecordType());
-				ps.setLong(++index, header.getWorkflowId());
+					ps.setString(++index, header.getEntityCode());
+					ps.setString(++index, header.getType());
+					ps.setString(++index, header.getFileName());
+					ps.setInt(++index, header.getTotalRecords());
+					ps.setInt(++index, header.getSuccessRecords());
+					ps.setInt(++index, header.getFailureRecords());
+					ps.setInt(++index, header.getProgress());
+					ps.setLong(++index, header.getCreatedBy());
+					ps.setTimestamp(++index, header.getCreatedOn());
+					ps.setObject(++index, header.getApprovedBy());
+					ps.setTimestamp(++index, header.getApprovedOn());
+					ps.setLong(++index, header.getLastMntBy());
+					ps.setTimestamp(++index, header.getLastMntOn());
+					ps.setInt(++index, header.getVersion());
+					ps.setString(++index, header.getRecordStatus());
+					ps.setString(++index, header.getRoleCode());
+					ps.setString(++index, header.getNextRoleCode());
+					ps.setString(++index, header.getTaskId());
+					ps.setString(++index, header.getNextTaskId());
+					ps.setString(++index, header.getRecordType());
+					ps.setLong(++index, header.getWorkflowId());
 
-				return ps;
-			}
-		}, keyHolder);
+					return ps;
+				}
+			}, keyHolder);
+		} catch (DuplicateKeyException e) {
+			throw new AppException("The File Name is Already Processed");
+		}
 
 		Number key = keyHolder.getKey();
 
