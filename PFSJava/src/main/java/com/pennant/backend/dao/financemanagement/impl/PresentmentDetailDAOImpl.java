@@ -2282,7 +2282,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		List<PresentmentDetail> list = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
 
 			ps.setLong(++index, finID);
@@ -2300,5 +2300,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 			return pd;
 		});
+
+		return list.stream().sorted((l1, l2) -> Long.valueOf(l2.getId()).compareTo(Long.valueOf(l1.getId())))
+				.collect(Collectors.toList());
 	}
 }

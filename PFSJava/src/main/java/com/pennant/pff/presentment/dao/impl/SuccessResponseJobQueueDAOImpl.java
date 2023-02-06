@@ -129,7 +129,7 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 				ps.setLong(3, queueId);
 			});
 		} else if (process == EodConstants.PROGRESS_FAILED) {
-			sql = "Update PRMNT_RESP_SUCCESS_QUEUE Set EndTime = ?, ThreadId = ?, Progress = ? Where Id = ?";
+			sql = "Update PRMNT_RESP_SUCCESS_QUEUE Set EndTime = ?, ThreadId = ?, Progress = ?, ErrorLog = ? Where Id = ?";
 
 			logger.debug(Literal.SQL.concat(sql));
 
@@ -137,7 +137,8 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
 				ps.setInt(2, 0);
 				ps.setInt(3, EodConstants.PROGRESS_FAILED);
-				ps.setLong(4, queueId);
+				ps.setString(4, jobQueue.getError());
+				ps.setLong(5, queueId);
 			});
 		}
 	}
