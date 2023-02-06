@@ -560,11 +560,6 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 					}
 				}
 
-				if (manualAdviseService.isManualAdviseExist(ma.getFinID())) {
-					MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_ManualAdvise"));
-					return false;
-				}
-				
 				if (rejectSts) {
 					if (StringUtils.isBlank(reason)) {
 						reason = Labels.getLabel("APPROVER_REJECT_REASON");
