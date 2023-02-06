@@ -21,7 +21,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
@@ -33,7 +32,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
-import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
@@ -51,7 +49,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
-import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -249,7 +246,6 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SettlementDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SettlementDialog_btnEdit"));
-		this.btnDelete.setVisible(false);
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SettlementDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		this.btnNewSettlementSchedule.setVisible(getUserWorkspace().isAllowed("button_SettlementDialog_btnNew"));
@@ -683,40 +679,6 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void createTab(String moduleID, boolean tabVisible) {
-		logger.trace(Literal.ENTERING);
-
-		String tabName = "";
-		if (StringUtils.equals(AssetConstants.UNIQUE_ID_JOINTGUARANTOR, moduleID)) {
-			tabName = Labels.getLabel("tab_Co-borrower&Gurantors");
-		} else if (StringUtils.equals(AssetConstants.UNIQUE_ID_ADDITIONALFIELDS, moduleID)) {
-			tabName = financeDetail.getExtendedFieldHeader().getTabHeading();
-		} else {
-			tabName = Labels.getLabel("tab_label_" + moduleID);
-		}
-
-		Tab tab = new Tab(tabName);
-		tab.setId(getTabID(moduleID));
-		tab.setVisible(tabVisible);
-		tabsIndexCenter.appendChild(tab);
-		Tabpanel tabpanel = new Tabpanel();
-		tabpanel.setId(getTabpanelID(moduleID));
-		tabpanel.setStyle("overflow:auto;");
-		tabpanel.setParent(tabpanelsBoxIndexCenter);
-		tabpanel.setHeight("100%");
-		ComponentsCtrl.applyForward(tab, ("onSelect=onSelectTab"));
-
-		logger.trace(Literal.LEAVING);
-	}
-
-	private String getTabID(String id) {
-		return "TAB" + StringUtils.trimToEmpty(id);
-	}
-
-	private String getTabpanelID(String id) {
-		return "TABPANEL" + StringUtils.trimToEmpty(id);
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void doWriteComponentsToBean(FinSettlementHeader header) {
 		logger.debug(Literal.ENTERING);
@@ -880,7 +842,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 					&& FinanceConstants.SETTLEMENT.equals(this.module))
 					|| (!PennantConstants.RECORD_TYPE_NEW.equals(settlement.getRecordType())
 							&& FinanceConstants.SETTLEMENT_CANCEL.equals(this.module)
-							&& (RepayConstants.SETTLEMENT_STATUS_INITIATED.equals(settlement.getSettlementStatus())
+							&& (RepayConstants.SETTLEMENT_STATUS_CANCELLED.equals(settlement.getSettlementStatus())
 									&& PennantConstants.RCD_STATUS_APPROVED.equals(settlement.getRecordStatus())))) {
 				doSetFieldEdit();
 			}
@@ -1125,6 +1087,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		readOnlyComponent(true, this.settlementAmount);
 		readOnlyComponent(true, this.settlementEndAfterGrace);
 		readOnlyComponent(true, this.noOfGraceDays);
+		readOnlyComponent(true, this.btnNewSettlementSchedule);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

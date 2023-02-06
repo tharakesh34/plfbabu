@@ -17,25 +17,21 @@
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
 							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" sclass="z-toolbarbutton"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" sclass="z-toolbarbutton"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								sclass="z-toolbarbutton"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								sclass="z-toolbarbutton"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								sclass="z-toolbarbutton" autodisable="btnNew,btnEdit,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-								sclass="z-toolbarbutton"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								sclass="z-toolbarbutton" autodisable="btnNew,btnEdit,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
 						<toolbar align="center" sclass="toolbar-center">
-							<label id="windowSettlementDialogTitle" value="${c:l('window_SettlementDialog.title')}" sclass="label-heading" />
+							<label id="windowSettlementDialogTitle" value="${c:l('window_SettlementDialog.title')}"
+								sclass="label-heading" />
 						</toolbar>
 
 						<!-- CRUD BUTTONS -->
@@ -47,176 +43,156 @@
 					</hbox>
 				</div>
 			</north>
-			
+
 			<center border="none" autoscroll="true">
 				<div width="100%" height="100%">
-					<tabbox width="100%">
-						<tabs id="tabsIndexCenter" style="padding:10px 0px 0px 10px">
-							<tab label="${c:l('label_SettlementDetails.value')}" id="settlementDetails" />
-						</tabs>
-						<tabpanels id="tabpanelsBoxIndexCenter">
-							<tabpanel style="overflow:auto">
-								<groupbox closable="false">
-									<caption label="${c:l('gb_Settlement')}" />
-									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-										<columns>
-											<column width="250px" />
-											<column />
-											<column width="250px" />
-											<column />
-										</columns>
-										<rows>
-											<row>
-												<label value="${c:l('label_SettlementDialog_FinReference.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<textbox id="finReference" width="200px" />
-													<button id="btnSearchFinreference"
-														tooltiptext="${c:l('label_ReceiptDialog_FinReference.value')}" image="/images/icons/more.png" />
-												</hbox>
-											</row>
-											<row>
-												<label value="${c:l('label_SettlementDialog_SettlementType.value')}" />
-												<extendedcombobox id="settlementType" />
+					<groupbox closable="false">
+						<caption label="${c:l('gb_Settlement')}" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="250px" />
+								<column />
+								<column width="250px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_SettlementDialog_FinReference.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="finReference" width="200px" />
+										<button id="btnSearchFinreference"
+											tooltiptext="${c:l('label_ReceiptDialog_FinReference.value')}" image="/images/icons/more.png" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_SettlementDialog_SettlementType.value')}" />
+									<extendedcombobox id="settlementType" />
 
-												<label id="label_SettlementStatus"
-													value="${c:l('label_SettlementDialog_SettlementStatus.value')}" />
-												<hbox>
-													<combobox id="settlementStatus" width="200px" />
-												</hbox>
-											</row>
+									<label id="label_SettlementStatus"
+										value="${c:l('label_SettlementDialog_SettlementStatus.value')}" />
+									<hbox>
+										<combobox id="settlementStatus" width="200px" />
+									</hbox>
+								</row>
 
-											<row>
-												<label value="${c:l('label_SettlementDialog_StartDate.value')}" />
-												<hbox>
-													<space spacing="2px" sclass="mandatory" />
-													<datebox id="startDate" width="200px" />
-												</hbox>
+								<row>
+									<label value="${c:l('label_SettlementDialog_StartDate.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<datebox id="startDate" width="200px" />
+									</hbox>
 
-												<label value="${c:l('label_SettlementDialog_OTSDate.value')}" />
-												<hbox>
-													<space spacing="2px" sclass="mandatory" />
-													<datebox id="otsDate" width="200px" />
-												</hbox>
-											</row>
+									<label value="${c:l('label_SettlementDialog_OTSDate.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<datebox id="otsDate" width="200px" />
+									</hbox>
+								</row>
 
-											<row>
-												<label value="${c:l('label_SettlementDialog_SettlementReason.value')}" />
-												<extendedcombobox id="settlementReason" />
+								<row>
+									<label value="${c:l('label_SettlementDialog_SettlementReason.value')}" />
+									<extendedcombobox id="settlementReason" />
 
-												<label value="${c:l('label_SettlementDialog_EndDate.value')}" />
-												<hbox>
-													<space spacing="2px" sclass="mandatory" />
-													<datebox id="endDate" width="200px" />
-												</hbox>
-											</row>
+									<label value="${c:l('label_SettlementDialog_EndDate.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<datebox id="endDate" width="200px" />
+									</hbox>
+								</row>
 
-											<row>
-												<label value="${c:l('label_SettlementDialog_SettlementAmount.value')}" />
-												<hbox>
-													<currencyBox id="settlementAmount" width="200px" />
-												</hbox>
-											</row>
+								<row>
+									<label value="${c:l('label_SettlementDialog_SettlementAmount.value')}" />
+									<hbox>
+										<currencyBox id="settlementAmount" width="200px" />
+									</hbox>
+								</row>
 
-											<row>
-												<label value="${c:l('label_SettlementDialog_NoOfGraceDays.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<longbox id="noOfGraceDays" width="200px" disabled="true" />
-												</hbox>
+								<row>
+									<label value="${c:l('label_SettlementDialog_NoOfGraceDays.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<longbox id="noOfGraceDays" width="200px" disabled="true" />
+									</hbox>
 
-												<label
-													value="${c:l('label_SettlementDialog_SettlementEndAfterGrace.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<datebox id="settlementEndAfterGrace" width="200px" />
-												</hbox>
-											</row>
-											<row id="cancellationReason" visible="false">
-												<label
-													value="${c:l('label_SettlementDialog_CancellationReasonCode.value')}" />
-												<extendedcombobox id="cancelReasonCode" />
+									<label value="${c:l('label_SettlementDialog_SettlementEndAfterGrace.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<datebox id="settlementEndAfterGrace" width="200px" />
+									</hbox>
+								</row>
+								<row id="cancellationReason" visible="false">
+									<label value="${c:l('label_SettlementDialog_CancellationReasonCode.value')}" />
+									<extendedcombobox id="cancelReasonCode" />
 
-												<label
-													value="${c:l('label_SettlementDialog_CancellationRemarks.value')}" />
-												<hbox>
-													<space spacing="2px" sclass="mandatory" />
-													<textbox id="cancelRemarks" width="200px" />
-												</hbox>
-											</row>
-										</rows>
-									</grid>
-								</groupbox>
+									<label value="${c:l('label_SettlementDialog_CancellationRemarks.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="cancelRemarks" width="200px" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
 
-								<groupbox closable="false">
-									<caption label="${c:l('label_ReceiptDialog_ReceivableDetails')}" />
-									<listbox id="listBoxPastdues" fixedLayout="true" sizedByContent="true" span="true"
-										emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false">
-										<listhead sizable="false" style="padding:0px;position:relative;">
-											<listheader label="${c:l('listheader_ReceiptDialog_Receivables.label')}"
-												sort="false" hflex="min" />
-											<listheader
-												label="${c:l('listheader_ReceiptDialog_CurrentReceivable.label')}" align="right" sort="false" hflex="min" />
-											<listheader label="${c:l('listheader_ReceiptDialog_WaivedAmount.label')}"
-												align="right" sort="false" hflex="min" />
-											<listheader
-												label="${c:l('listheader_ReceiptDialog_BalanceDueAmount.label')}" align="right" sort="false" hflex="min" />
-										</listhead>
-									</listbox>
-								</groupbox>
+					<groupbox closable="false">
+						<caption label="${c:l('label_ReceiptDialog_ReceivableDetails')}" />
+						<listbox id="listBoxPastdues" fixedLayout="true" sizedByContent="true" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false">
+							<listhead sizable="false" style="padding:0px;position:relative;">
+								<listheader label="${c:l('listheader_ReceiptDialog_Receivables.label')}" sort="false"
+									hflex="min" />
+								<listheader label="${c:l('listheader_ReceiptDialog_CurrentReceivable.label')}"
+									align="right" sort="false" hflex="min" />
+								<listheader label="${c:l('listheader_ReceiptDialog_WaivedAmount.label')}" align="right"
+									sort="false" hflex="min" />
+								<listheader label="${c:l('listheader_ReceiptDialog_BalanceDueAmount.label')}"
+									align="right" sort="false" hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
 
-								<groupbox sclass="gb_dialog">
-									<caption label="${c:l('gb_SettlementSchedule')}" />
-									<div sclass="z-toolbar" style="padding:0">
-										<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
-											style=" padding:0px;">
-											<toolbar align="start" style="border:none;">
-												<label value="${c:l('label_SettlementSchedule.value')}"
-													sclass="listboxHeading">
-												</label>
-											</toolbar>
-											<toolbar align="end"
-												style="float:right; border-style: none; padding:0px;">
-												<button id="btnNewSettlementSchedule" label="${c:l('label_New')}"
-													tooltiptext="${c:l('btnNew_SettlementSchedule.tooltiptext')}" autodisable="btnNew_SettlementSchedule" />
-											</toolbar>
-										</hbox>
-									</div>
-									<listbox id="listBoxSettlementSchedule" span="true" sizedByContent="true"
-										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
-										emptyMessage="${c:l('listbox.emptyMessage')}">
-										<listhead sizable="true">
-											<listheader label="${c:l('listheader_Sr.No.label')}" sort="false"
-												hflex="min" />
-											<listheader label="${c:l('listheader_SettlementInstalDate.label')}"
-												sort="false" hflex="min" />
-											<listheader label="${c:l('listheader_settlementAmount.label')}" sort="false"
-												hflex="min" />
-											<listheader label="${c:l('listheader_RecordStatus.label')}" sort="false"
-												hflex="min" visible="false" />
-											<listheader label="${c:l('listheader_RecordType.label')}" sort="false"
-												hflex="min" />
-										</listhead>
-									</listbox>
-									<listbox id="listBoxSettlementScheduleInlineEdit" span="true" sizedByContent="true"
-										width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
-										<listhead sizable="true">
-											<listheader label="${c:l('listheader_Sr.No.label')}" sort="false"
-												width="150px" />
-											<listheader label="${c:l('listheader_SettlementInstalDate.label')}"
-												sort="false" width="250px" />
-											<listheader label="${c:l('listheader_settlementAmount.label')}" sort="false"
-												width="310px" />
-											<listheader label="${c:l('listheader_RecordType.label')}" sort="false"
-												width="100px" />
-											<listheader sort="false" width="100px" />
-										</listhead>
-									</listbox>
-								</groupbox>
-
-							</tabpanel>
-						</tabpanels>
-					</tabbox>
+					<groupbox sclass="gb_dialog">
+						<caption label="${c:l('gb_SettlementSchedule')}" />
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;">
+								<toolbar align="start" style="border:none;">
+									<label value="${c:l('label_SettlementSchedule.value')}" sclass="listboxHeading">
+									</label>
+								</toolbar>
+								<toolbar align="end" style="float:right; border-style: none; padding:0px;">
+									<button id="btnNewSettlementSchedule" label="${c:l('label_New')}"
+										tooltiptext="${c:l('btnNew_SettlementSchedule.tooltiptext')}" autodisable="btnNew_SettlementSchedule" />
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox id="listBoxSettlementSchedule" span="true" sizedByContent="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}">
+							<listhead sizable="true">
+								<listheader label="${c:l('listheader_Sr.No.label')}" sort="false" hflex="min" />
+								<listheader label="${c:l('listheader_SettlementInstalDate.label')}" sort="false"
+									hflex="min" />
+								<listheader label="${c:l('listheader_settlementAmount.label')}" sort="false"
+									hflex="min" />
+								<listheader label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min"
+									visible="false" />
+								<listheader label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
+							</listhead>
+						</listbox>
+						<listbox id="listBoxSettlementScheduleInlineEdit" span="true" sizedByContent="true" width="100%"
+							multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+							<listhead sizable="true">
+								<listheader label="${c:l('listheader_Sr.No.label')}" sort="false" width="150px" />
+								<listheader label="${c:l('listheader_SettlementInstalDate.label')}" sort="false"
+									width="250px" />
+								<listheader label="${c:l('listheader_settlementAmount.label')}" sort="false"
+									width="310px" />
+								<listheader label="${c:l('listheader_RecordType.label')}" sort="false" width="100px" />
+								<listheader sort="false" width="100px" />
+							</listhead>
+						</listbox>
+					</groupbox>
 				</div>
 			</center>
 			<south id="south" sclass="south-dialog">
