@@ -253,9 +253,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			registerField("PartnerBankCode", partnerBank, SortOrder.NONE, sortOperator_partnerBank, Operators.STRING);
 		}
 
-		registerField("branchOrCluster", branchOrCluster, SortOrder.NONE, sortOperator_BranchOrCluster,
-				Operators.STRING);
-
 		// Render the page and display the data.
 		doRenderPage();
 		this.mandateIdMap.clear();
