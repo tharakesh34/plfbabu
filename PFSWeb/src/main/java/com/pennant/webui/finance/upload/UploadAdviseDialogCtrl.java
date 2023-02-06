@@ -830,6 +830,12 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 					error = true;
 				}
 			}
+
+			if (manualAdviseService.isManualAdviseExist(fm.getFinID())) {
+				reason.append("Not allowed to maintain the LAN as It is already initiated for Manual Advise.");
+				error = true;
+			}
+
 			/*
 			 * FinanceMain finMain1 = financeMainService.getFinanceMainDetails(finReference, "_temp"); if (finMain1 !=
 			 * null && (FinServiceEvent.ADDDISB.equals(finMain1. getRcdMaintainSts()) ||
