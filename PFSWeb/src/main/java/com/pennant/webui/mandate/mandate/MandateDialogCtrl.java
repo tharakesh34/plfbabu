@@ -1840,7 +1840,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.mandateStatus.setConstraint(new StaticListValidator(MandateUtil.getMandateStatus(),
 						Labels.getLabel("label_MandateDialog_Status.value")));
 			}
-			aMandate.setStatus(this.mandateStatus.getSelectedItem().getValue().toString());
+			aMandate.setStatus(this.mandateStatus.getSelectedItem() == null ? "#"
+					: this.mandateStatus.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
