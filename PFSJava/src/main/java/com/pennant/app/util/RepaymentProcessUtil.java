@@ -1579,8 +1579,8 @@ public class RepaymentProcessUtil {
 			if (ReceiptMode.EXCESS.equals(rcd.getPaymentType()) || ReceiptMode.EMIINADV.equals(rcd.getPaymentType())
 					|| ReceiptMode.ADVINT.equals(rcd.getPaymentType())
 					|| ReceiptMode.ADVEMI.equals(rcd.getPaymentType())
-					|| ReceiptMode.CASHCLT.equals(rcd.getPaymentType())
-					|| ReceiptMode.DSF.equals(rcd.getPaymentType())) {
+					|| ReceiptMode.CASHCLT.equals(rcd.getPaymentType()) || ReceiptMode.DSF.equals(rcd.getPaymentType())
+					|| ReceiptMode.TEXCESS.equals(rcd.getPaymentType())) {
 
 				long payAgainstID = rcd.getPayAgainstID();
 
