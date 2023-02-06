@@ -171,7 +171,7 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		Long finID = financeMainDAO.getFinIDByFinReference(reference, "", false);
+		Long finID = financeMainDAO.getFinID(reference);
 
 		if (StringUtils.isBlank(reference)) {
 			setError(detail, PaymentUploadError.HOLDUP001);
