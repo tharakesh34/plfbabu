@@ -172,9 +172,8 @@ public class ClosureService {
 
 	private void updateTerminationExcessAmount(FinEODEvent finEODEvent, BigDecimal receiptAmt) {
 		List<FinExcessAmount> finExcessAmounts = finEODEvent.getFinExcessAmounts();
-		String finReference = finEODEvent.getFinanceMain().getFinReference();
 		BigDecimal balns = BigDecimal.ZERO;
-		BigDecimal amount = BigDecimal.ZERO;
+		// BigDecimal amount = BigDecimal.ZERO;
 		BigDecimal utilized = BigDecimal.ZERO;
 
 		for (FinExcessAmount finex : finExcessAmounts) {
@@ -190,16 +189,16 @@ public class ClosureService {
 				if (receiptAmt.compareTo(excesAmt) >= 0) {
 					balns = BigDecimal.ZERO;
 					utilized = excesAmt;
-					amount = BigDecimal.ZERO;
+					// amount = BigDecimal.ZERO;
 					receiptAmt = receiptAmt.subtract(utilized);
 				} else if (excesAmt.compareTo(receiptAmt) >= 0) {
 					balns = excesAmt.subtract(receiptAmt);
-					amount = balns;
+					// amount = balns;
 					utilized = receiptAmt;
 					receiptAmt = receiptAmt.subtract(utilized);
 				}
 
-				finExcessAmountDAO.updateTerminationExcess(finReference, excessID, utilized, balns, amount);
+				finExcessAmountDAO.updateTerminationExcess(excessID, utilized, balns);
 			}
 		}
 	}
@@ -265,7 +264,7 @@ public class ClosureService {
 		rd.setFinanceDetail(fd);
 		rd.setTdPriBal(finEODEvent.getFinProfitDetail().getTdSchdPriBal());
 		rd.setReceiptHeader(frh);
-		
+
 		return rd;
 	}
 
