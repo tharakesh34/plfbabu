@@ -2306,4 +2306,15 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
 	}
+
+	@Override
+	public boolean isunAdjustablePayables(long finID) {
+		String sql = "Select Count(AdviseId) From ManualAdvise Where FinId = ? and AdviseType = ? and (Adviseamount - PaidAmount - WaivedAmount) > ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, AdviseType.PAYABLE.id(),
+				BigDecimal.ZERO) > 0;
+	}
+
 }

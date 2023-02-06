@@ -79,4 +79,6 @@ public interface ManualAdviseService {
 	boolean isPaybleExist(long finID, long feeTypeID, String linkTo);
 
 	boolean isManualAdviseExist(long finID);
+
+	boolean isunAdjustablePayables(long finID);
 }

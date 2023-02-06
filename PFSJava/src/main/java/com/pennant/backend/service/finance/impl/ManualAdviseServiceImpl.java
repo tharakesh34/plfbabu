@@ -1003,6 +1003,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return eligibleAmt.compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : eligibleAmt;
 	}
 
+	@Override
 	public boolean isDuplicatePayble(long finID, long feeTypeId, String linkTo) {
 		return manualAdviseDAO.isDuplicatePayble(finID, feeTypeId, linkTo);
 	}
@@ -1011,6 +1012,17 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public boolean isPaybleExist(long finID, long feeTypeID, String linkTo) {
 		return manualAdviseDAO.isPaybleExist(finID, feeTypeID, linkTo);
 	}
+	
+	@Override
+	public boolean isManualAdviseExist(long finID) {
+		return manualAdviseDAO.isManualAdviseExist(finID);
+	}
+
+	@Override
+	public boolean isunAdjustablePayables(long finID) {
+		return manualAdviseDAO.isunAdjustablePayables(finID);
+	}
+
 
 	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
@@ -1050,11 +1062,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Autowired
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
-	}
-
-	@Override
-	public boolean isManualAdviseExist(long finID) {
-		return manualAdviseDAO.isManualAdviseExist(finID);
 	}
 
 }

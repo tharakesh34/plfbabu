@@ -1,5 +1,6 @@
 package com.pennant.pff.settlement.web;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +23,13 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.ManualAdviseService;
+import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -58,6 +62,8 @@ public class SelectSettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader>
 	private transient SettlementListCtrl settlementListCtrl;
 	private transient FinanceDetailService financeDetailService;
 	private transient FeeWaiverHeaderService feeWaiverHeaderService;
+	private transient ManualAdviseService manualAdviseService;
+	private transient PaymentHeaderService paymentHeaderService;
 
 	public SelectSettlementDialogCtrl() {
 		super();
@@ -178,6 +184,21 @@ public class SelectSettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader>
 			fm.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 
+		if (manualAdviseService.isunAdjustablePayables(fm.getFinID())) {
+			MessageUtil.showError("Loan having Pending Payables, unable to proceed.");
+			return;
+		}
+
+		List<FinExcessAmount> excessAmt = paymentHeaderService.getfinExcessAmount(fm.getFinID());
+		
+		for (FinExcessAmount fea : excessAmt) {
+			if (fea.getBalanceAmt().compareTo(BigDecimal.ZERO) > 0
+					|| fea.getReservedAmt().compareTo(BigDecimal.ZERO) > 0) {
+				MessageUtil.showError("Loan having Balance amount in Excess, unable to proceed.");
+				return;
+			}
+		}
+
 		String nextroleCode = fm.getNextRoleCode();
 		if (nextroleCode == null) {
 			List<FeeWaiverHeader> waivers = feeWaiverHeaderService.getFeeWaiverHeaderByFinReference(finID, "");
@@ -292,6 +313,16 @@ public class SelectSettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader>
 	@Autowired
 	public void setFeeWaiverHeaderService(FeeWaiverHeaderService feeWaiverHeaderService) {
 		this.feeWaiverHeaderService = feeWaiverHeaderService;
+	}
+
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
+	}
+
+	@Autowired
+	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
+		this.paymentHeaderService = paymentHeaderService;
 	}
 
 }
