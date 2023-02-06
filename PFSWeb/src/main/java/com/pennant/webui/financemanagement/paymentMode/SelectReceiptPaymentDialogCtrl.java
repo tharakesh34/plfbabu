@@ -241,6 +241,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		}
 		this.receiptDues.setValue(BigDecimal.ZERO);
+		this.receiptData.setExcessAvailable(BigDecimal.ZERO);
 	}
 
 	public void loadValueDate() {
