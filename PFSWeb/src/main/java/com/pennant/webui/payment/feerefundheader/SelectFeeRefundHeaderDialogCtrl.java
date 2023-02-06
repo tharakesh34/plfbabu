@@ -152,8 +152,8 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 			return;
 		}
 
-		if (StringUtils.equals(UploadConstants.HOLD_REFUND_FLAG, holdStatus)) {
-			MessageUtil.showMessage("label_PaymentHeaderDialog_HoldLoan");
+		if (UploadConstants.HOLD_REFUND_FLAG.equals(holdStatus)) {
+			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_HoldLoan"));
 			return;
 		}
 
