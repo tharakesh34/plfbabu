@@ -310,7 +310,10 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		fsi.setRequestSource(RequestSource.UPLOAD);
 		fsi.setLoggedInUser(fc.getUserDetails());
 		fsi.setKnockOffReceipt(true);
-		fsi.setAdviseId(fc.getAdviseId());
+
+		if (!"E".equals(fc.getExcessType()) && !"A".equals(fc.getExcessType())) {
+			fsi.setAdviseId(fc.getAdviseId());
+		}
 
 		FinanceDetail fd = receiptService.receiptTransaction(fsi);
 

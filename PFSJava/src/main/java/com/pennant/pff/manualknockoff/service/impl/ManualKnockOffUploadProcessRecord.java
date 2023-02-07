@@ -98,14 +98,21 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 			alloc.setCode(allocationType.toUpperCase());
 
 			String strAmount = cell.toString();
-			if (strAmount != null) {
-				alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
-			} else {
-				alloc.setAmount(BigDecimal.ZERO);
+
+			if (StringUtils.isNotEmpty(strAmount)) {
+				BigDecimal str = BigDecimal.ZERO;
+
+				try {
+					str = new BigDecimal(strAmount);
+				} catch (NumberFormatException e) {
+					throw new AppException("Invalid amount");
+				}
+
+				if (str.compareTo(BigDecimal.ZERO) > 0) {
+					alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+					allocations.add(alloc);
+				}
 			}
-
-			allocations.add(alloc);
-
 			index++;
 
 			if (index == 23) {
