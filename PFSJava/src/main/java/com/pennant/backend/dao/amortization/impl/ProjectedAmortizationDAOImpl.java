@@ -535,7 +535,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	public boolean isAmortizationLogExist() {
 		String sql = "Select count(Id) from AmortizationLog where Status in (?, ?)";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, 0, 1) > 0;
 	}

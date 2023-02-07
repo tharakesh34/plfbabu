@@ -219,16 +219,16 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, id, finID);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, id, finID);
 	}
 
 	@Override
 	public String getStatus(long id) {
 		String sql = "Select status From Due_Diligence_Checklist Where id = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), String.class, id);
+		return this.jdbcOperations.queryForObject(sql, String.class, id);
 	}
 
 }

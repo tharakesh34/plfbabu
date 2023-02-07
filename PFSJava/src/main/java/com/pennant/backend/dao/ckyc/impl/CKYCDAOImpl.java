@@ -285,13 +285,13 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		logger.debug("Entering");
 
 		String sqlCkycDtl20 = "Truncate TABLE ckycdtl20 ";
-		jdbcTemplate.update(sqlCkycDtl20.toString(), new HashMap<String, Object>());
+		jdbcTemplate.update(sqlCkycDtl20, new HashMap<String, Object>());
 		String sqlCkycDtl30 = "Truncate TABLE ckycdtl30 ";
-		jdbcTemplate.update(sqlCkycDtl30.toString(), new HashMap<String, Object>());
+		jdbcTemplate.update(sqlCkycDtl30, new HashMap<String, Object>());
 		String sqlCkycDtl60 = "Truncate TABLE ckycdtl60 ";
-		jdbcTemplate.update(sqlCkycDtl60.toString(), new HashMap<String, Object>());
+		jdbcTemplate.update(sqlCkycDtl60, new HashMap<String, Object>());
 		String sqlCkycDtl70 = "Truncate TABLE ckycdtl70 ";
-		jdbcTemplate.update(sqlCkycDtl70.toString(), new HashMap<String, Object>());
+		jdbcTemplate.update(sqlCkycDtl70, new HashMap<String, Object>());
 
 		logger.debug("Leaving");
 		return true;

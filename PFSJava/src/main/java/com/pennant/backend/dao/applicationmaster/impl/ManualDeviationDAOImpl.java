@@ -103,7 +103,7 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 		source.addValue("Productdevid", deviationID);
 
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + DESC_QUERY.toString());
+		logger.trace(Literal.SQL + DESC_QUERY);
 
 		ManualDeviation manualDeviation = new ManualDeviation();
 		manualDeviation.setDeviationID(deviationID);
@@ -111,7 +111,7 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 		RowMapper<ManualDeviation> rowMapper = BeanPropertyRowMapper.newInstance(ManualDeviation.class);
 
 		try {
-			manualDeviation = jdbcTemplate.queryForObject(DESC_QUERY.toString(), source, rowMapper);
+			manualDeviation = jdbcTemplate.queryForObject(DESC_QUERY, source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			manualDeviation = null;
 		}
