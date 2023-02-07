@@ -305,6 +305,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 				this.partnerBank.setMaxlength(14);
 				this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 
+				Filter[] filter = new Filter[1];
+				filter[0] = new Filter("Purpose", "R", Filter.OP_EQUAL);
+				this.partnerBank.setFilters(filter);
+
 				this.branchOrCluster.setButtonDisabled(false);
 				this.branchOrCluster.setMandatoryStyle(true);
 
@@ -392,7 +396,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		Long clusterId = null;
 		List<String> branchlist = new ArrayList<String>();
 
-		Filter[] filters = new Filter[1];
+		Filter[] filters = new Filter[2];
 
 		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			filters[0] = new Filter("BranchCode", branchCode, Filter.OP_EQUAL);
@@ -415,6 +419,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 				this.partnerBank.setErrorMessage("please configure the branch with partnerbank.");
 				this.partnerBank.setButtonDisabled(true);
 			}
+		}
+
+		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION && PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			filters[1] = new Filter("Purpose", "R", Filter.OP_EQUAL);
 		}
 
 		List<FinTypePartnerBank> list = finTypePartnerBankService.getFintypePartnerBankByBranch(branchlist, clusterId);

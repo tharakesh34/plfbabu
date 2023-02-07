@@ -2661,9 +2661,11 @@ public class PennantJavaUtil {
 						new String[] { "AccountMapping", "AccountMapping_AView" }, hostGLMapping_WF,
 						new String[] { "Account", "HostAccount" }, null, 600));
 
-		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
-				new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
-				new String[] { "PartnerBankCode", "PartnerBankName" }, new Object[][] { { "Active", "0", 1 } }, 450));
+		ModuleUtil.register("FinTypePartner",
+				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
+						new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
+						new String[] { "FinType", "PartnerBankCode", "PartnerBankName", "PaymentMode" },
+						new Object[][] { { "Active", "0", 1 } }, 450));
 
 		ModuleUtil.register("Locality",
 				new ModuleMapping("Locality", Locality.class, new String[] { "Locality", "Locality_AView" }, masterWF,

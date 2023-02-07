@@ -2553,12 +2553,5 @@
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
-		
-	<menuItem id="menu_Item_CrossLoanKnockOff_Maker"
-				zulNavigation="/WEB-INF/pages/CrossLoanKnockOff/CrossLoanKnockOffList.zul?stage=M"
-				rightName="" />
-	<menuItem id="menu_Item_CrossLoanKnockOff_Approver"
-				zulNavigation="/WEB-INF/pages/CrossLoanKnockOff/CrossLoanKnockOffList.zul?stage=A"
-				rightName="" />
 
 </ns2:XMLRootMenu>
