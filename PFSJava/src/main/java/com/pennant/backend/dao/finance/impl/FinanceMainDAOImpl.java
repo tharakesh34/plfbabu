@@ -1324,7 +1324,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	private void doReject(String sql, long finID) {
 		logger.debug(Literal.SQL + sql);
-		this.jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(sql, ps -> {
 			ps.setLong(1, finID);
 		});
 	}
@@ -1644,9 +1644,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<String> getScheduleEffectModuleList(boolean schdChangeReq) {
 		String sql = "Select ModuleName FROM ScheduleEffectModule Where SchdCanModify = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForList(sql.toString(), String.class, schdChangeReq);
+		return this.jdbcOperations.queryForList(sql, String.class, schdChangeReq);
 	}
 
 	@Override
@@ -2438,7 +2438,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			break;
 		}
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
 
@@ -2925,9 +2925,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public void updateAssignmentId(long finID, long assignmentId) {
 		String sql = "Update FinanceMain Set AssignmentId = ? Where FinID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			ps.setLong(1, assignmentId);
 			ps.setLong(2, finID);
 		});
@@ -3864,7 +3864,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				FinanceMain fm = new FinanceMain();
 
 				fm.setFinType(rs.getString("FinType"));
@@ -5575,10 +5575,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(String finReference) {
 		String sql = getBasicFieldsQuery(TableType.BOTH_TAB, true);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), finReference, finReference);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), finReference, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -5589,7 +5589,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(String finReference, TableType tableType) {
 		String sql = getBasicFieldsQuery(tableType, true);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		Object[] parameters = null;
 		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
@@ -5599,7 +5599,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), parameters);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), parameters);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -5610,10 +5610,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(long finID) {
 		String sql = getBasicFieldsQuery(TableType.BOTH_TAB, false);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), finID, finID);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), finID, finID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -5624,7 +5624,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(long finID, TableType tableType) {
 		String sql = getBasicFieldsQuery(tableType, false);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		Object[] parameters = null;
 		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
@@ -5634,7 +5634,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), parameters);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), parameters);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

@@ -944,7 +944,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	public boolean isScheduleInQueue(long finID) {
 		String sql = "Select count(FinID) from FinScheduleDetails_Temp where FinID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
 	}
@@ -1037,7 +1037,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
 	}
 
 	/**
@@ -1110,9 +1110,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	public Long getSchdDueInvoiceID(long finID, Date schdate) {
 		String sql = "Select InvoiceID From ScheduleDueTaxDetails Where FinID = ? and SchDate = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finID, schdate);
+			return this.jdbcOperations.queryForObject(sql, Long.class, finID, schdate);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -1123,7 +1123,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	public void updateTDSChange(List<FinanceScheduleDetail> schedules) {
 		String sql = "Update FinScheduleDetails Set TDSAmount = ? Where FinID = ? and SchDate = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -1197,7 +1197,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	public List<Date> getScheduleDates(long finID, Date valueDate) {
 		String sql = "Select SchDate From FinScheduleDetails Where FinID = ? and PftOnSchDate = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		List<Date> list = this.jdbcOperations.query(sql, ps -> {
 			ps.setLong(1, finID);

@@ -541,9 +541,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	public List<ManualAdviseReserve> getPayableReserveList(long receiptSeqID) {
 		String sql = "Select ReceiptSeqID, AdviseID, ReservedAmt From ManualAdviseReserve Where ReceiptSeqID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		return this.jdbcOperations.query(sql, ps -> {
 			int index = 1;
 			ps.setLong(index, receiptSeqID);
 		}, (rs, rowNum) -> {
@@ -564,7 +564,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				ManualAdviseReserve mar = new ManualAdviseReserve();
 
 				mar.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
@@ -640,7 +640,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL + sql);
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
 			ps.setBigDecimal(index++, reserveAmt);
@@ -660,7 +660,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL);
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
 			ps.setBigDecimal(index++, reserveAmt);
@@ -708,7 +708,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	public void reverseUtilise(long adviseID, BigDecimal amount) {
 		String sql = "Update ManualAdvise Set PaidAmount = PaidAmount - ?, BalanceAmt = BalanceAmt + ?, HoldDue = ? Where AdviseID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
@@ -1342,7 +1342,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, adviseID);
+			return this.jdbcOperations.queryForObject(sql, Long.class, adviseID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

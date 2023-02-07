@@ -265,13 +265,13 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 	public ExtCreditReviewConfig getExtCreditReviewConfigDetails(ExtCreditReviewConfig extCreditReviewConfig) {
 		String sql = "select * from BREExtCreditReviewConfig where CreditReviewType = :CreditReviewType";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extCreditReviewConfig);
 		RowMapper<ExtCreditReviewConfig> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtCreditReviewConfig.class);
 
 		try {
-			extCreditReviewConfig = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			extCreditReviewConfig = jdbcTemplate.queryForObject(sql, beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			extCreditReviewConfig = null;
 		}
@@ -283,7 +283,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 	public ExtBreDetails getExtBreDetailsByRef(long finID) {
 		String sql = "Select * From EXTBreDetails Where FinID = :FinID";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinID", finID);
