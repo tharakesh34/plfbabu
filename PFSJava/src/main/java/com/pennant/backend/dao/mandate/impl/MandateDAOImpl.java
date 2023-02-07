@@ -1259,7 +1259,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 	@Override
 	public BigDecimal getMaxRepayAmount(String finreference) {
-		StringBuilder sql = new StringBuilder("Select max(RepayAmount) From (");
+		StringBuilder sql = new StringBuilder("Select Coalesce(max(RepayAmount),0) From (");
 		sql.append(" Select RepayAmount From FinScheduleDetails_Temp schd");
 		sql.append(" Inner Join FinanceMain_Temp fm on fm.FinId = schd.FinId and fm.finreference = ?");
 		sql.append(" Union all");
