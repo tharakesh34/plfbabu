@@ -541,6 +541,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		} else if (StringUtils.equals(RuleConstants.EVENT_CUSTOMER, event)) {
 			this.label_RuleTitle
 					.setValue("Customer " + Labels.getLabel("window_RuleDialog_" + ruleModuleName + ".title"));
+		} else if (RuleConstants.EVENT_AUTOTREFUND.equals(event)) {
+			this.label_RuleTitle.setValue("Auto Refund Reserve " + Labels.getLabel("window_RuleDialog.title"));
 		} else {
 			this.label_RuleTitle.setValue(Labels.getLabel("window_RuleDialog_" + ruleModuleName + ".title"));
 		}
