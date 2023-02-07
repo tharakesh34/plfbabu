@@ -11,6 +11,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.extension.PartnerBankExtension;
 
@@ -54,7 +55,7 @@ public class FinTypePartnerbankListModelItemRenderer implements ListitemRenderer
 		lc = new Listcell(finTypePartnerBank.getRecordStatus());
 		lc.setParent(item);
 
-		lc = new Listcell(finTypePartnerBank.getRecordType());
+		lc = new Listcell(PennantJavaUtil.getLabel(finTypePartnerBank.getRecordType()));
 		lc.setParent(item);
 
 		item.setAttribute("data", finTypePartnerBank);
