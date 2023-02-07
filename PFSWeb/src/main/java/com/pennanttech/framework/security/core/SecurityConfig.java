@@ -19,12 +19,10 @@ import org.springframework.security.web.authentication.session.CompositeSessionA
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.session.ConcurrentSessionFilter;
-import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.web.security.filter.AuthenticationFormFilter;
-import com.pennanttech.pennapps.web.security.filter.SessionFixationProtectionFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -39,8 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private LogoutFilter logoutFilter;
 	@Autowired
 	private ConcurrentSessionFilter concurrencyFilter;
-	@Autowired
-	private SessionFixationProtectionFilter sessionFixationProtectionFilter;
 	@Autowired
 	private RequestMatcher csrfRequestMatcher;
 	@Autowired
@@ -82,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.addFilter(authenticationFilter);
 		http.addFilterBefore(logoutFilter, LogoutFilter.class);
 		http.addFilter(concurrencyFilter);
-		http.addFilterAfter(sessionFixationProtectionFilter, SessionManagementFilter.class);
+		/* http.addFilterAfter(sessionFixationProtectionFilter, SessionManagementFilter.class); */
 		http.antMatcher("/**").authorizeRequests().antMatchers("/", "/pages/**", "/WEB-INF/pages/**").authenticated()
 				.and().httpBasic();
 
@@ -90,7 +86,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.headers().cacheControl();
 		http.headers().contentTypeOptions();
-		// http.headers().frameOptions("");
+		http.headers().frameOptions().sameOrigin();
 		http.headers().httpStrictTransportSecurity();
 
 		http.headers().addHeaderWriter(new StaticHeadersWriter("Server", App.getProperty("server.server-header")));
@@ -113,7 +109,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.headers().cacheControl();
 		http.headers().contentTypeOptions();
-		// http.headers().frameOptions("");
+		http.headers().frameOptions().sameOrigin();
 		http.headers().httpStrictTransportSecurity();
 
 		http.headers().addHeaderWriter(new StaticHeadersWriter("Server", App.getProperty("server.server-header")));

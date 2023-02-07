@@ -98,8 +98,8 @@
 		</beans:property>
 	</beans:bean>
 
-	<beans:bean id="sessionFixationProtectionFilter" class="com.pennanttech.pennapps.web.security.filter.SessionFixationProtectionFilter" 
-		/>
+	<!-- <beans:bean id="sessionFixationProtectionFilter" class="com.pennanttech.pennapps.web.security.filter.SessionFixationProtectionFilter" 
+		/> -->
 
 	<beans:bean id="sas"
 		class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">

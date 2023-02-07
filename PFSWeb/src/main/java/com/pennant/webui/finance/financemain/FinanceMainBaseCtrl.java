@@ -2191,7 +2191,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (PennantConstants.OLD_CREDITREVIEWTAB.equals(creditReviewTabVersion) && tabVisible && !restructure) {
 			appendCreditReviewDetailTab(false);
 		} else if (PennantConstants.NEW_CREDITREVIEWTAB.equals(creditReviewTabVersion) && tabVisible && !restructure) {
-			appendCreditReviewDetailSummaryTab(false);
+			appendCreditReviewDetailSummaryTab(false, false);
 		}
 
 		// Show Accounting Tab Details Based upon Role Condition using Work flow
@@ -3396,7 +3396,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					.equalsIgnoreCase(SysParamUtil.getValueAsString(SMTParameterConstants.EXTCREDITREVIEW_TAB))) {
 				appendExtCreditReviewDetailSummaryTab(true);
 			} else {
-				appendCreditReviewDetailSummaryTab(true);
+				appendCreditReviewDetailSummaryTab(true, false);
 				refershCreditReviewDetailSummaryTab();
 			}
 			break;
@@ -5040,7 +5040,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Credit Review Details Data in finance
 	 */
-	private void appendCreditReviewDetailSummaryTab(boolean onLoadProcess) {
+	private void appendCreditReviewDetailSummaryTab(boolean onLoadProcess, boolean isValidationAlw) {
 		boolean createTab = false;
 
 		if (getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY) == null) {
@@ -5075,6 +5075,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		map.put("financeMainDialogCtrl", this);
 		map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY));
+		map.put("isValidationAlw", isValidationAlw);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceSpreadSheet.zul",
@@ -7726,6 +7727,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Finance Fee Details
 		if (finFeeDetailListCtrl != null) {
+			finFeeDetailListCtrl.setFinanceDetail(afd);
 			finFeeDetailListCtrl.processFeeDetails(afd.getFinScheduleData(), false);
 		}
 
@@ -11019,13 +11021,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.eligibilityMethod.setValue("");
 			this.eligibilityMethod.setDescription("");
 			this.eligibilityMethod.setAttribute("FieldCodeId", null);
+			this.eligibilityMethod.setAttribute("prevEligiBility", null);
+			refershCreditReviewDetailSummaryTab();
 		} else {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
 				this.eligibilityMethod.setAttribute("FieldCodeId", details.getFieldCodeId());
+				String prevEligiBility = (String) this.eligibilityMethod.getAttribute("prevEligiBility");
+				if (prevEligiBility == null || !(prevEligiBility.equals(details.getFieldCode()))) {
+					refershCreditReviewDetailSummaryTab();
+				}
+				this.eligibilityMethod.setAttribute("prevEligiBility", details.getFieldCode());
 			}
+
 		}
-		refershCreditReviewDetailSummaryTab();
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -11037,7 +11047,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (PennantConstants.OLD_CREDITREVIEWTAB.equals(creditReviewTabVersion) && tabVisible) {
 			appendCreditReviewDetailTab(true);
 		} else if (PennantConstants.NEW_CREDITREVIEWTAB.equals(creditReviewTabVersion) && tabVisible) {
-			appendCreditReviewDetailSummaryTab(true);
+			appendCreditReviewDetailSummaryTab(true, true);
 		}
 
 		setEligibilityMethod(eligibilityMethodValue);

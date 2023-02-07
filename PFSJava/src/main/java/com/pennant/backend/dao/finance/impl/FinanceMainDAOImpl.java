@@ -2542,7 +2542,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public List<LoanPendingData> getCustomerODLoanDetails(long userID) {
 		StringBuilder sql = new StringBuilder("SELECT fm.FinID, FinReference, FM.CustID, CM.CustCIF CustCIF");
-		sql.append(", CM.CustShrtName CustShrtName, CD.CustDocTitle PANNumber, CP.PhoneNumber");
+		sql.append(", CM.CustShrtName CustShrtName, CD.CustDocTitle PANNumber, CP.PhoneNumber, FM.RoleCode");
 		sql.append(" From FinanceMain_Temp FM");
 		sql.append(" left JOIN Customers CM ON CM.CustID = FM.CUSTID");
 		sql.append(" left join customerdocuments CD ON CD.CustID = CM.CUSTID AND CUSTDOCCATEGORY='PPAN'");
@@ -2563,6 +2563,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			pd.setCustShrtName(rs.getString("CustShrtName"));
 			pd.setpANNumber(rs.getString("PANNumber"));
 			pd.setPhoneNumber(rs.getString("PhoneNumber"));
+			pd.setCurrentRole(rs.getString("RoleCode"));
 
 			return pd;
 		});
