@@ -565,10 +565,12 @@ public class RepaymentProcessUtil {
 			String feeCode = xcess.getFeeTypeCode();
 
 			addZeroifNotContains(extMap, feeCode + "_P");
+			addZeroifNotContains(extMap, feeCode + "_CGST_P");
 			addZeroifNotContains(extMap, feeCode + "_SGST_P");
 			addZeroifNotContains(extMap, feeCode + "_IGST_P");
 			addZeroifNotContains(extMap, feeCode + "_UGST_P");
 			addZeroifNotContains(extMap, feeCode + "_CESS_P");
+			addZeroifNotContains(extMap, feeCode + "_TDS_P");
 
 			switch (payableType) {
 			case RepayConstants.EXAMOUNTTYPE_EXCESS:
@@ -2089,7 +2091,7 @@ public class RepaymentProcessUtil {
 
 					curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
 					curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
-					
+
 					curRpySchd.setWaivedAmt(curRpySchd.getWaivedAmt().add(rpySchd.getWaivedAmt()));
 					curRpySchd.setPriSchdWaivedNow(curRpySchd.getPriSchdWaivedNow().add(rpySchd.getPriSchdWaivedNow()));
 					curRpySchd.setPftSchdWaivedNow(curRpySchd.getPftSchdWaivedNow().add(rpySchd.getPftSchdWaivedNow()));
