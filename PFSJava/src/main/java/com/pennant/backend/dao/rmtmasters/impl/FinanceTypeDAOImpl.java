@@ -1295,10 +1295,10 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	public String getFinTypeByReference(String finref) {
 		String sql = "Select FinType From financemain_view Where finreference = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finref);
+			return this.jdbcOperations.queryForObject(sql, String.class, finref);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -1309,10 +1309,10 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	public String getRepayHierarchy(String finType) {
 		String sql = "Select RpyHierarchy From RMTFinanceTypes Where FinType = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), String.class, finType);
+			return jdbcOperations.queryForObject(sql, String.class, finType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

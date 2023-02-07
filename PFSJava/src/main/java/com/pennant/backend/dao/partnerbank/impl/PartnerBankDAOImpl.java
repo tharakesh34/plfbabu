@@ -588,7 +588,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 	public PartnerBank getPartnerBankById(long partnerBankId) {
 		String sql = "Select AccountNo, AcType From PartnerBanks Where PartnerBankId = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
 			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {

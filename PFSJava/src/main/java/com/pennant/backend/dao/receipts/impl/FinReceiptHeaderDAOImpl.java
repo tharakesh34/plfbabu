@@ -790,7 +790,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -1371,7 +1371,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	public ClosureType getClosureType(String closureType) {
 		String sql = "Select Id, Code, Description From Closure_Types Where Code = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
 			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
@@ -1396,7 +1396,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				FinReceiptHeader rch = new FinReceiptHeader();
 
 				rch.setReference(rs.getString("Reference"));

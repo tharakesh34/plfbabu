@@ -339,7 +339,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForList(sql.toString(), Long.class);
+		return this.jdbcOperations.queryForList(sql, Long.class);
 	}
 
 	@Override
