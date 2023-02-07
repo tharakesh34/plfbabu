@@ -12085,4 +12085,80 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#217695.1_pre" author="saisandeep.b" dbms="oracle">
+		<sql>
+			<![CDATA[
+				DROP INDEX IX_RULES_RM_RE_RC;
+				DROP INDEX IX_RULES_SQ_RM_RE_RC;
+				DROP INDEX IX_RUL_RULMD;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#217695.1" author="saisandeep.b">
+		<modifyDataType tableName="RULES" columnName="RULEMODULE" newDataType="varchar(20)" />
+		<modifyDataType tableName="RULES" columnName="RULEEVENT" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="PSD#217695.1_post" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="RULES" columnName="RULEMODULE"
+			columnDataType="varchar(20)" />
+		<addNotNullConstraint tableName="RULES" columnName="RULEEVENT"
+			columnDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="PSD#217695.1_post" author="saisandeep.b" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_RULES_RM_RE_RC ON RULES (NLSSORT("RULEMODULE",'nls_sort=''BINARY_CI'''), NLSSORT("RULEEVENT",'nls_sort=''BINARY_CI'''), NLSSORT("RULECODE",'nls_sort=''BINARY_CI''')) 
+				CREATE INDEX IX_RULES_SQ_RM_RE_RC ON RULES ("SEQORDER", NLSSORT("RULEMODULE",'nls_sort=''BINARY_CI'''), NLSSORT("RULEEVENT",'nls_sort=''BINARY_CI'''), NLSSORT("ROLECODE",'nls_sort=''BINARY_CI'''), "RULEID") 
+				CREATE INDEX IX_RUL_RULMD ON RULES (NLSSORT("RULEMODULE",'nls_sort=''BINARY_CI''')) 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#217695.1_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rules');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#217695.2_pre" author="saisandeep.b" dbms="oracle">
+		<sql>
+			<![CDATA[
+				DROP INDEX IX_RULES_T_RM_RE_RC;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#217695.2" author="saisandeep.b">
+		<modifyDataType tableName="RULES_TEMP" columnName="RULEMODULE" newDataType="varchar(20)" />
+		<modifyDataType tableName="RULES_TEMP" columnName="RULEEVENT" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="PSD#217695.2_post" author="saisandeep.b" dbms="mssql">
+		<addNotNullConstraint tableName="RULES_TEMP" columnName="RULEMODULE"
+			columnDataType="varchar(20)" />
+		<addNotNullConstraint tableName="RULES_TEMP" columnName="RULEEVENT"
+			columnDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="PSD#217695.2_post" author="saisandeep.b" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_RULES_T_RM_RE_RC ON RULES_TEMP (NLSSORT("RULEMODULE",'nls_sort=''BINARY_CI'''), NLSSORT("RULEEVENT",'nls_sort=''BINARY_CI'''), NLSSORT("RULECODE",'nls_sort=''BINARY_CI''')) 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#217695.2_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rules_temp');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog> 

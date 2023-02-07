@@ -1073,4 +1073,9 @@
 		<addDefaultValue columnName="WorkFlowId" tableName="AdtCROSS_LOAN_KNOCKOFF" defaultValue="0" />
 	</changeSet>
 	
+	<changeSet id="PSD#217695.1" author="saisandeep.b">
+		<modifyDataType tableName="ADTRULES" columnName="RULEMODULE" newDataType="varchar(20)" />
+		<modifyDataType tableName="ADTRULES" columnName="RULEEVENT" newDataType="varchar(20)" />
+	</changeSet>
+	
 </databaseChangeLog>
