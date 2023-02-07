@@ -1393,6 +1393,11 @@ public class FileUploadList extends Window implements Serializable {
 				status.setDataEngineLogList(latestStatus.getDataEngineLogList());
 
 				if ("F".equals(status.getStatus())) {
+
+					if (status.getRemarks().isEmpty()) {
+						status.setRemarks("Seems Upload file doesn't contain any data");
+					}
+
 					update(uploadHeader, status);
 					throw new AppException(status.getRemarks());
 				}
