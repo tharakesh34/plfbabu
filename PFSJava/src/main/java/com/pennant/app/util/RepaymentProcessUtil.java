@@ -1568,6 +1568,8 @@ public class RepaymentProcessUtil {
 		List<FinReceiptDetail> rcdList = sortReceiptDetails(rch.getReceiptDetails());
 		Date appValueDate = SysParamUtil.getAppValueDate();
 
+		BigDecimal excessAmount = BigDecimal.ZERO;
+
 		for (FinReceiptDetail rcd : rcdList) {
 			rcd.setReceiptID(receiptID);
 			if (isApproval) {
@@ -1722,25 +1724,7 @@ public class RepaymentProcessUtil {
 			rph.setFinEvent(rch.getReceiptPurpose());
 
 			if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-				FinExcessAmount excess = new FinExcessAmount();
-				excess.setFinID(rch.getFinID());
-				excess.setFinReference(rch.getReference());
-				excess.setAmountType(rch.getExcessAdjustTo());
-				excess.setAmount(rph.getExcessAmount());
-				excess.setUtilisedAmt(BigDecimal.ZERO);
-				excess.setBalanceAmt(rph.getExcessAmount());
-				excess.setReservedAmt(BigDecimal.ZERO);
-				excess.setReceiptID(rch.getReceiptID());
-				excess.setValueDate(rch.getValueDate());
-				excess.setPostDate(SysParamUtil.getAppDate());
-
-				if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
-					excess.setBalanceAmt(BigDecimal.ZERO);
-					excess.setReservedAmt(rph.getExcessAmount());
-					excess.setAmount(rph.getExcessAmount());
-				}
-
-				finExcessAmountDAO.saveExcess(excess);
+				excessAmount = excessAmount.add(rph.getExcessAmount());
 			}
 
 			// Saving record while doing receipt for OD loans
@@ -1785,6 +1769,26 @@ public class RepaymentProcessUtil {
 				financeRepaymentsDAO.saveRpySchdList(rpySchdList, TableType.MAIN_TAB);
 			}
 		}
+
+		FinExcessAmount excess = new FinExcessAmount();
+		excess.setFinID(rch.getFinID());
+		excess.setFinReference(rch.getReference());
+		excess.setAmountType(rch.getExcessAdjustTo());
+		excess.setAmount(excessAmount);
+		excess.setUtilisedAmt(BigDecimal.ZERO);
+		excess.setBalanceAmt(excessAmount);
+		excess.setReservedAmt(BigDecimal.ZERO);
+		excess.setReceiptID(rch.getReceiptID());
+		excess.setValueDate(rch.getValueDate());
+		excess.setPostDate(SysParamUtil.getAppDate());
+
+		if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
+			excess.setBalanceAmt(BigDecimal.ZERO);
+			excess.setReservedAmt(excessAmount);
+			excess.setAmount(excessAmount);
+		}
+
+		finExcessAmountDAO.saveExcess(excess);
 
 		allocationPaidMap = null;
 		allocationWaivedMap = null;
