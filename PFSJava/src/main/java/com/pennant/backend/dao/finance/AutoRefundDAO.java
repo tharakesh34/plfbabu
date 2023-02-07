@@ -5,5 +5,5 @@ import java.util.List;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 
 public interface AutoRefundDAO {
-	void saveRefundlist(List<AutoRefundLoan> finalRefundList);
+	void save(List<AutoRefundLoan> list);
 }

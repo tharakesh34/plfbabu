@@ -177,7 +177,7 @@ public class FeeRefundDetailServiceImpl extends GenericService<FeeRefundDetail> 
 
 			if ("doApprove".equals(methodName)) {
 				if (!PennantConstants.RECORD_TYPE_NEW.equals(frd.getRecordType())) {
-					frd.setBefImage(feeRefundDetailDAO.getFeeRefundDetail(frd.getId(), ""));
+					frd.setBefImage(feeRefundDetailDAO.getFeeRefundDetail(frd.getId(), TableType.MAIN_TAB));
 				}
 			}
 			auditDetails.get(i).setModelData(frd);
@@ -225,13 +225,13 @@ public class FeeRefundDetailServiceImpl extends GenericService<FeeRefundDetail> 
 	}
 
 	@Override
-	public BigDecimal getPrvRefundAmt(long adviseID, long finID) {
-		return feeRefundDetailDAO.getPrvRefundAmt(adviseID, finID);
+	public BigDecimal getPrvRefundAmt(long finID, long adviseID) {
+		return feeRefundDetailDAO.getPrvRefundAmt(finID, adviseID);
 	}
 
 	@Override
-	public List<FeeRefundDetail> getFeeRefundDetailList(long feeRefundId, String type) {
-		return feeRefundDetailDAO.getFeeRefundDetailList(feeRefundId, type);
+	public List<FeeRefundDetail> getFeeRefundDetailList(long feeRefundId, TableType tableType) {
+		return feeRefundDetailDAO.getFeeRefundDetailList(feeRefundId, tableType);
 	}
 
 	public void setFeeRefundDetailDAO(FeeRefundDetailDAO feeRefundDetailDAO) {

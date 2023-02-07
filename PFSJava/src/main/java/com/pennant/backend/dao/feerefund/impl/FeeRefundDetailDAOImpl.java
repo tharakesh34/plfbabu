@@ -25,15 +25,19 @@
 package com.pennant.backend.dao.feerefund.impl;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.feerefund.FeeRefundDetailDAO;
 import com.pennant.backend.model.feerefund.FeeRefundDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -50,12 +54,11 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into FEE_REFUND_DETAILS");
 		sql.append(tableType.getSuffix());
-		sql.append(" (ID, HeaderID, ReceivableType, TotalAmount, PaidAmount, PrevRefundAmount");
-		sql.append(", CurrRefundAmount, AvailableAmount, ReceivableRefId");
-		sql.append(", FeeTypeCode, FeeTypeDesc, PayableFeeTypeCode, PayableFeeTypeDesc");
+		sql.append(" (ID, HeaderID, ReceivableFeeTypeID, PayableFeeTypeID");
+		sql.append(", ReceivableID, PayableID, RefundAmount, TaxHeaderID");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -68,17 +71,12 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 
 			ps.setLong(++index, frd.getId());
 			ps.setLong(++index, frd.getHeaderID());
-			ps.setString(++index, frd.getReceivableType());
-			ps.setBigDecimal(++index, frd.getTotalAmount());
-			ps.setBigDecimal(++index, frd.getPaidAmount());
-			ps.setBigDecimal(++index, frd.getPrevRefundAmount());
-			ps.setBigDecimal(++index, frd.getCurrRefundAmount());
-			ps.setBigDecimal(++index, frd.getAvailableAmount());
-			ps.setLong(++index, frd.getReceivableRefId());
-			ps.setString(++index, frd.getFeeTypeCode());
-			ps.setString(++index, frd.getFeeTypeDesc());
-			ps.setString(++index, frd.getPayableFeeTypeCode());
-			ps.setString(++index, frd.getPayableFeeTypeDesc());
+			ps.setObject(++index, frd.getReceivableFeeTypeID());
+			ps.setObject(++index, frd.getPayableFeeTypeID());
+			ps.setObject(++index, frd.getReceivableID());
+			ps.setObject(++index, frd.getPayableID());
+			ps.setBigDecimal(++index, frd.getRefundAmount());
+			ps.setObject(++index, frd.getTaxHeaderID());
 			ps.setInt(++index, frd.getVersion());
 			ps.setLong(++index, frd.getCreatedBy());
 			ps.setTimestamp(++index, frd.getCreatedOn());
@@ -103,10 +101,8 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 		StringBuilder sql = new StringBuilder("Update");
 		sql.append(" FEE_REFUND_DETAILS");
 		sql.append(tableType.getSuffix());
-		sql.append(" Set ID = ?, HeaderID = ?, ReceivableType = ?, TotalAmount = ?");
-		sql.append(", PaidAmount = ?, PrevRefundAmount = ?, currRefundAmount = ?, AvailableAmount = ?");
-		sql.append(", ReceivableRefId = ?, FeeTypeCode = ?, FeeTypeDesc = ?, PayableFeeTypeCode = ?");
-		sql.append(", PayableFeeTypeDesc = ?");
+		sql.append(" Set ReceivableFeeTypeID = ?, PayableFeeTypeID = ?");
+		sql.append(", ReceivableID = ?, PayableID = ?, RefundAmount = ?, TaxHeaderID = ?");
 		sql.append(", Version = ?, ApprovedBy = ?, ApprovedOn = ?, LastMntBy = ?, LastMntOn = ?");
 		sql.append(", RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
 		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
@@ -117,20 +113,12 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 0;
 
-			ps.setLong(++index, frd.getId());
-			ps.setLong(++index, frd.getHeaderID());
-			ps.setString(++index, frd.getReceivableType());
-			ps.setBigDecimal(++index, frd.getTotalAmount());
-			ps.setBigDecimal(++index, frd.getPaidAmount());
-			ps.setBigDecimal(++index, frd.getPrevRefundAmount());
-			ps.setBigDecimal(++index, frd.getCurrRefundAmount());
-			ps.setBigDecimal(++index, frd.getAvailableAmount());
-			ps.setLong(++index, frd.getReceivableRefId());
-			ps.setString(++index, frd.getFeeTypeCode());
-			ps.setString(++index, frd.getFeeTypeDesc());
-			ps.setString(++index, frd.getPayableFeeTypeCode());
-			ps.setString(++index, frd.getPayableFeeTypeDesc());
-			ps.setString(++index, frd.getFeeTypeCode());
+			ps.setObject(++index, frd.getReceivableFeeTypeID());
+			ps.setObject(++index, frd.getPayableFeeTypeID());
+			ps.setObject(++index, frd.getReceivableID());
+			ps.setObject(++index, frd.getPayableID());
+			ps.setBigDecimal(++index, frd.getRefundAmount());
+			ps.setObject(++index, frd.getTaxHeaderID());
 			ps.setInt(++index, frd.getVersion());
 			ps.setObject(++index, frd.getApprovedBy());
 			ps.setTimestamp(++index, frd.getApprovedOn());
@@ -168,58 +156,18 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 	}
 
 	@Override
-	public List<FeeRefundDetail> getFeeRefundDetailList(long headerID, String type) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select ID, HeaderID");
-		sql.append(", ReceivableType, TotalAmount, PaidAmount, PrevRefundAmount, currRefundAmount");
-		sql.append(", AvailableAmount, ReceivableRefId, FeeTypeCode, FeeTypeDesc, PayableFeeTypeCode");
-		sql.append(", PayableFeeTypeDesc, Version");
-		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FEE_REFUND_DETAILS");
-		sql.append(type);
+	public List<FeeRefundDetail> getFeeRefundDetailList(long headerID, TableType tableType) {
+		StringBuilder sql = getQuery(tableType);
 		sql.append(" Where HeaderID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, rowNum) -> {
-			FeeRefundDetail frd = new FeeRefundDetail();
-
-			frd.setId(rs.getLong("ID"));
-			frd.setHeaderID(rs.getLong("HeaderID"));
-			frd.setReceivableType(rs.getString("ReceivableType"));
-			frd.setTotalAmount(rs.getBigDecimal("TotalAmount"));
-			frd.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-			frd.setPrevRefundAmount(rs.getBigDecimal("PrevRefundAmount"));
-			frd.setCurrRefundAmount(rs.getBigDecimal("currRefundAmount"));
-			frd.setAvailableAmount(rs.getBigDecimal("AvailableAmount"));
-			frd.setReceivableRefId(rs.getLong("ReceivableRefId"));
-			frd.setFeeTypeCode(rs.getString("FeeTypeCode"));
-			frd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-			frd.setPayableFeeTypeCode(rs.getString("PayableFeeTypeCode"));
-			frd.setPayableFeeTypeDesc(rs.getString("PayableFeeTypeDesc"));
-			frd.setVersion(rs.getInt("Version"));
-			frd.setCreatedBy(rs.getLong("CreatedBy"));
-			frd.setCreatedOn(rs.getTimestamp("CreatedOn"));
-			frd.setApprovedBy(rs.getLong("ApprovedBy"));
-			frd.setApprovedOn(rs.getTimestamp("ApprovedOn"));
-			frd.setLastMntBy(rs.getLong("LastMntBy"));
-			frd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-			frd.setRecordStatus(rs.getString("RecordStatus"));
-			frd.setRoleCode(rs.getString("RoleCode"));
-			frd.setNextRoleCode(rs.getString("NextRoleCode"));
-			frd.setTaskId(rs.getString("TaskId"));
-			frd.setNextTaskId(rs.getString("NextTaskId"));
-			frd.setRecordType(rs.getString("RecordType"));
-			frd.setWorkflowId(rs.getLong("WorkflowId"));
-
-			return frd;
-		});
+		return this.jdbcOperations.query(sql.toString(), new FeeRefundRM(tableType), headerID);
 	}
 
 	@Override
-	public void updatePayableRef(long adviseId, long id) {
-		String sql = "Update FEE_REFUND_DETAILS Set PayableRefId = ? Where ID = ?";
+	public void updatePayableId(long id, long adviseId) {
+		String sql = "Update FEE_REFUND_DETAILS Set PayableID = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -230,54 +178,14 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 	}
 
 	@Override
-	public FeeRefundDetail getFeeRefundDetail(long id, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, HeaderID");
-		sql.append(", ReceivableType, TotalAmount, PaidAmount, PrevRefundAmount, currRefundAmount");
-		sql.append(", AvailableAmount, ReceivableRefId, FeeTypeCode, FeeTypeDesc, PayableFeeTypeCode");
-		sql.append(", PayableFeeTypeDesc, Version");
-		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FEE_REFUND_DETAILS");
-		sql.append(type);
+	public FeeRefundDetail getFeeRefundDetail(long id, TableType tableType) {
+		StringBuilder sql = getQuery(tableType);
 		sql.append(" Where ID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FeeRefundDetail frd = new FeeRefundDetail();
-
-				frd.setId(rs.getLong("ID"));
-				frd.setHeaderID(rs.getLong("HeaderID"));
-				frd.setReceivableType(rs.getString("ReceivableType"));
-				frd.setTotalAmount(rs.getBigDecimal("TotalAmount"));
-				frd.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-				frd.setPrevRefundAmount(rs.getBigDecimal("PrevRefundAmount"));
-				frd.setCurrRefundAmount(rs.getBigDecimal("currRefundAmount"));
-				frd.setAvailableAmount(rs.getBigDecimal("AvailableAmount"));
-				frd.setReceivableRefId(rs.getLong("ReceivableRefId"));
-				frd.setFeeTypeCode(rs.getString("FeeTypeCode"));
-				frd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-				frd.setPayableFeeTypeCode(rs.getString("PayableFeeTypeCode"));
-				frd.setPayableFeeTypeDesc(rs.getString("PayableFeeTypeDesc"));
-				frd.setVersion(rs.getInt("Version"));
-				frd.setCreatedBy(rs.getLong("CreatedBy"));
-				frd.setCreatedOn(rs.getTimestamp("CreatedOn"));
-				frd.setApprovedBy(rs.getLong("ApprovedBy"));
-				frd.setApprovedOn(rs.getTimestamp("ApprovedOn"));
-				frd.setLastMntBy(rs.getLong("LastMntBy"));
-				frd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				frd.setRecordStatus(rs.getString("RecordStatus"));
-				frd.setRoleCode(rs.getString("RoleCode"));
-				frd.setNextRoleCode(rs.getString("NextRoleCode"));
-				frd.setTaskId(rs.getString("TaskId"));
-				frd.setNextTaskId(rs.getString("NextTaskId"));
-				frd.setRecordType(rs.getString("RecordType"));
-				frd.setWorkflowId(rs.getLong("WorkflowId"));
-
-				return frd;
-			}, id);
+			return this.jdbcOperations.queryForObject(sql.toString(), new FeeRefundRM(tableType), id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -285,16 +193,16 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 	}
 
 	@Override
-	public BigDecimal getPrvRefundAmt(long adviseID, long finID) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" sum(CurrRefundAmount) From FEE_REFUND_DETAILS frd");
+	public BigDecimal getPrvRefundAmt(long finID, long receivableID) {
+		StringBuilder sql = new StringBuilder("Select Sum(RefundAmount)");
+		sql.append(" From FEE_REFUND_DETAILS frd");
 		sql.append(" Inner join FEE_REFUND_HEADER frh on frh.ID = frd.HeaderID");
-		sql.append(" Where frh.FinID = ? and ReceivableRefId = ? and frh.approvalStatus = '1' group by frh.FinID");
+		sql.append(" Where frh.FinID = ? and ReceivableID = ? and frh.ApprovalStatus = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, adviseID);
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, receivableID, 1);
 		} catch (Exception e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;
@@ -318,5 +226,88 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
+	}
+
+	private StringBuilder getQuery(TableType tableType) {
+		StringBuilder sql = new StringBuilder();
+
+		switch (tableType) {
+		case MAIN_TAB:
+		case AVIEW:
+			sql.append(getQuery(""));
+			break;
+		case TEMP_TAB:
+		case TVIEW:
+			sql.append(getQuery("_Temp"));
+			break;
+		case BOTH_TAB:
+		case VIEW:
+			sql.append("Select * From (");
+			sql.append(getQuery("_Temp"));
+			sql.append(" Union All ");
+			sql.append(getQuery(""));
+			sql.append(" Where not exists (Select 1 From Fee_Refund_Details_Temp Where ID = frd.ID)");
+			sql.append(" ) frd");
+			break;
+		default:
+			sql.append(getQuery(tableType.getSuffix()));
+			break;
+		}
+
+		return sql;
+	}
+
+	private StringBuilder getQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" frd.ID, frd.HeaderID, frd.ReceivableFeeTypeID, frd.PayableFeeTypeID");
+		sql.append(", frd.ReceivableID, frd.PayableID, frd.RefundAmount, frd.TaxHeaderID");
+		sql.append(", frd.Version, frd.CreatedBy, frd.CreatedOn, frd.ApprovedBy");
+		sql.append(", frd.ApprovedOn, frd.LastMntBy, frd.LastMntOn, frd.RecordStatus, frd.RoleCode");
+		sql.append(", frd.NextRoleCode, frd.TaskId, frd.NextTaskId, frd.RecordType, frd.WorkflowId");
+		sql.append(" From FEE_REFUND_DETAILS");
+		sql.append(type);
+		sql.append(" frd");
+
+		return sql;
+	}
+
+	private class FeeRefundRM implements RowMapper<FeeRefundDetail> {
+
+		private TableType tableType;
+
+		private FeeRefundRM(TableType tableType) {
+			this.tableType = tableType;
+		}
+
+		@Override
+		public FeeRefundDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FeeRefundDetail frd = new FeeRefundDetail();
+
+			frd.setId(rs.getLong("ID"));
+			frd.setHeaderID(rs.getLong("HeaderID"));
+			frd.setReceivableFeeTypeID(JdbcUtil.getLong(rs.getObject("ReceivableFeeTypeID")));
+			frd.setPayableFeeTypeID(JdbcUtil.getLong(rs.getObject("PayableFeeTypeID")));
+			frd.setReceivableID(JdbcUtil.getLong(rs.getObject("ReceivableID")));
+			frd.setPayableID(JdbcUtil.getLong(rs.getObject("PayableID")));
+			frd.setRefundAmount(rs.getBigDecimal("RefundAmount"));
+			frd.setTaxHeaderID(JdbcUtil.getLong(rs.getObject("TaxHeaderID")));
+			frd.setVersion(rs.getInt("Version"));
+			frd.setCreatedBy(rs.getLong("CreatedBy"));
+			frd.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			frd.setApprovedBy(rs.getLong("ApprovedBy"));
+			frd.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			frd.setLastMntBy(rs.getLong("LastMntBy"));
+			frd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			frd.setRecordStatus(rs.getString("RecordStatus"));
+			frd.setRoleCode(rs.getString("RoleCode"));
+			frd.setNextRoleCode(rs.getString("NextRoleCode"));
+			frd.setTaskId(rs.getString("TaskId"));
+			frd.setNextTaskId(rs.getString("NextTaskId"));
+			frd.setRecordType(rs.getString("RecordType"));
+			frd.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return frd;
+		}
+
 	}
 }

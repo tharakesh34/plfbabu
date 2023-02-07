@@ -4,34 +4,33 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum PaymentUploadError {
-	REFUP001("Fin Reference should not be empty."),
+	REFUP001("Reference should not be empty."),
 
-	REFUP002("Fin Reference is not valid."),
+	REFUP002("Reference is not valid."),
 
-	REFUP003("Fin Reference is not in active."),
+	REFUP003("Reference is not in active."),
 
-	REFUP004("Excess Type is not valid."),
+	REFUP004("Type of Excess is not valid."),
 
-	REFUP005("Fee Type is not valid"),
+	REFUP005("FeeType is not valid"),
 
-	REFUP006("Payment instruction already in progress for Loan"),
+	REFUP006("Payment instruction already in progress."),
 
-	REFUP007("Payable Advises are not found for the Loan Reference"),
+	REFUP007("Payable Advises are not found."),
 
-	REFUP008("Receipt Amount Should not be greater than Excess Available Amount"),
+	REFUP008("Pay Amount should not be greater than the available balance."),
 
-	REFUP009("Dues Available for knock off"),
+	REFUP009("Dues available for knock off"),
 
-	REFUP011("Fee Refund already in progress for Loan"),
+	REFUP011("Fee Refund already in progress"),
 
-	REFUP012("Fee Type is not valid if Excess Type is E"),
+	REFUP012("Fee Type is not required."),
 
-	REFUP013("Possible values should be Y/N "),
+	REFUP013("Override Overdue value should be either Y/N"),
 
-	// Hold Refund Errors
-	HOLDUP001("Fin Reference is Mandatory"),
+	HOLDUP001("FinReference is Mandatory"),
 
-	HOLDUP002("Hold Status is Mandatory"),
+	HOLDUP002("HoldStatus is Mandatory"),
 
 	HOLDUP003("When Hold Flag is true, Reason is Mandatory"),
 

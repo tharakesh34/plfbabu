@@ -91,6 +91,6 @@ public class UploadConstants {
 	public static final String FEE_WAIVER_APPROVER = "FeeWaiverApprover";
 
 	// Hold Refund
-	public static final String HOLD_REFUND_FLAG = "H";
-	public static final String HOLD_REFUND_REMOVAL_FLAG = "R";
+	public static final String REFUND_HOLD = "H";
+	public static final String REFUND_RELEASE = "R";
 }

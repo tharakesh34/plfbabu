@@ -167,22 +167,10 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	@Override
 	public FeeRefundHeader getFeeRefundHeader(long feeRefundId) {
 		FeeRefundHeader frh = feeRefundHeaderDAO.getFeeRefundHeader(feeRefundId, "_View");
-		List<FeeRefundDetail> list = this.feeRefundDetailService.getFeeRefundDetailList(frh.getId(), "_View");
+		List<FeeRefundDetail> list = this.feeRefundDetailService.getFeeRefundDetailList(frh.getId(), TableType.VIEW);
 		frh.setOdAgainstLoan(getDueAgainstLoan(frh.getFinID()));
 		frh.setOdAgainstCustomer(getDueAgainstCustomer(frh.getCustId(), frh.getCustCoreBank()));
-
-		if (list != null) {
-			frh.setFeeRefundDetailList(list);
-			for (FeeRefundDetail frd : list) {
-				if (frd.getTaxHeaderId() != null) {
-					frd.setTaxHeader(taxHeaderDetailsDAO.getTaxHeaderDetailsById(frd.getTaxHeaderId(), "_View"));
-				}
-				if (frd.getTaxHeader() != null) {
-					frd.getTaxHeader()
-							.setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(frd.getTaxHeaderId(), "_View"));
-				}
-			}
-		}
+		frh.setFeeRefundDetailList(list);
 
 		FeeRefundInstruction fri = this.feeRefundInstructionService.getFeeRefundInstructionDetails(frh.getId(),
 				"_View");
@@ -461,6 +449,7 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FeeRefundHeader(), frh.getExcludeFields());
 		auditHeader.setAuditDetail(
 				new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], frh.getBefImage(), frh));
+
 		feeRefundHeaderDAO.delete(frh, TableType.TEMP_TAB);
 		financeMainDAO.updateMaintainceStatus(frh.getFinID(), "");
 
@@ -514,17 +503,17 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	}
 
 	@Override
-	public boolean isFileDownloaded(long id, String isDownloaded) {
+	public boolean isFileDownloaded(long id, int isDownloaded) {
 		return feeRefundHeaderDAO.isFileDownloaded(id, isDownloaded);
 	}
 
 	@Override
-	public void updateApprovalStatus(Long id, String downloadStatus) {
+	public void updateApprovalStatus(Long id, int downloadStatus) {
 		feeRefundHeaderDAO.updateApprovalStatus(id, downloadStatus);
 	}
 
 	@Override
-	public boolean isInstructionInProgress(long finID) {
+	public boolean isInProgress(long finID) {
 		return feeRefundInstructionService.isInstructionInProgress(finID);
 	}
 

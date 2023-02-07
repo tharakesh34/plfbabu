@@ -246,6 +246,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		sql.append("SELECT SUM(PAIDAMOUNT) PAIDAMOUNT,FRD.ALLOCATIONTYPE,FRD.ALLOCATIONTO");
 		sql.append(" ,FRD.RECEIPTID FROM RECEIPTALLOCATIONDETAIL_TEMP FRD");
 		sql.append(" INNER JOIN FINRECEIPTHEADER_TEMP FR ON FR.RECEIPTID = FRD.RECEIPTID");
+
 		if (Allocation.MANADV.equals(allocType)) {
 			sql.append(" WHERE FRD.ALLOCATIONTYPE in('MANADV','BOUNCE')");
 		} else if (Allocation.ODC.equals(allocType)) {
@@ -255,6 +256,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		} else {
 			sql.append(" WHERE FRD.ALLOCATIONTYPE = 'FEE'");
 		}
+
 		sql.append(" AND FINID = ? AND FR.RECEIPTMODESTATUS IN ('C', 'B') AND PAIDAMOUNT > 0");
 		sql.append(" GROUP BY FRD.ALLOCATIONTYPE,FRD.ALLOCATIONTO, FRD.RECEIPTID");
 

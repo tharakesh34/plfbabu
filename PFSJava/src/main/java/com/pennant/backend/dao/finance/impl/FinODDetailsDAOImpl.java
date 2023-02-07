@@ -1182,4 +1182,18 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			}
 		});
 	}
+
+	@Override
+	public BigDecimal getOverDueAmount(long finID) {
+		String sql = "Select Sum(TotPenaltyBal + LpiBal) TotalDue From FinODDetails Where FinID = ? ";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
+	}
 }

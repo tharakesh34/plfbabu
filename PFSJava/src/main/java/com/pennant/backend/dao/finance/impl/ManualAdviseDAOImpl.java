@@ -2317,4 +2317,33 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				BigDecimal.ZERO) > 0;
 	}
 
+	@Override
+	public BigDecimal getOverDueAmount(long finID) {
+		String sql = "Select SUM(AdviseAmount - WaivedAmount - PaidAmount) AdvDue From ManualAdvise Where  FinID = ? and AdviseType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID,
+					AdviseType.RECEIVABLE.id());
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
+	}
+
+	@Override
+	public BigDecimal getPayableBalance(long finID, long feeTypeID) {
+		String sql = "Select Sum(BalanceAmt) From ManualAdvise Where FinID = ? and AdviseType = ? and FeeTypeID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, AdviseType.PAYABLE.id(), feeTypeID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
+	}
+
 }

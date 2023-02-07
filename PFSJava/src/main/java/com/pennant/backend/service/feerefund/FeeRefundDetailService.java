@@ -43,11 +43,11 @@ public interface FeeRefundDetailService {
 	List<AuditDetail> processFeeRefundDetails(List<AuditDetail> auditDetails, TableType type, String methodName,
 			long linkedTranId, long finID);
 
-	List<FeeRefundDetail> getFeeRefundDetailList(long feeRefundId, String type);
+	List<FeeRefundDetail> getFeeRefundDetailList(long feeRefundId, TableType tableType);
 
 	List<AuditDetail> setFeeRefundDetailAuditData(List<FeeRefundDetail> feeRefundDetailList, String auditTranType,
 			String method);
 
-	BigDecimal getPrvRefundAmt(long adviseID, long finID);
+	BigDecimal getPrvRefundAmt(long finID, long adviseID);
 
 }

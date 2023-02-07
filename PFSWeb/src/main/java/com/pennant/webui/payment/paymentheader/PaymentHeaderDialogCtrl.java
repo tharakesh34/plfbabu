@@ -539,53 +539,57 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		return tabID.replace("TAB", "");
 	}
 
-	/**
-	 * Method for Append Disbursement Instruction Tab
-	 */
 	private void appendDisbursementInstructionTab(PaymentHeader aPaymentHeader) {
-		try {
-			PaymentInstruction paymentInstruction = aPaymentHeader.getPaymentInstruction();
-			Date appDate = SysParamUtil.getAppDate();
-			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
-			if (paymentInstruction == null) {
-				PaymentInstruction payIns = null;
-				paymentInstruction = new PaymentInstruction();
-				payIns = refundBeneficiary.fetchBeneficiaryForRefund(financeMain.getFinID(), appDate,
-						alwRefundByCheque);
-				if (payIns != null) {
-					paymentInstruction.setBankBranchId(payIns.getBankBranchId());
-					paymentInstruction.setBankBranchCode(payIns.getBankBranchCode());
-					paymentInstruction.setBranchDesc(payIns.getBranchDesc());
-					paymentInstruction.setBankName(payIns.getBankName());
-					paymentInstruction.setBankBranchIFSC(payIns.getBankBranchIFSC());
-					paymentInstruction.setpCCityName(payIns.getpCCityName());
-					paymentInstruction.setAccountNo(payIns.getAccountNo());
-					paymentInstruction.setAcctHolderName(payIns.getAcctHolderName());
-					paymentInstruction.setPartnerBankId(payIns.getPartnerBankId());
-					paymentInstruction.setPartnerBankCode(payIns.getPartnerBankCode());
-					paymentInstruction.setPartnerBankName(payIns.getPartnerBankName());
-					paymentInstruction.setPhoneNumber(payIns.getPhoneNumber());
-					paymentInstruction.setIssuingBank(payIns.getIssuingBank());
-					paymentInstruction.setIssuingBankName(payIns.getIssuingBankName());
-					paymentInstruction.setPartnerBankAcType(payIns.getPartnerBankAc());
-					paymentInstruction.setPartnerBankAc(payIns.getPartnerBankAc());
-				}
-			}
-			Map<String, Object> map = new HashMap<>();
-			map.put("paymentInstruction", paymentInstruction);
-			map.put("roleCode", getRole());
-			map.put("paymentHeader", aPaymentHeader);
-			map.put("paymentHeaderDialogCtrl", this);
-			map.put("financeMain", this.financeMain);
-			map.put("tab", this.tabDisbInstructions);
-			map.put("ccyFormatter", ccyFormatter);
-			map.put("enqiryModule", this.enqiryModule);
+		logger.debug(Literal.ENTERING);
 
+		PaymentInstruction pi = aPaymentHeader.getPaymentInstruction();
+		Date appDate = SysParamUtil.getAppDate();
+		boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
+
+		if (pi == null) {
+			pi = new PaymentInstruction();
+		}
+
+		long finID = financeMain.getFinID();
+		PaymentInstruction payIns = refundBeneficiary.getBeneficiary(finID, appDate, alwRefundByCheque);
+
+		if (payIns != null) {
+			pi.setBankBranchId(payIns.getBankBranchId());
+			pi.setBankBranchCode(payIns.getBankBranchCode());
+			pi.setBranchDesc(payIns.getBranchDesc());
+			pi.setBankName(payIns.getBankName());
+			pi.setBankBranchIFSC(payIns.getBankBranchIFSC());
+			pi.setpCCityName(payIns.getpCCityName());
+			pi.setAccountNo(payIns.getAccountNo());
+			pi.setAcctHolderName(payIns.getAcctHolderName());
+			pi.setPartnerBankId(payIns.getPartnerBankId());
+			pi.setPartnerBankCode(payIns.getPartnerBankCode());
+			pi.setPartnerBankName(payIns.getPartnerBankName());
+			pi.setPhoneNumber(payIns.getPhoneNumber());
+			pi.setIssuingBank(payIns.getIssuingBank());
+			pi.setIssuingBankName(payIns.getIssuingBankName());
+			pi.setPartnerBankAcType(payIns.getPartnerBankAc());
+			pi.setPartnerBankAc(payIns.getPartnerBankAc());
+		}
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("paymentInstruction", pi);
+		map.put("roleCode", getRole());
+		map.put("paymentHeader", aPaymentHeader);
+		map.put("paymentHeaderDialogCtrl", this);
+		map.put("financeMain", this.financeMain);
+		map.put("tab", this.tabDisbInstructions);
+		map.put("ccyFormatter", ccyFormatter);
+		map.put("enqiryModule", this.enqiryModule);
+
+		try {
 			Executions.createComponents("/WEB-INF/pages/Payment/PaymentInstructionDialog.zul",
 					tabDisbInstructionsTabPanel, map);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(Literal.EXCEPTION);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

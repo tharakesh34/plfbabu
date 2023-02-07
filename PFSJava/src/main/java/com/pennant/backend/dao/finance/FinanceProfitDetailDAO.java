@@ -97,5 +97,6 @@ public interface FinanceProfitDetailDAO {
 
 	FinanceProfitDetail getFinProfitDetailsByFinRef(long finID);
 
-	BigDecimal getOverDueAmountByLoan(long finID);
+	BigDecimal getOverDueAmount(long finID);
+
 }

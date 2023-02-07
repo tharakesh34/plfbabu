@@ -132,7 +132,7 @@ public class PaymentInstUploadThreadProcess {
 			ph.setApprovedOn(appDate);
 			ph.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
-			ph.setPaymentInstruction(refundBeneficiary.fetchBeneficiaryForRefund(finId, appDate, alwRefundByCheque));
+			ph.setPaymentInstruction(refundBeneficiary.getBeneficiary(finId, appDate, alwRefundByCheque));
 			ph.getPaymentInstruction().setPaymentAmount(detail.getPayAmount());
 			ph.getPaymentInstruction().setPostDate(appDate);
 			if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(detail.getExcessType())) {

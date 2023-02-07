@@ -46,9 +46,9 @@ public interface FeeRefundHeaderDAO {
 
 	void delete(FeeRefundHeader frh, TableType tableType);
 
-	void updateApprovalStatus(long headerID, String isDownloaded);
+	void updateApprovalStatus(long headerID, int isDownloaded);
 
-	boolean isFileDownloaded(long id, String isDownloaded);
+	boolean isFileDownloaded(long id, int isDownloaded);
 
 	BigDecimal getDueAgainstLoan(long finId);
 

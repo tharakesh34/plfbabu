@@ -315,7 +315,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 	@Override
 	public void releaseHoldOnLoans(List<Long> finIds) {
-		String sql = "UPDATE Fin_Hold_Details SET HOLDSTATUS = ? WHERE FINID = ?";
+		String sql = "Update Fin_Hold_Details Set HoldStatus = ? Where FinID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -325,7 +325,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				Long finid = finIds.get(i);
 
-				ps.setString(1, FinanceConstants.FIN_HOLDSTATUS_RELEASE);
+				ps.setString(1, FinanceConstants.FEE_REFUND_RELEASE);
 				ps.setLong(2, finid);
 			}
 
@@ -341,11 +341,11 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 		StringBuilder sql = new StringBuilder("Select fm.FinId");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Fin_Hold_Details fh On fh.FinId = fm.FinId");
-		sql.append(" Where fm.FinIsActive = ? and fh.HoldStatus = ? and fm.ClosedDate <= ? ");
+		sql.append(" Where fm.FinIsActive = ? and fh.HoldStatus = ? and fm.ClosedDate <= ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForList(sql.toString(), Long.class, 0, FinanceConstants.FIN_HOLDSTATUS_HOLD,
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class, 0, FinanceConstants.FEE_REFUND_HOLD,
 				closureDate);
 	}
 

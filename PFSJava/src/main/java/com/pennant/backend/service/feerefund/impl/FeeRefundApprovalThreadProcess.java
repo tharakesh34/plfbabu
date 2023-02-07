@@ -12,7 +12,6 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -51,6 +50,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 public class FeeRefundApprovalThreadProcess {
 	private static Logger logger = LogManager.getLogger(FeeRefundApprovalThreadProcess.class);
@@ -108,7 +108,7 @@ public class FeeRefundApprovalThreadProcess {
 				long feeRefundId = rs.getLong(2);
 
 				frh = feeRefundHeaderDAO.getFeeRefundHeader(feeRefundId, "_View");
-				feeRefundDetailList = feeRefundDetailDAO.getFeeRefundDetailList(feeRefundId, "_View");
+				feeRefundDetailList = feeRefundDetailDAO.getFeeRefundDetailList(feeRefundId, TableType.VIEW);
 				fri = feeRefundInstructionDAO.getFeeRefundInstructionDetails(feeRefundId, "_View");
 
 				processFeeRefundApproval(frh, feeRefundDetailList, fri);
@@ -130,8 +130,8 @@ public class FeeRefundApprovalThreadProcess {
 
 			for (FeeRefundDetail frd : feeRefundDetailList) {
 				long adviseId = createPayableAdvise(frd, finReference, frh.getFinID());
-				frd.setPayableRefId(adviseId);
-				updatePayableRef(adviseId, frd.getId());
+				frd.setPayableID(adviseId);
+				updatePayableId(frd.getId(), adviseId);
 			}
 
 			createPaymentInstruction(frh, feeRefundDetailList, fri);
@@ -156,8 +156,8 @@ public class FeeRefundApprovalThreadProcess {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void updatePayableRef(long adviseId, long id) {
-		feeRefundDetailDAO.updatePayableRef(adviseId, id);
+	public void updatePayableId(long id, long adviseId) {
+		feeRefundDetailDAO.updatePayableId(id, adviseId);
 	}
 
 	private long createPayableAdvise(FeeRefundDetail frd, String finreference, long finID) {
@@ -167,15 +167,13 @@ public class FeeRefundApprovalThreadProcess {
 		manualAdvise.setFinReference(finreference);
 		manualAdvise.setFinID(finID);
 		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
-		manualAdvise.setAdviseAmount(frd.getCurrRefundAmount());
+		manualAdvise.setAdviseAmount(frd.getRefundAmount());
 		manualAdvise.setBalanceAmt(manualAdvise.getAdviseAmount());
 		manualAdvise.setHoldDue(false);
 		manualAdvise.setFinSource(FinanceConstants.FEE_REFUND_APPROVAL);
 
-		FeeType payableFeeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(frd.getPayableFeeTypeCode());
-		FeeType feeType = new FeeType();
-		BeanUtils.copyProperties(payableFeeType, feeType);
-		manualAdvise.setFeeType(feeType);
+		FeeType payableFeeType = feeTypeDAO.getFeeTypeById(frd.getPayableFeeTypeID(), "");
+		manualAdvise.setFeeType(payableFeeType);
 		manualAdvise.setFeeTypeCode(payableFeeType.getFeeTypeCode());
 		manualAdvise.setFeeTypeID(payableFeeType.getFeeTypeID());
 
@@ -189,9 +187,9 @@ public class FeeRefundApprovalThreadProcess {
 		manualAdvise.setNewRecord(true);
 		manualAdvise.setUserDetails(frd.getUserDetails());
 
-		// Save Cashback Advice
 		AuditHeader auditHeader = manualAdviseService.doApprove(getAuditHeader(manualAdvise, PennantConstants.TRAN_WF));
 		ManualAdvise md = ((ManualAdvise) auditHeader.getAuditDetail().getModelData());
+
 		logger.debug(Literal.LEAVING);
 		return md.getAdviseID();
 
@@ -238,12 +236,12 @@ public class FeeRefundApprovalThreadProcess {
 		// Payment Instruction Details preparation
 		for (FeeRefundDetail frd : frdList) {
 			PaymentDetail paymentDetail = new PaymentDetail();
-			FeeType payableFeeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(frd.getPayableFeeTypeCode());
+			FeeType payableFeeType = feeTypeDAO.getFeeTypeById(frd.getPayableFeeTypeID(), "");
 			paymentDetail.setPaymentId(paymentHeader.getPaymentId());
-			paymentDetail.setAmount(frd.getCurrRefundAmount());
-			paymentHeader.setPaymentAmount(frd.getCurrRefundAmount());
-			paymentDetail.setReferenceId(frd.getPayableRefId());
-			paymentDetail.setAvailableAmount(frd.getCurrRefundAmount());
+			paymentDetail.setAmount(frd.getRefundAmount());
+			paymentHeader.setPaymentAmount(frd.getRefundAmount());
+			paymentDetail.setReferenceId(frd.getPayableID());
+			paymentDetail.setAvailableAmount(frd.getRefundAmount());
 			paymentDetail.setAmountType(String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE));
 			paymentDetail.setFeeTypeCode(frd.getPayableFeeTypeCode());
 			paymentDetail.setFeeTypeDesc(frd.getPayableFeeTypeDesc());

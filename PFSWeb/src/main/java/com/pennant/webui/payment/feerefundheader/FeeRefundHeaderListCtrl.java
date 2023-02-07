@@ -178,8 +178,8 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		if (isApprovalMenu) {
 			this.searchObject.addWhereClause(" RECORDSTATUS in ('" + PennantConstants.RCD_STATUS_SUBMITTED + "')");
 		} else {
-			this.searchObject.addWhereClause(" RECORDSTATUS not in ('" + PennantConstants.RCD_STATUS_SUBMITTED
-					+ "') and APPROVALSTATUS is null");
+			this.searchObject.addWhereClause(
+					" RECORDSTATUS not in ('" + PennantConstants.RCD_STATUS_SUBMITTED + "') and APPROVALSTATUS = 0");
 		}
 	}
 
@@ -225,20 +225,15 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		registerField("Id");
 		registerField("FinID");
 		registerField("CustCif");
-		registerField("custName", listheader_FeeRefundCustName, SortOrder.NONE, custName,
+		registerField("CustShrtName", listheader_FeeRefundCustName, SortOrder.NONE, custName,
 				sortOperator_FeeRefundCustName, Operators.STRING);
-		registerField("finReference", listheader_FeeRefundFinRef, SortOrder.NONE, finReference,
+		registerField("FinReference", listheader_FeeRefundFinRef, SortOrder.NONE, finReference,
 				sortOperator_FeeRefundFinRef, Operators.STRING);
-		registerField("finType", listheader_FeeRefundFinType, SortOrder.NONE, finType, sortOperator_FeeRefundFinType,
+		registerField("FinType", listheader_FeeRefundFinType, SortOrder.NONE, finType, sortOperator_FeeRefundFinType,
 				Operators.STRING);
 		registerField("PaymentAmount");
 		registerField("ApprovalStatus");
-		// registerField("entityCode", entityCode, SortOrder.NONE, sortOperator_FeeRefundEntity, Operators.STRING);
-		registerField("BranchName", branchCode, SortOrder.NONE, sortOperator_FeeRefundBranchCode, Operators.STRING);
-		// registerField("clusterType", clusterType, SortOrder.NONE, sortOperator_FeeRefundClusterType,
-		// Operators.STRING);
-		// registerField("clusterName", clusterName, SortOrder.NONE, sortOperator_FeeRefundClusterName,
-		// Operators.STRING);
+		registerField("BranchDesc", branchCode, SortOrder.NONE, sortOperator_FeeRefundBranchCode, Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -609,7 +604,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 			lc = new Listcell(frh.getCustCif());
 			lc.setParent(item);
 
-			lc = new Listcell(frh.getCustName());
+			lc = new Listcell(frh.getCustShrtName());
 			lc.setParent(item);
 
 			lc = new Listcell(frh.getFinReference());
@@ -622,7 +617,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 			lc = new Listcell(frh.getFinType());
 			lc.setParent(item);
 
-			lc = new Listcell(frh.getBranchName());
+			lc = new Listcell(frh.getBranchDesc());
 			lc.setParent(item);
 
 			lc = new Listcell(frh.getRecordStatus());

@@ -194,8 +194,8 @@ public class FinanceConstants {
 	public static final String CLOSE_STATUS_EARLYSETTLE = "E";
 
 	// Loan Status of Hold
-	public static final String FIN_HOLDSTATUS_HOLD = "H";
-	public static final String FIN_HOLDSTATUS_RELEASE = "R";
+	public static final String FEE_REFUND_HOLD = "H";
+	public static final String FEE_REFUND_RELEASE = "R";
 
 	// Limit Rule
 	public static final String LIMITRULE_CUSTOMER = "Customer";

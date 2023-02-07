@@ -119,9 +119,9 @@ public interface MandateDAO {
 
 	PaymentInstruction getBeneficiatyDetailsByMandateId(Long mandateId);
 
-	PaymentInstruction getBeneficiatyDetailsByChequeDetailsId(long chequeDetailsID);
+	PaymentInstruction getBeneficiatyDetailsByChequeDetailsId(Long chequeDetailsID);
 
-	List<Long> getMandateIDByFinId(long finID);
+	List<Long> getMandateIdList(long finID);
 
 	List<Long> getChequeDetailIDByAppDate(long finID, Date appDate);
 

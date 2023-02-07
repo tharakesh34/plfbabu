@@ -13,24 +13,23 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface AutoRefundService {
 
-	List<AutoRefundLoan> autoRefundsLoanProcess(Date appDate);
+	List<AutoRefundLoan> getAutoRefunds();
 
-	List<ErrorDetail> verifyRefundInitiation(long finId, String closingStatus, int dpdDays, String holdStatus,
-			int autoRefCheckDPD, boolean isEOD);
+	List<ErrorDetail> verifyRefundInitiation(AutoRefundLoan arl, boolean isEOD);
 
 	List<FinExcessAmount> getExcessRcdList(long finID, Date maxValueDate);
 
 	List<ManualAdvise> getPayableAdviseList(long finID, Date maxValueDate);
 
-	BigDecimal getOverDueAmountByLoan(long finID);
+	BigDecimal getOverDueAmount(long finID);
 
 	BigDecimal findReserveAmountForAutoRefund(long finID, BigDecimal overDueAmt);
 
 	List<ErrorDetail> validateRefundAmt(BigDecimal feeRuleResult, AutoRefundLoan refundLoan);
 
 	List<ErrorDetail> executeAutoRefund(AutoRefundLoan refundLoan, List<PaymentDetail> payDtlList,
-			PaymentInstruction paymentInst, Date appDate);
+			PaymentInstruction paymentInst);
 
-	void saveRefundlist(List<AutoRefundLoan> finalRefundList);
+	void save(List<AutoRefundLoan> finalRefundList);
 
 }

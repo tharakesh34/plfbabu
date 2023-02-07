@@ -398,8 +398,8 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	}
 
 	@Override
-	public boolean isInstructionInProgress(String finReference) {
-		return getPaymentInstructionDAO().isInstructionInProgress(finReference);
+	public boolean isInProgress(long finID) {
+		return paymentInstructionDAO.isInProgress(finID);
 	}
 
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {

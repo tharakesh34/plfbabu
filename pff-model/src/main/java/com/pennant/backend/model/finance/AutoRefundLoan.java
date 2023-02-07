@@ -28,6 +28,12 @@ public class AutoRefundLoan implements Serializable {
 	private String finType;
 	private String entityCode;
 
+	private int autoRefCheckDPD;
+	private boolean overDueReq;
+	private Date activeNDate;
+	private Date closedNDate;
+	private boolean alwRefundByCheque;
+
 	public AutoRefundLoan() {
 		super();
 	}
@@ -182,6 +188,46 @@ public class AutoRefundLoan implements Serializable {
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
+	}
+
+	public int getAutoRefCheckDPD() {
+		return autoRefCheckDPD;
+	}
+
+	public void setAutoRefCheckDPD(int autoRefCheckDPD) {
+		this.autoRefCheckDPD = autoRefCheckDPD;
+	}
+
+	public boolean isOverDueReq() {
+		return overDueReq;
+	}
+
+	public void setOverDueReq(boolean overDueReq) {
+		this.overDueReq = overDueReq;
+	}
+
+	public Date getActiveNDate() {
+		return activeNDate;
+	}
+
+	public void setActiveNDate(Date activeNDate) {
+		this.activeNDate = activeNDate;
+	}
+
+	public Date getClosedNDate() {
+		return closedNDate;
+	}
+
+	public void setClosedNDate(Date closedNDate) {
+		this.closedNDate = closedNDate;
+	}
+
+	public boolean isAlwRefundByCheque() {
+		return alwRefundByCheque;
+	}
+
+	public void setAlwRefundByCheque(boolean alwRefundByCheque) {
+		this.alwRefundByCheque = alwRefundByCheque;
 	}
 
 }

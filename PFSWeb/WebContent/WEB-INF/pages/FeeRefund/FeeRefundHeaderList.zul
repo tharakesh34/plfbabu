@@ -80,34 +80,34 @@
 									<label id="label_FeeRefundHeaderList_FeeRefundFinRef" value="${c:l('label_FeeRefundHeaderList_FeeRefundFinRef.value')}" />
 									<listbox id="sortOperator_FeeRefundFinRef" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<extendedcombobox id="finReference" />
+									<extendedcombobox id="finReference" removeSpace="true"/>
 
 									<label id="label_FeeRefundHeaderList_FeeRefundFinType" value="${c:l('label_FeeRefundHeaderList_FeeRefundFinType.value')}" />
 									<listbox id="sortOperator_FeeRefundFinType" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<extendedcombobox id="finType" />
+									<extendedcombobox id="finType" removeSpace="true"/>
 								</row>
 								<row>
 									<label id="label_FeeRefundHeaderList_FeeRefundEntity" value="${c:l('label_FeeRefundHeaderList_FeeRefundEntity.value')}" />
 									<listbox id="sortOperator_FeeRefundEntity" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<extendedcombobox id="entityCode" />
+									<extendedcombobox id="entityCode" removeSpace="true"/>
 
 									<label id="label_FeeRefundHeaderList_FeeRefundBranchCode" value="${c:l('label_FeeRefundHeaderList_FeeRefundBranchCode.value')}" />
 									<listbox id="sortOperator_FeeRefundBranchCode" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<extendedcombobox id="branchCode" />
+									<extendedcombobox id="branchCode" removeSpace="true"/>
 								</row>
 								<row>
 									<label id="label_FeeRefundHeaderList_FeeRefundClusterType" value="${c:l('label_FeeRefundHeaderList_FeeRefundClusterType.value')}" />
 									<listbox id="sortOperator_FeeRefundClusterType" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<extendedcombobox id="clusterType" />
+									<extendedcombobox id="clusterType" removeSpace="true"/>
 
 									<label id="label_FeeRefundHeaderList_FeeRefundClusterName" value="${c:l('label_FeeRefundHeaderList_FeeRefundClusterName.value')}" />
 									<listbox id="sortOperator_FeeRefundClusterName" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<extendedcombobox id="clusterName" />
+									<extendedcombobox id="clusterName" removeSpace="true"/>
 								</row>
 							</rows>
 						</grid>

@@ -7806,23 +7806,8 @@
 			</props>
 		</property>
 	</bean>
-	<bean name="paymentHeaderServiceTarget" class="com.pennant.backend.service.payment.impl.PaymentHeaderServiceImpl">
-		<property name="paymentDetailService" ref="paymentDetailService" />
-		<property name="paymentInstructionService" ref="paymentInstructionService" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
-		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		<property name="instrumentwiseLimitService" ref="instrumentwiseLimitService" />
-		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="feeTypeService" ref="feeTypeService" />
-		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
-	</bean>
+	
+	<bean name="paymentHeaderServiceTarget" class="com.pennant.backend.service.payment.impl.PaymentHeaderServiceImpl"/>
 
 	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
@@ -12995,16 +12980,7 @@
 		class="com.pennant.backend.dao.payment.impl.PaymentInstructionUploadDAOImpl" parent="sequenceDao" />
 
 	<bean id="paymentInstructionUploadService"
-		class="com.pennant.backend.service.payment.impl.PaymentInstructionUploadServiceImpl" parent="aUploadService">
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="paymentInstructionUploadDAO" ref="paymentInstructionUploadDAO" />
-		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
-		<property name="paymentInstUploadApprovalProcess" ref="paymentInstUploadApprovalProcess" />
-		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
-		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
-		<property name="feeTypeDAO" ref="feeTypeDAO" />
-	</bean>
+	class="com.pennant.backend.service.payment.impl.PaymentInstructionUploadServiceImpl" parent="aUploadService" />
 
 	<bean id="paymentInstUploadApprovalProcess"
 		class="com.pennant.backend.service.payment.impl.PaymentInstUploadApprovalProcess">

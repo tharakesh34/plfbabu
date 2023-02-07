@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -16,6 +17,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionUploadDAO;
@@ -40,9 +42,11 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private PaymentInstructionDAO paymentInstructionDAO;
 	private PaymentHeaderDAO paymentHeaderDAO;
+	private FeeTypeDAO feeTypeDAO;
+	private ManualAdviseDAO manualAdviseDAO;
+
 	private PaymentInstUploadApprovalProcess paymentInstUploadApprovalProcess;
 	private FeeRefundHeaderService feeRefundHeaderService;
-	private FeeTypeDAO feeTypeDAO;
 
 	protected static final String ERR_CODE = "9999";
 	protected static final String ERR_DESC = "User rejected the record";
@@ -256,8 +260,11 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		String feeTypeCode = StringUtils.trimToNull(detail.getFeeType());
+		Long feeTypeId = null;
 		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(detail.getExcessType())) {
-			if (feeTypeCode == null || !feeTypeDAO.isValidFeeType(detail.getFeeType())) {
+			feeTypeId = feeTypeDAO.getFeeTypeId(feeTypeCode);
+
+			if (feeTypeId == null) {
 				setError(detail, PaymentUploadError.REFUP005);
 				return;
 			}
@@ -267,7 +274,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		BigDecimal dueAganistLoan = paymentHeaderDAO.getDueAgainstLoan(fm.getFinID());
-		BigDecimal dueAganistCustomer = paymentHeaderDAO.getDueAgainstCustomer(fm.getCustID(), null);
+		BigDecimal dueAganistCustomer = paymentHeaderDAO.getDueAgainstCustomer(fm.getCustID());
 
 		if (detail.getOverRide().equals("N") && (dueAganistLoan.compareTo(BigDecimal.ZERO) > 0
 				|| dueAganistCustomer.compareTo(BigDecimal.ZERO) > 0)) {
@@ -275,23 +282,27 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		boolean payInstInProgess = paymentInstructionDAO.isInstructionInProgress(fm.getFinReference());
+		boolean payInstInProgess = paymentInstructionDAO.isInProgress(fm.getFinID());
 		if (payInstInProgess) {
 			setError(detail, PaymentUploadError.REFUP006);
 			return;
 		}
 
-		boolean feerefundInProgess = this.feeRefundHeaderService.isInstructionInProgress(fm.getFinID());
+		boolean feerefundInProgess = this.feeRefundHeaderService.isInProgress(fm.getFinID());
 		if (feerefundInProgess) {
 			setError(detail, PaymentUploadError.REFUP011);
 			return;
 		}
 
-		BigDecimal fea = finExcessAmountDAO.getTotalExcessByRefAndType(fm.getFinID(),
-				RepayConstants.EXAMOUNTTYPE_EXCESS);
+		BigDecimal balanceAmount = BigDecimal.ZERO;
 
-		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(detail.getExcessType())
-				&& fea.compareTo(detail.getPayAmount()) < 0) {
+		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(detail.getExcessType())) {
+			balanceAmount = finExcessAmountDAO.getExcessBalance(fm.getFinID());
+		} else {
+			balanceAmount = manualAdviseDAO.getPayableBalance(fm.getFinID(), feeTypeId);
+		}
+
+		if (balanceAmount.compareTo(detail.getPayAmount()) < 0) {
 			setError(detail, PaymentUploadError.REFUP008);
 			return;
 		}
@@ -314,36 +325,49 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		return paymentInstructionUploadDAO.getSqlQuery();
 	}
 
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
+	@Autowired
 	public void setPaymentInstructionUploadDAO(PaymentInstructionUploadDAO paymentInstructionUploadDAO) {
 		this.paymentInstructionUploadDAO = paymentInstructionUploadDAO;
 	}
 
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
+	@Autowired
 	public void setPaymentInstructionDAO(PaymentInstructionDAO paymentInstructionDAO) {
 		this.paymentInstructionDAO = paymentInstructionDAO;
 	}
 
-	public void setPaymentInstUploadApprovalProcess(PaymentInstUploadApprovalProcess paymentInstUploadApprovalProcess) {
-		this.paymentInstUploadApprovalProcess = paymentInstUploadApprovalProcess;
-	}
-
+	@Autowired
 	public void setPaymentHeaderDAO(PaymentHeaderDAO paymentHeaderDAO) {
 		this.paymentHeaderDAO = paymentHeaderDAO;
 	}
 
-	public void setFeeRefundHeaderService(FeeRefundHeaderService feeRefundHeaderService) {
-		this.feeRefundHeaderService = feeRefundHeaderService;
-	}
-
+	@Autowired
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setPaymentInstUploadApprovalProcess(PaymentInstUploadApprovalProcess paymentInstUploadApprovalProcess) {
+		this.paymentInstUploadApprovalProcess = paymentInstUploadApprovalProcess;
+	}
+
+	@Autowired
+	public void setFeeRefundHeaderService(FeeRefundHeaderService feeRefundHeaderService) {
+		this.feeRefundHeaderService = feeRefundHeaderService;
 	}
 
 }

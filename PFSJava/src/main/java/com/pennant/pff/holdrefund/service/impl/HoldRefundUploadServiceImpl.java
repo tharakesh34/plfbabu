@@ -201,43 +201,44 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		boolean isValidFlag = false;
-		if (StringUtils.equals(UploadConstants.HOLD_REFUND_FLAG, holdStatus)) {
-			isValidFlag = true;
-		} else if (StringUtils.equals(UploadConstants.HOLD_REFUND_REMOVAL_FLAG, holdStatus)) {
-			isValidFlag = true;
-		}
+		boolean holdRefund = UploadConstants.REFUND_HOLD.equals(holdStatus);
+		boolean releaseRefund = UploadConstants.REFUND_RELEASE.equals(holdStatus);
 
-		if (!isValidFlag) {
+		if (!(holdRefund || releaseRefund)) {
 			setError(detail, PaymentUploadError.HOLDUP0010);
 			return;
 		}
 
 		String reasonCode = detail.getReason();
 
-		if (StringUtils.isBlank(reasonCode) && StringUtils.equals(UploadConstants.HOLD_REFUND_FLAG, holdStatus)) {
+		if (holdRefund && StringUtils.isBlank(reasonCode)) {
 			setError(detail, PaymentUploadError.HOLDUP003);
 			return;
-		} else if (StringUtils.isNotBlank(reasonCode)
-				&& StringUtils.equals(UploadConstants.HOLD_REFUND_REMOVAL_FLAG, holdStatus)) {
+		}
+
+		if (releaseRefund && StringUtils.isNotBlank(reasonCode)) {
 			setError(detail, PaymentUploadError.HOLDUP008);
 			return;
 		}
 
-		String holdFlag = holdRefundUploadDAO.getHoldRefundStatus(finID);
+		String refundStatus = holdRefundUploadDAO.getHoldRefundStatus(finID);
 
-		if (holdFlag == null && StringUtils.equals(UploadConstants.HOLD_REFUND_REMOVAL_FLAG, holdStatus)) {
+		if (refundStatus == null && releaseRefund) {
 			setError(detail, PaymentUploadError.HOLDUP005);
 			return;
 		}
 
-		if (StringUtils.equals(holdFlag, detail.getHoldStatus())) {
+		if (UploadConstants.REFUND_RELEASE.equals(refundStatus) && !holdRefund) {
+			setError(detail, PaymentUploadError.HOLDUP005);
+			return;
+		}
+
+		if (UploadConstants.REFUND_HOLD.equals(refundStatus) && !releaseRefund) {
 			setError(detail, PaymentUploadError.HOLDUP004);
 			return;
 		}
 
-		if (!lovFieldDetailDAO.isfieldCodeValueExists(detail.getReason(), true)
-				&& UploadConstants.HOLD_REFUND_FLAG.equals(holdStatus)) {
+		if (!lovFieldDetailDAO.isfieldCodeValueExists(detail.getReason(), true) && holdRefund) {
 			setError(detail, PaymentUploadError.HOLDUP007);
 			return;
 		}

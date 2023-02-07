@@ -58,7 +58,7 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 
 	long getNewPaymentHeaderId();
 
-	BigDecimal getDueAgainstCustomer(long custId, String coreBankId);
+	BigDecimal getDueAgainstCustomer(long custId);
 
 	BigDecimal getDueAgainstLoan(long finId);
 
@@ -68,7 +68,7 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 
 	BigDecimal getInProgressExcessAmt(long finId, Long receiptId);
 
-	boolean isRefundInQueue(long finId);
+	boolean isRefundInProcess(long finId);
 
 	BigDecimal getDueAgainstselCustomer(long custId, String coreBankId, long finId);
 

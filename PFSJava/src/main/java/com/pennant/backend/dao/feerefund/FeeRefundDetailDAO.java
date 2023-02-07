@@ -38,13 +38,13 @@ public interface FeeRefundDetailDAO {
 
 	void delete(FeeRefundDetail header, TableType tableType);
 
-	List<FeeRefundDetail> getFeeRefundDetailList(long headerID, String type);
+	List<FeeRefundDetail> getFeeRefundDetailList(long headerID, TableType tableType);
 
-	FeeRefundDetail getFeeRefundDetail(long id, String string);
+	FeeRefundDetail getFeeRefundDetail(long id, TableType tableType);
 
-	void updatePayableRef(long adviseId, long id);
+	void updatePayableId(long id, long adviseId);
 
-	BigDecimal getPrvRefundAmt(long adviseID, long finID);
+	BigDecimal getPrvRefundAmt(long finID, long adviseID);
 
 	void deleteList(FeeRefundDetail frd, TableType tableType);
 

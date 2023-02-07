@@ -169,22 +169,19 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		}
 
 		long finID = ComponentUtil.getFinID(this.finReference);
-		boolean payInstInProgess = this.paymentHeaderService.isInstructionInProgress(this.finReference.getValue());
 
-		if (payInstInProgess) {
+		if (this.paymentHeaderService.isInProgress(finID)) {
 			MessageUtil.showMessage("Payment instruction already in progress for - " + this.finReference.getValue());
 			return;
 		}
 
-		boolean feeRefundInProgess = this.feeRefundHeaderService.isInstructionInProgress(finID);
-
-		if (feeRefundInProgess) {
+		if (this.feeRefundHeaderService.isInProgress(finID)) {
 			MessageUtil.showMessage("Fee Refund already in progress for - " + this.finReference.getValue());
 			return;
 		}
 
-		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
+
 		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.PAYMENTINST.equals(rcdMntnSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
@@ -197,7 +194,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 			return;
 		}
 
-		if (FinanceConstants.FIN_HOLDSTATUS_HOLD.equals(financeMain.getHoldStatus())) {
+		if (FinanceConstants.FEE_REFUND_HOLD.equals(financeMain.getHoldStatus())) {
 			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_HoldLoan"));
 			return;
 		}

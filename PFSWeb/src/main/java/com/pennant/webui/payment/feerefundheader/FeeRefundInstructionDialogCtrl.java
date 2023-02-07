@@ -204,15 +204,7 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 		return feeRefundInstruction;
 	}
 
-	/**
-	 * Opens the Dialog window modal.
-	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
-	 * 
-	 * @param paymentInstruction
-	 * @throws InterruptedException
-	 */
-	public void doShowDialog(FeeRefundInstruction feeRefundInstruction) throws InterruptedException {
+	public void doShowDialog(FeeRefundInstruction feeRefundInstruction) {
 		logger.debug(Literal.ENTERING);
 
 		if (isWorkFlowEnabled() && !this.enqiryModule) {
@@ -220,7 +212,7 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 		} else {
 			doReadOnly();
 		}
-		// fill the components with the data
+
 		doWriteBeanToComponents(feeRefundInstruction);
 
 		if (parentTabPanel != null) {

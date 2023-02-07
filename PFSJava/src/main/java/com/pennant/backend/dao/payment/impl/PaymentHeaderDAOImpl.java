@@ -299,8 +299,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	@Override
 	public List<FinExcessAmount> getfinExcessAmount(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, BalanceAmt, ReservedAmt, ReceiptID ");
-		sql.append(" ,ValueDate, PostDate From FinExcessAmount Where FinID = ?");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, BalanceAmt, ReservedAmt, ReceiptID");
+		sql.append(", ValueDate, PostDate From FinExcessAmount Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -429,7 +429,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	}
 
 	@Override
-	public BigDecimal getDueAgainstCustomer(long custId, String coreBankId) {
+	public BigDecimal getDueAgainstCustomer(long custId) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Sum(ODPRINCIPAL + ODPROFIT + COALESCE(OD.LPPDUE,0) + COALESCE(OD.LPIDUE,0)");
 		sql.append(" + COALESCE(MA.ADVDUE,0)) TotalDue FROM FINPFTDETAILS PFT ");
@@ -552,15 +552,14 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	}
 
 	@Override
-	public boolean isRefundInQueue(long finId) {
-		StringBuilder sql = new StringBuilder("Select count(*) From PaymentHeader_Temp");
-		sql.append(" Where FinId = ?");
+	public boolean isRefundInProcess(long finId) {
+		String sql = "Select count(FinId) From PaymentHeader_Temp Where FinId = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		Object[] parameters = new Object[] { finId };
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
 	}
 
 	@Override

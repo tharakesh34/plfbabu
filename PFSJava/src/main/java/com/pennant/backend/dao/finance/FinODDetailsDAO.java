@@ -98,4 +98,6 @@ public interface FinODDetailsDAO {
 	void updatePaidPenalties(List<FinODDetails> overdues);
 
 	void updateFinODTotals(List<FinODDetails> list);
+
+	BigDecimal getOverDueAmount(long finID);
 }

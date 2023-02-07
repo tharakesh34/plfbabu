@@ -16,7 +16,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class AutoRefundDAOImpl extends BasicDao<AutoRefundLoan> implements AutoRefundDAO {
 
 	@Override
-	public void saveRefundlist(List<AutoRefundLoan> finalRefundList) {
+	public void save(List<AutoRefundLoan> finalRefundList) {
 		StringBuilder sql = new StringBuilder("Insert into Auto_Refund_Loans");
 		sql.append("(FinID, RefundAmt, AppDate, ExecutionTime, Status, ErrorCode)");
 		sql.append(" Values (?, ?, ?, ?, ?, ?)");

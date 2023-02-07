@@ -1017,13 +1017,13 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	@Override
-	public BigDecimal getTotalExcessByRefAndType(long finID, String amountType) {
-		String sql = "Select sum(BalanceAmt) Amount From FinExcessAmount Where FinID = ? and AmountType = ? Group By FinID, AmountType";
+	public BigDecimal getExcessBalance(long finID) {
+		String sql = "Select Sum(BalanceAmt) Amount From FinExcessAmount Where FinID = ? and AmountType = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, amountType);
+			return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, RepayConstants.EXAMOUNTTYPE_EXCESS);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;

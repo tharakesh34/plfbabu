@@ -50,11 +50,11 @@ public interface FeeRefundHeaderService {
 
 	AuditHeader doApprove(AuditHeader auditHeader);
 
-	boolean isFileDownloaded(long id, String isDownloaded);
+	boolean isFileDownloaded(long id, int isDownloaded);
 
-	void updateApprovalStatus(Long id, String downloadStatus);
+	void updateApprovalStatus(Long id, int downloadStatus);
 
-	boolean isInstructionInProgress(long finID);
+	boolean isInProgress(long finID);
 
 	BigDecimal getDueAgainstCustomer(long custId, String custCoreBank);
 

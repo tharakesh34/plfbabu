@@ -562,12 +562,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41023", valueParm3)));
 		}
 
-		ErrorDetail error = mandateDateValidation(mandate);
-
-		if (error != null) {
-			auditDetail.setErrorDetail(error);
-		}
-
 		if (!MandateStatus.isInprocess(status) && !MandateStatus.isNew(status) && !mandate.isSecondaryMandate()
 				&& !((MandateStatus.isApproved(status) || (MandateStatus.isRejected(status))))
 				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
@@ -2494,7 +2488,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	@Override
 	public List<Long> getMandateIDByFinId(long finID) {
-		return mandateDAO.getMandateIDByFinId(finID);
+		return mandateDAO.getMandateIdList(finID);
 	}
 
 	@Override

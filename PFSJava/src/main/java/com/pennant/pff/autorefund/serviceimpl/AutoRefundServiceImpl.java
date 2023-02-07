@@ -16,6 +16,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.AutoRefundDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
@@ -49,12 +50,13 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private RuleDAO ruleDAO;
 	private CustomerDAO customerDAO;
+	private FinODDetailsDAO finODDetailsDAO;
 	private PaymentHeaderService paymentHeaderService;
 
 	@Override
-	public List<AutoRefundLoan> autoRefundsLoanProcess(Date appDate) {
+	public List<AutoRefundLoan> getAutoRefunds() {
 		logger.debug(Literal.ENTERING);
-		List<AutoRefundLoan> finList = financeMainDAO.getAutoRefundsLoanList();
+		List<AutoRefundLoan> finList = financeMainDAO.getAutoRefunds();
 		logger.debug(Literal.LEAVING);
 		return finList;
 	}
@@ -65,10 +67,8 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	 * @return list
 	 */
 	@Override
-	public List<ErrorDetail> verifyRefundInitiation(long finId, String closingStatus, int dpdDays, String holdStatus,
-			int autoRefCheckDPD, boolean isEOD) {
-		return paymentHeaderService.verifyRefundInitiation(finId, closingStatus, dpdDays, holdStatus, autoRefCheckDPD,
-				isEOD);
+	public List<ErrorDetail> verifyRefundInitiation(AutoRefundLoan arl, boolean isEOD) {
+		return paymentHeaderService.verifyRefundInitiation(arl, isEOD);
 	}
 
 	/**
@@ -100,8 +100,14 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	 * @return OverdueAmount
 	 */
 	@Override
-	public BigDecimal getOverDueAmountByLoan(long finID) {
-		return profitDetailsDAO.getOverDueAmountByLoan(finID);
+	public BigDecimal getOverDueAmount(long finID) {
+		BigDecimal overDueAmount = BigDecimal.ZERO;
+
+		overDueAmount = overDueAmount.add(profitDetailsDAO.getOverDueAmount(finID));
+		overDueAmount = overDueAmount.add(finODDetailsDAO.getOverDueAmount(finID));
+		overDueAmount = overDueAmount.add(manualAdviseDAO.getOverDueAmount(finID));
+
+		return overDueAmount;
 	}
 
 	@Override
@@ -111,12 +117,12 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 		BigDecimal feeResult = BigDecimal.ZERO;
 
 		if (overDueAmt == null) {
-			overDueAmt = getOverDueAmountByLoan(finID);
+			overDueAmt = getOverDueAmount(finID);
 		}
 
-		FinanceProfitDetail finPftDetails = profitDetailsDAO.getFinProfitDetailsById(finID);
+		FinanceProfitDetail fpd = profitDetailsDAO.getFinProfitDetailsById(finID);
 
-		Customer customer = customerDAO.getCustomerForAutoRefund(finPftDetails.getCustId());
+		Customer customer = customerDAO.getCustomerForAutoRefund(fpd.getCustId());
 
 		List<Rule> rules = ruleDAO.getRuleByModuleAndEvent(RuleConstants.MODULE_AUTOREFUND,
 				RuleConstants.EVENT_AUTOTREFUND, "");
@@ -126,30 +132,22 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 
 			executionMap.put("CustCtgCode", customer.getCustCtgCode());
 			executionMap.put("CustTypeCode", customer.getCustTypeCode());
-			executionMap.put("FinDivision", finPftDetails.getFinBranch());
-			executionMap.put("FinType", finPftDetails.getFinType());
-			executionMap.put("FinProduct", finPftDetails.getProductCategory());
-			executionMap.put("NumberOfTerms", finPftDetails.getNOInst());
-			executionMap.put("Finstatus", finPftDetails.getFinIsActive());
-			executionMap.put("NoofFutureTerms", finPftDetails.getNOInst() - finPftDetails.getNOPaidInst());
-			executionMap.put("FutInstAmt", finPftDetails.getTotalPriBal());
-			executionMap.put("Fin_ODDays", finPftDetails.getCurODDays());
+			executionMap.put("FinDivision", fpd.getFinBranch());
+			executionMap.put("FinType", fpd.getFinType());
+			executionMap.put("FinProduct", fpd.getProductCategory());
+			executionMap.put("NumberOfTerms", fpd.getNOInst());
+			executionMap.put("Finstatus", fpd.getFinIsActive());
+			executionMap.put("NoofFutureTerms", fpd.getNOInst() - fpd.getNOPaidInst());
+			executionMap.put("FutInstAmt", fpd.getTotalPriBal());
+			executionMap.put("Fin_ODDays", fpd.getCurODDays());
 			executionMap.put("Fin_CurODamt", overDueAmt);
 
-			feeResult = RuleExecutionUtil.getRuleResult(rules.get(0).getsQLRule(), executionMap,
-					finPftDetails.getFinCcy());
+			feeResult = RuleExecutionUtil.getRuleResult(rules.get(0).getsQLRule(), executionMap, fpd.getFinCcy());
 		}
 
 		logger.debug(Literal.LEAVING);
 		return feeResult;
 	}
-
-	/**
-	 * Validating refund amount is less or grater on Loan type amounts
-	 * 
-	 * @param RefundAmt , Loan
-	 * @return List
-	 */
 
 	@Override
 	public List<ErrorDetail> validateRefundAmt(BigDecimal refundAmt, AutoRefundLoan refundLoan) {
@@ -169,26 +167,20 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 		return errors;
 	}
 
-	/**
-	 * Prepare Payment details and Approve
-	 * 
-	 * @param refundLoan ,paymentInst,refundAmt,appDate
-	 * @return OverdueAmount
-	 */
-
 	@Override
 	public List<ErrorDetail> executeAutoRefund(AutoRefundLoan refundLoan, List<PaymentDetail> payDtlList,
-			PaymentInstruction paymentInst, Date appDate) {
+			PaymentInstruction paymentInst) {
 		logger.debug(Literal.ENTERING);
 
-		PaymentHeader paymentHeader = paymentHeaderService.prepareRefund(refundLoan, payDtlList, paymentInst, appDate);
+		PaymentHeader paymentHeader = paymentHeaderService.prepareRefund(refundLoan, payDtlList, paymentInst);
 		AuditHeader auditHeader = getAuditHeader(paymentHeader, PennantConstants.TRAN_WF);
 
 		try {
 			paymentHeaderService.doApprove(auditHeader);
 		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			//
 		}
+
 		logger.debug(Literal.LEAVING);
 
 		if (auditHeader.getErrorMessage() != null) {
@@ -202,17 +194,10 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	}
 
 	@Override
-	public void saveRefundlist(List<AutoRefundLoan> finalRefundList) {
-		autoRefundDAO.saveRefundlist(finalRefundList);
+	public void save(List<AutoRefundLoan> finalRefundList) {
+		autoRefundDAO.save(finalRefundList);
 	}
 
-	/**
-	 * Method for preparation of Audit header for Approval process of Payment Header Details
-	 * 
-	 * @param ph
-	 * @param tranType
-	 * @return
-	 */
 	private AuditHeader getAuditHeader(PaymentHeader ph, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, ph.getBefImage(), ph);
 		return new AuditHeader(String.valueOf(ph.getPaymentId()), String.valueOf(ph.getPaymentId()), null, null,
@@ -257,6 +242,11 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	@Autowired
 	public void setAutoRefundDAO(AutoRefundDAO autoRefundDAO) {
 		this.autoRefundDAO = autoRefundDAO;
+	}
+
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
 }

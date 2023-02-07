@@ -50,6 +50,7 @@ import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.holdrefund.dao.HoldRefundUploadDAO;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.web.util.ComponentUtil;
@@ -134,7 +135,7 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 	 * @param event
 	 */
 	public void onClick$btnProceed(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		if (!doFieldValidation()) {
 			return;
@@ -142,54 +143,52 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 
 		long finID = ComponentUtil.getFinID(this.finReference);
 
-		boolean payInstInProgess = this.feeRefundHeaderService.isInstructionInProgress(finID);
-		payInstInProgess = this.paymentHeaderService.isInstructionInProgress(this.finReference.getValue());
-		FinanceMain financeMain = feeRefundHeaderService.getFinanceDetails(finID);
+		FinanceMain fm = feeRefundHeaderService.getFinanceDetails(finID);
 		String holdStatus = holdRefundUploadDAO.getHoldRefundStatus(finID);
 
-		if (payInstInProgess) {
-			MessageUtil.showMessage("Not allowed to initiate for the LAN as it is already initiated for Refund");
+		if (this.feeRefundHeaderService.isInProgress(finID)) {
+			MessageUtil.showMessage("Finance_Inprogresss_" + FinServiceEvent.FEEREFUNDINST);
 			return;
 		}
 
-		if (UploadConstants.HOLD_REFUND_FLAG.equals(holdStatus)) {
-			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_HoldLoan"));
+		if (this.paymentHeaderService.isInProgress(finID)) {
+			MessageUtil.showMessage("Finance_Inprogresss_" + FinServiceEvent.PAYMENTINST);
 			return;
 		}
 
-		if (financeMain.isWriteoffLoan()) {
-			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_WriteOffLoan"));
-			return;
-		}
-		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
-		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.FEEREFUNDINST.equals(rcdMntnSts)) {
+		String rcdMntnSts = fm.getRcdMaintainSts();
+
+		if (StringUtils.isNotEmpty(rcdMntnSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
 		}
 
-		if (payInstInProgess) {
-			MessageUtil.showMessage("Fee Refund already in progress for - " + this.finReference.getValue());
+		if (UploadConstants.REFUND_HOLD.equals(holdStatus)) {
+			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_HoldLoan"));
+			return;
+		}
+
+		if (fm.isWriteoffLoan()) {
+			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_WriteOffLoan"));
 			return;
 		}
 
 		feeRefundHeader.setOdAgainstLoan(paymentHeaderService.getDueAgainstLoan(finID));
-		feeRefundHeader.setOdAgainstCustomer(
-				paymentHeaderService.getDueAgainstCustomer(financeMain.getCustID(), feeRefundHeader.getCustCoreBank()));
+		feeRefundHeader.setOdAgainstCustomer(paymentHeaderService.getDueAgainstCustomer(fm.getCustID()));
 
-		Map<String, Object> arg = new HashMap<String, Object>();
+		Map<String, Object> arg = new HashMap<>();
 		arg.put("feeRefundHeader", feeRefundHeader);
 		arg.put("feeRefundHeaderListCtrl", feeRefundHeaderListCtrl);
-		arg.put("financeMain", financeMain);
+		arg.put("financeMain", fm);
 		try {
 			Executions.createComponents("/WEB-INF/pages/FeeRefund/FeeRefundHeaderDialog.zul", null, arg);
 			this.window_SelectFeeRefundHeaderDialog.onClose();
 		} catch (Exception e) {
-			logger.error("Exception:", e);
+			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

@@ -29,10 +29,6 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.finance.TaxHeader;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -45,61 +41,53 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private long headerID;
-	private String receivableType;
-	private BigDecimal totalAmount = BigDecimal.ZERO;
-	private BigDecimal paidAmount = BigDecimal.ZERO;
-	private BigDecimal prevRefundAmount = BigDecimal.ZERO;
-	private BigDecimal currRefundAmount = BigDecimal.ZERO;
-	private BigDecimal availableAmount = BigDecimal.ZERO;
-	private long receivableRefId;
-	private long payableRefId;
-	@XmlTransient
-	private String lovValue;
-	@XmlTransient
-	private FeeRefundDetail befImage;
-	@XmlTransient
-	private LoggedInUser userDetails;
-	private String feeTypeCode;
-	private String feeTypeDesc;
-	private String payableFeeTypeCode;
-	private String payableFeeTypeDesc;
-	private boolean taxApplicable = false;
-	private String taxComponent;
-	private Long taxHeaderId;
-	private TaxHeader taxHeader;
-	private BigDecimal adviseAmount = BigDecimal.ZERO;
-	private BigDecimal prvGST = BigDecimal.ZERO;
-	private ManualAdvise manualAdvise;
+	private Long receivableFeeTypeID;
+	private Long payableFeeTypeID;
+	private Long receivableID;
+	private Long payableID;
+	private BigDecimal refundAmount = BigDecimal.ZERO;
+	private Long taxHeaderID;
 	private long createdBy;
 	private Timestamp createdOn;
 	private Timestamp approvedOn;
 	private Long approvedBy;
 
+	private FeeRefundDetail befImage;
+	private LoggedInUser userDetails;
+
+	private BigDecimal availableAmount = BigDecimal.ZERO;
+	private BigDecimal adviseAmount = BigDecimal.ZERO;
+	private BigDecimal paidAmount = BigDecimal.ZERO;
+	private BigDecimal prevRefundAmount = BigDecimal.ZERO;
+	private String receivableType;
+
+	private String receivableFeeTypeCode;
+	private String receivableFeeTypeDesc;
+	private String payableFeeTypeCode;
+	private String payableFeeTypeDesc;
+
+	private boolean expand;
+	private boolean collapse;
+
 	public FeeRefundDetail() {
 		super();
 	}
 
-	public FeeRefundDetail(long id) {
-		super();
-		this.setId(id);
-	}
-
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
+
 		excludeFields.add("availableAmount");
-		excludeFields.add("feeTypeDesc");
-		excludeFields.add("feeTypeCode");
-		excludeFields.add("taxComponent");
-		excludeFields.add("taxApplicable");
-		excludeFields.add("finSource");
-		excludeFields.add("taxHeader");
 		excludeFields.add("adviseAmount");
-		excludeFields.add("taxHeaderId");
-		excludeFields.add("prvGST");
-		excludeFields.add("manualAdvise");
-		excludeFields.add("payableRefId");
+		excludeFields.add("paidAmount");
+		excludeFields.add("prevRefundAmount");
+		excludeFields.add("receivableType");
+		excludeFields.add("receivableFeeTypeCode");
+		excludeFields.add("receivableFeeTypeDesc");
 		excludeFields.add("payableFeeTypeCode");
 		excludeFields.add("payableFeeTypeDesc");
+		excludeFields.add("expand");
+		excludeFields.add("collapse");
+
 		return excludeFields;
 	}
 
@@ -119,184 +107,52 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 		this.headerID = headerID;
 	}
 
-	public String getReceivableType() {
-		return receivableType;
+	public Long getReceivableFeeTypeID() {
+		return receivableFeeTypeID;
 	}
 
-	public void setReceivableType(String receivableType) {
-		this.receivableType = receivableType;
+	public void setReceivableFeeTypeID(Long receivableFeeTypeID) {
+		this.receivableFeeTypeID = receivableFeeTypeID;
 	}
 
-	public BigDecimal getTotalAmount() {
-		return totalAmount;
+	public Long getPayableFeeTypeID() {
+		return payableFeeTypeID;
 	}
 
-	public void setTotalAmount(BigDecimal totalAmount) {
-		this.totalAmount = totalAmount;
+	public void setPayableFeeTypeID(Long payableFeeTypeID) {
+		this.payableFeeTypeID = payableFeeTypeID;
 	}
 
-	public BigDecimal getPaidAmount() {
-		return paidAmount;
+	public Long getReceivableID() {
+		return receivableID;
 	}
 
-	public void setPaidAmount(BigDecimal paidAmount) {
-		this.paidAmount = paidAmount;
+	public void setReceivableID(Long receivableID) {
+		this.receivableID = receivableID;
 	}
 
-	public BigDecimal getPrevRefundAmount() {
-		return prevRefundAmount;
+	public Long getPayableID() {
+		return payableID;
 	}
 
-	public void setPrevRefundAmount(BigDecimal prevRefundAmount) {
-		this.prevRefundAmount = prevRefundAmount;
+	public void setPayableID(Long payableID) {
+		this.payableID = payableID;
 	}
 
-	public BigDecimal getCurrRefundAmount() {
-		return currRefundAmount;
+	public BigDecimal getRefundAmount() {
+		return refundAmount;
 	}
 
-	public void setCurrRefundAmount(BigDecimal currRefundAmount) {
-		this.currRefundAmount = currRefundAmount;
+	public void setRefundAmount(BigDecimal refundAmount) {
+		this.refundAmount = refundAmount;
 	}
 
-	public long getReceivableRefId() {
-		return receivableRefId;
+	public Long getTaxHeaderID() {
+		return taxHeaderID;
 	}
 
-	public void setReceivableRefId(long receivableRefId) {
-		this.receivableRefId = receivableRefId;
-	}
-
-	public BigDecimal getAvailableAmount() {
-		return availableAmount;
-	}
-
-	public void setAvailableAmount(BigDecimal availableAmount) {
-		this.availableAmount = availableAmount;
-	}
-
-	public String getLovValue() {
-		return lovValue;
-	}
-
-	public void setLovValue(String lovValue) {
-		this.lovValue = lovValue;
-	}
-
-	public FeeRefundDetail getBefImage() {
-		return this.befImage;
-	}
-
-	public void setBefImage(FeeRefundDetail beforeImage) {
-		this.befImage = beforeImage;
-	}
-
-	public LoggedInUser getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(LoggedInUser userDetails) {
-		this.userDetails = userDetails;
-	}
-
-	public Timestamp getPrevMntOn() {
-		return befImage == null ? null : befImage.getLastMntOn();
-	}
-
-	public String getFeeTypeCode() {
-		return feeTypeCode;
-	}
-
-	public void setFeeTypeCode(String feeTypeCode) {
-		this.feeTypeCode = feeTypeCode;
-	}
-
-	public String getFeeTypeDesc() {
-		return feeTypeDesc;
-	}
-
-	public void setFeeTypeDesc(String feeTypeDesc) {
-		this.feeTypeDesc = feeTypeDesc;
-	}
-
-	public boolean isTaxApplicable() {
-		return taxApplicable;
-	}
-
-	public void setTaxApplicable(boolean taxApplicable) {
-		this.taxApplicable = taxApplicable;
-	}
-
-	public String getTaxComponent() {
-		return taxComponent;
-	}
-
-	public void setTaxComponent(String taxComponent) {
-		this.taxComponent = taxComponent;
-	}
-
-	public Long getTaxHeaderId() {
-		return taxHeaderId;
-	}
-
-	public void setTaxHeaderId(Long taxHeaderId) {
-		this.taxHeaderId = taxHeaderId;
-	}
-
-	public TaxHeader getTaxHeader() {
-		return taxHeader;
-	}
-
-	public void setTaxHeader(TaxHeader taxHeader) {
-		this.taxHeader = taxHeader;
-	}
-
-	public BigDecimal getAdviseAmount() {
-		return adviseAmount;
-	}
-
-	public void setAdviseAmount(BigDecimal adviseAmount) {
-		this.adviseAmount = adviseAmount;
-	}
-
-	public BigDecimal getPrvGST() {
-		return prvGST;
-	}
-
-	public void setPrvGST(BigDecimal prvGST) {
-		this.prvGST = prvGST;
-	}
-
-	public ManualAdvise getManualAdvise() {
-		return manualAdvise;
-	}
-
-	public void setManualAdvise(ManualAdvise manualAdvise) {
-		this.manualAdvise = manualAdvise;
-	}
-
-	public String getPayableFeeTypeCode() {
-		return payableFeeTypeCode;
-	}
-
-	public void setPayableFeeTypeCode(String payableFeeTypeCode) {
-		this.payableFeeTypeCode = payableFeeTypeCode;
-	}
-
-	public String getPayableFeeTypeDesc() {
-		return payableFeeTypeDesc;
-	}
-
-	public void setPayableFeeTypeDesc(String payableFeeTypeDesc) {
-		this.payableFeeTypeDesc = payableFeeTypeDesc;
-	}
-
-	public long getPayableRefId() {
-		return payableRefId;
-	}
-
-	public void setPayableRefId(long payableRefId) {
-		this.payableRefId = payableRefId;
+	public void setTaxHeaderID(Long taxHeaderID) {
+		this.taxHeaderID = taxHeaderID;
 	}
 
 	public long getCreatedBy() {
@@ -329,6 +185,114 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 
 	public void setApprovedBy(Long approvedBy) {
 		this.approvedBy = approvedBy;
+	}
+
+	public FeeRefundDetail getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(FeeRefundDetail befImage) {
+		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public BigDecimal getAvailableAmount() {
+		return availableAmount;
+	}
+
+	public void setAvailableAmount(BigDecimal availableAmount) {
+		this.availableAmount = availableAmount;
+	}
+
+	public BigDecimal getAdviseAmount() {
+		return adviseAmount;
+	}
+
+	public void setAdviseAmount(BigDecimal adviseAmount) {
+		this.adviseAmount = adviseAmount;
+	}
+
+	public BigDecimal getPaidAmount() {
+		return paidAmount;
+	}
+
+	public void setPaidAmount(BigDecimal paidAmount) {
+		this.paidAmount = paidAmount;
+	}
+
+	public BigDecimal getPrevRefundAmount() {
+		return prevRefundAmount;
+	}
+
+	public void setPrevRefundAmount(BigDecimal prevRefundAmount) {
+		this.prevRefundAmount = prevRefundAmount;
+	}
+
+	public boolean isExpand() {
+		return expand;
+	}
+
+	public void setExpand(boolean expand) {
+		this.expand = expand;
+	}
+
+	public boolean isCollapse() {
+		return collapse;
+	}
+
+	public void setCollapse(boolean collapse) {
+		this.collapse = collapse;
+	}
+
+	public BigDecimal getTotalAmount() {
+		return null;
+	}
+
+	public String getReceivableType() {
+		return receivableType;
+	}
+
+	public void setReceivableType(String receivableType) {
+		this.receivableType = receivableType;
+	}
+
+	public String getReceivableFeeTypeCode() {
+		return receivableFeeTypeCode;
+	}
+
+	public void setReceivableFeeTypeCode(String receivableFeeTypeCode) {
+		this.receivableFeeTypeCode = receivableFeeTypeCode;
+	}
+
+	public String getReceivableFeeTypeDesc() {
+		return receivableFeeTypeDesc;
+	}
+
+	public void setReceivableFeeTypeDesc(String receivableFeeTypeDesc) {
+		this.receivableFeeTypeDesc = receivableFeeTypeDesc;
+	}
+
+	public String getPayableFeeTypeCode() {
+		return payableFeeTypeCode;
+	}
+
+	public void setPayableFeeTypeCode(String payableFeeTypeCode) {
+		this.payableFeeTypeCode = payableFeeTypeCode;
+	}
+
+	public String getPayableFeeTypeDesc() {
+		return payableFeeTypeDesc;
+	}
+
+	public void setPayableFeeTypeDesc(String payableFeeTypeDesc) {
+		this.payableFeeTypeDesc = payableFeeTypeDesc;
 	}
 
 }

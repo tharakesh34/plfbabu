@@ -25,7 +25,6 @@
 package com.pennant.backend.service.payment;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -68,21 +67,19 @@ public interface PaymentHeaderService {
 
 	void executeAccountingProcess(AEEvent aeEvent, PaymentHeader paymentHeader);
 
-	boolean isInstructionInProgress(String finReference);
+	boolean isInProgress(long finID);
 
 	BigDecimal getDueAgainstLoan(long finId);
 
-	BigDecimal getDueAgainstCustomer(long custId, String custCoreBank);
+	BigDecimal getDueAgainstCustomer(long custId);
 
 	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
 
 	Long getPaymentIdByFinId(long finID, long receiptId, String type);
 
-	PaymentHeader prepareRefund(AutoRefundLoan refundLoan, List<PaymentDetail> payDtlList,
-			PaymentInstruction paymentInst, Date appDate);
+	PaymentHeader prepareRefund(AutoRefundLoan arl, List<PaymentDetail> payDtlList, PaymentInstruction paymentInst);
 
-	List<ErrorDetail> verifyRefundInitiation(long finId, String closingStatus, int dpdDays, String holdStatus,
-			int autoRefCheckDPD, boolean isEOD);
+	List<ErrorDetail> verifyRefundInitiation(AutoRefundLoan arl, boolean isEOD);
 
 	BigDecimal getInProgressExcessAmt(long finId, Long receiptId);
 

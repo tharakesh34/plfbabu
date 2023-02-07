@@ -50,12 +50,12 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private String custCif;
-	private String custName;
+	private String custShrtName;
 	private long finID;
 	private String paymentType;
 	private String finReference;
 	private String finType;
-	private String branchName;
+	private String branchDesc;
 	private BigDecimal paymentAmount = BigDecimal.ZERO;
 	private long createdBy;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
@@ -73,7 +73,7 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 	private FeeRefundHeader befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	private String approvalStatus;
+	private int approvalStatus;
 	private BigDecimal odAgainstCustomer = BigDecimal.ZERO;
 	private BigDecimal odAgainstLoan = BigDecimal.ZERO;
 	private long custId = Long.MIN_VALUE;
@@ -96,7 +96,7 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		excludeFields.add("defaultBeneficiary");
 		excludeFields.add("finSource");
 		excludeFields.add("finCcy");
-		excludeFields.add("custName");
+		excludeFields.add("custShrtName");
 		excludeFields.add("finReference");
 		excludeFields.add("linkedTranId");
 		excludeFields.add("feeRefundInstruction");
@@ -104,6 +104,10 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		excludeFields.add("odAgainstLoan");
 		excludeFields.add("custId");
 		excludeFields.add("custCoreBank");
+		excludeFields.add("custCif");
+		excludeFields.add("finType");
+		excludeFields.add("branchDesc");
+
 		return excludeFields;
 	}
 
@@ -128,12 +132,12 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		this.custCif = custCif;
 	}
 
-	public String getCustName() {
-		return custName;
+	public String getCustShrtName() {
+		return custShrtName;
 	}
 
-	public void setCustName(String custName) {
-		this.custName = custName;
+	public void setCustShrtName(String custShrtName) {
+		this.custShrtName = custShrtName;
 	}
 
 	public String getFinType() {
@@ -144,12 +148,12 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		this.finType = finType;
 	}
 
-	public String getBranchName() {
-		return branchName;
+	public String getBranchDesc() {
+		return branchDesc;
 	}
 
-	public void setBranchName(String branchName) {
-		this.branchName = branchName;
+	public void setBranchDesc(String branchDesc) {
+		this.branchDesc = branchDesc;
 	}
 
 	public long getFinID() {
@@ -308,11 +312,11 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		this.paymentType = paymentType;
 	}
 
-	public String getApprovalStatus() {
+	public int getApprovalStatus() {
 		return approvalStatus;
 	}
 
-	public void setApprovalStatus(String approvalStatus) {
+	public void setApprovalStatus(int approvalStatus) {
 		this.approvalStatus = approvalStatus;
 	}
 

@@ -42,6 +42,7 @@ import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.pff.mandate.ChequeSatus;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -113,7 +114,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			break;
 		}
 
-		log(sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
@@ -246,7 +247,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 	public void batchUpdateChequeStatus(List<Long> detailIDs, String status) {
 		String sql = "Update ChequeDetail Set Chequestatus = ? where ChequeDetailsId = ?";
 
-		log(sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -289,7 +290,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 	public boolean isChequeExists(long headerID, Date chequeDate) {
 		String sql = "Select count(ChequeDetailsID) From ChequeDetail_View Where HeaderID = ? and ChequeDate = ?";
 
-		log(sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForObject(sql, Integer.class, headerID, JdbcUtil.getDate(chequeDate)) > 0;
 	}
@@ -385,10 +386,10 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		List<ChequeDetail> list = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
 			ps.setLong(++index, finID);
-			ps.setString(++index, "PDC");
+			ps.setString(++index, InstrumentType.PDC.name());
 			ps.setString(++index, ChequeSatus.CANCELLED);
 		}, (rs, rowNum) -> {
 			ChequeDetail cd = new ChequeDetail();
@@ -397,9 +398,9 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			cd.setChequeDetailsID(rs.getLong("ChequeDetailsID"));
 			return cd;
 		});
-	}
 
-	private void log(String sql) {
-		logger.debug(Literal.SQL.concat(sql));
+		return list.stream().sorted((l1, l2) -> Long.valueOf(l2.getId()).compareTo(Long.valueOf(l1.getId())))
+				.collect(Collectors.toList());
+
 	}
 }

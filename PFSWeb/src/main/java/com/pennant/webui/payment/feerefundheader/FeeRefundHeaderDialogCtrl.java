@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -52,7 +53,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -60,7 +60,6 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
@@ -70,7 +69,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -83,14 +81,10 @@ import com.pennant.backend.model.feerefund.FeeRefundInstruction;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
-import com.pennant.backend.model.finance.TaxAmountSplit;
-import com.pennant.backend.model.finance.TaxHeader;
-import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
 import com.pennant.backend.service.feetype.FeeTypeService;
@@ -103,7 +97,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
@@ -113,7 +106,6 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -184,13 +176,11 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	private transient FeeRefundInstructionDialogCtrl feeRefundInstructionDialogCtrl;
 
 	private int ccyFormatter = 0;
-	private List<FeeRefundDetail> feeRefundDetailList = new ArrayList<FeeRefundDetail>();
+	private List<FeeRefundDetail> feeRefundDetailList = new ArrayList<>();
 	protected String selectMethodName = "onSelectTab";
 	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
 	private boolean isAccountingExecuted = false;
-	private long accountsetId;
 
-	private Listheader listheader_FeeRefundHeaderDialog_button;
 	private Grid grid_basicDetails;
 	private Map<String, BigDecimal> taxPercMap = null;
 	private FeeTypeService feeTypeService;
@@ -468,60 +458,60 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		return tabID.replace("TAB", "");
 	}
 
-	/**
-	 * Method for Append Disbursement Instruction Tab
-	 */
 	private void appendDisbursementInstructionTab(FeeRefundHeader frh) {
-		try {
-			FeeRefundInstruction fri = frh.getFeeRefundInstruction();
-			Date appDate = SysParamUtil.getAppDate();
-			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
-			if (fri == null) {
-				PaymentInstruction payIns = null;
-				fri = new FeeRefundInstruction();
-				payIns = refundBeneficiary.fetchBeneficiaryForRefund(this.financeMain.getFinID(), appDate,
-						alwRefundByCheque);
-				if (payIns != null) {
-					fri.setBankBranchId(payIns.getBankBranchId());
-					fri.setBankBranchCode(payIns.getBankBranchCode());
-					fri.setBranchDesc(payIns.getBranchDesc());
-					fri.setBankName(payIns.getBankName());
-					fri.setBankBranchIFSC(payIns.getBankBranchIFSC());
-					fri.setpCCityName(payIns.getpCCityName());
-					fri.setAccountNo(payIns.getAccountNo());
-					fri.setAcctHolderName(payIns.getAcctHolderName());
-					fri.setPartnerBankId(payIns.getPartnerBankId());
-					fri.setPartnerBankCode(payIns.getPartnerBankCode());
-					fri.setPartnerBankName(payIns.getPartnerBankName());
-					fri.setPhoneNumber(payIns.getPhoneNumber());
-					fri.setIssuingBank(payIns.getIssuingBank());
-					fri.setIssuingBankName(payIns.getIssuingBankName());
-					fri.setPartnerBankAcType(payIns.getPartnerBankAc());
-					fri.setPartnerBankAc(payIns.getPartnerBankAc());
-				}
-			}
-			Map<String, Object> map = new HashMap<>();
-			map.put("feeRefundInstruction", fri);
-			map.put("roleCode", getRole());
-			map.put("feeRefundHeader", frh);
-			map.put("feeRefundHeaderDialogCtrl", this);
-			map.put("financeMain", this.financeMain);
-			map.put("tab", this.tabDisbInstructions);
-			map.put("ccyFormatter", ccyFormatter);
-			map.put("enqiryModule", this.enqiryModule);
+		logger.debug(Literal.ENTERING);
 
+		FeeRefundInstruction fri = frh.getFeeRefundInstruction();
+		Date appDate = SysParamUtil.getAppDate();
+		boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
+
+		if (fri == null) {
+			fri = new FeeRefundInstruction();
+		}
+
+		PaymentInstruction payIns = refundBeneficiary.getBeneficiary(this.financeMain.getFinID(), appDate,
+				alwRefundByCheque);
+		if (payIns != null) {
+			fri.setBankBranchId(payIns.getBankBranchId());
+			fri.setBankBranchCode(payIns.getBankBranchCode());
+			fri.setBranchDesc(payIns.getBranchDesc());
+			fri.setBankName(payIns.getBankName());
+			fri.setBankBranchIFSC(payIns.getBankBranchIFSC());
+			fri.setpCCityName(payIns.getpCCityName());
+			fri.setAccountNo(payIns.getAccountNo());
+			fri.setAcctHolderName(payIns.getAcctHolderName());
+			fri.setPartnerBankId(payIns.getPartnerBankId());
+			fri.setPartnerBankCode(payIns.getPartnerBankCode());
+			fri.setPartnerBankName(payIns.getPartnerBankName());
+			fri.setPhoneNumber(payIns.getPhoneNumber());
+			fri.setIssuingBank(payIns.getIssuingBank());
+			fri.setIssuingBankName(payIns.getIssuingBankName());
+			fri.setPartnerBankAcType(payIns.getPartnerBankAc());
+			fri.setPartnerBankAc(payIns.getPartnerBankAc());
+		}
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("feeRefundInstruction", fri);
+		map.put("roleCode", getRole());
+		map.put("feeRefundHeader", frh);
+		map.put("feeRefundHeaderDialogCtrl", this);
+		map.put("financeMain", this.financeMain);
+		map.put("tab", this.tabDisbInstructions);
+		map.put("ccyFormatter", ccyFormatter);
+		map.put("enqiryModule", this.enqiryModule);
+
+		try {
 			Executions.createComponents("/WEB-INF/pages/FeeRefund/FeeRefundInstructionDialog.zul",
 					tabDisbInstructionsTabPanel, map);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(Literal.EXCEPTION);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for Rendering Schedule Details Data in finance
-	 */
 	protected void appendAccountingDetailTab(FeeRefundHeader frh, boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FeeRefundInstruction fri = frh.getFeeRefundInstruction();
 		if (fri == null) {
@@ -545,7 +535,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		}
 		if (!onLoadProcess) {
-			accountsetId = AccountingConfigCache.getAccountSetID(this.financeMain.getFinType(),
+			long accountsetId = AccountingConfigCache.getAccountSetID(this.financeMain.getFinType(),
 					AccountingEvent.PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
 			final Map<String, Object> map = new HashMap<>();
 			map.put("feeRefundInstruction", fri);
@@ -561,7 +551,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				tab.setVisible(true);
 			}
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private Tab getTab(String id) {
@@ -580,15 +571,9 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
-	/**
-	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
-	 * parameter
-	 * 
-	 * @param moduleID
-	 * @param tabVisible
-	 */
 	public void createTab(String moduleID, boolean tabVisible) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		String tabName = Labels.getLabel("tab_label_" + moduleID);
 		Tab tab = new Tab(tabName);
 		tab.setId(getTabID(moduleID));
@@ -600,7 +585,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
 		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void clearTabpanelChildren(String id) {
@@ -615,22 +601,27 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
-		if (this.listBoxFeeRefundTypeInstructions != null
-				&& this.listBoxFeeRefundTypeInstructions.getItems().size() > 0) {
+		for (Listitem item : listBoxFeeRefundTypeInstructions.getItems()) {
+			if (!"Y".equals(item.getAttribute("index"))) {
+				continue;
+			}
 
-			for (int i = 0; i < listBoxFeeRefundTypeInstructions.getItems().size() - 1; i++) {
-				List<Listcell> listCells = listBoxFeeRefundTypeInstructions.getItems().get(i).getChildren();
-				Listcell avaibleAmtCell = listCells.get(7);
-				Listcell payAmtCell = listCells.get(6);
-				Decimalbox avaibleAmt = (Decimalbox) avaibleAmtCell.getChildren().get(0);
-				Decimalbox payAmt = (Decimalbox) payAmtCell.getChildren().get(0);
-				Clients.clearWrongValue(payAmt);
-				if ((avaibleAmt.getValue().compareTo(payAmt.getValue())) == -1) {
-					throw new WrongValueException(payAmt,
-							Labels.getLabel("label_PaymentHeaderDialog_paymentAmountErrorMsg.value"));
-				}
+			List<Listcell> listCells = item.getChildren();
+
+			Decimalbox paidAmount = (Decimalbox) listCells.get(4).getChildren().get(0);
+			Decimalbox prvRefAmount = (Decimalbox) listCells.get(5).getChildren().get(0);
+			Decimalbox payAmt = (Decimalbox) listCells.get(6).getChildren().get(0);
+
+			BigDecimal balanceAmt = paidAmount.getValue().subtract(prvRefAmount.getValue());
+			BigDecimal curRefundAmt = payAmt.getValue();
+
+			Clients.clearWrongValue(payAmt);
+
+			if ((balanceAmt.compareTo(curRefundAmt)) == -1) {
+				throw new WrongValueException(payAmt,
+						Labels.getLabel("label_PaymentHeaderDialog_paymentAmountErrorMsg.value"));
 			}
 		}
 
@@ -663,15 +654,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		List<WrongValueException> wve = new ArrayList<>();
 
-		// Fin Id
 		try {
 			frh.setFinID(this.financeMain.getFinID());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			frh.setCustCif(this.financeMain.getLovDescCustCIF());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -684,32 +668,17 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		}
 
 		try {
-			frh.setFinType(this.financeMain.getFinType());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			frh.setBranchName(this.financeMain.getFinBranch());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		// Payment Type
-		try {
 			frh.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		// Payment Amount
 		try {
 			frh.setPaymentAmount(PennantApplicationUtil.unFormateAmount(this.totAmount.getValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		// Status
 		try {
 			if (frh.isNewRecord()) {
 				frh.setStatus(RepayConstants.PAYMENT_INTIATED);
@@ -1095,23 +1064,11 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		return processCompleted;
 	}
 
-	/**
-	 * @param aAuthorizedSignatoryRepository
-	 * @param tranType
-	 * @return
-	 */
 	private AuditHeader getAuditHeader(FeeRefundHeader frh, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, frh.getBefImage(), frh);
 		return new AuditHeader(getReference(), null, null, null, auditDetail, frh.getUserDetails(), getOverideMap());
 	}
 
-	/****************************************************
-	 * Account Executing * ***************************************************
-	 */
-
-	/**
-	 * Method for Executing Accountng Details
-	 */
 	public void executeAccounting() {
 		logger.debug(Literal.ENTERING);
 
@@ -1126,24 +1083,21 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		}
 
 		List<FeeRefundDetail> feeRefundDetailsList = this.feeRefundHeader.getFeeRefundDetailList();
-		List<String> feeTypeCodes = new ArrayList<>();
+		List<Long> feeTypeCodes = new ArrayList<>();
 		List<FeeType> feeTypesList = new ArrayList<>();
 
 		for (FeeRefundDetail frd : feeRefundDetailsList) {
-			feeTypeCodes.add(frd.getFeeTypeCode());
+			feeTypeCodes.add(frd.getReceivableFeeTypeID());
 		}
 
 		if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
-			feeTypesList = feeTypeService.getFeeTypeListByCodes(feeTypeCodes, "");
+			feeTypesList = feeTypeService.getFeeTypeListByIds(feeTypeCodes, "");
 			aeEvent.setFeesList(feeTypesList);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	/***************************************************
-	 * Payment details Saving, Processing...............* **************************************************
-	 */
 	private void calculatePaymentDetail(FeeRefundHeader frh) {
 		logger.debug(Literal.ENTERING);
 
@@ -1155,127 +1109,93 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		List<FinFeeDetail> finFeeDetailList = finFeeDetailService.getFinFeeDetailByFinRef(finID, false, "");
 		FinODDetails fod = finODDetailsDAO.getFinODSummary(finID);
 
-		if (CollectionUtils.isNotEmpty(manualAdviseList)) {
-			for (ManualAdvise ma : manualAdviseList) {
-				frd = new FeeRefundDetail();
-				if (!(ma.getPaidAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					continue;
-				}
+		for (ManualAdvise ma : manualAdviseList) {
+			frd = new FeeRefundDetail();
 
-				FeeType feeType = feeTypeService.getRecvFees(ma.getFeeTypeCode());
+			FeeType feeType = feeTypeService.getRecvFees(ma.getFeeTypeCode());
 
-				if (feeType == null || !feeType.isRefundable()) {
-					continue;
-				}
+			if (feeType == null || !feeType.isRefundable()) {
+				continue;
+			}
 
-				List<ReceiptAllocationDetail> radList = this.receiptService
-						.getReceiptAllocDetail(this.financeMain.getFinID(), Allocation.MANADV);
+			List<ReceiptAllocationDetail> radList = this.receiptService.getReceiptAllocDetail(finID, Allocation.MANADV);
 
-				BigDecimal receiptPaidAmt = BigDecimal.ZERO;
+			BigDecimal receiptPaidAmt = BigDecimal.ZERO;
 
-				if (CollectionUtils.isNotEmpty(radList)) {
-					for (ReceiptAllocationDetail rad : radList) {
-						if (StringUtils.equals(String.valueOf(rad.getAllocationTo()),
-								String.valueOf(ma.getAdviseID()))) {
-							receiptPaidAmt = rad.getPaidAmount();
-						}
+			if (CollectionUtils.isNotEmpty(radList)) {
+				for (ReceiptAllocationDetail rad : radList) {
+					if (StringUtils.equals(String.valueOf(rad.getAllocationTo()), String.valueOf(ma.getAdviseID()))) {
+						receiptPaidAmt = rad.getPaidAmount();
 					}
 				}
-
-				frd.setNewRecord(true);
-				frd.setReceivableRefId(ma.getAdviseID());
-				frd.setAvailableAmount(
-						ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
-
-				if (ma.getBounceID() > 0) {
-					frd.setReceivableType(RepayConstants.DUETYPE_BOUNCE + "_" + ma.getFeeTypeID());
-				} else {
-					frd.setReceivableType(RepayConstants.DUETYPE_MANUALADVISE + "_" + ma.getFeeTypeID());
-				}
-				frd.setFeeTypeCode(ma.getFeeTypeCode());
-				frd.setFeeTypeDesc(ma.getFeeTypeDesc());
-				frd.setAdviseAmount(ma.getAdviseAmount());
-				BigDecimal paidAmount = ma.getPaidAmount().subtract(receiptPaidAmt);
-				BigDecimal paidTGST = ma.getPaidCGST().add(ma.getPaidSGST()).add(ma.getPaidIGST()).add(ma.getPaidUGST())
-						.add(ma.getPaidCESS());
-				frd.setPaidAmount(paidAmount.add(paidTGST));
-
-				BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
-
-				frd.setPrevRefundAmount(prvRefundAmt);
-
-				if (feeType != null) {
-					frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
-					frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
-				}
-
-				BigDecimal waivedTGST = ma.getWaivedCGST().add(ma.getWaivedSGST()).add(ma.getWaivedIGST())
-						.add(ma.getWaivedUGST()).add(ma.getWaivedCESS());
-
-				frd.setPrvGST(paidTGST.add(waivedTGST));
-				frd.setManualAdvise(ma);
-				// GST Field details
-				frd.setTaxApplicable(ma.isTaxApplicable());
-				frd.setTaxComponent(ma.getTaxComponent());
-
-				detailList.add(frd);
 			}
+
+			frd.setNewRecord(true);
+			frd.setReceivableID(ma.getAdviseID());
+			frd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
+			frd.setReceivableFeeTypeID(ma.getFeeTypeID());
+			frd.setAdviseAmount(ma.getAdviseAmount());
+			frd.setPayableFeeTypeID(feeType.getFeeTypeID());
+			frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
+			frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
+			frd.setReceivableFeeTypeCode(ma.getFeeTypeCode());
+			frd.setReceivableFeeTypeDesc(ma.getFeeTypeDesc());
+			frd.setReceivableType(Allocation.MANADV);
+
+			BigDecimal paidAmount = ma.getPaidAmount().subtract(receiptPaidAmt);
+			frd.setPaidAmount(paidAmount);
+
+			BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
+			frd.setPrevRefundAmount(prvRefundAmt);
+
+			detailList.add(frd);
 		}
 
-		if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
-			for (FinFeeDetail ffd : finFeeDetailList) {
-				frd = new FeeRefundDetail();
-				if (!(ffd.getPaidAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					continue;
-				}
+		for (FinFeeDetail ffd : finFeeDetailList) {
+			frd = new FeeRefundDetail();
 
-				FeeType ft = feeTypeService.getApprovedFeeTypeById(ffd.getFeeTypeID());
-				FeeType feeType = feeTypeService.getRecvFees(ft.getFeeTypeCode());
-				if (feeType == null || !feeType.isRefundable()) {
-					continue;
-				}
+			FeeType ft = feeTypeService.getApprovedFeeTypeById(ffd.getFeeTypeID());
+			FeeType feeType = feeTypeService.getRecvFees(ft.getFeeTypeCode());
+			if (feeType == null || !feeType.isRefundable()) {
+				continue;
+			}
 
-				List<ReceiptAllocationDetail> radList = this.receiptService.getReceiptAllocDetail(finID,
-						Allocation.FEE);
+			List<ReceiptAllocationDetail> radList = this.receiptService.getReceiptAllocDetail(finID, Allocation.FEE);
 
-				BigDecimal receiptPaidAmt = BigDecimal.ZERO;
+			BigDecimal receiptPaidAmt = BigDecimal.ZERO;
 
-				if (CollectionUtils.isNotEmpty(radList)) {
-					for (ReceiptAllocationDetail rad : radList) {
-						if (StringUtils.equals(String.valueOf(rad.getAllocationTo()),
-								String.valueOf(ffd.getFeeTypeID()))) {
-							receiptPaidAmt = rad.getPaidAmount();
-						}
+			if (CollectionUtils.isNotEmpty(radList)) {
+				for (ReceiptAllocationDetail rad : radList) {
+					if (StringUtils.equals(String.valueOf(rad.getAllocationTo()), String.valueOf(ffd.getFeeTypeID()))) {
+						receiptPaidAmt = rad.getPaidAmount();
 					}
 				}
-
-				frd.setNewRecord(true);
-				frd.setReceivableRefId(ffd.getFeeID());
-				frd.setAvailableAmount(
-						ffd.getActualAmount().subtract(ffd.getPaidAmount()).subtract(ffd.getWaivedAmount()));
-				frd.setReceivableType(RepayConstants.DUETYPE_FEES + "_" + ffd.getFinEvent() + "_" + ffd.getFeeTypeID());
-				frd.setFeeTypeCode(ft.getFeeTypeCode());
-				frd.setFeeTypeDesc(ft.getFeeTypeDesc());
-				frd.setAdviseAmount(ffd.getActualAmount());
-				frd.setPaidAmount(ffd.getPaidAmount().subtract(receiptPaidAmt));
-
-				BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
-				frd.setPrevRefundAmount(prvRefundAmt);
-				frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
-				frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
-				frd.setTaxApplicable(ffd.isTaxApplicable());
-				frd.setTaxComponent(ffd.getTaxComponent());
-
-				detailList.add(frd);
 			}
+
+			frd.setNewRecord(true);
+			frd.setReceivableID(ffd.getFeeID());
+			frd.setAvailableAmount(ffd.getActualAmount().subtract(ffd.getPaidAmount()).subtract(ffd.getWaivedAmount()));
+			frd.setReceivableFeeTypeID(ffd.getFeeTypeID());
+			frd.setAdviseAmount(ffd.getActualAmount());
+			frd.setPaidAmount(ffd.getPaidAmount().subtract(receiptPaidAmt));
+			frd.setPayableFeeTypeID(feeType.getFeeTypeID());
+			frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
+			frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
+			frd.setReceivableFeeTypeCode(ft.getFeeTypeCode());
+			frd.setReceivableFeeTypeDesc(ft.getFeeTypeDesc());
+			frd.setReceivableType(Allocation.FEE);
+
+			BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
+			frd.setPrevRefundAmount(prvRefundAmt);
+
+			detailList.add(frd);
 		}
 
-		if (fod != null && fod.getTotPenaltyPaid().compareTo(BigDecimal.ZERO) > 0) {
+		if (fod != null) {
 			FeeType ft = feeTypeService.getApprovedFeeTypeByFeeCode("ODC");
 			FeeType feeType = feeTypeService.getRecvFees(ft.getFeeTypeCode());
 
 			if (feeType != null && feeType.isRefundable()) {
-
 				List<ReceiptAllocationDetail> radList = this.receiptService.getReceiptAllocDetail(finID,
 						Allocation.ODC);
 
@@ -1291,28 +1211,26 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 				frd = new FeeRefundDetail();
 				frd.setNewRecord(true);
-				frd.setReceivableRefId(ft.getFeeTypeID());
+				frd.setReceivableFeeTypeID(ft.getFeeTypeID());
 				frd.setAvailableAmount(
 						fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 				frd.setPaidAmount(fod.getTotPenaltyPaid().subtract(receiptPaidAmt));
-				frd.setReceivableType(RepayConstants.DUETYPE_ODC);
-
-				frd.setFeeTypeCode(ft.getFeeTypeCode());
-				frd.setFeeTypeDesc(ft.getFeeTypeDesc());
 				frd.setAdviseAmount(fod.getTotPenaltyAmt());
+				frd.setPayableFeeTypeID(feeType.getFeeTypeID());
+				frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
+				frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
+				frd.setReceivableFeeTypeCode(ft.getFeeTypeCode());
+				frd.setReceivableFeeTypeDesc(ft.getFeeTypeDesc());
+				frd.setReceivableType(Allocation.ODC);
 
 				BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
 				frd.setPrevRefundAmount(prvRefundAmt);
-				frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
-				frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
-				frd.setTaxApplicable(ft.isTaxApplicable());
-				frd.setTaxComponent(ft.getTaxComponent());
 
 				detailList.add(frd);
 			}
 		}
 
-		if (fod != null && fod.getLPIPaid().compareTo(BigDecimal.ZERO) > 0) {
+		if (fod != null) {
 			FeeType ft = feeTypeService.getApprovedFeeTypeByFeeCode("LPFT");
 			FeeType feeType = feeTypeService.getRecvFees(ft.getFeeTypeCode());
 
@@ -1332,171 +1250,34 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				}
 				frd = new FeeRefundDetail();
 				frd.setNewRecord(true);
-				frd.setReceivableRefId(ft.getFeeTypeID());
+				frd.setReceivableFeeTypeID(ft.getFeeTypeID());
 				frd.setAvailableAmount(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
 				frd.setPaidAmount(fod.getLPIPaid().subtract(receiptPaidAmt));
-				frd.setReceivableType(RepayConstants.DUETYPE_LPFT);
-
-				frd.setFeeTypeCode(ft.getFeeTypeCode());
-				frd.setFeeTypeDesc(ft.getFeeTypeDesc());
 				frd.setAdviseAmount(fod.getLPIAmt());
+				frd.setPayableFeeTypeID(feeType.getFeeTypeID());
+				frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
+				frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
+				frd.setReceivableFeeTypeCode(ft.getFeeTypeCode());
+				frd.setReceivableFeeTypeDesc(ft.getFeeTypeDesc());
+				frd.setReceivableType(Allocation.LPFT);
 
 				BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
 				frd.setPrevRefundAmount(prvRefundAmt);
-				frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
-				frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
-				frd.setTaxApplicable(ft.isTaxApplicable());
-				frd.setTaxComponent(ft.getTaxComponent());
 
 				detailList.add(frd);
 			}
 		}
 
-		if (CollectionUtils.isEmpty(detailList) && !this.enqiryModule) {
-			throw new AppException("There is no balance amount to Refund.");
-		}
-
 		if (frh.isNewRecord()) {
 			for (FeeRefundDetail detail : detailList) {
-				if (BigDecimal.ZERO.compareTo(detail.getPaidAmount()) == -1) {
-					feeRefundDetailList.add(detail);
-				}
+				feeRefundDetailList.add(detail);
 			}
 		} else {
 			updatePaybleAmounts(detailList, frh.getFeeRefundDetailList());
 		}
 
-		for (FeeRefundDetail detail : feeRefundDetailList) {
-			if (!AdviseType.isPayable(detail.getReceivableType())) {
-				continue;
-			}
+		doFillHeaderList(feeRefundDetailList);
 
-			if (detail.isTaxApplicable()) {
-
-				if (taxPercMap == null) {
-					FinanceDetail financeDetail = new FinanceDetail();
-					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-					taxPercMap = GSTCalculator.getTaxPercentages(financeMain);
-				}
-
-				// GST Calculations
-				TaxHeader taxHeader = detail.getTaxHeader();
-				Taxes cgstTax = null;
-				Taxes sgstTax = null;
-				Taxes igstTax = null;
-				Taxes ugstTax = null;
-				Taxes cessTax = null;
-				if (taxHeader == null) {
-					taxHeader = new TaxHeader();
-					taxHeader.setNewRecord(true);
-					taxHeader.setRecordType(PennantConstants.RCD_ADD);
-					taxHeader.setVersion(taxHeader.getVersion() + 1);
-					detail.setTaxHeader(taxHeader);
-				}
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-
-						switch (taxes.getTaxType()) {
-						case RuleConstants.CODE_CGST:
-							cgstTax = taxes;
-							break;
-						case RuleConstants.CODE_IGST:
-							igstTax = taxes;
-							break;
-						case RuleConstants.CODE_SGST:
-							sgstTax = taxes;
-							break;
-						case RuleConstants.CODE_UGST:
-							ugstTax = taxes;
-							break;
-						case RuleConstants.CODE_CESS:
-							cessTax = taxes;
-							break;
-						default:
-							break;
-						}
-					}
-				}
-
-				BigDecimal cGSTPerc = taxPercMap.get(RuleConstants.CODE_CGST);
-				BigDecimal sGSTPerc = taxPercMap.get(RuleConstants.CODE_SGST);
-				BigDecimal iGSTPerc = taxPercMap.get(RuleConstants.CODE_IGST);
-				BigDecimal uGSTPerc = taxPercMap.get(RuleConstants.CODE_UGST);
-				BigDecimal cessPerc = taxPercMap.get(RuleConstants.CODE_CESS);
-
-				if (taxHeader.getTaxDetails() == null) {
-					taxHeader.setTaxDetails(new ArrayList<>());
-				}
-
-				// CGST
-				if (cgstTax == null) {
-					cgstTax = getTaxDetail(RuleConstants.CODE_CGST, cGSTPerc, taxHeader);
-					taxHeader.getTaxDetails().add(cgstTax);
-				} else {
-					cgstTax.setTaxPerc(cGSTPerc);
-				}
-
-				// SGST
-				if (sgstTax == null) {
-					sgstTax = getTaxDetail(RuleConstants.CODE_SGST, sGSTPerc, taxHeader);
-					taxHeader.getTaxDetails().add(sgstTax);
-				} else {
-					sgstTax.setTaxPerc(sGSTPerc);
-				}
-
-				// IGST
-				if (igstTax == null) {
-					igstTax = getTaxDetail(RuleConstants.CODE_IGST, iGSTPerc, taxHeader);
-					taxHeader.getTaxDetails().add(igstTax);
-				} else {
-					igstTax.setTaxPerc(iGSTPerc);
-				}
-
-				// UGST
-				if (ugstTax == null) {
-					ugstTax = getTaxDetail(RuleConstants.CODE_UGST, uGSTPerc, taxHeader);
-					taxHeader.getTaxDetails().add(ugstTax);
-				} else {
-					ugstTax.setTaxPerc(uGSTPerc);
-				}
-
-				// CESS percentage
-				if (cessTax == null) {
-					cessTax = getTaxDetail(RuleConstants.CODE_CESS, cessPerc, taxHeader);
-					taxHeader.getTaxDetails().add(cessTax);
-				} else {
-					cessTax.setTaxPerc(cessPerc);
-				}
-
-				TaxAmountSplit taxSplit = null;
-
-				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
-					taxSplit = GSTCalculator.getExclusiveGST(detail.getAvailableAmount(), taxPercMap);
-				} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(detail.getTaxComponent())) {
-					taxSplit = GSTCalculator.getInclusiveGST(detail.getAvailableAmount(), taxPercMap);
-				}
-
-				getActualGST(detail, taxSplit);
-
-				if (taxSplit != null) {
-					cgstTax.setActualTax(taxSplit.getcGST());
-					sgstTax.setActualTax(taxSplit.getsGST());
-					igstTax.setActualTax(taxSplit.getiGST());
-					ugstTax.setActualTax(taxSplit.getuGST());
-					cessTax.setActualTax(taxSplit.getCess());
-
-					cgstTax.setNetTax(taxSplit.getcGST());
-					sgstTax.setNetTax(taxSplit.getsGST());
-					igstTax.setNetTax(taxSplit.getiGST());
-					ugstTax.setNetTax(taxSplit.getuGST());
-					cessTax.setNetTax(taxSplit.getCess());
-				}
-
-			}
-		}
-
-		doFillHeaderList(feeRefundDetailList, null, false);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1535,69 +1316,6 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		}
 	}
 
-	private void getActualGST(FeeRefundDetail frd, TaxAmountSplit taxSplit) {
-		if (taxSplit == null) {
-			return;
-		}
-
-		if (frd.getAdviseAmount().compareTo(BigDecimal.ZERO) <= 0) {
-			return;
-		}
-
-		ManualAdvise ma = frd.getManualAdvise();
-
-		if (ma == null) {
-			return;
-		}
-
-		TaxAmountSplit adviseSplit = null;
-
-		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(frd.getTaxComponent())) {
-			adviseSplit = GSTCalculator.getExclusiveGST(frd.getAdviseAmount(), taxPercMap);
-		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(frd.getTaxComponent())) {
-			adviseSplit = GSTCalculator.getInclusiveGST(frd.getAdviseAmount(), taxPercMap);
-		}
-
-		BigDecimal diffGST = BigDecimal.ZERO;
-
-		BigDecimal payableGST = taxSplit.gettGST().add(frd.getPrvGST());
-
-		if (payableGST.compareTo(adviseSplit.gettGST()) > 0) {
-			diffGST = payableGST.subtract(adviseSplit.gettGST());
-			taxSplit.settGST(taxSplit.gettGST().subtract(diffGST));
-		}
-
-		if (diffGST.compareTo(BigDecimal.ZERO) == 0) {
-			return;
-		}
-
-		BigDecimal prvCGst = ma.getPaidCGST().add(ma.getWaivedCGST());
-		BigDecimal prvSGst = ma.getPaidSGST().add(ma.getWaivedSGST());
-		BigDecimal prvIGst = ma.getPaidIGST().add(ma.getWaivedIGST());
-		BigDecimal prvUGst = ma.getPaidUGST().add(ma.getWaivedUGST());
-		BigDecimal prvCess = ma.getPaidCESS().add(ma.getWaivedCESS());
-
-		BigDecimal diffCGST = taxSplit.getcGST().add(prvCGst).subtract(adviseSplit.getcGST());
-		BigDecimal diffSGST = taxSplit.getsGST().add(prvSGst).subtract(adviseSplit.getsGST());
-		BigDecimal diffIGST = taxSplit.getiGST().add(prvIGst).subtract(adviseSplit.getiGST());
-		BigDecimal diffUGST = taxSplit.getuGST().add(prvUGst).subtract(adviseSplit.getuGST());
-		BigDecimal diffCESS = taxSplit.getCess().add(prvCess).subtract(adviseSplit.getCess());
-
-		taxSplit.setcGST(taxSplit.getcGST().subtract(diffCGST));
-		taxSplit.setsGST(taxSplit.getsGST().subtract(diffSGST));
-		taxSplit.setiGST(taxSplit.getiGST().subtract(diffIGST));
-		taxSplit.setuGST(taxSplit.getuGST().subtract(diffUGST));
-		taxSplit.setCess(taxSplit.getCess().subtract(diffCESS));
-	}
-
-	private Taxes getTaxDetail(String taxType, BigDecimal taxPerc, TaxHeader taxHeader) {
-		Taxes taxes = new Taxes();
-		taxes.setTaxType(taxType);
-		taxes.setTaxPerc(taxPerc);
-		return taxes;
-	}
-
-	// Update the latest balance amount..
 	private void updatePaybleAmounts(List<FeeRefundDetail> newList, List<FeeRefundDetail> oldList) {
 		logger.debug(Literal.ENTERING);
 
@@ -1606,95 +1324,44 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		for (FeeRefundDetail oldDetail : oldList) {
 			for (FeeRefundDetail newDetail : newList) {
-				if (oldDetail.getReceivableRefId() == newDetail.getReceivableRefId()) {
-
-					BigDecimal amount = oldDetail.getAvailableAmount();
-					if (oldDetail.getTaxHeader() != null
-							&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(oldDetail.getTaxComponent())) {
-						// GST Calculations
-						TaxHeader taxHeader = oldDetail.getTaxHeader();
-						List<Taxes> taxDetails = taxHeader.getTaxDetails();
-						BigDecimal gstAmount = BigDecimal.ZERO;
-						if (CollectionUtils.isNotEmpty(taxDetails)) {
-							for (Taxes taxes : taxDetails) {
-								gstAmount = gstAmount.add(taxes.getPaidTax());
-							}
-						}
-						amount = amount.subtract(gstAmount);
-					}
-
-					String amountType = oldDetail.getReceivableType();
-					if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(amountType)
-							|| RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(amountType)
-							|| RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)
-							|| RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(amountType)
-							|| RepayConstants.EXAMOUNTTYPE_DSF.equals(amountType)) {
-
-						oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
-					} else {
-						oldDetail.setAvailableAmount(newDetail.getAvailableAmount());
-					}
-
+				if (Long.compare(oldDetail.getReceivableID(), newDetail.getReceivableID()) == 0) {
+					oldDetail.setAvailableAmount(newDetail.getAvailableAmount());
 					oldDetail.setAdviseAmount(newDetail.getAdviseAmount());
-					oldDetail.setManualAdvise(newDetail.getManualAdvise());
-					oldDetail.setPrvGST(newDetail.getPrvGST());
 					oldDetail.setNewRecord(false);
-					oldDetail.setFeeTypeCode(newDetail.getFeeTypeCode());
-					oldDetail.setFeeTypeDesc(newDetail.getFeeTypeDesc());
-					oldDetail.setTaxApplicable(newDetail.isTaxApplicable());
-					oldDetail.setTaxComponent(newDetail.getTaxComponent());
+					oldDetail.setPaidAmount(newDetail.getPaidAmount());
+					oldDetail.setPayableFeeTypeCode(newDetail.getPayableFeeTypeCode());
+					oldDetail.setPayableFeeTypeDesc(newDetail.getPayableFeeTypeDesc());
+					oldDetail.setReceivableFeeTypeCode(newDetail.getReceivableFeeTypeCode());
+					oldDetail.setReceivableFeeTypeDesc(newDetail.getReceivableFeeTypeDesc());
+					oldDetail.setReceivableType(newDetail.getReceivableType());
+					oldDetail.setPrevRefundAmount(newDetail.getPrevRefundAmount());
+
 					feeRefundDetailList.add(oldDetail);
+
 					tempList.remove(newDetail);
 				}
 			}
 		}
+
 		for (FeeRefundDetail newDetail : tempList) {
-			if (BigDecimal.ZERO.compareTo(newDetail.getAvailableAmount()) == -1) {
-				feeRefundDetailList.add(newDetail);
-			}
+			feeRefundDetailList.add(newDetail);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for action Forward event for changing PayAmountChange
-	 * 
-	 * @param event
-	 */
 	public void onPayAmountChange(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Decimalbox paymentAmt = (Decimalbox) event.getOrigin().getTarget();
-		String recType = (String) event.getData();
 		Clients.clearWrongValue(paymentAmt);
 		Clients.clearWrongValue(this.totAmount);
 		BigDecimal amt1 = BigDecimal.ZERO;
 		BigDecimal amount = PennantApplicationUtil.unFormateAmount(paymentAmt.getValue(), ccyFormatter);
 
-		if (BigDecimal.ZERO.compareTo(amount) == 1) {
-			amount = BigDecimal.ZERO;
-		}
-
 		BigDecimal avaAmount = BigDecimal.ZERO;
 		for (FeeRefundDetail detail : feeRefundDetailList) {
-			if (!StringUtils.equals(recType, detail.getReceivableType())) {
-				continue;
-			}
 			avaAmount = detail.getPaidAmount().add(avaAmount);
-			if (detail.getTaxHeader() != null
-					&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
-				// GST Calculations
-				TaxHeader taxHeader = detail.getTaxHeader();
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				BigDecimal gstAmount = BigDecimal.ZERO;
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						gstAmount = gstAmount.add(taxes.getNetTax());
-					}
-				}
-				avaAmount = avaAmount.add(gstAmount);
-			}
 		}
 
 		if ((amount.compareTo(BigDecimal.ZERO)) < 0) {
@@ -1708,39 +1375,24 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		}
 
 		for (FeeRefundDetail detail : feeRefundDetailList) {
-			if (!StringUtils.equals(recType, detail.getReceivableType())) {
-				continue;
-			}
 			BigDecimal balAmount = detail.getPaidAmount().subtract(detail.getPrevRefundAmount());
-			if (detail.getTaxHeader() != null
-					&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
-				// GST Calculations
-				TaxHeader taxHeader = detail.getTaxHeader();
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				BigDecimal gstAmount = BigDecimal.ZERO;
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						gstAmount = gstAmount.add(taxes.getNetTax());
-					}
-				}
-				balAmount = balAmount.add(gstAmount);
-			}
 
 			if (balAmount.compareTo(amount) >= 0) {
-				detail.setCurrRefundAmount(amount);
+				detail.setRefundAmount(amount);
 				amount = BigDecimal.ZERO;
 			} else if (balAmount.compareTo(amount) == -1) {
 				amt1 = amount;
 				amt1 = amt1.subtract(balAmount);
 				if (amt1.compareTo(balAmount) <= 1) {
-					detail.setCurrRefundAmount(balAmount);
+					detail.setRefundAmount(balAmount);
 				} else {
-					detail.setCurrRefundAmount(BigDecimal.ZERO);
+					detail.setRefundAmount(BigDecimal.ZERO);
 				}
 				amount = amt1;
 			}
 		}
-		doFillHeaderList(feeRefundDetailList, null, false);
+
+		doFillHeaderList(feeRefundDetailList);
 
 		logger.debug("Leaving");
 	}
@@ -1754,8 +1406,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		if (frh.isNewRecord()) {
 			for (FeeRefundDetail detail : feeRefundDetailList) {
-				if (detail.getCurrRefundAmount() != null
-						&& (BigDecimal.ZERO.compareTo(detail.getCurrRefundAmount()) == 0)) {
+				if (detail.getRefundAmount() != null && (BigDecimal.ZERO.compareTo(detail.getRefundAmount()) == 0)) {
 					continue;
 				}
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
@@ -1765,7 +1416,6 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				detail.setLastMntBy(userId);
 				detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				detail.setUserDetails(loggedInUser);
-				detail = calTaxDetail(detail);
 				list.add(detail);
 			}
 		} else {
@@ -1793,7 +1443,6 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 						}
 					}
 				}
-				detail = calTaxDetail(detail);
 				list.add(detail);
 			}
 		}
@@ -1801,504 +1450,275 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Reset or calculate GST amounts based on amounts adjusted
-	 * 
-	 * @param detail
-	 * @return
-	 */
-	private FeeRefundDetail calTaxDetail(FeeRefundDetail detail) {
-
-		if (!AdviseType.isPayable(detail.getReceivableType())
-				|| detail.getTotalAmount().compareTo(BigDecimal.ZERO) <= 0) {
-			detail.setTaxHeader(null);
-			return detail;
-		}
-
-		TaxHeader taxHeader = detail.getTaxHeader();
-		if (detail.isTaxApplicable() && taxHeader != null) {
-
-			if (taxPercMap == null) {
-				taxPercMap = GSTCalculator.getTaxPercentages(financeMain);
-			}
-
-			// GST Calculations
-			Taxes cgstTax = null;
-			Taxes sgstTax = null;
-			Taxes igstTax = null;
-			Taxes ugstTax = null;
-			Taxes cessTax = null;
-			List<Taxes> taxDetails = taxHeader.getTaxDetails();
-			if (CollectionUtils.isNotEmpty(taxDetails)) {
-				for (Taxes taxes : taxDetails) {
-					switch (taxes.getTaxType()) {
-					case RuleConstants.CODE_CGST:
-						cgstTax = taxes;
-						break;
-					case RuleConstants.CODE_SGST:
-						sgstTax = taxes;
-						break;
-					case RuleConstants.CODE_IGST:
-						igstTax = taxes;
-						break;
-					case RuleConstants.CODE_UGST:
-						ugstTax = taxes;
-						break;
-					case RuleConstants.CODE_CESS:
-						cessTax = taxes;
-						break;
-					default:
-						break;
-					}
-				}
-			}
-
-			TaxAmountSplit taxSplit = GSTCalculator.getInclusiveGST(detail.getTotalAmount(), taxPercMap);
-			getActualGST(detail, taxSplit);
-			cgstTax.setPaidTax(taxSplit.getcGST());
-			sgstTax.setPaidTax(taxSplit.getsGST());
-			igstTax.setPaidTax(taxSplit.getiGST());
-			ugstTax.setPaidTax(taxSplit.getuGST());
-			cessTax.setPaidTax(taxSplit.getCess());
-
-		}
-
-		return detail;
-	}
-
-	// Filling paymeny details list...
-	public void doFillHeaderList(List<FeeRefundDetail> frdList, String rcvType, boolean expandClick) {
-		logger.debug("Entering");
-
-		this.listBoxFeeRefundTypeInstructions.getItems().clear();
-		this.listheader_FeeRefundHeaderDialog_button.setVisible(false);
-
-		// Total Avaliable Amount for ManualAdvise
-		if (CollectionUtils.isNotEmpty(frdList)) {
-
-			Map<String, List<FeeRefundDetail>> refmap = new HashMap<String, List<FeeRefundDetail>>();
-
-			List<FeeRefundDetail> refList = null;
-			for (FeeRefundDetail frd : frdList) {
-				if (refmap.containsKey(frd.getReceivableType())) {
-					refList = refmap.get(frd.getReceivableType());
-					refList.add(frd);
-					refmap.remove(frd.getReceivableType());
-				} else {
-					refList = new ArrayList<FeeRefundDetail>();
-					refList.add(frd);
-				}
-				refmap.put(frd.getReceivableType(), refList);
-			}
-
-			BigDecimal totalPayAmt = BigDecimal.ZERO;
-			for (String key : refmap.keySet()) {
-
-				List<FeeRefundDetail> frds = refmap.get(key);
-				boolean groupReq = false;
-				BigDecimal avaAmount = BigDecimal.ZERO;
-				BigDecimal dueGST = BigDecimal.ZERO;
-				BigDecimal dueGSTExclusive = BigDecimal.ZERO;
-				BigDecimal payAmount = BigDecimal.ZERO;
-				BigDecimal prvRefundAmt = BigDecimal.ZERO;
-				BigDecimal adviseAmt = BigDecimal.ZERO;
-				BigDecimal currRefundAmt = BigDecimal.ZERO;
-				String rcvFeeType = null;
-				String payFeeType = null;
-				long refID = 0;
-
-				for (FeeRefundDetail frd : frds) {
-
-					this.listheader_FeeRefundHeaderDialog_button.setVisible(true);
-
-					rcvFeeType = frd.getFeeTypeDesc();
-					payFeeType = frd.getPayableFeeTypeDesc();
-					avaAmount = frd.getAvailableAmount().add(avaAmount);
-					payAmount = frd.getPaidAmount().add(payAmount);
-					prvRefundAmt = frd.getPrevRefundAmount().add(prvRefundAmt);
-					currRefundAmt = frd.getCurrRefundAmount().add(currRefundAmt);
-					adviseAmt = frd.getAdviseAmount().add(adviseAmt);
-
-					// GST Calculations in case of Exclusive Case
-					if (StringUtils.equals(frd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-
-						TaxHeader taxHeader = frd.getTaxHeader();
-						if (taxHeader != null) {
-							List<Taxes> taxDetails = taxHeader.getTaxDetails();
-							if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
-								for (Taxes taxes : taxDetails) {
-									dueGST = dueGST.add(taxes.getActualTax());
-									dueGSTExclusive = dueGSTExclusive.add(taxes.getActualTax());
-								}
-							}
-						}
-					}
-
-					if (frds.size() > 1) {
-						groupReq = true;
-					} else {
-						refID = frd.getReceivableRefId();
-					}
-				}
-
-				FeeRefundDetail frTemp = new FeeRefundDetail();
-
-				frTemp.setFeeTypeDesc(rcvFeeType);
-				frTemp.setPayableFeeTypeDesc(payFeeType);
-				frTemp.setAdviseAmount(adviseAmt);
-				frTemp.setPaidAmount(payAmount);
-				frTemp.setPrevRefundAmount(prvRefundAmt);
-				frTemp.setCurrRefundAmount(currRefundAmt);
-				frTemp.setTotalAmount(totalPayAmt);
-				frTemp.setReceivableType(frds.get(0).getReceivableType());
-				frTemp.setReceivableRefId(refID);
-
-				// Manual Advise
-				if (groupReq) {
-
-					totalPayAmt = addGroupRecord(frTemp, true, expandClick);
-
-					if (expandClick && StringUtils.equals(rcvType, frds.get(0).getReceivableType())) {
-						doFillChildDetail(frds);
-					}
-				} else {
-					totalPayAmt = addGroupRecord(frTemp, false, false);
-				}
-
-			}
-			addFooter(totalPayAmt);
-		}
-		logger.debug("Leaving");
-	}
-
-	private BigDecimal addGroupRecord(FeeRefundDetail frTemp, boolean expandReq, boolean expandClick) {
-		Button button = new Button();
-		Listitem item = new Listitem();
-		Listcell lc;
-		boolean isReadOnly = isReadOnly("FeeRefundHeaderDialog_currRefundAmount");
-		BigDecimal totalPayAmt = frTemp.getTotalAmount();
-
-		if (expandReq) {
-			if (expandClick) {
-				lc = new Listcell();
-				button.setImage("/images/icons/delete.png");
-				button.setStyle("background:white;border:0px;");
-				button.addForward("onClick", self, "onClickCollapse", frTemp.getReceivableType());
-				lc.appendChild(button);
-				lc.setParent(item);
-			} else {
-				lc = new Listcell();
-				button.setImage("/images/icons/add.png");
-				button.setStyle("background:#FFFFFF;border:0px;onMouseOver ");
-				button.addForward("onClick", self, "onClickExpand", frTemp.getReceivableType());
-				lc.appendChild(button);
-				lc.setParent(item);
-			}
-		} else {
-			lc = new Listcell();
-			lc.setParent(item);
-		}
-
-		// Receivable Type
-		lc = new Listcell(
-				!expandReq ? frTemp.getReceivableRefId() + "-" + frTemp.getFeeTypeDesc() : frTemp.getFeeTypeDesc());
-		lc.setParent(item);
-
-		// Payable Type
-		lc = new Listcell(frTemp.getPayableFeeTypeDesc());
-		lc.setParent(item);
-
-		// Total Amount
-		lc = new Listcell();
-		Decimalbox totalAmt = new Decimalbox();
-		totalAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-		totalAmt.setStyle("text-align:right; ");
-		totalAmt.setReadonly(true);
-		totalAmt.setValue(PennantApplicationUtil.formateAmount(frTemp.getAdviseAmount(), ccyFormatter));
-		lc.appendChild(totalAmt);
-		lc.setParent(item);
-
-		// Paid Amount
-		lc = new Listcell();
-		Decimalbox paidAmt = new Decimalbox();
-		paidAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-		paidAmt.setStyle("text-align:right; ");
-		paidAmt.setReadonly(true);
-		paidAmt.setValue(PennantApplicationUtil.formateAmount(frTemp.getPaidAmount(), ccyFormatter));
-		lc.appendChild(paidAmt);
-		lc.setParent(item);
-
-		// Prev Refund Amount
-		lc = new Listcell();
-		Decimalbox prevRfdAmt = new Decimalbox();
-		prevRfdAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-		prevRfdAmt.setStyle("text-align:right; ");
-		prevRfdAmt.setReadonly(true);
-		prevRfdAmt.setValue(PennantApplicationUtil.formateAmount(frTemp.getPrevRefundAmount(), ccyFormatter));
-		lc.appendChild(prevRfdAmt);
-		lc.setParent(item);
-
-		lc = new Listcell();
-		paymentAmount = new Decimalbox();
-		paymentAmount.setReadonly(isReadOnly);
-		paymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-		paymentAmount.setStyle("text-align:right; ");
-		paymentAmount.setValue(PennantApplicationUtil.formateAmount(frTemp.getCurrRefundAmount(), ccyFormatter));
-		totalPayAmt = totalPayAmt.add(frTemp.getCurrRefundAmount());
-		paymentAmount.addForward("onChange", self, "onPayAmountChange", frTemp.getReceivableType());
-		lc.appendChild(paymentAmount);
-		lc.setParent(item);
-
-		lc = new Listcell();
-		Decimalbox balanceAmount = new Decimalbox();
-		balanceAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-		balanceAmount.setStyle("text-align:right; ");
-		balanceAmount.setReadonly(true);
-		balanceAmount.setValue(PennantApplicationUtil.formateAmount(
-				frTemp.getPaidAmount().subtract(frTemp.getCurrRefundAmount()).subtract(frTemp.getPrevRefundAmount()),
-				ccyFormatter));
-		lc.appendChild(balanceAmount);
-		lc.setParent(item);
-		this.listBoxFeeRefundTypeInstructions.appendChild(item);
-		return totalPayAmt;
-	}
-
 	private void addFooter(BigDecimal totalPayAmt) {
-
-		// Total Amount
 		Listitem item = new Listitem();
-		Listcell lc;
-		if (enqiryModule) {
-			lc = new Listcell();
-			lc.setParent(item);
-			lc = new Listcell(" Total Refund Amount ");
-			lc.setStyle("font-weight:bold;");
+		Listcell lc = new Listcell("");
+		lc.setParent(item);
 
-		} else {
-			lc = new Listcell();
-			lc.setParent(item);
-			lc = new Listcell();
-		}
-		item.appendChild(lc);
-		lc = new Listcell(" Total Refund Amount ");
-		lc.setSpan(4);
-		lc.setStyle("font-weight:bold;");
-		item.appendChild(lc);
+		/* Receivable Type */
+		lc = new Listcell("Total");
+		lc.setParent(item);
+
+		/* Payable Type */
+		lc = new Listcell("");
+		lc.setParent(item);
+
+		/* Total Amount */
+		lc = new Listcell("");
+		lc.setParent(item);
+
+		/* Paid Amount */
+		lc = new Listcell("");
+		lc.setParent(item);
+
+		/* Previous Refund Amount */
+		lc = new Listcell("");
+		lc.setParent(item);
+
+		/* Current Refund Amount */
 		lc = new Listcell();
 		totAmount = new Decimalbox();
 		totAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-		totAmount.setStyle("text-align:right; ");
+		totAmount.setStyle("text-align:right;");
 		totAmount.setReadonly(true);
-		totalPayAmt = PennantApplicationUtil.formateAmount(totalPayAmt, ccyFormatter);
-		totAmount.setValue(totalPayAmt);
+		totAmount.setValue(PennantApplicationUtil.formateAmount(totalPayAmt, ccyFormatter));
 		lc.appendChild(totAmount);
 		lc.setParent(item);
-		lc = new Listcell();
+
+		// Balance Amount
+		lc = new Listcell("");
 		lc.setParent(item);
+
 		if (feeRefundInstructionDialogCtrl != null) {
+			totalPayAmt = PennantApplicationUtil.formateAmount(totalPayAmt, ccyFormatter);
 			feeRefundInstructionDialogCtrl.paymentAmount.setValue(totalPayAmt);
 		}
+
 		this.listBoxFeeRefundTypeInstructions.appendChild(item);
 	}
 
-	/**
-	 * Method for action Forward event for changing PayAmountChangeForExcessAndEMI
-	 * 
-	 * @param event
-	 */
-	public void onPayAmountChangeForExcessAndEMI(ForwardEvent event) {
-		logger.debug("Entering");
+	public void doFillHeaderList(List<FeeRefundDetail> frdList) {
+		this.listBoxFeeRefundTypeInstructions.getItems().clear();
 
-		Decimalbox paymentAmt = (Decimalbox) event.getOrigin().getTarget();
-		Clients.clearWrongValue(paymentAmt);
-		Clients.clearWrongValue(this.totAmount);
-		BigDecimal amount = PennantApplicationUtil.unFormateAmount(paymentAmt.getValue(), ccyFormatter);
-
-		if (BigDecimal.ZERO.compareTo(amount) == 1) {
-			amount = BigDecimal.ZERO;
+		if (CollectionUtils.isEmpty(frdList)) {
+			return;
 		}
 
-		FeeRefundDetail frd = (FeeRefundDetail) paymentAmt.getAttribute("object");
-		for (FeeRefundDetail detail : feeRefundDetailList) {
-			if (frd.getReceivableRefId() == detail.getReceivableRefId()) {
-				if ((amount.compareTo(BigDecimal.ZERO)) < 0) {
-					paymentAmt.setValue(BigDecimal.ZERO);
-					throw new WrongValueException(paymentAmt,
-							Labels.getLabel("label_PaymentHeaderDialog_payAmountErrorMsg.value"));
-				}
+		Map<String, List<FeeRefundDetail>> map = new HashMap<>();
 
-				if ((detail.getAvailableAmount().compareTo(amount)) == -1) {
-					throw new WrongValueException(paymentAmt,
-							Labels.getLabel("label_PaymentHeaderDialog_paymentAmountErrorMsg.value"));
-				} else {
-					detail.setTotalAmount(amount);
-				}
+		for (FeeRefundDetail pd : frdList) {
+			String receivableType = pd.getReceivableType();
+
+			List<FeeRefundDetail> list = map.get(receivableType);
+
+			if (list == null) {
+				list = new ArrayList<>();
+				map.put(receivableType, list);
 			}
+
+			list.add(pd);
 		}
-		doFillHeaderList(feeRefundDetailList, null, false);
+
+		BigDecimal totalPayAmt = BigDecimal.ZERO;
+
+		for (Entry<String, List<FeeRefundDetail>> paymentDetail : map.entrySet()) {
+			totalPayAmt = totalPayAmt.add(doFillHeaderList(paymentDetail.getKey(), paymentDetail.getValue()));
+		}
+
+		addFooter(totalPayAmt);
+
+	}
+
+	public BigDecimal doFillHeaderList(String excessType, List<FeeRefundDetail> pdList) {
+		logger.debug(Literal.ENTERING);
+
+		boolean isReadOnly = isReadOnly("FeeRefundHeaderDialog_currRefundAmount");
+
+		BigDecimal totalPayAmt = BigDecimal.ZERO;
+
+		BigDecimal avaAmount = BigDecimal.ZERO;
+		BigDecimal currRefundAmount = BigDecimal.ZERO;
+
+		FeeRefundDetail temp = null;
+		for (FeeRefundDetail pd : pdList) {
+
+			if (temp == null) {
+				temp = pd;
+			}
+
+			avaAmount = avaAmount.add(pd.getAvailableAmount());
+			currRefundAmount = currRefundAmount.add(pd.getRefundAmount());
+
+			totalPayAmt = currRefundAmount;
+
+		}
+
+		Button button = new Button();
+		if (temp.isExpand()) {
+			button.setImage("/images/icons/delete.png");
+			button.setStyle("background:white;border:0px;");
+			button.addForward("onClick", self, "onExpand");
+		} else {
+			button.setImage("/images/icons/add.png");
+			button.setStyle("background:#FFFFFF;border:0px;onMouseOver ");
+			button.addForward("onClick", self, "onCollapse");
+		}
+
+		button.setAttribute("pd", temp);
+
+		Listitem item = new Listitem();
+		item.setAttribute("index", "Y");
+
+		Listcell lc = new Listcell();
+		lc.appendChild(button);
+		lc.setParent(item);
+
+		/* Receivable Type */
+		lc = new Listcell(temp.getReceivableFeeTypeCode() + "-" + temp.getReceivableFeeTypeDesc());
+		lc.setParent(item);
+
+		/* Payable Type */
+		lc = new Listcell(temp.getPayableFeeTypeCode() + "-" + temp.getPayableFeeTypeDesc());
+		lc.setParent(item);
+
+		/* Total Amount */
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(temp.getAdviseAmount(), true));
+		lc.setParent(item);
+
+		/* Paid Amount */
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(temp.getPaidAmount(), true));
+		lc.setParent(item);
+
+		/* Previous Refund Amount */
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(temp.getPrevRefundAmount(), true));
+		lc.setParent(item);
+
+		/* Current Refund Amount */
+		lc = new Listcell();
+		Decimalbox paymentAmount = getDecimalbox(currRefundAmount, isReadOnly);
+		paymentAmount.setAttribute("excessType", excessType);
+		paymentAmount.addForward("onChange", self, "onPayAmountChange");
+		lc.appendChild(paymentAmount);
+		lc.setParent(item);
+
+		// Balance Amount
+		BigDecimal balanceAmount = temp.getPaidAmount().subtract(currRefundAmount).subtract(temp.getPrevRefundAmount());
+		lc = new Listcell();
+		lc.appendChild(getDecimalbox(balanceAmount, true));
+		lc.setParent(item);
+
+		this.listBoxFeeRefundTypeInstructions.appendChild(item);
+
+		if (temp.isExpand() && !temp.isCollapse()) {
+			doFillChildDetail(pdList);
+		}
 
 		logger.debug("Leaving");
+
+		return totalPayAmt;
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the Plus button.
-	 * 
-	 * @param event An event sent to the event handler of the component.
-	 */
-	public void onClickExpand(Event event) {
-		logger.debug("Entering " + event.toString());
-		String rcvType = (String) event.getData();
-		doFillHeaderList(feeRefundDetailList, rcvType, true);
-		logger.debug("Leaving " + event.toString());
-	}
-
-	/**
-	 * The framework calls this event handler when user clicks the minus button.
-	 * 
-	 * @param event An event sent to the event handler of the component.
-	 */
-	public void onClickCollapse(Event event) {
-		logger.debug("Entering " + event.toString());
-		String rcvType = (String) event.getData();
-		doFillHeaderList(feeRefundDetailList, rcvType, false);
-		logger.debug("Leaving " + event.toString());
-	}
-
-	// Filling paymeny details list for Manual Advise
-	public List<Listitem> doFillChildDetail(List<FeeRefundDetail> frdList) {
+	private void doFillChildDetail(List<FeeRefundDetail> paymentDetail) {
 		logger.debug("Entering");
 
 		boolean isReadOnly = isReadOnly("FeeRefundHeaderDialog_currRefundAmount");
+
 		BigDecimal totalPayAmt = BigDecimal.ZERO;
-		List<Listitem> items = new ArrayList<Listitem>();
-		Listitem item = null;
-		if (frdList != null && !frdList.isEmpty()) {
 
-			for (FeeRefundDetail frd : frdList) {
-				item = new Listitem();
-				Listcell lc;
-				lc = new Listcell();
-				lc.setParent(item);
+		for (FeeRefundDetail pd : paymentDetail) {
+			Listitem item = new Listitem();
 
-				BigDecimal calGST = BigDecimal.ZERO;
-				BigDecimal availAmount = frd.getAvailableAmount();
-				BigDecimal paidAmount = frd.getPaidAmount();
-				BigDecimal prvRefundAmt = frd.getPrevRefundAmount();
-				BigDecimal currRefundAmt = frd.getCurrRefundAmount();
-				BigDecimal adviseAmt = frd.getAdviseAmount();
-				String desc = frd.getReceivableRefId() + "-" + frd.getFeeTypeDesc();
-				String paybleFeeDesc = frd.getPayableFeeTypeDesc();
+			Listcell lc = new Listcell();
+			lc.setParent(item);
 
-				// GST Calculations
-				TaxHeader taxHeader = frd.getTaxHeader();
-				if (taxHeader != null) {
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
-					if (CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							calGST = calGST.add(taxes.getActualTax());
-						}
+			BigDecimal aviseAmount = pd.getAdviseAmount();
+			BigDecimal paidAmount = pd.getPaidAmount();
+			BigDecimal prevRefundAmount = pd.getPrevRefundAmount();
+			BigDecimal currRefundAmount = pd.getRefundAmount();
 
-						if (StringUtils.equals(frd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-							availAmount = availAmount.subtract(calGST);
-							desc = desc.concat(" (Inclusive)");
-						} else if (StringUtils.equals(frd.getTaxComponent(),
-								FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-							desc = desc.concat(" (Exclusive)");
-						}
-					}
-				}
+			/* Receivable Type */
+			lc = new Listcell("");
+			lc.setParent(item);
 
-				lc = new Listcell();
-				Hbox hbox = new Hbox();
-				Space space = new Space();
-				space.setSpacing("20px");
-				space.setParent(hbox);
-				Label label = new Label();
-				label.setValue(desc);
-				label.setParent(hbox);
-				lc.appendChild(hbox);
-				lc.setParent(item);
+			/* Payable Type */
+			lc = new Listcell("");
+			lc.setParent(item);
 
-				lc = new Listcell();
-				Hbox hbox1 = new Hbox();
-				Space space1 = new Space();
-				space1.setSpacing("20px");
-				space1.setParent(hbox1);
-				Label label1 = new Label();
-				label1.setValue(paybleFeeDesc);
-				label1.setParent(hbox1);
-				lc.appendChild(hbox1);
-				lc.setParent(item);
+			/* Total Amount */
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(aviseAmount, true));
+			lc.setParent(item);
 
-				// Total Amount
-				lc = new Listcell();
-				Decimalbox totalAmt = new Decimalbox();
-				totalAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-				totalAmt.setStyle("text-align:right; ");
-				totalAmt.setReadonly(true);
-				totalAmt.setValue(PennantApplicationUtil.formateAmount(adviseAmt, ccyFormatter));
-				lc.appendChild(totalAmt);
-				lc.setParent(item);
+			/* Paid Amount */
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(paidAmount, true));
+			lc.setParent(item);
 
-				// Paid Amount
-				lc = new Listcell();
-				Decimalbox paidAmt = new Decimalbox();
-				paidAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-				paidAmt.setStyle("text-align:right; ");
-				paidAmt.setReadonly(true);
-				paidAmt.setValue(PennantApplicationUtil.formateAmount(paidAmount, ccyFormatter));
-				lc.appendChild(paidAmt);
-				lc.setParent(item);
+			/* Previous Refund Amount */
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(prevRefundAmount, true));
+			lc.setParent(item);
 
-				// Prev Refund Amount
-				lc = new Listcell();
-				Decimalbox prevRfdAmt = new Decimalbox();
-				prevRfdAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-				prevRfdAmt.setStyle("text-align:right; ");
-				prevRfdAmt.setReadonly(true);
-				prevRfdAmt.setValue(PennantApplicationUtil.formateAmount(prvRefundAmt, ccyFormatter));
-				lc.appendChild(prevRfdAmt);
-				lc.setParent(item);
+			/* Current Refund Amount */
+			lc = new Listcell();
+			Decimalbox paymentAmount = getDecimalbox(currRefundAmount, isReadOnly);
+			paymentAmount.addForward("onChange", self, "onPayAmountForEventChanges");
+			paymentAmount.setAttribute("object", pd);
+			paymentAmount.setConstraint("NO NEGATIVE");
+			lc.appendChild(paymentAmount);
+			lc.setParent(item);
 
-				lc = new Listcell();
-				paymentAmount = new Decimalbox();
-				paymentAmount.setReadonly(isReadOnly);
-				paymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-				paymentAmount.setStyle("text-align:right; ");
-				paymentAmount.setValue(PennantApplicationUtil.formateAmount(currRefundAmt, ccyFormatter));
-				paymentAmount.addForward("onChange", self, "onPayAmountForEventChanges");
-				paymentAmount.setAttribute("object", frd);
-				paymentAmount.setConstraint("NO NEGATIVE");
-				lc.appendChild(paymentAmount);
-				lc.setParent(item);
-				lc = new Listcell();
-				Decimalbox balanceAmount = new Decimalbox();
-				balanceAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-				balanceAmount.setStyle("text-align:right; ");
-				balanceAmount.setReadonly(true);
-				balanceAmount.setValue(PennantApplicationUtil.formateAmount(
-						paidAmount.add(calGST).subtract(currRefundAmt).subtract(prvRefundAmt), ccyFormatter));
-				lc.appendChild(balanceAmount);
-				lc.setParent(item);
-				this.listBoxFeeRefundTypeInstructions.appendChild(item);
-			}
-			if (feeRefundInstructionDialogCtrl != null) {
-				feeRefundInstructionDialogCtrl.paymentAmount.setValue(totalPayAmt);
-			}
+			// Balance Amount
+			BigDecimal balanceAmount = paidAmount.subtract(currRefundAmount).subtract(prevRefundAmount);
+			lc = new Listcell();
+			lc.appendChild(getDecimalbox(balanceAmount, true));
+			lc.setParent(item);
 
+			this.listBoxFeeRefundTypeInstructions.appendChild(item);
 		}
-		logger.debug("Leaving");
-		return items;
 
+		if (feeRefundInstructionDialogCtrl != null) {
+			feeRefundInstructionDialogCtrl.paymentAmount.setValue(totalPayAmt);
+		}
+
+		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for action Forward event for changing onPayAmountFoEventChanges
-	 * 
-	 * @param event
-	 */
+	private Decimalbox getDecimalbox(BigDecimal amount, boolean isReadOnly) {
+		Decimalbox decimalbox = new Decimalbox();
+		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		decimalbox.setStyle("text-align:right; ");
+		decimalbox.setReadonly(isReadOnly);
+		decimalbox.setValue(PennantApplicationUtil.formateAmount(amount, ccyFormatter));
+
+		return decimalbox;
+	}
+
+	public void onExpand(ForwardEvent event) {
+		Button button = (Button) event.getOrigin().getTarget();
+		FeeRefundDetail pd = (FeeRefundDetail) button.getAttribute("pd");
+
+		pd.setExpand(false);
+		pd.setCollapse(true);
+
+		doFillHeaderList(feeRefundDetailList);
+	}
+
+	public void onCollapse(ForwardEvent event) {
+		Button button = (Button) event.getOrigin().getTarget();
+		FeeRefundDetail pd = (FeeRefundDetail) button.getAttribute("pd");
+
+		pd.setExpand(true);
+		pd.setCollapse(false);
+
+		doFillHeaderList(feeRefundDetailList);
+	}
+
 	public void onPayAmountForEventChanges(ForwardEvent event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Decimalbox paymentAmount = (Decimalbox) event.getOrigin().getTarget();
 		Clients.clearWrongValue(paymentAmount);
@@ -2314,32 +1734,21 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		BigDecimal avaAmount = BigDecimal.ZERO;
 		for (FeeRefundDetail detail : feeRefundDetailList) {
-			if (frd.getReceivableRefId() == detail.getReceivableRefId()) {
+			if (frd.getReceivableID() == detail.getReceivableID()) {
 				avaAmount = detail.getPaidAmount().subtract(detail.getPrevRefundAmount());
-
-				// GST Calculations
-				TaxHeader taxHeader = detail.getTaxHeader();
-				if (taxHeader != null) {
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
-					if (taxHeader != null
-							&& StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)
-							&& CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							avaAmount = avaAmount.add(taxes.getActualTax());
-						}
-					}
-				}
 
 				if ((amount.compareTo(avaAmount)) > 0) {
 					amount = avaAmount;
 					paymentAmount.setValue(PennantApplicationUtil.formateAmount(avaAmount, ccyFormatter));
 				}
-				detail.setCurrRefundAmount(amount);
+
+				detail.setRefundAmount(amount);
 			}
 		}
 
-		doFillHeaderList(feeRefundDetailList, null, true);
-		logger.debug("Leaving");
+		doFillHeaderList(feeRefundDetailList);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {

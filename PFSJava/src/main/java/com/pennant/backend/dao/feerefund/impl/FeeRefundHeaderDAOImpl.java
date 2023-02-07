@@ -59,8 +59,8 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		sql.append(" fm.FinID, fm.FinReference, ft.FinType, ft.FinTypeDesc, ft.FinDivision");
 		sql.append(", fm.CalRoundingMode, fm.RoundingTarget, fm.FinBranch, fm.CustID, cu.CustCif");
 		sql.append(", cu.CustShrtName, curr.CcyCode, fm.FinStartDate, fm.MaturityDate, div.EntityCode");
-		sql.append(", fm.ClosingStatus");
-		sql.append(" From FinanceMainMaintenance_View fm");
+		sql.append(", fm.ClosingStatus, fm.RcdMaintainSts");
+		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers cu on cu.CustID = fm.CustID");
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join RMTCurrencies curr on curr.CcyCode = fm.FinCcy");
@@ -90,6 +90,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 				fm.setEntityCode(rs.getString("EntityCode"));
 				fm.setLovDescEntityCode(rs.getString("EntityCode"));
 				fm.setClosingStatus(rs.getString("ClosingStatus"));
+				fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
 
 				return fm;
 			}, finID);
@@ -168,12 +169,12 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into FEE_REFUND_HEADER");
 		sql.append(tableType.getSuffix());
-		sql.append(" (ID, CustCif");
-		sql.append(", FinID, PaymentType, FinType, BranchName");
+		sql.append(" (ID");
+		sql.append(", FinID, PaymentType");
 		sql.append(", PaymentAmount, Status, ApprovalStatus");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -185,14 +186,11 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 			int index = 0;
 
 			ps.setLong(++index, frh.getId());
-			ps.setString(++index, frh.getCustCif());
 			ps.setLong(++index, frh.getFinID());
 			ps.setString(++index, frh.getPaymentType());
-			ps.setString(++index, frh.getFinType());
-			ps.setString(++index, frh.getBranchName());
 			ps.setBigDecimal(++index, frh.getPaymentAmount());
 			ps.setString(++index, frh.getStatus());
-			ps.setString(++index, frh.getApprovalStatus());
+			ps.setInt(++index, frh.getApprovalStatus());
 			ps.setInt(++index, frh.getVersion());
 			ps.setLong(++index, frh.getCreatedBy());
 			ps.setTimestamp(++index, frh.getCreatedOn());
@@ -216,12 +214,10 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		StringBuilder sql = new StringBuilder("Update");
 		sql.append(" FEE_REFUND_HEADER");
 		sql.append(tableType.getSuffix());
-		sql.append(" Set ID = ?, CustCif = ?, FinID = ?");
-		sql.append(", PaymentType = ?, FinType = ?, BranchName = ?, PaymentAmount = ?");
-		sql.append(", CreatedOn = ?, ApprovedOn = ?, Status = ?, ApprovalStatus = ?");
-		sql.append(", Version = ?, ApprovedBy = ?, LastMntBy = ?, LastMntOn = ?");
-		sql.append(", RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
-		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Set PaymentType = ?, PaymentAmount = ?, Status = ?, ApprovalStatus = ?");
+		sql.append(", ApprovedBy = ?, ApprovedOn = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(", Version = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where ID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -229,21 +225,15 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 0;
 
-			ps.setLong(++index, frh.getId());
-			ps.setString(++index, frh.getCustCif());
-			ps.setLong(++index, frh.getFinID());
 			ps.setString(++index, frh.getPaymentType());
-			ps.setString(++index, frh.getFinType());
-			ps.setString(++index, frh.getBranchName());
 			ps.setBigDecimal(++index, frh.getPaymentAmount());
-			ps.setTimestamp(++index, frh.getCreatedOn());
-			ps.setTimestamp(++index, frh.getApprovedOn());
 			ps.setString(++index, frh.getStatus());
-			ps.setString(++index, frh.getApprovalStatus());
-			ps.setInt(++index, frh.getVersion());
+			ps.setInt(++index, frh.getApprovalStatus());
 			ps.setObject(++index, frh.getApprovedBy());
+			ps.setTimestamp(++index, frh.getApprovedOn());
 			ps.setLong(++index, frh.getLastMntBy());
 			ps.setTimestamp(++index, frh.getLastMntOn());
+			ps.setInt(++index, frh.getVersion());
 			ps.setString(++index, frh.getRecordStatus());
 			ps.setString(++index, frh.getRoleCode());
 			ps.setString(++index, frh.getNextRoleCode());
@@ -278,14 +268,12 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 	@Override
 	public FeeRefundHeader getFeeRefundHeader(long id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, CustCif");
-		sql.append(", FinID, PaymentType, FinType, BranchName");
-		sql.append(", PaymentAmount, CreatedOn, ApprovedOn, Status, ApprovalStatus");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(" ID, FinID, PaymentType, PaymentAmount, Status, ApprovalStatus");
+		sql.append(", CreatedOn, ApprovedOn, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FinReference, CustName, CustID");
+			sql.append(", CustID, CustCif, CustShrtName, FinReference, FinType, BranchDesc");
 		}
 
 		sql.append(" From FEE_REFUND_HEADER");
@@ -299,16 +287,13 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 				FeeRefundHeader frh = new FeeRefundHeader();
 
 				frh.setId(rs.getLong("ID"));
-				frh.setCustCif(rs.getString("CustCif"));
 				frh.setFinID(rs.getLong("FinID"));
 				frh.setPaymentType(rs.getString("PaymentType"));
-				frh.setFinType(rs.getString("FinType"));
-				frh.setBranchName(rs.getString("BranchName"));
 				frh.setPaymentAmount(rs.getBigDecimal("PaymentAmount"));
+				frh.setStatus(rs.getString("Status"));
+				frh.setApprovalStatus(rs.getInt("ApprovalStatus"));
 				frh.setCreatedOn(rs.getTimestamp("CreatedOn"));
 				frh.setApprovedOn(rs.getTimestamp("ApprovedOn"));
-				frh.setStatus(rs.getString("Status"));
-				frh.setApprovalStatus(rs.getString("ApprovalStatus"));
 				frh.setVersion(rs.getInt("Version"));
 				frh.setLastMntBy(rs.getLong("LastMntBy"));
 				frh.setLastMntOn(rs.getTimestamp("LastMntOn"));
@@ -321,9 +306,12 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 				frh.setWorkflowId(rs.getLong("WorkflowId"));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
-					frh.setFinReference(rs.getString("FinReference"));
-					frh.setCustName(rs.getString("CustName"));
 					frh.setCustId(rs.getLong("CustID"));
+					frh.setCustCif(rs.getString("CustCif"));
+					frh.setCustShrtName(rs.getString("CustShrtName"));
+					frh.setFinReference(rs.getString("FinReference"));
+					frh.setFinType(rs.getString("FinType"));
+					frh.setBranchDesc(rs.getString("BranchDesc"));
 				}
 
 				return frh;
@@ -335,19 +323,19 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 	}
 
 	@Override
-	public void updateApprovalStatus(long id, String refundProgress) {
+	public void updateApprovalStatus(long id, int refundProgress) {
 		String sql = "Update FEE_REFUND_HEADER Set ApprovalStatus = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		this.jdbcOperations.update(sql, ps -> {
-			ps.setString(1, refundProgress);
+			ps.setInt(1, refundProgress);
 			ps.setLong(2, id);
 		});
 	}
 
 	@Override
-	public boolean isFileDownloaded(long id, String isDownloaded) {
+	public boolean isFileDownloaded(long id, int isDownloaded) {
 		String sql = "Select count(Id) From FEE_REFUND_HEADER_TEMP Where Id = ? and ApprovalStatus = ?";
 
 		logger.debug(Literal.SQL.concat(sql));

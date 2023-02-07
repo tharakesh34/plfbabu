@@ -6544,41 +6544,44 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public List<AutoRefundLoan> getAutoRefundsLoanList() {
-		StringBuilder sql = new StringBuilder("SELECT");
-		sql.append(" FM.FINID ,FM.FINREFERENCE, FT.MAXAUTOREFUND MAXREFUNDAMT, FT.MINAUTOREFUND MINREFUNDAMT,");
-		sql.append(" FM.FINREPAYMETHOD,FM.FINISACTIVE, FPD.CURODDAYS DPDDAYS ,FM.FINCCY ,FM.CLOSINGSTATUS ,");
-		sql.append(" H.HOLDSTATUS ,FM.FINTYPE ,LOVDESCENTITYCODE FROM FINANCEMAIN_AVIEW FM ");
-		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE ");
-		sql.append(" INNER JOIN FINPFTDETAILS FPD ON FPD.FINID = FM.FINID ");
-		sql.append(" LEFT JOIN FINEXCESSAMOUNT E ON E.FINID = FM.FINID AND E.AMOUNTTYPE IN (?) ");
-		sql.append(" LEFT JOIN MANUALADVISE M ON M.FINID = FM.FINID AND M.HOLDDUE = 0 AND M.ADVISETYPE = ? ");
+	public List<AutoRefundLoan> getAutoRefunds() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, fm.FinReference, ft.MaxAutoRefund, ft.MinAutoRefund");
+		sql.append(", fm.FinRepayMethod, fm.FinIsActive, fpd.CurOdDays, fm.FinCcy, fm.ClosingStatus");
+		sql.append(", h.HoldStatus, fm.FinType, e.EntityCode");
+		sql.append(" From Financemain fm");
+		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" Inner Join SmtDivisionDetail d On d.DivisionCode = ft.FinDivision");
+		sql.append(" Inner Join Entity e on e.EntityCode = d.EntityCode");
+		sql.append(" Inner Join FinPftDetails fpd on fpd.FinID = fm.FinID");
+		sql.append(" Left Join FinExcessAmount ea on ea.FinID = fm.FinID and ea.AmountType in (?)");
+		sql.append(" Left Join ManualAdvise ma on ma.FinID = fm.FinID and ma.HoldDue = 0 and ma.AdviseType = ?");
 		sql.append(
-				" INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID AND F.REFUNDABLE = 1 AND F.ALLOWAUTOREFUND  = 1");
-		sql.append(" LEFT JOIN Fin_Hold_Details H ON FM.FINID = H.FINID ");
-		sql.append(" WHERE COALESCE(H.HOLDSTATUS, 'R') <> ? AND FT.ALLOWAUTOREFUND = ? ");
-		sql.append(" AND  (E.BALANCEAMT > 0 OR  (M.ADVISEAMOUNT - M.PAIDAMOUNT - M.WAIVEDAMOUNT) > 0 )");
+				" Inner Join FeeTypes f on f.FeeTypeId = ma.FeeTypeId and f.Refundable = 1 and f.AllowAutoRefund = 1");
+		sql.append(" Left Join Fin_Hold_Details h on fm.FinID = h.FinID");
+		sql.append(" Where coalesce(h.HoldStatus, 'R') <> ? and ft.AllowAutoRefund = ?");
+		sql.append(" and (ea.BalanceAmt > 0 or (ma.AdviseAmount - ma.PaidAmount - ma.WaivedAmount) > 0)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			AutoRefundLoan arl = new AutoRefundLoan();
 
-			arl.setFinID(rs.getLong("FINID"));
-			arl.setFinReference(rs.getString("FINREFERENCE"));
-			arl.setMaxRefundAmt(rs.getBigDecimal("MAXREFUNDAMT"));
-			arl.setMinRefundAmt(rs.getBigDecimal("MINREFUNDAMT"));
-			arl.setFinRepayMethod(rs.getString("FINREPAYMETHOD"));
-			arl.setFinIsActive(rs.getBoolean("FINISACTIVE"));
-			arl.setDpdDays(rs.getInt("DPDDAYS"));
-			arl.setFinCcy(rs.getString("FINCCY"));
-			arl.setClosingStatus(rs.getString("CLOSINGSTATUS"));
-			arl.setHoldStatus(rs.getString("HOLDSTATUS"));
-			arl.setFinType(rs.getString("FINTYPE"));
-			arl.setEntityCode(rs.getString("LOVDESCENTITYCODE"));
+			arl.setFinID(rs.getLong("FinID"));
+			arl.setFinReference(rs.getString("FinReference"));
+			arl.setMaxRefundAmt(rs.getBigDecimal("MaxAutoRefund"));
+			arl.setMinRefundAmt(rs.getBigDecimal("MinAutoRefund"));
+			arl.setFinRepayMethod(rs.getString("FinRepayMethod"));
+			arl.setFinIsActive(rs.getBoolean("FinIsActive"));
+			arl.setDpdDays(rs.getInt("CurOdDays"));
+			arl.setFinCcy(rs.getString("FinCcy"));
+			arl.setClosingStatus(rs.getString("ClosingStatus"));
+			arl.setHoldStatus(rs.getString("HoldStatus"));
+			arl.setFinType(rs.getString("FinType"));
+			arl.setEntityCode(rs.getString("EntityCode"));
 
 			return arl;
-		}, RepayConstants.EXAMOUNTTYPE_EXCESS, AdviseType.PAYABLE.id(), FinanceConstants.FIN_HOLDSTATUS_HOLD, true);
+		}, RepayConstants.EXAMOUNTTYPE_EXCESS, AdviseType.PAYABLE.id(), FinanceConstants.FEE_REFUND_HOLD, true);
 	}
 
 	@Override
