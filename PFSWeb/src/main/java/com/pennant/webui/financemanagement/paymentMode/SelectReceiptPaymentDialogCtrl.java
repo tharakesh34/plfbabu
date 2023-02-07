@@ -1081,6 +1081,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			long finID = ComponentUtil.getFinID(this.finReference);
 			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, appDate);
 			List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finID);
+			Date maxValueDate = financeRepaymentsDAO.getMaxValueDate(finID);
 
 			if (CollectionUtils.isNotEmpty(excessAmounts)) {
 				FinExcessAmount fea = excessAmounts.get(excessAmounts.size() - 1);
@@ -1089,6 +1090,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 					if (DateUtil.compare(receiptDt, schDate) < 0) {
 						receiptDt = schDate;
+					}
+
+					if (DateUtil.compare(receiptDt, maxValueDate) < 0) {
+						receiptDt = maxValueDate;
 					}
 					this.receiptDate.setValue(receiptDt);
 					this.receiptDate.setDisabled(true);
