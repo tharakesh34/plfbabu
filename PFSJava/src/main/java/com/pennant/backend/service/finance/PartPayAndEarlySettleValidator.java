@@ -202,8 +202,6 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 		BigDecimal ppAmount = ft.getMaxFPPAmount();
 		BigDecimal ppPercentage = ft.getMaxFPPPer();
 
-		BigDecimal finCurAssetValue = fm.getFinCurrAssetValue();
-
 		Date appDate = fm.getAppDate();
 
 		Date fStartDate = getFinancialYearStart(appDate);
@@ -212,7 +210,7 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 		switch (paymentMethod) {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_PERCENTAGE:
 			if (PennantConstants.PARTPAYMENT_CALCULATEDON_POS.equals(paymentOn)) {
-				BigDecimal totalAmount = finCurAssetValue;
+				BigDecimal totalAmount = null;
 				BigDecimal partPayAmount = BG_ZERO;
 				BigDecimal partPayDisAmount = BG_ZERO;
 
@@ -220,6 +218,10 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 					for (FinanceScheduleDetail schd : schedules) {
 						if (DateUtil.compare(schd.getSchDate(), fStartDate) >= 0
 								&& DateUtil.compare(schd.getSchDate(), fEndDate) <= 0) {
+
+							if (totalAmount == null) {
+								totalAmount = schd.getClosingBalance();
+							}
 							partPayAmount = partPayAmount.add(schd.getPartialPaidAmt());
 							if ("R".equals(schd.getSpecifier())) {
 								partPayDisAmount = partPayDisAmount.add(schd.getDisbAmount());
@@ -227,12 +229,18 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 						}
 					}
 				}
+
+				if (totalAmount == null) {
+					totalAmount = BG_ZERO;
+				}
 				// Removing current part pay amount
 				partPayAmount = partPayAmount.subtract(recieptAmount);
 
-				totalAmount = totalAmount.subtract(partPayAmount).add(partPayDisAmount);
+				totalAmount = totalAmount.add(partPayDisAmount);
 
 				BigDecimal perAmount = calculateAmount(fm, totalAmount, ppPercentage);
+
+				perAmount = perAmount.subtract(partPayAmount);
 
 				if (recieptAmount.compareTo(perAmount) > 0) {
 					return getError("PPA", "Maximum Part Payment Amount Allowed Rs : ", perAmount, ccyFormat);
