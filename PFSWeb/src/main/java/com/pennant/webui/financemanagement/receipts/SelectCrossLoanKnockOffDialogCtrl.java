@@ -312,6 +312,10 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		this.fromFinReference.setDescColumn("FinType");
 		this.fromFinReference.setValidateColumns(new String[] { "FinReference" });
 
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("Undersettlement", 1, Filter.OP_NOT_EQUAL);
+		this.fromFinReference.setFilters(filters);
+
 		this.toFinReference.setButtonDisabled(false);
 		this.toFinReference.setTextBoxWidth(155);
 		this.toFinReference.setMandatoryStyle(true);
@@ -827,6 +831,11 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 
 	public void onFulfill$fromFinReference(Event event) {
 		validateFinReference(event, false);
+		this.btnValidate.setDisabled(false);
+	}
+
+	public void onFulfill$toFinReference(Event event) {
+		validateToFinReference(event, false);
 		this.btnValidate.setDisabled(false);
 	}
 
