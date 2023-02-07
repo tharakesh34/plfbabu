@@ -875,6 +875,7 @@ public class FileUploadList extends Window implements Serializable {
 			this.toDate.setErrorMessage("");
 			this.toDate.setValue(null);
 
+			checkBoxComp.setChecked(selectedHeaders.size() == listbox.getItems().size());
 			listbox.getItems().clear();
 			listbox.clearSelection();
 		}
