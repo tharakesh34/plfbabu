@@ -162,6 +162,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (customer != null) {
 			customerNameLabel.setValue(customer.getCustShrtName());
 		} else {
+			customerNameLabel.setValue("");
 			MessageUtil.showError("Invalid Customer Please Select valid Customer");
 		}
 
@@ -181,7 +182,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		String coreBank = StringUtils.trimToEmpty(custCoreBank);
 
-		if (this.custCIF.getValue().trim().isEmpty() && this.custCoreBank.getValue().trim().isEmpty()) {
+		if (this.custCoreBank.getValue().trim().isEmpty()) {
 			customerNameLabel.setValue("");
 
 			return null;
@@ -475,8 +476,12 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.finReference.setValue(fm.getFinReference());
 				this.finReference.setDescription(fm.getFinType());
 				this.custCIF.setValue(String.valueOf(fm.getCustCIF()));
-				this.customerNameLabel.setValue(fm.getCustShrtName());
-				this.custCoreBank.setValue(String.valueOf(fm.getCustBankId()));
+
+				Customer cust = this.customerDetailsService.getCustomer(fm.getCustCIF());
+				if (cust.getCustCoreBank() != null) {
+					this.custCoreBank.setValue(String.valueOf(cust.getCustCoreBank()));
+					this.customerNameLabel.setValue(cust.getCustShrtName());
+				}
 				this.finType = fm.getFinType();
 				this.mandate.setLoanMaturityDate(fm.getMaturityDate());
 			}
