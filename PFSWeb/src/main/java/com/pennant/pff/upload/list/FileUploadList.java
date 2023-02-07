@@ -29,6 +29,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
@@ -66,9 +67,11 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.upload.model.FieUploadDTO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.pagging.PagedListWrapper;
@@ -453,6 +456,7 @@ public class FileUploadList extends Window implements Serializable {
 		this.fromDate = new Datebox();
 		this.fromDate.setWidth("150px");
 		this.fromDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.fromDate.addForward(Events.ON_CHANGE, this, "onChangeDateFilters", null);
 		hbox.appendChild(getSpace("2px", "M".equals(this.stage)));
 		hbox.appendChild(this.fromDate);
 
@@ -472,6 +476,7 @@ public class FileUploadList extends Window implements Serializable {
 		this.toDate = new Datebox();
 		this.toDate.setWidth("150px");
 		this.toDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.toDate.addForward(Events.ON_CHANGE, this, "onChangeDateFilters", null);
 		hbox.appendChild(getSpace("2px", "M".equals(this.stage)));
 		hbox.appendChild(this.toDate);
 
@@ -525,6 +530,20 @@ public class FileUploadList extends Window implements Serializable {
 		row.appendChild(cell);
 
 		return row;
+	}
+
+	public void onChangeDateFilters(ForwardEvent event) {
+
+		if (this.fromDate.getValue() != null && this.toDate.getValue() != null) {
+			String frmDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
+			String toDte = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
+
+			Filter[] filters = new Filter[3];
+			filters[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
+			filters[1] = new Filter("CreatedOn", frmDate, Filter.OP_GREATER_OR_EQUAL);
+			filters[2] = new Filter("CreatedOn", toDte, Filter.OP_LESS_OR_EQUAL);
+			this.fileName.setFilters(filters);
+		}
 	}
 
 	public void onChangeEntityCode(Event event) {
