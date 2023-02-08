@@ -6,15 +6,18 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.receipts.CrossLoanTransferDAO;
 import com.pennant.backend.model.finance.CrossLoanTransfer;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CrossLoanTransferDAOImpl extends SequenceDao<CrossLoanTransfer> implements CrossLoanTransferDAO {
 
@@ -272,6 +275,39 @@ public class CrossLoanTransferDAOImpl extends SequenceDao<CrossLoanTransfer> imp
 			return clt;
 		}
 
+	}
+
+	@Override
+	public FinExcessAmount getCrossLoanExcess(long ExcessId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt");
+		sql.append(", ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
+		sql.append(" From FinExcessAmount");
+		sql.append(" Where ExcessId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinExcessAmount ea = new FinExcessAmount();
+
+				ea.setExcessID(rs.getLong("ExcessID"));
+				ea.setFinID(rs.getLong("FinID"));
+				ea.setFinReference(rs.getString("FinReference"));
+				ea.setAmountType(rs.getString("AmountType"));
+				ea.setAmount(rs.getBigDecimal("Amount"));
+				ea.setUtilisedAmt(rs.getBigDecimal("UtilisedAmt"));
+				ea.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+				ea.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+				ea.setReceiptID(rs.getLong("ReceiptID"));
+				ea.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+
+				return ea;
+			}, ExcessId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 }

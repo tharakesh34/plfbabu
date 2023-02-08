@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -19,6 +20,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
 import com.pennant.backend.model.finance.CrossLoanTransfer;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -243,11 +245,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()) {
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
-		}
 
 		CrossLoanKnockOff ckk = (CrossLoanKnockOff) auditHeader.getAuditDetail().getModelData();
 
@@ -323,7 +320,15 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 				String[] parameters = new String[1];
 				parameters[0] = "To Loan is already exist in progress";
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30550", parameters, null));
+
 			}
+
+		}
+		FinExcessAmount excess = crossLoanTransferDAO.getCrossLoanExcess(clt.getExcessId());
+		if (excess == null || excess.getReservedAmt().compareTo(clt.getTransferAmount()) < 0) {
+			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60205", "", null),
+					PennantConstants.default_Language);
+			auditDetail.setErrorDetail(errorDetail);
 		}
 
 		return auditDetail;

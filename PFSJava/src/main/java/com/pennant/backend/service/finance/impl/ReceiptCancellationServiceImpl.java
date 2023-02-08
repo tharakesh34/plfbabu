@@ -88,6 +88,7 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
+import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -243,6 +244,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
 	private PaymentHeaderService paymentHeaderService;
+	private CrossLoanKnockOffDAO crossLoanKnockOffDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -1009,6 +1011,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					linkedTranId = rpyHeader.getLinkedTranId();
 
 					if (rpyHeader.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
+
+						BigDecimal excessAmt = crossLoanKnockOffDAO.getCrossLoanHeader(finID, receiptID);
+						if (excessAmt.compareTo(BigDecimal.ZERO) > 0) {
+							finExcessAmountDAO.updateExcessreserved(receiptID, excessAmt);
+						}
 
 						// Fetch Excess Amount Details
 						FinExcessAmount excess = finExcessAmountDAO.getExcessAmountsByReceiptId(receiptID);
@@ -3697,6 +3704,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
 		this.paymentHeaderService = paymentHeaderService;
+	}
+
+	@Autowired
+	public void setCrossLoanKnockOffDAO(CrossLoanKnockOffDAO crossLoanKnockOffDAO) {
+		this.crossLoanKnockOffDAO = crossLoanKnockOffDAO;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.receipts;
 
+import java.math.BigDecimal;
+
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
 
 public interface CrossLoanKnockOffDAO {
@@ -13,4 +15,6 @@ public interface CrossLoanKnockOffDAO {
 	CrossLoanKnockOff getCrossLoanHeaderById(long crossLoanHeaderId, String type);
 
 	boolean cancelReferenceID(long ReceiptID);
+
+	BigDecimal getCrossLoanHeader(long fromfinid, long receiptid);
 }

@@ -3,6 +3,7 @@ package com.pennant.backend.dao.receipts;
 import java.util.List;
 
 import com.pennant.backend.model.finance.CrossLoanTransfer;
+import com.pennant.backend.model.finance.FinExcessAmount;
 
 public interface CrossLoanTransferDAO {
 
@@ -17,4 +18,6 @@ public interface CrossLoanTransferDAO {
 	List<CrossLoanTransfer> getKnockOfListByRef(String finReference, boolean whichReference);
 
 	boolean isLoanExistInTemp(long finID, boolean fromLoan);
+
+	public FinExcessAmount getCrossLoanExcess(long ExcessId);
 }
