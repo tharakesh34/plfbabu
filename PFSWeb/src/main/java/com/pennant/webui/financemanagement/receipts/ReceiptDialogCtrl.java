@@ -3043,7 +3043,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						}
 						// FIXME
 						if (partnerBankReq) {
-							Object object = this.fundingAccount.getAttribute("fundingAccID");
+							Object object = this.fundingAccount.getAttribute("partnerBankId");
 							if (object != null) {
 								receiptDetail.setFundingAc(Long.valueOf(object.toString()));
 								PartnerBank partnerBank = getPartnerBankService()
@@ -3541,7 +3541,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 
 					if (partnerBankReq) {
-						this.fundingAccount.setAttribute("fundingAccID", rcd.getFundingAc());
+						this.fundingAccount.setAttribute("partnerBankId", rcd.getFundingAc());
 						this.fundingAccount.setValue(rcd.getFundingAcCode(),
 								StringUtils.trimToEmpty(rcd.getFundingAcDesc()));
 					}
@@ -7426,7 +7426,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				partnerBankID = finTypePartnerBank.getPartnerBankID();
 			}
 		}
-		this.fundingAccount.setAttribute("fundingAccID", partnerBankID);
+		this.fundingAccount.setAttribute("partnerBankId", partnerBankID);
 
 		logger.debug(Literal.LEAVING);
 	}
