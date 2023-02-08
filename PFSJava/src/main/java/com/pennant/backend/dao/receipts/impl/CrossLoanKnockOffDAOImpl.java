@@ -185,10 +185,10 @@ public class CrossLoanKnockOffDAOImpl extends SequenceDao<CrossLoanKnockOff> imp
 	@Override
 	public BigDecimal getCrossLoanHeader(long fromfinid, long receiptid) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CLT.TRANSFERAMOUNT");
-		sql.append(" From Cross_Loan_Transfer_Temp CLT");
-		sql.append(" Left Join FinExcessAmount FE on FE.EXCESSID= CLT.EXCESSID");
-		sql.append(" Where FromFinId = ? and FE.ReceiptId = ?");
+		sql.append(" clt.TransferAmount");
+		sql.append(" From Cross_Loan_Transfer_Temp clt");
+		sql.append(" Left Join FinExcessAmount fe on fe.ExcessID = clt.ExcessID");
+		sql.append(" Where FromFinId = ? and fe.ReceiptId = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

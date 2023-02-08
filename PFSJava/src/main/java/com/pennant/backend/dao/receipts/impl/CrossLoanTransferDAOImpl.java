@@ -278,7 +278,7 @@ public class CrossLoanTransferDAOImpl extends SequenceDao<CrossLoanTransfer> imp
 	}
 
 	@Override
-	public FinExcessAmount getCrossLoanExcess(long ExcessId) {
+	public FinExcessAmount getCrossLoanExcess(long excessId) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt");
 		sql.append(", ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
@@ -303,7 +303,7 @@ public class CrossLoanTransferDAOImpl extends SequenceDao<CrossLoanTransfer> imp
 				ea.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 
 				return ea;
-			}, ExcessId);
+			}, excessId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

@@ -19,5 +19,5 @@ public interface CrossLoanTransferDAO {
 
 	boolean isLoanExistInTemp(long finID, boolean fromLoan);
 
-	public FinExcessAmount getCrossLoanExcess(long ExcessId);
+	public FinExcessAmount getCrossLoanExcess(long excessId);
 }

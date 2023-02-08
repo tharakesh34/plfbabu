@@ -1323,6 +1323,7 @@ public class ReceiptCalculator {
 			xcessPayable.setTotPaidNow(BigDecimal.ZERO);
 			xcessPayable.setReserved(BigDecimal.ZERO);
 			xcessPayable.setBalanceAmt(xcessPayable.getAvailableAmt().subtract(xcessPayable.getTotPaidNow()));
+			xcessPayable.setReceiptID(excess.getReceiptID());
 			xcessPayableList.add(xcessPayable);
 		}
 

@@ -1138,18 +1138,19 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	@Override
-	public void updateExcessreserved(long receiptID, BigDecimal ExcessAMT) {
+	public void updateExcessreserved(long receiptID, BigDecimal excessAmt) {
 		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
 		sql.append(" Set ReservedAmt = ReservedAmt - ?, BalanceAmt = BalanceAmt + ?");
 		sql.append(" Where receiptID = ? ");
 
-		logger.debug(Literal.SQL + sql.toString());
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-			ps.setBigDecimal(index++, ExcessAMT);
-			ps.setBigDecimal(index++, ExcessAMT);
-			ps.setLong(index++, receiptID);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setBigDecimal(++index, excessAmt);
+			ps.setBigDecimal(++index, excessAmt);
+			ps.setLong(++index, receiptID);
 		});
 
 		if (recordCount <= 0) {

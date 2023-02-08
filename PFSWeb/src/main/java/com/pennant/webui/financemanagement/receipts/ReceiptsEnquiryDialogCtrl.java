@@ -1432,19 +1432,23 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private void doFillExcessPayables() {
 		logger.debug(Literal.ENTERING);
-		/*
-		 * if (!isForeClosure && !isEarlySettle){ return; }
-		 */
-		// this.gb_Payable.setVisible(false);
 
 		receiptData = getReceiptCalculator().setXcessPayables(receiptData);
 
 		List<XcessPayables> xcessPayableList = receiptData.getReceiptHeader().getXcessPayables();
 		this.listBoxExcess.getItems().clear();
 
+		Long id = receiptData.getReceiptHeader().getReceiptID();
+
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		for (int i = 0; i < xcessPayableList.size(); i++) {
 			XcessPayables xcessPayable = xcessPayableList.get(i);
+
+			if (xcessPayable.getReceiptID() != null) {
+				if (Long.compare(id, xcessPayable.getReceiptID()) != 0) {
+					continue;
+				}
+			}
 
 			BigDecimal adjAmount = getPayableAdjustedAmount(xcessPayable.getPayableType(), receiptData);
 			if (adjAmount.compareTo(BigDecimal.ZERO) > 0) {

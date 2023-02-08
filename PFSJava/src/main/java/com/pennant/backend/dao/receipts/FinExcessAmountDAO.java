@@ -111,6 +111,6 @@ public interface FinExcessAmountDAO {
 
 	FinExcessAmount getFinExcessAmountById(long excessID, String type);
 
-	void updateExcessreserved(long receiptID, BigDecimal ExcessAMT);
+	void updateExcessreserved(long receiptID, BigDecimal excessAmt);
 
 }
