@@ -125,8 +125,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.taxDetail.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.taxDetail.getId());
 	}
 
 	/**

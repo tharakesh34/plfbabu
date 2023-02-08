@@ -180,8 +180,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(this.financeTaxDetail.getFinReference());
-		return referenceBuffer.toString();
+		return this.financeTaxDetail.getFinReference();
 	}
 
 	/**

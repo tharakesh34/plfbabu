@@ -94,8 +94,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.reasonCode.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.reasonCode.getId());
 	}
 
 	/**

@@ -102,8 +102,7 @@ public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(this.holdDisbursement.getFinReference());
-		return referenceBuffer.toString();
+		return this.holdDisbursement.getFinReference();
 	}
 
 	/**

@@ -109,8 +109,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.manualDeviation.getDeviationID()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.manualDeviation.getDeviationID());
 	}
 
 	/**
