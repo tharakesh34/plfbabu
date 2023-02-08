@@ -11913,11 +11913,11 @@
 	</changeSet>
 
 
-	<changeSet id="PSD#217239" author="Sravani.S">
+	<changeSet id="PSD#217239.1" author="Sravani.S">
 		<sql>
 		 	<![CDATA[
 				DELETE FROM REPORTLIST WHERE code='FeeRefundHeader';
-				INSERT INTO REPORTLIST(CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES('FeeRefundHeader', 'FeeRefundHeader', 'listheader_FeeRefundCustCif.label,listheader_FeeRefundCustName.label,listheader_FeeRefundFinRef.label,listheader_FeeRefundPayAmount.label,listheader_FeeRefundFinType.label,listheader_FeeRefundBranchName.label,label.RecordStatus,label.RecordType', 'custCif,custName,finReference,paymentAmount,finType,branchName,RECORDSTATUS,RECORDTYPE', 'String,String,String,decimal,String,String,String,String', null, 'ReportList06', 'Payments', 'Enquiry', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+				INSERT INTO REPORTLIST(CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES('FeeRefundHeader', 'FeeRefundHeader', 'listheader_FeeRefundCustCif.label,listheader_FeeRefundCustName.label,listheader_FeeRefundFinRef.label,listheader_FeeRefundPayAmount.label,listheader_FeeRefundFinType.label,listheader_FeeRefundBranchName.label,label.RecordStatus,label.RecordType', 'custCif,custShrtName,finReference,paymentAmount,finType,branchDesc,RECORDSTATUS,RECORDTYPE', 'String,String,String,BigDecimal,String,String,String,String', null, 'ReportList06', 'Payments', 'Enquiry', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
 			]]>
 		</sql>
 	</changeSet>
@@ -12332,7 +12332,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2566.111_pre" author="sampath.d" dbms="postgresql">
+	<changeSet id="TK#2566.111.1_pre" author="sampath.d" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fee_refund_header_view');
@@ -12340,7 +12340,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2566.111" author="sampath.d">
+	<changeSet id="TK#2566.111.1" author="sampath.d">
 		<createView viewName="FEE_REFUND_HEADER_VIEW" replaceIfExists="true">
 			<![CDATA[
 			 	SELECT FRH.ID
@@ -12357,6 +12357,7 @@
 					, C.CUSTCOREBANK
 					, B.BRANCHCODE
 					, B.BRANCHDESC
+          			, SDD.ENTITYCODE
 					, FRH.VERSION
 					, FRH.CREATEDBY
 					, FRH.CREATEDON
@@ -12375,6 +12376,8 @@
 				INNER JOIN FINANCEMAIN FM ON FM.FINID = FRH.FINID
 				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
 				INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = FM.FINBRANCH
+        		INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE
+        		INNER JOIN SMTDIVISIONDETAIL SDD ON SDD.DIVISIONCODE = FT.FINDIVISION
 	            UNION ALL
 	          	SELECT FRH.ID
 					, FRH.FINID
@@ -12390,6 +12393,7 @@
 					, C.CUSTCOREBANK
 					, B.BRANCHCODE
 					, B.BRANCHDESC
+          			, SDD.ENTITYCODE
 					, FRH.VERSION
 					, FRH.CREATEDBY
 					, FRH.CREATEDON
@@ -12408,12 +12412,14 @@
 				INNER JOIN FINANCEMAIN FM ON FM.FINID = FRH.FINID
 				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
 				INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = FM.FINBRANCH
+         		INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE
+        		INNER JOIN SMTDIVISIONDETAIL SDD ON SDD.DIVISIONCODE = FT.FINDIVISION
 	            WHERE NOT EXISTS (SELECT 1 FROM FEE_REFUND_HEADER_TEMP WHERE ID = FRH.ID)
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="TK#2566.111_post" author="sampath.d" dbms="postgresql">
+	<changeSet id="TK#2566.111.1_post" author="sampath.d" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fee_refund_header_view');
