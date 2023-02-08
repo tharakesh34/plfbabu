@@ -207,8 +207,11 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 		sql.append(" mk.FinReference, mk.ExcessType, mk.AllocationType, mk.ReceiptAmount, mk.AdviseID");
 		sql.append(", mk.Progress, mk.Status, mk.ErrorCode, mk.ErrorDesc");
 		sql.append(", uh.CreatedOn, uh.CreatedBy, uh.ApprovedOn, uh.ApprovedBy");
+		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");
 		sql.append(" From MANUAL_KNOCKOFF_UPLOAD mk");
 		sql.append(" Inner Join File_Upload_Header uh on uh.ID = mk.HeaderId");
+		sql.append(" Inner Join SecUsers su1 on su1.UsrID = uh.CreatedBy");
+		sql.append(" Left Join SecUsers su2 on su2.UsrID = uh.ApprovedBy");
 		sql.append(" Where uh.ID = :HEADER_ID");
 
 		return sql.toString();
