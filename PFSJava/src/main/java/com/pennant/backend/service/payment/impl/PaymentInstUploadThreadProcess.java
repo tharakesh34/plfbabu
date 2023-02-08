@@ -266,8 +266,19 @@ public class PaymentInstUploadThreadProcess {
 			if (!feeType.equals(ma.getFeeTypeCode())) {
 				continue;
 			}
-
 			payableExists = true;
+
+			if (!ma.isRefundable()) {
+				bud.setProgress(EodConstants.PROGRESS_FAILED);
+				bud.setErrorDesc("Payable Advise Fee is not a Refundable fee");
+				continue;
+			}
+
+			if (ma.isHoldDue()) {
+				bud.setProgress(EodConstants.PROGRESS_FAILED);
+				bud.setErrorDesc("Payable Advise is a Hold Due");
+				continue;
+			}
 
 			PaymentDetail pd = prepareDetail(bud, ma);
 

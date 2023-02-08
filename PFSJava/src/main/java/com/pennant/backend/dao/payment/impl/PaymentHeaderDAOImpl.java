@@ -325,15 +325,13 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	@Override
 	public List<ManualAdvise> getManualAdvise(long finID) {
 		StringBuilder sql = getSqlQuery();
-		sql.append(" Where FinID = ? and ma.AdviseType = ? and HoldDue = ? and Refundable = ?");
+		sql.append(" Where FinID = ? and ma.AdviseType = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		List<ManualAdvise> list = jdbcOperations.query(sql.toString(), ps -> {
 			ps.setLong(1, finID);
 			ps.setInt(2, 2);
-			ps.setInt(3, 0);
-			ps.setInt(4, 1);
 		}, (rs, i) -> {
 			return getRowMapper(rs);
 		});
@@ -388,6 +386,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
 		ma.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
 		ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+		ma.setHoldDue(rs.getBoolean("HoldDue"));
+		ma.setRefundable(rs.getBoolean("Refundable"));
 		return ma;
 	}
 
@@ -396,7 +396,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append(" AdviseID, FinID, FinReference, BalanceAmt, ma.AdviseType, AdviseAmount, ReservedAmt, ValueDate");
 		sql.append(", PaidAmount, WaivedAmount, FeeTypeCode, FeeTypeDesc, ft.TaxApplicable, ft.TaxComponent");
 		sql.append(", PaidCGST, PaidIGST, PaidSGST, PaidUGST, PaidCESS");
-		sql.append(", WaivedCGST, WaivedIGST, WaivedSGST, WaivedUGST, WaivedCESS");
+		sql.append(", WaivedCGST, WaivedIGST, WaivedSGST, WaivedUGST, WaivedCESS, HoldDue, Refundable");
 		sql.append(" From ManualAdvise ma");
 		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeId = ma.FeeTypeId");
 

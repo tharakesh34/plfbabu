@@ -122,6 +122,7 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 	private boolean dueCreation;
 	private long linkedTranId;
 	private boolean holdDue;
+	private boolean refundable;
 
 	private FeeType feeType;
 	private List<DocumentDetails> documentDetails = new ArrayList<>(1);
@@ -214,6 +215,7 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 		entity.setVersion(super.getVersion());
 		entity.setLastMntBy(super.getLastMntBy());
 		entity.setLastMntOn(super.getLastMntOn());
+		entity.setRefundable(this.refundable);
 		return entity;
 	}
 
@@ -245,6 +247,7 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 		excludeFields.add("invoiceReq");
 		excludeFields.add("eligibleAmount");
 		excludeFields.add("payableLinkTo");
+		excludeFields.add("refundable");
 		return excludeFields;
 	}
 
@@ -690,6 +693,14 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 
 	public void setPayableLinkTo(String payableLinkTo) {
 		this.payableLinkTo = payableLinkTo;
+	}
+
+	public boolean isRefundable() {
+		return refundable;
+	}
+
+	public void setRefundable(boolean refundable) {
+		this.refundable = refundable;
 	}
 
 }
