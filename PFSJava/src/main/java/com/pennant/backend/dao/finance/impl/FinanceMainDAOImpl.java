@@ -2462,7 +2462,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public boolean isFinTypeExistsInFinanceMain(String finType, String type) {
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Select count(*) FROM FINANCEMAIN");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where FinType = ?");
@@ -2515,7 +2515,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("finpurpose", loanPurposeCode);
 
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Select count(FinID) From FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where Finpurpose = ?");

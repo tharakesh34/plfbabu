@@ -611,7 +611,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 						}
 
 						/* Full Name */
-						StringBuffer name = new StringBuffer();
+						StringBuilder name = new StringBuilder();
 
 						String firstName = StringUtils.trimToNull(customer.getCustFName());
 						String middleName = StringUtils.trimToNull(customer.getCustFName());
@@ -1205,7 +1205,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 				/* Full Name */
 				if (guarantorType == 2 || guarantorType == 4) {
-					StringBuffer name = new StringBuffer();
+					StringBuilder name = new StringBuilder();
 
 					String firstName = StringUtils.trimToNull(customer.getCustFName());
 					String middleName = StringUtils.trimToNull(customer.getCustMName());

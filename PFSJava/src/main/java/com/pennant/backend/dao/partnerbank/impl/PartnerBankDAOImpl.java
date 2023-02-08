@@ -467,7 +467,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Entity", entityCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM PartnerBanks");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE Entity= :Entity");
@@ -483,7 +483,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PartnerBankId", partnerBankId);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT BankCode FROM PartnerBanks");
 		selectSql.append(" WHERE PartnerBankId= :PartnerBankId");
 		logger.debug(Literal.SQL + selectSql.toString());
@@ -540,7 +540,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PartnerBankId", partnerBankId);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT PartnerBankCode FROM PartnerBanks");
 		selectSql.append(" WHERE PartnerBankId= :PartnerBankId");
 		logger.debug(Literal.SQL + selectSql.toString());

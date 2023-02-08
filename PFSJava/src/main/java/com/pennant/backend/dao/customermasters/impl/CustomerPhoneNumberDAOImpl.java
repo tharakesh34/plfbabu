@@ -369,9 +369,8 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		source.addValue("PhoneCustId", id);
 		source.addValue("PhoneTypeCode", phoneTypeCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM CustomerPhoneNumbers");
-
 		selectSql.append(" WHERE PhoneCustId = :PhoneCustId AND PhoneTypeCode = :PhoneTypeCode");
 
 		logger.debug("insertSql: " + selectSql.toString());
@@ -395,7 +394,7 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PhoneTypeCode", phoneTypeCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM BMTPhoneTypes");
 		selectSql.append(" WHERE ");
 		selectSql.append("PhoneTypeCode= :PhoneTypeCode");

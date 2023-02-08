@@ -413,9 +413,8 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Id", id);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM CustomerGst");
-
 		selectSql.append(" WHERE Id = :Id");
 
 		logger.debug("insertSql: " + selectSql.toString());
@@ -461,7 +460,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		source.addValue("Id", id);
 		source.addValue("CustId", custId);
 		source.addValue("GstNumber", gstNumber);
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT count(*) FROM CustomerGST");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE ");

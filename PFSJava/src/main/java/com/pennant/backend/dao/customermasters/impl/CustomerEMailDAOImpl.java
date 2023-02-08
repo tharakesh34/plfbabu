@@ -311,7 +311,7 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("EmailTypeCode", typeCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM BMTEMailTypes");
 		selectSql.append(" WHERE ");
 		selectSql.append("EmailTypeCode= :EmailTypeCode");
@@ -336,7 +336,7 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		source.addValue("CustId", id);
 		source.addValue("CustEMailTypeCode", typeCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM CustomerEMails");
 
 		selectSql.append(" WHERE CustId = :CustId AND CustEMailTypeCode = :CustEMailTypeCode");

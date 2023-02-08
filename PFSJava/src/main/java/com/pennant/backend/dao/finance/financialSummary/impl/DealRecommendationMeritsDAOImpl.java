@@ -194,9 +194,8 @@ public class DealRecommendationMeritsDAOImpl extends SequenceDao<DealRecommendat
 		source.addValue("id", id);
 		source.addValue("dealRecommendationMerits", dealRecommendationMerits);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM DealRecommendation_Merits");
-
 		selectSql.append(" WHERE id = :id AND finReference = :finReference");
 
 		logger.debug("insertSql: " + selectSql.toString());

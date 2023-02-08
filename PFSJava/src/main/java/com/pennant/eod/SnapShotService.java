@@ -92,7 +92,7 @@ public class SnapShotService extends SnapShotDataExecution {
 				updateLastRunDate(configuration.getId(), runDate);
 
 				// Logging Information
-				StringBuffer buffer = new StringBuffer("Snap Shot Completed For Customer ID ");
+				StringBuilder buffer = new StringBuilder("Snap Shot Completed For Customer ID ");
 				buffer.append(custID);
 				buffer.append(" From ");
 				buffer.append(configuration.getFromTable());
@@ -158,7 +158,7 @@ public class SnapShotService extends SnapShotDataExecution {
 				updateLastRunDate(configuration.getId(), endDate);
 
 				// Logging Information
-				StringBuffer buffer = new StringBuffer("Snap Shot Completed For Table");
+				StringBuilder buffer = new StringBuilder("Snap Shot Completed For Table");
 				buffer.append(configuration.getFromTable());
 				buffer.append(" Number of Records ");
 				buffer.append(recordCount);

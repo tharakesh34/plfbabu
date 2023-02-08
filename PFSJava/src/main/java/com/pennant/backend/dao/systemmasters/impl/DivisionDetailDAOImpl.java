@@ -230,7 +230,7 @@ public class DivisionDetailDAOImpl extends BasicDao<DivisionDetail> implements D
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ENTITYCODE", entityCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM SMTDIVISIONDETAIL");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE ENTITYCODE= :ENTITYCODE");
@@ -246,7 +246,7 @@ public class DivisionDetailDAOImpl extends BasicDao<DivisionDetail> implements D
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("DivisionCode", finDivision);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT EntityCode FROM SMTDIVISIONDETAIL");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE DivisionCode= :DivisionCode");

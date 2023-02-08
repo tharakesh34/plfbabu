@@ -1199,7 +1199,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FINDIVISION", divisionCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM RMTFINANCETYPES");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE FINDIVISION= :FINDIVISION");
