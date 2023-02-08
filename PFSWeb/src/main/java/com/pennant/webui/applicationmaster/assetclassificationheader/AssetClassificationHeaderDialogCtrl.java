@@ -99,8 +99,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.assetClssfcatnHeader.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.assetClssfcatnHeader.getId());
 	}
 
 	/**

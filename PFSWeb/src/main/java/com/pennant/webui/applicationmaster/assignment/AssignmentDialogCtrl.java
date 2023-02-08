@@ -130,8 +130,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.assignment.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.assignment.getId());
 	}
 
 	public void onCreate$window_AssignmentDialog(Event event) {

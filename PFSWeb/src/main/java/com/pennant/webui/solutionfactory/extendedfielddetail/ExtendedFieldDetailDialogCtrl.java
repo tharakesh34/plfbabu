@@ -1434,7 +1434,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 			// ### 08-05-2018 Start Development Iteam 81
 			boolean validate = true;
-			StringBuffer uniqueField = new StringBuffer();
+			StringBuilder uniqueField = new StringBuilder();
 
 			if (StringUtils.trimToNull(getExtendedFieldDetail().getFieldName()) == null) {
 				validate = false;
