@@ -121,7 +121,7 @@ public class PennantApplicationUtil {
 				format = "###,###,###,###";
 			}
 
-			StringBuffer sb = new StringBuffer(format);
+			StringBuilder sb = new StringBuilder(format);
 			boolean negSign = false;
 
 			if (decPos > 0) {
@@ -281,7 +281,7 @@ public class PennantApplicationUtil {
 	}
 
 	public static String formatRate(double value, int decPos) {
-		StringBuffer sb = new StringBuffer("###,###,######");
+		StringBuilder sb = new StringBuilder("###,###,######");
 
 		if (value != 0) {
 			String subString = String.valueOf(value).substring(String.valueOf(value).indexOf('.'));
@@ -339,17 +339,16 @@ public class PennantApplicationUtil {
 	}
 
 	public static String formateLong(long longValue) {
-		StringBuffer sb = new StringBuffer("###,###,###,###");
+		String pattern = "###,###,###,###";
 		java.text.DecimalFormat df = new java.text.DecimalFormat();
-		df.applyPattern(sb.toString());
+		df.applyPattern(pattern);
 		return df.format(longValue);
 	}
 
 	public static String formateInt(int intValue) {
-
-		StringBuffer sb = new StringBuffer("###,###,###,###");
+		String pattern = "###,###,###,###";
 		java.text.DecimalFormat df = new java.text.DecimalFormat();
-		df.applyPattern(sb.toString());
+		df.applyPattern(pattern);
 		return df.format(intValue);
 	}
 

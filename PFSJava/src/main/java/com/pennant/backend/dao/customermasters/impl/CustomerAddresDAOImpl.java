@@ -372,7 +372,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AddrTypeCode", addrType);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM BMTAddressTypes");
 		selectSql.append(" WHERE ");
 		selectSql.append("AddrTypeCode= :AddrTypeCode");
@@ -395,7 +395,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustAddrType", addrType);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM CustomerAddresses");
 		selectSql.append(" WHERE ");
 		selectSql.append("CustAddrType= :CustAddrType");
@@ -419,7 +419,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		source.addValue("CustId", id);
 		source.addValue("CustAddrType", addrType);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM CustomerAddresses");
 
 		selectSql.append(" WHERE CustId = :CustId AND CustAddrType = :CustAddrType");

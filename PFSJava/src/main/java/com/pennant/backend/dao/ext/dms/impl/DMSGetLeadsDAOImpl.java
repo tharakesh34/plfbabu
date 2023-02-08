@@ -22,10 +22,10 @@ public class DMSGetLeadsDAOImpl extends BasicDao<DMSLeadDetails> implements DMSG
 
 		String insertSql = "insert into DMS_RetreievProcess_Leads (LeadId, ProcessedFlag, InsertedOn) values (?, ?, ?)";
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + insertSql);
 
 		try {
-			result = jdbcOperations.batchUpdate(insertSql.toString(), new BatchPreparedStatementSetter() {
+			result = jdbcOperations.batchUpdate(insertSql, new BatchPreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
 					ps.setString(1, dmsLeadDetails.getLeadIds().get(i));

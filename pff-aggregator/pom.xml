@@ -4,13 +4,20 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>6.1.16</version>
+	<version>6.1.0-SFHT_R1.85</version>
 	<packaging>pom</packaging>
+
+	<licenses>
+		<license>
+			<name>Pennant Technologies</name>
+			<url>https://www.pennanttech.com/</url>
+		</license>
+	</licenses>
 
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
 		<client.code>core</client.code>
-		<pff.version>6.1.16</pff.version>
+		<pff.version>6.1.0-SFHT_R1.85</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>11</jdk.version>
 		<spring.version>5.3.20</spring.version>
@@ -31,11 +38,6 @@
 			<id>central</id>
 			<name>Central Repository</name>
 			<url>http://nexus-pennant-services/nexus/content/groups/public/</url>
-		</repository>
-		<repository>
-			<id>Shibboleth</id>
-			<name>Shibboleth</name>
-			<url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
 		</repository>
 	</repositories>
 
@@ -773,7 +775,19 @@
 					<generateBackupPoms>false</generateBackupPoms>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>2.0.0</version>
+				<executions>
+					<execution>
+						<id>download-licenses</id>
+						<goals>
+							<goal>download-licenses</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>

@@ -17,7 +17,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldMappingUtil {
-	private static final CustType RETAIL = null;
 	public static Logger logger = LogManager.getLogger(ExtendedFieldMappingUtil.class);
 
 	public static enum CustType {

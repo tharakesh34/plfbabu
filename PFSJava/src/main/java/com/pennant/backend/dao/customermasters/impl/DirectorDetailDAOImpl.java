@@ -440,7 +440,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		source.addValue("CustId", custID);
 		source.addValue("DirectorId", directorId);
 
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT Version FROM CustomerDirectorDetail");
 		sql.append(" WHERE CustId = :CustId AND DirectorId = :DirectorId");
 

@@ -135,7 +135,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuffer query = new StringBuffer();
+		StringBuilder query = new StringBuilder();
 		query.append(" UPDATE ReceiptBatchFileHeader SET EndTime = :EndTime, TotalRecords = :TotalRecords,");
 		query.append(
 				" SUCCESSRECORDS = :SucessRecords, FAILEDRECORDS = :FailedRecords, Remarks = :Remarks Where ID = :ID");
@@ -161,7 +161,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuffer query = new StringBuffer();
+		StringBuilder query = new StringBuilder();
 		query.append(" UPDATE Auto_ReceiptDetails SET PICKUPFLAG = :PICKUPFLAG, PICKUPBATCHID = :PICKUPBATCHID,");
 		query.append(" RESPONSESTATUS = :RESPONSESTATUS, ERRORMESSAGE = :ERRORMESSAGE, PICKUPDATE = :PICKUPDATE");
 		query.append(" Where Id = :Id");
@@ -185,7 +185,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuffer query = new StringBuffer();
+		StringBuilder query = new StringBuilder();
 		query.append(" UPDATE Auto_ReceiptDetails SET RECEIPTID = :RECEIPTID ");
 		query.append(" Where Id = :Id");
 
@@ -207,7 +207,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuffer query = new StringBuffer();
+		StringBuilder query = new StringBuilder();
 		query.append(" UPDATE Auto_ReceiptDetails SET PICKUPBATCHID = :PICKUPBATCHID ");
 		query.append(" Where PICKUPBATCHID = -1");
 

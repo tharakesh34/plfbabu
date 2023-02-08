@@ -547,17 +547,12 @@ public class PennantJavaUtil {
 	private final static String org_School_WF = "ORGANIZATION_SCHOOL";
 	private static String feeWaiverWF = "FEE_WAIVER";
 	private final static String PaymentWF = "PAYMENTINSTRUCTION";
-	private static String insuranceDetails = "INSURANCE_DETAILS";
 	private static String ReceiptProcessWF = "RECEIPT_PROCESS";
 	private final static String WF_VERIFICATION_PD = "VERIFICATION_PD";
 	private final static String WF_RECEIPTUPLOAD = "RECEIPTUPLOAD";
 	private static String FEEREFUND_WF = "FINFEEREFUND_PROCESS";
-	// private static String WF_DEPOSITDETAILS = "DEPOSITDETAILS";
-	// private static String WF_HOLDDISBURSEMENT = "HOLDDISBURSEMENT";
-	private static String WF_EXPENSEUPLOAD = "EXPENSEUPLOAD";
 	private static String WF_OCRMAINTENANCE = "OCRMAINTENANCE";
 	private final static String EXT_FIELDS_MAINT = "EXT_FIELDS_MAINT";
-	private final static String baseRate_WF = "BASERATE_WORKFLOW";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -3815,8 +3810,8 @@ public class PennantJavaUtil {
 	 */
 	public static String[] getFieldDetails(Object detailObject) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (detailObject != null) {
 			ArrayList<String> arrayFields = getFieldList(detailObject);
 			for (int j = 0; j < arrayFields.size(); j++) {
@@ -3841,8 +3836,8 @@ public class PennantJavaUtil {
 	 */
 	public static String[] getExtendedFieldDetails(ExtendedFieldRender fieldRender) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (fieldRender != null) {
 
 			// Adding Map Values
@@ -3871,8 +3866,8 @@ public class PennantJavaUtil {
 	 */
 	public static String[] getFieldDetails(Object detailObject, String excludeField) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (detailObject != null) {
 			ArrayList<String> arrayFields = getFieldList(detailObject);
 			for (int j = 0; j < arrayFields.size(); j++) {
@@ -3929,8 +3924,8 @@ public class PennantJavaUtil {
 	 */
 	public static String[] getFieldDetails(Object detailObject, Set<String> excludeFields) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (detailObject != null) {
 			ArrayList<String> arrayFields = getFieldList(detailObject);
 			for (int j = 0; j < arrayFields.size(); j++) {

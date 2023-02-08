@@ -422,7 +422,7 @@ public class ExtendedFieldDetailsValidation {
 						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO,
 								exdConfigDetail.getFieldType())) {
 							count = extendedFieldRenderDAO.validateExtendedComboBoxData(moduleMapping.getTableName(),
-									lovFields[0], filters, fieldValue.toString());
+									lovFields[0], filters, fieldValue);
 						} else {
 							count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(),
 									lovFields[0], (String) filters[0][0], fieldValue);

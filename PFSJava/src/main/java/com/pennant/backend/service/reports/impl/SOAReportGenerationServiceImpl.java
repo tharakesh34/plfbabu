@@ -2993,11 +2993,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String advancePayment = "Amount Paid Vide ";
 		String finSchedulePayable = "Amount Financed - Payable ";// Add Disbursement 1
 		String finScheduleReceivable = "Amount Financed - Receivable ";// Add Disbursement 1
-		String dueForInstallment = "Due for Installment "; // 3
 		String partPrepayment = "Part Prepayment Amount "; // 5
 		String brokenPeriodEvent = "Broken Period Interest Receivable "; // 6
 		String foreclosureAmount = "Foreclosure Amount "; // 19
-		String closingStatus = finMain.getClosingStatus();
 
 		if (CollectionUtils.isNotEmpty(finSchdDetList)) {
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
@@ -3539,7 +3537,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	}
 
 	private String buildAllocationData(List<ReceiptAllocationDetail> radList, int formatter) {
-		StringBuffer data = new StringBuffer();
+		StringBuilder data = new StringBuilder();
 		Map<String, BigDecimal> allocMap = new LinkedHashMap<String, BigDecimal>();
 		if (CollectionUtils.isNotEmpty(radList)) {
 			for (ReceiptAllocationDetail rad : radList) {
@@ -3588,7 +3586,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	}
 
 	private String buildAllocationDataForRestructure(List<RestructureCharge> rstChrgs, int formatter) {
-		StringBuffer data = new StringBuffer();
+		StringBuilder data = new StringBuilder();
 
 		Map<String, BigDecimal> allocMap = new LinkedHashMap<>();
 

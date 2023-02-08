@@ -64,8 +64,7 @@ public class QueryModuleController extends ExtendedTestClass {
 	}
 
 	protected String getReference(long id) {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(id));
-		return referenceBuffer.toString();
+		return String.valueOf(id);
 	}
 
 	public void setQueryDetailService(QueryDetailService queryDetailService) {

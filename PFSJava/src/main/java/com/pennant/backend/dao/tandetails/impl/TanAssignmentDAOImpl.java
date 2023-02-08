@@ -370,9 +370,9 @@ public class TanAssignmentDAOImpl extends SequenceDao<TanAssignment> implements 
 	public int isTanNumberAvailable(long tanID) {
 		String sql = "Select Count(FinReference) From Tan_Assignments Where TanID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, tanID);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, tanID);
 	}
 
 	@Override

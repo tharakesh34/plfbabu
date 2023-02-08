@@ -590,7 +590,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 	@Override
 	public List<String> getDuplicateDocByTitle(String docCategory, String docNumber) {
-		StringBuffer sql = new StringBuffer("Select c.CustCIF");
+		StringBuilder sql = new StringBuilder("Select c.CustCIF");
 		sql.append(" From Customers c");
 		sql.append(" Inner Join CustomerDocuments_View cd on cd.CustID = c.CustID");
 		sql.append(" Where cd.CustDocCategory = ? and cd.CustDocTitle = ?");

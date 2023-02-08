@@ -329,7 +329,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		String sql = extactPresentmentQuery(ph);
 
-		jdbcOperations.query(sql.toString(), ps -> {
+		jdbcOperations.query(sql, ps -> {
 			ps.setInt(1, 1);
 			ps.setBigDecimal(2, BigDecimal.ZERO);
 			ps.setDate(3, DateUtil.getSqlDate(ph.getFromDate()));
@@ -464,7 +464,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		String sql = extactRePresentmentQuery(ph);
 
-		jdbcOperations.query(sql.toString(), ps -> {
+		jdbcOperations.query(sql, ps -> {
 			ps.setInt(1, 1);
 			ps.setBigDecimal(2, BigDecimal.ZERO);
 			ps.setDate(3, DateUtil.getSqlDate(ph.getFromDate()));
@@ -581,7 +581,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public void extactPDCPresentments(PresentmentHeader ph, PresentmentDetailExtractService service) {
 		String sql = extactPDCPresentmentQuery(ph);
 
-		jdbcOperations.query(sql.toString(), ps -> {
+		jdbcOperations.query(sql, ps -> {
 			ps.setInt(1, 1);
 			ps.setBigDecimal(2, BigDecimal.ZERO);
 			ps.setDate(3, DateUtil.getSqlDate(ph.getFromDate()));
@@ -707,7 +707,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public void extactPDCRePresentments(PresentmentHeader ph, PresentmentDetailExtractService service) {
 		String sql = extactPDCRePresentmentQuery(ph);
 
-		jdbcOperations.query(sql.toString(), ps -> {
+		jdbcOperations.query(sql, ps -> {
 			ps.setInt(1, 1);
 			ps.setBigDecimal(2, BigDecimal.ZERO);
 			ps.setDate(3, DateUtil.getSqlDate(ph.getFromDate()));
@@ -969,7 +969,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public void deletePresentmentDetails(long presentmentId) {
 		String sql = "Delete from PresentmentDetails where PresentmentId = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		jdbcOperations.update(sql, ps -> {
 			ps.setLong(1, presentmentId);
@@ -980,7 +980,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public void deletePresentmentHeader(long id) {
 		String sql = "Delete from PresentmentHeader where Id = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
 			jdbcOperations.update(sql, ps -> {
@@ -1922,7 +1922,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 			ps.setInt(index++, status);
 			ps.setLong(index, id);

@@ -200,9 +200,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected int oldVar_sortOperator_Branch = -1; // autowired
 
 	private String CREATE_CIF = "CREATECIF";
-	private String CREATE_ACCOUNT = "CREATACCOUNT";
 	private List<String> usrfinRolesList = new ArrayList<String>();
-	private List<ValueLabel> betaConfig = PennantStaticListUtil.getBetaConfiguration();
 
 	private FinanceDetailService financeDetailService;
 	private DedupParmService dedupParmService;

@@ -274,7 +274,7 @@ public class TdsReceivableDAOImpl extends SequenceDao<TdsReceivable> implements 
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), String.class, certificatenumber);
+			return this.jdbcOperations.queryForObject(sql, String.class, certificatenumber);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}

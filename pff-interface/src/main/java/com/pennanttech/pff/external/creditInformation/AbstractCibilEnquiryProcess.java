@@ -3354,7 +3354,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				format = "###,###,###,###";
 			}
 
-			StringBuffer sb = new StringBuffer(format);
+			StringBuilder sb = new StringBuilder(format);
 			boolean negSign = false;
 
 			if (decPos > 0) {

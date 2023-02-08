@@ -370,7 +370,7 @@ public class BatchUploadProcessor {
 							Map<String, Object> rowMap = new HashMap<>();
 
 							for (int j = 0; j < keyList.size(); j++) {
-								if (!keyList.get(j).toString().contains("_")) {
+								if (!keyList.get(j).contains("_")) {
 									objFormulaEvaluator.evaluate(row.getCell(j));
 									String cellValueStr = objDefaultFormat.formatCellValue(row.getCell(j),
 											objFormulaEvaluator);

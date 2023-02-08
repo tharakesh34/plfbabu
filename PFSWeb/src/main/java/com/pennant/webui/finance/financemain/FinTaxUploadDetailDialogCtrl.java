@@ -464,13 +464,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			throw new WrongValueException(this.btnUpload, "Please Upload a Valid File to save");
 		}
 		if (afinTaxUploadHeader.isNewRecord()) {
-			if (MediaUtil.isXls(media)) {
-				copyInputStreamToFile(media.getByteData(),
-						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")));
-			} else {
-				copyInputStreamToFile(media.getByteData(),
-						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")));
-			}
+			copyInputStreamToFile(media.getByteData(), new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")));
 		}
 
 		doSetValidation(userAction);

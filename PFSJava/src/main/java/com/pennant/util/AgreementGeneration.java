@@ -3926,7 +3926,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
 		agreement.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
 
-		StringBuffer custAddress = new StringBuffer();
+		StringBuilder custAddress = new StringBuilder();
 		// careof
 		String custAddrLine3 = StringUtils.trimToEmpty(customerAddres.getCustAddrLine3());
 		if (StringUtils.isNotEmpty(custAddrLine3)) {

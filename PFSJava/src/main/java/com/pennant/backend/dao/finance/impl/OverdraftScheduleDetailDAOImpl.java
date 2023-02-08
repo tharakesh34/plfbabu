@@ -169,9 +169,9 @@ public class OverdraftScheduleDetailDAOImpl extends BasicDao<OverdraftScheduleDe
 	// FIXME get the next sequence from Sequence object
 	private long getodSeqID() {
 		String sql = "Select coalesce(max(odSeqID), 0)+1 From OverdraftMovements";
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
+		return this.jdbcTemplate.queryForObject(sql, new MapSqlParameterSource(), Long.class);
 	}
 
 	@Override

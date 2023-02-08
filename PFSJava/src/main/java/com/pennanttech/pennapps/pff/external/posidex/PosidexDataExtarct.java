@@ -830,7 +830,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 	}
 
 	private void extractLoans(Map<String, PosidexCustomer> customers, String sql) {
-		parameterJdbcTemplate.query(sql.toString(), paramMa, new RowCallbackHandler() {
+		parameterJdbcTemplate.query(sql, paramMa, new RowCallbackHandler() {
 			PosidexCustomerLoan loan = null;
 			PosidexCustomer customer = null;
 

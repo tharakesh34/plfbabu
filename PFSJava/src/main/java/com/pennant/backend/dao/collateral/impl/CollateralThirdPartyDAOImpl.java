@@ -216,7 +216,7 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("Select count(*) from (Select T1.CollateralRef from CollateralAssignment_Temp t1");
 		selectSql.append(" inner Join Financemain_Temp T3 on T3.Finreference = T1.Reference ");
 		selectSql.append(" where T1.CollateralRef='" + collateralRef + "' and T3.custid=' " + custId + "'");

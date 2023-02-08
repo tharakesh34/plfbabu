@@ -462,14 +462,11 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				 * with Raju. This functionality is moved to collateral and associated at customer side.
 				 * 
 				 */
-				String aggPath = "", templateName = "";
+				String templateName = "";
 				if (StringUtils.trimToEmpty(data.getLovDescAggReportName()).contains("/")) {
 					String aggRptName = StringUtils.trimToEmpty(data.getLovDescAggReportName());
-					// aggPath =
-					// main.getFinPurpose()+"/"+aggRptName.substring(0,aggRptName.lastIndexOf("/"));
 					templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
 				} else {
-					// aggPath = main.getFinPurpose();
 					templateName = data.getLovDescAggReportName();
 				}
 
@@ -516,20 +513,18 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 			try {
 
-				String aggPath = "", templateName = "";
+				String templateName = "";
 				if (StringUtils.trimToEmpty(data.getLovDescAggReportName()).contains("/")) {
 					String aggRptName = StringUtils.trimToEmpty(data.getLovDescAggReportName());
-					aggPath = aggRptName.substring(0, aggRptName.lastIndexOf("/"));
 					templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
 				} else {
-					aggPath = "";
 					templateName = data.getLovDescAggReportName();
 				}
 				AgreementEngine engine = new AgreementEngine();
 				engine.setTemplate(templateName);
 				engine.loadTemplate();
 
-				int format = SaveFormat.PDF;
+				int format;
 				if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
 					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
 					format = SaveFormat.PDF;

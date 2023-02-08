@@ -477,9 +477,9 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		String updateSql = "update Rules set Active= :Active  , RecordType = :RecordType, "
 				+ "  lastMntBy= :lastMntBy ,lastMntOn= :lastMntOn  " + "where RuleId= :RuleId";
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug("updateSql: " + updateSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql, beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

@@ -38,9 +38,9 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		String sql = getInsertQuery(type);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		return this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -65,7 +65,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			jdbcOperations.update(sql.toString(), ps -> {
+			jdbcOperations.update(sql, ps -> {
 				parameterizedSetter(ps, fsd);
 			});
 		} catch (Exception e) {
@@ -203,7 +203,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, finID, schdate);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, finID, schdate);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;

@@ -52,18 +52,9 @@ public class SnapShotDataExecution {
 		return snapShotConfigurations;
 	}
 
-	/*
-	 * protected String getColumn(List<SnapShotColumn> columns) { StringBuffer buffer = new StringBuffer();
-	 * 
-	 * for (int i = 0; i < columns.size(); i++) { SnapShotColumn column = columns.get(i); if (i != 0) {
-	 * buffer.append(","); } buffer.append(column.getColumnName()); }
-	 * 
-	 * return buffer.toString(); }
-	 */
-
 	protected String getSqlQry(String fromSchema, String fromTable, String totable, String columns,
 			SnapShotCondition condition) {
-		StringBuffer buffer = new StringBuffer("INSERT INTO ");
+		StringBuilder buffer = new StringBuilder("INSERT INTO ");
 		buffer.append(totable);
 		buffer.append(" ");
 
@@ -100,7 +91,7 @@ public class SnapShotDataExecution {
 
 	protected String getSqlQry(String fromSchema, String fromTable, String totable, String columns,
 			SnapShotCondition condition, boolean fullDownLoad) {
-		StringBuffer buffer = new StringBuffer("INSERT INTO ");
+		StringBuilder buffer = new StringBuilder("INSERT INTO ");
 		buffer.append(totable);
 		buffer.append(" ");
 
@@ -171,8 +162,7 @@ public class SnapShotDataExecution {
 	}
 
 	private String getPreEODSqlQry(String table, boolean delete) {
-
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		if (delete) {
 			buffer.append("DELETE  FROM ");

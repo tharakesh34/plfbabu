@@ -190,9 +190,8 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Id", id);
 
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT Version FROM CUSTCARDSALES");
-
 		sql.append(" WHERE Id = :Id");
 
 		logger.trace(Literal.SQL + sql.toString());

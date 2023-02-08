@@ -276,7 +276,7 @@ public class FeeWaiverUploadHeaderDAOImpl extends SequenceDao<FeeWaiverUploadHea
 
 	@Override
 	public void updateFileDownload(long uploadId, boolean fileDownload, String type) {
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Update FeeWaiverUploadHeader");
 		sql.append(StringUtils.trim(type));
 		sql.append(" Set FileDownload = ?");

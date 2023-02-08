@@ -231,9 +231,8 @@ public class RisksAndMitigantsDAOImpl extends SequenceDao<RisksAndMitigants> imp
 		source.addValue("id", id);
 		source.addValue("risk", risk);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM RISKS_MITIGANTS");
-
 		selectSql.append(" WHERE id = :id AND finReference = :finReference");
 
 		logger.debug("insertSql: " + selectSql.toString());

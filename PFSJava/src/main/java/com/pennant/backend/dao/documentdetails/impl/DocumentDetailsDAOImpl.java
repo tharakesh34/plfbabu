@@ -549,10 +549,10 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		logger.debug(Literal.ENTERING);
 
 		String sql = "select * from RegenerateAgreeement";
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		logger.debug(Literal.LEAVING);
-		return this.jdbcOperations.queryForList(sql.toString(), String.class);
+		return this.jdbcOperations.queryForList(sql, String.class);
 	}
 
 	@Override

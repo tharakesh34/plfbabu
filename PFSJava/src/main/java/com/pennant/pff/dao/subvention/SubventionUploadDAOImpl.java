@@ -277,7 +277,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, status);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, status);
 	}
 
 	@Override
@@ -286,7 +286,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, name) > 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, name) > 0;
 	}
 
 	public int logSubvention(List<ErrorDetail> errDetails, Long id) {
