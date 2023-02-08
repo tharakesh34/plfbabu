@@ -1359,8 +1359,14 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		BigDecimal amt1 = BigDecimal.ZERO;
 		BigDecimal amount = PennantApplicationUtil.unFormateAmount(paymentAmt.getValue(), ccyFormatter);
 
+		String receivableType = (String) paymentAmt.getAttribute("ReceivableType");
+
 		BigDecimal avaAmount = BigDecimal.ZERO;
 		for (FeeRefundDetail detail : feeRefundDetailList) {
+			if (!receivableType.equals(detail.getReceivableType())) {
+				continue;
+			}
+
 			avaAmount = detail.getPaidAmount().add(avaAmount);
 		}
 
@@ -1375,6 +1381,10 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		}
 
 		for (FeeRefundDetail detail : feeRefundDetailList) {
+			if (!receivableType.equals(detail.getReceivableType())) {
+				continue;
+			}
+
 			BigDecimal balAmount = detail.getPaidAmount().subtract(detail.getPrevRefundAmount());
 
 			if (balAmount.compareTo(amount) >= 0) {
@@ -1529,14 +1539,16 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 	}
 
-	public BigDecimal doFillHeaderList(String excessType, List<FeeRefundDetail> pdList) {
+	public BigDecimal doFillHeaderList(String receivableType, List<FeeRefundDetail> pdList) {
 		logger.debug(Literal.ENTERING);
 
 		boolean isReadOnly = isReadOnly("FeeRefundHeaderDialog_currRefundAmount");
 
 		BigDecimal totalPayAmt = BigDecimal.ZERO;
 
-		BigDecimal avaAmount = BigDecimal.ZERO;
+		BigDecimal adviseAmount = BigDecimal.ZERO;
+		BigDecimal paidAmount = BigDecimal.ZERO;
+		BigDecimal prevRefundAmount = BigDecimal.ZERO;
 		BigDecimal currRefundAmount = BigDecimal.ZERO;
 
 		FeeRefundDetail temp = null;
@@ -1546,7 +1558,9 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				temp = pd;
 			}
 
-			avaAmount = avaAmount.add(pd.getAvailableAmount());
+			adviseAmount = adviseAmount.add(pd.getAdviseAmount());
+			paidAmount = paidAmount.add(pd.getPaidAmount());
+			prevRefundAmount = prevRefundAmount.add(pd.getPrevRefundAmount());
 			currRefundAmount = currRefundAmount.add(pd.getRefundAmount());
 
 			totalPayAmt = currRefundAmount;
@@ -1574,21 +1588,21 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		lc.setParent(item);
 
 		/* Receivable Type */
-		lc = new Listcell(temp.getReceivableFeeTypeCode() + "-" + temp.getReceivableFeeTypeDesc());
+		lc = new Listcell(receivableType);
 		lc.setParent(item);
 
 		/* Payable Type */
-		lc = new Listcell(temp.getPayableFeeTypeCode() + "-" + temp.getPayableFeeTypeDesc());
+		lc = new Listcell("");
 		lc.setParent(item);
 
 		/* Total Amount */
 		lc = new Listcell();
-		lc.appendChild(getDecimalbox(temp.getAdviseAmount(), true));
+		lc.appendChild(getDecimalbox(adviseAmount, true));
 		lc.setParent(item);
 
 		/* Paid Amount */
 		lc = new Listcell();
-		lc.appendChild(getDecimalbox(temp.getPaidAmount(), true));
+		lc.appendChild(getDecimalbox(paidAmount, true));
 		lc.setParent(item);
 
 		/* Previous Refund Amount */
@@ -1599,13 +1613,13 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		/* Current Refund Amount */
 		lc = new Listcell();
 		Decimalbox paymentAmount = getDecimalbox(currRefundAmount, isReadOnly);
-		paymentAmount.setAttribute("excessType", excessType);
+		paymentAmount.setAttribute("ReceivableType", receivableType);
 		paymentAmount.addForward("onChange", self, "onPayAmountChange");
 		lc.appendChild(paymentAmount);
 		lc.setParent(item);
 
 		// Balance Amount
-		BigDecimal balanceAmount = temp.getPaidAmount().subtract(currRefundAmount).subtract(temp.getPrevRefundAmount());
+		BigDecimal balanceAmount = paidAmount.subtract(currRefundAmount).subtract(prevRefundAmount);
 		lc = new Listcell();
 		lc.appendChild(getDecimalbox(balanceAmount, true));
 		lc.setParent(item);
@@ -1640,11 +1654,11 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			BigDecimal currRefundAmount = pd.getRefundAmount();
 
 			/* Receivable Type */
-			lc = new Listcell("");
+			lc = new Listcell(pd.getReceivableFeeTypeCode() + "-" + pd.getReceivableFeeTypeDesc());
 			lc.setParent(item);
 
 			/* Payable Type */
-			lc = new Listcell("");
+			lc = new Listcell(pd.getPayableFeeTypeCode() + "-" + pd.getPayableFeeTypeDesc());
 			lc.setParent(item);
 
 			/* Total Amount */
@@ -1734,7 +1748,12 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		BigDecimal avaAmount = BigDecimal.ZERO;
 		for (FeeRefundDetail detail : feeRefundDetailList) {
-			if (frd.getReceivableID() == detail.getReceivableID()) {
+			if (detail.getReceivableID() == null) {
+				continue;
+			}
+
+			if (Long.compare(frd.getReceivableID(), detail.getReceivableID()) == 0) {
+
 				avaAmount = detail.getPaidAmount().subtract(detail.getPrevRefundAmount());
 
 				if ((amount.compareTo(avaAmount)) > 0) {
