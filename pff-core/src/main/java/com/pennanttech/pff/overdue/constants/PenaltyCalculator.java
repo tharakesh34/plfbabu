@@ -18,7 +18,7 @@ public class PenaltyCalculator {
 		}
 
 		for (FinODPenaltyRate penaltyRate : penaltyRates) {
-			if (dueDate.compareTo(penaltyRate.getFinEffectDate()) > 0) {
+			if (dueDate.compareTo(penaltyRate.getFinEffectDate()) >= 0) {
 				penlrate = penaltyRate;
 			}
 		}

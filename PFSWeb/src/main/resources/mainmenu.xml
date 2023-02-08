@@ -2511,9 +2511,9 @@
 		rightName= "menuItem_Enquiry_DeviationEnquiry"/> -->
 	<!-- <menuItem id="menu_Item_DDAEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DDAEnquiryList.zul" rightName= 
 		"menuItem_Enquiry_DeviationEnquiry"/> -->
-	<menuItem id="menu_Item_FinMandateEnquiry"
+	<!-- <menuItem id="menu_Item_FinMandateEnquiry"
 		zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/FinMandateEnquiryList.zul"
-		rightName="menuItem_Enquiry_FinMandate" />
+		rightName="menuItem_Enquiry_FinMandate" /> -->
 	<!-- <menuItem id="menu_Item_DDARepresentment" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DDARepresentmentList.zul" 
 		rightName="menuItem_Enquiry_WIFFinanceMain"/> -->
 	<!-- <menuItem id="menu_Item_DeviationTracker" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul" 

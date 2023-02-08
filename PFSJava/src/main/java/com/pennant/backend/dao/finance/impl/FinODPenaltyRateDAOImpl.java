@@ -35,7 +35,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			return null;
 		}
 
-		return list.get(0);
+		return list.get(list.size() - 1);
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		Collections.sort(list, new Comparator<FinODPenaltyRate>() {
 			@Override
 			public int compare(FinODPenaltyRate obj1, FinODPenaltyRate obj2) {
-				return DateUtility.compare(obj2.getFinEffectDate(), obj1.getFinEffectDate());
+				return DateUtility.compare(obj1.getFinEffectDate(), obj2.getFinEffectDate());
 			}
 		});
 

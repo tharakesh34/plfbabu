@@ -1324,7 +1324,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			return;
 		}
 
-		ChequeDetail cd = chequeDetails.get(0);
+		ChequeDetail cd = chequeDetails.get(chequeDetails.size() - 1);
 
 		BankBranch details = new BankBranch();
 

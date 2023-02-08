@@ -888,7 +888,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 				logUserAccess(menuItemName, finReceiptData.getReceiptHeader().getReference());
 
-				if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+				if (!enqiryModule && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 					validateTerminationExcess(finReceiptData);
 				}
 
@@ -902,7 +902,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 				logUserAccess(menuItemName, finReceiptData.getReceiptHeader().getReference());
 
-				if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+				if (!enqiryModule && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 					validateTerminationExcess(finReceiptData);
 				}
 

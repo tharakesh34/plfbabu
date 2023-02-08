@@ -2766,6 +2766,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			addMandateFilters(mandateType);
 		}
 
+		this.inputDate.setValue(SysParamUtil.getAppDate());
 		doEditFieldByInstrument(instrumentType);
 
 		this.parenttab.setVisible(!(instrumentType == InstrumentType.PDC || instrumentType == InstrumentType.MANUAL));

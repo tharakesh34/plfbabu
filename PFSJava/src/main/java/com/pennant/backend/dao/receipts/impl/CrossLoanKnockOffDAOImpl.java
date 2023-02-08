@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.receipts.impl;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -179,5 +180,23 @@ public class CrossLoanKnockOffDAOImpl extends SequenceDao<CrossLoanKnockOff> imp
 		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, RepayConstants.PAYSTATUS_CANCEL, receiptID) > 0;
+	}
+
+	@Override
+	public BigDecimal getCrossLoanHeader(long fromfinid, long receiptid) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CLT.TRANSFERAMOUNT");
+		sql.append(" From Cross_Loan_Transfer_Temp CLT");
+		sql.append(" Left Join FinExcessAmount FE on FE.EXCESSID= CLT.EXCESSID");
+		sql.append(" Where FromFinId = ? and FE.ReceiptId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, fromfinid, receiptid);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
 	}
 }

@@ -58,7 +58,6 @@ import org.zkoss.zkmax.zul.Filedownload;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
@@ -84,6 +83,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -128,7 +128,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	protected Button button_FeeRefundHeaderList_PrintList;
 
 	// Search Fields
-	protected Combobox custCif; // autowired
+	protected Uppercasebox custCif; // autowired
 	protected Textbox custName;
 	protected ExtendedCombobox finReference; // autowired
 	protected ExtendedCombobox finType; // autowired
@@ -224,7 +224,8 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		}
 		registerField("Id");
 		registerField("FinID");
-		registerField("CustCif");
+		registerField("CustCif", listheader_FeeRefundCustCif, SortOrder.NONE, custCif, sortOperator_FeeRefundCustCif,
+				Operators.NUMERIC);
 		registerField("CustShrtName", listheader_FeeRefundCustName, SortOrder.NONE, custName,
 				sortOperator_FeeRefundCustName, Operators.STRING);
 		registerField("FinReference", listheader_FeeRefundFinRef, SortOrder.NONE, finReference,
@@ -233,7 +234,9 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 				Operators.STRING);
 		registerField("PaymentAmount");
 		registerField("ApprovalStatus");
-		registerField("BranchDesc", branchCode, SortOrder.NONE, sortOperator_FeeRefundBranchCode, Operators.STRING);
+		registerField("BranchDesc");
+		registerField("BranchCode", branchCode, SortOrder.NONE, sortOperator_FeeRefundBranchCode, Operators.STRING);
+		registerField("EntityCode", entityCode, SortOrder.NONE, sortOperator_FeeRefundEntity, Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -312,11 +315,11 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		this.clusterType.setValueColumn("ClusterType");
 		this.clusterType.setValidateColumns(new String[] { "ClusterType" });
 
-		this.clusterName.setMaxlength(20);
+		this.clusterName.setMaxlength(50);
 		this.clusterName.setTextBoxWidth(120);
 		this.clusterName.setModuleName("Cluster");
 		this.clusterName.setValueColumn("Name");
-		this.clusterName.setValidateColumns(new String[] { "Code" });
+		this.clusterName.setValidateColumns(new String[] { "Name" });
 
 		logger.debug(Literal.LEAVING);
 	}

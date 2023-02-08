@@ -55,6 +55,7 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 	private String paymentType;
 	private String finReference;
 	private String finType;
+	private String branchCode;
 	private String branchDesc;
 	private BigDecimal paymentAmount = BigDecimal.ZERO;
 	private long createdBy;
@@ -106,6 +107,7 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		excludeFields.add("custCoreBank");
 		excludeFields.add("custCif");
 		excludeFields.add("finType");
+		excludeFields.add("branchCode");
 		excludeFields.add("branchDesc");
 
 		return excludeFields;
@@ -146,6 +148,14 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
 	}
 
 	public String getBranchDesc() {
