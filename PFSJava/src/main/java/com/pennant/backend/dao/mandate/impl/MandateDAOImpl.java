@@ -1228,47 +1228,46 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", bb.BankBranchId, bb.BankCode, bb.BranchDesc, bd.BankName, bb.IFSC");
 		sql.append(", pc.PCCityName, fap.BeneficiaryAccNo, fap.BeneficiaryName");
 		sql.append(", fap.PhoneNumber, fap.BeneficiaryAccno, pb.AcType");
-		sql.append(", pb.AccountNo");
+		sql.append(", pb.AccountNo, b.DefChequeDDPrintLoc");
 		sql.append(" From FinAdvancePayments fap");
 		sql.append(" Inner join PartnerBanks pb on pb.PartnerBankId = fap.PartnerBankId");
 		sql.append(" Inner join BankBranches bb on bb.BankBranchId = fap.BankBranchId");
-		sql.append(" Inner join BmtBankDetail bd ON bd.BankCode = bb.BankCode");
+		sql.append(" Inner join BmtBankDetail bd on bd.BankCode = bb.BankCode");
+		sql.append(" Inner join RMTBranches b on b.DefChequeDDPrintLoc = bb.BankCode");
 		sql.append(" Left join RmtProvinceVsCity pc ON pc.PcCity = bb.City");
 		sql.append(" Where Finid = ? and fap.PaymentType IN (?, ?, ?, ?) and fap.PaymentDetail = ?");
-
-		sql.append(" RMT.DEFCHEQUEDDPRINTLOC PRINTINGLOC");
-		sql.append("FROM FINADVANCEPAYMENTS  FAP INNER JOIN PARTNERBANKS_AVIEW PB ON  ");
-		sql.append(" FAP.PARTNERBANKID = PB.PARTNERBANKID ");
-		sql.append("  INNER JOIN BANKBRANCHES_AVIEW BB ON ");
-		sql.append(" FAP.BANKBRANCHID = BB.BANKBRANCHID  INNER JOIN RMTBRANCHES RMT ON   ");
-		sql.append(" RMT.DEFCHEQUEDDPRINTLOC = BB.BANKBRANCHID WHERE FINID = ?");
-		sql.append(" FAP.PAYMENTDETAIL ='CS'");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.query(sql.toString(), ps -> {
-				int index = 1;
-				ps.setLong(index++, finID);
+				int index = 0;
+				ps.setLong(++index, finID);
+				ps.setString(++index, "NEFT");
+				ps.setString(++index, "RTGS");
+				ps.setString(++index, "IMPS");
+				ps.setString(++index, "IFT");
+				ps.setString(++index, "CS");
 			}, (rs, rowNum) -> {
 				PaymentInstruction pi = new PaymentInstruction();
 
-				pi.setPartnerBankId(rs.getLong("PARTNERBANKID"));
-				pi.setPartnerBankCode(rs.getString("PARTNERBANKCODE"));
-				pi.setPartnerBankName(rs.getString("PARTNERBANKNAME"));
-				pi.setPartnerBankAcType(rs.getString("ACCOUNTTYPE"));
-				pi.setBankBranchId(rs.getLong("BANKBRANCHID"));
-				pi.setBankBranchCode(rs.getString("BANKBRANCHCODE"));
-				pi.setBranchDesc(rs.getString("BRANCHDESC"));
-				pi.setBankName(rs.getString("BANKNAME"));
-				pi.setBankBranchIFSC(rs.getString("BANKBRANCHIFSC"));
-				pi.setpCCityName(rs.getString("PCCITYNAME"));
-				pi.setAccountNo(rs.getString("ACCOUNTNO"));
-				pi.setAcctHolderName(rs.getString("ACCTHOLDERNAME"));
-				pi.setPhoneNumber(rs.getString("PHONENUMBER"));
-				pi.setPrintingLoc(rs.getString("PRINTINGLOC"));
-				pi.setPartnerBankAcType(rs.getString("PARTNERBANKACTYPE"));
-				pi.setPartnerBankAc(rs.getString("PARTNERBANKAC"));
+				pi.setPartnerBankId(rs.getLong("PartnerBankId"));
+				pi.setPartnerBankAcType(rs.getString("PaymentType"));
+				pi.setPartnerBankCode(rs.getString("PartnerBankCode"));
+				pi.setPartnerBankName(rs.getString("PartnerBankName"));
+				pi.setBankBranchId(rs.getLong("BankBranchId"));
+				pi.setBankBranchCode(rs.getString("BankCode"));
+				pi.setBranchDesc(rs.getString("BranchDesc"));
+				pi.setBankName(rs.getString("BankName"));
+				pi.setBankBranchIFSC(rs.getString("IFSC"));
+				pi.setpCCityName(rs.getString("PCCityName"));
+				pi.setAccountNo(rs.getString("BeneficiaryAccNo"));
+				pi.setAcctHolderName(rs.getString("BeneficiaryName"));
+				pi.setPhoneNumber(rs.getString("PhoneNumber"));
+				pi.setPartnerBankAc(rs.getString("BeneficiaryAccno"));
+				pi.setPartnerBankAcType(rs.getString("AcType"));
+				pi.setPartnerBankAc(rs.getString("AccountNo"));
+				pi.setPrintingLoc(rs.getString("DefChequeDDPrintLoc"));
 				return pi;
 			});
 		} catch (EmptyResultDataAccessException e) {
