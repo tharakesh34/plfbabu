@@ -1776,7 +1776,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public void updateCustSuspenseDetails(Customer aCustomer, String tableType) {
 		logger.debug("Entering");
 
-		StringBuffer updateSql = new StringBuffer();
+		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("UPDATE Customers");
 		updateSql.append(tableType);
 		updateSql.append(
@@ -1799,7 +1799,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public void saveCustSuspMovements(Customer aCustomer) {
 		logger.debug("Entering");
 
-		StringBuffer insertSql = new StringBuffer();
+		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("INSERT INTO CustSuspMovements ");
 		insertSql.append("(CustID, CustSuspEffDate, CustSuspAprDate, CustSuspMvtType, CustSuspRemarks) ");
 		insertSql.append(" VALUES(:CustID, :CustSuspEffDate, :CustSuspAprDate, :CustSuspMvtType, :CustSuspRemarks) ");
@@ -1819,7 +1819,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select T1.CustSuspRemarks FROM CustSuspMovements T1 INNER JOIN ");
 		selectSql.append(
 				" (Select CustID,MAX(CustSuspEffDate) MaxSuspEffDate FROM CustSuspMovements Group by CustID) T2 ");
@@ -1843,7 +1843,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT CustID, CustCIF, CustShrtName, CustDftBranch, CustSts, CustStsChgDate, custSuspSts,");
 		selectSql.append(" CasteId, ReligionId, SubCategory,");
 		selectSql.append(" custSuspDate, custSuspTrigger From Customers ");
@@ -1878,7 +1878,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		source.addValue("ColumnName", columnName);
 		source.addValue("Value", value);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM ");
 		selectSql.append(tableName);
 		selectSql.append(" WHERE ");

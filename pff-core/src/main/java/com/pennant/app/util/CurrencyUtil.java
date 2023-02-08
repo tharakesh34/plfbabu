@@ -288,7 +288,7 @@ public class CurrencyUtil {
 				format = AMOUNT_FORMAT;
 			}
 
-			StringBuffer sb = new StringBuffer(format);
+			StringBuilder sb = new StringBuilder(format);
 			boolean negSign = false;
 
 			if (decPos > 0) {

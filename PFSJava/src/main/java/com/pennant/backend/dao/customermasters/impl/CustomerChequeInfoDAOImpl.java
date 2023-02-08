@@ -293,9 +293,8 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 		source.addValue("CustId", id);
 		source.addValue("ChequeSeq", chequeSeq);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM CustomerChequeInfo");
-
 		selectSql.append(" WHERE CustId = :CustId AND ChequeSeq = :ChequeSeq");
 
 		logger.debug("insertSql: " + selectSql.toString());
