@@ -92,7 +92,8 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 	private int extendedType;
 	private int multiLine;
 	private boolean inputElement;
-	private String parentTag;
+	@XmlElement
+	private String parentTag = "";
 	private boolean editable;
 	private String lovValue;
 	private String lovDescErroDesc;
