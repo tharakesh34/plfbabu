@@ -54,6 +54,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -70,6 +71,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.eod.EODUtil;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 
 public class LatePayPenaltyService extends ServiceHelper {
@@ -379,14 +381,18 @@ public class LatePayPenaltyService extends ServiceHelper {
 					penalty = fixedAmt.multiply(new BigDecimal(dueDays));
 				}
 			} else {
+				List<FinODPenaltyRate> rates = fm.getPenaltyRates();
 				BigDecimal odChargeAmtOrPerc = fod.getODChargeAmtOrPerc();
-				if (FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS.equals(fod.getODChargeType())) {
-					odChargeAmtOrPerc = odcrCur.getoDChargeAmtOrPerc();
-				}
-				// Due Days accrual calculation
 
-				BigDecimal penaltyRate = odChargeAmtOrPerc.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN);
-				penalty = CalculationUtil.calInterest(datePrv, dateCur, balanceForCal, idb, penaltyRate);
+				boolean effectivedueExsist = rates.stream()
+						.anyMatch(pr -> pr.getODChargeType().equals(ChargeType.PERC_ON_EFF_DUE_DAYS));
+
+				if (effectivedueExsist) {
+					penalty = dueDateEffPenalty(fm, datePrv, dateCur, balanceForCal, idb);
+				} else {
+					BigDecimal penaltyRate = odChargeAmtOrPerc.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN);
+					penalty = CalculationUtil.calInterest(datePrv, dateCur, balanceForCal, idb, penaltyRate);
+				}
 			}
 
 			penalty = CalculationUtil.roundAmount(penalty, fm.getCalRoundingMode(), fm.getRoundingTarget());
@@ -427,6 +433,48 @@ public class LatePayPenaltyService extends ServiceHelper {
 		fod.setTotPenaltyPaid(totPenaltyPaid);
 		fod.setTotWaived(totWaived);
 		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
+	}
+
+	private BigDecimal dueDateEffPenalty(FinanceMain fm, Date datePrv, Date dateCur, BigDecimal balanceForCal,
+			String idb) {
+
+		BigDecimal penalty = BigDecimal.ZERO;
+		BigDecimal effectiveRate = BigDecimal.ZERO;
+
+		List<FinODPenaltyRate> rates = fm.getPenaltyRates();
+
+		Date currentEffDate = null;
+		if (rates.size() == 1) {
+			currentEffDate = rates.get(0).getFinEffectDate();
+			effectiveRate = rates.get(0).getODChargeAmtOrPerc();
+		}
+
+		for (int i = 1; i < rates.size(); i++) {
+			FinODPenaltyRate currentRate = rates.get(i);
+			FinODPenaltyRate previousRate = rates.get(i - 1);
+
+			currentEffDate = DateUtil.getDatePart(currentRate.getFinEffectDate());
+			Date previousEffDate = DateUtil.getDatePart(previousRate.getFinEffectDate());
+
+			effectiveRate = currentRate.getODChargeAmtOrPerc();
+
+			if (datePrv.compareTo(previousEffDate) >= 0 && datePrv.compareTo(currentEffDate) <= 0) {
+				BigDecimal penaltyRate = previousRate.getODChargeAmtOrPerc().divide(new BigDecimal(100), 2,
+						RoundingMode.HALF_DOWN);
+				penalty = penalty.add(CalculationUtil.calInterest(datePrv, DateUtil.addDays(currentEffDate, -1),
+						balanceForCal, idb, penaltyRate));
+				penalty = CalculationUtil.roundAmount(penalty, fm.getCalRoundingMode(), fm.getRoundingTarget());
+				datePrv = currentEffDate;
+			}
+		}
+
+		if (datePrv.compareTo(dateCur) <= 0) {
+			BigDecimal penaltyRate = effectiveRate.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN);
+			penalty = penalty.add(CalculationUtil.calInterest(datePrv, dateCur, balanceForCal, idb, penaltyRate));
+			penalty = CalculationUtil.roundAmount(penalty, fm.getCalRoundingMode(), fm.getRoundingTarget());
+		}
+
+		return penalty;
 	}
 
 	private OverdueChargeRecovery identifyODCRecovery(List<OverdueChargeRecovery> odcrList, FinODDetails fod,
