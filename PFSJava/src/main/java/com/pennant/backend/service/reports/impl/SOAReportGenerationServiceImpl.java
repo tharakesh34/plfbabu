@@ -39,9 +39,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -1640,22 +1642,28 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		// FinExcess Amount
 		String excessAmt = Labels.getLabel("label_SOA_Unadjustedamount.value");
 		BigDecimal unAdjustedAmt = BigDecimal.ZERO;
-		if (finExcessAmountsList != null && !finExcessAmountsList.isEmpty()) {
 
-			BigDecimal balanceAmt = BigDecimal.ZERO;
-
-			for (FinExcessAmount finExcessAmount : finExcessAmountsList) {
-				if (finExcessAmount.getBalanceAmt() != null) {
-					if (!FinanceConstants.SUBVEN_FEE.equals(finExcessAmount.getAmountType())) {
-						balanceAmt = balanceAmt.add(finExcessAmount.getBalanceAmt());
-					}
-				}
+		if (CollectionUtils.isEmpty(finExcessAmountsList)) {
+			soaSummaryReport = new SOASummaryReport();
+			soaSummaryReport.setComponent(excessAmt);
+			soaSummaryReport.setDue(BigDecimal.ZERO);
+			soaSummaryReport.setReceipt(BigDecimal.ZERO);
+			soaSummaryReport.setWaiver(BigDecimal.ZERO);
+			soaSummaryReport.setOverDue(BigDecimal.ZERO);
+			statementOfAccount.setUnAdjAmt(BigDecimal.ZERO);
+			if (!ImplementationConstants.CUSTOMIZED_SOAREPORT) {
+				soaSummaryReportsList.add(soaSummaryReport);
 			}
+		}
 
-			due = balanceAmt;
+		finExcessAmountsList = groupByAmountType(finExcessAmountsList);
+
+		for (FinExcessAmount finExcessAmount : finExcessAmountsList) {
+			due = finExcessAmount.getBalanceAmt();
+
 			if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
-				unAdjustedAmt = balanceAmt;
-				due = balanceAmt;
+				unAdjustedAmt = finExcessAmount.getBalanceAmt();
+				due = finExcessAmount.getBalanceAmt();
 				statementOfAccount.setUnAdjAmt(due.divide(new BigDecimal(100)));
 				try {
 					statementOfAccount.setUnAdjAmtInWords(due == BigDecimal.ZERO ? ""
@@ -1665,28 +1673,17 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					logger.error(Literal.EXCEPTION, e);
 				}
 			}
+
 			overDue = BigDecimal.ZERO;
 			receipt = BigDecimal.ZERO;
 
 			soaSummaryReport = new SOASummaryReport();
-			soaSummaryReport.setComponent(excessAmt);
+			soaSummaryReport.setComponent(Labels.getLabel("label_Excess_Type_" + finExcessAmount.getAmountType()));
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setWaiver(BigDecimal.ZERO);
 			soaSummaryReport.setOverDue(overDue.negate());
 			netDue = netDue.subtract(due);
-			if (!ImplementationConstants.CUSTOMIZED_SOAREPORT) {
-				soaSummaryReportsList.add(soaSummaryReport);
-			}
-		} else {
-
-			soaSummaryReport = new SOASummaryReport();
-			soaSummaryReport.setComponent(excessAmt);
-			soaSummaryReport.setDue(BigDecimal.ZERO);
-			soaSummaryReport.setReceipt(BigDecimal.ZERO);
-			soaSummaryReport.setWaiver(BigDecimal.ZERO);
-			soaSummaryReport.setOverDue(BigDecimal.ZERO);
-			statementOfAccount.setUnAdjAmt(BigDecimal.ZERO);
 			if (!ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				soaSummaryReportsList.add(soaSummaryReport);
 			}
@@ -3648,6 +3645,46 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 
 		return data.toString();
+	}
+
+	private List<FinExcessAmount> groupByAmountType(List<FinExcessAmount> finExcessAmountsList) {
+		List<FinExcessAmount> list = new ArrayList<>();
+
+		Map<String, List<FinExcessAmount>> map = new HashMap<>();
+
+		for (FinExcessAmount ea : finExcessAmountsList) {
+			String amountType = ea.getAmountType();
+
+			List<FinExcessAmount> list2 = map.get(amountType);
+			if (list2 == null) {
+				list2 = new ArrayList<>();
+				map.put(amountType, list2);
+			}
+
+			list2.add(ea);
+		}
+
+		for (Entry<String, List<FinExcessAmount>> finExcessAmount : map.entrySet()) {
+			String amountType = finExcessAmount.getKey();
+			BigDecimal amount = BigDecimal.ZERO;
+			BigDecimal balanceAmt = BigDecimal.ZERO;
+
+			for (FinExcessAmount ea : finExcessAmount.getValue()) {
+				amount = amount.add(ea.getAmount());
+				balanceAmt = balanceAmt.add(ea.getBalanceAmt());
+			}
+
+			if (balanceAmt.compareTo(BigDecimal.ZERO) > 0) {
+				FinExcessAmount fa = new FinExcessAmount();
+				fa.setAmountType(amountType);
+				fa.setAmount(amount);
+				fa.setBalanceAmt(balanceAmt);
+				list.add(fa);
+			}
+
+		}
+
+		return list;
 	}
 
 	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
