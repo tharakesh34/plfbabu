@@ -54,7 +54,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.util.DateUtility;
@@ -316,8 +315,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		 * show the enquiry.
 		 */
 
-		if (!(PennantConstants.YES.equals(this.recoveryCode.getValue())
-				&& CalculationConstants.PDPFTCAL_NOTAPP.equals(fm.getPastduePftCalMthd()))) {
+		if (PennantConstants.YES.equals(this.recoveryCode.getValue())) {
 			List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finID);
 			List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finID);
 
