@@ -1103,7 +1103,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		FeeRefundDetail frd = null;
 		long finID = this.financeMain.getFinID();
-		List<FeeRefundDetail> detailList = new ArrayList<FeeRefundDetail>();
+		List<FeeRefundDetail> detailList = new ArrayList<>();
 
 		List<ManualAdvise> manualAdviseList = this.feeRefundHeaderService.getManualAdvise(finID);
 		List<FinFeeDetail> finFeeDetailList = finFeeDetailService.getFinFeeDetailByFinRef(finID, false, "");
@@ -1211,9 +1211,10 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 				frd = new FeeRefundDetail();
 				frd.setNewRecord(true);
-				frd.setReceivableFeeTypeID(ft.getFeeTypeID());
+				frd.setReceivableID(ft.getFeeTypeID());
 				frd.setAvailableAmount(
 						fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
+				frd.setReceivableFeeTypeID(ft.getFeeTypeID());
 				frd.setPaidAmount(fod.getTotPenaltyPaid().subtract(receiptPaidAmt));
 				frd.setAdviseAmount(fod.getTotPenaltyAmt());
 				frd.setPayableFeeTypeID(feeType.getFeeTypeID());
@@ -1250,8 +1251,9 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				}
 				frd = new FeeRefundDetail();
 				frd.setNewRecord(true);
-				frd.setReceivableFeeTypeID(ft.getFeeTypeID());
+				frd.setReceivableID(ft.getFeeTypeID());
 				frd.setAvailableAmount(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
+				frd.setReceivableFeeTypeID(ft.getFeeTypeID());
 				frd.setPaidAmount(fod.getLPIPaid().subtract(receiptPaidAmt));
 				frd.setAdviseAmount(fod.getLPIAmt());
 				frd.setPayableFeeTypeID(feeType.getFeeTypeID());
