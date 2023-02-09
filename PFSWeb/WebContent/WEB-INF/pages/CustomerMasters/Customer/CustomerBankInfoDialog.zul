@@ -77,7 +77,10 @@
 										<label value="${c:l('label_CustomerBankInfoDialog_AddToBeneficiary.value')}" />
 									</cell>
 									<cell>
+									<hbox>
+										<space spacing="2px" />
 										<checkbox id="addToBenficiary" disabled="true" />
+									</hbox>
 									</cell>
 								</row>
 								<row>
@@ -111,7 +114,10 @@
 										<label id="label_CustomerBankInfoDialog_BankBranch" value="Bank Branch" />
 									</cell>
 									<cell>
+									<hbox>
+										<space spacing="2px" />
 										<textbox id="bankBranch" />
+									</hbox>
 									</cell>
 								</row>
 								<row>
@@ -149,7 +155,10 @@
 											value="${c:l('label_CustomerBankInfoDialog_AccountOpeningDate.value')}" />
 									</cell>
 									<cell colspan="3">
+									<hbox>
+										<space spacing="2px" />
 										<datebox id="accountOpeningDate" />
+									</hbox>
 									</cell>
 								</row>
 								<row>
@@ -157,28 +166,46 @@
 										<label id="label_CustomerBankInfoDialog_FromDate" value="From" />
 									</cell>
 									<cell>
-										<datebox id="fromDate" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox id="fromDate" />
+										</hbox>	
 									</cell>
 									<cell>
 										<label id="label_CustomerBankInfoDialog_ToDate" value="To" width="150px" />
 									</cell>
 									<cell>
+									<hbox>
+										<space spacing="2px" />
 										<datebox id="toDate" />
+									</hbox>
 									</cell>
 								</row>
 								<row>
 									<label id="label_CustomerBankInfoDialog_repaymentFrom" value="Repayment From" />
-									<combobox id="repaymentFrom" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="repaymentFrom" />
+									</hbox>
 									<label id="label_CustomerBankInfoDialog_PhoneNumber"
 										value="${c:l('label_CustomerBankInfoDialog_PhoneNumber.value')}" width="150px" />
-									<textbox id="phoneNumber" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="phoneNumber" />
+									</hbox>
 								</row>
 								<row>
 									<label id="label_CustomerBankInfoDialog_noOfMonthsBanking"
 										value="No Of Months Banking" width="150px" />
-									<intbox id="NoOfMonthsBanking" maxlength="2" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="NoOfMonthsBanking" maxlength="2" />
+									</hbox>
 									<label id="label_CustomerBankInfoDialog_lwowRatio" value="I/w o/w Ratio" />
-									<textbox id="lwowRatio" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="lwowRatio" />
+									</hbox>
 								</row>
 								<row>
 									<label id="label_CustomerBankInfoDialog_CCLimit"
@@ -186,7 +213,10 @@
 									<currencyBox id="ccLimit" />
 									<label id="label_CustomerBankInfoDialog_TypeOfBanks"
 										value="${c:l('label_CustomerBankInfoDialog_TypeOfBanks.value')}" />
-									<combobox id="typeOfBanks" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="typeOfBanks" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>

@@ -92,13 +92,11 @@
 								<label id="label_gstDetailsDialog_countryCode"
 									value="${c:l('label_gstDetailsDialog_countryCode.value')}" />
 								<hbox>
-									<space id="space_countryCode" spacing="2px" />
 									<extendedcombobox id="countryCode" />
 								</hbox>
 								<label id="label_gstDetailsDialog_stateCode"
 									value="${c:l('label_gstDetailsDialog_stateCode.value')}" />
 								<hbox>
-									<space id="space_stateCode" spacing="2px" />
 									<extendedcombobox id="stateCode" />
 								</hbox>
 							</row>
@@ -106,13 +104,11 @@
 								<label id="label_gstDetailsDialog_cityCode"
 									value="${c:l('label_gstDetailsDialog_cityCode.value')}" />
 								<hbox>
-									<space id="space_cityCode" spacing="2px" />
 									<extendedcombobox id="cityCode" />
 								</hbox>
 								<label id="label_gstDetailsDialog_pincode"
 									value="${c:l('label_gstDetailsDialog_pincode.value')}" />
 								<hbox>
-									<space id="space_pincode" spacing="2px" />
 									<extendedcombobox id="pincode" />
 								</hbox>
 							</row>

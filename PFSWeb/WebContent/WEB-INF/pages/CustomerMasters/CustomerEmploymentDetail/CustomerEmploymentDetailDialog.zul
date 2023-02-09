@@ -55,7 +55,10 @@
 								<label id="label_CustomerEmploymentDetailDialog_CustEmpName" value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpName.value')}" />
 								<extendedcombobox id="custEmpName" />
 								<label id="label_CustomerEmploymentDetailDialog_CompanyName" value="${c:l('label_CustomerEmploymentDetailDialog_CompanyName.value')}" />
-								<textbox id="companyName" width="120px" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="companyName" width="120px" />
+								</hbox>
 							</row>
 
 							<row visible="true">

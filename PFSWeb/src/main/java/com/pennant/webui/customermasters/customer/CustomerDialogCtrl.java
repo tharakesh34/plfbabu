@@ -1179,8 +1179,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.listBoxCustomerEmails.setVisible(false);
 		this.listBoxCustomerEmailsInlineEdit.setVisible(true);
 
-		spaceSubCategory.setVisible(false);
-
 		// setting visible false for new customer
 		this.btnUploadExternalLiability.setVisible(false);
 		this.btnDownloadExternalLiability.setVisible(false);
@@ -2039,17 +2037,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 
 			try {
-				if ("#".equals(getComboboxValue(this.subCategory))) {
-					if (validateAllDetails && this.subCategory.isVisible() && !this.subCategory.isDisabled()
-							&& spaceSubCategory.isVisible()) {
-						throw new WrongValueException(this.subCategory, Labels.getLabel("STATIC_INVALID",
-								new String[] { Labels.getLabel("label_CustomerDialog_SubCategory.value") }));
-					} else {
-						aCustomer.setSubCategory(getComboboxValue(this.subCategory));
-					}
-				} else {
-					aCustomer.setSubCategory(getComboboxValue(this.subCategory));
-				}
+				aCustomer.setSubCategory(getComboboxValue(this.subCategory));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -2106,13 +2094,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		// corporate customer
 		try {
-			if (!isRetailCustomer && "#".equals(getComboboxValue(this.entityType))) {
-				if (validateAllDetails && this.entityType.isVisible() && !this.entityType.isDisabled()
-						&& spaceSubCategory.isVisible()) {
-					throw new WrongValueException(this.entityType, Labels.getLabel("STATIC_INVALID",
-							new String[] { Labels.getLabel("label_CustomerDialog_EntityType.value") }));
-				}
-			} else if (!isRetailCustomer) {
+			if (!isRetailCustomer) {
 				aCustomer.setEntityType(getComboboxValue(this.entityType));
 			}
 		} catch (WrongValueException we) {
@@ -3260,11 +3242,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (this.profession.isVisible() && !this.profession.isReadonly()) {
 				this.profession.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_CustomerDialog_Profession.value"), null, isMandValidate, true));
-			}
-			// Employment type Mandatory base on system parameter setting validation
-			if (!this.subCategory.isDisabled() && spaceSubCategory.isVisible()) {
-				this.subCategory.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_CustomerDialog_SubCategory.value"), null, false));
 			}
 
 		}
@@ -8439,7 +8416,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				mName.append(names[i]).append(" ");
 			}
 			this.custMiddleName.setValue(mName.toString());
-		} else if(names.length > 1) {
+		} else if (names.length > 1) {
 			this.custLastName.setValue(names[1]);
 		}
 	}
