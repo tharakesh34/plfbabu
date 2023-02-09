@@ -274,7 +274,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		BigDecimal dueAganistLoan = paymentHeaderDAO.getDueAgainstLoan(fm.getFinID());
-		BigDecimal dueAganistCustomer = paymentHeaderDAO.getDueAgainstCustomer(fm.getCustID());
+		BigDecimal dueAganistCustomer = paymentHeaderDAO.getDueAgainstCustomer(fm.getCustID(), fm.getFinID());
 
 		if (detail.getOverRide().equals("N") && (dueAganistLoan.compareTo(BigDecimal.ZERO) > 0
 				|| dueAganistCustomer.compareTo(BigDecimal.ZERO) > 0)) {

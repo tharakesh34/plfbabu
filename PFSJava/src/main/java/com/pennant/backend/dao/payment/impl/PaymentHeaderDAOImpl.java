@@ -429,7 +429,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	}
 
 	@Override
-	public BigDecimal getDueAgainstCustomer(long custId) {
+	public BigDecimal getDueAgainstCustomer(long custId, long finId) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Sum(ODPRINCIPAL + ODPROFIT + COALESCE(OD.LPPDUE,0) + COALESCE(OD.LPIDUE,0)");
 		sql.append(" + COALESCE(MA.ADVDUE,0)) TotalDue FROM FINPFTDETAILS PFT ");
@@ -442,7 +442,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		// sql.append("WHERE pft.custid in");
 		// sql.append(" (Select custid from customers where custcorebank = ?) group by c.custcorebank");
 		// }else {
-		sql.append(" WHERE  PFT.CUSTID = ? GROUP BY PFT.CUSTID ");
+		sql.append(" WHERE  PFT.CUSTID = ? AND PFT.FINID <> ? GROUP BY PFT.CUSTID ");
 		// }
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -450,7 +450,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		// if(corebank) {/* Need add based on implementation of custcorebank functionality
 		// return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, coreBankId);
 		// }else {
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId);
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId, finId);
 		// }
 	}
 
@@ -560,27 +560,6 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		Object[] parameters = new Object[] { finId };
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
-	}
-
-	@Override
-	public BigDecimal getDueAgainstselCustomer(long custId, String coreBankId, long finId) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Sum(ODPRINCIPAL + ODPROFIT + COALESCE(OD.LPPDUE,0) + COALESCE(OD.LPIDUE,0)");
-		sql.append(" + COALESCE(MA.ADVDUE,0)) TotalDue FROM FINPFTDETAILS PFT ");
-		sql.append(" LEFT JOIN (SELECT SUM(TOTPENALTYBAL) LPPDUE,SUM(LPIBAL)LPIDUE,FINID ");
-		sql.append(" FROM FINODDETAILS GROUP BY FINID)OD ON OD.FINID = PFT.FINID ");
-		sql.append(" LEFT JOIN (SELECT SUM(ADVISEAMOUNT - WAIVEDAMOUNT - PAIDAMOUNT) ADVDUE, FINID ");
-		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 1 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
-		sql.append(" INNER JOIN CUSTOMERS C ON C.CUSTID = PFT.CUSTID ");
-
-		sql.append(" WHERE  PFT.CUSTID = ?  AND  PFT.FINID <> ? GROUP BY PFT.CUSTID ");
-		logger.debug(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId, finId);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return BigDecimal.ZERO;
-		}
 	}
 
 }
