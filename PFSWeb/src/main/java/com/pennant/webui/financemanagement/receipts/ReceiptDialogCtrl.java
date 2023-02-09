@@ -2659,6 +2659,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_DSF);
 			} else if (RepayConstants.EXAMOUNTTYPE_TEXCESS.equals(payable.getPayableType())) {
 				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_TEXCESS);
+			} else if (RepayConstants.EXAMOUNTTYPE_SETTLEMENT.equals(payable.getPayableType())) {
+				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_SETTLEMENT);
 			} else {
 				rcd.setPaymentType(ReceiptMode.PAYABLE);
 			}
