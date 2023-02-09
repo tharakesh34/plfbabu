@@ -919,7 +919,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 
 		boolean isCalcCompleted = true;
 		Date valuDate = receiptData.getReceiptHeader().getValueDate();
-		if (finMain.isFinIsActive() && DateUtility.compare(valuDate, maturityDate) <= 0) {
+		if (finMain.isFinIsActive() && DateUtil.compare(valuDate, finMain.getMaturityDate()) <= 0) {
 
 			if (receiptPurposeCtg > 0) {
 				isCalcCompleted = recalEarlyPaySchd(true);

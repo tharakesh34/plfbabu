@@ -3128,8 +3128,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		if (CollectionUtils.isNotEmpty(financeDetail.getDocumentDetailsList())) {
 			/*
 			 * auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
+			 * 
+			 * auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 			 */
-			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
 		// Finance Fee details
