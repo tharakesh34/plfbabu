@@ -1019,6 +1019,11 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	@Override
+	public boolean isAdviseUploadExist(long finID) {
+		return manualAdviseDAO.isAdviseUploadExist(finID);
+	}
+
+	@Override
 	public boolean isunAdjustablePayables(long finID) {
 		return manualAdviseDAO.isunAdjustablePayables(finID);
 	}

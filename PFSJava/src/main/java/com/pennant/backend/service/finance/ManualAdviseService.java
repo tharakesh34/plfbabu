@@ -81,4 +81,6 @@ public interface ManualAdviseService {
 	boolean isManualAdviseExist(long finID);
 
 	boolean isunAdjustablePayables(long finID);
+
+	boolean isAdviseUploadExist(long finID);
 }
