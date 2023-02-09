@@ -206,7 +206,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				"_View");
 
 		paymentHeader.setOdAgainstLoan(getDueAgainstLoan(paymentHeader.getFinID()));
-		paymentHeader.setOdAgainstCustomer(getDueAgainstCustomer(paymentHeader.getCustID()));
+		paymentHeader.setOdAgainstCustomer(getDueAgainstCustomer(paymentHeader.getCustID(), paymentHeader.getFinID()));
 
 		if (list != null) {
 			paymentHeader.setPaymentDetailList(list);
@@ -239,8 +239,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	}
 
 	@Override
-	public BigDecimal getDueAgainstCustomer(long custID) {
-		return paymentHeaderDAO.getDueAgainstCustomer(custID);
+	public BigDecimal getDueAgainstCustomer(long custID, long finId) {
+		return paymentHeaderDAO.getDueAgainstCustomer(custID, finId);
 	}
 
 	@Override
@@ -261,11 +261,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	@Override
 	public List<ManualAdvise> getManualAdviseForEnquiry(long finID) {
 		return paymentHeaderDAO.getManualAdviseForEnquiry(finID);
-	}
-
-	@Override
-	public BigDecimal getDueAgainstselCustomer(long custId, String custCoreBank, long finId) {
-		return paymentHeaderDAO.getDueAgainstselCustomer(custId, custCoreBank, finId);
 	}
 
 	@Override

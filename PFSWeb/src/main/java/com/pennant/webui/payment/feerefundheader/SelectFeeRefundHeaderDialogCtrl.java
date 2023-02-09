@@ -174,7 +174,7 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 		}
 
 		feeRefundHeader.setOdAgainstLoan(paymentHeaderService.getDueAgainstLoan(finID));
-		feeRefundHeader.setOdAgainstCustomer(paymentHeaderService.getDueAgainstCustomer(fm.getCustID()));
+		feeRefundHeader.setOdAgainstCustomer(paymentHeaderService.getDueAgainstCustomer(fm.getCustID(), finID));
 
 		Map<String, Object> arg = new HashMap<>();
 		arg.put("feeRefundHeader", feeRefundHeader);

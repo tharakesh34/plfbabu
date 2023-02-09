@@ -71,7 +71,7 @@ public interface PaymentHeaderService {
 
 	BigDecimal getDueAgainstLoan(long finId);
 
-	BigDecimal getDueAgainstCustomer(long custId);
+	BigDecimal getDueAgainstCustomer(long custId, long finId);
 
 	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
 
@@ -82,7 +82,4 @@ public interface PaymentHeaderService {
 	List<ErrorDetail> verifyRefundInitiation(AutoRefundLoan arl, boolean isEOD);
 
 	BigDecimal getInProgressExcessAmt(long finId, Long receiptId);
-
-	BigDecimal getDueAgainstselCustomer(long custId, String custCoreBank, long finId);
-
 }
