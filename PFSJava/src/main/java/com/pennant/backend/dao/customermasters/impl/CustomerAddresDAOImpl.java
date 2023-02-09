@@ -72,7 +72,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		sql.append(", CustAddrLine4, CustDistrict, PinCodeId");
 
 		if (type.contains("View")) {
-			sql.append(", LovDescCustAddrTypeName, LovDescCustAddrCityName");
+			sql.append(", LovDescCustAddrTypeName, LovDescCustAddrCityName, LovDescCustDistrictName");
 			sql.append(", LovDescCustAddrProvinceName, LovDescCustAddrCountryName, LovDescCustAddrZip");
 		}
 
@@ -116,6 +116,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 					ca.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
 					ca.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
 					ca.setLovDescCustAddrZip(rs.getString("LovDescCustAddrZip"));
+					ca.setLovDescCustDistrictName(rs.getString("LovDescCustDistrictName"));
 				}
 
 				ca.setVersion(rs.getInt("Version"));
@@ -151,7 +152,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCustAddrTypeName, LovDescCustAddrCityName, LovDescCustAddrProvinceName");
-			sql.append(", LovDescCustAddrCountryName, LovDescCustAddrZip");
+			sql.append(", LovDescCustAddrCountryName, LovDescCustAddrZip, LovDescCustDistrictName");
 		}
 
 		sql.append(" from CustomerAddresses");
@@ -203,6 +204,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 				ca.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
 				ca.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
 				ca.setLovDescCustAddrZip(rs.getString("LovDescCustAddrZip"));
+				ca.setLovDescCustDistrictName(rs.getString("LovDescCustDistrictName"));
 			}
 
 			return ca;
@@ -468,7 +470,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCustAddrTypeName, LovDescCustAddrCityName, LovDescCustAddrProvinceName");
-			sql.append(", LovDescCustAddrCountryName, LovDescCustAddrZip");
+			sql.append(", LovDescCustAddrCountryName, LovDescCustAddrZip, LovDescCustDistrictName");
 		}
 
 		sql.append(" From CustomerAddresses");
@@ -510,6 +512,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 					ca.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
 					ca.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
 					ca.setLovDescCustAddrZip(rs.getString("LovDescCustAddrZip"));
+					ca.setLovDescCustDistrictName(rs.getString("LovDescCustDistrictName"));
 				}
 
 				return ca;

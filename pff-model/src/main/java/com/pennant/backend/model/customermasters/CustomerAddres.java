@@ -101,7 +101,10 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	private String lovDescCustAddrZip;
 	private String custAddrLine3;
 	private String custAddrLine4;
+	@XmlElement(name = "district")
 	private String custDistrict;
+	@XmlElement(name = "districtName")
+	private String lovDescCustDistrictName;
 	@XmlElement
 	private Long pinCodeId;
 
@@ -419,4 +422,13 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	public void setPinCodeId(Long pinCodeId) {
 		this.pinCodeId = pinCodeId;
 	}
+
+	public String getLovDescCustDistrictName() {
+		return lovDescCustDistrictName;
+	}
+
+	public void setLovDescCustDistrictName(String lovDescCustDistrictName) {
+		this.lovDescCustDistrictName = lovDescCustDistrictName;
+	}
+
 }

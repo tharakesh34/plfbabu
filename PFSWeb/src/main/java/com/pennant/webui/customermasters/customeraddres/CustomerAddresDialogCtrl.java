@@ -62,6 +62,7 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
+import com.pennant.backend.model.systemmasters.District;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -116,7 +117,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	protected Combobox custAddrPriority; // autoWired
 	protected Textbox custCareOfAddr; // autoWired
 	protected Textbox custSubDist; // autoWired
-	protected Textbox custDistrict; // autoWired
+	protected ExtendedCombobox custDistrict; // autoWired
 
 	protected Label CustomerSname; // autoWired
 	protected Textbox cityName; // autowired
@@ -306,7 +307,6 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custPOBox.setMaxlength(8);
 		this.custCareOfAddr.setMaxlength(50);
 		this.custSubDist.setMaxlength(50);
-		this.custDistrict.setMaxlength(50);
 
 		this.custAddrCountry.setMaxlength(2);
 		this.custAddrCountry.setTextBoxWidth(121);
@@ -331,6 +331,14 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrCity.setValueColumn("PCCity");
 		this.custAddrCity.setDescColumn("PCCityName");
 		this.custAddrCity.setValidateColumns(new String[] { "PCCity" });
+
+		this.custDistrict.setMaxlength(8);
+		this.custDistrict.setTextBoxWidth(121);
+		this.custDistrict.setMandatoryStyle(false);
+		this.custDistrict.setModuleName("District");
+		this.custDistrict.setValueColumn("Code");
+		this.custDistrict.setDescColumn("Name");
+		this.custDistrict.setValidateColumns(new String[] { "Code" });
 
 		this.custAddrZIP.setMaxlength(50);
 		this.custAddrZIP.setTextBoxWidth(121);
@@ -681,7 +689,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 
 		try {
-			aCustomerAddres.setCustDistrict(this.custDistrict.getValue());
+			aCustomerAddres.setLovDescCustDistrictName(StringUtils.trimToNull(this.custDistrict.getDescription()));
+			aCustomerAddres.setCustDistrict(StringUtils.trimToNull(this.custDistrict.getValidatedValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -875,11 +884,6 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustSubDist.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		if (!this.custDistrict.isReadonly() && addressConstraint) {
-			this.custDistrict.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustDistrict.value"),
-							PennantRegularExpressions.REGEX_ADDRESS, false));
-		}
 		logger.debug("Leaving");
 	}
 
@@ -902,7 +906,6 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrPriority.setConstraint("");
 		this.custCareOfAddr.setConstraint("");
 		this.custSubDist.setConstraint("");
-		this.custDistrict.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -938,6 +941,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrCountry.setConstraint("");
 		this.custAddrProvince.setConstraint("");
 		this.custAddrCity.setConstraint("");
+		this.custDistrict.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1074,7 +1078,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrPriority.setDisabled(isReadOnly("CustomerAddresDialog_custAddrPriority"));
 		this.custCareOfAddr.setDisabled(isReadOnly("CustomerAddresDialog_custCareOfAddr"));
 		this.custSubDist.setDisabled(isReadOnly("CustomerAddresDialog_custSubDist"));
-		this.custDistrict.setDisabled(isReadOnly("CustomerAddresDialog_custDistrict"));
+		this.custDistrict.setReadonly(isReadOnly("CustomerAddresDialog_custDistrict"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1684,7 +1688,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 				this.custAddrProvince.setValue(city.getPCProvince());
 				this.custAddrProvince.setDescription(city.getLovDescPCProvinceName());
-				this.custDistrict.setValue(city.getDistrictName());
+				this.custDistrict.setValue(city.getDistrictCode());
 				cityValue = this.custAddrCity.getValue();
 			} else {
 				fillCitydetails(custAddrProvince.getValue());
@@ -1709,6 +1713,32 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 		this.custAddrCity.setFilters(filters);
 
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * onFulfill custAddrCity
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$custDistrict(Event event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Object dataObject = custDistrict.getObject();
+
+		if (dataObject instanceof String) {
+			this.custDistrict.setValue("");
+			this.custDistrict.setDescription("");
+		} else {
+			District district = (District) dataObject;
+			if (district != null) {
+				this.custDistrict.setErrorMessage("");
+				this.custDistrict.setValue(district.getCode());
+				this.custDistrict.setDescColumn(district.getName());
+
+			}
+		}
 		logger.debug("Leaving");
 	}
 
