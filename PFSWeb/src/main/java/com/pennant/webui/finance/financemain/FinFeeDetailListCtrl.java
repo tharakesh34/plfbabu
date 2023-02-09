@@ -208,7 +208,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private Map<String, FeeRule> feeRuleDetailsMap = null;
 	private Map<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<>();
 
-	private Map<String, BigDecimal> taxPercentages;
 	private FeeDetailService feeDetailService;
 
 	/**
@@ -3167,10 +3166,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	}
 
 	private void caluclateFeeGST(List<FinFeeDetail> fees, FinScheduleData fsd) {
-		FinanceMain financeMain = fsd.getFinanceMain();
+		FinanceMain finMain = fsd.getFinanceMain();
 		String userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
-		String finBranch = financeMain.getFinBranch();
-		String finCCY = financeMain.getFinCcy();
+		String finBranch = finMain.getFinBranch();
+		String finCCY = finMain.getFinCcy();
 
 		CustomerDetails custDetails = financeDetail.getCustomerDetails();
 

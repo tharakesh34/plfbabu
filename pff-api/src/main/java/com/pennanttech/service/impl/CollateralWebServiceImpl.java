@@ -265,7 +265,6 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 
 		} catch (Exception e) {
 			logger.error(e);
-			response = new WSReturnStatus();
 			response = APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");

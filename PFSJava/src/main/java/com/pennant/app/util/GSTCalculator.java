@@ -562,7 +562,7 @@ public class GSTCalculator {
 		taxPercMap.put(RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST, BigDecimal.ZERO);
 
 		for (Rule rule : rules) {
-			BigDecimal taxPerc = BigDecimal.ZERO;
+			BigDecimal taxPerc;
 			if (StringUtils.equals(RuleConstants.CODE_CGST, rule.getRuleCode())) {
 				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
 				totalTaxPerc = totalTaxPerc.add(taxPerc);

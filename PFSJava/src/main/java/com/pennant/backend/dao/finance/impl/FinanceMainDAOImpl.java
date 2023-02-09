@@ -6501,7 +6501,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			logger.warn("Exception: ", e);
 		}
 		logger.debug("Leaving");
-		return null;
+		return new ArrayList<>();
 
 	}
 }

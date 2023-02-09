@@ -4480,9 +4480,8 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public FinanceInquiry getFinanceDetailsByParams(List<Customer> custList, FinanceData financeData) {
 		logger.debug("Entering");
-		FinanceInquiry response = null;
+		FinanceInquiry response = new FinanceInquiry();
 		if (custList != null && !custList.isEmpty()) {
-			response = new FinanceInquiry();
 			List<FinInquiryDetail> finInqList = new ArrayList<FinInquiryDetail>();
 			for (Customer customer : custList) {
 				FinanceInquiry finInquiry = getFinanceDetailsByCIF(customer, financeData);

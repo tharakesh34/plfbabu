@@ -80,7 +80,7 @@ public class DocumentDetails extends AbstractWorkflowEntity {
 	@XmlElement
 	private String remarks;
 	@XmlElement
-	private List<DocumentDetails> documents = new ArrayList<>();;
+	private List<DocumentDetails> documents = new ArrayList<>();
 
 	@XmlElement
 	private WSReturnStatus returnStatus;

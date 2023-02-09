@@ -282,7 +282,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		case "menu_Item_CersaiSatisfactionReport":
 			return ImplementationConstants.ALLOW_CERSAI;
 		case "menu_Item_CollateralDownload":
-			return this.glemsCollateralProcess == null ? false : true;
+			return this.glemsCollateralProcess != null;
 		default:
 			break;
 		}

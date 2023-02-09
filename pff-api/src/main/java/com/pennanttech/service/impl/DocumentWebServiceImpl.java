@@ -42,9 +42,6 @@ public class DocumentWebServiceImpl extends ExtendedTestClass implements Documen
 		AuditDetail auditDetail = null;
 		AuditHeader auditHeader = null;
 
-		// basic field Validation
-		/* validationUtility.validate(documentDetails, DocumentDetailsGroup.class); */
-
 		if (StringUtils.isEmpty(documentDetails.getFinReference())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";

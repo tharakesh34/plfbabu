@@ -17,7 +17,7 @@ import com.pennant.backend.model.WSReturnStatus;
  *
  */
 @XmlType(propOrder = { "loginId", "stageCodes", "customerName", "mobileNumber", "finType", "finReference",
-		"finGenerationDate","applicationNo" })
+		"finGenerationDate", "applicationNo" })
 @XmlRootElement(name = "financeData")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceData implements Serializable {
@@ -43,9 +43,9 @@ public class FinanceData implements Serializable {
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
-	
+
 	@XmlElement
-	List<FinanceData> financeDataList = new ArrayList<>();
+	private List<FinanceData> financeDataList = new ArrayList<>();
 
 	public String getLoginId() {
 		return loginId;
@@ -110,7 +110,7 @@ public class FinanceData implements Serializable {
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
 	}
-	
+
 	public String getApplicationNo() {
 		return applicationNo;
 	}

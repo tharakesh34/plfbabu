@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
@@ -50,8 +51,8 @@ public class IMDFeeService {
 					}
 
 					Map<String, Object> paramMap = new HashMap<>();
-					paramMap.put("fee_IMDPaid", formateAmount(finFee.getPaidAmount(), 2));
-					paramMap.put("fee_IMDActualAmount", formateAmount(finFee.getActualAmount(), 2));
+					paramMap.put("fee_IMDPaid", CurrencyUtil.parse(finFee.getPaidAmount(), 2));
+					paramMap.put("fee_IMDActualAmount", CurrencyUtil.parse(finFee.getActualAmount(), 2));
 					paramMap.put("fm_finType", fm.getFinType());
 
 					if (finFee.getPaidAmount().compareTo(BigDecimal.ZERO) == 0
@@ -67,7 +68,7 @@ public class IMDFeeService {
 								paidAmount = paidAmount.add(feeReceipt.getPaidAmount());
 							}
 						}
-						paramMap.put("fee_IMDPaid", formateAmount(paidAmount, 2));
+						paramMap.put("fee_IMDPaid", CurrencyUtil.parse(paidAmount, 2));
 					}
 
 					BigDecimal result = RuleExecutionUtil.getRuleResult(ruleList.get(0).getSQLRule(), paramMap, null);
@@ -75,7 +76,7 @@ public class IMDFeeService {
 					if (result.compareTo(BigDecimal.ONE) == 0) {
 						String[] param = new String[1];
 						param[0] = "Minimum Paid Amount of " + finFee.getFeeTypeCode() + " of Rs "
-								+ formateAmount(finFee.getActualAmount(), 2);
+								+ CurrencyUtil.parse(finFee.getActualAmount(), 2);
 						error = new ErrorDetail("92021", param);
 
 					} else if (result.compareTo(BigDecimal.ONE) > 0) {
@@ -83,7 +84,7 @@ public class IMDFeeService {
 						param[0] = "Minimum Paid Amount of ";
 						param[1] = finFee.getFeeTypeCode();
 						param[2] = " of Rs ";
-						param[3] = "" + formateAmount(finFee.getActualAmount(), 2);
+						param[3] = "" + CurrencyUtil.parse(finFee.getActualAmount(), 2);
 						error = new ErrorDetail("21005", param);
 					}
 
@@ -97,15 +98,6 @@ public class IMDFeeService {
 		}
 
 		return error;
-	}
-
-	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
-		BigDecimal bigDecimal = BigDecimal.ZERO;
-
-		if (amount != null) {
-			bigDecimal = amount.divide(new BigDecimal((Math.pow(10, dec))));
-		}
-		return bigDecimal;
 	}
 
 	public RuleDAO getRuleDAO() {

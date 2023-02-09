@@ -255,46 +255,39 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			/*
 			 * Setting applicant data to corresponding cell based on the configuration, either from Fields or FieldKeys
 			 */
-			try {
-				String employmentType = (String) applicantDataMap.get("CUST_EMPLOYMENT_TYPE");
-				Sheet sheet = getSheet("APP", book, applicantDataMap, employmentType);
+			String employmentType = (String) applicantDataMap.get("CUST_EMPLOYMENT_TYPE");
+			Sheet appSheet = getSheet("APP", book, applicantDataMap, employmentType);
 
-				if (sheet == null) {
-					return;
-				}
-
-				doSetData(sheet);
-
-				if (!enqiryModule) {
-					doSetScreenData(sheet, applicantDataMap);
-				}
-
-				spreadSheet.setSelectedSheet(sheet.getSheetName());
-			} catch (Exception e) {
-				throw e;
+			if (appSheet == null) {
+				return;
 			}
+
+			doSetData(appSheet);
+
+			if (!enqiryModule) {
+				doSetScreenData(appSheet, applicantDataMap);
+			}
+
+			spreadSheet.setSelectedSheet(appSheet.getSheetName());
 
 			/* Setting co-applicant data to corresponding cell based on the configuration either from Fields or */
 			for (Entry<String, Map<String, Object>> coAppData : coApplicantData.entrySet()) {
-				try {
-					Map<String, Object> coappData = coAppData.getValue();
-					Sheet sheet = getSheet("CO_APP", book, coappData);
+				Map<String, Object> coappData = coAppData.getValue();
+				Sheet coAppSheet = getSheet("CO_APP", book, coappData);
 
-					if (sheet == null) {
-						return;
-					}
-
-					doSetData(sheet);
-
-					Map<String, Object> modicoappData = new HashMap<String, Object>();
-					for (Entry<String, Object> data : coappData.entrySet()) {
-						modicoappData.put("CO_APP_" + data.getKey(), data.getValue());
-					}
-
-					doSetScreenData(sheet, modicoappData);
-				} catch (Exception e) {
-					throw e;
+				if (coAppSheet == null) {
+					return;
 				}
+
+				doSetData(coAppSheet);
+
+				Map<String, Object> modicoappData = new HashMap<String, Object>();
+				for (Entry<String, Object> data : coappData.entrySet()) {
+					modicoappData.put("CO_APP_" + data.getKey(), data.getValue());
+				}
+
+				doSetScreenData(coAppSheet, modicoappData);
+
 			}
 
 			setFinalSheet(book, applicantDataMap);

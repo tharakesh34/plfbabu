@@ -60,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private String adfsProtocol;
 
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+	public void configureGlobal(AuthenticationManagerBuilder auth) {
 		auth.authenticationProvider(authenticationProvider);
 	}
 
@@ -78,7 +78,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.addFilter(authenticationFilter);
 		http.addFilterBefore(logoutFilter, LogoutFilter.class);
 		http.addFilter(concurrencyFilter);
-		/* http.addFilterAfter(sessionFixationProtectionFilter, SessionManagementFilter.class); */
 		http.antMatcher("/**").authorizeRequests().antMatchers("/", "/pages/**", "/WEB-INF/pages/**").authenticated()
 				.and().httpBasic();
 
