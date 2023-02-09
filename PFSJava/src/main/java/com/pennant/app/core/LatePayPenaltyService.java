@@ -459,6 +459,9 @@ public class LatePayPenaltyService extends ServiceHelper {
 			effectiveRate = currentRate.getODChargeAmtOrPerc();
 
 			if (datePrv.compareTo(previousEffDate) >= 0 && datePrv.compareTo(currentEffDate) <= 0) {
+				if (datePrv.compareTo(currentEffDate) == 0) {
+					continue;
+				}
 				BigDecimal penaltyRate = previousRate.getODChargeAmtOrPerc().divide(new BigDecimal(100), 2,
 						RoundingMode.HALF_DOWN);
 				penalty = penalty.add(CalculationUtil.calInterest(datePrv, DateUtil.addDays(currentEffDate, -1),
