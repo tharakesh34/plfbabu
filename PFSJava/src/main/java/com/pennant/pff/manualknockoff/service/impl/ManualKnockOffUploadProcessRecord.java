@@ -32,6 +32,10 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 			throws Exception {
 		logger.debug(Literal.ENTERING);
 
+		Sheet sheet = attributes.getSheet();
+
+		Row headerRow = sheet.getRow(0);
+
 		Row row = attributes.getRow();
 
 		ManualKnockOffUpload mku = new ManualKnockOffUpload();
@@ -44,27 +48,42 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 
 		mku.setHeaderId(headerID);
 
-		for (Cell cell : row) {
+		int readColumn = 0;
+
+		Cell rowCell = null;
+
+		for (Cell cell : headerRow) {
 			switch (cell.getColumnIndex()) {
 			case 0:
-				mku.setReference(cell.toString());
+				rowCell = row.getCell(readColumn);
+				mku.setReference(rowCell.toString());
+				readColumn = cell.getColumnIndex() + 1;
 				break;
 			case 1:
-				mku.setExcessType(cell.toString());
+				rowCell = row.getCell(readColumn);
+				mku.setExcessType(rowCell.toString());
+				readColumn = cell.getColumnIndex() + 1;
 				break;
 			case 2:
-				mku.setAllocationType(cell.toString());
+				rowCell = row.getCell(readColumn);
+				mku.setAllocationType(rowCell.toString());
+				readColumn = cell.getColumnIndex() + 1;
 				break;
 			case 3:
-				String strAmount = cell.toString();
+				rowCell = row.getCell(readColumn);
+				String strAmount = rowCell.toString();
 				if (strAmount != null) {
 					mku.setReceiptAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
 				}
+				readColumn = cell.getColumnIndex() + 1;
 				break;
 			case 4:
-				String strAdviseID = cell.toString();
-				if (StringUtils.isNotEmpty(strAdviseID)) {
-					mku.setAdviseId(Long.valueOf(strAdviseID));
+				rowCell = row.getCell(readColumn);
+				if (rowCell != null) {
+					String strAdviseID = rowCell.toString();
+					if (strAdviseID != null && StringUtils.isNotEmpty(strAdviseID)) {
+						mku.setAdviseId(Long.valueOf(strAdviseID));
+					}
 				}
 				break;
 			}
@@ -72,23 +91,19 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 
 		long uploadID = manualKnockOffUploadDAO.save(mku);
 
-		Sheet sheet = attributes.getSheet();
-
-		Row headerRow = sheet.getRow(0);
-
 		List<ManualKnockOffUpload> allocations = new ArrayList<>();
 
 		int index = 0;
-		for (Cell cell : row) {
+		for (Cell cell : headerRow) {
+
 			if (index < 5) {
 				index++;
 				continue;
 			}
 
 			ManualKnockOffUpload alloc = new ManualKnockOffUpload();
-			Cell headerCell = headerRow.getCell(index);
 
-			String allocationType = headerCell.toString();
+			String allocationType = cell.toString();
 
 			if (allocationType == null) {
 				break;
@@ -97,20 +112,25 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 			alloc.setId(uploadID);
 			alloc.setCode(allocationType.toUpperCase());
 
-			String strAmount = cell.toString();
+			rowCell = row.getCell(index);
 
-			if (StringUtils.isNotEmpty(strAmount)) {
-				BigDecimal str = BigDecimal.ZERO;
+			if (rowCell != null) {
 
-				try {
-					str = new BigDecimal(strAmount);
-				} catch (NumberFormatException e) {
-					throw new AppException("Invalid amount");
-				}
+				String strAmount = rowCell.toString();
 
-				if (str.compareTo(BigDecimal.ZERO) > 0) {
-					alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
-					allocations.add(alloc);
+				if (StringUtils.isNotEmpty(strAmount)) {
+					BigDecimal str = BigDecimal.ZERO;
+
+					try {
+						str = new BigDecimal(strAmount);
+					} catch (NumberFormatException e) {
+						throw new AppException("Invalid amount");
+					}
+
+					if (str.compareTo(BigDecimal.ZERO) > 0) {
+						alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+						allocations.add(alloc);
+					}
 				}
 			}
 			index++;
