@@ -190,7 +190,7 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  ConfigID =? ");
 
 		if (doCheckAuthority(npabucketconfiguration, whereCond.toString(),

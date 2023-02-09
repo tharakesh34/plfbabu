@@ -192,7 +192,7 @@ public class FinChangeCustomerListCtrl extends GFCBaseListCtrl<FinChangeCustomer
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  id =?");
 
 		if (doCheckAuthority(finChangeCustomer, whereCond.toString(), new Object[] { finChangeCustomer.getId() })) {

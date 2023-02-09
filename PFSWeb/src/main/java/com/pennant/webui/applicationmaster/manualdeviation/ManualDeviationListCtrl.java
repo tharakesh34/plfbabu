@@ -196,7 +196,7 @@ public class ManualDeviationListCtrl extends GFCBaseListCtrl<ManualDeviation> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  DeviationID =? ");
 
 		if (doCheckAuthority(manualdeviation, whereCond.toString(),

@@ -213,7 +213,7 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  PinCodeId =?");
 
 		if (doCheckAuthority(pincode, whereCond.toString(), new Object[] { pincode.getPinCodeId() })) {
