@@ -1,6 +1,5 @@
 package com.pennant.webui.rmtmasters.financetype;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -230,7 +229,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	private void doShowDialogPage(FinTypePartnerBank fintypepartnerbank) {
 		logger.debug(Literal.ENTERING);
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = getDefaultArguments();
 		map.put("fintypepartnerbank", fintypepartnerbank);
 		map.put("fintypepartnerbankMappingListCtrl", this);
 
