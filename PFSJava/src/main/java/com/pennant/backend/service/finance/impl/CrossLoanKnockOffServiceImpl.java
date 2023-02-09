@@ -325,7 +325,8 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 
 		}
 		FinExcessAmount excess = crossLoanTransferDAO.getCrossLoanExcess(clt.getExcessId());
-		if (excess == null || excess.getReservedAmt().compareTo(clt.getTransferAmount()) < 0) {
+		if (excess == null
+				|| excess.getReservedAmt().add(excess.getBalanceAmt()).compareTo(clt.getTransferAmount()) < 0) {
 			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60205", "", null),
 					PennantConstants.default_Language);
 			auditDetail.setErrorDetail(errorDetail);
