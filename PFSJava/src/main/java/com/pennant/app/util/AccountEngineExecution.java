@@ -225,6 +225,12 @@ public class AccountEngineExecution implements Serializable {
 		return returnDataSets;
 	}
 
+	private void addTxnEntry(TransactionEntry txnEntry, List<TransactionEntry> txnEntries, List<FeeType> feeTypes) {
+		int index = txnEntries.indexOf(txnEntry);
+		txnEntries.addAll(index, getTxnEntries(txnEntry, feeTypes));
+		txnEntries.remove(txnEntry);
+	}
+
 	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent) {
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 		List<Long> acSetList = aeEvent.getAcSetIDList();
@@ -239,12 +245,16 @@ public class AccountEngineExecution implements Serializable {
 			}
 		}
 
-		TransactionEntry singleFeeTxn = getSingleFeeTxn(SingleFee.FEE, txnEntries);
+		List<FeeType> feeTypes = getNotConfigurerFeeTypes(aeEvent.getFeesList(), txnEntries);
 
-		if (singleFeeTxn != null) {
-			List<FeeType> feeTypes = getNotConfigurerFeeTypes(aeEvent.getFeesList(), txnEntries);
+		List<TransactionEntry> list = getSingleFeeTxn(SingleFee.FEE, txnEntries);
 
+		for (TransactionEntry singleFeeTxn : list) {
 			for (FeeType feeType : feeTypes) {
+				if (singleFeeTxn.getReceivableOrPayable() != feeType.getAdviseType()) {
+					continue;
+				}
+
 				String feeTypeCode = feeType.getFeeTypeCode();
 
 				if ((AdvanceRuleCode.ADVINT.name().equals(feeTypeCode)
@@ -266,60 +276,52 @@ public class AccountEngineExecution implements Serializable {
 				setSingleFeeWaiverOrRefundTxn(singleFeeTxn, txnEntries);
 			}
 
-			int index = txnEntries.indexOf(singleFeeTxn);
-			txnEntries.addAll(index, getTxnEntries(singleFeeTxn, feeTypes));
+			addTxnEntry(singleFeeTxn, txnEntries, feeTypes);
 
-			TransactionEntry feeWaiverOrRefundTxn = singleFeeTxn.getSingleFeeWaiverOrRefundTxn();
+			List<TransactionEntry> feeWaiverOrRefundTxnList = singleFeeTxn.getSingleFeeWaiverOrRefundTxn();
 
-			if (feeWaiverOrRefundTxn != null) {
-				index = txnEntries.indexOf(feeWaiverOrRefundTxn);
-				txnEntries.addAll(index, getTxnEntries(feeWaiverOrRefundTxn, feeTypes));
+			for (TransactionEntry feeWaiverOrRefundTxn : feeWaiverOrRefundTxnList) {
+				addTxnEntry(feeWaiverOrRefundTxn, txnEntries, feeTypes);
 			}
 
-			TransactionEntry cgstTxn = singleFeeTxn.getSingleFeeCGSTTxn();
-			TransactionEntry sgstTxn = singleFeeTxn.getSingleFeeSGSTTxn();
-			TransactionEntry igstTxn = singleFeeTxn.getSingleFeeIGSTTxn();
-			TransactionEntry ugstTxn = singleFeeTxn.getSingleFeeUGSTTxn();
-			TransactionEntry cessTxn = singleFeeTxn.getSingleFeeCESSTxn();
-			TransactionEntry tdsTxn = singleFeeTxn.getSingleFeeTDSTxn();
+			List<TransactionEntry> cgstTxnList = singleFeeTxn.getSingleFeeCGSTTxn();
+			List<TransactionEntry> sgstTxnList = singleFeeTxn.getSingleFeeSGSTTxn();
+			List<TransactionEntry> igstTxnList = singleFeeTxn.getSingleFeeIGSTTxn();
+			List<TransactionEntry> ugstTxnListList = singleFeeTxn.getSingleFeeUGSTTxn();
+			List<TransactionEntry> cessTxnList = singleFeeTxn.getSingleFeeCESSTxn();
+			List<TransactionEntry> tdsTxnList = singleFeeTxn.getSingleFeeTDSTxn();
 
-			if (cgstTxn != null) {
-				index = txnEntries.indexOf(cgstTxn);
-				txnEntries.add(index, getSingleTxnEntry(getTxnEntries(cgstTxn, feeTypes)));
+			for (TransactionEntry cgstTxn : cgstTxnList) {
+				addTxnEntry(cgstTxn, txnEntries, feeTypes);
 			}
 
-			if (sgstTxn != null) {
-				index = txnEntries.indexOf(sgstTxn);
-				txnEntries.add(index, getSingleTxnEntry(getTxnEntries(sgstTxn, feeTypes)));
+			for (TransactionEntry sgstTxn : sgstTxnList) {
+				addTxnEntry(sgstTxn, txnEntries, feeTypes);
 			}
 
-			if (igstTxn != null) {
-				index = txnEntries.indexOf(igstTxn);
-				txnEntries.add(index, getSingleTxnEntry(getTxnEntries(igstTxn, feeTypes)));
+			for (TransactionEntry igstTxn : igstTxnList) {
+				addTxnEntry(igstTxn, txnEntries, feeTypes);
 			}
 
-			if (ugstTxn != null) {
-				index = txnEntries.indexOf(ugstTxn);
-				txnEntries.add(index, getSingleTxnEntry(getTxnEntries(ugstTxn, feeTypes)));
+			for (TransactionEntry ugstTxn : ugstTxnListList) {
+				addTxnEntry(ugstTxn, txnEntries, feeTypes);
 			}
 
-			if (cessTxn != null) {
-				index = txnEntries.indexOf(cessTxn);
-				txnEntries.add(index, getSingleTxnEntry(getTxnEntries(cessTxn, feeTypes)));
+			for (TransactionEntry cessTxn : cessTxnList) {
+				addTxnEntry(cessTxn, txnEntries, feeTypes);
 			}
 
-			if (tdsTxn != null) {
-				index = txnEntries.indexOf(tdsTxn);
-				txnEntries.add(index, getSingleTxnEntry(getTxnEntries(tdsTxn, feeTypes)));
+			for (TransactionEntry tdsTxn : tdsTxnList) {
+				addTxnEntry(tdsTxn, txnEntries, feeTypes);
 			}
 
-			int transOrder = 10;
+		}
 
-			for (TransactionEntry txn : txnEntries) {
-				txn.setTransOrder(transOrder);
-				transOrder = transOrder + 10;
-			}
+		int transOrder = 10;
 
+		for (TransactionEntry txn : txnEntries) {
+			txn.setTransOrder(transOrder);
+			transOrder = transOrder + 10;
 		}
 
 		EventProperties eventProperties = aeEvent.getEventProperties();
@@ -543,6 +545,10 @@ public class AccountEngineExecution implements Serializable {
 			list.add(createBulkingTE(singleFeeTxn, feeTypes));
 		} else {
 			for (FeeType feeType : feeTypes) {
+				if (singleFeeTxn.getReceivableOrPayable() != feeType.getAdviseType()) {
+					continue;
+				}
+
 				String feeTypeCode = feeType.getFeeTypeCode();
 
 				if ((AdvanceRuleCode.ADVINT.name().equals(feeTypeCode)
@@ -580,14 +586,22 @@ public class AccountEngineExecution implements Serializable {
 		return feeTypes;
 	}
 
-	private TransactionEntry getSingleFeeTxn(String feeType, List<TransactionEntry> txnEntries) {
+	private List<TransactionEntry> getSingleFeeTxn(String feeType, List<TransactionEntry> txnEntries) {
+		List<TransactionEntry> list = new ArrayList<>();
+
 		for (TransactionEntry transactionEntry : txnEntries) {
+			if (transactionEntry.isSingelFeeEntry()) {
+				continue;
+			}
+
 			String accountType = transactionEntry.getAccountType();
-			if (accountType.equals(feeType)) {
-				return transactionEntry;
+			if (accountType.equals(feeType) || transactionEntry.getAmountRule().contains("FEE_")) {
+				list.add(transactionEntry);
+				transactionEntry.setSingelFeeEntry(true);
 			}
 		}
-		return null;
+
+		return list;
 	}
 
 	private void addFeeCodes(Map<String, Object> dataMap, TransactionEntry txnEntry) {

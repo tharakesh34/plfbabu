@@ -25,7 +25,9 @@
 
 package com.pennant.backend.model.rmtmasters;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -85,13 +87,15 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	private boolean bulking = false;
 	private String glCode;
 
-	private TransactionEntry singleFeeCGSTTxn = null;
-	private TransactionEntry singleFeeSGSTTxn = null;
-	private TransactionEntry singleFeeUGSTTxn = null;
-	private TransactionEntry singleFeeIGSTTxn = null;
-	private TransactionEntry singleFeeCESSTxn = null;
-	private TransactionEntry singleFeeTDSTxn = null;
-	private TransactionEntry singleFeeWaiverOrRefundTxn = null;
+	private List<TransactionEntry> singleFeeCGSTTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeSGSTTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeUGSTTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeIGSTTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeCESSTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeTDSTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeWaiverOrRefundTxn = new ArrayList<>();
+
+	private boolean singelFeeEntry;
 
 	// ### END SFA_20210405 <--
 
@@ -175,6 +179,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 		excludeFields.add("singleFeeCESSTxn");
 		excludeFields.add("singleFeeTDSTxn");
 		excludeFields.add("singleFeeWaiverOrRefundTxn");
+		excludeFields.add("singelFeeEntry");
 
 		return excludeFields;
 	}
@@ -517,60 +522,68 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 		this.glCode = glCode;
 	}
 
-	public TransactionEntry getSingleFeeCGSTTxn() {
+	public List<TransactionEntry> getSingleFeeCGSTTxn() {
 		return singleFeeCGSTTxn;
 	}
 
-	public void setSingleFeeCGSTTxn(TransactionEntry singleFeeCGSTTxn) {
+	public void setSingleFeeCGSTTxn(List<TransactionEntry> singleFeeCGSTTxn) {
 		this.singleFeeCGSTTxn = singleFeeCGSTTxn;
 	}
 
-	public TransactionEntry getSingleFeeSGSTTxn() {
+	public List<TransactionEntry> getSingleFeeSGSTTxn() {
 		return singleFeeSGSTTxn;
 	}
 
-	public void setSingleFeeSGSTTxn(TransactionEntry singleFeeSGSTTxn) {
+	public void setSingleFeeSGSTTxn(List<TransactionEntry> singleFeeSGSTTxn) {
 		this.singleFeeSGSTTxn = singleFeeSGSTTxn;
 	}
 
-	public TransactionEntry getSingleFeeUGSTTxn() {
+	public List<TransactionEntry> getSingleFeeUGSTTxn() {
 		return singleFeeUGSTTxn;
 	}
 
-	public void setSingleFeeUGSTTxn(TransactionEntry singleFeeUGSTTxn) {
+	public void setSingleFeeUGSTTxn(List<TransactionEntry> singleFeeUGSTTxn) {
 		this.singleFeeUGSTTxn = singleFeeUGSTTxn;
 	}
 
-	public TransactionEntry getSingleFeeIGSTTxn() {
+	public List<TransactionEntry> getSingleFeeIGSTTxn() {
 		return singleFeeIGSTTxn;
 	}
 
-	public void setSingleFeeIGSTTxn(TransactionEntry singleFeeIGSTTxn) {
+	public void setSingleFeeIGSTTxn(List<TransactionEntry> singleFeeIGSTTxn) {
 		this.singleFeeIGSTTxn = singleFeeIGSTTxn;
 	}
 
-	public TransactionEntry getSingleFeeCESSTxn() {
+	public List<TransactionEntry> getSingleFeeCESSTxn() {
 		return singleFeeCESSTxn;
 	}
 
-	public void setSingleFeeCESSTxn(TransactionEntry singleFeeCESSTxn) {
+	public void setSingleFeeCESSTxn(List<TransactionEntry> singleFeeCESSTxn) {
 		this.singleFeeCESSTxn = singleFeeCESSTxn;
 	}
 
-	public TransactionEntry getSingleFeeTDSTxn() {
+	public List<TransactionEntry> getSingleFeeTDSTxn() {
 		return singleFeeTDSTxn;
 	}
 
-	public void setSingleFeeTDSTxn(TransactionEntry singleFeeTDSTxn) {
+	public void setSingleFeeTDSTxn(List<TransactionEntry> singleFeeTDSTxn) {
 		this.singleFeeTDSTxn = singleFeeTDSTxn;
 	}
 
-	public TransactionEntry getSingleFeeWaiverOrRefundTxn() {
+	public List<TransactionEntry> getSingleFeeWaiverOrRefundTxn() {
 		return singleFeeWaiverOrRefundTxn;
 	}
 
-	public void setSingleFeeWaiverOrRefundTxn(TransactionEntry singleFeeWaiverOrRefundTxn) {
+	public void setSingleFeeWaiverOrRefundTxn(List<TransactionEntry> singleFeeWaiverOrRefundTxn) {
 		this.singleFeeWaiverOrRefundTxn = singleFeeWaiverOrRefundTxn;
+	}
+
+	public boolean isSingelFeeEntry() {
+		return singelFeeEntry;
+	}
+
+	public void setSingelFeeEntry(boolean singelFeeEntry) {
+		this.singelFeeEntry = singelFeeEntry;
 	}
 
 }

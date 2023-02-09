@@ -453,12 +453,16 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.incomeOrExpenseAcType.setDisplayStyle(2);
 		this.incomeOrExpenseAcType.setValidateColumns(new String[] { "AcType" });
 
+		this.incomeOrExpenseAcType.setWhereClause("ACTYPE NOT Like 'FEE_%'");
+
 		this.waiverOrRefundAcType.setWidth("200px");
 		this.waiverOrRefundAcType.setModuleName("AccountType");
 		this.waiverOrRefundAcType.setValueColumn("AcType");
 		this.waiverOrRefundAcType.setDescColumn("AcTypeDesc");
 		this.waiverOrRefundAcType.setDisplayStyle(2);
 		this.waiverOrRefundAcType.setValidateColumns(new String[] { "AcType" });
+
+		this.waiverOrRefundAcType.setWhereClause("ACTYPE NOT Like 'FEE_%'");
 
 		this.receivableType.setModuleName("FeeType");
 		this.receivableType.setValueColumn("FeeTypeCode");
