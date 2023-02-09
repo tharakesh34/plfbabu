@@ -88,8 +88,7 @@ public class ReligionDialogCtrl extends GFCBaseCtrl<Religion> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.religion.getReligionId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.religion.getReligionId());
 	}
 
 	/**

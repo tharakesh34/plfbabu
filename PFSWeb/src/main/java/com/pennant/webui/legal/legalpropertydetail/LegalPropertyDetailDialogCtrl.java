@@ -135,8 +135,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.legalPropertyDetail.getLegalPropertyId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.legalPropertyDetail.getLegalPropertyId());
 	}
 
 	/**

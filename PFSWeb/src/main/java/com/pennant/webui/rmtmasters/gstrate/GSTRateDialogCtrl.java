@@ -120,8 +120,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.gSTRate.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.gSTRate.getId());
 	}
 
 	/**

@@ -100,8 +100,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.legalECDetail.getLegalECId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.legalECDetail.getLegalECId());
 	}
 
 	/**

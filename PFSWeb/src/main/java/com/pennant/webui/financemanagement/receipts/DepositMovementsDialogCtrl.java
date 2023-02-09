@@ -119,8 +119,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.depositMovements.getMovementId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.depositMovements.getMovementId());
 	}
 
 	/**

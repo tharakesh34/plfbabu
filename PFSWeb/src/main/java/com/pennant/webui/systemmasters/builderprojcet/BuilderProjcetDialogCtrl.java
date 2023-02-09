@@ -199,8 +199,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.builderProjcet.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.builderProjcet.getId());
 	}
 
 	/**

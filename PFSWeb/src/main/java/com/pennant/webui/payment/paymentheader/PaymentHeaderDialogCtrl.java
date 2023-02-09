@@ -201,8 +201,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.paymentHeader.getPaymentId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.paymentHeader.getPaymentId());
 	}
 
 	/**
@@ -433,7 +432,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		if (getDisbursementInstructionsDialogCtrl() != null) {
 			getDisbursementInstructionsDialogCtrl().closeDialog();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -4,7 +4,7 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>6.1.0-SFHT_R1.85</version>
+	<version>6.1.0-SFHT_R1.86</version>
 	<packaging>pom</packaging>
 
 	<licenses>
@@ -17,7 +17,7 @@
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
 		<client.code>core</client.code>
-		<pff.version>6.1.0-SFHT_R1.85</pff.version>
+		<pff.version>6.1.0-SFHT_R1.86</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>11</jdk.version>
 		<spring.version>5.3.20</spring.version>

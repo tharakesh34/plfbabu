@@ -8228,7 +8228,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					String incomeExpense = StringUtils.trimToEmpty(customerIncome.getIncomeExpense());
 					String category = StringUtils.trimToEmpty(customerIncome.getCategory());
 					String incomeType = StringUtils.trimToEmpty(customerIncome.getIncomeType());
-					String key = new StringBuffer(incomeExpense).append(category).append(incomeType).toString();
+					String key = new StringBuilder(incomeExpense).append(category).append(incomeType).toString();
 					if (!incometypes.add(key)) {
 						String errormsg = Labels.getLabel("label_IncomeTypeDialog_IncomeExpense.value") + ": "
 								+ incomeExpense + ", " + Labels.getLabel("label_IncomeTypeDialog_Category.value") + ": "
@@ -8257,9 +8257,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (!PennantConstants.RECORD_TYPE_CAN.equals(customerPhoneNumber.getRecordType())
 						&& !PennantConstants.RECORD_TYPE_DEL.equals(customerPhoneNumber.getRecordType())) {
 					String phoneType = StringUtils.trimToEmpty(customerPhoneNumber.getLovDescPhoneTypeCodeName());
-					String key = new StringBuffer(phoneType).toString();
+
 					// validating phone types
-					if (!phoneTypes.add(key)) {
+					if (!phoneTypes.add(phoneType)) {
 						String errormsg = Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value") + ": "
 								+ phoneType + " " + Labels.getLabel("label_IncomeType_Error");
 						MessageUtil.showError(errormsg);
@@ -8314,9 +8314,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (!PennantConstants.RECORD_TYPE_CAN.equals(customerEMail.getRecordType())
 						&& !PennantConstants.RECORD_TYPE_DEL.equals(customerEMail.getRecordType())) {
 					String emailType = StringUtils.trimToEmpty(customerEMail.getLovDescCustEMailTypeCode());
-					String key = new StringBuffer(emailType).toString();
+
 					// validating Email types
-					if (!emailTypes.add(key)) {
+					if (!emailTypes.add(emailType)) {
 						String errormsg = Labels.getLabel("listheader_CustEMailTypeCode.label") + ": " + emailType + " "
 								+ Labels.getLabel("label_IncomeType_Error");
 						MessageUtil.showError(errormsg);

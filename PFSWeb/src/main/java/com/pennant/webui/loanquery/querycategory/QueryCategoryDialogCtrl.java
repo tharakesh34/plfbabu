@@ -92,8 +92,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.queryCategory.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.queryCategory.getId());
 	}
 
 	/**
