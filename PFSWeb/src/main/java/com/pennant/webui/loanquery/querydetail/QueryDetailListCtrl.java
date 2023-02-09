@@ -219,7 +219,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =?");
 
 		if (doCheckAuthority(querydetail, whereCond.toString(), new Object[] { querydetail.getId() })) {

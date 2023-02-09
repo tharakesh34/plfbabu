@@ -222,7 +222,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  id =? ");
 
 		if (doCheckAuthority(buildercompany, whereCond.toString(), new Object[] { buildercompany.getId() })) {

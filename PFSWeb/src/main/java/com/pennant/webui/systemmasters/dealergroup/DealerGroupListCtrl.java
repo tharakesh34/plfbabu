@@ -176,7 +176,7 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  id =?");
 
 		if (doCheckAuthority(dealerGroup, whereCond.toString(), new Object[] { dealerGroup.getId() })) {
@@ -221,7 +221,7 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  id =? ");
 
 		if (doCheckAuthority(dealerGroup, whereCond.toString(), new Object[] { dealerGroup.getId() })) {

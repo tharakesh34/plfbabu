@@ -193,7 +193,7 @@ public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =?");
 
 		if (doCheckAuthority(reasoncode, whereCond.toString(), new Object[] { reasoncode.getId() })) {
