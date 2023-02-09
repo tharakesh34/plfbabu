@@ -15,6 +15,7 @@ import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -22,6 +23,7 @@ import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -55,6 +57,7 @@ public class ClosureService {
 	private ReceiptCalculator receiptCalculator;
 	private FeeCalculator feeCalculator;
 	private FinTypeFeesDAO finTypeFeesDAO;
+	private FinODDetailsDAO finODDetailsDAO;
 
 	public ClosureService() {
 		super();
@@ -64,14 +67,15 @@ public class ClosureService {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			FinanceMain fm = finEODEvent.getFinanceMain();
-			BigDecimal receiptAmount = BigDecimal.ZERO;
-			BigDecimal excessAmt = getAvailableExcessAmt(finEODEvent);
 
+			BigDecimal receiptAmount = BigDecimal.ZERO;
 			if (!fm.isFinIsActive()) {
 				continue;
 			}
 
-			if (excessAmt.compareTo(BigDecimal.ZERO) == 0) {
+			BigDecimal excessAmt = getExcessBalance(finEODEvent.getFinExcessAmounts());
+
+			if (excessAmt.compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
 
@@ -80,7 +84,7 @@ public class ClosureService {
 
 			BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 
-			if (calcClosureAmt.compareTo(BigDecimal.ZERO) == 0) {
+			if (calcClosureAmt.compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
 
@@ -91,6 +95,7 @@ public class ClosureService {
 					receiptAmount = calcClosureAmt;
 				}
 
+				updateUtilizedExcess(finEODEvent.getFinExcessAmounts(), true);
 				processReceipt(finEODEvent, receiptAmount, receiptDTO);
 			}
 		}
@@ -105,14 +110,19 @@ public class ClosureService {
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 
+		List<FinODDetails> finODDetails = schdData.getFinODDetails();
+
+		finODDetailsDAO.updatePaidPenalties(finODDetails);
+
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
+			updateUtilizedExcess(finEODEvent.getFinExcessAmounts(), false);
+
 			WSReturnStatus returnStatus = new WSReturnStatus();
 			ErrorDetail error = schdData.getErrorDetails().get(0);
 			returnStatus.setReturnCode(error.getCode());
 			returnStatus.setReturnText(error.getError());
 			fd.setReturnStatus(returnStatus);
 			logger.info(finEODEvent.getFinanceMain().getFinReference() + ":" + error.getMessage());
-			return;
 		} else {
 			updateTerminationExcessAmount(finEODEvent, calcClosureAmt);
 		}
@@ -145,6 +155,7 @@ public class ClosureService {
 		rcd.setReceivedDate(fm.getAppDate());
 		rcd.setValueDate(fm.getAppDate());
 		fsi.setReceiptDetail(rcd);
+		fsi.setFinFeeDetails(receiptDTO.getFees());
 
 		FinReceiptDetail rd = fsi.getReceiptDetail();
 
@@ -172,12 +183,10 @@ public class ClosureService {
 
 	private void updateTerminationExcessAmount(FinEODEvent finEODEvent, BigDecimal receiptAmt) {
 		List<FinExcessAmount> finExcessAmounts = finEODEvent.getFinExcessAmounts();
-		BigDecimal balns = BigDecimal.ZERO;
-		// BigDecimal amount = BigDecimal.ZERO;
 		BigDecimal utilized = BigDecimal.ZERO;
+		BigDecimal balance = BigDecimal.ZERO;
 
 		for (FinExcessAmount finex : finExcessAmounts) {
-
 			if (receiptAmt.compareTo(BigDecimal.ZERO) == 0) {
 				return;
 			}
@@ -187,32 +196,17 @@ public class ClosureService {
 
 			if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(finex.getAmountType())) {
 				if (receiptAmt.compareTo(excesAmt) >= 0) {
-					balns = BigDecimal.ZERO;
+					balance = BigDecimal.ZERO;
 					utilized = excesAmt;
-					// amount = BigDecimal.ZERO;
-					receiptAmt = receiptAmt.subtract(utilized);
 				} else if (excesAmt.compareTo(receiptAmt) >= 0) {
-					balns = excesAmt.subtract(receiptAmt);
-					// amount = balns;
+					balance = excesAmt.subtract(receiptAmt);
 					utilized = receiptAmt;
-					receiptAmt = receiptAmt.subtract(utilized);
 				}
 
-				finExcessAmountDAO.updateTerminationExcess(excessID, utilized, balns);
+				receiptAmt = receiptAmt.subtract(utilized);
+				finExcessAmountDAO.updateTerminationExcess(excessID, utilized, balance);
 			}
 		}
-	}
-
-	private BigDecimal getAvailableExcessAmt(FinEODEvent finEODEvent) {
-		List<FinExcessAmount> finExcessAmounts = finEODEvent.getFinExcessAmounts();
-		BigDecimal excessAmt = BigDecimal.ZERO;
-		for (FinExcessAmount finex : finExcessAmounts) {
-			if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(finex.getAmountType())) {
-				excessAmt = excessAmt.add(finex.getBalanceAmt());
-			}
-		}
-
-		return excessAmt;
 	}
 
 	private ReceiptDTO prepareReceiptRTO(FinEODEvent finEODEvent) {
@@ -268,6 +262,38 @@ public class ClosureService {
 		return rd;
 	}
 
+	private void updateUtilizedExcess(List<FinExcessAmount> finExcessAmounts, boolean isReserve) {
+		for (FinExcessAmount fea : finExcessAmounts) {
+			if (!RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(fea.getAmountType())) {
+				continue;
+			}
+
+			BigDecimal balanceAmount = fea.getBalanceAmt();
+
+			if (isReserve) {
+				if (balanceAmount.compareTo(BigDecimal.ZERO) > 0) {
+					finExcessAmountDAO.updateExcessAmount(fea.getExcessID(), "R", balanceAmount);
+				}
+			} else {
+				finExcessAmountDAO.updateTerminationExcess(fea.getExcessID(), BigDecimal.ZERO, balanceAmount);
+			}
+		}
+	}
+
+	private BigDecimal getExcessBalance(List<FinExcessAmount> finExcessAmounts) {
+		BigDecimal excessAmt = BigDecimal.ZERO;
+
+		for (FinExcessAmount fea : finExcessAmounts) {
+			if (!RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(fea.getAmountType())) {
+				continue;
+			}
+
+			excessAmt = excessAmt.add(fea.getBalanceAmt());
+		}
+
+		return excessAmt;
+	}
+
 	@Autowired
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
@@ -306,5 +332,10 @@ public class ClosureService {
 	@Autowired
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
 		this.finTypeFeesDAO = finTypeFeesDAO;
+	}
+
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
 	}
 }
