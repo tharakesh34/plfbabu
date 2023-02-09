@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.CustEODEvent;
+import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -1384,7 +1385,17 @@ public class PresentmentEngine {
 
 			CustEODEvent custEODEvent = new CustEODEvent();
 			custEODEvent.setEodDate(pd.getAppDate());
+			custEODEvent.setCustomer(receiptDTO.getCustomer());
 			custEODEvent.setEventProperties(pd.getEventProperties());
+
+			FinEODEvent finEODEvent = new FinEODEvent();
+			finEODEvent.setFinType(receiptDTO.getFinType());
+			finEODEvent.setFinanceMain(receiptDTO.getFinanceMain());
+			finEODEvent.setFinProfitDetail(receiptDTO.getProfitDetail());
+			finEODEvent.setFinanceScheduleDetails(receiptDTO.getSchedules());
+			finEODEvent.setFinODDetails(receiptDTO.getOdDetails());
+
+			custEODEvent.getFinEODEvents().add(finEODEvent);
 
 			if ("N".equals(fateCorrection)) {
 				pd = receiptCancellationService.presentmentCancellation(pd, custEODEvent);
