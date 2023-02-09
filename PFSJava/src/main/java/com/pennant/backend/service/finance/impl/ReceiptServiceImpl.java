@@ -3128,8 +3128,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		if (CollectionUtils.isNotEmpty(financeDetail.getDocumentDetailsList())) {
 			/*
 			 * auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
+			 * 
+			 * auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 			 */
-			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
 		// Finance Fee details
@@ -5731,6 +5732,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 	public boolean checkDueAdjusted(List<ReceiptAllocationDetail> allocations, FinReceiptData rd) {
 		boolean isDueAdjusted = true;
+		FinServiceInstruction fsi = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
 
 		for (ReceiptAllocationDetail allocate : allocations) {
 			BigDecimal waivedAmount = allocate.getWaivedAmount();
@@ -5745,6 +5747,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 
 			if (bal.compareTo(BigDecimal.ZERO) > 0 && allocate.isEditable()) {
+				isDueAdjusted = false;
+			}
+
+			if (bal.compareTo(BigDecimal.ZERO) > 0 && RequestSource.EOD.equals(fsi.getRequestSource())
+					&& ReceiptPurpose.EARLYSETTLE.equals(fsi.getReceiptPurpose())) {
 				isDueAdjusted = false;
 			}
 		}
@@ -6405,6 +6412,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 			break;
 		case API:
+		case EOD:
 			if (!(AllocationType.MANUAL.equals(allocationType) || AccountingEvent.RESTRUCTURE.equals(eventCode))) {
 				validateFees(rd);
 			}
@@ -6847,7 +6855,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		List<ReceiptAllocationDetail> allocations = rch.getAllocations();
 
 		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && !checkDueAdjusted(allocations, rd)) {
-			adjustToExcess(rd);
+			if (!RequestSource.EOD.equals(schdData.getFinServiceInstruction().getRequestSource())) {
+				adjustToExcess(rd);
+			}
+
 			rd.setDueAdjusted(false);
 
 			BigDecimal totalClosureAmt = rch.getClosureThresholdLimit().add(rd.getTotReceiptAmount());

@@ -214,30 +214,13 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			this.referenceId.setValueColumn("ExcessID");
 			this.referenceId.setDescColumn("BalanceAmt");
 			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
-			break;
-		case ReceiptMode.EMIINADV:
-			this.referenceId.setModuleName("EMIInAdvance");
-			this.referenceId.setValueColumn("ExcessID");
-			this.referenceId.setDescColumn("BalanceAmt");
-			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
+			this.referenceId.setWhereClause("(ReceiptModeStatus is null or ReceiptModeStatus not in ('C', 'B'))");
 			break;
 		case ReceiptMode.PAYABLE:
 			this.referenceId.setModuleName("PayableAdvise");
 			this.referenceId.setValueColumn("AdviseID");
 			this.referenceId.setDescColumn("BalanceAmt");
 			this.referenceId.setValidateColumns(new String[] { "AdviseID" });
-			break;
-		case ReceiptMode.CASHCLT:
-			this.referenceId.setModuleName("CASHCLT");
-			this.referenceId.setValueColumn("ExcessID");
-			this.referenceId.setDescColumn("BalanceAmt");
-			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
-			break;
-		case ReceiptMode.DSF:
-			this.referenceId.setModuleName("DSF");
-			this.referenceId.setValueColumn("ExcessID");
-			this.referenceId.setDescColumn("BalanceAmt");
-			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
 			break;
 		default:
 			break;
@@ -631,6 +614,17 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			}
 		}
 
+		long finID = ComponentUtil.getFinID(this.toFinReference);
+		Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, financeMain.getAppDate());
+		Date receiptDt = receiptDate.getValue();
+
+		if (DateUtil.compare(receiptDt, schDate) < 0) {
+			receiptDt = schDate;
+			this.receiptDate.setDisabled(false);
+		}
+
+		this.receiptDate.setValue(receiptDt);
+		this.receiptDate.setDisabled(true);
 	}
 
 	private void validateReceiptData() {

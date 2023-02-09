@@ -372,12 +372,11 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			lc = new Listcell(clk.getReceiptMode());
 			lc.setParent(item);
 
-			String purpose = clk.getReceiptPurpose();
-			if (FinServiceEvent.EARLYRPY.equals(purpose)) {
-				purpose = FinanceConstants.PARTIALSETTLEMENT;
+			String receiptPurpose = clk.getReceiptPurpose();
+			if (FinServiceEvent.EARLYRPY.equals(receiptPurpose)) {
+				receiptPurpose = "Partial Payment";
 			}
-
-			lc = new Listcell(purpose);
+			lc = new Listcell(receiptPurpose);
 			lc.setParent(item);
 
 			lc = new Listcell(clk.getCustCif());

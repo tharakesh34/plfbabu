@@ -93,7 +93,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		if (excessTransferUploadDAO.isDuplicateExists(reference, transferFrom, detail.getHeaderId())) {
-			setError(detail, ExcessTransferError.EXT_004);
+			setError(detail, ExcessTransferError.EXT_005);
 			return;
 		}
 
@@ -102,10 +102,9 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 		BigDecimal balanceAmount = excessTransferUploadDAO.getBalanceAmount(fm.getFinID(), transferFrom);
 
 		if (balanceAmount.compareTo(detail.getTransferAmount()) < 0) {
-			setError(detail, ExcessTransferError.EXT_005);
+			setError(detail, ExcessTransferError.EXT_004);
 			return;
 		}
-
 		detail.setReferenceID(fm.getFinID());
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		detail.setErrorCode("");

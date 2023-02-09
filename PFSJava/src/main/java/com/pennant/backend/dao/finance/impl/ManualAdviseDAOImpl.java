@@ -51,6 +51,7 @@ import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -2305,6 +2306,15 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
+	}
+
+	@Override
+	public boolean isAdviseUploadExist(long finID) {
+		String sql = "Select Count(FinID) From AdviseUploads_Temp Where FinID = ? and Status = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, UploadConstants.UPLOAD_STATUS_SUCCESS) > 0;
 	}
 
 	@Override
