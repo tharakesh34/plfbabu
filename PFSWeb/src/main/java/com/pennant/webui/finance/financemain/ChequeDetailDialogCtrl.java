@@ -201,8 +201,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.chequeHeader.getHeaderID()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.chequeHeader.getHeaderID());
 	}
 
 	/**

@@ -291,7 +291,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 		if (this.finCreditReviewDetailsList.size() >= 3) {
 			return;
 		} else {
-			StringBuffer errorMsg = new StringBuffer(
+			StringBuilder errorMsg = new StringBuilder(
 					"Credit Review for the Customer with CIF Number : " + customer.getCustCIF());
 			int validationCount = 0;
 			for (int i = 0; i < finCreditReviewDetailsList.size(); i++) {

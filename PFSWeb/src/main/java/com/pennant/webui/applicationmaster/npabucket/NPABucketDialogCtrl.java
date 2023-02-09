@@ -88,8 +88,7 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.nPABucket.getBucketID()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.nPABucket.getBucketID());
 	}
 
 	/**

@@ -99,8 +99,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.pinCode.getPinCodeId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.pinCode.getPinCodeId());
 	}
 
 	/**

@@ -111,8 +111,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.projectUnits.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.projectUnits.getId());
 	}
 
 	/**
@@ -776,7 +775,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 		final ProjectUnits pu = new ProjectUnits();
 		BeanUtils.copyProperties(this.projectUnits, pu);
 
-		StringBuffer message = new StringBuffer();
+		StringBuilder message = new StringBuilder();
 		message.append("Unit Type: ").append(pu.getUnitType());
 		message.append(", Floor Number: ").append(pu.getFloorNumber());
 		message.append(", Tower: ").append(pu.getTower());

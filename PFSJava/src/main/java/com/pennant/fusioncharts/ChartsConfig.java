@@ -51,7 +51,7 @@ public class ChartsConfig extends ChartUtil {
 	 */
 	public String getChartXML() {
 		logger.debug("Entering");
-		StringBuffer chartXML = new StringBuffer("<chart ");
+		StringBuilder chartXML = new StringBuilder("<chart ");
 
 		chartXML = setChartBasicElements(chartXML);
 		if (getRemarks() != null && StringUtils.isNotEmpty(getRemarks())) {
@@ -62,6 +62,7 @@ public class ChartsConfig extends ChartUtil {
 		chartXML.append(getSetElement(setElements));
 
 		chartXML.append("</chart>");
+
 		logger.debug("Leaving");
 		return chartXML.toString();
 	}
@@ -74,7 +75,7 @@ public class ChartsConfig extends ChartUtil {
 
 	public String getSeriesChartXML(String renderAs) {
 		logger.debug("Entering");
-		StringBuffer chartXML = new StringBuffer("<chart ");
+		StringBuilder chartXML = new StringBuilder("<chart ");
 		chartXML = setChartBasicElements(chartXML);
 		if (getRemarks() != null && StringUtils.isNotEmpty(getRemarks())) {
 			chartXML.append(" " + getRemarks() + " ");
@@ -84,6 +85,7 @@ public class ChartsConfig extends ChartUtil {
 		chartXML.append(getSeriesTypeElements(setElements, renderAs));
 
 		chartXML.append("</chart>");
+
 		logger.debug("Leaving");
 		return chartXML.toString();
 	}
@@ -95,7 +97,7 @@ public class ChartsConfig extends ChartUtil {
 	 */
 	public String getDrillDownChartXML() {
 		logger.debug("Entering");
-		StringBuffer chartXML = new StringBuffer("<chart ");
+		StringBuilder chartXML = new StringBuilder("<chart ");
 		chartXML = setChartBasicElements(chartXML);
 		String[] remarks = null;
 		if (StringUtils.contains(getRemarks(), "||")) {
@@ -107,6 +109,7 @@ public class ChartsConfig extends ChartUtil {
 		chartXML.append(">");
 		chartXML.append(getDrillDownTypeElements(setElements, remarks));
 		chartXML.append("</chart>");
+
 		logger.debug("Leaving");
 		return chartXML.toString();
 
@@ -119,7 +122,7 @@ public class ChartsConfig extends ChartUtil {
 	 */
 	public String getAGaugeXML() {
 		logger.debug("Entering");
-		StringBuffer chartXML = new StringBuffer("<chart ");
+		StringBuilder chartXML = new StringBuilder("<chart ");
 
 		chartXML = setChartBasicElements(chartXML);
 		if (getRemarks() != null && StringUtils.isNotEmpty(getRemarks())) {
@@ -131,21 +134,23 @@ public class ChartsConfig extends ChartUtil {
 		chartXML.append(getSetDial(setElements));
 		chartXML.append(getGaugeOthers());
 		chartXML.append("</chart>");
+
 		logger.debug("Leaving");
 		return chartXML.toString();
 	}
 
 	public String getGaugeColourRange() {
-		StringBuffer colourRange = new StringBuffer("<colorRange>");
+		StringBuilder colourRange = new StringBuilder("<colorRange>");
 		colourRange.append("<color minValue=\"0\" maxValue=\"9.99\" code=\"8BBA00\"/>");
 		colourRange.append("<color minValue=\"10.00\" maxValue=\"19.99\" code=\"F6BD0F\"/>");
 		colourRange.append("<color minValue=\"20.00\" maxValue=\"100.00\" code=\"FF654F\"/>");
 		colourRange.append("</colorRange>");
+
 		return colourRange.toString();
 	}
 
 	public String getGaugeOthers() {
-		StringBuffer others = new StringBuffer("<annotations>");
+		StringBuilder others = new StringBuilder("<annotations>");
 		others.append("<annotationGroup id=\"Grp1\" showBelow=\"1\" showShadow=\"1\">");
 		others.append(
 				"<annotation type=\"rectangle\" x=\"$chartStartX+5\" y=\"$chartStartY+5\" toX=\"$chartEndX-5\" toY=\"$chartEndY-5\" radius=\"10\" fillColor=\"FFFFFF,FFFFFF\" showBorder=\"0\" />");
@@ -160,6 +165,7 @@ public class ChartsConfig extends ChartUtil {
 		others.append("apply toObject=\"Grp1\" styles=\"RectShadow\">");
 		others.append("</application>");
 		others.append("</styles>");
+
 		return others.toString();
 	}
 
@@ -169,7 +175,7 @@ public class ChartsConfig extends ChartUtil {
 	 * @param chartXML
 	 * @return
 	 */
-	private StringBuffer setChartBasicElements(StringBuffer chartXML) {
+	private StringBuilder setChartBasicElements(StringBuilder chartXML) {
 		chartXML = getIntElement("caption", this.caption, chartXML);
 		chartXML = getIntElement("subCaption", this.subCaption, chartXML);
 		chartXML = getIntElement("yAxisName", this.yAxisName, chartXML);
@@ -180,6 +186,7 @@ public class ChartsConfig extends ChartUtil {
 		chartXML = getIntElement("plotFillAlpha", this.plotFillAlpha, chartXML);
 		chartXML = getIntElement("overlapColumns", this.overlapColumns, chartXML);
 		// chartXML.append(" "+ Labels.getLabel("label_Chart_CommanAttributes"));
+
 		return chartXML;
 	}
 

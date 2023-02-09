@@ -114,8 +114,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.nPAProvisionHeader.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.nPAProvisionHeader.getId());
 	}
 
 	/**

@@ -633,20 +633,16 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public int updateExcessReserveByRef(long finID, String amountType, BigDecimal amount) {
 		String sql = "Update FinExcessAmount Set ReservedAmt = ReservedAmt + ?, Amount = Amount + ? Where FinID = ? and AmountType = ?";
-
 		logger.debug(Literal.SQL + sql);
 
-		int recordCount = this.jdbcOperations.update(sql, ps -> {
+		return this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
 			ps.setLong(index++, finID);
 			ps.setString(index, amountType);
-
 		});
-
-		return recordCount;
 	}
 
 	@Override
@@ -706,10 +702,9 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public int updateReserveUtilization(FinExcessAmount ea) {
 		String sql = "Update FinExcessAmount Set BalanceAmt = ?, ReservedAmt = ?, UtilisedAmt = ? Where ExcessID = ?";
-
 		logger.debug(Literal.SQL + sql);
 
-		int recordCount = this.jdbcOperations.update(sql, ps -> {
+		return this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
 			ps.setBigDecimal(index++, ea.getBalanceAmt());
@@ -717,8 +712,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			ps.setBigDecimal(index++, ea.getUtilisedAmt());
 			ps.setLong(index, ea.getExcessID());
 		});
-
-		return recordCount;
 	}
 
 	@Override
