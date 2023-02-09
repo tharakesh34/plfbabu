@@ -741,4 +741,6 @@
 		class="com.pennant.backend.service.finance.PartPayAndEarlySettleValidator" />
 		
 	<bean id="feeWaiverCancelService" class="com.pennant.backend.service.finance.impl.FeeWaiverCancelServiceImpl"/>
+	
+	<bean id="crossLoanKnockOffDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanKnockOffDAOImpl" parent="sequenceDao"/>
 </beans>
