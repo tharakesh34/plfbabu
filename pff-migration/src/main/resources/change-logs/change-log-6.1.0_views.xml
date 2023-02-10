@@ -11455,7 +11455,7 @@
 	<changeSet id="99_pre" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'CUSTOMERADDRESSES_AVIEW');
+				select deps_save_and_drop_dependencies ('plf', 'customeraddresses_aview');
 			]]>
 		</sql>
 	</changeSet>
@@ -11513,7 +11513,7 @@
 	<changeSet id="99_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'CUSTOMERADDRESSES_AVIEW');
+				select deps_restore_dependencies ('plf', 'customeraddresses_aview');
 			]]>
 		</sql>
 	</changeSet>
@@ -11521,7 +11521,7 @@
 	<changeSet id="100_pre" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'CUSTOMERADDRESSES_VIEW');
+				select deps_save_and_drop_dependencies ('plf', 'customeraddresses_view');
 			]]>
 		</sql>
 	</changeSet>
@@ -11627,7 +11627,7 @@
 	<changeSet id="100_post" author="rahul.r" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'CUSTOMERADDRESSES_VIEW');
+				select deps_restore_dependencies ('plf', 'customeraddresses_view');
 			]]>
 		</sql>
 	</changeSet>
