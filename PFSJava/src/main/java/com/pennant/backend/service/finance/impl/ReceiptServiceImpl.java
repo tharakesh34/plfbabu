@@ -3680,7 +3680,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		boolean autoReceipt = ReceiptUtil.isAutoReceipt(receiptMode, productCategory);
 
-		if ((!(ReceiptMode.isValidReceiptMode(receiptMode)) && !fsi.isKnockOffReceipt() || autoReceipt)) {
+		if (!isTerminationEvent(fsi)
+				&& (!(ReceiptMode.isValidReceiptMode(receiptMode)) && !fsi.isKnockOffReceipt() || autoReceipt)) {
 			setError(schdData, "90281", "Receipt mode", ReceiptMode.getValidReceiptModes());
 			return;
 		}
@@ -3830,12 +3831,17 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		boolean autoReceipt = ReceiptUtil.isAutoReceipt(receiptMode, productCategory);
-		if (!ReceiptMode.isOfflineMode(receiptMode) && !fsi.isKnockOffReceipt() && !autoReceipt
-				&& StringUtils.isBlank(rcd.getTransactionRef())) {
+		if (!isTerminationEvent(fsi) && !ReceiptMode.isOfflineMode(receiptMode) && !fsi.isKnockOffReceipt()
+				&& !autoReceipt && StringUtils.isBlank(rcd.getTransactionRef())) {
 			setError(schdData, "90281", "Transaction Reference");
 		}
 
 		logger.info(Literal.LEAVING);
+	}
+
+	private boolean isTerminationEvent(FinServiceInstruction fsi) {
+		return RequestSource.EOD.equals(fsi.getRequestSource())
+				&& ReceiptPurpose.EARLYSETTLE.equals(fsi.getReceiptPurpose());
 	}
 
 	private void validateChequeOrDD(FinScheduleData schdData, String bankCode, Date valueDate,
@@ -3902,9 +3908,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		boolean alwCashMode = ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE;
 
-		if (!autoReceipt && fsi.isNewReceipt() && !ReceiptMode.isFundingAccountReq(receiptMode)
-				&& !fsi.isKnockOffReceipt() && !ReceiptMode.CASH.equals(receiptMode)
-				|| (alwCashMode && fundingAccount > 0)) {
+		if (!isTerminationEvent(fsi) && !autoReceipt && fsi.isNewReceipt()
+				&& !ReceiptMode.isFundingAccountReq(receiptMode) && !fsi.isKnockOffReceipt()
+				&& !ReceiptMode.CASH.equals(receiptMode) || (alwCashMode && fundingAccount > 0)) {
 			String receipts = AccountConstants.PARTNERSBANK_RECEIPTS;
 			String finType = fm.getFinType();
 			if (finTypePartnerBankDAO.getPartnerBankCount(finType, receiptMode, receipts, fundingAccount) <= 0) {
@@ -6855,7 +6861,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		List<ReceiptAllocationDetail> allocations = rch.getAllocations();
 
 		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && !checkDueAdjusted(allocations, rd)) {
-			if (!RequestSource.EOD.equals(schdData.getFinServiceInstruction().getRequestSource())) {
+			RequestSource requestSource = schdData.getFinServiceInstruction().getRequestSource();
+			if (!RequestSource.EOD.equals(requestSource)) {
 				adjustToExcess(rd);
 			}
 
@@ -6866,11 +6873,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 			String excessAdjustTo = schdData.getFinServiceInstruction().getExcessAdjustTo();
 
-			if (totalClosureAmt.compareTo(calcClosureAmt) < 0
-					&& RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)) {
+			if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)
+					|| (RequestSource.API.equals(requestSource) && !rd.isDueAdjusted())) {
 				rd.setExcessType(excessAdjustTo);
 				return;
-			} else if (totalClosureAmt.compareTo(calcClosureAmt) >= 0) {
+			} else if (totalClosureAmt.compareTo(calcClosureAmt) >= 0 && !RequestSource.API.equals(requestSource)) {
 				waiveThresholdLimit(rd);
 				rd.setDueAdjusted(true);
 			}
