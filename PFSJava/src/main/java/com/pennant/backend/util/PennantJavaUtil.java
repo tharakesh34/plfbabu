@@ -3838,6 +3838,11 @@ public class PennantJavaUtil {
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
 
+		ModuleUtil.register("LPPUploadHeader",
+				new ModuleMapping("LPPUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
 		ModuleUtil.register("FateCorrection",
 				new ModuleMapping("FateCorrection", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,

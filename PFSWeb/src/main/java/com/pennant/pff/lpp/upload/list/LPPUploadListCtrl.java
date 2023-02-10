@@ -1,6 +1,7 @@
 package com.pennant.pff.lpp.upload.list;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Window;
 
 import com.pennant.pff.upload.list.AUploadListCtrl;
@@ -9,16 +10,21 @@ import com.pennanttech.pff.file.UploadTypes;
 
 public class LPPUploadListCtrl extends AUploadListCtrl {
 	private static final long serialVersionUID = -256791887358524752L;
-
-	protected Window lppUploadListWindow;
+	protected Window window;
 
 	protected LPPUploadListCtrl(@Autowired UploadService lPPUploadService) {
 		super(lPPUploadService, UploadTypes.LPP);
 	}
 
 	@Override
+	public void doAfterCompose(Component comp) throws Exception {
+		this.window = (Window) comp;
+		super.doAfterCompose(comp);
+	}
+
+	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "LPPUploadHeader";
-		super.onCreate(getArgument("stage"), this.lppUploadListWindow);
+		super.onCreate(getArgument("stage"), this.window);
 	}
 }
