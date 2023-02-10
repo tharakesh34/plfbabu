@@ -19,6 +19,7 @@ import com.pennant.backend.dao.finance.AutoRefundDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
@@ -27,7 +28,9 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentDetail;
@@ -51,6 +54,7 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	private RuleDAO ruleDAO;
 	private CustomerDAO customerDAO;
 	private FinODDetailsDAO finODDetailsDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private PaymentHeaderService paymentHeaderService;
 
 	@Override
@@ -111,7 +115,7 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	}
 
 	@Override
-	public BigDecimal findReserveAmountForAutoRefund(long finID, BigDecimal overDueAmt) {
+	public BigDecimal findReserveAmountForAutoRefund(long finID, BigDecimal overDueAmt, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
 		BigDecimal feeResult = BigDecimal.ZERO;
@@ -121,6 +125,7 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 		}
 
 		FinanceProfitDetail fpd = profitDetailsDAO.getFinProfitDetailsById(finID);
+		FinODDetails od = finODDetailsDAO.getFinODSummary(finID);
 
 		Customer customer = customerDAO.getCustomerForAutoRefund(fpd.getCustId());
 
@@ -141,6 +146,22 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 			executionMap.put("FutInstAmt", fpd.getTotalPriBal());
 			executionMap.put("Fin_ODDays", fpd.getCurODDays());
 			executionMap.put("Fin_CurODamt", overDueAmt);
+
+			FinanceScheduleDetail nextSchd = financeScheduleDetailDAO.getNextSchd(finID, appDate, true);
+			FinanceScheduleDetail next2Schd = financeScheduleDetailDAO.getNextSchd(finID, nextSchd.getSchDate(), false);
+
+			BigDecimal nextEMIAmount = nextSchd.getRepayAmount();
+			BigDecimal next2EMIAmount = BigDecimal.ZERO;
+
+			if (next2Schd != null) {
+				next2EMIAmount = nextEMIAmount.add(next2Schd.getRepayAmount());
+			}
+
+			executionMap.put("NextEMIAmount", nextEMIAmount);
+			executionMap.put("Next2EMIAmount", next2EMIAmount);
+			executionMap.put("UnpaidLPP", od.getTotPenaltyBal());
+			executionMap.put("OverduePrincipal", fpd.getODPrincipal());
+			executionMap.put("OverdueInterest", fpd.getODProfit());
 
 			feeResult = RuleExecutionUtil.getRuleResult(rules.get(0).getsQLRule(), executionMap, fpd.getFinCcy());
 		}
@@ -247,6 +268,11 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	@Autowired
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 }

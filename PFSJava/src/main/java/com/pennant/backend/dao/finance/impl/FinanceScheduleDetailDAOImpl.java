@@ -658,27 +658,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	@Override
-	public FinanceScheduleDetail getNextSchPayment(long finID, Date curBussDate) {
-		StringBuilder sql = new StringBuilder("Select * from (");
-		sql.append(" Select row_number() Over(order by Schdate) row_num, ");
-		appendSchdColumns(false, sql);
-		sql.append(" From FinScheduleDetails");
-		sql.append(" Where FinID = ? and  SchDate >= ?) T");
-		sql.append(" Where row_num = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, curBussDate, 1);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
-	}
-
-	@Override
 	public boolean getFinScheduleCountByDate(long finID, Date fromDate, boolean isWIF) {
 		StringBuilder selectSql = new StringBuilder("Select count(FinID)");
 
@@ -1357,4 +1336,33 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		return this.jdbcOperations.queryForObject(sql, Date.class, finID, appDate, 0, 0, 0);
 	}
+
+	@Override
+	public FinanceScheduleDetail getNextSchd(long finID, Date appDate, boolean businessDate) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select SchDate, RepayAmount from FinScheduleDetails");
+		sql.append(" Where SchDate = (Select min(SchDate) From FinScheduleDetails");
+		if (businessDate) {
+			sql.append(" Where FinID = ? and SchDate >= ? and RepayOnSchDate = ?)");
+		} else {
+			sql.append(" Where FinID = ? and SchDate > ? and RepayOnSchDate = ?)");
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceScheduleDetail schd = new FinanceScheduleDetail();
+
+				schd.setSchDate(rs.getDate("SchDate"));
+				schd.setRepayAmount(rs.getBigDecimal("RepayAmount"));
+
+				return schd;
+			}, finID, appDate, 1);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }

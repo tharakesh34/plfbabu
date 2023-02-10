@@ -600,7 +600,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		boolean emptyRepayInstructions = schdData.getRepayInstructions() == null ? true : false;
 
-		FinanceScheduleDetail orgNextSchd = financeScheduleDetailDAO.getNextSchPayment(finID, appDate);
 		FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(finID);
 
 		List<RepayScheduleDetail> rsdList = repayData.getRepayScheduleDetails();

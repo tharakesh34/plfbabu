@@ -79,7 +79,6 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -437,8 +436,6 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
-		FinanceScheduleDetail orgNextSchd = financeScheduleDetailDAO.getNextSchPayment(finID, appData);
-
 		fm.setFinIsActive(false);
 		fm.setClosedDate(appData);
 		fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);

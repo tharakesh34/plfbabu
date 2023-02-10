@@ -122,7 +122,7 @@ public class AutoRefundProcess {
 			overDueAmt = autoRefundService.getOverDueAmount(finID);
 		}
 
-		BigDecimal reserveAmount = autoRefundService.findReserveAmountForAutoRefund(finID, overDueAmt);
+		BigDecimal reserveAmount = autoRefundService.findReserveAmountForAutoRefund(finID, overDueAmt, appDate);
 
 		if (overDueAmt == null) {
 			overDueAmt = BigDecimal.ZERO;

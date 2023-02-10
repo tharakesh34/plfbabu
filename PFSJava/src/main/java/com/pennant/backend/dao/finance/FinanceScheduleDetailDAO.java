@@ -72,8 +72,6 @@ public interface FinanceScheduleDetailDAO {
 
 	FinanceScheduleDetail getTotals(long finID);
 
-	FinanceScheduleDetail getNextSchPayment(long finID, Date curBussDate);
-
 	boolean getFinScheduleCountByDate(long finID, Date fromDate, boolean isWIF);
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(long Custid, boolean isActive);
@@ -140,8 +138,10 @@ public interface FinanceScheduleDetailDAO {
 	List<FinanceScheduleDetail> getFinSchdDetailsBtwDates(String finReference, Date fromdate, Date toDate);
 
 	void updateSchdTotals(List<FinanceScheduleDetail> schdDtls);
-	
+
 	Date getNextSchdDate(long finID, Date appDate);
 
 	Date getSchdDateForKnockOff(long finID, Date appDate);
+
+	FinanceScheduleDetail getNextSchd(long finID, Date appDate, boolean businessDate);
 }

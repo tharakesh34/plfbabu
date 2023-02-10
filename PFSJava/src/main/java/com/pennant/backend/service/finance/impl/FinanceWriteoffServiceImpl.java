@@ -559,9 +559,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			}
 		}
 
-		// Fetch Next Payment Details from Finance for Salaried Postings Verification
-		FinanceScheduleDetail orgNextSchd = financeScheduleDetailDAO.getNextSchPayment(finID, curBDay);
-
 		// Finance Stage Accounting Process
 		// =======================================
 		PostingDTO postingDTO = new PostingDTO();

@@ -23,7 +23,7 @@ public interface AutoRefundService {
 
 	BigDecimal getOverDueAmount(long finID);
 
-	BigDecimal findReserveAmountForAutoRefund(long finID, BigDecimal overDueAmt);
+	BigDecimal findReserveAmountForAutoRefund(long finID, BigDecimal overDueAmt, Date appDate);
 
 	List<ErrorDetail> validateRefundAmt(BigDecimal feeRuleResult, AutoRefundLoan refundLoan);
 
