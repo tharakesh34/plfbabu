@@ -101,7 +101,7 @@ public interface FinExcessAmountDAO {
 
 	List<FinExcessMovement> getExcessMovementList(long id, String movementType);
 
-	int updateTerminationExcess(long excessID, BigDecimal excessAmt, BigDecimal balns);
+	int updateTerminationExcess(long excessID, BigDecimal excessAmt, BigDecimal balns, BigDecimal reserved);
 
 	BigDecimal getExcessBalance(long finID);
 

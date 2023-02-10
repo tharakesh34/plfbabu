@@ -141,7 +141,9 @@ public class ClosureService {
 		fsi.setFinID(finEODEvent.getFinanceMain().getFinID());
 		fsi.setFromDate(fm.getAppDate());
 		fsi.setAmount(calcClosureAmt);
-		fsi.setPaymentMode(RepayConstants.PAYTYPE_CASH);
+
+		/* Payment Mode should be empty for Closer receipt with Termination Excess */
+		fsi.setPaymentMode(" ");
 		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
 		fsi.setPanNumber(receiptDTO.getCustomer().getCustCRCPR());
 		fsi.setReqType("Post");
@@ -204,7 +206,7 @@ public class ClosureService {
 				}
 
 				receiptAmt = receiptAmt.subtract(utilized);
-				finExcessAmountDAO.updateTerminationExcess(excessID, utilized, balance);
+				finExcessAmountDAO.updateTerminationExcess(excessID, utilized, balance, utilized);
 			}
 		}
 	}
@@ -275,7 +277,8 @@ public class ClosureService {
 					finExcessAmountDAO.updateExcessAmount(fea.getExcessID(), "R", balanceAmount);
 				}
 			} else {
-				finExcessAmountDAO.updateTerminationExcess(fea.getExcessID(), BigDecimal.ZERO, balanceAmount);
+				finExcessAmountDAO.updateTerminationExcess(fea.getExcessID(), BigDecimal.ZERO, balanceAmount,
+						balanceAmount);
 			}
 		}
 	}

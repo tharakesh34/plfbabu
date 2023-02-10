@@ -1004,7 +1004,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	@Override
-	public int updateTerminationExcess(long excessID, BigDecimal amount, BigDecimal balns) {
+	public int updateTerminationExcess(long excessID, BigDecimal amount, BigDecimal balns, BigDecimal reserved) {
 		String sql = "Update FinExcessAmount Set BalanceAmt = ?, UtilisedAmt = ?, ReservedAmt = ReservedAmt - ? Where ExcessID = ?";
 
 		return this.jdbcOperations.update(sql, ps -> {
@@ -1012,7 +1012,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			ps.setBigDecimal(index++, balns);
 			ps.setBigDecimal(index++, amount);
-			ps.setBigDecimal(index++, amount);
+			ps.setBigDecimal(index++, reserved);
 			ps.setLong(index++, excessID);
 		});
 	}
