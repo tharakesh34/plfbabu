@@ -1171,11 +1171,11 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 	@Override
 	public BigDecimal getOverDueAmount(long finID) {
-		String sql = "Select (ODPrincipal + ODProfit) TotalDue From FinPftDetails Where FinID = ? ";
+		String sql = "Select (ODPrincipal + ODProfit) TotalDue From FinPftDetails Where FinID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID);
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
 }

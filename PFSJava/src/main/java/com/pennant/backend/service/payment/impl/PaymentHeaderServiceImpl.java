@@ -944,6 +944,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		ph.setVersion(1);
 		ph.setLastMntBy(userDetails.getUserId());
 		ph.setLastMntOn(sysDate);
+		ph.setCreatedOn(sysDate);
 		ph.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		ph.setPaymentId(paymentHeaderDAO.getNewPaymentHeaderId());
 		ph.setFinSource(UploadConstants.FINSOURCE_ID_AUTOPROCESS);

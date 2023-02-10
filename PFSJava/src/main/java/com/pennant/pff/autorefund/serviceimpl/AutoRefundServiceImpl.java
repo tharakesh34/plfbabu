@@ -40,6 +40,7 @@ import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -199,7 +200,7 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 		try {
 			paymentHeaderService.doApprove(auditHeader);
 		} catch (Exception e) {
-			//
+			throw new AppException(e.getMessage());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -222,7 +223,7 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	private AuditHeader getAuditHeader(PaymentHeader ph, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, ph.getBefImage(), ph);
 		return new AuditHeader(String.valueOf(ph.getPaymentId()), String.valueOf(ph.getPaymentId()), null, null,
-				auditDetail, ph.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				auditDetail, ph.getUserDetails(), new HashMap<>());
 	}
 
 	@Autowired

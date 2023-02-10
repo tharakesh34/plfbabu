@@ -2329,17 +2329,11 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public BigDecimal getOverDueAmount(long finID) {
-		String sql = "Select SUM(AdviseAmount - WaivedAmount - PaidAmount) AdvDue From ManualAdvise Where  FinID = ? and AdviseType = ?";
+		String sql = "Select coalesce(sum(AdviseAmount - WaivedAmount - PaidAmount), 0) AdvDue From ManualAdvise Where  FinID = ? and AdviseType = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID,
-					AdviseType.RECEIVABLE.id());
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return BigDecimal.ZERO;
-		}
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, AdviseType.RECEIVABLE.id());
 	}
 
 	@Override
