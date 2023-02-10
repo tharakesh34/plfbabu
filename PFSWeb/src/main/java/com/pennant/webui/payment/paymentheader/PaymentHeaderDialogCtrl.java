@@ -106,6 +106,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.feerefund.FeeRefundUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
@@ -178,7 +179,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private transient PostingsPreparationUtil postingsPreparationUtil;
 	private transient PaymentInstructionDialogCtrl disbursementInstructionsDialogCtrl;
 	private int ccyFormatter = 0;
-	private List<PaymentDetail> paymentDetailList = new ArrayList<PaymentDetail>();
+	private List<PaymentDetail> paymentDetailList = new ArrayList<>();
 	protected String selectMethodName = "onSelectTab";
 	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
 	private boolean isAccountingExecuted = false;
@@ -543,33 +544,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		logger.debug(Literal.ENTERING);
 
 		PaymentInstruction pi = aPaymentHeader.getPaymentInstruction();
-		Date appDate = SysParamUtil.getAppDate();
-		boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
 
 		if (pi == null) {
-			pi = new PaymentInstruction();
-		}
+			Date appDate = SysParamUtil.getAppDate();
+			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
 
-		long finID = financeMain.getFinID();
-		PaymentInstruction payIns = refundBeneficiary.getBeneficiary(finID, appDate, alwRefundByCheque);
-
-		if (payIns != null) {
-			pi.setBankBranchId(payIns.getBankBranchId());
-			pi.setBankBranchCode(payIns.getBankBranchCode());
-			pi.setBranchDesc(payIns.getBranchDesc());
-			pi.setBankName(payIns.getBankName());
-			pi.setBankBranchIFSC(payIns.getBankBranchIFSC());
-			pi.setpCCityName(payIns.getpCCityName());
-			pi.setAccountNo(payIns.getAccountNo());
-			pi.setAcctHolderName(payIns.getAcctHolderName());
-			pi.setPartnerBankId(payIns.getPartnerBankId());
-			pi.setPartnerBankCode(payIns.getPartnerBankCode());
-			pi.setPartnerBankName(payIns.getPartnerBankName());
-			pi.setPhoneNumber(payIns.getPhoneNumber());
-			pi.setIssuingBank(payIns.getIssuingBank());
-			pi.setIssuingBankName(payIns.getIssuingBankName());
-			pi.setPartnerBankAcType(payIns.getPartnerBankAc());
-			pi.setPartnerBankAc(payIns.getPartnerBankAc());
+			pi = refundBeneficiary.getBeneficiary(this.financeMain.getFinID(), appDate, alwRefundByCheque);
+		} else {
+			pi = FeeRefundUtil.getPI(aPaymentHeader, pi);
 		}
 
 		Map<String, Object> map = new HashMap<>();

@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.PaymentInstruction;
 
 public interface FinAdvancePaymentsDAO {
 
@@ -78,4 +79,8 @@ public interface FinAdvancePaymentsDAO {
 	FinAdvancePayments getFinAdvancePaymentsById(long paymentId);
 
 	int getStatusCountByFinRefrence(long finID);
+
+	PaymentInstruction getBeneficiary(long finId);
+
+	PaymentInstruction getBeneficiaryByPrintLoc(long finID);
 }

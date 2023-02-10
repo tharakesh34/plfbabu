@@ -148,11 +148,6 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 
 			this.enqiryModule = (Boolean) arguments.get("enqiryModule");
 
-			if (arguments.containsKey("feeRefundHeaderDialogCtrl")) {
-				setFeeRefundHeaderDialogCtrl((FeeRefundHeaderDialogCtrl) arguments.get("feeRefundHeaderDialogCtrl"));
-				feeRefundHeaderDialogCtrl.setFeeRefundInstructionDialogCtrl(this);
-			}
-
 			if (arguments.containsKey("feeRefundHeader")) {
 				setFeeRefundHeader((FeeRefundHeader) arguments.get("feeRefundHeader"));
 			}

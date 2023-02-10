@@ -29,7 +29,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +42,7 @@ import org.springframework.jdbc.core.RowMapper;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -658,5 +661,126 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			logger.warn(Message.NO_RECORD_FOUND);
 			return 0;
 		}
+	}
+
+	@Override
+	public PaymentInstruction getBeneficiary(long finId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fap.PaymentID, fap.PartnerBankId, fap.PaymentType, pb.PartnerBankCode, pb.PartnerBankName");
+		sql.append(", bb.BankBranchId, bb.BankCode, bb.BranchDesc, bd.BankName, bb.IFSC");
+		sql.append(", pc.PCCityName, fap.BeneficiaryAccNo, fap.BeneficiaryName");
+		sql.append(", fap.PhoneNumber, fap.BeneficiaryAccno, pb.AcType");
+		sql.append(", pb.AccountNo");
+		sql.append(" From FinAdvancePayments fap");
+		sql.append(" Inner join PartnerBanks pb on pb.PartnerBankId = fap.PartnerBankId");
+		sql.append(" Inner join BankBranches bb on bb.BankBranchId = fap.BankBranchId");
+		sql.append(" Inner join BmtBankDetail bd ON bd.BankCode = bb.BankCode");
+		sql.append(" Left join RmtProvinceVsCity pc ON pc.PcCity = bb.City");
+		sql.append(" Where Finid = ? and fap.PaymentType IN (?, ?, ?, ?) and fap.PaymentDetail = ?");
+		sql.append(" and fap.Status in (?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		List<PaymentInstruction> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, finId);
+			ps.setString(++index, DisbursementConstants.PAYMENT_TYPE_NEFT);
+			ps.setString(++index, DisbursementConstants.PAYMENT_TYPE_RTGS);
+			ps.setString(++index, DisbursementConstants.PAYMENT_TYPE_IMPS);
+			ps.setString(++index, DisbursementConstants.PAYMENT_TYPE_IFT);
+			ps.setString(++index, DisbursementConstants.PAYMENT_DETAIL_CUSTOMER);
+			ps.setString(++index, DisbursementConstants.STATUS_PAID);
+			ps.setString(++index, DisbursementConstants.STATUS_REALIZED);
+		}, (rs, rowNum) -> {
+			PaymentInstruction pi = new PaymentInstruction();
+
+			pi.setPaymentId(rs.getLong("PaymentID"));
+			pi.setPartnerBankId(rs.getLong("PartnerBankId"));
+			pi.setPartnerBankAcType(rs.getString("PaymentType"));
+			pi.setPartnerBankCode(rs.getString("PartnerBankCode"));
+			pi.setPartnerBankName(rs.getString("PartnerBankName"));
+			pi.setBankBranchId(rs.getLong("BankBranchId"));
+			pi.setBankBranchCode(rs.getString("BankCode"));
+			pi.setBranchDesc(rs.getString("BranchDesc"));
+			pi.setBankName(rs.getString("BankName"));
+			pi.setBankBranchIFSC(rs.getString("IFSC"));
+			pi.setpCCityName(rs.getString("PCCityName"));
+			pi.setAccountNo(rs.getString("BeneficiaryAccNo"));
+			pi.setAcctHolderName(rs.getString("BeneficiaryName"));
+			pi.setPhoneNumber(rs.getString("PhoneNumber"));
+			pi.setPartnerBankAc(rs.getString("BeneficiaryAccno"));
+			pi.setPartnerBankAcType(rs.getString("AcType"));
+			pi.setPartnerBankAc(rs.getString("AccountNo"));
+
+			return pi;
+		});
+
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
+		list = list.stream().sorted((l1, l2) -> Long.compare(l2.getPaymentId(), l1.getPaymentId()))
+				.collect(Collectors.toList());
+		return list.get(0);
+	}
+
+	@Override
+	public PaymentInstruction getBeneficiaryByPrintLoc(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fap.PaymentID, fap.PartnerBankId, fap.PaymentType, pb.PartnerBankCode, pb.PartnerBankName");
+		sql.append(", bb.BankBranchId, bb.BankCode, bb.BranchDesc, bd.BankName, bb.IFSC");
+		sql.append(", pc.PCCityName, fap.BeneficiaryAccNo, fap.BeneficiaryName");
+		sql.append(", fap.PhoneNumber, fap.BeneficiaryAccno, pb.AcType");
+		sql.append(", pb.AccountNo, b.DefChequeDDPrintLoc, fap.LiabilityHoldName");
+		sql.append(" From FinAdvancePayments fap");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = fap.FinID");
+		sql.append(" Inner join PartnerBanks pb on pb.PartnerBankId = fap.PartnerBankId");
+		sql.append(" Inner join BankBranches bb on bb.BankBranchId = fap.BankBranchId");
+		sql.append(" Inner join BmtBankDetail bd on bd.BankCode = bb.BankCode");
+		sql.append(" Inner join RMTBranches b on b.BranchCode = fm.FinBranch");
+		sql.append(" Left join RmtProvinceVsCity pc ON pc.PcCity = bb.City");
+		sql.append(" Where fap.Finid = ? and fap.PaymentDetail = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		List<PaymentInstruction> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+			ps.setLong(++index, finID);
+			ps.setString(++index, DisbursementConstants.PAYMENT_DETAIL_CUSTOMER);
+		}, (rs, rowNum) -> {
+			PaymentInstruction pi = new PaymentInstruction();
+
+			pi.setPaymentId(rs.getLong("PaymentID"));
+			pi.setPartnerBankId(rs.getLong("PartnerBankId"));
+			pi.setPartnerBankAcType(rs.getString("PaymentType"));
+			pi.setPartnerBankCode(rs.getString("PartnerBankCode"));
+			pi.setPartnerBankName(rs.getString("PartnerBankName"));
+			pi.setBankBranchId(rs.getLong("BankBranchId"));
+			pi.setBankBranchCode(rs.getString("BankCode"));
+			pi.setBranchDesc(rs.getString("BranchDesc"));
+			pi.setBankName(rs.getString("BankName"));
+			pi.setBankBranchIFSC(rs.getString("IFSC"));
+			pi.setpCCityName(rs.getString("PCCityName"));
+			pi.setAccountNo(rs.getString("BeneficiaryAccNo"));
+			pi.setAcctHolderName(rs.getString("BeneficiaryName"));
+			pi.setPhoneNumber(rs.getString("PhoneNumber"));
+			pi.setPartnerBankAc(rs.getString("BeneficiaryAccno"));
+			pi.setPartnerBankAcType(rs.getString("AcType"));
+			pi.setPartnerBankAc(rs.getString("AccountNo"));
+			pi.setPrintingLoc(rs.getString("DefChequeDDPrintLoc"));
+			pi.setFavourName(rs.getString("LiabilityHoldName"));
+
+			return pi;
+		});
+
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
+		list = list.stream().sorted((l1, l2) -> Long.compare(l2.getPaymentId(), l1.getPaymentId()))
+				.collect(Collectors.toList());
+
+		return list.get(0);
 	}
 }

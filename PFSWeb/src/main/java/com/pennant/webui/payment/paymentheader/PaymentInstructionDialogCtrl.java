@@ -48,6 +48,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.payment.feerefundheader.FeeRefundHeaderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -68,7 +69,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 	protected Datebox postDate;
 	protected Combobox paymentType;
-	protected CurrencyBox paymentAmount;
+	public CurrencyBox paymentAmount;
 	protected ExtendedCombobox partnerBankID;
 	protected Textbox remarks;
 	protected Textbox tranReference;
@@ -107,6 +108,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	private transient BankDetailService bankDetailService;
 	private PaymentInstruction paymentInstruction;
 	private PaymentHeaderDialogCtrl paymentHeaderDialogCtrl;
+	private FeeRefundHeaderDialogCtrl feeRefundHeaderDialogCtrl;
 	private PaymentHeader paymentHeader;
 	private FinanceMain financeMain;
 	private FinTypePartnerBankService finTypePartnerBankService;
@@ -158,6 +160,11 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			if (arguments.containsKey("paymentHeaderDialogCtrl")) {
 				setPaymentHeaderDialogCtrl((PaymentHeaderDialogCtrl) arguments.get("paymentHeaderDialogCtrl"));
 				getPaymentHeaderDialogCtrl().setDisbursementInstructionsDialogCtrl(this);
+			}
+
+			if (arguments.containsKey("feeRefundHeaderDialogCtrl")) {
+				setFeeRefundHeaderDialogCtrl((FeeRefundHeaderDialogCtrl) arguments.get("feeRefundHeaderDialogCtrl"));
+				feeRefundHeaderDialogCtrl.setDisbursementInstructionsDialogCtrl(this);
 			}
 
 			if (arguments.containsKey("paymentHeader")) {
@@ -254,7 +261,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.acctNumber.setReadonly(isReadOnly("PaymentInstructionDialog_acctNumber"));
 		this.acctHolderName.setReadonly(isReadOnly("PaymentInstructionDialog_acctHolderName"));
 		this.phoneNumber.setReadonly(isReadOnly("PaymentInstructionDialog_phoneNumber"));
-		this.issuingBank.setReadonly(isReadOnly("PaymentInstructionDialog_issuingBank"));
+		this.issuingBank.setReadonly(true);
 		this.favouringName.setReadonly(isReadOnly("PaymentInstructionDialog_favouringName"));
 		this.chequeOrDDumber.setReadonly(isReadOnly("PaymentInstructionDialog_chequeOrDDumber"));
 		this.payableLoc.setReadonly(isReadOnly("PaymentInstructionDialog_payableLoc"));
@@ -349,6 +356,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.issuingBank.setDescColumn("BankName");
 		this.issuingBank.setDisplayStyle(2);
 		this.issuingBank.setValidateColumns(new String[] { "BankCode" });
+		this.issuingBank.setReadonly(true);
 
 		this.phoneNumber.setMaxlength(10);
 		this.phoneNumber.setWidth("180px");
@@ -372,26 +380,19 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			this.postDate.setValue(paymentInstruction.getPostDate());
 		}
 
-		if (this.paymentHeader.isNewRecord() && paymentInstruction.getPartnerBankCode() != null) {
-			if (StringUtils.equals(paymentInstruction.getPartnerBankCode(), "HDFC")) {
-				fillComboBox(this.paymentType, DisbursementConstants.PAYMENT_TYPE_IFT,
-						PennantStaticListUtil.getPaymentTypes(), "");
-			} else {
-				fillComboBox(this.paymentType, DisbursementConstants.PAYMENT_TYPE_NEFT,
-						PennantStaticListUtil.getPaymentTypes(), "");
-			}
-			paymentInstruction.setPaymentType(this.paymentType.getSelectedItem().getValue().toString());
+		fillComboBox(this.paymentType, paymentInstruction.getPaymentType(), PennantStaticListUtil.getPaymentTypes(),
+				"");
 
-		} else {
-			fillComboBox(this.paymentType, paymentInstruction.getPaymentType(), PennantStaticListUtil.getPaymentTypes(),
-					"");
-		}
 		if (paymentInstruction.getPartnerBankId() != Long.MIN_VALUE && paymentInstruction.getPartnerBankId() != 0) {
 			this.partnerBankID.getButton().setDisabled(isReadOnly("PaymentInstructionDialog_partnerBankID"));
 			this.partnerBankID.setAttribute("partnerBankId", paymentInstruction.getPartnerBankId());
 			this.partnerBankID.setValue(paymentInstruction.getPartnerBankCode(),
 					paymentInstruction.getPartnerBankName());
 		}
+
+		this.issuingBank.getButton().setDisabled(true);
+		this.issuingBank.setAttribute("issuingBank", paymentInstruction.getPartnerBankId());
+		this.issuingBank.setValue(paymentInstruction.getPartnerBankCode(), paymentInstruction.getPartnerBankName());
 
 		this.paymentAmount.setValue(
 				PennantApplicationUtil.formateAmount(this.paymentInstruction.getPaymentAmount(), ccyFormatter));
@@ -411,10 +412,6 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.acctNumber.setValue(paymentInstruction.getAccountNo());
 		this.acctHolderName.setValue(paymentInstruction.getAcctHolderName());
 		this.phoneNumber.setValue(paymentInstruction.getPhoneNumber());
-
-		this.issuingBank.setAttribute("issuingBank", paymentInstruction.getIssuingBank());
-		this.issuingBank.setValue(StringUtils.trimToEmpty(paymentInstruction.getIssuingBank()),
-				StringUtils.trimToEmpty(paymentInstruction.getIssuingBankName()));
 
 		this.chequeOrDDumber.setValue(paymentInstruction.getFavourNumber());
 		this.favouringName.setValue(paymentInstruction.getFavourName());
@@ -436,7 +433,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	public PaymentInstruction doWriteComponentsToBean(PaymentInstruction paymentInstruction) {
 		logger.debug(Literal.ENTERING);
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<WrongValueException> wve = new ArrayList<>();
 
 		if (this.paymentHeader.isNewRecord()) {
 			paymentInstruction.setStatus(DisbursementConstants.STATUS_NEW);
@@ -781,23 +778,6 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	public void onFulfill$issuingBank(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-
-		Object dataObject = issuingBank.getObject();
-		if (dataObject instanceof String) {
-			this.issuingBank.setValue(dataObject.toString());
-		} else {
-			BankDetail details = (BankDetail) dataObject;
-			if (details != null) {
-				this.issuingBank.setAttribute("issuingBank", details.getBankCode());
-				this.issuingBank.setValue(details.getBankCode());
-				this.issuingBank.setDescription(details.getBankName());
-			}
-		}
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
 	/**
 	 * Change the partnerBankID for the Account on changing the finance Branch
 	 * 
@@ -953,6 +933,10 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			this.partnerBankID.setAttribute("partnerBankAcType", fpb.getAccountType());
 			this.partnerBankID.setValue(fpb.getPartnerBankCode());
 			this.partnerBankID.setDescription(fpb.getPartnerBankName());
+			this.partnerBankID.setReadonly(true);
+
+			this.issuingBank.setValue(fpb.getPartnerBankCode());
+			this.issuingBank.setDescription(fpb.getPartnerBankName());
 		}
 
 		this.partnerBankID.setFilters(filters);
@@ -993,6 +977,10 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 	public void setPaymentHeaderDialogCtrl(PaymentHeaderDialogCtrl paymentHeaderDialogCtrl) {
 		this.paymentHeaderDialogCtrl = paymentHeaderDialogCtrl;
+	}
+
+	public void setFeeRefundHeaderDialogCtrl(FeeRefundHeaderDialogCtrl feeRefundHeaderDialogCtrl) {
+		this.feeRefundHeaderDialogCtrl = feeRefundHeaderDialogCtrl;
 	}
 
 	public PaymentHeader getPaymentHeader() {

@@ -21,7 +21,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.feerefundqueue.FeeRefundProcessQueuing;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feerefund.FeeRefundDetailDAO;
 import com.pennant.backend.dao.feerefund.FeeRefundHeaderDAO;
@@ -48,8 +47,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennant.pff.feerefund.FeeRefundUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
 public class FeeRefundApprovalThreadProcess {
@@ -212,104 +212,86 @@ public class FeeRefundApprovalThreadProcess {
 
 		Date appDate = SysParamUtil.getAppDate();
 
-		// Payment Header
-		PaymentHeader paymentHeader = new PaymentHeader();
-		paymentHeader.setFinReference(frh.getFinReference());
-		paymentHeader.setFinID(frh.getFinID());
-		paymentHeader.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
-		paymentHeader.setCreatedOn(appDate);
-		paymentHeader.setApprovedOn(appDate);
-		paymentHeader.setStatus(RepayConstants.PAYMENT_APPROVE);
-		paymentHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		paymentHeader.setNewRecord(true);
-		paymentHeader.setVersion(1);
-		paymentHeader.setUserDetails(frh.getUserDetails());
-		paymentHeader.setLastMntBy(frh.getLastMntBy());
-		paymentHeader.setLastMntOn(frh.getLastMntOn());
-		paymentHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		paymentHeader.setPaymentId(paymentHeaderDAO.getNewPaymentHeaderId());
-		paymentHeader.setFinSource(FinanceConstants.FEE_REFUND_APPROVAL);
+		PaymentHeader ph = new PaymentHeader();
+		ph.setFinReference(frh.getFinReference());
+		ph.setFinID(frh.getFinID());
+		ph.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
+		ph.setCreatedOn(appDate);
+		ph.setApprovedOn(appDate);
+		ph.setStatus(RepayConstants.PAYMENT_APPROVE);
+		ph.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		ph.setNewRecord(true);
+		ph.setVersion(1);
+		ph.setUserDetails(frh.getUserDetails());
+		ph.setLastMntBy(frh.getLastMntBy());
+		ph.setLastMntOn(frh.getLastMntOn());
+		ph.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		ph.setPaymentId(paymentHeaderDAO.getNewPaymentHeaderId());
+		ph.setFinSource(FinanceConstants.FEE_REFUND_APPROVAL);
 
-		// Payment Details
-		List<PaymentDetail> paymentDetailList = new ArrayList<PaymentDetail>();
+		List<PaymentDetail> paymentDetailList = new ArrayList<>();
 
-		// Payment Instruction Details preparation
 		for (FeeRefundDetail frd : frdList) {
-			PaymentDetail paymentDetail = new PaymentDetail();
+			PaymentDetail pd = new PaymentDetail();
 			FeeType payableFeeType = feeTypeDAO.getFeeTypeById(frd.getPayableFeeTypeID(), "");
-			paymentDetail.setPaymentId(paymentHeader.getPaymentId());
-			paymentDetail.setAmount(frd.getRefundAmount());
-			paymentHeader.setPaymentAmount(frd.getRefundAmount());
-			paymentDetail.setReferenceId(frd.getPayableID());
-			paymentDetail.setAvailableAmount(frd.getRefundAmount());
-			paymentDetail.setAmountType(String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE));
-			paymentDetail.setFeeTypeCode(frd.getPayableFeeTypeCode());
-			paymentDetail.setFeeTypeDesc(frd.getPayableFeeTypeDesc());
-			paymentDetail.setRecordType(PennantConstants.RCD_ADD);
-			paymentDetail.setNewRecord(true);
-			paymentDetail.setVersion(1);
-			paymentDetail.setUserDetails(frh.getUserDetails());
-			paymentDetail.setLastMntBy(frh.getLastMntBy());
-			paymentDetail.setLastMntOn(frh.getLastMntOn());
-			paymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			paymentDetail.setApiRequest(false);
-			paymentDetail.setTaxApplicable(payableFeeType.isTaxApplicable());
-			paymentDetail.setTaxComponent(payableFeeType.getTaxComponent());
-			paymentDetail.setFinSource(FinanceConstants.FEE_REFUND_APPROVAL);
-			paymentDetailList.add(paymentDetail);
+			pd.setPaymentId(ph.getPaymentId());
+			pd.setAmount(frd.getRefundAmount());
+			ph.setPaymentAmount(frd.getRefundAmount());
+			pd.setReferenceId(frd.getPayableID());
+			pd.setAvailableAmount(frd.getRefundAmount());
+			pd.setAmountType(String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE));
+			pd.setFeeTypeCode(frd.getPayableFeeTypeCode());
+			pd.setFeeTypeDesc(frd.getPayableFeeTypeDesc());
+			pd.setRecordType(PennantConstants.RCD_ADD);
+			pd.setNewRecord(true);
+			pd.setVersion(1);
+			pd.setUserDetails(frh.getUserDetails());
+			pd.setLastMntBy(frh.getLastMntBy());
+			pd.setLastMntOn(frh.getLastMntOn());
+			pd.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			pd.setApiRequest(false);
+			pd.setTaxApplicable(payableFeeType.isTaxApplicable());
+			pd.setTaxComponent(payableFeeType.getTaxComponent());
+			pd.setFinSource(FinanceConstants.FEE_REFUND_APPROVAL);
+			paymentDetailList.add(pd);
 		}
 
-		// Payment Instructions
-		PaymentInstruction paymentInstruction = new PaymentInstruction();
-		paymentInstruction.setPostDate(appDate);
-		paymentInstruction.setPaymentType(fri.getPaymentType());
-		paymentInstruction.setPaymentAmount(fri.getPaymentAmount());
-		paymentInstruction.setBankBranchCode(fri.getBankBranchCode());
-		paymentInstruction.setBankBranchId(fri.getBankBranchId());
-		paymentInstruction.setAcctHolderName(fri.getAcctHolderName());
-		paymentInstruction.setAccountNo(fri.getAccountNo());
-		paymentInstruction.setPhoneNumber(fri.getPhoneNumber());
-		paymentInstruction.setValueDate(appDate);
-		paymentInstruction.setPaymentCCy(fri.getPaymentCCy());
-		paymentInstruction.setPartnerBankCode(fri.getPartnerBankCode());
-		paymentInstruction.setPartnerBankId(fri.getPartnerBankId());
-		paymentInstruction.setStatus(DisbursementConstants.STATUS_NEW);
-		paymentInstruction.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		paymentInstruction.setRecordType(PennantConstants.RCD_ADD);
-		paymentInstruction.setNewRecord(true);
-		paymentInstruction.setVersion(1);
-		paymentInstruction.setUserDetails(frh.getUserDetails());
-		paymentInstruction.setLastMntBy(frh.getLastMntBy());
-		paymentInstruction.setLastMntOn(frh.getLastMntOn());
+		PaymentInstruction pi = FeeRefundUtil.getPI(fri);
+		pi.setValueDate(appDate);
+		pi.setStatus(DisbursementConstants.STATUS_NEW);
+		pi.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		pi.setRecordType(PennantConstants.RCD_ADD);
+		pi.setNewRecord(true);
+		pi.setVersion(1);
+		pi.setUserDetails(frh.getUserDetails());
+		pi.setLastMntBy(frh.getLastMntBy());
+		pi.setLastMntOn(frh.getLastMntOn());
 
-		// Extra validation fields
-		paymentInstruction.setPartnerBankAcType(fri.getPartnerBankAcType());
-
-		paymentHeader.setPaymentDetailList(paymentDetailList);
-		paymentHeader.setPaymentInstruction(paymentInstruction);
+		ph.setPaymentDetailList(paymentDetailList);
+		ph.setPaymentInstruction(pi);
 
 		logger.debug("Leaving");
-		return paymentHeader;
+		return ph;
 	}
 
 	private AuditHeader getAuditHeader(PaymentHeader paymentHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, paymentHeader.getBefImage(), paymentHeader);
 		return new AuditHeader(String.valueOf(paymentHeader.getPaymentId()),
 				String.valueOf(paymentHeader.getPaymentId()), null, null, auditDetail, paymentHeader.getUserDetails(),
-				new HashMap<String, List<ErrorDetail>>());
+				new HashMap<>());
 	}
 
 	private AuditHeader getAuditHeader(ManualAdvise aManualAdvise, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aManualAdvise.getBefImage(), aManualAdvise);
 		return new AuditHeader(String.valueOf(aManualAdvise.getAdviseID()), String.valueOf(aManualAdvise.getAdviseID()),
-				null, null, auditDetail, aManualAdvise.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				null, null, auditDetail, aManualAdvise.getUserDetails(), new HashMap<>());
 	}
 
 	private void updateFailed(long uploadHeaderId, String errorLog) {
 		FeeRefundProcessQueuing auQueuing = new FeeRefundProcessQueuing();
 
 		auQueuing.setFeeRefundHeaderId(uploadHeaderId);
-		auQueuing.setEndTime(DateUtility.getSysDate());
+		auQueuing.setEndTime(DateUtil.getSysDate());
 		auQueuing.setErrorLog(errorLog);
 		projectedFeeRefundProcessDAO.updateFailedQueue(auQueuing);
 	}
@@ -322,7 +304,6 @@ public class FeeRefundApprovalThreadProcess {
 		this.transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		this.transactionDefinition.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
 
-		// FIXME: PV change the time to 60 seocnds after code review completed
 		this.transactionDefinition.setTimeout(600);
 
 	}

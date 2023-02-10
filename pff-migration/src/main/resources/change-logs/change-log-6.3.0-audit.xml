@@ -1147,4 +1147,8 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="TK#2566_109" author="Gopal.p">
+		<modifyDataType tableName="AdtFee_Refund_Instructions" columnName="PaymentType" newDataType="varchar(8)"/>
+	</changeSet>
+	
 </databaseChangeLog>

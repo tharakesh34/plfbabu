@@ -12427,5 +12427,10 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="TK#2566_112" author="Gopal.p">
+		<modifyDataType tableName="Fee_Refund_Instructions" columnName="PaymentType" newDataType="varchar(8)"/>
+		<modifyDataType tableName="Fee_Refund_Instructions_Temp" columnName="PaymentType" newDataType="varchar(8)"/>
+	</changeSet>
+	
 </databaseChangeLog> 

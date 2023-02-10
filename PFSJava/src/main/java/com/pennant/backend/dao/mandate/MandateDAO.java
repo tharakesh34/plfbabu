@@ -117,16 +117,8 @@ public interface MandateDAO {
 
 	List<Mandate> getMandatesForAutoSwap(long finID);
 
-	PaymentInstruction getBeneficiatyDetailsByMandateId(Long mandateId);
+	PaymentInstruction getBeneficiary(long mandateId);
 
-	PaymentInstruction getBeneficiatyDetailsByChequeDetailsId(Long chequeDetailsID);
-
-	List<Long> getMandateIdList(long finID);
-
-	List<Long> getChequeDetailIDByAppDate(long finID, Date appDate);
-
-	List<PaymentInstruction> getBeneficiatyDetailsByFinId(long finID);
-
-	List<PaymentInstruction> getBeneficiatyDetailsRefundCheque(long finID);
+	Long getMandateId(long finID);
 
 }

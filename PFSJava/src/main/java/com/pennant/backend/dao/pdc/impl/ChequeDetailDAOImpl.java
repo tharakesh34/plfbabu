@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -40,7 +41,9 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -378,15 +381,12 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 	}
 
 	@Override
-	public List<ChequeDetail> getChequeDetailIDByFinId(long finID) {
-		StringBuilder sql = new StringBuilder("Select cd.HeaderID, cd.ChequeDetailsID");
-		sql.append(" From ChequeHeader ch");
-		sql.append(" Inner Join ChequeDetail cd on cd.HeaderID = ch.HeaderID");
-		sql.append(" Where ch.FinID = ? and cd.ChequeType = ? and cd.ChequeStatus != ?");
+	public Long getChequeDetailID(long finID) {
+		String sql = "Select cd.ChequeDetailsID From ChequeHeader ch Inner Join ChequeDetail cd on cd.HeaderID = ch.HeaderID Where ch.FinID = ? and cd.ChequeType = ? and cd.ChequeStatus != ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
-		List<ChequeDetail> list = this.jdbcOperations.query(sql.toString(), ps -> {
+		List<ChequeDetail> list = this.jdbcOperations.query(sql, ps -> {
 			int index = 0;
 			ps.setLong(++index, finID);
 			ps.setString(++index, InstrumentType.PDC.name());
@@ -394,13 +394,90 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		}, (rs, rowNum) -> {
 			ChequeDetail cd = new ChequeDetail();
 
-			cd.setHeaderID(rs.getLong("HeaderID"));
-			cd.setChequeDetailsID(rs.getLong("ChequeDetailsID"));
+			cd.setChequeDetailsID(rs.getLong(1));
+
 			return cd;
 		});
 
-		return list.stream().sorted((l1, l2) -> Long.valueOf(l2.getId()).compareTo(Long.valueOf(l1.getId())))
-				.collect(Collectors.toList());
+		list = list.stream().sorted((l1, l2) -> Long.compare(l2.getId(), l1.getId())).collect(Collectors.toList());
 
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
+		return list.get(0).getChequeDetailsID();
 	}
+
+	@Override
+	public Long getChequeDetailIDByAppDate(long finID, Date appDate) {
+		String sql = "Select cd.ChequeDetailsID From ChequeHeader ch Inner Join ChequeDetail cd on cd.HeaderID = ch.HeaderID Where ch.FinID = ? and cd.ChequeType = ? and ChequeDate > ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		List<ChequeDetail> list = jdbcOperations.query(sql, ps -> {
+			ps.setLong(1, finID);
+			ps.setString(2, InstrumentType.PDC.name());
+			ps.setDate(3, JdbcUtil.getDate(appDate));
+		}, (rs, rowNum) -> {
+			ChequeDetail cd = new ChequeDetail();
+
+			cd.setChequeDetailsID(rs.getLong(1));
+
+			return cd;
+		});
+
+		list = list.stream().sorted((l1, l2) -> Long.compare(l2.getId(), l1.getId())).collect(Collectors.toList());
+
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
+		return list.get(0).getChequeDetailsID();
+	}
+
+	@Override
+	public PaymentInstruction getBeneficiary(long id) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" bb.BankBranchID, bb.BankCode, bb.BranchDesc, bd.BankName, bb.IFSC");
+		sql.append(", pvc.PCCityName, cd.AccountNo, cd.AccHolderName, b.DefChequeDDPrintLoc");
+		sql.append(" From ChequeDetail cd");
+		sql.append(" Inner Join ChequeHeader ch on ch.HeaderID = cd.HeaderID");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = ch.FinID");
+		sql.append(" Inner Join BankBranches bb on bb.BankBranchID = cd.BankBranchID");
+		sql.append(" Inner Join BMTBankDetail bd on bd.BankCode = bb.BankCode");
+		sql.append(" Inner join RMTBranches b on b.BranchCode = fm.FinBranch");
+		sql.append(" Inner Join RMTProvincevsCity pvc on pvc.PCCity = bb.City");
+		sql.append(" Where ChequeDetailsID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PaymentInstruction pi = new PaymentInstruction();
+
+				pi.setBankBranchId(rs.getLong("BankBranchID"));
+				pi.setBankBranchCode(rs.getString("BankCode"));
+				pi.setBranchDesc(rs.getString("BranchDesc"));
+				pi.setBankName(rs.getString("BankName"));
+				pi.setBankBranchIFSC(rs.getString("IFSC"));
+				pi.setpCCityName(rs.getString("PCCityName"));
+				pi.setAccountNo(rs.getString("AccountNo"));
+				pi.setAcctHolderName(rs.getString("AccHolderName"));
+				pi.setIssuingBank(rs.getString("BankCode"));
+				pi.setIssuingBankName(rs.getString("BranchDesc"));
+				pi.setPartnerBankAcType(rs.getString("BranchDesc"));
+				pi.setPartnerBankAc(rs.getString("AccountNo"));
+
+				pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_CHEQUE);
+				pi.setFavourName(rs.getString("AccHolderName"));
+				pi.setPrintingLoc(rs.getString("DefChequeDDPrintLoc"));
+
+				return pi;
+			}, id);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+		return null;
+	}
+
 }

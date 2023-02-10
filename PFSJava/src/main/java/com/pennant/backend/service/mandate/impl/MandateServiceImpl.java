@@ -73,7 +73,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -2479,32 +2478,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	@Override
 	public PaymentInstruction getBeneficiatyDetailsByMandateId(Long mandateId) {
-		return mandateDAO.getBeneficiatyDetailsByMandateId(mandateId);
-	}
-
-	@Override
-	public List<ChequeDetail> getChequeDetailIDByFinId(long finID) {
-		return chequeDetailDAO.getChequeDetailIDByFinId(finID);
-	}
-
-	@Override
-	public PaymentInstruction getBeneficiatyDetailsByChequeDetailsId(long chequeDetailsID) {
-		return mandateDAO.getBeneficiatyDetailsByChequeDetailsId(chequeDetailsID);
-	}
-
-	@Override
-	public List<Long> getMandateIDByFinId(long finID) {
-		return mandateDAO.getMandateIdList(finID);
-	}
-
-	@Override
-	public List<Long> getChequeDetailIDByAppDate(long finID, Date appDate) {
-		return mandateDAO.getChequeDetailIDByAppDate(finID, appDate);
-	}
-
-	@Override
-	public List<PaymentInstruction> getBeneficiatyDetailsByFinId(long finID) {
-		return mandateDAO.getBeneficiatyDetailsByFinId(finID);
+		return mandateDAO.getBeneficiary(mandateId);
 	}
 
 	@Autowired

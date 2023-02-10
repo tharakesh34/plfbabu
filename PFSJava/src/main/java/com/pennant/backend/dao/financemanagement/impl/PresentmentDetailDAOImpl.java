@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -2274,22 +2275,19 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	@Override
-	public List<PresentmentDetail> getPresentmentIdByFinId(long finID) {
-		StringBuilder sql = new StringBuilder("Select pd.ID, pd.MandateID");
-		sql.append(" From PresentmentHeader ph");
-		sql.append(" Inner Join PresentmentDetails_AView pd on pd.PresentmentID = ph.ID");
-		sql.append(" Where pd.FinID = ? and pd.MandateType in (?, ?, ?, ?) and pd.Status not in (?, ?)");
+	public Long getLatestMandateId(long finID) {
+		String sql = "Select pd.ID, pd.MandateID From PresentmentHeader ph Inner Join PresentmentDetails pd on pd.PresentmentID = ph.ID Where pd.FinID = ? and ph.MandateType in (?, ?, ?, ?) and pd.Status not in (?, ?)";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
-		List<PresentmentDetail> list = this.jdbcOperations.query(sql.toString(), ps -> {
+		List<PresentmentDetail> list = this.jdbcOperations.query(sql, ps -> {
 			int index = 0;
 
 			ps.setLong(++index, finID);
-			ps.setString(++index, "NACH");
-			ps.setString(++index, "SI");
-			ps.setString(++index, "EMANDATE");
-			ps.setString(++index, "PDC");
+			ps.setString(++index, InstrumentType.NACH.code());
+			ps.setString(++index, InstrumentType.SI.code());
+			ps.setString(++index, InstrumentType.EMANDATE.name());
+			ps.setString(++index, InstrumentType.PDC.code());
 			ps.setString(++index, "I");
 			ps.setString(++index, "F");
 		}, (rs, rowNum) -> {
@@ -2301,8 +2299,14 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			return pd;
 		});
 
-		return list.stream().sorted((l1, l2) -> Long.valueOf(l2.getId()).compareTo(Long.valueOf(l1.getId())))
+		list = list.stream().sorted((l1, l2) -> Long.valueOf(l2.getId()).compareTo(Long.valueOf(l1.getId())))
 				.collect(Collectors.toList());
+
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
+		return list.get(0).getMandateId();
 	}
 
 }

@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
@@ -55,5 +56,9 @@ public interface ChequeDetailDAO {
 
 	boolean isRelisedAllCheques(long finId);
 
-	List<ChequeDetail> getChequeDetailIDByFinId(long finID);
+	Long getChequeDetailID(long finID);
+
+	Long getChequeDetailIDByAppDate(long finID, Date appDate);
+
+	PaymentInstruction getBeneficiary(long id);
 }
