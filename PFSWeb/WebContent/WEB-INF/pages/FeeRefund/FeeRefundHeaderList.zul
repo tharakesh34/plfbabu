@@ -99,11 +99,6 @@
 									<extendedcombobox id="branchCode" removeSpace="true"/>
 								</row>
 								<row>
-									<label id="label_FeeRefundHeaderList_FeeRefundClusterType" value="${c:l('label_FeeRefundHeaderList_FeeRefundClusterType.value')}" />
-									<listbox id="sortOperator_FeeRefundClusterType" width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<extendedcombobox id="clusterType" removeSpace="true"/>
-
 									<label id="label_FeeRefundHeaderList_FeeRefundClusterName" value="${c:l('label_FeeRefundHeaderList_FeeRefundClusterName.value')}" />
 									<listbox id="sortOperator_FeeRefundClusterName" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />

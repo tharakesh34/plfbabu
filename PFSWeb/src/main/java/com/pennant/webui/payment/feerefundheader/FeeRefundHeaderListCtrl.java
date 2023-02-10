@@ -102,7 +102,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.payment/PaymentHeader/PaymentHeaderList.zul file.
+ * This is the controller class for the /WEB-INF/pages/FeeRefund/FeeRefundHeaderList.zul file.
  * 
  */
 public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
@@ -128,14 +128,13 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	protected Button button_FeeRefundHeaderList_PrintList;
 
 	// Search Fields
-	protected Uppercasebox custCif; // autowired
+	protected Uppercasebox custCif;
 	protected Textbox custName;
-	protected ExtendedCombobox finReference; // autowired
-	protected ExtendedCombobox finType; // autowired
-	protected ExtendedCombobox entityCode; // autowired
-	protected ExtendedCombobox branchCode; // autowired
-	protected ExtendedCombobox clusterType; // autowired
-	protected ExtendedCombobox clusterName; // autowired
+	protected ExtendedCombobox finReference;
+	protected ExtendedCombobox finType;
+	protected ExtendedCombobox entityCode;
+	protected ExtendedCombobox branchCode;
+	protected ExtendedCombobox clusterName;
 
 	protected Listbox sortOperator_FeeRefundCustCif;
 	protected Listbox sortOperator_FeeRefundCustName;
@@ -143,7 +142,6 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	protected Listbox sortOperator_FeeRefundFinType;
 	protected Listbox sortOperator_FeeRefundEntity;
 	protected Listbox sortOperator_FeeRefundBranchCode;
-	protected Listbox sortOperator_FeeRefundClusterType;
 	protected Listbox sortOperator_FeeRefundClusterName;
 
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
@@ -222,6 +220,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 			registerButton(button_FeeRefundHeaderList_NewFeeRefundHeader,
 					"button_FeeRefundHeaderList_NewFeeRefundHeader", false);
 		}
+
 		registerField("Id");
 		registerField("FinID");
 		registerField("CustCif", listheader_FeeRefundCustCif, SortOrder.NONE, custCif, sortOperator_FeeRefundCustCif,
@@ -237,6 +236,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		registerField("BranchDesc");
 		registerField("BranchCode", branchCode, SortOrder.NONE, sortOperator_FeeRefundBranchCode, Operators.STRING);
 		registerField("EntityCode", entityCode, SortOrder.NONE, sortOperator_FeeRefundEntity, Operators.STRING);
+		registerField("ClusterId", clusterName, SortOrder.NONE, sortOperator_FeeRefundClusterName, Operators.NUMERIC);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -308,18 +308,13 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		this.branchCode.setValueColumn("BranchCode");
 		this.branchCode.setDescColumn("BranchDesc");
 		this.branchCode.setValidateColumns(new String[] { "BranchCode" });
-		// finReference
-		this.clusterType.setMaxlength(20);
-		this.clusterType.setTextBoxWidth(120);
-		this.clusterType.setModuleName("ClusterHierarchy");
-		this.clusterType.setValueColumn("ClusterType");
-		this.clusterType.setValidateColumns(new String[] { "ClusterType" });
 
 		this.clusterName.setMaxlength(50);
 		this.clusterName.setTextBoxWidth(120);
 		this.clusterName.setModuleName("Cluster");
-		this.clusterName.setValueColumn("Name");
-		this.clusterName.setValidateColumns(new String[] { "Name" });
+		this.clusterName.setValueColumn("Id");
+		this.clusterName.setDescColumn("Code");
+		this.clusterName.setValidateColumns(new String[] { "ID" });
 
 		logger.debug(Literal.LEAVING);
 	}

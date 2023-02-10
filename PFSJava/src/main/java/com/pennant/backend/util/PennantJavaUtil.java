@@ -3121,7 +3121,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("Cluster",
 				new ModuleMapping("Cluster", Cluster.class, new String[] { "Clusters", "Clusters_aview" }, CLUSTERS,
-						new String[] { "Code", "Name", "ClusterType" }, null, 600));
+						new String[] { "Id", "Code", "Name", "ClusterType" }, null, 600));
 
 		// FIX ME
 		// It's temporary fix related to workflow once workflow related issue fixed. we required to change the workflow

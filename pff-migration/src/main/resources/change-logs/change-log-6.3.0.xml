@@ -12032,7 +12032,7 @@
 			constraintName="pk_fee_refund_details_t_id" />
 	</changeSet>
 
-	<changeSet id="TK#2566_110_pre" author="sampath.d" dbms="postgresql">
+	<changeSet id="TK#2566_110.01_pre" author="sampath.d" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fee_refund_header_aview');
@@ -12040,7 +12040,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2566_110" author="sampath.d">
+	<changeSet id="TK#2566_110.01" author="sampath.d">
 		<createView viewName="FEE_REFUND_HEADER_AVIEW" replaceIfExists="true">
 			<![CDATA[
 			    SELECT FRH.ID
@@ -12057,6 +12057,7 @@
 					, C.CUSTCOREBANK
 					, B.BRANCHCODE
 					, B.BRANCHDESC
+					, B.CLUSTERID
 					, FRH.VERSION
 					, FRH.CREATEDBY
 					, FRH.CREATEDON
@@ -12079,7 +12080,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="TK#2566_110_post" author="sampath.d" dbms="postgresql">
+	<changeSet id="TK#2566_110.01_post" author="sampath.d" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fee_refund_header_aview');
@@ -12087,7 +12088,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2566.111.1_pre" author="sampath.d" dbms="postgresql">
+	<changeSet id="TK#2566.111.01_pre" author="sampath.d" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fee_refund_header_view');
@@ -12095,7 +12096,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2566.111.1" author="sampath.d">
+	<changeSet id="TK#2566.111.01" author="sampath.d">
 		<createView viewName="FEE_REFUND_HEADER_VIEW" replaceIfExists="true">
 			<![CDATA[
 			 	SELECT FRH.ID
@@ -12112,6 +12113,7 @@
 					, C.CUSTCOREBANK
 					, B.BRANCHCODE
 					, B.BRANCHDESC
+					, B.CLUSTERID
           			, SDD.ENTITYCODE
 					, FRH.VERSION
 					, FRH.CREATEDBY
@@ -12148,6 +12150,7 @@
 					, C.CUSTCOREBANK
 					, B.BRANCHCODE
 					, B.BRANCHDESC
+					, B.CLUSTERID
           			, SDD.ENTITYCODE
 					, FRH.VERSION
 					, FRH.CREATEDBY
@@ -12174,7 +12177,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="TK#2566.111.1_post" author="sampath.d" dbms="postgresql">
+	<changeSet id="TK#2566.111.01_post" author="sampath.d" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fee_refund_header_view');
