@@ -84,7 +84,7 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 
 		try {
 			this.feeRefundHeader = (FeeRefundHeader) arguments.get("feeRefundHeader");
-			this.feeRefundHeaderListCtrl = (FeeRefundHeaderListCtrl) arguments.get("feeRefundheaderListCtrl");
+			this.feeRefundHeaderListCtrl = (FeeRefundHeaderListCtrl) arguments.get("feeRefundHeaderListCtrl");
 			if (this.feeRefundHeader == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
