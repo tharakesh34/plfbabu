@@ -550,6 +550,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
 
 			pi = refundBeneficiary.getBeneficiary(this.financeMain.getFinID(), appDate, alwRefundByCheque);
+
+			if (pi == null) {
+				pi = new PaymentInstruction();
+			}
 		} else {
 			pi = FeeRefundUtil.getPI(aPaymentHeader, pi);
 		}
