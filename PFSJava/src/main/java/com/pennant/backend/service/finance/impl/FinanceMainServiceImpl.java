@@ -197,4 +197,9 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
+
+	@Override
+	public String getFinanceMainByRcdMaintenance(long finID) {
+		return financeMainDAO.getFinanceMainByRcdMaintenance(finID);
+	}
 }

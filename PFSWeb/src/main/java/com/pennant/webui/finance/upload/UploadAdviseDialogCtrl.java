@@ -832,7 +832,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			}
 
 			if (manualAdviseService.isManualAdviseExist(fm.getFinID())) {
-				reason.append("Not allowed to maintain the LAN as It is already initiated for Manual Advise.");
+				reason.append(Labels.getLabel("Finance_Inprogresss_ManualAdvise"));
 				error = true;
 			}
 
@@ -841,13 +841,11 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				error = true;
 			}
 
-			/*
-			 * FinanceMain finMain1 = financeMainService.getFinanceMainDetails(finReference, "_temp"); if (finMain1 !=
-			 * null && (FinServiceEvent.ADDDISB.equals(finMain1. getRcdMaintainSts()) ||
-			 * FinServiceEvent.RATECHG.equals(finMain1. getRcdMaintainSts()) ||
-			 * FinServiceEvent.EARLYRPY.equals(finMain1. getRcdMaintainSts()))) { reason =
-			 * "Loan Reference is in rescheduling process,upload isn't allowed." ; error = true; }
-			 */
+			String rcdMntnSts = financeMainService.getFinanceMainByRcdMaintenance(fm.getFinID());
+			if (StringUtils.isNotEmpty(rcdMntnSts)) {
+				reason.append(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
+				error = true;
+			}
 		}
 
 		adviseUpload.setNewRecord(true);
