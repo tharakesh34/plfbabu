@@ -3729,40 +3729,6 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="TK#2644_pre" author="saikiran.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'finexcessamount_lovview');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="TK#2644" author="saikiran.n">
-		<createView viewName="FINEXCESSAMOUNT_LOVVIEW" replaceIfExists="true">
-			<![CDATA[
-				SELECT EXCESSID
-					, FINID
-					, FINREFERENCE
-					, AMOUNTTYPE
-					, cast(round(AMOUNT / 100,2) as numeric(36,2)) AMOUNT
-					, cast(round(UTILISEDAMT / 100,2) as numeric(36,2)) UTILISEDAMT
-					, cast(round(RESERVEDAMT / 100,2) as numeric(36,2)) RESERVEDAMT
-					, cast(round(BALANCEAMT / 100,2) as numeric(36,2)) BALANCEAMT
-					, RECEIPTID
-					, VALUEDATE
-				FROM FINEXCESSAMOUNT
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="TK#2644__post" author="saikiran.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'finexcessamount_lovview');
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12464,6 +12430,42 @@
 		<addColumn tableName="MANUAL_KNOCKOFF_UPLOAD">
 			<column name="ReceiptID" type="bigint" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#2644.1_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finexcessamount_lovview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2644.1" author="saikiran.n">
+		<createView viewName="FINEXCESSAMOUNT_LOVVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FE.EXCESSID
+					, FE.FINID
+					, FE.FINREFERENCE
+					, FE.AMOUNTTYPE
+					, cast(round(FE.AMOUNT / 100,2) as numeric(36,2)) AMOUNT
+					, cast(round(FE.UTILISEDAMT / 100,2) as numeric(36,2)) UTILISEDAMT
+					, cast(round(FE.RESERVEDAMT / 100,2) as numeric(36,2)) RESERVEDAMT
+					, cast(round(FE.BALANCEAMT / 100,2) as numeric(36,2)) BALANCEAMT
+					, FE.RECEIPTID
+					, FE.VALUEDATE
+					, FRH.RECEIPTMODESTATUS 
+				FROM FINEXCESSAMOUNT
+				LEFT JOIN FINRECEIPTHEADER_TEMP FRH ON FRH.FINID = FE.FINID AND FE.RECEIPTID = FRH.RECEIPTID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="TK#2644.1_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finexcessamount_lovview');
+			]]>
+		</sql>
 	</changeSet>
 	
 </databaseChangeLog> 
