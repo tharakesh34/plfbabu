@@ -12437,9 +12437,33 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="TK#2566_112_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fee_refund_instructions');
+				select deps_save_and_drop_dependencies ('plf', 'fee_refund_instructions_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="TK#2566_112" author="Gopal.p">
 		<modifyDataType tableName="Fee_Refund_Instructions" columnName="PaymentType" newDataType="varchar(8)"/>
 		<modifyDataType tableName="Fee_Refund_Instructions_Temp" columnName="PaymentType" newDataType="varchar(8)"/>
+	</changeSet>
+	
+	<changeSet id="TK#2566_112_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fee_refund_instructions');
+				select deps_restore_dependencies ('plf', 'fee_refund_instructions_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#218120" author="Gopal.p">
+		<addColumn tableName="MANUAL_KNOCKOFF_UPLOAD">
+			<column name="ReceiptID" type="bigint" />
+		</addColumn>
 	</changeSet>
 	
 </databaseChangeLog> 
