@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.pff.upload.model.UploadDetails;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -19,6 +21,9 @@ public class ManualKnockOffUpload extends UploadDetails {
 	private BigDecimal amount;
 	private List<ManualKnockOffUpload> allocations = new ArrayList<>();
 	private LoggedInUser userDetails;
+	private List<FinExcessAmount> excessList = new ArrayList<>();
+	private ManualAdvise manualAdvise;
+	private Long receiptID;
 
 	public ManualKnockOffUpload() {
 		super();
@@ -94,6 +99,30 @@ public class ManualKnockOffUpload extends UploadDetails {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public List<FinExcessAmount> getExcessList() {
+		return excessList;
+	}
+
+	public void setExcessList(List<FinExcessAmount> excessList) {
+		this.excessList = excessList;
+	}
+
+	public ManualAdvise getManualAdvise() {
+		return manualAdvise;
+	}
+
+	public void setManualAdvise(ManualAdvise manualAdvise) {
+		this.manualAdvise = manualAdvise;
+	}
+
+	public Long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(Long receiptID) {
+		this.receiptID = receiptID;
 	}
 
 }

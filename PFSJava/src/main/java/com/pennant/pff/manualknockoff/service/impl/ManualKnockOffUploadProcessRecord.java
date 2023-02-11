@@ -53,38 +53,40 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 		Cell rowCell = null;
 
 		for (Cell cell : headerRow) {
+			rowCell = row.getCell(readColumn);
+
+			if (cell.getColumnIndex() > 4) {
+				break;
+			}
+
+			readColumn = cell.getColumnIndex() + 1;
+			if (rowCell == null) {
+				continue;
+			}
+
 			switch (cell.getColumnIndex()) {
 			case 0:
-				rowCell = row.getCell(readColumn);
 				mku.setReference(rowCell.toString());
-				readColumn = cell.getColumnIndex() + 1;
 				break;
 			case 1:
-				rowCell = row.getCell(readColumn);
 				mku.setExcessType(rowCell.toString());
-				readColumn = cell.getColumnIndex() + 1;
 				break;
 			case 2:
-				rowCell = row.getCell(readColumn);
 				mku.setAllocationType(rowCell.toString());
-				readColumn = cell.getColumnIndex() + 1;
 				break;
 			case 3:
-				rowCell = row.getCell(readColumn);
 				String strAmount = rowCell.toString();
 				if (strAmount != null) {
 					mku.setReceiptAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
 				}
-				readColumn = cell.getColumnIndex() + 1;
 				break;
 			case 4:
-				rowCell = row.getCell(readColumn);
-				if (rowCell != null) {
-					String strAdviseID = rowCell.toString();
-					if (strAdviseID != null && StringUtils.isNotEmpty(strAdviseID)) {
-						mku.setAdviseId(Long.valueOf(strAdviseID));
-					}
+				String strAdviseID = rowCell.toString();
+				if (strAdviseID != null && StringUtils.isNotEmpty(strAdviseID)) {
+					mku.setAdviseId(Long.valueOf(strAdviseID));
 				}
+				break;
+			default:
 				break;
 			}
 		}
@@ -96,7 +98,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 		int index = 0;
 		for (Cell cell : headerRow) {
 
-			if (index < 5) {
+			if (index < readColumn) {
 				index++;
 				continue;
 			}

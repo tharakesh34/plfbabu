@@ -28,6 +28,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.fee.AdviseType;
@@ -68,6 +69,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		String reference = detail.getReference();
+
+		detail.setReceiptAmount(detail.getReceiptAmount().multiply(new BigDecimal(100)));
 
 		logger.info("Validating the Data for the reference {}", reference);
 
@@ -139,6 +142,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 
+			detail.setExcessList(excessList);
+
 			for (FinExcessAmount fea : excessList) {
 				balanceAmount = balanceAmount.add(fea.getBalanceAmt());
 			}
@@ -154,6 +159,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				setError(detail, ManualKnockOffUploadError.MKOU_1012);
 				return;
 			}
+
+			detail.setManualAdvise(ma);
 
 			balanceAmount = ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()));
 		}
@@ -284,9 +291,10 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		rud.setReceivedDate(appDate);
 		rud.setReceiptAmount(fc.getReceiptAmount());
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rud.setReceiptMode(ReceiptMode.EXCESS);
+		rud.setReceiptMode("E".equals(fc.getExcessType()) ? ReceiptMode.EXCESS : ReceiptMode.PAYABLE);
 		rud.setReceiptPurpose("SP");
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
+		rud.setReceiptChannel(PennantConstants.List_Select);
 
 		List<UploadAlloctionDetail> list = new ArrayList<>();
 		for (ManualKnockOffUpload alloc : fc.getAllocations()) {
@@ -315,6 +323,11 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			fsi.setAdviseId(fc.getAdviseId());
 		}
 
+		if (ReceiptMode.EXCESS.equals(rud.getReceiptMode())) {
+			fsi.setReceiptDetail(null);
+			fsi.setReceiptDetails(receiptService.prepareReceiptDetails(fc.getExcessList(), rud));
+		}
+
 		FinanceDetail fd = receiptService.receiptTransaction(fsi);
 
 		FinScheduleData schd = fd.getFinScheduleData();
@@ -324,6 +337,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			fc.setErrorCode(error.getCode());
 			fc.setErrorDesc(error.getError());
 		} else {
+			fc.setReceiptID(fd.getReceiptId());
 			fc.setProgress(EodConstants.PROGRESS_SUCCESS);
 		}
 	}

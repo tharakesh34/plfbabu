@@ -11,6 +11,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -141,9 +142,11 @@ public interface ReceiptService {
 
 	List<ReceiptAllocationDetail> getReceiptAllocDetail(long finID, String allocType);
 
-	FinReceiptData doApproveReceipt(FinReceiptData rd) throws Exception;
+	FinReceiptData doApproveReceipt(FinReceiptData rd);
 
 	FinReceiptData getExcessAndManualAdviseData(FinReceiptData receiptData, long fromLanFinid);
 
 	boolean doProcessTerminationExcess(FinReceiptData receiptData);
+
+	List<FinReceiptDetail> prepareReceiptDetails(List<FinExcessAmount> excessList, ReceiptUploadDetail rud);
 }

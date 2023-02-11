@@ -227,6 +227,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String moduleType;
 
 	private List<FinanceScheduleDetail> oldShedules = new ArrayList<>();
+	private List<FinReceiptDetail> receiptDetails = new ArrayList<>();
 
 	public String getRestructuringType() {
 		return restructuringType;
@@ -1834,6 +1835,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setKnockOffReceipt(boolean knockOffReceipt) {
 		this.knockOffReceipt = knockOffReceipt;
+	}
+
+	public List<FinReceiptDetail> getReceiptDetails() {
+		return receiptDetails;
+	}
+
+	public void setReceiptDetails(List<FinReceiptDetail> receiptDetails) {
+		this.receiptDetails = receiptDetails;
 	}
 
 }
