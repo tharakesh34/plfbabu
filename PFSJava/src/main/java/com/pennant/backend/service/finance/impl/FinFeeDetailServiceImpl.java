@@ -1366,20 +1366,18 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, fee.getTaxComponent())) {
 
 				// Net Amount
-				BigDecimal totalNetFee = fee.getActualAmount().add(fee.getNetTDS());
+				BigDecimal totalNetFee = fee.getActualAmountOriginal().subtract(waivedAmount).add(fee.getNetTDS());
 
 				taxSplit = GSTCalculator.getInclusiveGST(totalNetFee, taxPercentages);
 
-				cgstTax.setNetTax(taxSplit.getcGST());
-				sgstTax.setNetTax(taxSplit.getsGST());
-				igstTax.setNetTax(taxSplit.getiGST());
-				ugstTax.setNetTax(taxSplit.getuGST());
-				cessTax.setNetTax(taxSplit.getCess());
-
-				fee.setNetAmountOriginal(totalNetFee.subtract(taxSplit.gettGST()));
-				fee.setNetAmountGST(taxSplit.gettGST());
-				fee.setNetAmount(totalNetFee.subtract(fee.getNetTDS()));
-
+				/*
+				 * cgstTax.setNetTax(taxSplit.getcGST()); sgstTax.setNetTax(taxSplit.getsGST());
+				 * igstTax.setNetTax(taxSplit.getiGST()); ugstTax.setNetTax(taxSplit.getuGST());
+				 * cessTax.setNetTax(taxSplit.getCess());
+				 * 
+				 * fee.setNetAmountOriginal(totalNetFee.subtract(taxSplit.gettGST()));
+				 * fee.setNetAmountGST(taxSplit.gettGST()); fee.setNetAmount(totalNetFee.subtract(fee.getNetTDS()));
+				 */
 				BigDecimal netFeeOriginal = taxSplit.getNetAmount();
 				BigDecimal netTGST = taxSplit.gettGST();
 
