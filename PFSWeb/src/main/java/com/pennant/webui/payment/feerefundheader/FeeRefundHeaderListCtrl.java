@@ -313,8 +313,8 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		this.clusterName.setTextBoxWidth(120);
 		this.clusterName.setModuleName("Cluster");
 		this.clusterName.setValueColumn("Id");
-		this.clusterName.setDescColumn("Code");
-		this.clusterName.setValidateColumns(new String[] { "ID" });
+		this.clusterName.setDescColumn("Name");
+		this.clusterName.setValidateColumns(new String[] { "Code", "Name" });
 
 		logger.debug(Literal.LEAVING);
 	}
