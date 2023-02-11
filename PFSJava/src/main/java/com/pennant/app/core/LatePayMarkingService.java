@@ -287,6 +287,8 @@ public class LatePayMarkingService extends ServiceHelper {
 			appDate = SysParamUtil.getAppDate();
 		}
 
+		fm.setAppDate(appDate);
+
 		List<FinODPenaltyRate> penaltyRates = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
 
 		if (CollectionUtils.isEmpty(penaltyRates)) {
@@ -673,8 +675,7 @@ public class LatePayMarkingService extends ServiceHelper {
 	private FinODDetails createODDetails(FinanceScheduleDetail schd, FinanceMain fm, BigDecimal balanceAmount) {
 		FinODDetails finOD = new FinODDetails();
 
-		EventProperties eventProperties = fm.getEventProperties();
-		Date valueDate = eventProperties.getAppDate();
+		Date valueDate = fm.getAppDate();
 
 		FinODPenaltyRate pr = PenaltyCalculator.getEffectiveRate(valueDate, fm.getPenaltyRates());
 
