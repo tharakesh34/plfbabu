@@ -8,7 +8,7 @@ public interface ManualKnockOffUploadDAO {
 
 	List<ManualKnockOffUpload> getDetails(long headerID);
 
-	List<ManualKnockOffUpload> getAllocations(long uploadId);
+	List<ManualKnockOffUpload> getAllocations(long uploadId, long headerID);
 
 	long save(ManualKnockOffUpload mk);
 

@@ -1946,6 +1946,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setWorkflowId(0);
 		rch.setActFinReceipt(fm.isFinIsActive());
 		rch.setValueDate(rd.getValueDate());
+		rd.getFinanceDetail().setReceiptId(rch.getReceiptID());
 
 		if (rch.getReceiptMode() != null && rch.getSubReceiptMode() == null) {
 			rch.setSubReceiptMode(rch.getReceiptMode());
@@ -6086,6 +6087,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 			rcd.setPaymentType(rud.getReceiptMode());
 
+			if (fea.getValueDate() == null) {
+				rcd.setValueDate(rud.getValueDate());
+			}
+			
 			if (partnerBank != null) {
 				rcd.setFundingAc(Long.parseLong(rud.getFundingAc()));
 				rcd.setPartnerBankAc(partnerBank.getAccountNo());

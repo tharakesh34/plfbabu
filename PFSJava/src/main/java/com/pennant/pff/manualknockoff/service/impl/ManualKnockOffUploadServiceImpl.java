@@ -216,7 +216,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				int failRecords = 0;
 
 				for (ManualKnockOffUpload fc : details) {
-					fc.setAllocations(manualKnockOffUploadDAO.getAllocations(fc.getId()));
+					fc.setAllocations(manualKnockOffUploadDAO.getAllocations(fc.getId(), header.getId()));
 					doValidate(header, fc);
 					fc.setUserDetails(header.getUserDetails());
 

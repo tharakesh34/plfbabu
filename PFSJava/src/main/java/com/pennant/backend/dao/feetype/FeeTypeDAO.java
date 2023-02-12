@@ -75,4 +75,6 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 	FeeType getRecvFees(String feeTypeCode);
 
 	boolean isValidFeeType(String feeTypeCode);
+
+	List<String> getReceivableFeeTypes();
 }

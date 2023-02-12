@@ -6209,4 +6209,6 @@
 		scope="prototype">
 		<property name="receiptService" ref="receiptService"/>	
 	</bean>
+	
+	<bean id="crossLoanKnockOffUploadList" class="com.pennant.pff.crossloanknockoff.upload.list.CrossLoanKnockoffUploadListCtrl" parent="uploadList" />
 </beans>

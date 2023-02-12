@@ -17,7 +17,9 @@ public enum UploadTypes {
 
 	EXCESS_TRANSFER("Excess Transfer Screen Details"),
 
-	MANUAL_KNOCKOFF("Manual KnockOff Upload Details Screen");
+	MANUAL_KNOCKOFF("Manual KnockOff Upload Details Screen"),
+
+	CROSS_LOAN_KNOCKOFF("CrossLoan KnockOff Upload Details Screen");
 
 	private String description;
 

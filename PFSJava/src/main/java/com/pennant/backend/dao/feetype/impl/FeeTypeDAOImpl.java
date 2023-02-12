@@ -37,6 +37,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -735,5 +736,16 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, feeTypeCode, 1) > 0;
+	}
+
+	@Override
+	public List<String> getReceivableFeeTypes() {
+		String sql = "Select FeeTypeCode From FeeTypes Where AdviseType = ? and Active = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql, (rs, rownum) -> {
+			return rs.getString(1);
+		}, AdviseType.RECEIVABLE.id(), 1);
 	}
 }

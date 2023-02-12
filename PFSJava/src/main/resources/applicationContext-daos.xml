@@ -13276,4 +13276,10 @@
 	<bean id="crossLoanTransferDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanTransferDAOImpl" parent="sequenceDao"/>
 
 	<bean id="lPPUploadService" class="com.pennant.pff.lpp.service.impl.LPPUploadServiceImpl" parent="aUploadService" />
+	
+	<bean id="crossLoanKnockOffUploadService" class="com.pennant.backend.service.finance.impl.CrossLoanKnockOffUploadServiceImpl" parent="aUploadService" />
+	
+	<bean id="crossLoanKnockoffUploadDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanKnockOffUploadDAOImpl" parent="sequenceDao"/>
+	
+	<bean id="crossLoanKnockOffUploadProcessRecord" class = "com.pennant.backend.service.finance.impl.CrossLoanKnockOffUploadProcessRecord"/>
 </beans>

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.pennant.backend.model.crossloanknockoff.CrossLoanKnockoffUpload;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -40,6 +41,9 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 	private Timestamp createdOn;
 	private long approvedBy;
 	private Timestamp approvedOn;
+	private FinServiceInstruction finServiceInstruction;
+	private String requestSource;
+	private CrossLoanKnockoffUpload crossLoanKnockoffUpload;
 
 	public CrossLoanKnockOff() {
 		super();
@@ -66,6 +70,9 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 		excludeFields.add("paymentType");
 		excludeFields.add("knockoffType");
 		excludeFields.add("receiptModeStatus");
+		excludeFields.add("requestSource");
+		excludeFields.add("finServiceInstruction");
+		excludeFields.add("crossLoanKnockoffUpload");
 
 		return excludeFields;
 	}
@@ -292,6 +299,30 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 
 	public void setApprovedOn(Timestamp approvedOn) {
 		this.approvedOn = approvedOn;
+	}
+
+	public FinServiceInstruction getFinServiceInstruction() {
+		return finServiceInstruction;
+	}
+
+	public void setFinServiceInstruction(FinServiceInstruction finServiceInstruction) {
+		this.finServiceInstruction = finServiceInstruction;
+	}
+
+	public String getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(String requestSource) {
+		this.requestSource = requestSource;
+	}
+
+	public CrossLoanKnockoffUpload getCrossLoanKnockoffUpload() {
+		return crossLoanKnockoffUpload;
+	}
+
+	public void setCrossLoanKnockoffUpload(CrossLoanKnockoffUpload crossLoanKnockoffUpload) {
+		this.crossLoanKnockoffUpload = crossLoanKnockoffUpload;
 	}
 
 }

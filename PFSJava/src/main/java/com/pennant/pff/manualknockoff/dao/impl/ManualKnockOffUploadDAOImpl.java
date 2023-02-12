@@ -57,15 +57,16 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 		});
 	}
 
-	public List<ManualKnockOffUpload> getAllocations(long uploadId) {
+	public List<ManualKnockOffUpload> getAllocations(long uploadID, long headerID) {
 		StringBuilder sql = new StringBuilder("Select UploadId, Code, Amount");
-		sql.append(" From MANUAL_KNOCKOFF_UPLOAD_ALLOC");
-		sql.append(" Where UploadId = ?");
+		sql.append(" From KNOCKOFF_UPLOAD_ALLOC");
+		sql.append(" Where UploadId = ? and HeaderID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, uploadId);
+			ps.setLong(1, uploadID);
+			ps.setLong(2, headerID);
 		}, (rs, rownum) -> {
 			ManualKnockOffUpload fc = new ManualKnockOffUpload();
 
@@ -115,9 +116,9 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 
 	@Override
 	public void saveAllocations(List<ManualKnockOffUpload> details) {
-		StringBuilder sql = new StringBuilder("Insert into MANUAL_KNOCKOFF_UPLOAD_ALLOC");
-		sql.append(" (UploadId, Code, Amount)");
-		sql.append(" Values(?, ?, ?)");
+		StringBuilder sql = new StringBuilder("Insert into KNOCKOFF_UPLOAD_ALLOC");
+		sql.append(" (HeaderID, UploadId, Code, Amount)");
+		sql.append(" Values(?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -128,6 +129,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 				int index = 0;
 				ManualKnockOffUpload detail = details.get(i);
 
+				ps.setLong(++index, detail.getHeaderId());
 				ps.setLong(++index, detail.getId());
 				ps.setString(++index, detail.getCode());
 				ps.setBigDecimal(++index, detail.getAmount());
