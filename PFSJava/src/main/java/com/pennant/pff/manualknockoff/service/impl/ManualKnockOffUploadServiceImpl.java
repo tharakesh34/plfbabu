@@ -70,8 +70,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 		String reference = detail.getReference();
 
-		detail.setReceiptAmount(detail.getReceiptAmount().multiply(new BigDecimal(100)));
-
 		logger.info("Validating the Data for the reference {}", reference);
 
 		if (StringUtils.isBlank(reference)) {

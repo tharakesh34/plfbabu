@@ -28,7 +28,7 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, Num) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, rowNum) -> {
 			ExcessTransferUpload rpud = new ExcessTransferUpload();
 
 			rpud.setHeaderId(rs.getLong("HeaderId"));
@@ -49,7 +49,7 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 	@Override
 	public void update(List<ExcessTransferUpload> detailsList) {
 		StringBuilder sql = new StringBuilder("Update EXCESS_TRANSFER_DETAILS_UPLOAD set");
-		sql.append(" TransferAmount = ?, FinID = ?, Progress = ?, Status = ?, ErrorCode = ?");
+		sql.append(" FinID = ?, Progress = ?, Status = ?, ErrorCode = ?");
 		sql.append(", ErrorDesc = ? ");
 		sql.append(" Where ID = ?");
 
@@ -62,7 +62,6 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 				int index = 0;
 				ExcessTransferUpload detail = detailsList.get(i);
 
-				ps.setBigDecimal(++index, detail.getTransferAmount());
 				ps.setObject(++index, detail.getReferenceID());
 				ps.setInt(++index, detail.getProgress());
 				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "C" : "R");
@@ -154,7 +153,7 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 		sql.append(" Where HeaderId = ? and Status = ?");
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), (rs, Num) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			ExcessTransferUpload etup = new ExcessTransferUpload();
 
 			etup.setHeaderId(rs.getLong("HeaderId"));

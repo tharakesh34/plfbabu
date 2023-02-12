@@ -222,8 +222,6 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 
 		logger.info("Validating the Data for the reference {}", detail.getReference());
 
-		detail.setPayAmount(detail.getPayAmount().multiply(new BigDecimal(100)));
-
 		detail.setHeaderId(header.getId());
 
 		String reference = detail.getReference();

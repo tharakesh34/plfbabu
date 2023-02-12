@@ -100,7 +100,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 
 	@Override
 	public void update(List<PaymentInstUploadDetail> detailsList) {
-		String sql = "Update PAYMINS_UPLOADS set Progress = ?, Payamount = ?, FinId = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
+		String sql = "Update PAYMINS_UPLOADS set Progress = ?, FinId = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -112,7 +112,6 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 				PaymentInstUploadDetail detail = detailsList.get(i);
 
 				ps.setInt(++index, detail.getProgress());
-				ps.setBigDecimal(++index, detail.getPayAmount());
 				ps.setObject(++index, detail.getReferenceID());
 				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, detail.getErrorCode());

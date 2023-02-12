@@ -97,8 +97,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		detail.setTransferAmount(detail.getTransferAmount().multiply(new BigDecimal(100)));
-
 		BigDecimal balanceAmount = excessTransferUploadDAO.getBalanceAmount(fm.getFinID(), transferFrom);
 
 		if (balanceAmount.compareTo(detail.getTransferAmount()) < 0) {
