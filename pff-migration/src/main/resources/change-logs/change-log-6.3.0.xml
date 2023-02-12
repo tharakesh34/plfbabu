@@ -12391,18 +12391,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.01.5" author="bhaskara.k" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllocationType" tableName="MANUAL_KNOCKOFF_UPLOAD" defaultValue="A" />
-	</changeSet>
-
-	<changeSet id="ST#722.01.5" author="bhaskara.k" dbms="mssql">
-		<sql>
-			<![CDATA[	
-				ALTER TABLE MANUAL_KNOCKOFF_UPLOAD ADD CONSTRAINT DF_MKU_ALLOCATIONTYPE DEFAULT 'A' FOR ALLOCATIONTYPE;
-			]]>
-		</sql>
-	</changeSet>
-	
 	<changeSet id="TK#2566_112_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[

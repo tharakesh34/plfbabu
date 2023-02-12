@@ -21,6 +21,7 @@ import com.pennanttech.dataengine.model.Table;
 import com.pennanttech.model.knockoff.ManualKnockOffUpload;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 
 public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 	private static final Logger logger = LogManager.getLogger(ManualKnockOffUploadProcessRecord.class);
@@ -89,6 +90,10 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 			default:
 				break;
 			}
+		}
+
+		if (StringUtils.isEmpty(mku.getAllocationType())) {
+			mku.setAllocationType(AllocationType.AUTO);
 		}
 
 		long uploadID = manualKnockOffUploadDAO.save(mku);
