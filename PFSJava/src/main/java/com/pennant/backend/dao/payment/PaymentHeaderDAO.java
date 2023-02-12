@@ -64,10 +64,10 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 
 	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
 
-	Long getPaymentIdByFinId(long finID, long receiptId, String type);
-
 	BigDecimal getInProgressExcessAmt(long finId, Long receiptId);
 
 	boolean isRefundInProcess(long finId);
+
+	Long getPaymetIDByReceiptID(long receiptId);
 
 }

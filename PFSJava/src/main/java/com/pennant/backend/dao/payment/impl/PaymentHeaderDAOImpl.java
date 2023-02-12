@@ -38,7 +38,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -525,41 +524,31 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	}
 
 	@Override
-	public Long getPaymentIdByFinId(long finID, long receiptId, String type) {
-		StringBuilder sql = new StringBuilder("SELECT");
-		sql.append(" PH.PAYMENTID FROM PAYMENTHEADER");
-		sql.append(type);
-		sql.append(" PH");
-		sql.append(" INNER JOIN PAYMENTDETAILS");
-		sql.append(type);
-		sql.append(" PD ON PD.PAYMENTID = PH.PAYMENTID ");
-		sql.append(" WHERE PH.FINID = :finId AND PD.AMOUNTTYPE = :excessType ");
-		sql.append(" AND PD.REFERENCEID = (SELECT EXCESSID FROM FINEXCESSAmount WHERE RECEIPTID = :receiptId) ");
+	public boolean isRefundInProcess(long finId) {
+		String sql = "Select count(FinId) From PaymentHeader_Temp Where FinId = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql));
 
-		MapSqlParameterSource paramsource = new MapSqlParameterSource();
-		paramsource.addValue("finId", finID);
-		paramsource.addValue("excessType", RepayConstants.EXAMOUNTTYPE_EXCESS);
-		paramsource.addValue("receiptId", receiptId);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finId) > 0;
+	}
+
+	@Override
+	public Long getPaymetIDByReceiptID(long receiptId) {
+		StringBuilder sql = new StringBuilder("Select ph.PaymentID");
+		sql.append(" From FinexcessAmount fa");
+		sql.append(" Inner Join PaymentDetails_Temp pd on pd.ReferenceID = fa.ExcessID");
+		sql.append(" Inner Join PaymentHeader_Temp ph on ph.PaymentID = pd.PaymentID");
+		sql.append(" Where fa.ReceiptId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), paramsource, Long.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, receiptId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-	}
 
-	@Override
-	public boolean isRefundInProcess(long finId) {
-		String sql = "Select count(FinId) From PaymentHeader_Temp Where FinId = ?";
-
-		logger.debug(Literal.SQL + sql);
-
-		Object[] parameters = new Object[] { finId };
-
-		return this.jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
 	}
 
 }

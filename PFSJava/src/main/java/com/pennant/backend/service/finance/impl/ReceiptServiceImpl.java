@@ -3039,6 +3039,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			rch.setBefImage(befFinReceiptHeader);
 		}
 
+		if (isExcessUtilized(rch, method)) {
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60219", "", null)));
+		}
+
 		return auditDetail;
 	}
 
@@ -6090,7 +6094,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			if (fea.getValueDate() == null) {
 				rcd.setValueDate(rud.getValueDate());
 			}
-			
+
 			if (partnerBank != null) {
 				rcd.setFundingAc(Long.parseLong(rud.getFundingAc()));
 				rcd.setPartnerBankAc(partnerBank.getAccountNo());
@@ -8489,6 +8493,31 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		return true;
+	}
+
+	private boolean isExcessUtilized(FinReceiptHeader rch, String method) {
+		if (!("saveOrUpdate".equals(method) || "doApprove".equals(method))) {
+			return false;
+		}
+
+		String status = rch.getReceiptModeStatus();
+		if (!(RepayConstants.PAYSTATUS_CANCEL.equals(status) || RepayConstants.PAYSTATUS_BOUNCE.equals(status))) {
+			return false;
+		}
+
+		FinExcessAmount excess = finExcessAmountDAO.getExcessAmountsByReceiptId(rch.getReceiptID());
+
+		if (excess == null) {
+			return false;
+		}
+
+		BigDecimal utilizedAmt = excess.getUtilisedAmt();
+
+		if (utilizedAmt.compareTo(BigDecimal.ZERO) > 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Autowired

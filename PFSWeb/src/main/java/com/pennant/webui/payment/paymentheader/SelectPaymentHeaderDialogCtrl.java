@@ -52,6 +52,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.web.util.ComponentUtil;
@@ -265,13 +266,13 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	 * @param event
 	 */
 	public void onFulfill$finReference(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		Clients.clearWrongValue(this.finReference);
 		this.finReference.setConstraint("");
 		this.finReference.setErrorMessage("");
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {

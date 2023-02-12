@@ -1,7 +1,6 @@
 package com.pennant.pff.autorefund.serviceimpl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,17 +20,14 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
-import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.AutoRefundLoan;
-import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
@@ -51,7 +47,6 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	private AutoRefundDAO autoRefundDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-	private FinExcessAmountDAO finExcessAmountDAO;
 	private RuleDAO ruleDAO;
 	private CustomerDAO customerDAO;
 	private FinODDetailsDAO finODDetailsDAO;
@@ -66,44 +61,11 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 		return finList;
 	}
 
-	/**
-	 * @param RefundLoan Validating loan DPD and In Process Receipts
-	 * 
-	 * @return list
-	 */
 	@Override
-	public List<ErrorDetail> verifyRefundInitiation(AutoRefundLoan arl, boolean isEOD) {
-		return paymentHeaderService.verifyRefundInitiation(arl, isEOD);
+	public ErrorDetail validateRefund(AutoRefundLoan arl, boolean isEOD) {
+		return paymentHeaderService.validateRefund(arl, isEOD);
 	}
 
-	/**
-	 * Fetching all the excess amount list on FinId
-	 * 
-	 * @param finID and Date
-	 * @return ExcessList
-	 */
-	@Override
-	public List<FinExcessAmount> getExcessRcdList(long finID, Date maxValueDate) {
-		return finExcessAmountDAO.getExcessRcdList(finID, maxValueDate);
-	}
-
-	/**
-	 * Fetching all the Payable list on FinId
-	 * 
-	 * @param finID and Date
-	 * @return PayableList
-	 */
-	@Override
-	public List<ManualAdvise> getPayableAdviseList(long finID, Date maxValueDate) {
-		return manualAdviseDAO.getPayableAdviseList(finID, maxValueDate);
-	}
-
-	/**
-	 * Fetching total overdue amount of the Loan on FinID
-	 * 
-	 * @param finID
-	 * @return OverdueAmount
-	 */
 	@Override
 	public BigDecimal getOverDueAmount(long finID) {
 		BigDecimal overDueAmount = BigDecimal.ZERO;
@@ -172,29 +134,28 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	}
 
 	@Override
-	public List<ErrorDetail> validateRefundAmt(BigDecimal refundAmt, AutoRefundLoan refundLoan) {
+	public ErrorDetail validateRefundAmt(BigDecimal refundAmt, AutoRefundLoan refundLoan) {
 		logger.debug(Literal.ENTERING);
-		List<ErrorDetail> errors = new ArrayList<>();
 
 		if (refundAmt.compareTo(refundLoan.getMaxRefundAmt()) > 0) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND004", null)));
 			logger.debug(Literal.LEAVING);
-			return errors;
-		} else if (refundAmt.compareTo(refundLoan.getMinRefundAmt()) < 0) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND005", null)));
-			logger.debug(Literal.LEAVING);
-			return errors;
+			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_004", null));
 		}
+
+		if (refundAmt.compareTo(refundLoan.getMinRefundAmt()) < 0) {
+			logger.debug(Literal.LEAVING);
+			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_005", null));
+		}
+
 		logger.debug(Literal.LEAVING);
-		return errors;
+		return null;
 	}
 
 	@Override
-	public List<ErrorDetail> executeAutoRefund(AutoRefundLoan refundLoan, List<PaymentDetail> payDtlList,
-			PaymentInstruction paymentInst) {
+	public ErrorDetail executeAutoRefund(AutoRefundLoan arl, List<PaymentDetail> pdList, PaymentInstruction piList) {
 		logger.debug(Literal.ENTERING);
 
-		PaymentHeader paymentHeader = paymentHeaderService.prepareRefund(refundLoan, payDtlList, paymentInst);
+		PaymentHeader paymentHeader = paymentHeaderService.prepareRefund(arl, pdList, piList);
 		AuditHeader auditHeader = getAuditHeader(paymentHeader, PennantConstants.TRAN_WF);
 
 		try {
@@ -208,11 +169,11 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 		if (auditHeader.getErrorMessage() != null) {
 			logger.debug(auditHeader.getErrorMessage().get(0).getCode());
 			logger.debug(Literal.LEAVING);
-			return auditHeader.getErrorMessage();
-		} else {
-			logger.debug(Literal.LEAVING);
-			return null;
+			return auditHeader.getErrorMessage().get(0);
 		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Override
@@ -239,11 +200,6 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	@Autowired
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 	@Autowired

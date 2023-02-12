@@ -945,15 +945,6 @@
 
 	<bean name="paymentsProcessService" class="com.pennant.backend.service.payment.PaymentsProcessService" />
 	<bean id="paymentDetailDAO" class="com.pennant.backend.dao.payment.impl.PaymentDetailDAOImpl" parent="sequenceDao" />
-	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="paymentDetailDAO" ref="paymentDetailDAO" />
-		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
-		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
-		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-	</bean>
+	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl"/>
 
 </beans>

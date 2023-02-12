@@ -38,7 +38,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -113,7 +112,6 @@ import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerP
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -895,7 +893,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * Saves the components to table. <br>
 	 */
 	public void doSave() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final PaymentHeader aPaymentHeader = new PaymentHeader();
 		BeanUtils.copyProperties(this.paymentHeader, aPaymentHeader);
 		boolean isNew = false;
@@ -973,17 +971,12 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				}
 
 			}
-		} catch (final DataAccessException e) {
-			logger.error(e);
-			MessageUtil.showError(e);
-		} catch (final InterfaceException e) {
-			logger.error(e);
-			MessageUtil.showError(e);
-		} catch (final ConcurrencyException e) {
+		} catch (final Exception e) {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private boolean validateAccounting(boolean validate) {
@@ -1200,7 +1193,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private void calculatePaymentDetail(PaymentHeader aPaymentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		List<PaymentDetail> detailList = new ArrayList<PaymentDetail>();
+		List<PaymentDetail> detailList = new ArrayList<>();
 
 		List<FinExcessAmount> excessList = processFinExcessAmount(aPaymentHeader);
 
@@ -1215,11 +1208,13 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					pd.setReceiptID(fea.getReceiptID());
 					pd.setValueDate(fea.getValueDate());
 				} else {
-					BigDecimal progressAmt = paymentHeaderService.getInProgressExcessAmt(this.financeMain.getFinID(),
-							fea.getReceiptID());
+					/*
+					 * BigDecimal progressAmt = paymentHeaderService.getInProgressExcessAmt(this.financeMain.getFinID(),
+					 * fea.getReceiptID());
+					 */
 					pd.setNewRecord(true);
 					pd.setReferenceId(fea.getId());
-					pd.setAvailableAmount(fea.getBalanceAmt().subtract(progressAmt));
+					pd.setAvailableAmount(fea.getBalanceAmt()/* .subtract(progressAmt) */);
 					pd.setAmountType(fea.getAmountType());
 					pd.setReceiptID(fea.getReceiptID());
 					pd.setValueDate(fea.getValueDate());

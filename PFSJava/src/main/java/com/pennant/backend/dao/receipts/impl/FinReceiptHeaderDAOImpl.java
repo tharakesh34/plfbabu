@@ -1642,16 +1642,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public boolean isCancelReceiptInQueue(long finId) {
-		String sql = "Select count(ReceiptID) From FinReceiptHeader_Temp Where FinID = ? and ReceiptModeStatus in (?,?)";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		return this.jdbcOperations.queryForObject(sql, Integer.class, finId, RepayConstants.PAYSTATUS_CANCEL,
-				RepayConstants.PAYSTATUS_BOUNCE) > 0;
-	}
-
-	@Override
 	public List<FinReceiptHeader> getSettlementReceipts(long finID, Date fromDate) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptId, ReceiptModeStatus From FinReceiptHeader");
@@ -1690,5 +1680,22 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug(Literal.SQL.concat(sql));
 
 		this.jdbcOperations.update(sql, excessAdjustTo, receiptID);
+	}
+
+	@Override
+	public String getReceiptModeStatuByExcessId(long excessID) {
+		StringBuilder sql = new StringBuilder("Select ReceiptModeStatus From (");
+		sql.append(" Select ReceiptModeStatus From FinReceiptHeader_Temp fh");
+		sql.append(" Inner Join FinExcessAmount fa on fa.ReceiptID = fh.ReceiptID");
+		sql.append(" Where fa.ExcessId = ?");
+		sql.append(" union all");
+		sql.append(" Select ReceiptModeStatus From FinReceiptHeader fh");
+		sql.append(" Inner Join FinExcessAmount fa on fa.ReceiptID = fh.ReceiptID");
+		sql.append(" Where fa.ExcessId = ? and Not Exists");
+		sql.append(" (Select 1 From FinReceiptHeader_Temp WHERE ReceiptId = fh.ReceiptId)) T");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), String.class, excessID, excessID);
 	}
 }

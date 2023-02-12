@@ -1559,7 +1559,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 			this.swapMandate.setChecked(aMandate.isSwapIsActive());
-			this.swapEffectiveDate.setValue(aMandate.getSwapEffectiveDate());
+
+			if (this.swapMandate.isChecked()) {
+				this.swapEffectiveDate.setValue(aMandate.getSwapEffectiveDate());
+			}
 		}
 
 		if (aMandate.getEmployerID() != null) {
@@ -1901,7 +1904,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (aMandate.isSwapIsActive()) {
 				aMandate.setSwapEffectiveDate(DateUtility
 						.getDate(DateUtil.format(this.swapEffectiveDate.getValue(), PennantConstants.dateFormat)));
+			} else {
+				aMandate.setSwapEffectiveDate(null);
 			}
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -49,7 +49,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
-import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -109,7 +108,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceMainDAO financeMainDAO;
 	private FeeTypeService feeTypeService;
-	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	private PostValidationHook postValidationHook;
 
@@ -201,15 +199,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	@Override
 	public PaymentHeader getPaymentHeader(long paymentId) {
-		PaymentHeader paymentHeader = paymentHeaderDAO.getPaymentHeader(paymentId, "_View");
-		List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentHeader.getPaymentId(),
-				"_View");
+		PaymentHeader ph = paymentHeaderDAO.getPaymentHeader(paymentId, "_View");
+		List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentId, "_View");
 
-		paymentHeader.setOdAgainstLoan(getDueAgainstLoan(paymentHeader.getFinID()));
-		paymentHeader.setOdAgainstCustomer(getDueAgainstCustomer(paymentHeader.getCustID(), paymentHeader.getFinID()));
+		ph.setOdAgainstLoan(getDueAgainstLoan(ph.getFinID()));
+		ph.setOdAgainstCustomer(getDueAgainstCustomer(ph.getCustID(), ph.getFinID()));
 
 		if (list != null) {
-			paymentHeader.setPaymentDetailList(list);
+			ph.setPaymentDetailList(list);
 			for (PaymentDetail pd : list) {
 				if (pd.getTaxHeaderId() != null) {
 					pd.setTaxHeader(taxHeaderDetailsDAO.getTaxHeaderDetailsById(pd.getTaxHeaderId(), "_View"));
@@ -221,11 +218,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		}
 
 		PaymentInstruction paymentInstruction = this.paymentInstructionService
-				.getPaymentInstructionDetails(paymentHeader.getPaymentId(), "_View");
+				.getPaymentInstructionDetails(ph.getPaymentId(), "_View");
 		if (paymentInstruction != null) {
-			paymentHeader.setPaymentInstruction(paymentInstruction);
+			ph.setPaymentInstruction(paymentInstruction);
 		}
-		return paymentHeader;
+		return ph;
 	}
 
 	@Override
@@ -395,7 +392,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		auditHeader = prepareChildsAudit(auditHeader, method);
 		auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
@@ -423,15 +420,18 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		arl.setDpdDays(0);
 		arl.setHoldStatus(fm.getHoldStatus());
 
-		List<ErrorDetail> errorDetails = verifyRefundInitiation(arl, false);
+		ErrorDetail error = validateRefund(arl, false);
 
-		auditDetail.addErrorDetails(errorDetails);
+		if (error != null) {
+			auditDetail.getErrorDetails().add(error);
+		}
 
+		String finSource = ph.getFinSource();
 		if ((ph.getOdAgainstCustomer().compareTo(BigDecimal.ZERO) > 0
 				|| ph.getOdAgainstLoan().compareTo(BigDecimal.ZERO) > 0)
-				&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, ph.getFinSource())) {
-			auditDetail.setErrorDetail(ErrorUtil
-					.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND014", null, null), usrLanguage));
+				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)) {
+			auditDetail.setErrorDetail(
+					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND_050", null, null)));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -894,17 +894,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	}
 
 	@Override
-	public boolean getPaymentHeadersByFinReference(long finID, String type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Long getPaymentIdByFinId(long finID, long receiptId, String type) {
-		return this.paymentHeaderDAO.getPaymentIdByFinId(finID, receiptId, type);
-	}
-
-	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId) {
 		return this.paymentInstructionService.getPaymentInstruction(paymentId);
 	}
@@ -982,7 +971,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	}
 
 	@Override
-	public List<ErrorDetail> verifyRefundInitiation(AutoRefundLoan arl, boolean isEOD) {
+	public ErrorDetail validateRefund(AutoRefundLoan arl, boolean isEOD) {
 		logger.debug(Literal.ENTERING);
 
 		long finId = arl.getFinID();
@@ -990,44 +979,46 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		int dpdDays = arl.getDpdDays();
 		String holdStatus = arl.getHoldStatus();
 
-		List<ErrorDetail> errors = new ArrayList<>();
-
 		/* DPD Days validation against System parameter Configuration */
 		if (dpdDays > arl.getAutoRefCheckDPD() && isEOD) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND001", null)));
 			logger.debug(Literal.LEAVING);
-			return errors;
-		}
-
-		/* Verification against Receipts , if any of the Cancelled Receipt in Process queue */
-		if (finReceiptHeaderDAO.isCancelReceiptInQueue(finId)) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND002", null)));
-			logger.debug(Literal.LEAVING);
-			return errors;
+			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_001", null));
 		}
 
 		/* Verification against Refunds, if any of the refund against loan in process */
 		if (paymentHeaderDAO.isRefundInProcess(finId) && isEOD) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND003", null)));
 			logger.debug(Literal.LEAVING);
-			return errors;
+			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_003", null));
 		}
 
 		/* Verifying if the loan is write off or not */
 		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND010", null)));
 			logger.debug(Literal.LEAVING);
-			return errors;
+			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_008", null));
 		}
 
 		if (FinanceConstants.FEE_REFUND_HOLD.equals(holdStatus)) {
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND011", null)));
 			logger.debug(Literal.LEAVING);
-			return errors;
+			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_009", null));
 		}
 
 		logger.debug(Literal.LEAVING);
-		return errors;
+		return null;
+	}
+
+	@Override
+	public void cancelPaymentInstruction(long receiptID) {
+		Long paymentId = paymentHeaderDAO.getPaymetIDByReceiptID(receiptID);
+
+		if (paymentId == null) {
+			return;
+		}
+
+		PaymentHeader ph = getPaymentHeader(paymentId);
+		AuditDetail ad = new AuditDetail(PennantConstants.TRAN_WF, 1, ph.getBefImage(), ph);
+		AuditHeader ah = new AuditHeader(paymentId.toString(), null, null, null, ad, ph.getUserDetails(), null);
+		doReject(ah);
+
 	}
 
 	@Autowired
@@ -1080,15 +1071,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		this.feeTypeService = feeTypeService;
 	}
 
-	@Autowired
-	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
-		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
 	@Autowired(required = false)
 	@Qualifier("paymentInstructionPostValidationHook")
 	public void setPostValidationHook(PostValidationHook postValidationHook) {
 		this.postValidationHook = postValidationHook;
 	}
-
 }

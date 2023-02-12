@@ -59,8 +59,6 @@ public interface PaymentHeaderService {
 
 	List<ManualAdvise> getManualAdvise(long finID);
 
-	boolean getPaymentHeadersByFinReference(long finID, String type);
-
 	List<ManualAdvise> getManualAdviseForEnquiry(long finID);
 
 	PaymentInstruction getPaymentInstruction(long paymentId);
@@ -75,11 +73,12 @@ public interface PaymentHeaderService {
 
 	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
 
-	Long getPaymentIdByFinId(long finID, long receiptId, String type);
-
 	PaymentHeader prepareRefund(AutoRefundLoan arl, List<PaymentDetail> payDtlList, PaymentInstruction paymentInst);
 
-	List<ErrorDetail> verifyRefundInitiation(AutoRefundLoan arl, boolean isEOD);
+	ErrorDetail validateRefund(AutoRefundLoan arl, boolean isEOD);
 
 	BigDecimal getInProgressExcessAmt(long finId, Long receiptId);
+
+	void cancelPaymentInstruction(long receiptId);
+
 }

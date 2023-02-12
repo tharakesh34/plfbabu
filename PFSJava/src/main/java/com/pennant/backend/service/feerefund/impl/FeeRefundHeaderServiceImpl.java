@@ -34,12 +34,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.feerefund.FeeRefundHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.feerefund.FeeRefundDetail;
@@ -68,11 +68,10 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	private static final Logger logger = LogManager.getLogger(FeeRefundHeaderServiceImpl.class);
 
 	private FeeRefundHeaderDAO feeRefundHeaderDAO;
-	private FeeRefundDetailService feeRefundDetailService;
-	private FeeRefundInstructionService feeRefundInstructionService;
 	private FinanceMainDAO financeMainDAO;
 	private AuditHeaderDAO auditHeaderDAO;
-	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
+	private FeeRefundDetailService feeRefundDetailService;
+	private FeeRefundInstructionService feeRefundInstructionService;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -232,15 +231,14 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 
 		if (frh.getOdAgainstCustomer().compareTo(BigDecimal.ZERO) > 0
 				|| frh.getOdAgainstLoan().compareTo(BigDecimal.ZERO) > 0) {
-			auditDetail.setErrorDetail(ErrorUtil
-					.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND014", null, null), usrLanguage));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND_050", null, null), usrLanguage));
 		}
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
-	// =================================== List maintaince
 	private AuditHeader prepareChildsAudit(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
@@ -357,6 +355,7 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 		if (list == null || list.isEmpty()) {
 			return auditDetails;
 		}
+
 		for (AuditDetail detail : list) {
 			String transType = "";
 			String rcdType = "";
@@ -478,30 +477,6 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 		return feeRefundHeaderDAO.getFeeRefundHeader(id, type);
 	}
 
-	public void setFeeRefundHeaderDAO(FeeRefundHeaderDAO feeRefundHeaderDAO) {
-		this.feeRefundHeaderDAO = feeRefundHeaderDAO;
-	}
-
-	public void setFeeRefundDetailService(FeeRefundDetailService feeRefundDetailService) {
-		this.feeRefundDetailService = feeRefundDetailService;
-	}
-
-	public void setFeeRefundInstructionService(FeeRefundInstructionService feeRefundInstructionService) {
-		this.feeRefundInstructionService = feeRefundInstructionService;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
-		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
-	}
-
 	@Override
 	public boolean isFileDownloaded(long id, int isDownloaded) {
 		return feeRefundHeaderDAO.isFileDownloaded(id, isDownloaded);
@@ -525,6 +500,31 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	@Override
 	public BigDecimal getDueAgainstCustomer(long custId, String custCoreBank) {
 		return feeRefundHeaderDAO.getDueAgainstCustomer(custId, custCoreBank);
+	}
+
+	@Autowired
+	public void setFeeRefundHeaderDAO(FeeRefundHeaderDAO feeRefundHeaderDAO) {
+		this.feeRefundHeaderDAO = feeRefundHeaderDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Autowired
+	public void setFeeRefundDetailService(FeeRefundDetailService feeRefundDetailService) {
+		this.feeRefundDetailService = feeRefundDetailService;
+	}
+
+	@Autowired
+	public void setFeeRefundInstructionService(FeeRefundInstructionService feeRefundInstructionService) {
+		this.feeRefundInstructionService = feeRefundInstructionService;
 	}
 
 }

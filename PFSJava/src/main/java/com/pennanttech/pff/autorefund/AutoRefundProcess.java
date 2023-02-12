@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -29,6 +31,8 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 public class AutoRefundProcess {
 	private static final Logger logger = LogManager.getLogger(AutoRefundProcess.class);
 
+	private FinExcessAmountDAO finExcessAmountDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 	private AutoRefundService autoRefundService;
 	private RefundBeneficiary refundBeneficiary;
 
@@ -76,13 +80,14 @@ public class AutoRefundProcess {
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 
-				arl.setErrorCode("REFUND009");
+				arl.setErrorCode("REFUND_999");
 				arl.setAppDate(appDate);
 				arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 				arl.setStatus("F");
 			}
 
-			logger.debug("Auto Refund Process completed for Loan : " + finID);
+			logger.debug("Auto Refund Process completed for Loan {}", finID);
+
 			list.add(arl);
 			if (list.size() == 500) {
 				autoRefundService.save(list);
@@ -106,10 +111,11 @@ public class AutoRefundProcess {
 		String finReference = arl.getFinReference();
 		Date appDate = arl.getAppDate();
 
-		List<ErrorDetail> errors = autoRefundService.verifyRefundInitiation(arl, true);
-		if (CollectionUtils.isNotEmpty(errors)) {
+		ErrorDetail error = autoRefundService.validateRefund(arl, true);
+
+		if (error != null) {
 			/* Auto Refund Loan bean to be updated as failure with Reason */
-			arl.setErrorCode(errors.get(0).getCode());
+			arl.setErrorCode(error.getCode());
 			arl.setAppDate(appDate);
 			arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 			arl.setStatus("F");
@@ -142,10 +148,10 @@ public class AutoRefundProcess {
 		logger.debug("Auto Refund Process initiating for FinReference {}", finReference);
 
 		/* Fetch Excess List against Reference and Before Requested Value Date */
-		List<FinExcessAmount> excessList = autoRefundService.getExcessRcdList(finID, maxValueDate);
+		List<FinExcessAmount> excessList = finExcessAmountDAO.getExcessRcdList(finID, maxValueDate);
 
 		/* Fetch Payable List against Reference and Before Requested Value Date */
-		List<ManualAdvise> advList = autoRefundService.getPayableAdviseList(finID, maxValueDate);
+		List<ManualAdvise> advList = manualAdviseDAO.getPayableAdviseList(finID, maxValueDate);
 
 		BigDecimal refundAvail = BigDecimal.ZERO;
 		List<PaymentDetail> payDtlList = new ArrayList<>();
@@ -183,7 +189,7 @@ public class AutoRefundProcess {
 		}
 
 		if (refundAvail.compareTo(BigDecimal.ZERO) <= 0) {
-			arl.setErrorCode("REFUND006");
+			arl.setErrorCode("REFUND_006");
 			arl.setAppDate(appDate);
 			arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 			arl.setStatus("F");
@@ -194,10 +200,10 @@ public class AutoRefundProcess {
 		/*
 		 * Validation of Minimum & Maximum Amounts of Refund against Calculated Refund Amount to proceed further
 		 */
-		errors = autoRefundService.validateRefundAmt(refundAvail, arl);
+		error = autoRefundService.validateRefundAmt(refundAvail, arl);
 
-		if (CollectionUtils.isNotEmpty(errors)) {
-			arl.setErrorCode(errors.get(0).getCode());
+		if (error != null) {
+			arl.setErrorCode(error.getCode());
 			arl.setAppDate(appDate);
 			arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 			arl.setStatus("F");
@@ -209,7 +215,7 @@ public class AutoRefundProcess {
 		PaymentInstruction payInst = refundBeneficiary.getBeneficiary(finID, appDate, arl.isAlwRefundByCheque());
 
 		if (payInst == null) {
-			arl.setErrorCode("REFUND007");
+			arl.setErrorCode("REFUND_007");
 			arl.setAppDate(appDate);
 			arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 			arl.setStatus("F");
@@ -217,10 +223,10 @@ public class AutoRefundProcess {
 			return;
 		}
 
-		errors = autoRefundService.executeAutoRefund(arl, payDtlList, payInst);
+		error = autoRefundService.executeAutoRefund(arl, payDtlList, payInst);
 
-		if (CollectionUtils.isNotEmpty(errors)) {
-			arl.setErrorCode(errors.get(0).getCode());
+		if (error != null) {
+			arl.setErrorCode(error.getCode());
 			arl.setAppDate(appDate);
 			arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 			arl.setStatus("F");
@@ -228,7 +234,7 @@ public class AutoRefundProcess {
 			return;
 		}
 
-		arl.setErrorCode("REFUND008");
+		arl.setErrorCode("REFUND_000");
 		arl.setAppDate(appDate);
 		arl.setRefundAmt(refundAvail);
 		arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
@@ -255,6 +261,16 @@ public class AutoRefundProcess {
 	}
 
 	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
 	public void setAutoRefundService(AutoRefundService autoRefundService) {
 		this.autoRefundService = autoRefundService;
 	}
@@ -263,5 +279,4 @@ public class AutoRefundProcess {
 	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
 		this.refundBeneficiary = refundBeneficiary;
 	}
-
 }

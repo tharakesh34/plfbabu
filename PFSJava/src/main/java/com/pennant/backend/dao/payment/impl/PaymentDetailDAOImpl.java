@@ -240,27 +240,46 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 
 	@Override
 	public List<PaymentDetail> getPaymentDetailList(long paymentId, String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"Select PaymentDetailId, PaymentId, AmountType, Amount, ReferenceId, TaxHeaderId, Version, LastMntOn");
-		sql.append(", LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PaymentDetailId, PaymentId, AmountType, Amount, ReferenceId, TaxHeaderId");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent");
 		}
 		sql.append(" From PaymentDetails");
 		sql.append(type);
-		sql.append(" Where paymentId = :paymentId");
+		sql.append(" Where PaymentId = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		paramSource.addValue("paymentId", paymentId);
-		RowMapper<PaymentDetail> rowMapper = BeanPropertyRowMapper.newInstance(PaymentDetail.class);
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			PaymentDetail pd = new PaymentDetail();
 
-		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			pd.setPaymentDetailId(rs.getLong("PaymentDetailId"));
+			pd.setPaymentId(rs.getLong("PaymentId"));
+			pd.setAmountType(rs.getString("AmountType"));
+			pd.setAmount(rs.getBigDecimal("Amount"));
+			pd.setReferenceId(rs.getLong("ReferenceId"));
+			pd.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+			pd.setVersion(rs.getInt("Version"));
+			pd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			pd.setLastMntBy(rs.getLong("LastMntBy"));
+			pd.setRecordStatus(rs.getString("RecordStatus"));
+			pd.setRoleCode(rs.getString("RoleCode"));
+			pd.setNextRoleCode(rs.getString("NextRoleCode"));
+			pd.setTaskId(rs.getString("TaskId"));
+			pd.setNextTaskId(rs.getString("NextTaskId"));
+			pd.setRecordType(rs.getString("RecordType"));
+			pd.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				pd.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				pd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				pd.setTaxComponent(rs.getString("TaxComponent"));
+			}
+
+			return pd;
+		}, paymentId);
 	}
 }

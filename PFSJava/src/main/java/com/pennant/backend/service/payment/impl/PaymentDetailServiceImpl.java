@@ -33,8 +33,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -43,6 +45,7 @@ import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.payment.PaymentDetailDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
@@ -68,6 +71,8 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.fee.AdviseType;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -85,18 +90,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceMainDAO financeMainDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * PaymentDeatils/PaymentDeatils_Temp by using PaymentDeatilsDAO's save method b) Update the Record in the table.
-	 * based on the module workFlow Configuration. by using PaymentDeatilsDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtPaymentDeatils by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -127,15 +122,6 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * PaymentDeatils by using PaymentDeatilsDAO's delete method with type as Blank 3) Audit the record in to
-	 * AuditHeader and AdtPaymentDeatils by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -155,44 +141,15 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		return auditHeader;
 	}
 
-	/**
-	 * getPaymentDeatils fetch the details by using PaymentDeatilsDAO's getPaymentDeatilsById method.
-	 * 
-	 * @param paymentDetailId paymentDetailId of the PaymentDetail.
-	 * @param amountType      amountType of the PaymentDetail.
-	 * @return PaymentDeatils
-	 */
 	@Override
 	public PaymentDetail getPaymentDetail(long paymentDetailId, String amountType) {
 		return paymentDetailDAO.getPaymentDetail(paymentDetailId, "_View");
 	}
 
-	/**
-	 * getApprovedPaymentDeatilsById fetch the details by using PaymentDeatilsDAO's getPaymentDeatilsById method . with
-	 * parameter id and type as blank. it fetches the approved records from the PaymentDeatils.
-	 * 
-	 * @param paymentDetailId paymentDetailId of the PaymentDetail.
-	 * @param amountType      amountType of the PaymentDetail. (String)
-	 * @return PaymentDeatils
-	 */
 	public PaymentDetail getApprovedPaymentDetail(long paymentDetailId, String amountType) {
 		return paymentDetailDAO.getPaymentDetail(paymentDetailId, "_AView");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using paymentDetailDAO.delete with
-	 * parameters paymentDetail,"" b) NEW Add new record in to main table by using paymentDetailDAO.save with parameters
-	 * paymentDetail,"" c) EDIT Update record in the main table by using paymentDetailDAO.update with parameters
-	 * paymentDetail,"" 3) Delete the record from the workFlow table by using paymentDetailDAO.delete with parameters
-	 * paymentDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtPaymentDeatils by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtPaymentDeatils by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -249,15 +206,6 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using paymentDetailDAO.delete with parameters paymentDetail,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtPaymentDeatils by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -279,13 +227,6 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -297,16 +238,6 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
-
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from paymentDetailDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-	 * the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 
 	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
@@ -361,7 +292,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	@Override
 	public List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName,
 			long linkedTranId, long finID) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -371,7 +302,11 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		List<ManualAdviseMovements> adviseMovements = new ArrayList<ManualAdviseMovements>();
 
 		for (int i = 0; i < auditDetails.size(); i++) {
-			PaymentDetail paymentDetail = (PaymentDetail) auditDetails.get(i).getModelData();
+			AuditDetail auditDetail = auditDetails.get(i);
+			PaymentDetail pd = (PaymentDetail) auditDetail.getModelData();
+
+			isValidateReceipt(pd);
+
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -382,103 +317,103 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			if (TableType.MAIN_TAB.equals(type)) {
 				tableType = TableType.MAIN_TAB;
 				approveRec = true;
-				paymentDetail.setRoleCode("");
-				paymentDetail.setNextRoleCode("");
-				paymentDetail.setTaskId("");
-				paymentDetail.setNextTaskId("");
-				paymentDetail.setWorkflowId(0);
+				pd.setRoleCode("");
+				pd.setNextRoleCode("");
+				pd.setTaskId("");
+				pd.setNextTaskId("");
+				pd.setWorkflowId(0);
 			}
-			if (paymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (pd.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
-			} else if (paymentDetail.isNewRecord()) {
+			} else if (pd.isNewRecord()) {
 				saveRecord = true;
-				if (paymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					paymentDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (paymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					paymentDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (paymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					paymentDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (pd.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					pd.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (pd.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					pd.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (pd.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					pd.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
-			} else if (paymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (pd.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (paymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (pd.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (paymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (pd.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (paymentDetail.isNewRecord()) {
+				} else if (pd.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
 			}
 			if (approveRec) {
-				rcdType = paymentDetail.getRecordType();
-				recordStatus = paymentDetail.getRecordStatus();
-				paymentDetail.setRecordType("");
-				paymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				rcdType = pd.getRecordType();
+				recordStatus = pd.getRecordStatus();
+				pd.setRecordType("");
+				pd.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
 
-				if (paymentDetail.getTaxHeader() != null) {
-					Long taxheaderID = taxHeaderDetailsDAO.save(paymentDetail.getTaxHeader(), tableType.getSuffix());
-					paymentDetail.setTaxHeaderId(taxheaderID);
+				if (pd.getTaxHeader() != null) {
+					Long taxheaderID = taxHeaderDetailsDAO.save(pd.getTaxHeader(), tableType.getSuffix());
+					pd.setTaxHeaderId(taxheaderID);
 
-					List<Taxes> taxList = paymentDetail.getTaxHeader().getTaxDetails();
+					List<Taxes> taxList = pd.getTaxHeader().getTaxDetails();
 					for (Taxes taxes : taxList) {
 						taxes.setReferenceId(taxheaderID);
 					}
 					taxHeaderDetailsDAO.saveTaxes(taxList, tableType.getSuffix());
 				}
 
-				String detailId = paymentDetailDAO.save(paymentDetail, tableType);
-				paymentDetail.setPaymentDetailId(Long.valueOf(detailId));
+				String detailId = paymentDetailDAO.save(pd, tableType);
+				pd.setPaymentDetailId(Long.valueOf(detailId));
 
 				// Payments processing
 				if ("doApprove".equals(methodName)) {
-					ManualAdviseMovements movement = doApprove(paymentDetail);
+					ManualAdviseMovements movement = doApprove(pd);
 					if (movement != null) {
 						adviseMovements.add(movement);
 					}
 				} else {
-					saveOrUpdate(paymentDetail);
+					saveOrUpdate(pd);
 				}
 			}
 			if (updateRecord) {
-				if (paymentDetail.getTaxHeader() != null && paymentDetail.getTaxHeader().getId() <= 0) {
-					long taxheaderID = taxHeaderDetailsDAO.save(paymentDetail.getTaxHeader(), tableType.getSuffix());
-					paymentDetail.setTaxHeaderId(taxheaderID);
+				if (pd.getTaxHeader() != null && pd.getTaxHeader().getId() <= 0) {
+					long taxheaderID = taxHeaderDetailsDAO.save(pd.getTaxHeader(), tableType.getSuffix());
+					pd.setTaxHeaderId(taxheaderID);
 
-					List<Taxes> taxList = paymentDetail.getTaxHeader().getTaxDetails();
+					List<Taxes> taxList = pd.getTaxHeader().getTaxDetails();
 					for (Taxes taxes : taxList) {
 						taxes.setReferenceId(taxheaderID);
 					}
 					taxHeaderDetailsDAO.saveTaxes(taxList, tableType.getSuffix());
 				}
 
-				paymentDetailDAO.update(paymentDetail, tableType);
-				saveOrUpdate(paymentDetail);
+				paymentDetailDAO.update(pd, tableType);
+				saveOrUpdate(pd);
 			}
 			if (deleteRecord) {
-				paymentDetailDAO.delete(paymentDetail, tableType);
+				paymentDetailDAO.delete(pd, tableType);
 				// Payments processing
-				doReject(paymentDetail);
+				doReject(pd);
 			}
 			if (approveRec) {
-				paymentDetail.setRecordType(rcdType);
-				paymentDetail.setRecordStatus(recordStatus);
+				pd.setRecordType(rcdType);
+				pd.setRecordStatus(recordStatus);
 			}
 
 			if ("doApprove".equals(methodName)) {
-				if (!PennantConstants.RECORD_TYPE_NEW.equals(paymentDetail.getRecordType())) {
-					paymentDetail.setBefImage(paymentDetailDAO.getPaymentDetail(paymentDetail.getPaymentId(), ""));
+				if (!PennantConstants.RECORD_TYPE_NEW.equals(pd.getRecordType())) {
+					pd.setBefImage(paymentDetailDAO.getPaymentDetail(pd.getPaymentId(), ""));
 				}
 			}
-			auditDetails.get(i).setModelData(paymentDetail);
+			auditDetail.setModelData(pd);
 		}
 
 		// GST Invoice preparation for Receivable Advises
@@ -501,7 +436,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 			this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
@@ -644,123 +580,135 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		logger.debug("Leaving");
 	}
 
-	private ManualAdviseMovements doApprove(PaymentDetail paymentDetail) {
-		logger.debug("Entering");
-
+	private ManualAdviseMovements processManualAdvice(PaymentDetail pd) {
+		logger.debug(Literal.ENTERING);
 		ManualAdviseMovements manualMovement = null;
 
-		// Excess Amounts
-		if (!AdviseType.isPayable(paymentDetail.getAmountType())) {
-			// Excess Amount make utilization
-			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentDetail.getFinSource())
-					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, paymentDetail.getFinSource())) {
-				finExcessAmountDAO.updateUtilise(paymentDetail.getReferenceId(), paymentDetail.getAmount());
-			} else {
-				finExcessAmountDAO.updateUtiliseOnly(paymentDetail.getReferenceId(), paymentDetail.getAmount());
-			}
-			// Delete Reserved Log against Excess and Receipt ID
-			finExcessAmountDAO.deleteExcessReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId(),
-					RepayConstants.RECEIPTTYPE_PAYABLE);
+		ManualAdvise advise = new ManualAdvise();
+		advise.setAdviseID(pd.getReferenceId());
 
-			// Excess Movement Creation
-			FinExcessMovement movement = new FinExcessMovement();
-			movement.setExcessID(paymentDetail.getReferenceId());
-			movement.setReceiptID(paymentDetail.getPaymentDetailId());
-			movement.setMovementType(RepayConstants.RECEIPTTYPE_PAYABLE);
-			movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
-			movement.setAmount(paymentDetail.getAmount());
-			finExcessAmountDAO.saveExcessMovement(movement);
+		BigDecimal amount = pd.getAmount();
+		if (pd.getTaxHeader() != null
+				&& StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+			// GST Calculations
+			List<Taxes> taxDetails = pd.getTaxHeader().getTaxDetails();
+			BigDecimal gstAmount = BigDecimal.ZERO;
+			if (CollectionUtils.isNotEmpty(taxDetails)) {
+				for (Taxes taxes : taxDetails) {
+					gstAmount = gstAmount.add(taxes.getPaidTax());
 
-		} else {
-
-			ManualAdvise advise = new ManualAdvise();
-			advise.setAdviseID(paymentDetail.getReferenceId());
-
-			BigDecimal amount = paymentDetail.getAmount();
-			if (paymentDetail.getTaxHeader() != null && StringUtils.equals(paymentDetail.getTaxComponent(),
-					FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-				// GST Calculations
-				List<Taxes> taxDetails = paymentDetail.getTaxHeader().getTaxDetails();
-				BigDecimal gstAmount = BigDecimal.ZERO;
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						gstAmount = gstAmount.add(taxes.getPaidTax());
-
-						if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
-							advise.setPaidCGST(taxes.getPaidTax());
-						} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
-							advise.setPaidSGST(taxes.getPaidTax());
-						} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
-							advise.setPaidIGST(taxes.getPaidTax());
-						} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
-							advise.setPaidUGST(taxes.getPaidTax());
-						} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
-							advise.setPaidCESS(taxes.getPaidTax());
-						}
+					if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+						advise.setPaidCGST(taxes.getPaidTax());
+					} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+						advise.setPaidSGST(taxes.getPaidTax());
+					} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+						advise.setPaidIGST(taxes.getPaidTax());
+					} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+						advise.setPaidUGST(taxes.getPaidTax());
+					} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+						advise.setPaidCESS(taxes.getPaidTax());
 					}
 				}
-				amount = amount.subtract(gstAmount);
 			}
-
-			advise.setPaidAmount(amount);
-			advise.setBalanceAmt(amount.negate());
-			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())
-					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentDetail.getFinSource())
-					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, paymentDetail.getFinSource())) {
-				advise.setReservedAmt(amount.negate());
-				advise.setBalanceAmt(BigDecimal.ZERO);
-			}
-
-			manualAdviseDAO.updateAdvPayment(advise, TableType.MAIN_TAB);
-
-			// Delete Reserved Log against Advise and Receipt Seq ID
-			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())
-					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentDetail.getFinSource())
-					&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, paymentDetail.getFinSource())) {
-				manualAdviseDAO.deletePayableReserve(paymentDetail.getPaymentDetailId(),
-						paymentDetail.getReferenceId());
-			}
-
-			// Payable Advise Movement Creation
-			manualMovement = new ManualAdviseMovements();
-			manualMovement.setAdviseID(paymentDetail.getReferenceId());
-			manualMovement.setReceiptID(paymentDetail.getPaymentDetailId());
-			manualMovement.setReceiptSeqID(0);
-			manualMovement.setMovementDate(SysParamUtil.getAppDate());
-			manualMovement.setMovementAmount(amount);
-			manualMovement.setPaidAmount(amount);
-
-			TaxHeader taxHeader = new TaxHeader();
-			taxHeader.setNewRecord(true);
-			taxHeader.setRecordType(PennantConstants.RCD_ADD);
-			taxHeader.setVersion(taxHeader.getVersion() + 1);
-			if (AdviseType.isPayable(paymentDetail.getAmountType())) {
-				List<Taxes> taxDetails = paymentDetail.getTaxHeader().getTaxDetails();
-				taxHeader.setTaxDetails(taxDetails);
-			}
-			if (taxHeader.getTaxDetails() == null) {
-				taxHeader.setTaxDetails(new ArrayList<>());
-			}
-			manualMovement.setTaxHeader(taxHeader);
-			manualAdviseDAO.saveMovement(manualMovement, TableType.MAIN_TAB.getSuffix());
-
-			ManualAdvise manualAdvise = manualAdviseDAO.getManualAdviseById(paymentDetail.getReferenceId(), "_AView");
-
-			if (manualAdvise == null) {
-				manualMovement.setFeeTypeCode(paymentDetail.getFeeTypeCode());
-				manualMovement.setFeeTypeDesc(paymentDetail.getFeeTypeDesc());
-				manualMovement.setTaxApplicable(paymentDetail.isTaxApplicable());
-				manualMovement.setTaxComponent(paymentDetail.getTaxComponent());
-			} else {
-				manualMovement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
-				manualMovement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
-				manualMovement.setTaxApplicable(manualAdvise.isTaxApplicable());
-				manualMovement.setTaxComponent(manualAdvise.getTaxComponent());
-			}
-
-			logger.debug("Leaving");
+			amount = amount.subtract(gstAmount);
 		}
+
+		advise.setPaidAmount(amount);
+		advise.setBalanceAmt(amount.negate());
+
+		String finSource = pd.getFinSource();
+		if (!UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD.equals(finSource)
+				&& !UploadConstants.FINSOURCE_ID_AUTOPROCESS.equals(finSource)
+				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)) {
+			advise.setReservedAmt(amount.negate());
+			advise.setBalanceAmt(BigDecimal.ZERO);
+		}
+
+		manualAdviseDAO.updateAdvPayment(advise, TableType.MAIN_TAB);
+
+		// Delete Reserved Log against Advise and Receipt Seq ID
+		if (!UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD.equals(finSource)
+				&& !UploadConstants.FINSOURCE_ID_AUTOPROCESS.equals(finSource)
+				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)) {
+			manualAdviseDAO.deletePayableReserve(pd.getPaymentDetailId(), pd.getReferenceId());
+		}
+
+		// Payable Advise Movement Creation
+		manualMovement = new ManualAdviseMovements();
+		manualMovement.setAdviseID(pd.getReferenceId());
+		manualMovement.setReceiptID(pd.getPaymentDetailId());
+		manualMovement.setReceiptSeqID(0);
+		manualMovement.setMovementDate(SysParamUtil.getAppDate());
+		manualMovement.setMovementAmount(amount);
+		manualMovement.setPaidAmount(amount);
+
+		TaxHeader taxHeader = new TaxHeader();
+		taxHeader.setNewRecord(true);
+		taxHeader.setRecordType(PennantConstants.RCD_ADD);
+		taxHeader.setVersion(taxHeader.getVersion() + 1);
+
+		if (AdviseType.isPayable(pd.getAmountType())) {
+			List<Taxes> taxDetails = pd.getTaxHeader().getTaxDetails();
+			taxHeader.setTaxDetails(taxDetails);
+		}
+
+		if (taxHeader.getTaxDetails() == null) {
+			taxHeader.setTaxDetails(new ArrayList<>());
+		}
+
+		manualMovement.setTaxHeader(taxHeader);
+		manualAdviseDAO.saveMovement(manualMovement, TableType.MAIN_TAB.getSuffix());
+
+		ManualAdvise manualAdvise = manualAdviseDAO.getManualAdviseById(pd.getReferenceId(), "_AView");
+
+		if (manualAdvise == null) {
+			manualMovement.setFeeTypeCode(pd.getFeeTypeCode());
+			manualMovement.setFeeTypeDesc(pd.getFeeTypeDesc());
+			manualMovement.setTaxApplicable(pd.isTaxApplicable());
+			manualMovement.setTaxComponent(pd.getTaxComponent());
+		} else {
+			manualMovement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
+			manualMovement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+			manualMovement.setTaxApplicable(manualAdvise.isTaxApplicable());
+			manualMovement.setTaxComponent(manualAdvise.getTaxComponent());
+		}
+
+		logger.debug(Literal.LEAVING);
+
 		return manualMovement;
+	}
+
+	private ManualAdviseMovements doApprove(PaymentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
+		if (AdviseType.isPayable(pd.getAmountType())) {
+			return processManualAdvice(pd);
+		}
+
+		String finSource = pd.getFinSource();
+		if (!UploadConstants.FINSOURCE_ID_AUTOPROCESS.equals(finSource)
+				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)) {
+			finExcessAmountDAO.updateUtilise(pd.getReferenceId(), pd.getAmount());
+		} else {
+			finExcessAmountDAO.updateUtiliseOnly(pd.getReferenceId(), pd.getAmount());
+		}
+
+		// Delete Reserved Log against Excess and Receipt ID
+		finExcessAmountDAO.deleteExcessReserve(pd.getPaymentDetailId(), pd.getReferenceId(),
+				RepayConstants.RECEIPTTYPE_PAYABLE);
+
+		// Excess Movement Creation
+		FinExcessMovement movement = new FinExcessMovement();
+		movement.setExcessID(pd.getReferenceId());
+		movement.setReceiptID(pd.getPaymentDetailId());
+		movement.setMovementType(RepayConstants.RECEIPTTYPE_PAYABLE);
+		movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
+		movement.setAmount(pd.getAmount());
+
+		finExcessAmountDAO.saveExcessMovement(movement);
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Override
@@ -803,36 +751,68 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		return paymentInstructionDAO.getPymntsCustId(paymentId);
 	}
 
+	private void isValidateReceipt(PaymentDetail pd) {
+		logger.debug(Literal.ENTERING);
+
+		if (AdviseType.isPayable(pd.getAmountType())) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
+		String receipModeStatus = finReceiptHeaderDAO.getReceiptModeStatuByExcessId(pd.getReferenceId());
+
+		if (RepayConstants.PAYSTATUS_CANCEL.equals(receipModeStatus)
+				|| RepayConstants.PAYSTATUS_BOUNCE.equals(receipModeStatus)) {
+			ErrorDetail ed = ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_002", null));
+			throw new AppException(ed.getCode(), ed.getMessage());
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
+	@Autowired
 	public void setPaymentDetailDAO(PaymentDetailDAO paymentDetailDAO) {
 		this.paymentDetailDAO = paymentDetailDAO;
 	}
 
+	@Autowired
 	public void setPaymentInstructionDAO(PaymentInstructionDAO paymentInstructionDAO) {
 		this.paymentInstructionDAO = paymentInstructionDAO;
 	}
 
+	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
+	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
+	@Autowired
 	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
 		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
 	}
 
+	@Autowired
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
+	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 
 }
