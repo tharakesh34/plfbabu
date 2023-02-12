@@ -1384,6 +1384,16 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				BigDecimal netTGST = taxSplit.gettGST();
 
 				// Actual Amounts
+				fee.setActualAmountOriginal(fee.getNetAmountOriginal());
+				fee.setActualAmountGST(fee.getNetAmountGST());
+				fee.setActualAmount(fee.getNetAmount());
+
+				cgstTax.setActualTax(taxSplit.getcGST());
+				sgstTax.setActualTax(taxSplit.getsGST());
+				igstTax.setActualTax(taxSplit.getiGST());
+				ugstTax.setActualTax(taxSplit.getuGST());
+				cessTax.setActualTax(taxSplit.getCess());
+
 				/*
 				 * if (BigDecimal.ZERO.compareTo(waivedAmount) == 0) {
 				 * fee.setActualAmountOriginal(fee.getNetAmountOriginal());
@@ -1401,6 +1411,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				 * igstTax.setActualTax(taxSplit.getiGST()); ugstTax.setActualTax(taxSplit.getuGST());
 				 * cessTax.setActualTax(taxSplit.getCess()); }
 				 */
+
 				// Paid Amounts
 				BigDecimal totalPaidFee = fee.getPaidAmount().add(fee.getPaidTDS());
 				if (fee.isPaidCalcReq()) {
