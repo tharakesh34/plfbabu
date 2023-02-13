@@ -192,7 +192,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 		StringBuilder sql = new StringBuilder("Insert into CROSS_LOAN_KNOCKOFF_UPLOAD");
 		sql.append(" (HeaderId, FromFinID, ToFinID, FromFinReference, TOFinReference, ExcessType");
 		sql.append(", ExcessAmount, AllocationType)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
