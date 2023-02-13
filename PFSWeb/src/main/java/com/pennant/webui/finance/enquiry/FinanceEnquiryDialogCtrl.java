@@ -1669,13 +1669,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.format(finODPenaltyRate.getODChargeAmtOrPerc(),
+			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(finODPenaltyRate.getODChargeAmtOrPerc(),
 					CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 				|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.format(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
+			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
 		}
 
 		this.oDAllowWaiver.setChecked(finODPenaltyRate.isODAllowWaiver());
