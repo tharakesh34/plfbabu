@@ -424,7 +424,12 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append(" WHERE PFT.FinId = ? Group by PFT.FINID");
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finId);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
 	}
 
 	@Override
@@ -449,8 +454,15 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		// if(corebank) {/* Need add based on implementation of custcorebank functionality
 		// return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, coreBankId);
 		// }else {
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId, finId);
+		// return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId, finId);
 		// }
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId, finId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
 	}
 
 	@Override
