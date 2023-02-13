@@ -40,6 +40,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -482,7 +483,7 @@ public class FeeCalculator {
 			BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(fee.getRuleCode()), dataMap,
 					finCcy);
 
-			fee.setCalculatedAmount(feeResult);
+			fee.setCalculatedAmount(PennantApplicationUtil.formateAmount(feeResult, PennantConstants.defaultCCYDecPos));
 
 			if (fee.isTaxApplicable()) {
 				this.finFeeDetailService.processGSTCalForRule(fee, feeResult, fd, taxPercentages, false);
@@ -873,23 +874,23 @@ public class FeeCalculator {
 		BigDecimal totOSIncludeFees = totOSExcludeFees.add(outStandingFeeBal);
 		BigDecimal unearnedAmount = pft.getUnearned();
 
-		dataMap.put("totalOutStanding", CurrencyUtil.format(totalOutStanding));
-		dataMap.put("principalOutStanding", CurrencyUtil.format(principalOutStanding));
-		dataMap.put("principalSchdOutstanding", CurrencyUtil.format(principalOutStanding));
-		dataMap.put("principalAmtFutPrincipalAmt", CurrencyUtil.format(principalAmtFutPrincipalAmt));
-		dataMap.put("totOSExcludeFees", CurrencyUtil.format(totOSExcludeFees));
+		dataMap.put("totalOutStanding", pft.getTotalPftBal());
+		dataMap.put("principalOutStanding", principalOutStanding);
+		dataMap.put("principalSchdOutstanding", principalOutStanding);
+		dataMap.put("principalAmtFutPrincipalAmt", principalAmtFutPrincipalAmt);
+		dataMap.put("totOSExcludeFees", totOSExcludeFees);
 
-		dataMap.put("totOSIncludeFees", CurrencyUtil.format(totOSIncludeFees));
-		dataMap.put("unearnedAmount", CurrencyUtil.format(unearnedAmount));
+		dataMap.put("totOSIncludeFees", totOSIncludeFees);
+		dataMap.put("unearnedAmount", unearnedAmount);
 		dataMap.put("eligibilityMethod", fm.getEligibilityMethod());
 
 		if (rd.isForeClosureEnq()) {
 			principalOutStanding = principalAmtFutPrincipalAmt.subtract(rd.getOrgFinPftDtls().getTdSchdPriBal());
-			dataMap.put("principalOutStanding", CurrencyUtil.format(principalOutStanding));
-			dataMap.put("principalAmtFutPrincipalAmt", CurrencyUtil.format(principalAmtFutPrincipalAmt));
+			dataMap.put("principalOutStanding", principalOutStanding);
+			dataMap.put("principalAmtFutPrincipalAmt", principalAmtFutPrincipalAmt);
 		}
 
-		dataMap.put("totalPayment", CurrencyUtil.format(totReceiptAmount));
+		dataMap.put("totalPayment", totReceiptAmount);
 
 		BigDecimal totalDues = BigDecimal.ZERO;
 
@@ -904,7 +905,7 @@ public class FeeCalculator {
 			totalDues = totalDues.subtract(rd.getExcessAvailable());
 		}
 
-		dataMap.put("totalDueAmount", CurrencyUtil.format(totalDues));
+		dataMap.put("totalDueAmount", totalDues);
 
 		BigDecimal partialPaymentAmount = BigDecimal.ZERO;
 		BigDecimal partPayAmount = rd.getReceiptHeader().getPartPayAmount();
@@ -913,7 +914,7 @@ public class FeeCalculator {
 			partialPaymentAmount = partPayAmount.subtract(totalDues);
 		}
 
-		dataMap.put("partialPaymentAmount", CurrencyUtil.format(partialPaymentAmount));
+		dataMap.put("partialPaymentAmount", partialPaymentAmount);
 
 		Date fixedTenorEndDate = DateUtility.addMonths(fm.getGrcPeriodEndDate(), fm.getFixedRateTenor());
 
