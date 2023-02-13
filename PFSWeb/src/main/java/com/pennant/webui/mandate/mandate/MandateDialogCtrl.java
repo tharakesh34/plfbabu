@@ -2521,7 +2521,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	public void doClear() {
-		this.custID.setValue("");
 		this.mandateRef.setValue("");
 		this.inputDate.setValue(null);
 		this.mandateType.setValue("");
