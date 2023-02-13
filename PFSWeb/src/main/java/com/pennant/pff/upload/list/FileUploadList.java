@@ -67,6 +67,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.upload.model.FieUploadDTO;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -388,6 +389,14 @@ public class FileUploadList extends Window implements Serializable {
 		cell.appendChild(this.entityCode);
 
 		row.appendChild(cell);
+
+		List<Entity> entity = uploadService.getEntities();
+
+		if (entity.size() == 1) {
+			this.entityCode.setValue(entity.get(0).getEntityCode());
+			this.entityCode.setDescColumn(entity.get(0).getEntityDesc());
+			this.entityCode.setReadonly(true);
+		}
 
 		return row;
 	}
@@ -851,12 +860,14 @@ public class FileUploadList extends Window implements Serializable {
 	private void uploadRefresh() {
 		headerRefresh();
 
-		this.entityCode.clearErrorMessage();
-		this.entityCode.setConstraint("");
-		this.entityCode.setErrorMessage("");
-		this.entityCode.setValue(null);
+		if (!this.entityCode.isReadonly()) {
+			this.entityCode.clearErrorMessage();
+			this.entityCode.setConstraint("");
+			this.entityCode.setErrorMessage("");
+			this.entityCode.setValue(null);
 
-		Clients.clearWrongValue(this.entityCode);
+			Clients.clearWrongValue(this.entityCode);
+		}
 
 		if ("M".equals(this.stage)) {
 			this.uploadFileName.setValue("");
@@ -881,10 +892,13 @@ public class FileUploadList extends Window implements Serializable {
 		this.fileName.setValue("", "");
 
 		if (!"M".equals(this.stage)) {
-			this.entityCode.clearErrorMessage();
-			this.entityCode.setConstraint("");
-			this.entityCode.setErrorMessage("");
-			this.entityCode.setValue(null);
+
+			if (!this.entityCode.isReadonly()) {
+				this.entityCode.clearErrorMessage();
+				this.entityCode.setConstraint("");
+				this.entityCode.setErrorMessage("");
+				this.entityCode.setValue(null);
+			}
 
 			this.fromDate.setConstraint("");
 			this.fromDate.setErrorMessage("");
