@@ -100,6 +100,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 	protected Listbox listBoxPastdues;
 	protected Label windowSettlementDialogTitle;
 	protected Row cancellationReason;
+	protected Row cancellationRemarks;
 	protected Button btnSearchFinreference;
 
 	private String module = "";
@@ -165,9 +166,11 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 				this.module = (String) arguments.get("module");
 				if (StringUtils.equals(this.module, "SETTLEMENT_CANCEL")) {
 					this.cancellationReason.setVisible(true);
+					this.cancellationRemarks.setVisible(true);
 					this.windowSettlementDialogTitle.setValue(Labels.getLabel("window_SettlementCancelDialog.title"));
 				} else {
 					this.cancellationReason.setVisible(false);
+					this.cancellationRemarks.setVisible(false);
 				}
 			}
 
@@ -905,7 +908,8 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 
 		}
 
-		if (this.cancellationReason.isVisible() && !this.cancelReasonCode.isReadonly()) {
+		if (this.cancellationReason.isVisible() && !this.cancelReasonCode.isReadonly()
+				&& this.cancellationRemarks.isVisible()) {
 			if (!this.cancelReasonCode.isReadonly()) {
 				this.cancelReasonCode.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_SettlementDialog_CancellationReasonCode.value"), null, true));

@@ -124,12 +124,16 @@
 								<row id="cancellationReason" visible="false">
 									<label value="${c:l('label_SettlementDialog_CancellationReasonCode.value')}" />
 									<extendedcombobox id="cancelReasonCode" />
-
+								</row>
+								<row id="cancellationRemarks" visible="false">
 									<label value="${c:l('label_SettlementDialog_CancellationRemarks.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<textbox id="cancelRemarks" width="200px" />
-									</hbox>
+									<cell colspan="3">
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="cancelRemarks" maxlength="200" width="880px" multiline="true"
+												rows="5" />
+										</hbox>
+									</cell>
 								</row>
 							</rows>
 						</grid>
