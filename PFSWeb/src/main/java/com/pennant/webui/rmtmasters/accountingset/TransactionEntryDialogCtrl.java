@@ -1472,6 +1472,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 					getSingleFeeCodes();
 
 				} else {
+					getSingleFeeCodes();
 					getAllFeeCodes();
 				}
 				// ### END SFA_20210405 <--
@@ -1688,6 +1689,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		if (SingleFee.FEE.equals(this.accountType.getValue())) {
 			getSingleFeeCodes();
 		} else {
+			getSingleFeeCodes();
 			getAllFeeCodes();
 		}
 	}
