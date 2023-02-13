@@ -117,6 +117,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 			}
 
 			alloc.setId(uploadID);
+			alloc.setHeaderId(headerID);
 			alloc.setCode(allocationType.toUpperCase());
 
 			rowCell = row.getCell(index);
