@@ -670,13 +670,14 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(", bb.BankBranchId, bb.BankCode, bb.BranchDesc, bd.BankName, bb.IFSC");
 		sql.append(", pc.PCCityName, fap.BeneficiaryAccNo, fap.BeneficiaryName");
 		sql.append(", fap.PhoneNumber, fap.BeneficiaryAccno, pb.AcType");
-		sql.append(", pb.AccountNo");
+		sql.append(", pb.AccountNo, fm.FinType, fm.FinBranch");
 		sql.append(" From FinAdvancePayments fap");
+		sql.append(" Inner join FinanceMain fm on fm.FInID = fap.FInID");
 		sql.append(" Inner join PartnerBanks pb on pb.PartnerBankId = fap.PartnerBankId");
 		sql.append(" Inner join BankBranches bb on bb.BankBranchId = fap.BankBranchId");
 		sql.append(" Inner join BmtBankDetail bd ON bd.BankCode = bb.BankCode");
 		sql.append(" Left join RmtProvinceVsCity pc ON pc.PcCity = bb.City");
-		sql.append(" Where Finid = ? and fap.PaymentType IN (?, ?, ?, ?) and fap.PaymentDetail = ?");
+		sql.append(" Where fap.Finid = ? and fap.PaymentType IN (?, ?, ?, ?) and fap.PaymentDetail = ?");
 		sql.append(" and fap.Status in (?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -712,6 +713,8 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			pi.setPartnerBankAc(rs.getString("BeneficiaryAccno"));
 			pi.setPartnerBankAcType(rs.getString("AcType"));
 			pi.setPartnerBankAc(rs.getString("AccountNo"));
+			pi.setFinType(rs.getString("FinType"));
+			pi.setFinBranch(rs.getString("FinBranch"));
 
 			return pi;
 		});
@@ -732,7 +735,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(", bb.BankBranchId, bb.BankCode, bb.BranchDesc, bd.BankName, bb.IFSC");
 		sql.append(", pc.PCCityName, fap.BeneficiaryAccNo, fap.BeneficiaryName");
 		sql.append(", fap.PhoneNumber, fap.BeneficiaryAccno, pb.AcType");
-		sql.append(", pb.AccountNo, b.DefChequeDDPrintLoc, fap.LiabilityHoldName");
+		sql.append(", pb.AccountNo, b.DefChequeDDPrintLoc, fap.LiabilityHoldName, fm.FinType, fm.FinBranch");
 		sql.append(" From FinAdvancePayments fap");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = fap.FinID");
 		sql.append(" Inner join PartnerBanks pb on pb.PartnerBankId = fap.PartnerBankId");
@@ -770,6 +773,8 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			pi.setPartnerBankAc(rs.getString("AccountNo"));
 			pi.setPrintingLoc(rs.getString("DefChequeDDPrintLoc"));
 			pi.setFavourName(rs.getString("LiabilityHoldName"));
+			pi.setFinType(rs.getString("FinType"));
+			pi.setFinBranch(rs.getString("FinBranch"));
 
 			return pi;
 		});

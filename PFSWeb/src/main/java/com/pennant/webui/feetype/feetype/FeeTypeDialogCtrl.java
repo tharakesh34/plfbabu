@@ -470,11 +470,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.receivableType.setValidateColumns(new String[] { "FeeTypeCode" });
 		this.receivableType.setMandatoryStyle(true);
 
-		Filter recvfilters[] = new Filter[3];
-		recvfilters[0] = new Filter("ACTIVE", 1, Filter.OP_EQUAL);
-		recvfilters[1] = new Filter("MANUALADVICE", 1, Filter.OP_EQUAL);
-		recvfilters[2] = new Filter("ADVISETYPE", 1, Filter.OP_EQUAL);
-		this.receivableType.setFilters(recvfilters);
+		this.receivableType.setWhereClause("(ManualAdvice = 1 and AdviseType = 1) or ManualAdvice = 0");
 
 		this.allowAutoRefund.setDisabled(true);
 

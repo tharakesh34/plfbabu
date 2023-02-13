@@ -174,7 +174,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	public void updateExcessReserve(long payAgainstID, BigDecimal reserveAmt) {
 		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
 		sql.append(" Set ReservedAmt = ReservedAmt + ?, BalanceAmt = BalanceAmt - ?");
-		sql.append(" Where ExcessID = ? and (BalanceAmt-ReservedAmt) >= ? ");
+		sql.append(" Where ExcessID = ? and BalanceAmt >= ? ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
