@@ -18,7 +18,7 @@ public enum PresentmentError {
 
 	PRMNT507("Presentment response already marked as bounce."),
 
-	PRMNT508("The presentment not proceed with schedule date greater than application bussiness date."),
+	PRMNT508("The presentment not proceed with schedule date greater than application business date."),
 
 	PRMNT5010("Receipt not exists to bounce."),
 

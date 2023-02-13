@@ -1149,7 +1149,9 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			frd = new FeeRefundDetail();
 
 			FeeType ft = feeTypeService.getApprovedFeeTypeById(ffd.getFeeTypeID());
+
 			FeeType feeType = feeTypeService.getRecvFees(ft.getFeeTypeCode());
+
 			if (feeType == null || !feeType.isRefundable()) {
 				continue;
 			}
