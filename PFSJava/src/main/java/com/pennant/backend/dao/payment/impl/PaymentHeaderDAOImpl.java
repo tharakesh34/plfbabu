@@ -299,11 +299,11 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	public List<FinExcessAmount> getfinExcessAmount(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, BalanceAmt, ReservedAmt, ReceiptID");
-		sql.append(", ValueDate, PostDate From FinExcessAmount Where FinID = ?");
+		sql.append(", ValueDate, PostDate From FinExcessAmount Where FinID = ? and BalanceAmt > ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			FinExcessAmount fea = new FinExcessAmount();
 
 			fea.setExcessID(rs.getLong("ExcessID"));
@@ -318,7 +318,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			fea.setPostDate(JdbcUtil.getDate(rs.getDate("PostDate")));
 
 			return fea;
-		});
+		}, finID, BigDecimal.ZERO);
 	}
 
 	@Override

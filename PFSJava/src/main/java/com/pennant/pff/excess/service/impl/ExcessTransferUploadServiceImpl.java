@@ -80,16 +80,19 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 		String transferFrom = detail.getTransferFromType();
 		String transferToType = detail.getTransferToType();
 
-		if (!ExcessHead.isValidExcessTransferHead(transferFrom)) {
+		if (transferFrom.equals(transferToType)) {
 			setError(detail, ExcessTransferError.EXT_006);
+			return;
+		}
+
+		if (!ExcessHead.isValidExcessTransferHead(transferFrom)) {
+			setError(detail, ExcessTransferError.EXT_007);
+			return;
 		}
 
 		if (!ExcessHead.isValidExcessTransferHead(transferToType)) {
-			setError(detail, ExcessTransferError.EXT_006);
-		}
-
-		if (transferFrom.equals(transferToType)) {
-			setError(detail, ExcessTransferError.EXT_006);
+			setError(detail, ExcessTransferError.EXT_007);
+			return;
 		}
 
 		if (excessTransferUploadDAO.isDuplicateExists(reference, transferFrom, detail.getHeaderId())) {
