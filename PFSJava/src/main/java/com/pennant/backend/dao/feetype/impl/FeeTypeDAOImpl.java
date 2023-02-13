@@ -699,12 +699,12 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select fe.FeeTypeCode, fe.FeeTypeDesc, fe.Refundable");
 		sql.append(", fe.PayableLinkTo, fe.AdviseType, fe.FeeTypeID, fe.RecvFeeTypeId");
-		sql.append(" From feetypes fee");
-		sql.append(" inner join (select case when PAYABLELINKTO = 'MANADV'");
-		sql.append(" then (Select feetypecode from feetypes where feetypeid = f.recvfeetypeid)");
-		sql.append(" else PAYABLELINKTO end type,feetypecode, feetypedesc, refundable");
-		sql.append(", PayableLinkTo, AdviseType, FeeTypeID, RecvFeeTypeId from feetypes f) fe");
-		sql.append(" on fee.feetypecode = fe.type and fee.feetypecode = ?");
+		sql.append(" From FeeTypes fee");
+		sql.append(" Inner join (select case when PayableLinkTo = ?");
+		sql.append(" then (Select FeeTypeCode From FeeTypes where FeeTypeId = f.RecvFeeTypeId)");
+		sql.append(" else PayableLinkTo end Type, FeeTypeCode, FeeTypeDesc, Refundable");
+		sql.append(", PayableLinkTo, AdviseType, FeeTypeID, RecvFeeTypeId From FeeTypes f) fe");
+		sql.append(" on fee.FeeTypeCode = fe.Type and fee.FeeTypeCode = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -712,16 +712,16 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FeeType ft = new FeeType();
 
+				ft.setFeeTypeID(rs.getLong("FeeTypeID"));
 				ft.setRecvFeeTypeCode(rs.getString("FeeTypeCode"));
 				ft.setRecvFeeTypeDesc(rs.getString("FeeTypeDesc"));
 				ft.setRefundable(rs.getBoolean("Refundable"));
 				ft.setPayableLinkTo(rs.getString("PayableLinkTo"));
 				ft.setAdviseType(rs.getInt("AdviseType"));
-				ft.setFeeTypeID(rs.getLong("FeeTypeID"));
-				ft.setRecvFeeTypeId(rs.getLong("RecvFeeTypeId"));
+				ft.setRecvFeeTypeId(JdbcUtil.getLong(rs.getObject("RecvFeeTypeId")));
 
 				return ft;
-			}, feeTypeCode);
+			}, "MANADV", feeTypeCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

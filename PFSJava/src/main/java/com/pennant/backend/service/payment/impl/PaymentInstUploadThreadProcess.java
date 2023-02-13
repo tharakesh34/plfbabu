@@ -208,6 +208,10 @@ public class PaymentInstUploadThreadProcess {
 				continue;
 			}
 
+			if (fea.getBalanceAmt().compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+
 			excessExists = true;
 
 			PaymentDetail pd = prepareDetail(bud, fea, balAmt);

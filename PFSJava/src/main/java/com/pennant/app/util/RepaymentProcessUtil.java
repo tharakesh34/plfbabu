@@ -1770,25 +1770,27 @@ public class RepaymentProcessUtil {
 			}
 		}
 
-		FinExcessAmount excess = new FinExcessAmount();
-		excess.setFinID(rch.getFinID());
-		excess.setFinReference(rch.getReference());
-		excess.setAmountType(rch.getExcessAdjustTo());
-		excess.setAmount(excessAmount);
-		excess.setUtilisedAmt(BigDecimal.ZERO);
-		excess.setBalanceAmt(excessAmount);
-		excess.setReservedAmt(BigDecimal.ZERO);
-		excess.setReceiptID(rch.getReceiptID());
-		excess.setValueDate(rch.getValueDate());
-		excess.setPostDate(SysParamUtil.getAppDate());
-
-		if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
-			excess.setBalanceAmt(BigDecimal.ZERO);
-			excess.setReservedAmt(excessAmount);
+		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
+			FinExcessAmount excess = new FinExcessAmount();
+			excess.setFinID(rch.getFinID());
+			excess.setFinReference(rch.getReference());
+			excess.setAmountType(rch.getExcessAdjustTo());
 			excess.setAmount(excessAmount);
-		}
+			excess.setUtilisedAmt(BigDecimal.ZERO);
+			excess.setBalanceAmt(excessAmount);
+			excess.setReservedAmt(BigDecimal.ZERO);
+			excess.setReceiptID(rch.getReceiptID());
+			excess.setValueDate(rch.getValueDate());
+			excess.setPostDate(SysParamUtil.getAppDate());
 
-		finExcessAmountDAO.saveExcess(excess);
+			if (RepayConstants.PAYSTATUS_DEPOSITED.equals(rch.getReceiptModeStatus())) {
+				excess.setBalanceAmt(BigDecimal.ZERO);
+				excess.setReservedAmt(excessAmount);
+				excess.setAmount(excessAmount);
+			}
+
+			finExcessAmountDAO.saveExcess(excess);
+		}
 
 		allocationPaidMap = null;
 		allocationWaivedMap = null;

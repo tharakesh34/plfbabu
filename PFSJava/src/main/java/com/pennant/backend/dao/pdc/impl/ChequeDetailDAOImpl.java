@@ -439,7 +439,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 	public PaymentInstruction getBeneficiary(long id) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" bb.BankBranchID, bb.BankCode, bb.BranchDesc, bd.BankName, bb.IFSC");
-		sql.append(", pvc.PCCityName, cd.AccountNo, cd.AccHolderName, b.DefChequeDDPrintLoc");
+		sql.append(", pvc.PCCityName, cd.AccountNo, cd.AccHolderName, b.DefChequeDDPrintLoc, fm.FinType, fm.FinBranch");
 		sql.append(" From ChequeDetail cd");
 		sql.append(" Inner Join ChequeHeader ch on ch.HeaderID = cd.HeaderID");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ch.FinID");
@@ -471,6 +471,8 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 				pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_CHEQUE);
 				pi.setFavourName(rs.getString("AccHolderName"));
 				pi.setPrintingLoc(rs.getString("DefChequeDDPrintLoc"));
+				pi.setFinType(rs.getString("FinType"));
+				pi.setFinBranch(rs.getString("FinBranch"));
 
 				return pi;
 			}, id);

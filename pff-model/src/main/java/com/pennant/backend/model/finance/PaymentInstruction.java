@@ -104,6 +104,8 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private boolean paymentProcReq = false;
 	private String branchBankCode;
 	private String lei;
+	private String finType;
+	private String finBranch;
 
 	public long getPartnerBankId() {
 		return partnerBankId;
@@ -148,6 +150,8 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 		excludeFields.add("paymentProcReq");
 		excludeFields.add("branchBankCode");
 		excludeFields.add("clearingStatus");
+		excludeFields.add("finType");
+		excludeFields.add("finBranch");
 		return excludeFields;
 	}
 
@@ -506,4 +510,21 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	public void setLei(String lei) {
 		this.lei = lei;
 	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
+	}
+
+	public String getFinBranch() {
+		return finBranch;
+	}
+
+	public void setFinBranch(String finBranch) {
+		this.finBranch = finBranch;
+	}
+
 }
