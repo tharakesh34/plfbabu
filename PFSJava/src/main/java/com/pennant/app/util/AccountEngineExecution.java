@@ -595,7 +595,7 @@ public class AccountEngineExecution implements Serializable {
 			}
 
 			String accountType = transactionEntry.getAccountType();
-			if (accountType.equals(feeType) || transactionEntry.getAmountRule().contains("FEE_")) {
+			if (accountType.equals(feeType) || isSingleFee(transactionEntry.getAmountRule())) {
 				list.add(transactionEntry);
 				transactionEntry.setSingelFeeEntry(true);
 			}
@@ -755,11 +755,57 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		String amountRule = txnEntry.getAmountRule();
-		amountRule = amountRule.replaceAll("FEE", feeType.getFeeTypeCode().toUpperCase());
+
+		if (isSingleFee(amountRule)) {
+			amountRule = amountRule.replaceAll("FEE", feeType.getFeeTypeCode().toUpperCase());
+		}
 
 		txnEntry.setAmountRule(amountRule);
 		txnEntry.setFeeCode(feeType.getFeeTypeCode());
 		return txnEntry;
+	}
+
+	private boolean isSingleFee(String amountRule) {
+		String[] amountCodes = getAmountCodes(amountRule);
+
+		for (String feeCode : amountCodes) {
+			if (feeCode.startsWith("FEE_")) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private String[] getAmountCodes(String amountRule) {
+		amountRule = amountRule.replace("Result=", "");
+		amountRule = amountRule.replace("Result =", "");
+		amountRule = amountRule.replace("Result= ", "");
+		amountRule = amountRule.replace("Result = ", "");
+		amountRule = amountRule.replace("Result = ", "");
+
+		amountRule = amountRule.trim();
+
+		amountRule = amountRule.replace("(", "");
+		amountRule = amountRule.replace(")", "");
+
+		amountRule = amountRule.trim();
+
+		amountRule = amountRule.replace("+", "#");
+		amountRule = amountRule.replace(" +", "#");
+		amountRule = amountRule.replace("+ ", "#");
+		amountRule = amountRule.replace(" + ", "#");
+
+		amountRule = amountRule.trim();
+
+		amountRule = amountRule.replace("-", "#");
+		amountRule = amountRule.replace(" -", "#");
+		amountRule = amountRule.replace("- ", "#");
+		amountRule = amountRule.replace(" - ", "#");
+
+		amountRule = amountRule.trim();
+
+		return amountRule.split("#");
 	}
 
 	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
