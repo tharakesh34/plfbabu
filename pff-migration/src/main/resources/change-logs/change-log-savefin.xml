@@ -1738,4 +1738,11 @@
 				]]>
 			</sql>
 	</changeSet>
+	<changeSet id="73" author="rahul.r">
+			<sql>
+				<![CDATA[
+					UPDATE BMTDOCUMENTTYPES SET DOCISMANDATORY=0 WHERE DOCTYPECODE='03';
+				]]>
+			</sql>
+	</changeSet>
 </databaseChangeLog>
