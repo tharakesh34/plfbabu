@@ -12687,5 +12687,10 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#217985" author="sravanthi.g">
+		<modifyDataType tableName="fin_settlement_header_temp" columnName="CANCELREMARKS" newDataType="varchar(200)" />
+			<modifyDataType tableName="fin_settlement_header" columnName="CANCELREMARKS" newDataType="varchar(200)" />
+	</changeSet>
 
 </databaseChangeLog> 
