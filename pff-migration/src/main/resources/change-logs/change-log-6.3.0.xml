@@ -12745,20 +12745,20 @@
 	<changeSet id="PSD#216488.3_pre" author="sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'MANDATES_UPLOAD');
+				select deps_save_and_drop_dependencies ('plf', 'mandates_upload');
 				
 			]]>
 		</sql>
 	</changeSet>	
 	
 	<changeSet id="PSD#216488.3" author="sravanthi.g">
-		<modifyDataType tableName="MANDATES_UPLOAD" columnName="MICR" newDataType="varchar(200)" />
+		<modifyDataType tableName="MANDATES_UPLOAD" columnName="MICR" newDataType="varchar(20)" />
 	</changeSet>
 	
 	<changeSet id="PSD#216488.3_post" author="sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'MANDATES_UPLOAD');
+				select deps_restore_dependencies ('plf', 'mandates_upload');
 			]]>
 		</sql>
 	</changeSet>
