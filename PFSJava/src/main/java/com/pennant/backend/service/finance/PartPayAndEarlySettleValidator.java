@@ -244,8 +244,10 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 				}
 			}
 		} else if (PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT.equals(paymentMethod)) {
-			if (recieptAmount.add(partPayAmount).compareTo(ppAmount) > 0) {
-				return getError("30550", "Maximum Part Payment Amount Allowed Rs ", ppAmount, ccyFormat);
+			if (partPayAmount.compareTo(ppAmount) > 0) {
+				BigDecimal currentpaid = partPayAmount.subtract(recieptAmount);
+				return getError("30550", "Maximum Part Payment Amount Allowed Rs ", ppAmount.subtract(currentpaid),
+						ccyFormat);
 			}
 		}
 
