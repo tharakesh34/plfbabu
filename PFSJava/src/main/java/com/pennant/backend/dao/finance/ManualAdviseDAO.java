@@ -164,7 +164,7 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	BigDecimal getPaidAmountsByFeeType(String reference, Long feeTypeId, Date valueDate);
 
-	BigDecimal getPaidAmountsForOriginalFee(String reference, Long feeTypeId);
+	BigDecimal getFeePaidAmounts(String reference, Long feeTypeId);
 
 	BigDecimal getPaidAmountsbyAllocation(String reference, String payableLinkTo, Date valueDate);
 
