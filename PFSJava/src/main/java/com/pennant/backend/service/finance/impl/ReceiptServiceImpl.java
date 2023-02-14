@@ -229,6 +229,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
+import com.pennant.pff.extension.ReceiptExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.AppException;
@@ -4468,7 +4469,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE || receiptPurpose == ReceiptPurpose.EARLYSTLENQ) {
 			Date lastServDate = finLogEntryDetailDAO.getMaxPostDate(finID);
-			if (DateUtil.compare(valueDate, lastServDate) < 0) {
+			if (ReceiptExtension.STOP_BACK_DATED_EARLY_SETTLE && DateUtil.compare(valueDate, lastServDate) < 0) {
 				setError(schdData, "RU0013", valueDateFormat, DateUtil.formatToLongDate(lastServDate));
 				return;
 			}
