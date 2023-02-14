@@ -18,4 +18,6 @@ public interface IFeatureExtension {
 	Map<String, Object> getDPDExtensions();
 
 	Map<String, Object> getPartnerBankExtensions();
+
+	Map<String, Object> getReceiptExtensions();
 }

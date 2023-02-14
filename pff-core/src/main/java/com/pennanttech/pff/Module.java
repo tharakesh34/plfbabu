@@ -20,5 +20,7 @@ public enum Module {
 
 	DPD,
 
-	PARTNERBANK
+	PARTNERBANK,
+
+	RECEIPT
 }

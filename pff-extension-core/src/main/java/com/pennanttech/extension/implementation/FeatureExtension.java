@@ -16,6 +16,7 @@ public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> feeExtensions = new HashMap<>();
 	static Map<String, Object> dpdExtensions = new HashMap<>();
 	static Map<String, Object> partnerBankExtensions = new HashMap<>();
+	static Map<String, Object> receiptExtensions = new HashMap<>();
 
 	/**
 	 * <p>
@@ -160,6 +161,8 @@ public class FeatureExtension implements IFeatureExtension {
 
 		getPartnerBankExtensions();
 
+		getReceiptExtensions();
+
 	}
 
 	private void customerExtensions() {
@@ -213,6 +216,12 @@ public class FeatureExtension implements IFeatureExtension {
 		partnerBankExtensions.put("MAPPING", "B");
 
 		return partnerBankExtensions;
+	}
+
+	@Override
+	public Map<String, Object> getReceiptExtensions() {
+		receiptExtensions.put("STOP_BACK_DATED_EARLY_SETTLE", true);
+		return receiptExtensions;
 	}
 
 }

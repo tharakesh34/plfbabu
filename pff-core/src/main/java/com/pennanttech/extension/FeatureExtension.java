@@ -40,6 +40,8 @@ public final class FeatureExtension {
 			return extension.getDPDExtensions();
 		case PARTNERBANK:
 			return extension.getPartnerBankExtensions();
+		case RECEIPT:
+			return extension.getReceiptExtensions();
 
 		default:
 			return extension.getCustomConstants();
