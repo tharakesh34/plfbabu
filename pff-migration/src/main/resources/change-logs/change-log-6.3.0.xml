@@ -12693,17 +12693,72 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="PSD#217985" author="sravanthi.g">
-		<modifyDataType tableName="fin_settlement_header_temp" columnName="CANCELREMARKS" newDataType="varchar(200)" />
-			<modifyDataType tableName="fin_settlement_header" columnName="CANCELREMARKS" newDataType="varchar(200)" />
-	</changeSet>
-	
 	<changeSet id="PSD#218325" author="Mounika.M">
 		<sql>
 			<![CDATA[
 				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REPAY' and AMOUNTCODE='ae_toTExcessAmt';
 				
 				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REPAY',0,'ae_toTExcessAmt','To Termination Excess Amount.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#217985_pre" author="sravanthi.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fin_settlement_header_temp');
+				select deps_save_and_drop_dependencies ('plf', 'fin_settlement_header');
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="PSD#217985" author="sravanthi.g">
+		<modifyDataType tableName="fin_settlement_header_temp" columnName="CANCELREMARKS" newDataType="varchar(200)" />
+			<modifyDataType tableName="fin_settlement_header" columnName="CANCELREMARKS" newDataType="varchar(200)" />
+	</changeSet> 
+	
+	<changeSet id="PSD#217985_post" author="sravanthi.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fin_settlement_header_temp');
+				select deps_restore_dependencies ('plf', 'fin_settlement_header');
+			]]>
+		</sql>
+	</changeSet> 
+	
+	  <changeSet id="PSD#216488.1" author="sravanthi.g">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_COLUMN SET CONSTRAINTTYPE = 'M'  WHERE NAME = 'MICR' AND TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID  IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANDATES_UPLOAD'));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#216488.2" author="sravanthi.g">
+		<sql>
+			<![CDATA[
+				UPDATE MANDATES_UPLOAD SET MICR = '';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#216488.3_pre" author="sravanthi.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'MANDATES_UPLOAD');
+				
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="PSD#216488.3" author="sravanthi.g">
+		<modifyDataType tableName="MANDATES_UPLOAD" columnName="MICR" newDataType="varchar(200)" />
+	</changeSet>
+	
+	<changeSet id="PSD#216488.3_post" author="sravanthi.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'MANDATES_UPLOAD');
 			]]>
 		</sql>
 	</changeSet>
