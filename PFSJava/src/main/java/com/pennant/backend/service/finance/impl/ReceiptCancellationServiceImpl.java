@@ -1525,6 +1525,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			newTaxRcv.setUGST(ugstTaxLPP.getPaidTax().subtract(ugstTax.getPaidTax()));
 			newTaxRcv.setIGST(igstTaxLPP.getPaidTax().subtract(igstTax.getPaidTax()));
 			newTaxRcv.setCESS(cessTaxLPP.getPaidTax().subtract(cessTax.getPaidTax()));
+			newTaxRcv.setFinID(finID);
+			newTaxRcv.setFinReference(finReference);
 
 			if (accrualDiffPostReq) {
 				Date dateValueDate = DateUtility.addDays(DateUtility.getMonthStart(valueDate), -1);
@@ -1799,8 +1801,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		if (taxRcv == null && accrualDiffPostReq) {
 			isSaveRcv = true;
 			taxRcv = new FinTaxReceivable();
-			taxRcv.setFinID(taxRcv.getFinID());
-			taxRcv.setFinReference(taxRcv.getFinReference());
+			taxRcv.setFinID(finID);
+			taxRcv.setFinReference(newTaxRcv.getFinReference());
 			taxRcv.setTaxFor("LPP");
 		}
 
