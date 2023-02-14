@@ -758,6 +758,10 @@ public class RepaymentProcessUtil {
 				extMap.put("ae_toCashCollAmt", toExcess);
 				dataMap.put("ae_toCashCollAmt", toExcess);
 				break;
+			case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
+				extMap.put("ae_toTExcessAmt", toExcess);
+				break;
 
 			default:
 				break;
