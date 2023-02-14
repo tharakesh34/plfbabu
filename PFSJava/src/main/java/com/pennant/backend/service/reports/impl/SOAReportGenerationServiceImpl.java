@@ -1588,7 +1588,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		netDue = netDue.add(overDue);
 		soaSummaryReportsList.add(soaSummaryReport);
 
-		overDue = otherReceivableDue.subtract(otherReceivableReceipt);
+		overDue = otherReceivableDue.subtract(otherReceivableReceipt.add(otherReceivableWaiver));
 
 		soaSummaryReport = new SOASummaryReport();
 		soaSummaryReport.setComponent("Other Receivables");
