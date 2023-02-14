@@ -482,4 +482,16 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		return null;
 	}
 
+	@Override
+	public void deleteCheques(ChequeDetail cheque) {
+		String sql = "Delete from ChequeDetail Where ChequeSerialNo = ? and AccountNo = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, cheque.getChequeSerialNo());
+			ps.setString(2, cheque.getAccountNo());
+		});
+	}
+
 }

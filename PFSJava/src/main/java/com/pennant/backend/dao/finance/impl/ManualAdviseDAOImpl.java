@@ -1937,8 +1937,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public BigDecimal getPaidAmountsForOriginalFee(String reference, Long feeTypeId) {
-		String sql = "Select PaidAmountOriginal, PaidAmountGST, PaidTDS from FinFeeDetail where finreference = ? and feetypeid = ? and OriginationFee = ?";
+	public BigDecimal getFeePaidAmounts(String reference, Long feeTypeId) {
+		String sql = "Select PaidAmountOriginal, PaidAmountGST, PaidTDS from FinFeeDetail where finreference = ? and feetypeid = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -1949,7 +1949,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				eligibleAmount = eligibleAmount.subtract(rs.getBigDecimal("PaidTDS"));
 
 				return eligibleAmount;
-			}, reference, feeTypeId, 1);
+			}, reference, feeTypeId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;

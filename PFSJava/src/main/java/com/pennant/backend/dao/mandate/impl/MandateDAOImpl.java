@@ -1053,7 +1053,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	public PaymentInstruction getBeneficiary(long mandateId) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" m.PartnerBankID, pb.PartnerBankCode, pb.PartnerBankName, bb.BankBranchID");
-		sql.append(", bb.BankCode, bb.BranchDesc, bd.BankName, bb.Ifsc, pvc.PCCityName");
+		sql.append(", bb.BankCode, bb.BranchDesc, bd.BankName, bb.Ifsc, pvc.PCCityName, m.AccNumber");
 		sql.append(", m.AccHolderName, m.PhoneNumber, pb.AcType, pb.AccountNo, fm.FinType, fm.FinBranch");
 		sql.append(" From Mandates m");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference");
@@ -1078,11 +1078,51 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				pi.setBankName(rs.getString("BankName"));
 				pi.setBankBranchIFSC(rs.getString("Ifsc"));
 				pi.setpCCityName(rs.getString("PCCityName"));
-				pi.setAccountNo(rs.getString("AccountNo"));
+				pi.setAccountNo(rs.getString("AccNumber"));
 				pi.setAcctHolderName(rs.getString("AccHolderName"));
 				pi.setPhoneNumber(rs.getString("PhoneNumber"));
 				pi.setPartnerBankAcType(rs.getString("AcType"));
 				pi.setPartnerBankAc(rs.getString("AccountNo"));
+				pi.setFinType(rs.getString("FinType"));
+				pi.setFinBranch(rs.getString("FinBranch"));
+
+				return pi;
+			}, mandateId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public PaymentInstruction getBeneficiaryForSI(Long mandateId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" m.PartnerBankID, bb.BankBranchID, bb.BankCode, bb.BranchDesc,");
+		sql.append(" bd.BankName, bb.Ifsc, pvc.PCCityName, m.AccNumber");
+		sql.append(", m.AccHolderName, m.PhoneNumber, fm.FinType, fm.FinBranch");
+		sql.append(" From Mandates m");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference");
+		sql.append(" Inner Join BankBranches bb on m.BankBranchID = bb.BankBranchID");
+		sql.append(" Inner Join BMTBankDetail bd on bd.BankCode = bb.BankCode");
+		sql.append(" Inner Join RMTProvincevsCity pvc on pvc.PCCity = bb.City");
+		sql.append(" Where m.MandateID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PaymentInstruction pi = new PaymentInstruction();
+
+				pi.setPartnerBankId(rs.getLong("PartnerBankID"));
+				pi.setBankBranchId(rs.getLong("BankBranchID"));
+				pi.setBankBranchCode(rs.getString("BankCode"));
+				pi.setBranchDesc(rs.getString("BranchDesc"));
+				pi.setBankName(rs.getString("BankName"));
+				pi.setBankBranchIFSC(rs.getString("Ifsc"));
+				pi.setpCCityName(rs.getString("PCCityName"));
+				pi.setAccountNo(rs.getString("AccNumber"));
+				pi.setAcctHolderName(rs.getString("AccHolderName"));
+				pi.setPhoneNumber(rs.getString("PhoneNumber"));
 				pi.setFinType(rs.getString("FinType"));
 				pi.setFinBranch(rs.getString("FinBranch"));
 
@@ -1122,6 +1162,20 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finreference, finreference);
+	}
+
+	@Override
+	public String getMandateTypeById(Long mandateId, String string) {
+		String sql = "Select MandateType From Mandates Where MandateID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, mandateId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 }

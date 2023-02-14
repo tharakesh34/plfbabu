@@ -4462,16 +4462,24 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			Date befEomDate = DateUtil.addDays(DateUtil.getMonthStart(appDate), -1);
 			if (valueDate.compareTo(befEomDate) <= 0
 					&& (!rd.isForeClosure() || appDate.compareTo(fm.getMaturityDate()) < 0)) {
-				setError(schdData, "RU0010", valueDateFormat, DateUtil.formatToLongDate(befEomDate));
-				return;
+				if (ReceiptExtension.STOP_BACK_DATED_EARLY_SETTLE) {
+					setError(schdData, "RU0010", valueDateFormat, DateUtil.formatToLongDate(befEomDate));
+					return;
+				}
+
+				rd.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
 			}
 		}
 
 		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE || receiptPurpose == ReceiptPurpose.EARLYSTLENQ) {
 			Date lastServDate = finLogEntryDetailDAO.getMaxPostDate(finID);
-			if (ReceiptExtension.STOP_BACK_DATED_EARLY_SETTLE && DateUtil.compare(valueDate, lastServDate) < 0) {
-				setError(schdData, "RU0013", valueDateFormat, DateUtil.formatToLongDate(lastServDate));
-				return;
+			if (DateUtil.compare(valueDate, lastServDate) < 0) {
+				if (ReceiptExtension.STOP_BACK_DATED_EARLY_SETTLE) {
+					setError(schdData, "RU0013", valueDateFormat, DateUtil.formatToLongDate(lastServDate));
+					return;
+				}
+
+				rd.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
 			}
 
 			String receiptModeSts = rch.getReceiptModeStatus();
@@ -4479,15 +4487,23 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					&& !RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeSts)) {
 				Date prvSchdDate = pd.getPrvRpySchDate();
 				if (valueDate.compareTo(prvSchdDate) < 0) {
-					setError(schdData, "RU0012", valueDateFormat, DateUtil.formatToLongDate(prvSchdDate));
-					return;
+					if (ReceiptExtension.STOP_BACK_DATED_EARLY_SETTLE) {
+						setError(schdData, "RU0012", valueDateFormat, DateUtil.formatToLongDate(prvSchdDate));
+						return;
+					}
+
+					rd.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
 				}
 			}
 
 			Date lastReceivedDate = finReceiptDetailDAO.getMaxReceivedDate(finID);
 
 			if (DateUtil.compare(valueDate, lastReceivedDate) < 0) {
-				setError(schdData, "RU0011", valueDateFormat, DateUtil.formatToLongDate(lastReceivedDate));
+				if (ReceiptExtension.STOP_BACK_DATED_EARLY_SETTLE) {
+					setError(schdData, "RU0011", valueDateFormat, DateUtil.formatToLongDate(lastReceivedDate));
+				}
+
+				rd.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
 			}
 		}
 	}
@@ -6917,9 +6933,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		rd.setDueAdjusted(true);
 		List<ReceiptAllocationDetail> allocations = rch.getAllocations();
+		RequestSource requestSource = schdData.getFinServiceInstruction().getRequestSource();
 
 		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && !checkDueAdjusted(allocations, rd)) {
-			RequestSource requestSource = schdData.getFinServiceInstruction().getRequestSource();
 			if (!RequestSource.EOD.equals(requestSource)) {
 				adjustToExcess(rd);
 			}
@@ -6932,7 +6948,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			String excessAdjustTo = schdData.getFinServiceInstruction().getExcessAdjustTo();
 
 			if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)
-					|| (RequestSource.API.equals(requestSource) && !rd.isDueAdjusted())) {
+					&& (RequestSource.API.equals(requestSource) && !rd.isDueAdjusted())) {
 				rd.setExcessType(excessAdjustTo);
 				return;
 			} else if (totalClosureAmt.compareTo(calcClosureAmt) >= 0 && !RequestSource.API.equals(requestSource)) {
@@ -6943,6 +6959,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (!rd.isDueAdjusted()) {
 			setError(schdData, "90330", receiptPurpose.code(), "");
+			return;
+		}
+
+		if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(rd.getExcessType())) {
+			logger.info("Receipt amount adjusted to termination excess incase of backdated early settlement");
 			return;
 		}
 

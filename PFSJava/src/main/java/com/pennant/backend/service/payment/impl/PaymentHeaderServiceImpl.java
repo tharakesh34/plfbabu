@@ -367,7 +367,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -420,18 +420,26 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		arl.setDpdDays(0);
 		arl.setHoldStatus(fm.getHoldStatus());
 
-		ErrorDetail error = validateRefund(arl, false);
+		ErrorDetail error = null;
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method)) {
+			error = validateRefund(arl, false);
+		}
 
 		if (error != null) {
 			auditDetail.getErrorDetails().add(error);
 		}
 
 		String finSource = ph.getFinSource();
-		if ((ph.getOdAgainstCustomer().compareTo(BigDecimal.ZERO) > 0
-				|| ph.getOdAgainstLoan().compareTo(BigDecimal.ZERO) > 0)
-				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)) {
-			auditDetail.setErrorDetail(
-					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND_050", null, null)));
+		BigDecimal odAgainstCustomer = ph.getOdAgainstCustomer();
+		BigDecimal odAgainstLoan = ph.getOdAgainstLoan();
+
+		if (!UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)
+				&& (odAgainstCustomer.compareTo(BigDecimal.ZERO) > 0 || odAgainstLoan.compareTo(BigDecimal.ZERO) > 0)) {
+			if ("saveOrUpdate".equals(method) || "doApprove".equals(method)) {
+				auditDetail.setErrorDetail(ErrorUtil
+						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND_050", null, null)));
+			}
+
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

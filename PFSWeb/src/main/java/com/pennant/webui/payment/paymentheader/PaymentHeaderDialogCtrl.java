@@ -438,11 +438,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		logger.debug(Literal.ENTERING);
 		doClose(this.btnSave.isVisible());
 
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	protected void doPostClose() {
 		if (getDisbursementInstructionsDialogCtrl() != null) {
 			getDisbursementInstructionsDialogCtrl().closeDialog();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**

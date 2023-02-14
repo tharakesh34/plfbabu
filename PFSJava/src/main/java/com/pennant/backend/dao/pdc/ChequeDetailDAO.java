@@ -61,4 +61,6 @@ public interface ChequeDetailDAO {
 	Long getChequeDetailIDByAppDate(long finID, Date appDate);
 
 	PaymentInstruction getBeneficiary(long id);
+
+	void deleteCheques(ChequeDetail cheque);
 }

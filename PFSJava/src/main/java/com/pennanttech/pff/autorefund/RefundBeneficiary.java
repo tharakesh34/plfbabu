@@ -22,6 +22,7 @@ import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.extension.PartnerBankExtension;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class RefundBeneficiary {
@@ -95,7 +96,13 @@ public class RefundBeneficiary {
 
 		PaymentInstruction pi = null;
 		if (mandateId != null) {
-			pi = mandateDAO.getBeneficiary(mandateId);
+			String mandateType = mandateDAO.getMandateTypeById(mandateId, "");
+
+			if (InstrumentType.SI.name().equals(mandateType)) {
+				pi = mandateDAO.getBeneficiaryForSI(mandateId);
+			} else {
+				pi = mandateDAO.getBeneficiary(mandateId);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);

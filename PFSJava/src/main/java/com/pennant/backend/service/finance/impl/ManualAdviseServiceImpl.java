@@ -992,7 +992,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		BigDecimal eligibleAmt = BigDecimal.ZERO;
 		if (Allocation.MANADV.equals(linkTo) && recvId != null) {
 			eligibleAmt = manualAdviseDAO.getPaidAmountsByFeeType(reference, recvId, valueDate);
-			eligibleAmt = eligibleAmt.add(manualAdviseDAO.getPaidAmountsForOriginalFee(reference, recvId));
+			eligibleAmt = eligibleAmt.add(manualAdviseDAO.getFeePaidAmounts(reference, recvId));
 		} else {
 			eligibleAmt = manualAdviseDAO.getPaidAmountsbyAllocation(reference, linkTo, valueDate);
 		}
@@ -1012,7 +1012,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public boolean isPaybleExist(long finID, long feeTypeID, String linkTo) {
 		return manualAdviseDAO.isPaybleExist(finID, feeTypeID, linkTo);
 	}
-	
+
 	@Override
 	public boolean isManualAdviseExist(long finID) {
 		return manualAdviseDAO.isManualAdviseExist(finID);
@@ -1027,7 +1027,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public boolean isunAdjustablePayables(long finID) {
 		return manualAdviseDAO.isunAdjustablePayables(finID);
 	}
-
 
 	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {

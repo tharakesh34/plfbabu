@@ -109,6 +109,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal excessBal = BigDecimal.ZERO;
 	private BigDecimal toExcessAmt = BigDecimal.ZERO;
 	private BigDecimal toEmiAdvance = BigDecimal.ZERO;
+	private BigDecimal toTExcessAmt = BigDecimal.ZERO;
 
 	private BigDecimal downpayB = BigDecimal.ZERO;
 	private BigDecimal downpayS = BigDecimal.ZERO;
@@ -359,6 +360,7 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_excessBal", this.excessBal);
 		map.put("ae_toExcessAmt", this.toExcessAmt);
 		map.put("ae_toEmiAdvance", this.toEmiAdvance);
+		map.put("ae_toTExcessAmt", this.toTExcessAmt);
 		map.put("ae_downpayB", this.downpayB);
 		map.put("ae_downpayS", this.downpayS);
 		map.put("ae_FeeChargeAmt", this.FeeChargeAmt);
@@ -1093,6 +1095,14 @@ public class AEAmountCodes implements Serializable {
 
 	public void setToEmiAdvance(BigDecimal toEmiAdvance) {
 		this.toEmiAdvance = toEmiAdvance;
+	}
+
+	public BigDecimal getToTExcessAmt() {
+		return toTExcessAmt;
+	}
+
+	public void setToTExcessAmt(BigDecimal toTExcessAmt) {
+		this.toTExcessAmt = toTExcessAmt;
 	}
 
 	public BigDecimal getDownpayB() {
