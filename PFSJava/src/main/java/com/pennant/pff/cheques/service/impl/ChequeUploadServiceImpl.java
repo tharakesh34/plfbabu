@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.pdc.ChequeDetailDAO;
+import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
@@ -30,6 +33,7 @@ import com.pennant.pff.cheques.dao.ChequeUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.RequestSource;
 
 public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(ChequeUploadServiceImpl.class);
@@ -38,6 +42,8 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	private ChequeHeaderService chequeHeaderService;
 	private BankBranchService bankBranchService;
 	private FinanceMainDAO financeMainDAO;
+	private ChequeDetailDAO chequeDetailDAO;
+	private ChequeHeaderDAO chequeHeaderDAO;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -84,38 +90,65 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						continue;
 					}
 
+					chequeHeader.setUserDetails(header.getUserDetails());
+
+					if (!CollectionUtils.isEmpty(chequeHeader.getChequeDetailList())) {
+						chequeHeader.setBankBranchID(chequeHeader.getChequeDetailList().get(0).getBankBranchID());
+						chequeHeader.setAccHolderName(chequeHeader.getChequeDetailList().get(0).getAccHolderName());
+						chequeHeader.setAccountNo(chequeHeader.getChequeDetailList().get(0).getAccountNo());
+						chequeHeader.setChequeSerialNo(chequeHeader.getChequeDetailList().get(0).getChequeSerialNo());
+					}
+
 					List<ChequeDetail> cheques = new ArrayList<>();
+
+					List<ChequeDetail> addcheques = new ArrayList<>();
+					List<ChequeDetail> delcheques = new ArrayList<>();
 
 					for (ChequeUpload upload : chequeUploads) {
 						upload.setReferenceID(finID);
+						String action = upload.getAction();
 						doValidate(header, upload);
 
-						if (upload.getProgress() == EodConstants.PROGRESS_FAILED) {
-							failRecords++;
-						} else {
-							sucessRecords++;
+						if (upload.getProgress() != EodConstants.PROGRESS_FAILED) {
 							cheques.add(upload.getChequeDetail());
 						}
-					}
 
-					if (!cheques.isEmpty()) {
-						chequeHeader.setChequeDetailList(cheques);
-
-						process(chequeHeader, chequeUploads);
-					}
-
-					for (ChequeUpload chequeUpload : chequeUploads) {
-						if (chequeUpload.getProgress() == EodConstants.PROGRESS_FAILED) {
-							failRecords++;
+						upload.getChequeDetail().setHeaderID(chequeHeader.getId());
+						if (action.equals("A")) {
+							addcheques.add(upload.getChequeDetail());
 						} else {
-							sucessRecords++;
+							delcheques.add(upload.getChequeDetail());
 						}
 					}
 
 					try {
 						txStatus = transactionManager.getTransaction(txDef);
 
+						if (!addcheques.isEmpty()) {
+							chequeHeader.setChequeDetailList(addcheques);
+							process(chequeHeader, chequeUploads);
+						}
+
+						if (!delcheques.isEmpty()) {
+							chequeHeader.setChequeDetailList(delcheques);
+							for (ChequeDetail detail : delcheques) {
+								chequeDetailDAO.deleteCheques(detail);
+							}
+
+							chequeHeader.setNoOfCheques(chequeUploads.size() - delcheques.size());
+							chequeHeaderDAO.updatesize(chequeHeader);
+						}
+
+						for (ChequeUpload chequeUpload : chequeUploads) {
+							if (chequeUpload.getProgress() == EodConstants.PROGRESS_FAILED) {
+								failRecords++;
+							} else {
+								sucessRecords++;
+							}
+						}
+
 						chequeUploadDAO.update(chequeUploads);
+
 						transactionManager.commit(txStatus);
 					} catch (Exception e) {
 						logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
@@ -167,9 +200,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	public void doReject(List<FileUploadHeader> headers) {
 		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
 
-		/*
-		 * String errorCode = "9999"; String errorDesc = "User rejected the record";
-		 */
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
@@ -200,6 +230,14 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		ChequeDetail cd = upload.getChequeDetail();
+
+		String action = upload.getAction();
+
+		if (!("A".equals(action) || "D".equals(action))) {
+			upload.setProgress(EodConstants.PROGRESS_FAILED);
+			upload.setErrorCode("999");
+			upload.setErrorDesc("Action is invalid.");
+		}
 
 		String ifsc = cd.getIfsc();
 		String micr = cd.getMicr();
@@ -237,6 +275,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		FinScheduleData data = new FinScheduleData();
 
 		fd.setFinScheduleData(data);
+		header.setSourceId(RequestSource.UPLOAD.name());
 		fd.setChequeHeader(header);
 
 		fd.setFinReference(header.getFinReference());
@@ -303,6 +342,16 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
+		this.chequeDetailDAO = chequeDetailDAO;
+	}
+
+	@Autowired
+	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
+		this.chequeHeaderDAO = chequeHeaderDAO;
 	}
 
 }

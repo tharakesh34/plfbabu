@@ -45,4 +45,6 @@ public interface ChequeHeaderDAO {
 
 	boolean isChequeDetilsExists(long finID);
 
+	void updatesize(ChequeHeader ch);
+
 }

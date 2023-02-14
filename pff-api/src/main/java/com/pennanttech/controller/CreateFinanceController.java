@@ -182,6 +182,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -3347,6 +3348,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			ch.setNoOfCheques(0);
 			ch.setTotalAmount(BigDecimal.ZERO);
 			ch.setActive(true);
+			ch.setSourceId(RequestSource.API.name());
 			fd.setChequeHeader(ch);
 		}
 
@@ -4154,6 +4156,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			long finID = fm.getFinID();
 
 			ChequeHeader chequeHeader = chequeHeaderService.getChequeHeaderByRef(finID);
+			chequeHeader.setSourceId(RequestSource.API.name());
 			fd.setChequeHeader(chequeHeader);
 
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());

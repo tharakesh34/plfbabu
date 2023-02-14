@@ -100,6 +100,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
@@ -907,9 +908,14 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 			cheque.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			cheque.setNewRecord(true);
-			cheque.setChequeSerialNo(serialNum++);
 
-			ch.setTotalAmount(ch.getTotalAmount().add(cheque.getAmount()));
+			if (RequestSource.API.name().equals(ch.getSourceId())) {
+				cheque.setChequeSerialNo(serialNum++);
+			}
+
+			if ("PDC".equals(cheque.getChequeType())) {
+				ch.setTotalAmount(ch.getTotalAmount().add(cheque.getAmount()));
+			}
 		}
 
 		return processCheques(tableType, ch);
@@ -925,7 +931,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		ch.setNextRoleCode(fm.getNextRoleCode());
 		ch.setWorkflowId(fm.getWorkflowId());
 		ch.setActive(true);
-		ch.setSourceId(PennantConstants.FINSOURCE_ID_API);
+		ch.setSourceId(StringUtils.isEmpty(ch.getSourceId()) ? RequestSource.API.name() : ch.getSourceId());
 		ch.setFinID(fm.getFinID());
 		ch.setFinReference(fm.getFinReference());
 	}
@@ -983,7 +989,9 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		AuditHeader ah = new AuditHeader(ch.getFinReference(), null, null, null, new AuditDetail(tranType, 1, null, ch),
 				ch.getUserDetails(), new HashMap<>());
 
-		ah.setApiHeader(PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY));
+		if (RequestSource.API.name().equals(ch.getSourceId())) {
+			ah.setApiHeader(PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY));
+		}
 
 		return ah;
 	}
@@ -1289,12 +1297,14 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		}
 
 		if (cheque.getAmount() == null) {
-			return getError("90502", "Amount");
+			if (chequeType.contains(cheque.getChequeType()) && "PDC".equals(cheque.getChequeType()))
+				return getError("90502", "Amount");
 		}
 
-		// FIXME :: Error code is wrong
-		if (cheque.getAmount().toString().length() >= 18) {
-			return getError("RU0039", "chequeDate for UDC");
+		if (chequeType.contains(cheque.getChequeType()) && "PDC".equals(cheque.getChequeType())) {
+			if (cheque.getAmount().toString().length() >= 18) {
+				return getError("RU0039", "chequeDate for UDC");
+			}
 		}
 
 		if (InstrumentType.isPDC(cheque.getChequeType()) && cheque.getChequeDate() == null) {
