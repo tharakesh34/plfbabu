@@ -540,7 +540,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 		String type = aTransactionEntry.getPostToSys();
 		if (StringUtils.isBlank(aTransactionEntry.getPostToSys())) {
-			type = AccountConstants.POSTTOSYS_CORE;
+			type = AccountConstants.POSTTOSYS_GLNPL;
 		}
 
 		switch (type) {
