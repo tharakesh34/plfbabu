@@ -35,7 +35,7 @@ public enum ExcessHead {
 		List<ExcessHead> list = Arrays.asList(ExcessHead.values());
 
 		for (ExcessHead it : list) {
-			if (it.name().equals(code)) {
+			if (it.code().equals(code)) {
 				return it;
 			}
 		}
