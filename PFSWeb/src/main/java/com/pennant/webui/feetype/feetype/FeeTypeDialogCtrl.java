@@ -593,21 +593,18 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		// Fee Type Code
 		try {
-			aFeeType.setFeeTypeCode(this.feeTypeCode.getValue());
+			if ("FEE".equals(this.feeTypeCode.getValue())) {
+				wve.add(new WrongValueException(this.feeTypeCode, Labels.getLabel("invalid_FeeCode",
+						new String[] { Labels.getLabel("label_FeeTypeDialog_FeeTypeCode.value") })));
+			} else {
+				aFeeType.setFeeTypeCode(this.feeTypeCode.getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Description
 		try {
-			if ("FEE".equals(this.feeTypeCode.getValue())) {
-
-				wve.add(new WrongValueException(this.feeTypeCode, Labels.getLabel("invalid_FeeCode",
-						new String[] { Labels.getLabel("label_FeeTypeDialog_FeeTypeCode.value") })));
-
-			} else {
-				aFeeType.setFeeTypeCode(this.feeTypeCode.getValue());
-			}
-
+			aFeeType.setFeeTypeDesc(this.feeTypeDesc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
