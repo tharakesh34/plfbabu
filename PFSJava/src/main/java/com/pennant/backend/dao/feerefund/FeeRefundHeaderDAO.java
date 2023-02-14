@@ -52,6 +52,6 @@ public interface FeeRefundHeaderDAO {
 
 	BigDecimal getDueAgainstLoan(long finId);
 
-	BigDecimal getDueAgainstCustomer(long custId, String custCoreBank);
+	BigDecimal getDueAgainstCustomer(long custId, String custCoreBank, long finId);
 
 }

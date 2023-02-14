@@ -368,7 +368,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 	}
 
 	@Override
-	public BigDecimal getDueAgainstCustomer(long custId, String coreBankId) {
+	public BigDecimal getDueAgainstCustomer(long custId, String coreBankId, long finId) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Sum(ODPRINCIPAL + ODPROFIT + COALESCE(OD.LPPDUE,0) + COALESCE(OD.LPIDUE,0)");
 		sql.append(" + COALESCE(MA.ADVDUE,0)) TotalDue FROM FINPFTDETAILS PFT ");
@@ -381,7 +381,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		// sql.append("WHERE pft.custid in");
 		// sql.append(" (Select custid from customers where custcorebank = ?) group by c.custcorebank");
 		// }else {
-		sql.append(" WHERE PFT.CUSTID = ? GROUP BY PFT.CUSTID ");
+		sql.append(" WHERE PFT.CUSTID = ? AND PFT.FINID <> ? GROUP BY PFT.CUSTID ");
 		// }
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -390,7 +390,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		// return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, coreBankId);
 		// }else {
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId);
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId, finId);
 		} catch (Exception e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;

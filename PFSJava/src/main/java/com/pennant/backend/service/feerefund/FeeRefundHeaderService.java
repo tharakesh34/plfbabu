@@ -56,7 +56,7 @@ public interface FeeRefundHeaderService {
 
 	boolean isInProgress(long finID);
 
-	BigDecimal getDueAgainstCustomer(long custId, String custCoreBank);
+	BigDecimal getDueAgainstCustomer(long custId, String custCoreBank, long finId);
 
 	BigDecimal getDueAgainstLoan(long finId);
 

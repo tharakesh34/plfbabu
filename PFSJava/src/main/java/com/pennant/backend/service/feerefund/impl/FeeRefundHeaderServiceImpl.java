@@ -168,7 +168,7 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 		FeeRefundHeader frh = feeRefundHeaderDAO.getFeeRefundHeader(feeRefundId, "_View");
 		List<FeeRefundDetail> list = this.feeRefundDetailService.getFeeRefundDetailList(frh.getId(), TableType.VIEW);
 		frh.setOdAgainstLoan(getDueAgainstLoan(frh.getFinID()));
-		frh.setOdAgainstCustomer(getDueAgainstCustomer(frh.getCustId(), frh.getCustCoreBank()));
+		frh.setOdAgainstCustomer(getDueAgainstCustomer(frh.getCustId(), frh.getCustCoreBank(), frh.getFinID()));
 		frh.setFeeRefundDetailList(list);
 
 		FeeRefundInstruction fri = this.feeRefundInstructionService.getFeeRefundInstructionDetails(frh.getId(),
@@ -498,8 +498,8 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	}
 
 	@Override
-	public BigDecimal getDueAgainstCustomer(long custId, String custCoreBank) {
-		return feeRefundHeaderDAO.getDueAgainstCustomer(custId, custCoreBank);
+	public BigDecimal getDueAgainstCustomer(long custId, String custCoreBank, long finId) {
+		return feeRefundHeaderDAO.getDueAgainstCustomer(custId, custCoreBank, finId);
 	}
 
 	@Autowired
