@@ -1702,8 +1702,6 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private void getAllFeeCodes() {
 		logger.debug(Literal.ENTERING);
 
-		this.feeCodeListbox.getItems().clear();
-
 		JdbcSearchObject<FeeType> searchObj = new JdbcSearchObject<FeeType>(FeeType.class);
 		searchObj.addTabelName("FeeTypes");
 		searchObj.addFilter(new Filter("Active", 1, Filter.OP_EQUAL));
