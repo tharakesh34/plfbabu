@@ -121,4 +121,8 @@ public interface MandateDAO {
 
 	Long getMandateId(long finID);
 
+	PaymentInstruction getBeneficiaryForSI(Long mandateId);
+
+	String getMandateTypeById(Long mandateId, String string);
+
 }
