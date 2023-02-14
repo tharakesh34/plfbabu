@@ -545,4 +545,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="33" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Delete FROM RBFieldDetails WHERE RBModule = 'ELGRULE' AND RBEvent = 'ELGRULE' and rbfldname='Coll_Assign_Percentage';			
+				INSERT INTO RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('ELGRULE','ELGRULE','Coll_Assign_Percentage','Collateral Assigned Percentage','decimal',18,'0','1',NULL,'static,global',null);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

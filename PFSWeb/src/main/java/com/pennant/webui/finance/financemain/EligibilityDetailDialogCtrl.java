@@ -522,6 +522,28 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		BigDecimal downpaySupl = customerEligibilityCheck.getDownpaySupl();
 		customerEligibilityCheck.setDownpaySupl(CalculationUtil.getConvertedAmount(finCcy, null, downpaySupl));
 
+		BigDecimal zero = BigDecimal.ZERO;
+		BigDecimal finAssetValue = zero;
+		BigDecimal totalAssgnedCollAmount = zero;
+
+		if (customerEligibilityCheck.getCurrentAssetValue() != null) {
+			finAssetValue = customerEligibilityCheck.getCurrentAssetValue();
+			finAssetValue = PennantApplicationUtil.formateAmount(finAssetValue, 2);
+		}
+
+		if (customerEligibilityCheck.getExtendedValue("Collaterals_Total_Assigned") != null) {
+			totalAssgnedCollAmount = (BigDecimal) customerEligibilityCheck
+					.getExtendedValue("Collaterals_Total_Assigned");
+		}
+
+		try {
+			BigDecimal collPrec = totalAssgnedCollAmount.divide(finAssetValue, 2, RoundingMode.HALF_UP);
+			collPrec = collPrec.multiply(new BigDecimal(100));
+			customerEligibilityCheck.addExtendedField("Coll_Assign_Percentage", collPrec);
+		} catch (Exception e) {
+			customerEligibilityCheck.addExtendedField("Coll_Assign_Percentage", 0);
+		}
+
 		FinanceDeviations deviation = deviationExecutionCtrl.checkEligibilityDeviations(finElgDet, aFinanceDetail);
 		customerEligibilityCheck.setReqFinAmount(finAmount);
 
