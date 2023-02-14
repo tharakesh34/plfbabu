@@ -8,15 +8,19 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.ClusterDAO;
+import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -29,6 +33,7 @@ public class RefundBeneficiary {
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
 	private ClusterDAO clusterDAO;
+	private BankBranchDAO bankBranchDAO;
 
 	public PaymentInstruction getBeneficiary(long finID, Date appDate, boolean alwRefundByCheque) {
 		logger.debug(Literal.ENTERING);
@@ -39,15 +44,31 @@ public class RefundBeneficiary {
 			pi = getPIByCheque(finID, appDate);
 		}
 
-		if (pi == null) {
-			pi = finAdvancePaymentsDAO.getBeneficiary(finID);
+		if (pi != null) {
+			String dftBankCode = SysParamUtil.getValueAsString(SMTParameterConstants.BANK_CODE);
+
+			if (dftBankCode.equals(pi.getBankBranchCode())) {
+				pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_IFT);
+			} else {
+				pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_NEFT);
+			}
+
+			pi.setFinID(finID);
+			setPartnerBankDetails(pi);
+
+			return pi;
 		}
 
-		if (pi != null && "HDFC".equals(pi.getPartnerBankCode())) {
-			pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_IFT);
+		pi = finAdvancePaymentsDAO.getBeneficiary(finID);
+
+		if (pi != null) {
+			pi.setFinID(finID);
+			setPartnerBankDetails(pi);
+
+			return pi;
 		}
 
-		if (pi == null && alwRefundByCheque) {
+		if (alwRefundByCheque) {
 			pi = finAdvancePaymentsDAO.getBeneficiaryByPrintLoc(finID);
 			if (pi != null) {
 				pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_CHEQUE);
@@ -55,6 +76,7 @@ public class RefundBeneficiary {
 		}
 
 		if (pi != null) {
+			pi.setFinID(finID);
 			setPartnerBankDetails(pi);
 		}
 
@@ -105,10 +127,15 @@ public class RefundBeneficiary {
 			clusterId = clusterDAO.getClustersFilter(pi.getFinBranch());
 		}
 
+		String paymentType = pi.getPaymentType();
+		if (paymentType == null) {
+			pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_NEFT);
+		}
+
 		FinTypePartnerBank fpb = new FinTypePartnerBank();
 		fpb.setFinType(pi.getFinType());
 		fpb.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
-		fpb.setPaymentMode(pi.getFinType());
+		fpb.setPaymentMode(paymentType);
 		fpb.setBranchCode(pi.getFinBranch());
 		fpb.setClusterId(clusterId);
 
@@ -119,11 +146,27 @@ public class RefundBeneficiary {
 			pi.setPartnerBankId(fpb.getPartnerBankID());
 			pi.setPartnerBankCode(fpb.getPartnerBankCode());
 			pi.setPartnerBankName(fpb.getPartnerBankName());
-		} else {
-			pi.setPartnerBankId(0L);
-			pi.setPartnerBankCode(null);
-			pi.setPartnerBankName(null);
+			pi.setIssuingBank(fpb.getIssuingBankCode());
+			pi.setIssuingBankName(fpb.getIssuingBankName());
+
 		}
+
+		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
+				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
+			for (FinTypePartnerBank ftpb : fintypePartnerbank) {
+				BankBranch bb = bankBranchDAO.getPrintingLoc(pi.getFinID(), ftpb.getIssuingBankCode(), paymentType);
+
+				if (bb != null) {
+					pi.setPrintingLoc(bb.getBranchCode());
+					pi.setPrintingLocDesc(bb.getBranchDesc());
+
+					fpb.setPrintingLoc(bb.getBranchCode());
+					fpb.setPrintingLocDesc(bb.getBranchDesc());
+				}
+			}
+		}
+
+		pi.setValueDate(SysParamUtil.getAppDate());
 	}
 
 	@Autowired
@@ -154,6 +197,11 @@ public class RefundBeneficiary {
 	@Autowired
 	public void setClusterDAO(ClusterDAO clusterDAO) {
 		this.clusterDAO = clusterDAO;
+	}
+
+	@Autowired
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
 	}
 
 }

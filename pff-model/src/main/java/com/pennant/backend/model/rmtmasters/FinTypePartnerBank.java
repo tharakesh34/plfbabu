@@ -55,6 +55,10 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 	private long partnerBankID;
 	private String partnerBankCode;
 	private String partnerBankName;
+	private String issuingBankCode;
+	private String issuingBankName;
+	private String printingLoc;
+	private String printingLocDesc;
 	private String lovValue;
 	private String accountNo;
 	private String accountType;
@@ -74,6 +78,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 	private String clusterType;
 	private String entityCode;
 	private String suspenseAc;
+	private long finID;
 
 	public FinTypePartnerBank() {
 		super();
@@ -84,47 +89,15 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public FinTypePartnerBank copyEntity() {
-		FinTypePartnerBank entity = new FinTypePartnerBank();
-		entity.setID(this.iD);
-		entity.setFinType(this.finType);
-		entity.setPurpose(this.purpose);
-		entity.setPaymentMode(this.paymentMode);
-		entity.setPartnerBankID(this.partnerBankID);
-		entity.setPartnerBankCode(this.partnerBankCode);
-		entity.setPartnerBankName(this.partnerBankName);
-		entity.setNewRecord(super.isNewRecord());
-		entity.setLovValue(this.lovValue);
-		entity.setAccountNo(this.accountNo);
-		entity.setAccountType(this.accountType);
-		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
-		entity.setUserDetails(this.userDetails);
-		entity.setVanApplicable(this.vanApplicable);
-		entity.setFinTypeDesc(this.finTypeDesc);
-		entity.setSponsorBankCode(this.sponsorBankCode);
-		entity.setClientCode(this.clientCode);
-		entity.setUtilityCode(this.utilityCode);
-		entity.setRecordStatus(super.getRecordStatus());
-		entity.setRoleCode(super.getRoleCode());
-		entity.setNextRoleCode(super.getNextRoleCode());
-		entity.setTaskId(super.getTaskId());
-		entity.setNextTaskId(super.getNextTaskId());
-		entity.setRecordType(super.getRecordType());
-		entity.setWorkflowId(super.getWorkflowId());
-		entity.setUserAction(super.getUserAction());
-		entity.setVersion(super.getVersion());
-		entity.setLastMntBy(super.getLastMntBy());
-		entity.setLastMntOn(super.getLastMntOn());
-		entity.setSuspenseAc(this.suspenseAc);
-
-		return entity;
-	}
-
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("partnerBankName");
+		excludeFields.add("issuingBankCode");
+		excludeFields.add("issuingBankName");
+		excludeFields.add("printingLoc");
+		excludeFields.add("printingLocDesc");
 		excludeFields.add("accountNo");
 		excludeFields.add("accountType");
 		excludeFields.add("sponsorBankCode");
@@ -136,6 +109,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 		excludeFields.add("clusterType");
 		excludeFields.add("entityCode");
 		excludeFields.add("suspenseAc");
+		excludeFields.add("finID");
 
 		return excludeFields;
 	}
@@ -238,6 +212,38 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 
 	public void setPartnerBankName(String partnerBankName) {
 		this.partnerBankName = partnerBankName;
+	}
+
+	public String getIssuingBankCode() {
+		return issuingBankCode;
+	}
+
+	public void setIssuingBankCode(String issuingBankCode) {
+		this.issuingBankCode = issuingBankCode;
+	}
+
+	public String getIssuingBankName() {
+		return issuingBankName;
+	}
+
+	public void setIssuingBankName(String issuingBankName) {
+		this.issuingBankName = issuingBankName;
+	}
+
+	public String getPrintingLoc() {
+		return printingLoc;
+	}
+
+	public void setPrintingLoc(String printingLoc) {
+		this.printingLoc = printingLoc;
+	}
+
+	public String getPrintingLocDesc() {
+		return printingLocDesc;
+	}
+
+	public void setPrintingLocDesc(String printingLocDesc) {
+		this.printingLocDesc = printingLocDesc;
 	}
 
 	public String getAccountNo() {
@@ -350,6 +356,14 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 
 	public void setSuspenseAc(String suspenseAc) {
 		this.suspenseAc = suspenseAc;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 }

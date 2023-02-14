@@ -573,8 +573,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.finTypeAccountingMap.entrySet().stream()
 				.forEach(e -> entity.getFinTypeAccountingMap().put(e.getKey(), e.getValue()));
 		this.finTypeFeesList.stream().forEach(e -> entity.getFinTypeFeesList().add(e == null ? null : e.copyEntity()));
-		this.finTypePartnerBankList.stream()
-				.forEach(e -> entity.getFinTypePartnerBankList().add(e == null ? null : e.copyEntity()));
 		this.finTypeExpenseList.stream()
 				.forEach(e -> entity.getFinTypeExpenseList().add(e == null ? null : e.copyEntity()));
 		entity.setCostOfFunds(this.costOfFunds);

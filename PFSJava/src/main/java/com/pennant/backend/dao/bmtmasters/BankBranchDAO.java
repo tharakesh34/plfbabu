@@ -74,4 +74,6 @@ public interface BankBranchDAO {
 
 	List<BankBranch> getBankBranchByMICR(String micr);
 
+	BankBranch getPrintingLoc(long finID, String issuingBank, String paymentType);
+
 }

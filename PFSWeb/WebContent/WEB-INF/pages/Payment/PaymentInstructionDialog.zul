@@ -126,7 +126,7 @@
 										<label value="${c:l('label_DisbInstructionsDialog_PrintingLoc.value')}" />
 										<hbox>
 											<space spacing="2px" id="madndatory_PrintingLoc" />
-											<textbox id="printingLoc" />
+											<extendedcombobox id="printingLoc" />
 										</hbox>
 									</row>
 

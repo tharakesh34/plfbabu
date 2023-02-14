@@ -68,6 +68,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private String favourName;
 	private String payableLoc;
 	private String printingLoc;
+	private String printingLocDesc;
 	private Date valueDate;
 	private String favourNumber;// Cheque/DD Number
 	private String accountNo;// beneficiaryAccNo
@@ -152,6 +153,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 		excludeFields.add("clearingStatus");
 		excludeFields.add("finType");
 		excludeFields.add("finBranch");
+		excludeFields.add("printingLocDesc");
 		return excludeFields;
 	}
 
@@ -225,6 +227,14 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 
 	public void setPrintingLoc(String printingLoc) {
 		this.printingLoc = printingLoc;
+	}
+
+	public String getPrintingLocDesc() {
+		return printingLocDesc;
+	}
+
+	public void setPrintingLocDesc(String printingLocDesc) {
+		this.printingLocDesc = printingLocDesc;
 	}
 
 	public Date getValueDate() {

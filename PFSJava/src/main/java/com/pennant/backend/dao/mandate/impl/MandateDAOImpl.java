@@ -1053,14 +1053,15 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	public PaymentInstruction getBeneficiary(long mandateId) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" m.PartnerBankID, pb.PartnerBankCode, pb.PartnerBankName, bb.BankBranchID");
-		sql.append(", bb.BankCode, bb.BranchDesc, bd.BankName, bb.Ifsc");
-		sql.append(", pvc.PCCityName, m.AccHolderName, m.PhoneNumber, pb.AcType, pb.AccountNo");
+		sql.append(", bb.BankCode, bb.BranchDesc, bd.BankName, bb.Ifsc, pvc.PCCityName");
+		sql.append(", m.AccHolderName, m.PhoneNumber, pb.AcType, pb.AccountNo, fm.FinType, fm.FinBranch");
 		sql.append(" From Mandates m");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference");
 		sql.append(" Inner Join PartnerBanks pb on m.PartnerBankID = pb.PartnerBankID");
 		sql.append(" Inner Join BankBranches bb on m.BankBranchID = bb.BankBranchID");
 		sql.append(" Inner Join BMTBankDetail bd on bd.BankCode = bb.BankCode");
 		sql.append(" Inner Join RMTProvincevsCity pvc on pvc.PCCity = bb.City");
-		sql.append(" Where MandateID = ?");
+		sql.append(" Where m.MandateID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -1082,6 +1083,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				pi.setPhoneNumber(rs.getString("PhoneNumber"));
 				pi.setPartnerBankAcType(rs.getString("AcType"));
 				pi.setPartnerBankAc(rs.getString("AccountNo"));
+				pi.setFinType(rs.getString("FinType"));
+				pi.setFinBranch(rs.getString("FinBranch"));
 
 				return pi;
 			}, mandateId);

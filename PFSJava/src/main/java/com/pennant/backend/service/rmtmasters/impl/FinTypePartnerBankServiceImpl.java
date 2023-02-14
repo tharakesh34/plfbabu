@@ -35,12 +35,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -56,6 +59,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
+	private BankBranchDAO bankBranchDAO;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -467,7 +471,22 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 
 	@Override
 	public List<FinTypePartnerBank> getByFinTypeAndPurpose(FinTypePartnerBank fab) {
-		return finTypePartnerBankDAO.getByFinTypeAndPurpose(fab);
+		List<FinTypePartnerBank> list = finTypePartnerBankDAO.getByFinTypeAndPurpose(fab);
+
+		String paymentMode = fab.getPaymentMode();
+		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentMode)
+				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentMode)) {
+			for (FinTypePartnerBank ftpb : list) {
+				BankBranch bb = bankBranchDAO.getPrintingLoc(fab.getFinID(), ftpb.getIssuingBankCode(), paymentMode);
+
+				if (bb != null) {
+					ftpb.setPrintingLoc(bb.getBranchCode());
+					ftpb.setPrintingLocDesc(bb.getBranchDesc());
+				}
+			}
+		}
+
+		return list;
 	}
 
 	@Override
@@ -498,6 +517,11 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	@Autowired
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
+	}
+
+	@Autowired
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
 	}
 
 }

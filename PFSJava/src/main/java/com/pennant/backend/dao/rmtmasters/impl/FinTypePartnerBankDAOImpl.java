@@ -280,17 +280,27 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	@Override
 	public List<FinTypePartnerBank> getByFinTypeAndPurpose(FinTypePartnerBank fpb) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, FinType, FintypeDesc, Purpose, PaymentMode, PartnerBankID, VanApplicable, BranchCode");
-		sql.append(", BranchDesc, ClusterId, ClusterCode, Name, ClusterType, AccountNo, AccountType, PartnerbankCode");
-		sql.append(", PartnerbankName, Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FinTypePartnerBanks_AView");
+		sql.append(" ftpb.Id, ft.FinType, ft.FintypeDesc, Purpose, PaymentMode, pb.PartnerBankID, VanApplicable");
+		sql.append(", b.BranchCode, b.BranchDesc, ftpb.ClusterId, c.Code ClusterCode, c.Name, c.ClusterType");
+		sql.append(", AccountNo, AcType AccountType, PartnerbankCode, PartnerbankName");
+		sql.append(", bd.BankCode, bd.BankName");
+		sql.append(", bb.BranchCode PrintingLoc, bb.BranchDesc PrintingLocDesc");
+		sql.append(", ftpb.Version, ftpb.LastMntOn, ftpb.LastMntBy, ftpb.RecordStatus");
+		sql.append(", ftpb.RoleCode, ftpb.NextRoleCode, ftpb.TaskId, ftpb.NextTaskId");
+		sql.append(", ftpb.RecordType, ftpb.WorkflowId");
+		sql.append(" From FinTypePartnerBanks ftpb");
+		sql.append(" Inner Join PartnerBanks pb on pb.PartnerBankID = ftpb.PartnerBankID");
+		sql.append(" Inner Join BMTBankDetail bd on bd.BankCode = pb.BankCode");
+		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = ftpb.FinType");
+		sql.append(" Left Join RMTBranches b on b.BranchCode = ftpb.BranchCode");
+		sql.append(" Left Join BankBranches bb on bb.BranchCode = b.DefChequeDDPrintLoc");
+		sql.append(" Left Join Clusters c on c.ID = ftpb.ClusterId");
+		sql.append(" Where ftpb.FinType = ? and Purpose = ? and PaymentMode = ?");
 
-		sql.append(" Where FinType = ? and Purpose = ? and PaymentMode = ?");
 		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
-			sql.append(" and BranchCode = ?");
+			sql.append(" and ftpb.BranchCode = ?");
 		} else {
-			sql.append(" and ClusterId = ?");
+			sql.append(" and ftpb.ClusterId = ?");
 		}
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -327,6 +337,10 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 			item.setAccountType(rs.getString("AccountType"));
 			item.setPartnerBankCode(rs.getString("PartnerBankCode"));
 			item.setPartnerBankName(rs.getString("PartnerBankName"));
+			item.setIssuingBankCode(rs.getString("BankCode"));
+			item.setIssuingBankName(rs.getString("BankName"));
+			item.setPrintingLoc(rs.getString("PrintingLoc"));
+			item.setPrintingLocDesc(rs.getString("PrintingLocDesc"));
 			item.setVersion(rs.getInt("Version"));
 			item.setLastMntOn(rs.getTimestamp("LastMntOn"));
 			item.setLastMntBy(rs.getLong("LastMntBy"));
