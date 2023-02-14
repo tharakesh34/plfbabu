@@ -189,4 +189,5 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	BigDecimal getPayableBalance(long finID, long feeTypeID);
 
 	boolean isAdviseUploadExist(long finID);
+
 }

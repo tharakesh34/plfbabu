@@ -1012,7 +1012,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public boolean isPaybleExist(long finID, long feeTypeID, String linkTo) {
 		return manualAdviseDAO.isPaybleExist(finID, feeTypeID, linkTo);
 	}
-	
+
 	@Override
 	public boolean isManualAdviseExist(long finID) {
 		return manualAdviseDAO.isManualAdviseExist(finID);
@@ -1027,7 +1027,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public boolean isunAdjustablePayables(long finID) {
 		return manualAdviseDAO.isunAdjustablePayables(finID);
 	}
-
 
 	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
