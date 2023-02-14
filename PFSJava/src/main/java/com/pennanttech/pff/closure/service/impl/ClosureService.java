@@ -23,6 +23,7 @@ import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -123,6 +124,7 @@ public class ClosureService {
 			returnStatus.setReturnText(error.getError());
 			fd.setReturnStatus(returnStatus);
 			logger.info(finEODEvent.getFinanceMain().getFinReference() + ":" + error.getMessage());
+			return;
 		} else {
 			updateTerminationExcessAmount(finEODEvent, calcClosureAmt);
 		}
@@ -132,6 +134,9 @@ public class ClosureService {
 
 	private FinServiceInstruction prepareFinInstruction(FinEODEvent finEODEvent, BigDecimal calcClosureAmt,
 			ReceiptDTO receiptDTO) {
+
+		List<FinFeeDetail> fees = receiptDTO.getFees();
+
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		fm.setAppDate(fm.getEventProperties().getAppDate());
 
@@ -157,7 +162,12 @@ public class ClosureService {
 		rcd.setReceivedDate(fm.getAppDate());
 		rcd.setValueDate(fm.getAppDate());
 		fsi.setReceiptDetail(rcd);
-		fsi.setFinFeeDetails(receiptDTO.getFees());
+
+		for (FinFeeDetail fee : fees) {
+			fee.setPaidAmount(fee.getActualAmount());
+		}
+
+		fsi.setFinFeeDetails(fees);
 
 		FinReceiptDetail rd = fsi.getReceiptDetail();
 
