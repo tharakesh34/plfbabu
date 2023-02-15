@@ -1849,9 +1849,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			// Checklist Details
-			checkListDetailService.fetchFinCheckListDetails(fd, checkListdetails);
-
 			// Finance Stage Accounting Posting Details
 			// =======================================
 			List<TransactionEntry> stageEntries = new ArrayList<>();
@@ -1860,6 +1857,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			fd.setStageTransactionEntries(stageEntries);
 		}
+
+		// Checklist Details
+		checkListDetailService.fetchFinCheckListDetails(fd, checkListdetails);
 
 		// Accounting Set Details
 		if (StringUtils.isBlank(eventCode)) {

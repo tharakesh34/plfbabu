@@ -2102,7 +2102,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendAgreementsDetailTab(onLoad);
 
 		// CheckList Details Tab Addition
-		appendCheckListDetailTab(aFinanceDetail, true);
+		appendCheckListDetailTab(aFinanceDetail, onLoad);
 
 		// Document Detail Tab Addition
 		if (!FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
