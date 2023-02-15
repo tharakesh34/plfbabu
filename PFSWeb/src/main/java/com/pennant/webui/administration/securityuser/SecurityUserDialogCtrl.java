@@ -2912,6 +2912,13 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		ExtendedCombobox clusters = (ExtendedCombobox) getComponent(row, 7);
 
 		if (clusterType != null && clusters != null) {
+			if (getComboboxValue(clusterType).equals(PennantConstants.List_Select)) {
+				clusters.setButtonDisabled(true);
+			} else {
+				clusters.setButtonDisabled(false);
+			}
+			clusters.setSelectedValues(new HashMap<>());
+			clusters.setValue("");
 			clusters.setFilters(new Filter[] { new Filter("clustertype", clusterType.getSelectedItem().getValue()) });
 		}
 	}
@@ -2959,6 +2966,13 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			onChangeClusters(row);
 		} else {
 			clusters.setValue("");
+		}
+
+		Combobox clusterType = (Combobox) getComponent(row, 5);
+		if (clusterType.getValue().equals("")) {
+			clusters.setButtonDisabled(true);
+		} else {
+			clusters.setButtonDisabled(false);
 		}
 	}
 
