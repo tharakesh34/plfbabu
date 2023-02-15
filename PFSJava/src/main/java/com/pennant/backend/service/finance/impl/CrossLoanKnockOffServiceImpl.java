@@ -41,6 +41,7 @@ import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -99,6 +100,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			rch.setNewRecord(clk.isNewRecord());
 			rch.setVersion(clk.getVersion());
 			rch.setRcdMaintainSts(FinServiceEvent.RECEIPT);
+			rch.setKnockOffType(KnockOffType.CROSS_LOAN.code());
 			rch.setLastMntOn(clk.getLastMntOn());
 			rch.setRecordStatus(clk.getRecordStatus());
 			rch.setUserDetails(clk.getUserDetails());

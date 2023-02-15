@@ -57,6 +57,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -702,7 +703,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		}
 
 		rch.setKnockOffRefId(Long.valueOf(this.referenceId.getValue()));
-		rch.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_MANUAL);
+		rch.setKnockOffType(KnockOffType.CROSS_LOAN.code());
 
 		schdData.setErrorDetails(new ArrayList<>(1));
 

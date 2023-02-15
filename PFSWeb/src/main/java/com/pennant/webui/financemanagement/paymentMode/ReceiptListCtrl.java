@@ -58,6 +58,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -364,7 +365,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			} else if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment' and ((RECEIPTMODESTATUS = 'R' and ReceiptMode != 'ADVINT' and (NEXTROLECODE is null Or NEXTROLECODE = '')) or NEXTROLECODE='"
-								+ module + "')");
+								+ module + "')  and (KnockOffType != '" + KnockOffType.CROSS_LOAN.code() + "')");
 			} else if (FinanceConstants.KNOCKOFFCAN_APPROVER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment'  and (NEXTROLECODE='" + module + "')");
@@ -633,10 +634,12 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc.setParent(item);
 
 			String knockOffType = finReceiptHeader.getKnockOffType();
-			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(knockOffType)) {
+			if (KnockOffType.AUTO.code().equals(knockOffType)) {
 				lc = new Listcell("Auto");
-			} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(knockOffType)) {
+			} else if (KnockOffType.MANUAL.code().equals(knockOffType)) {
 				lc = new Listcell("Manual");
+			} else if (KnockOffType.CROSS_LOAN.code().equals(knockOffType)) {
+				lc = new Listcell("Cross Loan");
 			} else {
 				lc = new Listcell("");
 			}
@@ -808,7 +811,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		}
 
 		if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(module) || FinanceConstants.KNOCKOFFCAN_APPROVER.equals(module)) {
-			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(finRcptHeader.getKnockOffType())) {
+			if (KnockOffType.AUTO.code().equals(finRcptHeader.getKnockOffType())) {
 				ErrorDetail ed = receiptService.receiptCancelValidation(rch.getFinID(), rch.getReceiptDate());
 				if (ed != null) {
 					MessageUtil.showError(ed.getError());

@@ -216,6 +216,7 @@ import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -3503,10 +3504,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.valueDate.setValue(rch.getValueDate());
 
 		if (row_knockOff_Type.isVisible()) {
-			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(rch.getKnockOffType())) {
+			if (KnockOffType.AUTO.code().equals(rch.getKnockOffType())) {
 				this.knockOffType.setValue("Auto");
-			} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(rch.getKnockOffType())) {
+			} else if (KnockOffType.MANUAL.code().equals(rch.getKnockOffType())) {
 				this.knockOffType.setValue("Manual");
+			} else if (KnockOffType.CROSS_LOAN.code().equals(rch.getKnockOffType())) {
+				this.knockOffType.setValue("Cross Loan");
 			} else {
 				this.knockOffType.setValue("");
 			}
@@ -4952,9 +4955,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (this.row_knockOff_Type.isVisible()) {
 			if (isKnockOff) {
 				if ("Manual".equals(this.knockOffType.getValue())) {
-					header.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_MANUAL);
+					header.setKnockOffType(KnockOffType.MANUAL.code());
 				} else if ("Auto".equals(this.knockOffType.getValue())) {
-					header.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_AUTO);
+					header.setKnockOffType(KnockOffType.AUTO.code());
+				} else if ("Cross Loan".equals(this.knockOffType.getValue())) {
+					header.setKnockOffType(KnockOffType.CROSS_LOAN.code());
 				} else {
 					header.setKnockOffType("");
 				}

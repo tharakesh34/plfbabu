@@ -49,6 +49,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -358,11 +359,14 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			lc.setParent(item);
 
 			String knockoffType = clk.getKnockoffType();
-			if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(knockoffType)) {
-				lc = new Listcell(RepayConstants.KNOCKOFF_TYPE_MANUAL);
+			if (KnockOffType.MANUAL.code().equals(knockoffType)) {
+				lc = new Listcell(KnockOffType.MANUAL.code());
 				lc.setParent(item);
-			} else if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(knockoffType)) {
-				lc = new Listcell(RepayConstants.KNOCKOFF_TYPE_AUTO);
+			} else if (KnockOffType.AUTO.code().equals(knockoffType)) {
+				lc = new Listcell(KnockOffType.AUTO.code());
+				lc.setParent(item);
+			} else if (KnockOffType.CROSS_LOAN.code().equals(knockoffType)) {
+				lc = new Listcell(KnockOffType.CROSS_LOAN.code());
 				lc.setParent(item);
 			} else {
 				lc = new Listcell("");

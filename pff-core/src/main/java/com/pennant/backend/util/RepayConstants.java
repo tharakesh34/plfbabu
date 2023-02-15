@@ -104,9 +104,6 @@ public class RepayConstants {
 	public static final String RECEIPTTO_CUSTOMER = "C";
 	public static final String RECEIPTTO_OTHER = "O";
 
-	public static final String KNOCKOFF_TYPE_AUTO = "A";
-	public static final String KNOCKOFF_TYPE_MANUAL = "M";
-
 	// Receipt Payment Type
 	public static final String PAYTYPE_CASH = "CASH";
 	public static final String PAYTYPE_CHEQUE = "CHEQUE";

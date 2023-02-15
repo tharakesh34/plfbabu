@@ -137,6 +137,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -1214,18 +1215,12 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.closureType.setValue(String.valueOf(rch.getClosureTypeId()));
 			this.closureType.setDescription(rch.getClosureTypeDesc());
 		}
-		if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(rch.getKnockOffType())) {
+		if (KnockOffType.AUTO.code().equals(rch.getKnockOffType())) {
 			this.knockOffType.setValue("Auto");
-		} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(rch.getKnockOffType())) {
+		} else if (KnockOffType.MANUAL.code().equals(rch.getKnockOffType())) {
 			this.knockOffType.setValue("Manual");
-		} else {
-			this.knockOffType.setValue("");
-		}
-
-		if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(rch.getKnockOffType())) {
-			this.knockOffType.setValue("Auto");
-		} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(rch.getKnockOffType())) {
-			this.knockOffType.setValue("Manual");
+		} else if (KnockOffType.CROSS_LOAN.code().equals(rch.getKnockOffType())) {
+			this.knockOffType.setValue("Cross Loan");
 		} else {
 			this.knockOffType.setValue("");
 		}
