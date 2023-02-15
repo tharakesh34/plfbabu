@@ -183,7 +183,7 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -231,8 +231,10 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 
 		if (frh.getOdAgainstCustomer().compareTo(BigDecimal.ZERO) > 0
 				|| frh.getOdAgainstLoan().compareTo(BigDecimal.ZERO) > 0) {
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-					new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND_050", null, null), usrLanguage));
+			if ("saveOrUpdate".equals(method) || "doApprove".equals(method)) {
+				auditDetail.setErrorDetail(ErrorUtil
+						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND_050", null, null)));
+			}
 		}
 
 		logger.debug(Literal.LEAVING);

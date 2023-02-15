@@ -659,7 +659,6 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		doApprove(listFrh);
 
 		doRefresh();
-		Clients.showNotification("Fee Refund Process Approved.", "info", null, null, -1);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -922,11 +921,6 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 
 		if (feeRefundIdList.isEmpty()) {
 			MessageUtil.showError(Labels.getLabel("FeeRefundHeaderDataList_NoEmpty"));
-			return;
-		}
-
-		boolean isFileDownloaded = checkFileDownloaded(feeRefundIdList);
-		if (isFileDownloaded) {
 			return;
 		}
 
