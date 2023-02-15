@@ -110,14 +110,20 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 			executionMap.put("Fin_ODDays", fpd.getCurODDays());
 			executionMap.put("Fin_CurODamt", overDueAmt);
 
-			FinanceScheduleDetail nextSchd = financeScheduleDetailDAO.getNextSchd(finID, appDate, true);
-			FinanceScheduleDetail next2Schd = financeScheduleDetailDAO.getNextSchd(finID, nextSchd.getSchDate(), false);
-
-			BigDecimal nextEMIAmount = nextSchd.getRepayAmount();
+			BigDecimal nextEMIAmount = BigDecimal.ZERO;
 			BigDecimal next2EMIAmount = BigDecimal.ZERO;
 
-			if (next2Schd != null) {
-				next2EMIAmount = nextEMIAmount.add(next2Schd.getRepayAmount());
+			FinanceScheduleDetail nextSchd = financeScheduleDetailDAO.getNextSchd(finID, appDate, true);
+
+			if (nextSchd != null) {
+				nextEMIAmount = nextSchd.getRepayAmount();
+
+				FinanceScheduleDetail next2Schd = financeScheduleDetailDAO.getNextSchd(finID, nextSchd.getSchDate(),
+						false);
+
+				if (next2Schd != null) {
+					next2EMIAmount = nextEMIAmount.add(next2Schd.getRepayAmount());
+				}
 			}
 
 			executionMap.put("NextEMIAmount", nextEMIAmount);

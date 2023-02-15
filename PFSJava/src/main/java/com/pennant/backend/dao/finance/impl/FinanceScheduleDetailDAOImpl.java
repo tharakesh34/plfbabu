@@ -1341,12 +1341,13 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	public FinanceScheduleDetail getNextSchd(long finID, Date appDate, boolean businessDate) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select SchDate, RepayAmount from FinScheduleDetails");
-		sql.append(" Where SchDate = (Select min(SchDate) From FinScheduleDetails");
+		sql.append(" Where FinID = ? and SchDate = (Select min(SchDate) From FinScheduleDetails");
 		if (businessDate) {
 			sql.append(" Where FinID = ? and SchDate >= ? and RepayOnSchDate = ?)");
 		} else {
 			sql.append(" Where FinID = ? and SchDate > ? and RepayOnSchDate = ?)");
 		}
+		sql.append(" and RepayOnSchDate = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -1358,7 +1359,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				schd.setRepayAmount(rs.getBigDecimal("RepayAmount"));
 
 				return schd;
-			}, finID, appDate, 1);
+			}, finID, finID, appDate, 1, 1);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

@@ -74,6 +74,7 @@ public class AutoRefundProcess {
 			arl.setActiveNDate(activeNDate);
 			arl.setClosedNDate(closedNDate);
 			arl.setAlwRefundByCheque(alwRefundByCheque);
+			arl.setAppDate(appDate);
 
 			try {
 				process(arl);
