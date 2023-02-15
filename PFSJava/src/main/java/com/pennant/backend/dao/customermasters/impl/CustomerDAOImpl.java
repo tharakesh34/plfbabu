@@ -2899,6 +2899,15 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 	}
 
+	@Override
+	public String getCustShrtNameByFinID(long finID) {
+		String sql = "Select CustShrtName From Customers c Inner Join FinanceMain fm on fm.CustID = c.CustID Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, String.class, finID);
+	}
+
 	private String getCustomerEODQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch, CustPOB");

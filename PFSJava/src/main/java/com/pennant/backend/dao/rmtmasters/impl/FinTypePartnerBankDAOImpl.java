@@ -278,7 +278,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	}
 
 	@Override
-	public List<FinTypePartnerBank> getByFinTypeAndPurpose(FinTypePartnerBank fpb) {
+	public List<FinTypePartnerBank> getFinTypePartnerBanks(FinTypePartnerBank fpb) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ftpb.Id, ft.FinType, ft.FintypeDesc, Purpose, PaymentMode, pb.PartnerBankID, VanApplicable");
 		sql.append(", b.BranchCode, b.BranchDesc, ftpb.ClusterId, c.Code ClusterCode, c.Name, c.ClusterType");
@@ -303,6 +303,10 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 			sql.append(" and ftpb.ClusterId = ?");
 		}
 
+		if (fpb.getPartnerBankID() != null && fpb.getPartnerBankID() > 0) {
+			sql.append(" and ftpb.PartnerBankID = ?");
+		}
+
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return jdbcOperations.query(sql.toString(), ps -> {
@@ -316,6 +320,10 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 				ps.setString(++index, fpb.getBranchCode());
 			} else {
 				ps.setObject(++index, fpb.getClusterId());
+			}
+
+			if (fpb.getPartnerBankID() != null && fpb.getPartnerBankID() > 0) {
+				ps.setObject(++index, fpb.getPartnerBankID());
 			}
 
 		}, (rs, rowNum) -> {

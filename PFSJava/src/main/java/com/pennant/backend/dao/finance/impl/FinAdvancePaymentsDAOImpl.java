@@ -732,10 +732,11 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	public PaymentInstruction getBeneficiaryByPrintLoc(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" bb.BankBranchId, bb.BranchCode, bb.BranchDesc, bb.BankCode, bd.BankName, bb.IFSC, bb.City");
-		sql.append(", fm.FinType, fm.FinBranch");
+		sql.append(", fm.FinType, fm.FinBranch, c.CustShrtName");
 		sql.append(" From RMTBranches b");
 		sql.append(" Inner Join BankBranches bb on bb.BranchCode = b.DefChequeDDPrintLoc");
 		sql.append(" Inner Join FinanceMain fm on fm.FinBranch = b.BranchCode");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Inner Join BmtBankDetail bd ON bd.BankCode = bb.BankCode");
 		sql.append(" Where fm.Finid = ? ");
 
@@ -754,6 +755,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			pi.setPrintingLocDesc(rs.getString("BranchDesc"));
 			pi.setFinType(rs.getString("FinType"));
 			pi.setFinBranch(rs.getString("FinBranch"));
+			pi.setFavourName(rs.getString("CustShrtName"));
 
 			return pi;
 		}, finID);

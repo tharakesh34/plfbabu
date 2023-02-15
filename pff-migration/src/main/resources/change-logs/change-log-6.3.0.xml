@@ -12632,7 +12632,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.1.1" author="Sravanthi.S">
 		<sql>
 			<![CDATA[	
@@ -12640,7 +12640,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#2568.100" author="Vijayakumar.K">
 		<sql>
 			<![CDATA[
@@ -12692,7 +12692,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#218325" author="Mounika.M">
 		<sql>
 			<![CDATA[
@@ -12702,7 +12702,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#217985_pre" author="sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12710,13 +12710,14 @@
 				select deps_save_and_drop_dependencies ('plf', 'fin_settlement_header');
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="PSD#217985" author="sravanthi.g">
-		<modifyDataType tableName="fin_settlement_header_temp" columnName="CANCELREMARKS" newDataType="varchar(200)" />
-			<modifyDataType tableName="fin_settlement_header" columnName="CANCELREMARKS" newDataType="varchar(200)" />
-	</changeSet> 
-	
+		<modifyDataType tableName="fin_settlement_header_temp" columnName="CANCELREMARKS"
+			newDataType="varchar(200)" />
+		<modifyDataType tableName="fin_settlement_header" columnName="CANCELREMARKS" newDataType="varchar(200)" />
+	</changeSet>
+
 	<changeSet id="PSD#217985_post" author="sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12724,16 +12725,16 @@
 				select deps_restore_dependencies ('plf', 'fin_settlement_header');
 			]]>
 		</sql>
-	</changeSet> 
-	
-	  <changeSet id="PSD#216488.1" author="sravanthi.g">
+	</changeSet>
+
+	<changeSet id="PSD#216488.1" author="sravanthi.g">
 		<sql>
 			<![CDATA[
 				UPDATE DATA_ENGINE_COLUMN SET CONSTRAINTTYPE = 'M'  WHERE NAME = 'MICR' AND TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID  IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANDATES_UPLOAD'));
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#216488.2" author="sravanthi.g">
 		<sql>
 			<![CDATA[
@@ -12741,7 +12742,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#216488.3_pre" author="sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12749,12 +12750,12 @@
 				
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="PSD#216488.3" author="sravanthi.g">
 		<modifyDataType tableName="MANDATES_UPLOAD" columnName="MICR" newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#216488.3_post" author="sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12762,7 +12763,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#218446" author="sampath.d">
 		<sql>
 			<![CDATA[
@@ -12825,6 +12826,18 @@
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT max(GrpRightID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'CD_MANUFACTURERS_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CDManufacturersDialogue_ContactName'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 			
 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#218440_01" author="murthy.y">
+		<sql>
+		    <![CDATA[
+		        DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PAYMENT_INSTRUCTION_DD_PAYABLE_LOCATION';
+		        DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PAYMENT_INSTRUCTION_CHEQUE_PAYABLE_LOCATION';
+		       				
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PAYMENT_INSTRUCTION_DD_PAYABLE_LOCATION',       	'Payable location for payment mode DD',     		'string',    1, 'PAR',   	50, 0, NULL, NULL, 'Payable location for payment mode DD',		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PAYMENT_INSTRUCTION_CHEQUE_PAYABLE_LOCATION',       'Payable location for payment mode CHEQUE',        	'string',    1, 'ATPAR',   	50, 0, NULL, NULL, 'Payable location for payment mode CHEQUE',	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		     ]]>
 		</sql>
 	</changeSet>
 

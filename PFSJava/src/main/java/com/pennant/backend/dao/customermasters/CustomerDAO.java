@@ -204,4 +204,6 @@ public interface CustomerDAO {
 	Customer getCustomerForAutoRefund(long custID);
 
 	Customer getCustomerCoreBankID(String cif);
+
+	String getCustShrtNameByFinID(long finID);
 }

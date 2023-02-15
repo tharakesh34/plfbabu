@@ -80,7 +80,6 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	protected Textbox favouringName;
 	protected Textbox payableLoc;
 	protected ExtendedCombobox printingLoc;
-	protected Space madndatory_PrintingLoc;
 	protected Datebox valueDate;
 	protected Textbox chequeOrDDumber;
 
@@ -265,7 +264,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.chequeOrDDumber.setReadonly(isReadOnly("PaymentInstructionDialog_chequeOrDDumber"));
 		this.payableLoc.setReadonly(isReadOnly("PaymentInstructionDialog_payableLoc"));
 		this.printingLoc.setReadonly(isReadOnly("PaymentInstructionDialog_printingLoc"));
-		this.valueDate.setReadonly(isReadOnly("PaymentInstructionDialog_valueDate"));
+		this.valueDate.setDisabled(isReadOnly("PaymentInstructionDialog_valueDate"));
 		this.partnerBankID.setReadonly(isReadOnly("PaymentInstructionDialog_partnerBankID"));
 		this.leiNumber.setReadonly(isReadOnly("PaymentInstructionDialog_leiNumber"));
 
@@ -329,9 +328,9 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.postDate.setWidth("150px");
 		this.valueDate.setWidth("150px");
 		this.chequeOrDDumber.setWidth("150px");
-		this.remarks.setWidth("150px");
 
 		this.printingLoc.setModuleName("BankBranch");
+		this.printingLoc.setMandatoryStyle(true);
 		this.printingLoc.setValueColumn("BranchCode");
 		this.printingLoc.setDescColumn("BranchDesc");
 		this.printingLoc.setValidateColumns(new String[] { "BranchCode" });
@@ -807,15 +806,30 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 				this.partnerBankID.setValue(dataObject.toString());
 				this.partnerBankID.setDescription("");
 			}
-		} else {
-			FinTypePartnerBank partnerBank = (FinTypePartnerBank) dataObject;
-			if (partnerBank != null) {
-				this.partnerBankID.setAttribute("partnerBankId", partnerBank.getPartnerBankID());
-				this.paymentInstruction.setPartnerBankName(partnerBank.getPartnerBankName());
-				this.paymentInstruction.setPartnerBankAc(partnerBank.getAccountNo());
-				this.paymentInstruction.setPartnerBankAcType(partnerBank.getAccountType());
-			}
+
+			doSetPartnerBank();
+			logger.debug(Literal.LEAVING);
+			return;
 		}
+
+		FinTypePartnerBank ftpb = (FinTypePartnerBank) dataObject;
+		if (ftpb != null) {
+
+			setFilters(ftpb, null);
+
+			ftpb = finTypePartnerBankService.getFinTypePartnerBank(ftpb);
+		}
+
+		if (ftpb != null) {
+			doSetPartnerBank(ftpb);
+		} else {
+			doSetPartnerBank();
+		}
+
+		this.partnerBankID.setAttribute("partnerBankId", ftpb.getPartnerBankID());
+		this.paymentInstruction.setPartnerBankName(ftpb.getPartnerBankName());
+		this.paymentInstruction.setPartnerBankAc(ftpb.getAccountNo());
+		this.paymentInstruction.setPartnerBankAcType(ftpb.getAccountType());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -854,7 +868,8 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 	public void onChange$paymentType(Event event) {
 		String sPaymentType = this.paymentType.getSelectedItem().getValue().toString();
-		this.partnerBankID.setReadonly(false);
+
+		doSetPartnerBank();
 
 		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
 			doAddBranchWiseFilter(sPaymentType);
@@ -900,11 +915,11 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			this.acctNumber.setValue("");
 			this.acctHolderName.setValue("");
 			this.phoneNumber.setValue("");
+
 			if (type.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 					|| type.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
 				readOnlyComponent(isReadOnly("PaymentInstructionDialog_printingLoc"), this.printingLoc);
 				this.printingLoc.setMandatoryStyle(true);
-
 			} else {
 				this.printingLoc.setSclass("");
 			}
@@ -942,58 +957,87 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 	}
 
-	private void doAddBranchWiseFilter(String payMode) {
-		String finBranch = financeMain.getFinBranch();
+	private void doSetPartnerBank(FinTypePartnerBank fpb) {
+		this.partnerBankID.setAttribute("bankBranchID", fpb.getPartnerBankID());
+		// this.partnerBankID.setAttribute("partnerBankAc", fpb.getAccountNo());
+		// this.partnerBankID.setAttribute("partnerBankAcType", fpb.getAccountType());
+		this.partnerBankID.setValue(fpb.getPartnerBankCode());
+		this.partnerBankID.setDescription(fpb.getPartnerBankName());
+		this.partnerBankID.setReadonly(true);
 
+		this.issuingBank.setValue(fpb.getIssuingBankCode());
+		this.issuingBank.setDescription(fpb.getIssuingBankName());
+
+		this.printingLoc.setValue(fpb.getPrintingLoc());
+		this.printingLoc.setDescription(fpb.getPrintingLocDesc());
+
+		this.payableLoc.setValue(fpb.getPayableLoc());
+
+		this.favouringName.setValue(fpb.getFavourName());
+
+	}
+
+	private void doSetPartnerBank() {
+		this.partnerBankID.setAttribute("bankBranchID", null);
+		// this.partnerBankID.setAttribute("partnerBankAc", fpb.getAccountNo());
+		// this.partnerBankID.setAttribute("partnerBankAcType", fpb.getAccountType());
+		this.partnerBankID.setValue("");
+		this.partnerBankID.setDescription("");
+		this.partnerBankID.setReadonly(false);
+
+		this.issuingBank.setValue("");
+		this.issuingBank.setDescription("");
+
+		this.printingLoc.setValue("");
+		this.printingLoc.setDescription("");
+
+		this.payableLoc.setValue("");
+	}
+
+	private void setFilters(FinTypePartnerBank fpb, Filter[] filters) {
+		long finID = financeMain.getFinID();
+		String finType = financeMain.getFinType();
+		String finBranch = financeMain.getFinBranch();
+		String paymentMode = this.paymentType.getSelectedItem().getValue().toString();
+
+		Long clusterId = null;
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
+			clusterId = clusterService.getClustersFilter(finBranch);
+		}
+
+		if (filters != null) {
+			if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
+				filters[3] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
+			} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
+				filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+			}
+		}
+
+		fpb.setFinID(finID);
+		fpb.setFinType(finType);
+		fpb.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
+		fpb.setPaymentMode(paymentMode);
+		fpb.setBranchCode(finBranch);
+		fpb.setClusterId(clusterId);
+
+	}
+
+	private void doAddBranchWiseFilter(String payMode) {
 		Filter[] filters = new Filter[4];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
 		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
 
-		Long clusterId = null;
-		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
-			filters[3] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
-		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
-			clusterId = clusterService.getClustersFilter(finBranch);
-			filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
-		}
-
 		FinTypePartnerBank fpb = new FinTypePartnerBank();
-		fpb.setFinID(financeMain.getFinID());
-		fpb.setFinType(financeMain.getFinType());
-		fpb.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
-		fpb.setPaymentMode(payMode);
-		fpb.setBranchCode(finBranch);
-		fpb.setClusterId(clusterId);
+		setFilters(fpb, filters);
 
-		List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService.getByFinTypeAndPurpose(fpb);
+		List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService.getFinTypePartnerBanks(fpb);
 
 		if (fintypePartnerbank.size() == 1) {
 			fpb = fintypePartnerbank.get(0);
-			this.partnerBankID.setAttribute("partnerBankId", fpb.getPartnerBankID());
-			this.partnerBankID.setAttribute("partnerBankAc", fpb.getAccountNo());
-			this.partnerBankID.setAttribute("partnerBankAcType", fpb.getAccountType());
-			this.partnerBankID.setValue(fpb.getPartnerBankCode());
-			this.partnerBankID.setDescription(fpb.getPartnerBankName());
-			this.partnerBankID.setReadonly(true);
-
-			this.issuingBank.setValue(fpb.getIssuingBankCode());
-			this.issuingBank.setDescription(fpb.getIssuingBankName());
-
-			this.printingLoc.setValue(fpb.getPrintingLoc());
-			this.printingLoc.setDescription(fpb.getPrintingLocDesc());
-		}
-
-		if (fintypePartnerbank.size() == 0) {
-			this.partnerBankID.setValue("");
-			this.partnerBankID.setDescription("");
-			// this.partnerBankID.setReadonly(true);
-
-			this.issuingBank.setValue("");
-			this.issuingBank.setDescription("");
-
-			this.printingLoc.setValue("");
-			this.printingLoc.setDescription("");
+			doSetPartnerBank(fpb);
+		} else if (fintypePartnerbank.size() > 1) {
+			doSetPartnerBank();
 		}
 
 		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(payMode)

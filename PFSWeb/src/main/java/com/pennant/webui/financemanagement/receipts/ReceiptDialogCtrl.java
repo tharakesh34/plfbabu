@@ -2096,7 +2096,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		fpb.setBranchCode(branchCode);
 		fpb.setClusterId(clusterId);
 
-		List<FinTypePartnerBank> list = finTypePartnerBankService.getByFinTypeAndPurpose(fpb);
+		List<FinTypePartnerBank> list = finTypePartnerBankService.getFinTypePartnerBanks(fpb);
 
 		if (list.size() == 1) {
 			fpb = list.get(0);

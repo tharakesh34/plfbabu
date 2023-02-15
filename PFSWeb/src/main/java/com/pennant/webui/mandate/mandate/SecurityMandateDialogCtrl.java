@@ -2403,7 +2403,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		fpb.setBranchCode(finBranch);
 		fpb.setClusterId(clusterId);
 
-		List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService.getByFinTypeAndPurpose(fpb);
+		List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService.getFinTypePartnerBanks(fpb);
 
 		if (fintypePartnerbank.size() == 1) {
 			this.partnerBank.setAttribute("partnerBankId", fintypePartnerbank.get(0).getPartnerBankID());

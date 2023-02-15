@@ -11,6 +11,7 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.ClusterDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
@@ -35,6 +36,7 @@ public class RefundBeneficiary {
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
 	private ClusterDAO clusterDAO;
 	private BankBranchDAO bankBranchDAO;
+	private CustomerDAO customerDAO;
 
 	public PaymentInstruction getBeneficiary(long finID, Date appDate, boolean alwRefundByCheque) {
 		logger.debug(Literal.ENTERING);
@@ -146,7 +148,7 @@ public class RefundBeneficiary {
 		fpb.setBranchCode(pi.getFinBranch());
 		fpb.setClusterId(clusterId);
 
-		List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankDAO.getByFinTypeAndPurpose(fpb);
+		List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankDAO.getFinTypePartnerBanks(fpb);
 
 		if (fintypePartnerbank.size() == 1) {
 			fpb = fintypePartnerbank.get(0);
@@ -160,20 +162,39 @@ public class RefundBeneficiary {
 
 		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
 				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
+
+			String payableLoc = getPayableLoc(paymentType);
+
+			String custShrtName = customerDAO.getCustShrtNameByFinID(pi.getFinID());
+
 			for (FinTypePartnerBank ftpb : fintypePartnerbank) {
 				BankBranch bb = bankBranchDAO.getPrintingLoc(pi.getFinID(), ftpb.getIssuingBankCode(), paymentType);
 
 				if (bb != null) {
 					pi.setPrintingLoc(bb.getBranchCode());
 					pi.setPrintingLocDesc(bb.getBranchDesc());
+					pi.setFavourName(custShrtName);
+					pi.setPayableLoc(payableLoc);
 
 					fpb.setPrintingLoc(bb.getBranchCode());
 					fpb.setPrintingLocDesc(bb.getBranchDesc());
+					fpb.setFavourName(custShrtName);
+					fpb.setPayableLoc(payableLoc);
 				}
 			}
 		}
 
 		pi.setValueDate(SysParamUtil.getAppDate());
+	}
+
+	private String getPayableLoc(String paymentMode) {
+		String sysParamCode = SMTParameterConstants.PAYMENT_INSTRUCTION_CHEQUE_PAYABLE_LOCATION;
+
+		if (DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentMode)) {
+			sysParamCode = SMTParameterConstants.PAYMENT_INSTRUCTION_DD_PAYABLE_LOCATION;
+		}
+
+		return SysParamUtil.getValueAsString(sysParamCode);
 	}
 
 	@Autowired
@@ -209,6 +230,11 @@ public class RefundBeneficiary {
 	@Autowired
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 
 }

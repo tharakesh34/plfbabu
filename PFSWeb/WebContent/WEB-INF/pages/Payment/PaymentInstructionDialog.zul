@@ -54,17 +54,18 @@
 										<hbox>
 											<currencyBox id="paymentAmount" />
 										</hbox>
+										<label value="${c:l('label_DisbInstructionsDialog_Partnerbank.value')}" />
+										<extendedcombobox id="partnerBankID" />
 									</row>
 
 									<row>
-										<label value="${c:l('label_DisbInstructionsDialog_Partnerbank.value')}" />
-										<extendedcombobox id="partnerBankID" />
-
 										<label value="${c:l('label_DisbInstructionsDialog_Remarks.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<textbox id="remarks" rows="2" cols="2" width="150px" />
-										</hbox>
+										<cell colspan="3" valign="top">
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="remarks" multiline="true" width="500px" height="60px" maxlength ="100"/>
+											</hbox>
+										</cell>
 									</row>
 
 									<row>
@@ -112,7 +113,7 @@
 										<label value="${c:l('label_DisbInstructionsDialog_FavouringName.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<textbox id="favouringName" />
+											<textbox id="favouringName" maxlength="200" width="250px"/>
 										</hbox>
 									</row>
 
@@ -120,12 +121,11 @@
 										<label value="${c:l('label_DisbInstructionsDialog_PayableLoc.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<textbox id="payableLoc" />
+											<textbox id="payableLoc" maxlength="50" width="250px"/>
 										</hbox>
 
 										<label value="${c:l('label_DisbInstructionsDialog_PrintingLoc.value')}" />
 										<hbox>
-											<space spacing="2px" id="madndatory_PrintingLoc" />
 											<extendedcombobox id="printingLoc" />
 										</hbox>
 									</row>
