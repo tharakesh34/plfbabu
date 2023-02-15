@@ -3022,6 +3022,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				continue;
 			}
 
+			Decimalbox calbox = getDecimalbox(FEE_UNIQUEID_CALCULATEDAMOUNT, fee);
+			if (calbox != null) {
+				calbox.setErrorMessage("");
+			}
+
 			Decimalbox waivedbox = getDecimalbox(FEE_UNIQUEID_WAIVEDAMOUNT, fee);
 			if (waivedbox != null) {
 				waivedbox.setErrorMessage("");
