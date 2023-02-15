@@ -414,6 +414,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				String aggName = StringUtils.trimToEmpty(data.getLovDescNamelov());
 				String reportName = "";
 				String totalEligibiltyAmount = "0.00";
+				String actualFoir = "0.00";
+				String ltv = "0.00";
 
 				if ("NOC".equals(data.getLovDescCodelov())) {
 					List<String> finReferences = linkedFinancesService.getFinReferences(fm.getFinReference());
@@ -439,19 +441,40 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				} else if ("CAM".equals(data.getLovDescCodelov())) {
 					if (getFinanceMainDialogCtrl() != null) {
 						@SuppressWarnings("unchecked")
-						Map<String, Object> map = (Map<String, Object>) getFinanceMainDialogCtrl().getClass()
-								.getMethod("getCreditReviewMap").invoke(financeMainDialogCtrl);
+						CreditReviewData creditReviewData = (CreditReviewData) getFinanceMainDialogCtrl().getClass()
+								.getMethod("getUpdateCreditReviewMap").invoke(financeMainDialogCtrl);
 
-						CreditReviewData creditReviewData = (CreditReviewData) map.get("creditReviewData");
 						if (creditReviewData != null) {
 							Map<String, Object> dataMap = convertStringToMap(creditReviewData.getTemplateData());
 
 							String cellCode = SysParamUtil.getValueAsString("CREDIT_ELIGIBILITY_TOTAL");
-							Double obj = (Double) dataMap.get("FINAL_OFFER_" + cellCode);
-							if (obj != null) {
-								totalEligibiltyAmount = PennantApplicationUtil.formatAmount(new BigDecimal(obj), 2)
-										.toString();
+							if (!StringUtils.isEmpty(cellCode)) {
+								Double obj = (Double) dataMap.get("FINAL_OFFER_" + cellCode);
+								if (obj != null) {
+									totalEligibiltyAmount = PennantApplicationUtil.formatAmount(new BigDecimal(obj), 2)
+											.toString();
+								}
 							}
+
+							String foirCells = SysParamUtil.getValueAsString("CREDIT_FINAL_FOIR");
+							if (!StringUtils.isEmpty(foirCells)) {
+								String[] args = foirCells.split(",");
+								if (args[0] != null) {
+									Double obj = (Double) dataMap.get("FINAL_OFFER_" + args[0]);
+									if (obj != null) {
+										actualFoir = PennantApplicationUtil.formatAmount(new BigDecimal(obj), 2)
+												.toString();
+									}
+								}
+
+								if (args[1] != null) {
+									Double obj = (Double) dataMap.get("FINAL_OFFER_" + args[1]);
+									if (obj != null) {
+										ltv = PennantApplicationUtil.formatAmount(new BigDecimal(obj), 2).toString();
+									}
+								}
+							}
+
 						}
 
 					}
@@ -477,6 +500,10 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 						getUserWorkspace().getUserDetails());
 
 				aggDetail.setTotalEligibilityAmount(totalEligibiltyAmount);
+				if (aggDetail.getOtherMap() != null) {
+					aggDetail.getOtherMap().put("actualFoir", actualFoir);
+					aggDetail.getOtherMap().put("finalLtv", ltv);
+				}
 
 				engine.mergeFields(aggDetail);
 

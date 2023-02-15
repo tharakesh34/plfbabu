@@ -553,4 +553,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="34" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Delete from SMTPARAMETERS where SYSPARMCODE ='CREDIT_FINAL_FOIR';
+				Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CREDIT_FINAL_FOIR','Actual Foir & LTV in credit review sheet','String',1,'C8,C12',50,0,null,null,null,1,1000,to_date('01-12-22','DD-MM-RR'),'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

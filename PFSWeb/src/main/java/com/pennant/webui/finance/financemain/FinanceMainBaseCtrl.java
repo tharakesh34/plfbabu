@@ -23692,6 +23692,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public CreditReviewData getUpdateCreditReviewMap() {
+		try {
+			if (financeSpreadSheetCtrl != null) {
+				financeSpreadSheetCtrl.doSave(userAction, true);
+				return financeSpreadSheetCtrl.getCreditReviewData();
+			}
+		} catch (Exception e) {
+			return null;
+		}
+
+		return null;
+	}
+
 	public List<String> getAssignCollateralRef() {
 		return assignCollateralRef;
 	}
