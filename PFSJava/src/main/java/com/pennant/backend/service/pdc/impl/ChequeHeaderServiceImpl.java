@@ -450,7 +450,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		ChequeHeader ch = new ChequeHeader();
 		BeanUtils.copyProperties((ChequeHeader) auditHeader.getAuditDetail().getModelData(), ch);
 
-		if (ch.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (PennantConstants.RECORD_TYPE_DEL.equals(ch.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
 			chequeHeaderDAO.delete(ch, TableType.MAIN_TAB);
 			auditDetails.addAll(listDeletion(ch, TableType.MAIN_TAB, auditHeader.getAuditTranType()));
@@ -464,7 +464,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 			processDocument(ch);
 
-			if (ch.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (PennantConstants.RECORD_TYPE_NEW.equals(ch.getRecordType())) {
 				tranType = PennantConstants.TRAN_ADD;
 				ch.setRecordType("");
 				chequeHeaderDAO.save(ch, TableType.MAIN_TAB);
@@ -486,7 +486,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			details = processingChequeDetailList(details, TableType.MAIN_TAB, ch.getHeaderID());
 			auditDetails.addAll(details);
 		}
-		if (!StringUtils.equals(ch.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+		if (!PennantConstants.FINSOURCE_ID_API.equals(ch.getSourceId())
+				&& !RequestSource.UPLOAD.name().equals(ch.getSourceId())) {
 			auditHeader.setAuditDetails(
 					getListAuditDetails(listDeletion(ch, TableType.TEMP_TAB, auditHeader.getAuditTranType())));// FIXME
 			chequeHeaderDAO.delete(ch, TableType.TEMP_TAB);
