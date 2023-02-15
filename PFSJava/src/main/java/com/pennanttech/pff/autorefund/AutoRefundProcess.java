@@ -189,6 +189,8 @@ public class AutoRefundProcess {
 					adv.getFeeTypeCode(), adv.getFeeTypeDesc(), refundAvail));
 		}
 
+		arl.setRefundAmt(refundAvail);
+
 		if (refundAvail.compareTo(BigDecimal.ZERO) <= 0) {
 			arl.setErrorCode("REFUND_006");
 			arl.setAppDate(appDate);
