@@ -1668,7 +1668,7 @@ public class FinanceDataValidation {
 			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(dsaCodeRef, "DSA", "");
 			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getDsaCode();
+				valueParm[0] = "dsaCode";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 			} else {
 				finMain.setDsaCode(String.valueOf(vehicleDealer.getDealerId()));
