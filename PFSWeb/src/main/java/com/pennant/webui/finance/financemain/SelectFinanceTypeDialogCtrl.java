@@ -1390,8 +1390,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					eidNumber.setConstraint(
 							new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
 					if (isRetailCustomer && !ImplementationConstants.RETAIL_CUST_PAN_MANDATORY) {
-						eidNumber.setConstraint(
-								new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, true));
+						eidNumber.setConstraint(new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex,
+								"Y".equals(isPANMandatory)));
 					}
 				}
 
