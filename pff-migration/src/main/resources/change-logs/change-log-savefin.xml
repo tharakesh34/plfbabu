@@ -1823,4 +1823,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="78" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Delete from SMTPARAMETERS where SYSPARMCODE ='PAN_REQ';
+				Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('PAN_REQ','Pan Mandatory','String',1,'Y',1,0,null,null,null,1,1000,to_date('01-12-22','DD-MM-RR'),'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

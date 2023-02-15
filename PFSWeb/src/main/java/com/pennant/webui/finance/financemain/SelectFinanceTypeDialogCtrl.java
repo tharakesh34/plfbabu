@@ -107,6 +107,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.pff.document.DocVerificationUtil;
@@ -1390,7 +1391,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 							new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
 					if (isRetailCustomer && !ImplementationConstants.RETAIL_CUST_PAN_MANDATORY) {
 						eidNumber.setConstraint(
-								new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, false));
+								new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, true));
 					}
 				}
 
@@ -1934,11 +1935,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Entering" + event.toString());
 		changeCustCtgType();
 
-		/*
-		 * isPANMandatory = SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ); if
-		 * (StringUtils.equals("Y",isPANMandatory)) { this.space_EIDNumber.setSclass(PennantConstants.mandateSclass);
-		 * }else{ this.space_EIDNumber.setSclass(""); }
-		 */
+		isPANMandatory = SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ);
+		if (StringUtils.equals("Y", isPANMandatory) && isRetailCustomer) {
+			this.space_EIDNumber.setSclass(PennantConstants.mandateSclass);
+		} else {
+			this.space_EIDNumber.setSclass("");
+		}
 
 		logger.debug("Leaving" + event.toString());
 	}
