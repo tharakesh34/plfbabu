@@ -149,7 +149,6 @@ public class SuccessResponseTasklet implements Tasklet {
 			transactionManager.rollback(transactionStatus);
 			return false;
 		} catch (Exception e) {
-			e.printStackTrace();
 			transactionManager.rollback(transactionStatus);
 			throw e;
 		}
