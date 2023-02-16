@@ -577,4 +577,27 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="37" author="rahul.r">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAEEVENTS WHERE AEEVENTCODE='IMDFEE' AND ACTIVE=1;
+				INSERT INTO BMTAEEVENTS(aeeventcode, aeeventcodedesc, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, active) VALUES ('IMDFEE', 'IMD Fee validation', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+				
+				DELETE FROM RBFIELDDETAILS WHERE RBMODULE = 'FEES' AND RBEVENT = 'IMDFEE' AND RBFLDNAME = 'fee_PROCFEEPaid';
+				INSERT INTO RBFieldDetails values  ('FEES', 'IMDFEE', 'fee_PROCFEEPaid', 'PROCFEE Fee paid amount', 'bigint', 0, 1, 1, null, 'static,global', null);
+				
+				DELETE FROM RBFIELDDETAILS WHERE RBMODULE = 'FEES' AND RBEVENT = 'IMDFEE' AND RBFLDNAME = 'fee_PROCFEEActualAmount';
+				INSERT INTO RBFieldDetails values  ('FEES', 'IMDFEE', 'fee_PROCFEEActualAmount', 'PROCFEE Fee Actual amount', 'bigint', 0, 1, 1, null, 'static,global', null);
+				
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="79" author="rahul.r">
+		<sql>
+			<![CDATA[
+				Delete from SMTPARAMETERS where SYSPARMCODE ='CLIENT_CODE';
+				Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CLIENT_CODE','Client code Values','String',1,'Habitat',20,0,null,null,null,1,1000,to_date('01-12-22','DD-MM-RR'),'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -7,9 +7,11 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.cronutils.utils.StringUtils;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -39,11 +41,20 @@ public class IMDFeeService {
 		FinanceMain fm = schdData.getFinanceMain();
 		List<FinFeeDetail> finFeeDetailActualList = schdData.getFinFeeDetailList();
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
-
+		String clientName = SysParamUtil.getValueAsString("CLIENT_CODE");
+		if (StringUtils.isEmpty(clientName)) {
+			clientName = "Habitat";
+		}
+		String feeType = "IMD";
+		if ("Habitat".equals(clientName)) {
+			feeType = "PROCFEE";
+		} else if ("Save".equals(clientName)) {
+			feeType = "IMD";
+		}
 		ErrorDetail error = null;
 		if (CollectionUtils.isNotEmpty(finFeeDetailActualList)) {
 			for (FinFeeDetail finFee : finFeeDetailActualList) {
-				if (finFee.getFeeTypeCode().equals("IMD")) {
+				if (finFee.getFeeTypeCode().equals(feeType)) {
 
 					List<Rule> ruleList = ruleDAO.getRuleByModuleAndEvent(RuleConstants.MODULE_FEES, "IMDFEE", "");
 					if (CollectionUtils.isEmpty(ruleList)) {
@@ -51,8 +62,8 @@ public class IMDFeeService {
 					}
 
 					Map<String, Object> paramMap = new HashMap<>();
-					paramMap.put("fee_IMDPaid", CurrencyUtil.parse(finFee.getPaidAmount(), 2));
-					paramMap.put("fee_IMDActualAmount", CurrencyUtil.parse(finFee.getActualAmount(), 2));
+					paramMap.put("fee_" + feeType + "Paid", CurrencyUtil.parse(finFee.getPaidAmount(), 2));
+					paramMap.put("fee_" + feeType + "ActualAmount", CurrencyUtil.parse(finFee.getActualAmount(), 2));
 					paramMap.put("fm_finType", fm.getFinType());
 
 					if (finFee.getPaidAmount().compareTo(BigDecimal.ZERO) == 0
@@ -68,7 +79,7 @@ public class IMDFeeService {
 								paidAmount = paidAmount.add(feeReceipt.getPaidAmount());
 							}
 						}
-						paramMap.put("fee_IMDPaid", CurrencyUtil.parse(paidAmount, 2));
+						paramMap.put("fee_" + feeType + "Paid", CurrencyUtil.parse(paidAmount, 2));
 					}
 
 					BigDecimal result = RuleExecutionUtil.getRuleResult(ruleList.get(0).getSQLRule(), paramMap, null);
