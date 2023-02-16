@@ -1996,4 +1996,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
+	public List<Verification> getVerifications() {
+		return verifications;
+	}
 }

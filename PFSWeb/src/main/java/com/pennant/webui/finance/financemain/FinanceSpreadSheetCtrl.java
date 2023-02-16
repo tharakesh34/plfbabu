@@ -58,6 +58,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
@@ -79,6 +80,8 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 	private FinanceDetail fd;
 	private Tab parentTab;
+
+	private List<Verification> verifications;
 
 	int format = PennantConstants.defaultCCYDecPos;
 
@@ -132,6 +135,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 			if (arguments.containsKey("isValidationAlw")) {
 				this.isValidationAlw = (boolean) arguments.get("isValidationAlw");
+			}
+
+			if (arguments.containsKey("verifications")) {
+				this.verifications = (List<Verification>) arguments.get("verifications");
 			}
 
 			if (this.creditReviewDetails != null) {
@@ -330,6 +337,11 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		if (!enqiryModule) {
 			doSetScreenData(sheet, applicantDataMap);
+			try {
+				doSetVarificationData(sheet);
+			} catch (Exception e) {
+
+			}
 		}
 	}
 
@@ -638,6 +650,42 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doSetVarificationData(Sheet sheet) {
+		if (this.verifications == null) {
+			return;
+		}
+
+		String marketValueFiedls = SysParamUtil.getValueAsString("CREDIT_MARKET_VALUATION");
+		if (StringUtils.isEmpty(marketValueFiedls)) {
+			return;
+		}
+		BigDecimal value1 = null;
+		BigDecimal value2 = null;
+		String arr[] = marketValueFiedls.split(",");
+		for (int i = 0; i < this.verifications.size(); i++) {
+			Verification verification = this.verifications.get(i);
+			if (verification.getReinitid() == null) {
+				if (verification.getAgencyName() == null) {
+					continue;
+				}
+
+				if (value1 == null) {
+					value1 = verification.getValuationAmount();
+					continue;
+				}
+
+				if (value2 == null) {
+					value2 = verification.getValuationAmount();
+					break;
+				}
+
+			}
+		}
+
+		setCellValue(sheet, arr[0], value1);
+		setCellValue(sheet, arr[1], value2);
 	}
 
 	/**

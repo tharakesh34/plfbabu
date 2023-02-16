@@ -5076,6 +5076,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY));
 		map.put("isValidationAlw", isValidationAlw);
 
+		if (this.tVerificationDialogCtrl != null) {
+			List<Verification> verifications = this.tVerificationDialogCtrl.getVerifications();
+			map.put("verifications", verifications);
+		}
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceSpreadSheet.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY), map);
