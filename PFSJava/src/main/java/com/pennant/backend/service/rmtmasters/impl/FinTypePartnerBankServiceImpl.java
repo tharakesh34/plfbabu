@@ -477,6 +477,10 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	public List<FinTypePartnerBank> getFinTypePartnerBanks(FinTypePartnerBank fab) {
 		List<FinTypePartnerBank> list = finTypePartnerBankDAO.getFinTypePartnerBanks(fab);
 
+		if (fab.getFinID() <= 0) {
+			return list;
+		}
+
 		String paymentMode = fab.getPaymentMode();
 		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentMode)
 				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentMode)) {
