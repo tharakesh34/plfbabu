@@ -2677,7 +2677,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (receiptPurposeCtg < 2) {
 				rcd.setAmount(receiptData.getReceiptHeader().getReceiptAmount());
 			} else {
-				rcd.setAmount(rcd.getDueAmount());
+				rcd.setAmount(payable.getTotPaidNow());
 			}
 			rcd.setValueDate(rch.getValueDate());
 			rcd.setReceivedDate(rch.getValueDate());
