@@ -23,10 +23,10 @@
 			<center border="none" autoscroll="true" style="overflow:auto">
 				<div style="border:none">
 					<groupbox style="overflow:auto">
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
+						<grid sclass="GridLayoutNoBorder"  style="border:0px;">
 							<columns>
-								<column width="15%" />
-								<column width="35%" />
+								<column width="20%" />
+								<column width="80%" />
 								<column width="15%" />
 								<column width="35%" />
 							</columns>
@@ -73,7 +73,7 @@
 							</rows>
 						</grid>
 					</groupbox>
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
+					<grid sclass="GridLayoutNoBorder"  style="border:0px;">
 						<columns>
 							<column width="90%" />
 						</columns>
