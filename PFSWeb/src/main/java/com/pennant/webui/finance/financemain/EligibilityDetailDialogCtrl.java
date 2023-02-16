@@ -528,7 +528,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 
 		if (customerEligibilityCheck.getCurrentAssetValue() != null) {
 			finAssetValue = customerEligibilityCheck.getCurrentAssetValue();
-			finAssetValue = PennantApplicationUtil.formateAmount(finAssetValue, 2);
+			finAssetValue = PennantApplicationUtil.formateAmount(finAssetValue, PennantConstants.defaultCCYDecPos);
 		}
 
 		if (customerEligibilityCheck.getExtendedValue("Collaterals_Total_Assigned") != null) {
@@ -537,7 +537,8 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		}
 
 		try {
-			BigDecimal collPrec = totalAssgnedCollAmount.divide(finAssetValue, 2, RoundingMode.HALF_UP);
+			BigDecimal collPrec = totalAssgnedCollAmount.divide(finAssetValue, PennantConstants.defaultCCYDecPos,
+					RoundingMode.HALF_UP);
 			collPrec = collPrec.multiply(new BigDecimal(100));
 			customerEligibilityCheck.addExtendedField("Coll_Assign_Percentage", collPrec);
 		} catch (Exception e) {
