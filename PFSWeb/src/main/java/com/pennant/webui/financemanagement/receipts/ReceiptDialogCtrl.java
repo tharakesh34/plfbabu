@@ -3706,21 +3706,31 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void appendScheduleMethod(FinReceiptHeader rch) {
+		String excessAdjustTo = rch.getExcessAdjustTo();
+		String exclude = "";
+		List<ValueLabel> excessAdjustToList = PennantStaticListUtil.getExcessAdjustmentTypes();
 
 		if (receiptPurposeCtg != 1) {
 			scheduleLabel.setValue(Labels.getLabel("label_ReceiptPayment_ExcessAmountAdjustment.value"));
 			this.excessAdjustTo.setVisible(true);
 			this.excessAdjustTo.setDisabled(false);
+
 			if (StringUtils.contains(rch.getFinType(), "OD")) {
-				fillComboBox(excessAdjustTo, "A", PennantStaticListUtil.getExcessAdjustmentTypes(), "E");
+				excessAdjustTo = "A";
+				exclude = "E";
 				this.excessAdjustTo.setDisabled(true);
 				this.excessAdjustTo.setReadonly(true);
-			} else {
-				fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
-						"");
 			}
+
+			fillComboBox(this.excessAdjustTo, excessAdjustTo, excessAdjustToList, exclude);
+
 			if (receiptPurposeCtg == 2) {
-				fillComboBox(excessAdjustTo, "E", PennantStaticListUtil.getExcessAdjustmentTypes(), ",A,");
+				exclude = ",A,";
+				if (StringUtils.isEmpty(rch.getExcessAdjustTo())) {
+					excessAdjustTo = "E";
+				}
+
+				fillComboBox(this.excessAdjustTo, excessAdjustTo, excessAdjustToList, exclude);
 				this.excessAdjustTo.setDisabled(true);
 				this.excessAdjustTo.setReadonly(true);
 			}
@@ -3735,7 +3745,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			this.excessAdjustTo.setVisible(false);
 			this.excessAdjustTo.setDisabled(true);
-			scheduleLabel.setValue(Labels.getLabel("label_ReceiptDialog_EffecScheduleMethod.value"));
+
+			this.scheduleLabel.setValue(Labels.getLabel("label_ReceiptDialog_EffecScheduleMethod.value"));
+
 			List<ValueLabel> epyMethodList = getEffectiveSchdMethods();
 			String defaultMethod = "";
 			String effschmethod = getFinanceDetail().getFinScheduleData().getFinanceType().getFinScheduleOn();
