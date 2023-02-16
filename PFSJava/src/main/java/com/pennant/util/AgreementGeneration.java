@@ -1933,6 +1933,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 									}
 								}
 								collExtMapList.add(collMap);
+								agreement.getOtherMap().putAll(collMap);
 							}
 						}
 					}
