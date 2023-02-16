@@ -303,4 +303,19 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="011.01" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				INSERT INTO INTERFACE_ERROR_CODES (ERROR_CODE, ERROR_MESSAGE, STATUS, CREATED_DATE, ERROR_DESC) VALUES ('F606','Invalid reject file count.',1,current_timestamp,'REJECT_FILE_COUNT_MISMATCH');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="003.01" author="goutham.ch">
+		<addColumn tableName="PRMNT_HEADER">
+			<column name="ERROR_CODE" type="VARCHAR(200)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(4000)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
