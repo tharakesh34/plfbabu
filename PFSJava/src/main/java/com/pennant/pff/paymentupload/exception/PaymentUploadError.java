@@ -50,7 +50,9 @@ public enum PaymentUploadError {
 
 	HOLDUP0011("Fin Reference is not in active."),
 
-	REFUP014("Duplicate Record is found in File for the Reference and Excess Type");
+	REFUP014("Duplicate Record is found in File for the Reference and Excess Type"),
+
+	REFUP015("Refunds not allowed for Written off Loan");
 
 	private String description;
 

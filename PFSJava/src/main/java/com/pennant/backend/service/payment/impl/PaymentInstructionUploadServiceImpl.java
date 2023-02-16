@@ -243,6 +243,11 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
+		if (fm.isWriteoffLoan()) {
+			setError(detail, PaymentUploadError.REFUP015);
+			return;
+		}
+
 		if (!"N".equals(detail.getOverRide()) && !"Y".equals(detail.getOverRide())) {
 			setError(detail, PaymentUploadError.REFUP013);
 			return;
