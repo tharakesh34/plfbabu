@@ -6421,9 +6421,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		BigDecimal closingBal = getClosingBalance(fm.getFinID(), rd.getReceiptHeader().getValueDate());
+		BigDecimal formateAmount = PennantApplicationUtil.formateAmount(closingBal,
+				CurrencyUtil.getFormat(fm.getFinCcy()));
+
 		BigDecimal diff = closingBal.subtract(rd.getReceiptHeader().getPartPayAmount());
 		if (diff.compareTo(new BigDecimal(100)) < 0) {
-			setError(schdData, "91127", String.valueOf(closingBal));
+			setError(schdData, "91127", String.valueOf(formateAmount));
 			return;
 		}
 	}
