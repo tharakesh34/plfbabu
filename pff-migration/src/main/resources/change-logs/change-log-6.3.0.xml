@@ -12840,5 +12840,65 @@
 		     ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#218613.1" author="saikrishna.b" dbms="oracle">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval NUMBER(19);
+			begin
+			select COALESCE(max(T.RULEID),0)+1 into v_maxval from
+			(select
+			RULEID from RULES union all select RULEID from RULES_Temp) T;
+			EXECUTE IMMEDIATE
+			'alter sequence SeqRules restart start with ' || v_maxval;
+			end;
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="PSD#218613.2" author="saikrishna.b" dbms="postgresql">
+		<sql splitStatements="false">
+		<![CDATA[
+			do $$
+			declare
+			v_maxval BIGINT;
+			begin
+			select COALESCE(max(T.RULEID),0)+1 into v_maxval from
+			(select RULEID from RULES union all select RULEID from RULES_Temp) T;
+			EXECUTE 'alter
+			sequence SeqRules restart start with ' || v_maxval;
+			end;
+			$$;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#218613.3" author="saikrishna.b" dbms="mssql">
+		<sql splitStatements="false">
+		<![CDATA[
+			DECLARE @SQLCmd VARCHAR(MAX);
+			DECLARE @MAXNO BIGINT;
+			SELECT
+			@MAXNO=COALESCE(max(T.RULEID),0)+1 from
+			(select RULEID from RULES union all select RULEID
+			from RULES_Temp) T;
+
+			SET @SQLCmd = '
+                ALTER SEQUENCE SeqRules
+                RESTART WITH ' + CAST(@MAXNO AS VARCHAR(MAX));
+                           
+                EXEC (@SQLCmd);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#218423" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_COLUMN SET CONSTRAINTTYPE = 'CHECK: B,S' WHERE NAME = 'CLEARING_STATUS' AND TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'FATE_CORRECTION_UPLOAD'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
