@@ -3314,15 +3314,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		}
 
 		try {
-			if (!isKnockOff && !isForeClosure) {
-				header.setReceiptMode(getComboboxValue(receiptMode));
-			}
-			if (StringUtils.equalsIgnoreCase("#", header.getSubReceiptMode())) {
+			header.setReceiptMode(getComboboxValue(receiptMode));
+			if (header.getSubReceiptMode() == null || StringUtils.equalsIgnoreCase("#", header.getSubReceiptMode())) {
 				header.setSubReceiptMode(header.getReceiptMode());
-			}
-			if (isKnockOff || isForeClosure) {
-				header.setReceiptMode(RepayConstants.PAYTYPE_EXCESS);
-				header.setSubReceiptMode(RepayConstants.PAYTYPE_EXCESS);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
