@@ -1143,7 +1143,8 @@ public class PresentmentEngine {
 		}
 
 		if (DateUtil.compare(pd.getAppDate(), pd.getSchDate()) >= 0) {
-			createReceipt(receiptDTO, RequestSource.PRMNT_EXT, false);
+			createReceipt(receiptDTO, RequestSource.PRMNT_EXT,
+					PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType()));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1589,6 +1590,9 @@ public class PresentmentEngine {
 		receiptDTO.setSchedules(schedules);
 		receiptDTO.setPresentmentDetail(pd);
 		receiptDTO.setOdDetails(finODDetails);
+
+		receiptDTO.setValuedate(pd.getSchDate());
+		receiptDTO.setPostDate(pd.getAppDate());
 
 		return receiptDTO;
 	}

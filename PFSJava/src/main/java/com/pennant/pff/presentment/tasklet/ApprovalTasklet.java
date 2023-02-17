@@ -168,6 +168,8 @@ public class ApprovalTasklet implements Tasklet {
 	private boolean approvePresentment(Long presentmentID, PresentmentHeader ph) {
 		PresentmentDetail pd = presentmentEngine.getPresentmenToPost(presentmentID);
 
+		pd.setAppDate(ph.getAppDate());
+
 		ReceiptDTO receiptDTO = presentmentEngine.prepareReceiptDTO(pd);
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
