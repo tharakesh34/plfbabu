@@ -494,4 +494,18 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		});
 	}
 
+	@Override
+	public String getChequeStatus(int chequeSerial, String accountNo) {
+		String sql = "Select ChequeStatus From ChequeDetail  Where ChequeSerialNo = ? and AccountNo = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql, String.class, chequeSerial, accountNo);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }
