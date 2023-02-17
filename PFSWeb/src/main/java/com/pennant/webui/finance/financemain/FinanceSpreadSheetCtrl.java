@@ -273,6 +273,11 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 			if (!enqiryModule) {
 				doSetScreenData(appSheet, applicantDataMap);
+				try {
+					doSetVarificationData(appSheet);
+				} catch (Exception e) {
+
+				}
 			}
 
 			spreadSheet.setSelectedSheet(appSheet.getSheetName());
@@ -337,11 +342,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		if (!enqiryModule) {
 			doSetScreenData(sheet, applicantDataMap);
-			try {
-				doSetVarificationData(sheet);
-			} catch (Exception e) {
-
-			}
 		}
 	}
 
