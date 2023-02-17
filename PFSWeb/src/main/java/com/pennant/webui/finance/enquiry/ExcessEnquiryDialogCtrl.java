@@ -129,6 +129,7 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				finExcess.setUtilisedAmt(manualAdvise.getPaidAmount());
 				finExcess.setReservedAmt(manualAdvise.getReservedAmt());
 				finExcess.setBalanceAmt(manualAdvise.getBalanceAmt());
+				finExcess.setValueDate(manualAdvise.getValueDate());
 				this.paymentDetailList.add(finExcess);
 			}
 		}
