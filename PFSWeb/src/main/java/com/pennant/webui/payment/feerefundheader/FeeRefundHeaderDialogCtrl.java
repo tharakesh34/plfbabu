@@ -67,6 +67,7 @@ import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -1136,7 +1137,9 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			frd.setReceivableFeeTypeDesc(ma.getFeeTypeDesc());
 			frd.setReceivableType(Allocation.MANADV);
 
-			BigDecimal paidAmount = ma.getPaidAmount().subtract(receiptPaidAmt);
+			BigDecimal totPaidGSTAmount = CalculationUtil.getTotalPaidGST(ma);
+
+			BigDecimal paidAmount = ma.getPaidAmount().subtract(receiptPaidAmt).add(totPaidGSTAmount);
 			frd.setPaidAmount(paidAmount);
 
 			BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
