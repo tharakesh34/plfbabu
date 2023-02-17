@@ -12735,14 +12735,22 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#216488.2" author="sravanthi.g">
+	<changeSet id="PSD#216488.2" author="sravanthi.g" dbms="oracle,mssql">
 		<sql>
 			<![CDATA[
 				UPDATE MANDATES_UPLOAD SET MICR = '';
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="PSD#216488.2" author="sravanthi.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				UPDATE MANDATES_UPLOAD SET MICR = null;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="PSD#216488.3_pre" author="sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[

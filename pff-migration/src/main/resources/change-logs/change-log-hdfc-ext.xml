@@ -314,6 +314,11 @@
 	<changeSet id="003.01" author="goutham.ch">
 		<addColumn tableName="PRMNT_HEADER">
 			<column name="ERROR_CODE" type="VARCHAR(200)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="003.02" author="goutham.ch">
+		<addColumn tableName="PRMNT_HEADER">
 			<column name="ERROR_MESSAGE" type="VARCHAR(4000)" />
 		</addColumn>
 	</changeSet>
