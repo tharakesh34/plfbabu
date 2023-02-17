@@ -147,12 +147,12 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 		String holdStatus = holdRefundUploadDAO.getHoldRefundStatus(finID);
 
 		if (this.feeRefundHeaderService.isInProgress(finID)) {
-			MessageUtil.showMessage("Finance_Inprogresss_" + FinServiceEvent.FEEREFUNDINST);
+			MessageUtil.showMessage(Labels.getLabel("Finance_Inprogresss_" + FinServiceEvent.FEEREFUNDINST));
 			return;
 		}
 
 		if (this.paymentHeaderService.isInProgress(finID)) {
-			MessageUtil.showMessage("Finance_Inprogresss_" + FinServiceEvent.PAYMENTINST);
+			MessageUtil.showMessage(Labels.getLabel("Finance_Inprogresss_" + FinServiceEvent.PAYMENTINST));
 			return;
 		}
 
