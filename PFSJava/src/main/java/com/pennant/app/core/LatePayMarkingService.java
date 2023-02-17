@@ -36,8 +36,6 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +50,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.app.util.LookupMethods;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
@@ -128,11 +127,19 @@ public class LatePayMarkingService extends ServiceHelper {
 			appDate = SysParamUtil.getAppDate();
 		}
 
+		// IF LOAN CREATED BACK DATED AND IT COMES FOR RECEIPT ON DAY 1 BEFORE EOD FOD WILL BE EMPTY
+		fodList = findInstDueButFODNotFound(fm, fodList, valueDate, schedules);
+
 		for (FinODDetails fod : fodList) {
-			FinanceScheduleDetail curSchd = getODSchedule(schedules, fod);
+			// Find OD schedule date from FSD list. In theoretical scenario index must found
+			int fsdIdx = LookupMethods.lookupFSD(schedules, fod.getFinODSchdDate(), LookupMethods.EQ);
+			FinanceScheduleDetail curSchd = null;
+			if (fsdIdx >= 0) {
+				curSchd = schedules.get(fsdIdx);
+			}
 
 			if (curSchd == null) {
-				// if there is no schedule for od now then there is no penlaty
+				// if there is no schedule for od now then there is no penalty
 				fod.setFinODTillDate(valueDate);
 				fod.setFinCurODPri(BigDecimal.ZERO);
 				fod.setFinCurODPft(BigDecimal.ZERO);
@@ -157,7 +164,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				continue;
 			}
 
-			// check due and proceeed
+			// check due and proceed
 			boolean isAmountDue = false;
 			if (ImplementationConstants.ALLOW_OLDEST_DUE) {
 				isAmountDue = isOldestDueOverDue(curSchd);
@@ -181,11 +188,42 @@ public class LatePayMarkingService extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public List<FinODDetails> findInstDueButFODNotFound(FinanceMain fm, List<FinODDetails> fodList, Date valueDate,
+			List<FinanceScheduleDetail> fsdList) {
+		if (fodList != null && fodList.size() > 0) {
+			return fodList;
+		}
+
+		if (fodList == null) {
+			fodList = new ArrayList<>();
+		}
+
+		for (FinanceScheduleDetail fsd : fsdList) {
+			if (DateUtil.compare(fsd.getSchDate(), valueDate) >= 0) {
+				break;
+			}
+
+			if (!fsd.isFrqDate()) {
+				continue;
+			}
+
+			if (fsd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
+				continue;
+			}
+
+			FinODDetails fod = createODDetails(fsd, fm, BigDecimal.ZERO);
+			fodList.add(fod);
+
+		}
+
+		return fodList;
+	}
+
 	public void resetMaxODAmount(List<FinanceRepayments> repayments, FinODDetails fod, FinanceScheduleDetail curSchd) {
 		fod.setFinMaxODPri(curSchd.getPrincipalSchd());
 		fod.setFinMaxODPft(curSchd.getProfitSchd());
 
-		if (repayments == null) {
+		if (repayments == null || repayments.size() == 0) {
 			fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()));
 			return;
 		}
@@ -197,10 +235,8 @@ public class LatePayMarkingService extends ServiceHelper {
 			}
 
 			// MAx OD amounts is same as repayments balance amounts
-			if (repayment.getFinValueDate().compareTo(repayment.getFinSchdDate()) <= 0) {
-				fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(repayment.getFinSchdPriPaid()));
-				fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(repayment.getFinSchdPftPaid()));
-			}
+			fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(repayment.getFinSchdPriPaid()));
+			fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(repayment.getFinSchdPftPaid()));
 		}
 		fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()));
 	}
@@ -240,22 +276,17 @@ public class LatePayMarkingService extends ServiceHelper {
 
 	}
 
-	private FinanceScheduleDetail getODSchedule(List<FinanceScheduleDetail> fsdList, FinODDetails fod) {
-		for (FinanceScheduleDetail schd : fsdList) {
-			if (fod.getFinODSchdDate().compareTo(schd.getSchDate()) == 0) {
-				return schd;
-			}
-		}
-		return null;
-
-	}
-
 	public void processLatePayMarking(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
+
 			if (finEODEvent.getIdxPD() <= 0) {
 				continue;
+			}
+
+			if (StringUtils.equals(finEODEvent.getFinanceMain().getFinReference(), "2972")) {
+				int temp = 1;
 			}
 
 			findLatePay(finEODEvent, custEODEvent);
@@ -443,7 +474,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		BigDecimal maxOdAmount = BigDecimal.ZERO;
 		List<ManualAdviseMovements> movements = new ArrayList<>();
 
-		Date maxValuDate = penaltyCalDate;
+		// Date maxValuDate = penaltyCalDate;
 		fod.setFinODTillDate(penaltyCalDate);
 
 		String productCategory = fm.getProductCategory();
@@ -468,13 +499,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		}
 
-		fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
-
-		fod.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 		fod.setCurOverdraftTxnChrg(overallBalAmount);
-		fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()).add(fod.getCurOverdraftTxnChrg()));
-		fod.setFinMaxODPri(curSchd.getPrincipalSchd());
-		fod.setFinMaxODPft(curSchd.getProfitSchd());
 		fod.setMaxOverdraftTxnChrg(maxOdAmount);
 
 		Date grcDate = DateUtil.addDays(schDate, grcDays);
@@ -482,10 +507,11 @@ public class LatePayMarkingService extends ServiceHelper {
 		if (repayments == null) {
 			repayments = financeRepaymentsDAO.getByFinRefAndSchdDate(finID, schDate);
 		} else {
-			repayments = sortRpdListByValueDate(repayments);
+			repayments = LookupMethods.sortRPDByValueDate(repayments);
 		}
 
 		for (FinanceRepayments rpd : repayments) {
+
 			// check the payment made against the actual schedule date
 			Date finSchdDate = rpd.getFinSchdDate();
 			if (finSchdDate.compareTo(schDate) != 0) {
@@ -494,27 +520,11 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			// Max OD amounts is same as rpdList balance amounts
 			Date finValueDate = rpd.getFinValueDate();
-			if (finSchdDate.compareTo(finValueDate) == 0 || DateUtil.compare(grcDate, finValueDate) >= 0) {
+			if (finSchdDate.compareTo(finValueDate) == 0) {
 				fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(rpd.getFinSchdPriPaid()));
 				fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(rpd.getFinSchdPftPaid()));
 			}
 
-			BigDecimal odAmt = fod.getLPIAmt().add(fod.getTotPenaltyAmt());
-			if (rpd.getFinSchdPriPaid().add(rpd.getFinSchdPftPaid()).compareTo(BigDecimal.ZERO) > 0
-					&& odAmt.compareTo(BigDecimal.ZERO) == 0) {
-				maxValuDate = finValueDate;
-			}
-		}
-
-		if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO) == 0) {
-			if (FinanceConstants.ODCALON_PIPD_FRQ.equals(fod.getODChargeCalOn())
-					|| FinanceConstants.ODCALON_PIPD_EOM.equals(fod.getODChargeCalOn())) {
-				if (fod.getTotPenaltyBal().compareTo(BigDecimal.ZERO) == 0) {
-					penaltyCalDate = maxValuDate;
-				}
-			} else {
-				penaltyCalDate = maxValuDate;
-			}
 		}
 
 		if (ProductUtil.isOverDraft(productCategory)) {
@@ -528,9 +538,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			odtCaldate = DateUtil.addDays(penaltyCalDate, 1);
 		}
 
-		FinODPenaltyRate penaltyRate = PenaltyCalculator.getEffectiveRate(fod.getFinODTillDate(), fm.getPenaltyRates());
-
-		setFinCurODDays(penaltyRate, fod, productCategory, odtCaldate);
+		fod.setFinCurODDays(DateUtil.getDaysBetween(fod.getFinODSchdDate(), valueDate));
 
 		EventProperties eventProperties = fm.getEventProperties();
 
@@ -542,8 +550,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			fod.setFinLMdfDate(SysParamUtil.getAppDate());
 		}
 
-		latePayPenaltyService.computeLPP(fod, penaltyCalDate, fm, schedules, repayments, movements,
-				penaltyRate.getOverDraftExtGraceDays());
+		latePayPenaltyService.computeLPP(fod, penaltyCalDate, fm, schedules, repayments);
 
 		String lpiMethod = fm.getPastduePftCalMthd();
 
@@ -554,43 +561,6 @@ public class LatePayMarkingService extends ServiceHelper {
 				latePayInterestService.computeLPI(fod, penaltyCalDate, fm, schedules, repayments);
 			}
 		}
-	}
-
-	private void setFinCurODDays(FinODPenaltyRate pr, FinODDetails fod, String productCategory, Date valueDate) {
-		Date odSchDateIncGrc = fod.getFinODSchdDate();
-
-		if (ProductUtil.isOverDraft(productCategory)) {
-			odSchDateIncGrc = DateUtil.addDays(fod.getFinODSchdDate(), pr.getODGraceDays());
-
-			if (!pr.isODIncGrcDays()) {
-				odSchDateIncGrc = DateUtil.addDays(odSchDateIncGrc, pr.getOverDraftExtGraceDays());
-			}
-		} else {
-			if (!pr.isODIncGrcDays()) {
-				odSchDateIncGrc = DateUtil.addDays(odSchDateIncGrc, pr.getODGraceDays());
-			}
-		}
-
-		if (DateUtil.compare(valueDate, odSchDateIncGrc) > 0) {
-			fod.setFinCurODDays(DateUtil.getDaysBetween(odSchDateIncGrc, valueDate));
-		} else {
-			fod.setFinCurODDays(0);
-		}
-
-	}
-
-	private List<FinanceRepayments> sortRpdListByValueDate(List<FinanceRepayments> rpdList) {
-
-		if (rpdList != null && rpdList.size() > 0) {
-			Collections.sort(rpdList, new Comparator<FinanceRepayments>() {
-				@Override
-				public int compare(FinanceRepayments detail1, FinanceRepayments detail2) {
-					return DateUtil.compare(detail1.getFinValueDate(), detail2.getFinValueDate());
-				}
-			});
-		}
-
-		return rpdList;
 	}
 
 	public void updateFinPftDetails(FinanceProfitDetail pftDetail, List<FinODDetails> fodList, Date valueDate) {
@@ -700,7 +670,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		finOD.setMaxOverdraftTxnChrg(finOD.getCurOverdraftTxnChrg());
 		finOD.setFinMaxODAmt(finOD.getFinMaxODPft().add(finOD.getFinMaxODPri()).add(finOD.getMaxOverdraftTxnChrg()));
 
-		setFinCurODDays(pr, finOD, fm.getProductCategory(), valueDate);
+		finOD.setFinCurODDays(DateUtil.getDaysBetween(finOD.getFinODSchdDate(), valueDate));
 
 		finOD.setFinCurODDays(DateUtil.getDaysBetween(finOD.getFinODSchdDate(), valueDate));
 		// TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be
@@ -1047,7 +1017,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		Taxes ugstTax = new Taxes();
 		Taxes cessTax = new Taxes();
 
-		// FIXME Duplicate Code
 		cgstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_CGST));
 		sgstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_SGST));
 		igstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_IGST));

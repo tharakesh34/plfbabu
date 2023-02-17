@@ -702,7 +702,6 @@
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
-		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 	</bean>
 
 	<bean id="freemarkerMailConfiguration"

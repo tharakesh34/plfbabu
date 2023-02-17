@@ -92,6 +92,9 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 	private boolean addTodayRcd = true;
 	private BigDecimal oDChargeAmtOrPerc = BigDecimal.ZERO;
 
+	private BigDecimal priPaid = BigDecimal.ZERO;
+	private BigDecimal pftPaid = BigDecimal.ZERO;
+
 	public OverdueChargeRecovery() {
 		super();
 	}
@@ -157,6 +160,9 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 		entity.setVersion(super.getVersion());
 		entity.setLastMntBy(super.getLastMntBy());
 		entity.setLastMntOn(super.getLastMntOn());
+
+		entity.setPriPaid(this.priPaid);
+		entity.setPftPaid(this.pftPaid);
 		return entity;
 	}
 
@@ -528,6 +534,22 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 
 	public void setoDChargeAmtOrPerc(BigDecimal oDChargeAmtOrPerc) {
 		this.oDChargeAmtOrPerc = oDChargeAmtOrPerc;
+	}
+
+	public BigDecimal getPriPaid() {
+		return priPaid;
+	}
+
+	public void setPriPaid(BigDecimal priPaid) {
+		this.priPaid = priPaid;
+	}
+
+	public BigDecimal getPftPaid() {
+		return pftPaid;
+	}
+
+	public void setPftPaid(BigDecimal pftPaid) {
+		this.pftPaid = pftPaid;
 	}
 
 }

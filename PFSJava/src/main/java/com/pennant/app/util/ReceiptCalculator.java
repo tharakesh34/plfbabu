@@ -70,7 +70,6 @@ import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
-import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -135,7 +134,6 @@ public class ReceiptCalculator {
 	private LatePayMarkingService latePayMarkingService;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 	private AssetClassificationService assetClassificationService;
 
 	private static final String DESC_INC_TAX = " (Inclusive)";
@@ -4760,10 +4758,10 @@ public class ReceiptCalculator {
 
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(finID);
 
-		if (CollectionUtils.isEmpty(overdueList)) {
-			logger.debug(Literal.LEAVING);
-			return overdueList;
-		}
+		// FIXME: PV 16FEB2023. COMMENTED TO TEST LOANS CREATED WITH OD AND RECEIPT TAKEN BEFORE THE FIRST EOD
+		/*
+		 * if (CollectionUtils.isEmpty(overdueList)) { logger.debug(Literal.LEAVING); return overdueList; }
+		 */
 
 		if (CollectionUtils.isEmpty(schedules)) {
 			schedules = schdData.getFinanceScheduleDetails();
@@ -5212,10 +5210,6 @@ public class ReceiptCalculator {
 
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
-	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
-		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
 	}
 
 	@Autowired

@@ -4,30 +4,49 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public class PenaltyCalculator {
 
-	public static FinODPenaltyRate getEffectiveRate(Date dueDate, List<FinODPenaltyRate> penaltyRates) {
-		FinODPenaltyRate penlrate = new FinODPenaltyRate();
+	public static FinODPenaltyRate getEffectiveRate(Date dueDate, List<FinODPenaltyRate> prList) {
+		return getEffectiveRate(dueDate, prList, null);
+	}
 
-		if (penaltyRates == null) {
+	public static FinODPenaltyRate getEffectiveRate(Date dueDate, List<FinODPenaltyRate> prList, String odChargeType) {
+		int idx = -1;
+
+		if (prList == null || prList.size() == 0) {
 			return new FinODPenaltyRate();
 		}
 
-		for (FinODPenaltyRate penaltyRate : penaltyRates) {
-			if (dueDate.compareTo(penaltyRate.getFinEffectDate()) >= 0) {
-				penlrate = penaltyRate;
+		for (int i = 0; i < prList.size(); i++) {
+			if (prList.get(i).getFinEffectDate().compareTo(dueDate) > 0) {
+				break;
 			}
+
+			if (StringUtils.isEmpty(odChargeType)) {
+				// New OD record creation
+			} else if (!StringUtils.equals(prList.get(i).getODChargeType(), odChargeType)) {
+				continue;
+			}
+
+			idx = i;
 		}
 
-		return penlrate;
+		if (idx < 0) {
+			return new FinODPenaltyRate();
+		}
+
+		return prList.get(idx);
 	}
 
-	public static FinODPenaltyRate getEffectiveRate(FinanceScheduleDetail schd, List<FinODPenaltyRate> penaltyRates) {
-		return getEffectiveRate(schd.getSchDate(), penaltyRates);
+	public static FinODPenaltyRate getEffectiveRate(FinanceScheduleDetail schd, List<FinODPenaltyRate> penaltyRates,
+			String odChargeType) {
+		return getEffectiveRate(schd.getSchDate(), penaltyRates, odChargeType);
 	}
 
 	public static BigDecimal getEffectiveODCharge(FinanceMain fm, Date movementDate) {

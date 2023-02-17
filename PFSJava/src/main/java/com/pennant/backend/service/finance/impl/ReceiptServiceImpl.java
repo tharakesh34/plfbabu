@@ -526,6 +526,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		List<FinODPenaltyRate> penaltyRates = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView");
 		fm.setPenaltyRates(penaltyRates);
+
+		// TODO PV: 14FEB2023. New change passing null to be checked
 		schdData.setFinODPenaltyRate(PenaltyCalculator.getEffectiveRate(valueDate, penaltyRates));
 
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
@@ -663,6 +665,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementForLMSEvent(finID));
 		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructionsForLMSEvent(finID));
+
+		// TODO PV: 14FEB2023. New change passing null to be checked
 		schdData.setFinODPenaltyRate(PenaltyCalculator.getEffectiveRate(rch.getValueDate(), penaltyRates));
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 
@@ -3297,10 +3301,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = schdData.getFinanceMain();
-		if (CollectionUtils.isEmpty(overdueList)) {
-			logger.debug(Literal.LEAVING);
-			return overdueList;
-		}
+		// FIXME: PV 16FEB2023. COMMENTED TO TEST LOANS CREATED WITH OD AND RECEIPT TAKEN BEFORE THE FIRST EOD
+		/*
+		 * if (CollectionUtils.isEmpty(overdueList)) { logger.debug(Literal.LEAVING); return overdueList; }
+		 */
 
 		List<FinanceRepayments> repayments = new ArrayList<>();
 
@@ -5329,6 +5333,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, "_AView", false));
 		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, "_AView", false));
+
+		// TODO PV: 14FEB2023. New change passing null to be checked
 		schdData.setFinODPenaltyRate(PenaltyCalculator.getEffectiveRate(rch.getValueDate(), penaltyRates));
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 
