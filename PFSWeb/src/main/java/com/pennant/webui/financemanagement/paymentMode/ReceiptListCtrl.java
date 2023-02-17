@@ -365,7 +365,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			} else if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment' and ((RECEIPTMODESTATUS = 'R' and ReceiptMode != 'ADVINT' and (NEXTROLECODE is null Or NEXTROLECODE = '')) or NEXTROLECODE='"
-								+ module + "')  and (KnockOffType != '" + KnockOffType.CROSS_LOAN.code() + "')");
+								+ module + "')  and (KnockOffType != '" + KnockOffType.CROSS_LOAN.code() + "' or KnockOffType  is null)");
 			} else if (FinanceConstants.KNOCKOFFCAN_APPROVER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment'  and (NEXTROLECODE='" + module + "')");
