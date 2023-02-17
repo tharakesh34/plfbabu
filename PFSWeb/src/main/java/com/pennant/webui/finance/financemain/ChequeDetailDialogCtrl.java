@@ -1705,9 +1705,14 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 
 			if (!checkbox.isChecked()) {
-				if (fromLoan) {
-					cheque.seteMIRefNo(cheque.geteMIRefNo() - count);
+				int eMIRefNo = cheque.geteMIRefNo() - count;
+				if (!fromLoan) {
+					if (eMIRefNo != cheque.geteMIRefNo()) {
+						cheque.setRecordType(PennantConstants.RCD_UPD);
+					}
 				}
+
+				cheque.seteMIRefNo(eMIRefNo);
 				cheques.add(cheque);
 				continue;
 			}
