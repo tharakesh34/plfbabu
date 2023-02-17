@@ -2016,6 +2016,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						}
 					}
 					vasExtMapList.add(vasMap);
+					agreement.getOtherMap().putAll(vasMap);
 				}
 			}
 			agreement.getVasExtMap().addAll(vasExtMapList);
@@ -2608,7 +2609,11 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					if (StringUtils.isNotEmpty(extendedFieldDetail.getAgrField())) {
 						extendedDetail.setAgrField(StringUtils.trimToEmpty(extendedFieldDetail.getAgrField()));
 						extendedDetail.setFieldDataType(StringUtils.trimToEmpty(extendedFieldDetail.getFieldType()));
+					} else {
+						extendedDetail.setAgrField(StringUtils.trimToEmpty(key));
 					}
+				} else {
+					extendedDetail.setAgrField(StringUtils.trimToEmpty(key));
 				}
 			}
 			extendedDetail.setKey(StringUtils.trimToEmpty(key));
