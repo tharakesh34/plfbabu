@@ -27,13 +27,16 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.pdc.upload.ChequeUpload;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.cheques.dao.ChequeUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(ChequeUploadServiceImpl.class);
@@ -107,6 +110,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 					for (ChequeUpload upload : chequeUploads) {
 						upload.setReferenceID(finID);
 						String action = upload.getAction();
+
 						doValidate(header, upload);
 
 						if (upload.getProgress() != EodConstants.PROGRESS_FAILED) {
@@ -117,7 +121,13 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						if (action.equals("A")) {
 							addcheques.add(upload.getChequeDetail());
 						} else {
-							delcheques.add(upload.getChequeDetail());
+							if (isNotRelizedOrPresent(upload)) {
+								delcheques.add(upload.getChequeDetail());
+							} else {
+								ErrorDetail error = ErrorUtil.getError("90508", "Cheque Header ");
+								setError(chequeUploads, error);
+								continue;
+							}
 						}
 					}
 
@@ -192,8 +202,21 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 					txStatus = null;
 				}
 			}
+
 		}).start();
 
+	}
+
+	private boolean isNotRelizedOrPresent(ChequeUpload upload) {
+		ChequeDetail chequeDetail = upload.getChequeDetail();
+
+		int Seq = chequeDetail.getChequeSerialNo();
+		String AccNo = chequeDetail.getAccountNo();
+
+		String status = chequeDetailDAO.getChequeStatus(Seq, AccNo);
+
+		return !(RepayConstants.PAYTYPE_PRESENTMENT.equals(status)
+				|| DisbursementConstants.STATUS_REALIZED.equals(status) || Allocation.BOUNCE.equals(status));
 	}
 
 	@Override

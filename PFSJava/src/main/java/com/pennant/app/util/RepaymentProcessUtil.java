@@ -496,9 +496,9 @@ public class RepaymentProcessUtil {
 			String paymentType = rcd.getPaymentType();
 			movements.addAll(rcd.getAdvMovements());
 			if (!ReceiptMode.EMIINADV.equals(paymentType) && !ReceiptMode.EXCESS.equals(paymentType)
-					&& !ReceiptMode.PAYABLE.equals(paymentType) && !ReceiptMode.ADVINT.equals(paymentType)
-					&& !ReceiptMode.ADVEMI.equals(paymentType) && !ReceiptMode.CASHCLT.equals(paymentType)
-					&& !ReceiptMode.DSF.equals(paymentType)) {
+					&& !ReceiptMode.TEXCESS.equals(paymentType) && !ReceiptMode.PAYABLE.equals(paymentType)
+					&& !ReceiptMode.ADVINT.equals(paymentType) && !ReceiptMode.ADVEMI.equals(paymentType)
+					&& !ReceiptMode.CASHCLT.equals(paymentType) && !ReceiptMode.DSF.equals(paymentType)) {
 				receiptFromBank = receiptFromBank.add(rcd.getAmount());
 			}
 		}

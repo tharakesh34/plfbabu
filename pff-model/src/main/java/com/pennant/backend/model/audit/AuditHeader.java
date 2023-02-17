@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 
@@ -464,12 +465,14 @@ public class AuditHeader implements java.io.Serializable {
 	}
 
 	public void setErrorMessage(List<ErrorDetail> errorMessage) {
-		if (errorMessage != null && !errorMessage.isEmpty()) {
-			for (int i = 0; i < overideMessage.size(); i++) {
-				setErrorMessage((ErrorDetail) errorMessage.get(i));
-			}
-		} else {
+
+		if (CollectionUtils.isEmpty(errorMessage)) {
 			this.auditError = null;
+			return;
+		}
+
+		for (ErrorDetail ed : errorMessage) {
+			setErrorMessage(ed);
 		}
 	}
 
@@ -490,6 +493,8 @@ public class AuditHeader implements java.io.Serializable {
 				auditError = auditError.concat("\n");
 				auditError = auditError.concat(errorMessage.getError());
 			}
+
+			errorMessage.setMessage(auditError);
 		}
 	}
 

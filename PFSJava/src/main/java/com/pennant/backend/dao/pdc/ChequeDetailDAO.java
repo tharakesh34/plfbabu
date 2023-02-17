@@ -63,4 +63,6 @@ public interface ChequeDetailDAO {
 	PaymentInstruction getBeneficiary(long id);
 
 	void deleteCheques(ChequeDetail cheque);
+
+	String getChequeStatus(int chequeSerial, String accountNo);
 }
