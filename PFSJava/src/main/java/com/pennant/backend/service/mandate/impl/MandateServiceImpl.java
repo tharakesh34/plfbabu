@@ -95,6 +95,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
@@ -1413,9 +1414,19 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			return response;
 		}
 
-		if (StringUtils.isNotBlank(mandate.getMandateRef()) && !InstrumentType.isEMandate(mandate.getMandateType())) {
-			response.setError(getError("90329", "mandateRef", "createMandate"));
-			return response;
+		if (UploadConstants.FINSOURCE_ID_UPLOAD.equals(mandate.getSourceId())) {
+			if (mandate.isExternalMandate() || !mandate.getMandateRef().isEmpty()) {
+				response.setError(getError("91132", "external Mandate,", "UMRN number"));
+				return response;
+			}
+		}
+
+		if (UploadConstants.FINSOURCE_ID_API.equals(mandate.getSourceId())) {
+			if (StringUtils.isNotBlank(mandate.getMandateRef())
+					&& !InstrumentType.isEMandate(mandate.getMandateType())) {
+				response.setError(getError("90329", "mandateRef", "createMandate"));
+				return response;
+			}
 		}
 
 		return createMandate(prepareMandate(mandate));

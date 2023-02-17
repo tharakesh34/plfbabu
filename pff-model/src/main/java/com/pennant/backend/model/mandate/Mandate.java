@@ -198,6 +198,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private Mandate validateMandate = this;
 
 	private Date loanMaturityDate;
+	private boolean externalMandate;
 	private ErrorDetail error;
 
 	public Mandate() {
@@ -263,6 +264,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("loanMaturityDate");
 		excludeFields.add("error");
 		excludeFields.add("custCoreBank");
+		excludeFields.add("externalMandate");
 
 		return excludeFields;
 	}
@@ -1044,6 +1046,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setError(ErrorDetail error) {
 		this.error = error;
+	}
+
+	public boolean isExternalMandate() {
+		return externalMandate;
+	}
+
+	public void setExternalMandate(boolean externalMandate) {
+		this.externalMandate = externalMandate;
 	}
 
 }

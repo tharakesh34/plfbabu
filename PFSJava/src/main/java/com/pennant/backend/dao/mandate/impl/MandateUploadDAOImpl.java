@@ -87,7 +87,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			mndts.setEmployeeNo(rs.getString("EmployeeNo"));
 			mndts.setIFSC(rs.getString("Ifsc"));
 			mndts.setMICR(rs.getString("Micr"));
-			// mndts.setExternalMandate(rs.getBoolean("ExternalMandate"));
+			mndts.setExternalMandate(rs.getBoolean("ExternalMandate"));
 
 			upload.setMandate(mndts);
 
