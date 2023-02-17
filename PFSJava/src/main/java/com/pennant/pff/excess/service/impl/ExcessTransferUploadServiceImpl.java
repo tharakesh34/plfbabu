@@ -207,7 +207,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			excessamount.setBalanceAmt(exc.getTransferAmount());
 			excessamount.setReservedAmt(BigDecimal.ZERO);
 			excessamount.setReceiptID(exc.getId());
-			excessamount.setValueDate(appDate);
 			excessamount.setPostDate(appDate);
 
 			List<FinExcessAmount> existingExcess = finExcessAmountDAO.getExcessAmountsByRefAndType(exc.getReferenceID(),
@@ -223,6 +222,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 					break;
 				}
 
+				excessamount.setValueDate(excess.getValueDate());
 				BigDecimal available = excess.getBalanceAmt();
 
 				if (transferAmount.compareTo(available) >= 0) {
