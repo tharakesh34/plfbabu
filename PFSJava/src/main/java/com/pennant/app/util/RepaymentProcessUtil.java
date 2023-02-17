@@ -2587,7 +2587,8 @@ public class RepaymentProcessUtil {
 			// updating fixexcess amount after realization
 			if (FinServiceEvent.SCHDRPY.equals(rch.getReceiptPurpose())) {
 				if (rph != null && rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-					finExcessAmountDAO.updExcessAfterRealize(rph.getFinID(), excessAdjustTo, rph.getExcessAmount());
+					finExcessAmountDAO.updExcessAfterRealize(rph.getFinID(), excessAdjustTo, rph.getExcessAmount(),
+							rch.getReceiptID());
 				}
 			}
 		}

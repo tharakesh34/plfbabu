@@ -45,7 +45,7 @@ public interface FinExcessAmountDAO {
 
 	int updateExcessBalByRef(long finID, String amountType, BigDecimal amount);
 
-	int updExcessAfterRealize(long finID, String amountType, BigDecimal amount);
+	int updExcessAfterRealize(long finID, String amountType, BigDecimal amount, long receiptID);
 
 	List<FinExcessAmountReserve> getExcessReserveList(long receiptID);
 

@@ -400,18 +400,19 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	@Override
-	public int updExcessAfterRealize(long finID, String amountType, BigDecimal amount) {
-		String sql = "Update FinExcessAmount Set BalanceAmt = BalanceAmt + ?, ReservedAmt = ReservedAmt - ? Where FinID = ? and AmountType = ?";
+	public int updExcessAfterRealize(long finID, String amountType, BigDecimal amount, long receiptID) {
+		String sql = "Update FinExcessAmount Set BalanceAmt = BalanceAmt + ?, ReservedAmt = ReservedAmt - ? Where FinID = ?  and and ReceiptId = ? and AmountType = ? ";
 
 		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.update(sql, ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setBigDecimal(index++, amount);
-			ps.setBigDecimal(index++, amount);
-			ps.setLong(index++, finID);
-			ps.setString(index, amountType);
+			ps.setBigDecimal(++index, amount);
+			ps.setBigDecimal(++index, amount);
+			ps.setLong(++index, finID);
+			ps.setLong(++index, receiptID);
+			ps.setString(++index, amountType);
 
 		});
 	}
