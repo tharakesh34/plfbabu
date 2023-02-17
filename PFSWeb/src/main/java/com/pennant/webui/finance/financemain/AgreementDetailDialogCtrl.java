@@ -24,6 +24,7 @@
 package com.pennant.webui.finance.financemain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -462,15 +463,16 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 								if (args[0] != null) {
 									Double obj = (Double) dataMap.get("FINAL_OFFER_" + args[0]);
 									if (obj != null) {
-										actualFoir = PennantApplicationUtil.formatAmount(new BigDecimal(obj), 2)
-												.toString();
+										BigDecimal val = new BigDecimal(obj);
+										actualFoir = val.setScale(2, RoundingMode.UP) + "%";
 									}
 								}
 
 								if (args[1] != null) {
 									Double obj = (Double) dataMap.get("FINAL_OFFER_" + args[1]);
 									if (obj != null) {
-										ltv = PennantApplicationUtil.formatAmount(new BigDecimal(obj), 2).toString();
+										BigDecimal val = new BigDecimal(obj);
+										ltv = val.setScale(2, RoundingMode.UP) + "%";
 									}
 								}
 							}
