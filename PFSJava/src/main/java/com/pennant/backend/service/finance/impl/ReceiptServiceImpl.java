@@ -8501,7 +8501,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		ReceiptDTO receiptDTO = prepareReceiptDTO(receiptData);
 		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 
-		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(BigDecimal.ZERO) == 0) {
+		if (receiptData.getExcessAvailable().compareTo(BigDecimal.ZERO) == 0) {
 			calcuateDues(receiptData);
 		}
 
