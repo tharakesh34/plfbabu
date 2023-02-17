@@ -580,6 +580,19 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			}
 		}
 
+		Date receiptDt = null;
+		long finID = ComponentUtil.getFinID(this.toFinReference);
+		Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, SysParamUtil.getAppDate());
+
+		if (DateUtil.compare(this.receiptDate.getValue(), schDate) < 0) {
+			receiptDt = schDate;
+			this.receiptDate.setValue(receiptDt);
+			this.receiptDate.setDisabled(true);
+		} else if (schDate == null) {
+			this.receiptDate.setValue(SysParamUtil.getAppDate());
+			this.receiptDate.setDisabled(true);
+		}
+
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
