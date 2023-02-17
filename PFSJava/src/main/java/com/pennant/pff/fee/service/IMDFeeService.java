@@ -86,16 +86,15 @@ public class IMDFeeService {
 
 					if (result.compareTo(BigDecimal.ONE) == 0) {
 						String[] param = new String[1];
-						param[0] = "Minimum Paid Amount of " + finFee.getFeeTypeCode() + " of Rs "
-								+ CurrencyUtil.parse(finFee.getActualAmount(), 2);
+						param[0] = "Minimum Amount of " + finFee.getFeeTypeCode() + " fee must paid.";
 						error = new ErrorDetail("92021", param);
 
 					} else if (result.compareTo(BigDecimal.ONE) > 0) {
 						String[] param = new String[4];
-						param[0] = "Minimum Paid Amount of ";
+						param[0] = "Minimum Amount of ";
 						param[1] = finFee.getFeeTypeCode();
-						param[2] = " of Rs ";
-						param[3] = "" + CurrencyUtil.parse(finFee.getActualAmount(), 2);
+						param[2] = " fee must paid.";
+						param[3] = "";
 						error = new ErrorDetail("21005", param);
 					}
 
