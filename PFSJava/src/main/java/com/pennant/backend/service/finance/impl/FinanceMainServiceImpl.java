@@ -135,13 +135,13 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 
 		if (DateUtil.compare(receiptDate, startDate) < 0) {
 			parameters[1] = String.valueOf(DateUtil.format(startDate, DateFormat.LONG_DATE.getPattern()));
-			return new ErrorDetail(PennantConstants.KEY_FIELD, "30507", parameters);
+			return new ErrorDetail(PennantConstants.KEY_FIELD, "30507", parameters, null);
 		}
 
 		Date monthStartDate = DateUtil.getMonthStart(SysParamUtil.getAppDate());
 		if (DateUtil.compare(receiptDate, monthStartDate) < 0) {
 			parameters[1] = String.valueOf(DateUtil.format(monthStartDate, DateFormat.LONG_DATE.getPattern()));
-			return new ErrorDetail(PennantConstants.KEY_FIELD, "30507", parameters);
+			return new ErrorDetail(PennantConstants.KEY_FIELD, "30507", parameters, null);
 		}
 
 		FinanceScheduleDetail financeScheduleDetail = financeScheduleDetailDAO.getPrvSchd(finID,
@@ -149,7 +149,7 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		if (financeScheduleDetail != null && DateUtil.compare(receiptDate, financeScheduleDetail.getSchDate()) < 0) {
 			parameters[1] = String
 					.valueOf(DateUtil.format(financeScheduleDetail.getSchDate(), DateFormat.LONG_DATE.getPattern()));
-			return new ErrorDetail(PennantConstants.KEY_FIELD, "30507", parameters);
+			return new ErrorDetail(PennantConstants.KEY_FIELD, "30507", parameters, null);
 		}
 		return null;
 	}

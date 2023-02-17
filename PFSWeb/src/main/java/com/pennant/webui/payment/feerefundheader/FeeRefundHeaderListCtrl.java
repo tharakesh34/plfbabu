@@ -659,6 +659,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		doApprove(listFrh);
 
 		doRefresh();
+		Clients.showNotification("Fee Refund Process Approved.", "info", null, null, -1);
 
 		logger.debug(Literal.LEAVING);
 	}

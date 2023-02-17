@@ -240,8 +240,8 @@ public class FeeRefundApprovalThreadProcess {
 			pd.setReferenceId(frd.getPayableID());
 			pd.setAvailableAmount(frd.getRefundAmount());
 			pd.setAmountType(String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE));
-			pd.setFeeTypeCode(frd.getPayableFeeTypeCode());
-			pd.setFeeTypeDesc(frd.getPayableFeeTypeDesc());
+			pd.setFeeTypeCode(payableFeeType.getFeeTypeCode());
+			pd.setFeeTypeDesc(payableFeeType.getFeeTypeDesc());
 			pd.setRecordType(PennantConstants.RCD_ADD);
 			pd.setNewRecord(true);
 			pd.setVersion(1);

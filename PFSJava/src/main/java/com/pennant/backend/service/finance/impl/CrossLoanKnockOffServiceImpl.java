@@ -17,6 +17,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.dao.receipts.CrossLoanTransferDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -62,6 +63,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	private CrossLoanKnockOffDAO crossLoanKnockOffDAO;
 	private CrossLoanTransferDAO crossLoanTransferDAO;
 	private AccountingSetDAO accountingSetDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	private FinanceMainService financeMainService;
 	private ReceiptService receiptService;
@@ -343,6 +345,8 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		auditDetail.setErrorDetails(new ArrayList<>());
 
 		CrossLoanKnockOff clk = (CrossLoanKnockOff) auditDetail.getModelData();
+		FinReceiptData rcdData = clk.getFinReceiptData();
+		FinReceiptHeader frh = rcdData.getReceiptHeader();
 		CrossLoanTransfer clt = clk.getCrossLoanTransfer();
 
 		if (clk.isNewRecord()) {
@@ -367,14 +371,15 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			return auditDetail;
 		}
 
-		FinExcessAmount excess = crossLoanTransferDAO.getCrossLoanExcess(clt.getExcessId());
-		if (excess == null
-				|| excess.getReservedAmt().add(excess.getBalanceAmt()).compareTo(clt.getTransferAmount()) < 0) {
-			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60205", "", null),
-					PennantConstants.default_Language);
-			auditDetail.setErrorDetail(errorDetail);
+		if (ReceiptMode.EXCESS.equals(frh.getReceiptMode())) {
+			FinExcessAmount excess = finExcessAmountDAO.getFinExcessByID(clt.getExcessId());
+			if (excess == null
+					|| excess.getReservedAmt().add(excess.getBalanceAmt()).compareTo(clt.getTransferAmount()) < 0) {
+				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60205", "", null),
+						PennantConstants.default_Language);
+				auditDetail.setErrorDetail(errorDetail);
+			}
 		}
-
 		return auditDetail;
 	}
 
@@ -571,4 +576,10 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	public void setReceiptDataValidator(ReceiptDataValidator receiptDataValidator) {
 		this.receiptDataValidator = receiptDataValidator;
 	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
 }

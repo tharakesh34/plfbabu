@@ -2276,7 +2276,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public Long getLatestMandateId(long finID) {
-		String sql = "Select pd.ID, pd.MandateID From PresentmentHeader ph Inner Join PresentmentDetails pd on pd.PresentmentID = ph.ID Where pd.FinID = ? and ph.MandateType in (?, ?, ?, ?) and pd.Status not in (?, ?)";
+		String sql = "Select pd.ID, pd.MandateID From PresentmentHeader ph Inner Join PresentmentDetails pd on pd.PresentmentID = ph.ID Where pd.FinID = ? and ph.MandateType in (?, ?, ?, ?) and pd.Status not in (?, ?) and  pd.ExcludeReason in (?, ?)";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -2290,6 +2290,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setString(++index, InstrumentType.PDC.code());
 			ps.setString(++index, "I");
 			ps.setString(++index, "F");
+			ps.setLong(++index, RepayConstants.PEXC_EMIINCLUDE);
+			ps.setLong(++index, RepayConstants.PEXC_MANUAL_EXCLUDE);
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 

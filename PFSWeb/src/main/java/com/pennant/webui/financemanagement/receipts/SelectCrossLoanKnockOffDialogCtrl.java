@@ -372,7 +372,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 
 		// validating value date for knock off
 		Date valuedate = null;
-		if (StringUtils.equals(RepayConstants.RECEIPTTYPE_PAYABLE, receiptData.getReceiptHeader().getReceiptMode())) {
+		if (RepayConstants.PAYTYPE_PAYABLE.equals(receiptData.getReceiptHeader().getReceiptMode())) {
 			ManualAdvise ma = (ManualAdvise) this.referenceId.getObject();
 			valuedate = ma.getValueDate();
 		} else {
@@ -424,7 +424,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		validateReceiptData();
 
 		Date valuedate = null;
-		if (RepayConstants.RECEIPTTYPE_PAYABLE.equals(receiptData.getReceiptHeader().getReceiptMode())) {
+		if (RepayConstants.PAYTYPE_PAYABLE.equals(receiptData.getReceiptHeader().getReceiptMode())) {
 			ManualAdvise ma = (ManualAdvise) this.referenceId.getObject();
 			valuedate = ma.getValueDate();
 		} else {
@@ -580,6 +580,19 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			}
 		}
 
+		Date receiptDt = null;
+		long finID = ComponentUtil.getFinID(this.toFinReference);
+		Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, SysParamUtil.getAppDate());
+
+		if (DateUtil.compare(this.receiptDate.getValue(), schDate) < 0) {
+			receiptDt = schDate;
+			this.receiptDate.setValue(receiptDt);
+			this.receiptDate.setDisabled(true);
+		} else if (schDate == null) {
+			this.receiptDate.setValue(SysParamUtil.getAppDate());
+			this.receiptDate.setDisabled(true);
+		}
+
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
@@ -696,11 +709,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		rch.setReceiptPurpose(rptPurpose.code());
 
 		String receiptMode = this.knockOffFrom.getSelectedItem().getValue().toString();
-		if (RepayConstants.PAYTYPE_PAYABLE.equals(receiptMode)) {
-			rch.setReceiptMode(RepayConstants.RECEIPTTYPE_PAYABLE);
-		} else {
-			rch.setReceiptMode(receiptMode);
-		}
+		rch.setReceiptMode(receiptMode);
 
 		rch.setKnockOffRefId(Long.valueOf(this.referenceId.getValue()));
 		rch.setKnockOffType(KnockOffType.CROSS_LOAN.code());
@@ -760,7 +769,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		crossLoanTransfer.setToFinReference(this.toFinReference.getValidatedValue());
 		crossLoanTransfer.setTransferAmount(receiptData.getReceiptHeader().getReceiptAmount());
 
-		if (RepayConstants.RECEIPTTYPE_PAYABLE.equals(receiptData.getReceiptHeader().getReceiptMode())) {
+		if (RepayConstants.PAYTYPE_PAYABLE.equals(receiptData.getReceiptHeader().getReceiptMode())) {
 			ManualAdvise ma = (ManualAdvise) this.referenceId.getObject();
 			crossLoanTransfer.setExcessType("P");
 			crossLoanTransfer.setExcessAmount(ma.getAdviseAmount());
