@@ -13207,17 +13207,7 @@
 	</bean>
 
 	<bean name="excessTransferServiceTarget"
-		class="com.pennant.pff.excess.service.impl.ExcessTransferServiceImpl">
-		<property name="finExcessTransferDAO" ref="finExcessTransferDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="customerDAO" ref="customerDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
-		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
-		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-	</bean>
+		class="com.pennant.pff.excess.service.impl.ExcessTransferServiceImpl"/>
 
 	<bean id="excessTransferUploadService"
 		class="com.pennant.pff.excess.service.impl.ExcessTransferUploadServiceImpl" parent="aUploadService">

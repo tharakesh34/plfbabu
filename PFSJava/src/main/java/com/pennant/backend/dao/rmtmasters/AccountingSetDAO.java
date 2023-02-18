@@ -42,6 +42,9 @@ public interface AccountingSetDAO {
 	// Commitments
 	Long getAccountingSetId(String eventCode, String accSetCode);
 
+	Long getAccountingSetId(String eventCode);
+
 	AccountingSet getAccountingSetbyEventCode(AccountingSet accountingset, String type);
 
+	boolean isValidCategoryWiseEvents(String eventCode);
 }

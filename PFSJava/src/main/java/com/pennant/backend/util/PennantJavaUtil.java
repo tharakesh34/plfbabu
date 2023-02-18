@@ -3915,15 +3915,17 @@ public class PennantJavaUtil {
 						new String[] { "Excess_Transfer_Details", "Excess_Transfer_Details_View" }, masterWF,
 						new String[] { "Id", "FinID" }, null, 300));
 
-		ModuleUtil.register("ExcessTrf",
-				new ModuleMapping("ExcessAmount", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" },
-						null, new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" }, null,
-						750));
+		ModuleUtil
+				.register("ExcessTrf",
+						new ModuleMapping("ExcessAmount", FinExcessAmount.class,
+								new String[] { "FinExcessAmount_LovView" }, null, new String[] { "ExcessID", "Amount",
+										"UtilisedAmt", "ReservedAmt", "BalanceAmt", "ReceiptID", "ValueDate" },
+								null, 750));
 
-		ModuleUtil.register("Excess",
-				new ModuleMapping("ExcessAmount", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" },
-						null, new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
-						new String[][] { { "AmountType", "0", "E" } }, 750));
+		ModuleUtil.register("Excess", new ModuleMapping("ExcessAmount", FinExcessAmount.class,
+				new String[] { "FinExcessAmount_LovView" }, null, new String[] { "ExcessID", "Amount", "UtilisedAmt",
+						"ReservedAmt", "BalanceAmt", "ReceiptID", "ValueDate" },
+				new String[][] { { "AmountType", "0", "E" } }, 750));
 
 		ModuleUtil.register("ExcessTransferUpload",
 				new ModuleMapping("ExcessTransferUpload", FileUploadHeader.class,

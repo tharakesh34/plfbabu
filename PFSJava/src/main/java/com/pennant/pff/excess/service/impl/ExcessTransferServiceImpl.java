@@ -1,8 +1,9 @@
 package com.pennant.pff.excess.service.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -15,9 +16,8 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -27,12 +27,9 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.excess.dao.FinExcessTransferDAO;
 import com.pennant.pff.excess.model.FinExcessTransfer;
 import com.pennant.pff.excess.service.ExcessTransferService;
@@ -43,18 +40,15 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer> implements ExcessTransferService {
-
 	private static Logger logger = LogManager.getLogger(ExcessTransferServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinExcessTransferDAO finExcessTransferDAO;
 	private CustomerDAO customerDAO;
 	private FinanceMainDAO financeMainDAO;
-	private FinanceProfitDetailDAO profitDetailsDAO;
-	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-	private FinanceDetailService financeDetailService;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	private AccountingSetDAO accountingSetDAO;
 
 	public ExcessTransferServiceImpl() {
 		super();
@@ -72,101 +66,188 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 
 	@Override
 	public boolean isReferenceExist(String finReference) {
-		boolean isExists = finExcessTransferDAO.isFinReceferenceExist(finReference, "_Temp");
-		return isExists;
+		return finExcessTransferDAO.isFinReceferenceExist(finReference, "_Temp");
+	}
+
+	@Override
+	public FinExcessAmount getFinExcessAmountById(long excessId) {
+		return finExcessAmountDAO.getFinExcessAmountById(excessId, "");
 	}
 
 	@Override
 	public FinExcessTransfer getFinExcessData(long finID) {
+		FinExcessTransfer transfer = new FinExcessTransfer();
 
-		FinExcessTransfer finExcessTransfer = new FinExcessTransfer();
-		finExcessTransfer.setFinId(finID);
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_View", false);
-		finExcessTransfer.setCustomer(customerDAO.getCustomerByID(fm.getCustID()));
-		finExcessTransfer.setFinBranch(fm.getFinBranch());
-		finExcessTransfer.setFinType(fm.getFinType());
-		finExcessTransfer.setFinReference(fm.getFinReference());
+		transfer.setFinId(finID);
+		transfer.setCustomer(customerDAO.getCustomerByID(fm.getCustID()));
+		transfer.setFinBranch(fm.getFinBranch());
+		transfer.setFinType(fm.getFinType());
+		transfer.setFinReference(fm.getFinReference());
 
-		return finExcessTransfer;
+		return transfer;
 	}
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);
+		logger.debug(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		FinExcessTransfer finExcessTransfer = (FinExcessTransfer) auditHeader.getAuditDetail().getModelData();
-		getFinExcessTransferDAO().delete(finExcessTransfer, TableType.MAIN_TAB);
+		finExcessTransferDAO.delete(finExcessTransfer, TableType.MAIN_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.info(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);
+		logger.debug(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
-		FinExcessTransfer finExcessTransfer = (FinExcessTransfer) auditHeader.getAuditDetail().getModelData();
+		FinExcessTransfer transfer = (FinExcessTransfer) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
-		if (finExcessTransfer.isWorkflow()) {
+		if (transfer.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (finExcessTransfer.isNewRecord()) {
-			finExcessTransfer.setTransferDate(SysParamUtil.getAppDate());
-			finExcessTransfer.setId(Long.parseLong(getFinExcessTransferDAO().save(finExcessTransfer, tableType)));
-			auditHeader.getAuditDetail().setModelData(finExcessTransfer);
-			auditHeader.setAuditReference(String.valueOf(finExcessTransfer.getId()));
+		if (transfer.isNewRecord()) {
+			transfer.setId(Long.parseLong(finExcessTransferDAO.save(transfer, tableType)));
+			auditHeader.getAuditDetail().setModelData(transfer);
+			auditHeader.setAuditReference(String.valueOf(transfer.getId()));
 		} else {
-			getFinExcessTransferDAO().update(finExcessTransfer, tableType);
+			finExcessTransferDAO.update(transfer, tableType);
 		}
 
-		// Excess Amount make utilization
-		FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(finExcessTransfer.getId(),
-				finExcessTransfer.getTransferFromId(), RepayConstants.RECEIPTTYPE_TRANSFER);
+		FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(transfer.getId(),
+				transfer.getTransferFromId(), RepayConstants.RECEIPTTYPE_TRANSFER);
+
 		if (exReserve == null) {
+			finExcessAmountDAO.updateExcessReserve(transfer.getTransferFromId(), transfer.getTransferAmount());
 
-			// Update Excess Amount in Reserve
-			finExcessAmountDAO.updateExcessReserve(finExcessTransfer.getTransferFromId(),
-					finExcessTransfer.getTransferAmount());
-
-			// Save Excess Reserve Log Amount
-			finExcessAmountDAO.saveExcessReserveLog(finExcessTransfer.getId(), finExcessTransfer.getTransferFromId(),
-					finExcessTransfer.getTransferAmount(), RepayConstants.RECEIPTTYPE_TRANSFER);
-
+			finExcessAmountDAO.saveExcessReserveLog(transfer.getId(), transfer.getTransferFromId(),
+					transfer.getTransferAmount(), RepayConstants.RECEIPTTYPE_TRANSFER);
 		} else {
+			if (transfer.getTransferAmount().compareTo(exReserve.getReservedAmt()) != 0) {
+				BigDecimal diffInReserve = transfer.getTransferAmount().subtract(exReserve.getReservedAmt());
 
-			if (finExcessTransfer.getTransferAmount().compareTo(exReserve.getReservedAmt()) != 0) {
-				BigDecimal diffInReserve = finExcessTransfer.getTransferAmount().subtract(exReserve.getReservedAmt());
-
-				// Update Reserve Amount in FinExcessAmount
-				finExcessAmountDAO.updateExcessReserve(finExcessTransfer.getTransferFromId(), diffInReserve);
-
-				// Update Excess Reserve Log
-				// finExcessAmountDAO.updateExcessReserveLog(finExcessTransfer.getTransferId(),
-				// finExcessTransfer.getTransferFromId(), diffInReserve, RepayConstants.RECEIPTTYPE_RECIPT);
-				finExcessAmountDAO.updateExcessReserveLog(finExcessTransfer.getId(),
-						finExcessTransfer.getTransferFromId(), diffInReserve, RepayConstants.RECEIPTTYPE_TRANSFER);
+				finExcessAmountDAO.updateExcessReserve(transfer.getTransferFromId(), diffInReserve);
+				finExcessAmountDAO.updateExcessReserveLog(transfer.getId(), transfer.getTransferFromId(), diffInReserve,
+						RepayConstants.RECEIPTTYPE_TRANSFER);
 			}
 		}
 
-		// auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	@Override
+	public AuditHeader doApprove(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader);
+
+		if (!auditHeader.isNextProcess()) {
+			logger.info(Literal.LEAVING);
+			return auditHeader;
+		}
+
+		FinExcessTransfer transfer = new FinExcessTransfer();
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), transfer);
+
+		finExcessTransferDAO.delete(transfer, TableType.TEMP_TAB);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(transfer.getRecordType())) {
+			auditHeader.getAuditDetail()
+					.setBefImage(finExcessTransferDAO.getExcessTransferByTransferId(transfer.getId(), ""));
+		}
+
+		long linkedTranId = 0;
+
+		AEEvent aeEvent = executeAccounting(transfer);
+		if (aeEvent.isPostingSucess()) {
+			linkedTranId = aeEvent.getLinkedTranId();
+		}
+
+		FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(transfer.getId(),
+				transfer.getTransferFromId(), RepayConstants.RECEIPTTYPE_TRANSFER);
+
+		if (exReserve != null) {
+			finExcessAmountDAO.updateUtilise(transfer.getTransferFromId(), transfer.getTransferAmount());
+			finExcessAmountDAO.deleteExcessReserve(transfer.getId(), transfer.getTransferFromId(),
+					RepayConstants.RECEIPTTYPE_TRANSFER);
+		} else {
+			finExcessAmountDAO.updateUtiliseOnly(transfer.getTransferFromId(), transfer.getTransferAmount());
+		}
+
+		FinExcessMovement movement = new FinExcessMovement();
+		movement.setExcessID(transfer.getTransferFromId());
+		movement.setReceiptID(transfer.getId());
+		movement.setMovementType(RepayConstants.RECEIPTTYPE_TRANSFER);
+		movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+		movement.setAmount(transfer.getTransferAmount());
+		finExcessAmountDAO.saveExcessMovement(movement);
+
+		FinExcessAmount excess = new FinExcessAmount();
+		excess.setFinID(transfer.getFinId());
+		excess.setFinReference(transfer.getFinReference());
+		excess.setAmountType(transfer.getTransferToType());
+		excess.setAmount(transfer.getTransferAmount());
+		excess.setUtilisedAmt(BigDecimal.ZERO);
+		excess.setBalanceAmt(transfer.getTransferAmount());
+		excess.setReservedAmt(BigDecimal.ZERO);
+		excess.setReceiptID(transfer.getId());
+		excess.setPostDate(transfer.getTransferDate());
+		excess.setValueDate(transfer.getTransferDate());
+		finExcessAmountDAO.saveExcess(excess);
+		long tranferToExcessId = excess.getExcessID();
+
+		transfer.setTransferToId(tranferToExcessId);
+		transfer.setLinkedTranId(linkedTranId);
+
+		transfer.setRoleCode("");
+		transfer.setNextRoleCode("");
+		transfer.setTaskId("");
+		transfer.setNextTaskId("");
+		transfer.setWorkflowId(0);
+		transfer.setRecordType("");
+		transfer.setStatus(ChequeSatus.REALISE);
+
+		finExcessTransferDAO.save(transfer, TableType.MAIN_TAB);
+
+		FinExcessMovement toMovement = new FinExcessMovement();
+		toMovement.setExcessID(tranferToExcessId);
+		toMovement.setReceiptID(transfer.getId());
+		toMovement.setMovementType(RepayConstants.RECEIPTTYPE_TRANSFER);
+		toMovement.setTranType(AccountConstants.TRANTYPE_CREDIT);
+		toMovement.setAmount(transfer.getTransferAmount());
+		finExcessAmountDAO.saveExcessMovement(toMovement);
+
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		auditHeaderDAO.addAudit(auditHeader);
+
+		auditHeader.setAuditTranType(tranType);
+		auditHeader.getAuditDetail().setAuditTranType(tranType);
+		auditHeader.getAuditDetail().setModelData(transfer);
+
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -174,109 +255,9 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);
-
-		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
-
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
-		}
-
-		FinExcessTransfer finExcessTransfer = new FinExcessTransfer();
-		BeanUtils.copyProperties((FinExcessTransfer) auditHeader.getAuditDetail().getModelData(), finExcessTransfer);
-
-		getFinExcessTransferDAO().delete(finExcessTransfer, TableType.TEMP_TAB);
-
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(finExcessTransfer.getRecordType())) {
-			auditHeader.getAuditDetail()
-					.setBefImage(finExcessTransferDAO.getExcessTransferByTransferId(finExcessTransfer.getId(), ""));
-		}
-
-		long linkedTranId = 0;
-
-		AEEvent aeEvent = executeAccounting(finExcessTransfer);
-		if (aeEvent.isPostingSucess()) {
-			linkedTranId = aeEvent.getLinkedTranId();
-		}
-
-		FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(finExcessTransfer.getId(),
-				finExcessTransfer.getTransferFromId(), RepayConstants.RECEIPTTYPE_TRANSFER);
-
-		if (exReserve != null) {
-			finExcessAmountDAO.updateUtilise(finExcessTransfer.getTransferFromId(),
-					finExcessTransfer.getTransferAmount());
-			finExcessAmountDAO.deleteExcessReserve(finExcessTransfer.getId(), finExcessTransfer.getTransferFromId(),
-					RepayConstants.RECEIPTTYPE_TRANSFER);
-		} else {
-			finExcessAmountDAO.updateUtiliseOnly(finExcessTransfer.getTransferFromId(),
-					finExcessTransfer.getTransferAmount());
-		}
-
-		FinExcessMovement movement = new FinExcessMovement();
-		movement.setExcessID(finExcessTransfer.getTransferFromId());
-		movement.setReceiptID(finExcessTransfer.getId());
-		movement.setMovementType(RepayConstants.RECEIPTTYPE_TRANSFER);
-		movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
-		movement.setAmount(finExcessTransfer.getTransferAmount());
-		finExcessAmountDAO.saveExcessMovement(movement);
-
-		long tranferToExcessId = 0;
-
-		FinExcessAmount excess = new FinExcessAmount();
-		excess.setFinID(finExcessTransfer.getFinId());
-		excess.setFinReference(finExcessTransfer.getFinReference());
-		excess.setAmountType(finExcessTransfer.getTransferToType());
-		excess.setAmount(finExcessTransfer.getTransferAmount());
-		excess.setUtilisedAmt(BigDecimal.ZERO);
-		excess.setBalanceAmt(finExcessTransfer.getTransferAmount());
-		excess.setReservedAmt(BigDecimal.ZERO);
-		excess.setReceiptID(finExcessTransfer.getId());
-		excess.setPostDate(finExcessTransfer.getTransferDate());
-		excess.setValueDate(SysParamUtil.getAppDate());
-		finExcessAmountDAO.saveExcess(excess);
-		tranferToExcessId = excess.getExcessID();
-
-		finExcessTransfer.setTransferToId(tranferToExcessId);
-		finExcessTransfer.setLinkedTranId(linkedTranId);
-
-		finExcessTransfer.setRoleCode("");
-		finExcessTransfer.setNextRoleCode("");
-		finExcessTransfer.setTaskId("");
-		finExcessTransfer.setNextTaskId("");
-		finExcessTransfer.setWorkflowId(0);
-		finExcessTransfer.setRecordType("");
-		finExcessTransfer.setStatus(ChequeSatus.REALISE);
-
-		finExcessTransferDAO.save(finExcessTransfer, TableType.MAIN_TAB);
-
-		FinExcessMovement toMovement = new FinExcessMovement();
-		toMovement.setExcessID(tranferToExcessId);
-		toMovement.setReceiptID(finExcessTransfer.getId());
-		toMovement.setMovementType(RepayConstants.RECEIPTTYPE_TRANSFER);
-		toMovement.setTranType(AccountConstants.TRANTYPE_CREDIT);
-		toMovement.setAmount(finExcessTransfer.getTransferAmount());
-		finExcessAmountDAO.saveExcessMovement(toMovement);
-
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
-
-		auditHeader.setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(finExcessTransfer);
-
-		getAuditHeaderDAO().addAudit(auditHeader);
-
-		logger.info(Literal.LEAVING);
-		return auditHeader;
-
-	}
-
-	private AEEvent executeAccounting(FinExcessTransfer excessTransfer) {
-
+	public AEEvent executeAccounting(FinExcessTransfer excessTransfer) {
 		String eventCode = AccountingEvent.EXTRF;
+		Date appDate = SysParamUtil.getAppDate();
 
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = new AEAmountCodes();
@@ -285,7 +266,8 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 
 		aeEvent.setFinReference(excessTransfer.getFinReference());
 		aeEvent.setAccountingEvent(eventCode);
-		aeEvent.setPostDate(SysParamUtil.getAppDate());
+
+		aeEvent.setPostDate(appDate);
 		aeEvent.setValueDate(excessTransfer.getTransferDate());
 		aeEvent.setSchdDate(excessTransfer.getTransferDate());
 		aeEvent.setBranch(fm.getFinBranch());
@@ -295,57 +277,56 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 		aeEvent.setCustID(fm.getCustID());
 		aeEvent.setPostRefId(excessTransfer.getId());
 
-		// Finance Fields
 		amountCodes.setFinType(aeEvent.getFinType());
 		aeEvent.setAeAmountCodes(amountCodes);
 
-		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
-				aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
-		aeEvent.setCustAppDate(SysParamUtil.getAppDate());
+		Map<String, Object> extDataMap = amountCodes.getDeclaredFieldValues();
+
+		BigDecimal transfer = excessTransfer.getTransferAmount();
+
+		prepareDataMap(excessTransfer, extDataMap, transfer);
+
+		aeEvent.setDataMap(extDataMap);
+
+		aeEvent.getAcSetIDList().add(accountingSetDAO.getAccountingSetId(AccountingEvent.EXTRF));
+		aeEvent.setCustAppDate(appDate);
 		aeEvent.setEntityCode(fm.getEntityCode());
 
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		return aeEvent;
-
 	}
 
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);
+		logger.debug(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
-		FinExcessTransfer finExcessTransfer = (FinExcessTransfer) auditHeader.getAuditDetail().getModelData();
+		FinExcessTransfer transfer = (FinExcessTransfer) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getFinExcessTransferDAO().delete(finExcessTransfer, TableType.TEMP_TAB);
+		finExcessTransferDAO.delete(transfer, TableType.TEMP_TAB);
 
-		FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(finExcessTransfer.getId(),
-				finExcessTransfer.getTransferFromId(), RepayConstants.RECEIPTTYPE_TRANSFER);
+		FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(transfer.getId(),
+				transfer.getTransferFromId(), RepayConstants.RECEIPTTYPE_TRANSFER);
 
 		if (exReserve != null) {
-			// Delete Reserve Amount in FinExcessAmount
-			finExcessAmountDAO.deleteExcessReserve(finExcessTransfer.getId(), finExcessTransfer.getTransferFromId(),
+			finExcessAmountDAO.deleteExcessReserve(transfer.getId(), transfer.getTransferFromId(),
 					RepayConstants.RECEIPTTYPE_TRANSFER);
-
-			// Update Reserve Amount in FinExcessAmount
-			finExcessAmountDAO.updateExcessReserve(finExcessTransfer.getTransferFromId(),
-					exReserve.getReservedAmt().negate());
-
+			finExcessAmountDAO.updateExcessReserve(transfer.getTransferFromId(), exReserve.getReservedAmt().negate());
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.info(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
@@ -360,17 +341,14 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
-		// Get the model object.
-		FinExcessTransfer finExcessTransfer = (FinExcessTransfer) auditDetail.getModelData();
+		FinExcessTransfer transfer = (FinExcessTransfer) auditDetail.getModelData();
 
 		String[] parameters = new String[2];
-		parameters[0] = PennantJavaUtil.getLabel("label_TransferID") + ": " + finExcessTransfer.getId();
+		parameters[0] = PennantJavaUtil.getLabel("label_TransferID") + ": " + transfer.getId();
 
-		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, finExcessTransfer.getRecordType())) {
-			boolean workflowExists = getFinExcessTransferDAO().isIdExists(finExcessTransfer.getId());
-			if (workflowExists) {
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
-			}
+		if (PennantConstants.RECORD_TYPE_DEL.equals(transfer.getRecordType())
+				&& finExcessTransferDAO.isIdExists(transfer.getId())) {
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -379,69 +357,60 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 		return auditDetail;
 	}
 
-	@Override
-	public FinExcessAmount getFinExcessAmountById(long excessId) {
-		return finExcessAmountDAO.getFinExcessAmountById(excessId, "");
+	private void prepareDataMap(FinExcessTransfer transfer, Map<String, Object> map, BigDecimal amount) {
+		switch (transfer.getTransferToType()) {
+		case RepayConstants.EXCESSADJUSTTO_EXCESS:
+			map.put("ae_toExcessAmt", amount);
+			break;
+		case RepayConstants.EXCESSADJUSTTO_EMIINADV:
+			map.put("ae_toEmiAdvance", amount);
+			break;
+		case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+			map.put("ae_toTExcessAmt", amount);
+			break;
+		case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+			map.put("ae_toSettlement", amount);
+			break;
+		default:
+			break;
+		}
+
+		switch (transfer.getTransferFromType()) {
+		case RepayConstants.EXCESSADJUSTTO_EXCESS:
+			map.put("EX_ReceiptAmount", amount);
+			break;
+		case RepayConstants.EXCESSADJUSTTO_EMIINADV:
+			map.put("EA_ReceiptAmount", amount);
+			break;
+		case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+			map.put("ET_ReceiptAmount", amount);
+			break;
+		case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+			map.put("SETTLE_ReceiptAmount", amount);
+			break;
+		default:
+			break;
+		}
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
+	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
-	public FinExcessTransferDAO getFinExcessTransferDAO() {
-		return finExcessTransferDAO;
-	}
-
+	@Autowired
 	public void setFinExcessTransferDAO(FinExcessTransferDAO finExcessTransferDAO) {
 		this.finExcessTransferDAO = finExcessTransferDAO;
 	}
 
-	public CustomerDAO getCustomerDAO() {
-		return customerDAO;
-	}
-
+	@Autowired
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
 
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
+	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public FinanceProfitDetailDAO getProfitDetailsDAO() {
-		return profitDetailsDAO;
-	}
-
-	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
-		this.profitDetailsDAO = profitDetailsDAO;
-	}
-
-	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
-		return finReceiptHeaderDAO;
-	}
-
-	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
-		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
-	public FinanceDetailService getFinanceDetailService() {
-		return financeDetailService;
-	}
-
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
 	}
 
 	@Autowired
@@ -449,8 +418,14 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
+	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	@Autowired
+	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
+		this.accountingSetDAO = accountingSetDAO;
 	}
 
 }

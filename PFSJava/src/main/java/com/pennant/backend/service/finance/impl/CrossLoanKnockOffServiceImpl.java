@@ -64,11 +64,9 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	private CrossLoanTransferDAO crossLoanTransferDAO;
 	private AccountingSetDAO accountingSetDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
-
 	private FinanceMainService financeMainService;
 	private ReceiptService receiptService;
 	private ReceiptDataValidator receiptDataValidator;
-
 	private PostingsPreparationUtil postingsPreparationUtil;
 
 	@Override
@@ -418,8 +416,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		aeEvent.getDataMap().put("rd_amount", crossLoan.getTransferAmount());
 		aeEvent.getDataMap().put("ae_isWriteOff", main.isWriteoffLoan());
 
-		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.CROSS_LOAN_FROM,
-				AccountingEvent.CROSS_LOAN_FROM);
+		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.CROSS_LOAN_FROM);
 
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
@@ -454,8 +451,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		aeEvent1.setDataMap(dataMap);
 		aeEvent1.getDataMap().put("rd_amount", crossLoan.getTransferAmount());
 
-		long accountsetId1 = accountingSetDAO.getAccountingSetId(AccountingEvent.CROSS_LOAN_TO,
-				AccountingEvent.CROSS_LOAN_TO);
+		long accountsetId1 = accountingSetDAO.getAccountingSetId(AccountingEvent.CROSS_LOAN_TO);
 
 		aeEvent1.getAcSetIDList().add(accountsetId1);
 		aeEvent1 = postingsPreparationUtil.postAccounting(aeEvent1);

@@ -2,6 +2,7 @@ package com.pennant.pff.excess.service;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.pff.excess.model.FinExcessTransfer;
 
 public interface ExcessTransferService {
@@ -23,5 +24,7 @@ public interface ExcessTransferService {
 	boolean isReferenceExist(String finReference);
 
 	FinExcessAmount getFinExcessAmountById(long excessId);
+
+	AEEvent executeAccounting(FinExcessTransfer excessTransfer);
 
 }

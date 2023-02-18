@@ -830,6 +830,14 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 			this.excessReference.setValue(dataObject.toString());
 			this.excessReference.setDescription("");
 		}
+
+		FinExcessAmount fea = (FinExcessAmount) dataObject;
+
+		if (fea.getValueDate() != null) {
+			this.transferDate.setValue(fea.getValueDate());
+			this.transferDate.setDisabled(true);
+		}
+
 		logger.debug("Leaving " + event.toString());
 	}
 

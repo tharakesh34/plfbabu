@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,20 +14,21 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.excess.ExcessHead;
 import com.pennant.pff.excess.ExcessTransferError;
 import com.pennant.pff.excess.dao.ExcessTransferUploadDAO;
 import com.pennant.pff.excess.model.ExcessTransferUpload;
+import com.pennant.pff.excess.model.FinExcessTransfer;
+import com.pennant.pff.excess.service.ExcessTransferService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.AppException;
@@ -40,6 +40,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	private ExcessTransferUploadDAO excessTransferUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
+	private ExcessTransferService excessTransferService;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -192,22 +193,12 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	private void process(long headerID) {
-		List<FinExcessAmount> amount = new ArrayList<>();
 		List<ExcessTransferUpload> process = excessTransferUploadDAO.getProcess(headerID);
 
 		Date appDate = SysParamUtil.getAppDate();
-		for (ExcessTransferUpload exc : process) {
-			FinExcessAmount excessamount = new FinExcessAmount();
 
-			excessamount.setFinID(exc.getReferenceID());
-			excessamount.setFinReference(exc.getReference());
-			excessamount.setAmountType(exc.getTransferToType());
-			excessamount.setAmount(exc.getTransferAmount());
-			excessamount.setUtilisedAmt(BigDecimal.ZERO);
-			excessamount.setBalanceAmt(exc.getTransferAmount());
-			excessamount.setReservedAmt(BigDecimal.ZERO);
-			excessamount.setReceiptID(exc.getId());
-			excessamount.setPostDate(appDate);
+		for (ExcessTransferUpload exc : process) {
+			List<FinExcessTransfer> transferList = new ArrayList<>();
 
 			List<FinExcessAmount> existingExcess = finExcessAmountDAO.getExcessAmountsByRefAndType(exc.getReferenceID(),
 					exc.getTransferFromType());
@@ -222,62 +213,51 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 					break;
 				}
 
-				excessamount.setValueDate(excess.getValueDate());
 				BigDecimal available = excess.getBalanceAmt();
 
 				if (transferAmount.compareTo(available) >= 0) {
-					excess.setUtilisedAmt(available);
 					transferAmount = transferAmount.subtract(available);
 				} else {
-					excess.setUtilisedAmt(transferAmount);
 					transferAmount = BigDecimal.ZERO;
 				}
 
-				finExcessAmountDAO.updateUtiliseOnly(excess.getExcessID(), excess.getUtilisedAmt());
-				FinExcessMovement movement = new FinExcessMovement();
-				movement.setExcessID(excess.getExcessID());
-				movement.setReceiptID(exc.getId());
-				movement.setMovementType(RepayConstants.RECEIPTTYPE_TRANSFER);
-				movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
-				movement.setAmount(excess.getUtilisedAmt());
-				finExcessAmountDAO.saveExcessMovement(movement);
+				FinExcessTransfer transfer = new FinExcessTransfer();
+
+				transfer.setFinId(exc.getReferenceID());
+				transfer.setFinReference(exc.getReference());
+				transfer.setTransferFromType(exc.getTransferFromType());
+				transfer.setTransferToType(exc.getTransferToType());
+				transfer.setTransferDate(excess.getValueDate() == null ? appDate : excess.getValueDate());
+				transfer.setTransferAmount(available);
+				transfer.setTransferFromId(excess.getExcessID());
+				transfer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				transfer.setLastMntBy(exc.getApprovedBy());
+				transfer.setLastMntOn(exc.getApprovedOn());
+				transfer.setCreatedBy(exc.getCreatedBy());
+				transfer.setCreatedOn(exc.getCreatedOn());
+				transfer.setApprovedBy(exc.getApprovedBy());
+				transfer.setApprovedOn(exc.getApprovedOn());
+
+				transferList.add(transfer);
+
+				if (transferList.size() == PennantConstants.CHUNK_SIZE) {
+					for (FinExcessTransfer fet : transferList) {
+						excessTransferService.doApprove(getAuditHeader(fet, PennantConstants.TRAN_WF));
+					}
+					transferList.clear();
+				}
 			}
 
-			amount.add(excessamount);
-
-			if (amount.size() == PennantConstants.CHUNK_SIZE) {
-				finExcessAmountDAO.saveExcessList(amount);
-				amount.clear();
+			for (FinExcessTransfer fet : transferList) {
+				excessTransferService.doApprove(getAuditHeader(fet, PennantConstants.TRAN_WF));
 			}
+			transferList.clear();
 		}
+	}
 
-		if (CollectionUtils.isNotEmpty(amount)) {
-			finExcessAmountDAO.saveExcessList(amount);
-		}
-
-		List<FinExcessMovement> movementList = new ArrayList<>();
-
-		for (FinExcessAmount fea : amount) {
-			FinExcessMovement toMovement = new FinExcessMovement();
-			toMovement.setExcessID(fea.getId());
-			toMovement.setReceiptID(fea.getReceiptID());
-			toMovement.setMovementType(RepayConstants.RECEIPTTYPE_TRANSFER);
-			toMovement.setTranType(AccountConstants.TRANTYPE_CREDIT);
-			toMovement.setAmount(fea.getAmount());
-
-			movementList.add(toMovement);
-
-			if (movementList.size() == PennantConstants.CHUNK_SIZE) {
-				finExcessAmountDAO.saveExcessMovementList(movementList);
-				movementList.clear();
-			}
-
-		}
-
-		if (CollectionUtils.isNotEmpty(movementList)) {
-			finExcessAmountDAO.saveExcessMovementList(movementList);
-		}
-
+	private AuditHeader getAuditHeader(FinExcessTransfer transfer, String tranType) {
+		AuditDetail ad = new AuditDetail(tranType, 1, transfer.getBefImage(), transfer);
+		return new AuditHeader(transfer.getFinReference(), null, null, null, ad, transfer.getUserDetails(), null);
 	}
 
 	@Override
@@ -325,4 +305,10 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
+
+	@Autowired
+	public void setExcessTransferService(ExcessTransferService excessTransferService) {
+		this.excessTransferService = excessTransferService;
+	}
+
 }

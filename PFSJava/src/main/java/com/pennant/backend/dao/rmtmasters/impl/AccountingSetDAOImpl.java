@@ -40,6 +40,7 @@ import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 
 /**
@@ -200,31 +201,28 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Fetching Accounting Set ID by Using EventCode and AccSetCode
-	 * 
-	 * @param eventCode
-	 * @param accSetCode
-	 * @param type
-	 * @return Long
-	 */
 	@Override
 	public Long getAccountingSetId(final String eventCode, final String accSetCode) {
-		logger.debug("Entering");
-		AccountingSet accountingSet = new AccountingSet();
+		String sql = "Select AccountSetid From RMTAccountingSet Where EventCode = ? and AccountSetCode = ?";
 
-		accountingSet.setEventCode(eventCode);
-		accountingSet.setAccountSetCode(accSetCode);
-
-		StringBuilder selectSql = new StringBuilder(" Select AccountSetid  ");
-		selectSql.append(" From RMTAccountingSet");
-		selectSql.append(" Where EventCode =:EventCode and AccountSetCode=:AccountSetCode");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+			return this.jdbcOperations.queryForObject(sql, Long.class, eventCode, accSetCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0L;
+		}
+	}
+
+	@Override
+	public Long getAccountingSetId(final String eventCode) {
+		String sql = "Select AccountSetid From RMTAccountingSet Where EventCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, eventCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return 0L;
@@ -279,5 +277,14 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public boolean isValidCategoryWiseEvents(String eventCode) {
+		String sql = "Select count(AEEventCode) from CategoryWiseEvents where AEEventCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, eventCode) > 0;
 	}
 }
