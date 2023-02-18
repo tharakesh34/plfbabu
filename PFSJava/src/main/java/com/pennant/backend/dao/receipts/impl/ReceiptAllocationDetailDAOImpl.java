@@ -254,7 +254,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 			sql.append(" and rad.AllocationType = ?");
 		}
 
-		sql.append(" and rad rch.ReceiptModeStatus in (?, ?)");
+		sql.append(" and rch.ReceiptModeStatus in (?, ?)");
 		sql.append(" group by rad.AllocationType, rad.AllocationTo, rad.ReceiptId");
 
 		logger.debug(Literal.SQL + sql.toString());
