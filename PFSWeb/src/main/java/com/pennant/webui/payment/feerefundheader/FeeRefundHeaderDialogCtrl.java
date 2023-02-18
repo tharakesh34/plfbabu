@@ -102,7 +102,6 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.feerefund.FeeRefundUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -1069,7 +1068,6 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		AEEvent aeEvent = new AEEvent();
 
-		// feeRefundHeaderService.executeAccountingProcess(aeEvent, this.feeRefundHeader);
 		postingsPreparationUtil.getAccounting(aeEvent);
 
 		if (accountingDetailDialogCtrl != null) {
@@ -1107,34 +1105,27 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		for (ManualAdvise ma : manualAdviseList) {
 			frd = new FeeRefundDetail();
 
-			FeeType feeType = feeTypeService.getRecvFees(ma.getFeeTypeCode());
+			FeeType pFeeType = feeTypeService.getPayableFeeType(ma.getFeeTypeCode());
 
-			if (feeType == null || !feeType.isRefundable()) {
+			if (pFeeType == null || !pFeeType.isRefundable()) {
 				continue;
 			}
 
-			List<ReceiptAllocationDetail> radList = this.receiptService.getReceiptAllocDetail(finID, Allocation.MANADV);
-
-			BigDecimal receiptPaidAmt = BigDecimal.ZERO;
-
-			if (CollectionUtils.isNotEmpty(radList)) {
-				for (ReceiptAllocationDetail rad : radList) {
-					if (StringUtils.equals(String.valueOf(rad.getAllocationTo()), String.valueOf(ma.getAdviseID()))) {
-						receiptPaidAmt = rad.getPaidAmount();
-					}
-				}
-			}
+			BigDecimal receiptPaidAmt = getReceiptAmt(finID, Allocation.MANADV, String.valueOf(ma.getAdviseID()));
 
 			frd.setNewRecord(true);
 			frd.setReceivableID(ma.getAdviseID());
 			frd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
-			frd.setReceivableFeeTypeID(ma.getFeeTypeID());
 			frd.setAdviseAmount(ma.getAdviseAmount());
-			frd.setPayableFeeTypeID(feeType.getFeeTypeID());
-			frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
-			frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
+
+			frd.setPayableFeeTypeID(pFeeType.getFeeTypeID());
+			frd.setPayableFeeTypeCode(pFeeType.getRecvFeeTypeCode());
+			frd.setPayableFeeTypeDesc(pFeeType.getRecvFeeTypeDesc());
+
+			frd.setReceivableFeeTypeID(ma.getFeeTypeID());
 			frd.setReceivableFeeTypeCode(ma.getFeeTypeCode());
 			frd.setReceivableFeeTypeDesc(ma.getFeeTypeDesc());
+
 			frd.setReceivableType(Allocation.MANADV);
 
 			BigDecimal totPaidGSTAmount = CalculationUtil.getTotalPaidGST(ma);
@@ -1142,128 +1133,104 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			BigDecimal paidAmount = ma.getPaidAmount().subtract(receiptPaidAmt).add(totPaidGSTAmount);
 			frd.setPaidAmount(paidAmount);
 
-			BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
-			frd.setPrevRefundAmount(prvRefundAmt);
+			frd.setPrevRefundAmount(getPreviousRefundAmt(finID, frd));
 
 			detailList.add(frd);
 		}
 
-		for (FinFeeDetail ffd : finFeeDetailList) {
+		for (FinFeeDetail fee : finFeeDetailList) {
 			frd = new FeeRefundDetail();
 
-			FeeType ft = feeTypeService.getApprovedFeeTypeById(ffd.getFeeTypeID());
+			FeeType rFeeType = feeTypeService.getApprovedFeeTypeById(fee.getFeeTypeID());
 
-			FeeType feeType = feeTypeService.getRecvFees(ft.getFeeTypeCode());
+			FeeType pFeeType = feeTypeService.getPayableFeeType(rFeeType.getFeeTypeCode());
 
-			if (feeType == null || !feeType.isRefundable()) {
+			if (pFeeType == null || !pFeeType.isRefundable()) {
 				continue;
 			}
 
-			List<ReceiptAllocationDetail> radList = this.receiptService.getReceiptAllocDetail(finID, Allocation.FEE);
-
-			BigDecimal receiptPaidAmt = BigDecimal.ZERO;
-
-			if (CollectionUtils.isNotEmpty(radList)) {
-				for (ReceiptAllocationDetail rad : radList) {
-					if (StringUtils.equals(String.valueOf(rad.getAllocationTo()), String.valueOf(ffd.getFeeTypeID()))) {
-						receiptPaidAmt = rad.getPaidAmount();
-					}
-				}
-			}
+			BigDecimal receiptPaidAmt = getReceiptAmt(finID, Allocation.FEE, String.valueOf(-1 * fee.getFeeTypeID()));
 
 			frd.setNewRecord(true);
-			frd.setReceivableID(ffd.getFeeID());
-			frd.setAvailableAmount(ffd.getActualAmount().subtract(ffd.getPaidAmount()).subtract(ffd.getWaivedAmount()));
-			frd.setReceivableFeeTypeID(ffd.getFeeTypeID());
-			frd.setAdviseAmount(ffd.getActualAmount());
-			frd.setPaidAmount(ffd.getPaidAmount().subtract(receiptPaidAmt));
-			frd.setPayableFeeTypeID(feeType.getFeeTypeID());
-			frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
-			frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
-			frd.setReceivableFeeTypeCode(ft.getFeeTypeCode());
-			frd.setReceivableFeeTypeDesc(ft.getFeeTypeDesc());
+			frd.setReceivableID(fee.getFeeID());
+			frd.setAvailableAmount(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
+			frd.setAdviseAmount(fee.getActualAmount());
+			frd.setPaidAmount(fee.getPaidAmount().subtract(receiptPaidAmt));
+
+			frd.setPayableFeeTypeID(pFeeType.getFeeTypeID());
+			frd.setPayableFeeTypeCode(pFeeType.getRecvFeeTypeCode());
+			frd.setPayableFeeTypeDesc(pFeeType.getRecvFeeTypeDesc());
+
+			frd.setReceivableFeeTypeID(rFeeType.getFeeTypeID());
+			frd.setReceivableFeeTypeCode(rFeeType.getFeeTypeCode());
+			frd.setReceivableFeeTypeDesc(rFeeType.getFeeTypeDesc());
+
 			frd.setReceivableType(Allocation.FEE);
 
-			BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
-			frd.setPrevRefundAmount(prvRefundAmt);
+			frd.setPrevRefundAmount(getPreviousRefundAmt(finID, frd));
 
 			detailList.add(frd);
 		}
 
 		if (fod != null) {
-			FeeType ft = feeTypeService.getApprovedFeeTypeByFeeCode("ODC");
-			FeeType feeType = feeTypeService.getRecvFees(ft.getFeeTypeCode());
+			FeeType rFeeType = feeTypeService.getApprovedFeeTypeByFeeCode("ODC");
+			FeeType pFeeType = feeTypeService.getPayableFeeType(rFeeType.getFeeTypeCode());
 
-			if (feeType != null && feeType.isRefundable()) {
-				List<ReceiptAllocationDetail> radList = this.receiptService.getReceiptAllocDetail(finID,
-						Allocation.ODC);
+			if (pFeeType != null && pFeeType.isRefundable()) {
 
-				BigDecimal receiptPaidAmt = BigDecimal.ZERO;
-
-				if (CollectionUtils.isNotEmpty(radList)) {
-					for (ReceiptAllocationDetail rad : radList) {
-						if (StringUtils.equals(String.valueOf(rad.getAllocationType()), Allocation.ODC)) {
-							receiptPaidAmt = rad.getPaidAmount();
-						}
-					}
-				}
+				BigDecimal receiptPaidAmt = getReceiptAmt(finID, Allocation.ODC, Allocation.ODC);
 
 				frd = new FeeRefundDetail();
 				frd.setNewRecord(true);
-				frd.setReceivableID(ft.getFeeTypeID());
+				frd.setReceivableID(rFeeType.getFeeTypeID());
 				frd.setAvailableAmount(
 						fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
-				frd.setReceivableFeeTypeID(ft.getFeeTypeID());
 				frd.setPaidAmount(fod.getTotPenaltyPaid().subtract(receiptPaidAmt));
 				frd.setAdviseAmount(fod.getTotPenaltyAmt());
-				frd.setPayableFeeTypeID(feeType.getFeeTypeID());
-				frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
-				frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
-				frd.setReceivableFeeTypeCode(ft.getFeeTypeCode());
-				frd.setReceivableFeeTypeDesc(ft.getFeeTypeDesc());
+
+				frd.setPayableFeeTypeID(pFeeType.getFeeTypeID());
+				frd.setPayableFeeTypeCode(pFeeType.getRecvFeeTypeCode());
+				frd.setPayableFeeTypeDesc(pFeeType.getRecvFeeTypeDesc());
+
+				frd.setReceivableFeeTypeID(rFeeType.getFeeTypeID());
+				frd.setReceivableFeeTypeCode(rFeeType.getFeeTypeCode());
+				frd.setReceivableFeeTypeDesc(rFeeType.getFeeTypeDesc());
+
 				frd.setReceivableType(Allocation.ODC);
 
-				BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
-				frd.setPrevRefundAmount(prvRefundAmt);
+				frd.setPrevRefundAmount(getPreviousRefundAmt(finID, frd));
 
 				detailList.add(frd);
 			}
 		}
 
 		if (fod != null) {
-			FeeType ft = feeTypeService.getApprovedFeeTypeByFeeCode("LPFT");
-			FeeType feeType = feeTypeService.getRecvFees(ft.getFeeTypeCode());
+			FeeType rFeeType = feeTypeService.getApprovedFeeTypeByFeeCode("LPFT");
+			FeeType pFeeType = feeTypeService.getPayableFeeType(rFeeType.getFeeTypeCode());
 
-			if (feeType != null && feeType.isRefundable()) {
+			if (pFeeType != null && pFeeType.isRefundable()) {
 
-				List<ReceiptAllocationDetail> radList = this.receiptService.getReceiptAllocDetail(finID,
-						Allocation.LPFT);
+				BigDecimal receiptPaidAmt = getReceiptAmt(finID, Allocation.LPFT, Allocation.LPFT);
 
-				BigDecimal receiptPaidAmt = BigDecimal.ZERO;
-
-				if (CollectionUtils.isNotEmpty(radList)) {
-					for (ReceiptAllocationDetail rad : radList) {
-						if (StringUtils.equals(String.valueOf(rad.getAllocationType()), Allocation.LPFT)) {
-							receiptPaidAmt = rad.getPaidAmount();
-						}
-					}
-				}
 				frd = new FeeRefundDetail();
 				frd.setNewRecord(true);
-				frd.setReceivableID(ft.getFeeTypeID());
+				frd.setReceivableID(rFeeType.getFeeTypeID());
 				frd.setAvailableAmount(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
-				frd.setReceivableFeeTypeID(ft.getFeeTypeID());
+				frd.setReceivableFeeTypeID(rFeeType.getFeeTypeID());
 				frd.setPaidAmount(fod.getLPIPaid().subtract(receiptPaidAmt));
 				frd.setAdviseAmount(fod.getLPIAmt());
-				frd.setPayableFeeTypeID(feeType.getFeeTypeID());
-				frd.setPayableFeeTypeCode(feeType.getRecvFeeTypeCode());
-				frd.setPayableFeeTypeDesc(feeType.getRecvFeeTypeDesc());
-				frd.setReceivableFeeTypeCode(ft.getFeeTypeCode());
-				frd.setReceivableFeeTypeDesc(ft.getFeeTypeDesc());
+
+				frd.setPayableFeeTypeID(pFeeType.getFeeTypeID());
+				frd.setPayableFeeTypeCode(pFeeType.getRecvFeeTypeCode());
+				frd.setPayableFeeTypeDesc(pFeeType.getRecvFeeTypeDesc());
+
+				frd.setReceivableID(rFeeType.getFeeTypeID());
+				frd.setReceivableFeeTypeCode(rFeeType.getFeeTypeCode());
+				frd.setReceivableFeeTypeDesc(rFeeType.getFeeTypeDesc());
+
 				frd.setReceivableType(Allocation.LPFT);
 
-				BigDecimal prvRefundAmt = frd.getPaidAmount().subtract(setEligibleAmount(feeType));
-				frd.setPrevRefundAmount(prvRefundAmt);
+				frd.setPrevRefundAmount(getPreviousRefundAmt(finID, frd));
 
 				detailList.add(frd);
 			}
@@ -1282,39 +1249,26 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private BigDecimal setEligibleAmount(FeeType ft) {
-		String linkTo = ft.getPayableLinkTo();
+	private BigDecimal getReceiptAmt(long finID, String allocationType, String allocationTo) {
+		List<ReceiptAllocationDetail> radList = this.receiptService.getReceiptAllocDetail(finID, allocationType);
 
-		BigDecimal amount = BigDecimal.ZERO;
-		if (Allocation.ADHOC.equals(linkTo)) {
-			amount = BigDecimal.ZERO;
-		} else if (isValidPayableLink(linkTo, ft.getAdviseType())) {
-			ManualAdvise ma = new ManualAdvise();
+		BigDecimal receiptPaidAmt = BigDecimal.ZERO;
 
-			ma.setFinReference(this.financeMain.getFinReference());
-			ma.setValueDate(SysParamUtil.getAppDate());
-
-			amount = manualAdviseService.getEligibleAmount(ma, ft);
+		if (CollectionUtils.isNotEmpty(radList)) {
+			for (ReceiptAllocationDetail rad : radList) {
+				if (StringUtils.equals(String.valueOf(rad.getAllocationTo()), allocationTo)) {
+					receiptPaidAmt = rad.getPaidAmount();
+				}
+			}
 		}
-		return amount;
+
+		return receiptPaidAmt;
 	}
 
-	private boolean isValidPayableLink(String linkTo, int adviseType) {
-		if (AdviseType.isReceivable(adviseType) || linkTo == null) {
-			return false;
-		}
-
-		switch (linkTo) {
-		case Allocation.PFT:
-		case Allocation.PRI:
-		case Allocation.MANADV:
-		case Allocation.BOUNCE:
-		case Allocation.ODC:
-		case Allocation.LPFT:
-			return true;
-		default:
-			return false;
-		}
+	private BigDecimal getPreviousRefundAmt(long finID, FeeRefundDetail frd) {
+		long receivableID = frd.getReceivableID();
+		long receivableFeeTypeID = frd.getReceivableFeeTypeID();
+		return manualAdviseService.getRefundedAmt(finID, receivableID, receivableFeeTypeID);
 	}
 
 	private void updatePaybleAmounts(List<FeeRefundDetail> newList, List<FeeRefundDetail> oldList) {
@@ -1608,7 +1562,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		/* Previous Refund Amount */
 		lc = new Listcell();
-		lc.appendChild(getDecimalbox(temp.getPrevRefundAmount(), true));
+		lc.appendChild(getDecimalbox(prevRefundAmount, true));
 		lc.setParent(item);
 
 		/* Current Refund Amount */

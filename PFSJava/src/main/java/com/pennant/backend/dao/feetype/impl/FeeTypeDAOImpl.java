@@ -695,7 +695,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	}
 
 	@Override
-	public FeeType getRecvFees(String feeTypeCode) {
+	public FeeType getPayableFeeType(String feeTypeCode) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select fe.FeeTypeCode, fe.FeeTypeDesc, fe.Refundable");
 		sql.append(", fe.PayableLinkTo, fe.AdviseType, fe.FeeTypeID, fe.RecvFeeTypeId");

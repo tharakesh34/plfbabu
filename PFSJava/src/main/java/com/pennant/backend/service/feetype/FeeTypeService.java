@@ -56,7 +56,7 @@ public interface FeeTypeService {
 
 	FeeType getFeeTypeByRecvFeeTypeId(long recvFeeTypeId);
 
-	FeeType getRecvFees(String feeTypeCode);
+	FeeType getPayableFeeType(String feeTypeCode);
 
 	FeeType getApprovedFeeTypeByFeeCode(String string);
 }

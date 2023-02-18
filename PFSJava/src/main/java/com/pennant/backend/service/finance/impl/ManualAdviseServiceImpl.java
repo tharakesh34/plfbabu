@@ -982,7 +982,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public BigDecimal getEligibleAmount(ManualAdvise ma, FeeType feeType) {
 		logger.debug(Literal.ENTERING);
 
-		String reference = ma.getFinReference();
+		long finID = ma.getFinID();
 		Date valueDate = ma.getValueDate();
 
 		long feeTypeID = feeType.getFeeTypeID();
@@ -991,16 +991,26 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		BigDecimal eligibleAmt = BigDecimal.ZERO;
 		if (Allocation.MANADV.equals(linkTo) && recvId != null) {
-			eligibleAmt = manualAdviseDAO.getPaidAmountsByFeeType(reference, recvId, valueDate);
-			eligibleAmt = eligibleAmt.add(manualAdviseDAO.getFeePaidAmounts(reference, recvId));
+			eligibleAmt = manualAdviseDAO.getPaidAmount(finID, recvId, valueDate);
+			eligibleAmt = eligibleAmt.add(manualAdviseDAO.getFeePaidAmount(finID, recvId));
 		} else {
-			eligibleAmt = manualAdviseDAO.getPaidAmountsbyAllocation(reference, linkTo, valueDate);
+			eligibleAmt = manualAdviseDAO.getPaidAmountsbyAllocation(finID, linkTo, valueDate);
 		}
 
-		eligibleAmt = eligibleAmt.subtract(manualAdviseDAO.getExistingPayableAmount(reference, feeTypeID));
+		eligibleAmt = eligibleAmt.subtract(getRefundedAmount(finID, feeTypeID));
 
 		logger.debug(Literal.LEAVING);
 		return eligibleAmt.compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : eligibleAmt;
+	}
+
+	@Override
+	public BigDecimal getRefundedAmount(long finID, long feeTypeID) {
+		return manualAdviseDAO.getRefundedAmount(finID, feeTypeID);
+	}
+
+	@Override
+	public BigDecimal getRefundedAmt(long finID, long receivableID, long receivableFeeTypeID) {
+		return manualAdviseDAO.getRefundedAmt(finID, receivableID, receivableFeeTypeID);
 	}
 
 	@Override

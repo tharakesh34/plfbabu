@@ -160,13 +160,13 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	void updateStatus(List<ManualAdvise> list, String type);
 
-	BigDecimal getExistingPayableAmount(String reference, long feeTypeId);
+	BigDecimal getRefundedAmount(long finID, long feeTypeId);
 
-	BigDecimal getPaidAmountsByFeeType(String reference, Long feeTypeId, Date valueDate);
+	BigDecimal getPaidAmount(long finID, Long feeTypeId, Date valueDate);
 
-	BigDecimal getFeePaidAmounts(String reference, Long feeTypeId);
+	BigDecimal getFeePaidAmount(long finID, Long feeTypeId);
 
-	BigDecimal getPaidAmountsbyAllocation(String reference, String payableLinkTo, Date valueDate);
+	BigDecimal getPaidAmountsbyAllocation(long finID, String payableLinkTo, Date valueDate);
 
 	boolean isDuplicatePayble(long finID, long feeTypeId, String payablelinkTo);
 
@@ -191,4 +191,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	boolean isAdviseUploadExist(long finID);
 
 	List<ManualAdvise> getReceivableAdvises(long finID);
+
+	BigDecimal getRefundedAmt(long finID, long receivableID, long receivableFeeTypeID);
 }

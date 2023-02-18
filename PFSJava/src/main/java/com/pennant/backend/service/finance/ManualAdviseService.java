@@ -83,4 +83,8 @@ public interface ManualAdviseService {
 	boolean isunAdjustablePayables(long finID);
 
 	boolean isAdviseUploadExist(long finID);
+
+	BigDecimal getRefundedAmount(long finID, long feeTypeID);
+
+	public BigDecimal getRefundedAmt(long finID, long receivableID, long receivableFeeTypeID);
 }

@@ -211,8 +211,8 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	}
 
 	@Override
-	public FeeType getRecvFees(String feeTypeCode) {
-		return feeTypeDAO.getRecvFees(feeTypeCode);
+	public FeeType getPayableFeeType(String feeTypeCode) {
+		return feeTypeDAO.getPayableFeeType(feeTypeCode);
 	}
 
 	@Override

@@ -1904,41 +1904,41 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public BigDecimal getPaidAmountsbyAllocation(String reference, String payableLinkTo, Date valueDate) {
+	public BigDecimal getPaidAmountsbyAllocation(long finID, String payableLinkTo, Date valueDate) {
 		StringBuilder sql = new StringBuilder("Select coalesce(Sum(rad.PaidAmount), 0)");
 		sql.append(" From FinReceiptHeader rh");
 		sql.append(" Inner Join ReceiptAllocationDetail rad on rad.ReceiptID = rh.ReceiptID and rh.ValueDate <= ?");
-		sql.append(" Where rh.Reference = ? and rh.ReceiptModeStatus not in (?, ?)");
+		sql.append(" Where rh.FinID = ? and rh.ReceiptModeStatus not in (?, ?)");
 		sql.append(" and Not Exists (Select 1 from FinReceiptHeader_Temp rht");
 		sql.append(" Where rh.ReceiptID = rht.ReceiptID)");
 		sql.append(" and rad.AllocationType = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, valueDate, reference,
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, valueDate, finID,
 				RepayConstants.PAYSTATUS_BOUNCE, RepayConstants.PAYSTATUS_CANCEL, payableLinkTo);
 	}
 
 	@Override
-	public BigDecimal getPaidAmountsByFeeType(String reference, Long feeTypeId, Date valueDate) {
+	public BigDecimal getPaidAmount(long finID, Long feeTypeId, Date valueDate) {
 		StringBuilder sql = new StringBuilder("Select coalesce(sum(rad.PaidAmount - rad.TdsPaid), 0)");
 		sql.append(" From ReceiptAllocationDetail rad");
 		sql.append(" Inner Join FinReceiptHeader rh on rh.ReceiptID = rad.ReceiptID");
 		sql.append(" Inner Join ManualAdvise ma on ma.AdviseID = rad.AllocationTO");
-		sql.append(" Where rh.Reference = ?  and ma.FeeTypeID = ? and rh.ValueDate <= ?");
+		sql.append(" Where rh.FinID = ?  and ma.FeeTypeID = ? and rh.ValueDate <= ?");
 		sql.append(" and Not Exists (Select 1 from FinReceiptHeader_Temp rht");
 		sql.append(" Where rh.ReceiptID = rht.ReceiptID)");
 		sql.append(" and rh.ReceiptModeStatus not in (?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, reference, feeTypeId, valueDate,
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, feeTypeId, valueDate,
 				RepayConstants.PAYSTATUS_BOUNCE, RepayConstants.PAYSTATUS_CANCEL);
 	}
 
 	@Override
-	public BigDecimal getFeePaidAmounts(String reference, Long feeTypeId) {
-		String sql = "Select PaidAmountOriginal, PaidAmountGST, PaidTDS from FinFeeDetail where finreference = ? and feetypeid = ?";
+	public BigDecimal getFeePaidAmount(long finID, Long feeTypeId) {
+		String sql = "Select PaidAmountOriginal, PaidAmountGST, PaidTDS from FinFeeDetail where FinID = ? and FeeTypeID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -1949,7 +1949,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				eligibleAmount = eligibleAmount.subtract(rs.getBigDecimal("PaidTDS"));
 
 				return eligibleAmount;
-			}, reference, feeTypeId);
+			}, finID, feeTypeId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;
@@ -1957,12 +1957,27 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public BigDecimal getExistingPayableAmount(String reference, long feeTypeId) {
-		String sql = "Select coalesce(sum(AdviseAmount), 0) From ManualAdvise Where FinReference = ? and FeeTypeID = ?";
+	public BigDecimal getRefundedAmount(long finID, long feeTypeId) {
+		String sql = "Select coalesce(sum(AdviseAmount), 0) From ManualAdvise Where FinID = ? and FeeTypeID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, reference, feeTypeId);
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, feeTypeId);
+	}
+
+	@Override
+	public BigDecimal getRefundedAmt(long finID, long receivableID, long receivableFeeTypeID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" coalesce(sum(AdviseAmount), 0) AdviseAmount");
+		sql.append(" From Fee_Refund_Header frh");
+		sql.append(" Inner Join Fee_Refund_Details frd on frd.HeaderID = frh.ID");
+		sql.append(" Inner Join ManualAdvise ma on ma.AdviseID = frd.PayableID");
+		sql.append(" Where ma.FinID = ? and frd.ReceivableID = ? and frd.ReceivableFeeTypeID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, receivableID,
+				receivableFeeTypeID);
 	}
 
 	@Override
