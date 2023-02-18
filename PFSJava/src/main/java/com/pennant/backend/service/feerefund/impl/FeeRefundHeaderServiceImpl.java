@@ -531,4 +531,9 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 		this.feeRefundInstructionService = feeRefundInstructionService;
 	}
 
+	@Autowired
+	public void setFinOverDueService(FinOverDueService finOverDueService) {
+		this.finOverDueService = finOverDueService;
+	}
+
 }
