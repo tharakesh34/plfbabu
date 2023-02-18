@@ -24,6 +24,7 @@
  */
 package com.pennant.backend.dao.receipts.impl;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -245,20 +246,24 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		sql.append(" sum(PaidAmount) PaidAmount, rad.AllocationType, rad.AllocationTo, rad.ReceiptId");
 		sql.append(" From ReceiptAllocationDetail_Temp rad");
 		sql.append(" Inner Join FinReceiptHeader_Temp rch on rch.ReceiptId = rad.ReceiptId");
+		sql.append(" Where FinID = ? and PaidAmount > ?");
 
 		if (Allocation.MANADV.equals(allocType)) {
-			sql.append(" Where rad.AllocationType in(?, ?)");
+			sql.append(" and rad.AllocationType in(?, ?)");
 		} else {
-			sql.append(" Where rad.AllocationType = ?");
+			sql.append(" and rad.AllocationType = ?");
 		}
 
-		sql.append(" and FinID = ? rad FR.ReceiptModeStatus in (?, ?) and PaidAmount > 0");
+		sql.append(" and rad rch.ReceiptModeStatus in (?, ?)");
 		sql.append(" group by rad.AllocationType, rad.AllocationTo, rad.ReceiptId");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
+
+			ps.setLong(++index, finID);
+			ps.setBigDecimal(++index, BigDecimal.ZERO);
 
 			if (Allocation.MANADV.equals(allocType)) {
 				ps.setString(++index, "MANADV");
@@ -271,7 +276,6 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 				ps.setString(++index, "FEE");
 			}
 
-			ps.setLong(++index, finID);
 			ps.setString(++index, "C");
 			ps.setString(++index, "B");
 		}, (rs, rowNum) -> {
