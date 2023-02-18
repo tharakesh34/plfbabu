@@ -30,6 +30,7 @@ import java.util.List;
 
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerCoreBank;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -206,4 +207,8 @@ public interface CustomerDAO {
 	Customer getCustomerCoreBankID(String cif);
 
 	String getCustShrtNameByFinID(long finID);
+
+	CustomerCoreBank getCoreBankByFinID(long finID);
+
+	CustomerCoreBank getCoreBankByCustID(long custID);
 }

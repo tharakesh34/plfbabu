@@ -67,10 +67,6 @@ public interface PaymentHeaderService {
 
 	boolean isInProgress(long finID);
 
-	BigDecimal getDueAgainstLoan(long finId);
-
-	BigDecimal getDueAgainstCustomer(long custId, long finId);
-
 	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
 
 	PaymentHeader prepareRefund(AutoRefundLoan arl, List<PaymentDetail> payDtlList, PaymentInstruction paymentInst);

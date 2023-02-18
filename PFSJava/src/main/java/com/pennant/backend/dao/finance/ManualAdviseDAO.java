@@ -190,4 +190,5 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	boolean isAdviseUploadExist(long finID);
 
+	List<ManualAdvise> getReceivableAdvises(long finID);
 }

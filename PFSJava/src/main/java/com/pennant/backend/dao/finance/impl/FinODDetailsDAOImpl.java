@@ -1185,7 +1185,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 	@Override
 	public BigDecimal getOverDueAmount(long finID) {
-		String sql = "Select coalesce(Sum(TotPenaltyBal + LpiBal), 0) TotalDue From FinODDetails Where FinID = ? ";
+		String sql = "Select coalesce(Sum(coalesce(TotPenaltyBal,0) + coalesce(LpiBal, 0)),0) TotalDue From FinODDetails Where FinID = ? ";
 
 		logger.debug(Literal.SQL.concat(sql));
 

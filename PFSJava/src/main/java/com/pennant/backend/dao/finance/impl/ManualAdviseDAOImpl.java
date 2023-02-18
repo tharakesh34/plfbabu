@@ -2350,4 +2350,61 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		}
 	}
 
+	@Override
+	public List<ManualAdvise> getReceivableAdvises(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AdviseID, ma.AdviseType, FinID, FinReference, ma.FeeTypeID,  AdviseAmount");
+		sql.append(", PaidAmount, WaivedAmount, ValueDate, BalanceAmt, Status, ft.TaxComponent, ft.TdsReq");
+		sql.append(", PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS");
+		sql.append(", WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS");
+		sql.append(" From ManualAdvise ma ");
+		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID");
+		sql.append(" Where ma.FinId = ? ");
+		sql.append(" and ma.AdviseType = ?");
+
+		if (!ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+			sql.append(" and ValueDate <= ?");
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, finID);
+			ps.setInt(++index, AdviseType.RECEIVABLE.id());
+
+			if (!ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+				ps.setDate(++index, JdbcUtil.getDate(SysParamUtil.getAppDate()));
+			}
+		}, (rs, rowNum) -> {
+			ManualAdvise ma = new ManualAdvise();
+
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setAdviseType(rs.getInt("AdviseType"));
+			ma.setFinID(rs.getLong("FinID"));
+			ma.setFinReference(rs.getString("FinReference"));
+			ma.setFeeTypeID(rs.getLong("FeeTypeID"));
+			ma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setValueDate(rs.getTimestamp("ValueDate"));
+			ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			ma.setStatus(rs.getString("Status"));
+			ma.setTaxComponent(rs.getString("TaxComponent"));
+			ma.setTdsReq(rs.getBoolean("TdsReq"));
+			ma.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+			ma.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+			ma.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+			ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+			ma.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+			ma.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+			ma.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+			ma.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+			ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+			ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+
+			return ma;
+		});
+	}
 }

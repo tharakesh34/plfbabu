@@ -36,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.core.FinOverDueService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.feerefund.FeeRefundHeaderDAO;
@@ -72,6 +73,7 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FeeRefundDetailService feeRefundDetailService;
 	private FeeRefundInstructionService feeRefundInstructionService;
+	private FinOverDueService finOverDueService;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -167,8 +169,8 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	public FeeRefundHeader getFeeRefundHeader(long feeRefundId) {
 		FeeRefundHeader frh = feeRefundHeaderDAO.getFeeRefundHeader(feeRefundId, "_View");
 		List<FeeRefundDetail> list = this.feeRefundDetailService.getFeeRefundDetailList(frh.getId(), TableType.VIEW);
-		frh.setOdAgainstLoan(getDueAgainstLoan(frh.getFinID()));
-		frh.setOdAgainstCustomer(getDueAgainstCustomer(frh.getCustId(), frh.getCustCoreBank(), frh.getFinID()));
+		frh.setOdAgainstLoan(finOverDueService.getDueAgnistLoan(frh.getFinID()));
+		frh.setOdAgainstCustomer(finOverDueService.getDueAgnistCustomer(frh.getFinID(), false));
 		frh.setFeeRefundDetailList(list);
 
 		FeeRefundInstruction fri = this.feeRefundInstructionService.getFeeRefundInstructionDetails(frh.getId(),

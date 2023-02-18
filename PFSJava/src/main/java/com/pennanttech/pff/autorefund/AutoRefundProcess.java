@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.core.FinOverDueService;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -35,6 +36,7 @@ public class AutoRefundProcess {
 	private ManualAdviseDAO manualAdviseDAO;
 	private AutoRefundService autoRefundService;
 	private RefundBeneficiary refundBeneficiary;
+	private FinOverDueService finOverDueService;
 
 	public void startRefundProcess(Date appDate) {
 		logger.debug(Literal.ENTERING);
@@ -126,7 +128,7 @@ public class AutoRefundProcess {
 		/* Overdue Amount verification Check required or not */
 		BigDecimal overDueAmt = null;
 		if (arl.isOverDueReq()) {
-			overDueAmt = autoRefundService.getOverDueAmount(finID);
+			overDueAmt = finOverDueService.getDueAgnistCustomer(finID);
 		}
 
 		BigDecimal reserveAmount = autoRefundService.findReserveAmountForAutoRefund(finID, overDueAmt, appDate);
@@ -281,5 +283,10 @@ public class AutoRefundProcess {
 	@Autowired
 	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
 		this.refundBeneficiary = refundBeneficiary;
+	}
+
+	@Autowired
+	public void setFinOverDueService(FinOverDueService finOverDueService) {
+		this.finOverDueService = finOverDueService;
 	}
 }

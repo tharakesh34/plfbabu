@@ -413,59 +413,6 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	}
 
 	@Override
-	public BigDecimal getDueAgainstLoan(long finId) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Sum(ODPRINCIPAL + ODPROFIT + COALESCE(OD.LPPDUE,0) + COALESCE(OD.LPIDUE,0)");
-		sql.append(" + COALESCE(MA.ADVDUE,0)) TotalDue FROM FINPFTDETAILS PFT ");
-		sql.append(" LEFT JOIN (SELECT SUM(TOTPENALTYBAL) LPPDUE,SUM(LPIBAL)LPIDUE,FINID ");
-		sql.append(" FROM FINODDETAILS GROUP BY FINID)OD ON OD.FINID = PFT.FINID ");
-		sql.append(" LEFT JOIN (SELECT SUM(ADVISEAMOUNT - WAIVEDAMOUNT - PAIDAMOUNT) ADVDUE, FINID ");
-		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 1 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
-		sql.append(" WHERE PFT.FinId = ? Group by PFT.FINID");
-		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finId);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return BigDecimal.ZERO;
-		}
-	}
-
-	@Override
-	public BigDecimal getDueAgainstCustomer(long custId, long finId) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Sum(ODPRINCIPAL + ODPROFIT + COALESCE(OD.LPPDUE,0) + COALESCE(OD.LPIDUE,0)");
-		sql.append(" + COALESCE(MA.ADVDUE,0)) TotalDue FROM FINPFTDETAILS PFT ");
-		sql.append(" LEFT JOIN (SELECT SUM(TOTPENALTYBAL) LPPDUE,SUM(LPIBAL)LPIDUE,FINID ");
-		sql.append(" FROM FINODDETAILS GROUP BY FINID)OD ON OD.FINID = PFT.FINID ");
-		sql.append(" LEFT JOIN (SELECT SUM(ADVISEAMOUNT - WAIVEDAMOUNT - PAIDAMOUNT) ADVDUE, FINID ");
-		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 1 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
-		sql.append(" INNER JOIN CUSTOMERS C ON C.CUSTID = PFT.CUSTID ");
-		// if(corebank) {/* Need add based on implementation of custcorebank functionality
-		// sql.append("WHERE pft.custid in");
-		// sql.append(" (Select custid from customers where custcorebank = ?) group by c.custcorebank");
-		// }else {
-		sql.append(" WHERE  PFT.CUSTID = ? AND PFT.FINID <> ? GROUP BY PFT.CUSTID ");
-		// }
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		// if(corebank) {/* Need add based on implementation of custcorebank functionality
-		// return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, coreBankId);
-		// }else {
-		// return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId, finId);
-		// }
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId, finId);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return BigDecimal.ZERO;
-		}
-	}
-
-	@Override
 	public Map<Long, BigDecimal> getAdvisesInProgess(long finId) {
 		StringBuilder sql = new StringBuilder("SELECT");
 		sql.append(" SUM(AMOUNT) AMOUNT,FRD.PAYAGAINSTID FROM FINRECEIPTDETAIL_TEMP FRD ");

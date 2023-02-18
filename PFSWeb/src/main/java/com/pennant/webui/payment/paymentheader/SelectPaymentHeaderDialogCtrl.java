@@ -32,6 +32,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -42,6 +43,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.core.FinOverDueService;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payment.PaymentHeader;
@@ -70,6 +72,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	private PaymentHeaderService paymentHeaderService;
 	private FinanceDetailService financeDetailService;
 	private FeeRefundHeaderService feeRefundHeaderService;
+	private FinOverDueService finOverDueService;
 
 	List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
@@ -200,8 +203,8 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 			return;
 		}
 
-		paymentHeader.setOdAgainstLoan(paymentHeaderService.getDueAgainstLoan(finID));
-		paymentHeader.setOdAgainstCustomer(paymentHeaderService.getDueAgainstCustomer(financeMain.getCustID(), finID));
+		paymentHeader.setOdAgainstLoan(finOverDueService.getDueAgnistLoan(finID));
+		paymentHeader.setOdAgainstCustomer(finOverDueService.getDueAgnistCustomer(finID, false));
 
 		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("paymentHeader", paymentHeader);
@@ -285,6 +288,11 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 
 	public void setFeeRefundHeaderService(FeeRefundHeaderService feeRefundHeaderService) {
 		this.feeRefundHeaderService = feeRefundHeaderService;
+	}
+
+	@Autowired
+	public void setFinOverDueService(FinOverDueService finOverDueService) {
+		this.finOverDueService = finOverDueService;
 	}
 
 }

@@ -31,6 +31,7 @@ import java.util.Map;
 
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerCoreBank;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -416,4 +417,6 @@ public interface FinanceMainDAO {
 	void updateSettlementFlag(long finID, boolean isUnderSettlement);
 
 	FinanceMain getFinanceMainForExcessTransfer(long finId);
+
+	List<Long> getFinIDsByCustomer(CustomerCoreBank customerCoreBank);
 }

@@ -947,4 +947,6 @@
 	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl"/>
 	<bean id="bankBranchDAO" class="com.pennant.backend.dao.bmtmasters.impl.BankBranchDAOImpl" parent="sequenceDao" />
 	<bean id="clusterDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterDAOImpl" parent="sequenceDao" />
+	
+	<bean id="finOverDueService" class="com.pennant.app.core.FinOverDueService"/>
 </beans>

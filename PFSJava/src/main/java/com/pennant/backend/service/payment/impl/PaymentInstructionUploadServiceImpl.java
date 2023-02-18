@@ -14,6 +14,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.pennant.app.core.FinOverDueService;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -44,6 +45,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	private PaymentHeaderDAO paymentHeaderDAO;
 	private FeeTypeDAO feeTypeDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private FinOverDueService finOverDueService;
 
 	private PaymentInstUploadApprovalProcess paymentInstUploadApprovalProcess;
 	private FeeRefundHeaderService feeRefundHeaderService;
@@ -276,11 +278,9 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		BigDecimal dueAganistLoan = paymentHeaderDAO.getDueAgainstLoan(fm.getFinID());
-		BigDecimal dueAganistCustomer = paymentHeaderDAO.getDueAgainstCustomer(fm.getCustID(), fm.getFinID());
+		BigDecimal dueAganistCustomer = finOverDueService.getDueAgnistCustomer(fm.getFinID());
 
-		if (detail.getOverRide().equals("N") && (dueAganistLoan.compareTo(BigDecimal.ZERO) > 0
-				|| dueAganistCustomer.compareTo(BigDecimal.ZERO) > 0)) {
+		if (detail.getOverRide().equals("N") && dueAganistCustomer.compareTo(BigDecimal.ZERO) > 0) {
 			setError(detail, PaymentUploadError.REFUP009);
 			return;
 		}
@@ -371,6 +371,11 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFeeRefundHeaderService(FeeRefundHeaderService feeRefundHeaderService) {
 		this.feeRefundHeaderService = feeRefundHeaderService;
+	}
+
+	@Autowired
+	public void setFinOverDueService(FinOverDueService finOverDueService) {
+		this.finOverDueService = finOverDueService;
 	}
 
 }

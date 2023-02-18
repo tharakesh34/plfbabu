@@ -51,6 +51,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerCoreBank;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -2965,4 +2966,46 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	}
 
+	@Override
+	public CustomerCoreBank getCoreBankByFinID(long finID) {
+		String sql = "Select c.CustId, c.CustCoreBank From Customers c Inner Join FinanceMain fm on fm.CustID = c.CustID Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, i) -> {
+				CustomerCoreBank c = new CustomerCoreBank();
+
+				c.setCustID(rs.getLong("CustID"));
+				c.setCustCoreBank(rs.getString("CustCoreBank"));
+
+				return c;
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public CustomerCoreBank getCoreBankByCustID(long custID) {
+		String sql = "Select c.CustId,c.CustCoreBank From Customers c where CustID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, i) -> {
+				CustomerCoreBank c = new CustomerCoreBank();
+
+				c.setCustID(rs.getLong("CustID"));
+				c.setCustCoreBank(rs.getString("CustCoreBank"));
+
+				return c;
+			}, custID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+
+	}
 }

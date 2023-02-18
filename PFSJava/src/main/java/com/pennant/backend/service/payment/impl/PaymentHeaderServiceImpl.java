@@ -40,6 +40,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.pennant.app.core.FinOverDueService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -108,6 +109,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceMainDAO financeMainDAO;
 	private FeeTypeService feeTypeService;
+	private FinOverDueService finOverDueService;
 
 	private PostValidationHook postValidationHook;
 
@@ -202,8 +204,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		PaymentHeader ph = paymentHeaderDAO.getPaymentHeader(paymentId, "_View");
 		List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentId, "_View");
 
-		ph.setOdAgainstLoan(getDueAgainstLoan(ph.getFinID()));
-		ph.setOdAgainstCustomer(getDueAgainstCustomer(ph.getCustID(), ph.getFinID()));
+		ph.setOdAgainstLoan(finOverDueService.getDueAgnistLoan(ph.getFinID()));
+		ph.setOdAgainstCustomer(finOverDueService.getDueAgnistCustomer(ph.getFinID(), false));
 
 		if (list != null) {
 			ph.setPaymentDetailList(list);
@@ -228,16 +230,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	@Override
 	public PaymentHeader getApprovedPaymentHeader(long paymentId) {
 		return paymentHeaderDAO.getPaymentHeader(paymentId, "_AView");
-	}
-
-	@Override
-	public BigDecimal getDueAgainstLoan(long finId) {
-		return paymentHeaderDAO.getDueAgainstLoan(finId);
-	}
-
-	@Override
-	public BigDecimal getDueAgainstCustomer(long custID, long finId) {
-		return paymentHeaderDAO.getDueAgainstCustomer(custID, finId);
 	}
 
 	@Override
@@ -1084,4 +1076,10 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	public void setPostValidationHook(PostValidationHook postValidationHook) {
 		this.postValidationHook = postValidationHook;
 	}
+
+	@Autowired
+	public void setFinOverDueService(FinOverDueService finOverDueService) {
+		this.finOverDueService = finOverDueService;
+	}
+
 }

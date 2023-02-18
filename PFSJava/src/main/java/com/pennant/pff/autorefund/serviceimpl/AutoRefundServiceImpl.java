@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.core.FinOverDueService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -19,7 +20,6 @@ import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -46,12 +46,12 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	private FinanceMainDAO financeMainDAO;
 	private AutoRefundDAO autoRefundDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
-	private ManualAdviseDAO manualAdviseDAO;
 	private RuleDAO ruleDAO;
 	private CustomerDAO customerDAO;
 	private FinODDetailsDAO finODDetailsDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private PaymentHeaderService paymentHeaderService;
+	private FinOverDueService finOverDueService;
 
 	@Override
 	public List<AutoRefundLoan> getAutoRefunds() {
@@ -67,24 +67,13 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	}
 
 	@Override
-	public BigDecimal getOverDueAmount(long finID) {
-		BigDecimal overDueAmount = BigDecimal.ZERO;
-
-		overDueAmount = overDueAmount.add(profitDetailsDAO.getOverDueAmount(finID));
-		overDueAmount = overDueAmount.add(finODDetailsDAO.getOverDueAmount(finID));
-		overDueAmount = overDueAmount.add(manualAdviseDAO.getOverDueAmount(finID));
-
-		return overDueAmount;
-	}
-
-	@Override
 	public BigDecimal findReserveAmountForAutoRefund(long finID, BigDecimal overDueAmt, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
 		BigDecimal feeResult = BigDecimal.ZERO;
 
 		if (overDueAmt == null) {
-			overDueAmt = getOverDueAmount(finID);
+			overDueAmt = finOverDueService.getDueAgnistCustomer(finID);
 		}
 
 		FinanceProfitDetail fpd = profitDetailsDAO.getFinProfitDetailsById(finID);
@@ -204,11 +193,6 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	}
 
 	@Autowired
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	@Autowired
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
@@ -236,6 +220,11 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinOverDueService(FinOverDueService finOverDueService) {
+		this.finOverDueService = finOverDueService;
 	}
 
 }

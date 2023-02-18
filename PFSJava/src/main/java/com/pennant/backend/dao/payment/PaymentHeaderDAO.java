@@ -58,10 +58,6 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 
 	long getNewPaymentHeaderId();
 
-	BigDecimal getDueAgainstCustomer(long custId, long finId);
-
-	BigDecimal getDueAgainstLoan(long finId);
-
 	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
 
 	BigDecimal getInProgressExcessAmt(long finId, Long receiptId);

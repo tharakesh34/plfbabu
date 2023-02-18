@@ -65,6 +65,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerCoreBank;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinCustomerDetails;
@@ -6617,5 +6618,33 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			return fm;
 		}, finId);
+	}
+
+	@Override
+	public List<Long> getFinIDsByCustomer(CustomerCoreBank customerCoreBank) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinId From FinanceMain fm");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" Where c.CustCoreBank = ? ");
+		} else {
+			sql.append(" Where c.CustID = ? ");
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			if (CustomerExtension.CUST_CORE_BANK_ID) {
+				ps.setString(++index, customerCoreBank.getCustCoreBank());
+			} else {
+				ps.setLong(++index, customerCoreBank.getCustID());
+			}
+
+		}, (rs, rowNum) -> {
+			return rs.getLong("FinId");
+		});
 	}
 }

@@ -15,8 +15,6 @@ public interface AutoRefundService {
 
 	ErrorDetail validateRefund(AutoRefundLoan arl, boolean isEOD);
 
-	BigDecimal getOverDueAmount(long finID);
-
 	BigDecimal findReserveAmountForAutoRefund(long finID, BigDecimal overDueAmt, Date appDate);
 
 	ErrorDetail validateRefundAmt(BigDecimal feeRuleResult, AutoRefundLoan refundLoan);

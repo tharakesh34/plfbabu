@@ -31,6 +31,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -41,6 +42,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.core.FinOverDueService;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.feerefund.FeeRefundHeader;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -69,6 +71,7 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 	private FinanceDetailService financeDetailService;
 	private PaymentHeaderService paymentHeaderService;
 	private HoldRefundUploadDAO holdRefundUploadDAO;
+	private FinOverDueService finOverDueService;
 
 	public SelectFeeRefundHeaderDialogCtrl() {
 		super();
@@ -173,8 +176,8 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 			return;
 		}
 
-		feeRefundHeader.setOdAgainstLoan(paymentHeaderService.getDueAgainstLoan(finID));
-		feeRefundHeader.setOdAgainstCustomer(paymentHeaderService.getDueAgainstCustomer(fm.getCustID(), finID));
+		feeRefundHeader.setOdAgainstLoan(finOverDueService.getDueAgnistLoan(finID));
+		feeRefundHeader.setOdAgainstCustomer(finOverDueService.getDueAgnistCustomer(finID, false));
 
 		Map<String, Object> arg = new HashMap<>();
 		arg.put("feeRefundHeader", feeRefundHeader);
@@ -262,6 +265,11 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 
 	public void setHoldRefundUploadDAO(HoldRefundUploadDAO holdRefundUploadDAO) {
 		this.holdRefundUploadDAO = holdRefundUploadDAO;
+	}
+
+	@Autowired
+	public void setFinOverDueService(FinOverDueService finOverDueService) {
+		this.finOverDueService = finOverDueService;
 	}
 
 }
