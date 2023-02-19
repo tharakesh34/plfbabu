@@ -13486,5 +13486,10 @@
 			<column name="ErrorDesc" type="varchar(2000)"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="PSD#218850" author="Gopal.p">
+		<dropForeignKeyConstraint baseTableName="FinFlagsHeader_Temp" constraintName="fk_flagsheader_t_finid"/>
+		<dropForeignKeyConstraint baseTableName="FinFlagsHeader" constraintName="fk_flagsheader_finid"/>
+	</changeSet>
 
 </databaseChangeLog> 

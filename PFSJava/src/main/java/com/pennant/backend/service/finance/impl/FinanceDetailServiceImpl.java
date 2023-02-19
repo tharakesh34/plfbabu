@@ -87,6 +87,7 @@ import com.pennant.backend.dao.finance.ExtendedFieldMaintenanceDAO;
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
+import com.pennant.backend.dao.finance.FinFlagsHeaderDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
@@ -200,6 +201,7 @@ import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -385,6 +387,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private PaymentsProcessService paymentsProcessService;
 	private ProvisionDAO provisionDAO;
 	private HoldRefundUploadDAO holdRefundUploadDAO;
+	private FinFlagsHeaderDAO finFlagsHeaderDAO;
 
 	@Autowired(required = false)
 	private Crm crm;
@@ -2539,8 +2542,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Flag Details
 			// =======================================
-			if (fd.getFinFlagsDetails() != null && fd.getFinFlagsDetails().size() > 0) {
-				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
+			if (CollectionUtils.isNotEmpty(fd.getFinFlagsDetails())) {
+				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsHeader");
+				details = processingFinFlagHeader(details, table);
+				auditDetails.addAll(details);
+
+				details = fd.getAuditDetailMap().get("FinFlagsDetail");
 				details = processingFinFlagDetailList(details, table);
 				auditDetails.addAll(details);
 			}
@@ -3162,14 +3169,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Check List for Fin Flag Details
-	 * 
-	 * @param auditDetails
-	 * @param financeDetail
-	 * @param type
-	 * @return
-	 */
 	private List<AuditDetail> processingFinFlagDetailList(List<AuditDetail> auditDetails, String type) {
 		logger.debug(Literal.ENTERING);
 
@@ -3946,8 +3945,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Flag Details
-			if (fd.getFinFlagsDetails() != null && !fd.getFinFlagsDetails().isEmpty()) {
-				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
+			if (CollectionUtils.isNotEmpty(fd.getFinFlagsDetails())) {
+				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsHeader");
+				finFlagsHeaderDAO.delete(((FinanceFlag) details.get(0).getModelData()), "");
+				auditDetails.addAll(details);
+
+				details = fd.getAuditDetailMap().get("FinFlagsDetail");
 				finFlagDetailsDAO.deleteList(finReference, FinanceConstants.MODULE_NAME, "");
 				auditDetails.addAll(details);
 			}
@@ -4519,8 +4522,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				// Fin Flag Details
-				if (fd.getFinFlagsDetails() != null && fd.getFinFlagsDetails().size() > 0) {
-					List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
+				if (CollectionUtils.isNotEmpty(fd.getFinFlagsDetails())) {
+					List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsHeader");
+					details = processingFinFlagHeader(details, "");
+					auditDetails.addAll(details);
+
+					details = fd.getAuditDetailMap().get("FinFlagsDetail");
 					details = processingFinFlagDetailList(details, "");
 					auditDetails.addAll(details);
 				}
@@ -4838,8 +4845,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					financeStepDetailDAO.deleteList(finID, isWIF, "_Temp");
 
 					// Finance Flag Details
-					if (fd.getFinFlagsDetails() != null && !fd.getFinFlagsDetails().isEmpty()) {
-						List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
+					if (CollectionUtils.isNotEmpty(fd.getFinFlagsDetails())) {
+						List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsHeader");
+						finFlagsHeaderDAO.delete(((FinanceFlag) details.get(0).getModelData()), "_Temp");
+						auditDetailList.addAll(details);
+
+						details = fd.getAuditDetailMap().get("FinFlagsDetail");
 						finFlagDetailsDAO.deleteList(finReference, FinanceConstants.MODULE_NAME, "_Temp");
 						auditDetailList.addAll(details);
 					}
@@ -6529,8 +6540,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Flag Details
-			if (fd.getFinFlagsDetails() != null && !fd.getFinFlagsDetails().isEmpty()) {
-				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
+			if (CollectionUtils.isNotEmpty(fd.getFinFlagsDetails())) {
+				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsHeader");
+				finFlagsHeaderDAO.delete(((FinanceFlag) details.get(0).getModelData()), "_Temp");
+				auditDetails.addAll(details);
+
+				details = fd.getAuditDetailMap().get("FinFlagsDetail");
 				finFlagDetailsDAO.deleteList(finReference, FinanceConstants.MODULE_NAME, "_Temp");
 				if (details != null) {
 					auditDetails.addAll(details);
@@ -7079,7 +7094,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Finance Flag details Validation
 			List<FinFlagsDetail> finFlagsDetailList = fd.getFinFlagsDetails();
-			if (finFlagsDetailList != null && !finFlagsDetailList.isEmpty()) {
+			if (CollectionUtils.isNotEmpty(finFlagsDetailList)) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
 				details = getFlagDetailValidation().vaildateDetails(details, method, usrLanguage);
 				auditDetails.addAll(details);
@@ -7670,9 +7685,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Finance Flag details
-		if (financeDetail.getFinFlagsDetails() != null && financeDetail.getFinFlagsDetails().size() > 0) {
+		if (CollectionUtils.isNotEmpty(financeDetail.getFinFlagsDetails())) {
 			auditDetailMap.put("FinFlagsDetail", setFinFlagAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinFlagsDetail"));
+
+			auditDetailMap.put("FinFlagsHeader", prepareFinFlagHeader(financeDetail, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("FinFlagsHeader"));
 		}
 
 		if (!financeDetail.isExtSource()) {
@@ -11105,6 +11123,141 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return collateralAssignmentPerc;
 
 	}
+	
+	private List<AuditDetail> prepareFinFlagHeader(FinanceDetail fd, String auditTranType, String method) {
+		boolean isRcdType = false;
+
+		FinanceFlag flag = new FinanceFlag();
+
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+
+		flag.setFinID(fm.getFinID());
+		flag.setFinReference(fm.getFinReference());
+		flag.setFinFlagDetailList(fd.getFinFlagsDetails());
+		flag.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		flag.setRecordStatus(fm.getRecordStatus());
+		flag.setWorkflowId(fm.getWorkflowId());
+		flag.setRecordType(fm.getRecordType());
+		flag.setNewRecord(fm.isNewRecord());
+		flag.setTaskId(fm.getTaskId());
+		flag.setNextTaskId(fm.getNextTaskId());
+		flag.setRoleCode(fm.getRoleCode());
+		flag.setNextRoleCode(fm.getNextRoleCode());
+		flag.setVersion(1);
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
+		if (fm.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+			flag.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			isRcdType = true;
+		} else if (fm.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+			flag.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			if (fm.isWorkflow()) {
+				isRcdType = true;
+			}
+		} else if (fm.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+			flag.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		}
+
+		if ("saveOrUpdate".equals(method) && (isRcdType)) {
+			flag.setNewRecord(true);
+		}
+
+		if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+			if (fm.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				auditTranType = PennantConstants.TRAN_ADD;
+			} else if (fm.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+					|| fm.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				auditTranType = PennantConstants.TRAN_DEL;
+			} else {
+				auditTranType = PennantConstants.TRAN_UPD;
+			}
+		}
+		if (StringUtils.isNotEmpty(fm.getRecordType())) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceFlag(), flag.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], flag.getBefImage(), flag));
+		}
+
+		return auditDetails;
+	}
+	
+	private List<AuditDetail> processingFinFlagHeader(List<AuditDetail> auditDetails, String type) {
+		logger.debug(Literal.ENTERING);
+
+		boolean saveRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			FinanceFlag flag = (FinanceFlag) auditDetails.get(i).getModelData();
+
+			if (StringUtils.isEmpty(flag.getRecordType())) {
+				continue;
+			}
+
+			saveRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				flag.setRoleCode("");
+				flag.setNextRoleCode("");
+				flag.setTaskId("");
+				flag.setNextTaskId("");
+				flag.setWorkflowId(0);
+			}
+
+			if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (flag.isNewRecord()) {
+				saveRecord = true;
+				if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					flag.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					flag.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					flag.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				}
+			} else if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (flag.isNewRecord()) {
+					saveRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = flag.getRecordType();
+				recordStatus = flag.getRecordStatus();
+				flag.setRecordType("");
+				flag.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				finFlagsHeaderDAO.save(flag, type);
+			}
+
+			if (deleteRecord) {
+				finFlagsHeaderDAO.delete(flag, type);
+			}
+
+			if (approveRec) {
+				flag.setRecordType(rcdType);
+				flag.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(flag);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+
+	}
+
 
 	@Override
 	public String getFinCategory(String finReference) {
@@ -11307,6 +11460,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setHoldRefundUploadDAO(HoldRefundUploadDAO holdRefundUploadDAO) {
 		this.holdRefundUploadDAO = holdRefundUploadDAO;
+	}
+
+	@Autowired
+	public void setFinFlagsHeaderDAO(FinFlagsHeaderDAO finFlagsHeaderDAO) {
+		this.finFlagsHeaderDAO = finFlagsHeaderDAO;
 	}
 
 }
