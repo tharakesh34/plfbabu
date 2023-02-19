@@ -317,6 +317,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		// Add Effective Rates
 		odcrList = addEffectiveRates(fod, odcrList, fm, valueDate);
+
 		return odcrList;
 	}
 
@@ -419,15 +420,20 @@ public class LatePayPenaltyService extends ServiceHelper {
 				break;
 			}
 
+			// OD charge type is on Effective Rate by Due days
+			if (!StringUtils.equals(fod.getODChargeType(), pr.getODChargeType())) {
+				continue;
+			}
+
 			// Before the installment due date. no need to consider
-			if (DateUtil.compare(pr.getFinEffectDate(), fod.getFinODSchdDate()) < 0) {
+			if (DateUtil.compare(pr.getFinEffectDate(), fod.getFinODSchdDate()) <= 0) {
 				odcrList = applyNewEffRate(odcrList, pr.getFinEffectDate(), pr.getODChargeAmtOrPerc());
 				continue;
 			}
 
-			// OD charge type is on Effective Rate by Due days
-			if (!StringUtils.equals(fod.getODChargeType(), pr.getODChargeType())) {
-				continue;
+			// In case of
+			if (!StringUtils.equals(fod.getODChargeType(), ChargeType.PERC_ON_EFF_DUE_DAYS)) {
+				break;
 			}
 
 			// Add ODCR Record
@@ -436,10 +442,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 			// Apply new rate
 			odcrList = applyNewEffRate(odcrList, pr.getFinEffectDate(), pr.getODChargeAmtOrPerc());
 
-			// In case of
-			if (!StringUtils.equals(fod.getODChargeType(), ChargeType.PERC_ON_EFF_DUE_DAYS)) {
-				break;
-			}
 		}
 
 		return odcrList;
@@ -525,7 +527,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 			fod.setFinCurODPri(priDue);
 			fod.setFinCurODPft(pftDue);
-			odcrCur.setFinCurODAmt(odcrCur.getFinCurODAmt());
+			fod.setFinCurODAmt(odcrCur.getFinCurODAmt());
 
 			if (iOdcr == 0) {
 				fod.setFinMaxODPri(priDue);
@@ -580,6 +582,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 			fod.setLpCurCpzBal(odcrCur.getLpCurCpzBal());
 
 			fod.setTotPenaltyAmt(fod.getTotPenaltyAmt().add(penalty));
+
+			if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO) == 0) {
+				break;
+			}
+
 		}
 	}
 
