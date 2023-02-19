@@ -1,5 +1,6 @@
 package com.pennant.backend.service.feerefund.impl;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -162,32 +163,32 @@ public class FeeRefundApprovalThreadProcess {
 
 	private long createPayableAdvise(FeeRefundDetail frd, String finreference, long finID) {
 
-		ManualAdvise manualAdvise = new ManualAdvise();
-		manualAdvise.setAdviseID(manualAdviseService.getNewAdviseID());
-		manualAdvise.setFinReference(finreference);
-		manualAdvise.setFinID(finID);
-		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
-		manualAdvise.setAdviseAmount(frd.getRefundAmount());
-		manualAdvise.setBalanceAmt(manualAdvise.getAdviseAmount());
-		manualAdvise.setHoldDue(false);
-		manualAdvise.setFinSource(FinanceConstants.FEE_REFUND_APPROVAL);
+		ManualAdvise ma = new ManualAdvise();
+		ma.setAdviseID(manualAdviseService.getNewAdviseID());
+		ma.setFinReference(finreference);
+		ma.setFinID(finID);
+		ma.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
+		ma.setAdviseAmount(frd.getRefundAmount());
+		ma.setBalanceAmt(BigDecimal.ZERO);
+		ma.setHoldDue(false);
+		ma.setFinSource(FinanceConstants.FEE_REFUND_APPROVAL);
 
 		FeeType payableFeeType = feeTypeDAO.getFeeTypeById(frd.getPayableFeeTypeID(), "");
-		manualAdvise.setFeeType(payableFeeType);
-		manualAdvise.setFeeTypeCode(payableFeeType.getFeeTypeCode());
-		manualAdvise.setFeeTypeID(payableFeeType.getFeeTypeID());
+		ma.setFeeType(payableFeeType);
+		ma.setFeeTypeCode(payableFeeType.getFeeTypeCode());
+		ma.setFeeTypeID(payableFeeType.getFeeTypeID());
 
-		manualAdvise.setValueDate(SysParamUtil.getAppDate());
-		manualAdvise.setPostDate(SysParamUtil.getAppDate());
-		manualAdvise.setVersion(1);
-		manualAdvise.setLastMntBy(frd.getLastMntBy());
-		manualAdvise.setLastMntOn(frd.getLastMntOn());
-		manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		manualAdvise.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		manualAdvise.setNewRecord(true);
-		manualAdvise.setUserDetails(frd.getUserDetails());
+		ma.setValueDate(SysParamUtil.getAppDate());
+		ma.setPostDate(SysParamUtil.getAppDate());
+		ma.setVersion(1);
+		ma.setLastMntBy(frd.getLastMntBy());
+		ma.setLastMntOn(frd.getLastMntOn());
+		ma.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		ma.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		ma.setNewRecord(true);
+		ma.setUserDetails(frd.getUserDetails());
 
-		AuditHeader auditHeader = manualAdviseService.doApprove(getAuditHeader(manualAdvise, PennantConstants.TRAN_WF));
+		AuditHeader auditHeader = manualAdviseService.doApprove(getAuditHeader(ma, PennantConstants.TRAN_WF));
 		ManualAdvise md = ((ManualAdvise) auditHeader.getAuditDetail().getModelData());
 
 		logger.debug(Literal.LEAVING);

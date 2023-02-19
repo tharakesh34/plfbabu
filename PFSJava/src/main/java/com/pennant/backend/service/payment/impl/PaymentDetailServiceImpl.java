@@ -619,7 +619,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		String finSource = pd.getFinSource();
 		if (!UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD.equals(finSource)
 				&& !UploadConstants.FINSOURCE_ID_AUTOPROCESS.equals(finSource)
-				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)) {
+				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)
+				&& !FinanceConstants.FEE_REFUND_APPROVAL.equals(finSource)) {
 			advise.setReservedAmt(amount.negate());
 			advise.setBalanceAmt(BigDecimal.ZERO);
 		}
@@ -629,7 +630,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		// Delete Reserved Log against Advise and Receipt Seq ID
 		if (!UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD.equals(finSource)
 				&& !UploadConstants.FINSOURCE_ID_AUTOPROCESS.equals(finSource)
-				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)) {
+				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)
+				&& !FinanceConstants.FEE_REFUND_APPROVAL.equals(finSource)) {
 			manualAdviseDAO.deletePayableReserve(pd.getPaymentDetailId(), pd.getReferenceId());
 		}
 
