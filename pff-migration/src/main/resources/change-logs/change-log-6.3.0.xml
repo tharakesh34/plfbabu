@@ -12724,7 +12724,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#216488.2" author="sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12732,7 +12732,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#216488.3_pre" author="sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12830,7 +12830,7 @@
 		     ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#218613.1" author="saikrishna.b" dbms="oracle">
 		<sql splitStatements="false">
 		<![CDATA[
@@ -12882,7 +12882,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#218423" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -12890,7 +12890,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#218575" author="sandeepkumar.m">
 		<sql>
 			<![CDATA[
@@ -12899,7 +12899,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="FJADV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -13098,7 +13098,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#218590" author="Gopal.p">
 		<sql>
    			<![CDATA[
@@ -13118,5 +13118,367 @@
          	 ]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="TK#2566_200" author="murthy.y">
+		<sql>
+         	<![CDATA[
+            	DELETE FROM FEE_REFUND_DETAILS;
+            	DELETE FROM FEE_REFUND_HEADER;	
+            	
+            	DELETE FROM FEE_REFUND_DETAILS_TEMP;
+            	DELETE FROM FEE_REFUND_HEADER_TEMP;	
+         	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2566_201" author="murthy.y">
+		<dropView viewName="FEE_REFUND_HEADER_AVIEW" />
+		<dropView viewName="FEE_REFUND_HEADER_VIEW" />
+		<dropView viewName="FEE_REFUND_DETAILS_VIEW" />
+	</changeSet>
+
+	<changeSet id="TK#2566_202" author="murthy.y">
+		<dropTable tableName="Fee_Refund_Details" />
+		<dropTable tableName="Fee_Refund_Details_Temp" />
+		<dropTable tableName="Fee_Refund_Header" />
+		<dropTable tableName="Fee_Refund_Header_temp" />
+	</changeSet>
+
+	<changeSet id="TK#2566_203" author="murthy.y">
+		<createTable tableName="Fee_Refund_Header">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="RefundType" type="char(1)" />
+			<column name="PaymentAmount" type="Decimal(18,0)" />
+			<column name="OverDueAgainstLoan" type="Decimal(18,0)" />
+			<column name="OverDueAgainstCustomer" type="Decimal(18,0)" />
+			<column name="Override" type="boolean" />
+			<column name="Status" type="varchar(5)" />
+			<column name="ApprovalStatus" type="int" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2566_204" author="murthy.y">
+		<addPrimaryKey tableName="Fee_Refund_Header" columnNames="Id" constraintName="pk_feerfdhdr_feeid" />
+	</changeSet>
+
+	<changeSet id="TK#2566_205" author="murthy.y">
+		<createTable tableName="Fee_Refund_Header_Temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="RefundType" type="char(1)" />
+			<column name="PaymentAmount" type="Decimal(18,0)" />
+			<column name="OverDueAgainstLoan" type="Decimal(18,0)" />
+			<column name="OverDueAgainstCustomer" type="Decimal(18,0)" />
+			<column name="Override" type="boolean" />
+			<column name="Status" type="varchar(5)" />
+			<column name="ApprovalStatus" type="int" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2566_206" author="murthy.y">
+		<addPrimaryKey tableName="Fee_Refund_Header_Temp" columnNames="Id" constraintName="pk_feerfdhdrt_feeid" />
+	</changeSet>
+
+	<changeSet id="TK#2566_207" author="murthy.y">
+		<createTable tableName="Fee_Refund_Details">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableFeeTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PayableFeeTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PayableID" type="bigint" />
+			<column name="RefundAmount" type="Decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TaxHeaderId" type="bigint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2566_208" author="murthy.y">
+		<addPrimaryKey tableName="Fee_Refund_Details" columnNames="Id" constraintName="pk_fee_refund_details_id" />
+	</changeSet>
+
+	<changeSet id="TK#2566_209" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_fee_refund_details_headerid"
+			referencedTableName="Fee_Refund_Header" baseColumnNames="HeaderID" baseTableName="Fee_Refund_Details"
+			referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="TK#2566_210" author="murthy.y">
+		<createTable tableName="Fee_Refund_Details_Temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableFeeTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PayableFeeTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PayableID" type="bigint" />
+			<column name="RefundAmount" type="Decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TaxHeaderId" type="bigint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2566_211" author="murthy.y">
+		<addPrimaryKey tableName="Fee_Refund_Details_Temp" columnNames="Id"
+			constraintName="pk_fee_refund_details_t_id" />
+	</changeSet>
+
+	<changeSet id="TK#2566_212.01_pre" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fee_refund_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2566_212.01" author="murthy.y">
+		<createView viewName="FEE_REFUND_HEADER_AVIEW" replaceIfExists="true">
+			<![CDATA[
+			    SELECT FRH.ID
+					, FRH.FINID
+					, FRH.REFUNDTYPE
+					, FRH.PAYMENTAMOUNT
+					, FRH.OVERDUEAGAINSTLOAN
+					, FRH.OVERDUEAGAINSTCUSTOMER
+					, FRH.OVERRIDE
+					, FRH.STATUS
+					, FRH.APPROVALSTATUS
+					, FM.FINREFERENCE
+					, FM.FINTYPE
+					, C.CUSTID
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, C.CUSTCOREBANK
+					, B.BRANCHCODE
+					, B.BRANCHDESC
+					, B.CLUSTERID
+					, FRH.VERSION
+					, FRH.CREATEDBY
+					, FRH.CREATEDON
+					, FRH.APPROVEDBY
+					, FRH.APPROVEDON
+					, FRH.LASTMNTBY
+					, FRH.LASTMNTON
+					, FRH.RECORDSTATUS
+					, FRH.ROLECODE
+					, FRH.NEXTROLECODE
+					, FRH.TASKID
+					, FRH.NEXTTASKID
+					, FRH.RECORDTYPE
+					, FRH.WORKFLOWID
+				FROM FEE_REFUND_HEADER FRH
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = FRH.FINID
+				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = FM.FINBRANCH
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="TK#2566_212.01_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fee_refund_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2566.213.01_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fee_refund_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2566.213.01" author="murthy.y">
+		<createView viewName="FEE_REFUND_HEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
+			 	SELECT FRH.ID
+					, FRH.FINID
+					, FRH.PAYMENTAMOUNT
+					, FRH.REFUNDTYPE
+					, FRH.OVERDUEAGAINSTLOAN
+					, FRH.OVERDUEAGAINSTCUSTOMER
+					, FRH.OVERRIDE
+					, FRH.STATUS
+					, FRH.APPROVALSTATUS
+					, FM.FINREFERENCE
+					, FM.FINTYPE
+					, C.CUSTID
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, C.CUSTCOREBANK
+					, B.BRANCHCODE
+					, B.BRANCHDESC
+					, B.CLUSTERID
+          			, SDD.ENTITYCODE
+					, FRH.VERSION
+					, FRH.CREATEDBY
+					, FRH.CREATEDON
+					, FRH.APPROVEDBY
+					, FRH.APPROVEDON
+					, FRH.LASTMNTBY
+					, FRH.LASTMNTON
+					, FRH.RECORDSTATUS
+					, FRH.ROLECODE
+					, FRH.NEXTROLECODE
+					, FRH.TASKID
+					, FRH.NEXTTASKID
+					, FRH.RECORDTYPE
+					, FRH.WORKFLOWID
+				FROM FEE_REFUND_HEADER_TEMP FRH
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = FRH.FINID
+				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = FM.FINBRANCH
+        		INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE
+        		INNER JOIN SMTDIVISIONDETAIL SDD ON SDD.DIVISIONCODE = FT.FINDIVISION
+	            UNION ALL
+	          	SELECT FRH.ID
+					, FRH.FINID
+					, FRH.PAYMENTAMOUNT
+					, FRH.REFUNDTYPE
+					, FRH.OVERDUEAGAINSTLOAN
+					, FRH.OVERDUEAGAINSTCUSTOMER
+					, FRH.OVERRIDE
+					, FRH.STATUS
+					, FRH.APPROVALSTATUS
+					, FM.FINREFERENCE
+					, FM.FINTYPE
+					, C.CUSTID
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, C.CUSTCOREBANK
+					, B.BRANCHCODE
+					, B.BRANCHDESC
+					, B.CLUSTERID
+          			, SDD.ENTITYCODE
+					, FRH.VERSION
+					, FRH.CREATEDBY
+					, FRH.CREATEDON
+					, FRH.APPROVEDBY
+					, FRH.APPROVEDON
+					, FRH.LASTMNTBY
+					, FRH.LASTMNTON
+					, FRH.RECORDSTATUS
+					, FRH.ROLECODE
+					, FRH.NEXTROLECODE
+					, FRH.TASKID
+					, FRH.NEXTTASKID
+					, FRH.RECORDTYPE
+					, FRH.WORKFLOWID
+				FROM FEE_REFUND_HEADER FRH
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = FRH.FINID
+				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = FM.FINBRANCH
+         		INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE
+        		INNER JOIN SMTDIVISIONDETAIL SDD ON SDD.DIVISIONCODE = FT.FINDIVISION
+	            WHERE NOT EXISTS (SELECT 1 FROM FEE_REFUND_HEADER_TEMP WHERE ID = FRH.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="TK#2566.213.01_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fee_refund_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog> 

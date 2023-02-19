@@ -94,7 +94,6 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.AssetConstants;
-import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -114,6 +113,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.autorefund.RefundBeneficiary;
@@ -168,7 +168,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	protected Listheader listheader_PaymentHeaderDialog_Balance;
 
 	private FeeRefundHeader feeRefundHeader;
-	private FinanceMain financeMain;
+	private FinanceMain fm;
 
 	private transient FeeRefundHeaderListCtrl feeRefundHeaderListCtrl;
 	private transient CustomerPaymentTxnsListCtrl customerPaymentTxnsListCtrl;
@@ -228,7 +228,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				this.enqiryModule = (Boolean) arguments.get("enqiryModule");
 			}
 			this.feeRefundHeaderListCtrl = (FeeRefundHeaderListCtrl) arguments.get("feeRefundHeaderListCtrl");
-			this.financeMain = (FinanceMain) arguments.get("financeMain");
+			this.fm = (FinanceMain) arguments.get("financeMain");
 
 			if (arguments.containsKey("customerPaymentTxnsListCtrl")) {
 				customerPaymentTxnsListCtrl = (CustomerPaymentTxnsListCtrl) arguments
@@ -256,7 +256,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				this.windowTitle.setValue(Labels.getLabel("window_FeeRefundHeaderDialog_Approver.title"));
 			}
 
-			ccyFormatter = CurrencyUtil.getFormat(this.financeMain.getFinCcy());
+			ccyFormatter = CurrencyUtil.getFormat(this.fm.getFinCcy());
 
 			doSetFieldProperties();
 			doCheckRights();
@@ -413,19 +413,14 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	public void doWriteBeanToComponents(FeeRefundHeader frh) {
 		logger.debug(Literal.ENTERING);
 
-		this.lbl_LoanReference.setValue(this.financeMain.getFinReference());
-		this.lbl_LoanType.setValue(this.financeMain.getFinType() + "-" + this.financeMain.getLovDescFinTypeName());
-		this.lbl_CustCIF
-				.setValue(this.financeMain.getLovDescCustCIF() + "-" + this.financeMain.getLovDescCustShrtName());
-		this.lbl_Currency
-				.setValue(this.financeMain.getFinCcy() + "- " + CurrencyUtil.getCcyDesc(this.financeMain.getFinCcy()));
-		this.lbl_startDate
-				.setValue(DateUtility.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
-		this.lbl_MaturityDate
-				.setValue(DateUtility.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
-		this.lbl_ODAgainstLoan.setValue(PennantApplicationUtil.amountFormate(frh.getOdAgainstLoan(), ccyFormatter));
-		this.lbl_ODAgainstCustomer
-				.setValue(PennantApplicationUtil.amountFormate(frh.getOdAgainstCustomer(), ccyFormatter));
+		this.lbl_LoanReference.setValue(this.fm.getFinReference());
+		this.lbl_LoanType.setValue(this.fm.getFinType() + "-" + this.fm.getLovDescFinTypeName());
+		this.lbl_CustCIF.setValue(this.fm.getLovDescCustCIF() + "-" + this.fm.getLovDescCustShrtName());
+		this.lbl_Currency.setValue(this.fm.getFinCcy() + "- " + CurrencyUtil.getCcyDesc(this.fm.getFinCcy()));
+		this.lbl_startDate.setValue(DateUtility.format(this.fm.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_MaturityDate.setValue(DateUtil.format(this.fm.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_ODAgainstLoan.setValue(CurrencyUtil.format(frh.getOverDueAgainstLoan()));
+		this.lbl_ODAgainstCustomer.setValue(CurrencyUtil.format(frh.getOverDueAgainstCustomer()));
 
 		// Disbursement Instructions tab.
 		appendDisbursementInstructionTab(frh);
@@ -469,7 +464,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			Date appDate = SysParamUtil.getAppDate();
 			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
 
-			payIns = refundBeneficiary.getBeneficiary(this.financeMain.getFinID(), appDate, alwRefundByCheque);
+			payIns = refundBeneficiary.getBeneficiary(this.fm.getFinID(), appDate, alwRefundByCheque);
 
 			if (payIns == null) {
 				payIns = new PaymentInstruction();
@@ -490,7 +485,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		map.put("roleCode", getRole());
 		map.put("paymentHeader", ph);
 		map.put("feeRefundHeaderDialogCtrl", this);
-		map.put("financeMain", this.financeMain);
+		map.put("financeMain", this.fm);
 		map.put("tab", this.tabDisbInstructions);
 		map.put("ccyFormatter", ccyFormatter);
 		map.put("enqiryModule", this.enqiryModule);
@@ -530,8 +525,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		}
 		if (!onLoadProcess) {
-			long accountsetId = AccountingConfigCache.getAccountSetID(this.financeMain.getFinType(),
-					AccountingEvent.PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+			long accountsetId = AccountingConfigCache.getAccountSetID(this.fm.getFinType(), AccountingEvent.PAYMTINS,
+					FinanceConstants.MODULEID_FINTYPE);
 			final Map<String, Object> map = new HashMap<>();
 			map.put("feeRefundInstruction", fri);
 			map.put("acSetID", accountsetId);
@@ -650,20 +645,14 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
-			frh.setFinID(this.financeMain.getFinID());
+			frh.setFinID(this.fm.getFinID());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		// Fin Reference
 		try {
-			frh.setFinReference(this.financeMain.getFinReference());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			frh.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
+			frh.setFinReference(this.fm.getFinReference());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -877,8 +866,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 					publishNotification(Notify.ROLE, frh.getFinReference(), frh);
 				} else {
-					publishNotification(Notify.ROLE, frh.getFinReference(), frh, financeMain.getFinPurpose(),
-							financeMain.getFinBranch());
+					publishNotification(Notify.ROLE, frh.getFinReference(), frh, fm.getFinPurpose(), fm.getFinBranch());
 				}
 
 			}
@@ -1038,6 +1026,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				}
 			}
 			auditHeader = ErrorControl.showErrorDetails(this.window_FeeRefundHeaderDialog, auditHeader);
+
 			retValue = auditHeader.getProcessStatus();
 			if (retValue == PennantConstants.porcessCONTINUE) {
 				processCompleted = true;
@@ -1047,11 +1036,13 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			}
 			if (retValue == PennantConstants.porcessOVERIDE) {
 				auditHeader.setOveride(true);
+				frh.setOverride(true);
 				auditHeader.setErrorMessage(null);
 				auditHeader.setInfoMessage(null);
 				auditHeader.setOverideMessage(null);
 			}
 		}
+
 		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug("Leaving");
@@ -1095,7 +1086,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		logger.debug(Literal.ENTERING);
 
 		FeeRefundDetail frd = null;
-		long finID = this.financeMain.getFinID();
+		long finID = this.fm.getFinID();
 		List<FeeRefundDetail> detailList = new ArrayList<>();
 
 		List<ManualAdvise> manualAdviseList = this.feeRefundHeaderService.getManualAdvise(finID);

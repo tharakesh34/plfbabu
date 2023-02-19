@@ -14,35 +14,32 @@
 					<!-- SEARCH AREA -->
 					<toolbar align="center" style="toolbar-center">
 						<button id="button_FeeRefundHeaderList_FeeRefundHeaderSearch" label="${c:l('label_Filter')}"
-							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help"
+							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help, btndownload, btnApprove, btnReject"
 							tooltiptext="${c:l('button_FeeRefundHeaderList_FeeRefundHeaderSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="print" label="${c:l('label_Print')}"
-							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help"
+							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help, btndownload, btnApprove, btnReject"
 							tooltiptext="${c:l('button_FeeRefundHeaderList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
 						<button id="button_FeeRefundHeaderList_NewFeeRefundHeader" label="${c:l('label_New')}"
-							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help"
+							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help, btndownload, btnApprove, btnReject"
 							tooltiptext="${c:l('button_FeeRefundHeaderList_NewFeeRefundHeader.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" label="${c:l('label_Refresh')}"
-							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help,btndownload,btnApprove,btnReject"
+							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help, btndownload, btnApprove, btnReject"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="help" label="${c:l('label_Help')}"
-							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help,btndownload,btnApprove,btnReject"
+							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help, btndownload, btnApprove, btnReject"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" visible="false" />
 						<button id="btndownload" visible="false" label="${c:l('btnFeeRefunddownload.label')}"
-							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,
-							button_FeeRefundHeaderList_NewFeeRefundHeader, btnRefresh, help,btndownload,btnApprove,btnReject"
+							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help, btndownload, btnApprove, btnReject"
 							tooltiptext="${c:l('btnFeeRefunddownload.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnApprove" visible="false" label="${c:l('btnFeeRefundApprove.label')}"
-							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,
-							button_FeeRefundHeaderList_NewFeeRefundHeader, btnRefresh, help,btndownload,btnApprove,btnReject"
+							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help, btndownload, btnApprove, btnReject"
 							tooltiptext="${c:l('btnFeeRefundApprove.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnReject" visible="false" label="${c:l('btnFeeRefundReject.label')}"
-							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,
-							button_FeeRefundHeaderList_NewFeeRefundHeader, btnRefresh, help,btndownload,btnApprove,btnReject"
+							autodisable="button_FeeRefundHeaderList_FeeRefundHeaderSearch,print,button_FeeRefundHeaderList_NewFeeRefundHeader,btnRefresh,help, btndownload, btnApprove, btnReject"
 							tooltiptext="${c:l('btnFeeRefundReject.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
@@ -111,6 +108,8 @@
 							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
 								<listheader visible="false" id="listHeader_CheckBox_Name" hflex="min" align="center" />
+								<listheader id="listheader_FeeRefundHeaderID" label="${c:l('listheader_FeeRefundCustHeaderID.label')}" sort="auto"
+									hflex="min" />
 								<listheader id="listheader_FeeRefundCustCif" label="${c:l('listheader_FeeRefundCustCif.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_FeeRefundCustName" label="${c:l('listheader_FeeRefundCustName.label')}" sort="auto"

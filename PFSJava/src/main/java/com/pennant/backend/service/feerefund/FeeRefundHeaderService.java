@@ -24,7 +24,6 @@
  */
 package com.pennant.backend.service.feerefund;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -55,9 +54,5 @@ public interface FeeRefundHeaderService {
 	void updateApprovalStatus(Long id, int downloadStatus);
 
 	boolean isInProgress(long finID);
-
-	BigDecimal getDueAgainstCustomer(long custId, String custCoreBank, long finId);
-
-	BigDecimal getDueAgainstLoan(long finId);
 
 }

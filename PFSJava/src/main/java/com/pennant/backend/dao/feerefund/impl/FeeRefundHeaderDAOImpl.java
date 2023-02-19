@@ -24,7 +24,6 @@
  */
 package com.pennant.backend.dao.feerefund.impl;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -168,14 +167,13 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 	@Override
 	public long save(FeeRefundHeader frh, TableType tableType) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Insert Into FEE_REFUND_HEADER");
+		sql.append("Insert Into Fee_Refund_Header");
 		sql.append(tableType.getSuffix());
-		sql.append(" (ID");
-		sql.append(", FinID, PaymentType");
-		sql.append(", PaymentAmount, Status, ApprovalStatus");
+		sql.append(" (ID, FinID, RefundType, PaymentAmount, OverDueAgainstLoan, OverDueAgainstCustomer");
+		sql.append(", Override, Status, ApprovalStatus");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -188,8 +186,11 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 
 			ps.setLong(++index, frh.getId());
 			ps.setLong(++index, frh.getFinID());
-			ps.setString(++index, frh.getPaymentType());
+			ps.setString(++index, frh.getRefundType());
 			ps.setBigDecimal(++index, frh.getPaymentAmount());
+			ps.setBigDecimal(++index, frh.getOverDueAgainstLoan());
+			ps.setBigDecimal(++index, frh.getOverDueAgainstCustomer());
+			ps.setBoolean(++index, frh.isOverride());
 			ps.setString(++index, frh.getStatus());
 			ps.setInt(++index, frh.getApprovalStatus());
 			ps.setInt(++index, frh.getVersion());
@@ -212,10 +213,10 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 
 	@Override
 	public int update(FeeRefundHeader frh, TableType tableType) {
-		StringBuilder sql = new StringBuilder("Update");
-		sql.append(" FEE_REFUND_HEADER");
+		StringBuilder sql = new StringBuilder("Update Fee_Refund_Header");
 		sql.append(tableType.getSuffix());
-		sql.append(" Set PaymentType = ?, PaymentAmount = ?, Status = ?, ApprovalStatus = ?");
+		sql.append(" Set PaymentAmount = ?, OverDueAgainstLoan = ?, OverDueAgainstCustomer = ?");
+		sql.append(", Override = ?, Status = ?, ApprovalStatus = ?");
 		sql.append(", ApprovedBy = ?, ApprovedOn = ?, LastMntBy = ?, LastMntOn = ?");
 		sql.append(", Version = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
 		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
@@ -226,8 +227,10 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 0;
 
-			ps.setString(++index, frh.getPaymentType());
 			ps.setBigDecimal(++index, frh.getPaymentAmount());
+			ps.setBigDecimal(++index, frh.getOverDueAgainstLoan());
+			ps.setBigDecimal(++index, frh.getOverDueAgainstCustomer());
+			ps.setBoolean(++index, frh.isOverride());
 			ps.setString(++index, frh.getStatus());
 			ps.setInt(++index, frh.getApprovalStatus());
 			ps.setObject(++index, frh.getApprovedBy());
@@ -255,7 +258,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 
 	@Override
 	public void delete(FeeRefundHeader frh, TableType tableType) {
-		String sql = "Delete From FEE_REFUND_HEADER".concat(tableType.getSuffix()).concat(" Where ID = ?");
+		String sql = "Delete From Fee_Refund_Header".concat(tableType.getSuffix()).concat(" Where ID = ?");
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -269,7 +272,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 	@Override
 	public FeeRefundHeader getFeeRefundHeader(long id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, FinID, PaymentType, PaymentAmount, Status, ApprovalStatus");
+		sql.append(" ID, FinID, RefundType, PaymentAmount, Override, Status, ApprovalStatus");
 		sql.append(", CreatedOn, ApprovedOn, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -277,7 +280,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 			sql.append(", CustID, CustCif, CustShrtName, FinReference, FinType, BranchDesc");
 		}
 
-		sql.append(" From FEE_REFUND_HEADER");
+		sql.append(" From Fee_Refund_Header");
 		sql.append(type);
 		sql.append(" Where ID = ?");
 
@@ -289,8 +292,9 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 
 				frh.setId(rs.getLong("ID"));
 				frh.setFinID(rs.getLong("FinID"));
-				frh.setPaymentType(rs.getString("PaymentType"));
+				frh.setRefundType(rs.getString("RefundType"));
 				frh.setPaymentAmount(rs.getBigDecimal("PaymentAmount"));
+				frh.setOverride(rs.getBoolean("Override"));
 				frh.setStatus(rs.getString("Status"));
 				frh.setApprovalStatus(rs.getInt("ApprovalStatus"));
 				frh.setCreatedOn(rs.getTimestamp("CreatedOn"));
@@ -325,7 +329,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 
 	@Override
 	public void updateApprovalStatus(long id, int refundProgress) {
-		String sql = "Update FEE_REFUND_HEADER Set ApprovalStatus = ? Where ID = ?";
+		String sql = "Update Fee_Refund_Header_Temp Set ApprovalStatus = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -337,7 +341,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 
 	@Override
 	public boolean isFileDownloaded(long id, int isDownloaded) {
-		String sql = "Select count(Id) From FEE_REFUND_HEADER_TEMP Where Id = ? and ApprovalStatus = ?";
+		String sql = "Select count(Id) From Fee_Refund_Header_Temp Where Id = ? and ApprovalStatus = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -348,53 +352,5 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 			logger.warn(Message.NO_RECORD_FOUND);
 			return false;
 		}
-	}
-
-	@Override
-	public BigDecimal getDueAgainstLoan(long finId) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Sum(ODPrincipal + ODProfit + Coalesce(OD.LppDue, 0) + Coalesce(OD.LpiDue, 0)");
-		sql.append(" + Coalesce(MA.AdvDue, 0)) TotalDue");
-		sql.append(" From FinPftDetails pft");
-		sql.append(" Left join (SELECT SUM(TOTPENALTYBAL) LPPDUE,SUM(LPIBAL)LPIDUE,FINID ");
-		sql.append(" FROM FINODDETAILS GROUP BY FINID)OD ON OD.FINID = PFT.FINID ");
-		sql.append(" LEFT JOIN (SELECT SUM(ADVISEAMOUNT - WAIVEDAMOUNT - PAIDAMOUNT) ADVDUE, FINID ");
-		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 1 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
-		sql.append(" WHERE PFT.FinId = ? Group by PFT.FINID");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finId);
-	}
-
-	@Override
-	public BigDecimal getDueAgainstCustomer(long custId, String coreBankId, long finId) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Sum(ODPRINCIPAL + ODPROFIT + COALESCE(OD.LPPDUE,0) + COALESCE(OD.LPIDUE,0)");
-		sql.append(" + COALESCE(MA.ADVDUE,0)) TotalDue FROM FINPFTDETAILS PFT ");
-		sql.append(" LEFT JOIN (SELECT SUM(TOTPENALTYBAL) LPPDUE,SUM(LPIBAL)LPIDUE,FINID ");
-		sql.append(" FROM FINODDETAILS GROUP BY FINID)OD ON OD.FINID = PFT.FINID ");
-		sql.append(" LEFT JOIN (SELECT SUM(ADVISEAMOUNT - WAIVEDAMOUNT - PAIDAMOUNT) ADVDUE, FINID ");
-		sql.append(" FROM MANUALADVISE WHERE ADVISETYPE = 1 GROUP BY FINID) MA ON MA.FINID = PFT.FINID ");
-		sql.append(" INNER JOIN CUSTOMERS C ON C.CUSTID = PFT.CUSTID ");
-		// if(corebank) {/* Need add based on implementation of custcorebank functionality
-		// sql.append("WHERE pft.custid in");
-		// sql.append(" (Select custid from customers where custcorebank = ?) group by c.custcorebank");
-		// }else {
-		sql.append(" WHERE PFT.CUSTID = ? AND PFT.FINID <> ? GROUP BY PFT.CUSTID ");
-		// }
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		// if(corebank) {/* Need add based on implementation of custcorebank functionality
-		// return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, coreBankId);
-		// }else {
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId, finId);
-		} catch (Exception e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return BigDecimal.ZERO;
-		}
-		// }
 	}
 }

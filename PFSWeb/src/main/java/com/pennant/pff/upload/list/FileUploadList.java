@@ -944,7 +944,7 @@ public class FileUploadList extends Window implements Serializable {
 		}
 
 		if (uploadService.isValidateApprove(selectedHeaders) != selectedHeaders.size()) {
-			MessageUtil.showError(Labels.getLabel("DataList_Download"));
+			MessageUtil.showError(Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "" }));
 			return;
 		}
 
@@ -961,7 +961,7 @@ public class FileUploadList extends Window implements Serializable {
 		}
 
 		if (uploadService.isValidateApprove(selectedHeaders) != selectedHeaders.size()) {
-			MessageUtil.showError(Labels.getLabel("DataList_Download"));
+			MessageUtil.showError(Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "" }));
 			return;
 		}
 

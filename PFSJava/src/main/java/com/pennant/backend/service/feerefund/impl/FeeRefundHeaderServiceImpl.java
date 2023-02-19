@@ -169,8 +169,10 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	public FeeRefundHeader getFeeRefundHeader(long feeRefundId) {
 		FeeRefundHeader frh = feeRefundHeaderDAO.getFeeRefundHeader(feeRefundId, "_View");
 		List<FeeRefundDetail> list = this.feeRefundDetailService.getFeeRefundDetailList(frh.getId(), TableType.VIEW);
-		frh.setOdAgainstLoan(finOverDueService.getDueAgnistLoan(frh.getFinID()));
-		frh.setOdAgainstCustomer(finOverDueService.getDueAgnistCustomer(frh.getFinID(), false));
+
+		frh.setOverDueAgainstLoan(finOverDueService.getDueAgnistLoan(frh.getFinID()));
+		frh.setOverDueAgainstCustomer(finOverDueService.getDueAgnistCustomer(frh.getFinID(), false));
+
 		frh.setFeeRefundDetailList(list);
 
 		FeeRefundInstruction fri = this.feeRefundInstructionService.getFeeRefundInstructionDetails(frh.getId(),
@@ -231,8 +233,10 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 		// Write the required validation over hear.
 		FeeRefundHeader frh = (FeeRefundHeader) auditDetail.getModelData();
 
-		if (frh.getOdAgainstCustomer().compareTo(BigDecimal.ZERO) > 0
-				|| frh.getOdAgainstLoan().compareTo(BigDecimal.ZERO) > 0) {
+		BigDecimal overDueAmt = frh.getOverDueAgainstCustomer();
+		overDueAmt = overDueAmt.add(frh.getOverDueAgainstLoan());
+
+		if (overDueAmt.compareTo(BigDecimal.ZERO) > 0) {
 			if ("saveOrUpdate".equals(method) || "doApprove".equals(method)) {
 				auditDetail.setErrorDetail(ErrorUtil
 						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND_050", null, null)));
@@ -494,16 +498,6 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 	@Override
 	public boolean isInProgress(long finID) {
 		return feeRefundInstructionService.isInstructionInProgress(finID);
-	}
-
-	@Override
-	public BigDecimal getDueAgainstLoan(long finId) {
-		return feeRefundHeaderDAO.getDueAgainstLoan(finId);
-	}
-
-	@Override
-	public BigDecimal getDueAgainstCustomer(long custId, String custCoreBank, long finId) {
-		return feeRefundHeaderDAO.getDueAgainstCustomer(custId, custCoreBank, finId);
 	}
 
 	@Autowired

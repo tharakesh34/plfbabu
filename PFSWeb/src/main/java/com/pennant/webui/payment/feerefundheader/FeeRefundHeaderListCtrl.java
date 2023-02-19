@@ -115,6 +115,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	protected Listbox listBoxFeeRefundHeader;
 
 	// List headers
+	protected Listheader listheader_FeeRefundHeaderID;
 	protected Listheader listheader_FeeRefundCustCif;
 	protected Listheader listheader_FeeRefundCustName;
 	protected Listheader listheader_FeeRefundFinRef;
@@ -221,7 +222,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 					"button_FeeRefundHeaderList_NewFeeRefundHeader", false);
 		}
 
-		registerField("Id");
+		registerField("ID", listheader_FeeRefundHeaderID);
 		registerField("FinID");
 		registerField("CustCif", listheader_FeeRefundCustCif, SortOrder.NONE, custCif, sortOperator_FeeRefundCustCif,
 				Operators.NUMERIC);
@@ -419,6 +420,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		// Create a new entity.
 		FeeRefundHeader frh = new FeeRefundHeader();
 		frh.setNewRecord(true);
+		frh.setRefundType("M");
 		frh.setWorkflowId(getWorkFlowId());
 
 		Map<String, Object> arg = getDefaultArguments();
@@ -599,6 +601,9 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 				lc.setParent(item);
 			}
 
+			lc = new Listcell(String.valueOf(frh.getId()));
+			lc.setParent(item);
+
 			lc = new Listcell(frh.getCustCif());
 			lc.setParent(item);
 
@@ -630,7 +635,6 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	}
 
 	public void onClick$btnApprove(Event event) {
-
 		logger.debug(Literal.ENTERING);
 
 		List<Long> frhList = getListofFeeRefundHeader();
@@ -648,6 +652,13 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 			return;
 		}
 
+		String notDownloadIds = checkFileDownloaded(frhList);
+
+		if (StringUtils.isNotEmpty(notDownloadIds)) {
+			MessageUtil.showError(Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { notDownloadIds }));
+			return;
+		}
+
 		List<String> listFrh = new ArrayList<>();
 		for (FeeRefundHeader frh : listRefundHeader) {
 
@@ -656,9 +667,11 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 			// call dosaveProgress
 			doProcess(frh, PennantConstants.TRAN_ADD, PennantConstants.RCD_STATUS_APPROVED);
 		}
+
 		doApprove(listFrh);
 
 		doRefresh();
+
 		Clients.showNotification("Fee Refund Process Approved.", "info", null, null, -1);
 
 		logger.debug(Literal.LEAVING);
@@ -872,10 +885,10 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 			this.pagingFeeRefundHeaderList.setTotalSize(0);
 
 		} else {
-
 			doReset();
-			search();
 		}
+
+		search();
 	}
 
 	private AuditHeader getAuditHeader(FeeRefundHeader frh, String tranType) {
@@ -958,33 +971,33 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		}
 
 		if (feeRefundIdList.size() > 1) {
-			ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-			ZipOutputStream out = new ZipOutputStream(arrayOutputStream);
 
-			for (Long id : feeRefundIdList) {
-				ByteArrayOutputStream outputStream = null;
-				outputStream = doDownloadFiles(String.valueOf(id));
-				out.putNextEntry(new ZipEntry(id + ".xls"));
-				out.write(outputStream.toByteArray());
-				out.closeEntry();
+			try (ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream()) {
+				try (ZipOutputStream out = new ZipOutputStream(arrayOutputStream)) {
+					for (Long headerID : feeRefundIdList) {
+						ByteArrayOutputStream outputStream = doDownloadFiles(headerID);
+						out.putNextEntry(new ZipEntry("Fee_Refund_" + headerID + ".xls"));
+						out.write(outputStream.toByteArray());
+						out.closeEntry();
 
-				this.feeRefundHeaderService.updateApprovalStatus(id, PennantConstants.FEE_REFUND_APPROVAL_DOWNLOADED);
+						this.feeRefundHeaderService.updateApprovalStatus(headerID,
+								PennantConstants.FEE_REFUND_APPROVAL_DOWNLOADED);
+					}
+				}
+
+				String zipfileName = "Fee_Refund.zip";
+				byte[] tobytes = arrayOutputStream.toByteArray();
+
+				Filedownload.save(new AMedia(zipfileName, "zip", "application/*", tobytes));
 			}
-			out.close();
-			String zipfileName = "FeeRefundApprovalReport.zip";
 
-			byte[] tobytes = arrayOutputStream.toByteArray();
-			arrayOutputStream.close();
-			arrayOutputStream = null;
-
-			Filedownload.save(new AMedia(zipfileName, "zip", "application/*", tobytes));
 		} else {
-			for (long id : feeRefundIdList) {
-				ByteArrayOutputStream outputStream = null;
-				outputStream = doDownloadFiles(String.valueOf(id));
+			for (long headerID : feeRefundIdList) {
+				ByteArrayOutputStream os = doDownloadFiles(headerID);
 				Filedownload.save(
-						new AMedia(String.valueOf(id), "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
-				this.feeRefundHeaderService.updateApprovalStatus(id, PennantConstants.FEE_REFUND_APPROVAL_DOWNLOADED);
+						new AMedia("Fee_Refund_" + headerID, "xls", "application/vnd.ms-excel", os.toByteArray()));
+				this.feeRefundHeaderService.updateApprovalStatus(headerID,
+						PennantConstants.FEE_REFUND_APPROVAL_DOWNLOADED);
 			}
 		}
 
@@ -995,11 +1008,10 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private ByteArrayOutputStream doDownloadFiles(String id) {
+	private ByteArrayOutputStream doDownloadFiles(long headerID) {
 		logger.debug(Literal.ENTERING);
 
-		String whereCond = " where frd.ID in (" + "'" + id + "'" + ") and  ApprovalStatus in (" + "'"
-				+ PennantConstants.FEE_REFUND_APPROVAL_HOLD + "'" + ")";
+		String whereCond = " Where frh.ID = " + headerID;
 		StringBuilder searchCriteria = new StringBuilder(" ");
 
 		String reportName = "";
@@ -1007,13 +1019,14 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		reportName = "FeeRefundApprovalReport";
 		ByteArrayOutputStream outputStream = null;
 		outputStream = generateReport(getUserWorkspace().getLoggedInUser().getFullName(), reportName, whereCond,
-				searchCriteria, this.window_FeeRefundHeaderList, true, id);
+				searchCriteria, this.window_FeeRefundHeaderList, true, String.valueOf(headerID));
 
 		logger.debug(Literal.LEAVING);
 		return outputStream;
 	}
 
-	private boolean checkFileDownloaded(List<Long> feeRefundIdList) {
+	private String checkFileDownloaded(List<Long> feeRefundIdList) {
+		StringBuilder builder = new StringBuilder();
 
 		for (long id : feeRefundIdList) {
 
@@ -1021,11 +1034,15 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 					PennantConstants.FEE_REFUND_APPROVAL_DOWNLOADED);
 
 			if (!isDownloaded) {
-				MessageUtil.showError("FeeRefundId:" + id + " is not download atleast one time");
-				return true;
+
+				if (builder.length() > 0) {
+					builder.append(", ");
+				}
+
+				builder.append(id);
 			}
 		}
-		return false;
+		return builder.toString();
 	}
 
 	public ByteArrayOutputStream generateReport(String userName, String reportName, String whereCond,

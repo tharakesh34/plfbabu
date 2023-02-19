@@ -49,36 +49,38 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
-	private String custCif;
-	private String custShrtName;
 	private long finID;
-	private String paymentType;
-	private String finReference;
-	private String finType;
-	private String branchCode;
-	private String branchDesc;
+	private String refundType;
 	private BigDecimal paymentAmount = BigDecimal.ZERO;
+	private BigDecimal overDueAgainstLoan = BigDecimal.ZERO;
+	private BigDecimal overDueAgainstCustomer = BigDecimal.ZERO;
+	private boolean override;
+	private String status;
+	private int approvalStatus;
 	private long createdBy;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Timestamp createdOn;
 	private Long approvedBy;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Timestamp approvedOn;
-	private String status;
-	private String paymentInstrType;
-	private long linkedTranId;
-	private String finCcy;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private FeeRefundHeader befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	private int approvalStatus;
-	private BigDecimal odAgainstCustomer = BigDecimal.ZERO;
-	private BigDecimal odAgainstLoan = BigDecimal.ZERO;
+
 	private long custId = Long.MIN_VALUE;
 	private String custCoreBank;
+	private String custCif;
+	private String custShrtName;
+	private String finReference;
+	private String finType;
+	private String finCcy;
+	private String branchCode;
+	private String branchDesc;
+	private String paymentInstrType;
+	private long linkedTranId;
 
 	private List<FeeRefundDetail> feeRefundDetailList;
 	private FeeRefundInstruction feeRefundInstruction;
@@ -101,8 +103,6 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		excludeFields.add("finReference");
 		excludeFields.add("linkedTranId");
 		excludeFields.add("feeRefundInstruction");
-		excludeFields.add("odAgainstCustomer");
-		excludeFields.add("odAgainstLoan");
 		excludeFields.add("custId");
 		excludeFields.add("custCoreBank");
 		excludeFields.add("custCif");
@@ -113,57 +113,12 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public FeeRefundHeader(long id) {
-		super();
-		this.setId(id);
-	}
-
 	public long getId() {
 		return id;
 	}
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public String getCustCif() {
-		return custCif;
-	}
-
-	public void setCustCif(String custCif) {
-		this.custCif = custCif;
-	}
-
-	public String getCustShrtName() {
-		return custShrtName;
-	}
-
-	public void setCustShrtName(String custShrtName) {
-		this.custShrtName = custShrtName;
-	}
-
-	public String getFinType() {
-		return finType;
-	}
-
-	public void setFinType(String finType) {
-		this.finType = finType;
-	}
-
-	public String getBranchCode() {
-		return branchCode;
-	}
-
-	public void setBranchCode(String branchCode) {
-		this.branchCode = branchCode;
-	}
-
-	public String getBranchDesc() {
-		return branchDesc;
-	}
-
-	public void setBranchDesc(String branchDesc) {
-		this.branchDesc = branchDesc;
 	}
 
 	public long getFinID() {
@@ -174,12 +129,12 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		this.finID = finID;
 	}
 
-	public String getFinReference() {
-		return finReference;
+	public String getRefundType() {
+		return refundType;
 	}
 
-	public void setFinReference(String finReference) {
-		this.finReference = finReference;
+	public void setRefundType(String refundType) {
+		this.refundType = refundType;
 	}
 
 	public BigDecimal getPaymentAmount() {
@@ -188,6 +143,46 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 
 	public void setPaymentAmount(BigDecimal paymentAmount) {
 		this.paymentAmount = paymentAmount;
+	}
+
+	public BigDecimal getOverDueAgainstLoan() {
+		return overDueAgainstLoan;
+	}
+
+	public void setOverDueAgainstLoan(BigDecimal overDueAgainstLoan) {
+		this.overDueAgainstLoan = overDueAgainstLoan;
+	}
+
+	public BigDecimal getOverDueAgainstCustomer() {
+		return overDueAgainstCustomer;
+	}
+
+	public void setOverDueAgainstCustomer(BigDecimal overDueAgainstCustomer) {
+		this.overDueAgainstCustomer = overDueAgainstCustomer;
+	}
+
+	public boolean isOverride() {
+		return override;
+	}
+
+	public void setOverride(boolean override) {
+		this.override = override;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public int getApprovalStatus() {
+		return approvalStatus;
+	}
+
+	public void setApprovalStatus(int approvalStatus) {
+		this.approvalStatus = approvalStatus;
 	}
 
 	public long getCreatedBy() {
@@ -222,12 +217,100 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		this.approvedOn = approvedOn;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getLovValue() {
+		return lovValue;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setLovValue(String lovValue) {
+		this.lovValue = lovValue;
+	}
+
+	public FeeRefundHeader getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(FeeRefundHeader befImage) {
+		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(long custId) {
+		this.custId = custId;
+	}
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
+	}
+
+	public String getCustCif() {
+		return custCif;
+	}
+
+	public void setCustCif(String custCif) {
+		this.custCif = custCif;
+	}
+
+	public String getCustShrtName() {
+		return custShrtName;
+	}
+
+	public void setCustShrtName(String custShrtName) {
+		this.custShrtName = custShrtName;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
+	}
+
+	public String getFinCcy() {
+		return finCcy;
+	}
+
+	public void setFinCcy(String finCcy) {
+		this.finCcy = finCcy;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+	public String getBranchDesc() {
+		return branchDesc;
+	}
+
+	public void setBranchDesc(String branchDesc) {
+		this.branchDesc = branchDesc;
 	}
 
 	public String getPaymentInstrType() {
@@ -246,32 +329,12 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		this.linkedTranId = linkedTranId;
 	}
 
-	public String getLovValue() {
-		return lovValue;
+	public List<FeeRefundDetail> getFeeRefundDetailList() {
+		return feeRefundDetailList;
 	}
 
-	public void setLovValue(String lovValue) {
-		this.lovValue = lovValue;
-	}
-
-	public FeeRefundHeader getBefImage() {
-		return this.befImage;
-	}
-
-	public void setBefImage(FeeRefundHeader beforeImage) {
-		this.befImage = beforeImage;
-	}
-
-	public LoggedInUser getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(LoggedInUser userDetails) {
-		this.userDetails = userDetails;
-	}
-
-	public Timestamp getPrevMntOn() {
-		return befImage == null ? null : befImage.getLastMntOn();
+	public void setFeeRefundDetailList(List<FeeRefundDetail> feeRefundDetailList) {
+		this.feeRefundDetailList = feeRefundDetailList;
 	}
 
 	public FeeRefundInstruction getFeeRefundInstruction() {
@@ -282,22 +345,6 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		this.feeRefundInstruction = feeRefundInstruction;
 	}
 
-	public List<FeeRefundDetail> getFeeRefundDetailList() {
-		return feeRefundDetailList;
-	}
-
-	public void setFeeRefundDetailList(List<FeeRefundDetail> feeRefundDetailList) {
-		this.feeRefundDetailList = feeRefundDetailList;
-	}
-
-	public Map<String, List<AuditDetail>> getAuditDetailMap() {
-		return auditDetailMap;
-	}
-
-	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
-		this.auditDetailMap = auditDetailMap;
-	}
-
 	public Beneficiary getDefaultBeneficiary() {
 		return defaultBeneficiary;
 	}
@@ -306,60 +353,12 @@ public class FeeRefundHeader extends AbstractWorkflowEntity {
 		this.defaultBeneficiary = defaultBeneficiary;
 	}
 
-	public String getFinCcy() {
-		return finCcy;
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
 	}
 
-	public void setFinCcy(String finCcy) {
-		this.finCcy = finCcy;
-	}
-
-	public String getPaymentType() {
-		return paymentType;
-	}
-
-	public void setPaymentType(String paymentType) {
-		this.paymentType = paymentType;
-	}
-
-	public int getApprovalStatus() {
-		return approvalStatus;
-	}
-
-	public void setApprovalStatus(int approvalStatus) {
-		this.approvalStatus = approvalStatus;
-	}
-
-	public BigDecimal getOdAgainstCustomer() {
-		return odAgainstCustomer;
-	}
-
-	public void setOdAgainstCustomer(BigDecimal odAgainstCustomer) {
-		this.odAgainstCustomer = odAgainstCustomer;
-	}
-
-	public BigDecimal getOdAgainstLoan() {
-		return odAgainstLoan;
-	}
-
-	public void setOdAgainstLoan(BigDecimal odAgainstLoan) {
-		this.odAgainstLoan = odAgainstLoan;
-	}
-
-	public long getCustId() {
-		return custId;
-	}
-
-	public void setCustId(long custId) {
-		this.custId = custId;
-	}
-
-	public String getCustCoreBank() {
-		return custCoreBank;
-	}
-
-	public void setCustCoreBank(String custCoreBank) {
-		this.custCoreBank = custCoreBank;
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
 	}
 
 }

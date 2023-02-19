@@ -41,6 +41,7 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private long headerID;
+	private String receivableType;
 	private Long receivableFeeTypeID;
 	private Long payableFeeTypeID;
 	private Long receivableID;
@@ -59,7 +60,6 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	private BigDecimal prevRefundAmount = BigDecimal.ZERO;
-	private String receivableType;
 
 	private String receivableFeeTypeCode;
 	private String receivableFeeTypeDesc;
@@ -80,7 +80,6 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 		excludeFields.add("adviseAmount");
 		excludeFields.add("paidAmount");
 		excludeFields.add("prevRefundAmount");
-		excludeFields.add("receivableType");
 		excludeFields.add("receivableFeeTypeCode");
 		excludeFields.add("receivableFeeTypeDesc");
 		excludeFields.add("payableFeeTypeCode");
@@ -105,6 +104,14 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 
 	public void setHeaderID(long headerID) {
 		this.headerID = headerID;
+	}
+
+	public String getReceivableType() {
+		return receivableType;
+	}
+
+	public void setReceivableType(String receivableType) {
+		this.receivableType = receivableType;
 	}
 
 	public Long getReceivableFeeTypeID() {
@@ -253,14 +260,6 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 
 	public BigDecimal getTotalAmount() {
 		return null;
-	}
-
-	public String getReceivableType() {
-		return receivableType;
-	}
-
-	public void setReceivableType(String receivableType) {
-		this.receivableType = receivableType;
 	}
 
 	public String getReceivableFeeTypeCode() {

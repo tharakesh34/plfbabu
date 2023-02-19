@@ -52,13 +52,13 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 	@Override
 	public long save(FeeRefundDetail frd, TableType tableType) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Insert Into FEE_REFUND_DETAILS");
+		sql.append("Insert Into Fee_Refund_Details");
 		sql.append(tableType.getSuffix());
-		sql.append(" (ID, HeaderID, ReceivableFeeTypeID, PayableFeeTypeID");
+		sql.append(" (ID, HeaderID, ReceivableType, ReceivableFeeTypeID, PayableFeeTypeID");
 		sql.append(", ReceivableID, PayableID, RefundAmount, TaxHeaderID");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -71,6 +71,7 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 
 			ps.setLong(++index, frd.getId());
 			ps.setLong(++index, frd.getHeaderID());
+			ps.setString(++index, frd.getReceivableType());
 			ps.setObject(++index, frd.getReceivableFeeTypeID());
 			ps.setObject(++index, frd.getPayableFeeTypeID());
 			ps.setObject(++index, frd.getReceivableID());
@@ -99,7 +100,7 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 	@Override
 	public int update(FeeRefundDetail frd, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update");
-		sql.append(" FEE_REFUND_DETAILS");
+		sql.append(" Fee_Refund_Details");
 		sql.append(tableType.getSuffix());
 		sql.append(" Set ReceivableFeeTypeID = ?, PayableFeeTypeID = ?");
 		sql.append(", ReceivableID = ?, PayableID = ?, RefundAmount = ?, TaxHeaderID = ?");
@@ -144,7 +145,7 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 
 	@Override
 	public void delete(FeeRefundDetail header, TableType tableType) {
-		String sql = "Delete From FEE_REFUND_DETAILS".concat(tableType.getSuffix()).concat(" Where HeaderID = ?");
+		String sql = "Delete From Fee_Refund_Details".concat(tableType.getSuffix()).concat(" Where HeaderID = ?");
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -162,12 +163,12 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), new FeeRefundRM(tableType), headerID);
+		return this.jdbcOperations.query(sql.toString(), new FeeRefundRM(), headerID);
 	}
 
 	@Override
 	public void updatePayableId(long id, long adviseId) {
-		String sql = "Update FEE_REFUND_DETAILS Set PayableID = ? Where ID = ?";
+		String sql = "Update Fee_Refund_Details Set PayableID = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -185,7 +186,7 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FeeRefundRM(tableType), id);
+			return this.jdbcOperations.queryForObject(sql.toString(), new FeeRefundRM(), id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -195,8 +196,8 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 	@Override
 	public BigDecimal getPrvRefundAmt(long finID, long receivableID) {
 		StringBuilder sql = new StringBuilder("Select Sum(RefundAmount)");
-		sql.append(" From FEE_REFUND_DETAILS frd");
-		sql.append(" Inner join FEE_REFUND_HEADER frh on frh.ID = frd.HeaderID");
+		sql.append(" From Fee_Refund_Details frd");
+		sql.append(" Inner join Fee_Refund_Header frh on frh.ID = frd.HeaderID");
 		sql.append(" Where frh.FinID = ? and ReceivableID = ? and frh.ApprovalStatus = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -211,7 +212,7 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 
 	@Override
 	public void deleteList(FeeRefundDetail frd, TableType tableType) {
-		StringBuilder sql = new StringBuilder("Delete from FEE_REFUND_DETAILS");
+		StringBuilder sql = new StringBuilder("Delete from Fee_Refund_Details");
 		sql.append(tableType.getSuffix());
 		sql.append(" where HeaderID = ?");
 
@@ -259,12 +260,12 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 
 	private StringBuilder getQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" frd.ID, frd.HeaderID, frd.ReceivableFeeTypeID, frd.PayableFeeTypeID");
+		sql.append(" frd.ID, frd.HeaderID, frd.ReceivableType, frd.ReceivableFeeTypeID, frd.PayableFeeTypeID");
 		sql.append(", frd.ReceivableID, frd.PayableID, frd.RefundAmount, frd.TaxHeaderID");
 		sql.append(", frd.Version, frd.CreatedBy, frd.CreatedOn, frd.ApprovedBy");
 		sql.append(", frd.ApprovedOn, frd.LastMntBy, frd.LastMntOn, frd.RecordStatus, frd.RoleCode");
 		sql.append(", frd.NextRoleCode, frd.TaskId, frd.NextTaskId, frd.RecordType, frd.WorkflowId");
-		sql.append(" From FEE_REFUND_DETAILS");
+		sql.append(" From Fee_Refund_Details");
 		sql.append(type);
 		sql.append(" frd");
 
@@ -273,18 +274,13 @@ public class FeeRefundDetailDAOImpl extends SequenceDao<FeeRefundDetail> impleme
 
 	private class FeeRefundRM implements RowMapper<FeeRefundDetail> {
 
-		private TableType tableType;
-
-		private FeeRefundRM(TableType tableType) {
-			this.tableType = tableType;
-		}
-
 		@Override
 		public FeeRefundDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 			FeeRefundDetail frd = new FeeRefundDetail();
 
 			frd.setId(rs.getLong("ID"));
 			frd.setHeaderID(rs.getLong("HeaderID"));
+			frd.setReceivableType(rs.getString("ReceivableType"));
 			frd.setReceivableFeeTypeID(JdbcUtil.getLong(rs.getObject("ReceivableFeeTypeID")));
 			frd.setPayableFeeTypeID(JdbcUtil.getLong(rs.getObject("PayableFeeTypeID")));
 			frd.setReceivableID(JdbcUtil.getLong(rs.getObject("ReceivableID")));

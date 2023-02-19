@@ -24,7 +24,6 @@
  */
 package com.pennant.backend.dao.feerefund;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.feerefund.FeeRefundHeader;
@@ -49,9 +48,5 @@ public interface FeeRefundHeaderDAO {
 	void updateApprovalStatus(long headerID, int isDownloaded);
 
 	boolean isFileDownloaded(long id, int isDownloaded);
-
-	BigDecimal getDueAgainstLoan(long finId);
-
-	BigDecimal getDueAgainstCustomer(long custId, String custCoreBank, long finId);
 
 }
