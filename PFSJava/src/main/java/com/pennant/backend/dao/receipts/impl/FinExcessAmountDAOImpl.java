@@ -401,7 +401,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public int updExcessAfterRealize(long finID, String amountType, BigDecimal amount, long receiptID) {
-		String sql = "Update FinExcessAmount Set BalanceAmt = BalanceAmt + ?, ReservedAmt = ReservedAmt - ? Where FinID = ?  and and ReceiptId = ? and AmountType = ? ";
+		String sql = "Update FinExcessAmount Set BalanceAmt = BalanceAmt + ?, ReservedAmt = ReservedAmt - ? Where FinID = ? and ReceiptId = ? and AmountType = ? ";
 
 		logger.debug(Literal.SQL + sql);
 
