@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.FinOverDueService;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -82,8 +83,7 @@ public class AutoRefundProcess {
 				process(arl);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
-
-				arl.setErrorCode("REFUND_999");
+				arl.setError(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_999")));
 				arl.setAppDate(appDate);
 				arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 				arl.setStatus("F");
@@ -91,7 +91,10 @@ public class AutoRefundProcess {
 
 			logger.debug("Auto Refund Process completed for Loan {}", finID);
 
-			list.add(arl);
+			if (arl.getRefundAmt().compareTo(BigDecimal.ZERO) > 0) {
+				list.add(arl);
+			}
+
 			if (list.size() == 500) {
 				autoRefundService.save(list);
 				list.clear();
@@ -118,7 +121,7 @@ public class AutoRefundProcess {
 
 		if (error != null) {
 			/* Auto Refund Loan bean to be updated as failure with Reason */
-			arl.setErrorCode(error.getCode());
+			arl.setError(error);
 			arl.setAppDate(appDate);
 			arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 			arl.setStatus("F");
@@ -194,7 +197,7 @@ public class AutoRefundProcess {
 		arl.setRefundAmt(refundAvail);
 
 		if (refundAvail.compareTo(BigDecimal.ZERO) <= 0) {
-			arl.setErrorCode("REFUND_006");
+			arl.setError(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_006")));
 			arl.setAppDate(appDate);
 			arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 			arl.setStatus("F");
@@ -208,7 +211,7 @@ public class AutoRefundProcess {
 		error = autoRefundService.validateRefundAmt(refundAvail, arl);
 
 		if (error != null) {
-			arl.setErrorCode(error.getCode());
+			arl.setError(error);
 			arl.setAppDate(appDate);
 			arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 			arl.setStatus("F");
@@ -220,7 +223,7 @@ public class AutoRefundProcess {
 		PaymentInstruction payInst = refundBeneficiary.getBeneficiary(finID, appDate, arl.isAlwRefundByCheque());
 
 		if (payInst == null) {
-			arl.setErrorCode("REFUND_007");
+			arl.setError(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_007")));
 			arl.setAppDate(appDate);
 			arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 			arl.setStatus("F");
@@ -231,7 +234,7 @@ public class AutoRefundProcess {
 		error = autoRefundService.executeAutoRefund(arl, payDtlList, payInst);
 
 		if (error != null) {
-			arl.setErrorCode(error.getCode());
+			arl.setError(error);
 			arl.setAppDate(appDate);
 			arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));
 			arl.setStatus("F");
@@ -239,7 +242,7 @@ public class AutoRefundProcess {
 			return;
 		}
 
-		arl.setErrorCode("REFUND_000");
+		arl.setError(ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_000")));
 		arl.setAppDate(appDate);
 		arl.setRefundAmt(refundAvail);
 		arl.setExecutionTime(new Timestamp(System.currentTimeMillis()));

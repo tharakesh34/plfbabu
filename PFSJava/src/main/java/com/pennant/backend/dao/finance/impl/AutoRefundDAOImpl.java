@@ -18,8 +18,8 @@ public class AutoRefundDAOImpl extends BasicDao<AutoRefundLoan> implements AutoR
 	@Override
 	public void save(List<AutoRefundLoan> finalRefundList) {
 		StringBuilder sql = new StringBuilder("Insert into Auto_Refund_Loans");
-		sql.append("(FinID, RefundAmt, AppDate, ExecutionTime, Status, ErrorCode)");
-		sql.append(" Values (?, ?, ?, ?, ?, ?)");
+		sql.append("(FinID, RefundAmt, AppDate, ExecutionTime, Status, ErrorCode, ErrorDesc)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -35,7 +35,8 @@ public class AutoRefundDAOImpl extends BasicDao<AutoRefundLoan> implements AutoR
 				ps.setDate(++index, JdbcUtil.getDate(arl.getAppDate()));
 				ps.setTimestamp(++index, JdbcUtil.getTimestamp(arl.getExecutionTime()));
 				ps.setString(++index, arl.getStatus());
-				ps.setString(++index, arl.getErrorCode());
+				ps.setString(++index, arl.getError().getCode());
+				ps.setString(++index, arl.getError().getMessage());
 			}
 
 			@Override

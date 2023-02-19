@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+
 public class AutoRefundLoan implements Serializable {
 	private static final long serialVersionUID = -5852740108623344237L;
 
@@ -24,15 +26,14 @@ public class AutoRefundLoan implements Serializable {
 	private Date appDate;
 	private Timestamp executionTime;
 	private String status;
-	private String errorCode;
 	private String finType;
 	private String entityCode;
-
 	private int autoRefCheckDPD;
 	private boolean overDueReq;
 	private Date activeNDate;
 	private Date closedNDate;
 	private boolean alwRefundByCheque;
+	private ErrorDetail error = new ErrorDetail();
 
 	public AutoRefundLoan() {
 		super();
@@ -158,14 +159,6 @@ public class AutoRefundLoan implements Serializable {
 		this.status = status;
 	}
 
-	public String getErrorCode() {
-		return errorCode;
-	}
-
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
-	}
-
 	public Timestamp getExecutionTime() {
 		return executionTime;
 	}
@@ -228,6 +221,14 @@ public class AutoRefundLoan implements Serializable {
 
 	public void setAlwRefundByCheque(boolean alwRefundByCheque) {
 		this.alwRefundByCheque = alwRefundByCheque;
+	}
+
+	public ErrorDetail getError() {
+		return error;
+	}
+
+	public void setError(ErrorDetail error) {
+		this.error = error;
 	}
 
 }

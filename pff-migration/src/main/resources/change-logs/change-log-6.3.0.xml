@@ -13480,5 +13480,11 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="TK#2568.200" author="murthy.y">
+		<addColumn tableName="Auto_Refund_Loans">
+			<column name="ErrorDesc" type="varchar(2000)"/>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog> 
