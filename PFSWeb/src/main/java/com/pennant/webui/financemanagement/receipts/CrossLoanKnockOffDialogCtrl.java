@@ -39,9 +39,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -574,8 +576,17 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				&& !finMain.isWriteoffLoan()) {
 			fillComboBox(this.receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose(),
 					",FeePayment,EarlySettlement,EarlyPayment,");
+
+			Set<String> exclude = new HashSet<>();
+			exclude.add("A");
+			if (!finMain.isUnderSettlement()) {
+				exclude.add("S");
+			}
+
+			List<ValueLabel> excessAdjustmentTypes = PennantStaticListUtil.getExcessAdjustmentTypes();
+
 			fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS,
-					PennantStaticListUtil.getExcessAdjustmentTypes(), ",A,");
+					excludeComboBox(excessAdjustmentTypes, exclude));
 		}
 	}
 
@@ -989,8 +1000,17 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				.setDisabled(!getUserWorkspace().isAllowed("button_CrossLoanKnockOffDialog_btnCalcReceipts"));
 
 		readOnlyComponent(isReadOnly("CrossLoanKnockOffDialog_allocationMethod"), this.allocationMethod);
-		fillComboBox(this.allocationMethod, RepayConstants.ALLOCTYPE_AUTO, PennantStaticListUtil.getAllocationMethods(),
-				"");
+
+		List<ValueLabel> allocationMethods = PennantStaticListUtil.getAllocationMethods();
+
+		Set<String> exclude = new HashSet<>();
+		FinanceMain fm = this.financeDetail.getFinScheduleData().getFinanceMain();
+
+		if (!fm.isUnderSettlement()) {
+			exclude.add(AllocationType.NO_ALLOC);
+		}
+
+		fillComboBox(this.allocationMethod, AllocationType.AUTO, excludeComboBox(allocationMethods, exclude));
 
 		resetAllocationPayments();
 
@@ -2109,7 +2129,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		logger.debug("Entering");
 
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
-		FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
+		FinScheduleData schData = financeDetail.getFinScheduleData();
+		FinanceType finType = schData.getFinanceType();
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
 		this.favourName.setValue(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getEntityDesc());
@@ -2154,16 +2175,22 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		this.receiptId.setValue(String.valueOf(rch.getReceiptID()));
 		this.receiptDate.setDisabled(true);
 
+		List<ValueLabel> allocationMethods = PennantStaticListUtil.getAllocationMethods();
+
+		Set<String> exclude = new HashSet<>();
+
 		if ((StringUtils.equals(rch.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE) && isEarlySettle)
 				|| (StringUtils.equals(FinServiceEvent.EARLYRPY, rch.getReceiptPurpose())
 						&& "N".equals(SysParamUtil.getValueAsString("ALW_PP_MANUAL_ALLOC")))) {
-			fillComboBox(this.allocationMethod, rch.getAllocationType(), PennantStaticListUtil.getAllocationMethods(),
-					",M,");
+			exclude.add(AllocationType.MANUAL);
 			this.allocationMethod.setDisabled(true);
-		} else {
-			fillComboBox(this.allocationMethod, rch.getAllocationType(), PennantStaticListUtil.getAllocationMethods(),
-					"");
 		}
+
+		if (!schData.getFinanceMain().isUnderSettlement()) {
+			exclude.add(AllocationType.NO_ALLOC);
+		}
+
+		fillComboBox(this.allocationMethod, rch.getAllocationType(), excludeComboBox(allocationMethods, exclude));
 
 		fillComboBox(this.receivedFrom, rch.getReceivedFrom(), PennantStaticListUtil.getReceivedFrom(), "");
 
@@ -2283,16 +2310,25 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			scheduleLabel.setValue(Labels.getLabel("label_ReceiptPayment_ExcessAmountAdjustment.value"));
 			this.excessAdjustTo.setVisible(true);
 			this.excessAdjustTo.setDisabled(false);
+
 			if (receiptPurposeCtg == 0) {
 				this.excessAdjustTo.setDisabled(true);
 			}
-			fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+
+			Set<String> exclude = new HashSet<>();
+
 			if (receiptPurposeCtg == 2) {
-				fillComboBox(excessAdjustTo, "E", PennantStaticListUtil.getExcessAdjustmentTypes(), ",A,B,S,");
 				this.excessAdjustTo.setDisabled(true);
 				this.excessAdjustTo.setReadonly(true);
+
+				exclude.add("A");
+				exclude.add("B");
+				exclude.add("S");
 			}
 
+			List<ValueLabel> excessAdjustToList = PennantStaticListUtil.getExcessAdjustmentTypes();
+
+			fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), excludeComboBox(excessAdjustToList, exclude));
 		} else {
 			this.effScheduleMethod.setVisible(true);
 			this.effScheduleMethod.setDisabled(false);

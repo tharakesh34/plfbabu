@@ -41,8 +41,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -1057,8 +1059,17 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				&& !fm.isWriteoffLoan()) {
 			fillComboBox(this.receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose(),
 					",FeePayment,EarlySettlement,EarlyPayment,");
+
+			Set<String> exclude = new HashSet<>();
+			exclude.add("A");
+			if (!fm.isUnderSettlement()) {
+				exclude.add("S");
+			}
+
+			List<ValueLabel> excessAdjustmentTypes = PennantStaticListUtil.getExcessAdjustmentTypes();
+
 			fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS,
-					PennantStaticListUtil.getExcessAdjustmentTypes(), ",A,");
+					excludeComboBox(excessAdjustmentTypes, exclude));
 		}
 	}
 
@@ -1800,7 +1811,16 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.btnCalcReceipts.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnCalcReceipts"));
 
 		readOnlyComponent(isReadOnly("ReceiptDialog_allocationMethod"), this.allocationMethod);
-		fillComboBox(this.allocationMethod, AllocationType.AUTO, PennantStaticListUtil.getAllocationMethods(), "");
+		List<ValueLabel> allocationMethods = PennantStaticListUtil.getAllocationMethods();
+
+		Set<String> exclude = new HashSet<>();
+		FinanceMain fm = this.financeDetail.getFinScheduleData().getFinanceMain();
+
+		if (!fm.isUnderSettlement()) {
+			exclude.add(AllocationType.NO_ALLOC);
+		}
+
+		fillComboBox(this.allocationMethod, AllocationType.AUTO, excludeComboBox(allocationMethods, exclude));
 
 		resetAllocationPayments();
 
@@ -3420,10 +3440,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		fillComboBox(this.receiptPurpose, rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(),
 				",FeePayment,");
 		this.receiptPurpose.setDisabled(true);
-		/*
-		 * fillComboBox(this.excessAdjustTo, rch.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
-		 * "");
-		 */
 
 		String excldValues = ",PRESENT";
 		if (FinanceConstants.REALIZATION_MAKER.equals(getRole())
@@ -3466,14 +3482,20 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			setEarlySettlementReasonData(rch.getReasonCode());
 		}
 
+		List<ValueLabel> allocationMethods = PennantStaticListUtil.getAllocationMethods();
+
+		Set<String> exclude = new HashSet<>();
+
 		if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()) && isEarlySettle) {
-			fillComboBox(this.allocationMethod, rch.getAllocationType(), PennantStaticListUtil.getAllocationMethods(),
-					",M,");
+			exclude.add(AllocationType.MANUAL);
 			this.allocationMethod.setDisabled(true);
-		} else {
-			fillComboBox(this.allocationMethod, rch.getAllocationType(), PennantStaticListUtil.getAllocationMethods(),
-					"");
 		}
+
+		if (!fm.isUnderSettlement()) {
+			exclude.add(AllocationType.NO_ALLOC);
+		}
+
+		fillComboBox(this.allocationMethod, rch.getAllocationType(), excludeComboBox(allocationMethods, exclude));
 
 		fillComboBox(this.receivedFrom, RepayConstants.RECEIVED_CUSTOMER, PennantStaticListUtil.getReceivedFrom(), "");
 
@@ -3703,7 +3725,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private void appendScheduleMethod(FinReceiptHeader rch) {
 		String excessAdjustTo = rch.getExcessAdjustTo();
-		String exclude = "";
+		Set<String> exclude = new HashSet<>();
 		List<ValueLabel> excessAdjustToList = PennantStaticListUtil.getExcessAdjustmentTypes();
 
 		if (receiptPurposeCtg != 1) {
@@ -3713,23 +3735,29 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			if (StringUtils.contains(rch.getFinType(), "OD")) {
 				excessAdjustTo = "A";
-				exclude = "E";
+				exclude.add("E");
 				this.excessAdjustTo.setDisabled(true);
 				this.excessAdjustTo.setReadonly(true);
 			}
 
-			fillComboBox(this.excessAdjustTo, excessAdjustTo, excessAdjustToList, exclude);
-
 			if (receiptPurposeCtg == 2) {
-				exclude = ",A,";
+				exclude.clear();
+				exclude.add("A");
 				if (StringUtils.isEmpty(rch.getExcessAdjustTo())) {
 					excessAdjustTo = "E";
 				}
 
-				fillComboBox(this.excessAdjustTo, excessAdjustTo, excessAdjustToList, exclude);
 				this.excessAdjustTo.setDisabled(true);
 				this.excessAdjustTo.setReadonly(true);
 			}
+
+			FinanceMain fm = this.financeDetail.getFinScheduleData().getFinanceMain();
+
+			if (!fm.isUnderSettlement()) {
+				exclude.add("S");
+			}
+
+			fillComboBox(this.excessAdjustTo, excessAdjustTo, excludeComboBox(excessAdjustToList, exclude));
 
 		} else {
 			this.effScheduleMethod.setVisible(true);

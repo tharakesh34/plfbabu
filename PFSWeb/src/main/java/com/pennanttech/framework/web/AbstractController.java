@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -624,6 +625,18 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 
 	protected void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
 		fillComboBox(combobox, value, list, "");
+	}
+
+	protected List<ValueLabel> excludeComboBox(List<ValueLabel> actualList, Set<String> exludeList) {
+		List<ValueLabel> list = new ArrayList<>();
+
+		for (ValueLabel item : actualList) {
+			if (!exludeList.contains(item.getValue())) {
+				list.add(item);
+			}
+		}
+
+		return list;
 	}
 
 	public void fillList(Combobox combobox, String value, List<ValueLabel> list, String excludeFields) {
