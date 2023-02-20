@@ -93,7 +93,6 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 	protected Longbox noOfGraceDays;
 	protected ExtendedCombobox cancelReasonCode;
 	protected Textbox cancelRemarks;
-	protected Tab settlementDetails;
 	protected Listbox listBoxSettlementScheduleInlineEdit;
 	protected Button btnNewSettlementSchedule;
 	protected Listbox listBoxSettlementSchedule;
@@ -784,7 +783,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 				this.listBoxSettlementScheduleInlineEdit, header.getSettlementScheduleList(), header.getId());
 
 		if (settlementSchDetails.get("errorList") != null) {
-			showErrorDetails(settlementSchDetails.get("errorList"), null, settlementDetails);
+			showErrorDetails(settlementSchDetails.get("errorList"), null);
 		}
 
 		if (settlementSchDetails.get("settlementSchedule") != null) {
@@ -801,7 +800,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void showErrorDetails(List<WrongValueException> wve, Tab parentTab, Tab childTab) {
+	private void showErrorDetails(List<WrongValueException> wve, Tab parentTab) {
 		logger.debug(Literal.ENTERING);
 		doRemoveValidation();
 
@@ -810,7 +809,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 			if (parentTab != null) {
 				parentTab.setSelected(true);
 			}
-			childTab.setSelected(true);
+			
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
