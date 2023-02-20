@@ -208,6 +208,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		filter[0] = new Filter("FinReference", this.fromFinReference.getValue(), Filter.OP_EQUAL);
 		filter[1] = new Filter("BalanceAmt", BigDecimal.ZERO, Filter.OP_GREATER_THAN);
 		this.referenceId.setFilters(filter);
+		this.referenceId.setWhereClause("");
 
 		switch (getComboboxValue(knockOffFrom)) {
 		case ReceiptMode.EXCESS:
@@ -222,6 +223,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			this.referenceId.setValueColumn("AdviseID");
 			this.referenceId.setDescColumn("BalanceAmt");
 			this.referenceId.setValidateColumns(new String[] { "AdviseID" });
+			this.referenceId.setWhereClause("");
 			break;
 		default:
 			break;
