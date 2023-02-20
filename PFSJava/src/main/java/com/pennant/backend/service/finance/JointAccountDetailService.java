@@ -30,6 +30,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -86,7 +87,7 @@ public interface JointAccountDetailService {
 
 	List<CustomerExtLiability> getJointExtLiabilityByCustomer(long custID);
 
-	List<FinanceEnquiry> getJointCustFinanceExposureByCustomer(long custID);
+	List<FinanceEnquiry> getJointCustFinanceExposureByCustomer(Customer customer);
 
 	// 10-Jul-2018 BUG FIX related to TktNo:127415
 	List<AuditDetail> processingJointAccountDetail(List<AuditDetail> auditDetails, String tableType,

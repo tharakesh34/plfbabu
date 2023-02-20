@@ -673,7 +673,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", LovDescCIFName, CustID, LovCustDob");
+			sql.append(", LovDescCIFName, CustID, CustCoreBank, LovCustDob");
 		}
 
 		sql.append(" From FinJointAccountDetails");
@@ -717,6 +717,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				jad.setLovDescCIFName(rs.getString("LovDescCIFName"));
 				jad.setCustID(rs.getLong("CustID"));
+				jad.setCustCoreBank(rs.getString("CustCoreBank"));
 				jad.setLovCustDob(rs.getTimestamp("LovCustDob"));
 			}
 

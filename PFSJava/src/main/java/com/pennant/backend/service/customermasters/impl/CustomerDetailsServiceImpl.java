@@ -505,7 +505,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 
-		customerDetails.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
+		customerDetails
+				.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(customerDetails.getCustomer()));
 
 		customerDetails.setFinanceMainList(financeMainDAO.getFinanceByCustId(id, ""));
 		customerDetails.setCollateraldetailList(collateralSetupService.getCollateralByCustId(id, type));
@@ -655,7 +656,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						customerCardSalesInfoDAO.getCardSalesInfoSubDetailById(customerCardSalesInfo.getId(), type));
 			}
 		}
-		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
+		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(cd.getCustomer()));
 
 		logger.debug(Literal.LEAVING);
 		return cd;

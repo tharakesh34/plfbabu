@@ -365,6 +365,12 @@ public class Customer extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public Customer(long id, String custCoreBank) {
+		super();
+		this.setId(id);
+		this.setCustCoreBank(custCoreBank);
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("branchProvince");

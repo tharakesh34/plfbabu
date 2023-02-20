@@ -104,7 +104,7 @@ public interface CustomerDAO {
 
 	Customer getCustomerByID(final long id);
 
-	List<FinanceEnquiry> getCustomerFinanceDetailById(long custId);
+	List<FinanceEnquiry> getCustomerFinanceDetailById(Customer customer);
 
 	boolean financeExistForCustomer(long id);
 

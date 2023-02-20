@@ -654,7 +654,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			getJointAccountDetail().setCustomerExtLiabilityList(
 					getJointAccountDetailService().getJointExtLiabilityByCustomer(customer.getCustID()));
 			getJointAccountDetail().setCustFinanceExposureList(
-					getJointAccountDetailService().getJointCustFinanceExposureByCustomer(customer.getCustID()));
+					getJointAccountDetailService().getJointCustFinanceExposureByCustomer(customer));
 
 			if (this.primaryList != null) {
 				doFillPrimaryExposureDetails(this.primaryList);

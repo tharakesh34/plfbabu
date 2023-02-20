@@ -371,12 +371,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private List<CustomerEMail> customerEmailDetailList = new ArrayList<CustomerEMail>();
 
 	protected Button btnNew_BankInformation;
-	protected Groupbox gp_BankInformationDetail;
 	protected Listbox listBoxCustomerBankInformation;
 	private List<CustomerBankInfo> customerBankInfoDetailList = new ArrayList<CustomerBankInfo>();
 
 	protected Button btnNew_ChequeInformation;
-	protected Groupbox gp_ChequeInformation;
 	protected Listbox listBoxCustomerChequeInformation;
 	private List<CustomerChequeInfo> customerChequeInfoDetailList = new ArrayList<CustomerChequeInfo>();
 
@@ -803,10 +801,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 220 + "px");
 				this.grid_BankDetails.setHeight(borderLayoutHeight - 220 + "px");
 				this.grid_CardSales.setHeight(borderLayoutHeight - 220 + "px");
-				this.listBoxCustomerBankInformation.setHeight(semiBorderlayoutHeights - 125 + "px");
-				this.listBoxCustomerChequeInformation.setHeight(semiBorderlayoutHeights - 125 + "px");
-				this.listBoxCustomerFinExposure.setHeight(semiBorderlayoutHeights - 125 + "px");
-				this.listBoxCustomerExternalLiability.setHeight(semiBorderlayoutHeights - 125 + "px");
 				this.listBoxCustomerCardSalesInformation.setHeight(semiBorderlayoutHeights - 125 + "px");
 			} else {
 				int divKycHeight = this.borderLayoutHeight - 80;
@@ -835,9 +829,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.gb_directorDetails.setHeight(borderLayoutHeight - 40 + "px");
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 40 + "px");
 
-				this.listBoxCustomerChequeInformation.setHeight(borderlayoutHeights - 130 + "px");
-				this.listBoxCustomerFinExposure.setHeight(borderlayoutHeights - 130 + "px");
-				this.listBoxCustomerExternalLiability.setHeight(borderlayoutHeights - 130 + "px");
 				this.listBoxCustomerCardSalesInformation.setHeight(borderlayoutHeights - 130 + "px");
 			}
 

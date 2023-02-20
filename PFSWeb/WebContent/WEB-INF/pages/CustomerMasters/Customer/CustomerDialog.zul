@@ -893,7 +893,7 @@
 												</div>
 												<listbox id="listBoxCustomerBankInformation" span="true"
 													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
-													emptyMessage="${c:l('listbox.emptyMessage')}">
+													emptyMessage="${c:l('listbox.emptyMessage')}" rows="3">
 													<listhead sizable="true">
 														<listheader id="listheader_CustomerBankInfo_BankName"
 															label="${c:l('listheader_CustomerBankInfo_BankName.label')}" sort="false" hflex="min" />
@@ -923,7 +923,7 @@
 												</div>
 												<listbox id="listBoxCustomerChequeInformation" span="true"
 													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
-													emptyMessage="${c:l('listbox.emptyMessage')}">
+													emptyMessage="${c:l('listbox.emptyMessage')}" rows="3">
 													<listhead sizable="true">
 														<listheader id="listheader_CustomerChequeInfo_MonthYear"
 															label="${c:l('listheader_CustomerChequeInfo_MonthYear.label')}" sort="false" hflex="min" />
@@ -948,7 +948,7 @@
 												<caption label="${c:l('gp_CustFinExposureDetails')}"></caption>
 												<listbox id="listBoxCustomerFinExposure" span="true"
 													sizedByContent="true" fixedLayout="true" width="100%" multiple="false"
-													emptyMessage="${c:l('listbox.emptyMessage')}">
+													emptyMessage="${c:l('listbox.emptyMessage')}" rows="3">
 													<listhead sizable="true">
 														<listheader id="listheader_CustFinExposure_FinDate"
 															label="${c:l('listheader_CustFinExposure_FinDate.label')}" sort="false" hflex="min" />
@@ -992,7 +992,7 @@
 												</div>
 												<listbox id="listBoxCustomerExternalLiability" span="true"
 													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
-													emptyMessage="${c:l('listbox.emptyMessage')}">
+													emptyMessage="${c:l('listbox.emptyMessage')}" rows="3">
 													<listhead sizable="true">
 														<listheader id="listheader_ExternalLiability_FinDate"
 															label="${c:l('listheader_ExternalLiability_FinDate.label')}" sort="false" hflex="min" />
