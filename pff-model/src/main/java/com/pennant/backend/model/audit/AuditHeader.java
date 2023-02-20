@@ -494,30 +494,31 @@ public class AuditHeader implements java.io.Serializable {
 				auditError = auditError.concat(errorMessage.getError());
 			}
 
-			errorMessage.setMessage(auditError);
+			errorMessage.setMessage(errorMessage.getError());
 		}
 	}
 
 	public void setErrorList(List<ErrorDetail> errorDetails) {
+		if (CollectionUtils.isEmpty(errorDetails)) {
+			return;
+		}
 
-		if (errorDetails != null && !errorDetails.isEmpty()) {
-			for (int i = 0; i < errorDetails.size(); i++) {
-				setErrorDetails(errorDetails.get(i));
-			}
+		for (ErrorDetail ed : errorDetails) {
+			setErrorDetails(ed);
 		}
 	}
 
 	public void setErrorDetails(ErrorDetail errorDetails) {
+		if (errorDetails == null) {
+			return;
+		}
 
-		if (errorDetails != null) {
-
-			if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("I")) { // PennantConstants.ERR_SEV_INFO
-				setInfoMessage(errorDetails);
-			} else if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("W")) { // PennantConstants.ERR_SEV_WARNING
-				setOverideMessage(errorDetails);
-			} else if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("E")) { // PennantConstants.ERR_SEV_ERROR
-				setErrorMessage(errorDetails);
-			}
+		if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("I")) { // PennantConstants.ERR_SEV_INFO
+			setInfoMessage(errorDetails);
+		} else if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("W")) { // PennantConstants.ERR_SEV_WARNING
+			setOverideMessage(errorDetails);
+		} else if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("E")) { // PennantConstants.ERR_SEV_ERROR
+			setErrorMessage(errorDetails);
 		}
 	}
 

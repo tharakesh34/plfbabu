@@ -281,13 +281,13 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			getDocument(mandate);
 
 			long mandateID = mandateDAO.save(mandate, tableType);
-			
+
 			if (mandate.isSecurityMandate()) {
 				fm.setSecurityMandateID(mandateID);
 			} else {
 				fm.setMandateID(mandateID);
 			}
-			
+
 			auditDetails.add(getAuditDetails(mandate, 1, PennantConstants.TRAN_ADD));
 
 			com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
@@ -464,8 +464,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				errParmFrq[0] = DateUtility.formatToShortDate(mandate.getStartDate());
 				errParmFrq[1] = DateUtility.formatToShortDate(firstRepayDate);
 
-				auditDetail.setErrorDetail(ErrorUtil
-						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65020", errParmFrq, null), ""));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65020", errParmFrq)));
 
 			}
 
