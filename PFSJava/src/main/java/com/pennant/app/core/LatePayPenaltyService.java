@@ -323,17 +323,20 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	private List<OverdueChargeRecovery> addODGraceDate(FinODDetails fod, List<OverdueChargeRecovery> odcrList,
 			FinanceMain fm) {
+
+		Date odGrcDate = fod.getFinODSchdDate();
+		fod.setOdGrcDate(odGrcDate);
 		// If OD days to be included in the calculation then no need to add any record
 		if (fod.isODIncGrcDays()) {
 			return odcrList;
 		}
 
-		Date odGrcDate = null;
-		// Not oevrdraft product category
+		// Not overdraft product category
 		if (!ProductUtil.isOverDraft(fm.getProductCategory())) {
-			if (fod.getGraceDays() > 0) {
-				DateUtil.addDays(fod.getFinODSchdDate(), fod.getGraceDays());
+			if (fod.getODGraceDays() > 0) {
+				odGrcDate = DateUtil.addDays(fod.getFinODSchdDate(), fod.getODGraceDays());
 				addODCRRecord(fod, odcrList, odGrcDate, false);
+				fod.setOdGrcDate(odGrcDate);
 			}
 			return odcrList;
 		}
@@ -342,10 +345,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 		FinODPenaltyRate pr = PenaltyCalculator.getEffectiveRate(fod.getFinODSchdDate(), fm.getPenaltyRates(),
 				fod.getODChargeType());
 
-		int netODDays = fod.getGraceDays() + pr.getOverDraftExtGraceDays();
+		int netODDays = fod.getODGraceDays() + pr.getOverDraftExtGraceDays();
 		if (netODDays > 0) {
-			DateUtil.addDays(fod.getFinODSchdDate(), netODDays);
+			odGrcDate = DateUtil.addDays(fod.getFinODSchdDate(), netODDays);
 			addODCRRecord(fod, odcrList, odGrcDate, false);
+			fod.setOdGrcDate(odGrcDate);
 		}
 		return odcrList;
 
@@ -549,10 +553,14 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (ChargeType.RULE.equals(fod.getODChargeType())) {
 				penalty = calPenaltyByRule(fod, fm, dateCur, datePrv);
 			} else {
-				// If charge calculation Type is by Due Days irrespective of one rate OR effective rate
-				BigDecimal penaltyRate = odcrPrv.getoDChargeAmtOrPerc().divide(new BigDecimal(100), 2,
-						RoundingMode.HALF_DOWN);
-				penalty = CalculationUtil.calInterest(datePrv, dateCur, balanceForCal, pftDaysBasis, penaltyRate);
+				if (!fod.isODIncGrcDays() && DateUtil.compare(odcrCur.getMovementDate(), fod.getOdGrcDate()) <= 0) {
+					penalty = BigDecimal.ZERO;
+				} else {
+					// If charge calculation Type is by Due Days irrespective of one rate OR effective rate
+					BigDecimal penaltyRate = odcrPrv.getoDChargeAmtOrPerc().divide(new BigDecimal(100), 2,
+							RoundingMode.HALF_DOWN);
+					penalty = CalculationUtil.calInterest(datePrv, dateCur, balanceForCal, pftDaysBasis, penaltyRate);
+				}
 			}
 
 			// Calculate Penalty Amount
