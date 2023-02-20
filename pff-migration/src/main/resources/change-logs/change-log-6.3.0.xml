@@ -13134,7 +13134,6 @@
 	<changeSet id="TK#2566_201" author="murthy.y">
 		<dropView viewName="FEE_REFUND_HEADER_AVIEW" />
 		<dropView viewName="FEE_REFUND_HEADER_VIEW" />
-		<dropView viewName="FEE_REFUND_DETAILS_VIEW" />
 	</changeSet>
 
 	<changeSet id="TK#2566_202" author="murthy.y">
@@ -13177,7 +13176,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2566_204" author="murthy.y">
-		<addPrimaryKey tableName="Fee_Refund_Header" columnNames="Id" constraintName="pk_feerfdhdr_feeid" />
+		<addPrimaryKey tableName="Fee_Refund_Header" columnNames="Id" constraintName="pk_feerfdhdr_id" />
 	</changeSet>
 
 	<changeSet id="TK#2566_205" author="murthy.y">
@@ -13213,7 +13212,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2566_206" author="murthy.y">
-		<addPrimaryKey tableName="Fee_Refund_Header_Temp" columnNames="Id" constraintName="pk_feerfdhdrt_feeid" />
+		<addPrimaryKey tableName="Fee_Refund_Header_Temp" columnNames="Id" constraintName="pk_feerfdhdrt_id" />
 	</changeSet>
 
 	<changeSet id="TK#2566_207" author="murthy.y">
