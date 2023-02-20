@@ -127,6 +127,8 @@ public class LatePayMarkingService extends ServiceHelper {
 			appDate = SysParamUtil.getAppDate();
 		}
 
+		fm.setAppDate(appDate);
+
 		// IF LOAN CREATED BACK DATED AND IT COMES FOR RECEIPT ON DAY 1 BEFORE EOD FOD WILL BE EMPTY
 		fodList = findInstDueButFODNotFound(fm, fodList, valueDate, schedules);
 
