@@ -786,6 +786,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			ManualAdvise ma = new ManualAdvise();
 
 			ma.setFinReference(finReference);
+			ma.setFinID(fm.getFinID());
 			ma.setValueDate(valueDate);
 
 			BigDecimal eblAmount = manualAdviseService.getEligibleAmount(ma, fee);

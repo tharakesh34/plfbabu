@@ -997,7 +997,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			eligibleAmt = manualAdviseDAO.getPaidAmountsbyAllocation(finID, linkTo, valueDate);
 		}
 
-		eligibleAmt = eligibleAmt.subtract(getRefundedAmount(finID, feeTypeID));
+		eligibleAmt = eligibleAmt.subtract(manualAdviseDAO.getExistingPayableAmount(finID, feeTypeID));
 
 		logger.debug(Literal.LEAVING);
 		return eligibleAmt.compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : eligibleAmt;

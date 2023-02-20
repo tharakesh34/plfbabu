@@ -1918,6 +1918,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		} else if (isValidPayableLink(linkTo, ft.getAdviseType())) {
 			ManualAdvise ma = new ManualAdvise();
 
+			ma.setFinID(manualAdvise.getFinID());
 			ma.setFinReference(manualAdvise.getFinReference());
 			ma.setValueDate(this.valueDate.getValue());
 

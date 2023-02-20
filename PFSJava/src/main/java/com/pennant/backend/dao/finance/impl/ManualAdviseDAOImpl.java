@@ -1957,6 +1957,15 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
+	public BigDecimal getExistingPayableAmount(long finID, long feeTypeId) {
+		String sql = "Select coalesce(sum(AdviseAmount), 0) From ManualAdvise Where FinID = ? and FeeTypeID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, feeTypeId);
+	}
+
+	@Override
 	public BigDecimal getRefundedAmount(long finID, long feeTypeId) {
 		String sql = "Select coalesce(sum(AdviseAmount), 0) From ManualAdvise Where FinID = ? and FeeTypeID = ?";
 
