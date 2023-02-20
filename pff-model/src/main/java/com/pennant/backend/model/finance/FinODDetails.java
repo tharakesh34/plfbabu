@@ -116,6 +116,7 @@ public class FinODDetails implements Serializable {
 	private BigDecimal curOverdraftTxnChrg = BigDecimal.ZERO;
 	private BigDecimal maxOverdraftTxnChrg = BigDecimal.ZERO;
 	private Long presentmentID;
+	private Date odGrcDate;
 
 	/*
 	 * These fields used in bulk upload (Ex: EOD) rcdAction = "" No action Required rcdAction = "I" record to be
@@ -177,17 +178,18 @@ public class FinODDetails implements Serializable {
 		entity.setPresentmentID(this.presentmentID);
 		entity.setCurOverdraftTxnChrg(this.curOverdraftTxnChrg);
 		entity.setMaxOverdraftTxnChrg(this.maxOverdraftTxnChrg);
-		entity.setPriPenalty(this.getPriPenalty());
-		entity.setPftPenalty(this.getPftPenalty());
-		entity.setPriPenaltyPaid(this.getPriPenaltyPaid());
-		entity.setPriPenaltyWaived(this.getPriPenaltyWaived());
-		entity.setPftPenaltyPaid(this.getPftPenaltyPaid());
-		entity.setPftPenaltyWaived(this.getPftPenaltyWaived());
-		entity.setPriPenaltyBal(this.getPriPenaltyBal());
-		entity.setPftPenaltyBal(this.getPftPenaltyBal());
-		entity.setActPriPenBal(this.getActPriPenBal());
-		entity.setActPftPenBal(this.getActPftPenBal());
-		entity.setPastDuePri(this.getPastDuePri());
+		entity.setPriPenalty(this.priPenalty);
+		entity.setPftPenalty(this.pftPenalty);
+		entity.setPriPenaltyPaid(this.priPenaltyPaid);
+		entity.setPriPenaltyWaived(this.priPenaltyWaived);
+		entity.setPftPenaltyPaid(this.pftPenaltyPaid);
+		entity.setPftPenaltyWaived(this.pftPenaltyWaived);
+		entity.setPriPenaltyBal(this.priPenaltyBal);
+		entity.setPftPenaltyBal(this.pftPenaltyBal);
+		entity.setActPriPenBal(this.actPriPenBal);
+		entity.setActPftPenBal(this.actPftPenBal);
+		entity.setPastDuePri(this.pastDuePri);
+		entity.setOdGrcDate(this.odGrcDate);
 
 		return entity;
 	}
@@ -655,6 +657,14 @@ public class FinODDetails implements Serializable {
 
 	public void setActPftPenBal(BigDecimal actPftPenBal) {
 		this.actPftPenBal = actPftPenBal;
+	}
+
+	public Date getOdGrcDate() {
+		return odGrcDate;
+	}
+
+	public void setOdGrcDate(Date odGrcDate) {
+		this.odGrcDate = odGrcDate;
 	}
 
 }

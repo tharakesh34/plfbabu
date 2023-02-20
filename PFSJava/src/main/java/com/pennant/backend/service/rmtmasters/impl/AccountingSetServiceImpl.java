@@ -506,7 +506,8 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 					+ PennantJavaUtil.getLabel("label_AccountSetCode") + ":" + valueParm1[1];
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm1, null));
 		} else {
-			if (!accountingSetDAO.isValidCategoryWiseEvents(accountingSet.getEventCode())) {
+			if (PennantConstants.RECORD_TYPE_NEW.equals(accountingSet.getRecordType())
+					&& !accountingSetDAO.isValidCategoryWiseEvents(accountingSet.getEventCode())) {
 				String[] errParm1 = new String[1];
 				errParm1[0] = PennantJavaUtil.getLabel("label_EventCode") + ":" + accountingSet.getEventCode();
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm1, null));

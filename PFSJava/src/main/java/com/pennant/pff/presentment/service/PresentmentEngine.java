@@ -5,13 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -345,49 +342,6 @@ public class PresentmentEngine {
 		}
 
 		return count;
-	}
-
-	private Map<String, List<PresentmentDetail>> groupByInstrumentType(List<PresentmentDetail> list) {
-		Map<String, List<PresentmentDetail>> map = new HashMap<>();
-
-		for (PresentmentDetail pd : list) {
-			String instrumentType = pd.getInstrumentType();
-
-			List<PresentmentDetail> groupList = map.get(instrumentType);
-
-			if (groupList == null) {
-				groupList = new ArrayList<>();
-				map.put(instrumentType, groupList);
-			}
-
-			groupList.add(pd);
-		}
-
-		return map;
-	}
-
-	private List<List<PresentmentDetail>> getBatchesByInstruentType(List<PresentmentDetail> list) {
-		Map<String, Integer> batchMap = presentmentDAO.batchSizeByInstrumentType();
-
-		Map<String, List<PresentmentDetail>> map = groupByInstrumentType(list);
-		List<List<PresentmentDetail>> batches = new ArrayList<List<PresentmentDetail>>();
-
-		for (Entry<String, List<PresentmentDetail>> itGroup : map.entrySet()) {
-			List<PresentmentDetail> value = itGroup.getValue();
-
-			Integer batchSize = batchMap.get(itGroup.getKey());
-			if (batchSize == null || batchSize == 0) {
-				batches.add(value);
-			} else {
-				AtomicInteger counter = new AtomicInteger();
-				Collection<List<PresentmentDetail>> partitionedList = value.stream()
-						.collect(Collectors.groupingBy(pd -> counter.getAndIncrement() / batchSize)).values();
-
-				batches.addAll(partitionedList);
-			}
-		}
-
-		return batches;
 	}
 
 	public List<PresentmentDetail> grouping(ResultSet rs, PresentmentHeader ph) throws SQLException {
@@ -1428,6 +1382,9 @@ public class PresentmentEngine {
 		if (StringUtils.isNotEmpty(pd.getBounceCode())) {
 			pd.setErrorCode(pd.getBounceCode());
 			pd.setErrorDesc(pd.getBounceRemarks());
+		} else {
+			pd.setErrorCode(null);
+			pd.setErrorDesc(null);
 		}
 
 		updatePresentmentDetail(pd);

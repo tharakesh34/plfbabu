@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -33,9 +34,11 @@ import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
@@ -82,9 +85,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setLong(1, batchID);
-		});
+		this.jdbcOperations.update(sql, batchID);
 	}
 
 	@Override
@@ -311,7 +312,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		String bankCode = SysParamUtil.getValueAsString("BANK_CODE");
+		String bankCode = SysParamUtil.getValueAsString(SMTParameterConstants.BANK_CODE);
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -442,7 +443,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		String sql = "Update PRMNT_EXTRACTION_STAGE Set MandateId = ?, MandateStatus = ?, MandateType = ?, InstrumentType = ? Where Id = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
-		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		return jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -463,16 +464,14 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			public int getBatchSize() {
 				return securityMandates.size();
 			}
-		});
-
-		return 0;
+		}).length;
 	}
 
 	@Override
 	public void updateIPDC(long batchID) {
 		String sql = "Update PRMNT_EXTRACTION_STAGE set InstrumentType = ?, MandateType = ?, ChequeType = ? Where BatchID = ? and InstrumentType = ? and BankCode = ?";
 
-		String bankcode = SysParamUtil.getValueAsString("BANK_CODE");
+		String bankcode = SysParamUtil.getValueAsString(SMTParameterConstants.BANK_CODE);
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -513,12 +512,11 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return count = count + this.jdbcOperations.update(sql.toString(), ps -> {
+		return count + this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
 			ps.setLong(index++, batchID);
 			ps.setInt(index++, ExcludeReasonCode.MANUAL_EXCLUDE.id());
-
 			ps.setInt(index++, RepayConstants.PEXC_EXTRACT);
 			ps.setInt(index++, RepayConstants.PEXC_BATCH_CREATED);
 			ps.setInt(index, RepayConstants.PEXC_AWAITING_CONF);
@@ -790,13 +788,13 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				int index = 1;
+				int index = 0;
 				PresentmentDetail pd = list.get(i);
 
-				ps.setLong(index++, pd.getHeaderId());
-				ps.setDate(index++, JdbcUtil.getDate(pd.getDueDate()));
+				ps.setLong(++index, pd.getHeaderId());
+				ps.setDate(++index, JdbcUtil.getDate(pd.getDueDate()));
 
-				ps.setLong(index++, pd.getId());
+				ps.setLong(++index, pd.getId());
 			}
 
 			@Override
@@ -838,7 +836,8 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public void updateHeaderIdByPartnerBankAndBank(long batchID, List<PresentmentDetail> list) {
-		StringBuilder sql = new StringBuilder("Update PRMNT_EXTRACTION_STAGE set HeaderID = ?, DueDate = ?");
+		StringBuilder sql = new StringBuilder("Update PRMNT_EXTRACTION_STAGE");
+		sql.append(" Set HeaderID = ?, DueDate = ?");
 		sql.append(" Where BatchID = ?");
 		sql.append(" and DefSchdDate = ? and BankCode = ? and EntityCode = ?");
 		sql.append(" and PartnerBankId = ? and InstrumentType = ?");
@@ -1170,7 +1169,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql.toString(), (ResultSet rs) -> {
+		return this.jdbcOperations.query(sql, (ResultSet rs) -> {
 			while (rs.next()) {
 				totals.put(rs.getInt(1), rs.getInt(2));
 
@@ -1184,6 +1183,10 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		Map<Integer, Integer> presentments = getTotalPresentments(presentmentId);
 
 		int total = 0;
+
+		if (MapUtils.isEmpty(presentments)) {
+			return 0;
+		}
 
 		for (Integer count : presentments.values()) {
 			total = total + count;
@@ -1211,32 +1214,30 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	public Presentment getPartnerBankId(String finType, String mandateType) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" PartnerBankID, AccountNo");
-		sql.append(" From PresentmentPartnerBank");
-		sql.append(" Where FinType = ?");
+		String sql = "Select PartnerBankID, AccountNo From PresentmentPartnerBank Where FinType = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+			return jdbcOperations.queryForObject(sql, (rs, i) -> {
 				Presentment p = new Presentment();
 				p.setPartnerBankId(rs.getLong("PartnerBankID"));
 				p.setAccountNo(rs.getString("AccountNo"));
 				return p;
 			}, finType);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND, e);
 			return null;
 		}
 	}
 
 	@Override
-	public void updatePartnerBankID(long id, long PartnerBankId) {
+	public void updatePartnerBankID(long id, long partnerBankId) {
 		String sql = "Update PresentmentHeader set PartnerBankId = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, PartnerBankId, id);
+		this.jdbcOperations.update(sql, partnerBankId, id);
 	}
 
 	@Override
@@ -1325,7 +1326,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" Inner join Financemain fm on pd.FinID = fm.FinID");
 		sql.append(" Where pd.Id = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
@@ -1368,7 +1369,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" and pd.ExcludeReason = ? and pd.Status <> ?");
 		sql.append(" and pd.Receiptid = ? ");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -1431,26 +1432,18 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public void updateExcludeReason(long presentmentId, int manualExclude) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Update presentmentdetails Set ExcludeReason = ? Where ID = ?";
 
-		StringBuilder sql = null;
-
-		sql = new StringBuilder();
-		sql.append(" UPDATE presentmentdetails Set EXCLUDEREASON = ? Where ID = ?");
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			this.jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			this.jdbcOperations.update(sql, ps -> {
 				ps.setInt(1, manualExclude);
 				ps.setLong(2, presentmentId);
 			});
 		} catch (Exception e) {
-			throw e;
-		} finally {
-			sql = null;
+			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	public int extractPDC(long batchID, long finID, Date dueDate, Long rePresentUploadID, String instrumentType) {
@@ -1503,7 +1496,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		String instrumentType = ph.getMandateType();
 		Long rePresentUploadID = ph.getRePresentUploadID();
 		String partnerBankCode = ph.getPartnerBankCode();
-		String bankCode = SysParamUtil.getValueAsString("BANK_CODE");
+		String bankCode = SysParamUtil.getValueAsString(SMTParameterConstants.BANK_CODE);
 
 		InstrumentType type = InstrumentType.getType(instrumentType);
 
@@ -1718,7 +1711,6 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setId(rs.getLong("ID"));
 			pd.setResponseId(rs.getLong("RESPONSEID"));
 			pd.setHeaderId(rs.getLong("HEADER_ID"));
-			// pd.setPresentmentID(rs.getLong("PRESENTMENTID"));
 			pd.setFinID(rs.getLong("FINID"));
 			pd.setFinReference(rs.getString("FINREFERENCE"));
 			pd.setHostReference(rs.getString("HOST_REFERENCE"));
@@ -1761,8 +1753,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	@Override
 	public List<Long> getResponseHeadersByBatch(long batchID, String responseType) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT DISTINCT HEADER_ID");
-		sql.append(" FROM PRESENTMENT_RESP_DTLS PRD");
+		sql.append("SELECT DISTINCT HEADER_ID FROM PRESENTMENT_RESP_DTLS PRD");
 
 		if ("S".equals(responseType)) {
 			sql.append(" INNER JOIN PRMNT_RESP_SUCCESS_QUEUE PRSQ ON PRSQ.REFERENCEID = PRD.ID");
@@ -1788,14 +1779,13 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return jdbcOperations.queryForList(sql.toString(), Long.class, headerId);
-
 	}
 
 	@Override
 	public List<String> getStatusByPresentmentHeader(Long id) {
 		String sql = "SELECT STATUS FROM PRESENTMENTDETAILS WHERE PRESENTMENTID = ? AND EXCLUDEREASON = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForList(sql, String.class, id, 0);
 	}
@@ -1804,7 +1794,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public void updateHeaderCounts(Long id, int successCount, int failedCount) {
 		String sql = "UPDATE PRESENTMENTHEADER SET Resp_Success = ?, Resp_Failed = ? WHERE ID = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		jdbcOperations.update(sql, ps -> {
 			ps.setInt(1, successCount);
@@ -1818,12 +1808,11 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public void updateHeaderStatus(Long id, int status) {
 		String sql = "UPDATE PresentmentHeader SET STATUS = ? WHERE ID = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setInt(index++, status);
-			ps.setLong(index, id);
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, status);
+			ps.setLong(2, id);
 		});
 	}
 
@@ -1841,15 +1830,15 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setInt(index++, totalRecords);
-			ps.setInt(index++, successRecords);
-			ps.setInt(index++, failedRecords);
-			ps.setString(index++, status);
-			ps.setString(index++, remarks);
-			ps.setTimestamp(index++, curTimeStamp);
-			ps.setLong(index, headerId);
+			int index = 0;
 
+			ps.setInt(++index, totalRecords);
+			ps.setInt(++index, successRecords);
+			ps.setInt(++index, failedRecords);
+			ps.setString(++index, status);
+			ps.setString(++index, remarks);
+			ps.setTimestamp(++index, curTimeStamp);
+			ps.setLong(++index, headerId);
 		});
 	}
 
@@ -1859,12 +1848,11 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		jdbcOperations.update(sql.toString(), ps -> {
+		jdbcOperations.update(sql, ps -> {
 			ps.setString(1, pexcFailure);
 			ps.setString(2, errorMessage);
 			ps.setInt(3, processFlag);
 			ps.setLong(4, responseID);
-
 		});
 	}
 
@@ -1887,11 +1875,9 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" From PRESENTMENT_RESP_DTLS PRD");
 		sql.append(" WHERE ID = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, id);
-		});
+		return jdbcOperations.update(sql.toString(), id);
 	}
 
 	@Override
