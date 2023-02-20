@@ -2989,10 +2989,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			}
 			if (!recReject) {
-				if (receiptPurposeCtg == 1 || receiptPurposeCtg == 2 && !isClosrMaturedLAN) {
-					recalEarlyPaySchd(false);
-				}
-
 				if (!RepayConstants.PAYSTATUS_BOUNCE.equals(receiptData.getReceiptHeader().getReceiptModeStatus())
 						&& !RepayConstants.PAYSTATUS_CANCEL
 								.equals(receiptData.getReceiptHeader().getReceiptModeStatus())) {
