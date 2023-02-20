@@ -293,4 +293,19 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 			throw new ConcurrencyException();
 		}
 	}
+
+	@Override
+	public ChequeHeader getChequeHeaderForEnq(long finID) {
+		StringBuilder sql = getSqlQuery("");
+		sql.append(" Where FinId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), new ChequeHeaderRM(), finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }
