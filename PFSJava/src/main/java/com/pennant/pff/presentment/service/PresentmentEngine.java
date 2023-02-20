@@ -1382,6 +1382,9 @@ public class PresentmentEngine {
 		if (StringUtils.isNotEmpty(pd.getBounceCode())) {
 			pd.setErrorCode(pd.getBounceCode());
 			pd.setErrorDesc(pd.getBounceRemarks());
+		} else {
+			pd.setErrorCode(null);
+			pd.setErrorDesc(null);
 		}
 
 		updatePresentmentDetail(pd);

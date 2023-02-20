@@ -52,7 +52,9 @@ public enum PresentmentError {
 
 	FC_602("Presentment is not found for this respective schedule."),
 
-	FC_603("Clearing status in invalid in Fate Correction Upload File");
+	FC_603("Clearing status in invalid in Fate Correction Upload File"),
+
+	FC_604("If Clearing status is 'B' then BounceCode & BounceRemarks are Mandatory");
 
 	private String description;
 
