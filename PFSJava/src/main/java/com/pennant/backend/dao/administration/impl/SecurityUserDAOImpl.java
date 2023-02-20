@@ -727,13 +727,12 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				int index = 1;
-
 				SecurityUser su = userAccounts.get(i);
 
-				ps.setInt(index++, 1);
-				ps.setDate(index++, JdbcUtil.getDate(su.getAccountLockedOn()));
-				ps.setDate(index, null);
+				ps.setInt(1, 1);
+				ps.setDate(2, JdbcUtil.getDate(su.getAccountLockedOn()));
+				ps.setDate(3, null);
+				ps.setLong(4, su.getUsrID());
 			}
 
 			@Override
