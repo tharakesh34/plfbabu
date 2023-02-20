@@ -131,7 +131,7 @@ public class AutoRefundProcess {
 		/* Overdue Amount verification Check required or not */
 		BigDecimal overDueAmt = null;
 		if (arl.isOverDueReq()) {
-			overDueAmt = finOverDueService.getDueAgnistCustomer(finID);
+			overDueAmt = finOverDueService.getDueAgnistLoan(finID);
 		}
 
 		BigDecimal reserveAmount = autoRefundService.findReserveAmountForAutoRefund(finID, overDueAmt, appDate);
