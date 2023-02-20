@@ -949,4 +949,7 @@
 	<bean id="clusterDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterDAOImpl" parent="sequenceDao" />
 	
 	<bean id="finOverDueService" class="com.pennant.app.core.FinOverDueService"/>
+	
+	<!--============ Finance Flags Details ============== -->
+	<bean id="finFlagsHeaderDAO" class="com.pennant.backend.dao.finance.impl.FinFlagsHeaderDAOImpl" parent="basicDao" />
 </beans>
