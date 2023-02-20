@@ -47,4 +47,6 @@ public interface ChequeHeaderDAO {
 
 	void updatesize(ChequeHeader ch);
 
+	ChequeHeader getChequeHeaderForEnq(long finID);
+
 }

@@ -1443,4 +1443,14 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
+
+	@Override
+	public ChequeHeader getApprovedChequeHeaderForEnq(long finID) {
+		ChequeHeader ch = chequeHeaderDAO.getChequeHeaderForEnq(finID);
+		if (ch != null) {
+			ch.setChequeDetailList(chequeDetailDAO.getChequeDetailList(ch.getHeaderID(), "_AView"));
+		}
+		return ch;
+
+	}
 }

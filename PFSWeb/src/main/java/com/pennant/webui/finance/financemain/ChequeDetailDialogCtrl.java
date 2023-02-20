@@ -52,6 +52,7 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -152,6 +153,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	protected Listbox listBoxSPDCChequeDetail;
 	protected Listheader listSPDCHeaderCheckBox;
 	protected Checkbox listSPDCHeaderCheckBoxComp;
+
+	private Tabpanel tabPanel_dialogWindow;
 
 	private Tab parenttab;
 
@@ -271,6 +274,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			} else {
 				setFinanceDetail(chequeHeaderService.getFinanceDetailById(chequeHeader.getFinID()));
 				appendFinBasicDetails(getFinBasicDetails(financeDetail));
+			}
+
+			if (arguments.containsKey("parentTabPanel")) {
+				tabPanel_dialogWindow = (Tabpanel) arguments.get("parentTabPanel");
 			}
 
 			if (fromLoan) {
@@ -879,6 +886,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		try {
 			if (fromLoan) {
 				chequeTabDisplay(chequeHeader.getChequeDetailList());
+			} else if (tabPanel_dialogWindow != null) {
+				tabPanel_dialogWindow.appendChild(this.windowChequeDetailDialog);
 			} else {
 				this.hboxNorth.setVisible(true);
 				setDialog(DialogType.EMBEDDED);
@@ -900,6 +909,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				this.readOnlyComponent(true, this.amount);
 				this.readOnlyComponent(true, this.btnFetchAccountDetails);
 				this.readOnlyComponent(true, customer);
+				this.readOnlyComponent(true, this.micr);
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

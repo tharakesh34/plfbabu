@@ -320,6 +320,9 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		if (type.equals("_View")) {
 			sql.append(", BankCode, BranchCode, BranchDesc, Micr, Ifsc, City, BankName");
 		}
+		if (type.equals("_AView")) {
+			sql.append(", BankCode, BranchCode, BranchDesc, Micr, Ifsc, City, BankName");
+		}
 
 		sql.append(" From ChequeDetail");
 		sql.append(type);
@@ -367,6 +370,16 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			cheque.setWorkflowId(rs.getLong("WorkflowId"));
 
 			if (type.equals("_View")) {
+				cheque.setBankCode(rs.getString("BankCode"));
+				cheque.setBranchCode(rs.getString("BranchCode"));
+				cheque.setBranchDesc(rs.getString("BranchDesc"));
+				cheque.setMicr(rs.getString("Micr"));
+				cheque.setIfsc(rs.getString("Ifsc"));
+				cheque.setCity(rs.getString("City"));
+				cheque.setBankName(rs.getString("BankName"));
+			}
+
+			if (type.equals("_AView")) {
 				cheque.setBankCode(rs.getString("BankCode"));
 				cheque.setBranchCode(rs.getString("BranchCode"));
 				cheque.setBranchDesc(rs.getString("BranchDesc"));
