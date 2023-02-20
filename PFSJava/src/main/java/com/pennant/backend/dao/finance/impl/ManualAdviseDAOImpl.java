@@ -2383,8 +2383,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS");
 		sql.append(" From ManualAdvise ma ");
 		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID");
-		sql.append(" Where ma.FinId = ? ");
-		sql.append(" and ma.AdviseType = ?");
+		sql.append(" Where ma.FinId = ? and ma.AdviseType = ?");
 
 		if (!ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
 			sql.append(" and ValueDate <= ?");
