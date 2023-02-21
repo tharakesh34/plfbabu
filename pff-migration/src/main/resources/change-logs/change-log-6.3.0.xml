@@ -13490,5 +13490,13 @@
 		<dropForeignKeyConstraint baseTableName="FinFlagsHeader_Temp" constraintName="fk_flagsheader_t_finid"/>
 		<dropForeignKeyConstraint baseTableName="FinFlagsHeader" constraintName="fk_flagsheader_finid"/>
 	</changeSet>
+	
+	<changeSet id="PSD#219091" author="murthy.y">
+		<sql>
+         	<![CDATA[
+            	Update ErrorDetails Set Message = 'Total Excess available {0} is should be greater than the overdue amount {1}.' Where code = 'REFUND_006'
+         	]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog> 

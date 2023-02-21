@@ -76,17 +76,23 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 			overDueAmt = finOverDueService.getDueAgnistCustomer(finID);
 		}
 
-		FinanceProfitDetail fpd = profitDetailsDAO.getFinProfitDetailsById(finID);
-		FinODDetails od = finODDetailsDAO.getFinODSummary(finID);
-
-		Customer customer = customerDAO.getCustomerForAutoRefund(fpd.getCustId());
+		if (overDueAmt == null) {
+			overDueAmt = BigDecimal.ZERO;
+		}
 
 		List<Rule> rules = ruleDAO.getRuleByModuleAndEvent(RuleConstants.MODULE_AUTOREFUND,
 				RuleConstants.EVENT_AUTOTREFUND, "");
 
 		if (CollectionUtils.isNotEmpty(rules)) {
-			Map<String, Object> executionMap = new HashMap<>();
+			FinanceProfitDetail fpd = profitDetailsDAO.getFinProfitDetailsById(finID);
+			Customer customer = customerDAO.getCustomerForAutoRefund(fpd.getCustId());
+			FinODDetails od = finODDetailsDAO.getFinODSummary(finID);
 
+			if (od == null) {
+				od = new FinODDetails();
+			}
+
+			Map<String, Object> executionMap = new HashMap<>();
 			executionMap.put("CustCtgCode", customer.getCustCtgCode());
 			executionMap.put("CustTypeCode", customer.getCustTypeCode());
 			executionMap.put("FinDivision", fpd.getFinBranch());
