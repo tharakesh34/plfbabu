@@ -2345,9 +2345,6 @@
 		rightName="menuItem_SolutionFactory_DeviationParam"/> -->
 
 	<!-- Master Enquiry -->
-	<menuItem id="menu_Item_CustomerStatusCode"
-		zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerStatusCode/CustomerStatusCodeList.zul"
-		rightName="menuItem_ApplicationMaster_CustomerStatusCode" />
 	<menuItem id="menu_Item_ReasonCategoryEnquiry"
 		zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCategory/ReasonCategoryEnquiryList.zul?enqiryModule=Y"
 		rightName="menuItem_ApplicationMaster_ReasonCategoryEnquiry" />

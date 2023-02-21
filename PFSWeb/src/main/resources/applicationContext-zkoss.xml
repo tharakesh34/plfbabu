@@ -654,20 +654,6 @@
 		<property name="customerNotesTypeService" ref="customerNotesTypeService" />
 	</bean>
 
-	<!--============ Customer Status Codes ============== -->
-
-	<bean id="customerStatusCodeListCtrl"
-		class="com.pennant.webui.applicationmaster.customerstatuscode.CustomerStatusCodeListCtrl" parent="basisListCtrl"
-		scope="prototype">
-		<property name="customerStatusCodeService" ref="customerStatusCodeService" />
-	</bean>
-
-	<bean id="customerStatusCodeDialogCtrl"
-		class="com.pennant.webui.applicationmaster.customerstatuscode.CustomerStatusCodeDialogCtrl" parent="basisCtrl"
-		scope="prototype">
-		<property name="customerStatusCodeService" ref="customerStatusCodeService" />
-	</bean>
-
 	<!-- Finance Credit Review Sub Category -->
 	<bean id="finCreditRevSubCategoryListCtrl"
 		class="com.pennant.webui.customermasters.fincreditrevsubcategory.FinCreditRevSubCategoryListCtrl"

@@ -30,9 +30,7 @@ import java.sql.SQLException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -40,8 +38,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -55,149 +51,6 @@ public class CustomerStatusCodeDAOImpl extends BasicDao<CustomerStatusCode> impl
 
 	public CustomerStatusCodeDAOImpl() {
 		super();
-	}
-
-	/**
-	 * Fetch the Record Customer Status Codes details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return CustomerStatusCode
-	 */
-	@Override
-	public CustomerStatusCode getCustomerStatusCodeById(final String id, String type) {
-		logger.debug("Entering");
-		CustomerStatusCode customerStatusCode = new CustomerStatusCode();
-		customerStatusCode.setId(id);
-		StringBuilder selectSql = new StringBuilder();
-
-		selectSql.append("SELECT CustStsCode, CustStsDescription, DueDays, SuspendProfit,CustStsIsActive,");
-		if (type.contains("View")) {
-			selectSql.append("");
-		}
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  BMTCustStatusCodes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustStsCode =:CustStsCode");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
-		RowMapper<CustomerStatusCode> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerStatusCode.class);
-
-		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
-	}
-
-	/**
-	 * This method Deletes the Record from the BMTCustStatusCodes or BMTCustStatusCodes_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete Customer Status Codes by key CustStsCode
-	 * 
-	 * @param Customer Status Codes (customerStatusCode)
-	 * @param type     (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	public void delete(CustomerStatusCode customerStatusCode, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder();
-
-		deleteSql.append("Delete From BMTCustStatusCodes");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where CustStsCode =:CustStsCode");
-
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
-
-		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-
-			if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method insert new Records into BMTCustStatusCodes or BMTCustStatusCodes_Temp.
-	 * 
-	 * save Customer Status Codes
-	 * 
-	 * @param Customer Status Codes (customerStatusCode)
-	 * @param type     (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public String save(CustomerStatusCode customerStatusCode, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
-
-		insertSql.append("Insert Into BMTCustStatusCodes");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustStsCode, CustStsDescription, DueDays, SuspendProfit, CustStsIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustStsCode, :CustStsDescription, :DueDays, :SuspendProfit,:CustStsIsActive, ");
-		insertSql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		insertSql.append(" :RecordType, :WorkflowId)");
-
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-		return customerStatusCode.getId();
-	}
-
-	/**
-	 * This method updates the Record BMTCustStatusCodes or BMTCustStatusCodes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Customer Status Codes by key CustStsCode and Version
-	 * 
-	 * @param Customer Status Codes (customerStatusCode)
-	 * @param type     (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public void update(CustomerStatusCode customerStatusCode, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder();
-
-		updateSql.append("Update BMTCustStatusCodes");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustStsDescription = :CustStsDescription,");
-		updateSql.append(" DueDays=:DueDays, SuspendProfit=:SuspendProfit,CustStsIsActive = :CustStsIsActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		updateSql.append(
-				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where CustStsCode =:CustStsCode ");
-		if (!type.endsWith("_Temp")) {
-			updateSql.append(" AND Version= :Version-1");
-		}
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
 	}
 
 	/**
