@@ -8502,16 +8502,18 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 	@Override
 	public boolean doProcessTerminationExcess(FinReceiptData receiptData) {
-		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		FinReceiptData frd = receiptData.copyEntity();
+
+		FinReceiptHeader rch = frd.getReceiptHeader();
 		BigDecimal totalClosureAmt = rch.getClosureThresholdLimit().add(rch.getReceiptAmount());
-		ReceiptDTO receiptDTO = prepareReceiptDTO(receiptData);
+		ReceiptDTO receiptDTO = prepareReceiptDTO(frd);
 		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 
-		if (receiptData.getExcessAvailable().compareTo(BigDecimal.ZERO) == 0) {
-			calcuateDues(receiptData);
+		if (frd.getExcessAvailable().compareTo(BigDecimal.ZERO) == 0) {
+			calcuateDues(frd);
 		}
 
-		if (rch.getReceiptAmount().add(receiptData.getExcessAvailable()).compareTo(calcClosureAmt) >= 0) {
+		if (rch.getReceiptAmount().add(frd.getExcessAvailable()).compareTo(calcClosureAmt) >= 0) {
 			return false;
 		}
 
@@ -8519,11 +8521,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		 * This Value should be set only when Auto Waiver has to do
 		 */
 		receiptData.setCalculatedClosureAmt(calcClosureAmt);
-		if (totalClosureAmt.compareTo(calcClosureAmt) >= 0 && ImplementationConstants.AUTO_WAIVER_REQUIRED_FROMSCREEN) {
-			return false;
-		}
 
-		return true;
+		return !(totalClosureAmt.compareTo(calcClosureAmt) >= 0
+				&& ImplementationConstants.AUTO_WAIVER_REQUIRED_FROMSCREEN);
 	}
 
 	private boolean isExcessUtilized(FinReceiptHeader rch, String method) {
