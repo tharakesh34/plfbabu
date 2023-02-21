@@ -48,16 +48,7 @@ public class RefundBeneficiary {
 		}
 
 		if (pi != null) {
-			String dftBankCode = SysParamUtil.getValueAsString(SMTParameterConstants.BANK_CODE);
-
-			if (dftBankCode.equals(pi.getBankBranchCode())) {
-				pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_IFT);
-			} else {
-				pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_NEFT);
-			}
-
-			pi.setFinID(finID);
-			setPartnerBankDetails(pi);
+			setBankDetails(finID, pi);
 
 			return pi;
 		}
@@ -65,8 +56,7 @@ public class RefundBeneficiary {
 		pi = finAdvancePaymentsDAO.getBeneficiary(finID);
 
 		if (pi != null) {
-			pi.setFinID(finID);
-			setPartnerBankDetails(pi);
+			setBankDetails(finID, pi);
 
 			return pi;
 		}
@@ -85,6 +75,19 @@ public class RefundBeneficiary {
 
 		logger.debug(Literal.LEAVING);
 		return pi;
+	}
+
+	private void setBankDetails(long finID, PaymentInstruction pi) {
+		String dftBankCode = SysParamUtil.getValueAsString(SMTParameterConstants.BANK_CODE);
+
+		if (dftBankCode.equals(pi.getBankBranchCode())) {
+			pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_IFT);
+		} else {
+			pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_NEFT);
+		}
+
+		pi.setFinID(finID);
+		setPartnerBankDetails(pi);
 	}
 
 	private PaymentInstruction getPIByPresentment(long finID) {
