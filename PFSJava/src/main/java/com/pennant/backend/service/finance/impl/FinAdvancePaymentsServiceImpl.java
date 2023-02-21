@@ -864,7 +864,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		if (netFinAmount.compareTo(totDisbAmt) != 0 && "#".equals(fm.getAdvType()) && "#".equals(fm.getGrcAdvType())) {
+		if (netFinAmount.compareTo(totDisbAmt) != 0) {
 			if (loanApproved || fm.isQuickDisb()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmt, ccyFormat);
