@@ -897,6 +897,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				this.btnSave.setVisible(false);
 				this.btnNotes.setVisible(false);
 				this.btnGen.setVisible(false);
+				this.includeCoAppCust.setDisabled(true);
 
 				this.readOnlyComponent(true, this.accountType);
 				this.readOnlyComponent(true, this.bankBranchID);

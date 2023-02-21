@@ -937,7 +937,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Finance/Overdraft/OverdraftTransactionsDialog.zul";
 		} else if ("FINCHECKENQ".equals(this.enquiryType)) {
-			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_Cheque_Detail_Header.value"));
+			this.btnPrint.setVisible(false);
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_Cheque_Enquiry.value"));
 
 			ChequeHeader ch = chequeHeaderService.getApprovedChequeHeaderForEnq(this.finID);
 
