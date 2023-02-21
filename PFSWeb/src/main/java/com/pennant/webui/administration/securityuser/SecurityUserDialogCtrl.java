@@ -3025,9 +3025,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		cluster.setParent(hbox);
 		cluster.setMandatoryStyle(true);
-		cluster.getLabel().setStyle("white-space: ellipsis;");
 		cluster.addForward("onFulfill", self, "onChangeParentCluster", row);
-		// hbox.setStyle("padding-top:10px");
 		// cluster.setInputAllowed(false);
 
 		Cluster cl = new Cluster();
@@ -3035,6 +3033,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			cl.setId(division.getParentCluster());
 			cl.setCode(division.getParentClusterCode());
 			cl.setName(division.getParentClusterName());
+			cluster.getLabel().setValue("...");
+			cluster.getLabel().setTooltiptext(division.getParentClusterName());
 			cluster.setObject(cl);
 			onChangeParentCluster(row);
 		}
@@ -3097,11 +3097,14 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			ocluster = (Cluster) object;
 			cluster.setValue(ocluster.getCode());
 			cluster.setDescription(ocluster.getName());
+			cluster.getLabel().setValue("...");
+			cluster.getLabel().setTooltiptext(ocluster.getName());
 			cluster.setObject(ocluster);
 		}
 
 		ExtendedCombobox branches = (ExtendedCombobox) getComponent(row, 7);
 		branches.setValue("", "");
+		branches.setSelectedValues(new HashMap<>());
 
 		doSetBranchFilter(row);
 	}
