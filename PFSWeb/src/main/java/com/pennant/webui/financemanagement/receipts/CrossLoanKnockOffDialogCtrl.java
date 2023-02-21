@@ -251,6 +251,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	protected Button btnReceipt;
 	protected Button btnChangeReceipt;
 	protected Button btnCalcReceipts;
+	protected Decimalbox remBalAfterAllocation;
 
 	private CustomerDetailsService customerDetailsService;
 	private ReceiptService receiptService;
@@ -1477,11 +1478,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			}
 		}
 
-		if (isSchdFee) {
-			this.lhSchFee.setVisible(true);
-		} else {
-			this.lhSchFee.setVisible(false);
-		}
+		this.lhSchFee.setVisible(isSchdFee);
 
 		// Clear all the listitems in listbox
 		this.listBoxSchedule.getItems().clear();
@@ -1508,10 +1505,20 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			map.put("paymentDetailsMap", rpyDetailsMap);
 			map.put("penaltyDetailsMap", penaltyDetailsMap);
 			map.put("window", this.windowCrossLoanKnockOffDialog);
+			map.put("formatter", formatter);
 
 			finRender.render(map, prvSchDetail, false, true, true, aFinScheduleData.getFinFeeDetailList(), showRate,
 					false);
-			if (i == sdSize - 1) {
+			boolean lastRecord = false;
+			if (aScheduleDetail.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && !financeMain.isSanBsdSchdle()
+					&& !(financeMain.isInstBasedSchd())) {
+				if (!(financeMain.isManualSchedule())
+						|| aScheduleDetail.getSchDate().compareTo(financeMain.getMaturityDate()) == 0) {
+					lastRecord = true;
+				}
+			}
+
+			if (i == sdSize - 1 || lastRecord) {
 				finRender.render(map, prvSchDetail, true, true, true, aFinScheduleData.getFinFeeDetailList(), showRate,
 						false);
 				break;
@@ -2470,23 +2477,33 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	}
 
 	private void addExcessAmt() {
-		/*
-		 * if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0) { Listitem item = new Listitem();
-		 * Listcell lc = null; item = new Listitem(); lc = new
-		 * Listcell(Labels.getLabel("label_RecceiptDialog_ExcessType_EXCESS")); lc.setStyle("font-weight:bold;");
-		 * lc.setParent(item);
-		 * 
-		 * lc = new Listcell(); lc.setStyle("font-weight:bold;color: #191a1c;"); lc.setParent(item);
-		 * 
-		 * lc = new Listcell(); lc.setStyle("font-weight:bold;color: #191a1c;"); lc.setParent(item);
-		 * 
-		 * lc = new Listcell(); lc.setStyle("font-weight:bold;color: #191a1c;"); lc.setParent(item);
-		 * 
-		 * lc = new Listcell(PennantApplicationUtil.amountFormate(receiptData.getRemBal(), formatter));
-		 * 
-		 * lc.setId("ExcessAmount"); lc.setStyle("text-align:right;"); lc.setParent(item);
-		 * this.listBoxPastdues.appendChild(item); }
-		 */
+		if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0) {
+			Listitem item = new Listitem();
+			Listcell lc = null;
+			item = new Listitem();
+			lc = new Listcell(Labels.getLabel("label_RecceiptDialog_ExcessType_EXCESS"));
+			lc.setStyle("font-weight:bold;");
+			lc.setParent(item);
+
+			lc = new Listcell();
+			lc.setStyle("font-weight:bold;color: #191a1c;");
+			lc.setParent(item);
+
+			lc = new Listcell();
+			lc.setStyle("font-weight:bold;color: #191a1c;");
+			lc.setParent(item);
+
+			lc = new Listcell();
+			lc.setStyle("font-weight:bold;color: #191a1c;");
+			lc.setParent(item);
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(receiptData.getRemBal(), formatter));
+
+			lc.setId("ExcessAmount");
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+			this.listBoxPastdues.appendChild(item);
+		}
 	}
 
 	private void createAllocateItem(ReceiptAllocationDetail allocate, boolean isManAdv, String desc, int idx) {
@@ -4473,7 +4490,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				this.excessAdjustTo.setDisabled(true);
 			}
 		}
-
+		
+		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBalAfterAllocation, formatter));
 	}
 
 	/**

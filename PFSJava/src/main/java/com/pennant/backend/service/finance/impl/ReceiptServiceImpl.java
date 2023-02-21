@@ -5671,6 +5671,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		FinanceDetail fd = rd.getFinanceDetail();
 		Cloner cloner = new Cloner();
+		List<FinanceScheduleDetail> finSchdDtls = cloner
+				.deepClone(rd.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
@@ -5735,6 +5737,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		receiptCalculator.initiateReceipt(rd, false);
+		schdData.setFinanceScheduleDetails(finSchdDtls);
 		schdData.setFeeEvent(eventCode);
 
 		return rd;
