@@ -571,6 +571,15 @@ public class FeeCalculator {
 			break;
 		case PennantConstants.FEE_CALCULATEDON_PAYAMOUNT:
 			calculatedAmt = rd.getReceiptHeader().getPartPayAmount();
+
+			if (calculatedAmt == null || calculatedAmt.compareTo(BigDecimal.ZERO) < 0) {
+				calculatedAmt = BigDecimal.ZERO;
+			}
+
+			if (calculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
+				calculatedAmt = calculatedAmt.add(rd.getReceiptHeader().getTotalFees().getPaidAmount());
+			}
+
 			break;
 		// part payment fee calculation
 		case PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL:
