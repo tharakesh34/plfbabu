@@ -213,11 +213,12 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 					break;
 				}
 
-				BigDecimal available = excess.getBalanceAmt();
+				BigDecimal amount = excess.getBalanceAmt();
 
-				if (transferAmount.compareTo(available) >= 0) {
-					transferAmount = transferAmount.subtract(available);
+				if (transferAmount.compareTo(amount) >= 0) {
+					transferAmount = transferAmount.subtract(amount);
 				} else {
+					amount = transferAmount;
 					transferAmount = BigDecimal.ZERO;
 				}
 
@@ -228,7 +229,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 				transfer.setTransferFromType(exc.getTransferFromType());
 				transfer.setTransferToType(exc.getTransferToType());
 				transfer.setTransferDate(excess.getValueDate() == null ? appDate : excess.getValueDate());
-				transfer.setTransferAmount(available);
+				transfer.setTransferAmount(amount);
 				transfer.setTransferFromId(excess.getExcessID());
 				transfer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				transfer.setLastMntBy(exc.getApprovedBy());
