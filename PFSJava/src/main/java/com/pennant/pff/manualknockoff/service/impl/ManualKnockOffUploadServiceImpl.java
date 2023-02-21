@@ -28,6 +28,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -174,7 +175,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			uad.setRootId(String.valueOf(alloc.getFeeId()));
 			uad.setAllocationType(allocationType);
 			uad.setReferenceCode(alloc.getCode());
-			uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
+			uad.setStrPaidAmount(String.valueOf(PennantApplicationUtil.formateAmount(alloc.getAmount(), 2)));
 
 			receiptDataValidator.validateAllocations(uad);
 
@@ -206,6 +207,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 			TransactionStatus txStatus = null;
 
+			Date appDate = SysParamUtil.getAppDate();
+
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
 
@@ -216,6 +219,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				int failRecords = 0;
 
 				for (ManualKnockOffUpload fc : details) {
+					fc.setAppDate(appDate);
 					fc.setAllocations(manualKnockOffUploadDAO.getAllocations(fc.getId(), header.getId()));
 					doValidate(header, fc);
 					fc.setUserDetails(header.getUserDetails());
@@ -283,10 +287,10 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		rud.setReference(fc.getReference());
 		rud.setFinID(fc.getReferenceID());
 		rud.setAllocationType(fc.getAllocationType());
-		Date appDate = SysParamUtil.getAppDate();
-		rud.setValueDate(appDate);
-		rud.setRealizationDate(appDate);
-		rud.setReceivedDate(appDate);
+
+		rud.setValueDate(fc.getAppDate());
+		rud.setRealizationDate(fc.getAppDate());
+		rud.setReceivedDate(fc.getAppDate());
 		rud.setReceiptAmount(fc.getReceiptAmount());
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		rud.setReceiptMode("E".equals(fc.getExcessType()) ? ReceiptMode.EXCESS : ReceiptMode.PAYABLE);

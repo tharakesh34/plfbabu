@@ -2,6 +2,7 @@ package com.pennanttech.model.knockoff;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -24,6 +25,7 @@ public class ManualKnockOffUpload extends UploadDetails {
 	private List<FinExcessAmount> excessList = new ArrayList<>();
 	private ManualAdvise manualAdvise;
 	private Long receiptID;
+	private Date appDate;
 
 	public ManualKnockOffUpload() {
 		super();
@@ -123,6 +125,14 @@ public class ManualKnockOffUpload extends UploadDetails {
 
 	public void setReceiptID(Long receiptID) {
 		this.receiptID = receiptID;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
 	}
 
 }
