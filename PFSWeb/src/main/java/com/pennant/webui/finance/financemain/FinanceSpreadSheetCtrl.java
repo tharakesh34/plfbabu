@@ -684,8 +684,16 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 		}
 
-		setCellValue(sheet, arr[0], value1);
-		setCellValue(sheet, arr[1], value2);
+		if (value1 == null) {
+			value1 = BigDecimal.ZERO;
+		}
+
+		if (value2 == null) {
+			value2 = BigDecimal.ZERO;
+		}
+
+		setCellValue(sheet, arr[0], PennantApplicationUtil.formateAmount(value1, 2));
+		setCellValue(sheet, arr[1], PennantApplicationUtil.formateAmount(value2, 2));
 	}
 
 	/**
