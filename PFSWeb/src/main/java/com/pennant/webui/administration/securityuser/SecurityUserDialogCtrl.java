@@ -2779,7 +2779,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		branches.setModuleName("Branch");
 		branches.setValueColumn("BranchCode");
-		branches.setDescColumn("BranchDesc");
 		branches.setValidateColumns(new String[] { "BranchCode" });
 
 		String selectedEntity = entity.getSelectedItem().getValue();
@@ -2973,6 +2972,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			clusters.setButtonDisabled(true);
 		} else {
 			clusters.setButtonDisabled(false);
+			clusters.setFilters(new Filter[] { new Filter("clustertype", clusterType.getValue()) });
 		}
 	}
 
@@ -2998,7 +2998,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				if (value.length() > 0) {
 					value.append(",");
 				}
-				value.append(entity);
+
+				Cluster data = (Cluster) cluster.get(entity);
+
+				value.append(data.getCode());
 			}
 		}
 
@@ -3022,6 +3025,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		cluster.setParent(hbox);
 		cluster.setMandatoryStyle(true);
+		cluster.getLabel().setStyle("white-space: ellipsis;");
+		cluster.addForward("onFulfill", self, "onChangeParentCluster", row);
+		// hbox.setStyle("padding-top:10px");
 		// cluster.setInputAllowed(false);
 
 		Cluster cl = new Cluster();
@@ -3057,6 +3063,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		branch.setMultySelection(true);
 		branch.setTooltiptext(value.toString());
+		branch.setModuleName("Branch");
+		branch.setValueColumn("BranchCode");
+		branch.setValidateColumns(new String[] { "BranchCode" });
+
 		branch.setInputAllowed(false);
 		branch.setSelectedValues(division.getBranches());
 		branch.setAttribute("data", division.getBranches());
@@ -3090,6 +3100,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			cluster.setObject(ocluster);
 		}
 
+		ExtendedCombobox branches = (ExtendedCombobox) getComponent(row, 7);
+		branches.setValue("", "");
+
 		doSetBranchFilter(row);
 	}
 
@@ -3100,7 +3113,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		entities.setValueColumn("EntityCode");
 		entities.setDescColumn("EntityDesc");
 		entities.setValidateColumns(new String[] { "EntityCode" });
-		// entities.setWhereClause(" entitycode in (select entity from rmtBranches)");
 		entities.setWhereClause(" entitycode in (select s.entitycode from smtdivisiondetail s" + " where divisioncode ="
 				+ "'" + division.getUserDivision() + "'" + ") ");
 		logger.debug(Literal.LEAVING);
