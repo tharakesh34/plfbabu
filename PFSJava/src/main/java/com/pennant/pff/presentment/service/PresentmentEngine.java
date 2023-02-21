@@ -1122,7 +1122,7 @@ public class PresentmentEngine {
 			String presentmentRef = ph.getReference();
 			String bankAccNo = ph.getPartnerAcctNumber();
 
-			if (externalPresentmentHook != null) {
+			if (externalPresentmentHook != null && !InstrumentType.isDAS(ph.getMandateType())) {
 				externalPresentmentHook.processPresentmentRequest(ph);
 			} else {
 				getPresentmentRequest().sendReqest(idList, ph.getId(), false, ph.getMandateType(), presentmentRef,
