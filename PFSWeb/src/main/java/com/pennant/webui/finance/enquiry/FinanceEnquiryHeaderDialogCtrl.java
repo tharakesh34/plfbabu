@@ -138,6 +138,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -821,7 +822,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("EXCESSENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ExcessEnquiry"));
 			List<FinExcessAmount> excessDetails = getFinExcessAmountDAO().getExcessAmountsByRef(this.finID);
-			List<ManualAdvise> payables = getManualAdviseDAO().getPaybleAdvises(this.finID, "_View");
+			List<ManualAdvise> payables = getManualAdviseDAO().getAdvisesList(this.finID, AdviseType.PAYABLE.id(),
+					"_View");
 			map.put("excessDetails", excessDetails);
 			map.put("payables", payables);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));

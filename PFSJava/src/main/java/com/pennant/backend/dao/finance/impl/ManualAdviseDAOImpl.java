@@ -1600,6 +1600,33 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
+	public List<ManualAdvise> getAdvisesList(long finID, int adviseType, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinID = ? and AdviseType = ? ");
+
+		if (!ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+			sql.append(" and ValueDate <= ?");
+		}
+
+		sql.append(" and (Status is null or status = ?)");
+		sql.append(" order by valuedate, adviseid");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setInt(index++, adviseType);
+
+			if (!ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+				ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
+			}
+
+			ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
+		}, new ManualAdviseRM(type));
+	}
+
+	@Override
 	public List<ManualAdvise> getAdvisesByDueDate(long finID, Date dueDate, String type) {
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinID = ? and DueDate = ?");
