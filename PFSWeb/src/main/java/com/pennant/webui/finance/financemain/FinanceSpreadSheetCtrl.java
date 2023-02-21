@@ -666,7 +666,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		String arr[] = marketValueFiedls.split(",");
 		for (int i = 0; i < this.verifications.size(); i++) {
 			Verification verification = this.verifications.get(i);
-			if (verification.getReinitid() == null) {
+			if (verification.getReinitid() == null && !StringUtils.isEmpty(verification.getFinalValDecision())) {
 				if (verification.getAgencyName() == null) {
 					continue;
 				}
