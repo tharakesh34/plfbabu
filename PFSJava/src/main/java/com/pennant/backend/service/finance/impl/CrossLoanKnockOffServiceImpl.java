@@ -39,6 +39,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.CrossLoanKnockOffService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -489,7 +490,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			uad.setRootId(String.valueOf(alloc.getFeeId()));
 			uad.setAllocationType(Allocation.getCode(alloc.getCode()));
 			uad.setReferenceCode(alloc.getCode());
-			uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
+			uad.setStrPaidAmount(String.valueOf(PennantApplicationUtil.formateAmount(alloc.getAmount(), 2)));
 
 			receiptDataValidator.validateAllocations(uad);
 
