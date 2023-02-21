@@ -422,6 +422,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setApplicationNo(StringUtils.trimToEmpty(financeMain.getApplicationNo()));
 		agreement.setAccountsOfficer(StringUtils.trimToEmpty(financeMain.getLovDescAccountsOfficer()));
 		agreement.setFinCcy(financeMain.getFinCcy());
+		agreement.setSourcingBranch(StringUtils.trimToEmpty(financeMain.getSourcingBranch()));
+		agreement.setLovDescSourcingBranch(StringUtils.trimToEmpty(financeMain.getLovDescSourcingBranch()));
 
 		if (financeMain.isPlanEMIHAlw()) {
 			agreement.setPlanEMIHAlw("PLANNED EMI");
@@ -516,6 +518,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							PennantStaticListUtil.getEntityTypeList()));
 					agreement.setCustSubCategory(PennantStaticListUtil.getlabelDesc(customer.getSubCategory(),
 							PennantStaticListUtil.getSubCategoriesList()));
+
+					agreement.setCustNatureOfBusiness(PennantStaticListUtil.getlabelDesc(customer.getNatureOfBusiness(),
+							PennantStaticListUtil.getNatureofBusinessList()));
 
 					// Customer Employment Details
 					if (detail.getCustomerDetails().getCustEmployeeDetail() != null) {
@@ -995,7 +1000,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						externalLiabilityDetail.setRepayBank(extLiability.getRepayBank());
 						externalLiabilityDetail.setRepayBankName(extLiability.getRepayBankName());
 						externalLiabilityDetail.setOtherFinInstitute(extLiability.getOtherFinInstitute());
-
+						externalLiabilityDetail.setRemarks(extLiability.getRemarks());
 						agreement.getExternalLiabilityDetails().add(externalLiabilityDetail);
 					}
 				}
@@ -4299,6 +4304,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			}
 			collateralData.setColAddrCity(StringUtils.trimToEmpty(cs.getCollateralLoc()));
 			collateralData.setCollateralBankAmt(CurrencyUtil.format(cs.getBankValuation(), formatter));
+			collateralData.setRemarks(StringUtils.trimToEmpty(cs.getRemarks()));
 			agreement.getCollateralData().add(collateralData);
 
 			if (CollectionUtils.isEmpty(agreement.getExtendedDetails())) {

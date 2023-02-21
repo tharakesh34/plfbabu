@@ -266,6 +266,7 @@ public class AgreementDetail {
 
 	// Customer subcategory
 	private String custSubCategory = "";
+	private String custNatureOfBusiness = "";
 
 	private String ltvPerc = "";
 
@@ -1099,6 +1100,8 @@ public class AgreementDetail {
 	 */
 	private String finCcy = ""; // Currency Code
 
+	private String sourcingBranch = "";
+	private String lovDescSourcingBranch = "";
 	private String pftDaysBasis = ""; // Profit Days Basis
 
 	/**
@@ -2858,6 +2861,7 @@ public class AgreementDetail {
 		private String colDesc = "";
 		private String colAddrCity = "";
 		private String colLtv = "";
+		private String remarks = "";
 		private List<ExtendedDetailCollateral> extendedDetailsList = null;
 		private List<CoOwners> coOwnersList = new ArrayList<>();
 		private Map<String, Object> collMap = new HashMap<>();
@@ -2948,6 +2952,14 @@ public class AgreementDetail {
 
 		public void setCollMap(Map<String, Object> collMap) {
 			this.collMap = collMap;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
 		}
 
 		public class CoOwners {
@@ -3873,6 +3885,22 @@ public class AgreementDetail {
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
+	}
+
+	public String getSourcingBranch() {
+		return sourcingBranch;
+	}
+
+	public void setSourcingBranch(String sourcingBranch) {
+		this.sourcingBranch = sourcingBranch;
+	}
+
+	public String getLovDescSourcingBranch() {
+		return lovDescSourcingBranch;
+	}
+
+	public void setLovDescSourcingBranch(String lovDescSourcingBranch) {
+		this.lovDescSourcingBranch = lovDescSourcingBranch;
 	}
 
 	public String getPftDaysBasis() {
@@ -5300,6 +5328,14 @@ public class AgreementDetail {
 
 	public void setCustSubCategory(String custSubCategory) {
 		this.custSubCategory = custSubCategory;
+	}
+
+	public String getCustNatureOfBusiness() {
+		return custNatureOfBusiness;
+	}
+
+	public void setCustNatureOfBusiness(String custNatureOfBusiness) {
+		this.custNatureOfBusiness = custNatureOfBusiness;
 	}
 
 	public String getLtvPerc() {
@@ -7673,6 +7709,7 @@ public class AgreementDetail {
 		private String otherFinInstitute = "";
 		private String bounceInstalmentsInSixMonths = "";
 		private String bounceInstalmentsInTwelveMonths = "";
+		private String remarks = "";
 
 		public String getFinBranchName() {
 			return finBranchName;
@@ -7963,6 +8000,14 @@ public class AgreementDetail {
 
 		public void setBounceInstalmentsInTwelveMonths(String bounceInstalmentsInTwelveMonths) {
 			this.bounceInstalmentsInTwelveMonths = bounceInstalmentsInTwelveMonths;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
 		}
 
 	}
