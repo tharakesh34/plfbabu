@@ -48,13 +48,17 @@ public enum PresentmentError {
 
 	REPRMNT523(""),
 
-	FC_601("Fate Correction already proceessed for this schedule."),
+	FC_601("Fate correction already proceessed for this schedule."),
 
 	FC_602("Presentment is not found for this respective schedule."),
 
-	FC_603("Clearing status in invalid in Fate Correction Upload File"),
+	FC_603("Clearing status in invalid in Fate Correction Upload File."),
 
-	FC_604("If Clearing status is 'B' then BounceCode & BounceRemarks are Mandatory");
+	FC_604("If Clearing status is 'B' then BounceCode & BounceRemarks are Mandatory."),
+
+	FC_605("Latest presentment status should be either bounce or success."),
+
+	FC_606("Latest re-presentment status should be either bounce or success.");
 
 	private String description;
 
