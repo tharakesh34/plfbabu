@@ -1125,23 +1125,21 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			FinRepayHeader rpyHeader = rcd.getRepayHeader();
 			isRcdFound = true;
 
-			if (rpyHeader != null && rpyHeader.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
+			if (rpyHeader != null) {
 				isRcdFound = true;
 				linkedTranId = rpyHeader.getLinkedTranId();
 
-				String erroMessage = reversalExcess(receiptID, rpyHeader.getExcessAmount());
+				if (rpyHeader.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
+					String erroMessage = reversalExcess(receiptID, rpyHeader.getExcessAmount());
 
-				if (erroMessage != null) {
-					return erroMessage;
+					if (erroMessage != null) {
+						return erroMessage;
+					}
 				}
-			}
 
-			if (rpyHeader != null) {
 				if (rpyHeader.getPriAmount().compareTo(BigDecimal.ZERO) > 0) {
 					totalPriAmount = totalPriAmount.add(rpyHeader.getPriAmount());
 				}
-
-				isRcdFound = true;
 
 				if (linkedTranId > 0) {
 					financeRepaymentsDAO.deleteRpyDetailbyLinkedTranId(linkedTranId, finID);
