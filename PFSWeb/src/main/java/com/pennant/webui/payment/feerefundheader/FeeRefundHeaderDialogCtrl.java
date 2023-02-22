@@ -70,6 +70,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -86,6 +87,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
@@ -1106,9 +1108,18 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 			frd.setNewRecord(true);
 			frd.setReceivableID(ma.getAdviseID());
-			frd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
-			frd.setAdviseAmount(ma.getAdviseAmount());
 
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(ma.getTaxComponent())) {
+				Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
+				TaxAmountSplit taxAmountSplit = GSTCalculator.getExclusiveGST(ma.getAdviseAmount(), taxPercentages);
+				BigDecimal totWaivedGSTAmount = CalculationUtil.getTotalWaivedGST(ma);
+				frd.setAdviseAmount(ma.getAdviseAmount().subtract(ma.getWaivedAmount()).subtract(totWaivedGSTAmount)
+						.add(taxAmountSplit.gettGST()));
+			} else {
+				frd.setAdviseAmount(ma.getAdviseAmount().subtract(ma.getWaivedAmount()));
+			}
+
+			frd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
 			frd.setPayableFeeTypeID(pFeeType.getFeeTypeID());
 			frd.setPayableFeeTypeCode(pFeeType.getRecvFeeTypeCode());
 			frd.setPayableFeeTypeDesc(pFeeType.getRecvFeeTypeDesc());
@@ -1120,10 +1131,11 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			frd.setReceivableType(Allocation.MANADV);
 
 			BigDecimal totPaidGSTAmount = CalculationUtil.getTotalPaidGST(ma);
-
-			BigDecimal paidAmount = ma.getPaidAmount().subtract(receiptPaidAmt).add(totPaidGSTAmount);
-			frd.setPaidAmount(paidAmount);
-
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(ma.getTaxComponent())) {
+				frd.setPaidAmount(ma.getPaidAmount().subtract(receiptPaidAmt).add(totPaidGSTAmount));
+			} else {
+				frd.setPaidAmount(ma.getPaidAmount().subtract(receiptPaidAmt));
+			}
 			frd.setPrevRefundAmount(getPreviousRefundAmt(finID, frd));
 
 			detailList.add(frd);
