@@ -653,7 +653,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_PrintingLoc.value"),
 								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
-			if (!this.valueDate.isReadonly()) {
+			if (!this.valueDate.isDisabled()) {
 				Date appDate = SysParamUtil.getAppDate();
 				Date todate = DateUtility.addMonths(appDate, 6);
 				this.valueDate.setConstraint(new PTDateValidator(
