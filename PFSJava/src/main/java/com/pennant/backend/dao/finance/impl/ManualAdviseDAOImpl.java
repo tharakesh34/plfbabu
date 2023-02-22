@@ -2254,13 +2254,14 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	@Override
 	public List<ManualAdvise> getPayableAdviseList(long finID, Date maxValueDate) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" AdviseID, AdviseType, FinID, FinReference, FeeTypeID,  AdviseAmount");
+		sql.append(" ma.AdviseID, ma.AdviseType, FinID, FinReference, ma.FeeTypeID, AdviseAmount");
 		sql.append(", PaidAmount, WaivedAmount, ValueDate, BalanceAmt, Status, ft.TaxComponent, ft.TdsReq");
 		sql.append(", PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS");
 		sql.append(", WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS");
 		sql.append(" From ManualAdvise ma");
-		sql.append(" Where FinId = ? and AdviseType = ? and (Status is null or status = ?)");
-		sql.append(" and ValueDate <= ? and (AdviseAmount - PaidAmount - WaivedAmount > ?) ");
+		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID");
+		sql.append(" Where FinId = ? and ma.AdviseType = ? and (Status is null or status = ?)");
+		sql.append(" and ValueDate <= ? and (AdviseAmount - PaidAmount - WaivedAmount) > ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

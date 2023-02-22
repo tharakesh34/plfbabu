@@ -13510,10 +13510,8 @@
 	<changeSet id="PSD#218621" author="saikiran.n">
 		<sql>
 			<![CDATA[
-			
-					DELETE FROM ERRORDETAILS WHERE CODE = 'MNDT05';
-					INSERT INTO ERRORDETAILS VALUES('MNDT05','EN','E','{0} is mandatory for Mandate Type {1}.','null','Approved','null','null','null','null','null',0,
-					CURRENT_TIMESTAMP,1000,0);
+				DELETE FROM ERRORDETAILS WHERE CODE = 'MNDT05';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('MNDT05','EN','E','{0} is mandatory for Mandate Type {1}.','null','Approved','null','null','null','null','null',0, CURRENT_TIMESTAMP,1000,0);
 			]]>
 		</sql>
 	</changeSet>
