@@ -315,15 +315,6 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 	}
 
 	@Override
-	public void updateSettlementStatus(long headerID, String status) {
-		String sql = "Update Fin_Settlement_Header Set SettlementStatus = ? Where HeaderID = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		this.jdbcOperations.update(sql, status, headerID);
-	}
-
-	@Override
 	public FinSettlementHeader getInitiateSettlementByFinID(long finID, String type) {
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinID = ? and SettlementStatus= ?");
@@ -424,5 +415,19 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 
 		return jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
 
+	}
+
+	@Override
+	public void updateSettlementStatus(long finId, String status) {
+		String sql = "Update Fin_Settlement_Header Set SettlementStatus = ? Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setString(index++, status);
+			ps.setLong(index++, finId);
+		});
 	}
 }

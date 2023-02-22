@@ -43,6 +43,7 @@
 	<!-- End Of Month Decider -->
 	<bean id="endOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.EndOfMonthDecider" />
 
+	<bean id="oTSTaskLet" class="com.pennant.backend.endofday.tasklet.OTSTasklet" />
 
 	<!-- To be deleted -->
 

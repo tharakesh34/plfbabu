@@ -1645,7 +1645,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	public List<FinReceiptHeader> getSettlementReceipts(long finID, Date fromDate) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptId, ReceiptModeStatus From FinReceiptHeader");
-		sql.append(" Where FinId = ? and receiptDate >= ? and excessAdjustTo = ? and ReceiptModeStatus  in (?, ?)");
+		sql.append(" Where FinId = ? and receiptDate <= ? and excessAdjustTo = ? and ReceiptModeStatus  in (?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

@@ -116,7 +116,7 @@
 		<property name="accrualService" ref="accrualService" />
 	</bean>
 	<!-- Date Service -->
-	<bean id="dateService" class="com.pennant.app.core.DateService" parent="sequenceDao"/>
+	<bean id="dateService" class="com.pennant.app.core.DateService" parent="sequenceDao" />
 	<!-- Date rollover -->
 	<bean id="dateRollOverService" class="com.pennant.app.core.DateRollOverService" parent="serviceHelper">
 	</bean>
@@ -151,8 +151,8 @@
 	<bean id="customerQueuingDAO" class="com.pennant.eod.dao.impl.CustomerQueuingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
-	<bean id="eodCustomerQueueDAO" class="com.pennant.pff.eod.dao.impl.EODCustomerQueueDAOImpl"  parent="sequenceDao"/>
+
+	<bean id="eodCustomerQueueDAO" class="com.pennant.pff.eod.dao.impl.EODCustomerQueueDAOImpl" parent="sequenceDao" />
 
 	<bean id="customerGroupQueuingDAO" class="com.pennant.eod.dao.impl.CustomerGroupQueuingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
@@ -279,6 +279,8 @@
 	<!-- Check Details -->
 	<bean id="finCheckListDetailService" class="com.pennant.backend.service.finance.impl.CheckListDetailServiceImpl">
 		<property name="financeCheckListReferenceDAO" ref="financeCheckListReferenceDAO" />
+		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 	</bean>
 
 	<bean id="financeCheckListReferenceDAO"
@@ -557,9 +559,15 @@
 	<bean id="covenantsDAO" class="com.pennant.backend.dao.finance.covenant.impl.CovenantsDAOImpl"
 		parent="sequenceDao" />
 
+	<bean id="checkListDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.CheckListDetailDAOImpl"
+		parent="basicDao" />
+
 	<!-- checklist detail service -->
 	<bean id="checkListDetailService" class="com.pennant.backend.service.finance.impl.CheckListDetailServiceImpl">
 		<property name="financeCheckListReferenceDAO" ref="financeCheckListReferenceDAO" />
+		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="checkListDetailDAO" ref="checkListDetailDAO" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 	</bean>
 
 	<!-- FinMandate service -->
@@ -675,7 +683,10 @@
 
 	<bean id="closureService" class="com.pennanttech.pff.closure.service.impl.ClosureService" />
 
-	<bean id="receiptService" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" />
+	<bean name="receiptService" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl">
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="repaymentProcessUtil" ref="repaymentProcessUtil" />
+	</bean>
 
 	<bean id="depositDetailsDAO" class="com.pennant.backend.dao.receipts.impl.DepositDetailsDAOImpl"
 		parent="sequenceDao" />
@@ -718,7 +729,11 @@
 		parent="sequenceDao" />
 	<bean id="ruleService" class="com.pennant.backend.service.rulefactory.impl.RuleServiceImpl" />
 	<bean id="manualScheduleService"
-		class="com.pennant.backend.service.finance.manual.schedule.impl.ManualScheduleServiceImpl" />
+		class="com.pennant.backend.service.finance.manual.schedule.impl.ManualScheduleServiceImpl">
+		<property name="manualScheduleDAO" ref="manualScheduleDAO" />
+	</bean>
+	<bean id="manualScheduleDAO" class="com.pennant.backend.dao.finance.manual.schedule.impl.ManualScheduleDAOImpl"
+		parent="sequenceDao" />
 	<bean id="finTypeFeesDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeFeesDAOImpl" parent="sequenceDao" />
 	<bean id="extendedFieldExtensionService"
 		class="com.pennant.backend.service.extendedfieldsExtension.impl.ExtendedFieldExtensionServiceImpl" />
@@ -726,9 +741,9 @@
 		parent="basicDao" />
 	<bean id="financeWorkFlowService" class="com.pennant.backend.service.lmtmasters.impl.FinanceWorkFlowServiceImpl" />
 	<bean id="jointAccountDetailService"
-		class="com.pennant.backend.service.finance.impl.JointAccountDetailServiceImpl" />
-	<bean id="customerDetailsService"
-		class="com.pennant.backend.service.customermasters.impl.CustomerDetailsServiceImpl" />
+		class="com.pennant.backend.service.finance.impl.JointAccountDetailServiceImpl">
+		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
+	</bean>
 	<bean id="samplingService" class="com.pennanttech.pff.service.sampling.SamplingServiceImpl" />
 	<bean id="customerIncomeDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerIncomeDAOImpl"
 		parent="sequenceDao" />
@@ -739,8 +754,57 @@
 
 	<bean id="partPayAndEarlySettleValidator"
 		class="com.pennant.backend.service.finance.PartPayAndEarlySettleValidator" />
-		
-	<bean id="feeWaiverCancelService" class="com.pennant.backend.service.finance.impl.FeeWaiverCancelServiceImpl"/>
+
+	<bean id="feeWaiverCancelService" class="com.pennant.backend.service.finance.impl.FeeWaiverCancelServiceImpl" />
+
+	<bean id="crossLoanKnockOffDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanKnockOffDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="settlementDAO" class="com.pennant.pff.settlement.dao.impl.SettlementDAOImpl" parent="sequenceDao" />
+
+	<bean name="settlementService" class="com.pennant.pff.settlement.service.impl.SettlementServiceImpl">
+		<property name="receiptService" ref="receiptService" />
+	</bean>
+
+	<bean id="settlementScheduleDAO" class="com.pennant.pff.settlement.dao.impl.SettlementScheduleDAOImpl"
+		parent="sequenceDao" />
+
+	<bean name="customerDetailsService"
+		class="com.pennant.backend.service.customermasters.impl.CustomerDetailsServiceImpl">
+		<property name="incomeDetailDAO" ref="incomeDetailDAO" />
+		<property name="custEmployeeDetailDAO" ref="custEmployeeDetailDAO" />
+		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="primaryAccountDAO" ref="primaryAccountDAO" />
+		<property name="directorDetailDAO" ref="directorDetailDAO" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="customerPhoneNumberDAO" ref="customerPhoneNumberDAO" />
+		<property name="customerEMailDAO" ref="customerEMailDAO" />
+		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
+		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
+		<property name="customerChequeInfoDAO" ref="customerChequeInfoDAO" />
+		<property name="gstDetailDAO" ref="gstDetailDAO" />
+		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
+		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
+		<property name="externalLiabilityDAO" ref="externalLiabilityDAO" />
+		<property name="pinCodeDAO" ref="pinCodeDAO" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="customerIncomeDAO" ref="customerIncomeDAO" />
+		<property name="countryDAO" ref="countryDAO" />
+		<property name="branchDAO" ref="branchDAO" />
+		<property name="salutationDAO" ref="salutationDAO" />
+		<property name="genderDAO" ref="genderDAO" />
+		<property name="beneficiaryDAO" ref="beneficiaryDAO" />
+	</bean>
+
+	<bean id="pinCodeDAO" class="com.pennant.backend.dao.applicationmaster.impl.PinCodeDAOImpl" parent="sequenceDao" />
 	
-	<bean id="crossLoanKnockOffDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanKnockOffDAOImpl" parent="sequenceDao"/>
+	<bean id="countryDAO" class="com.pennant.backend.dao.systemmasters.impl.CountryDAOImpl" parent="basicDao" />
+	
+	<bean id="salutationDAO" class="com.pennant.backend.dao.systemmasters.impl.SalutationDAOImpl" parent="basicDao" />
+	
+	<bean id="genderDAO" class="com.pennant.backend.dao.systemmasters.impl.GenderDAOImpl" parent="basicDao" />
+	
+	<bean id="beneficiaryDAO" class="com.pennant.backend.dao.beneficiary.impl.BeneficiaryDAOImpl" parent="sequenceDao" />
 </beans>

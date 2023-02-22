@@ -4406,7 +4406,10 @@
 		</property>
 	</bean>
 
-	<bean id="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" />
+	<bean id="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" >
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="repaymentProcessUtil" ref="repaymentProcessUtil" />
+	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->
 	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl"

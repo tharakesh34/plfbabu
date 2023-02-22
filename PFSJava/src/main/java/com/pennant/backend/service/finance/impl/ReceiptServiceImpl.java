@@ -344,7 +344,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private AccountingSetDAO accountingSetDAO;
 	private PartPayAndEarlySettleValidator partPayAndEarlySettleValidator;
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
-	private RepaymentProcessUtil repayProcessUtil;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -8289,7 +8288,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		List<Object> returnList = repayProcessUtil.doProcessReceipts(fm, schdList, fpd, rch,
+		List<Object> returnList = repaymentProcessUtil.doProcessReceipts(fm, schdList, fpd, rch,
 				schdData.getFinFeeDetailList(), schdData, valueDate, curBusDate, fd);
 		schdList = (List<FinanceScheduleDetail>) returnList.get(0);
 
@@ -8370,7 +8369,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setNextTaskId("");
 		rch.setWorkflowId(0);
 
-		repayProcessUtil.doSaveReceipts(rch, schdData.getFinFeeDetailList(), true);
+		repaymentProcessUtil.doSaveReceipts(rch, schdData.getFinFeeDetailList(), true);
 		long receiptID = rch.getReceiptID();
 		User logiedInUser = SessionUserDetails.getLogiedInUser();
 
@@ -8390,7 +8389,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		fm = repayProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose(),
+		fm = repaymentProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose(),
 				isPresentProc);
 
 		String closingStatus = fm.getClosingStatus();

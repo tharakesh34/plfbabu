@@ -1033,7 +1033,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 	@Override
 	public void updateLinkedTranId(FinRepayHeader rph) {
-		String sql = "Update FinRepayHeader LinkedTranId = ? Where FinID = ? and RepayId = ?";
+		String sql = "Update FinRepayHeader set LinkedTranId = ? Where FinID = ? and RepayId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
