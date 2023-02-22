@@ -257,7 +257,6 @@ import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
-import com.rits.cloning.Cloner;
 
 public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> implements ReceiptService {
 	private static final Logger logger = LogManager.getLogger(ReceiptServiceImpl.class);
@@ -5669,9 +5668,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		FinanceDetail fd = rd.getFinanceDetail();
-		Cloner cloner = new Cloner();
-		List<FinanceScheduleDetail> finSchdDtls = cloner
-				.deepClone(rd.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
@@ -5708,6 +5704,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		if (peceiptPurpose != ReceiptPurpose.SCHDRPY) {
 			recalEarlyPay(rd);
 		}
+
+		List<FinanceScheduleDetail> finSchdDtls = copy(
+				rd.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 
 		BigDecimal pastDues = receiptCalculator.getTotalNetPastDue(rd);
 		rd.setTotalPastDues(pastDues);
