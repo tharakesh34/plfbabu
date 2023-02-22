@@ -1602,6 +1602,15 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			}
 		}
 
+		if (UploadConstants.FINSOURCE_ID_UPLOAD.equals(mandate.getSourceId())
+				&& StringUtils.isEmpty(mandate.getMICR())) {
+			return getError("MNDT05", "MICR", mandate.getMandateType());
+		}
+
+		if (mandate.getStartDate() == null) {
+			return getError("MNDT05", "Start Date", mandate.getMandateType());
+		}
+
 		if (StringUtils.isNotBlank(periodicity)) {
 			ErrorDetail error = FrequencyUtil.validateFrequency(periodicity);
 			if (error != null && StringUtils.isNotBlank(error.getCode())) {
@@ -2372,6 +2381,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		mndt.setOpenMandate(mandate.isOpenMandate());
 		mndt.setDefaultMandate(mandate.isDefaultMandate());
 		mndt.setInputDate(mandate.getInputDate());
+
+		if (mandate.getStartDate() == null) {
+			mndt.setStartDate(SysParamUtil.getAppDate());
+		}
+
 		mndt.setStartDate(mandate.getStartDate());
 		mndt.setExpiryDate(mandate.getExpiryDate());
 		mndt.setPeriodicity(mandate.getPeriodicity());

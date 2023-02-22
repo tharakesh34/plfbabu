@@ -13494,8 +13494,27 @@
 	<changeSet id="PSD#219091" author="murthy.y">
 		<sql>
          	<![CDATA[
-            	Update ErrorDetails Set Message = 'Total Excess available {0} is should be greater than the overdue amount {1}.' Where code = 'REFUND_006'
+            	Update ErrorDetails Set Message = 'Total Excess available {0} is should be greater than the overdue amount {1}.' Where code = 'REFUND_006';
          	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#218611" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_COLUMN SET CONSTRAINTTYPE = 'O'  WHERE NAME = 'MICR' AND TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID  IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANDATES_UPLOAD'));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#218621" author="saikiran.n">
+		<sql>
+			<![CDATA[
+			
+					DELETE FROM ERRORDETAILS WHERE CODE = 'MNDT05';
+					INSERT INTO ERRORDETAILS VALUES('MNDT05','EN','E','{0} is mandatory for Mandate Type {1}.','null','Approved','null','null','null','null','null',0,
+					CURRENT_TIMESTAMP,1000,0);
+			]]>
 		</sql>
 	</changeSet>
 
