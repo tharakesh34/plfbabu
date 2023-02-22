@@ -93,9 +93,7 @@ public class AutoRefundProcess {
 
 			logger.debug("Auto Refund Process completed for Loan {}", finID);
 
-			if (!"REFUND_006".equals(arl.getError().getCode())) {
-				list.add(arl);
-			}
+			list.add(arl);
 
 			if (list.size() == 500) {
 				autoRefundService.save(list);
