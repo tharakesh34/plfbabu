@@ -424,6 +424,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setFinCcy(financeMain.getFinCcy());
 		agreement.setSourcingBranch(StringUtils.trimToEmpty(financeMain.getSourcingBranch()));
 		agreement.setLovDescSourcingBranch(StringUtils.trimToEmpty(financeMain.getLovDescSourcingBranch()));
+		agreement.setSanctionedDate(DateUtil.formatToLongDate(financeMain.getSanctionedDate()));
 
 		if (financeMain.isPlanEMIHAlw()) {
 			agreement.setPlanEMIHAlw("PLANNED EMI");
@@ -960,12 +961,13 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						externalLiabilityDetail.setOutStandingAmt(
 								CurrencyUtil.format(extLiability.getOutstandingBalance(), formatter));
 						externalLiabilityDetail.setLoanDate(DateUtil.formatToLongDate(extLiability.getFinDate()));
-						if("A".equals(extLiability.getFinStatus())) {
+						if ("A".equals(extLiability.getFinStatus())) {
 							externalLiabilityDetail.setStatus("Active");
-						}else if("I".equals(extLiability.getFinStatus())) {
+						} else if ("I".equals(extLiability.getFinStatus())) {
 							externalLiabilityDetail.setStatus("Inactive");
-						}else {
-						externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getCustStatusDesc()));
+						} else {
+							externalLiabilityDetail
+									.setStatus(StringUtils.trimToEmpty(extLiability.getCustStatusDesc()));
 						}
 
 						externalLiabilityDetail.setSeqNo(String.valueOf(extLiability.getSeqNo()));

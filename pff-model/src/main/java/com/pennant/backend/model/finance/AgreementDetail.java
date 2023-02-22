@@ -1103,6 +1103,7 @@ public class AgreementDetail {
 	private String sourcingBranch = "";
 	private String lovDescSourcingBranch = "";
 	private String pftDaysBasis = ""; // Profit Days Basis
+	private String sanctionedDate = "";
 
 	/**
 	 * Provides current loan Branch Code.
@@ -3901,6 +3902,14 @@ public class AgreementDetail {
 
 	public void setLovDescSourcingBranch(String lovDescSourcingBranch) {
 		this.lovDescSourcingBranch = lovDescSourcingBranch;
+	}
+
+	public String getSanctionedDate() {
+		return sanctionedDate;
+	}
+
+	public void setSanctionedDate(String sanctionedDate) {
+		this.sanctionedDate = sanctionedDate;
 	}
 
 	public String getPftDaysBasis() {
