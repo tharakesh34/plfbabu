@@ -2253,31 +2253,54 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public List<ManualAdvise> getPayableAdviseList(long finID, Date maxValueDate) {
-		StringBuilder sql = new StringBuilder(" SELECT MA.ADVISEID, MA.ADVISEAMOUNT,");
-		sql.append(" MA.PAIDAMOUNT, MA.WAIVEDAMOUNT, MA.VALUEDATE, MA.POSTDATE, MA.RESERVEDAMT ,MA.BALANCEAMT, ");
-		sql.append(" MA.FEETYPECODE,MA.FEETYPEDESC FROM MANUALADVISE_Aview MA");
-		sql.append(" INNER JOIN FEETYPES FT ON FT.FEETYPEID = MA.FEETYPEID AND FT.ALLOWAUTOREFUND = '1' ");
-		sql.append(
-				" WHERE MA.FINID = ? AND MA.ADVISETYPE = ? AND MA.VALUEDATE <= ? AND (MA.ADVISEAMOUNT-MA.PAIDAMOUNT-MA.WAIVEDAMOUNT > 0) ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AdviseID, AdviseType, FinID, FinReference, FeeTypeID,  AdviseAmount");
+		sql.append(", PaidAmount, WaivedAmount, ValueDate, BalanceAmt, Status, ft.TaxComponent, ft.TdsReq");
+		sql.append(", PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS");
+		sql.append(", WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS");
+		sql.append(" From ManualAdvise ma");
+		sql.append(" Where FinId = ? and AdviseType = ? and (Status is null or status = ?)");
+		sql.append(" and ValueDate <= ? and (AdviseAmount - PaidAmount - WaivedAmount > ?) ");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, finID);
+			ps.setInt(++index, AdviseType.PAYABLE.id());
+			ps.setString(++index, PennantConstants.MANUALADVISE_MAINTAIN);
+			ps.setDate(++index, JdbcUtil.getDate(maxValueDate));
+			ps.setBigDecimal(++index, BigDecimal.ZERO);
+		}, (rs, rowNum) -> {
 			ManualAdvise ma = new ManualAdvise();
 
-			ma.setAdviseID(rs.getLong("ADVISEID"));
-			ma.setAdviseAmount(rs.getBigDecimal("ADVISEAMOUNT"));
-			ma.setPaidAmount(rs.getBigDecimal("PAIDAMOUNT"));
-			ma.setWaivedAmount(rs.getBigDecimal("WAIVEDAMOUNT"));
-			ma.setValueDate(rs.getTimestamp("VALUEDATE"));
-			ma.setPostDate(rs.getTimestamp("POSTDATE"));
-			ma.setReservedAmt(rs.getBigDecimal("RESERVEDAMT"));
-			ma.setBalanceAmt(rs.getBigDecimal("BALANCEAMT"));
-			ma.setFeeTypeCode(rs.getString("FEETYPECODE"));
-			ma.setFeeTypeDesc(rs.getString("FEETYPEDESC"));
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setAdviseType(rs.getInt("AdviseType"));
+			ma.setFinID(rs.getLong("FinID"));
+			ma.setFinReference(rs.getString("FinReference"));
+			ma.setFeeTypeID(rs.getLong("FeeTypeID"));
+			ma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setValueDate(rs.getTimestamp("ValueDate"));
+			ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			ma.setStatus(rs.getString("Status"));
+			ma.setTaxComponent(rs.getString("TaxComponent"));
+			ma.setTdsReq(rs.getBoolean("TdsReq"));
+			ma.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+			ma.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+			ma.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+			ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+			ma.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+			ma.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+			ma.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+			ma.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+			ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+			ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
 
 			return ma;
-		}, finID, AdviseType.PAYABLE.id(), maxValueDate);
+		});
 	}
 
 	@Override

@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -80,6 +79,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -848,7 +848,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				Date valueDate = md.getValueDate();
 
 				if (!PennantConstants.MANUALADVISE_CANCEL.equals(md.getStatus())
-						&& DateUtility.compare(valueDate, fm.getMaturityDate()) > 0) {
+						&& DateUtil.compare(valueDate, fm.getMaturityDate()) > 0) {
 					md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
 					md.setAdviseID(md.getAdviseID());
 
