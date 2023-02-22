@@ -590,6 +590,23 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 				extDataMap.put("PB_ReceiptAmount", receiptHeader.getReceiptAmount());
 				extDataMap.put("ae_toExcessAmt", receiptHeader.getReceiptAmount());
 
+				switch (receiptHeader.getExcessAdjustTo()) {
+				case RepayConstants.EXCESSADJUSTTO_EXCESS:
+					extDataMap.put("ae_toExcessAmt", receiptHeader.getReceiptAmount());
+					break;
+				case RepayConstants.EXCESSADJUSTTO_EMIINADV:
+					extDataMap.put("ae_toEmiAdvance", receiptHeader.getReceiptAmount());
+					break;
+				case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+					extDataMap.put("ae_toTExcessAmt", receiptHeader.getReceiptAmount());
+					break;
+				case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+					extDataMap.put("ae_toSettlement", receiptHeader.getReceiptAmount());
+					break;
+				default:
+					break;
+				}
+
 				aeEvent.setDataMap(extDataMap);
 
 				FinReceiptDetail rcd = receiptHeader.getReceiptDetails().get(0);

@@ -13525,5 +13525,15 @@
 		     ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#218547" author="saikiran.n">
+		<sql>
+   			<![CDATA[
+         	 	DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REPAY' AND AMOUNTCODE = 'ae_toSettlement';
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES('REPAY', 0, 'ae_toSettlement', 'Settlement Receipt Amount', 1, 1, '1000', CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', '0');
+         	 ]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog> 
