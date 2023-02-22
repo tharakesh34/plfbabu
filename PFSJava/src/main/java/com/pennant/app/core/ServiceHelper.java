@@ -53,7 +53,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
-import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
@@ -104,7 +103,6 @@ abstract public class ServiceHelper {
 	private DataSource dataSource;
 	// customer
 	protected CustomerDAO customerDAO;
-	protected CustomerStatusCodeDAO customerStatusCodeDAO;
 	private CustomerQueuingDAO customerQueuingDAO;
 	// Loan
 	protected FinanceTypeDAO financeTypeDAO;
@@ -281,10 +279,6 @@ abstract public class ServiceHelper {
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
-		this.customerStatusCodeDAO = customerStatusCodeDAO;
 	}
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
