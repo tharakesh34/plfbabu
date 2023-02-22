@@ -9,10 +9,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -47,12 +44,10 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.menu.MainMenu;
 import com.pennanttech.pennapps.web.menu.Menu;
 import com.pennanttech.pennapps.web.menu.MenuItem;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
-
 	private static final long serialVersionUID = 1L;
-
-	private static final Logger logger = LogManager.getLogger(MenuRolesListCtrl.class);
 
 	protected Window window_MenuRolesList;
 	protected Borderlayout borderLayout_MenuRolesList;
@@ -74,7 +69,6 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 	private SearchProcessor searchProcessor;
 
 	private List<MenuItem> menuItemFinalList;
-	private List<MenuItem> menuItemDupList;
 
 	public MenuRolesListCtrl() {
 		super();
@@ -102,11 +96,12 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 	}
 
 	public void onClick$button_MenuRolesList_MenuSearch(Event event) {
+		logger.debug(Literal.ENTERING);
 
 		String opr = String.valueOf(sortOperator_menuName.getSelectedIndex());
 		String menuname = menuName.getValue();
 
-		menuItemDupList = new ArrayList<>();
+		List<MenuItem> menuItemDupList = new ArrayList<>();
 		menuItemDupList.addAll(menuItemFinalList);
 
 		if (!opr.isEmpty() && menuname.isEmpty()) {
@@ -143,22 +138,23 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 
 		getPagedListWrapper().initList(menuItemDupList, listBoxMenuRoles, pagingMenuRolesList);
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnRefresh(Event event) {
+		logger.debug(Literal.ENTERING);
+
 		sortOperator_menuName.setSelectedIndex(0);
 		SearchFilterControl.resetFilters(menuName);
 		getPagedListWrapper().initList(menuItemFinalList, listBoxMenuRoles, pagingMenuRolesList);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnDownload(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		try {
-			createFile();
-		} catch (IOException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		createFile();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -176,67 +172,48 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 		}
 	}
 
-	private void createFile() throws IOException {
+	private void createFile() {
 		int rowIndex = 0;
 		String name = "Menu Roles and Rights";
-		ByteArrayOutputStream bos = null;
-		Workbook workbook = null;
 		Sheet sheet = null;
-		try {
-			workbook = new XSSFWorkbook();
+
+		try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
 			sheet = workbook.createSheet(name);
 
 			Row row = sheet.createRow((int) rowIndex++);
 
 			Cell cell = row.createCell(0);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue("Menu");
 
 			cell = row.createCell(1);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue("Level1");
 
 			cell = row.createCell(2);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue("Level2");
 
 			cell = row.createCell(3);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue("Level3");
 
 			cell = row.createCell(4);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue("Right");
 
 			cell = row.createCell(5);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue("Groups");
 
 			cell = row.createCell(6);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue("Roles");
 
 			for (MenuItem menuItem : MainMenu.getMenuItems()) {
 				rowIndex = createMenu(rowIndex, 0, sheet, menuItem);
 			}
 
-			bos = new ByteArrayOutputStream();
-			workbook.write(bos);
-			workbook.close();
-			Filedownload.save(new AMedia(name, "xlsx", DocType.XLSX.getContentType(), bos.toByteArray()));
-		} catch (Exception e) {
+			workbook.write(stream);
+
+			Filedownload.save(new AMedia(name, "xlsx", DocType.XLSX.getContentType(), stream.toByteArray()));
+		} catch (IOException e) {
 			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		} finally {
-			if (bos != null) {
-				bos.close();
-				bos.flush();
-				bos = null;
-			}
-			if (workbook != null) {
-				workbook = null;
-			}
-			sheet = null;
+			MessageUtil.showMessage(
+					"Unable to generate the file. Please try again later or contact the system administrator.");
 		}
 	}
 
@@ -244,22 +221,18 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 		Row row = sheet.createRow((int) rowIndex++);
 		if (menuItem instanceof Menu) {
 			Cell cell = row.createCell(celIndex++);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue(org.zkoss.util.resource.Labels.getLabel(menuItem.getId()));
 
 			cell = row.createCell(4);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue(menuItem.getRightName());
 
 			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
 				cell = row.createCell(5);
-				cell.setCellType(CellType.STRING);
 				cell.setCellValue(getGroups(menuItem.getRightName(), ","));
 			}
 
 			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
 				cell = row.createCell(6);
-				cell.setCellType(CellType.STRING);
 				cell.setCellValue(getRoles(menuItem.getRightName(), ","));
 			}
 
@@ -269,22 +242,18 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 			}
 		} else {
 			Cell cell = row.createCell(celIndex++);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue(org.zkoss.util.resource.Labels.getLabel(menuItem.getId()));
 
 			cell = row.createCell(4);
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue(menuItem.getRightName());
 
 			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
 				cell = row.createCell(5);
-				cell.setCellType(CellType.STRING);
 				cell.setCellValue(getGroups(menuItem.getRightName(), ","));
 			}
 
 			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
 				cell = row.createCell(6);
-				cell.setCellType(CellType.STRING);
 				cell.setCellValue(getRoles(menuItem.getRightName(), ","));
 			}
 		}
@@ -352,15 +321,14 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, MenuItem menuItem, int count) {
-
+		public void render(Listitem item, MenuItem data, int index) {
 			Listcell lc;
 
-			lc = new Listcell(org.zkoss.util.resource.Labels.getLabel(menuItem.getId()));
+			lc = new Listcell(org.zkoss.util.resource.Labels.getLabel(data.getId()));
 			lc.setParent(item);
 
 			lc = new Listcell();
-			String strGroups = getGroups(menuItem.getRightName(), "\n");
+			String strGroups = getGroups(data.getRightName(), "\n");
 			Label label = new Label();
 			label.setValue(strGroups);
 			label.setMultiline(true);
@@ -368,13 +336,12 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 			lc.setParent(item);
 
 			lc = new Listcell();
-			String strRoles = getRoles(menuItem.getRightName(), "\n");
+			String strRoles = getRoles(data.getRightName(), "\n");
 			Label label1 = new Label();
 			label1.setValue(strRoles);
 			label1.setMultiline(true);
 			lc.appendChild(label1);
 			lc.setParent(item);
-
 		}
 	}
 }
