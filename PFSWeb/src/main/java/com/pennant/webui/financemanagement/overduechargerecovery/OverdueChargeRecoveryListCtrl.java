@@ -111,6 +111,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	protected Listheader listheader_FinODPri; // autowired
 	protected Listheader listheader_FinODPft; // autowired
 	protected Listheader listheader_FinODTot; // autowired
+	protected Textbox chargeAmtPer_header;
 	protected Listheader listheader_FinODCPenalty; // autowired
 	protected Listheader listheader_FinODCWaived; // autowired
 	protected Listheader listheader_FinODCPLPenalty; // autowired

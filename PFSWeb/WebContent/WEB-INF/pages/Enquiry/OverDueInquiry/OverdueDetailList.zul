@@ -52,6 +52,7 @@
 								<listheader id="listheader_FinODPri" label="${c:l('listheader_FinODPri.label')}" sort="false" hflex="true" />
 								<listheader id="listheader_FinODPft" label="${c:l('listheader_FinODPft.label')}" sort="false" hflex="true" />
 								<listheader id="listheader_FinODTot" label="${c:l('listheader_FinODTot.label')}" sort="false" hflex="true" />
+								<listheader id="listheader_FinODCCumPenalty" label="${c:l('listheader_FinODCCumPenalty.label')}" sort="false" hflex="true" />
 								<listheader id="listheader_FinODCPenalty" label="${c:l('listheader_FinODCPenalty.label')}" sort="false"
 									hflex="true" />
 								<listheader id="listheader_FinODCWaived" label="${c:l('listheader_FinODCWaived.label')}" sort="false"
