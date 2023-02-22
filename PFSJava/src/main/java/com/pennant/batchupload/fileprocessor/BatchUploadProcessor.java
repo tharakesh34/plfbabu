@@ -505,7 +505,6 @@ public class BatchUploadProcessor {
 		int lastCellIndex = row.getLastCellNum();
 		for (int i = 0; i < Headers.size(); i++) {
 			Cell cell = row.createCell(lastCellIndex + (i + 1));
-			cell.setCellType(CellType.STRING);
 			cell.setCellValue(Headers.get(i));
 			cell.setCellStyle(style);
 		}
@@ -644,7 +643,6 @@ public class BatchUploadProcessor {
 			Row row = writebleSheet.getRow(cellndex);
 			for (int i = 0; i < response.length; i++) {
 				Cell cell = row.createCell(lastCellIndex + (i + 1));
-				cell.setCellType(CellType.STRING);
 				cell.setCellValue(response[i]);
 			}
 			FileOutputStream outputStream = new FileOutputStream(file);

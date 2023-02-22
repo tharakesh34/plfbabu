@@ -19,7 +19,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -343,7 +342,6 @@ public class CashFlowServiceImpl implements CashFlowService {
 	 */
 	private static void createCell(Row row, int columnCount, String field) {
 		Cell cell = row.createCell(columnCount);
-		cell.setCellType(CellType.STRING);
 		cell.setCellValue(field);
 	}
 
