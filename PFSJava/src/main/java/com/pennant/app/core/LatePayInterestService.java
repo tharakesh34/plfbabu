@@ -72,6 +72,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 		BigDecimal odPri = fod.getFinMaxODPri();
 		BigDecimal odPft = fod.getFinMaxODPft();
+		BigDecimal penaltypaid = fod.getTotPenaltyPaid();
 		fod.setLPIAmt(BigDecimal.ZERO);
 
 		List<OverdueChargeRecovery> schdODCRecoveries = new ArrayList<>();
@@ -86,6 +87,7 @@ public class LatePayInterestService extends ServiceHelper {
 		odcr.setFinCurODPri(odPri);
 		odcr.setFinCurODPft(odPft);
 		odcr.setFinCurODAmt(odPri.add(odPft));
+		odcr.setPenaltyPaid(penaltypaid);
 		odcr.setWaivedAmt(fod.getTotWaived());
 		schdODCRecoveries.add(odcr);
 
