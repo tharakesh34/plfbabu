@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
-import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.systemmasters.DesignationDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
@@ -20,7 +19,6 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 	private static Logger logger = LogManager.getLogger(CustomerInterfaceServiceImpl.class);
 
-	private CustomerStatusCodeDAO customerStatusCodeDAO;
 	private DesignationDAO designationDAO;
 
 	public CustomerInterfaceServiceImpl() {
@@ -131,14 +129,6 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
-	public CustomerStatusCodeDAO getCustomerStatusCodeDAO() {
-		return customerStatusCodeDAO;
-	}
-
-	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
-		this.customerStatusCodeDAO = customerStatusCodeDAO;
-	}
 
 	public DesignationDAO getDesignationDAO() {
 		return designationDAO;

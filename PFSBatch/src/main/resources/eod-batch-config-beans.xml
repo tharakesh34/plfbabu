@@ -136,7 +136,6 @@
 	</bean>
 
 	<bean id="customerInterfaceService" class="com.pennant.Interface.service.impl.CustomerInterfaceServiceImpl">
-		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="designationDAO" ref="designationDAO" />
 	</bean>
 
