@@ -960,7 +960,13 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						externalLiabilityDetail.setOutStandingAmt(
 								CurrencyUtil.format(extLiability.getOutstandingBalance(), formatter));
 						externalLiabilityDetail.setLoanDate(DateUtil.formatToLongDate(extLiability.getFinDate()));
+						if("A".equals(extLiability.getFinStatus())) {
+							externalLiabilityDetail.setStatus("Active");
+						}else if("I".equals(extLiability.getFinStatus())) {
+							externalLiabilityDetail.setStatus("Inactive");
+						}else {
 						externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getCustStatusDesc()));
+						}
 
 						externalLiabilityDetail.setSeqNo(String.valueOf(extLiability.getSeqNo()));
 						externalLiabilityDetail.setFinType(extLiability.getFinType());
