@@ -202,7 +202,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		sql.append(", Progress, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntOn, LastMntBy");
 		sql.append(", Version, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FILE_UPLOAD_HEADER");
-		sql.append(" Where Type = ?");
+		sql.append(" Where Type = ? and Progress != ?");
 
 		StringBuilder whereClause = prepareWhereClause(roleCodes, entityCode, id, fromDate, toDate, stage);
 
@@ -218,6 +218,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			int index = 0;
 
 			ps.setString(++index, type);
+			ps.setInt(++index, Status.IN_PROCESS.getValue());
 
 			if (CollectionUtils.isNotEmpty(roleCodes)) {
 				for (String roleCode : roleCodes) {

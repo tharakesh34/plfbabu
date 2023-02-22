@@ -612,10 +612,6 @@ public class FileUploadList extends Window implements Serializable {
 	private void search(boolean isApprove) {
 		List<FileUploadHeader> list = getUploadHeaders();
 
-		if (isApprove) {
-			list = sortedHeaders(list);
-		}
-
 		listbox.clearSelection();
 
 		if (!"M".equals(this.stage) && !list.isEmpty()) {
@@ -968,6 +964,7 @@ public class FileUploadList extends Window implements Serializable {
 		for (FileUploadHeader header : selectedHeaders) {
 			header.setLastMntBy(this.userId);
 			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			uploadService.updateInProcessStatus(header.getId(), Status.IN_PROCESS.getValue());
 		}
 
 		uploadService.doApprove(selectedHeaders);
