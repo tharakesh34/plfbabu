@@ -15,7 +15,6 @@
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
 		<property name="dataSource" ref="dataSource" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -110,8 +109,7 @@
 	<!-- Date Service -->
 	<bean id="dateService" class="com.pennant.app.core.DateService" parent="sequenceDao" />
 	<!-- Date rollover -->
-	<bean id="dateRollOverService" class="com.pennant.app.core.DateRollOverService" parent="serviceHelper">
-	</bean>
+	<bean id="dateRollOverService" class="com.pennant.app.core.DateRollOverService" parent="serviceHelper" />
 
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
 		<property name="engineExecution" ref="engineExecution" />

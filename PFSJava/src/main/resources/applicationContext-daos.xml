@@ -7085,7 +7085,6 @@
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
 		<property name="dataSource" ref="dataSource" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -7131,8 +7130,7 @@
 	<!-- Late Pay Penalty -->
 	<bean id="latePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService" parent="serviceHelper" />
 	<!-- Late Pay Interest -->
-	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper">
-	</bean>
+	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper" />
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
@@ -7156,8 +7154,7 @@
 		parent="serviceHelper" />
 
 	<!-- Late Pay Buckets -->
-	<bean id="latePayBucketService" class="com.pennant.app.core.LatePayBucketService" parent="serviceHelper">
-	</bean>
+	<bean id="latePayBucketService" class="com.pennant.app.core.LatePayBucketService" parent="serviceHelper" />
 
 	<!-- AccountTypeGroup -->
 	<bean id="accountTypeGroupService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
