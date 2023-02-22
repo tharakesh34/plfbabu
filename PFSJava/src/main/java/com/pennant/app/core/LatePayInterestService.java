@@ -86,6 +86,7 @@ public class LatePayInterestService extends ServiceHelper {
 		odcr.setFinCurODPri(odPri);
 		odcr.setFinCurODPft(odPft);
 		odcr.setFinCurODAmt(odPri.add(odPft));
+		odcr.setWaivedAmt(fod.getTotWaived());
 		schdODCRecoveries.add(odcr);
 
 		if (repayments == null) {
