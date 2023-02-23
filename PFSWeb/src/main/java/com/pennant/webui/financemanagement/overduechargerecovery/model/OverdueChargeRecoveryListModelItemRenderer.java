@@ -89,6 +89,8 @@ public class OverdueChargeRecoveryListModelItemRenderer
 			cummulativePenalityAmt = cummulativePenalityAmt.add(overdueChargeRecovery.getPenalty());
 
 			lc = new Listcell(CurrencyUtil.format(cummulativePenalityAmt, format));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
 
 			lc = new Listcell(CurrencyUtil.format(overdueChargeRecovery.getPenalty(), format));
 			lc.setStyle("text-align:right;");
