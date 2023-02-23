@@ -7387,13 +7387,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				fm.setDeductFeeDisb(actualAmbnt);
 
 				for (FinAdvancePayments fap : fd.getAdvancePaymentsList()) {
-					disbAmount = fap.getAmtToBeReleased();
-					if (disbAmount.compareTo(netfinamnt) != 0) {
-						String[] vprm = new String[2];
-						vprm[0] = PennantApplicationUtil.amountFormate(disbAmount, ccyFormat);
-						vprm[1] = PennantApplicationUtil.amountFormate(netfinamnt, ccyFormat);
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60401", vprm)));
-					}
+					disbAmount = disbAmount.add(fap.getAmtToBeReleased());
+				}
+
+				if (disbAmount.compareTo(netfinamnt) != 0) {
+					String[] vprm = new String[2];
+					vprm[0] = PennantApplicationUtil.amountFormate(disbAmount, ccyFormat);
+					vprm[1] = PennantApplicationUtil.amountFormate(netfinamnt, ccyFormat);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60401", vprm)));
 				}
 			}
 		}
@@ -11123,7 +11124,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return collateralAssignmentPerc;
 
 	}
-	
+
 	private List<AuditDetail> prepareFinFlagHeader(FinanceDetail fd, String auditTranType, String method) {
 		boolean isRcdType = false;
 
@@ -11180,7 +11181,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		return auditDetails;
 	}
-	
+
 	private List<AuditDetail> processingFinFlagHeader(List<AuditDetail> auditDetails, String type) {
 		logger.debug(Literal.ENTERING);
 
@@ -11257,7 +11258,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditDetails;
 
 	}
-
 
 	@Override
 	public String getFinCategory(String finReference) {
