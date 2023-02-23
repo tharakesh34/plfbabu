@@ -41,7 +41,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 			cd.setHeaderID(rs.getLong("ChequeHeaderId"));
 			cd.setBankBranchID(rs.getLong("BankBranchId"));
 			cd.setAccountNo(rs.getString("AccountNo"));
-			cd.setChequeSerialNo(rs.getInt("ChequeSerialNo"));
+			cd.setChequeSerialNumber(rs.getString("ChequeSerialNo"));
 			cd.setChequeDate(JdbcUtil.getDate(rs.getDate("ChequeDate")));
 			cd.seteMIRefNo(rs.getInt("EmiRefNo"));
 			cd.setAmount(rs.getBigDecimal("Amount"));

@@ -207,7 +207,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	public void doWriteBeanToComponents(ChequeDetail chequeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		this.chequeId.setValue(String.valueOf(chequeDetail.getChequeSerialNo()));
+		this.chequeId.setValue(String.valueOf(chequeDetail.getChequeSerialNumber()));
 		this.documentName.setValue(chequeDetail.getDocumentName());
 		this.documentName.setAttribute("data", chequeDetail);
 

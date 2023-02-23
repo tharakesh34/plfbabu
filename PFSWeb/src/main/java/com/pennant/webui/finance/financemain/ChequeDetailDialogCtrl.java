@@ -1196,8 +1196,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			ChequeDetail cd = new ChequeDetail();
 
 			cd.setAccountNo(this.accNumber.getValue());
-			cd.setChequeSerialNo(chequeSerialNum++);
 			doFillBankBranch(cd);
+			cd.setChequeSerialNumber(StringUtils.leftPad("" + chequeSerialNum, 6, "0"));
+			chequeSerialNum = chequeSerialNum + 1;
 			cd.setAccountNo(this.accNumber.getValue());
 
 			cd.setAmount(BigDecimal.ZERO);
@@ -1252,9 +1253,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			this.totNoOfCheques.setValue(totalCheques);
 			chequeDetailList.addAll(cheques);
 
-			cheques = cheques.stream()
-					.sorted((cd1, cd2) -> Integer.compare(cd1.getChequeSerialNo(), cd2.getChequeSerialNo()))
-					.collect(Collectors.toList());
+			cheques = cheques.stream().sorted((cd1, cd2) -> StringUtils.trimToEmpty(cd1.getChequeSerialNumber())
+					.compareTo(cd2.getChequeSerialNumber())).collect(Collectors.toList());
 			doFillCheques(cheques);
 		} else {
 			if (parenttab != null) {
@@ -1355,7 +1355,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		this.accNumber.setValue(cd.getAccountNo());
 		this.accHolderName.setValue(cd.getAccHolderName());
-		this.chequeSerialNo.setValue(cd.getChequeSerialNo());
+		this.chequeSerialNo.setValue(Integer.valueOf(cd.getChequeSerialNumber()));
 		this.bankBranchID.setValue(String.valueOf(cd.getBranchCode()));
 		this.noOfCheques.setValue(ch.getNoOfCheques());
 		this.micr.setValue(cd.getMicr());
@@ -1601,8 +1601,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			accType.clearErrorMessage();
 
-			cheque.setChequeSerialNo(
-					((Intbox) listcell.get(Field.CHEQUE_SERIAL_NO.index()).getFirstChild()).getValue());
+			Integer chequeSerialNo = ((Intbox) listcell.get(Field.CHEQUE_SERIAL_NO.index()).getFirstChild()).getValue();
+			cheque.setChequeSerialNumber(StringUtils.leftPad("" + chequeSerialNo, 6, "0"));
 			cheque.setAccountType(accType.getSelectedItem().getValue().toString());
 			cheque.setAccHolderName(listcell.get(Field.ACC_HOLDER_NAME.index()).getLabel());
 			cheque.setAccountNo(listcell.get(Field.ACCOUNT_NO.index()).getLabel());
@@ -1662,7 +1662,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		int serialNo = ((Intbox) listCells.get(Field.CHEQUE_SERIAL_NO.index()).getFirstChild()).getValue();
 
 		for (ChequeDetail cd : cheques) {
-			int cdSerialNo = cd.getChequeSerialNo();
+			int cdSerialNo = Integer.valueOf(cd.getChequeSerialNumber());
 			String cdIfsc = cd.getIfsc();
 			String cdAccountNo = cd.getAccountNo();
 
@@ -1762,9 +1762,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		setChequeDetailList(cheques);
 
-		cheques = cheques.stream()
-				.sorted((cd1, cd2) -> Integer.compare(cd1.getChequeSerialNo(), cd2.getChequeSerialNo()))
-				.collect(Collectors.toList());
+		cheques = cheques.stream().sorted((cd1, cd2) -> StringUtils.trimToEmpty(cd1.getChequeSerialNumber())
+				.compareTo(cd2.getChequeSerialNumber())).collect(Collectors.toList());
 
 		doFillCheques(cheques);
 	}
@@ -2196,7 +2195,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		for (ChequeDetail cd : cheques) {
 			String recordType = cd.getRecordType();
-			String cdSerialNo = String.valueOf(cd.getChequeSerialNo());
+			String cdSerialNo = String.valueOf(cd.getChequeSerialNumber());
 			String acc = cd.getAccountNo();
 			String cdIfsc = cd.getIfsc();
 
@@ -2355,7 +2354,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	private void setChequeDocuments(ChequeDetail cheque) {
 		for (ChequeDetail cd : chequeDocuments) {
-			if (cd.getChequeSerialNo() == cheque.getChequeSerialNo()) {
+			if (cd.getChequeSerialNumber() == cheque.getChequeSerialNumber()) {
 				cheque.setDocImage(cd.getDocImage());
 				cheque.setDocumentName(cd.getDocumentName());
 			}
@@ -2408,7 +2407,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	private void appendChequeSerialNo(Listitem listitem, ChequeDetail cd) {
 		Intbox intbox = new Intbox();
-		intbox.setValue(cd.getChequeSerialNo());
+		intbox.setValue(Integer.valueOf(cd.getChequeSerialNumber()));
 		intbox.setFormat("000000");
 		intbox.setMaxlength(6);
 		intbox.addForward(Events.ON_CHANGE, this.window, "onChangeChequeSerialNo");

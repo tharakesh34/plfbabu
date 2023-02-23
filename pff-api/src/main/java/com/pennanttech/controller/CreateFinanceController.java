@@ -4515,14 +4515,15 @@ public class CreateFinanceController extends SummaryDetailService {
 		ch.setNewRecord(true);
 
 		BigDecimal totalChequeAmount = BigDecimal.ZERO;
-		int chequeSerialNum = ch.getChequeSerialNo();
+		int serialNum = Integer.valueOf(ch.getChequeSerialNumber());
 
 		List<ChequeDetail> cheques = ch.getChequeDetailList();
 
 		String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 
 		for (ChequeDetail cheque : cheques) {
-			cheque.setChequeSerialNo(chequeSerialNum++);
+			serialNum = serialNum + 1;
+			cheque.setChequeSerialNumber(StringUtils.leftPad("" + serialNum, 6, "0"));
 			cheque.setBankBranchID(ch.getBankBranchID());
 			cheque.setAccHolderName(ch.getAccHolderName());
 			cheque.setAccountNo(ch.getAccountNo());

@@ -38,7 +38,7 @@ public interface ChequeDetailDAO {
 
 	List<ChequeDetail> getChequeDetailList(long headerID, String type);
 
-	boolean isDuplicateKey(long chequeID, long branchID, String accountNo, int chequeSerial, TableType type);
+	boolean isDuplicateKey(long chequeID, long branchID, String accountNo, String chequeSerial, TableType type);
 
 	String save(ChequeDetail cheque, TableType type);
 
@@ -64,5 +64,5 @@ public interface ChequeDetailDAO {
 
 	void deleteCheques(ChequeDetail cheque);
 
-	String getChequeStatus(int chequeSerial, String accountNo);
+	String getChequeStatus(String chequeSerial, String accountNo);
 }

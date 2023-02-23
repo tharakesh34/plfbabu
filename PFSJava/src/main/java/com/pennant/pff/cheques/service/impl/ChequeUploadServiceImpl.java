@@ -32,6 +32,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.cheques.dao.ChequeUploadDAO;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -99,13 +100,16 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						chequeHeader.setBankBranchID(chequeHeader.getChequeDetailList().get(0).getBankBranchID());
 						chequeHeader.setAccHolderName(chequeHeader.getChequeDetailList().get(0).getAccHolderName());
 						chequeHeader.setAccountNo(chequeHeader.getChequeDetailList().get(0).getAccountNo());
-						chequeHeader.setChequeSerialNo(chequeHeader.getChequeDetailList().get(0).getChequeSerialNo());
+						chequeHeader.setChequeSerialNumber(
+								chequeHeader.getChequeDetailList().get(0).getChequeSerialNumber());
 					}
 
 					List<ChequeDetail> cheques = new ArrayList<>();
 
 					List<ChequeDetail> addcheques = new ArrayList<>();
 					List<ChequeDetail> delcheques = new ArrayList<>();
+
+					int chequeSize = 0;
 
 					for (ChequeUpload upload : chequeUploads) {
 						upload.setReferenceID(finID);
@@ -119,9 +123,16 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 						upload.getChequeDetail().setHeaderID(chequeHeader.getId());
 						if (action.equals("A")) {
+							if (InstrumentType.isPDC(upload.getChequeDetail().getChequeType())) {
+								chequeSize++;
+							}
+
 							addcheques.add(upload.getChequeDetail());
 						} else {
 							if (isNotRelizedOrPresent(upload)) {
+								if (InstrumentType.isPDC(upload.getChequeDetail().getChequeType())) {
+									chequeSize--;
+								}
 								delcheques.add(upload.getChequeDetail());
 							} else {
 								ErrorDetail error = ErrorUtil.getError("90508", "Cheque Header ");
@@ -145,7 +156,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 								chequeDetailDAO.deleteCheques(detail);
 							}
 
-							chequeHeader.setNoOfCheques(chequeUploads.size() - delcheques.size());
+							chequeHeader.setNoOfCheques(chequeSize);
 							chequeHeaderDAO.updatesize(chequeHeader);
 						}
 
@@ -210,10 +221,10 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	private boolean isNotRelizedOrPresent(ChequeUpload upload) {
 		ChequeDetail chequeDetail = upload.getChequeDetail();
 
-		int Seq = chequeDetail.getChequeSerialNo();
+		String seq = chequeDetail.getChequeSerialNumber();
 		String AccNo = chequeDetail.getAccountNo();
 
-		String status = chequeDetailDAO.getChequeStatus(Seq, AccNo);
+		String status = chequeDetailDAO.getChequeStatus(seq, AccNo);
 
 		return !(RepayConstants.PAYTYPE_PRESENTMENT.equals(status)
 				|| DisbursementConstants.STATUS_REALIZED.equals(status) || Allocation.BOUNCE.equals(status));

@@ -95,7 +95,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 	}
 
 	@Override
-	public boolean isDuplicateKey(long chequeID, long branchID, String accountNo, int chequeSerial, TableType type) {
+	public boolean isDuplicateKey(long chequeID, long branchID, String accountNo, String chequeSerial, TableType type) {
 		String serialNo = String.valueOf(chequeSerial);
 
 		String sql;
@@ -148,7 +148,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 				ps.setLong(index++, cheque.getHeaderID());
 				ps.setLong(index++, cheque.getBankBranchID());
 				ps.setString(index++, cheque.getAccountNo());
-				ps.setInt(index++, cheque.getChequeSerialNo());
+				ps.setString(index++, cheque.getChequeSerialNumber());
 				ps.setDate(index++, JdbcUtil.getDate(cheque.getChequeDate()));
 				ps.setInt(index++, cheque.geteMIRefNo());
 				ps.setBigDecimal(index++, cheque.getAmount());
@@ -199,7 +199,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			ps.setLong(index++, cheque.getHeaderID());
 			ps.setLong(index++, cheque.getBankBranchID());
 			ps.setString(index++, cheque.getAccountNo());
-			ps.setInt(index++, cheque.getChequeSerialNo());
+			ps.setString(index++, cheque.getChequeSerialNumber());
 			ps.setDate(index++, JdbcUtil.getDate(cheque.getChequeDate()));
 			ps.setInt(index++, cheque.geteMIRefNo());
 			ps.setBigDecimal(index++, cheque.getAmount());
@@ -345,7 +345,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			cheque.setHeaderID(rs.getLong("HeaderID"));
 			cheque.setBankBranchID(rs.getLong("BankBranchID"));
 			cheque.setAccountNo(rs.getString("AccountNo"));
-			cheque.setChequeSerialNo(rs.getInt("ChequeSerialNo"));
+			cheque.setChequeSerialNumber(rs.getString("ChequeSerialNo"));
 			cheque.setChequeDate(JdbcUtil.getDate(rs.getDate("ChequeDate")));
 			cheque.seteMIRefNo(rs.getInt("EMIRefNo"));
 			cheque.setAmount(rs.getBigDecimal("Amount"));
@@ -502,13 +502,13 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		logger.debug(Literal.SQL.concat(sql));
 
 		this.jdbcOperations.update(sql, ps -> {
-			ps.setLong(1, cheque.getChequeSerialNo());
+			ps.setString(1, cheque.getChequeSerialNumber());
 			ps.setString(2, cheque.getAccountNo());
 		});
 	}
 
 	@Override
-	public String getChequeStatus(int chequeSerial, String accountNo) {
+	public String getChequeStatus(String chequeSerial, String accountNo) {
 		String sql = "Select ChequeStatus From ChequeDetail  Where ChequeSerialNo = ? and AccountNo = ?";
 
 		logger.debug(Literal.SQL.concat(sql));

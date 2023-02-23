@@ -13479,18 +13479,20 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#2568.200" author="murthy.y">
 		<addColumn tableName="Auto_Refund_Loans">
-			<column name="ErrorDesc" type="varchar(2000)"/>
+			<column name="ErrorDesc" type="varchar(2000)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="PSD#218850" author="Gopal.p">
-		<dropForeignKeyConstraint baseTableName="FinFlagsHeader_Temp" constraintName="fk_flagsheader_t_finid"/>
-		<dropForeignKeyConstraint baseTableName="FinFlagsHeader" constraintName="fk_flagsheader_finid"/>
+		<dropForeignKeyConstraint baseTableName="FinFlagsHeader_Temp"
+			constraintName="fk_flagsheader_t_finid" />
+		<dropForeignKeyConstraint baseTableName="FinFlagsHeader"
+			constraintName="fk_flagsheader_finid" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#219091" author="murthy.y">
 		<sql>
          	<![CDATA[
@@ -13498,7 +13500,7 @@
          	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#218611" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -13506,7 +13508,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#218621" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -13515,7 +13517,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#216957" author="saikiran.n">
 		<sql>
 		    <![CDATA[
@@ -13523,7 +13525,7 @@
 		     ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#218547" author="saikiran.n">
 		<sql>
    			<![CDATA[
@@ -13533,7 +13535,7 @@
          	 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#219091_01" author="murthy.y">
 		<sql>
          	<![CDATA[
@@ -13541,6 +13543,35 @@
             	Update ErrorDetails Set Message = 'Refund amount {0} should be less than minimum refund amount {1} configured against loan type.' Where code = 'REFUND_005';
             	Update ErrorDetails Set Message = 'DPD day’s {0} should be less than the configured DPD day’s {1}.' Where code = 'REFUND_001';
          	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#219159" author="sandeepkumar.m">
+		<sql>
+   			<![CDATA[
+         	 	DELETE FROM FILE_UPLOAD_HEADER WHERE ID IN (SELECT HEADERID FROM CHEQUES_UPLOAD) AND TYPE = 'CHEQUES_UPLOAD';
+				DELETE FROM CHEQUES_UPLOAD;
+         	 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#219159.1_pre" author="sandeepkumar.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'cheques_upload');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#219159.2" author="sandeepkumar.m">
+		<modifyDataType tableName="CHEQUES_UPLOAD" columnName="CHEQUESERIALNO" newDataType="varchar(20)" />
+	</changeSet>
+
+	<changeSet id="PSD#219159.3_post" author="sandeepkumar.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'cheques_upload');
+			]]>
 		</sql>
 	</changeSet>
 

@@ -2217,7 +2217,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				} else {
 					chDetail.setAccountNo(StringUtils.trimToEmpty(chequeDetail.getAccountNo()));
 				}
-				chDetail.setChequeSerialNo(String.valueOf(chequeDetail.getChequeSerialNo()));
+				chDetail.setChequeSerialNo(String.valueOf(chequeDetail.getChequeSerialNumber()));
 				chDetail.setChequeType(chequeDetail.getChequeType());
 				chDetail.setChequeTypeDesc(PennantApplicationUtil.getLabelDesc(chequeDetail.getChequeType(),
 						MandateUtil.getChequeTypes()));

@@ -167,6 +167,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		}
 
 		if (CollectionUtils.isNotEmpty(ch.getChequeDetailList())) {
+
 			List<AuditDetail> details = ch.getAuditDetailMap().get("ChequeDetail");
 			details = processingChequeDetailList(details, tableType, ch.getHeaderID());
 			auditDetails.addAll(details);
@@ -641,7 +642,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		for (ChequeDetail cd : cdList) {
 			if (cd.isNewRecord() && chequeDetailDAO.isDuplicateKey(cd.getChequeDetailsID(), cd.getBankBranchID(),
-					cd.getAccountNo(), cd.getChequeSerialNo(), TableType.BOTH_TAB)) {
+					cd.getAccountNo(), cd.getChequeSerialNumber(), TableType.BOTH_TAB)) {
 
 				String[] parameters = new String[3];
 
@@ -650,7 +651,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				parameters[1] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_AccNumber.value") + ": "
 						+ cd.getAccountNo();
 				parameters[2] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_ChequeSerialNo.value") + ": "
-						+ cd.getChequeSerialNo();
+						+ cd.getChequeSerialNumber();
 
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
 			}
@@ -900,7 +901,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		prepareChequeHeader(ch, fm, loggedInUser);
 
 		List<ChequeDetail> cheques = ch.getChequeDetailList();
-		int serialNum = ch.getChequeSerialNo();
+		String serialNum = String.valueOf(ch.getChequeSerialNumber());
 
 		String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 
@@ -911,7 +912,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			cheque.setNewRecord(true);
 
 			if (RequestSource.API.name().equals(ch.getSourceId())) {
-				cheque.setChequeSerialNo(serialNum++);
+				serialNum = serialNum + 1;
+				cheque.setChequeSerialNumber(StringUtils.leftPad("" + serialNum, 6, "0"));
 			}
 
 			if ("PDC".equals(cheque.getChequeType())) {
@@ -1154,11 +1156,11 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	}
 
 	private ErrorDetail validateChequeSerialNo(ChequeHeader ch) {
-		if (ch.getChequeSerialNo() == 0) {
+		if (Integer.valueOf(ch.getChequeSerialNumber()) == 0) {
 			return getError("90502", "ChequeSerialNo");
 		}
 
-		if (String.valueOf(ch.getChequeSerialNo()).length() > 6) {
+		if (String.valueOf(ch.getChequeSerialNumber()).length() > 6) {
 			return getError("30565", "ChequeSerialNo", "or Equal to size Six");
 		}
 
