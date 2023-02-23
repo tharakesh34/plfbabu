@@ -91,7 +91,11 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 	public void delete(long finID, Date finEffDate, String type) {
 		StringBuilder sql = new StringBuilder("Delete From FinODPenaltyRates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ? and FinEffectDate = ?");
+		sql.append(" Where FinID = ?");
+
+		if (finEffDate != null) {
+			sql.append(" and FinEffectDate = ?");
+		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -99,7 +103,11 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			int index = 0;
 
 			ps.setLong(++index, finID);
-			ps.setDate(++index, JdbcUtil.getDate(finEffDate));
+
+			if (finEffDate != null) {
+				ps.setDate(++index, JdbcUtil.getDate(finEffDate));
+			}
+
 		});
 	}
 

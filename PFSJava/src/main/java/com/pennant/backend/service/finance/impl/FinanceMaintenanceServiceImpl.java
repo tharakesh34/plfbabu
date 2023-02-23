@@ -712,7 +712,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		List<AuditDetail> auditDetailList = new ArrayList<>();
 
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
@@ -753,8 +754,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp", fd.getFinScheduleData().getFinanceMain(),
-					fd.getModuleDefiner(), serviceUID);
+			details = processingDocumentDetailsList(details, "_Temp", fm, fd.getModuleDefiner(), serviceUID);
 			auditDetailList.addAll(details);
 		}
 
@@ -804,7 +804,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				CollateralAssignment assignment = (CollateralAssignment) details.get(i).getModelData();
 				assignment.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
-			details = processingCollateralAssignmentList(details, "_Temp", fd.getFinScheduleData().getFinanceMain());
+			details = processingCollateralAssignmentList(details, "_Temp", schdData.getFinanceMain());
 			auditDetailList.addAll(details);
 		}
 
@@ -825,8 +825,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					auditHeader.getAuditTranType(), extendedDetails));
 		}
 
-		// ScheduleDetails deletion
-		finODPenaltyRateDAO.delete(finID, fd.getFinScheduleData().getFinODPenaltyRate().getFinEffectDate(), "_Temp");
+		finODPenaltyRateDAO.delete(finID, null, "_Temp");
 
 		if (fd.getFinwriteoffPayment() != null) {
 			financeWriteoffDAO.deletefinWriteoffPayment(finID, fd.getFinwriteoffPayment().getSeqNo(), "_Temp");
