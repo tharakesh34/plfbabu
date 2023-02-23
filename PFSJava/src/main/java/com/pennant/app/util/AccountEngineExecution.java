@@ -64,6 +64,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.SingleFee;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -251,6 +252,11 @@ public class AccountEngineExecution implements Serializable {
 
 		for (TransactionEntry singleFeeTxn : list) {
 			for (FeeType feeType : feeTypes) {
+
+				if (!feeType.isManualAdvice()) {
+					feeType.setAdviseType(AdviseType.RECEIVABLE.id());
+				}
+
 				if (singleFeeTxn.getReceivableOrPayable() != feeType.getAdviseType()) {
 					continue;
 				}
