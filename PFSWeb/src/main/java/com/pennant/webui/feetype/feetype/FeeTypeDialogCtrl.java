@@ -128,6 +128,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Row incomeOrExpenseAcTypeRow;
 	protected ExtendedCombobox incomeOrExpenseAcType;
 	protected ExtendedCombobox waiverOrRefundAcType;
+	protected Label labelIncomeOrExpenseAcType;
+	protected Label labelWaiverOrRefundAcType;
 
 	protected Checkbox active;
 
@@ -1024,6 +1026,10 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.receivableType.setValue(null);
 			this.payableLinkToRow.setVisible(false);
 			this.refundableFee.setDisabled(false);
+
+			this.labelIncomeOrExpenseAcType
+					.setValue(Labels.getLabel("label_FeeTypeDialog_IncomeOrExpenseAcType.value"));
+			this.labelWaiverOrRefundAcType.setValue(Labels.getLabel("label_FeeTypeDialog_WaiverOrRefundAcType.value"));
 			return;
 		}
 
@@ -1048,17 +1054,27 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 			this.refundableFee.setDisabled(false);
 
+			this.labelIncomeOrExpenseAcType.setValue(Labels.getLabel("label_FeeTypeDialog_FeeExpense.value"));
+			this.labelWaiverOrRefundAcType.setValue(Labels.getLabel("label_FeeTypeDialog_FeeRefund.value"));
 		} else if (AdviseType.isReceivable(adviseCtgry)) {
 			this.allowAutoRefund.setDisabled(true);
 			this.allowAutoRefund.setChecked(false);
 			this.refundableFee.setDisabled(true);
 			this.refundableFee.setChecked(false);
+
+			this.labelIncomeOrExpenseAcType
+					.setValue(Labels.getLabel("label_FeeTypeDialog_IncomeOrExpenseAcType.value"));
+			this.labelWaiverOrRefundAcType.setValue(Labels.getLabel("label_FeeTypeDialog_WaiverOrRefundAcType.value"));
 		} else {
 			this.payableLinkToRow.setVisible(false);
 			this.payableLinkTo.setValue(null);
 			this.receivableType.setValue(null);
 			this.allowAutoRefund.setChecked(false);
 			this.allowAutoRefund.setDisabled(true);
+
+			this.labelIncomeOrExpenseAcType
+					.setValue(Labels.getLabel("label_FeeTypeDialog_IncomeOrExpenseAcType.value"));
+			this.labelWaiverOrRefundAcType.setValue(Labels.getLabel("label_FeeTypeDialog_WaiverOrRefundAcType.value"));
 		}
 	}
 
