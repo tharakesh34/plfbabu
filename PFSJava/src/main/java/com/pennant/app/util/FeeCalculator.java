@@ -40,7 +40,6 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -483,7 +482,7 @@ public class FeeCalculator {
 			BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(fee.getRuleCode()), dataMap,
 					finCcy);
 
-			fee.setCalculatedAmount(PennantApplicationUtil.formateAmount(feeResult, PennantConstants.defaultCCYDecPos));
+			fee.setCalculatedAmount(feeResult);
 
 			if (fee.isTaxApplicable()) {
 				this.finFeeDetailService.processGSTCalForRule(fee, feeResult, fd, taxPercentages, false);
