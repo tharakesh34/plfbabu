@@ -44,10 +44,12 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.payment.PaymentDetailDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
+import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -91,6 +93,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceMainDAO financeMainDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private CrossLoanKnockOffDAO crossLoanKnockOffDAO;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -477,44 +480,57 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		return paymentDetailDAO.getPaymentDetailList(paymentId, type);
 	}
 
-	private void saveOrUpdate(PaymentDetail paymentDetail) {
-		logger.debug("Entering");
+	private void saveOrUpdate(PaymentDetail pd) {
+		logger.debug(Literal.ENTERING);
 
 		// Excess Amount Reserve
-		if (!AdviseType.isPayable(paymentDetail.getAmountType())) {
+		if (!AdviseType.isPayable(pd.getAmountType())) {
 			// Excess Amount make utilization
-			FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(paymentDetail.getPaymentDetailId(),
-					paymentDetail.getReferenceId(), RepayConstants.RECEIPTTYPE_PAYABLE);
+			FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(pd.getPaymentDetailId(),
+					pd.getReferenceId(), RepayConstants.RECEIPTTYPE_PAYABLE);
+
 			if (exReserve == null) {
+				FinExcessAmount fea = finExcessAmountDAO.getFinExcessByID(pd.getReferenceId());
 
-				// Update Excess Amount in Reserve
-				finExcessAmountDAO.updateExcessReserve(paymentDetail.getReferenceId(), paymentDetail.getAmount());
+				BigDecimal transferamt = crossLoanKnockOffDAO.getTransferAmount(fea.getExcessID());
 
-				// Save Excess Reserve Log Amount
-				finExcessAmountDAO.saveExcessReserveLog(paymentDetail.getPaymentDetailId(),
-						paymentDetail.getReferenceId(), paymentDetail.getAmount(), RepayConstants.RECEIPTTYPE_PAYABLE);
+				if (pd.getAmount().compareTo(fea.getBalanceAmt()) > 0 && transferamt.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal reserveamt = fea.getReservedAmt().subtract(transferamt).add(fea.getAmount());
+					fea.setReservedAmt(reserveamt);
+					fea.setBalanceAmt(BigDecimal.ZERO);
+					finExcessAmountDAO.updateExcess(fea);
+					finExcessAmountDAO.saveExcessReserveLog(pd.getPaymentDetailId(), pd.getReferenceId(),
+							pd.getAmount(), RepayConstants.RECEIPTTYPE_PAYABLE);
+				} else {
+					// Update Excess Amount in Reserve
+					finExcessAmountDAO.updateExcessReserve(pd.getReferenceId(), pd.getAmount());
+
+					// Save Excess Reserve Log Amount
+					finExcessAmountDAO.saveExcessReserveLog(pd.getPaymentDetailId(), pd.getReferenceId(),
+							pd.getAmount(), RepayConstants.RECEIPTTYPE_PAYABLE);
+				}
 			} else {
-				if (paymentDetail.getAmount().compareTo(exReserve.getReservedAmt()) != 0) {
-					BigDecimal diffInReserve = paymentDetail.getAmount().subtract(exReserve.getReservedAmt());
+				if (pd.getAmount().compareTo(exReserve.getReservedAmt()) != 0) {
+					BigDecimal diffInReserve = pd.getAmount().subtract(exReserve.getReservedAmt());
 
 					// Update Reserve Amount in FinExcessAmount
-					finExcessAmountDAO.updateExcessReserve(paymentDetail.getReferenceId(), diffInReserve);
+					finExcessAmountDAO.updateExcessReserve(pd.getReferenceId(), diffInReserve);
 
 					// Update Excess Reserve Log
-					finExcessAmountDAO.updateExcessReserveLog(paymentDetail.getPaymentDetailId(),
-							paymentDetail.getReferenceId(), diffInReserve, RepayConstants.RECEIPTTYPE_PAYABLE);
+					finExcessAmountDAO.updateExcessReserveLog(pd.getPaymentDetailId(), pd.getReferenceId(),
+							diffInReserve, RepayConstants.RECEIPTTYPE_PAYABLE);
 				}
 			}
 		} else {
 			// Payable Amount make utilization
-			ManualAdviseReserve payableReserve = manualAdviseDAO.getPayableReserve(paymentDetail.getPaymentDetailId(),
-					paymentDetail.getReferenceId());
+			ManualAdviseReserve payableReserve = manualAdviseDAO.getPayableReserve(pd.getPaymentDetailId(),
+					pd.getReferenceId());
 
-			BigDecimal amount = paymentDetail.getAmount();
-			if (paymentDetail.getTaxHeader() != null && StringUtils.equals(paymentDetail.getTaxComponent(),
-					FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+			BigDecimal amount = pd.getAmount();
+			if (pd.getTaxHeader() != null
+					&& StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 				// GST Calculations
-				List<Taxes> taxDetails = paymentDetail.getTaxHeader().getTaxDetails();
+				List<Taxes> taxDetails = pd.getTaxHeader().getTaxDetails();
 				BigDecimal gstAmount = BigDecimal.ZERO;
 				if (CollectionUtils.isNotEmpty(taxDetails)) {
 					for (Taxes taxes : taxDetails) {
@@ -525,21 +541,20 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 			if (payableReserve == null) {
 				// Update Payable Amount in Reserve
-				manualAdviseDAO.updatePayableReserveAmount(paymentDetail.getReferenceId(), amount);
+				manualAdviseDAO.updatePayableReserveAmount(pd.getReferenceId(), amount);
 
 				// Save Payable Reserve Log Amount
-				manualAdviseDAO.savePayableReserveLog(paymentDetail.getPaymentDetailId(),
-						paymentDetail.getReferenceId(), amount);
+				manualAdviseDAO.savePayableReserveLog(pd.getPaymentDetailId(), pd.getReferenceId(), amount);
 			} else {
 				if (amount.compareTo(payableReserve.getReservedAmt()) != 0) {
 					BigDecimal diffInReserve = amount.subtract(payableReserve.getReservedAmt());
 
 					// Update Reserve Amount in Manual Advise
-					manualAdviseDAO.updatePayableReserveAmount(paymentDetail.getReferenceId(), diffInReserve);
+					manualAdviseDAO.updatePayableReserveAmount(pd.getReferenceId(), diffInReserve);
 
 					// Update Payable Reserve Log
-					manualAdviseDAO.updatePayableReserveLog(paymentDetail.getPaymentDetailId(),
-							paymentDetail.getReferenceId(), diffInReserve);
+					manualAdviseDAO.updatePayableReserveLog(pd.getPaymentDetailId(), pd.getReferenceId(),
+							diffInReserve);
 				}
 			}
 		}
@@ -555,26 +570,41 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(paymentDetail.getPaymentDetailId(),
 					paymentDetail.getReferenceId(), RepayConstants.RECEIPTTYPE_PAYABLE);
 			if (exReserve != null) {
-				// Update Reserve Amount in FinExcessAmount
-				finExcessAmountDAO.updateExcessReserve(paymentDetail.getReferenceId(),
-						exReserve.getReservedAmt().negate());
 
-				// Delete Reserved Log against Excess and Receipt ID
-				finExcessAmountDAO.deleteExcessReserve(paymentDetail.getPaymentDetailId(),
-						paymentDetail.getReferenceId(), RepayConstants.RECEIPTTYPE_PAYABLE);
-			}
-		} else { // Payable Amount Reserve
-			// Payable Amount make utilization
-			ManualAdviseReserve payableReserve = manualAdviseDAO.getPayableReserve(paymentDetail.getPaymentDetailId(),
-					paymentDetail.getReferenceId());
-			if (payableReserve != null) {
-				// Update Reserve Amount in ManualAdvise
-				manualAdviseDAO.updatePayableReserve(paymentDetail.getReferenceId(),
-						payableReserve.getReservedAmt().negate());
+				FinExcessAmount fea = finExcessAmountDAO.getFinExcessByID(paymentDetail.getReferenceId());
 
-				// Delete Reserved Log against Payable Advise ID and Receipt ID
-				manualAdviseDAO.deletePayableReserve(paymentDetail.getPaymentDetailId(),
-						paymentDetail.getReferenceId());
+				BigDecimal transferamt = crossLoanKnockOffDAO.getTransferAmount(fea.getExcessID());
+
+				if (fea.getBalanceAmt().equals(BigDecimal.ZERO) && transferamt.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal balanceAmt = fea.getReservedAmt().subtract(transferamt);
+					fea.setReservedAmt(transferamt);
+					fea.setBalanceAmt(balanceAmt);
+					finExcessAmountDAO.updateExcess(fea);
+					finExcessAmountDAO.deleteExcessReserve(paymentDetail.getPaymentDetailId(),
+							paymentDetail.getReferenceId(), RepayConstants.RECEIPTTYPE_PAYABLE);
+				} else {
+
+					// Update Reserve Amount in FinExcessAmount
+					finExcessAmountDAO.updateExcessReserve(paymentDetail.getReferenceId(),
+							exReserve.getReservedAmt().negate());
+
+					// Delete Reserved Log against Excess and Receipt ID
+					finExcessAmountDAO.deleteExcessReserve(paymentDetail.getPaymentDetailId(),
+							paymentDetail.getReferenceId(), RepayConstants.RECEIPTTYPE_PAYABLE);
+				}
+			} else { // Payable Amount Reserve
+				// Payable Amount make utilization
+				ManualAdviseReserve payableReserve = manualAdviseDAO
+						.getPayableReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
+				if (payableReserve != null) {
+					// Update Reserve Amount in ManualAdvise
+					manualAdviseDAO.updatePayableReserve(paymentDetail.getReferenceId(),
+							payableReserve.getReservedAmt().negate());
+
+					// Delete Reserved Log against Payable Advise ID and Receipt ID
+					manualAdviseDAO.deletePayableReserve(paymentDetail.getPaymentDetailId(),
+							paymentDetail.getReferenceId());
+				}
 			}
 		}
 		logger.debug("Leaving");
@@ -817,4 +847,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 
+	@Autowired
+	public void setCrossLoanKnockOffDAO(CrossLoanKnockOffDAO crossLoanKnockOffDAO) {
+		this.crossLoanKnockOffDAO = crossLoanKnockOffDAO;
+	}
 }

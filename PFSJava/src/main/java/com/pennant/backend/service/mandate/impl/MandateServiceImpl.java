@@ -311,6 +311,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 			mandateStatusDAO.save(mandateStatus, "");
 
+			Long securityMandate = mandateDAO.getSecurityMandateIdByRef(mandate.getOrgReference());
+			if (securityMandate == null) {
+				mandateDAO.updateFinMandateId(mandate.getMandateID(), mandate.getOrgReference());
+			}
+
 			try {
 
 				BigDecimal maxlimt = PennantApplicationUtil.formateAmount(mandate.getMaxLimit(),

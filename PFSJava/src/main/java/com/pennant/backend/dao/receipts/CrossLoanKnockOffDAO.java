@@ -17,4 +17,6 @@ public interface CrossLoanKnockOffDAO {
 	boolean cancelReferenceID(long ReceiptID);
 
 	BigDecimal getCrossLoanHeader(long fromfinid, long receiptid);
+
+	BigDecimal getTransferAmount(long excessID);
 }

@@ -231,6 +231,7 @@ import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennant.pff.extension.ReceiptExtension;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -1608,9 +1609,20 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 						receiptDetail.getPayAgainstID(), RepayConstants.RECEIPTTYPE_RECIPT);
 				if (exReserve != null) {
 
+					BigDecimal reservedAmt = exReserve.getReservedAmt();
+
+					if (KnockOffType.CROSS_LOAN.code().equals(rch.getKnockOffType())) {
+						FinExcessAmount excess = finExcessAmountDAO.getFinExcessByID(receiptDetail.getPayAgainstID());
+
+						BigDecimal balanceAmount = excess.getReservedAmt();
+
+						if (reservedAmt.compareTo(balanceAmount) > 0) {
+							reservedAmt = balanceAmount;
+						}
+					}
+
 					// Update Reserve Amount in FinExcessAmount
-					finExcessAmountDAO.updateExcessReserve(receiptDetail.getPayAgainstID(),
-							exReserve.getReservedAmt().negate());
+					finExcessAmountDAO.updateExcessReserve(receiptDetail.getPayAgainstID(), reservedAmt.negate());
 
 					// Delete Reserved Log against Excess and Receipt ID
 					finExcessAmountDAO.deleteExcessReserve(receiptSeqID, receiptDetail.getPayAgainstID(),

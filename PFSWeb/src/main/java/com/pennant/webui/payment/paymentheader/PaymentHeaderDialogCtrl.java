@@ -75,6 +75,7 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FeeType;
@@ -192,6 +193,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private Button btnSave_payment;
 	private FeeTypeService feeTypeService;
 	private RefundBeneficiary refundBeneficiary;
+	private CrossLoanKnockOffDAO crossLoanKnockOffDAO;
 
 	private List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
@@ -1217,7 +1219,19 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					 */
 					pd.setNewRecord(true);
 					pd.setReferenceId(fea.getId());
-					pd.setAvailableAmount(fea.getBalanceAmt()/* .subtract(progressAmt) */);
+					BigDecimal refAmount = BigDecimal.ZERO;
+					
+					BigDecimal amount = crossLoanKnockOffDAO.getTransferAmount(fea.getExcessID());
+					
+					for (PaymentDetail pDtl : paymentHeader.getPaymentDetailList()) {
+						if (fea.getExcessID() == pDtl.getReferenceId()) {
+							refAmount = pDtl.getAmount();
+						}
+					}
+					if (fea.getBalanceAmt().compareTo(BigDecimal.ZERO) == 0) {
+						amount = fea.getReservedAmt().subtract(refAmount);
+					}
+					pd.setAvailableAmount(fea.getBalanceAmt().add(amount)/* .subtract(progressAmt) */);
 					pd.setAmountType(fea.getAmountType());
 					pd.setReceiptID(fea.getReceiptID());
 					pd.setValueDate(fea.getValueDate());
@@ -2195,6 +2209,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
 		this.refundBeneficiary = refundBeneficiary;
+	}
+
+	public void setCrossLoanKnockOffDAO(CrossLoanKnockOffDAO crossLoanKnockOffDAO) {
+		this.crossLoanKnockOffDAO = crossLoanKnockOffDAO;
 	}
 
 }

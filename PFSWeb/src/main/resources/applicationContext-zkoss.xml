@@ -4106,6 +4106,7 @@
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="feeTypeService" ref="feeTypeService" />
 		<property name="refundBeneficiary" ref="refundBeneficiary" />
+		<property name ="crossLoanKnockOffDAO" ref="crossLoanKnockOffDAO" />
 	</bean>
 	
 	<!-- Refund Beneficiary  -->

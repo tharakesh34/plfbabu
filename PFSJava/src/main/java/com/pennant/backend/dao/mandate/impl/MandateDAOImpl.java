@@ -1178,4 +1178,26 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		}
 	}
 
+	@Override
+	public void updateFinMandateId(Long mandateId, String finreference) {
+		String sql = "Update FinanceMain Set SecurityMandateId = ? Where FinReference = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, mandateId, finreference);
+	}
+
+	@Override
+	public Long getSecurityMandateIdByRef(String finreference) {
+		String sql = "Select SecurityMandateId From FinanceMain Where Finreference = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finreference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }
