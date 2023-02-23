@@ -652,12 +652,12 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 			return;
 		}
 
-		String notDownloadIds = checkFileDownloaded(frhList);
-
-		if (StringUtils.isNotEmpty(notDownloadIds)) {
-			MessageUtil.showError(Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { notDownloadIds }));
-			return;
-		}
+		/*
+		 * String notDownloadIds = checkFileDownloaded(frhList);
+		 * 
+		 * if (StringUtils.isNotEmpty(notDownloadIds)) { MessageUtil.showError(Labels.getLabel("DOWNLOAD_MANDATORY", new
+		 * Object[] { notDownloadIds })); return; }
+		 */
 
 		List<String> listFrh = new ArrayList<>();
 		for (FeeRefundHeader frh : listRefundHeader) {
