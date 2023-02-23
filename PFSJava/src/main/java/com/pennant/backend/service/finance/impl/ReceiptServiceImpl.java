@@ -2106,7 +2106,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		if ((FinanceConstants.CLOSE_STATUS_MATURED.equals(fm.getClosingStatus())
 				|| FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus()))
 				&& !(ReceiptMode.PRESENTMENT.equals(receiptHeader.getReceiptMode()))) {
-			fm.setClosedDate(valueDate);
+
+			if (fm.getClosedDate() == null) {
+				fm.setClosedDate(valueDate);
+			}
 		}
 
 		User logiedInUser = SessionUserDetails.getLogiedInUser();
@@ -8408,7 +8411,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		if ((FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)
 				|| FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus))
 				&& !(ReceiptMode.PRESENTMENT.equals(rch.getReceiptMode()))) {
-			fm.setClosedDate(valueDate);
+
+			if (fm.getClosedDate() == null) {
+				fm.setClosedDate(valueDate);
+			}
 		}
 
 		financeMainDAO.updateFromReceipt(fm, TableType.MAIN_TAB);

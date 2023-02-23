@@ -1657,7 +1657,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				ps.setString(index++, PennantConstants.MANUALADVISE_CANCEL);
 				ps.setString(index++, Labels.getLabel("label_EOD_ManualAdvise_Cancel_Reason.Msg"));
 				ps.setLong(index++, fm.getFinID());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getMaturityDate()));
+				ps.setDate(index++, JdbcUtil.getDate(fm.getAppDate()));
 				ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
 			}
 
@@ -2205,12 +2205,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public List<ManualAdvise> getAdviseStatus(String finReference, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Status, ValueDate, AdviseId, FinReference");
-		sql.append(" From ManualAdvise");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
+	public List<ManualAdvise> getAdviseStatus(long finID) {
+		String sql = "Select Status, ValueDate, AdviseId, FinReference From ManualAdvise Where FinID = ? and Status != ?";
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -2223,7 +2219,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ma.setFinReference(rs.getString("Finreference"));
 
 			return ma;
-		}, finReference);
+		}, finID, PennantConstants.MANUALADVISE_CANCEL);
 	}
 
 	@Override

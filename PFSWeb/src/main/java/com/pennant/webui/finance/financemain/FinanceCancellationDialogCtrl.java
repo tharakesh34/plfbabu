@@ -1161,10 +1161,10 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 			} else {
 				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-					String finreference = afinanceMain.getFinReference();
+					long finID = afinanceMain.getFinID();
 					String errormsg = "";
 
-					List<ManualAdvise> manualAdvise = manualAdviseDAO.getAdviseStatus(finreference, "");
+					List<ManualAdvise> manualAdvise = manualAdviseDAO.getAdviseStatus(finID);
 
 					List<ManualAdvise> updateList = new ArrayList<>();
 

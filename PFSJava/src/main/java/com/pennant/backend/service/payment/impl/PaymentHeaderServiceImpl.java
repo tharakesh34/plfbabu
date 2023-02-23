@@ -980,7 +980,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		String holdStatus = arl.getHoldStatus();
 
 		/* DPD Days validation against System parameter Configuration */
-		if (dpdDays > arl.getAutoRefCheckDPD() && isEOD) {
+		if (dpdDays >= arl.getAutoRefCheckDPD() && isEOD) {
 			logger.debug(Literal.LEAVING);
 			return ErrorUtil.getError("REFUND_001", String.valueOf(dpdDays), String.valueOf(arl.getAutoRefCheckDPD()));
 		}

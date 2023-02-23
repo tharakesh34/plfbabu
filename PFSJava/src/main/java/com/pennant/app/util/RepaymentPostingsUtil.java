@@ -110,6 +110,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
@@ -740,7 +741,7 @@ public class RepaymentPostingsUtil {
 			if (fullyPaid) {
 				pftDetail.setSvnAcrCalReq(false);
 				fm.setFinIsActive(false);
-				fm.setClosedDate(appDate);
+				fm.setClosedDate(FinanceUtil.deriveClosedDate(fm));
 				fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 
 				if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
@@ -2030,7 +2031,7 @@ public class RepaymentPostingsUtil {
 		if (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCIP)) {
 			if (totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0) {
 				financeMain.setFinIsActive(false);
-				financeMain.setClosedDate(SysParamUtil.getAppDate());
+				financeMain.setClosedDate(FinanceUtil.deriveClosedDate(financeMain));
 				financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 			}
 		} else if (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FIPC)
@@ -2038,7 +2039,7 @@ public class RepaymentPostingsUtil {
 			if (!isPenaltyAvail
 					&& totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0) {
 				financeMain.setFinIsActive(false);
-				financeMain.setClosedDate(SysParamUtil.getAppDate());
+				financeMain.setClosedDate(FinanceUtil.deriveClosedDate(financeMain));
 				financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 			}
 		} else if (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCPI)

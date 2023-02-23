@@ -812,9 +812,22 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public void cancelFutureDatedAdvises(CustEODEvent custEODEvent) {
 		logger.debug(Literal.ENTERING);
+		int closedNdays = SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_N_DAYS_CLOSED_LAN);
 
 		List<FinanceMain> fmList = new ArrayList<>();
-		custEODEvent.getFinEODEvents().forEach(fod -> fmList.add(fod.getFinanceMain()));
+
+		custEODEvent.getFinEODEvents().forEach(fod -> {
+			FinanceMain aFm = fod.getFinanceMain();
+			FinanceMain fm = new FinanceMain();
+			fm.setFinID(aFm.getFinID());
+			if (fm.isFinIsActive()) {
+				fm.setAppDate(aFm.getMaturityDate());
+			} else {
+				fm.setAppDate(DateUtil.addDays(custEODEvent.getEodDate(), closedNdays + 1));
+			}
+
+			fmList.add(fm);
+		});
 
 		manualAdviseDAO.cancelFutureDatedAdvises(fmList);
 
@@ -838,26 +851,47 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 	@Override
 	public void cancelManualAdvises(FinanceMain fm) {
-		List<ManualAdvise> manualAdvise = manualAdviseDAO.getAdviseStatus(fm.getFinReference(), "");
+		logger.debug(Literal.ENTERING);
+
+		if (!PennantConstants.RCD_STATUS_APPROVED.equals(fm.getRecordStatus())) {
+			return;
+		}
+
+		List<ManualAdvise> manualAdvise = manualAdviseDAO.getAdviseStatus(fm.getFinID());
 
 		List<ManualAdvise> updateList = new ArrayList<>();
 
-		if (CollectionUtils.isNotEmpty(manualAdvise)
-				&& PennantConstants.RCD_STATUS_APPROVED.equals(fm.getRecordStatus())) {
-			for (ManualAdvise md : manualAdvise) {
-				Date valueDate = md.getValueDate();
+		if (CollectionUtils.isEmpty(manualAdvise)) {
+			return;
+		}
 
-				if (!PennantConstants.MANUALADVISE_CANCEL.equals(md.getStatus())
-						&& DateUtil.compare(valueDate, fm.getMaturityDate()) > 0) {
-					md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
-					md.setAdviseID(md.getAdviseID());
+		Date appDate = fm.getAppDate();
 
-					updateList.add(md);
-				}
+		if (appDate == null) {
+			appDate = SysParamUtil.getAppDate();
+		}
+
+		int closedNdays = SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_N_DAYS_CLOSED_LAN);
+
+		for (ManualAdvise md : manualAdvise) {
+			Date valueDate = md.getValueDate();
+
+			if (fm.isFinIsActive()) {
+				appDate = fm.getMaturityDate();
+			} else {
+				appDate = DateUtil.addDays(appDate, closedNdays + 1);
 			}
 
-			manualAdviseDAO.updateStatus(updateList, "");
+			if (DateUtil.compare(valueDate, appDate) > 0) {
+				md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
+				md.setAdviseID(md.getAdviseID());
+
+				updateList.add(md);
+			}
 		}
+
+		manualAdviseDAO.updateStatus(updateList, "");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void postManualAdvise(FinEODEvent fodEvent, CustEODEvent codEvent, ManualAdvise ma) {
