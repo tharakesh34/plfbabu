@@ -920,7 +920,8 @@ public class FeeCalculator {
 		BigDecimal partPayAmount = rd.getReceiptHeader().getReceiptAmount();
 
 		if ((partPayAmount.compareTo(totalDues) > 0)) {
-			partialPaymentAmount = partPayAmount.subtract(totalDues);
+			partialPaymentAmount = partPayAmount.subtract(totalDues)
+					.subtract(rd.getReceiptHeader().getTotalFees().getTotalDue());
 		}
 
 		dataMap.put("partialPaymentAmount", partialPaymentAmount);
