@@ -928,8 +928,9 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 
 				// validate disbursement instructions
-				List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(fd.getAdvancePaymentsList(),
-						list, schdData.getFinanceMain(), true);
+				schdData.setDisbursementDetails(list);
+				List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(fd, true);
+				schdData.setDisbursementDetails(new ArrayList<>());
 				for (ErrorDetail ed : errors) {
 					schdData.setErrorDetail(
 							ErrorUtil.getErrorDetail(new ErrorDetail(ed.getCode(), ed.getParameters())));

@@ -60,6 +60,7 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -87,6 +88,7 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -829,9 +831,15 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	}
 
-	public List<ErrorDetail> validateFinAdvPayments(List<FinAdvancePayments> list,
-			List<FinanceDisbursement> disbursements, FinanceMain fm, boolean loanApproved) {
+	@Override
+	public List<ErrorDetail> validateFinAdvPayments(FinanceDetail fd, boolean loanApproved) {
 		logger.debug(Literal.ENTERING);
+
+		List<FinAdvancePayments> list = fd.getAdvancePaymentsList();
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		List<FinanceDisbursement> disbursements = schdData.getDisbursementDetails();
+		FinanceMain fm = schdData.getFinanceMain();
 
 		int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
 		FinanceDisbursement totDisb = getTotal(disbursements, fm, 0, false);
@@ -843,7 +851,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		BigDecimal totDisbAmt = BigDecimal.ZERO;
 		Map<Integer, BigDecimal> map = new HashMap<>();
-
 
 		for (FinAdvancePayments fap : list) {
 			if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(fap.getPaymentDetail())) {
@@ -864,14 +871,14 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		if (netFinAmount.compareTo(totDisbAmt) != 0) {
-			if (loanApproved || fm.isQuickDisb()) {
-				String[] valueParm = new String[2];
-				valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmt, ccyFormat);
-				valueParm[1] = PennantApplicationUtil.amountFormate(netFinAmount, ccyFormat);
-				errorList.add(new ErrorDetail("60401", valueParm));
-				return errorList;
-			}
+		BigDecimal feeAmount = calculateAdvanceAmount(schdData, fm);
+
+		if (netFinAmount.subtract(feeAmount).compareTo(totDisbAmt) != 0 && (loanApproved || fm.isQuickDisb())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmt, ccyFormat);
+			valueParm[1] = PennantApplicationUtil.amountFormate(netFinAmount, ccyFormat);
+			errorList.add(new ErrorDetail("60401", valueParm));
+			return errorList;
 		}
 
 		if (!checkMode && fm.isQuickDisb()) {
@@ -1268,6 +1275,25 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		} else {
 			documentDetailsDAO.save(details, TableType.MAIN_TAB.getSuffix());
 		}
+	}
+
+	private BigDecimal calculateAdvanceAmount(FinScheduleData schdData, FinanceMain fm) {
+		if ("#".equals(fm.getAdvType()) && "#".equals(fm.getGrcAdvType())) {
+			return BigDecimal.ZERO;
+		}
+
+		BigDecimal feeAmount = BigDecimal.ZERO;
+
+		List<FinFeeDetail> fees = schdData.getFinFeeDetailList();
+
+		for (FinFeeDetail fee : fees) {
+			FinFeeDetail feeTemp = new FinFeeDetail();
+			feeTemp.setFeeTypeCode(fee.getFeeTypeCode());
+			AdvancePaymentUtil.calculateLOSAdvPayment(schdData, feeTemp);
+			feeAmount = feeAmount.add(feeTemp.getActualAmount());
+		}
+
+		return feeAmount;
 	}
 
 	@Override

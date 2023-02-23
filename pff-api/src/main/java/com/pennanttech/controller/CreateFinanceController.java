@@ -386,12 +386,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			// PSD #146217 Disbursal Instruction is not getting created.
 			// Disbursement Instruction is calculation fails if alwBpiTreatment
 			// is true so calling this after schedule calculation.
-			if (!fm.isAlwBPI()) {
-				if (stp && !loanWithWIF) {
-					schdData.getDisbursementDetails().clear();
-				}
-				setDisbursements(fd, loanWithWIF, false, false);
-			}
+
+			/* The below commented code is moved to after schedule calculation, ADVEMI is not calculating. */
+			/*
+			 * if (!fm.isAlwBPI()) { if (stp && !loanWithWIF) { schdData.getDisbursementDetails().clear(); }
+			 * setDisbursements(fd, loanWithWIF, false, false); }
+			 */
 
 			schdData = fd.getFinScheduleData();
 			fm = schdData.getFinanceMain();
@@ -473,6 +473,13 @@ public class CreateFinanceController extends SummaryDetailService {
 			} else {
 				fm.setCalculateRepay(true);
 				schdData.setSchduleGenerated(true);
+			}
+
+			if (!fm.isAlwBPI()) {
+				if (stp && !loanWithWIF) {
+					schdData.getDisbursementDetails().clear();
+				}
+				setDisbursements(fd, loanWithWIF, false, false);
 			}
 
 			if (!schdData.getErrorDetails().isEmpty()) {
@@ -2219,22 +2226,23 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	/**
-	 * @param financeDetail
+	 * @param fd
 	 * @param finScheduleData
 	 */
-	private void validateDisbInstAmount(FinanceDetail financeDetail) {
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		if (financeDetail.getAdvancePaymentsList() != null) {
-			for (FinAdvancePayments advPayments : financeDetail.getAdvancePaymentsList()) {
-				advPayments.setDisbSeq(finScheduleData.getDisbursementDetails().size());
-			}
-			List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(
-					financeDetail.getAdvancePaymentsList(), finScheduleData.getDisbursementDetails(),
-					finScheduleData.getFinanceMain(), true);
-			for (ErrorDetail erroDetails : errors) {
-				finScheduleData.setErrorDetail(
-						ErrorUtil.getErrorDetail(new ErrorDetail(erroDetails.getCode(), erroDetails.getParameters())));
-			}
+	private void validateDisbInstAmount(FinanceDetail fd) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		if (fd.getAdvancePaymentsList() == null) {
+			return;
+		}
+
+		for (FinAdvancePayments advPayments : fd.getAdvancePaymentsList()) {
+			advPayments.setDisbSeq(schdData.getDisbursementDetails().size());
+		}
+
+		List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(fd, true);
+		for (ErrorDetail error : errors) {
+			schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(error.getCode(), error.getParameters())));
 		}
 	}
 

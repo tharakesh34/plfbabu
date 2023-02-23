@@ -714,7 +714,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		logger.info(Literal.ENTERING);
 		AuditDetail auditDetail = new AuditDetail();
 		FinScheduleData schd = financeDetail.getFinScheduleData();
-		FinanceMain fm = schd.getFinanceMain();
 		List<ErrorDetail> errorDetailList = financeDataValidation.disbursementValidation(financeDetail);
 
 		if (CollectionUtils.isNotEmpty(errorDetailList)) {
@@ -734,8 +733,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			advPayments.setDisbSeq(disbursements.size());
 		}
 
-		List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(advancePayments, disbursements, fm,
-				true);
+		List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(financeDetail, true);
 		for (ErrorDetail erroDetails : errors) {
 			auditDetail.setErrorDetail(
 					ErrorUtil.getErrorDetail(new ErrorDetail(erroDetails.getCode(), erroDetails.getParameters())));
