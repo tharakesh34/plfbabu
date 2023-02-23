@@ -15,6 +15,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.payment.PaymentDetailDAO;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.dao.receipts.CrossLoanTransferDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -69,6 +70,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	private ReceiptService receiptService;
 	private ReceiptDataValidator receiptDataValidator;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	private PaymentDetailDAO paymentDetailDAO;
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -378,6 +380,10 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 						PennantConstants.default_Language);
 				auditDetail.setErrorDetail(errorDetail);
 			}
+
+			if (paymentDetailDAO.getPaymentId(clt.getExcessId())) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60205", "", null)));
+			}
 		}
 		return auditDetail;
 	}
@@ -579,4 +585,8 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
+	@Autowired
+	public void setPaymentDetailDAO(PaymentDetailDAO paymentDetailDAO) {
+		this.paymentDetailDAO = paymentDetailDAO;
+	}
 }

@@ -48,4 +48,5 @@ public interface PaymentDetailDAO extends BasicCrudDao<PaymentDetail> {
 
 	void deleteList(PaymentDetail paymentDetail, TableType tableType);
 
+	boolean getPaymentId(long excessID);
 }

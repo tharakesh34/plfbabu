@@ -282,4 +282,19 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 			return pd;
 		}, paymentId);
 	}
+
+	@Override
+	public boolean getPaymentId(long excessID) {
+		String sql = " Select PaymentID from PaymentDetails_Temp Where ReferenceID = ? ";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, excessID) != null ? true : false;
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
+		}
+	}
 }

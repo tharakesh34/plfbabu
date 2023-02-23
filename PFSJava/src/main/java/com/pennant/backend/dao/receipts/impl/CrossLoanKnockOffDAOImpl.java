@@ -199,4 +199,17 @@ public class CrossLoanKnockOffDAOImpl extends SequenceDao<CrossLoanKnockOff> imp
 			return BigDecimal.ZERO;
 		}
 	}
+
+	public BigDecimal getTransferAmount(long excessID) {
+		String sql = "Select sum(TransferAmount) From Cross_Loan_Transfer_Temp Where ExcessID = ?";
+	
+		logger.debug(Literal.SQL.concat(sql));
+		
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, excessID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
+	}
 }
