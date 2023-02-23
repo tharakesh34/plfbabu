@@ -59,18 +59,10 @@
 		</step>
 		<step id="autoKnockOffDataBackUp">
 			<tasklet ref="autoKnockOffDataBackUpTasklet" />
-			<next on="*" to="oTS" />
-			<fail on="FAILED" />
-		</step>
-		
-		<step id="oTS">
-		<tasklet ref="oTSTaskLet"  allow-start-if-complete="true">
-			<transaction-attributes propagation="NEVER" />
-		</tasklet>
 			<next on="*" to="notifyLoanClosureDetailsToEFS" />
 			<fail on="FAILED" />
 		</step>
-
+		
 		<step id="notifyLoanClosureDetailsToEFS">
 			<tasklet ref="notifyLoanClosureDetailsToEFSTaskLet" />
 			<next on="*" to="processInActiveFinances" />
