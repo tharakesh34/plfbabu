@@ -196,25 +196,20 @@ public class AutoRefundProcess {
 
 		arl.setRefundAmt(excessBalance.subtract(overDueAmt));
 
-		/*
-		 * Validation of Minimum & Maximum Amounts of Refund against Calculated Refund Amount to proceed further
-		 */
-		error = autoRefundService.validateRefundAmt(arl.getRefundAmt(), arl);
+		BigDecimal refundAmt = arl.getRefundAmt();
+		BigDecimal maxRefundAmt = arl.getMaxRefundAmt();
+		BigDecimal minRefundAmt = arl.getMinRefundAmt();
 
-		if (arl.getRefundAmt().compareTo(arl.getMaxRefundAmt()) > 0) {
-			setError(arl, "REFUND_004");
-		}
-
-		if (arl.getRefundAmt().compareTo(arl.getMinRefundAmt()) < 0) {
-			setError(arl, "REFUND_005");
-		}
-
-		if (error != null) {
-			setError(arl, error);
+		if (refundAmt.compareTo(maxRefundAmt) > 0) {
+			setError(arl, "REFUND_004", CurrencyUtil.format(refundAmt), CurrencyUtil.format(maxRefundAmt));
 			return;
 		}
 
-		// Need to write bank details for the Payment type cheque
+		if (refundAmt.compareTo(minRefundAmt) < 0) {
+			setError(arl, "REFUND_005", CurrencyUtil.format(refundAmt), CurrencyUtil.format(minRefundAmt));
+			return;
+		}
+
 		PaymentInstruction payInst = refundBeneficiary.getBeneficiary(finID, appDate, arl.isAlwRefundByCheque());
 
 		if (payInst == null) {

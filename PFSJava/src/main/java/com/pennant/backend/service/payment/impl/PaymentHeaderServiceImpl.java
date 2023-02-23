@@ -982,24 +982,24 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		/* DPD Days validation against System parameter Configuration */
 		if (dpdDays > arl.getAutoRefCheckDPD() && isEOD) {
 			logger.debug(Literal.LEAVING);
-			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_001"));
+			return ErrorUtil.getError("REFUND_001", String.valueOf(dpdDays), String.valueOf(arl.getAutoRefCheckDPD()));
 		}
 
 		/* Verification against Refunds, if any of the refund against loan in process */
 		if (paymentHeaderDAO.isRefundInProcess(finId) && isEOD) {
 			logger.debug(Literal.LEAVING);
-			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_003"));
+			return ErrorUtil.getError("REFUND_003");
 		}
 
 		/* Verifying if the loan is write off or not */
 		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
 			logger.debug(Literal.LEAVING);
-			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_008"));
+			return ErrorUtil.getError("REFUND_008");
 		}
 
 		if (FinanceConstants.FEE_REFUND_HOLD.equals(holdStatus)) {
 			logger.debug(Literal.LEAVING);
-			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_009"));
+			return ErrorUtil.getError("REFUND_009");
 		}
 
 		logger.debug(Literal.LEAVING);

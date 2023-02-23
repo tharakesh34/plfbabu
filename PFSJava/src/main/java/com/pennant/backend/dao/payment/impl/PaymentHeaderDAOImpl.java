@@ -449,7 +449,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append(" COALESCE(EXCESSAMOUNT,0) AMOUNT,FINID FROM FINREPAYHEADER WHERE RECEIPTSEQID IN ( ");
 		sql.append(" SELECT RECEIPTSEQID FROM FINRECEIPTDETAIL_TEMP WHERE STATUS IN (?, ?)");
 		if (receiptId != null) {
-			sql.append(" and receiptid = ?");
+			sql.append(" and ReceiptId = ?");
 		}
 		sql.append(")");
 		sql.append(" AND EXCESSAMOUNT > 0  AND FINID = ? ");

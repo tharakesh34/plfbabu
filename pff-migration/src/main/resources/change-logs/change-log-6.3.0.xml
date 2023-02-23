@@ -13533,5 +13533,15 @@
          	 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#219091_01" author="murthy.y">
+		<sql>
+         	<![CDATA[
+            	Update ErrorDetails Set Message = 'Refund amount {0} should be less than maximum refund amount {1} configured against loan type.' Where code = 'REFUND_004';
+            	Update ErrorDetails Set Message = 'Refund amount {0} should be less than minimum refund amount {1} configured against loan type.' Where code = 'REFUND_005';
+            	Update ErrorDetails Set Message = 'DPD day’s {0} should be less than the configured DPD day’s {1}.' Where code = 'REFUND_001';
+         	]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog> 
