@@ -386,8 +386,8 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		clko.setReceiptDate(clku.getAppDate());
 		clko.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		clko.setReceiptAmount(clku.getExcessAmount());
-		clko.setToFinreference(clku.getToFinReference());
-		clko.setFromFinreference(clku.getFromFinReference());
+		clko.setToFinReference(clku.getToFinReference());
+		clko.setFromFinReference(clku.getFromFinReference());
 		clko.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		clko.setRequestSource(RequestSource.UPLOAD.name());
 		clko.setNewRecord(true);

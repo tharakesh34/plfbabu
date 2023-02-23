@@ -97,6 +97,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 	protected Listheader lhToFinReference;
 	protected Listheader lhReceiptId;
 	protected Listheader lhReceiptDate;
+	protected Listheader lh_ReceiptPurpose;
 	protected Listheader lhKnockOffType;
 	protected Listheader lhReceiptAmount;
 	protected Listheader lhExcessType;
@@ -157,7 +158,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		registerButton(btnSearch);
 		registerField("receiptID", lhReceiptId, SortOrder.ASC, receiptId, soReceiptID, Operators.DEFAULT);
 		registerField("receiptDate", lhReceiptDate, SortOrder.NONE, receiptDate, soReceiptDate, Operators.DATE);
-		registerField("receiptPurpose");
+		registerField("receiptPurpose", lh_ReceiptPurpose, SortOrder.NONE);
 		registerField("custCIF", lhCustCIF, SortOrder.NONE, customer, soCustCIF, Operators.STRING);
 		registerField("finType", lhFinType, SortOrder.NONE, finType, soFinType, Operators.STRING);
 		registerField("receiptAmount", lhReceiptAmount, SortOrder.NONE, receiptAmount, soReceiptAmount,
@@ -352,7 +353,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		public void render(Listitem item, CrossLoanKnockOff clk, int count) throws Exception {
 			Listcell lc;
 
-			lc = new Listcell(String.valueOf(clk.getReceiptId()));
+			lc = new Listcell(String.valueOf(clk.getReceiptID()));
 			lc.setParent(item);
 
 			lc = new Listcell(PennantAppUtil.formateDate(clk.getReceiptDate(), DateFormat.SHORT_DATE.getPattern()));
@@ -383,16 +384,16 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			lc = new Listcell(receiptPurpose);
 			lc.setParent(item);
 
-			lc = new Listcell(clk.getCustCif());
+			lc = new Listcell(clk.getCustCIF());
 			lc.setParent(item);
 
 			lc = new Listcell(clk.getFinType());
 			lc.setParent(item);
 
-			lc = new Listcell(clk.getFromFinreference());
+			lc = new Listcell(clk.getFromFinReference());
 			lc.setParent(item);
 
-			lc = new Listcell(clk.getToFinreference());
+			lc = new Listcell(clk.getToFinReference());
 			lc.setParent(item);
 
 			lc = new Listcell(clk.getPaymentType());

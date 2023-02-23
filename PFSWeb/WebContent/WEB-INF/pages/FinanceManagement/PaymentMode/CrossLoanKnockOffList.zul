@@ -124,7 +124,7 @@
 									sort="auto" hflex="min" visible="false" />
 								<listheader label="${c:l('listheader_ReceiptMode.label')}" sort="auto" hflex="min"
 									visible="false" />
-								<listheader label="${c:l('listheader_ReceiptPurpose.label')}" sort="auto" hflex="min" />
+								<listheader id="lh_ReceiptPurpose" label="${c:l('listheader_ReceiptPurpose.label')}" sort="auto" hflex="min" />
 								<listheader id="lhCustCIF" label="${c:l('listheader_Customer.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="lhFinType" label="${c:l('listheader_FinTypeCode.label')}" sort="auto"

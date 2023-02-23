@@ -22,14 +22,14 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 	private Date valueDate;
 	private CrossLoanTransfer crossLoanTransfer;
 	private FinReceiptData finReceiptData;
-	private long receiptId;
+	private long receiptID = 0;
 	private Date receiptDate;
 	private String receiptPurpose;
-	private String custCif;
+	private String custCIF;
 	private String finType;
 	private BigDecimal receiptAmount;
-	private String fromFinreference;
-	private String toFinreference;
+	private String fromFinReference;
+	private String toFinReference;
 	private String transactionRef;
 	private Date depositDate;
 	private Date realizationDate;
@@ -55,14 +55,14 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 		excludeFields.add("finReceiptData");
 		excludeFields.add("crossLoanTransfer");
 		excludeFields.add("receiptModeStatus");
-		excludeFields.add("receiptId");
+		excludeFields.add("receiptID");
 		excludeFields.add("receiptDate");
 		excludeFields.add("receiptPurpose");
-		excludeFields.add("custCif");
+		excludeFields.add("custCIF");
 		excludeFields.add("finType");
 		excludeFields.add("receiptAmount");
-		excludeFields.add("fromFinreference");
-		excludeFields.add("toFinreference");
+		excludeFields.add("fromFinReference");
+		excludeFields.add("toFinReference");
 		excludeFields.add("transactionRef");
 		excludeFields.add("depositDate");
 		excludeFields.add("realizationDate");
@@ -149,12 +149,12 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 		this.finReceiptData = finReceiptData;
 	}
 
-	public long getReceiptId() {
-		return receiptId;
+	public long getReceiptID() {
+		return receiptID;
 	}
 
-	public void setReceiptId(long receiptId) {
-		this.receiptId = receiptId;
+	public void setReceiptID(long receiptID) {
+		this.receiptID = receiptID;
 	}
 
 	public Date getReceiptDate() {
@@ -173,12 +173,12 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 		this.receiptPurpose = receiptPurpose;
 	}
 
-	public String getCustCif() {
-		return custCif;
+	public String getCustCIF() {
+		return custCIF;
 	}
 
-	public void setCustCif(String custCif) {
-		this.custCif = custCif;
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
 	}
 
 	public String getFinType() {
@@ -197,20 +197,20 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 		this.receiptAmount = receiptAmount;
 	}
 
-	public String getFromFinreference() {
-		return fromFinreference;
+	public String getFromFinReference() {
+		return fromFinReference;
 	}
 
-	public void setFromFinreference(String fromFinreference) {
-		this.fromFinreference = fromFinreference;
+	public void setFromFinReference(String fromFinReference) {
+		this.fromFinReference = fromFinReference;
 	}
 
-	public String getToFinreference() {
-		return toFinreference;
+	public String getToFinReference() {
+		return toFinReference;
 	}
 
-	public void setToFinreference(String toFinreference) {
-		this.toFinreference = toFinreference;
+	public void setToFinReference(String toFinReference) {
+		this.toFinReference = toFinReference;
 	}
 
 	public String getTransactionRef() {
