@@ -258,7 +258,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = pd.FinID");
 		sql.append(" Inner Join RMTBranches b on b.BranchCode = fm.FinBranch");
 		sql.append(" Inner Join PresentmentHeader ph on ph.id = pd.PresentmentId");
-		sql.append(" Where fm.FinReference = ? and SchDate = ?");
+		sql.append(" Where fm.FinReference = ? and pd.SchDate = ?");
 		sql.append(" Order by PresentmentID desc");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));

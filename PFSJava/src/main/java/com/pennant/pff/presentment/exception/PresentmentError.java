@@ -56,9 +56,13 @@ public enum PresentmentError {
 
 	FC_604("If Clearing status is 'B' then BounceCode & BounceRemarks are Mandatory."),
 
-	FC_605("Latest presentment status should be either bounce or success."),
+	FC_605("Previous presentment status should be either BOUNCE or SUCCESS."),
 
-	FC_606("Latest re-presentment status should be either bounce or success.");
+	FC_606("Previous re-presentment status should be either BOUNCE or SUCCESS."),
+
+	FC_607("Clearing status should be 'B', since the previous presentment status is 'SUCCESS'"),
+
+	FC_608("Clearing status should be 'S', since the previous presentment status is 'BOUNCE'");
 
 	private String description;
 

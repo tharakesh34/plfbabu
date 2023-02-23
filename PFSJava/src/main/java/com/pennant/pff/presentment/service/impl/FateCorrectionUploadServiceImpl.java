@@ -79,19 +79,25 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (!RepayConstants.PEXC_BOUNCE.equals(pd.getStatus()) || !RepayConstants.PEXC_SUCCESS.equals(pd.getStatus())) {
-			setError(detail, PresentmentError.FC_605);
+		String status = pd.getStatus();
+
+		if (!(RepayConstants.PEXC_BOUNCE.equals(status)) && !(RepayConstants.PEXC_SUCCESS.equals(status))) {
+			if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
+				setError(detail, PresentmentError.FC_606);
+			} else {
+				setError(detail, PresentmentError.FC_605);
+			}
 			return;
 		}
 
-		if ((!RepayConstants.PEXC_BOUNCE.equals(pd.getStatus()) || !RepayConstants.PEXC_BOUNCE.equals(pd.getStatus()))
-				&& PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
-			setError(detail, PresentmentError.FC_606);
-			return;
-		}
+		if (status.equals(detail.getClearingStatus())) {
+			if (RepayConstants.PEXC_BOUNCE.equals(status)) {
+				setError(detail, PresentmentError.FC_607);
+			}
 
-		if (StringUtils.equals(detail.getClearingStatus(), pd.getStatus())) {
-			setError(detail, PresentmentError.FC_603);
+			if (RepayConstants.PEXC_SUCCESS.equals(status)) {
+				setError(detail, PresentmentError.FC_608);
+			}
 			return;
 		}
 
