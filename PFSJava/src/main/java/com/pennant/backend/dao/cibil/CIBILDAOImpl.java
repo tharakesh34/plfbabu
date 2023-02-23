@@ -652,7 +652,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 			colltflStp.setBankValuation(rs.getBigDecimal("BankValuation"));
 			colltflStp.setCollateralCcy(rs.getString("CcyCode"));
-			colltflStp.setCollateralType(rs.getString("Codes"));
+			colltflStp.setCollateralType(rs.getString("Code"));
 
 			return colltflStp;
 		}, segmentType, segmentType, finID, segmentType);
