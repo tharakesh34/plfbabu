@@ -3103,8 +3103,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 
 		ExtendedCombobox branches = (ExtendedCombobox) getComponent(row, 7);
-		branches.setValue("", "");
-		branches.setSelectedValues(new HashMap<>());
+
+		if (branches != null) {
+			branches.setValue("", "");
+			branches.setSelectedValues(new HashMap<>());
+		}
 
 		doSetBranchFilter(row);
 	}
