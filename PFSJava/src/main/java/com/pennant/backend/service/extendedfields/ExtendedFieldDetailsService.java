@@ -1967,15 +1967,6 @@ public class ExtendedFieldDetailsService {
 							return errorDetails;
 						}
 
-						// if fieldValue is blank then sets fieldValue is
-						// Mandatory
-						if (StringUtils.isBlank(Objects.toString(extFieldData.getFieldValue(), ""))) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "fieldValue";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-							return errorDetails;
-						}
-
 						if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP && !isDedupe) {
 							errorDetails.add(validateUCICNumber(subModule, extFieldData));
 
@@ -2000,6 +1991,16 @@ public class ExtendedFieldDetailsService {
 									} else {
 										fieldList.add(extFieldData.getFieldName());
 									}
+
+									if (detail.isFieldMandatory() && StringUtils
+											.isBlank(Objects.toString(extFieldData.getFieldValue(), ""))) {
+										String[] valueParm = new String[1];
+										valueParm[0] = "fieldValue";
+										errorDetails
+												.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+										return errorDetails;
+									}
+
 									if (detail.isFieldMandatory()) {
 										exdMandConfigCount++;
 									}
