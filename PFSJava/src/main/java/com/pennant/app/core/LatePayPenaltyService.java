@@ -368,6 +368,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		odcr.setPenaltyPaid(rpd.getPenaltyPaid());
 		odcr.setWaivedAmt(rpd.getPenaltyWaived());
 		odcr.setPenaltyAmtPerc(fod.getODChargeAmtOrPerc());
+		odcr.setoDChargeAmtOrPerc(fod.getODChargeAmtOrPerc());
 		odcr.setLpCpz(isLpCpz);
 		return odcr;
 	}
