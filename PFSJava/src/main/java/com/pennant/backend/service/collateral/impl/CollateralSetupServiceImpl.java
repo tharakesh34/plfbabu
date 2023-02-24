@@ -2318,16 +2318,18 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 							return auditDetail;
 						}
-						if (StringUtils.isBlank(Objects.toString(extendedFieldData.getFieldValue(), ""))) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "fieldValue";
-							auditDetail
-									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-							return auditDetail;
-						}
+
 						boolean isFeild = false;
 						for (ExtendedFieldDetail detail : exdFldConfig) {
 							if (StringUtils.equals(detail.getFieldName(), extendedFieldData.getFieldName())) {
+								if (detail.isFieldMandatory() && StringUtils
+										.isBlank(Objects.toString(extendedFieldData.getFieldValue(), ""))) {
+									String[] valueParm = new String[1];
+									valueParm[0] = "fieldValue";
+									auditDetail.setErrorDetail(
+											ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+									return auditDetail;
+								}
 								if (detail.isFieldMandatory()) {
 									exdMandConfigCount++;
 								}
