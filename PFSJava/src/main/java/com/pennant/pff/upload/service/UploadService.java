@@ -41,4 +41,6 @@ public interface UploadService {
 	void updateInProcessStatus(long headerID, int status);
 
 	int isValidateApprove(List<FileUploadHeader> selectedHeaders);
+
+	void updateFailRecords(int sucessRecords, int faildrecords, long headerId);
 }

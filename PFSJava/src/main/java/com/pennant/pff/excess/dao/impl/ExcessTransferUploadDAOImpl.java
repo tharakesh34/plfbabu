@@ -177,4 +177,22 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 			return etup;
 		}, headerID, "C");
 	}
+
+	@Override
+	public void updateFailure(ExcessTransferUpload detail) {
+		String sql = "Update Excess_Transfer_Details_Upload Set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ?  Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.update(sql, ps -> {
+			int index = 0;
+
+			ps.setInt(++index, EodConstants.PROGRESS_FAILED);
+			ps.setString(++index, "R");
+			ps.setString(++index, detail.getErrorCode());
+			ps.setString(++index, detail.getErrorDesc());
+
+			ps.setLong(++index, detail.getId());
+		});
+	}
 }

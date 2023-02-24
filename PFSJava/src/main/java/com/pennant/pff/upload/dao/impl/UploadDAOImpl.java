@@ -451,4 +451,18 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, obj);
 	}
 
+	@Override
+	public void updateFailRecords(int sucessRecords, int faildrecords, long headerId) {
+		String sql = "Update FILE_UPLOAD_HEADER Set SuccessRecords = SuccessRecords - ?, FailureRecords = FailureRecords + ? Where Id = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, st -> {
+			int index = 0;
+			
+			st.setInt(++index, sucessRecords);
+			st.setInt(++index, faildrecords);
+			st.setLong(++index, headerId);
+		});
+	}
 }

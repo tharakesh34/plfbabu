@@ -169,11 +169,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 
 					updateHeader(headerList, true);
 
-					logger.info("Excess Transfer Process is Initiated");
-
-					// Process needs to be implement
-					process(header.getId());
-
 					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
@@ -184,6 +179,10 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 				} finally {
 					txStatus = null;
 				}
+
+				logger.info("Excess Transfer Process is Initiated");
+
+				process(header.getId());
 
 				logger.info("Processed the File {}", header.getFileName());
 			}
@@ -242,18 +241,30 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 				transferList.add(transfer);
 
 				if (transferList.size() == PennantConstants.CHUNK_SIZE) {
-					for (FinExcessTransfer fet : transferList) {
-						excessTransferService.doApprove(getAuditHeader(fet, PennantConstants.TRAN_WF));
-					}
-					transferList.clear();
+					approveExcess(exc, transferList);
 				}
 			}
 
-			for (FinExcessTransfer fet : transferList) {
-				excessTransferService.doApprove(getAuditHeader(fet, PennantConstants.TRAN_WF));
+			approveExcess(exc, transferList);
+
+			if (EodConstants.PROGRESS_FAILED == exc.getProgress()) {
+				updateFailRecords(1, 1, exc.getHeaderId());
 			}
-			transferList.clear();
 		}
+	}
+
+	private void approveExcess(ExcessTransferUpload exc, List<FinExcessTransfer> transferList) {
+		for (FinExcessTransfer fet : transferList) {
+			try {
+				excessTransferService.doApprove(getAuditHeader(fet, PennantConstants.TRAN_WF));
+			} catch (Exception e) {
+				exc.setErrorCode(ERR_CODE);
+				exc.setErrorDesc(getErrorMessage(e));
+				exc.setProgress(EodConstants.PROGRESS_FAILED);
+				excessTransferUploadDAO.updateFailure(exc);
+			}
+		}
+		transferList.clear();
 	}
 
 	private AuditHeader getAuditHeader(FinExcessTransfer transfer, String tranType) {

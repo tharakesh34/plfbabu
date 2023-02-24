@@ -130,6 +130,20 @@ public abstract class AUploadServiceImpl implements UploadService {
 	}
 
 	@Override
+	public void updateFailRecords(int sucessRecords, int faildrecords, long headerId) {
+		this.uploadDAO.updateFailRecords(sucessRecords, faildrecords, headerId);
+	}
+
+	protected String getErrorMessage(Exception e) {
+		String message = e.getMessage();
+
+		if (message != null && message.length() > 1999) {
+			message = message.substring(1999);
+		}
+		return message;
+	}
+
+	@Override
 	public int isValidateApprove(List<FileUploadHeader> selectedHeaders) {
 		return this.uploadDAO.isValidateApprove(selectedHeaders, Status.DOWNLOADED.getValue());
 	}
