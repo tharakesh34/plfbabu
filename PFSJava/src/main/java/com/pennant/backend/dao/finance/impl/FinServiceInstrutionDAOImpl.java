@@ -106,6 +106,41 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	}
 
 	@Override
+	public List<FinServiceInstruction> getFinServiceInstructions(long finID, String finEvent) {
+		StringBuilder sql = new StringBuilder("Select * From (");
+		sql.append(" Select ");
+		sql.append(" ServiceSeqId, FinEvent, FinID, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
+		sql.append(", ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate, NextGrcRepayDate, RepayPftFrq");
+		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
+		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
+		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, InitiatedDate, ApprovedDate");
+		sql.append(", GrcPftRate, GraceBaseRate, GraceSpecialRate, GrcMargin");
+		sql.append(" From FinServiceInstruction_Temp ");
+		sql.append(" Union All ");
+		sql.append(" Select ");
+		sql.append(" ServiceSeqId, FinEvent, FinID, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
+		sql.append(", ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate, NextGrcRepayDate, RepayPftFrq");
+		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
+		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
+		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, InitiatedDate, ApprovedDate");
+		sql.append(", GrcPftRate, GraceBaseRate, GraceSpecialRate, GrcMargin");
+		sql.append(" From FinServiceInstruction");
+		sql.append(" WHERE NOT EXISTS (SELECT 1 FROM FinServiceInstruction_Temp) T");
+		sql.append(" Where FinID = ? and FinEvent = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinServiceInstructionRowMapper rowMapper = new FinServiceInstructionRowMapper();
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+			ps.setString(index, finEvent);
+		}, rowMapper);
+	}
+
+	@Override
 	public List<FinServiceInstruction> getFinServiceInstAddDisbDetail(long finID, Date fromDate, String finEvent) {
 		StringBuilder sql = sqlSelectQuery();
 		sql.append(" Where FinID = ? and FromDate = ? and FinEvent = ?");

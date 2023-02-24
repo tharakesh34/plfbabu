@@ -148,7 +148,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
-		schdData.setFinServiceInstructions(getFinServiceInstructions(finID, procEdtEvent));
+		schdData.setFinServiceInstructions(finServiceInstructionDAO.getFinServiceInstructions(finID, procEdtEvent));
 
 		List<FinFeeDetail> feeList = schdData.getFinFeeDetailList();
 
