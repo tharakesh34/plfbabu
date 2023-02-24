@@ -419,7 +419,9 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				if (finalFormula.length() > 0) {
 					finalFormula = finalFormula + "+";
 				}
-
+				if (sheetName.contains("-")) {
+					sheetName = "'" + sheetName + "'";
+				}
 				finalFormula = finalFormula + sheetName + "!" + reference;
 			}
 		}
