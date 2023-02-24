@@ -537,7 +537,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		}
 
 		try {
-			BigDecimal collPrec = totalAssgnedCollAmount.divide(finAssetValue, PennantConstants.defaultCCYDecPos,
+			BigDecimal collPrec = finAssetValue.divide(totalAssgnedCollAmount, PennantConstants.defaultCCYDecPos,
 					RoundingMode.HALF_UP);
 			collPrec = collPrec.multiply(new BigDecimal(100));
 			customerEligibilityCheck.addExtendedField("Coll_Assign_Percentage", collPrec);
