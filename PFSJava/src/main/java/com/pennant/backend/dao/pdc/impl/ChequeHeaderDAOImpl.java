@@ -280,7 +280,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 
 	@Override
 	public void updatesize(ChequeHeader ch) {
-		String sql = "Update ChequeHeader Set NoOfCheques = NoOfCheques + ? Where HeaderID = ?";
+		String sql = "Update ChequeHeader Set NoOfCheques = NoOfCheques - ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
