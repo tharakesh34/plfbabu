@@ -2329,6 +2329,9 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 									auditDetail.setErrorDetail(
 											ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 									return auditDetail;
+								} else if (StringUtils
+										.isBlank(Objects.toString(extendedFieldData.getFieldValue(), ""))) {
+									continue;
 								}
 								if (detail.isFieldMandatory()) {
 									exdMandConfigCount++;
