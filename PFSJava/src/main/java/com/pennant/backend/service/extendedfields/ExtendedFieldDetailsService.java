@@ -728,11 +728,11 @@ public class ExtendedFieldDetailsService {
 						efr.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 					} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 						efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(efr.getRecordType())) {
-						// If saved record has been updated then it should be updated in the table.
-						updateRecord = true;
-						saveRecord = false;
-					}
+					} /*
+						 * else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(efr.getRecordType())) { // If
+						 * saved record has been updated then it should be updated in the table. updateRecord = true;
+						 * saveRecord = false; }
+						 */
 
 				} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					if (approveRec) {

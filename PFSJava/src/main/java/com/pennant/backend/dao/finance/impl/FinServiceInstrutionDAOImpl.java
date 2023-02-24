@@ -115,7 +115,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
 		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, InitiatedDate, ApprovedDate");
 		sql.append(", GrcPftRate, GraceBaseRate, GraceSpecialRate, GrcMargin");
-		sql.append(" From FinServiceInstruction_Temp ");
+		sql.append(" From FinServiceInstruction_Temp T1 ");
 		sql.append(" Union All ");
 		sql.append(" Select ");
 		sql.append(" ServiceSeqId, FinEvent, FinID, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
@@ -124,8 +124,9 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
 		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, InitiatedDate, ApprovedDate");
 		sql.append(", GrcPftRate, GraceBaseRate, GraceSpecialRate, GrcMargin");
-		sql.append(" From FinServiceInstruction");
-		sql.append(" WHERE NOT EXISTS (SELECT 1 FROM FinServiceInstruction_Temp)) T");
+		sql.append(" From FinServiceInstruction T2");
+		sql.append(" WHERE NOT (EXISTS (SELECT 1 FROM FinServiceInstruction_Temp T3");
+		sql.append(" WHERE T3.Serviceseqid = T2.Serviceseqid))) T");
 		sql.append(" Where FinID = ? and FinEvent = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
