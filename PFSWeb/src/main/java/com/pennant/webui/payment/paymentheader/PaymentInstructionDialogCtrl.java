@@ -470,9 +470,11 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 		try {
 			this.partnerBankID.getValidatedValue();
-			Object obj = this.partnerBankID.getAttribute("partnerBankId");
+			Object obj = (Object) this.partnerBankID.getObject();
+
 			if (obj != null) {
-				pi.setPartnerBankId(Long.valueOf(String.valueOf(obj)));
+				FinTypePartnerBank ftpb = (FinTypePartnerBank) obj;
+				pi.setPartnerBankId(ftpb.getPartnerBankID());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
