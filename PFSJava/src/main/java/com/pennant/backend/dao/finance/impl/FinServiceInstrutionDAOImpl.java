@@ -125,7 +125,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, InitiatedDate, ApprovedDate");
 		sql.append(", GrcPftRate, GraceBaseRate, GraceSpecialRate, GrcMargin");
 		sql.append(" From FinServiceInstruction");
-		sql.append(" WHERE NOT EXISTS (SELECT 1 FROM FinServiceInstruction_Temp) T");
+		sql.append(" WHERE NOT EXISTS (SELECT 1 FROM FinServiceInstruction_Temp)) T");
 		sql.append(" Where FinID = ? and FinEvent = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
