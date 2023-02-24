@@ -63,7 +63,7 @@ public class LookupMethods {
 	public static final int GE = 1; // greater than or equal to
 	public static final int GT = 2; // greater than
 
-	public LookupMethods() {
+	private LookupMethods() {
 		super();
 	}
 

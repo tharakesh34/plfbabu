@@ -282,13 +282,8 @@ public class LatePayMarkingService extends ServiceHelper {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
-
 			if (finEODEvent.getIdxPD() <= 0) {
 				continue;
-			}
-
-			if (StringUtils.equals(finEODEvent.getFinanceMain().getFinReference(), "2972")) {
-				int temp = 1;
 			}
 
 			findLatePay(finEODEvent, custEODEvent);
@@ -512,33 +507,32 @@ public class LatePayMarkingService extends ServiceHelper {
 			repayments = LookupMethods.sortRPDByValueDate(repayments);
 		}
 
-		for (FinanceRepayments rpd : repayments) {
-
-			// check the payment made against the actual schedule date
-			Date finSchdDate = rpd.getFinSchdDate();
-			if (finSchdDate.compareTo(schDate) != 0) {
-				continue;
-			}
-
-			// Max OD amounts is same as rpdList balance amounts
-			Date finValueDate = rpd.getFinValueDate();
-			if (finSchdDate.compareTo(finValueDate) == 0) {
-				fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(rpd.getFinSchdPriPaid()));
-				fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(rpd.getFinSchdPftPaid()));
-			}
-
-		}
+		// FIXME: 24FEB23. WHY THE BELOW CODE IS REQUIRED.
+		/*
+		 * for (FinanceRepayments rpd : repayments) {
+		 * 
+		 * // check the payment made against the actual schedule date Date finSchdDate = rpd.getFinSchdDate(); if
+		 * (finSchdDate.compareTo(schDate) != 0) { continue; }
+		 * 
+		 * // Max OD amounts is same as rpdList balance amounts Date finValueDate = rpd.getFinValueDate(); if
+		 * (finSchdDate.compareTo(finValueDate) == 0) {
+		 * fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(rpd.getFinSchdPriPaid()));
+		 * fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(rpd.getFinSchdPftPaid())); }
+		 * 
+		 * }
+		 */
 
 		if (ProductUtil.isOverDraft(productCategory)) {
 			BigDecimal txnChrg = overdrafLoanService.getTransactionCharge(movements, schDate, grcDate);
 			fod.setMaxOverdraftTxnChrg(fod.getMaxOverdraftTxnChrg().subtract(txnChrg));
 		}
 
-		fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()).add(fod.getMaxOverdraftTxnChrg()));
-		Date odtCaldate = penaltyCalDate;
-		if (ImplementationConstants.LP_MARK_FIRSTDAY && isEODprocess) {
-			odtCaldate = DateUtil.addDays(penaltyCalDate, 1);
-		}
+		// FIXME: 24FEB23. WHY THE BELOW CODE IS REQUIRED.
+		/*
+		 * fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()).add(fod.getMaxOverdraftTxnChrg())); Date
+		 * odtCaldate = penaltyCalDate; if (ImplementationConstants.LP_MARK_FIRSTDAY && isEODprocess) { odtCaldate =
+		 * DateUtil.addDays(penaltyCalDate, 1); }
+		 */
 
 		fod.setFinCurODDays(DateUtil.getDaysBetween(fod.getFinODSchdDate(), valueDate));
 

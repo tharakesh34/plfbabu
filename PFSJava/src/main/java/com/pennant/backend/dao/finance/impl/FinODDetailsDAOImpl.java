@@ -147,6 +147,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" Set FinODTillDate = ?, FinCurODAmt = ?, FinCurODPri = ?, FinCurODPft = ?, FinCurODDays = ?");
 		sql.append(", TotPenaltyAmt = ?, TotWaived = ?, TotPenaltyPaid = ?, TotPenaltyBal = ?, FinLMdfDate = ?");
 		sql.append(", LPIAmt = ?, LPIPaid = ?, LPIBal = ?, LPIWaived = ?, CurOverdraftTxnChrg = ?");
+		sql.append(", FinMaxODAmt = ?, FinMaxODPri = ?, FinMaxODPft = ? ");
 		sql.append(" Where FinID = ? and FinODSchdDate = ? and FinODFor = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -174,6 +175,9 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				ps.setBigDecimal(index++, od.getLPIBal());
 				ps.setBigDecimal(index++, od.getLPIWaived());
 				ps.setBigDecimal(index++, od.getCurOverdraftTxnChrg());
+				ps.setBigDecimal(index++, od.getFinMaxODAmt());
+				ps.setBigDecimal(index++, od.getFinMaxODPri());
+				ps.setBigDecimal(index++, od.getFinMaxODPft());
 
 				ps.setLong(index++, od.getFinID());
 				ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
