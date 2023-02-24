@@ -323,4 +323,13 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="002.5" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				UPDATE FILE_INTERFACE_CONFIG SET FILE_PREPEND = 'PNS' WHERE INTERFACE_TYPE = 'SI';
+				UPDATE FILE_INTERFACE_CONFIG SET FILE_PREPEND = 'PNI' WHERE INTERFACE_TYPE = 'IPDC';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
