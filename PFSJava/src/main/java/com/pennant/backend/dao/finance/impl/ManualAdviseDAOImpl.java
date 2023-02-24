@@ -2409,7 +2409,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public BigDecimal getPayableBalance(long finID, long feeTypeID) {
-		String sql = "Select Sum(BalanceAmt) From ManualAdvise Where FinID = ? and AdviseType = ? and FeeTypeID = ?";
+		String sql = "Select coalesce(Sum(BalanceAmt), 0) From ManualAdvise Where FinID = ? and AdviseType = ? and FeeTypeID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 

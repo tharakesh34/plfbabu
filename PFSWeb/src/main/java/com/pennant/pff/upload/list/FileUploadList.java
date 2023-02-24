@@ -545,14 +545,42 @@ public class FileUploadList extends Window implements Serializable {
 
 		if (this.fromDate.getValue() != null && this.toDate.getValue() != null) {
 			String frmDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
-			String toDte = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
+			String toDte = PennantAppUtil.formateDate(DateUtil.addDays(this.toDate.getValue(), 1),
+					PennantConstants.DBDateFormat);
 
-			Filter[] filters = new Filter[3];
+			Filter[] filters = new Filter[4];
+
+			if ("A".equals(this.stage) && StringUtils.isNotEmpty(this.entityCode.getValue())) {
+				filters = new Filter[5];
+			}
+
 			filters[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
 			filters[1] = new Filter("CreatedOn", frmDate, Filter.OP_GREATER_OR_EQUAL);
-			filters[2] = new Filter("CreatedOn", toDte, Filter.OP_LESS_OR_EQUAL);
+			filters[2] = new Filter("CreatedOn", toDte, Filter.OP_LESS_THAN);
+			filters[3] = new Filter("Progress", Status.IN_PROCESS.getValue(), Filter.OP_NOT_EQUAL);
+
+			if ("A".equals(this.stage) && StringUtils.isNotEmpty(this.entityCode.getValue())) {
+				filters[4] = new Filter("EntityCode", this.entityCode.getValue(), Filter.OP_EQUAL);
+			}
+
 			this.fileName.setFilters(filters);
+
+			this.fileName.setWhereClause("NextRoleCode is null or NextRoleCode in (".concat(getRoles()).concat(")"));
 		}
+	}
+
+	private String getRoles() {
+		StringBuilder whereClause = new StringBuilder("");
+
+		for (String roleCode : this.workflowRoles) {
+			if (whereClause.length() > 1) {
+				whereClause.append(", ");
+			}
+
+			whereClause.append("'").append(roleCode).append("'");
+		}
+
+		return whereClause.toString();
 	}
 
 	public void onChangeEntityCode(Event event) {

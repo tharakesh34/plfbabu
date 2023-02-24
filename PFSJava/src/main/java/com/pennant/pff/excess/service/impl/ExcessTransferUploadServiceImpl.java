@@ -208,11 +208,15 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 
 			BigDecimal transferAmount = exc.getTransferAmount();
 			for (FinExcessAmount excess : excessList) {
+				BigDecimal amount = excess.getBalanceAmt();
+
 				if (transferAmount.compareTo(BigDecimal.ZERO) <= 0) {
 					break;
 				}
 
-				BigDecimal amount = excess.getBalanceAmt();
+				if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
 
 				if (transferAmount.compareTo(amount) >= 0) {
 					transferAmount = transferAmount.subtract(amount);
@@ -223,6 +227,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 
 				FinExcessTransfer transfer = new FinExcessTransfer();
 
+				transfer.setId(excess.getReceiptID());
 				transfer.setFinId(exc.getReferenceID());
 				transfer.setFinReference(exc.getReference());
 				transfer.setTransferFromType(exc.getTransferFromType());

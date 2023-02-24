@@ -267,7 +267,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		String feeTypeCode = StringUtils.trimToNull(detail.getFeeType());
 		Long feeTypeId = null;
 		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(detail.getExcessType())) {
-			feeTypeId = feeTypeDAO.getFeeTypeId(feeTypeCode);
+			feeTypeId = feeTypeDAO.getPayableFeeTypeID(feeTypeCode);
 
 			if (feeTypeId == null) {
 				setError(detail, PaymentUploadError.REFUP005);
