@@ -13227,4 +13227,6 @@
 	<bean id="crossLoanKnockOffUploadProcessRecord" class = "com.pennant.backend.service.finance.impl.CrossLoanKnockOffUploadProcessRecord"/>
 	
 	<bean id="finOverDueService" class="com.pennant.app.core.FinOverDueService"/>
+	
+	<bean id="lppUploadDAO" class="com.pennant.pff.lpp.dao.impl.LPPUploadDAOImpl" parent="sequenceDao" />
 </beans>
