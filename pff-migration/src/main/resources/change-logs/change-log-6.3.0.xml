@@ -13831,4 +13831,14 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#219416" author="bhagyaraj.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE='REFUND_016';
+				
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, RECORDSTATUS, WORKFLOWID, LASTMNTBY, VERSION) VALUES ('REFUND_016', 	 'EN', 'E', 'There is no sufficiant balance to process the refund.', 'Approved', 0, 1000, 1);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

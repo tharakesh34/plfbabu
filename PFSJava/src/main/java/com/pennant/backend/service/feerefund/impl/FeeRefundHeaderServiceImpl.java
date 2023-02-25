@@ -264,6 +264,7 @@ public class FeeRefundHeaderServiceImpl extends GenericService<FeeRefundHeader> 
 		// PaymentDetails
 		if (frh.getFeeRefundDetailList() != null && frh.getFeeRefundDetailList().size() > 0) {
 			for (FeeRefundDetail detail : frh.getFeeRefundDetailList()) {
+				detail.setFinID(frh.getFinID());
 				detail.setHeaderID(frh.getId());
 				detail.setWorkflowId(frh.getWorkflowId());
 			}

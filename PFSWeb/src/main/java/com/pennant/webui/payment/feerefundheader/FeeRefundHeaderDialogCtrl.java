@@ -86,15 +86,13 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.service.feerefund.FeeRefundDetailService;
 import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
-import com.pennant.backend.service.finance.ManualAdviseService;
-import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -190,9 +188,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 	private Grid grid_basicDetails;
 	private Map<String, BigDecimal> taxPercMap = null;
 	private FeeTypeService feeTypeService;
-	private ReceiptService receiptService;
-	private ManualAdviseService manualAdviseService;
 	private RefundBeneficiary refundBeneficiary;
+	private FeeRefundDetailService feeRefundDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -1104,7 +1101,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				continue;
 			}
 
-			BigDecimal receiptPaidAmt = getReceiptAmt(finID, Allocation.MANADV, String.valueOf(ma.getAdviseID()));
+			BigDecimal receiptPaidAmt = feeRefundDetailService.getCanelReceiptAmt(finID, Allocation.MANADV,
+					String.valueOf(ma.getAdviseID()));
 
 			frd.setNewRecord(true);
 			frd.setReceivableID(ma.getAdviseID());
@@ -1136,7 +1134,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 			} else {
 				frd.setPaidAmount(ma.getPaidAmount().subtract(receiptPaidAmt));
 			}
-			frd.setPrevRefundAmount(getPreviousRefundAmt(finID, frd));
+			frd.setPrevRefundAmount(feeRefundDetailService.getPreviousRefundAmt(finID, frd));
 
 			detailList.add(frd);
 		}
@@ -1152,7 +1150,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 				continue;
 			}
 
-			BigDecimal receiptPaidAmt = getReceiptAmt(finID, Allocation.FEE, String.valueOf(-1 * fee.getFeeTypeID()));
+			BigDecimal receiptPaidAmt = feeRefundDetailService.getCanelReceiptAmt(finID, Allocation.FEE,
+					String.valueOf(-1 * fee.getFeeTypeID()));
 
 			frd.setNewRecord(true);
 			frd.setReceivableID(fee.getFeeID());
@@ -1170,7 +1169,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 			frd.setReceivableType(Allocation.FEE);
 
-			frd.setPrevRefundAmount(getPreviousRefundAmt(finID, frd));
+			frd.setPrevRefundAmount(feeRefundDetailService.getPreviousRefundAmt(finID, frd));
 
 			detailList.add(frd);
 		}
@@ -1181,7 +1180,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 			if (pFeeType != null && pFeeType.isRefundable()) {
 
-				BigDecimal receiptPaidAmt = getReceiptAmt(finID, Allocation.ODC, Allocation.ODC);
+				BigDecimal receiptPaidAmt = feeRefundDetailService.getCanelReceiptAmt(finID, Allocation.ODC,
+						Allocation.ODC);
 
 				frd = new FeeRefundDetail();
 				frd.setNewRecord(true);
@@ -1201,7 +1201,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 				frd.setReceivableType(Allocation.ODC);
 
-				frd.setPrevRefundAmount(getPreviousRefundAmt(finID, frd));
+				frd.setPrevRefundAmount(feeRefundDetailService.getPreviousRefundAmt(finID, frd));
 
 				detailList.add(frd);
 			}
@@ -1213,7 +1213,8 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 			if (pFeeType != null && pFeeType.isRefundable()) {
 
-				BigDecimal receiptPaidAmt = getReceiptAmt(finID, Allocation.LPFT, Allocation.LPFT);
+				BigDecimal receiptPaidAmt = feeRefundDetailService.getCanelReceiptAmt(finID, Allocation.LPFT,
+						Allocation.LPFT);
 
 				frd = new FeeRefundDetail();
 				frd.setNewRecord(true);
@@ -1233,7 +1234,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 				frd.setReceivableType(Allocation.LPFT);
 
-				frd.setPrevRefundAmount(getPreviousRefundAmt(finID, frd));
+				frd.setPrevRefundAmount(feeRefundDetailService.getPreviousRefundAmt(finID, frd));
 
 				detailList.add(frd);
 			}
@@ -1250,28 +1251,6 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		doFillHeaderList(feeRefundDetailList);
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private BigDecimal getReceiptAmt(long finID, String allocationType, String allocationTo) {
-		List<ReceiptAllocationDetail> radList = this.receiptService.getReceiptAllocDetail(finID, allocationType);
-
-		BigDecimal receiptPaidAmt = BigDecimal.ZERO;
-
-		if (CollectionUtils.isNotEmpty(radList)) {
-			for (ReceiptAllocationDetail rad : radList) {
-				if (StringUtils.equals(String.valueOf(rad.getAllocationTo()), allocationTo)) {
-					receiptPaidAmt = rad.getPaidAmount();
-				}
-			}
-		}
-
-		return receiptPaidAmt;
-	}
-
-	private BigDecimal getPreviousRefundAmt(long finID, FeeRefundDetail frd) {
-		long receivableID = frd.getReceivableID();
-		long receivableFeeTypeID = frd.getReceivableFeeTypeID();
-		return manualAdviseService.getRefundedAmt(finID, receivableID, receivableFeeTypeID);
 	}
 
 	private void updatePaybleAmounts(List<FeeRefundDetail> newList, List<FeeRefundDetail> oldList) {
@@ -1788,16 +1767,12 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
-	public void setReceiptService(ReceiptService receiptService) {
-		this.receiptService = receiptService;
-	}
-
-	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
-		this.manualAdviseService = manualAdviseService;
-	}
-
 	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
 		this.refundBeneficiary = refundBeneficiary;
+	}
+
+	public void setFeeRefundDetailService(FeeRefundDetailService feeRefundDetailService) {
+		this.feeRefundDetailService = feeRefundDetailService;
 	}
 
 }

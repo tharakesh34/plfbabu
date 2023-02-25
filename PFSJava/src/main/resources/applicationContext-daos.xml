@@ -3678,7 +3678,7 @@
 	</bean>
 
 	<bean name="financeWriteoffServiceTarget"
-		class="com.pennant.backend.service.finance.impl.FinanceWriteoffServiceImpl" parent="genericFinanceDetailService"/>
+		class="com.pennant.backend.service.finance.impl.FinanceWriteoffServiceImpl" parent="genericFinanceDetailService" />
 
 	<!--============ Finance Schedule Details ============== -->
 	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
@@ -4406,7 +4406,7 @@
 		</property>
 	</bean>
 
-	<bean id="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" >
+	<bean id="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl">
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="repaymentProcessUtil" ref="repaymentProcessUtil" />
 	</bean>
@@ -12997,7 +12997,7 @@
 	</bean>
 
 	<bean name="feeRefundHeaderServiceTarget"
-		class="com.pennant.backend.service.feerefund.impl.FeeRefundHeaderServiceImpl"/>
+		class="com.pennant.backend.service.feerefund.impl.FeeRefundHeaderServiceImpl" />
 
 	<bean id="feeRefundDetailService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -13019,7 +13019,6 @@
 
 	<bean name="feeRefundDetailServiceTarget"
 		class="com.pennant.backend.service.feerefund.impl.FeeRefundDetailServiceImpl">
-		<property name="feeRefundDetailDAO" ref="feeRefundDetailDAO" />
 	</bean>
 
 	<bean id="feeRefundInstructionService"

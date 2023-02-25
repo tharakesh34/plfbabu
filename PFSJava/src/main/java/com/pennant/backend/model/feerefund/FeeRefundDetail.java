@@ -68,6 +68,7 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 
 	private boolean expand;
 	private boolean collapse;
+	private Long finID;
 
 	public FeeRefundDetail() {
 		super();
@@ -86,6 +87,7 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 		excludeFields.add("payableFeeTypeDesc");
 		excludeFields.add("expand");
 		excludeFields.add("collapse");
+		excludeFields.add("finID");
 
 		return excludeFields;
 	}
@@ -292,6 +294,14 @@ public class FeeRefundDetail extends AbstractWorkflowEntity {
 
 	public void setPayableFeeTypeDesc(String payableFeeTypeDesc) {
 		this.payableFeeTypeDesc = payableFeeTypeDesc;
+	}
+
+	public Long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(Long finID) {
+		this.finID = finID;
 	}
 
 }

@@ -6114,8 +6114,7 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="refundBeneficiary" ref="refundBeneficiary" />
-		<property name="receiptService" ref="receiptService" />
-		<property name="manualAdviseService" ref="manualAdviseService" />
+		<property name="feeRefundDetailService" ref="feeRefundDetailService" />
 	</bean>
 	<bean id="selectFeeRefundHeaderDialogCtrl" class="com.pennant.webui.payment.feerefundheader.SelectFeeRefundHeaderDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
