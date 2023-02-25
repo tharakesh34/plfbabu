@@ -28,13 +28,15 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into Eod_Customer_Queue (ID, AppDate, CustId, CoreBankID, LoanExist)");
 		sql.append(" Select row_number() over(order by CustCoreBank) ID, ?, CustID, CustCoreBank, LoanExist From (");
+
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 1 LoanExist");
 		sql.append(" From  FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Where fm.FinIsActive = ?");
+
 		sql.append(" Union all");
 
-		sql.append(" Select distinct c.CustID, c.CustCoreBank, 1 LoanExist");
+		sql.append(" Select distinct c.CustID, c.CustCoreBank, 0 LoanExist");
 		sql.append(" From  FinanceMain fm");
 		sql.append(" Inner Join (");
 		sql.append(" Select FinID From FinExcessAmount Where AmountType = ? and BalanceAmt > ?");
@@ -47,7 +49,9 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 		sql.append(" (Select distinct c.CustCoreBank From FinanceMain fm ");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Where fm.FinIsActive = ?)");
+
 		sql.append(" Union all");
+
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 0 LoanExist");
 		sql.append(" From LimitHeader lh");
 		sql.append(" Inner Join Customers c on c.CustID = lh.CustomerID");
