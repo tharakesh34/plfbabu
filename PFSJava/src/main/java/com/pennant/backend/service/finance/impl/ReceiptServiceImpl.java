@@ -8129,7 +8129,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		/**
 		 * Waiver is not allowed for allocation type Principle and EMI.
 		 */
-		if (Allocation.EMI.equals(allocationType) || Allocation.PRI.equals(allocationType)) {
+		if (Allocation.EMI.equals(allocationType) || Allocation.PRI.equals(allocationType)
+				|| Allocation.FUT_PRI.equals(allocationType)) {
 			return false;
 		}
 
