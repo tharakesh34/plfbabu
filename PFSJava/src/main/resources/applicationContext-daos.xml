@@ -13229,4 +13229,6 @@
 	<bean id="finOverDueService" class="com.pennant.app.core.FinOverDueService"/>
 	
 	<bean id="lppUploadDAO" class="com.pennant.pff.lpp.dao.impl.LPPUploadDAOImpl" parent="sequenceDao" />
+	
+	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao"/>
 </beans>

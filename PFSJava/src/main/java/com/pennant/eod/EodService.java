@@ -27,6 +27,7 @@ import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.customermasters.Customer;
@@ -250,6 +251,15 @@ public class EodService {
 			logger.info("Processing Rate Review completed.");
 		}
 
+		// if month end then only it should run
+		if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0
+				|| eventProperties.isEomOnEOD()) {
+			// Calculate MonthEnd LPI
+			logger.info("Processing Late Pay interest started...");
+			custEODEvent = latePayMarkingService.processLPIAccrual(custEODEvent);
+			logger.info("Processing Late Pay interest Completed...");
+		}
+
 		// Accrual posted on EOD only
 		logger.info("Processing Accruals started...");
 		accrualService.processAccrual(custEODEvent);
@@ -266,6 +276,14 @@ public class EodService {
 			logger.info("Processing MonthEndAccruals started...");
 			projectedAmortizationService.prepareMonthEndAccruals(custEODEvent);
 			logger.info("Processing MonthEndAccruals completed.");
+		}
+
+		if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0
+				|| eventProperties.isEomOnEOD()) {
+			// Calculate MonthEnd Penalty
+			logger.info("Processing Late Pay Accruals started...");
+			latePayMarkingService.processLatePayAccrual(custEODEvent);
+			logger.info("Processing Late Pay Accruals completed...");
 		}
 
 		// Auto disbursements

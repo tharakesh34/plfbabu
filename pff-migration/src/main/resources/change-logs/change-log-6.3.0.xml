@@ -13713,4 +13713,122 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#713.50" author="Mounika.M">
+		<createTable tableName="Fin_OverDue_Charges">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChargeType" type="Varchar(5)"/>
+			<column name="FinID" type="bigint"/>
+			<column name="SchDate" type="datetime"/>
+			<column name="PostDate" type="datetime"/>
+			<column name="ValueDate" type="datetime"/>
+			<column name="Amount" type="decimal(18,0)"/>
+			<column name="PaidAmount" type="decimal(18,0)"/>
+			<column name="WaivedAmount" type="decimal(18,0)"/>
+			<column name="BalanceAmt" type="decimal(18,0)"/>
+			<column name="OdPri" type="decimal(18,0)"/>
+			<column name="OdPft" type="decimal(18,0)"/>
+			<column name="FinODTillDate" type="datetime"/>
+			<column name="DueDays" type="bigint"/>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#713.51" author="Mounika.M">
+		<addPrimaryKey tableName="Fin_OverDue_Charges" columnNames="ID" constraintName="PK_Fin_OverDue_Charges"/>
+	</changeSet>
+
+	<changeSet id="ST#713.52" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_FinanceMain_FinRef"
+			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="Fin_OverDue_Charges"
+			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="ST#713.53" author="Mounika.M">
+		<createIndex tableName="Fin_OverDue_Charges" indexName="IDX_FODA_FINF" unique="false">
+			<column name="FinID"></column>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#713.54" author="Mounika.M">
+		<createIndex tableName="Fin_OverDue_Charges" indexName="IX_FinRefSchDate_LPI_AMTS" unique="false">
+			<column name="FinID"/>
+			<column name="SchDate"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#713.55" author="Mounika.M">
+		<createTable tableName="Fin_OverDue_Charge_Movements">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChargeId" type="bigint" />
+			<column name="ReceiptId" type="bigint" />
+			<column name="WaiverId" type="bigint" />
+			<column name="MovementDate" type="datetime" />
+			<column name="MovementAmount" type="number(18,0)" />
+			<column name="PaidAmount" type="number(18,0)" />
+			<column name="WaivedAmount" type="number(18,0)" />
+			<column name="Status" type="varchar(1)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#713.51" author="Mounika.M">
+		<addPrimaryKey tableName="Fin_OverDue_Charge_Movements" columnNames="ID" constraintName="PK_Fin_OverDue_Charge_movements"/>
+	</changeSet>
+	
+	<changeSet id="ST#713.56" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_FinCharge_ID"
+			referencedTableName="Fin_OverDue_Charges" baseColumnNames="ChargeId" baseTableName="Fin_OverDue_Charge_Movements"
+			referencedColumnNames="ID" />
+	</changeSet>
+	
+	<changeSet id="ST#713.57" author="Mounika.M">
+		<addColumn tableName="FinODDetails">
+			<column name="LPIDueTillDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#713.58" author="Mounika.M">
+		<addColumn tableName="FinODDetails">
+			<column name="LPIDueAmt" type="decimal(18,0)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#713.3.3" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE FinODDetails ADD CONSTRAINT DF_FT_LPIDUEAMT DEFAULT 0 FOR LPIDUEAMT;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#713.59" author="Mounika.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="LPIDueAmt" tableName="FinODDetails" defaultValue="0"/>
+	</changeSet>
+	
+	<changeSet id="ST#713.62" author="Mounika.M">
+		<addColumn tableName="FinODDetails">
+			<column name="LPPDueTillDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#713.60" author="Mounika.M">
+		<addColumn tableName="FinODDetails">
+			<column name="LPPDueAmt" type="decimal(18,0)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#713.61" author="Mounika.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="LPPDueAmt" tableName="FinODDetails" defaultValue="0"/>
+	</changeSet>
+	
+	<changeSet id="ST#713.3.3" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE FinODDetails ADD CONSTRAINT DF_FT_LPPDUEAMT DEFAULT 0 FOR LPPDUEAMT;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

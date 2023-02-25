@@ -1,8 +1,11 @@
 package com.pennant.backend.model.FinRepayQueue;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.pennant.backend.model.finance.FinODDetails;
 
 public class FinRepayQueueHeader {
 
@@ -48,6 +51,7 @@ public class FinRepayQueueHeader {
 	private List<FinRepayQueue> queueList = null;
 	private long repayID;
 	private boolean lppAmzReqonME = false;
+	private List<FinODDetails> finOdList = new ArrayList<>();
 
 	public FinRepayQueueHeader() {
 
@@ -337,4 +341,11 @@ public class FinRepayQueueHeader {
 		this.feeTds = feeTds;
 	}
 
+	public List<FinODDetails> getFinOdList() {
+		return finOdList;
+	}
+
+	public void setFinOdList(List<FinODDetails> finOdList) {
+		this.finOdList = finOdList;
+	}
 }

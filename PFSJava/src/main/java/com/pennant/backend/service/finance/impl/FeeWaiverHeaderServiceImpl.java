@@ -60,6 +60,7 @@ import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FeeWaiverDetailDAO;
 import com.pennant.backend.dao.finance.FeeWaiverHeaderDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
+import com.pennant.backend.dao.finance.FinODCAmountDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -79,6 +80,8 @@ import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinOverDueChargeMovement;
+import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -152,6 +155,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private LoanPaymentService loanPaymentService;
+	private FinODCAmountDAO finODCAmountDAO;
 
 	List<ManualAdvise> manualAdviseList; // TODO remove this
 
@@ -1225,6 +1229,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		FinanceMain fm = new FinanceMain();
 		fm.setFinID(fwh.getFinID());
+		long finID = fwh.getFinID();
+		Date postDate = fwh.getPostingDate();
 
 		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(fm);
 
@@ -1310,6 +1316,85 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						}
 					}
 
+					BigDecimal prvMnthPenaltyAmt = BigDecimal.ZERO;
+					List<FinOverDueChargeMovement> dueMovements = new ArrayList<>();
+					BigDecimal currWaivedAmt = BigDecimal.ZERO;
+					BigDecimal waivedAmt = amountWaived;
+
+					List<FinOverDueCharges> odcAmounts = finODCAmountDAO.getFinODCAmtByFinRef(finID,
+							pdPenality.getFinODSchdDate(), RepayConstants.FEE_TYPE_LPP);
+
+					boolean createOdc = true;
+					Date lpiDueTillDate = pdPenality.getLppDueTillDate();
+					for (FinOverDueCharges finODCAmount : odcAmounts) {
+						BigDecimal balanceAmt = finODCAmount.getBalanceAmt();
+						if (postDate.compareTo(finODCAmount.getValueDate()) == 0) {
+							createOdc = false;
+						}
+						if (balanceAmt.compareTo(BigDecimal.ZERO) <= 0 || waivedAmt.compareTo(BigDecimal.ZERO) <= 0) {
+							continue;
+						}
+						prvMnthPenaltyAmt = prvMnthPenaltyAmt.add(finODCAmount.getAmount());
+						// Waived Amount Update
+						if (waivedAmt.compareTo(balanceAmt) >= 0) {
+							finODCAmount.setWaivedAmount(finODCAmount.getWaivedAmount().add(balanceAmt));
+							currWaivedAmt = balanceAmt;
+							waivedAmt = waivedAmt.subtract(balanceAmt);
+							balanceAmt = BigDecimal.ZERO;
+						} else {
+							finODCAmount.setWaivedAmount(finODCAmount.getWaivedAmount().add(waivedAmt));
+							currWaivedAmt = waivedAmt;
+							balanceAmt = balanceAmt.subtract(waivedAmt);
+							waivedAmt = BigDecimal.ZERO;
+						}
+						finODCAmount.setBalanceAmt(balanceAmt);
+						pdPenality.setLppDueTillDate(lpiDueTillDate);
+						FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
+						movement.setMovementDate(appDate);
+						movement.setChargeId(finODCAmount.getId());
+						movement.setMovementAmount(currWaivedAmt);
+						movement.setWaivedAmount(currWaivedAmt);
+						movement.setWaiverID(fwd.getWaiverId());
+						dueMovements.add(movement);
+					}
+					if (createOdc) {
+						if (waivedAmt.compareTo(BigDecimal.ZERO) > 0) {
+							FinOverDueCharges finod = new FinOverDueCharges();
+							BigDecimal penaltyAmt = pdPenality.getTotPenaltyAmt()
+									.subtract(prvMnthPenaltyAmt.add(waivedAmt));
+							finod.setFinID(pdPenality.getFinID());
+							finod.setSchDate(pdPenality.getFinODSchdDate());
+							finod.setPostDate(appDate);
+							finod.setValueDate(postDate);
+							finod.setAmount(pdPenality.getTotPenaltyAmt().subtract(prvMnthPenaltyAmt));
+							finod.setPaidAmount(BigDecimal.ZERO);
+							finod.setWaivedAmount(waivedAmt);
+							finod.setNewRecord(true);
+							finod.setBalanceAmt(penaltyAmt);
+							finod.setOdPri(pdPenality.getFinCurODPri());
+							finod.setOdPft(pdPenality.getFinCurODPft());
+							finod.setFinOdTillDate(postDate);
+							finod.setDueDays(DateUtility.getDaysBetween(pdPenality.getFinODSchdDate(), postDate));
+							finod.setChargeType(RepayConstants.FEE_TYPE_LPP);
+							pdPenality.setLpiDueTillDate(fwh.getValueDate());
+							pdPenality.setLpiDueAmt(
+									pdPenality.getLpiDueAmt().add(pdPenality.getLPIAmt().subtract(prvMnthPenaltyAmt)));
+
+							long referenceID = finODCAmountDAO.saveFinODCAmt(finod);
+							FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
+							movement.setMovementDate(appDate);
+							movement.setChargeId(referenceID);
+							movement.setMovementAmount(finod.getWaivedAmount());
+							movement.setPaidAmount(BigDecimal.ZERO);
+							movement.setWaivedAmount(finod.getWaivedAmount());
+							movement.setReceiptID(fwh.getWaiverId());
+							dueMovements.add(movement);
+						}
+					}
+
+					finODCAmountDAO.updateFinODCBalAmts(odcAmounts);
+					finODCAmountDAO.saveMovement(dueMovements);
+
 					finODDetailsDAO.updatePenaltyTotals(pdPenality);
 
 					if (penalWaived.compareTo(BigDecimal.ZERO) > 0) {
@@ -1353,6 +1438,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 							movements.add(movement);
 						}
 					}
+
 				}
 			}
 
@@ -1369,6 +1455,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						oddetail.setLPIBal(BigDecimal.ZERO);
 					}
 
+					saveLPIWaiver(fwh, appDate, finID, postDate, fwd, curwaivedAmt, oddetail);
+
 					finODDetailsDAO.updateLatePftTotals(oddetail.getFinID(), oddetail.getFinODSchdDate(),
 							BigDecimal.ZERO, oddetail.getLPIWaived());
 				}
@@ -1379,6 +1467,85 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		logger.debug(Literal.LEAVING);
 		return movements;
+	}
+
+	private void saveLPIWaiver(FeeWaiverHeader fwh, Date appDate, long finID, Date postDate, FeeWaiverDetail fwd,
+			BigDecimal curwaivedAmt, FinODDetails oddetail) {
+		BigDecimal prvMnthLPIAmt = BigDecimal.ZERO;
+		List<FinOverDueCharges> lpiAmtList = finODCAmountDAO.getFinODCAmtByFinRef(finID, oddetail.getFinODSchdDate(),
+				RepayConstants.FEE_TYPE_LPI);
+
+		List<FinOverDueChargeMovement> lpiMovementList = new ArrayList<>();
+		BigDecimal currWaivedAmt = BigDecimal.ZERO;
+		boolean createOdc = true;
+		Date lpiDueTillDate = oddetail.getLpiDueTillDate();
+		for (FinOverDueCharges finLPIAmt : lpiAmtList) {
+			BigDecimal lpiBalanceAmt = finLPIAmt.getBalanceAmt();
+			if (postDate.compareTo(finLPIAmt.getValueDate()) == 0) {
+				createOdc = false;
+			}
+			if (lpiBalanceAmt.compareTo(BigDecimal.ZERO) <= 0 || curwaivedAmt.compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+			prvMnthLPIAmt = prvMnthLPIAmt.add(finLPIAmt.getAmount());
+			// Waived Amount Update
+			if (curwaivedAmt.compareTo(lpiBalanceAmt) >= 0) {
+				finLPIAmt.setWaivedAmount(finLPIAmt.getWaivedAmount().add(lpiBalanceAmt));
+				currWaivedAmt = lpiBalanceAmt;
+				curwaivedAmt = curwaivedAmt.subtract(lpiBalanceAmt);
+				lpiBalanceAmt = BigDecimal.ZERO;
+			} else {
+				finLPIAmt.setWaivedAmount(finLPIAmt.getWaivedAmount().add(curwaivedAmt));
+				currWaivedAmt = curwaivedAmt;
+				lpiBalanceAmt = lpiBalanceAmt.subtract(curwaivedAmt);
+				curwaivedAmt = BigDecimal.ZERO;
+			}
+			finLPIAmt.setBalanceAmt(lpiBalanceAmt);
+			oddetail.setLpiDueTillDate(lpiDueTillDate);
+			FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
+			movement.setMovementDate(appDate);
+			movement.setChargeId(finLPIAmt.getId());
+			movement.setMovementAmount(currWaivedAmt);
+			movement.setWaivedAmount(currWaivedAmt);
+			movement.setWaiverID(fwd.getWaiverId());
+			lpiMovementList.add(movement);
+		}
+		if (createOdc) {
+			if (curwaivedAmt.compareTo(BigDecimal.ZERO) > 0) {
+				FinOverDueCharges finLPIAmt = new FinOverDueCharges();
+				BigDecimal lpiAmt = oddetail.getLPIAmt().subtract(prvMnthLPIAmt.add(curwaivedAmt));
+				finLPIAmt.setFinID(oddetail.getFinID());
+				finLPIAmt.setSchDate(oddetail.getFinODSchdDate());
+				finLPIAmt.setPostDate(appDate);
+				finLPIAmt.setValueDate(postDate);
+				finLPIAmt.setAmount(oddetail.getTotPenaltyAmt().subtract(prvMnthLPIAmt));
+				finLPIAmt.setPaidAmount(BigDecimal.ZERO);
+				finLPIAmt.setWaivedAmount(curwaivedAmt);
+				finLPIAmt.setNewRecord(true);
+				finLPIAmt.setBalanceAmt(lpiAmt);
+				finLPIAmt.setOdPri(oddetail.getFinCurODPri());
+				finLPIAmt.setOdPft(oddetail.getFinCurODPft());
+				finLPIAmt.setFinOdTillDate(postDate);
+				finLPIAmt.setDueDays(DateUtility.getDaysBetween(oddetail.getFinODSchdDate(), postDate));
+				finLPIAmt.setChargeType(RepayConstants.FEE_TYPE_LPI);
+
+				oddetail.setLpiDueTillDate(fwh.getValueDate());
+				oddetail.setLpiDueAmt(oddetail.getLpiDueAmt().add(oddetail.getLPIAmt().subtract(prvMnthLPIAmt)));
+
+				long referenceID = finODCAmountDAO.saveFinODCAmt(finLPIAmt);
+				FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
+				movement.setMovementDate(appDate);
+				movement.setChargeId(referenceID);
+				movement.setMovementAmount(finLPIAmt.getWaivedAmount());
+				movement.setPaidAmount(BigDecimal.ZERO);
+				movement.setWaivedAmount(finLPIAmt.getWaivedAmount());
+				movement.setReceiptID(fwh.getWaiverId());
+				lpiMovementList.add(movement);
+			}
+		}
+
+		finODCAmountDAO.updateFinODCAmts(lpiAmtList);
+		finODCAmountDAO.saveMovement(lpiMovementList);
 	}
 
 	/**
@@ -2462,7 +2629,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	public Date getMaxFullFillDate(long finID) {
 		return feeWaiverHeaderDAO.getMaxFullFillDate(finID);
 	}
-	
+
 	@Override
 	public List<ManualAdvise> getManualAdviseByFinRef(long finID) {
 		return this.manualAdviseDAO.getManualAdvise(finID);
@@ -2568,5 +2735,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	@Autowired
 	public void setLoanPaymentService(LoanPaymentService loanPaymentService) {
 		this.loanPaymentService = loanPaymentService;
+	}
+
+	@Autowired
+	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
+		this.finODCAmountDAO = finODCAmountDAO;
 	}
 }

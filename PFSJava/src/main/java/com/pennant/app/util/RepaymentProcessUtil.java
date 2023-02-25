@@ -2052,6 +2052,7 @@ public class RepaymentProcessUtil {
 		FinRepayQueueHeader rpyQueueHeader = new FinRepayQueueHeader();
 
 		FinScheduleData fsd = financeDetail.getFinScheduleData();
+		rpyQueueHeader.setFinOdList(fsd.getFinODDetails());
 		FinanceMain fm = fsd.getFinanceMain();
 		List<FinReceiptDetail> rcdList = rch.getReceiptDetails();
 		rcdList = sortReceiptDetails(rcdList);

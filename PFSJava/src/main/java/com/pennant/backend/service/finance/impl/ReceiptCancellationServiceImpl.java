@@ -76,6 +76,7 @@ import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
+import com.pennant.backend.dao.finance.FinODCAmountDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinStageAccountingLogDAO;
@@ -119,6 +120,8 @@ import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinOverDueChargeMovement;
+import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -241,6 +244,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
 	private PaymentHeaderService paymentHeaderService;
+	private FinODCAmountDAO finODCAmountDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -1311,6 +1315,23 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		}
 
+		List<FinOverDueChargeMovement> dueMovements = finODCAmountDAO.getFinODCMovements(rch.getReceiptID());
+
+		List<FinOverDueCharges> updatedODAmt = new ArrayList<>();
+
+		if (CollectionUtils.isNotEmpty(dueMovements)) {
+			for (FinOverDueChargeMovement movement : dueMovements) {
+				FinOverDueCharges odcAmount = new FinOverDueCharges();
+				odcAmount.setPaidAmount(movement.getPaidAmount());
+				odcAmount.setWaivedAmount(movement.getWaivedAmount());
+				odcAmount.setId(movement.getChargeId());
+				updatedODAmt.add(odcAmount);
+			}
+			
+			finODCAmountDAO.updateReversals(updatedODAmt);
+			finODCAmountDAO.updateMovenantStatus(rch.getReceiptID(), rch.getReceiptModeStatus());
+		}
+
 		// Schedule Details Updation
 		if (!updateSchdList.isEmpty()) {
 			financeScheduleDetailDAO.updateListForRpy(updateSchdList);
@@ -1573,6 +1594,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 			for (FinODDetails od : finEodEvent.getFinODDetails()) {
 				if (StringUtils.equals("I", od.getRcdAction())) {
+					od.setLppDueTillDate(valueDate);
+					od.setLppDueAmt(od.getTotPenaltyPaid().add(od.getTotWaived()));
 					saveODlist.add(od);
 				} else {
 					updateODlist.add(od);
@@ -3549,5 +3572,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
 		this.paymentHeaderService = paymentHeaderService;
+	}
+
+	@Autowired
+	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
+		this.finODCAmountDAO = finODCAmountDAO;
 	}
 }

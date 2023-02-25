@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -57,6 +58,7 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -64,6 +66,7 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.pff.eod.cache.RuleConfigCache;
@@ -177,6 +180,76 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		setTotals(fod);
+	}
+
+	public void postLatePayAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
+		Date monthEndDate = custEODEvent.getEodDate();
+
+		FinanceMain fm = finEODEvent.getFinanceMain();
+
+		List<FinODDetails> odList = finEODEvent.getFinODDetails();
+
+		List<FinOverDueCharges> saveList = new ArrayList<>();
+	
+		for (FinODDetails fod : odList) {
+			Date schdDate = fod.getFinODSchdDate();
+
+			if ((fod.getFinCurODPri().add(fod.getFinCurODPft())).compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+
+			List<FinOverDueCharges> finODCAmounts = finODCAmountDAO.getFinODCAmtByFinRef(fm.getFinID(), schdDate,
+					RepayConstants.FEE_TYPE_LPP);
+			BigDecimal totPenaltyAmt = fod.getTotPenaltyAmt();
+			BigDecimal prvMnthPenaltyAmt = BigDecimal.ZERO;
+
+			if (CollectionUtils.isEmpty(finODCAmounts)) {
+				FinOverDueCharges finODCAmount = createODCAmounts(fod, totPenaltyAmt, monthEndDate);
+				saveList.add(finODCAmount);
+			} else {
+				FinOverDueCharges prvFinODCAmount = null;
+
+				for (FinOverDueCharges finODCAmount : finODCAmounts) {
+					Date postDate = finODCAmount.getPostDate();
+					if (postDate.compareTo(monthEndDate) < 0) {
+						prvMnthPenaltyAmt = prvMnthPenaltyAmt.add(finODCAmount.getAmount());
+					} else if (postDate.compareTo(monthEndDate) == 0) {
+						prvFinODCAmount = finODCAmount;
+					}
+				}
+				if (prvFinODCAmount != null) {
+					prvFinODCAmount.setAmount(totPenaltyAmt.subtract(prvMnthPenaltyAmt));
+					prvFinODCAmount.setBalanceAmt(prvFinODCAmount.getAmount().subtract(prvFinODCAmount.getPaidAmount())
+							.subtract(prvFinODCAmount.getWaivedAmount()));
+					saveList.add(prvFinODCAmount);
+				} else {
+					FinOverDueCharges finODCAmount = createODCAmounts(fod, totPenaltyAmt.subtract(prvMnthPenaltyAmt),
+							monthEndDate);
+					saveList.add(finODCAmount);
+				}
+			}
+		}
+
+		finEODEvent.getFinODCAmounts().addAll(saveList);
+	}
+
+	private static FinOverDueCharges createODCAmounts(FinODDetails od, BigDecimal penalty, Date monthEndDate) {
+		FinOverDueCharges finod = new FinOverDueCharges();
+
+		finod.setFinID(od.getFinID());
+		finod.setSchDate(od.getFinODSchdDate());
+		finod.setPostDate(monthEndDate);
+		finod.setValueDate(monthEndDate);
+		finod.setAmount(penalty);
+		finod.setNewRecord(true);
+		finod.setBalanceAmt(penalty);
+		finod.setOdPri(od.getFinCurODPri());
+		finod.setOdPft(od.getFinCurODPft());
+		finod.setFinOdTillDate(od.getFinODTillDate());
+		finod.setDueDays(DateUtility.getDaysBetween(od.getFinODSchdDate(), od.getFinODTillDate()));
+		finod.setChargeType(RepayConstants.FEE_TYPE_LPP);
+
+		return finod;
 	}
 
 	private void setTotals(FinODDetails fod) {

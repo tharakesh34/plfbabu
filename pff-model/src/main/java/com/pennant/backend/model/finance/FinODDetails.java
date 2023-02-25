@@ -117,6 +117,10 @@ public class FinODDetails implements Serializable {
 	private BigDecimal maxOverdraftTxnChrg = BigDecimal.ZERO;
 	private Long presentmentID;
 	private Date odGrcDate;
+	private BigDecimal lppDueAmt = BigDecimal.ZERO;
+	private Date lppDueTillDate;
+	private BigDecimal lpiDueAmt = BigDecimal.ZERO;
+	private Date lpiDueTillDate;
 
 	/*
 	 * These fields used in bulk upload (Ex: EOD) rcdAction = "" No action Required rcdAction = "I" record to be
@@ -190,6 +194,10 @@ public class FinODDetails implements Serializable {
 		entity.setActPftPenBal(this.actPftPenBal);
 		entity.setPastDuePri(this.pastDuePri);
 		entity.setOdGrcDate(this.odGrcDate);
+		entity.setLppDueAmt(this.lppDueAmt);
+		entity.setLppDueTillDate(this.lppDueTillDate);
+		entity.setLpiDueAmt(this.lpiDueAmt);
+		entity.setLpiDueTillDate(this.lpiDueTillDate);
 
 		return entity;
 	}
@@ -667,4 +675,35 @@ public class FinODDetails implements Serializable {
 		this.odGrcDate = odGrcDate;
 	}
 
+	public BigDecimal getLppDueAmt() {
+		return lppDueAmt;
+	}
+
+	public void setLppDueAmt(BigDecimal lppDueAmt) {
+		this.lppDueAmt = lppDueAmt;
+	}
+
+	public Date getLppDueTillDate() {
+		return lppDueTillDate;
+	}
+
+	public void setLppDueTillDate(Date lppDueTillDate) {
+		this.lppDueTillDate = lppDueTillDate;
+	}
+
+	public BigDecimal getLpiDueAmt() {
+		return lpiDueAmt;
+	}
+
+	public void setLpiDueAmt(BigDecimal lpiDueAmt) {
+		this.lpiDueAmt = lpiDueAmt;
+	}
+
+	public Date getLpiDueTillDate() {
+		return lpiDueTillDate;
+	}
+
+	public void setLpiDueTillDate(Date lpiDueTillDate) {
+		this.lpiDueTillDate = lpiDueTillDate;
+	}
 }

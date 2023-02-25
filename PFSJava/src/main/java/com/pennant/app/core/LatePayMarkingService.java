@@ -638,6 +638,35 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 	}
 
+	public void processLatePayAccrual(CustEODEvent custEODEvent) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+
+		for (FinEODEvent finEODEvent : finEODEvents) {
+
+			if (finEODEvent.getIdxPD() <= 0) {
+				continue;
+			}
+
+			latePayPenaltyService.postLatePayAccruals(finEODEvent, custEODEvent);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public CustEODEvent processLPIAccrual(CustEODEvent custEODEvent) {
+		for (FinEODEvent finEODEvent : custEODEvent.getFinEODEvents()) {
+
+			if (finEODEvent.getIdxPD() <= 0) {
+				continue;
+			}
+
+			latePayInterestService.postLPIAccruals(finEODEvent, custEODEvent);
+		}
+		return custEODEvent;
+	}
+
 	private FinODDetails createODDetails(FinanceScheduleDetail schd, FinanceMain fm, BigDecimal balanceAmount) {
 		FinODDetails finOD = new FinODDetails();
 

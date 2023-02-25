@@ -20,6 +20,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -427,6 +428,15 @@ public class LoadFinanceData extends ServiceHelper {
 						}
 
 						boolean exists = checkExsistInList(od, odDetailsLBD);
+						
+						if (custEODEvent.getEodDate().compareTo(DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0
+								|| custEODEvent.getEventProperties().isEomOnEOD()) {
+							od.setLppDueAmt(od.getTotPenaltyAmt());
+							od.setLppDueTillDate(custEODEvent.getEodDate());
+							od.setLpiDueAmt(od.getLPIAmt());
+							od.setLpiDueTillDate(custEODEvent.getEodDate());
+						}
+						
 						if (exists) {
 							listupdate.add(od);
 						} else {
@@ -450,6 +460,28 @@ public class LoadFinanceData extends ServiceHelper {
 						logger.info("{} overdue details are created", updateCount);
 					}
 					listupdate = null;
+
+					List<FinOverDueCharges> finODCAmounts = finEODEvent.getFinODCAmounts();
+
+					if (CollectionUtils.isNotEmpty(finODCAmounts)) {
+						List<FinOverDueCharges> saveList = new ArrayList<>();
+						List<FinOverDueCharges> updateList = new ArrayList<>();
+
+						for (FinOverDueCharges finODCAmount : finODCAmounts) {
+							if (finODCAmount.isNewRecord()) {
+								saveList.add(finODCAmount);
+							} else {
+								updateList.add(finODCAmount);
+							}
+						}
+
+						if (!saveList.isEmpty()) {
+							finODCAmountDAO.saveFinODCAmts(saveList);
+						}
+						if (!updateList.isEmpty()) {
+							finODCAmountDAO.updateFinODCAmts(updateList);
+						}
+					}
 
 					logger.info("{} are the total overdue", savedCount + updateCount);
 				}
