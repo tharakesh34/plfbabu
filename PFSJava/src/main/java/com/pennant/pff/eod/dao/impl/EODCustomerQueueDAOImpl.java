@@ -9,10 +9,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -30,7 +31,20 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 1 LoanExist");
 		sql.append(" From  FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
-		sql.append(" Where (fm.FinIsActive = ? or fm.ClosedDate <= ?)");
+		sql.append(" Where fm.FinIsActive = ?");
+		sql.append(" Union all");
+
+		sql.append(" Select distinct c.CustID, c.CustCoreBank, 1 LoanExist");
+		sql.append(" From  FinanceMain fm");
+		sql.append(" Inner Join (");
+		sql.append(" Select FinID From FinExcessAmount Where AmountType = ? and BalanceAmt > ?");
+		sql.append(" Union ALl");
+		sql.append(" Select FinID From ManualAdvise Where AdviseType = ?");
+		sql.append("  and (AdviseAmount - PaidAmount - WaivedAmount) > ?");
+		sql.append(" ) e on e.FinID = fm.FinID");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Where fm.FinIsActive = ?");
+
 		sql.append(" Union all");
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 0 LoanExist");
 		sql.append(" From LimitHeader lh");
@@ -46,10 +60,16 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			Date appDate = SysParamUtil.getAppDate();
+
 			ps.setDate(1, JdbcUtil.getDate(appDate));
 			ps.setBoolean(2, true);
-			ps.setDate(3, JdbcUtil.getDate(DateUtil.addDays(appDate,
-					SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_N_DAYS_CLOSED_LAN))));
+
+			ps.setString(3, RepayConstants.EXAMOUNTTYPE_EXCESS);
+			ps.setInt(4, 0);
+			ps.setInt(5, AdviseType.PAYABLE.id());
+			ps.setInt(6, 0);
+			ps.setBoolean(7, false);
+
 			ps.setBoolean(4, true);
 			ps.setBoolean(5, true);
 
