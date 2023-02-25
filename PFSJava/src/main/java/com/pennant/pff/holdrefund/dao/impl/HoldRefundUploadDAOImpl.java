@@ -314,39 +314,25 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 	}
 
 	@Override
-	public void releaseHoldOnLoans(List<Long> finIds) {
-		String sql = "Update Fin_Hold_Details Set HoldStatus = ? Where FinID = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
-			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				Long finid = finIds.get(i);
-
-				ps.setString(1, FinanceConstants.FEE_REFUND_RELEASE);
-				ps.setLong(2, finid);
-			}
-
-			@Override
-			public int getBatchSize() {
-				return finIds.size();
-			}
-		});
-	}
-
-	@Override
-	public List<Long> getInactiveLoansOnHold(Date closureDate) {
-		StringBuilder sql = new StringBuilder("Select fm.FinId");
+	public void releaseHoldOnLoans(Date closureDate) {
+		StringBuilder sql = new StringBuilder("Update Fin_Hold_Details Set HoldStatus = ?");
+		sql.append("  Where FinID in (");
+		sql.append(" Select fm.FinId");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Fin_Hold_Details fh On fh.FinId = fm.FinId");
 		sql.append(" Where fm.FinIsActive = ? and fh.HoldStatus = ? and fm.ClosedDate <= ?");
+		sql.append(" )");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForList(sql.toString(), Long.class, 0, FinanceConstants.FEE_REFUND_HOLD,
-				closureDate);
-	}
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 0;
 
+			ps.setString(++index, FinanceConstants.FEE_REFUND_RELEASE);
+			ps.setBoolean(++index, false);
+			ps.setString(++index, FinanceConstants.FEE_REFUND_HOLD);
+			ps.setDate(++index, JdbcUtil.getDate(closureDate));
+		});
+
+	}
 }

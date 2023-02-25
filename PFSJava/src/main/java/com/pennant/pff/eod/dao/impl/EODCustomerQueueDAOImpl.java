@@ -2,12 +2,14 @@ package com.pennant.pff.eod.dao.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
@@ -28,7 +30,7 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 1 LoanExist");
 		sql.append(" From  FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
-		sql.append(" Where fm.FinIsActive = ?");
+		sql.append(" Where (fm.FinIsActive = ? or fm.ClosedDate <= ?)");
 		sql.append(" Union all");
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 0 LoanExist");
 		sql.append(" From LimitHeader lh");
@@ -43,10 +45,13 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setDate(1, JdbcUtil.getDate(SysParamUtil.getAppDate()));
+			Date appDate = SysParamUtil.getAppDate();
+			ps.setDate(1, JdbcUtil.getDate(appDate));
 			ps.setBoolean(2, true);
-			ps.setBoolean(3, true);
+			ps.setDate(3, JdbcUtil.getDate(DateUtil.addDays(appDate,
+					SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_N_DAYS_CLOSED_LAN))));
 			ps.setBoolean(4, true);
+			ps.setBoolean(5, true);
 
 		});
 	}

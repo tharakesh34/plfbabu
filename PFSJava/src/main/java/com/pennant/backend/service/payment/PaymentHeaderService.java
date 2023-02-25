@@ -34,7 +34,6 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -69,7 +68,7 @@ public interface PaymentHeaderService {
 
 	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
 
-	PaymentHeader prepareRefund(AutoRefundLoan arl, List<PaymentDetail> payDtlList, PaymentInstruction paymentInst);
+	PaymentHeader prepareRefund(AutoRefundLoan arl);
 
 	ErrorDetail validateRefund(AutoRefundLoan arl, boolean isEOD);
 

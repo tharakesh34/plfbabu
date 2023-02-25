@@ -66,73 +66,17 @@ public class EventProperties implements Serializable {
 	private boolean covenantModule;
 	private int overDraftMonthlyLimit;
 	private Map<String, String> upfrontBounceCodes = new HashMap<>();
+	private int autoRefundDaysForClosed;
+	private int autoRefundDaysForActive;
+	private int autoRefundCheckDPD;
+	private boolean autoRefundOverdueCheck;
+	private boolean autoRefundByCheque;
 
 	private boolean parameterLoaded;
 	private boolean cacheLoaded;
 
 	public EventProperties() {
 		super();
-	}
-
-	public EventProperties copyEntity() {
-		EventProperties entity = new EventProperties();
-		entity.setAppDate(this.appDate);
-		entity.setPostDate(this.postDate);
-		entity.setAppValueDate(this.appValueDate);
-		entity.setValueDate(this.valueDate);
-		entity.setNextDate(this.nextDate);
-		entity.setLastDate(this.lastDate);
-		entity.setBusinessDate(this.businessDate);
-		entity.setMonthEndDate(this.monthEndDate);
-		entity.setMonthStartDate(this.monthStartDate);
-		entity.setPrvMonthEndDate(this.prvMonthEndDate);
-		entity.setAmzPostingEvent(this.amzPostingEvent);
-		entity.setTaxRoundMode(this.taxRoundMode);
-		entity.setTaxRoundingTarget(this.taxRoundingTarget);
-		entity.setAcEffValDate(this.acEffValDate);
-		entity.setAcEffPostDate(this.acEffPostDate);
-		entity.setEomOnEOD(this.eomOnEOD);
-		entity.setAccrualCalOn(this.accrualCalOn);
-		entity.setAllowZeroPostings(this.allowZeroPostings);
-		entity.setCalAccrualFromStart(this.calAccrualFromStart);
-		entity.setTdsRoundMode(this.tdsRoundMode);
-		entity.setTdsRoundingTarget(this.tdsRoundingTarget);
-		entity.setTdsPerc(this.tdsPerc);
-		entity.setTdsMultiplier(this.tdsMultiplier);
-		entity.setIgnoringBucket(this.ignoringBucket);
-		entity.setProvRule(this.provRule);
-		entity.setSkipLatePay(this.skipLatePay);
-		entity.setSchRecalLock(this.schRecalLock);
-		entity.setAccrualReversalReq(this.accrualReversalReq);
-		entity.setAppCurrency(this.appCurrency);
-		entity.setDpdCalIncludeExcess(this.dpdCalIncludeExcess);
-		entity.setLmsServiceLogReq(this.lmsServiceLogReq);
-		entity.setProvisionBooks(this.provisionBooks);
-		entity.setNpaTagging(this.npaTagging);
-		entity.setProvEffPostDate(this.provEffPostDate);
-		entity.setMonthEndAccCallReq(this.monthEndAccCallReq);
-		entity.setEntityCode(this.entityCode);
-		entity.setPftInvFeeCode(this.pftInvFeeCode);
-		entity.setPriInvFeeCode(this.priInvFeeCode);
-		entity.setFpftInvFeeCode(this.fpftInvFeeCode);
-		entity.setFpriInvFeeCode(this.fpriInvFeeCode);
-		entity.setInvAddrEntityBasis(this.invAddrEntityBasis);
-		entity.setBpiPaidOnInstDate(this.bpiPaidOnInstDate);
-		entity.setAdvTdsIncsUpf(this.advTdsIncsUpf);
-		entity.setBpiTdsDeductOnOrg(this.bpiTdsDeductOnOrg);
-		entity.setLocalCcy(this.localCcy);
-		entity.setAllowProvEod(this.allowProvEod);
-		entity.setThresholdValue(this.thresholdValue);
-		entity.setCpzPosIntact(this.cpzPosIntact);
-		entity.setNpaRepayHierarchy(this.npaRepayHierarchy);
-		entity.setDpdBucket(this.dpdBucket);
-		entity.setAlwDiffRepayOnNpa(this.alwDiffRepayOnNpa);
-		entity.setGstInvOnDue(this.gstInvOnDue);
-		entity.setEodThreadCount(this.eodThreadCount);
-		entity.setPhase(this.phase);
-		entity.setCovenantModule(this.covenantModule);
-		entity.setParameterLoaded(this.parameterLoaded);
-		return entity;
 	}
 
 	public Date getAppDate() {
@@ -605,6 +549,46 @@ public class EventProperties implements Serializable {
 
 	public void setUpfrontBounceCodes(Map<String, String> upfrontBounceCodes) {
 		this.upfrontBounceCodes = upfrontBounceCodes;
+	}
+
+	public int getAutoRefundDaysForClosed() {
+		return autoRefundDaysForClosed;
+	}
+
+	public void setAutoRefundDaysForClosed(int autoRefundDaysForClosed) {
+		this.autoRefundDaysForClosed = autoRefundDaysForClosed;
+	}
+
+	public int getAutoRefundDaysForActive() {
+		return autoRefundDaysForActive;
+	}
+
+	public void setAutoRefundDaysForActive(int autoRefundDaysForActive) {
+		this.autoRefundDaysForActive = autoRefundDaysForActive;
+	}
+
+	public int getAutoRefundCheckDPD() {
+		return autoRefundCheckDPD;
+	}
+
+	public void setAutoRefundCheckDPD(int autoRefundCheckDPD) {
+		this.autoRefundCheckDPD = autoRefundCheckDPD;
+	}
+
+	public boolean isAutoRefundOverdueCheck() {
+		return autoRefundOverdueCheck;
+	}
+
+	public void setAutoRefundOverdueCheck(boolean autoRefundOverdueCheck) {
+		this.autoRefundOverdueCheck = autoRefundOverdueCheck;
+	}
+
+	public boolean isAutoRefundByCheque() {
+		return autoRefundByCheque;
+	}
+
+	public void setAutoRefundByCheque(boolean autoRefundByCheque) {
+		this.autoRefundByCheque = autoRefundByCheque;
 	}
 
 }

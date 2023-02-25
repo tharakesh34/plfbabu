@@ -38,6 +38,7 @@ import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -73,6 +74,7 @@ public class EodService {
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ClosureService closureService;
+	private AutoRefundService autoRefundService;
 
 	public EodService() {
 		super();
@@ -163,6 +165,9 @@ public class EodService {
 
 	public void doUpdate(CustEODEvent custEODEvent, boolean isLimitRebuild) throws Exception {
 		// update customer EOD
+
+		autoRefundService.updateRefunds(custEODEvent);
+
 		loadFinanceData.updateFinEODEvents(custEODEvent);
 		// receipt postings on SOD
 		if (custEODEvent.isCheckPresentment()) {
@@ -221,6 +226,8 @@ public class EodService {
 
 		// LatePay Due creation Service
 		latePayDueCreationService.processLatePayAccrual(custEODEvent);
+
+		autoRefundService.executeRefund(custEODEvent);
 
 		/**************** SOD ***********/
 		// moving customer date to sod
@@ -421,6 +428,11 @@ public class EodService {
 	@Autowired
 	public void setClosureService(ClosureService closureService) {
 		this.closureService = closureService;
+	}
+
+	@Autowired
+	public void setAutoRefundService(AutoRefundService autoRefundService) {
+		this.autoRefundService = autoRefundService;
 	}
 
 }

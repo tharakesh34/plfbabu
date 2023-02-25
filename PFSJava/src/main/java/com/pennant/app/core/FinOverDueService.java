@@ -11,6 +11,8 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.customermasters.CustomerCoreBank;
+import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -22,6 +24,31 @@ public class FinOverDueService {
 	private CustomerDAO customerDAO;
 	private FinODDetailsDAO finODDetailsDAO;
 	private FinanceMainDAO financeMainDAO;
+
+	public BigDecimal getOveDueAmount(FinanceProfitDetail pft, List<FinODDetails> odLIst, List<ManualAdvise> advList) {
+		BigDecimal overDue = BigDecimal.ZERO;
+
+		if (pft != null) {
+			overDue = pft.getODPrincipal().add(pft.getODProfit());
+		}
+
+		for (FinODDetails od : odLIst) {
+			overDue = overDue.add(od.getTotPenaltyBal());
+			overDue = overDue.add(od.getLPIBal());
+		}
+
+		for (ManualAdvise ma : advList) {
+			if (ma.getStatus() == null || PennantConstants.MANUALADVISE_MAINTAIN.equals(ma.getStatus())) {
+				BigDecimal bal = ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount());
+				if (bal.compareTo(BigDecimal.ZERO) > 0) {
+					ManualAdviceUtil.calculateBalanceAmt(ma);
+					overDue = overDue.add(ma.getBalanceAmt());
+				}
+			}
+		}
+
+		return overDue;
+	}
 
 	public BigDecimal getDueAgnistLoan(long finID) {
 		BigDecimal totalDue = BigDecimal.ZERO;

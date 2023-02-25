@@ -199,6 +199,7 @@ public class MicroEOD implements Tasklet {
 					custEODEvent.setEodValueDate(appDate);
 
 					eodService.doProcess(custEODEvent);
+
 					eodService.doUpdate(custEODEvent, customerQueuing.isLimitRebuild());
 				} else {
 					logger.info("There is no active loans exists for the customer ID {}", custId);

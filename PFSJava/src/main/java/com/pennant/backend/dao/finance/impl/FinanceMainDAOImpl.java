@@ -59,12 +59,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerCoreBank;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -75,10 +77,8 @@ import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.pff.extension.CustomerExtension;
-import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -87,6 +87,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.FinanceUtil;
@@ -6540,27 +6541,76 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public List<AutoRefundLoan> getAutoRefunds() {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.FinID, fm.FinReference, ft.MaxAutoRefund, ft.MinAutoRefund");
+	public List<AutoRefundLoan> getAutoRefunds(CustEODEvent cee) {
+		Date eodDate = cee.getEodDate();
+		EventProperties ep = cee.getEventProperties();
+		Customer customer = cee.getCustomer();
+		StringBuilder sql = new StringBuilder("Select * From (");
+		sql.append(" Select fm.FinID, fm.FinReference, ft.MaxAutoRefund, ft.MinAutoRefund");
 		sql.append(", fm.FinRepayMethod, fm.FinIsActive, fpd.CurOdDays, fm.FinCcy, fm.ClosingStatus");
 		sql.append(", h.HoldStatus, fm.FinType, e.EntityCode");
 		sql.append(" From Financemain fm");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join SmtDivisionDetail d On d.DivisionCode = ft.FinDivision");
 		sql.append(" Inner Join Entity e on e.EntityCode = d.EntityCode");
 		sql.append(" Inner Join FinPftDetails fpd on fpd.FinID = fm.FinID");
-		sql.append(" Left Join FinExcessAmount ea on ea.FinID = fm.FinID and ea.AmountType in (?)");
-		sql.append(" Left Join ManualAdvise ma on ma.FinID = fm.FinID and ma.HoldDue = 0 and ma.AdviseType = ?");
-		sql.append(
-				" Left Join FeeTypes f on f.FeeTypeId = ma.FeeTypeId and f.Refundable = 1 and f.AllowAutoRefund = 1");
 		sql.append(" Left Join Fin_Hold_Details h on fm.FinID = h.FinID");
-		sql.append(" Where coalesce(h.HoldStatus, 'R') <> ? and ft.AllowAutoRefund = ?");
-		sql.append(" and (ea.BalanceAmt > 0 or (ma.AdviseAmount - ma.PaidAmount - ma.WaivedAmount) > 0)");
+		sql.append(" Where fm.FinIsActive = ?");
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" and c.CustCoreBank = ? ");
+		} else {
+			sql.append(" and c.CustID = ? ");
+		}
+		sql.append(" and ft.AllowAutoRefund = ?");
+
+		sql.append(" Union All");
+
+		sql.append(" Select fm.FinID, fm.FinReference, ft.MaxAutoRefund, ft.MinAutoRefund");
+		sql.append(", fm.FinRepayMethod, fm.FinIsActive, fpd.CurOdDays, fm.FinCcy, fm.ClosingStatus");
+		sql.append(", h.HoldStatus, fm.FinType, e.EntityCode");
+		sql.append(" From Financemain fm");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" Inner Join SmtDivisionDetail d On d.DivisionCode = ft.FinDivision");
+		sql.append(" Inner Join Entity e on e.EntityCode = d.EntityCode");
+		sql.append(" Inner Join FinPftDetails fpd on fpd.FinID = fm.FinID");
+		sql.append(" Left Join Fin_Hold_Details h on fm.FinID = h.FinID");
+		sql.append(" Where fm.FinIsActive = ? and fm.ClosedDate <= ?");
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" and c.CustCoreBank = ? ");
+		} else {
+			sql.append(" and c.CustID = ? ");
+		}
+		sql.append(" and ft.AllowAutoRefund = ?");
+
+		sql.append(" ) T");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setBoolean(++index, true);
+			if (CustomerExtension.CUST_CORE_BANK_ID) {
+				ps.setString(++index, customer.getCustCoreBank());
+			} else {
+				ps.setLong(++index, customer.getCustID());
+			}
+			ps.setBoolean(++index, true);
+
+			ps.setBoolean(++index, false);
+			ps.setDate(++index, JdbcUtil.getDate(DateUtil.addDays(eodDate, -ep.getAutoRefundDaysForClosed())));
+			if (CustomerExtension.CUST_CORE_BANK_ID) {
+				ps.setString(++index, customer.getCustCoreBank());
+			} else {
+				ps.setLong(++index, customer.getCustID());
+			}
+			ps.setBoolean(++index, true);
+
+		}, (rs, rowNum) -> {
 			AutoRefundLoan arl = new AutoRefundLoan();
 
 			arl.setFinID(rs.getLong("FinID"));
@@ -6577,7 +6627,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			arl.setEntityCode(rs.getString("EntityCode"));
 
 			return arl;
-		}, RepayConstants.EXAMOUNTTYPE_EXCESS, AdviseType.PAYABLE.id(), FinanceConstants.FEE_REFUND_HOLD, true);
+		});
 	}
 
 	@Override

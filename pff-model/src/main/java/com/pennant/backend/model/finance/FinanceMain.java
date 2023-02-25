@@ -1548,7 +1548,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setPartnerBankAc(this.partnerBankAc);
 		entity.setWriteoffLoan(this.writeoffLoan);
 		entity.setRestructure(this.restructure);
-		entity.setEventProperties(this.eventProperties == null ? null : this.eventProperties.copyEntity());
 		entity.setTdsType(this.tdsType);
 		entity.setCalcOfSteps(this.calcOfSteps);
 		entity.setStepsAppliedFor(this.stepsAppliedFor);

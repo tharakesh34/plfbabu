@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennanttech.pennapps.core.model.AbstractEntity;
 
 public class CustEODEvent extends AbstractEntity {
@@ -31,6 +32,7 @@ public class CustEODEvent extends AbstractEntity {
 	private String provisionBooks;
 	private Date provisionEffectiveDate;
 	private EventProperties eventProperties = new EventProperties();
+	private List<AutoRefundLoan> autoRefundLoans = new ArrayList<>();
 
 	public Customer getCustomer() {
 		return customer;
@@ -188,4 +190,13 @@ public class CustEODEvent extends AbstractEntity {
 	public void setEventProperties(EventProperties eventProperties) {
 		this.eventProperties = eventProperties;
 	}
+
+	public List<AutoRefundLoan> getAutoRefundLoans() {
+		return autoRefundLoans;
+	}
+
+	public void setAutoRefundLoans(List<AutoRefundLoan> autoRefundLoans) {
+		this.autoRefundLoans = autoRefundLoans;
+	}
+
 }

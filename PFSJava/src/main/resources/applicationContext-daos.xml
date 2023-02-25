@@ -13066,10 +13066,6 @@
 
 	<bean id="autoRefundService" class="com.pennant.pff.autorefund.serviceimpl.AutoRefundServiceImpl" />
 
-	<bean id="autoRefundProcess" class="com.pennanttech.pff.autorefund.AutoRefundProcess">
-		<property name="autoRefundService" ref="autoRefundService" />
-		<property name="refundBeneficiary" ref="refundBeneficiary" />
-	</bean>
 
 	<!--Refund beneficiary -->
 	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary">

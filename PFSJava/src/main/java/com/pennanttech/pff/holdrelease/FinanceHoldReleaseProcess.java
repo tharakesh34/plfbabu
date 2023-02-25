@@ -1,9 +1,7 @@
 package com.pennanttech.pff.holdrelease;
 
 import java.util.Date;
-import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +24,7 @@ public class FinanceHoldReleaseProcess {
 
 		Date maxClosedDate = DateUtility.addDays(appdate, -nDays);
 
-		// Finding Loans with Hold Status & Marked as Closed(Matured/Early Settled)
-		List<Long> finIds = holdRefundUploadDAO.getInactiveLoansOnHold(maxClosedDate);
-
-		// Marking Loan Hold Status from Hold to Release for Refund process
-		if (CollectionUtils.isNotEmpty(finIds)) {
-			holdRefundUploadDAO.releaseHoldOnLoans(finIds);
-		}
+		holdRefundUploadDAO.releaseHoldOnLoans(maxClosedDate);
 
 		logger.debug(Literal.LEAVING);
 	}

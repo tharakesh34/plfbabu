@@ -13493,10 +13493,10 @@
 			constraintName="fk_flagsheader_finid" />
 	</changeSet>
 
-	<changeSet id="PSD#219091" author="murthy.y">
+	<changeSet id="PSD#219091_01	" author="murthy.y">
 		<sql>
          	<![CDATA[
-            	Update ErrorDetails Set Message = 'Total Excess available {0} is should be greater than the overdue amount {1}.' Where code = 'REFUND_006';
+            	Update ErrorDetails Set Message = 'Total Excess available {0} should be greater than the overdue amount {1}.' Where code = 'REFUND_006';
          	]]>
 		</sql>
 	</changeSet>
@@ -13536,12 +13536,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#219091_01" author="murthy.y">
+	<changeSet id="PSD#219091_02" author="murthy.y">
 		<sql>
          	<![CDATA[
-            	Update ErrorDetails Set Message = 'Refund amount {0} should be less than maximum refund amount {1} configured against loan type.' Where code = 'REFUND_004';
-            	Update ErrorDetails Set Message = 'Refund amount {0} should be less than minimum refund amount {1} configured against loan type.' Where code = 'REFUND_005';
+            	Update ErrorDetails Set Message = 'Refund amount {0} should be less than the maximum refund amount {1} configured against loan type.' Where code = 'REFUND_004';
+            	Update ErrorDetails Set Message = 'Refund amount {0} should be grater then the minimum refund amount {1} configured against loan type.' Where code = 'REFUND_005';
             	Update ErrorDetails Set Message = 'DPD day’s {0} should be less than the configured DPD day’s {1}.' Where code = 'REFUND_001';
+            	Update ErrorDetails Set Message = 'Auto refund not allowed, auto refund status is on HOLD state for the loan' Where code = 'REFUND_009';
          	]]>
 		</sql>
 	</changeSet>
@@ -13573,6 +13574,98 @@
 				select deps_restore_dependencies ('plf', 'cheques_upload');
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#2568_200" author="murthy.y">
+		<dropTable tableName="Auto_Refund_Loans" />
+	</changeSet>
+
+
+	<changeSet id="TK#2568_200.01" author="murthy.y">
+		<createTable tableName="Excess_Auto_Refunds">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="RefundAmt" type="decimal(18,0)" />
+			<column name="BusinessDate" type="datetime" />
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)" />
+			<column name="ErrorCode" type="varchar(20)" />
+			<column name="ErrorDesc" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="TK#2568_200.02" author="murthy.y">
+		<addPrimaryKey tableName="Excess_Auto_Refunds" columnNames="Id" constraintName="pk_Excess_Auto_Refunds" />
+	</changeSet>
+
+	<changeSet id="TK#2568_200.03" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE EXCESS_AUTO_REFUNDS ADD CONSTRAINT DF_AER_REFUNDAMT DEFAULT 0 FOR REFUNDAMT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2568_200.04" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue tableName="Excess_Auto_Refunds" columnName="RefundAmt" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="TK#2568_201.01" author="murthy.y">
+		<createTable tableName="Excess_Auto_Refunds_Payments">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="RefundAgainstID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="RefundType" type="char(1)" />
+			<column name="PaymentAmt" type="decimal(18,0)" />
+			<column name="PaymentID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2568_201.02" author="murthy.y">
+		<addPrimaryKey tableName="Excess_Auto_Refunds_Payments" columnNames="Id"
+			constraintName="pk_earp_id" />
+	</changeSet>
+
+	<changeSet id="TK#2568_201.03" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_earps_headerid"
+			referencedTableName="Excess_Auto_Refunds" baseColumnNames="HeaderID" baseTableName="Excess_Auto_Refunds_Payments"
+			referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="TK#2568_201.04" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_earps_paymentid"
+			referencedTableName="PaymentHeader" baseColumnNames="PaymentID" baseTableName="Excess_Auto_Refunds_Payments"
+			referencedColumnNames="PaymentID" />
+	</changeSet>
+
+	<changeSet id="TK#2568_201.05" author="murthy.y">
+		<createIndex tableName="Excess_Auto_Refunds_Payments" indexName="idx_earps_HeaderID">
+			<column name="HeaderID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="TK#2568_201.06" author="murthy.y">
+		<createIndex tableName="Excess_Auto_Refunds_Payments" indexName="idx_earps_RefundAgainstID">
+			<column name="RefundAgainstID" type="bigint" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="TK#2568_201.07" author="murthy.y">
+		<createIndex tableName="Excess_Auto_Refunds_Payments" indexName="idx_earps_PaymentID">
+			<column name="PaymentID" type="bigint" />
+		</createIndex>
 	</changeSet>
 
 </databaseChangeLog> 

@@ -80,6 +80,7 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 	private Date valueDate;
 	private boolean expand;
 	private boolean collapse;
+	private Long autoRefundID;
 
 	public PaymentDetail() {
 		super();
@@ -111,6 +112,7 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 		excludeFields.add("valueDate");
 		excludeFields.add("expand");
 		excludeFields.add("collapse");
+		excludeFields.add("autoRefundID");
 
 		return excludeFields;
 	}
@@ -333,6 +335,14 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 
 	public void setCollapse(boolean collapse) {
 		this.collapse = collapse;
+	}
+
+	public Long getAutoRefundID() {
+		return autoRefundID;
+	}
+
+	public void setAutoRefundID(Long autoRefundID) {
+		this.autoRefundID = autoRefundID;
 	}
 
 }

@@ -148,7 +148,6 @@ public class ReturnDataSet implements Serializable {
 		entity.setOldLinkedTranId(this.oldLinkedTranId);
 		entity.setEntityCode(this.entityCode);
 		entity.setPostCategory(this.postCategory);
-		entity.setEventProperties(this.eventProperties.copyEntity());
 		entity.setInvoiceId(this.invoiceId);
 		entity.setInvoiceAmt(this.invoiceAmt);
 		entity.setTransactionId(this.transactionId);

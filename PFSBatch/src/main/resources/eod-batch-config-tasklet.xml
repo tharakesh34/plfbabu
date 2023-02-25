@@ -221,9 +221,5 @@
 	
 	<bean id="presentmentPreparationTasklet" class="com.pennant.pff.presentment.tasklet.PreparationTasklet"/>
 	
-	<bean id="autoRefundProcessTasklet" class="com.pennant.backend.endofday.tasklet.AutoRefundProcessTasklet">
-		<property name="autoRefundProcess" ref="autoRefundProcess" />
-	</bean>
-	
 	<bean id="waiverCancellationTasklet" class="com.pennant.backend.endofday.tasklet.WaiverCancellationTasklet" />
 </beans>
