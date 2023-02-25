@@ -2882,7 +2882,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		ErrorDetail errorDetail = null;
 		if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
 			errorDetail = this.partPayAndEarlySettleValidator.validatePartPay(repayData);
-		} else if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
+		} else if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			errorDetail = this.partPayAndEarlySettleValidator.validateEarlyPay(fd.getFinScheduleData());
 		}
 
@@ -2895,6 +2895,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		auditHeader = nextProcess(auditHeader);
+
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
