@@ -13377,109 +13377,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2566.213.01_pre" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'fee_refund_header_view');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="TK#2566.213.01" author="murthy.y">
-		<createView viewName="FEE_REFUND_HEADER_VIEW" replaceIfExists="true">
-			<![CDATA[
-			 	SELECT FRH.ID
-					, FRH.FINID
-					, FRH.PAYMENTAMOUNT
-					, FRH.REFUNDTYPE
-					, FRH.OVERDUEAGAINSTLOAN
-					, FRH.OVERDUEAGAINSTCUSTOMER
-					, FRH.OVERRIDE
-					, FRH.STATUS
-					, FRH.APPROVALSTATUS
-					, FM.FINREFERENCE
-					, FM.FINTYPE
-					, C.CUSTID
-					, C.CUSTCIF
-					, C.CUSTSHRTNAME
-					, C.CUSTCOREBANK
-					, B.BRANCHCODE
-					, B.BRANCHDESC
-					, B.CLUSTERID
-          			, SDD.ENTITYCODE
-					, FRH.VERSION
-					, FRH.CREATEDBY
-					, FRH.CREATEDON
-					, FRH.APPROVEDBY
-					, FRH.APPROVEDON
-					, FRH.LASTMNTBY
-					, FRH.LASTMNTON
-					, FRH.RECORDSTATUS
-					, FRH.ROLECODE
-					, FRH.NEXTROLECODE
-					, FRH.TASKID
-					, FRH.NEXTTASKID
-					, FRH.RECORDTYPE
-					, FRH.WORKFLOWID
-				FROM FEE_REFUND_HEADER_TEMP FRH
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = FRH.FINID
-				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
-				INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = FM.FINBRANCH
-        		INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE
-        		INNER JOIN SMTDIVISIONDETAIL SDD ON SDD.DIVISIONCODE = FT.FINDIVISION
-	            UNION ALL
-	          	SELECT FRH.ID
-					, FRH.FINID
-					, FRH.PAYMENTAMOUNT
-					, FRH.REFUNDTYPE
-					, FRH.OVERDUEAGAINSTLOAN
-					, FRH.OVERDUEAGAINSTCUSTOMER
-					, FRH.OVERRIDE
-					, FRH.STATUS
-					, FRH.APPROVALSTATUS
-					, FM.FINREFERENCE
-					, FM.FINTYPE
-					, C.CUSTID
-					, C.CUSTCIF
-					, C.CUSTSHRTNAME
-					, C.CUSTCOREBANK
-					, B.BRANCHCODE
-					, B.BRANCHDESC
-					, B.CLUSTERID
-          			, SDD.ENTITYCODE
-					, FRH.VERSION
-					, FRH.CREATEDBY
-					, FRH.CREATEDON
-					, FRH.APPROVEDBY
-					, FRH.APPROVEDON
-					, FRH.LASTMNTBY
-					, FRH.LASTMNTON
-					, FRH.RECORDSTATUS
-					, FRH.ROLECODE
-					, FRH.NEXTROLECODE
-					, FRH.TASKID
-					, FRH.NEXTTASKID
-					, FRH.RECORDTYPE
-					, FRH.WORKFLOWID
-				FROM FEE_REFUND_HEADER FRH
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = FRH.FINID
-				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
-				INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = FM.FINBRANCH
-         		INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE
-        		INNER JOIN SMTDIVISIONDETAIL SDD ON SDD.DIVISIONCODE = FT.FINDIVISION
-	            WHERE NOT EXISTS (SELECT 1 FROM FEE_REFUND_HEADER_TEMP WHERE ID = FRH.ID)
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="TK#2566.213.01_post" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'fee_refund_header_view');
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="TK#2568.200" author="murthy.y">
 		<addColumn tableName="Auto_Refund_Loans">
 			<column name="ErrorDesc" type="varchar(2000)" />
@@ -13667,5 +13564,112 @@
 			<column name="PaymentID" type="bigint" />
 		</createIndex>
 	</changeSet>
+	
+	<changeSet id="TK#2566.213.01.1_pre" author="Sravani.s" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fee_refund_header_view');
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="TK#2566.213.01.1" author="Sravani.s">
+		<createView viewName="FEE_REFUND_HEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
+			 	SELECT FRH.ID
+					, FRH.FINID
+					, FRH.PAYMENTAMOUNT
+					, FRH.REFUNDTYPE
+					, FRH.OVERDUEAGAINSTLOAN
+					, FRH.OVERDUEAGAINSTCUSTOMER
+					, FRH.OVERRIDE
+					, FRH.STATUS
+					, FRH.APPROVALSTATUS
+					, FM.FINREFERENCE
+					, FM.FINTYPE
+					, C.CUSTID
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, C.CUSTCOREBANK
+					, B.BRANCHCODE
+					, B.BRANCHDESC
+					, B.CLUSTERID
+					, CL.CODE CLUSTERCODE
+          			, SDD.ENTITYCODE
+					, FRH.VERSION
+					, FRH.CREATEDBY
+					, FRH.CREATEDON
+					, FRH.APPROVEDBY
+					, FRH.APPROVEDON
+					, FRH.LASTMNTBY
+					, FRH.LASTMNTON
+					, FRH.RECORDSTATUS
+					, FRH.ROLECODE
+					, FRH.NEXTROLECODE
+					, FRH.TASKID
+					, FRH.NEXTTASKID
+					, FRH.RECORDTYPE
+					, FRH.WORKFLOWID
+				FROM FEE_REFUND_HEADER_TEMP FRH
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = FRH.FINID
+				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = FM.FINBRANCH
+        		INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE
+        		INNER JOIN SMTDIVISIONDETAIL SDD ON SDD.DIVISIONCODE = FT.FINDIVISION
+        		INNER JOIN CLUSTERS CL ON CL.ID = B.CLUSTERID
+	            UNION ALL
+	          	SELECT FRH.ID
+					, FRH.FINID
+					, FRH.PAYMENTAMOUNT
+					, FRH.REFUNDTYPE
+					, FRH.OVERDUEAGAINSTLOAN
+					, FRH.OVERDUEAGAINSTCUSTOMER
+					, FRH.OVERRIDE
+					, FRH.STATUS
+					, FRH.APPROVALSTATUS
+					, FM.FINREFERENCE
+					, FM.FINTYPE
+					, C.CUSTID
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, C.CUSTCOREBANK
+					, B.BRANCHCODE
+					, B.BRANCHDESC
+					, B.CLUSTERID
+					, CL.CODE CLUSTERCODE
+          			, SDD.ENTITYCODE
+					, FRH.VERSION
+					, FRH.CREATEDBY
+					, FRH.CREATEDON
+					, FRH.APPROVEDBY
+					, FRH.APPROVEDON
+					, FRH.LASTMNTBY
+					, FRH.LASTMNTON
+					, FRH.RECORDSTATUS
+					, FRH.ROLECODE
+					, FRH.NEXTROLECODE
+					, FRH.TASKID
+					, FRH.NEXTTASKID
+					, FRH.RECORDTYPE
+					, FRH.WORKFLOWID
+				FROM FEE_REFUND_HEADER FRH
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = FRH.FINID
+				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = FM.FINBRANCH
+         		INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE
+        		INNER JOIN SMTDIVISIONDETAIL SDD ON SDD.DIVISIONCODE = FT.FINDIVISION
+        		INNER JOIN CLUSTERS CL ON CL.ID = B.CLUSTERID
+	            WHERE NOT EXISTS (SELECT 1 FROM FEE_REFUND_HEADER_TEMP WHERE ID = FRH.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="TK#2566.213.01.1_post" author="Sravani.s" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fee_refund_header_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
