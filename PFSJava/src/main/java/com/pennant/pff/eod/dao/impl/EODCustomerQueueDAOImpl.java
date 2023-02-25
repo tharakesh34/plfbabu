@@ -43,8 +43,10 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 		sql.append("  and (AdviseAmount - PaidAmount - WaivedAmount) > ?");
 		sql.append(" ) e on e.FinID = fm.FinID");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
-		sql.append(" Where fm.FinIsActive = ?");
-
+		sql.append(" Where fm.FinIsActive = ? and c.CustCoreBank not in");
+		sql.append(" (Select distinct c.CustCoreBank From FinanceMain fm ");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Where fm.FinIsActive = ?)");
 		sql.append(" Union all");
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 0 LoanExist");
 		sql.append(" From LimitHeader lh");
@@ -70,6 +72,7 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 			ps.setBoolean(7, false);
 			ps.setBoolean(8, true);
 			ps.setBoolean(9, true);
+			ps.setBoolean(10, true);
 
 		});
 	}
