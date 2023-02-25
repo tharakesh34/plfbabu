@@ -63,15 +63,13 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 
 			ps.setDate(1, JdbcUtil.getDate(appDate));
 			ps.setBoolean(2, true);
-
 			ps.setString(3, RepayConstants.EXAMOUNTTYPE_EXCESS);
 			ps.setInt(4, 0);
 			ps.setInt(5, AdviseType.PAYABLE.id());
 			ps.setInt(6, 0);
 			ps.setBoolean(7, false);
-
-			ps.setBoolean(4, true);
-			ps.setBoolean(5, true);
+			ps.setBoolean(8, true);
+			ps.setBoolean(9, true);
 
 		});
 	}
