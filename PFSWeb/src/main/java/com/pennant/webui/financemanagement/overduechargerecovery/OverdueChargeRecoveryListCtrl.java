@@ -635,6 +635,10 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		this.searchObj = searchObj;
 	}
 
+	public PagedListService getPagedListService() {
+		return pagedListService;
+	}
+
 	@Autowired
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
