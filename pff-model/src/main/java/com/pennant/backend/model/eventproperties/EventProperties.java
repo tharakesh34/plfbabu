@@ -71,6 +71,7 @@ public class EventProperties implements Serializable {
 	private int autoRefundCheckDPD;
 	private boolean autoRefundOverdueCheck;
 	private boolean autoRefundByCheque;
+	private boolean allowOTSOnEOD;
 
 	private boolean parameterLoaded;
 	private boolean cacheLoaded;
@@ -589,6 +590,14 @@ public class EventProperties implements Serializable {
 
 	public void setAutoRefundByCheque(boolean autoRefundByCheque) {
 		this.autoRefundByCheque = autoRefundByCheque;
+	}
+
+	public boolean isAllowOTSOnEOD() {
+		return allowOTSOnEOD;
+	}
+
+	public void setAllowOTSOnEOD(boolean allowOTSOnEOD) {
+		this.allowOTSOnEOD = allowOTSOnEOD;
 	}
 
 }

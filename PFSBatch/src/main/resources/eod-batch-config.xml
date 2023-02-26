@@ -77,6 +77,13 @@
 
 		<step id="processInActiveFinances">
 			<tasklet ref="processInActiveFinancesTaskLet" />
+			<next on="*" to="oTSettlement" />
+			<fail on="FAILED" />
+		</step>
+		<step id="oTSettlement">
+			<tasklet ref="oTSTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
 			<next on="*" to="beforeAssetClassification" />
 			<fail on="FAILED" />
 		</step>
@@ -243,13 +250,11 @@
 			<next on="*" to="waiverCancellation" />
 			<fail on="FAILED" />
 		</step>
-
 		<step id="waiverCancellation">
 			<tasklet ref="waiverCancellationTasklet" />
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>
-
 		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
 			<next on="EndOfMonth" to="retailcibil" />
 			<end on="NotEndOfMonth" exit-code="COMPLETED" />
