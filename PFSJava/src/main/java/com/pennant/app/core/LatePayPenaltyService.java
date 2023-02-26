@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -111,7 +112,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			repayments = sortRpdListByValueDate(repayments);
 		}
 
-		prepareDueDateData(fod, valueDate, repayments, fm, schedules);
+		List<OverdueChargeRecovery> odcrList = prepareDueDateData(fod, valueDate, repayments, fm, schedules);
 
 		switch (fod.getODChargeType()) {
 		case ChargeType.FLAT:
@@ -122,6 +123,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			/* Fixed Fee. On Every Passing Schedule Month */
 			balanceForCal = getBalanceForCal(fod);
 
+			valueDate = deriveValueDate(fod, valueDate, odcrList);
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
 				int numberOfMonths = getMonthsBetween(fod, schedules, valueDate);
 				penalty = odChargeAmtOrPerc.multiply(new BigDecimal(numberOfMonths));
@@ -142,6 +144,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			balanceForCal = getBalanceForCal(fod);
 
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
+				valueDate = deriveValueDate(fod, valueDate, odcrList);
 				int numberOfMonths = getMonthsBetween(fod, schedules, valueDate);
 				BigDecimal amtOrPercetage = odChargeAmtOrPerc.divide(new BigDecimal(100));
 				penalty = balanceForCal.multiply(amtOrPercetage).multiply(new BigDecimal(numberOfMonths))
@@ -189,7 +192,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		List<FinODDetails> odList = finEODEvent.getFinODDetails();
 
 		List<FinOverDueCharges> saveList = new ArrayList<>();
-	
+
 		for (FinODDetails fod : odList) {
 			Date schdDate = fod.getFinODSchdDate();
 
@@ -283,8 +286,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 	 * effective date rates in ODC Recovery STEP 5: Go through the ODC Recovery list and compute LPP charges
 	 */
 
-	private void prepareDueDateData(FinODDetails fod, Date valueDate, List<FinanceRepayments> rpdList, FinanceMain fm,
-			List<FinanceScheduleDetail> fsdList) {
+	private List<OverdueChargeRecovery> prepareDueDateData(FinODDetails fod, Date valueDate,
+			List<FinanceRepayments> rpdList, FinanceMain fm, List<FinanceScheduleDetail> fsdList) {
 
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
 
@@ -295,12 +298,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 				&& !StringUtils.equals(fod.getODChargeType(), ChargeType.PERC_ON_DUE_DAYS)
 				&& !StringUtils.equals(fod.getODChargeType(), ChargeType.PERC_ON_EFF_DUE_DAYS)) {
 			computeMaxAndCurDetails(fod, odcrList, fm, fsdList);
-			return;
+			return odcrList;
 		}
 
 		odcrList = addDuePaidHistForDueDateCal(fod, fm, valueDate, fsdList, odcrList);
 		calculateLPPAmounts(fod, odcrList, fm, fsdList);
-
+		return odcrList;
 	}
 
 	/**
@@ -846,8 +849,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	public List<FinanceRepayments> sortRpdListByValueDate(List<FinanceRepayments> repayments) {
 
-		if (repayments != null && repayments.size() > 0) {
-			Collections.sort(repayments, new Comparator<FinanceRepayments>() {
+		if (CollectionUtils.isNotEmpty(repayments)) {
+			Collections.sort(repayments, new Comparator<>() {
 				@Override
 				public int compare(FinanceRepayments detail1, FinanceRepayments detail2) {
 					return DateUtil.compare(detail1.getFinValueDate(), detail2.getFinValueDate());
@@ -860,8 +863,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	public List<OverdueChargeRecovery> sortOdcrListByValueDate(List<OverdueChargeRecovery> odcrList) {
 
-		if (odcrList != null && odcrList.size() > 0) {
-			Collections.sort(odcrList, new Comparator<OverdueChargeRecovery>() {
+		if (CollectionUtils.isNotEmpty(odcrList)) {
+			Collections.sort(odcrList, new Comparator<>() {
 				@Override
 				public int compare(OverdueChargeRecovery detail1, OverdueChargeRecovery detail2) {
 					return DateUtil.compare(detail1.getMovementDate(), detail2.getMovementDate());
@@ -872,4 +875,19 @@ public class LatePayPenaltyService extends ServiceHelper {
 		return odcrList;
 	}
 
+	private Date deriveValueDate(FinODDetails fod, Date valueDate, List<OverdueChargeRecovery> odcrList) {
+		for (int iOdcr = 0; iOdcr < odcrList.size(); iOdcr++) {
+			OverdueChargeRecovery odcrCur = odcrList.get(iOdcr);
+
+			if (iOdcr == 0) {
+				continue;
+			}
+
+			if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO) == 0) {
+				return odcrCur.getMovementDate();
+			}
+		}
+
+		return valueDate;
+	}
 }
