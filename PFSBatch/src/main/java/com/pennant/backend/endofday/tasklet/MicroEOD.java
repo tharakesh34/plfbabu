@@ -196,10 +196,10 @@ public class MicroEOD implements Tasklet {
 
 				if (customerQueuing.isLoanExist()) {
 					customerQueuing.setLoanExist(false);
-
 					logger.info("Preparing EOD Events for the Customer ID {} >> started...", custId);
 					eodService.prepareFinEODEvents(custEODEvent);
 					logger.info("Preparing EOD Events for the Customer ID {} >> completed.", custId);
+					customerQueuing.setLoanExist(true);
 				} else {
 					eodService.loadAutoRefund(custEODEvent);
 				}
@@ -207,6 +207,7 @@ public class MicroEOD implements Tasklet {
 				txStatus = transactionManager.getTransaction(txDef);
 
 				if (customerQueuing.isLoanExist()) {
+					customerQueuing.setLoanExist(false);
 					eodService.doProcess(custEODEvent);
 					eodService.doUpdate(custEODEvent, customerQueuing.isLimitRebuild());
 				} else {

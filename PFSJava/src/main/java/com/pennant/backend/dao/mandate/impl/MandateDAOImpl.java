@@ -1136,13 +1136,13 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 	@Override
 	public Long getMandateId(long finID) {
-		String sql = "Select fm.MandateId From FinanceMain fm Inner Join Mandates m on fm.MandateId = m.MandateId Where fm.FinID = ? and m.Mandatetype in (?, ?, ?) and m.Status = ?";
+		String sql = "Select fm.MandateId From FinanceMain fm Inner Join Mandates m on fm.MandateId = m.MandateId Where fm.FinID = ? and m.Mandatetype in (?, ?, ?) and m.Status = ? and m.SecurityMandate = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
 			return jdbcOperations.queryForObject(sql, Long.class, finID, InstrumentType.NACH.name(),
-					InstrumentType.SI.name(), InstrumentType.EMANDATE.name(), "APPROVED");
+					InstrumentType.SI.name(), InstrumentType.EMANDATE.name(), "APPROVED", 0);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
