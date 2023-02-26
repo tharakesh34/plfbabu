@@ -13773,7 +13773,7 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="ST#713.51" author="Mounika.M">
+	<changeSet id="ST#713.55.1" author="Mounika.M">
 		<addPrimaryKey tableName="Fin_OverDue_Charge_Movements" columnNames="ID" constraintName="PK_Fin_OverDue_Charge_movements"/>
 	</changeSet>
 	

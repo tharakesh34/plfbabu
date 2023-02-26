@@ -49,7 +49,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 	private AutoRefundService autoRefundService;
 
-	public void prepareFinEODEvents(CustEODEvent custEODEvent) throws Exception {
+	public void prepareFinEODEvents(CustEODEvent custEODEvent) {
 		Customer customer = custEODEvent.getCustomer();
 
 		List<FinanceMain> custFinMains = financeMainDAO.getFinMainsForEODByCustId(customer);
@@ -121,7 +121,7 @@ public class LoadFinanceData extends ServiceHelper {
 		custFinMains.clear();
 	}
 
-	public CustEODEvent prepareInActiveFinEODEvents(CustEODEvent custEODEvent, long finID) throws Exception {
+	public CustEODEvent prepareInActiveFinEODEvents(CustEODEvent custEODEvent, long finID) {
 		logger.debug(Literal.ENTERING);
 
 		FinEODEvent finEODEvent = new FinEODEvent();
@@ -147,7 +147,7 @@ public class LoadFinanceData extends ServiceHelper {
 		return custEODEvent;
 	}
 
-	private void setEventFlags(CustEODEvent custEODEvent, FinEODEvent finEODEvent) throws Exception {
+	private void setEventFlags(CustEODEvent custEODEvent, FinEODEvent finEODEvent) {
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		Date valueDate = custEODEvent.getEodValueDate();
 		Date businessDate = custEODEvent.getEventProperties().getBusinessDate();
@@ -247,16 +247,13 @@ public class LoadFinanceData extends ServiceHelper {
 		}
 
 		// Check If LPP Method on capitalization basis and Due Index not exists
-		if (finEODEvent.getIdxPD() <= 0) {
-			if (isLPPCpzReq(finEODEvent)) {
-				finEODEvent.setIdxPD(1);
-				custEODEvent.setPastDueExist(true);
-			}
+		if (finEODEvent.getIdxPD() <= 0 && isLPPCpzReq(finEODEvent)) {
+			finEODEvent.setIdxPD(1);
+			custEODEvent.setPastDueExist(true);
 		}
 	}
 
-	private void setDateRollover(CustEODEvent custEODEvent, FinEODEvent finEODEvent, Date schdDate, int iSchd)
-			throws Exception {
+	private void setDateRollover(CustEODEvent custEODEvent, FinEODEvent finEODEvent, Date schdDate, int iSchd) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 
 		Date grcEndDate = fm.getGrcPeriodEndDate();
@@ -306,13 +303,10 @@ public class LoadFinanceData extends ServiceHelper {
 		}
 
 		// Set Next Repayment Profit Review Date
-		if (fm.isAllowRepayRvw()) {
-			if (schdDate.compareTo(fm.getNextRepayRvwDate()) == 0) {
-				finEODEvent.setIdxRpyPftRvw(iSchd);
-				custEODEvent.setDateRollover(true);
-			}
+		if (fm.isAllowRepayRvw() && schdDate.compareTo(fm.getNextRepayRvwDate()) == 0) {
+			finEODEvent.setIdxRpyPftRvw(iSchd);
+			custEODEvent.setDateRollover(true);
 		}
-
 	}
 
 	public void updateFinEODEvents(CustEODEvent custEODEvent) throws Exception {
@@ -389,14 +383,11 @@ public class LoadFinanceData extends ServiceHelper {
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
 			List<FinODDetails> odDetailsLBD = finEODEvent.getFinODDetailsLBD();
 			if (odDetails != null && !odDetails.isEmpty()) {
-
-				if (finEODEvent.getIdxPD() > 1) {
-					if (isLPPCpzReq(finEODEvent)) {
-						finEODEvent.setIdxPD(1);
-					}
+				if (finEODEvent.getIdxPD() > 1 && isLPPCpzReq(finEODEvent)) {
+					finEODEvent.setIdxPD(1);
 				}
+
 				FinanceScheduleDetail odschd = finEODEvent.getFinanceScheduleDetails().get(finEODEvent.getIdxPD());
-				Date odSchDateIncGrc = odschd.getSchDate();
 				Date appDate = fm.getEventProperties().getAppDate();
 				String productCategory = fm.getProductCategory();
 
@@ -416,7 +407,7 @@ public class LoadFinanceData extends ServiceHelper {
 								odGraceDays = odGraceDays + extnODGrcDays;
 							}
 
-							odSchDateIncGrc = DateUtil.addDays(odschd.getSchDate(), odGraceDays);
+							Date odSchDateIncGrc = DateUtil.addDays(odschd.getSchDate(), odGraceDays);
 
 							if (appDate.compareTo(odSchDateIncGrc) < 0) {
 								continue;
@@ -428,7 +419,7 @@ public class LoadFinanceData extends ServiceHelper {
 						}
 
 						boolean exists = checkExsistInList(od, odDetailsLBD);
-						
+
 						if (custEODEvent.getEodDate().compareTo(DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0
 								|| custEODEvent.getEventProperties().isEomOnEOD()) {
 							od.setLppDueAmt(od.getTotPenaltyAmt());
@@ -436,7 +427,7 @@ public class LoadFinanceData extends ServiceHelper {
 							od.setLpiDueAmt(od.getLPIAmt());
 							od.setLpiDueTillDate(custEODEvent.getEodDate());
 						}
-						
+
 						if (exists) {
 							listupdate.add(od);
 						} else {
@@ -452,14 +443,12 @@ public class LoadFinanceData extends ServiceHelper {
 						logger.info("{} Overdue details are created", savedCount);
 					}
 
-					listSave = null;
 					if (!listupdate.isEmpty()) {
 						logger.info("updating existing overdue details into FinODDetails table...");
 						updateCount = finODDetailsDAO.updateODDetailsBatch(listupdate);
 
 						logger.info("{} overdue details are created", updateCount);
 					}
-					listupdate = null;
 
 					List<FinOverDueCharges> finODCAmounts = finEODEvent.getFinODCAmounts();
 
@@ -541,9 +530,9 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.info("Updating EOD Events for the CustID >> {} completed.", custID);
 	}
 
-	private boolean checkExsistInList(FinODDetails finODDetails, List<FinODDetails> odDetails_PRV) {
+	private boolean checkExsistInList(FinODDetails finODDetails, List<FinODDetails> fodDetails) {
 
-		for (FinODDetails finODDet : odDetails_PRV) {
+		for (FinODDetails finODDet : fodDetails) {
 			if (finODDetails.getFinODSchdDate().compareTo(finODDet.getFinODSchdDate()) == 0) {
 				return true;
 			}
@@ -653,7 +642,7 @@ public class LoadFinanceData extends ServiceHelper {
 			if (CollectionUtils.isEmpty(projAccrualList)) {
 				continue;
 			}
-			int count = projectedAmortizationDAO.saveBatchProjAccruals(projAccrualList);
+			projectedAmortizationDAO.saveBatchProjAccruals(projAccrualList);
 		}
 	}
 
@@ -665,8 +654,8 @@ public class LoadFinanceData extends ServiceHelper {
 
 		for (FinEODEvent finEODEvent : custEODEvent.getFinEODEvents()) {
 
-			List<ProjectedAmortization> projSaveAMZList = new ArrayList<ProjectedAmortization>(1);
-			List<ProjectedAmortization> projUpdateAMZList = new ArrayList<ProjectedAmortization>(1);
+			List<ProjectedAmortization> projSaveAMZList = new ArrayList<>();
+			List<ProjectedAmortization> projUpdateAMZList = new ArrayList<>();
 
 			List<ProjectedAmortization> incomeAMZList = finEODEvent.getIncomeAMZList();
 
@@ -779,7 +768,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 	private void listSave(FinEODEvent finEODEvent, String tableType, long logKey) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
-		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<>();
 
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 

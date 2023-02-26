@@ -200,13 +200,9 @@ public class EodService {
 			eodAutoKnockOffService.processKnockOff(custId, appDate);
 			logger.info("Auto-Knock-Off process completed for the Customer ID >> {} ", custId);
 		}
-
-		logger.info("Preparing EOD Events for the Customer ID {} >> started...", custId);
-		loadFinanceData.prepareFinEODEvents(custEODEvent);
-		logger.info("Preparing EOD Events for the Customer ID {} >> completed.", custId);
-
 		if (!eventProperties.isSkipLatePay()) {
 			// late pay marking
+
 			if (custEODEvent.isPastDueExist()) {
 				// overdue calculated on EOD
 				// LPP calculated on the SOD
@@ -331,7 +327,21 @@ public class EodService {
 		if (ImplementationConstants.ALLOW_NPA) {
 			assetClassificationService.process(custEODEvent);
 		}
+	}
 
+	public void processAutoRefund(CustEODEvent custEODEvent) {
+		logger.info("Process the auto Refund for the Customer who is no active loans");
+		autoRefundService.executeRefund(custEODEvent);
+
+		autoRefundService.updateRefunds(custEODEvent);
+	}
+
+	public void prepareFinEODEvents(CustEODEvent custEODEvent) {
+		loadFinanceData.prepareFinEODEvents(custEODEvent);
+	}
+
+	public void loadAutoRefund(CustEODEvent custEODEvent) {
+		autoRefundService.loadAutoRefund(custEODEvent);
 	}
 
 	@Autowired

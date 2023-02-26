@@ -140,9 +140,11 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		/**
 		 * Auto Refund Parameters
 		 */
-		ep.setAutoRefundDaysForClosed(SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_N_DAYS_CLOSED_LAN));
-		ep.setAutoRefundDaysForActive(SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_N_DAYS_ACTIVE_LAN));
-		ep.setAutoRefundCheckDPD(SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_HOLD_DPD));
+		ep.setAutoRefundDaysForClosed(
+				SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_N_DAYS_CLOSED_LAN) - 1);
+		ep.setAutoRefundDaysForActive(
+				SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_N_DAYS_ACTIVE_LAN) - 1);
+		ep.setAutoRefundCheckDPD(SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_HOLD_DPD) - 1);
 		ep.setAutoRefundOverdueCheck(SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_OVERDUE_CHECK));
 		ep.setAutoRefundByCheque(SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE));
 

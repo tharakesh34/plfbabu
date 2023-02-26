@@ -931,7 +931,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		} else if (FinanceConstants.REALIZATION_APPROVER.equals(roleCode)
 				|| FinanceConstants.KNOCKOFFCAN_APPROVER.equals(roleCode)) {
 
-		} else if (FinanceConstants.RECEIPT_MAKER.equals(roleCode) || FinanceConstants.RECEIPT_APPROVER.equals(roleCode)
+		} else if ((FinanceConstants.RECEIPT_MAKER.equals(roleCode)
+				|| FinanceConstants.RECEIPT_APPROVER.equals(roleCode))
 				&& RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus())) {
 
 		} else {
