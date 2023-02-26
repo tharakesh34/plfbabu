@@ -13795,10 +13795,18 @@
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="ST#713.3.3" author="Mounika.M" dbms="mssql">
+	<changeSet id="ST#713.58_post" author="Mounika.M">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE FinODDetails ADD CONSTRAINT DF_FT_LPIDUEAMT DEFAULT 0 FOR LPIDUEAMT;
+				UPDATE FINODDETAILS SET LPIDUEAMT = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#713.59" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE FINODDETAILS ADD CONSTRAINT DF_FT_LPIDUEAMT DEFAULT 0 FOR LPIDUEAMT;
 			]]>
 		</sql>
 	</changeSet>
@@ -13819,14 +13827,22 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="ST#713.60_post" author="Mounika.M">
+		<sql>
+			<![CDATA[	
+				UPDATE FINODDETAILS SET LPPDUEAMT = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#713.61" author="Mounika.M" dbms="postgresql, oracle">
 		<addDefaultValue columnName="LPPDueAmt" tableName="FinODDetails" defaultValue="0"/>
 	</changeSet>
 	
-	<changeSet id="ST#713.3.3" author="Mounika.M" dbms="mssql">
+	<changeSet id="ST#713.61" author="Mounika.M" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE FinODDetails ADD CONSTRAINT DF_FT_LPPDUEAMT DEFAULT 0 FOR LPPDUEAMT;
+				ALTER TABLE FINODDETAILS ADD CONSTRAINT DF_FT_LPPDUEAMT DEFAULT 0 FOR LPPDUEAMT;
 			]]>
 		</sql>
 	</changeSet>
@@ -14026,4 +14042,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#216047" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'RECEIPTS_SHOW_ACCOUNTING_TAB';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('RECEIPTS_SHOW_ACCOUNTING_TAB', 'Accounting tab is required or not', 'String', 1, 'Y',  1, 0, NULL, NULL, 'Accounting tab is required or not', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog> 

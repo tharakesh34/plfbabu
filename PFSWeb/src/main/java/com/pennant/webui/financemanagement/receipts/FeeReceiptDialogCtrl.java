@@ -124,6 +124,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
@@ -1262,7 +1263,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				doSetValidation();
 				doWriteComponentsToBean();
 				// Accounting Details Validations
-				if (ImplementationConstants.RECEIPTS_SHOW_ACCOUNTING_TAB) {
+
+				if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTS_SHOW_ACCOUNTING_TAB)) {
 					if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
 							&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
 						boolean validate = false;
