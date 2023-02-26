@@ -43,7 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -387,8 +386,13 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odcrList = loadEOMCpzDate(fod, fsdList, odcrList, valueDate, fm);
 		}
 
-		// Add Effective Rates
-		odcrList = addEffectiveRates(fod, odcrList, fm, valueDate);
+		if (StringUtils.equals(fod.getODChargeType(), "E")) {
+			// Add Effective Rates
+			odcrList = addEffectiveRates(fod, odcrList, fm, valueDate);
+		} else {
+			// Add Due Days Rates
+			odcrList = applyNewEffRate(odcrList, fod.getFinODSchdDate(), fod.getODChargeAmtOrPerc());
+		}
 
 		return odcrList;
 	}
@@ -440,7 +444,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 		odcr.setPftPaid(rpd.getFinSchdPftPaid());
 		odcr.setPenaltyPaid(rpd.getPenaltyPaid());
 		odcr.setWaivedAmt(rpd.getPenaltyWaived());
-		odcr.setPenaltyAmtPerc(fod.getODChargeAmtOrPerc());
+
+		// FIXME: GOPAL.P 25FEB2023. Value was set to penaltyAmtPerc Instead of ODChargeAmtOrPerc
+		// Commented the code and added new line. PenaltyAmtPerc( usage was not found any where
+		// odcr.setPenaltyAmtPerc(fod.getODChargeAmtOrPerc());
 		odcr.setoDChargeAmtOrPerc(fod.getODChargeAmtOrPerc());
 		odcr.setLpCpz(isLpCpz);
 		return odcr;
