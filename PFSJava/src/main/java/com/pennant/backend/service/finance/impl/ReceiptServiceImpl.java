@@ -2891,6 +2891,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		// Max and Min PartPayment Validation & Lock in Period
 		ErrorDetail errorDetail = null;
 		if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
+			List<FinanceScheduleDetail> schedules = this.financeScheduleDetailDAO.getFinScheduleDetails(rch.getFinID(),
+					"", false);
+			repayData.setPartPayschedules(schedules);
 			errorDetail = this.partPayAndEarlySettleValidator.validatePartPay(repayData);
 		} else if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			errorDetail = this.partPayAndEarlySettleValidator.validateEarlyPay(fd.getFinScheduleData());

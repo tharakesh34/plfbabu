@@ -129,6 +129,8 @@ public class FinReceiptData implements Serializable {
 	private boolean isSettlement = false;
 	private boolean isSettlementGrace = false;
 
+	private List<FinanceScheduleDetail> partPayschedules = new ArrayList<>();
+
 	public FinReceiptData() {
 		super();
 	}
@@ -235,6 +237,7 @@ public class FinReceiptData implements Serializable {
 		entity.setOTSByEod(this.isOTSByEod);
 		entity.setSettlement(this.isSettlement);
 		entity.setSettlementGrace(this.isSettlementGrace);
+		entity.setPartPayschedules(this.partPayschedules);
 
 		return entity;
 	}
@@ -829,6 +832,14 @@ public class FinReceiptData implements Serializable {
 
 	public void setSettlementGrace(boolean isSettlementGrace) {
 		this.isSettlementGrace = isSettlementGrace;
+	}
+
+	public List<FinanceScheduleDetail> getPartPayschedules() {
+		return partPayschedules;
+	}
+
+	public void setPartPayschedules(List<FinanceScheduleDetail> partPayschedules) {
+		this.partPayschedules = partPayschedules;
 	}
 
 	/*
