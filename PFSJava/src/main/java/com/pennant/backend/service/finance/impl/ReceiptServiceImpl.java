@@ -2080,6 +2080,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (!overdueList.isEmpty()) {
 			finODDetailsDAO.updatePaidPenalties(overdueList);
+
+			if (RepayConstants.EXCESSADJUSTTO_TEXCESS
+					.equals(scheduleData.getFinServiceInstruction().getExcessAdjustTo())
+					&& RequestSource.EOD.equals(scheduleData.getFinServiceInstruction().getRequestSource())) {
+				scheduleData.setFinODDetails(finODDetailsDAO.getFinODDetailsByFinRef(finID));
+			}
 		}
 
 		if (rch.getUserDetails() == null && SessionUserDetails.getLogiedInUser() != null) {
