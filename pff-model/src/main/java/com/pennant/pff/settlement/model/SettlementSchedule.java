@@ -20,6 +20,7 @@ public class SettlementSchedule extends AbstractWorkflowEntity {
 	private Date settlementInstalDate;
 	private BigDecimal settlementAmount = BigDecimal.ZERO;
 	private SettlementSchedule befImage;
+	private String module;
 	private LoggedInUser userDetails;
 	private String sourceId;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
@@ -34,6 +35,7 @@ public class SettlementSchedule extends AbstractWorkflowEntity {
 		excludeFields.add("settlement");
 		excludeFields.add("settlementScheduleList");
 		excludeFields.add("auditDetailMap");
+		excludeFields.add("module");
 		return excludeFields;
 	}
 
@@ -47,6 +49,7 @@ public class SettlementSchedule extends AbstractWorkflowEntity {
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		entity.setSourceId(this.sourceId);
+		entity.setSourceId(this.getModule());
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -129,6 +132,14 @@ public class SettlementSchedule extends AbstractWorkflowEntity {
 
 	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
+	}
+
+	public String getModule() {
+		return module;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
 	}
 
 }
