@@ -677,6 +677,7 @@
 		</sql>
 	</changeSet>
 	
+	
 	<changeSet id="003.2" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -717,4 +718,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="002.2_post" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE JOB_DETAILS SET ENABLED = 0 WHERE JOBKEY IN ('SI_LIEN_MARKING_JOB', 'SI_LIEN_FILE_WRITING_JOB', 'SI_LIEN_RESPONSE_JOB');
+			]]>
+		</sql>
+	</changeSet>
+		
 </databaseChangeLog>
