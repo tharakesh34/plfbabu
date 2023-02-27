@@ -236,4 +236,7 @@ public class RepayConstants {
 	public static final String SETTLEMENT_STATUS_INIT_MSG = "Initiated";
 	public static final String SETTLEMENT_STATUS_PROC_MSG = "Processed";
 	public static final String SETTLEMENT_STATUS_CANC_MSG = "Cancelled";
+
+	public static final String ALLOCATIONTYPE_AUTO = "A";
+	public static final String ALLOCATIONTYPE_MANUAL = "M";
 }

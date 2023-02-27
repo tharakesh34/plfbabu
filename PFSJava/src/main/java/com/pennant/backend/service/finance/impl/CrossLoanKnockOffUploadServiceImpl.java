@@ -41,6 +41,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.crossloanknockoff.service.error.CrossLoanKnockOffUploadError;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.AppException;
@@ -484,6 +485,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		frh.setDedupCheckRequired(false);
 		frh.setWorkflowId(1);
 		frh.setValueDate(clku.getAppDate());
+		frh.setKnockOffType(KnockOffType.CROSS_LOAN.name());
 
 		return frh;
 	}

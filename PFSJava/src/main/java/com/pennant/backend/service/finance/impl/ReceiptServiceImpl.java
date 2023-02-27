@@ -5892,6 +5892,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setSource(fsi.getRequestSource().name());
 		rch.setFinType(fm.getFinType());
 
+		if (fsi.isKnockOffReceipt()) {
+			rch.setKnockOffType(fsi.getKnockoffType());
+		}
+
 		if (receiptPurpose == ReceiptPurpose.SCHDRPY && fsi.isBckdtdWthOldDues()) {
 			Date derivedDate = getDerivedValueDate(rd, fsi, fm.getAppDate());
 
