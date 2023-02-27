@@ -14,6 +14,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.api.Importer;
@@ -58,6 +60,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.service.hook.ExtendedCreditReviewHook;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -84,6 +87,10 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private List<Verification> verifications;
 
 	int format = PennantConstants.defaultCCYDecPos;
+
+	@Autowired(required = false)
+	@Qualifier("extendedCreditReviewHook")
+	private ExtendedCreditReviewHook extendedCreditReviewHook;
 
 	public FinanceSpreadSheetCtrl() {
 		super();
@@ -1277,7 +1284,9 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	}
 
 	public void doSaveScoreDetail(FinanceDetail afd) {
-		// TODO Auto-generated method stub
+		if (extendedCreditReviewHook != null) {
+			extendedCreditReviewHook.saveExtCreditReviewDetails(afd);
+		}
 	}
 
 	public CreditReviewData getCreditReviewData() {
