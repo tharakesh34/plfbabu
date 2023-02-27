@@ -439,14 +439,17 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		List<PaymentDetail> pdtl = ph.getPaymentDetailList();
 
 		for (PaymentDetail pdt : pdtl) {
-			FinExcessAmount fea = finExcessAmountDAO.getFinExcessByID(pdt.getReferenceId());
-			List<Long> receiptID = paymentHeaderDAO.getReceiptPurpose(fea.getExcessID());
+			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(pdt.getAmountType())) {
+				FinExcessAmount fea = finExcessAmountDAO.getFinExcessByID(pdt.getReferenceId());
+				List<Long> receiptID = paymentHeaderDAO.getReceiptPurpose(fea.getExcessID());
 
-			if (CollectionUtils.isNotEmpty(receiptID)) {
-				String[] parameters = new String[1];
-				parameters[0] = "Excess is in reserved state, since receipt is in progress with Receipt IDs "
-						+ receiptID;
-				auditDetail.setErrorDetail(new ErrorDetail("REFUND_050", parameters[0], null));
+				if (CollectionUtils.isNotEmpty(receiptID)) {
+					String[] parameters = new String[1];
+					parameters[0] = "Excess is in reserved state, since receipt is in progress with Receipt IDs "
+							+ receiptID;
+					auditDetail.setErrorDetail(new ErrorDetail("REFUND_050", parameters[0], null));
+				}
+
 			}
 		}
 

@@ -1225,9 +1225,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		this.allocationMethod.setErrorMessage("");
 		String allocateMthd = getComboboxValue(this.allocationMethod);
 
-		if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)) {
+		if (AllocationType.AUTO.equals(allocateMthd)) {
 			resetAllocationPayments();
-		} else if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)) {
+		} else if (AllocationType.MANUAL.equals(allocateMthd)) {
 			receiptData.getReceiptHeader().setAllocationType(allocateMthd);
 			doFillAllocationDetail();
 		}
@@ -2517,8 +2517,10 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				.compareTo(receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
 				&& !receiptData.isForeClosure()) {
 			String[] err = new String[2];
-			err[0] = receiptData.getPaidNow().toString();
-			err[1] = receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable()).toString();
+
+			err[0] = PennantApplicationUtil.formatAmount(receiptData.getPaidNow(), formatter);
+			err[1] = PennantApplicationUtil.formatAmount(
+					receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable()), formatter);
 			MessageUtil
 					.showError(new ErrorDetail("WFEE12", Labels.getLabel("label_Allocation_More_than_receipt"), err));
 			return;
@@ -4902,7 +4904,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		if (paidAmount.compareTo(dueAmount.subtract(waivedAmount)) > 0) {
 			paidAmount = dueAmount.subtract(waivedAmount);
 		}
-		BigDecimal totalPaid = getReceiptCalculator().getPaidAmount(allocate, paidAmount);
+		BigDecimal totalPaid = receiptCalculator.getPaidAmount(allocate, paidAmount);
 		allocate.setTotalPaid(paidAmount);
 		allocate.setPaidAmount(paidAmount);
 		// allocate.setPaidAmount(allocate.getTotRecv());
@@ -4917,7 +4919,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			allocate.setPaidIGST(BigDecimal.ZERO);
 			allocate.setPaidCESS(BigDecimal.ZERO);
 			allocate.setPaidGST(BigDecimal.ZERO);
-			getReceiptCalculator().calAllocationPaidGST(financeDetail, totalPaid, allocate,
+			receiptCalculator.calAllocationPaidGST(financeDetail, totalPaid, allocate,
 					FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
 		}
 
@@ -4926,7 +4928,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			if (dueAmount.equals(paidAmount)) {
 				tdsPaidNow = allocate.getTdsDue();
 			} else {
-				tdsPaidNow = getReceiptCalculator().getTDSAmount(financeDetail.getFinScheduleData().getFinanceMain(),
+				tdsPaidNow = receiptCalculator.getTDSAmount(financeDetail.getFinScheduleData().getFinanceMain(),
 						totalPaid);
 				allocate.setTdsPaid(tdsPaidNow);
 			}
@@ -4934,7 +4936,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		}
 
 		if (allocate.isSubListAvailable()) {
-			getReceiptCalculator().splitNetAllocSummary(receiptData, idx);
+			receiptCalculator.splitNetAllocSummary(receiptData, idx);
 		} else {
 			if (Allocation.EMI.equals(allocate.getAllocationType())) {
 				allocateEmi(paidAmount);
@@ -4956,8 +4958,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 							allocteDtl.setPaidIGST(BigDecimal.ZERO);
 							allocteDtl.setPaidCESS(BigDecimal.ZERO);
 							allocteDtl.setPaidGST(BigDecimal.ZERO);
-							getReceiptCalculator().calAllocationPaidGST(financeDetail, allocteDtl.getTotalPaid(),
-									allocteDtl, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+							receiptCalculator.calAllocationPaidGST(financeDetail, allocteDtl.getTotalPaid(), allocteDtl,
+									FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 						}
 					}
 				}
@@ -5084,10 +5086,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	@Autowired
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
-	}
-
-	public ReceiptCalculator getReceiptCalculator() {
-		return receiptCalculator;
 	}
 
 }

@@ -485,7 +485,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		frh.setDedupCheckRequired(false);
 		frh.setWorkflowId(1);
 		frh.setValueDate(clku.getAppDate());
-		frh.setKnockOffType(KnockOffType.CROSS_LOAN.name());
+		frh.setKnockOffType(KnockOffType.CROSS_LOAN.code());
 
 		return frh;
 	}

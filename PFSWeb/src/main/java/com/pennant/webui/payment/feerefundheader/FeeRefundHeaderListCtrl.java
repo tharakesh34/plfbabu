@@ -656,21 +656,27 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		 * Object[] { notDownloadIds })); return; }
 		 */
 
+		boolean processCompleted = true;
 		List<String> listFrh = new ArrayList<>();
 		for (FeeRefundHeader frh : listRefundHeader) {
 
 			listFrh.add(String.valueOf(frh.getId()));
 
 			// call dosaveProgress
-			doProcess(frh, PennantConstants.TRAN_ADD, PennantConstants.RCD_STATUS_APPROVED);
+			if (processCompleted) {
+				processCompleted = doProcess(frh, PennantConstants.TRAN_ADD, PennantConstants.RCD_STATUS_APPROVED);
+			}
 		}
 
-		doApprove(listFrh);
+		if (processCompleted) {
+			doApprove(listFrh);
+		}
 
 		doRefresh();
 
-		Clients.showNotification("Fee Refund Process Approved.", "info", null, null, -1);
-
+		if (processCompleted) {
+			Clients.showNotification("Fee Refund Process Approved.", "info", null, null, -1);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -1080,7 +1080,17 @@ public class FileUploadList extends Window implements Serializable {
 		}
 
 		if (uploadService.isValidateApprove(selectedHeaders) != selectedHeaders.size()) {
-			MessageUtil.showError(Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "" }));
+			StringBuilder idList = new StringBuilder();
+
+			for (FileUploadHeader header : selectedHeaders) {
+				if (idList.length() > 1) {
+					idList.append(", ");
+				}
+
+				idList.append(header.getId());
+			}
+			MessageUtil.showError(
+					Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "Upload ID : " + idList.toString() }));
 			return;
 		}
 
