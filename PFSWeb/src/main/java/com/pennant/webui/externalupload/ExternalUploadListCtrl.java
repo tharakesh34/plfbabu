@@ -35,8 +35,6 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,7 +65,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(ExternalUploadListCtrl.class);
 
 	protected Window window_ExternalUploadsList;
 	protected Button btnImport;

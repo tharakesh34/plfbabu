@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -39,7 +37,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePartnerBank> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(FinTypePartnerbankMappingListCtrl.class);
 
 	protected Window window_FinTypeParterbankMappingList;
 	protected Borderlayout borderLayout_FinTypeParterbankMappingList;
