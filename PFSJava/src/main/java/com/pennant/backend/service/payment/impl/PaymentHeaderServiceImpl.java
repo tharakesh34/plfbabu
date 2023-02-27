@@ -993,18 +993,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		int dpdDays = arl.getDpdDays();
 		String holdStatus = arl.getHoldStatus();
 
-		/* DPD Days validation against System parameter Configuration */
-		if (dpdDays >= arl.getAutoRefCheckDPD() && isEOD) {
-			logger.debug(Literal.LEAVING);
-			return ErrorUtil.getError("REFUND_001", String.valueOf(dpdDays), String.valueOf(arl.getAutoRefCheckDPD()));
-		}
-
-		/* Verification against Refunds, if any of the refund against loan in process */
-		if (paymentHeaderDAO.isRefundInProcess(finId) && isEOD) {
-			logger.debug(Literal.LEAVING);
-			return ErrorUtil.getError("REFUND_003");
-		}
-
 		/* Verifying if the loan is write off or not */
 		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
 			logger.debug(Literal.LEAVING);
@@ -1014,6 +1002,19 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		if (FinanceConstants.FEE_REFUND_HOLD.equals(holdStatus)) {
 			logger.debug(Literal.LEAVING);
 			return ErrorUtil.getError("REFUND_009");
+		}
+
+		/* DPD Days validation against System parameter Configuration */
+		if (dpdDays >= arl.getAutoRefCheckDPD() && isEOD) {
+			logger.debug(Literal.LEAVING);
+			return ErrorUtil.getError("REFUND_001", String.valueOf(dpdDays),
+					String.valueOf(arl.getAutoRefCheckDPD() + 1));
+		}
+
+		/* Verification against Refunds, if any of the refund against loan in process */
+		if (paymentHeaderDAO.isRefundInProcess(finId) && isEOD) {
+			logger.debug(Literal.LEAVING);
+			return ErrorUtil.getError("REFUND_003");
 		}
 
 		logger.debug(Literal.LEAVING);

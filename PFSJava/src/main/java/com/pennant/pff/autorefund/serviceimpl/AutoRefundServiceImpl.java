@@ -194,7 +194,8 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 				BigDecimal paymentAmt = balanceAmt.subtract(overDueAmount);
 
 				if (paymentAmt.compareTo(BigDecimal.ZERO) > 0) {
-					list.add(preparePD(String.valueOf(AdviseType.PAYABLE.id()), adv.getAdviseID(), adv.getFeeTypeCode(), adv.getFeeTypeDesc(), paymentAmt));
+					list.add(preparePD(String.valueOf(AdviseType.PAYABLE.id()), adv.getAdviseID(), adv.getFeeTypeCode(),
+							adv.getFeeTypeDesc(), paymentAmt));
 				}
 
 				overDueAmount = BigDecimal.ZERO;
@@ -202,7 +203,7 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 
 		}
 
-		arl.setRefundAmt(excessBalance.subtract(arl.getOverDueAmount()));
+		arl.setRefundAmt(excessBalance.subtract(arl.getOverDueAmount().add(reserveAmount)));
 
 		BigDecimal refundAmt = arl.getRefundAmt();
 		BigDecimal maxRefundAmt = arl.getMaxRefundAmt();
