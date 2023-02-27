@@ -2,8 +2,6 @@ package com.pennanttech.pff.mmfl.cd.webui;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -26,7 +24,6 @@ import com.pennanttech.pff.cd.service.MerchantDetailsService;
 
 public class MerchantDetailsListCtrl extends GFCBaseListCtrl<MerchantDetails> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(MerchantDetailsListCtrl.class);
 
 	protected Window window_merchantDetails;
 	protected Borderlayout borderLayout_MerchantDetails;

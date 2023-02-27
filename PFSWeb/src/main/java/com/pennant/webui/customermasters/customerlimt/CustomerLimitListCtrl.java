@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -53,7 +51,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 	private static final long serialVersionUID = 9086034736503097868L;
-	private static final Logger logger = LogManager.getLogger(CustomerLimitListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUl-file

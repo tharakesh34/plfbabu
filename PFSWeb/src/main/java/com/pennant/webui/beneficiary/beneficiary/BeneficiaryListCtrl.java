@@ -27,8 +27,6 @@ package com.pennant.webui.beneficiary.beneficiary;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -58,7 +56,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class BeneficiaryListCtrl extends GFCBaseListCtrl<Beneficiary> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(BeneficiaryListCtrl.class);
 
 	protected Window window_BeneficiaryList;
 	protected Borderlayout borderLayout_BeneficiaryList;

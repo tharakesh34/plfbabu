@@ -26,8 +26,6 @@ package com.pennant.webui.customermasters.customergroup;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -54,7 +52,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerGroupListCtrl extends GFCBaseListCtrl<CustomerGroup> {
 	private static final long serialVersionUID = 8090581617957622077L;
-	private static final Logger logger = LogManager.getLogger(CustomerGroupListCtrl.class);
 
 	protected Window window_CustomerGroupList;
 	protected Borderlayout borderLayout_CustomerGroupList;
