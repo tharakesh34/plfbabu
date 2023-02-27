@@ -206,7 +206,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		sql.append(", uh.TaskId, uh.NextTaskId, uh.RecordType, uh.WorkflowId");
 		sql.append(" From FILE_UPLOAD_HEADER uh");
 
-		if ("A".equals(stage) && UploadTypes.PAYINS_REFUND.name().equals(type)) {
+		if (StringUtils.isNotEmpty(code) && "A".equals(stage) && UploadTypes.PAYINS_REFUND.name().equals(type)) {
 			sql.append(" Inner Join Clusters cl on cl.Entity = uh.EntityCode and cl.Code = ?");
 		}
 
@@ -225,7 +225,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
 
-			if ("A".equals(stage) && UploadTypes.PAYINS_REFUND.name().equals(type)) {
+			if (StringUtils.isNotEmpty(code) && "A".equals(stage) && UploadTypes.PAYINS_REFUND.name().equals(type)) {
 				ps.setString(++index, code);
 			}
 
@@ -471,7 +471,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 		this.jdbcOperations.update(sql, st -> {
 			int index = 0;
-			
+
 			st.setInt(++index, sucessRecords);
 			st.setInt(++index, faildrecords);
 			st.setLong(++index, headerId);

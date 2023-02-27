@@ -50,6 +50,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -110,6 +111,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private FinanceMainDAO financeMainDAO;
 	private FeeTypeService feeTypeService;
 	private FinOverDueService finOverDueService;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	private PostValidationHook postValidationHook;
 
@@ -434,7 +436,20 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		List<PaymentDetail> pdtl = ph.getPaymentDetailList();
+
+		for (PaymentDetail pdt : pdtl) {
+			FinExcessAmount fea = finExcessAmountDAO.getFinExcessByID(pdt.getReferenceId());
+			List<Long> receiptID = paymentHeaderDAO.getReceiptPurpose(fea.getExcessID());
+
+			if (CollectionUtils.isNotEmpty(receiptID)) {
+				String[] parameters = new String[1];
+				parameters[0] = "Excess is in reserved state, since receipt is in progress with Receipt IDs "
+						+ receiptID;
+				auditDetail.setErrorDetail(new ErrorDetail("REFUND_050", parameters[0], null));
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
@@ -913,13 +928,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		return this.paymentHeaderDAO.getInProgressExcessAmt(finId, receiptId);
 	}
 
-	@Override
-	public PaymentHeader prepareRefund(AutoRefundLoan arl) {
+	public PaymentHeader prepareRefund(AutoRefundLoan arl, List<PaymentDetail> pdList, PaymentInstruction payInst) {
 		logger.debug(Literal.ENTERING);
-
-		List<PaymentDetail> payDtlList = arl.getPaymentDetails();
-
-		PaymentInstruction payInst = arl.getPaymentInstruction();
 
 		LoggedInUser userDetails = PFSBatchAdmin.loggedInUser;
 		Timestamp sysDate = new Timestamp(System.currentTimeMillis());
@@ -929,8 +939,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		ph.setFinID(arl.getFinID());
 		ph.setFinReference(arl.getFinReference());
 		ph.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
-		ph.setCreatedOn(sysDate);
-		ph.setApprovedOn(sysDate);
+		ph.setCreatedOn(appDate);
+		ph.setApprovedOn(appDate);
 		ph.setStatus(RepayConstants.PAYMENT_APPROVE);
 		ph.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		ph.setNewRecord(true);
@@ -943,7 +953,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		ph.setFinSource(UploadConstants.FINSOURCE_ID_AUTOPROCESS);
 
 		BigDecimal totRefund = BigDecimal.ZERO;
-		for (PaymentDetail pd : payDtlList) {
+		for (PaymentDetail pd : pdList) {
 			pd.setRecordType(PennantConstants.RCD_ADD);
 			pd.setNewRecord(true);
 			pd.setVersion(1);
@@ -954,8 +964,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 			totRefund = totRefund.add(pd.getAmount());
 		}
-
-		ph.setPaymentAmount(totRefund);
 
 		payInst.setPostDate(appDate);
 		payInst.setPaymentAmount(totRefund);
@@ -969,7 +977,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		payInst.setLastMntBy(userDetails.getUserId());
 		payInst.setLastMntOn(sysDate);
 
-		ph.setPaymentDetailList(payDtlList);
+		ph.setPaymentDetailList(pdList);
 		ph.setPaymentInstruction(payInst);
 
 		logger.debug(Literal.LEAVING);
@@ -1088,4 +1096,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		this.finOverDueService = finOverDueService;
 	}
 
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Override
+	public PaymentHeader prepareRefund(AutoRefundLoan arl) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

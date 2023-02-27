@@ -66,4 +66,5 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 
 	Long getPaymetIDByReceiptID(long receiptId);
 
+	List<Long> getReceiptPurpose(long receiptId);
 }
