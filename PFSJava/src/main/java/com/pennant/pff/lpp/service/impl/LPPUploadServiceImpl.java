@@ -302,7 +302,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				&& (StringUtils.isNotBlank(reference) || StringUtils.isNotBlank(loanType))) {
 			if (StringUtils.isNotBlank(calculatedOn) || (StringUtils.isNotBlank(detail.getIncludeGraceDays()))
 					|| (StringUtils.isNotBlank(penaltyType)) || StringUtils.isNotBlank(detail.getAllowWaiver())
-					|| (detail.getMaxWaiver().compareTo(BigDecimal.ZERO)) > 0 && detail.getGraceDays() > 0
+					|| (detail.getMaxWaiver().compareTo(BigDecimal.ZERO)) > 0 || detail.getGraceDays() > 0
 					|| amountOrPercent.compareTo(BigDecimal.ZERO) > 0) {
 				setError(detail, LPPUploadError.LPP09);
 				return;
@@ -347,6 +347,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			switch (penaltyType) {
 			case ChargeType.FLAT:
 			case ChargeType.FLAT_ON_PD_MTH:
+				amountOrPercent = amountOrPercent.divide(new BigDecimal(100));
 				if ((amountOrPercent.compareTo(BigDecimal.ZERO)) < 0
 						|| (amountOrPercent.compareTo(new BigDecimal(9999999)) > 0)
 						|| StringUtils.isNotBlank(calculatedOn)) {

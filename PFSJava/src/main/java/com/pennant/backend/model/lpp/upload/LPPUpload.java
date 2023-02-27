@@ -15,9 +15,9 @@ public class LPPUpload extends UploadDetails {
 	private String includeGraceDays;
 	private int graceDays;
 	private String calculatedOn;
-	private BigDecimal amountOrPercent;
+	private BigDecimal amountOrPercent = BigDecimal.ZERO;
 	private String allowWaiver;
-	private BigDecimal maxWaiver;
+	private BigDecimal maxWaiver = BigDecimal.ZERO;
 	private String holdStatus;
 	private String reason;
 	private String remarks;
