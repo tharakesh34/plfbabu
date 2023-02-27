@@ -34,9 +34,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.sinnlabs.zk.ui.CodeMirror;
 import org.springframework.beans.BeanUtils;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.zkoss.codemirror.Codemirror;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
@@ -122,7 +122,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 
 	protected Combobox emailFormat; // autowired
 	protected Textbox userIds; // autowired
-	protected Codemirror emailSubject; // autowired
+	protected CodeMirror emailSubject; // autowired
 	protected Div divHtmlArtifact; // autowired
 	protected PTCKeditor htmlArtifact; // autowired
 	protected Textbox plainText; // autowired
@@ -1209,7 +1209,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 								NotificationConstants.MAIL_MODULE_CREDIT)
 						|| StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
 								NotificationConstants.MAIL_MODULE_PROVIDER)
-						|| NotificationConstants.TEMPLATE_FOR_OTP.equals(this.templateModule.getSelectedItem().getValue().toString()))) {
+						|| NotificationConstants.TEMPLATE_FOR_OTP
+								.equals(this.templateModule.getSelectedItem().getValue().toString()))) {
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData,
 					this.templateEvent.getSelectedItem().getValue());
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData1,

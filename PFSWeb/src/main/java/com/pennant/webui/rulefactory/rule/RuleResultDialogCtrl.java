@@ -32,7 +32,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zkoss.codemirror.Codemirror;
+import org.sinnlabs.zk.ui.CodeMirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.util.resource.Labels;
@@ -70,7 +70,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 	private static final Logger logger = LogManager.getLogger(RuleResultDialogCtrl.class);
 
 	protected Window window_RuleResultDialog;
-	public Codemirror formula; // FIXME change the modifier into protected
+	public CodeMirror formula; // FIXME change the modifier into protected
 
 	protected Listbox listboxFieldCodes;
 	protected Listbox listboxFeeOperators;

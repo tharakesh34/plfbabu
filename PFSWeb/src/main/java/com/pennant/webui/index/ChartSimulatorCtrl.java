@@ -29,7 +29,7 @@ import java.util.Collections;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zkoss.codemirror.Codemirror;
+import org.sinnlabs.zk.ui.CodeMirror;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -130,7 +130,7 @@ public class ChartSimulatorCtrl extends GFCBaseCtrl<ChartDetail> {
 			this.window_chart_simulator.onClose();
 			this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog.setVisible(true);
 			// This code is fix for fire fox .for code mirror became disable after any event .
-			Codemirror remarks = (Codemirror) this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog
+			CodeMirror remarks = (CodeMirror) this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog
 					.getFellow("remarks");
 			remarks.setReadonly(false);
 		} catch (final WrongValuesException e) {

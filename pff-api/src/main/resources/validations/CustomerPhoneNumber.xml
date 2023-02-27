@@ -51,7 +51,7 @@
 		</field>
 
 		<field name="phoneTypePriority">
-			<constraint annotation="javax.validation.constraints.DecimalMin">
+			<constraint annotation="jakarta.validation.constraints.DecimalMin">
 				<message>priority should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -59,7 +59,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>priority allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

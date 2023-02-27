@@ -38,8 +38,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.sinnlabs.zk.ui.CodeMirror;
 import org.springframework.beans.BeanUtils;
-import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.util.resource.Labels;
@@ -157,8 +157,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	protected Decimalbox maxLtvWaiver;
 	protected JavaScriptBuilder javaScriptSqlRule;
 
-	protected Codemirror postValidation;
-	protected Codemirror preValidation;
+	protected CodeMirror postValidation;
+	protected CodeMirror preValidation;
 	protected Listbox prevalidationListbox;
 	protected Grid preValidationGrid;
 	protected Grid postValidationGrid;

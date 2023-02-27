@@ -39,8 +39,8 @@ import java.util.StringTokenizer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.sinnlabs.zk.ui.CodeMirror;
 import org.springframework.beans.BeanUtils;
-import org.zkoss.codemirror.Codemirror;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -119,7 +119,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	protected Textbox queryDesc; // autoWired
 	protected Textbox queryModule; // autoWired
 	// protected Combobox custCtgCode; // autoWired
-	protected Codemirror sQLQuery; // autoWired
+	protected CodeMirror sQLQuery; // autoWired
 	protected Combobox combo;
 	protected Row rowCustCtgCode;
 	protected Tabpanel tabPanel_tree;

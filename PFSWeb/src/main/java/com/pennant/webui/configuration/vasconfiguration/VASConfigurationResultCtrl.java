@@ -9,7 +9,7 @@ import javax.script.ScriptException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zkoss.codemirror.Codemirror;
+import org.sinnlabs.zk.ui.CodeMirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.zk.ui.event.Event;
@@ -32,7 +32,7 @@ public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 
 	protected Window window_VASConfigurationResult;
 
-	protected Codemirror condition;
+	protected CodeMirror condition;
 	protected Grid fields;
 	protected Rows rows_Fields;
 	protected Button btn_Stimulate;

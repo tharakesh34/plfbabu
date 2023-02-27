@@ -8,7 +8,7 @@
 	<!-- Mandate validations -->
 	<bean class="com.pennant.backend.model.mandate.Mandate">
 		<field name="mandateID">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>mandateID is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -16,14 +16,14 @@
 				<element name="value">1</element>
 
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Max">
+			<constraint annotation="jakarta.validation.constraints.Max">
 				<message>mandateID Applicable only for update Mandate</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
 				<element name="value">-1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>mandateID allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -161,7 +161,7 @@
 				</groups>
 				<element name="max">100</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Pattern">
+			<constraint annotation="jakarta.validation.constraints.Pattern">
 				<message>accHolderName  invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
@@ -181,7 +181,7 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Pattern">
+			<constraint annotation="jakarta.validation.constraints.Pattern">
 				<message>jointAccHolderName  invalid.invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
@@ -193,7 +193,7 @@
 		</field> -->
 
 		<!-- <field name="startDate">
-			<constraint annotation="javax.validation.constraints.NotNull">
+			<constraint annotation="jakarta.validation.constraints.NotNull">
 				<message>startDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -202,12 +202,12 @@
 			</constraint>
 		</field> -->
 
-		<!-- <field name="expiryDate"> <constraint annotation="javax.validation.constraints.NotNull"> <message>expiryDate is Mandatory</message> 
+		<!-- <field name="expiryDate"> <constraint annotation="jakarta.validation.constraints.NotNull"> <message>expiryDate is Mandatory</message> 
 			<groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
 			</groups> </constraint> </field> -->
 
 		<field name="maxLimit">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>maxLimit should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -215,7 +215,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>maxLimit allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
