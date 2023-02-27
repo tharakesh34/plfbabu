@@ -1051,7 +1051,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public BigDecimal getSettlementAmountReceived(long finId) {
-		String sql = "Select sum(BalanceAmt) From FinExcessAmount Where FinID = ? and AmountType= ?";
+		String sql = "Select coalesce(sum(BalanceAmt), 0) From FinExcessAmount Where FinID = ? and AmountType= ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 		try {

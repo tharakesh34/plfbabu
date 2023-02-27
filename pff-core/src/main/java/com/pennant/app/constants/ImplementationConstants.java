@@ -246,7 +246,6 @@ public class ImplementationConstants {
 		ADV_EMI_STAGE_REAR_END = getValueAsBoolean("ADV_EMI_STAGE_REAR_END", false);
 		ADV_EMI_STAGE_REPAY_TERMS = getValueAsBoolean("ADV_EMI_STAGE_REPAY_TERMS", false);
 		AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT = getValueAsBoolean("AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", false);
-		RECEIPTS_SHOW_ACCOUNTING_TAB = getValueAsBoolean("RECEIPTS_SHOW_ACCOUNTING_TAB", true);
 		BRANCHWISE_RCU_INITIATION = getValueAsBoolean("BRANCHWISE_RCU_INITIATION", false);
 		ALLOW_NON_LAN_RECEIPTS = getValueAsBoolean("ALLOW_NON_LAN_RECEIPTS", false);
 		ALLOW_BUILDER_BENEFICIARY_DETAILS = getValueAsBoolean("ALLOW_BUILDER_BENEFICIARY_DETAILS", false);
@@ -474,7 +473,6 @@ public class ImplementationConstants {
 	public static int PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
 	public static int PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
 	public static boolean AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT;
-	public static boolean RECEIPTS_SHOW_ACCOUNTING_TAB;
 	/* Cibil report must generate based on entity code */
 	public static boolean CIBIL_BASED_ON_ENTITY;
 	public static boolean PENALTY_CALC_ON_REPRESENTATION;

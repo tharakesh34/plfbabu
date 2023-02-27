@@ -114,6 +114,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.rits.cloning.Cloner;
@@ -1146,7 +1147,9 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		// FinanceMain Details Clearing before
 		// =======================================
-		financeMainDAO.delete(fm, TableType.TEMP_TAB, false, true);
+		if (!RequestSource.UPLOAD.equals(penaltyRate.getRequestSource())) {
+			financeMainDAO.delete(fm, TableType.TEMP_TAB, false, true);
+		}
 
 		// Collateral assignment Details
 		if (fd.getCollateralAssignmentList() != null && !fd.getCollateralAssignmentList().isEmpty()) {

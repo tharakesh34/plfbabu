@@ -57,6 +57,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
+import com.pennant.backend.dao.finance.FinODCAmountDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
@@ -142,6 +143,7 @@ abstract public class ServiceHelper {
 	protected AssetClassificationService assetClassificationService;
 	protected FeeTypeDAO feeTypeDAO;
 	protected OverdraftScheduleDetailDAO overdraftScheduleDetailDAO;
+	protected FinODCAmountDAO finODCAmountDAO;
 
 	public Long getAccountingID(FinanceMain main, String eventCode) {
 		// FIXME: PV: 28AUG19. No Separate Accounting for Promotion
@@ -409,5 +411,10 @@ abstract public class ServiceHelper {
 
 	public void setOverdraftScheduleDetailDAO(OverdraftScheduleDetailDAO overdraftScheduleDetailDAO) {
 		this.overdraftScheduleDetailDAO = overdraftScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
+		this.finODCAmountDAO = finODCAmountDAO;
 	}
 }

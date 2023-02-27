@@ -65,4 +65,5 @@ public interface ClusterDAO extends BasicCrudDao<Cluster> {
 
 	Long getClustersFilter(String branchCode);
 
+	List<Cluster> getClusterName(String code);
 }

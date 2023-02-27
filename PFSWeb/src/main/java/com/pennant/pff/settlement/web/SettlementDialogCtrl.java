@@ -633,6 +633,11 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		}
 
 		if (CollectionUtils.isNotEmpty(header.getSettlementScheduleList())) {
+
+			for (SettlementSchedule sch : header.getSettlementScheduleList()) {
+				sch.setModule(this.moduleCode);
+			}
+
 			doFillSettlementSchDetails(header.getSettlementScheduleList());
 			setSettlementScheduleDetailList(header.getSettlementScheduleList());
 		}
@@ -1346,6 +1351,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		schedule.setWorkflowId(0);
 		schedule.setSettlementHeaderID(settlement.getId());
 		schedule.setRecordType(PennantConstants.RCD_ADD);
+		schedule.setModule(this.module);
 		this.settlementScheduleDetailList.add(schedule);
 
 		settlementScheduleInlineEditCtrl.doFillSettlementSchedule(schedule, this.listBoxSettlementScheduleInlineEdit,

@@ -212,6 +212,8 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 		BigDecimal partPayAmount = BG_ZERO;
 		BigDecimal partPayDisAmount = BG_ZERO;
 
+		partPayAmount = receiptData.getRemBal();
+
 		for (FinanceScheduleDetail schd : schedules) {
 			if (DateUtil.compare(schd.getSchDate(), fStartDate) >= 0
 					&& DateUtil.compare(schd.getSchDate(), fEndDate) <= 0) {
@@ -219,7 +221,6 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 				if (totalAmount == null) {
 					totalAmount = schd.getClosingBalance();
 				}
-				partPayAmount = partPayAmount.add(schd.getPartialPaidAmt());
 				if ("R".equals(schd.getSpecifier())) {
 					partPayDisAmount = partPayDisAmount.add(schd.getDisbAmount());
 				}

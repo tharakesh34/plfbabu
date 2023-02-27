@@ -126,13 +126,6 @@
 
 	<bean id="autoDisbursementService" class="com.pennant.app.core.AutoDisbursementService" parent="serviceHelper" />
 
-	<bean id="customerAccountService" class="com.pennant.app.core.CustomerAccountService" parent="serviceHelper">
-		<property name="accountsDAO" ref="accountsDAO" />
-		<property name="accountsHistoryDAO" ref="accountsHistoryDAO" />
-		<property name="accountTypeDAO" ref="accountTypeDAO" />
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
 	<bean id="snapshotService" class="com.pennant.app.core.SnapshotService">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
@@ -797,4 +790,6 @@
 	<bean id="genderDAO" class="com.pennant.backend.dao.systemmasters.impl.GenderDAOImpl" parent="basicDao" />
 	
 	<bean id="beneficiaryDAO" class="com.pennant.backend.dao.beneficiary.impl.BeneficiaryDAOImpl" parent="sequenceDao" />
+	
+	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao"/>
 </beans>

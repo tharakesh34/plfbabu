@@ -667,6 +667,10 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		if (isSave && odDetails.getFinODSchdDate().compareTo(curBussDate) <= 0) {
 			List<FinODDetails> odDList = new ArrayList<>();
+
+			odDetails.setLppDueTillDate(dateValueDate);
+			odDetails.setLppDueAmt(odDetails.getTotPenaltyPaid().add(odDetails.getTotWaived()));
+
 			odDList.add(odDetails);
 			finODDetailsDAO.saveList(odDList);
 		} else {

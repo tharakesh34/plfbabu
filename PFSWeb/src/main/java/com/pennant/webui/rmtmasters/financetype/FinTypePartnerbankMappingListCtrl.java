@@ -57,6 +57,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	// checkRights
 	protected Button button_FinTypeParterbankMappingList_NewFinTypeParterbankMapping;
 	protected Button button_FinTypeParterbankMappingList_FinTypeParterbankMappingSearchDialog;
+	protected Button button_FinTypeParterbankMappingList_PrintList;
 
 	// Search Fields
 	protected ExtendedCombobox finType;
@@ -108,6 +109,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 
 		// Register buttons and fields.
 		registerButton(button_FinTypeParterbankMappingList_FinTypeParterbankMappingSearchDialog);
+		registerButton(button_FinTypeParterbankMappingList_PrintList);
 		registerButton(button_FinTypeParterbankMappingList_NewFinTypeParterbankMapping,
 				"button_FinTypeParterbankMappingList_NewFinTypeParterbankMapping", true);
 		registerField("Id");
@@ -279,7 +281,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 		search();
 	}
 
-	public void onClick$print(Event event) {
+	public void onClick$button_FinTypeParterbankMappingList_PrintList(Event event) {
 		doPrintResults();
 	}
 

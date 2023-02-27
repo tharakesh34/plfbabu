@@ -198,6 +198,13 @@
 														<textbox id="excessRef" readonly="true" />
 													</hbox>
 												</row>
+												<row id="rowCancelReason" visible="false">
+													<label value="${c:l('label_ReceiptDialog_CancelReason.value')}" />
+													<extendedcombobox id="cancelReason" />
+
+													<label value="${c:l('label_ReceiptDialog_CancelRemark.value')}" />
+													<textbox id="cancelRemarks" />
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

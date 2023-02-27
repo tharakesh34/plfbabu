@@ -709,4 +709,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#2160471.1" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'N' WHERE SYSPARMCODE = 'RECEIPTS_SHOW_ACCOUNTING_TAB';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

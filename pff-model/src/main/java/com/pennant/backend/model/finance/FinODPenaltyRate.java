@@ -3,11 +3,15 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pff.core.RequestSource;
 
 @XmlType(propOrder = { "applyODPenalty", "oDIncGrcDays", "oDGraceDays", "oDChargeType", "oDChargeCalOn",
 		"oDChargeAmtOrPerc", "oDAllowWaiver", "oDMaxWaiverPerc", "extensionODGrcDays", "collecChrgCodeId",
@@ -46,6 +50,7 @@ public class FinODPenaltyRate implements Serializable {
 
 	private String oDRuleCode;
 	private boolean oDTDSReq;
+	private RequestSource requestSource = RequestSource.UI;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -53,6 +58,12 @@ public class FinODPenaltyRate implements Serializable {
 
 	public FinODPenaltyRate() {
 		super();
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("requestSource");
+		return excludeFields;
 	}
 
 	public FinODPenaltyRate copyEntity() {
@@ -229,4 +240,13 @@ public class FinODPenaltyRate implements Serializable {
 	public void setOverDraftColAmt(BigDecimal overDraftColAmt) {
 		this.overDraftColAmt = overDraftColAmt;
 	}
+
+	public RequestSource getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(RequestSource requestSource) {
+		this.requestSource = requestSource;
+	}
+
 }

@@ -2563,14 +2563,7 @@
 
 	<bean id="overdueChargeRecoveryListCtrl"
 		class="com.pennant.webui.financemanagement.overduechargerecovery.OverdueChargeRecoveryListCtrl" parent="basisListCtrl"
-		scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
-		<property name="overdueChargeRecoveryService" ref="overdueChargeRecoveryService" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="latePayInterestService" ref="latePayInterestService" />
-	</bean>
+		scope="prototype"/>
 
 	<bean id="overdueChargeRecoveryDialogCtrl"
 		class="com.pennant.webui.financemanagement.overduechargerecovery.OverdueChargeRecoveryDialogCtrl" parent="basisCtrl"
@@ -6103,8 +6096,7 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="refundBeneficiary" ref="refundBeneficiary" />
-		<property name="receiptService" ref="receiptService" />
-		<property name="manualAdviseService" ref="manualAdviseService" />
+		<property name="feeRefundDetailService" ref="feeRefundDetailService" />
 	</bean>
 	<bean id="selectFeeRefundHeaderDialogCtrl" class="com.pennant.webui.payment.feerefundheader.SelectFeeRefundHeaderDialogCtrl"
 		parent="basisListCtrl" scope="prototype">

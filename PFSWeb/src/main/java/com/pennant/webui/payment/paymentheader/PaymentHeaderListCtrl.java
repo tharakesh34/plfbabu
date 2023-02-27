@@ -140,7 +140,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		registerField("paymentInstrType", listheader_PaymentType, SortOrder.NONE, paymentType, sortOperator_PaymentType,
 				Operators.STRING);
 		registerField("approvedOn", listheader_ApprovedOn, SortOrder.NONE, approvedOn, sortOperator_ApprovedOn,
-				Operators.DATE);
+				Operators.DATE_RANGE_BETWEEN);
 
 		// Render the page and display the data.
 		doRenderPage();

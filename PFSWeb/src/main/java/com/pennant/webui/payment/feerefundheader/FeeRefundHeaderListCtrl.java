@@ -237,7 +237,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		registerField("BranchDesc");
 		registerField("BranchCode", branchCode, SortOrder.NONE, sortOperator_FeeRefundBranchCode, Operators.STRING);
 		registerField("EntityCode", entityCode, SortOrder.NONE, sortOperator_FeeRefundEntity, Operators.STRING);
-		registerField("ClusterId", clusterName, SortOrder.NONE, sortOperator_FeeRefundClusterName, Operators.NUMERIC);
+		registerField("ClusterCode", clusterName, SortOrder.NONE, sortOperator_FeeRefundClusterName, Operators.NUMERIC);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -313,7 +313,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		this.clusterName.setMaxlength(50);
 		this.clusterName.setTextBoxWidth(120);
 		this.clusterName.setModuleName("Cluster");
-		this.clusterName.setValueColumn("Id");
+		this.clusterName.setValueColumn("Code");
 		this.clusterName.setDescColumn("Name");
 		this.clusterName.setValidateColumns(new String[] { "Code", "Name" });
 

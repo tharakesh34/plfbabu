@@ -44,6 +44,7 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 	private FinServiceInstruction finServiceInstruction;
 	private String requestSource;
 	private CrossLoanKnockoffUpload crossLoanKnockoffUpload;
+	private boolean cancelProcess;
 
 	public CrossLoanKnockOff() {
 		super();
@@ -73,6 +74,8 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 		excludeFields.add("requestSource");
 		excludeFields.add("finServiceInstruction");
 		excludeFields.add("crossLoanKnockoffUpload");
+		excludeFields.add("cancelProcess");
+		excludeFields.add("transferID");
 
 		return excludeFields;
 	}
@@ -325,4 +328,11 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 		this.crossLoanKnockoffUpload = crossLoanKnockoffUpload;
 	}
 
+	public boolean isCancelProcess() {
+		return cancelProcess;
+	}
+
+	public void setCancelProcess(boolean cancelProcess) {
+		this.cancelProcess = cancelProcess;
+	}
 }

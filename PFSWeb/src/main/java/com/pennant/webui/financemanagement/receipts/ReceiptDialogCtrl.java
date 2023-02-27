@@ -2973,7 +2973,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			doWriteComponentsToBean();
 
 			// Accounting Details Validations
-			if (ImplementationConstants.RECEIPTS_SHOW_ACCOUNTING_TAB) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTS_SHOW_ACCOUNTING_TAB)) {
 				if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
 						&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
 					boolean validate = false;
@@ -3636,7 +3636,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 		// Show Accounting Tab Details Based upon Role Condition using Work flow
-		if (isApprover() && ImplementationConstants.RECEIPTS_SHOW_ACCOUNTING_TAB) {
+		if (isApprover() && SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTS_SHOW_ACCOUNTING_TAB)) {
 			appendAccountingDetailTab(true);
 		}
 		fillComboBox(this.sourceofFund, receiptHeader.getSourceofFund(), sourceofFundList, "");

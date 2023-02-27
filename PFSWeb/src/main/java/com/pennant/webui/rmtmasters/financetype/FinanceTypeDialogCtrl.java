@@ -4142,7 +4142,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		try {
 			if (this.rowMaxFPPCalOn.isVisible() && "#".equals(getComboboxValue(this.maxFPPCalOn))) {
-				throw new WrongValueException(this.maxFPPCalType, Labels.getLabel("STATIC_INVALID",
+				throw new WrongValueException(this.maxFPPCalOn, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_FinanceTypeDialog_MaxPartPymtCalOn.value") }));
 			}
 			aFinanceType.setMaxFPPCalOn(getComboboxValue(this.maxFPPCalOn));

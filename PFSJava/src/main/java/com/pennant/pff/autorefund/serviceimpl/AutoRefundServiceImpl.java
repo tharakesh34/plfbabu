@@ -48,6 +48,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -123,9 +124,9 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 		for (AutoRefundLoan arl : cee.getAutoRefundLoans()) {
 
 			/* Overdue Amount calculation */
-			// if (arl.isOverDueReq()) {
-			calculateOverDueAmount(arl, cee);
-			// }
+			if (arl.isOverDueReq()) {
+				calculateOverDueAmount(arl, cee);
+			}
 
 			executeRefund(arl);
 		}
@@ -193,7 +194,7 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 				BigDecimal paymentAmt = balanceAmt.subtract(overDueAmount);
 
 				if (paymentAmt.compareTo(BigDecimal.ZERO) > 0) {
-					list.add(preparePD("P", adv.getAdviseID(), adv.getFeeTypeCode(), adv.getFeeTypeDesc(), paymentAmt));
+					list.add(preparePD(String.valueOf(AdviseType.PAYABLE.id()), adv.getAdviseID(), adv.getFeeTypeCode(), adv.getFeeTypeDesc(), paymentAmt));
 				}
 
 				overDueAmount = BigDecimal.ZERO;

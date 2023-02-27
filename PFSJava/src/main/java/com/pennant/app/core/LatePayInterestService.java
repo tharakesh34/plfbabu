@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,10 +46,12 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LatePayInterestService extends ServiceHelper {
@@ -204,6 +207,78 @@ public class LatePayInterestService extends ServiceHelper {
 		}
 		penaltyRate = penaltyRate.add(lpiMargin);
 		return penaltyRate;
+	}
+
+	public void postLPIAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
+		List<FinOverDueCharges> saveList = new ArrayList<>();
+
+		Date monthEndDate = custEODEvent.getEodDate();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		List<FinODDetails> odList = finEODEvent.getFinODDetails();
+
+		for (FinODDetails fod : odList) {
+			Date schdDate = fod.getFinODSchdDate();
+
+			if ((fod.getFinCurODPri().add(fod.getFinCurODPft())).compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+
+			List<FinOverDueCharges> odcList = finODCAmountDAO.getFinODCAmtByFinRef(fm.getFinID(), schdDate,
+					RepayConstants.FEE_TYPE_LPI);
+			BigDecimal totLPIAmt = fod.getLPIAmt();
+			BigDecimal prvMnthLPIAmt = BigDecimal.ZERO;
+
+			if (CollectionUtils.isEmpty(odcList)) {
+				if (totLPIAmt.compareTo(BigDecimal.ZERO) > 0) {
+					FinOverDueCharges finLPIAmount = createLPIAmounts(fod, totLPIAmt, monthEndDate);
+					saveList.add(finLPIAmount);
+				}
+			} else {
+				FinOverDueCharges prvFinLPIAmount = null;
+
+				for (FinOverDueCharges odc : odcList) {
+					Date postDate = odc.getPostDate();
+					if (postDate.compareTo(monthEndDate) < 0) {
+						prvMnthLPIAmt = prvMnthLPIAmt.add(odc.getAmount());
+					} else if (postDate.compareTo(monthEndDate) == 0) {
+						prvFinLPIAmount = odc;
+					}
+				}
+
+				if (prvFinLPIAmount != null) {
+					prvFinLPIAmount.setAmount(totLPIAmt.subtract(prvMnthLPIAmt));
+					prvFinLPIAmount.setBalanceAmt(prvFinLPIAmount.getAmount().subtract(prvFinLPIAmount.getPaidAmount())
+							.subtract(prvFinLPIAmount.getWaivedAmount()));
+					saveList.add(prvFinLPIAmount);
+				} else {
+					FinOverDueCharges finODCAmount = createLPIAmounts(fod, totLPIAmt.subtract(prvMnthLPIAmt),
+							monthEndDate);
+					saveList.add(finODCAmount);
+				}
+
+			}
+		}
+
+		finEODEvent.getFinODCAmounts().addAll(saveList);
+	}
+
+	private FinOverDueCharges createLPIAmounts(FinODDetails od, BigDecimal lpi, Date monthEndDate) {
+		FinOverDueCharges odc = new FinOverDueCharges();
+
+		odc.setFinID(od.getFinID());
+		odc.setSchDate(od.getFinODSchdDate());
+		odc.setPostDate(monthEndDate);
+		odc.setValueDate(monthEndDate);
+		odc.setAmount(lpi);
+		odc.setNewRecord(true);
+		odc.setBalanceAmt(lpi);
+		odc.setOdPri(od.getFinCurODPri());
+		odc.setOdPft(od.getFinCurODPft());
+		odc.setFinOdTillDate(od.getFinODTillDate());
+		odc.setDueDays(DateUtility.getDaysBetween(od.getFinODSchdDate(), od.getFinODTillDate()));
+		odc.setChargeType(RepayConstants.FEE_TYPE_LPI);
+
+		return odc;
 	}
 
 }

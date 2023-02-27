@@ -180,8 +180,6 @@ public class MicroEOD implements Tasklet {
 				jobQueue.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 				eodCustomerQueueDAO.updateProgress(jobQueue);
 
-				txStatus = transactionManager.getTransaction(txDef);
-
 				CustEODEvent custEODEvent = new CustEODEvent();
 				custEODEvent.setProvisionRule(provisionRule);
 				custEODEvent.setAmzMethodRule(amzMethodRule);
@@ -190,19 +188,33 @@ public class MicroEOD implements Tasklet {
 				custEODEvent.setCustomerProvision(customerProvision);
 				custEODEvent.setProvisionEffectiveDate(provisionEffectiveDate);
 				custEODEvent.setEventProperties(eventProperties);
+				custEODEvent.setEodDate(appDate);
+				custEODEvent.setEodValueDate(appDate);
+
+				Customer customer = customerDAO.getCustomerEOD(coreBankId);
+				custEODEvent.setCustomer(customer);
 
 				if (customerQueuing.isLoanExist()) {
 					customerQueuing.setLoanExist(false);
-					Customer customer = customerDAO.getCustomerEOD(coreBankId);
-					custEODEvent.setCustomer(customer);
-					custEODEvent.setEodDate(appDate);
-					custEODEvent.setEodValueDate(appDate);
+					logger.info("Preparing EOD Events for the Customer ID {} >> started...", custId);
+					eodService.prepareFinEODEvents(custEODEvent);
+					logger.info("Preparing EOD Events for the Customer ID {} >> completed.", custId);
+					customerQueuing.setLoanExist(true);
+				} else {
+					eodService.loadAutoRefund(custEODEvent);
+				}
 
+				txStatus = transactionManager.getTransaction(txDef);
+
+				if (customerQueuing.isLoanExist()) {
+					customerQueuing.setLoanExist(false);
 					eodService.doProcess(custEODEvent);
-
 					eodService.doUpdate(custEODEvent, customerQueuing.isLimitRebuild());
 				} else {
 					logger.info("There is no active loans exists for the customer ID {}", custId);
+
+					eodService.processAutoRefund(custEODEvent);
+
 					if (customerQueuing.isLimitRebuild()) {
 						eodService.processCustomerRebuild(custId, true);
 					}

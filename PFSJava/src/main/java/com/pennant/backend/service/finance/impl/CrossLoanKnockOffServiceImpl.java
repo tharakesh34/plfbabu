@@ -15,6 +15,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.payment.PaymentDetailDAO;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.dao.receipts.CrossLoanTransferDAO;
@@ -39,6 +40,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.CrossLoanKnockOffService;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -71,6 +73,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	private ReceiptDataValidator receiptDataValidator;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private PaymentDetailDAO paymentDetailDAO;
+	private ReceiptCancellationService receiptCancellationService;
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -196,7 +199,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		crossLoanTransferDAO.delete(clk.getTransferID(), TableType.TEMP_TAB.getSuffix());
 		crossLoanKnockOffDAO.deleteHeader(clk.getId(), TableType.TEMP_TAB.getSuffix());
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(clk.getRecordType())) {
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(clk.getRecordType()) && !clk.isCancelProcess()) {
 			auditHeader.getAuditDetail()
 					.setBefImage(crossLoanTransferDAO.getCrossLoanTransferById(clk.getTransferID(), ""));
 		}
@@ -214,12 +217,11 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 
 			clt.setUtiliseAmount(clt.getUtiliseAmount().add(clt.getTransferAmount()));
 			clt.setReserveAmount(BigDecimal.ZERO);
+			AuditHeader auditReceiptHeader = getAuditHeader(clk.getFinReceiptData(), PennantConstants.TRAN_WF);
 
 			if (clk.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				clk.setRecordType("");
-
-				AuditHeader auditReceiptHeader = getAuditHeader(clk.getFinReceiptData(), PennantConstants.TRAN_WF);
 
 				if (RequestSource.UPLOAD.name().equals(clk.getRequestSource())) {
 					FinanceDetail fd = createReceipt(clk);
@@ -259,8 +261,12 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				clk.setRecordType("");
-				if (RepayConstants.MODULETYPE_CANCEL.equals(clt.getModuleType())) {
+
+				if (clk.isCancelProcess()) {
+					clt.setModuleType(RepayConstants.MODULETYPE_CANCEL);
 					clk.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
+
+					receiptCancellationService.doApprove(auditReceiptHeader);
 
 					postingsPreparationUtil.postReversalsByLinkedTranID(clt.getToLinkedTranId());
 					postingsPreparationUtil.postReversalsByLinkedTranID(clt.getFromLinkedTranId());
@@ -368,7 +374,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 
 		}
 
-		if (RequestSource.UPLOAD.name().equals(clk.getRequestSource())) {
+		if (RequestSource.UPLOAD.name().equals(clk.getRequestSource()) || clk.isCancelProcess()) {
 			return auditDetail;
 		}
 
@@ -588,5 +594,10 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	@Autowired
 	public void setPaymentDetailDAO(PaymentDetailDAO paymentDetailDAO) {
 		this.paymentDetailDAO = paymentDetailDAO;
+	}
+
+	@Autowired
+	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
+		this.receiptCancellationService = receiptCancellationService;
 	}
 }

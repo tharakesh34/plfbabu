@@ -69,6 +69,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FeeWaiverDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
+import com.pennant.backend.dao.finance.FinODCAmountDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
@@ -86,6 +87,7 @@ import com.pennant.backend.model.finance.FinFeeRefundHeader;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
@@ -123,7 +125,6 @@ import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.extension.feature.SOAExtensionService;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
@@ -156,6 +157,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	@Qualifier("sOAExtensionService")
 	private SOAExtensionService sOAExtensionService;
 	private LinkedFinancesService linkedFinancesService;
+	private FinODCAmountDAO finODCAmountDAO;
 
 	private Date fixedEndDate = null;
 
@@ -1824,6 +1826,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 																									// Created for Past
 																									// due till date ";
 																									// //16
+		String finODCDue = Labels.getLabel("label_penalty_due_created_for_installemnt_date.value");
 		String penaltyUnAccrued = "Unaccrued Penalty due till date "; // 16
 		String penalityMnthEnd = "Penalty Accrued on Month-End date ";
 
@@ -1863,6 +1866,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		} else {
 			downPaymentEntry = "Advance EMI";
 		}
+
+		String overDuePenalty = "Overdue Penalty";
 		SOATransactionReport soaTranReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
 
@@ -1902,6 +1907,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			List<FinFeeDetail> finFeedetailsList = getFinFeedetails(finReference);
 
 			List<FeeWaiverDetail> feeWaiverDetailList = getFeeWaiverDetail(finReference);
+
+			// LPP Due creation on monthly
+			List<FinOverDueCharges> odcAmounts = getFinODCAmtByRef(finMain.getFinID());
 
 			// Finance Schedule Details
 			String closingStatus = finMain.getClosingStatus();
@@ -2029,6 +2037,35 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					fixedEndDate = null;
 					fixedEndDate = finSchdDetail.getSchDate();
 				}
+
+				if (StringUtils.isBlank(closingStatus)
+						|| FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())) {
+					String event = "";
+					for (FinOverDueCharges finODCAmount : odcAmounts) {
+						if (finODCAmount.getSchDate().compareTo(finSchdDetail.getSchDate()) == 0
+								&& finODCAmount.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+							event = finODCDue.concat(String.valueOf(finSchdDetail.getInstNumber()));
+
+							if ((StringUtils.equals(finSchdDetail.getSchdMethod(),
+									CalculationConstants.SCHMTHD_EQUAL))) {
+								// penality = stringReplacement(events.get("PENALTYDUE").toString(), placeHolderMap);
+							}
+
+							Date valueDate = finODCAmount.getPostDate();
+							if (finODCAmount.getValueDate() != null) {
+								valueDate = finODCAmount.getValueDate();
+							}
+							soaTranReport = new SOATransactionReport();
+							soaTranReport.setEvent(event);
+							soaTranReport.setTransactionDate(finODCAmount.getPostDate());
+							soaTranReport.setValueDate(valueDate);
+							soaTranReport.setCreditAmount(BigDecimal.ZERO);
+							soaTranReport.setDebitAmount(finODCAmount.getAmount());
+							soaTranReport.setPriority(19);
+							soaTransactionReports.add(soaTranReport);
+						}
+					}
+				}
 			}
 
 			// fin Advance Payments List
@@ -2101,21 +2138,18 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			// FinODDetails
-			if (finODDetailsList != null && !finODDetailsList.isEmpty()
-					&& (StringUtils.isBlank(closingStatus) || !StringUtils.equalsIgnoreCase(closingStatus, "C"))) {
-
-				for (FinODDetails finODDetails : finODDetailsList) {
-					soaTranReport = new SOATransactionReport();
-					soaTranReport.setEvent(penality
-							+ DateUtility.format(finODDetails.getFinODTillDate(), DateFormat.SHORT_DATE.getPattern()));
-					soaTranReport.setTransactionDate(finODDetails.getFinODSchdDate());
-					soaTranReport.setValueDate(finODDetails.getFinODSchdDate());
-					soaTranReport.setCreditAmount(BigDecimal.ZERO);
-					soaTranReport.setDebitAmount(finODDetails.getTotPenaltyAmt());
-					soaTranReport.setPriority(19);
-					soaTransactionReports.add(soaTranReport);
-				}
-			}
+			/*
+			 * if (finODDetailsList != null && !finODDetailsList.isEmpty() && (StringUtils.isBlank(closingStatus) ||
+			 * !StringUtils.equalsIgnoreCase(closingStatus, "C"))) {
+			 * 
+			 * for (FinODDetails finODDetails : finODDetailsList) { soaTranReport = new SOATransactionReport();
+			 * soaTranReport.setEvent(penality + DateUtility.format(finODDetails.getFinODTillDate(),
+			 * DateFormat.SHORT_DATE.getPattern())); soaTranReport.setTransactionDate(finODDetails.getFinODSchdDate());
+			 * soaTranReport.setValueDate(finODDetails.getFinODSchdDate());
+			 * soaTranReport.setCreditAmount(BigDecimal.ZERO);
+			 * soaTranReport.setDebitAmount(finODDetails.getTotPenaltyAmt()); soaTranReport.setPriority(19);
+			 * soaTransactionReports.add(soaTranReport); } }
+			 */
 
 			for (FeeWaiverDetail fwd : feeWaiverDetailList) {
 				if (fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) <= 0) {
@@ -3687,6 +3721,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		return list;
 	}
 
+	public List<FinOverDueCharges> getFinODCAmtByRef(long finID) {
+		return finODCAmountDAO.getFinODCAmtByRef(finID, RepayConstants.FEE_TYPE_LPP);
+	}
+
 	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
 		return financeTaxDetailDAO;
 	}
@@ -3753,6 +3791,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	public void setLinkedFinancesService(LinkedFinancesService linkedFinancesService) {
 		this.linkedFinancesService = linkedFinancesService;
+	}
+
+	@Autowired
+	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
+		this.finODCAmountDAO = finODCAmountDAO;
 	}
 
 }
