@@ -952,7 +952,8 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public FinExcessAmount getExcessAmountsByReceiptId(long finID, String amountType, long receiptId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt");
+		sql.append(", ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
 		sql.append(" From FinExcessAmount");
 		sql.append(" Where FinID = ? and AmountType = ? and ReceiptId = ?");
 

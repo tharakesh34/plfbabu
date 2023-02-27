@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -30,6 +31,7 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -316,7 +318,10 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 		if (StringUtils.isNotBlank(settlement.getCancelReasonCode())) {
 			financeMainDAO.updateSettlementFlag(settlement.getFinID(), false);
-			processSettlementCancellation(loadDataForCancellation(settlement.getFinID(), settlement.getStartDate()));
+			FinSettlementHeader fshs = loadDataForCancellation(settlement.getFinID(), settlement.getStartDate());
+			if (fshs != null) {
+				processSettlementCancellation(fshs);
+			}
 		} else {
 			financeMainDAO.updateSettlementFlag(settlement.getFinID(), true);
 		}
@@ -511,6 +516,10 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 	public FinSettlementHeader loadDataForCancellation(long finID, Date settlementDate) {
 		FinSettlementHeader fsh = settlementDAO.getInitiateSettlementByFinID(finID, "");
 
+		if (fsh == null) {
+			return null;
+		}
+
 		fsh.setReceiptList(finReceiptHeaderDAO.getSettlementReceipts(finID, settlementDate));
 		fsh.setFinanceMain(financeMainDAO.getFinanceMainById(finID, "", false));
 
@@ -525,7 +534,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 		if (CollectionUtils.isEmpty(receiptList)) {
 			financeMainDAO.updateSettlementFlag(finID, false);
-			settlementDAO.updateSettlementStatus(fsh.getFinID(), "C");
+			settlementDAO.updateSettlementStatus(fsh.getFinID(), RepayConstants.SETTLEMENT_STATUS_CANCELLED);
 			return;
 		}
 
@@ -636,27 +645,35 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			finRepayHeader.setFinID(rch.getFinID());
 			financeRepaymentsDAO.updateLinkedTranId(finRepayHeader);
 
-			int recordCount = finExcessAmountDAO.updateExcessBalByRef(rch.getFinID(),
-					RepayConstants.EXCESSADJUSTTO_EXCESS, rch.getReceiptAmount());
+			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(rch.getFinID(),
+					RepayConstants.EXAMOUNTTYPE_SETTLEMENT, receiptID);
 
-			if (recordCount <= 0) {
-				finExcessAmountDAO.saveExcess(prepareExcess(appDate, rch));
-			}
+			finExcessAmountDAO.updateUtiliseOnly(fea.getExcessID(), fea.getBalanceAmt());
+
+			FinExcessMovement movement = new FinExcessMovement();
+			movement.setExcessID(fea.getExcessID());
+			movement.setReceiptID(newReceiptId);
+			movement.setMovementType(RepayConstants.RECEIPTTYPE_TRANSFER);
+			movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+			movement.setAmount(fea.getBalanceAmt());
+			finExcessAmountDAO.saveExcessMovement(movement);
+
+			finExcessAmountDAO.saveExcess(prepareExcess(appDate, rch, fea));
 		}
 
 		financeMainDAO.updateSettlementFlag(finID, false);
-		settlementDAO.updateSettlementStatus(fsh.getFinID(), "C");
+		settlementDAO.updateSettlementStatus(fsh.getFinID(), RepayConstants.SETTLEMENT_STATUS_CANCELLED);
 
 	}
 
-	private FinExcessAmount prepareExcess(Date appDate, FinReceiptHeader receiptHeader) {
+	private FinExcessAmount prepareExcess(Date appDate, FinReceiptHeader receiptHeader, FinExcessAmount fea) {
 		FinExcessAmount excess = new FinExcessAmount();
-		excess.setFinID(receiptHeader.getFinID());
-		excess.setFinReference(receiptHeader.getReference());
+		excess.setFinID(fea.getFinID());
+		excess.setFinReference(fea.getFinReference());
 		excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		excess.setAmount(receiptHeader.getReceiptAmount());
+		excess.setAmount(fea.getBalanceAmt());
 		excess.setUtilisedAmt(BigDecimal.ZERO);
-		excess.setBalanceAmt(receiptHeader.getReceiptAmount());
+		excess.setBalanceAmt(fea.getBalanceAmt());
 		excess.setReservedAmt(BigDecimal.ZERO);
 		excess.setReceiptID(receiptHeader.getReceiptID());
 		excess.setValueDate(receiptHeader.getValueDate());
@@ -834,7 +851,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		receiptData.setOTSByEod(true);
 		try {
 			receiptService.doApproveReceipt(receiptData);
-			settlementDAO.updateSettlementStatus(fsh.getFinID(), "P");
+			settlementDAO.updateSettlementStatus(fsh.getFinID(), RepayConstants.SETTLEMENT_STATUS_PROCESSED);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

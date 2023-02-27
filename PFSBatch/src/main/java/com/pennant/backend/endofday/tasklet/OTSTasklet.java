@@ -95,16 +95,21 @@ public class OTSTasklet implements Tasklet {
 			BigDecimal balanceAmt = settlementService.getSettlementAountReceived(fsh.getFinID());
 
 			boolean validSettlementProcess = false;
+			boolean validSettlementCancellation = false;
 
 			List<SettlementAllocationDetail> allocations = fsh.getSettlementAllocationDetails();
 			if (balanceAmt.compareTo(fsh.getSettlementAmount()) >= 0 && CollectionUtils.isNotEmpty(allocations)) {
 				settlementService.loadSettlementData(fsh);
 				validSettlementProcess = settlementService.isValidSettlementProcess(fsh);
+				validSettlementCancellation = !validSettlementProcess;
 			}
 
-			boolean validSettlementCancellation = false;
-			if (!validSettlementProcess && isValidSettlementCencellation(fsh)) {
+			if (validSettlementCancellation || isValidSettlementCencellation(fsh)) {
 				fsh = settlementService.loadDataForCancellation(fsh.getFinID(), fsh.getOtsDate());
+				if (fsh == null) {
+					continue;
+				}
+				fsh.setAppDate(appDate);
 				validSettlementCancellation = true;
 			}
 
@@ -150,7 +155,7 @@ public class OTSTasklet implements Tasklet {
 	}
 
 	private boolean isValidSettlementCencellation(FinSettlementHeader fsh) {
-		return fsh.getAppDate().compareTo(fsh.getEndDate()) != 0 && fsh.getNoOfGraceDays() >= 0;
+		return fsh.getAppDate().compareTo(fsh.getEndDate()) == 0 && fsh.getNoOfGraceDays() >= 0;
 	}
 
 	@Autowired
