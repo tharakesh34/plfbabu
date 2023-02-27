@@ -410,7 +410,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		AutoRefundLoan arl = new AutoRefundLoan();
 		arl.setFinID(fm.getFinID());
-		arl.setClosingStatus(fm.getClosingStatus());
+		arl.setWriteOffLoan(fm.isWriteoffLoan());
 		arl.setDpdDays(0);
 		arl.setHoldStatus(fm.getHoldStatus());
 
@@ -989,12 +989,12 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.debug(Literal.ENTERING);
 
 		long finId = arl.getFinID();
-		String closingStatus = arl.getClosingStatus();
+		boolean writeOffLoan = arl.isWriteOffLoan();
 		int dpdDays = arl.getDpdDays();
 		String holdStatus = arl.getHoldStatus();
 
 		/* Verifying if the loan is write off or not */
-		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
+		if (writeOffLoan) {
 			logger.debug(Literal.LEAVING);
 			return ErrorUtil.getError("REFUND_008");
 		}

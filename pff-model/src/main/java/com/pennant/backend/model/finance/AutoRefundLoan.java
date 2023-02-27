@@ -23,7 +23,6 @@ public class AutoRefundLoan implements Serializable {
 	private long lastMntBy;
 	private Timestamp lastMntOn;
 	private String finCcy;
-	private String closingStatus;
 	private String holdStatus;
 	private BigDecimal refundAmt = BigDecimal.ZERO;
 	private Date appDate;
@@ -42,6 +41,7 @@ public class AutoRefundLoan implements Serializable {
 	private List<ManualAdvise> receivableList = new ArrayList<>();
 	private List<PaymentDetail> paymentDetails = new ArrayList<>();
 	private PaymentInstruction paymentInstruction;
+	private boolean writeOffLoan;
 
 	private ErrorDetail error = new ErrorDetail();
 
@@ -127,14 +127,6 @@ public class AutoRefundLoan implements Serializable {
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
-	}
-
-	public String getClosingStatus() {
-		return closingStatus;
-	}
-
-	public void setClosingStatus(String closingStatus) {
-		this.closingStatus = closingStatus;
 	}
 
 	public String getHoldStatus() {
@@ -279,6 +271,14 @@ public class AutoRefundLoan implements Serializable {
 
 	public void setPaymentInstruction(PaymentInstruction paymentInstruction) {
 		this.paymentInstruction = paymentInstruction;
+	}
+
+	public boolean isWriteOffLoan() {
+		return writeOffLoan;
+	}
+
+	public void setWriteOffLoan(boolean writeOffLoan) {
+		this.writeOffLoan = writeOffLoan;
 	}
 
 	public ErrorDetail getError() {

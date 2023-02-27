@@ -287,7 +287,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		}
 
 		if (rate == null) {
-			rate = finODPenaltyRateDAO.getEffectivePenaltyRate(finID, "AVIEW");
+			rate = finODPenaltyRateDAO.getEffectivePenaltyRate(finID, "_AVIEW");
 		}
 
 		List<ValueLabel> odcChargeType = PennantStaticListUtil.getODCChargeType();
