@@ -33,6 +33,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.dataengine.util.ExcelUtil;
 import com.pennanttech.framework.core.SearchOperator;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.web.components.SearchFilterControl;
@@ -172,43 +173,27 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 		}
 	}
 
+	/**
+	 * Create the excel file and download to user's desktop.
+	 */
 	private void createFile() {
-		int rowIndex = 0;
 		String name = "Menu Roles and Rights";
-		Sheet sheet = null;
 
 		try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
 			// Create a new sheet.
-			sheet = workbook.createSheet(name);
+			Sheet sheet = workbook.createSheet(name);
 
 			// Create header row.
-			Row row = sheet.createRow((int) rowIndex++);
+			ExcelUtil.createRow(sheet, 0, "Menu", "Level1", "Level2", "Level3", "Right", "Groups", "Roles");
 
-			Cell cell = row.createCell(0);
-			cell.setCellValue("Menu");
-
-			cell = row.createCell(1);
-			cell.setCellValue("Level1");
-
-			cell = row.createCell(2);
-			cell.setCellValue("Level2");
-
-			cell = row.createCell(3);
-			cell.setCellValue("Level3");
-
-			cell = row.createCell(4);
-			cell.setCellValue("Right");
-
-			cell = row.createCell(5);
-			cell.setCellValue("Groups");
-
-			cell = row.createCell(6);
-			cell.setCellValue("Roles");
+			// Create data row for each menu item.
+			int rowIndex = 1;
 
 			for (MenuItem menuItem : MainMenu.getMenuItems()) {
-				rowIndex = createMenu(rowIndex, 0, sheet, menuItem);
+				rowIndex = createMenu(sheet, rowIndex, 0, menuItem);
 			}
 
+			// Write out the workbook to stream and download the file at the client.
 			workbook.write(stream);
 
 			Filedownload.save(new AMedia(name, "xlsx", DocType.XLSX.getContentType(), stream.toByteArray()));
@@ -219,44 +204,34 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 		}
 	}
 
-	private int createMenu(int rowIndex, int celIndex, Sheet sheet, MenuItem menuItem) {
-		Row row = sheet.createRow((int) rowIndex++);
+	private int createMenu(Sheet sheet, int rowIndex, int columnIndex, MenuItem menuItem) {
+		// Create a row.
+		Row row = sheet.createRow(rowIndex++);
+
+		// Create a cell for the menu item.
+		Cell cell = row.createCell(columnIndex);
+		cell.setCellValue(Labels.getLabel(menuItem.getId()));
+
+		// Create a cell for the right.
+		cell = row.createCell(4);
+		cell.setCellValue(menuItem.getRightName());
+
+		// Create cells for groups and roles if the right available.
+		if (StringUtils.isNotEmpty(menuItem.getRightName())) {
+			cell = row.createCell(5);
+			cell.setCellValue(getGroups(menuItem.getRightName(), ","));
+
+			cell = row.createCell(6);
+			cell.setCellValue(getRoles(menuItem.getRightName(), ","));
+		}
+
+		// Create data row for each child if available.
 		if (menuItem instanceof Menu) {
-			Cell cell = row.createCell(celIndex++);
-			cell.setCellValue(org.zkoss.util.resource.Labels.getLabel(menuItem.getId()));
-
-			cell = row.createCell(4);
-			cell.setCellValue(menuItem.getRightName());
-
-			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
-				cell = row.createCell(5);
-				cell.setCellValue(getGroups(menuItem.getRightName(), ","));
-			}
-
-			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
-				cell = row.createCell(6);
-				cell.setCellValue(getRoles(menuItem.getRightName(), ","));
-			}
-
 			Menu menu = (Menu) menuItem;
+			columnIndex++;
+
 			for (MenuItem item : menu.getItems()) {
-				rowIndex = createMenu(rowIndex, celIndex, sheet, item);
-			}
-		} else {
-			Cell cell = row.createCell(celIndex);
-			cell.setCellValue(org.zkoss.util.resource.Labels.getLabel(menuItem.getId()));
-
-			cell = row.createCell(4);
-			cell.setCellValue(menuItem.getRightName());
-
-			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
-				cell = row.createCell(5);
-				cell.setCellValue(getGroups(menuItem.getRightName(), ","));
-			}
-
-			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
-				cell = row.createCell(6);
-				cell.setCellValue(getRoles(menuItem.getRightName(), ","));
+				rowIndex = createMenu(sheet, rowIndex, columnIndex, item);
 			}
 		}
 
