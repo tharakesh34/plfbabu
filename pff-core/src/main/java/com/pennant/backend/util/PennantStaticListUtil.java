@@ -1862,11 +1862,6 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ImportData_CustomerRating.value")));
 			importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_COUNTRY,
 					Labels.getLabel("label_ImportData_CountryDetails.value")));
-			// Below BMTCustStatusCodes download commented because of improper
-			// data from core system(duedays are 0 for all statuscodes named
-			// with 'M')
-			// importTablesList.add(new ValueLabel("BMTCustStatusCodes",
-			// Labels.getLabel("label_ImportData_CustStatusCodeDetails.value")));
 			importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_INDUSTRY,
 					Labels.getLabel("label_ImportData_IndustryDetails.value")));
 			importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_BRANCH,
