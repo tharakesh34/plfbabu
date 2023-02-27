@@ -2331,6 +2331,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 									return auditDetail;
 								} else if (StringUtils
 										.isBlank(Objects.toString(extendedFieldData.getFieldValue(), ""))) {
+									isFeild = true;
 									continue;
 								}
 								if (detail.isFieldMandatory()) {

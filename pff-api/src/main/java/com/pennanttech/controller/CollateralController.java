@@ -548,13 +548,15 @@ public class CollateralController extends ExtendedTestClass {
 
 					try {
 						// Setting Number of units
-						if (mapValues.containsKey("NOOFUNITS")) {
+						if (mapValues.containsKey("NOOFUNITS")
+								&& !StringUtils.isEmpty(mapValues.get("NOOFUNITS").toString())) {
 							noOfUnits = Integer.parseInt(mapValues.get("NOOFUNITS").toString());
 							totalUnits = totalUnits + noOfUnits;
 						}
 
 						// Setting Total Value
-						if (mapValues.containsKey("UNITPRICE")) {
+						if (mapValues.containsKey("UNITPRICE")
+								&& !StringUtils.isEmpty(mapValues.get("UNITPRICE").toString())) {
 							curValue = new BigDecimal(mapValues.get("UNITPRICE").toString());
 							totalValue = totalValue.add(curValue.multiply(new BigDecimal(noOfUnits)));
 						}
