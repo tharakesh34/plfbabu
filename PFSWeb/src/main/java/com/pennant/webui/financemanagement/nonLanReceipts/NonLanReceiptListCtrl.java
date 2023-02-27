@@ -10,8 +10,6 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -67,9 +65,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
-
 	private static final long serialVersionUID = 778410382420505812L;
-	private static final Logger logger = LogManager.getLogger(NonLanReceiptListCtrl.class);
 
 	protected Window window_NonLanReceiptList;
 	protected Borderlayout borderLayout_ReceiptList;
