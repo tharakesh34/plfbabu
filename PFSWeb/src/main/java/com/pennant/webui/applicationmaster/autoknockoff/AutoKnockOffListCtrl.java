@@ -2,8 +2,6 @@ package com.pennant.webui.applicationmaster.autoknockoff;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -27,8 +25,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AutoKnockOffListCtrl extends GFCBaseListCtrl<AutoKnockOff> {
-	private static Logger logger = LogManager.getLogger(AutoKnockOffListCtrl.class);
-
 	private static final long serialVersionUID = 1L;
 
 	protected Window window_AutoKnockOffList;

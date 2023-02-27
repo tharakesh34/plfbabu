@@ -13,8 +13,6 @@ package com.pennant.webui.interfacemapping;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -40,7 +38,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = LogManager.getLogger(InterfaceMappingListCtrl.class);
 
 	protected Window window_InterfaceMappingList;
 	protected Borderlayout borderLayout_InterfaceMappingList;

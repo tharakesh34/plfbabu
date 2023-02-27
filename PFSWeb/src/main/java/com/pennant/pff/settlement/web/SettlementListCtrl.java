@@ -2,8 +2,6 @@ package com.pennant.pff.settlement.web;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -36,7 +34,6 @@ import io.micrometer.core.instrument.util.StringUtils;
 
 public class SettlementListCtrl extends GFCBaseListCtrl<FinSettlementHeader> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(SettlementListCtrl.class);
 
 	protected Window windowSettlementList;
 	protected Borderlayout blSettlementList;

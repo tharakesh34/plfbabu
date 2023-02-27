@@ -39,8 +39,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -96,7 +94,6 @@ import com.pennanttech.pff.receipt.upload.ReceiptUploadApprovalProcess;
 
 public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHeader> {
 	private static final long serialVersionUID = 1817958653208633892L;
-	private static final Logger logger = LogManager.getLogger(ReceiptUploadHeaderListCtrl.class);
 
 	protected Window window_ReceiptUploadList;
 	protected Borderlayout borderLayout_ReceiptUploadList;

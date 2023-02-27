@@ -43,8 +43,6 @@ import java.util.zip.ZipOutputStream;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
@@ -107,7 +105,6 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
  */
 public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(FeeRefundHeaderListCtrl.class);
 
 	protected Window window_FeeRefundHeaderList;
 	protected Borderlayout borderLayout_FeeRefundHeaderList;

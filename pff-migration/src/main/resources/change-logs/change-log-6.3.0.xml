@@ -13496,7 +13496,7 @@
 		</createTable>
 	</changeSet>
 	<changeSet id="TK#2568_200.02" author="murthy.y">
-		<addPrimaryKey tableName="Excess_Auto_Refunds" columnNames="Id" constraintName="pk_Excess_Auto_Refunds" />
+		<addPrimaryKey tableName="Excess_Auto_Refunds" columnNames="Id" constraintName="pk_Excess_Auto_Refunds_Id" />
 	</changeSet>
 
 	<changeSet id="TK#2568_200.03" author="murthy.y" dbms="mssql">
@@ -13687,7 +13687,7 @@
 		<modifyDataType tableName="LPP_UPLOAD" columnName="AmountOrPercent" newDataType="decimal(18,0)" />
 	</changeSet>
 	
-	<changeSet id="ST#713.13_pre" author="Sravani.S" dbms="postgresql">
+	<changeSet id="ST#713.13_post" author="Sravani.S" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'lpp_upload'); 
@@ -13735,7 +13735,7 @@
 	</changeSet>
 
 	<changeSet id="ST#713.51" author="Mounika.M">
-		<addPrimaryKey tableName="Fin_OverDue_Charges" columnNames="ID" constraintName="PK_Fin_OverDue_Charges"/>
+		<addPrimaryKey tableName="Fin_OverDue_Charges" columnNames="ID" constraintName="PK_Fin_OverDue_Charges_ID"/>
 	</changeSet>
 
 	<changeSet id="ST#713.52" author="Mounika.M">
@@ -13766,15 +13766,15 @@
 			<column name="ReceiptId" type="bigint" />
 			<column name="WaiverId" type="bigint" />
 			<column name="MovementDate" type="datetime" />
-			<column name="MovementAmount" type="number(18,0)" />
-			<column name="PaidAmount" type="number(18,0)" />
-			<column name="WaivedAmount" type="number(18,0)" />
+			<column name="MovementAmount" type="decimal(18,0)" />
+			<column name="PaidAmount" type="decimal(18,0)" />
+			<column name="WaivedAmount" type="decimal(18,0)" />
 			<column name="Status" type="varchar(1)" />
 		</createTable>
 	</changeSet>
 	
 	<changeSet id="ST#713.55.1" author="Mounika.M">
-		<addPrimaryKey tableName="Fin_OverDue_Charge_Movements" columnNames="ID" constraintName="PK_Fin_OverDue_Charge_mvmnts"/>
+		<addPrimaryKey tableName="Fin_OverDue_Charge_Movements" columnNames="ID" constraintName="PK_Fin_OverDue_Char_mvmnts_ID"/>
 	</changeSet>
 	
 	<changeSet id="ST#713.56" author="Mounika.M">
@@ -13827,7 +13827,7 @@
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="ST#713.60_post" author="Mounika.M">
+	<changeSet id="ST#713.60.1" author="Mounika.M">
 		<sql>
 			<![CDATA[	
 				UPDATE FINODDETAILS SET LPPDUEAMT = 0;
@@ -14047,6 +14047,16 @@
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'RECEIPTS_SHOW_ACCOUNTING_TAB';
 				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('RECEIPTS_SHOW_ACCOUNTING_TAB', 'Accounting tab is required or not', 'String', 1, 'Y',  1, 0, NULL, NULL, 'Accounting tab is required or not', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#216047.2" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'CancelCrossLoanKnockOff';
+				
+				INSERT INTO REPORTLIST(CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('CancelCrossLoanKnockOff', 'CancelCrossLoanKnockOff', 'listheader_ReceiptId.label,listheader_ReceiptDate.label,listheader_ReceiptPurpose.label,listheader_Customer.label,listheader_FinTypeCode.label,listheader_ToFinReference.label,listheader_FromFinReference.label,listheader_ExcessType.label,listheader_TransferAmount.label,listheader_RecordStatus.label', 'ReceiptId,ReceiptDate,ReceiptPurpose,CustCif,finType,ToFinreference,fromFinreference,receiptMode,ReceiptAmount,RecordStatus', 'Long,Date,String,String,String,String,String,String,BigDecimal,String', null, 'ReportList10', 'CancelCrossLoanKnockOff', 'Receipts', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
 			]]>
 		</sql>
 	</changeSet>

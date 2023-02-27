@@ -10,8 +10,6 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -78,9 +76,7 @@ import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
-
 	private static final long serialVersionUID = 778410382420505812L;
-	private static final Logger logger = LogManager.getLogger(ReceiptListCtrl.class);
 
 	protected Window window_ReceiptList;
 	protected Borderlayout borderLayout_ReceiptList;
@@ -365,7 +361,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			} else if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment' and ((RECEIPTMODESTATUS = 'R' and ReceiptMode != 'ADVINT' and (NEXTROLECODE is null Or NEXTROLECODE = '')) or NEXTROLECODE='"
-								+ module + "')  and (KnockOffType != '" + KnockOffType.CROSS_LOAN.code() + "' or KnockOffType  is null)");
+								+ module + "')  and (KnockOffType != '" + KnockOffType.CROSS_LOAN.code()
+								+ "' or KnockOffType  is null)");
 			} else if (FinanceConstants.KNOCKOFFCAN_APPROVER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment'  and (NEXTROLECODE='" + module + "')");

@@ -197,6 +197,27 @@ public class ExcelUtil {
 		}
 	}
 
+	/**
+	 * Creates a new header row at the specified row number with the values.
+	 * 
+	 * @param sheet  The sheet within which the header row to be created.
+	 * @param rowNum The row number the header row represents.
+	 * @param values The array of header row values.
+	 */
+	public static void createRow(Sheet sheet, int rowNum, String... values) {
+		// Create a new row within the sheet.
+		Row row = sheet.createRow(rowNum);
+
+		// Create new cells within the row for the values supplied.
+		Cell cell;
+		int columnNum = -1;
+
+		for (String value : values) {
+			cell = row.createCell(++columnNum);
+			cell.setCellValue(value);
+		}
+	}
+
 	public static void addCellValue(Row row, int valueIndex, String value) {
 		Cell cell = row.createCell(++valueIndex);
 		cell.setCellValue(value);
