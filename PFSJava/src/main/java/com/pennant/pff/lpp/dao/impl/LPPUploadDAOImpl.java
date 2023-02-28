@@ -18,7 +18,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 	@Override
 	public List<LPPUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select ID, HeaderId, loanType");
-		sql.append(", ApplyToExistingLoans, ApplyOverDueOD, FinID, FinReference");
+		sql.append(", ApplyToExistingLoans, ApplyOverDue, FinID, FinReference");
 		sql.append(", PenaltyType, IncludeGraceDays, GraceDays, CalculatedOn");
 		sql.append(", AmountOrPercent, AllowWaiver, MaxWaiver, HoldStatus");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc, Reason, Remarks");
@@ -36,7 +36,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 			lpp.setReference(rs.getString("FinReference"));
 			lpp.setLoanType(rs.getString("LoanType"));
 			lpp.setApplyToExistingLoans(rs.getString("ApplyToExistingLoans"));
-			lpp.setApplyOverDueOD(rs.getString("ApplyOverDueOD"));
+			lpp.setApplyOverDue(rs.getString("ApplyOverDue"));
 			lpp.setPenaltyType(rs.getString("PenaltyType"));
 			lpp.setIncludeGraceDays(rs.getString("IncludeGraceDays"));
 			lpp.setGraceDays(rs.getInt("GraceDays"));
@@ -118,7 +118,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" lp.FinReference, lp.LoanType, lp.ApplyToExistingLoans");
-		sql.append(", lp.ApplyOverDueOD, lp.PenaltyType, lp.IncludeGraceDays, lp.GraceDays");
+		sql.append(", lp.ApplyOverDue, lp.PenaltyType, lp.IncludeGraceDays, lp.GraceDays");
 		sql.append(", lp.CalculatedOn, lp.AmountOrPercent, lp.AllowWaiver, lp.MaxWaiver, lp.HoldStatus");
 		sql.append(", lp.Reason, lp.Remarks, lp.Status, lp.ErrorCode, lp.ErrorDesc");
 		sql.append(", uh.ApprovedOn, uh.CreatedOn");

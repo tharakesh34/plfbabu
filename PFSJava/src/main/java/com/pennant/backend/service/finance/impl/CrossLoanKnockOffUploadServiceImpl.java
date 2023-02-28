@@ -380,7 +380,6 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		CrossLoanKnockOff clko = new CrossLoanKnockOff();
 
 		clko.setUserDetails(clku.getUserDetails());
-		clko.setValueDate(SysParamUtil.getAppValueDate());
 		clko.setCrossLoanTransfer(getCrossLoanTransferBean(clku, frmFm, toFm, excessList));
 		clko.setPostDate(clku.getAppDate());
 		clko.setFinReceiptData(getFinReceiptDataBean(clku, toFm));
@@ -393,6 +392,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		clko.setRequestSource(RequestSource.UPLOAD.name());
 		clko.setNewRecord(true);
 		clko.setCrossLoanKnockoffUpload(clku);
+		clko.setValueDate(clko.getCrossLoanTransfer().getValueDate());
 
 		return clko;
 	}
@@ -424,6 +424,11 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		clt.setValueDate(clku.getAppDate());
 		clt.setExcessType(clku.getExcessType());
 		clt.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		for (FinExcessAmount fea : excessList) {
+			if (fea.getExcessID() == clt.getExcessId()) {
+				clt.setValueDate(fea.getValueDate());
+			}
+		}
 
 		return clt;
 	}

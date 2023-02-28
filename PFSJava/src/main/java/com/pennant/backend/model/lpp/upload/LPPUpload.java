@@ -10,7 +10,7 @@ public class LPPUpload extends UploadDetails {
 
 	private String loanType;
 	private String applyToExistingLoans;
-	private String applyOverDueOD;
+	private String applyOverDue;
 	private String penaltyType;
 	private String includeGraceDays;
 	private int graceDays;
@@ -44,12 +44,12 @@ public class LPPUpload extends UploadDetails {
 		this.applyToExistingLoans = applyToExistingLoans;
 	}
 
-	public String getApplyOverDueOD() {
-		return applyOverDueOD;
+	public String getApplyOverDue() {
+		return applyOverDue;
 	}
 
-	public void setApplyOverDueOD(String applyOverDueOD) {
-		this.applyOverDueOD = applyOverDueOD;
+	public void setApplyOverDue(String applyOverDue) {
+		this.applyOverDue = applyOverDue;
 	}
 
 	public String getPenaltyType() {
