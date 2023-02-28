@@ -395,6 +395,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			return;
 		}
 
+		agency.setValue("");
+		agency.setObject(null);
+
 		for (ExtendedFieldRender fieldRender : collateralSetup.getExtendedFieldRenderList()) {
 			Map<String, Object> mapValues = fieldRender.getMapValues();
 			if (mapValues != null && mapValues.containsKey(collateralAddrCol)) {
@@ -1314,6 +1317,10 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		Object dataObject = collateral.getObject();
+
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL);
+		agency.setFilters(filter);
 
 		if (dataObject instanceof String) {
 			collateral.setValue(dataObject.toString());
