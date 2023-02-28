@@ -49,7 +49,6 @@ import com.pennant.pff.knockoff.KnockOffType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
@@ -191,7 +190,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		clt.setUserDetails(clk.getUserDetails());
 
 		if (crossLoanKnockOffDAO.cancelReferenceID(clk.getKnockOffId())) {
-			MessageUtil.showError("Excess Receipt is cancelled");
+			auditHeader.setErrorDetails(new ErrorDetail("30550", "Excess Receipt is cancelled", null));
 			return auditHeader;
 		}
 
@@ -265,7 +264,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 					clt.setModuleType(RepayConstants.MODULETYPE_CANCEL);
 					clk.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
 
-					receiptCancellationService.doApprove(auditReceiptHeader);
+					receiptService.doApprove(auditReceiptHeader);
 
 					postingsPreparationUtil.postReversalsByLinkedTranID(clt.getToLinkedTranId());
 					postingsPreparationUtil.postReversalsByLinkedTranID(clt.getFromLinkedTranId());
@@ -483,7 +482,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		rud.setFinID(clku.getToFm().getFinID());
 		rud.setAllocationType(clku.getAllocationType());
 		Date appDate = SysParamUtil.getAppDate();
-		rud.setValueDate(appDate);
+		rud.setValueDate(clko.getValueDate());
 		rud.setRealizationDate(appDate);
 		rud.setReceivedDate(appDate);
 		rud.setReceiptAmount(clku.getExcessAmount());

@@ -11714,11 +11714,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#217109" author="VinayKumar.k">
+	<changeSet id="PSD#219655.1" author="VinayKumar.k">
 		<sql>
 			<![CDATA[
    		     	DELETE FROM REPORTLIST WHERE CODE = 'CrossLoanKnockOff';
-				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('CrossLoanKnockOff', 'CrossLoanKnockOff', 'listheader_ReceiptId.label,listheader_ReceiptDate.label,listheader_ReceiptPurpose.label,listheader_Customer.label,listheader_FinTypeCode.label,listheader_ToFinReference.label,listheader_FromFinReference.label,listheader_ExcessType.label,listheader_TransferAmount.label,listheader_RecordStatus.label','ReceiptId,ReceiptDate,ReceiptPurpose,CustCif,finType,ToFinreference,fromFinreference,receiptMode,ReceiptAmount,RecordStatus','Long,Date,String,String,String,String,String,String,BigDecimal,String', null, 'ReportList10', 'CrossLoanKnockOff', 'Receipts', 1,1000, CURRENT_TIMESTAMP,'Approved', null, null, null, null, null, 0, 0);
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('CrossLoanKnockOff', 'CrossLoanKnockOff', 'listheader_ReceiptId.label,listheader_ReceiptDate.label,listheader_ReceiptPurpose.label,listheader_Customer.label,listheader_FinTypeCode.label,listheader_ToFinReference.label,listheader_FromFinReference.label,listheader_ExcessType.label,listheader_TransferAmount.label,listheader_RecordStatus.label','ReceiptId,ReceiptDate,ReceiptPurpose,CustCif,finType,ToFinreference,fromFinreference,receiptMode,ReceiptAmount,RecordStatus','String,Date,String,String,String,String,String,String,BigDecimal,String', null, 'ReportList10', 'CrossLoanKnockOff', 'Receipts', 1,1000, CURRENT_TIMESTAMP,'Approved', null, null, null, null, null, 0, 0);
         	 ]]>
 		</sql>
 	</changeSet>
@@ -14055,12 +14055,12 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#216047.2" author="Gopal.p">
+	<changeSet id="PSD#219655.3" author="Gopal.p">
 		<sql>
 			<![CDATA[
 				DELETE FROM REPORTLIST WHERE CODE = 'CancelCrossLoanKnockOff';
 				
-				INSERT INTO REPORTLIST(CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('CancelCrossLoanKnockOff', 'CancelCrossLoanKnockOff', 'listheader_ReceiptId.label,listheader_ReceiptDate.label,listheader_ReceiptPurpose.label,listheader_Customer.label,listheader_FinTypeCode.label,listheader_ToFinReference.label,listheader_FromFinReference.label,listheader_ExcessType.label,listheader_TransferAmount.label,listheader_RecordStatus.label', 'ReceiptId,ReceiptDate,ReceiptPurpose,CustCif,finType,ToFinreference,fromFinreference,receiptMode,ReceiptAmount,RecordStatus', 'Long,Date,String,String,String,String,String,String,BigDecimal,String', null, 'ReportList10', 'CancelCrossLoanKnockOff', 'Receipts', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+				INSERT INTO REPORTLIST(CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('CancelCrossLoanKnockOff', 'CancelCrossLoanKnockOff', 'listheader_ReceiptId.label,listheader_ReceiptDate.label,listheader_ReceiptPurpose.label,listheader_Customer.label,listheader_FinTypeCode.label,listheader_ToFinReference.label,listheader_FromFinReference.label,listheader_ExcessType.label,listheader_TransferAmount.label,listheader_RecordStatus.label', 'ReceiptId,ReceiptDate,ReceiptPurpose,CustCif,finType,ToFinreference,fromFinreference,receiptMode,ReceiptAmount,RecordStatus', 'String,Date,String,String,String,String,String,String,BigDecimal,String', null, 'ReportList10', 'CancelCrossLoanKnockOff', 'Receipts', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
 			]]>
 		</sql>
 	</changeSet>
