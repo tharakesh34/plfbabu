@@ -15,7 +15,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.payment.PaymentDetailDAO;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.dao.receipts.CrossLoanTransferDAO;
@@ -527,6 +526,8 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		fsi.setUploadAllocationDetails(list);
 		fsi.setReceiptDetail(null);
 		fsi.setReceiptDetails(receiptService.prepareReceiptDetails(clku.getExcessList(), rud));
+		fsi.setKnockOffReceipt(true);
+		fsi.setKnockoffType(KnockOffType.CROSS_LOAN.code());
 
 		return receiptService.receiptTransaction(fsi);
 	}

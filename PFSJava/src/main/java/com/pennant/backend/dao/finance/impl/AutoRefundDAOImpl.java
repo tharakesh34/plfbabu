@@ -32,7 +32,7 @@ public class AutoRefundDAOImpl extends BasicDao<AutoRefundLoan> implements AutoR
 		Customer customer = cee.getCustomer();
 		StringBuilder sql = new StringBuilder("Select * From (");
 		sql.append(" Select fm.FinID, fm.FinReference, ft.MaxAutoRefund, ft.MinAutoRefund");
-		sql.append(", fm.FinRepayMethod, fm.FinIsActive, fpd.CurOdDays, fm.FinCcy, fm.ClosingStatus");
+		sql.append(", fm.FinRepayMethod, fm.FinIsActive, fpd.CurOdDays, fm.FinCcy, fm.WriteOffLoan");
 		sql.append(", h.HoldStatus, fm.FinType, e.EntityCode");
 		sql.append(" From Financemain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
@@ -53,7 +53,7 @@ public class AutoRefundDAOImpl extends BasicDao<AutoRefundLoan> implements AutoR
 		sql.append(" Union All");
 
 		sql.append(" Select fm.FinID, fm.FinReference, ft.MaxAutoRefund, ft.MinAutoRefund");
-		sql.append(", fm.FinRepayMethod, fm.FinIsActive, fpd.CurOdDays, fm.FinCcy, fm.ClosingStatus");
+		sql.append(", fm.FinRepayMethod, fm.FinIsActive, fpd.CurOdDays, fm.FinCcy, fm.WriteOffLoan");
 		sql.append(", h.HoldStatus, fm.FinType, e.EntityCode");
 		sql.append(" From Financemain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
@@ -106,7 +106,7 @@ public class AutoRefundDAOImpl extends BasicDao<AutoRefundLoan> implements AutoR
 			arl.setFinIsActive(rs.getBoolean("FinIsActive"));
 			arl.setDpdDays(rs.getInt("CurOdDays"));
 			arl.setFinCcy(rs.getString("FinCcy"));
-			arl.setClosingStatus(rs.getString("ClosingStatus"));
+			arl.setWriteOffLoan(rs.getBoolean("WriteOffLoan"));
 			arl.setHoldStatus(rs.getString("HoldStatus"));
 			arl.setFinType(rs.getString("FinType"));
 			arl.setEntityCode(rs.getString("EntityCode"));

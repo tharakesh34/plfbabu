@@ -26,8 +26,6 @@ package com.pennant.webui.applicationmaster.query;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -58,7 +56,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class QueryListCtrl extends GFCBaseListCtrl<Query> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(QueryListCtrl.class);
 
 	protected Window window_QueryList;
 	protected Borderlayout borderLayout_QueryList;

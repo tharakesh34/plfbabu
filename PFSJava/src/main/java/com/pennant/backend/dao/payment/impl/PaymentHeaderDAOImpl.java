@@ -45,6 +45,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -510,4 +511,23 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 
 	}
 
+	@Override
+	public List<Long> getReceiptPurpose(long receiptId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" rch.ReceiptID From FinReceiptHeader_Temp rch");
+		sql.append(" Inner Join FinReceiptDetail_Temp rcd on rcd.receiptId = rch.receiptId");
+		sql.append(" Where rcd.PayAgainstId = ? and rch.ReceiptModeStatus not in (?, ?) and rch.KnockOffType != ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				return rs.getLong(1);
+			}, receiptId, RepayConstants.PAYSTATUS_BOUNCE, RepayConstants.PAYSTATUS_CANCEL,
+					KnockOffType.CROSS_LOAN.code());
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

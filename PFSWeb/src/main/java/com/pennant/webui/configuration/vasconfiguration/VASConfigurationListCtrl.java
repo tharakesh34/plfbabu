@@ -36,8 +36,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 import org.apache.commons.beanutils.converters.DateConverter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -71,9 +69,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * 
  */
 public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> {
-
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(VASConfigurationListCtrl.class);
 
 	protected Window window_VASConfigurationList;
 	protected Borderlayout borderLayout_VASConfigurationList;

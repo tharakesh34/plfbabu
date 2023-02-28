@@ -365,6 +365,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	@XmlElement
 	private String division;
 	private boolean knockOffReceipt;
+	private String knockoffType;
 
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction fsi = new FinServiceInstruction();
@@ -1843,6 +1844,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setReceiptDetails(List<FinReceiptDetail> receiptDetails) {
 		this.receiptDetails = receiptDetails;
+	}
+
+	public String getKnockoffType() {
+		return knockoffType;
+	}
+
+	public void setKnockoffType(String knockoffType) {
+		this.knockoffType = knockoffType;
 	}
 
 }

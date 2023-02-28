@@ -27,8 +27,6 @@ package com.pennant.webui.smtmasters.holidaymaster;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -56,7 +54,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster> {
 	private static final long serialVersionUID = 5550212164288969546L;
-	private static final Logger logger = LogManager.getLogger(HolidayMasterListCtrl.class);
 
 	protected Window window_HolidayMasterList;
 	protected Borderlayout borderLayout_HolidayMasterList;

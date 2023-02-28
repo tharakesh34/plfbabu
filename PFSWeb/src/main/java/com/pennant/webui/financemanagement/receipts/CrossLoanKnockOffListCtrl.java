@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -68,7 +66,6 @@ import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff> {
 	private static final long serialVersionUID = 778410382420505812L;
-	private static final Logger logger = LogManager.getLogger(CrossLoanKnockOffListCtrl.class);
 
 	protected Window windowCrossLoanKnockOffList;
 	protected Borderlayout crossLoanKnockOffBL;
@@ -222,14 +219,16 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			filters[0] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
 			this.searchObject.addFilters(filters);
 		} else if (FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER.equals(this.module)) {
-			Filter[] filters = new Filter[2];
+			Filter[] filters = new Filter[3];
 			filters[0] = new Filter("ReceiptModeStatus", "C");
 			filters[1] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
+			filters[2] = new Filter("RECEIPTPURPOSE", "SchdlRepayment", Filter.OP_EQUAL);
 			this.searchObject.addFilters(filters);
 		} else if (FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_MAKER.equals(this.module)) {
-			Filter[] filters = new Filter[2];
+			Filter[] filters = new Filter[3];
 			filters[0] = new Filter("ReceiptModeStatus", "C", Filter.OP_NOT_EQUAL);
 			filters[1] = new Filter("RecordStatus", "APPROVED");
+			filters[2] = new Filter("RECEIPTPURPOSE", "SchdlRepayment", Filter.OP_EQUAL);
 			this.searchObject.addFilters(filters);
 		}
 
@@ -627,7 +626,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		if (isCancel && PennantConstants.RCD_STATUS_APPROVED.equals(clk.getRecordStatus())) {
 			clk.setNewRecord(true);
 		}
-		
+
 		clk.setCancelProcess(isCancel);
 		clk.setFinReceiptData(frd);
 

@@ -2080,6 +2080,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (!overdueList.isEmpty()) {
 			finODDetailsDAO.updatePaidPenalties(overdueList);
+
+			if (RepayConstants.EXCESSADJUSTTO_TEXCESS
+					.equals(scheduleData.getFinServiceInstruction().getExcessAdjustTo())
+					&& RequestSource.EOD.equals(scheduleData.getFinServiceInstruction().getRequestSource())) {
+				scheduleData.setFinODDetails(finODDetailsDAO.getFinODDetailsByFinRef(finID));
+			}
 		}
 
 		if (rch.getUserDetails() == null && SessionUserDetails.getLogiedInUser() != null) {
@@ -2885,6 +2891,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		// Max and Min PartPayment Validation & Lock in Period
 		ErrorDetail errorDetail = null;
 		if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
+			List<FinanceScheduleDetail> schedules = this.financeScheduleDetailDAO.getFinScheduleDetails(rch.getFinID(),
+					"", false);
+			repayData.setPartPayschedules(schedules);
 			errorDetail = this.partPayAndEarlySettleValidator.validatePartPay(repayData);
 		} else if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			errorDetail = this.partPayAndEarlySettleValidator.validateEarlyPay(fd.getFinScheduleData());
@@ -5882,6 +5891,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setValueDate(fsi.getValueDate());
 		rch.setSource(fsi.getRequestSource().name());
 		rch.setFinType(fm.getFinType());
+
+		if (fsi.isKnockOffReceipt()) {
+			rch.setKnockOffType(fsi.getKnockoffType());
+		}
 
 		if (receiptPurpose == ReceiptPurpose.SCHDRPY && fsi.isBckdtdWthOldDues()) {
 			Date derivedDate = getDerivedValueDate(rd, fsi, fm.getAppDate());

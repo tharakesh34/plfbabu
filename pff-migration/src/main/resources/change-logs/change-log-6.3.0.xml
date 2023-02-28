@@ -13471,7 +13471,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#2568_200" author="murthy.y">
 		<dropTable tableName="Auto_Refund_Loans" />
 	</changeSet>
@@ -13496,7 +13496,8 @@
 		</createTable>
 	</changeSet>
 	<changeSet id="TK#2568_200.02" author="murthy.y">
-		<addPrimaryKey tableName="Excess_Auto_Refunds" columnNames="Id" constraintName="pk_Excess_Auto_Refunds_Id" />
+		<addPrimaryKey tableName="Excess_Auto_Refunds" columnNames="Id"
+			constraintName="pk_Excess_Auto_Refunds_Id" />
 	</changeSet>
 
 	<changeSet id="TK#2568_200.03" author="murthy.y" dbms="mssql">
@@ -13531,8 +13532,7 @@
 	</changeSet>
 
 	<changeSet id="TK#2568_201.02" author="murthy.y">
-		<addPrimaryKey tableName="Excess_Auto_Refunds_Payments" columnNames="Id"
-			constraintName="pk_earp_id" />
+		<addPrimaryKey tableName="Excess_Auto_Refunds_Payments" columnNames="Id" constraintName="pk_earp_id" />
 	</changeSet>
 
 	<changeSet id="TK#2568_201.03" author="murthy.y">
@@ -13563,7 +13563,7 @@
 			<column name="PaymentID" type="bigint" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="TK#2566.213.01.1_pre" author="Sravani.s" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -13670,7 +13670,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.13_pre" author="Sravani.S" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -13678,7 +13678,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.00" author="Sainaveen.y">
 		<modifyDataType tableName="LPP_UPLOAD" columnName="ApplyToExistingLoans" newDataType="char(1)" />
 		<modifyDataType tableName="LPP_UPLOAD" columnName="ApplyOverDueOD" newDataType="char(1)" />
@@ -13686,7 +13686,7 @@
 		<modifyDataType tableName="LPP_UPLOAD" columnName="AllowWaiver" newDataType="char(1)" />
 		<modifyDataType tableName="LPP_UPLOAD" columnName="AmountOrPercent" newDataType="decimal(18,0)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#713.13_post" author="Sravani.S" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -13694,17 +13694,17 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.01" author="Sainaveen.y">
 		<addColumn tableName="LPP_UPLOAD">
 			<column name="PickUpFlag" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.02" author="sainaveen.y" dbms="postgresql,oracle">
 		<addDefaultValue columnName="PickUpFlag" tableName="LPP_UPLOAD" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#713.03" author="sainaveen.y" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -13712,30 +13712,31 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.50" author="Mounika.M">
 		<createTable tableName="Fin_OverDue_Charges">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
-			<column name="ChargeType" type="Varchar(5)"/>
-			<column name="FinID" type="bigint"/>
-			<column name="SchDate" type="datetime"/>
-			<column name="PostDate" type="datetime"/>
-			<column name="ValueDate" type="datetime"/>
-			<column name="Amount" type="decimal(18,0)"/>
-			<column name="PaidAmount" type="decimal(18,0)"/>
-			<column name="WaivedAmount" type="decimal(18,0)"/>
-			<column name="BalanceAmt" type="decimal(18,0)"/>
-			<column name="OdPri" type="decimal(18,0)"/>
-			<column name="OdPft" type="decimal(18,0)"/>
-			<column name="FinODTillDate" type="datetime"/>
-			<column name="DueDays" type="bigint"/>
+			<column name="ChargeType" type="Varchar(5)" />
+			<column name="FinID" type="bigint" />
+			<column name="SchDate" type="datetime" />
+			<column name="PostDate" type="datetime" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Amount" type="decimal(18,0)" />
+			<column name="PaidAmount" type="decimal(18,0)" />
+			<column name="WaivedAmount" type="decimal(18,0)" />
+			<column name="BalanceAmt" type="decimal(18,0)" />
+			<column name="OdPri" type="decimal(18,0)" />
+			<column name="OdPft" type="decimal(18,0)" />
+			<column name="FinODTillDate" type="datetime" />
+			<column name="DueDays" type="bigint" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="ST#713.51" author="Mounika.M">
-		<addPrimaryKey tableName="Fin_OverDue_Charges" columnNames="ID" constraintName="PK_Fin_OverDue_Charges_ID"/>
+		<addPrimaryKey tableName="Fin_OverDue_Charges" columnNames="ID"
+			constraintName="PK_Fin_OverDue_Charges_ID" />
 	</changeSet>
 
 	<changeSet id="ST#713.52" author="Mounika.M">
@@ -13752,8 +13753,8 @@
 
 	<changeSet id="ST#713.54" author="Mounika.M">
 		<createIndex tableName="Fin_OverDue_Charges" indexName="IX_FinRefSchDate_LPI_AMTS" unique="false">
-			<column name="FinID"/>
-			<column name="SchDate"/>
+			<column name="FinID" />
+			<column name="SchDate" />
 		</createIndex>
 	</changeSet>
 
@@ -13772,29 +13773,30 @@
 			<column name="Status" type="varchar(1)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.55.1" author="Mounika.M">
-		<addPrimaryKey tableName="Fin_OverDue_Charge_Movements" columnNames="ID" constraintName="PK_Fin_OverDue_Char_mvmnts_ID"/>
+		<addPrimaryKey tableName="Fin_OverDue_Charge_Movements" columnNames="ID"
+			constraintName="PK_Fin_OverDue_Char_mvmnts_ID" />
 	</changeSet>
-	
+
 	<changeSet id="ST#713.56" author="Mounika.M">
 		<addForeignKeyConstraint constraintName="FK_FinCharge_ID"
 			referencedTableName="Fin_OverDue_Charges" baseColumnNames="ChargeId" baseTableName="Fin_OverDue_Charge_Movements"
 			referencedColumnNames="ID" />
 	</changeSet>
-	
+
 	<changeSet id="ST#713.57" author="Mounika.M">
 		<addColumn tableName="FinODDetails">
 			<column name="LPIDueTillDate" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.58" author="Mounika.M">
 		<addColumn tableName="FinODDetails">
-			<column name="LPIDueAmt" type="decimal(18,0)"/>
+			<column name="LPIDueAmt" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.58_post" author="Mounika.M">
 		<sql>
 			<![CDATA[	
@@ -13802,7 +13804,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.59" author="Mounika.M" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -13810,23 +13812,23 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.59" author="Mounika.M" dbms="postgresql, oracle">
-		<addDefaultValue columnName="LPIDueAmt" tableName="FinODDetails" defaultValue="0"/>
+		<addDefaultValue columnName="LPIDueAmt" tableName="FinODDetails" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#713.62" author="Mounika.M">
 		<addColumn tableName="FinODDetails">
 			<column name="LPPDueTillDate" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.60" author="Mounika.M">
 		<addColumn tableName="FinODDetails">
-			<column name="LPPDueAmt" type="decimal(18,0)"/>
+			<column name="LPPDueAmt" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.60.1" author="Mounika.M">
 		<sql>
 			<![CDATA[	
@@ -13834,11 +13836,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.61" author="Mounika.M" dbms="postgresql, oracle">
-		<addDefaultValue columnName="LPPDueAmt" tableName="FinODDetails" defaultValue="0"/>
+		<addDefaultValue columnName="LPPDueAmt" tableName="FinODDetails" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#713.61" author="Mounika.M" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -13846,7 +13848,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#219416" author="bhagyaraj.v">
 		<sql>
 			<![CDATA[
@@ -13856,7 +13858,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#722.100.1" author="HariTeja.B">
 		<sql>
 			<![CDATA[
@@ -14020,7 +14022,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#219461" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -14029,19 +14031,21 @@
             ]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="ST#717.50.100" author="Mounika.M">
+
+	<changeSet id="ST#717.50.100.1_1" author="Mounika.M">
 		<sql>
 			<![CDATA[
-				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYSTL' AND AMOUNTCODE = 'SETTLE_ReceiptAmount';
 				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REPAY' AND AMOUNTCODE = 'SETTLE_ReceiptAmount';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYPAY' AND AMOUNTCODE = 'SETTLE_ReceiptAmount';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYSTL' AND AMOUNTCODE = 'SETTLE_ReceiptAmount';
 				
 				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES('REPAY', 0, 'SETTLE_ReceiptAmount', 'Settlement Receipt Amount For Repay Event', 1, 1, '1005', CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', '0');
-				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES('EARLYPAY', 0, 'SETTLE_ReceiptAmount', 'Settlement Receipt Amount For Early Settlement Event', 1, 1, '1005', CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', '0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES('EARLYPAY', 0, 'SETTLE_ReceiptAmount', 'Settlement Receipt Amount For Early Payment Event', 1, 1, '1005', CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', '0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES('EARLYSTL', 0, 'SETTLE_ReceiptAmount', 'Settlement Receipt Amount For Early Settlement Event', 1, 1, '1005', CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', '0');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#216047" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -14050,7 +14054,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#216047.2" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -14060,4 +14064,19 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="PSD#219486" author="Gopal.p">
+		<sql>
+			<![CDATA[	
+				UPDATE RMTFINANCETYPES SET MAXFPPCALON = '#' WHERE MAXFPPCALON IS NULL;
+				UPDATE RMTFINANCETYPES SET MAXPPCALON = '#' WHERE MAXPPCALON IS NULL;
+				UPDATE RMTFINANCETYPES SET MINPPCALON = '#' WHERE MINPPCALON IS NULL;
+				
+				UPDATE RMTFINANCETYPES_TEMP SET MAXFPPCALON = '#' WHERE MAXFPPCALON IS NULL;
+				UPDATE RMTFINANCETYPES_TEMP SET MAXPPCALON = '#' WHERE MAXPPCALON IS NULL;
+				UPDATE RMTFINANCETYPES_TEMP SET MINPPCALON = '#' WHERE MINPPCALON IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog> 

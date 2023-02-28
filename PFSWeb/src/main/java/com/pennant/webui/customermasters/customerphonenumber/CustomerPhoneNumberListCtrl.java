@@ -26,8 +26,6 @@ package com.pennant.webui.customermasters.customerphonenumber;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -54,7 +52,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNumber> {
 	private static final long serialVersionUID = 5073003999430539385L;
-	private static final Logger logger = LogManager.getLogger(CustomerPhoneNumberListCtrl.class);
 
 	protected Window window_CustomerPhoneNumberList;
 	protected Borderlayout borderLayout_CustomerPhoneNumberList;

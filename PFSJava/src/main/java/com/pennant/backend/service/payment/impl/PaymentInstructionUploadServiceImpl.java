@@ -135,6 +135,8 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 				logger.info("Processed the File {}", header.getFileName());
 			}
 
+			updateHeader(headers, true);
+
 			logger.info("Payment Instruction Process is Initiated");
 
 			paymentInstUploadApprovalProcess.approvePaymentInst(headerIdList);

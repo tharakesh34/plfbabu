@@ -50,6 +50,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -110,6 +111,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private FinanceMainDAO financeMainDAO;
 	private FeeTypeService feeTypeService;
 	private FinOverDueService finOverDueService;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	private PostValidationHook postValidationHook;
 
@@ -408,7 +410,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		AutoRefundLoan arl = new AutoRefundLoan();
 		arl.setFinID(fm.getFinID());
-		arl.setClosingStatus(fm.getClosingStatus());
+		arl.setWriteOffLoan(fm.isWriteoffLoan());
 		arl.setDpdDays(0);
 		arl.setHoldStatus(fm.getHoldStatus());
 
@@ -434,7 +436,23 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		List<PaymentDetail> pdtl = ph.getPaymentDetailList();
+
+		for (PaymentDetail pdt : pdtl) {
+			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(pdt.getAmountType())) {
+				FinExcessAmount fea = finExcessAmountDAO.getFinExcessByID(pdt.getReferenceId());
+				List<Long> receiptID = paymentHeaderDAO.getReceiptPurpose(fea.getExcessID());
+
+				if (CollectionUtils.isNotEmpty(receiptID)) {
+					String[] parameters = new String[1];
+					parameters[0] = "Excess is in reserved state, since receipt is in progress with Receipt IDs "
+							+ receiptID;
+					auditDetail.setErrorDetail(new ErrorDetail("REFUND_050", parameters[0], null));
+				}
+
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
@@ -981,24 +999,12 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.debug(Literal.ENTERING);
 
 		long finId = arl.getFinID();
-		String closingStatus = arl.getClosingStatus();
+		boolean writeOffLoan = arl.isWriteOffLoan();
 		int dpdDays = arl.getDpdDays();
 		String holdStatus = arl.getHoldStatus();
 
-		/* DPD Days validation against System parameter Configuration */
-		if (dpdDays >= arl.getAutoRefCheckDPD() && isEOD) {
-			logger.debug(Literal.LEAVING);
-			return ErrorUtil.getError("REFUND_001", String.valueOf(dpdDays), String.valueOf(arl.getAutoRefCheckDPD()));
-		}
-
-		/* Verification against Refunds, if any of the refund against loan in process */
-		if (paymentHeaderDAO.isRefundInProcess(finId) && isEOD) {
-			logger.debug(Literal.LEAVING);
-			return ErrorUtil.getError("REFUND_003");
-		}
-
 		/* Verifying if the loan is write off or not */
-		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
+		if (writeOffLoan) {
 			logger.debug(Literal.LEAVING);
 			return ErrorUtil.getError("REFUND_008");
 		}
@@ -1006,6 +1012,19 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		if (FinanceConstants.FEE_REFUND_HOLD.equals(holdStatus)) {
 			logger.debug(Literal.LEAVING);
 			return ErrorUtil.getError("REFUND_009");
+		}
+
+		/* DPD Days validation against System parameter Configuration */
+		if (dpdDays >= arl.getAutoRefCheckDPD() && isEOD) {
+			logger.debug(Literal.LEAVING);
+			return ErrorUtil.getError("REFUND_001", String.valueOf(dpdDays),
+					String.valueOf(arl.getAutoRefCheckDPD() + 1));
+		}
+
+		/* Verification against Refunds, if any of the refund against loan in process */
+		if (paymentHeaderDAO.isRefundInProcess(finId) && isEOD) {
+			logger.debug(Literal.LEAVING);
+			return ErrorUtil.getError("REFUND_003");
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1086,6 +1105,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	@Autowired
 	public void setFinOverDueService(FinOverDueService finOverDueService) {
 		this.finOverDueService = finOverDueService;
+	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 }
