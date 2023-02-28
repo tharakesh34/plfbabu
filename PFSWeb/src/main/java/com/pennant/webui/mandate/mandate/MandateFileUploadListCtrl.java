@@ -25,11 +25,7 @@
 
 package com.pennant.webui.mandate.mandate;
 
-import java.io.Serializable;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -59,10 +55,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * ************************************************************<br>
  * 
  */
-public class MandateFileUploadListCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
-
+public class MandateFileUploadListCtrl extends GFCBaseListCtrl<Mandate> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(MandateFileUploadListCtrl.class);
 
 	protected Window window_MandateFileUploadList;
 	protected Borderlayout borderLayout_MandateList;

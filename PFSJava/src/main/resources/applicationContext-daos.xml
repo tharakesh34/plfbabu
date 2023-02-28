@@ -7084,7 +7084,6 @@
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
 		<property name="dataSource" ref="dataSource" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -7095,8 +7094,6 @@
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
@@ -7121,7 +7118,6 @@
 	<bean id="latePaydueCreationService" class="com.pennant.app.core.LatePayDueCreationService" parent="serviceHelper">
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>

@@ -151,8 +151,24 @@ public abstract class AUploadServiceImpl implements UploadService {
 	}
 
 	@Override
-	public int isValidateApprove(List<FileUploadHeader> selectedHeaders) {
-		return this.uploadDAO.isValidateApprove(selectedHeaders, Status.DOWNLOADED.getValue());
+	public String isValidateApprove(List<FileUploadHeader> selectedHeaders) {
+		StringBuilder builder = new StringBuilder();
+
+		for (FileUploadHeader header : selectedHeaders) {
+			if (!header.isDownloadReq()) {
+				continue;
+			}
+
+			if (!this.uploadDAO.isValidateApprove(header.getId(), Status.DOWNLOADED.getValue())) {
+				if (builder.length() > 0) {
+					builder.append(", ");
+				}
+
+				builder.append(header.getId());
+			}
+		}
+		
+		return builder.toString();
 	}
 
 	@Autowired
