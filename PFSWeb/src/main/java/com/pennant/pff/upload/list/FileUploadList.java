@@ -1062,8 +1062,10 @@ public class FileUploadList extends Window implements Serializable {
 			return;
 		}
 
-		if (uploadService.isValidateApprove(selectedHeaders) != selectedHeaders.size()) {
-			MessageUtil.showError(Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "" }));
+		String uploadIDs = uploadService.isValidateApprove(selectedHeaders);
+		if (StringUtils.isNotEmpty(uploadIDs)) {
+			MessageUtil.showError(
+					Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "Upload ID : (" + uploadIDs + ")," }));
 			return;
 		}
 
@@ -1079,18 +1081,10 @@ public class FileUploadList extends Window implements Serializable {
 			return;
 		}
 
-		if (uploadService.isValidateApprove(selectedHeaders) != selectedHeaders.size()) {
-			StringBuilder idList = new StringBuilder();
-
-			for (FileUploadHeader header : selectedHeaders) {
-				if (idList.length() > 1) {
-					idList.append(", ");
-				}
-
-				idList.append(header.getId());
-			}
+		String uploadIDs = uploadService.isValidateApprove(selectedHeaders);
+		if (StringUtils.isNotEmpty(uploadIDs)) {
 			MessageUtil.showError(
-					Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "Upload ID : " + idList.toString() }));
+					Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "Upload ID : (" + uploadIDs + ")," }));
 			return;
 		}
 
@@ -1415,6 +1409,8 @@ public class FileUploadList extends Window implements Serializable {
 				dowButton.setDisabled(!((int) deStatus.getSuccessRecords() > 0));
 				viewButton.setDisabled(!((int) deStatus.getFailedRecords() > 0));
 			}
+
+			uph.setDownloadReq(!dowButton.isDisabled());
 
 			item.setAttribute("id", id);
 			item.setAttribute("data", uph);
