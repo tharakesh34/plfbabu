@@ -24,12 +24,9 @@
  */
 package com.pennant.webui.limit.limitdetails;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -71,9 +68,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/Limit/LimitDetails/LimitDetailsList.zul file.<br>
  * ************************************************************<br>
  */
-public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements Serializable {
+public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(LimitDetailListCtrl.class);
 
 	/*
 	 * ************************************************************************ All the components that are defined here

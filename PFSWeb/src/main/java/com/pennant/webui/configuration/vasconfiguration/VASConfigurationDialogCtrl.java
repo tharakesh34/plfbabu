@@ -36,8 +36,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.sinnlabs.zk.ui.CodeMirror;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.util.media.Media;
@@ -186,8 +186,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	protected Label postModuleDesc;
 	protected Label postSubModuleDesc;
 
-	protected CodeMirror postValidation;
-	protected CodeMirror preValidation;
+	protected Codemirror postValidation;
+	protected Codemirror preValidation;
 	protected Listbox prevalidationListbox;
 	protected Listbox postValidationListbox;
 

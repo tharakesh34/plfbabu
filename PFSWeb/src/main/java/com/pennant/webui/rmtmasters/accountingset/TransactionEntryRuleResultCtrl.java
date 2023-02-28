@@ -8,7 +8,7 @@ import javax.script.ScriptException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.sinnlabs.zk.ui.CodeMirror;
+import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.zk.ui.event.Event;
@@ -40,7 +40,7 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 	 */
 	protected Window window_TransactionEntryRuleResult; // autowired
 
-	protected CodeMirror condition; // autowired
+	protected Codemirror condition; // autowired
 	protected Grid fields; // autowired
 	protected Rows rows_Fields; // autowired
 	protected Button btn_Stimulate; // autowired

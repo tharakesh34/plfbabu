@@ -109,6 +109,7 @@ public class OTSTasklet implements Tasklet {
 				if (fsh == null) {
 					continue;
 				}
+				settlementService.loadSettlementData(fsh);
 				fsh.setAppDate(appDate);
 				validSettlementCancellation = true;
 			}

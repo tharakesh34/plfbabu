@@ -12,7 +12,7 @@ import javax.script.ScriptException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.sinnlabs.zk.ui.CodeMirror;
+import org.zkoss.codemirror.Codemirror;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -47,7 +47,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_RuleResultSimulation;
-	protected CodeMirror condition;
+	protected Codemirror condition;
 	protected Grid fields;
 	protected Rows rows_Fields;
 	protected Button btn_Stimulate;

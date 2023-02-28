@@ -35,7 +35,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.sinnlabs.zk.ui.CodeMirror;
+import org.zkoss.codemirror.Codemirror;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -90,8 +90,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 	protected Tree tree;
 	protected Space space;
-	protected CodeMirror codemirror;
-	protected CodeMirror splCodemirror;
+	protected Codemirror codemirror;
+	protected Codemirror splCodemirror;
 	protected Tabbox tabbox;
 	protected Tabs tabs;
 	protected Tab treeTab;
@@ -227,7 +227,7 @@ public class JavaScriptBuilder extends Groupbox {
 		this.scriptTabpanel = new Tabpanel();
 		this.scriptTabpanel.setParent(tabPanels);
 
-		this.splCodemirror = new CodeMirror();
+		this.splCodemirror = new Codemirror();
 		this.splCodemirror.setWidth("100%");
 		this.splCodemirror.setReadonly(false);
 		// this.splCodemirror.setConfig("lineNumbers:true");
@@ -236,7 +236,7 @@ public class JavaScriptBuilder extends Groupbox {
 		this.splCodemirror.setStyle("overflow:auto;");
 		this.splCodemirror.setParent(this.specialRulescriptTabpanel);
 
-		this.codemirror = new CodeMirror();
+		this.codemirror = new Codemirror();
 		this.codemirror.setWidth("100%");
 		this.codemirror.setReadonly(true);
 		// this.codemirror.setConfig("lineNumbers:true");

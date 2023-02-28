@@ -2158,7 +2158,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				String nextRoleCode = crossLoanHKnockOff.getNextRoleCode();
 
 				String msg = PennantApplicationUtil.getSavingStatus(crossLoanHKnockOff.getRoleCode(), nextRoleCode,
-						crossLoanHKnockOff.getCrossLoanTransfer().getFromFinReference(), " Loan ",
+						crossLoanHKnockOff.getCrossLoanTransfer().getToFinReference(), " Loan ",
 						crossLoanHKnockOff.getRecordStatus(), false);
 				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();

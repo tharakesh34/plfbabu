@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
@@ -53,10 +51,8 @@ import com.pennanttech.service.AmazonS3Bucket;
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class NESLFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
-
+public class NESLFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(NESLFileDownloadListCtrl.class);
 
 	protected Window window_NESLFileDownloadList;
 	protected Borderlayout borderLayout_NESLFileDownloadList;

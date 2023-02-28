@@ -33,9 +33,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.sinnlabs.zk.ui.CodeMirror;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.codemirror.Codemirror;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -101,9 +101,9 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	protected Textbox subCaption; // autoWired
 	protected Textbox xAxisName; // autoWired
 	protected Textbox yAxisName; // autoWiredR
-	protected CodeMirror query; // autoWired
-	protected CodeMirror dataXML; // autoWired
-	protected CodeMirror remarks; // autoWired
+	protected Codemirror query; // autoWired
+	protected Codemirror dataXML; // autoWired
+	protected Codemirror remarks; // autoWired
 	protected Checkbox isAdtDataSource; // autoWired
 	protected Checkbox isMultiSeries; // autoWired
 	protected Checkbox isDataXML; // autoWired
