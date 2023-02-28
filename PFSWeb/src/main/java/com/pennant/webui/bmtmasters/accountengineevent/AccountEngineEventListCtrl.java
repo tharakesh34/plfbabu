@@ -26,8 +26,6 @@ package com.pennant.webui.bmtmasters.accountengineevent;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -58,7 +56,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEvent> {
 	private static final long serialVersionUID = -3818155098220806436L;
-	private static final Logger logger = LogManager.getLogger(AccountEngineEventListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding Component with the same 'id' in the ZUL-file

@@ -26,8 +26,6 @@ package com.pennant.webui.customermasters.customeradditionaldetail;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -57,7 +55,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerAdditionalDetailListCtrl extends GFCBaseListCtrl<CustomerAdditionalDetail> {
 	private static final long serialVersionUID = -4292260671471272242L;
-	private static final Logger logger = LogManager.getLogger(CustomerAdditionalDetailListCtrl.class);
 
 	protected Window window_CustomerAdditionalDetailList;
 	protected Borderlayout borderLayout_CustomerAdditionalDetailList;

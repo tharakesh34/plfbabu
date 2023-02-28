@@ -29,6 +29,8 @@ public class JsonMapperUtil {
 
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
+				.configure(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME, true)
+
 				.serializationInclusion(Include.NON_NULL)
 
 				.defaultDateFormat(defaultDateFormat)

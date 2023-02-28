@@ -306,6 +306,8 @@ public abstract class JsonService<T> {
 
 					.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
+					.configure(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME, true)
+
 					.serializationInclusion(Include.NON_NULL)
 
 					.serializationInclusion(Include.NON_EMPTY).build();
@@ -320,6 +322,8 @@ public abstract class JsonService<T> {
 
 					.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
+					.configure(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME, true)
+
 					.serializationInclusion(Include.NON_NULL)
 
 					.serializationInclusion(Include.NON_EMPTY).build();
@@ -332,6 +336,8 @@ public abstract class JsonService<T> {
 				.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+				.configure(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME, true)
 
 				.serializationInclusion(Include.NON_NULL)
 

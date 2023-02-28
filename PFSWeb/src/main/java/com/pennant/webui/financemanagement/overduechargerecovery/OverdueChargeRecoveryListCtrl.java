@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -85,7 +83,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueChargeRecovery> {
 	private static final long serialVersionUID = -4562972510077651582L;
-	private static final Logger logger = LogManager.getLogger(OverdueChargeRecoveryListCtrl.class);
 
 	protected Window window_OverdueChargeRecoveryList;
 	protected Borderlayout borderLayout_OverdueChargeRecoveryList;

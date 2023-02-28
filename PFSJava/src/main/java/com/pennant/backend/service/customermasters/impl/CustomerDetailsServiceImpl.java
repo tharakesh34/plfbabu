@@ -3611,11 +3611,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private AuditDetail validatePersonalInfo(AuditDetail auditDetail, Customer customer) {
 		logger.debug(Literal.ENTERING);
 
-		if (StringUtils.isBlank(customer.getCustCRCPR())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "panNumber";
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-		}
+		/*
+		 * if (StringUtils.isBlank(customer.getCustCRCPR())) { String[] valueParm = new String[1]; valueParm[0] =
+		 * "panNumber"; auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm))); }
+		 */
 
 		if (StringUtils.isNotBlank(customer.getCustCRCPR())) {
 			String regExp = PennantRegularExpressions.REGEX_PANNUMBER;
