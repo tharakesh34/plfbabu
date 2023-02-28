@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
@@ -40,9 +38,8 @@ import com.pennanttech.pff.cersai.CERSAIDownloadProcess;
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class CERSAIFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
+public class CERSAIFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(CERSAIFileDownloadListctrl.class);
 
 	protected Window window_CERSAIFileDownloadList;
 	protected Borderlayout borderLayout_CERSAIDownloadList;
