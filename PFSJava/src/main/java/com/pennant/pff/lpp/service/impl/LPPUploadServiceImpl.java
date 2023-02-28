@@ -141,7 +141,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 
 		Long finID = financeMainDAO.getFinID(detail.getReference());
 
-		if (PennantConstants.NO.equals(detail.getApplyOverDueOD())) {
+		if (PennantConstants.NO.equals(detail.getApplyOverDue())) {
 			pr.setApplyODPenalty(false);
 		} else {
 			pr.setApplyODPenalty(true);
@@ -283,13 +283,13 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (StringUtils.isBlank(detail.getApplyOverDueOD())) {
+		if (StringUtils.isBlank(detail.getApplyOverDue())) {
 			setError(detail, LPPUploadError.LPP03);
 			return;
 		}
 
-		boolean applyOverDue = PennantConstants.YES.equals(detail.getApplyOverDueOD());
-		if (!(PennantConstants.NO.equals(detail.getApplyOverDueOD()) || applyOverDue)) {
+		boolean applyOverDue = PennantConstants.YES.equals(detail.getApplyOverDue());
+		if (!(PennantConstants.NO.equals(detail.getApplyOverDue()) || applyOverDue)) {
 			setError(detail, LPPUploadError.LPP04);
 			return;
 		}
@@ -298,7 +298,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		BigDecimal amountOrPercent = detail.getAmountOrPercent();
 		String calculatedOn = detail.getCalculatedOn();
 
-		if (PennantConstants.NO.equals(detail.getApplyOverDueOD())
+		if (PennantConstants.NO.equals(detail.getApplyOverDue())
 				&& (StringUtils.isNotBlank(reference) || StringUtils.isNotBlank(loanType))) {
 			if (StringUtils.isNotBlank(calculatedOn) || (StringUtils.isNotBlank(detail.getIncludeGraceDays()))
 					|| (StringUtils.isNotBlank(penaltyType)) || StringUtils.isNotBlank(detail.getAllowWaiver())
@@ -309,12 +309,17 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			}
 		}
 
-		if (PennantConstants.YES.equals(detail.getApplyOverDueOD())) {
+		if (PennantConstants.YES.equals(detail.getApplyOverDue())) {
 			boolean allowWaiver = PennantConstants.YES.equals(detail.getAllowWaiver());
 			boolean includeGraceDays = PennantConstants.YES.equals(detail.getIncludeGraceDays());
 
 			if (!(PennantConstants.NO.equals(detail.getAllowWaiver()) || allowWaiver)) {
 				setError(detail, LPPUploadError.LPP04);
+				return;
+			}
+
+			if (!(PennantConstants.NO.equals(detail.getIncludeGraceDays()) || includeGraceDays)) {
+				setError(detail, LPPUploadError.LPP19);
 				return;
 			}
 
@@ -344,6 +349,12 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 					return;
 				}
 			}
+
+			if (StringUtils.isBlank(penaltyType)) {
+				setError(detail, LPPUploadError.LPP05);
+				return;
+			}
+
 			switch (penaltyType) {
 			case ChargeType.FLAT:
 			case ChargeType.FLAT_ON_PD_MTH:
@@ -372,9 +383,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 					return;
 				}
 				break;
-			default:
-				setError(detail, LPPUploadError.LPP05);
-				break;
+
 			}
 		}
 	}
