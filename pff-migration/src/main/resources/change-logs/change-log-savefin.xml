@@ -1855,7 +1855,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="82" author="rahul.r">
 		<sql>
 			<![CDATA[
