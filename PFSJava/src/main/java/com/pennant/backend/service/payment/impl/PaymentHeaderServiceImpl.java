@@ -931,8 +931,13 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		return this.paymentHeaderDAO.getInProgressExcessAmt(finId, receiptId);
 	}
 
-	public PaymentHeader prepareRefund(AutoRefundLoan arl, List<PaymentDetail> pdList, PaymentInstruction payInst) {
+	@Override
+	public PaymentHeader prepareRefund(AutoRefundLoan arl) {
 		logger.debug(Literal.ENTERING);
+
+		List<PaymentDetail> payDtlList = arl.getPaymentDetails();
+
+		PaymentInstruction payInst = arl.getPaymentInstruction();
 
 		LoggedInUser userDetails = PFSBatchAdmin.loggedInUser;
 		Timestamp sysDate = new Timestamp(System.currentTimeMillis());
@@ -942,8 +947,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		ph.setFinID(arl.getFinID());
 		ph.setFinReference(arl.getFinReference());
 		ph.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
-		ph.setCreatedOn(appDate);
-		ph.setApprovedOn(appDate);
+		ph.setCreatedOn(sysDate);
+		ph.setApprovedOn(sysDate);
 		ph.setStatus(RepayConstants.PAYMENT_APPROVE);
 		ph.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		ph.setNewRecord(true);
@@ -956,7 +961,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		ph.setFinSource(UploadConstants.FINSOURCE_ID_AUTOPROCESS);
 
 		BigDecimal totRefund = BigDecimal.ZERO;
-		for (PaymentDetail pd : pdList) {
+		for (PaymentDetail pd : payDtlList) {
 			pd.setRecordType(PennantConstants.RCD_ADD);
 			pd.setNewRecord(true);
 			pd.setVersion(1);
@@ -967,6 +972,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 			totRefund = totRefund.add(pd.getAmount());
 		}
+
+		ph.setPaymentAmount(totRefund);
 
 		payInst.setPostDate(appDate);
 		payInst.setPaymentAmount(totRefund);
@@ -980,7 +987,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		payInst.setLastMntBy(userDetails.getUserId());
 		payInst.setLastMntOn(sysDate);
 
-		ph.setPaymentDetailList(pdList);
+		ph.setPaymentDetailList(payDtlList);
 		ph.setPaymentInstruction(payInst);
 
 		logger.debug(Literal.LEAVING);
@@ -1105,9 +1112,4 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
-	@Override
-	public PaymentHeader prepareRefund(AutoRefundLoan arl) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
