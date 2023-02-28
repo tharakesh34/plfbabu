@@ -3,8 +3,6 @@ package com.pennanttech.pff.overdraft.web;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -35,7 +33,6 @@ import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 
 public class ManualBlockingListCtrl extends GFCBaseListCtrl<OverdraftLimit> {
 	private static final long serialVersionUID = -4317219679571013354L;
-	private static final Logger logger = LogManager.getLogger(ManualBlockingListCtrl.class);
 
 	protected Window window_ManualBlockingList;
 	protected Borderlayout borderlayout_ManualBlockingList;

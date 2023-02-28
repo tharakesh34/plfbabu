@@ -26,8 +26,6 @@ package com.pennant.webui.customermasters.customerincome;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -55,7 +53,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> {
 	private static final long serialVersionUID = -5018975982654527543L;
-	private static final Logger logger = LogManager.getLogger(CustomerIncomeListCtrl.class);
 
 	protected Window window_CustomerIncomeList;
 	protected Borderlayout borderLayout_CustomerIncomeList;
