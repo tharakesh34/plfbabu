@@ -3413,6 +3413,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			covenant.setRemarks(StringUtils.trimToEmpty(covenantType.getAdditionalField1()));
 			covenant.setTargetDate(DateUtil.formatToLongDate(covenantType.getReceivableDate()));
 			covenant.setStatus(StringUtils.trimToEmpty(covenantType.getRecordStatus()));
+			covenant.setPdd(covenantType.isPdd());
+			covenant.setAllowWaiver(covenantType.isAllowWaiver());
+			covenant.setOtc(covenantType.isOtc());
 
 			if (covenant.isPdd()) {
 				covenant.setTargetDate(DateUtil.formatToLongDate(covenantType.getReceivableDate()));
