@@ -471,10 +471,7 @@
 	<!-- Income Amortization IND AS for InActive Loans -->
 	<bean id="finMaturityService" class="com.pennant.app.core.FinMaturityService" parent="serviceHelper">
 		<property name="dataSource" ref="dataSource" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
-		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
 
 	<!-- ProjectedAmortizationService -->

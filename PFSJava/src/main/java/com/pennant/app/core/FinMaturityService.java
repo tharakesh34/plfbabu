@@ -49,9 +49,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -70,10 +67,6 @@ public class FinMaturityService extends ServiceHelper {
 	private Logger logger = LogManager.getLogger(FinMaturityService.class);
 
 	private DataSource dataSource;
-
-	private RuleDAO ruleDAO;
-	private ProjectedAmortizationDAO projectedAmortizationDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private ProjectedAmortizationService projectedAmortizationService;
 
 	/**
@@ -221,17 +214,5 @@ public class FinMaturityService extends ServiceHelper {
 
 	public void setProjectedAmortizationService(ProjectedAmortizationService projectedAmortizationService) {
 		this.projectedAmortizationService = projectedAmortizationService;
-	}
-
-	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
-		this.projectedAmortizationDAO = projectedAmortizationDAO;
-	}
-
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
 	}
 }
