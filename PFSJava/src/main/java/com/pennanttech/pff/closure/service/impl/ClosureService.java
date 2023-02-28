@@ -1,6 +1,7 @@
 package com.pennanttech.pff.closure.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -101,7 +102,7 @@ public class ClosureService {
 			return;
 		} else {
 			updateTerminationExcessAmount(finEODEvent, calcClosureAmt);
-			finEODEvent.setFinODDetails(schdData.getFinODDetails());
+			finEODEvent.setFinODDetails(new ArrayList<>());
 		}
 
 		logger.debug(Literal.ENTERING);
