@@ -41,7 +41,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
-import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -78,7 +77,6 @@ public class LatePayDueCreationService extends ServiceHelper {
 
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private CustomerAddresDAO customerAddresDAO;
-	private FeeTypeDAO feeTypeDAO;
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 
@@ -600,11 +598,6 @@ public class LatePayDueCreationService extends ServiceHelper {
 		}
 
 		return getTotalTaxAmount(taxPercmap, amount, feeType.getTaxComponent());
-
-	}
-
-	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
-		this.feeTypeDAO = feeTypeDAO;
 	}
 
 	public void setFinODAmzTaxDetailDAO(FinODAmzTaxDetailDAO finODAmzTaxDetailDAO) {
@@ -622,5 +615,4 @@ public class LatePayDueCreationService extends ServiceHelper {
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
-
 }
