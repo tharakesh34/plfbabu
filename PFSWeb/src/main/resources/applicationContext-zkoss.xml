@@ -1979,11 +1979,6 @@
 		<property name="securityGroupService" ref="securityGroupService" />
 	</bean>
 
-	<bean id="securityGroupSearchCtrl" class="com.pennant.webui.administration.securitygroup.SecurityGroupSearchCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="securityGroupService" ref="securityGroupService" />
-	</bean>
-
 	<!--============= Security RoleGroup Details ============== -->
 
 	<bean id="securityRoleGroupsDailogCtrl"
@@ -3077,12 +3072,6 @@
 		class="com.pennant.webui.lmtmasters.facilityreferencedetail.FacilityReferenceDetailDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
-		<property name="facilityReferenceDetailService" ref="facilityReferenceDetailService" />
-	</bean>
-
-	<bean id="facilityReferenceDetailSearchCtrl"
-		class="com.pennant.webui.lmtmasters.facilityreferencedetail.FacilityReferenceDetailSearchCtrl" parent="basisCtrl"
-		scope="prototype">
 		<property name="facilityReferenceDetailService" ref="facilityReferenceDetailService" />
 	</bean>
 
