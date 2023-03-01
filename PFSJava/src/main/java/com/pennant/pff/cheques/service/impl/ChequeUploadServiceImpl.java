@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +34,7 @@ import com.pennant.pff.cheques.dao.ChequeUploadDAO;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.receipt.constants.Allocation;
@@ -86,6 +86,15 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 					Long finID = financeMainDAO.getActiveFinID(finReference);
 
+					if (finID == null) {
+						for (ChequeUpload detail : chequeUploads) {
+							detail.setProgress(EodConstants.PROGRESS_FAILED);
+							detail.setErrorCode("9999");
+							detail.setErrorDesc("Fin Reference is not valid.");
+						}
+						continue;
+					}
+
 					ChequeHeader chequeHeader = chequeHeaderService.getChequeHeaderByRef(finID);
 
 					if (chequeHeader == null) {
@@ -95,14 +104,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 					}
 
 					chequeHeader.setUserDetails(header.getUserDetails());
-
-					if (!CollectionUtils.isEmpty(chequeHeader.getChequeDetailList())) {
-						chequeHeader.setBankBranchID(chequeHeader.getChequeDetailList().get(0).getBankBranchID());
-						chequeHeader.setAccHolderName(chequeHeader.getChequeDetailList().get(0).getAccHolderName());
-						chequeHeader.setAccountNo(chequeHeader.getChequeDetailList().get(0).getAccountNo());
-						chequeHeader.setChequeSerialNumber(
-								chequeHeader.getChequeDetailList().get(0).getChequeSerialNumber());
-					}
 
 					List<ChequeDetail> cheques = new ArrayList<>();
 
@@ -218,9 +219,9 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		ChequeDetail chequeDetail = upload.getChequeDetail();
 
 		String seq = chequeDetail.getChequeSerialNumber();
-		String AccNo = chequeDetail.getAccountNo();
+		String accNo = chequeDetail.getAccountNo();
 
-		String status = chequeDetailDAO.getChequeStatus(seq, AccNo);
+		String status = chequeDetailDAO.getChequeStatus(seq, accNo);
 
 		return !(RepayConstants.PAYTYPE_PRESENTMENT.equals(status)
 				|| DisbursementConstants.STATUS_REALIZED.equals(status) || Allocation.BOUNCE.equals(status));
@@ -257,6 +258,10 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 		if (object instanceof ChequeUpload) {
 			upload = (ChequeUpload) object;
+		}
+
+		if (upload == null) {
+			throw new AppException("Invalid Data transferred...");
 		}
 
 		ChequeDetail cd = upload.getChequeDetail();
@@ -317,6 +322,15 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		if (error != null) {
 			setError(uploads, error);
 			return;
+		}
+
+		ChequeUpload upload = uploads.get(uploads.size() - 1);
+
+		if (upload != null) {
+			header.setBankBranchID(upload.getChequeDetail().getBankBranchID());
+			header.setAccHolderName(upload.getChequeDetail().getAccHolderName());
+			header.setAccountNo(upload.getChequeDetail().getAccountNo());
+			header.setChequeSerialNumber(upload.getChequeDetail().getChequeSerialNumber());
 		}
 
 		error = chequeHeaderService.chequeValidationForUpdate(fd, PennantConstants.method_save, "");
