@@ -3,6 +3,7 @@ package com.pennant.backend.service.payment.impl;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -102,6 +103,7 @@ public class PaymentInstUploadThreadProcess {
 	private void processRefunds(PaymentInstUploadDetail detail) {
 
 		// Process Payment Header
+		Timestamp sysDate = new Timestamp(System.currentTimeMillis());
 
 		long uploadheaderid = detail.getHeaderId();
 		long uploaddetailid = detail.getId();
@@ -114,21 +116,19 @@ public class PaymentInstUploadThreadProcess {
 
 			Date appDate = SysParamUtil.getAppDate();
 
-			PaymentHeader ph = new PaymentHeader();
-
 			String finreference = detail.getReference();
 			Long finId = detail.getReferenceID();
 
-			ph = new PaymentHeader();
+			PaymentHeader ph = new PaymentHeader();
 			ph.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			ph.setFinSource(UploadConstants.FINSOURCE_ID_UPLOAD);
 
 			ph.setFinReference(finreference);
 			ph.setFinID(finId);
 			ph.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
-			ph.setCreatedOn(appDate);
+			ph.setCreatedOn(sysDate);
 			ph.setPaymentAmount(detail.getPayAmount());
-			ph.setApprovedOn(appDate);
+			ph.setApprovedOn(sysDate);
 			ph.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			ph.setPaymentInstruction(refundBeneficiary.getBeneficiary(finId, appDate, true));
 			ph.getPaymentInstruction().setPaymentAmount(detail.getPayAmount());

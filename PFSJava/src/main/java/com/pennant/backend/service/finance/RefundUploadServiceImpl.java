@@ -13,8 +13,8 @@
 package com.pennant.backend.service.finance;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -316,15 +316,15 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	public PaymentHeader preparePayments(RefundUpload refundUpload) {
 		logger.debug("Entering");
 
-		Date appDate = SysParamUtil.getAppDate();
+		Timestamp sysDate = new Timestamp(System.currentTimeMillis());
 		long bankBranchId = 0;
 		// Payment Header
 		PaymentHeader paymentHeader = new PaymentHeader();
 		paymentHeader.setFinReference(refundUpload.getFinReference());
 		paymentHeader.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
 		paymentHeader.setPaymentAmount(refundUpload.getPayableAmount());
-		paymentHeader.setCreatedOn(appDate);
-		paymentHeader.setApprovedOn(appDate);
+		paymentHeader.setCreatedOn(sysDate);
+		paymentHeader.setApprovedOn(sysDate);
 		paymentHeader.setStatus(RepayConstants.PAYMENT_APPROVE);
 		paymentHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		paymentHeader.setNewRecord(true);

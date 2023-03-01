@@ -766,7 +766,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		try {
 			if (aPaymentHeader.isNewRecord()) {
 				aPaymentHeader.setStatus(RepayConstants.PAYMENT_INTIATED);
-				aPaymentHeader.setCreatedOn(SysParamUtil.getAppDate());
+				Timestamp sysDate = new Timestamp(System.currentTimeMillis());
+				aPaymentHeader.setCreatedOn(sysDate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1017,10 +1018,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
 			aPaymentHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-
+			Timestamp sysDate = new Timestamp(System.currentTimeMillis());
 			if (PennantConstants.RCD_STATUS_APPROVED.equals(aPaymentHeader.getRecordStatus())) {
 				aPaymentHeader.setStatus(RepayConstants.PAYMENT_APPROVE);
-				aPaymentHeader.setApprovedOn(SysParamUtil.getAppDate());
+				aPaymentHeader.setApprovedOn(sysDate);
 			}
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
