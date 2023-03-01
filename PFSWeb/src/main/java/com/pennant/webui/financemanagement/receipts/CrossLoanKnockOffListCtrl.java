@@ -219,17 +219,18 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			filters[0] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
 			this.searchObject.addFilters(filters);
 		} else if (FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER.equals(this.module)) {
+			
 			Filter[] filters = new Filter[3];
-			filters[0] = new Filter("ReceiptModeStatus", "C");
+			filters[0] = new Filter("RECEIPTPURPOSE", "SchdlRepayment", Filter.OP_EQUAL);
 			filters[1] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
-			filters[2] = new Filter("RECEIPTPURPOSE", "SchdlRepayment", Filter.OP_EQUAL);
+			filters[2] = new Filter("ReceiptModeStatus", "C");
 			this.searchObject.addFilters(filters);
 		} else if (FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_MAKER.equals(this.module)) {
-			Filter[] filters = new Filter[3];
-			filters[0] = new Filter("ReceiptModeStatus", "C", Filter.OP_NOT_EQUAL);
-			filters[1] = new Filter("RecordStatus", "APPROVED");
-			filters[2] = new Filter("RECEIPTPURPOSE", "SchdlRepayment", Filter.OP_EQUAL);
-			this.searchObject.addFilters(filters);
+
+			whereClause.append(
+					"  RECEIPTPURPOSE = 'SchdlRepayment' and ((RECEIPTMODESTATUS = 'R' and (NEXTROLECODE is null Or NEXTROLECODE = '')) or NEXTROLECODE like '%MAKER')  and (KnockOffType = '"
+							+ KnockOffType.CROSS_LOAN.code()
+							+ "' or KnockOffType  is null) and (RecordStatus = 'Approved' or RecordStatus = 'Resubmitted')");
 		}
 
 		// Filtering added based on user branch and division
