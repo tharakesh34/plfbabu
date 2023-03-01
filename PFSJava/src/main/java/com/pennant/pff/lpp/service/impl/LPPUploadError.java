@@ -28,7 +28,7 @@ public enum LPPUploadError {
 
 	LPP12(" Fin Reference is not in active."),
 
-	LPP13(" Should give only one Either FinReference or LoanType. "),
+	LPP13("Loan Type is invalid to the given Fin Reference."),
 
 	LPP14(" ApplyToExistingLoans Possible values should be 'Y' or 'N'. "),
 
@@ -40,7 +40,11 @@ public enum LPPUploadError {
 
 	LPP18(" It should not be blank if allow waiver captured as 'y'."),
 
-	LPP19(" IncludeGraceDays Possible values should be 'Y' or 'N'. ");
+	LPP19(" IncludeGraceDays Possible values should be 'Y' or 'N'. "),
+
+	LPP20("Grace days should be 0, since Include Grace Days is N."),
+
+	LPP21("Max Waiver should be 0, since Allow Waiver is N.");
 
 	private String description;
 

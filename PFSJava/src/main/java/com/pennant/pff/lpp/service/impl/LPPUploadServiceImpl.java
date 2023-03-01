@@ -254,25 +254,27 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (StringUtils.isNotBlank(reference) && StringUtils.isNotBlank(loanType)) {
-			setError(detail, LPPUploadError.LPP13);
-			return;
-		}
+		if (StringUtils.isNotBlank(reference)) {
+			FinanceMain fm = financeMainDAO.getFinanceMain(reference);
 
-		FinanceMain fm = financeMainDAO.getFinanceMain(reference);
+			if (StringUtils.isNotBlank(reference) && !fm.isFinIsActive()) {
+				setError(detail, LPPUploadError.LPP12);
+				return;
+			}
 
-		if (StringUtils.isNotBlank(reference) && !fm.isFinIsActive()) {
-			setError(detail, LPPUploadError.LPP12);
-			return;
-		}
+			if (StringUtils.isNotBlank(reference) && fm == null) {
+				setError(detail, LPPUploadError.LPP02);
+				return;
+			}
 
-		if (StringUtils.isNotBlank(reference) && fm == null) {
-			setError(detail, LPPUploadError.LPP02);
-			return;
+			if (StringUtils.isNotBlank(loanType) && !fm.getFinType().equals(loanType)) {
+				setError(detail, LPPUploadError.LPP13);
+				return;
+			}
 		}
 
 		String existingLoans = detail.getApplyToExistingLoans();
-		if (StringUtils.isNotBlank(loanType)
+		if (StringUtils.isNotBlank(loanType) && StringUtils.isBlank(reference)
 				&& !(PennantConstants.NO.equals(existingLoans) || PennantConstants.YES.equals(existingLoans))) {
 			setError(detail, LPPUploadError.LPP14);
 			return;
@@ -323,6 +325,11 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 
+			if (!includeGraceDays && detail.getGraceDays() != 0) {
+				setError(detail, LPPUploadError.LPP20);
+				return;
+			}
+
 			if (includeGraceDays && (detail.getGraceDays() < 0 || detail.getGraceDays() > 999)) {
 				setError(detail, LPPUploadError.LPP15);
 				return;
@@ -330,6 +337,11 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 
 			if (!includeGraceDays && detail.getGraceDays() > 0) {
 				setError(detail, LPPUploadError.LPP16);
+				return;
+			}
+
+			if (!allowWaiver && detail.getMaxWaiver().compareTo(BigDecimal.ZERO) != 0) {
+				setError(detail, LPPUploadError.LPP21);
 				return;
 			}
 
@@ -383,7 +395,6 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 					return;
 				}
 				break;
-
 			}
 		}
 	}
