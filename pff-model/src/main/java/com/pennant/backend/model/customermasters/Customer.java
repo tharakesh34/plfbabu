@@ -355,6 +355,7 @@ public class Customer extends AbstractWorkflowEntity {
 	private String lovDescCustAddrCountry;
 	private String lovDescCustAddrCity;
 	private String lovDescCustAddrProvince;
+	private boolean prospectAsCIF = false;
 
 	public Customer() {
 		super();
@@ -435,6 +436,7 @@ public class Customer extends AbstractWorkflowEntity {
 		excludeFields.add("lovDescCustAddrCountry");
 		excludeFields.add("lovDescCustAddrCity");
 		excludeFields.add("lovDescCustAddrProvince");
+		excludeFields.add("prospectAsCIF");
 
 		return excludeFields;
 	}
@@ -2245,6 +2247,14 @@ public class Customer extends AbstractWorkflowEntity {
 
 	public void setLovDescCustAddrProvince(String lovDescCustAddrProvince) {
 		this.lovDescCustAddrProvince = lovDescCustAddrProvince;
+	}
+
+	public boolean isProspectAsCIF() {
+		return prospectAsCIF;
+	}
+
+	public void setprospectAsCIF(boolean prospectAsCIF) {
+		this.prospectAsCIF = prospectAsCIF;
 	}
 
 }

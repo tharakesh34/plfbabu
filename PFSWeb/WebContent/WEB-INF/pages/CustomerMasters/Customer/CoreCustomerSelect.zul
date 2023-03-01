@@ -36,6 +36,8 @@
 										</radio>
 										<radio id="prospect" label="${c:l('label_CoreCustomerDialog_Prospect.value')}">
 										</radio>
+										<radio id="prospectAsCif" label="${c:l('label_CoreCustomerDialog_ProspectAsCif.value')}">
+										</radio>
 									</radiogroup>
 								</cell>
 							</row>

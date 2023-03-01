@@ -308,8 +308,6 @@ public class EodService {
 			advancePaymentService.processAdvansePayments(custEODEvent);
 			logger.info("Advance payment process completed.");
 		}
-		// Auto Increment Grace End
-		changeGraceEndService.processChangeGraceEnd(custEODEvent);
 
 		logger.info("Auto grace extension process started...");
 		changeGraceEndService.processChangeGraceEnd(custEODEvent);
