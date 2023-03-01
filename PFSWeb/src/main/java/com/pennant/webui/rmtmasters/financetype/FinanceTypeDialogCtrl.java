@@ -1199,7 +1199,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.maxFPPAmount.setMandatory(true);
 			this.maxFPPAmount.setDisabled(false);
 			this.maxFPPPer.setVisible(false);
-			this.maxFPPCalOn.setValue("");
+			fillComboBox(this.maxFPPCalOn, PennantConstants.List_Select, partialpymtCalOn);
 			this.rowMaxFPPCalOn.setVisible(false);
 			this.spacePercentage.setVisible(false);
 			break;
@@ -1244,7 +1244,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.minPPAmount.setVisible(true);
 			this.minPPAmount.setDisabled(false);
 			this.minPPAmount.setMandatory(true);
-			this.minPPCalOn.setValue("");
+			fillComboBox(this.minPPCalOn, PennantConstants.List_Select, partpymt);
 			this.minPPPercentage.setVisible(false);
 			this.spaceMinPPPercentage.setVisible(false);
 			this.rowMinPPCalculationOn.setVisible(false);
@@ -1293,7 +1293,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.maxPPAmount.setDisabled(false);
 			this.minPPEmi.setVisible(false);
 			this.spaceMinPPEmi.setVisible(false);
-			this.maxPPCalOn.setValue("");
+			fillComboBox(this.maxPPCalOn, PennantConstants.List_Select, partpymt);
 			this.maxPPPercentage.setVisible(false);
 			this.spaceMaxPPPercentage.setVisible(false);
 			this.rowMaxPPCalculationOn.setVisible(false);
@@ -1315,7 +1315,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_MIN_EMI:
 			this.minPPEmi.setVisible(true);
 			this.spaceMinPPEmi.setVisible(true);
-			this.maxPPCalOn.setValue("");
+			fillComboBox(this.maxPPCalOn, PennantConstants.List_Select, partpymt);
 			this.maxPPPercentage.setVisible(false);
 			this.spaceMaxPPPercentage.setVisible(false);
 			this.maxPPAmount.setDisabled(true);
@@ -1331,7 +1331,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.maxPPAmount.setDisabled(true);
 			this.maxPPAmount.setVisible(false);
 			this.maxPPAmount.setMandatory(false);
-			this.maxPPCalOn.setValue("");
+			fillComboBox(this.maxPPCalOn, PennantConstants.List_Select, partpymt);
 			this.maxPPPercentage.setVisible(false);
 			this.spaceMaxPPPercentage.setVisible(false);
 			this.rowMaxPPCalculationOn.setVisible(false);
