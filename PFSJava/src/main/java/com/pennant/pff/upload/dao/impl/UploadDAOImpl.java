@@ -31,6 +31,7 @@ import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements UploadDAO {
 
@@ -196,13 +197,20 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 	@Override
 	public List<FileUploadHeader> getHeaderData(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate, String type, String stage) {
+			Date toDate, String type, String stage, String code) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, EntityCode, Type, FileName, TotalRecords, SuccessRecords, FailureRecords, ExecutionID");
-		sql.append(", Progress, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntOn, LastMntBy");
-		sql.append(", Version, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FILE_UPLOAD_HEADER");
-		sql.append(" Where Type = ? and Progress != ?");
+		sql.append(" uh.Id, uh.EntityCode, uh.Type, uh.FileName, uh.TotalRecords");
+		sql.append(", uh.SuccessRecords, uh.FailureRecords, uh.ExecutionID, uh.Progress");
+		sql.append(", uh.CreatedBy, uh.CreatedOn, uh.ApprovedBy, uh.ApprovedOn, uh.LastMntOn, uh.LastMntBy");
+		sql.append(", uh.Version, uh.RecordStatus, uh.RoleCode, uh.NextRoleCode");
+		sql.append(", uh.TaskId, uh.NextTaskId, uh.RecordType, uh.WorkflowId");
+		sql.append(" From FILE_UPLOAD_HEADER uh");
+
+		if (StringUtils.isNotEmpty(code) && "A".equals(stage) && UploadTypes.PAYINS_REFUND.name().equals(type)) {
+			sql.append(" Inner Join Clusters cl on cl.Entity = uh.EntityCode and cl.Code = ?");
+		}
+
+		sql.append(" Where uh.Type = ? and uh.Progress != ?");
 
 		StringBuilder whereClause = prepareWhereClause(roleCodes, entityCode, id, fromDate, toDate, stage);
 
@@ -216,6 +224,10 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
+
+			if (StringUtils.isNotEmpty(code) && "A".equals(stage) && UploadTypes.PAYINS_REFUND.name().equals(type)) {
+				ps.setString(++index, code);
+			}
 
 			ps.setString(++index, type);
 			ps.setInt(++index, Status.IN_PROCESS.getValue());
@@ -277,26 +289,26 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			whereClause.append(" and ");
 			whereClause.append("(");
 			if ("M".equals(stage)) {
-				whereClause.append("NextRoleCode is null or ");
+				whereClause.append("uh.NextRoleCode is null or ");
 			}
-			whereClause.append("NextRoleCode in (");
+			whereClause.append("uh.NextRoleCode in (");
 			whereClause.append(JdbcUtil.getInCondition(roleCodes));
 			whereClause.append("))");
 		}
 
 		if (StringUtils.isNotEmpty(entityCode)) {
 			whereClause.append(" and ");
-			whereClause.append("EntityCode = ?");
+			whereClause.append("uh.EntityCode = ?");
 		}
 
 		if (id != null && id > 0) {
 			whereClause.append(" and ");
-			whereClause.append(" ID = ?");
+			whereClause.append(" uh.ID = ?");
 		}
 
 		if (fromDate != null && toDate != null) {
 			whereClause.append(" and ");
-			whereClause.append(" (CreatedOn >= ? and CreatedOn < ?)");
+			whereClause.append(" (uh.CreatedOn >= ? and uh.CreatedOn < ?)");
 		}
 
 		return whereClause;
@@ -430,25 +442,12 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	}
 
 	@Override
-	public int isValidateApprove(List<FileUploadHeader> selectedHeaders, int status) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select count(ID) From FILE_UPLOAD_HEADER");
-		sql.append(" Where ID in (");
-		sql.append(JdbcUtil.getInCondition(selectedHeaders));
-		sql.append(") and Progress = ?");
+	public boolean isValidateApprove(long id, int status) {
+		String sql = "Select count(ID) From FILE_UPLOAD_HEADER Where ID = ? and Progress = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
-		Object[] obj = new Object[selectedHeaders.size() + 1];
-
-		int i = 0;
-		for (FileUploadHeader hdr : selectedHeaders) {
-			obj[i++] = hdr.getId();
-		}
-
-		obj[i] = status;
-
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, obj);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, id, status) > 0;
 	}
 
 	@Override
@@ -459,7 +458,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 		this.jdbcOperations.update(sql, st -> {
 			int index = 0;
-			
+
 			st.setInt(++index, sucessRecords);
 			st.setInt(++index, faildrecords);
 			st.setLong(++index, headerId);

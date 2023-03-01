@@ -23,9 +23,15 @@ public interface SettlementService {
 
 	FinSettlementHeader getSettlementByRef(String finReference, String type);
 
-	void processSettlementCancellation(long finID, Date settlementDate);
+	void processSettlementCancellation(FinSettlementHeader fsh);
 
-	void processSettlement(long finID, Date settlementDate);
+	void processSettlement(FinSettlementHeader fsh);
 
 	BigDecimal getSettlementAountReceived(long finId);
+
+	void loadSettlementData(FinSettlementHeader header);
+
+	boolean isValidSettlementProcess(FinSettlementHeader fsh);
+
+	FinSettlementHeader loadDataForCancellation(long finID, Date settlementDate);
 }

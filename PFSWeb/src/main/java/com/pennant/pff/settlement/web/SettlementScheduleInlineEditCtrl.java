@@ -22,6 +22,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 
 import com.pennant.CurrencyBox;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.settlement.model.SettlementSchedule;
@@ -224,6 +225,13 @@ public class SettlementScheduleInlineEditCtrl extends GFCBaseCtrl<SettlementSche
 		dateBox.setDisabled(false);
 		dateBox.setValue(schedule.getSettlementInstalDate());
 
+		if ((PennantConstants.RECORD_TYPE_NEW.equals(schedule.getRecordType())
+				&& PennantConstants.RCD_STATUS_SUBMITTED.equals(schedule.getRecordStatus()))
+				|| PennantConstants.RCD_STATUS_APPROVED.equals(schedule.getRecordStatus())
+				|| FinanceConstants.SETTLEMENT_CANCEL.equals(schedule.getModule())) {
+			dateBox.setDisabled(true);
+		}
+
 		Hbox hbox = new Hbox();
 		Space space = new Space();
 		space.setSpacing("2px");
@@ -254,6 +262,13 @@ public class SettlementScheduleInlineEditCtrl extends GFCBaseCtrl<SettlementSche
 		amount.setValue(schedule.getSettlementAmount());
 		amount.setAttribute("data", schedule);
 		amount.addForward("onFulfill", self, "onFulfillsettlementAmount");
+
+		if ((PennantConstants.RECORD_TYPE_NEW.equals(schedule.getRecordType())
+				&& PennantConstants.RCD_STATUS_SUBMITTED.equals(schedule.getRecordStatus()))
+				|| PennantConstants.RCD_STATUS_APPROVED.equals(schedule.getRecordStatus())
+				|| FinanceConstants.SETTLEMENT_CANCEL.equals(schedule.getModule())) {
+			amount.setReadonly(true);
+		}
 
 		Hbox hbox = new Hbox();
 		hbox.appendChild(amount);

@@ -1979,11 +1979,6 @@
 		<property name="securityGroupService" ref="securityGroupService" />
 	</bean>
 
-	<bean id="securityGroupSearchCtrl" class="com.pennant.webui.administration.securitygroup.SecurityGroupSearchCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="securityGroupService" ref="securityGroupService" />
-	</bean>
-
 	<!--============= Security RoleGroup Details ============== -->
 
 	<bean id="securityRoleGroupsDailogCtrl"
@@ -2563,14 +2558,7 @@
 
 	<bean id="overdueChargeRecoveryListCtrl"
 		class="com.pennant.webui.financemanagement.overduechargerecovery.OverdueChargeRecoveryListCtrl" parent="basisListCtrl"
-		scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
-		<property name="overdueChargeRecoveryService" ref="overdueChargeRecoveryService" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="latePayInterestService" ref="latePayInterestService" />
-	</bean>
+		scope="prototype"/>
 
 	<bean id="overdueChargeRecoveryDialogCtrl"
 		class="com.pennant.webui.financemanagement.overduechargerecovery.OverdueChargeRecoveryDialogCtrl" parent="basisCtrl"
@@ -3084,12 +3072,6 @@
 		class="com.pennant.webui.lmtmasters.facilityreferencedetail.FacilityReferenceDetailDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
-		<property name="facilityReferenceDetailService" ref="facilityReferenceDetailService" />
-	</bean>
-
-	<bean id="facilityReferenceDetailSearchCtrl"
-		class="com.pennant.webui.lmtmasters.facilityreferencedetail.FacilityReferenceDetailSearchCtrl" parent="basisCtrl"
-		scope="prototype">
 		<property name="facilityReferenceDetailService" ref="facilityReferenceDetailService" />
 	</bean>
 
@@ -6114,8 +6096,7 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="refundBeneficiary" ref="refundBeneficiary" />
-		<property name="receiptService" ref="receiptService" />
-		<property name="manualAdviseService" ref="manualAdviseService" />
+		<property name="feeRefundDetailService" ref="feeRefundDetailService" />
 	</bean>
 	<bean id="selectFeeRefundHeaderDialogCtrl" class="com.pennant.webui.payment.feerefundheader.SelectFeeRefundHeaderDialogCtrl"
 		parent="basisListCtrl" scope="prototype">

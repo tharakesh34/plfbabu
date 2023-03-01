@@ -142,7 +142,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> postingGroupList;
 	private static List<ValueLabel> PftDaysBasisList;
 	private static List<ValueLabel> schMthdList;
-	private static List<ValueLabel> repayMethodList;
 	private static List<ValueLabel> limitCategoryList;
 	private static List<ValueLabel> limitcheckTypes;
 	private static List<ValueLabel> facilityLevels;
@@ -192,8 +191,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> presentmentExclusionList;
 	private static List<Property> presentmentBatchStatusList;
 	private static List<RoundingTarget> roundingTargetList;
-	private static List<ValueLabel> jvPostingPurposeList;
-	private static List<ValueLabel> postingPurposeList;
 	private static List<ValueLabel> authTypes;
 	private static List<ValueLabel> presentmentsStatusList;
 	private static List<ValueLabel> presentmentsStatusListReport;
@@ -215,10 +212,8 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> disbursmentParty;
 	private static List<ValueLabel> disbursmentStatus;
 	private static List<ValueLabel> disbStatusList;
-	private static List<ValueLabel> chequeTypesList;
 
 	private static List<ValueLabel> feeTaxTypes;
-	private static List<ValueLabel> mandateMapping;
 	private static List<ValueLabel> presentmentMapping;
 	private static List<ValueLabel> responseStatus;
 	private static List<ValueLabel> expenseCalculatedOn;
@@ -344,7 +339,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> productTypeList;
 	private static List<ValueLabel> txFinTypeList;
 	private static List<ValueLabel> percType;
-	private static List<ValueLabel> betaConfiguration;
 	private static List<ValueLabel> purgEnvList = getPurgEnvironment();
 	private static List<ValueLabel> purgTypeList = getPurgType();
 	private static List<ValueLabel> purgActionList = getPurgAction();
@@ -1862,11 +1856,6 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ImportData_CustomerRating.value")));
 			importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_COUNTRY,
 					Labels.getLabel("label_ImportData_CountryDetails.value")));
-			// Below BMTCustStatusCodes download commented because of improper
-			// data from core system(duedays are 0 for all statuscodes named
-			// with 'M')
-			// importTablesList.add(new ValueLabel("BMTCustStatusCodes",
-			// Labels.getLabel("label_ImportData_CustStatusCodeDetails.value")));
 			importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_INDUSTRY,
 					Labels.getLabel("label_ImportData_IndustryDetails.value")));
 			importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_BRANCH,
@@ -5220,15 +5209,6 @@ public class PennantStaticListUtil {
 			percType.add(new ValueLabel(PennantConstants.PERC_TYPE_VARIABLE, "Variable"));
 		}
 		return percType;
-	}
-
-	public static List<ValueLabel> getBetaConfiguration() {
-		if (betaConfiguration == null) {
-			betaConfiguration = new ArrayList<ValueLabel>(1);
-			betaConfiguration.add(new ValueLabel("Old", "Old"));
-		}
-
-		return betaConfiguration;
 	}
 
 	public static List<ValueLabel> getNPAPaymentTypes() {

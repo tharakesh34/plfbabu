@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -57,6 +58,7 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -64,6 +66,7 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.pff.eod.cache.RuleConfigCache;
@@ -97,15 +100,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 			return;
 		}
 
-		/* Still before the grace days no need to calculate OD penalty */
-		if (fod.getFinCurODDays() <= fod.getODGraceDays()) {
-			// #PSD 137379
-			fod.setTotPenaltyAmt(penalty);
-			fod.setTotPenaltyBal(penalty);
-			setTotals(fod);
-			return;
-		}
-
 		BigDecimal balanceForCal = BigDecimal.ZERO;
 		BigDecimal odChargeAmtOrPerc = fod.getODChargeAmtOrPerc();
 
@@ -118,7 +112,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			repayments = sortRpdListByValueDate(repayments);
 		}
 
-		prepareDueDateData(fod, valueDate, repayments, fm, schedules);
+		List<OverdueChargeRecovery> odcrList = prepareDueDateData(fod, valueDate, repayments, fm, schedules);
 
 		switch (fod.getODChargeType()) {
 		case ChargeType.FLAT:
@@ -129,6 +123,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			/* Fixed Fee. On Every Passing Schedule Month */
 			balanceForCal = getBalanceForCal(fod);
 
+			valueDate = deriveValueDate(fod, valueDate, odcrList);
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
 				int numberOfMonths = getMonthsBetween(fod, schedules, valueDate);
 				penalty = odChargeAmtOrPerc.multiply(new BigDecimal(numberOfMonths));
@@ -139,8 +134,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 			balanceForCal = getBalanceForCal(fod);
 
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal amtOrPercetage = odChargeAmtOrPerc.divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
-				penalty = balanceForCal.multiply(amtOrPercetage).divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+				BigDecimal amtOrPercetage = odChargeAmtOrPerc.divide(new BigDecimal(100));
+				penalty = balanceForCal.multiply(amtOrPercetage).divide(new BigDecimal(100));
 			}
 
 			break;
@@ -149,16 +144,25 @@ public class LatePayPenaltyService extends ServiceHelper {
 			balanceForCal = getBalanceForCal(fod);
 
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
+				valueDate = deriveValueDate(fod, valueDate, odcrList);
 				int numberOfMonths = getMonthsBetween(fod, schedules, valueDate);
-				BigDecimal amtOrPercetage = odChargeAmtOrPerc.divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+				BigDecimal amtOrPercetage = odChargeAmtOrPerc.divide(new BigDecimal(100));
 				penalty = balanceForCal.multiply(amtOrPercetage).multiply(new BigDecimal(numberOfMonths))
 						.divide(new BigDecimal(100));
 			}
+
 			break;
 
 		default:
 			penalty = fod.getTotPenaltyAmt();
 			break;
+		}
+
+		int curODDays = DateUtil.getDaysBetween(odDate, valueDate);
+		/* Still before the grace days no need to calculate OD penalty */
+		if (curODDays <= fod.getODGraceDays()) {
+			fod.setFinCurODDays(curODDays);
+			penalty = BigDecimal.ZERO;
 		}
 
 		penalty = CalculationUtil.roundAmount(penalty, fm.getCalRoundingMode(), fm.getRoundingTarget());
@@ -178,6 +182,76 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		setTotals(fod);
+	}
+
+	public void postLatePayAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
+		Date monthEndDate = custEODEvent.getEodDate();
+
+		FinanceMain fm = finEODEvent.getFinanceMain();
+
+		List<FinODDetails> odList = finEODEvent.getFinODDetails();
+
+		List<FinOverDueCharges> saveList = new ArrayList<>();
+
+		for (FinODDetails fod : odList) {
+			Date schdDate = fod.getFinODSchdDate();
+
+			if ((fod.getFinCurODPri().add(fod.getFinCurODPft())).compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+
+			List<FinOverDueCharges> finODCAmounts = finODCAmountDAO.getFinODCAmtByFinRef(fm.getFinID(), schdDate,
+					RepayConstants.FEE_TYPE_LPP);
+			BigDecimal totPenaltyAmt = fod.getTotPenaltyAmt();
+			BigDecimal prvMnthPenaltyAmt = BigDecimal.ZERO;
+
+			if (CollectionUtils.isEmpty(finODCAmounts)) {
+				FinOverDueCharges finODCAmount = createODCAmounts(fod, totPenaltyAmt, monthEndDate);
+				saveList.add(finODCAmount);
+			} else {
+				FinOverDueCharges prvFinODCAmount = null;
+
+				for (FinOverDueCharges finODCAmount : finODCAmounts) {
+					Date postDate = finODCAmount.getPostDate();
+					if (postDate.compareTo(monthEndDate) < 0) {
+						prvMnthPenaltyAmt = prvMnthPenaltyAmt.add(finODCAmount.getAmount());
+					} else if (postDate.compareTo(monthEndDate) == 0) {
+						prvFinODCAmount = finODCAmount;
+					}
+				}
+				if (prvFinODCAmount != null) {
+					prvFinODCAmount.setAmount(totPenaltyAmt.subtract(prvMnthPenaltyAmt));
+					prvFinODCAmount.setBalanceAmt(prvFinODCAmount.getAmount().subtract(prvFinODCAmount.getPaidAmount())
+							.subtract(prvFinODCAmount.getWaivedAmount()));
+					saveList.add(prvFinODCAmount);
+				} else {
+					FinOverDueCharges finODCAmount = createODCAmounts(fod, totPenaltyAmt.subtract(prvMnthPenaltyAmt),
+							monthEndDate);
+					saveList.add(finODCAmount);
+				}
+			}
+		}
+
+		finEODEvent.getFinODCAmounts().addAll(saveList);
+	}
+
+	private static FinOverDueCharges createODCAmounts(FinODDetails od, BigDecimal penalty, Date monthEndDate) {
+		FinOverDueCharges finod = new FinOverDueCharges();
+
+		finod.setFinID(od.getFinID());
+		finod.setSchDate(od.getFinODSchdDate());
+		finod.setPostDate(monthEndDate);
+		finod.setValueDate(monthEndDate);
+		finod.setAmount(penalty);
+		finod.setNewRecord(true);
+		finod.setBalanceAmt(penalty);
+		finod.setOdPri(od.getFinCurODPri());
+		finod.setOdPft(od.getFinCurODPft());
+		finod.setFinOdTillDate(od.getFinODTillDate());
+		finod.setDueDays(DateUtility.getDaysBetween(od.getFinODSchdDate(), od.getFinODTillDate()));
+		finod.setChargeType(RepayConstants.FEE_TYPE_LPP);
+
+		return finod;
 	}
 
 	private void setTotals(FinODDetails fod) {
@@ -212,8 +286,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 	 * effective date rates in ODC Recovery STEP 5: Go through the ODC Recovery list and compute LPP charges
 	 */
 
-	private void prepareDueDateData(FinODDetails fod, Date valueDate, List<FinanceRepayments> rpdList, FinanceMain fm,
-			List<FinanceScheduleDetail> fsdList) {
+	private List<OverdueChargeRecovery> prepareDueDateData(FinODDetails fod, Date valueDate,
+			List<FinanceRepayments> rpdList, FinanceMain fm, List<FinanceScheduleDetail> fsdList) {
 
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
 
@@ -224,12 +298,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 				&& !StringUtils.equals(fod.getODChargeType(), ChargeType.PERC_ON_DUE_DAYS)
 				&& !StringUtils.equals(fod.getODChargeType(), ChargeType.PERC_ON_EFF_DUE_DAYS)) {
 			computeMaxAndCurDetails(fod, odcrList, fm, fsdList);
-			return;
+			return odcrList;
 		}
 
 		odcrList = addDuePaidHistForDueDateCal(fod, fm, valueDate, fsdList, odcrList);
 		calculateLPPAmounts(fod, odcrList, fm, fsdList);
-
+		return odcrList;
 	}
 
 	/**
@@ -315,8 +389,13 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odcrList = loadEOMCpzDate(fod, fsdList, odcrList, valueDate, fm);
 		}
 
-		// Add Effective Rates
-		odcrList = addEffectiveRates(fod, odcrList, fm, valueDate);
+		if (StringUtils.equals(fod.getODChargeType(), "E")) {
+			// Add Effective Rates
+			odcrList = addEffectiveRates(fod, odcrList, fm, valueDate);
+		} else {
+			// Add Due Days Rates
+			odcrList = applyNewEffRate(odcrList, fod.getFinODSchdDate(), fod.getODChargeAmtOrPerc());
+		}
 
 		return odcrList;
 	}
@@ -368,7 +447,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 		odcr.setPftPaid(rpd.getFinSchdPftPaid());
 		odcr.setPenaltyPaid(rpd.getPenaltyPaid());
 		odcr.setWaivedAmt(rpd.getPenaltyWaived());
-		odcr.setPenaltyAmtPerc(fod.getODChargeAmtOrPerc());
+
+		// FIXME: GOPAL.P 25FEB2023. Value was set to penaltyAmtPerc Instead of ODChargeAmtOrPerc
+		// Commented the code and added new line. PenaltyAmtPerc( usage was not found any where
+		// odcr.setPenaltyAmtPerc(fod.getODChargeAmtOrPerc());
+		odcr.setoDChargeAmtOrPerc(fod.getODChargeAmtOrPerc());
 		odcr.setLpCpz(isLpCpz);
 		return odcr;
 	}
@@ -420,7 +503,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		List<FinODPenaltyRate> prList = fm.getPenaltyRates();
 		for (FinODPenaltyRate pr : prList) {
 			// Future change reached then exit
-			if (DateUtil.compare(pr.getFinEffectDate(), valueDate) >= 0) {
+			if (DateUtil.compare(pr.getFinEffectDate(), valueDate) > 0) {
 				break;
 			}
 
@@ -489,6 +572,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odcrCur.setFinCurODPft(pftDue);
 			odcrCur.setFinCurODAmt(priDue.add(pftDue));
 
+			fod.setFinCurODPri(priDue);
+			fod.setFinCurODPft(pftDue);
+			fod.setFinCurODAmt(odcrCur.getFinCurODAmt());
+
 			if (iOdcr == 0) {
 				fod.setFinMaxODPri(priDue);
 				fod.setFinMaxODPft(pftDue);
@@ -500,6 +587,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	private void calculateLPPAmounts(FinODDetails fod, List<OverdueChargeRecovery> odcrList, FinanceMain fm,
 			List<FinanceScheduleDetail> fsdList) {
+
 		fod.setLpCurCpzBal(BigDecimal.ZERO);
 		fod.setLpCpzAmount(BigDecimal.ZERO);
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
@@ -761,8 +849,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	public List<FinanceRepayments> sortRpdListByValueDate(List<FinanceRepayments> repayments) {
 
-		if (repayments != null && repayments.size() > 0) {
-			Collections.sort(repayments, new Comparator<FinanceRepayments>() {
+		if (CollectionUtils.isNotEmpty(repayments)) {
+			Collections.sort(repayments, new Comparator<>() {
 				@Override
 				public int compare(FinanceRepayments detail1, FinanceRepayments detail2) {
 					return DateUtil.compare(detail1.getFinValueDate(), detail2.getFinValueDate());
@@ -775,8 +863,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	public List<OverdueChargeRecovery> sortOdcrListByValueDate(List<OverdueChargeRecovery> odcrList) {
 
-		if (odcrList != null && odcrList.size() > 0) {
-			Collections.sort(odcrList, new Comparator<OverdueChargeRecovery>() {
+		if (CollectionUtils.isNotEmpty(odcrList)) {
+			Collections.sort(odcrList, new Comparator<>() {
 				@Override
 				public int compare(OverdueChargeRecovery detail1, OverdueChargeRecovery detail2) {
 					return DateUtil.compare(detail1.getMovementDate(), detail2.getMovementDate());
@@ -787,4 +875,19 @@ public class LatePayPenaltyService extends ServiceHelper {
 		return odcrList;
 	}
 
+	private Date deriveValueDate(FinODDetails fod, Date valueDate, List<OverdueChargeRecovery> odcrList) {
+		for (int iOdcr = 0; iOdcr < odcrList.size(); iOdcr++) {
+			OverdueChargeRecovery odcrCur = odcrList.get(iOdcr);
+
+			if (iOdcr == 0) {
+				continue;
+			}
+
+			if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO) == 0) {
+				return odcrCur.getMovementDate();
+			}
+		}
+
+		return valueDate;
+	}
 }

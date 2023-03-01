@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -19,12 +20,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
+import com.pennant.pff.settlement.model.SettlementAllocationDetail;
 import com.pennant.pff.settlement.service.SettlementService;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class OTSTasklet implements Tasklet {
 
@@ -33,13 +35,14 @@ public class OTSTasklet implements Tasklet {
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	private SettlementService settlementService;
+
 	private static final String START_MSG = "OTS Process started at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String FAILED_MSG = "OTS Process failed on {} for the FinReference {}";
 	private static final String SUCCESS_MSG = "OTS Process completed at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String EXCEPTION_MSG = "OTS Process failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\nLocalizedMessage {}\nStackTrace {}";
 
-	private static final String QUEUE_QUERY = "select FinId, ID, SettlementAmount, OtsDate, FinReference, NoOfGraceDays, SETTLEMENTENDAFTERGRACE, ENDDATE from FIN_SETTLEMENT_HEADER where SETTLEMENTSTATUS='I'";
+	private static final String QUEUE_QUERY = "Select ID From Fin_Settlement_Header Where SettlementStatus = ?";
 
 	public OTSTasklet() {
 		super();
@@ -47,14 +50,17 @@ public class OTSTasklet implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		if (!"Y".equals(SysParamUtil.getValue(SMTParameterConstants.ALW_OTS_ON_EOD))) {
+		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, chunkContext);
+
+		if (!eventProperties.isAllowOTSOnEOD()) {
 			return RepeatStatus.FINISHED;
 		}
 
-		Date appDate = SysParamUtil.getAppDate();
+		Date appDate = eventProperties.getAppDate();
 
 		String strSysDate = DateUtil.format(appDate, DateFormat.LONG_DATE_TIME);
 		String strAppDate = DateUtil.formatToLongDate(appDate);
+
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
@@ -64,64 +70,62 @@ public class OTSTasklet implements Tasklet {
 
 		logger.info(START_MSG, strSysDate, strAppDate);
 
-		JdbcCursorItemReader<FinSettlementHeader> itemReader = new JdbcCursorItemReader<>();
+		JdbcCursorItemReader<Long> itemReader = new JdbcCursorItemReader<>();
 		itemReader.setSql(QUEUE_QUERY);
 		itemReader.setDataSource(dataSource);
 		itemReader.setRowMapper((rs, rowNum) -> {
-
-			FinSettlementHeader header = new FinSettlementHeader();
-
-			long finId = rs.getLong("FinId");
-			long settlementHeaderID = rs.getLong("ID");
-			BigDecimal settlementAmount = rs.getBigDecimal("SettlementAmount");
-			Date otsDate = rs.getDate("OtsDate");
-			String finReference = rs.getString("FinReference");
-			long noOfGraceDays = rs.getLong("NoOfGraceDays");
-			Date settlementEndAfterGrace = rs.getDate("SettlementEndAfterGrace");
-			Date endDate = rs.getDate("EndDate");
-
-			header.setFinID(finId);
-			header.setId(settlementHeaderID);
-			header.setSettlementAmount(settlementAmount);
-			header.setOtsDate(otsDate);
-			header.setFinReference(finReference);
-			header.setNoOfGraceDays(noOfGraceDays);
-			header.setSettlementEndAfterGrace(settlementEndAfterGrace);
-			header.setEndDate(endDate);
-
-			return header;
+			return rs.getLong(1);
+		});
+		itemReader.setPreparedStatementSetter(ps -> {
+			ps.setString(1, "I");
 		});
 
 		itemReader.open(chunkContext.getStepContext().getStepExecution().getExecutionContext());
 
-		FinSettlementHeader fsh = null;
-		while ((fsh = itemReader.read()) != null) {
+		Long id = null;
+		while ((id = itemReader.read()) != null) {
+			FinSettlementHeader fsh = settlementService.getsettlementById(id);
+
+			if (fsh == null) {
+				continue;
+			}
+
+			fsh.setAppDate(appDate);
 
 			BigDecimal balanceAmt = settlementService.getSettlementAountReceived(fsh.getFinID());
-			balanceAmt = balanceAmt == null ? BigDecimal.ZERO : balanceAmt;
-			boolean processSettlementCancellation = false;
+
+			boolean validSettlementProcess = false;
+			boolean validSettlementCancellation = false;
+
+			List<SettlementAllocationDetail> allocations = fsh.getSettlementAllocationDetails();
+			if (balanceAmt.compareTo(fsh.getSettlementAmount()) >= 0 && CollectionUtils.isNotEmpty(allocations)) {
+				settlementService.loadSettlementData(fsh);
+				validSettlementProcess = settlementService.isValidSettlementProcess(fsh);
+				validSettlementCancellation = !validSettlementProcess;
+			}
+
+			if (validSettlementCancellation || isValidSettlementCencellation(fsh)) {
+				fsh = settlementService.loadDataForCancellation(fsh.getFinID(), fsh.getOtsDate());
+				if (fsh == null) {
+					continue;
+				}
+				settlementService.loadSettlementData(fsh);
+				fsh.setAppDate(appDate);
+				validSettlementCancellation = true;
+			}
 
 			try {
 				txStatus = transactionManager.getTransaction(txDef);
-				if (balanceAmt.compareTo(fsh.getSettlementAmount()) >= 0) {
-					settlementService.processSettlement(fsh.getId(), fsh.getOtsDate());
-					continue;
+
+				if (validSettlementProcess) {
+					settlementService.processSettlement(fsh);
 				}
 
-				if (fsh.getNoOfGraceDays() == 0 && appDate.compareTo(fsh.getEndDate()) == 0) {
-					processSettlementCancellation = true;
-				}
-
-				if (fsh.getNoOfGraceDays() > 0 && appDate.compareTo(fsh.getEndDate()) == 0) {
-					processSettlementCancellation = true;
-				}
-
-				if (processSettlementCancellation) {
-					settlementService.processSettlementCancellation(fsh.getFinID(), fsh.getOtsDate());
+				if (validSettlementCancellation) {
+					settlementService.processSettlementCancellation(fsh);
 				}
 
 				transactionManager.commit(txStatus);
-
 			} catch (Exception e) {
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
 
@@ -149,6 +153,10 @@ public class OTSTasklet implements Tasklet {
 		logger.info(SUCCESS_MSG, sysDate, strAppDate);
 
 		return RepeatStatus.FINISHED;
+	}
+
+	private boolean isValidSettlementCencellation(FinSettlementHeader fsh) {
+		return fsh.getAppDate().compareTo(fsh.getEndDate()) == 0 && fsh.getNoOfGraceDays() >= 0;
 	}
 
 	@Autowired

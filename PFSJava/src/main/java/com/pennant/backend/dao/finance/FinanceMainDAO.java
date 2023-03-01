@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerCoreBank;
@@ -412,7 +413,7 @@ public interface FinanceMainDAO {
 
 	FinanceMain getEntityByRef(String finReference);
 
-	List<AutoRefundLoan> getAutoRefunds();
+	List<AutoRefundLoan> getAutoRefunds(CustEODEvent cee);
 
 	void updateSettlementFlag(long finID, boolean isUnderSettlement);
 

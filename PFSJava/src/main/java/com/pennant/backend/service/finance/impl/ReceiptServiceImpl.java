@@ -931,6 +931,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		} else if (FinanceConstants.REALIZATION_APPROVER.equals(roleCode)
 				|| FinanceConstants.KNOCKOFFCAN_APPROVER.equals(roleCode)) {
 
+		} else if ((FinanceConstants.RECEIPT_MAKER.equals(roleCode)
+				|| FinanceConstants.RECEIPT_APPROVER.equals(roleCode))
+				&& RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus())) {
+
 		} else {
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
 
@@ -2076,6 +2080,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (!overdueList.isEmpty()) {
 			finODDetailsDAO.updatePaidPenalties(overdueList);
+
+			if (RepayConstants.EXCESSADJUSTTO_TEXCESS
+					.equals(scheduleData.getFinServiceInstruction().getExcessAdjustTo())
+					&& RequestSource.EOD.equals(scheduleData.getFinServiceInstruction().getRequestSource())) {
+				scheduleData.setFinODDetails(finODDetailsDAO.getFinODDetailsByFinRef(finID));
+			}
 		}
 
 		if (rch.getUserDetails() == null && SessionUserDetails.getLogiedInUser() != null) {
@@ -2881,8 +2891,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		// Max and Min PartPayment Validation & Lock in Period
 		ErrorDetail errorDetail = null;
 		if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
+			List<FinanceScheduleDetail> schedules = this.financeScheduleDetailDAO.getFinScheduleDetails(rch.getFinID(),
+					"", false);
+			repayData.setPartPayschedules(schedules);
 			errorDetail = this.partPayAndEarlySettleValidator.validatePartPay(repayData);
-		} else if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
+		} else if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			errorDetail = this.partPayAndEarlySettleValidator.validateEarlyPay(fd.getFinScheduleData());
 		}
 
@@ -2895,6 +2908,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		auditHeader = nextProcess(auditHeader);
+
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -5878,6 +5892,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setSource(fsi.getRequestSource().name());
 		rch.setFinType(fm.getFinType());
 
+		if (fsi.isKnockOffReceipt()) {
+			rch.setKnockOffType(fsi.getKnockoffType());
+		}
+
 		if (receiptPurpose == ReceiptPurpose.SCHDRPY && fsi.isBckdtdWthOldDues()) {
 			Date derivedDate = getDerivedValueDate(rd, fsi, fm.getAppDate());
 
@@ -8129,7 +8147,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		/**
 		 * Waiver is not allowed for allocation type Principle and EMI.
 		 */
-		if (Allocation.EMI.equals(allocationType) || Allocation.PRI.equals(allocationType)) {
+		if (Allocation.EMI.equals(allocationType) || Allocation.PRI.equals(allocationType)
+				|| Allocation.FUT_PRI.equals(allocationType)) {
 			return false;
 		}
 

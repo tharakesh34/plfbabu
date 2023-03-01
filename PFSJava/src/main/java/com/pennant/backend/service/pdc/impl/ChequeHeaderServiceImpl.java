@@ -1147,8 +1147,14 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		if (ch.getNoOfCheques() == 0) {
 			return getError("90502", "NoOfCheques");
 		}
+		int chequeSize = 0;
 
-		if (cheques.size() != ch.getNoOfCheques()) {
+		for (ChequeDetail cd : cheques) {
+			if (InstrumentType.isPDC(cd.getChequeType())) {
+				chequeSize++;
+			}
+		}
+		if (chequeSize != ch.getNoOfCheques()) {
 			return getError("30540", "ChequeDetails ", " total no cheques");
 		}
 

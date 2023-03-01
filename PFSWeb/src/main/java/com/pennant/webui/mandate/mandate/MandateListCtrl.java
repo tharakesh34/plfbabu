@@ -25,13 +25,10 @@
 
 package com.pennant.webui.mandate.mandate;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -69,10 +66,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * ************************************************************<br>
  * 
  */
-public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
-
+public class MandateListCtrl extends GFCBaseListCtrl<Mandate> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(MandateListCtrl.class);
 
 	protected Window window_MandateList;
 	protected Borderlayout borderLayout_MandateList;

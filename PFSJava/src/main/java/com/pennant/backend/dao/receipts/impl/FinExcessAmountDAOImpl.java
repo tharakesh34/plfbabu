@@ -952,7 +952,8 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public FinExcessAmount getExcessAmountsByReceiptId(long finID, String amountType, long receiptId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt");
+		sql.append(", ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
 		sql.append(" From FinExcessAmount");
 		sql.append(" Where FinID = ? and AmountType = ? and ReceiptId = ?");
 
@@ -1020,7 +1021,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public BigDecimal getExcessBalance(long finID) {
-		String sql = "Select Sum(BalanceAmt) Amount From FinExcessAmount Where FinID = ? and AmountType = ?";
+		String sql = "Select coalesce(Sum(BalanceAmt), 0) Amount From FinExcessAmount Where FinID = ? and AmountType = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -1051,7 +1052,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public BigDecimal getSettlementAmountReceived(long finId) {
-		String sql = "Select sum(BalanceAmt) From FinExcessAmount Where FinID = ? and AmountType= ?";
+		String sql = "Select coalesce(sum(BalanceAmt), 0) From FinExcessAmount Where FinID = ? and AmountType= ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 		try {

@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -30,6 +31,7 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -316,7 +318,10 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 		if (StringUtils.isNotBlank(settlement.getCancelReasonCode())) {
 			financeMainDAO.updateSettlementFlag(settlement.getFinID(), false);
-			processSettlementCancellation(settlement.getFinID(), settlement.getStartDate());
+			FinSettlementHeader fshs = loadDataForCancellation(settlement.getFinID(), settlement.getStartDate());
+			if (fshs != null) {
+				processSettlementCancellation(fshs);
+			}
 		} else {
 			financeMainDAO.updateSettlementFlag(settlement.getFinID(), true);
 		}
@@ -508,194 +513,224 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 	}
 
 	@Override
-	public void processSettlementCancellation(long finID, Date settlementDate) {
+	public FinSettlementHeader loadDataForCancellation(long finID, Date settlementDate) {
 		FinSettlementHeader fsh = settlementDAO.getInitiateSettlementByFinID(finID, "");
 
 		if (fsh == null) {
-			return;
+			return null;
 		}
 
-		List<FinReceiptHeader> receiptList = finReceiptHeaderDAO.getSettlementReceipts(finID, settlementDate);
+		fsh.setReceiptList(finReceiptHeaderDAO.getSettlementReceipts(finID, settlementDate));
+		fsh.setFinanceMain(financeMainDAO.getFinanceMainById(finID, "", false));
 
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finID, "", false);
-
-		String eventCode = AccountingEvent.REPAY;
-
-		Date appDate = SysParamUtil.getAppDate();
-
-		if (CollectionUtils.isNotEmpty(receiptList)) {
-			for (FinReceiptHeader rch : receiptList) {
-				long newReceiptId = 0;
-				long repayID = 0;
-				String paymentType = "";
-				String partnerBankActype = "";
-				String partnerbank = "";
-				FinReceiptHeader receiptHeader = finReceiptHeaderDAO.getReceiptHeaderByID(rch.getReceiptID(), "");
-				List<FinReceiptDetail> recDtls = finReceiptDetailDAO.getReceiptHeaderByID(rch.getReceiptID(), "_View");
-				receiptHeader.setReceiptDetails(recDtls);
-				for (FinReceiptDetail rcd : recDtls) {
-					FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), "");
-					repayID = rph.getRepayID();
-					long postingId = postingsDAO.getPostingId();
-
-					postingsPreparationUtil.postReversalsByPostRef(String.valueOf(rch.getReceiptID()), postingId,
-							appDate);
-					rcd.setReceiptSeqID(0);
-					rcd.setId(0);
-					receiptHeader.setReceiptID(0);
-					receiptHeader.setBounceDate(appDate);
-					newReceiptId = finReceiptHeaderDAO.generatedReceiptID(receiptHeader);
-					rcd.setReceiptID(newReceiptId);
-					receiptHeader.setValueDate(rcd.getValueDate());
-					partnerbank = rcd.getPartnerBankAc();
-					paymentType = rcd.getPaymentType();
-					partnerBankActype = rcd.getPartnerBankAcType();
-				}
-
-				AEEvent aeEvent = new AEEvent();
-
-				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-
-				long postingId = postingsDAO.getPostingId();
-
-				aeEvent.setCustID(financeMain.getCustID());
-				aeEvent.setFinReference(financeMain.getFinReference());
-				aeEvent.setFinType(financeMain.getFinType());
-				aeEvent.setPromotion(financeMain.getPromotionCode());
-				aeEvent.setBranch(financeMain.getFinBranch());
-				aeEvent.setCcy(financeMain.getFinCcy());
-				aeEvent.setPostingUserBranch(receiptHeader.getCashierBranch());
-				aeEvent.setLinkedTranId(0);
-				aeEvent.setAccountingEvent(eventCode);
-				aeEvent.setValueDate(receiptHeader.getValueDate());
-				aeEvent.setPostRefId(newReceiptId);
-				aeEvent.setPostingId(postingId);
-				aeEvent.setEntityCode(financeMain.getEntityCode());
-
-				amountCodes.setUserBranch(receiptHeader.getCashierBranch());
-				amountCodes.setFinType(financeMain.getFinType());
-				amountCodes.setPartnerBankAc(partnerbank);
-				amountCodes.setPartnerBankAcType(partnerBankActype);
-				amountCodes.setToExcessAmt(BigDecimal.ZERO);
-				amountCodes.setToEmiAdvance(BigDecimal.ZERO);
-				amountCodes.setPaymentType(paymentType);
-
-				aeEvent.getAcSetIDList().clear();
-				aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), eventCode,
-						FinanceConstants.MODULEID_FINTYPE));
-
-				amountCodes.setFinType(financeMain.getFinType());
-
-				Map<String, Object> extDataMap = amountCodes.getDeclaredFieldValues();
-				extDataMap.put("PB_ReceiptAmount", receiptHeader.getReceiptAmount());
-				extDataMap.put("ae_toExcessAmt", receiptHeader.getReceiptAmount());
-
-				switch (receiptHeader.getExcessAdjustTo()) {
-				case RepayConstants.EXCESSADJUSTTO_EXCESS:
-					extDataMap.put("ae_toExcessAmt", receiptHeader.getReceiptAmount());
-					break;
-				case RepayConstants.EXCESSADJUSTTO_EMIINADV:
-					extDataMap.put("ae_toEmiAdvance", receiptHeader.getReceiptAmount());
-					break;
-				case RepayConstants.EXCESSADJUSTTO_TEXCESS:
-					extDataMap.put("ae_toTExcessAmt", receiptHeader.getReceiptAmount());
-					break;
-				case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
-					extDataMap.put("ae_toSettlement", receiptHeader.getReceiptAmount());
-					break;
-				default:
-					break;
-				}
-
-				aeEvent.setDataMap(extDataMap);
-
-				FinReceiptDetail rcd = receiptHeader.getReceiptDetails().get(0);
-				rcd.setReceiptID(newReceiptId);
-
-				aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
-
-				receiptHeader.getReceiptDetails().get(0).getRepayHeader().setLinkedTranId(aeEvent.getLinkedTranId());
-				finReceiptHeaderDAO.updateExcessAdjustTo(rch.getReceiptID(), RepayConstants.EXCESSADJUSTTO_EXCESS);
-
-				FinRepayHeader finRepayHeader = new FinRepayHeader();
-				finRepayHeader.setRepayID(repayID);
-				finRepayHeader.setLinkedTranId(aeEvent.getLinkedTranId());
-				finRepayHeader.setFinID(receiptHeader.getFinID());
-				financeRepaymentsDAO.updateLinkedTranId(finRepayHeader);
-
-				int recordCount = finExcessAmountDAO.updateExcessBalByRef(receiptHeader.getFinID(),
-						RepayConstants.EXCESSADJUSTTO_EXCESS, receiptHeader.getReceiptAmount());
-
-				if (recordCount <= 0) {
-					FinExcessAmount excess = new FinExcessAmount();
-					excess.setFinID(receiptHeader.getFinID());
-					excess.setFinReference(receiptHeader.getReference());
-					excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
-					excess.setAmount(receiptHeader.getReceiptAmount());
-					excess.setUtilisedAmt(BigDecimal.ZERO);
-					excess.setBalanceAmt(receiptHeader.getReceiptAmount());
-					excess.setReservedAmt(BigDecimal.ZERO);
-					excess.setReceiptID(receiptHeader.getReceiptID());
-					excess.setValueDate(receiptHeader.getValueDate());
-					excess.setPostDate(appDate);
-
-					if (RepayConstants.PAYSTATUS_DEPOSITED.equals(receiptHeader.getReceiptModeStatus())) {
-						excess.setBalanceAmt(BigDecimal.ZERO);
-						excess.setReservedAmt(receiptHeader.getReceiptAmount());
-						excess.setAmount(receiptHeader.getReceiptAmount());
-					}
-
-					finExcessAmountDAO.saveExcess(excess);
-				}
-			}
-		}
-
-		financeMainDAO.updateSettlementFlag(finID, false);
-		settlementDAO.updateSettlementStatus(fsh.getFinID(), "C");
-
+		return fsh;
 	}
 
 	@Override
-	public void processSettlement(long settlementHeaderID, Date settlementDate) {
-		FinSettlementHeader fsh = settlementDAO.getSettlementById(settlementHeaderID, "_View");
+	public void processSettlementCancellation(FinSettlementHeader fsh) {
+		long finID = fsh.getFinID();
 
-		if (fsh == null) {
+		List<FinReceiptHeader> receiptList = fsh.getReceiptList();
+
+		if (CollectionUtils.isEmpty(receiptList)) {
+			financeMainDAO.updateSettlementFlag(finID, false);
+			settlementDAO.updateSettlementStatus(fsh.getFinID(), RepayConstants.SETTLEMENT_STATUS_CANCELLED);
 			return;
 		}
 
-		List<SettlementAllocationDetail> sadList = settlementDAO.getSettlementAllcDetailByHdrID(fsh.getId(), "_View");
-		if (CollectionUtils.isEmpty(sadList)) {
-			return;
+		FinanceMain financeMain = fsh.getFinanceMain();
+
+		String eventCode = AccountingEvent.REPAY;
+
+		Long accountSetID = AccountingConfigCache.getAccountSetID(financeMain.getFinType(), eventCode,
+				FinanceConstants.MODULEID_FINTYPE);
+
+		Date appDate = fsh.getAppDate();
+
+		for (FinReceiptHeader receipt : receiptList) {
+			long newReceiptId = 0;
+			long repayID = 0;
+			String paymentType = "";
+			String partnerBankActype = "";
+			String partnerbank = "";
+
+			long receiptID = receipt.getReceiptID();
+			FinReceiptHeader rch = finReceiptHeaderDAO.getReceiptHeaderByID(receiptID, "");
+			List<FinReceiptDetail> recDtls = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, "_View");
+			rch.setReceiptDetails(recDtls);
+
+			for (FinReceiptDetail rcd : recDtls) {
+				FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), "");
+				repayID = rph.getRepayID();
+				long postingId = postingsDAO.getPostingId();
+
+				postingsPreparationUtil.postReversalsByPostRef(String.valueOf(receiptID), postingId, appDate);
+				rcd.setReceiptSeqID(0);
+				rcd.setId(0);
+				rch.setReceiptID(0);
+				rch.setBounceDate(appDate);
+				newReceiptId = finReceiptHeaderDAO.generatedReceiptID(rch);
+				rcd.setReceiptID(newReceiptId);
+				rch.setValueDate(rcd.getValueDate());
+				partnerbank = rcd.getPartnerBankAc();
+				paymentType = rcd.getPaymentType();
+				partnerBankActype = rcd.getPartnerBankAcType();
+			}
+
+			AEEvent aeEvent = new AEEvent();
+			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
+			long postingId = postingsDAO.getPostingId();
+
+			aeEvent.setCustID(financeMain.getCustID());
+			aeEvent.setFinReference(financeMain.getFinReference());
+			aeEvent.setFinType(financeMain.getFinType());
+			aeEvent.setPromotion(financeMain.getPromotionCode());
+			aeEvent.setBranch(financeMain.getFinBranch());
+			aeEvent.setCcy(financeMain.getFinCcy());
+			aeEvent.setPostingUserBranch(rch.getCashierBranch());
+			aeEvent.setLinkedTranId(0);
+			aeEvent.setAccountingEvent(eventCode);
+			aeEvent.setValueDate(rch.getValueDate());
+			aeEvent.setPostRefId(newReceiptId);
+			aeEvent.setPostingId(postingId);
+			aeEvent.setEntityCode(financeMain.getEntityCode());
+
+			amountCodes.setUserBranch(rch.getCashierBranch());
+			amountCodes.setFinType(financeMain.getFinType());
+			amountCodes.setPartnerBankAc(partnerbank);
+			amountCodes.setPartnerBankAcType(partnerBankActype);
+			amountCodes.setToExcessAmt(BigDecimal.ZERO);
+			amountCodes.setToEmiAdvance(BigDecimal.ZERO);
+			amountCodes.setPaymentType(paymentType);
+
+			aeEvent.getAcSetIDList().clear();
+			aeEvent.getAcSetIDList().add(accountSetID);
+
+			amountCodes.setFinType(financeMain.getFinType());
+
+			Map<String, Object> extDataMap = amountCodes.getDeclaredFieldValues();
+			extDataMap.put("PB_ReceiptAmount", rch.getReceiptAmount());
+			extDataMap.put("ae_toExcessAmt", rch.getReceiptAmount());
+
+			switch (rch.getExcessAdjustTo()) {
+			case RepayConstants.EXCESSADJUSTTO_EXCESS:
+				extDataMap.put("ae_toExcessAmt", rch.getReceiptAmount());
+				break;
+			case RepayConstants.EXCESSADJUSTTO_EMIINADV:
+				extDataMap.put("ae_toEmiAdvance", rch.getReceiptAmount());
+				break;
+			case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+				extDataMap.put("ae_toTExcessAmt", rch.getReceiptAmount());
+				break;
+			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+				extDataMap.put("ae_toSettlement", rch.getReceiptAmount());
+				break;
+			default:
+				break;
+			}
+
+			aeEvent.setDataMap(extDataMap);
+
+			rch.getReceiptDetails().get(0).setReceiptID(newReceiptId);
+
+			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
+
+			rch.getReceiptDetails().get(0).getRepayHeader().setLinkedTranId(aeEvent.getLinkedTranId());
+			finReceiptHeaderDAO.updateExcessAdjustTo(receiptID, RepayConstants.EXCESSADJUSTTO_EXCESS);
+
+			FinRepayHeader finRepayHeader = new FinRepayHeader();
+			finRepayHeader.setRepayID(repayID);
+			finRepayHeader.setLinkedTranId(aeEvent.getLinkedTranId());
+			finRepayHeader.setFinID(rch.getFinID());
+			financeRepaymentsDAO.updateLinkedTranId(finRepayHeader);
+
+			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(rch.getFinID(),
+					RepayConstants.EXAMOUNTTYPE_SETTLEMENT, receiptID);
+
+			finExcessAmountDAO.updateUtiliseOnly(fea.getExcessID(), fea.getBalanceAmt());
+
+			FinExcessMovement movement = new FinExcessMovement();
+			movement.setExcessID(fea.getExcessID());
+			movement.setReceiptID(newReceiptId);
+			movement.setMovementType(RepayConstants.RECEIPTTYPE_TRANSFER);
+			movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+			movement.setAmount(fea.getBalanceAmt());
+			finExcessAmountDAO.saveExcessMovement(movement);
+
+			finExcessAmountDAO.saveExcess(prepareExcess(appDate, rch, fea));
 		}
 
-		BigDecimal actualReceiptAmount = BigDecimal.ZERO;
+		financeMainDAO.updateSettlementFlag(finID, false);
+		settlementDAO.updateSettlementStatus(fsh.getFinID(), RepayConstants.SETTLEMENT_STATUS_CANCELLED);
 
-		Date appDate = SysParamUtil.getAppDate();
+	}
 
-		FinReceiptData receiptData = receiptService.getFinReceiptDataById(fsh.getFinReference(), appDate,
-				AccountingEvent.EARLYSTL, FinServiceEvent.RECEIPT, "");
+	private FinExcessAmount prepareExcess(Date appDate, FinReceiptHeader receiptHeader, FinExcessAmount fea) {
+		FinExcessAmount excess = new FinExcessAmount();
+		excess.setFinID(fea.getFinID());
+		excess.setFinReference(fea.getFinReference());
+		excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		excess.setAmount(fea.getBalanceAmt());
+		excess.setUtilisedAmt(BigDecimal.ZERO);
+		excess.setBalanceAmt(fea.getBalanceAmt());
+		excess.setReservedAmt(BigDecimal.ZERO);
+		excess.setReceiptID(receiptHeader.getReceiptID());
+		excess.setValueDate(receiptHeader.getValueDate());
+		excess.setPostDate(appDate);
 
-		BigDecimal excessAmount = BigDecimal.ZERO;
-		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		if (RepayConstants.PAYSTATUS_DEPOSITED.equals(receiptHeader.getReceiptModeStatus())) {
+			excess.setBalanceAmt(BigDecimal.ZERO);
+			excess.setReservedAmt(receiptHeader.getReceiptAmount());
+			excess.setAmount(receiptHeader.getReceiptAmount());
+		}
+		return excess;
+	}
+
+	private BigDecimal settlementAvailable(FinReceiptHeader rch) {
 		List<FinExcessAmount> excessList = rch.getExcessAmounts();
 		List<ManualAdvise> payabaleList = rch.getPayableAdvises();
 
-		if (CollectionUtils.isNotEmpty(excessList)) {
-			for (FinExcessAmount excess : excessList) {
-				excessAmount = excessAmount.add(excess.getBalanceAmt());
-			}
+		BigDecimal excessAmount = BigDecimal.ZERO;
+
+		for (FinExcessAmount excess : excessList) {
+			excessAmount = excessAmount.add(excess.getBalanceAmt());
 		}
 
-		if (CollectionUtils.isNotEmpty(payabaleList)) {
-			for (ManualAdvise advise : payabaleList) {
-				excessAmount = excessAmount.add(advise.getBalanceAmt());
-			}
+		for (ManualAdvise advise : payabaleList) {
+			excessAmount = excessAmount.add(advise.getBalanceAmt());
 		}
+		return excessAmount;
+	}
+
+	@Override
+	public boolean isValidSettlementProcess(FinSettlementHeader fsh) {
+		FinReceiptData receiptData = fsh.getFrd();
+
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+
+		BigDecimal excessAmount = settlementAvailable(rch);
 
 		if (excessAmount.compareTo(fsh.getSettlementAmount()) < 0) {
-			processSettlementCancellation(fsh.getFinID(), fsh.getStartDate());
-			return;
+			return false;
 		}
+
+		return true;
+	}
+
+	@Override
+	public void loadSettlementData(FinSettlementHeader header) {
+		header.setFrd(receiptService.getFinReceiptDataById(header.getFinReference(), header.getAppDate(),
+				AccountingEvent.EARLYSTL, FinServiceEvent.RECEIPT, ""));
+	}
+
+	@Override
+	public void processSettlement(FinSettlementHeader fsh) {
+		BigDecimal actualReceiptAmount = BigDecimal.ZERO;
+
+		Date appDate = fsh.getAppDate();
+		FinReceiptData receiptData = fsh.getFrd();
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
 		FinanceDetail fd = receiptData.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -725,6 +760,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			return;
 		}
 
+		List<SettlementAllocationDetail> sadList = fsh.getSettlementAllocationDetails();
 		for (ReceiptAllocationDetail rad : radList) {
 			for (SettlementAllocationDetail sad : sadList) {
 				if (StringUtils.equals(sad.getAllocationType().trim(), rad.getAllocationType())
@@ -735,6 +771,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			}
 		}
 
+		BigDecimal excessAmount = settlementAvailable(rch);
 		for (ReceiptAllocationDetail rad : radList) {
 			if (excessAmount.compareTo(BigDecimal.ZERO) <= 0) {
 				break;
@@ -814,7 +851,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		receiptData.setOTSByEod(true);
 		try {
 			receiptService.doApproveReceipt(receiptData);
-			settlementDAO.updateSettlementStatus(fsh.getFinID(), "P");
+			settlementDAO.updateSettlementStatus(fsh.getFinID(), RepayConstants.SETTLEMENT_STATUS_PROCESSED);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

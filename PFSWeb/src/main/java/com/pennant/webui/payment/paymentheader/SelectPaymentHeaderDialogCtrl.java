@@ -138,7 +138,8 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 
 		// Query for faetching the finreferences only avalable in FinExcessAmount and ManualAdvise.
 		StringBuilder sql = new StringBuilder();
-		sql.append(" FinReference in (Select FinReference from FinExcessAmount  where BalanceAmt > 0 ");
+		sql.append(" FinReference in (Select FinReference from FinExcessAmount Where (BalanceAmt > 0 ");
+		sql.append(" or ReservedAmt > 0 and ExcessID in (Select ExcessID From Cross_Loan_Transfer_Temp))");
 		sql.append(" and AmountType in (");
 		sql.append(list);
 		sql.append(") union ");
@@ -146,7 +147,8 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		sql.append(" Inner JOIN FEETYPES ft on ft.feetypeid = M.FeeTypeId ");
 		sql.append(" Where M.AdviseType = ");
 		sql.append(AdviseType.PAYABLE.id());
-		sql.append(" AND HoldDue=0 And adviseAmount - PaidAmount > 0");
+		sql.append(" AND HoldDue=0 And ((adviseAmount - PaidAmount - WaivedAmount) > 0");
+		sql.append(" or ReservedAmt > 0 and AdviseId in (Select ExcessID From Cross_Loan_Transfer_Temp))");
 		sql.append(" And ft.Refundable = 1) ");
 
 		this.finReference.setMaxlength(20);

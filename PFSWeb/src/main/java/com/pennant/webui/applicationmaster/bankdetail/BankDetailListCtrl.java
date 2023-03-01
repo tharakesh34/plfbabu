@@ -26,8 +26,6 @@ package com.pennant.webui.applicationmaster.bankdetail;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -54,7 +52,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class BankDetailListCtrl extends GFCBaseListCtrl<BankDetail> {
 	private static final long serialVersionUID = -3571720185247491921L;
-	private static final Logger logger = LogManager.getLogger(BankDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

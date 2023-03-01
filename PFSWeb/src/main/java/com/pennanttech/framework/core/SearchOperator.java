@@ -126,6 +126,10 @@ public class SearchOperator {
 		 */
 		DATE_RANGE,
 		/**
+		 * Filter.OP_LESS_OR_EQUAL, Filter.OP_GREATER_OR_EQUAL
+		 */
+		DATE_RANGE_BETWEEN,
+		/**
 		 * Filter.OP_EQUAL, Filter.OP_NOT_EQUAL, Filter.OP_LIKE, Filter.OP_IN, Filter.OP_NOT_IN
 		 */
 		MULTISELECT;
@@ -140,6 +144,7 @@ public class SearchOperator {
 	private static List<ValueLabel> booleanOperators = new ArrayList<>();
 	private static List<ValueLabel> dateOperators = new ArrayList<>();
 	private static List<ValueLabel> dateRangeOperators = new ArrayList<>();
+	private static List<ValueLabel> dateRangeBetweenOperators = new ArrayList<>();
 	private static List<ValueLabel> multiselectOperators = new ArrayList<>();
 
 	static {
@@ -180,6 +185,9 @@ public class SearchOperator {
 		dateRangeOperators.addAll(dateOperators);
 		dateRangeOperators.add(new ValueLabel(String.valueOf(Filter.OP_BETWEEN), "BETWEEN"));
 
+		dateRangeBetweenOperators.add(new ValueLabel(String.valueOf(Filter.OP_GREATER_OR_EQUAL), ">="));
+		dateRangeBetweenOperators.add(new ValueLabel(String.valueOf(Filter.OP_LESS_OR_EQUAL), "<"));
+
 		multiselectOperators.add(new ValueLabel(String.valueOf(Filter.OP_EQUAL), "="));
 		multiselectOperators.add(new ValueLabel(String.valueOf(Filter.OP_NOT_EQUAL), "<>"));
 		multiselectOperators.add(new ValueLabel(String.valueOf(Filter.OP_LIKE), "%"));
@@ -216,6 +224,9 @@ public class SearchOperator {
 			break;
 		case DATE_RANGE:
 			operators = dateRangeOperators;
+			break;
+		case DATE_RANGE_BETWEEN:
+			operators = dateRangeBetweenOperators;
 			break;
 		case MULTISELECT:
 			operators = multiselectOperators;

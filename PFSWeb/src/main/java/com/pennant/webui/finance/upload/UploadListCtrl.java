@@ -33,8 +33,6 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -86,7 +84,6 @@ import com.pennanttech.pff.constants.FinServiceEvent;
  */
 public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = LogManager.getLogger(UploadListCtrl.class);
 
 	protected Window window_UploadList;
 	protected Borderlayout borderLayout_UploadList;

@@ -14,8 +14,6 @@ package com.pennant.webui.financemanagement.receipts;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -67,7 +65,6 @@ import com.pennanttech.pff.receipt.constants.ReceiptMode;
  */
 public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = LogManager.getLogger(ReceiptCancellationListCtrl.class);
 
 	protected Window window_ReceiptCancellationList;
 	protected Borderlayout borderLayout_ReceiptCancellationList;

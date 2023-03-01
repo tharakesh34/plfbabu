@@ -748,4 +748,18 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			return rs.getString(1);
 		}, AdviseType.RECEIVABLE.id(), 1);
 	}
+
+	@Override
+	public Long getPayableFeeTypeID(String code) {
+		String sql = "Select FeeTypeID From FeeTypes Where FeeTypeCode = ? and AdviseType = ? and Active = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, code, AdviseType.PAYABLE.id(), 1);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

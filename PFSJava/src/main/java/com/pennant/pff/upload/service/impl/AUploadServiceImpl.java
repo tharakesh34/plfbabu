@@ -1,5 +1,6 @@
 package com.pennant.pff.upload.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.upload.dao.UploadDAO;
@@ -54,9 +56,9 @@ public abstract class AUploadServiceImpl implements UploadService {
 
 	@Override
 	public List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate, String type, String stage) {
+			Date toDate, String type, String stage, String code) {
 		List<FileUploadHeader> headerList = uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate, type,
-				stage);
+				stage, code);
 
 		for (FileUploadHeader header : headerList) {
 			if (header.getFailureRecords() > 0) {
@@ -120,6 +122,11 @@ public abstract class AUploadServiceImpl implements UploadService {
 	}
 
 	@Override
+	public List<Cluster> getClusterName(String code) {
+		return new ArrayList<>();
+	}
+
+	@Override
 	public void updateDownloadStatus(long headerID, int status) {
 		this.uploadDAO.updateDownloadStatus(headerID, status);
 	}
@@ -144,8 +151,24 @@ public abstract class AUploadServiceImpl implements UploadService {
 	}
 
 	@Override
-	public int isValidateApprove(List<FileUploadHeader> selectedHeaders) {
-		return this.uploadDAO.isValidateApprove(selectedHeaders, Status.DOWNLOADED.getValue());
+	public String isValidateApprove(List<FileUploadHeader> selectedHeaders) {
+		StringBuilder builder = new StringBuilder();
+
+		for (FileUploadHeader header : selectedHeaders) {
+			if (!header.isDownloadReq()) {
+				continue;
+			}
+
+			if (!this.uploadDAO.isValidateApprove(header.getId(), Status.DOWNLOADED.getValue())) {
+				if (builder.length() > 0) {
+					builder.append(", ");
+				}
+
+				builder.append(header.getId());
+			}
+		}
+		
+		return builder.toString();
 	}
 
 	@Autowired

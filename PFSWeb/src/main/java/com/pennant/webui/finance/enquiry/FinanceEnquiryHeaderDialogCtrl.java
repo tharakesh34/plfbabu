@@ -501,6 +501,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("finID", this.finID);
 			map.put("finReference", this.finReference);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
+
+			if (finScheduleData != null) {
+				map.put("PenaltyRate", this.finScheduleData.getFinODPenaltyRate());
+			}
+
 			path = "/WEB-INF/pages/Enquiry/OverDueInquiry/OverdueDetailList.zul";
 
 		} else if ("SUSENQ".equals(this.enquiryType)) {

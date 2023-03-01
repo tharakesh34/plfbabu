@@ -26,8 +26,6 @@ package com.pennant.webui.staticparms.schedulemethod;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -53,7 +51,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> {
 	private static final long serialVersionUID = -7332745886128746110L;
-	private static final Logger logger = LogManager.getLogger(ScheduleMethodListCtrl.class);
 
 	protected Window window_ScheduleMethodList;
 	protected Borderlayout borderLayout_ScheduleMethodList;

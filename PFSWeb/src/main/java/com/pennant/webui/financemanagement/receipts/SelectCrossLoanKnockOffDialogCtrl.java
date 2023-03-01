@@ -800,7 +800,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		map.put("isForeClosure", false);
 		map.put("isSettlementLoan", false);
 		map.put("crossLoanHeader", cLKHeader);
-		map.put("crossLoanKnockOff", crossLoanKnockOffListCtrl);
+		map.put("crossLoanKnockOffListCtrl", crossLoanKnockOffListCtrl);
 		Executions.createComponents("/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffDialog.zul", null,
 				map);
 

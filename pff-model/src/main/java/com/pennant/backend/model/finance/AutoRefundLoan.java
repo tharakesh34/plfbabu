@@ -3,8 +3,11 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AutoRefundLoan implements Serializable {
@@ -20,7 +23,6 @@ public class AutoRefundLoan implements Serializable {
 	private long lastMntBy;
 	private Timestamp lastMntOn;
 	private String finCcy;
-	private String closingStatus;
 	private String holdStatus;
 	private BigDecimal refundAmt = BigDecimal.ZERO;
 	private Date appDate;
@@ -33,6 +35,14 @@ public class AutoRefundLoan implements Serializable {
 	private Date activeNDate;
 	private Date closedNDate;
 	private boolean alwRefundByCheque;
+	private BigDecimal overDueAmount = BigDecimal.ZERO;
+	private List<FinExcessAmount> excessList = new ArrayList<>();
+	private List<ManualAdvise> payableList = new ArrayList<>();
+	private List<ManualAdvise> receivableList = new ArrayList<>();
+	private List<PaymentDetail> paymentDetails = new ArrayList<>();
+	private PaymentInstruction paymentInstruction;
+	private boolean writeOffLoan;
+
 	private ErrorDetail error = new ErrorDetail();
 
 	public AutoRefundLoan() {
@@ -119,14 +129,6 @@ public class AutoRefundLoan implements Serializable {
 		this.finCcy = finCcy;
 	}
 
-	public String getClosingStatus() {
-		return closingStatus;
-	}
-
-	public void setClosingStatus(String closingStatus) {
-		this.closingStatus = closingStatus;
-	}
-
 	public String getHoldStatus() {
 		return holdStatus;
 	}
@@ -151,20 +153,20 @@ public class AutoRefundLoan implements Serializable {
 		this.appDate = appDate;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	public Timestamp getExecutionTime() {
 		return executionTime;
 	}
 
 	public void setExecutionTime(Timestamp executionTime) {
 		this.executionTime = executionTime;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getFinType() {
@@ -221,6 +223,62 @@ public class AutoRefundLoan implements Serializable {
 
 	public void setAlwRefundByCheque(boolean alwRefundByCheque) {
 		this.alwRefundByCheque = alwRefundByCheque;
+	}
+
+	public BigDecimal getOverDueAmount() {
+		return overDueAmount;
+	}
+
+	public void setOverDueAmount(BigDecimal overDueAmount) {
+		this.overDueAmount = overDueAmount;
+	}
+
+	public List<FinExcessAmount> getExcessList() {
+		return excessList;
+	}
+
+	public void setExcessList(List<FinExcessAmount> excessList) {
+		this.excessList = excessList;
+	}
+
+	public List<ManualAdvise> getPayableList() {
+		return payableList;
+	}
+
+	public void setPayableList(List<ManualAdvise> payableList) {
+		this.payableList = payableList;
+	}
+
+	public List<ManualAdvise> getReceivableList() {
+		return receivableList;
+	}
+
+	public void setReceivableList(List<ManualAdvise> receivableList) {
+		this.receivableList = receivableList;
+	}
+
+	public List<PaymentDetail> getPaymentDetails() {
+		return paymentDetails;
+	}
+
+	public void setPaymentDetails(List<PaymentDetail> paymentDetails) {
+		this.paymentDetails = paymentDetails;
+	}
+
+	public PaymentInstruction getPaymentInstruction() {
+		return paymentInstruction;
+	}
+
+	public void setPaymentInstruction(PaymentInstruction paymentInstruction) {
+		this.paymentInstruction = paymentInstruction;
+	}
+
+	public boolean isWriteOffLoan() {
+		return writeOffLoan;
+	}
+
+	public void setWriteOffLoan(boolean writeOffLoan) {
+		this.writeOffLoan = writeOffLoan;
 	}
 
 	public ErrorDetail getError() {

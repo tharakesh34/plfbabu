@@ -15,7 +15,6 @@
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
 		<property name="dataSource" ref="dataSource" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -27,8 +26,6 @@
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
@@ -93,7 +90,6 @@
 	<bean id="latePaydueCreationService" class="com.pennant.app.core.LatePayDueCreationService" parent="serviceHelper">
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
@@ -125,13 +121,6 @@
 	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" />
 
 	<bean id="autoDisbursementService" class="com.pennant.app.core.AutoDisbursementService" parent="serviceHelper" />
-
-	<bean id="customerAccountService" class="com.pennant.app.core.CustomerAccountService" parent="serviceHelper">
-		<property name="accountsDAO" ref="accountsDAO" />
-		<property name="accountsHistoryDAO" ref="accountsHistoryDAO" />
-		<property name="accountTypeDAO" ref="accountTypeDAO" />
-		<property name="dataSource" ref="dataSource" />
-	</bean>
 
 	<bean id="snapshotService" class="com.pennant.app.core.SnapshotService">
 		<property name="dataSource" ref="dataSource" />
@@ -481,10 +470,7 @@
 	<!-- Income Amortization IND AS for InActive Loans -->
 	<bean id="finMaturityService" class="com.pennant.app.core.FinMaturityService" parent="serviceHelper">
 		<property name="dataSource" ref="dataSource" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
-		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
 
 	<!-- ProjectedAmortizationService -->
@@ -797,4 +783,6 @@
 	<bean id="genderDAO" class="com.pennant.backend.dao.systemmasters.impl.GenderDAOImpl" parent="basicDao" />
 	
 	<bean id="beneficiaryDAO" class="com.pennant.backend.dao.beneficiary.impl.BeneficiaryDAOImpl" parent="sequenceDao" />
+	
+	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao"/>
 </beans>

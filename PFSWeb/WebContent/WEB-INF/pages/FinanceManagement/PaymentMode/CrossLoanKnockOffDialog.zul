@@ -198,6 +198,13 @@
 														<textbox id="excessRef" readonly="true" />
 													</hbox>
 												</row>
+												<row id="rowCancelReason" visible="false">
+													<label value="${c:l('label_ReceiptDialog_CancelReason.value')}" />
+													<extendedcombobox id="cancelReason" />
+
+													<label value="${c:l('label_ReceiptDialog_CancelRemark.value')}" />
+													<textbox id="cancelRemarks" />
+												</row>
 											</rows>
 										</grid>
 									</groupbox>
@@ -380,6 +387,8 @@
 													label="${c:l('listheader_ReceiptDialog_CurrentReceivable.label')}" align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}"
 													align="right" sort="false" hflex="min" />
+											 	<listheader label="${c:l('listheader_ReceiptDialog_NetPaid.label')}" align="right" sort="false"
+													hflex="min" /> 
 												<listheader
 													label="${c:l('listheader_ReceiptDialog_WaivedAmount.label')}" align="right" sort="false" hflex="min" />
 												<listheader

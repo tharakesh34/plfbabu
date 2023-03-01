@@ -26,8 +26,6 @@ package com.pennant.webui.customermasters.customerrating;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -53,7 +51,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerRatingListCtrl extends GFCBaseListCtrl<CustomerRating> {
 	private static final long serialVersionUID = -6628823752111176539L;
-	private static final Logger logger = LogManager.getLogger(CustomerRatingListCtrl.class);
 
 	protected Window window_CustomerRatingList;
 	protected Borderlayout borderLayout_CustomerRatingList;

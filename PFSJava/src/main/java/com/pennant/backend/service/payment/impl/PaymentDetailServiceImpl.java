@@ -73,7 +73,6 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.fee.AdviseType;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -302,13 +301,18 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		boolean deleteRecord = false;
 		boolean approveRec = false;
 
-		List<ManualAdviseMovements> adviseMovements = new ArrayList<ManualAdviseMovements>();
+		List<ManualAdviseMovements> adviseMovements = new ArrayList<>();
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			AuditDetail auditDetail = auditDetails.get(i);
 			PaymentDetail pd = (PaymentDetail) auditDetail.getModelData();
 
-			isValidateReceipt(pd);
+			ErrorDetail errorDetail = isValidateReceipt(pd);
+
+			if (errorDetail != null) {
+				auditDetail.setErrorDetail(errorDetail);
+				continue;
+			}
 
 			saveRecord = false;
 			updateRecord = false;
@@ -783,23 +787,22 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		return paymentInstructionDAO.getPymntsCustId(paymentId);
 	}
 
-	private void isValidateReceipt(PaymentDetail pd) {
+	private ErrorDetail isValidateReceipt(PaymentDetail pd) {
 		logger.debug(Literal.ENTERING);
 
 		if (AdviseType.isPayable(pd.getAmountType())) {
 			logger.debug(Literal.LEAVING);
-			return;
+			return null;
 		}
 
 		String receipModeStatus = finReceiptHeaderDAO.getReceiptModeStatuByExcessId(pd.getReferenceId());
 
 		if (RepayConstants.PAYSTATUS_CANCEL.equals(receipModeStatus)
 				|| RepayConstants.PAYSTATUS_BOUNCE.equals(receipModeStatus)) {
-			ErrorDetail ed = ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_002", null));
-			throw new AppException(ed.getCode(), ed.getMessage());
+			return ErrorUtil.getErrorDetail(new ErrorDetail("REFUND_002", null));
 		}
 
-		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Autowired

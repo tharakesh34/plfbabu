@@ -252,6 +252,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	protected Button btnChangeReceipt;
 	protected Button btnCalcReceipts;
 	protected Decimalbox remBalAfterAllocation;
+	protected ExtendedCombobox cancelReason;
+	protected Textbox cancelRemarks;
+	protected Row rowCancelReason;
 
 	private CustomerDetailsService customerDetailsService;
 	private ReceiptService receiptService;
@@ -296,6 +299,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	private boolean isKnockOff = false;
 	private boolean isForeClosure = false;
 	private boolean isEarlySettle = false;
+	private boolean isCancel = false;
 	private Date maturityDate;
 
 	private CustomerDetails customerDetails = null;
@@ -370,6 +374,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 					amountFormat = PennantApplicationUtil.getAmountFormate(formatter);
 
 					recordType = finReceiptHeader.getRecordType();
+					isCancel = crossLoanHeader.isCancelProcess();
 
 					Cloner cloner = new Cloner();
 					befImage = cloner.deepClone(crossLoanHeader);
@@ -392,8 +397,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				isForeClosure = (boolean) arguments.get("isForeClosure");
 			}
 
-			if (arguments.containsKey("crossLoanKnockOff")) {
-				setCrossLoanKnockOffListCtrl((CrossLoanKnockOffListCtrl) arguments.get("crossLoanKnockOff"));
+			if (arguments.containsKey("crossLoanKnockOffListCtrl")) {
+				setCrossLoanKnockOffListCtrl((CrossLoanKnockOffListCtrl) arguments.get("crossLoanKnockOffListCtrl"));
 			}
 			if (arguments.containsKey("moduleCode")) {
 				moduleCode = (String) arguments.get("moduleCode");
@@ -554,6 +559,15 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole(), menuItemRightName);
 
+		if (isCancel) {
+			this.btnReceipt.setVisible(true);
+			this.btnReceipt.setDisabled(false);
+			this.btnChangeReceipt.setVisible(true);
+			this.btnChangeReceipt.setDisabled(false);
+
+			return;
+		}
+
 		this.btnReceipt.setVisible(getUserWorkspace().isAllowed("button_CrossLoanKnockOffDialog_btnReceipt"));
 		this.btnChangeReceipt
 				.setVisible(getUserWorkspace().isAllowed("button_CrossLoanKnockOffDialog_btnChangeReceipt"));
@@ -629,10 +643,24 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		this.bankCode.setDisplayStyle(2);
 		this.bankCode.setValidateColumns(new String[] { "BankCode" });
 
+		this.cancelReason.setModuleName("RejectDetail");
+		this.cancelReason.setMandatoryStyle(true);
+		this.cancelReason.setValueColumn("RejectCode");
+		this.cancelReason.setDescColumn("RejectDesc");
+		this.cancelReason.setDisplayStyle(2);
+		this.cancelReason.setValidateColumns(new String[] { "RejectCode" });
+		this.cancelReason.setFilters(
+				new Filter[] { new Filter("RejectType", PennantConstants.Reject_Payment, Filter.OP_EQUAL) });
+		this.cancelReason.setMaxlength(10);
+		this.cancelRemarks.setMaxlength(100);
 		/*
 		 * if (DisbursementConstants.PAYMENT_TYPE_MOB .equals(receiptData.getReceiptHeader().getReceiptChannel())) {
 		 * this.collectionAgentId.setMandatoryStyle(true); }
 		 */
+
+		if (isCancel) {
+			this.rowCancelReason.setVisible(true);
+		}
 
 		appendScheduleMethod(receiptData.getReceiptHeader());
 
@@ -727,6 +755,11 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		// readOnlyComponent(true, this.receivedDate);
 		readOnlyComponent(isReadOnly("CrossLoanKnockOffDialog_remarks"), this.remarks);
 		readOnlyComponent(isReadOnly("CrossLoanKnockOffDialog_DrawerName"), this.drawerName);
+
+		if (isCancel && FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER.equals(module)) {
+			readOnlyComponent(true, this.cancelReason);
+			readOnlyComponent(true, this.cancelRemarks);
+		}
 
 		logger.debug("Leaving");
 	}
@@ -1192,9 +1225,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		this.allocationMethod.setErrorMessage("");
 		String allocateMthd = getComboboxValue(this.allocationMethod);
 
-		if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCTYPE_AUTO)) {
+		if (AllocationType.AUTO.equals(allocateMthd)) {
 			resetAllocationPayments();
-		} else if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCTYPE_MANUAL)) {
+		} else if (AllocationType.MANUAL.equals(allocateMthd)) {
 			receiptData.getReceiptHeader().setAllocationType(allocateMthd);
 			doFillAllocationDetail();
 		}
@@ -1854,6 +1887,11 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				.setDisabled(!getUserWorkspace().isAllowed("button_CrossLoanKnockOffDialog_btnChangeReceipt"));
 		this.btnCalcReceipts.setDisabled(true);
 
+		if (isCancel) {
+			this.btnReceipt.setDisabled(false);
+			this.btnChangeReceipt.setDisabled(false);
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1882,6 +1920,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	public void onClick$btnReceipt(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSave();
+		crossLoanKnockOffListCtrl.doRefresh();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -2085,6 +2124,10 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				crossLoanHKnockOff.setVersion(1);
 				if (crossLoanHKnockOff.isNewRecord()) {
 					crossLoanHKnockOff.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					if (isCancel) {
+						crossLoanHKnockOff.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
+
 				} else {
 					crossLoanHKnockOff.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					crossLoanHKnockOff.setNewRecord(true);
@@ -2115,7 +2158,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				String nextRoleCode = crossLoanHKnockOff.getNextRoleCode();
 
 				String msg = PennantApplicationUtil.getSavingStatus(crossLoanHKnockOff.getRoleCode(), nextRoleCode,
-						crossLoanHKnockOff.getCrossLoanTransfer().getFromFinReference(), " Loan ",
+						crossLoanHKnockOff.getCrossLoanTransfer().getToFinReference(), " Loan ",
 						crossLoanHKnockOff.getRecordStatus(), false);
 				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();
@@ -2181,6 +2224,10 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		this.receiptDate.setValue(rch.getReceiptDate());
 		this.receiptId.setValue(String.valueOf(rch.getReceiptID()));
 		this.receiptDate.setDisabled(true);
+		if (isCancel) {
+			this.cancelReason.setValue(rch.getCancelReason());
+			this.cancelRemarks.setValue(rch.getCancelRemarks());
+		}
 
 		List<ValueLabel> allocationMethods = PennantStaticListUtil.getAllocationMethods();
 
@@ -2469,7 +2516,13 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		if (receiptData.getPaidNow()
 				.compareTo(receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
 				&& !receiptData.isForeClosure()) {
-			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt"));
+			String[] err = new String[2];
+
+			err[0] = PennantApplicationUtil.formatAmount(receiptData.getPaidNow(), formatter);
+			err[1] = PennantApplicationUtil.formatAmount(
+					receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable()), formatter);
+			MessageUtil
+					.showError(new ErrorDetail("WFEE12", Labels.getLabel("label_Allocation_More_than_receipt"), err));
 			return;
 		}
 
@@ -2553,16 +2606,20 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		lc.setParent(item);
 
 		// Editable Amount - Total Paid
-		/*
-		 * lc = new Listcell(); CurrencyBox allocationNetPaid = new CurrencyBox();
-		 * allocationNetPaid.setStyle("text-align:right;"); allocationNetPaid.setBalUnvisible(true, true);
-		 * setProps(allocationNetPaid, false, formatter, 120); allocationNetPaid.setId("AllocateNetPaid_" + idx);
-		 * allocationNetPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getPaidAmount(), formatter));
-		 * allocationNetPaid.addForward("onFulfill", this.window_CrossLoanKnockOffDialog, "onAllocateNetPaidChange",
-		 * idx); allocationNetPaid.setReadonly(true);
-		 * 
-		 * lc.appendChild(allocationNetPaid); lc.setStyle("text-align:right;"); lc.setParent(item);
-		 */
+
+		lc = new Listcell();
+		CurrencyBox allocationNetPaid = new CurrencyBox();
+		allocationNetPaid.setStyle("text-align:right;");
+		allocationNetPaid.setBalUnvisible(true, true);
+		setProps(allocationNetPaid, false, formatter, 120);
+		allocationNetPaid.setId("AllocateNetPaid_" + idx);
+		allocationNetPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getPaidAmount(), formatter));
+		allocationNetPaid.addForward("onFulfill", this.windowCrossLoanKnockOffDialog, "onAllocateNetPaidChange", idx);
+		allocationNetPaid.setReadonly(true);
+
+		lc.appendChild(allocationNetPaid);
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
 
 		// addAmountCell(item, allocate.getPaidGST(), ("PaidGST_" + idx), true);
 		// addAmountCell(item, allocate.getTdsPaid(), ("PaidTDS_" + idx), true);
@@ -2598,8 +2655,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		lc.setParent(item);
 
 		if (AllocationType.MANUAL.equals(allocateMthd)) {
-			// allocationNetPaid.setReadonly(!getUserWorkspace().isAllowed("CrossLoanKnockOffDialog_PaidAmount"));
-			// allocationPaid.setReadonly(!getUserWorkspace().isAllowed("CrossLoanKnockOffDialog_PaidAmount"));
+			allocationNetPaid.setReadonly(!getUserWorkspace().isAllowed("CrossLoanKnockOffDialog_PaidAmount"));
+			// allocationPaid.setReadonly(false);
 		}
 
 		// Balance Due AMount
@@ -2710,7 +2767,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		// addAmountCell(item, tdsDue, null, true);
 		addAmountCell(item, totDue, null, true);
 		addAmountCell(item, totPaid, null, true);
-		// addAmountCell(item, paid, null, true);
+		addAmountCell(item, paid, null, true);
 		// addAmountCell(item, paidGST, null, true);
 		// addAmountCell(item, tdsPaid, null, true);
 		addAmountCell(item, waived.subtract(gstAmount), null, true);
@@ -3192,6 +3249,11 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 					Labels.getLabel("label_ReceiptDialog_EffecScheduleMethod.value")));
 		}
 
+		if (this.rowCancelReason.isVisible() && !this.cancelReason.isReadonly()) {
+			this.cancelReason.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CrossLoanKnockoffDialog_CancelReason.value"), null, true, true));
+		}
+
 		if (StringUtils.equals(recptMode, ReceiptMode.CHEQUE)) {
 
 			if (!this.chequeAcNo.isReadonly()) {
@@ -3493,6 +3555,23 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		// RecAppDate
 		if (header.getRecAppDate() == null) {
 			header.setRecAppDate(SysParamUtil.getAppDate());
+		}
+
+		if (isCancel) {
+			header.setReceiptModeStatus(RepayConstants.PAYSTATUS_CANCEL);
+			header.setNewRecord(false);
+
+			try {
+				header.setCancelReason(cancelReason.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				header.setCancelRemarks(cancelRemarks.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 
 		doRemoveValidation();
@@ -4490,7 +4569,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				this.excessAdjustTo.setDisabled(true);
 			}
 		}
-		
+
 		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBalAfterAllocation, formatter));
 	}
 
@@ -4805,6 +4884,103 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				this.windowCrossLoanKnockOffDialog, map);
 
 		logger.debug("Leaving " + event.toString());
+	}
+
+	public void onAllocateNetPaidChange(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		// FIXME: PV: CODE REVIEW PENDING
+		int idx = (int) event.getData();
+		String id = "AllocateNetPaid_" + idx;
+
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+
+		ReceiptAllocationDetail allocate = rch.getAllocationsSummary().get(idx);
+
+		CurrencyBox allocationPaid = (CurrencyBox) this.listBoxPastdues.getFellow(id);
+
+		BigDecimal paidAmount = PennantApplicationUtil.unFormateAmount(allocationPaid.getValidateValue(), formatter);
+		BigDecimal dueAmount = rch.getAllocationsSummary().get(idx).getTotalDue();
+		BigDecimal waivedAmount = rch.getAllocationsSummary().get(idx).getWaivedAmount();
+		if (paidAmount.compareTo(dueAmount.subtract(waivedAmount)) > 0) {
+			paidAmount = dueAmount.subtract(waivedAmount);
+		}
+		BigDecimal totalPaid = receiptCalculator.getPaidAmount(allocate, paidAmount);
+		allocate.setTotalPaid(paidAmount);
+		allocate.setPaidAmount(paidAmount);
+		// allocate.setPaidAmount(allocate.getTotRecv());
+
+		// GST Calculations
+		if (StringUtils.isNotBlank(allocate.getTaxType())) {
+			// always paid amount we are taking the inclusive type here because
+			// we are doing reverse calculation here
+			allocate.setPaidCGST(BigDecimal.ZERO);
+			allocate.setPaidSGST(BigDecimal.ZERO);
+			allocate.setPaidUGST(BigDecimal.ZERO);
+			allocate.setPaidIGST(BigDecimal.ZERO);
+			allocate.setPaidCESS(BigDecimal.ZERO);
+			allocate.setPaidGST(BigDecimal.ZERO);
+			receiptCalculator.calAllocationPaidGST(financeDetail, totalPaid, allocate,
+					FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
+		}
+
+		BigDecimal tdsPaidNow = BigDecimal.ZERO;
+		if (allocate.isTdsReq()) {
+			if (dueAmount.equals(paidAmount)) {
+				tdsPaidNow = allocate.getTdsDue();
+			} else {
+				tdsPaidNow = receiptCalculator.getTDSAmount(financeDetail.getFinScheduleData().getFinanceMain(),
+						totalPaid);
+				allocate.setTdsPaid(tdsPaidNow);
+			}
+			allocate.setTotalPaid(totalPaid.add(tdsPaidNow));
+		}
+
+		if (allocate.isSubListAvailable()) {
+			receiptCalculator.splitNetAllocSummary(receiptData, idx);
+		} else {
+			if (Allocation.EMI.equals(allocate.getAllocationType())) {
+				allocateEmi(paidAmount);
+			} else if (Allocation.PFT.equals(allocate.getAllocationType())) {
+				allocatePft(paidAmount);
+			} else if (Allocation.PRI.equals(allocate.getAllocationType())) {
+				allocatePRI(paidAmount);
+			} else {
+				for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
+					if (allocteDtl.getAllocationType().equals(allocate.getAllocationType())
+							&& allocteDtl.getAllocationTo() == allocate.getAllocationTo()) {
+						allocteDtl.setTotalPaid(paidAmount.add(tdsPaidNow));
+						allocteDtl.setPaidAmount(paidAmount);
+						allocteDtl.setTdsPaid(tdsPaidNow);
+						if (allocteDtl.getDueGST().compareTo(BigDecimal.ZERO) > 0) {
+							allocteDtl.setPaidCGST(BigDecimal.ZERO);
+							allocteDtl.setPaidSGST(BigDecimal.ZERO);
+							allocteDtl.setPaidUGST(BigDecimal.ZERO);
+							allocteDtl.setPaidIGST(BigDecimal.ZERO);
+							allocteDtl.setPaidCESS(BigDecimal.ZERO);
+							allocteDtl.setPaidGST(BigDecimal.ZERO);
+							receiptCalculator.calAllocationPaidGST(financeDetail, allocteDtl.getTotalPaid(), allocteDtl,
+									FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+						}
+					}
+				}
+			}
+		}
+
+		try {
+			changePaid();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		// if no extra balance or partial pay disable excessAdjustTo
+		if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) <= 0 || receiptPurposeCtg == 1) {
+			this.excessAdjustTo.setSelectedIndex(0);
+			this.excessAdjustTo.setDisabled(true);
+		} else {
+			this.excessAdjustTo.setDisabled(false);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public Map<String, BigDecimal> getTaxPercMap() {

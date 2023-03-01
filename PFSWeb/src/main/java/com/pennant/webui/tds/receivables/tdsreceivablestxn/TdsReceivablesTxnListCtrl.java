@@ -27,8 +27,6 @@ package com.pennant.webui.tds.receivables.tdsreceivablestxn;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -61,7 +59,6 @@ import com.pennanttech.pff.core.TableType;
  */
 public class TdsReceivablesTxnListCtrl extends GFCBaseListCtrl<TdsReceivable> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(TdsReceivablesTxnListCtrl.class);
 
 	protected Window window_TdsReceivablesTxnList;
 	protected Borderlayout borderLayout_TdsReceivablesTxnList;

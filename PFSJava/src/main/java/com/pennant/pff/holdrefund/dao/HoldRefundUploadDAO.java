@@ -32,8 +32,6 @@ public interface HoldRefundUploadDAO {
 
 	FinanceHoldDetail getFinanceHoldDetails(long finID, String type, boolean isWIF);
 
-	void releaseHoldOnLoans(List<Long> finIds);
-
-	List<Long> getInactiveLoansOnHold(Date closureDate);
+	void releaseHoldOnLoans(Date closureDate);
 
 }

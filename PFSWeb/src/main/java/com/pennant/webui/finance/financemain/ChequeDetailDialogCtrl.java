@@ -1700,6 +1700,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		boolean deletedCheques = false;
 		int count = 0;
+		BigDecimal totamt = BigDecimal.ZERO;
 		for (Listitem listItem : getListItems()) {
 			Checkbox checkbox = (Checkbox) listItem.getFirstChild().getFirstChild();
 
@@ -1715,16 +1716,20 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				continue;
 			}
 
+			BigDecimal schdAmt = BigDecimal.ZERO;
 			if (!checkbox.isChecked()) {
 				int eMIRefNo = cheque.geteMIRefNo() - count;
 				if (!fromLoan) {
 					if (eMIRefNo != cheque.geteMIRefNo()) {
 						cheque.setRecordType(PennantConstants.RCD_UPD);
 					}
+					schdAmt = getEmiAmount(cheque.getChequeDate());
 				}
 
 				cheque.seteMIRefNo(eMIRefNo);
 				cheques.add(cheque);
+
+				totamt = totamt.add(schdAmt);
 				continue;
 			}
 
@@ -1766,6 +1771,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				.compareTo(cd2.getChequeSerialNumber())).collect(Collectors.toList());
 
 		doFillCheques(cheques);
+
+		if (!fromLoan) {
+			this.totAmount.setValue(PennantApplicationUtil.formateAmount(totamt, ccyEditField));
+		}
 	}
 
 	private BigDecimal getEmiAmount(Listitem listitem) {

@@ -3678,7 +3678,7 @@
 	</bean>
 
 	<bean name="financeWriteoffServiceTarget"
-		class="com.pennant.backend.service.finance.impl.FinanceWriteoffServiceImpl" parent="genericFinanceDetailService"/>
+		class="com.pennant.backend.service.finance.impl.FinanceWriteoffServiceImpl" parent="genericFinanceDetailService" />
 
 	<!--============ Finance Schedule Details ============== -->
 	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
@@ -4406,7 +4406,7 @@
 		</property>
 	</bean>
 
-	<bean id="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" >
+	<bean id="receiptServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl">
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="repaymentProcessUtil" ref="repaymentProcessUtil" />
 	</bean>
@@ -7084,7 +7084,6 @@
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
 		<property name="dataSource" ref="dataSource" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -7095,8 +7094,6 @@
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
@@ -7121,7 +7118,6 @@
 	<bean id="latePaydueCreationService" class="com.pennant.app.core.LatePayDueCreationService" parent="serviceHelper">
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
@@ -12997,7 +12993,7 @@
 	</bean>
 
 	<bean name="feeRefundHeaderServiceTarget"
-		class="com.pennant.backend.service.feerefund.impl.FeeRefundHeaderServiceImpl"/>
+		class="com.pennant.backend.service.feerefund.impl.FeeRefundHeaderServiceImpl" />
 
 	<bean id="feeRefundDetailService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -13019,7 +13015,6 @@
 
 	<bean name="feeRefundDetailServiceTarget"
 		class="com.pennant.backend.service.feerefund.impl.FeeRefundDetailServiceImpl">
-		<property name="feeRefundDetailDAO" ref="feeRefundDetailDAO" />
 	</bean>
 
 	<bean id="feeRefundInstructionService"
@@ -13066,10 +13061,6 @@
 
 	<bean id="autoRefundService" class="com.pennant.pff.autorefund.serviceimpl.AutoRefundServiceImpl" />
 
-	<bean id="autoRefundProcess" class="com.pennanttech.pff.autorefund.AutoRefundProcess">
-		<property name="autoRefundService" ref="autoRefundService" />
-		<property name="refundBeneficiary" ref="refundBeneficiary" />
-	</bean>
 
 	<!--Refund beneficiary -->
 	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary">
@@ -13231,4 +13222,8 @@
 	<bean id="crossLoanKnockOffUploadProcessRecord" class = "com.pennant.backend.service.finance.impl.CrossLoanKnockOffUploadProcessRecord"/>
 	
 	<bean id="finOverDueService" class="com.pennant.app.core.FinOverDueService"/>
+	
+	<bean id="lppUploadDAO" class="com.pennant.pff.lpp.dao.impl.LPPUploadDAOImpl" parent="sequenceDao" />
+	
+	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao"/>
 </beans>

@@ -29,8 +29,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.event.Event;
@@ -58,7 +56,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
  */
 public class AlertListCtrl extends GFCBaseListCtrl<Object> {
 	private static final long serialVersionUID = 259921702952389829L;
-	private static final Logger logger = LogManager.getLogger(AlertListCtrl.class);
 
 	protected Window window;
 	protected Borderlayout borderLayout;

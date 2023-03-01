@@ -27,6 +27,7 @@ import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.customermasters.Customer;
@@ -38,6 +39,7 @@ import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -73,6 +75,7 @@ public class EodService {
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ClosureService closureService;
+	private AutoRefundService autoRefundService;
 
 	public EodService() {
 		super();
@@ -163,6 +166,9 @@ public class EodService {
 
 	public void doUpdate(CustEODEvent custEODEvent, boolean isLimitRebuild) throws Exception {
 		// update customer EOD
+
+		autoRefundService.updateRefunds(custEODEvent);
+
 		loadFinanceData.updateFinEODEvents(custEODEvent);
 		// receipt postings on SOD
 		if (custEODEvent.isCheckPresentment()) {
@@ -194,13 +200,9 @@ public class EodService {
 			eodAutoKnockOffService.processKnockOff(custId, appDate);
 			logger.info("Auto-Knock-Off process completed for the Customer ID >> {} ", custId);
 		}
-
-		logger.info("Preparing EOD Events for the Customer ID {} >> started...", custId);
-		loadFinanceData.prepareFinEODEvents(custEODEvent);
-		logger.info("Preparing EOD Events for the Customer ID {} >> completed.", custId);
-
 		if (!eventProperties.isSkipLatePay()) {
 			// late pay marking
+
 			if (custEODEvent.isPastDueExist()) {
 				// overdue calculated on EOD
 				// LPP calculated on the SOD
@@ -221,6 +223,8 @@ public class EodService {
 
 		// LatePay Due creation Service
 		latePayDueCreationService.processLatePayAccrual(custEODEvent);
+
+		autoRefundService.executeRefund(custEODEvent);
 
 		/**************** SOD ***********/
 		// moving customer date to sod
@@ -243,6 +247,15 @@ public class EodService {
 			logger.info("Processing Rate Review completed.");
 		}
 
+		// if month end then only it should run
+		if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0
+				|| eventProperties.isEomOnEOD()) {
+			// Calculate MonthEnd LPI
+			logger.info("Processing Late Pay interest started...");
+			custEODEvent = latePayMarkingService.processLPIAccrual(custEODEvent);
+			logger.info("Processing Late Pay interest Completed...");
+		}
+
 		// Accrual posted on EOD only
 		logger.info("Processing Accruals started...");
 		accrualService.processAccrual(custEODEvent);
@@ -259,6 +272,14 @@ public class EodService {
 			logger.info("Processing MonthEndAccruals started...");
 			projectedAmortizationService.prepareMonthEndAccruals(custEODEvent);
 			logger.info("Processing MonthEndAccruals completed.");
+		}
+
+		if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0
+				|| eventProperties.isEomOnEOD()) {
+			// Calculate MonthEnd Penalty
+			logger.info("Processing Late Pay Accruals started...");
+			latePayMarkingService.processLatePayAccrual(custEODEvent);
+			logger.info("Processing Late Pay Accruals completed...");
 		}
 
 		// Auto disbursements
@@ -304,7 +325,21 @@ public class EodService {
 		if (ImplementationConstants.ALLOW_NPA) {
 			assetClassificationService.process(custEODEvent);
 		}
+	}
 
+	public void processAutoRefund(CustEODEvent custEODEvent) {
+		logger.info("Process the auto Refund for the Customer who is no active loans");
+		autoRefundService.executeRefund(custEODEvent);
+
+		autoRefundService.updateRefunds(custEODEvent);
+	}
+
+	public void prepareFinEODEvents(CustEODEvent custEODEvent) {
+		loadFinanceData.prepareFinEODEvents(custEODEvent);
+	}
+
+	public void loadAutoRefund(CustEODEvent custEODEvent) {
+		autoRefundService.loadAutoRefund(custEODEvent);
 	}
 
 	@Autowired
@@ -419,6 +454,11 @@ public class EodService {
 	@Autowired
 	public void setClosureService(ClosureService closureService) {
 		this.closureService = closureService;
+	}
+
+	@Autowired
+	public void setAutoRefundService(AutoRefundService autoRefundService) {
+		this.autoRefundService = autoRefundService;
 	}
 
 }

@@ -109,8 +109,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 					List<ChequeDetail> addcheques = new ArrayList<>();
 					List<ChequeDetail> delcheques = new ArrayList<>();
 
-					int chequeSize = 0;
-
 					for (ChequeUpload upload : chequeUploads) {
 						upload.setReferenceID(finID);
 						String action = upload.getAction();
@@ -123,16 +121,9 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 						upload.getChequeDetail().setHeaderID(chequeHeader.getId());
 						if (action.equals("A")) {
-							if (InstrumentType.isPDC(upload.getChequeDetail().getChequeType())) {
-								chequeSize++;
-							}
-
 							addcheques.add(upload.getChequeDetail());
 						} else {
 							if (isNotRelizedOrPresent(upload)) {
-								if (InstrumentType.isPDC(upload.getChequeDetail().getChequeType())) {
-									chequeSize--;
-								}
 								delcheques.add(upload.getChequeDetail());
 							} else {
 								ErrorDetail error = ErrorUtil.getError("90508", "Cheque Header ");
@@ -147,18 +138,23 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 						if (!addcheques.isEmpty()) {
 							chequeHeader.setChequeDetailList(addcheques);
+							chequeHeader.setNoOfCheques(fetchChequeSize(addcheques));
 							process(chequeHeader, chequeUploads);
 						}
 
+						int chequeSize = 0;
 						if (!delcheques.isEmpty()) {
 							chequeHeader.setChequeDetailList(delcheques);
 							for (ChequeDetail detail : delcheques) {
+								if (InstrumentType.isPDC(detail.getChequeType())) {
+									chequeSize++;
+								}
 								chequeDetailDAO.deleteCheques(detail);
 							}
 
-							chequeHeader.setNoOfCheques(chequeSize);
-							chequeHeaderDAO.updatesize(chequeHeader);
 						}
+						chequeHeader.setNoOfCheques(chequeSize);
+						chequeHeaderDAO.updatesize(chequeHeader);
 
 						for (ChequeUpload chequeUpload : chequeUploads) {
 							if (chequeUpload.getProgress() == EodConstants.PROGRESS_FAILED) {
@@ -314,7 +310,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 		fd.setFinReference(header.getFinReference());
 
-		header.setNoOfCheques(header.getChequeDetailList().size());
 		header.setChequeDetailList(header.getChequeDetailList());
 
 		ErrorDetail error = chequeHeaderService.validateBasicDetails(fd, "");
@@ -344,6 +339,17 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 			detail.setErrorDesc("");
 		}
 
+	}
+
+	private int fetchChequeSize(List<ChequeDetail> cheques) {
+		int chequeSize = 0;
+
+		for (ChequeDetail detail : cheques) {
+			if (InstrumentType.isPDC(detail.getChequeType())) {
+				chequeSize++;
+			}
+		}
+		return chequeSize;
 	}
 
 	private void setError(ChequeUpload detail, ErrorDetail error) {

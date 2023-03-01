@@ -201,10 +201,10 @@ public class CrossLoanKnockOffDAOImpl extends SequenceDao<CrossLoanKnockOff> imp
 	}
 
 	public BigDecimal getTransferAmount(long excessID) {
-		String sql = "Select sum(TransferAmount) From Cross_Loan_Transfer_Temp Where ExcessID = ?";
-	
+		String sql = "Select coalesce(sum(TransferAmount), 0) From Cross_Loan_Transfer_Temp Where ExcessID = ?";
+
 		logger.debug(Literal.SQL.concat(sql));
-		
+
 		try {
 			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, excessID);
 		} catch (EmptyResultDataAccessException e) {

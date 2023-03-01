@@ -8,7 +8,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.pff.settlement.dao.SettlementDAO;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
@@ -316,16 +319,32 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 
 	@Override
 	public FinSettlementHeader getInitiateSettlementByFinID(long finID, String type) {
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where FinID = ? and SettlementStatus= ?");
+		logger.debug(Literal.ENTERING);
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		FinSettlementHeader settlement = new FinSettlementHeader();
+		settlement.setFinID(finID);
+
+		StringBuilder selectSql = new StringBuilder("Select ID, FinID, SettlementType,");
+		selectSql.append(" SettlementStatus, StartDate, OtsDate, EndDate, SettlementReason, SettlementAmount,");
+		selectSql.append(" SettlementEndAfterGrace, NoOfGraceDays,CancelReasonCode, CancelRemarks,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+		selectSql.append(" NextTaskId, RecordType, WorkflowId");
+
+		selectSql.append(" From Fin_Settlement_Header");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where  FinID =:finID and SettlementStatus= 'I'");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(settlement);
+		RowMapper<FinSettlementHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinSettlementHeader.class);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinSettlementHeaderRM(type), finID, "I");
+			settlement = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			return null;
+			// settlement = null;
 		}
+		logger.debug(Literal.LEAVING);
+		return settlement;
 	}
 
 	private StringBuilder getSqlQuery(String type) {

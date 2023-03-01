@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -42,6 +45,10 @@ public class FinSettlementHeader extends AbstractWorkflowEntity {
 	private List<SettlementAllocationDetail> settlementAllocationDetails = new ArrayList<>();
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private SettlementTypeDetail settlementTypeDetail;
+	private Date appDate;
+	private FinReceiptData frd;
+	private List<FinReceiptHeader> receiptList = new ArrayList<>();
+	private FinanceMain financeMain;
 
 	public FinSettlementHeader() {
 		super();
@@ -59,6 +66,10 @@ public class FinSettlementHeader extends AbstractWorkflowEntity {
 		excludeFields.add("sourceId");
 		excludeFields.add("cancelRemarks");
 		excludeFields.add("cancelReasonCode");
+		excludeFields.add("appDate");
+		excludeFields.add("frd");
+		excludeFields.add("receiptList");
+		excludeFields.add("financeMain");
 
 		return excludeFields;
 	}
@@ -269,6 +280,38 @@ public class FinSettlementHeader extends AbstractWorkflowEntity {
 
 	public void setSettlementReasonDesc(String settlementReasonDesc) {
 		this.settlementReasonDesc = settlementReasonDesc;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
+	}
+
+	public FinReceiptData getFrd() {
+		return frd;
+	}
+
+	public void setFrd(FinReceiptData frd) {
+		this.frd = frd;
+	}
+
+	public List<FinReceiptHeader> getReceiptList() {
+		return receiptList;
+	}
+
+	public void setReceiptList(List<FinReceiptHeader> receiptList) {
+		this.receiptList = receiptList;
+	}
+
+	public FinanceMain getFinanceMain() {
+		return financeMain;
+	}
+
+	public void setFinanceMain(FinanceMain financeMain) {
+		this.financeMain = financeMain;
 	}
 
 }

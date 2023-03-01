@@ -549,6 +549,7 @@ public class RepaymentProcessUtil {
 		extMap.put("DSF_ReceiptAmount", BigDecimal.ZERO);
 		extMap.put("PB_ReceiptAmount", BigDecimal.ZERO);
 		extMap.put("Restruct_Bpi", rch.getBpiAmount());
+		extMap.put("SETTLE_ReceiptAmount", BigDecimal.ZERO);
 
 		List<ManualAdviseMovements> payableAdvMovements = new ArrayList<>();
 
@@ -594,6 +595,9 @@ public class RepaymentProcessUtil {
 			case RepayConstants.EXAMOUNTTYPE_TEXCESS:
 				extMap.put("ET_ReceiptAmount", extMap.get("ET_ReceiptAmount").add(totPaidNow));
 				break;
+			case RepayConstants.EXAMOUNTTYPE_SETTLEMENT:
+				extMap.put("SETTLE_ReceiptAmount", extMap.get("SETTLE_ReceiptAmount").add(totPaidNow));
+				break;
 			default:
 				extMap.put((feeCode + "_P"), extMap.get(feeCode + "_P").add(totPaidNow));
 				extMap.put((feeCode + "_CGST_P"), extMap.get(feeCode + "_CGST_P").add(xcess.getPaidCGST()));
@@ -637,6 +641,7 @@ public class RepaymentProcessUtil {
 		addZeroifNotContains(extMap, "EA_ReceiptAmount");
 		addZeroifNotContains(extMap, "PB_ReceiptAmount");
 		addZeroifNotContains(extMap, "Restruct_Bpi");
+		addZeroifNotContains(extMap, "SETTLE_ReceiptAmount");
 
 		// Branch Cash Update
 		/*
@@ -2052,6 +2057,7 @@ public class RepaymentProcessUtil {
 		FinRepayQueueHeader rpyQueueHeader = new FinRepayQueueHeader();
 
 		FinScheduleData fsd = financeDetail.getFinScheduleData();
+		rpyQueueHeader.setFinOdList(fsd.getFinODDetails());
 		FinanceMain fm = fsd.getFinanceMain();
 		List<FinReceiptDetail> rcdList = rch.getReceiptDetails();
 		rcdList = sortReceiptDetails(rcdList);

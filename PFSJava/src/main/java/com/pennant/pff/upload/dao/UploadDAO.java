@@ -24,7 +24,7 @@ public interface UploadDAO {
 	boolean isFileDownlaoded(long id);
 
 	List<FileUploadHeader> getHeaderData(List<String> roleCodes, String entityCode, Long id, Date fromDate, Date toDate,
-			String type, String stage);
+			String type, String stage, String code);
 
 	void deleteHeader(FileUploadHeader header, TableType tableType);
 
@@ -38,7 +38,7 @@ public interface UploadDAO {
 
 	void updateDownloadStatus(long headerID, int status);
 
-	int isValidateApprove(List<FileUploadHeader> selectedHeaders, int status);
+	boolean isValidateApprove(long id, int status);
 
 	void updateFailRecords(int sucessRecords, int failedrecords, long headerId);
 }

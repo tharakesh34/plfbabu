@@ -16,13 +16,14 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.core.FinOverDueService;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.ClusterDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
-import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionUploadDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payment.PaymentInstUploadDetail;
 import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
@@ -42,16 +43,13 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private PaymentInstructionDAO paymentInstructionDAO;
-	private PaymentHeaderDAO paymentHeaderDAO;
 	private FeeTypeDAO feeTypeDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinOverDueService finOverDueService;
 
 	private PaymentInstUploadApprovalProcess paymentInstUploadApprovalProcess;
 	private FeeRefundHeaderService feeRefundHeaderService;
-
-	protected static final String ERR_CODE = "9999";
-	protected static final String ERR_DESC = "User rejected the record";
+	private ClusterDAO clusterDAO;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -136,6 +134,8 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 
 				logger.info("Processed the File {}", header.getFileName());
 			}
+
+			updateHeader(headers, true);
 
 			logger.info("Payment Instruction Process is Initiated");
 
@@ -267,7 +267,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		String feeTypeCode = StringUtils.trimToNull(detail.getFeeType());
 		Long feeTypeId = null;
 		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(detail.getExcessType())) {
-			feeTypeId = feeTypeDAO.getFeeTypeId(feeTypeCode);
+			feeTypeId = feeTypeDAO.getPayableFeeTypeID(feeTypeCode);
 
 			if (feeTypeId == null) {
 				setError(detail, PaymentUploadError.REFUP005);
@@ -317,6 +317,11 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		logger.info("Validated the Data for the reference {}", detail.getReference());
 	}
 
+	@Override
+	public List<Cluster> getClusterName(String code) {
+		return this.clusterDAO.getClusterName(code);
+	}
+
 	private void setError(PaymentInstUploadDetail detail, PaymentUploadError error) {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
 		detail.setErrorCode(error.name());
@@ -349,11 +354,6 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Autowired
-	public void setPaymentHeaderDAO(PaymentHeaderDAO paymentHeaderDAO) {
-		this.paymentHeaderDAO = paymentHeaderDAO;
-	}
-
-	@Autowired
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
 	}
@@ -378,4 +378,8 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		this.finOverDueService = finOverDueService;
 	}
 
+	@Autowired
+	public void setClusterDAO(ClusterDAO clusterDAO) {
+		this.clusterDAO = clusterDAO;
+	}
 }

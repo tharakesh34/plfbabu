@@ -2,15 +2,18 @@ package com.pennant.pff.eod.dao.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -31,6 +34,22 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 		sql.append(" Where fm.FinIsActive = ?");
 		sql.append(" Union all");
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 0 LoanExist");
+		sql.append(" From  FinanceMain fm");
+		sql.append(" Inner Join (");
+		sql.append(" Select FinID From FinExcessAmount Where AmountType = ? and BalanceAmt > ?");
+		sql.append(" Union ALl");
+		sql.append(" Select FinID From ManualAdvise Where AdviseType = ?");
+		sql.append("  and (AdviseAmount - PaidAmount - WaivedAmount) > ?");
+		sql.append(" ) e on e.FinID = fm.FinID");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Where fm.FinIsActive = ? and c.CustCoreBank not in");
+		sql.append(" (Select distinct c.CustCoreBank From FinanceMain fm ");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Where fm.FinIsActive = ?)");
+
+		sql.append(" Union all");
+
+		sql.append(" Select distinct c.CustID, c.CustCoreBank, 0 LoanExist");
 		sql.append(" From LimitHeader lh");
 		sql.append(" Inner Join Customers c on c.CustID = lh.CustomerID");
 		sql.append(" Inner Join LIMITSTRUCTURE ls on ls.StructureCode = lh.LimitStructureCode and ls.Rebuild = ?");
@@ -43,10 +62,18 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setDate(1, JdbcUtil.getDate(SysParamUtil.getAppDate()));
+			Date appDate = SysParamUtil.getAppDate();
+
+			ps.setDate(1, JdbcUtil.getDate(appDate));
 			ps.setBoolean(2, true);
-			ps.setBoolean(3, true);
-			ps.setBoolean(4, true);
+			ps.setString(3, RepayConstants.EXAMOUNTTYPE_EXCESS);
+			ps.setInt(4, 0);
+			ps.setInt(5, AdviseType.PAYABLE.id());
+			ps.setInt(6, 0);
+			ps.setBoolean(7, false);
+			ps.setBoolean(8, true);
+			ps.setBoolean(9, true);
+			ps.setBoolean(10, true);
 
 		});
 	}

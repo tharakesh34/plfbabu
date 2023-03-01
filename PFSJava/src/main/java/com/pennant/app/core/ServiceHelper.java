@@ -57,6 +57,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
+import com.pennant.backend.dao.finance.FinODCAmountDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
@@ -71,10 +72,8 @@ import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
-import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
@@ -91,19 +90,17 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
-import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.dao.OverdraftLoanDAO;
 import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 
-abstract public class ServiceHelper {
+public abstract class ServiceHelper {
 	protected static Logger logger = LogManager.getLogger(ServiceHelper.class.getClass());
 
 	private DataSource dataSource;
 	// customer
 	protected CustomerDAO customerDAO;
-	private CustomerQueuingDAO customerQueuingDAO;
 	// Loan
 	protected FinanceTypeDAO financeTypeDAO;
 	protected FinanceMainDAO financeMainDAO;
@@ -116,15 +113,12 @@ abstract public class ServiceHelper {
 	protected PresentmentDetailDAO presentmentDetailDAO;
 	protected FinServiceInstrutionDAO finServiceInstructionDAO;
 	// accounting
-	private FinTypeAccountingDAO finTypeAccountingDAO;
-	private PostingsDAO postingsDAO;
 	protected PostingsPreparationUtil postingsPreparationUtil;
 	// over due
 	protected FinODDetailsDAO finODDetailsDAO;
 	protected ProvisionDAO provisionDAO;
 	protected ProjectedAmortizationDAO projectedAmortizationDAO;
 	protected RuleDAO ruleDAO;
-	private FinanceProfitDetailDAO profitDetailsDAO;
 	protected ExtendedFieldDetailsService extendedFieldDetailsService;
 	protected FinExcessAmountDAO finExcessAmountDAO;
 	protected FinLogEntryDetailDAO finLogEntryDetailDAO;
@@ -142,6 +136,7 @@ abstract public class ServiceHelper {
 	protected AssetClassificationService assetClassificationService;
 	protected FeeTypeDAO feeTypeDAO;
 	protected OverdraftScheduleDetailDAO overdraftScheduleDetailDAO;
+	protected FinODCAmountDAO finODCAmountDAO;
 
 	public Long getAccountingID(FinanceMain main, String eventCode) {
 		// FIXME: PV: 28AUG19. No Separate Accounting for Promotion
@@ -265,10 +260,6 @@ abstract public class ServiceHelper {
 		return false;
 	}
 
-	public void setPostingsDAO(PostingsDAO postingsDAO) {
-		this.postingsDAO = postingsDAO;
-	}
-
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
@@ -291,10 +282,6 @@ abstract public class ServiceHelper {
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
-	}
-
-	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
-		this.finTypeAccountingDAO = finTypeAccountingDAO;
 	}
 
 	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
@@ -329,10 +316,6 @@ abstract public class ServiceHelper {
 		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 
-	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
-		this.customerQueuingDAO = customerQueuingDAO;
-	}
-
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
 	}
@@ -347,10 +330,6 @@ abstract public class ServiceHelper {
 
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
-	}
-
-	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
-		this.profitDetailsDAO = profitDetailsDAO;
 	}
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
@@ -409,5 +388,10 @@ abstract public class ServiceHelper {
 
 	public void setOverdraftScheduleDetailDAO(OverdraftScheduleDetailDAO overdraftScheduleDetailDAO) {
 		this.overdraftScheduleDetailDAO = overdraftScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
+		this.finODCAmountDAO = finODCAmountDAO;
 	}
 }

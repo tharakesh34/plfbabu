@@ -2256,16 +2256,19 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS");
 		sql.append(" From ManualAdvise ma");
 		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID");
-		sql.append(" Where FinId = ? and ma.AdviseType = ? and (Status is null or status = ?)");
-		sql.append(" and ValueDate <= ? and (AdviseAmount - PaidAmount - WaivedAmount) > ?");
+		sql.append(" Where FinId = ? and ma.AdviseType = ? and ft.Refundable = ? and ft.AllowAutoRefund = ?");
+		sql.append(" and (Status is null or status = ?) and ValueDate <= ?");
+		sql.append(" and (AdviseAmount - PaidAmount - WaivedAmount) > ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		List<ManualAdvise> maList = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
 
 			ps.setLong(++index, finID);
 			ps.setInt(++index, AdviseType.PAYABLE.id());
+			ps.setInt(++index, 1);
+			ps.setInt(++index, 1);
 			ps.setString(++index, PennantConstants.MANUALADVISE_MAINTAIN);
 			ps.setDate(++index, JdbcUtil.getDate(maxValueDate));
 			ps.setBigDecimal(++index, BigDecimal.ZERO);
@@ -2298,6 +2301,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 			return ma;
 		});
+
+		return maList.stream().sorted((l1, l2) -> Long.compare(l1.getAdviseID(), l2.getAdviseID()))
+				.collect(Collectors.toList());
 	}
 
 	@Override

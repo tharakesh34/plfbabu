@@ -27,8 +27,6 @@ package com.pennant.webui.lmtmasters.facilityreferencedetail;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -66,7 +64,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacilityType> {
 	private static final long serialVersionUID = 5574042632591594715L;
-	private static final Logger logger = LogManager.getLogger(FacilityReferenceDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

@@ -43,8 +43,6 @@ import java.util.zip.ZipOutputStream;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
@@ -107,7 +105,6 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
  */
 public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(FeeRefundHeaderListCtrl.class);
 
 	protected Window window_FeeRefundHeaderList;
 	protected Borderlayout borderLayout_FeeRefundHeaderList;
@@ -237,7 +234,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		registerField("BranchDesc");
 		registerField("BranchCode", branchCode, SortOrder.NONE, sortOperator_FeeRefundBranchCode, Operators.STRING);
 		registerField("EntityCode", entityCode, SortOrder.NONE, sortOperator_FeeRefundEntity, Operators.STRING);
-		registerField("ClusterId", clusterName, SortOrder.NONE, sortOperator_FeeRefundClusterName, Operators.NUMERIC);
+		registerField("ClusterCode", clusterName, SortOrder.NONE, sortOperator_FeeRefundClusterName, Operators.NUMERIC);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -313,7 +310,7 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		this.clusterName.setMaxlength(50);
 		this.clusterName.setTextBoxWidth(120);
 		this.clusterName.setModuleName("Cluster");
-		this.clusterName.setValueColumn("Id");
+		this.clusterName.setValueColumn("Code");
 		this.clusterName.setDescColumn("Name");
 		this.clusterName.setValidateColumns(new String[] { "Code", "Name" });
 
@@ -659,21 +656,27 @@ public class FeeRefundHeaderListCtrl extends GFCBaseListCtrl<FeeRefundHeader> {
 		 * Object[] { notDownloadIds })); return; }
 		 */
 
+		boolean processCompleted = true;
 		List<String> listFrh = new ArrayList<>();
 		for (FeeRefundHeader frh : listRefundHeader) {
 
 			listFrh.add(String.valueOf(frh.getId()));
 
 			// call dosaveProgress
-			doProcess(frh, PennantConstants.TRAN_ADD, PennantConstants.RCD_STATUS_APPROVED);
+			if (processCompleted) {
+				processCompleted = doProcess(frh, PennantConstants.TRAN_ADD, PennantConstants.RCD_STATUS_APPROVED);
+			}
 		}
 
-		doApprove(listFrh);
+		if (processCompleted) {
+			doApprove(listFrh);
+		}
 
 		doRefresh();
 
-		Clients.showNotification("Fee Refund Process Approved.", "info", null, null, -1);
-
+		if (processCompleted) {
+			Clients.showNotification("Fee Refund Process Approved.", "info", null, null, -1);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 

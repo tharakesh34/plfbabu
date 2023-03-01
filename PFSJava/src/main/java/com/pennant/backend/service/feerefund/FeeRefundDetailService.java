@@ -50,4 +50,7 @@ public interface FeeRefundDetailService {
 
 	BigDecimal getPrvRefundAmt(long finID, long adviseID);
 
+	BigDecimal getPreviousRefundAmt(long finID, FeeRefundDetail frd);
+
+	BigDecimal getCanelReceiptAmt(long finID, String allocationType, String allocationTo);
 }
