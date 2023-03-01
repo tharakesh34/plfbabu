@@ -113,9 +113,11 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
@@ -2205,18 +2207,26 @@ public class ReceiptCalculator {
 
 	private FinReceiptData earlySettleAllocation(FinReceiptData receiptData) {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		if (rch.getXcessPayables() != null && rch.getXcessPayables().size() > 0) {
-			receiptData = adjustAdvanceInt(receiptData);
-			for (XcessPayables xcess : rch.getXcessPayables()) {
-				if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcess.getPayableType())) {
-					continue;
+		ReceiptPurpose receiptPurpose = receiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstruction()
+				.getReceiptPurpose();
+		RequestSource requestSource = receiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstruction()
+				.getRequestSource();
+
+		if (!(RequestSource.EOD.equals(requestSource) && ReceiptPurpose.EARLYSETTLE == receiptPurpose)) {
+			if (rch.getXcessPayables() != null && rch.getXcessPayables().size() > 0) {
+				receiptData = adjustAdvanceInt(receiptData);
+				for (XcessPayables xcess : rch.getXcessPayables()) {
+					if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcess.getPayableType())) {
+						continue;
+					}
+					BigDecimal balAmount = xcess.getBalanceAmt();
+					recalEarlyStlAlloc(receiptData, xcess.getBalanceAmt());
+					xcess.setTotPaidNow(balAmount);
+					xcess.setBalanceAmt(xcess.getBalanceAmt().subtract(balAmount));
 				}
-				BigDecimal balAmount = xcess.getBalanceAmt();
-				recalEarlyStlAlloc(receiptData, xcess.getBalanceAmt());
-				xcess.setTotPaidNow(balAmount);
-				xcess.setBalanceAmt(xcess.getBalanceAmt().subtract(balAmount));
 			}
 		}
+
 		if (!receiptData.isForeClosure() && rch.getReceiptAmount().compareTo(BigDecimal.ZERO) > 0) {
 			recalEarlyStlAlloc(receiptData, rch.getReceiptAmount());
 		}

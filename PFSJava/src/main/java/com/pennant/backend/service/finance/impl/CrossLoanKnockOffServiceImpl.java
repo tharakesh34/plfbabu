@@ -188,6 +188,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), clk);
 		CrossLoanTransfer clt = clk.getCrossLoanTransfer();
 		clt.setUserDetails(clk.getUserDetails());
+		clk.getCrossLoanTransfer().setValueDate(clk.getValueDate());
 
 		if (crossLoanKnockOffDAO.cancelReferenceID(clk.getKnockOffId())) {
 			auditHeader.setErrorDetails(new ErrorDetail("30550", "Excess Receipt is cancelled", null));
@@ -403,7 +404,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		aeEvent.setAccountingEvent(AccountingEvent.CROSS_LOAN_FROM);
 		aeEvent.setFinID(crossLoan.getFromFinID());
 		aeEvent.setFinReference(crossLoan.getFromFinReference());
-		aeEvent.setValueDate(SysParamUtil.getAppDate());
+		aeEvent.setValueDate(crossLoan.getValueDate());
 
 		aeEvent.setFinReference(main.getFinReference());
 		aeEvent.setFinID(main.getFinID());
@@ -441,7 +442,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		aeEvent1.setAccountingEvent(AccountingEvent.CROSS_LOAN_TO);
 		aeEvent1.setFinID(crossLoan.getToFinID());
 		aeEvent1.setFinReference(crossLoan.getToFinReference());
-		aeEvent1.setValueDate(SysParamUtil.getAppDate());
+		aeEvent1.setValueDate(crossLoan.getValueDate());
 
 		aeEvent1.setFinReference(fm.getFinReference());
 		aeEvent1.setFinID(fm.getFinID());
