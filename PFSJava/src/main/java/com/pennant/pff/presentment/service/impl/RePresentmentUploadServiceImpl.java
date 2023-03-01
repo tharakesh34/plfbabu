@@ -181,13 +181,13 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
+		detail.setFm(fm);
+		detail.setReferenceID(fm.getFinID());
+
 		if (!fm.isFinIsActive()) {
 			setError(detail, PresentmentError.REPRMNT515);
 			return;
 		}
-
-		detail.setFm(fm);
-		detail.setReferenceID(fm.getFinID());
 
 		Date dueDate = detail.getDueDate();
 		if (dueDate == null) {

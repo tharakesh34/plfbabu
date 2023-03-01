@@ -130,7 +130,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 				int index = 0;
 				RePresentmentUploadDetail detail = detailsList.get(i);
 
-				ps.setLong(++index, detail.getReferenceID());
+				ps.setObject(++index, detail.getReferenceID());
 				ps.setInt(++index, detail.getProgress());
 				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, detail.getErrorCode());
