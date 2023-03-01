@@ -128,4 +128,6 @@ public interface CustomerDetailsService {
 	long getCustIDByCIF(String custCIF);
 
 	Customer getCustomerCoreBankID(String custCoreBank);
+
+	CustomerDetails prospectAsCIF(String cif);
 }
