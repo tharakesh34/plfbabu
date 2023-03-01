@@ -292,7 +292,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(" FROM ManualAdvise T1");
 		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		selectSql.append(" Left Join Bouncereasons T3 ON T1.bounceid = T3.BounceId");
-		selectSql.append(" Where FinReference = :FinReference");
+		selectSql.append(" Where FinReference = :FinReference and T1.AdviseAmount > 0");
 		selectSql.append(" and ValueDate <= :ValueDate and (Status is null or Status ='M')");
 		selectSql.append(" ORDER by T1.adviseID");
 
