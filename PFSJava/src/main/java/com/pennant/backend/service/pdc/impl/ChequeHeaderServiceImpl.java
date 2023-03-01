@@ -858,7 +858,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		}
 
 		// FIXME this should come from loan type
-		if (ch.getNoOfCheques() <= 2) {
+		if (existingCH.getNoOfCheques() + ch.getNoOfCheques() <= 2) {
 			return getError("30569", "NoOfCheques ", "Three");
 		}
 
@@ -959,9 +959,11 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		cheque.setNextRoleCode(fm.getNextRoleCode());
 		cheque.setWorkflowId(fm.getWorkflowId());
 
-		cheque.setBankBranchID(ch.getBankBranchID());
-		cheque.setAccHolderName(ch.getAccHolderName());
-		cheque.setAccountNo(ch.getAccountNo());
+		if (RequestSource.UPLOAD.name().equals(ch.getSourceId())) {
+			cheque.setBankBranchID(ch.getBankBranchID());
+			cheque.setAccHolderName(ch.getAccHolderName());
+			cheque.setAccountNo(ch.getAccountNo());
+		}
 
 		cheque.setStatus(ChequeSatus.NEW);
 		cheque.setChequeStatus(ChequeSatus.NEW);
@@ -1084,7 +1086,6 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				for (FinanceScheduleDetail schedule : schedules) {
 					date = false;
 
-					// cheque.setChequeDate(SysParamUtil.getAppDate());
 					if (DateUtil.compare(schedule.getSchDate(), cheque.getChequeDate()) == 0) {
 						date = true;
 						cheque.seteMIRefNo(schedule.getInstNumber());
@@ -1235,29 +1236,44 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	}
 
 	private ErrorDetail validateBranchDetails(ChequeHeader ch) {
-		if (Long.valueOf(ch.getBankBranchID()) == 0) {
+		if (RequestSource.UPLOAD.name().equals(ch.getSourceId())) {
+			for (ChequeDetail cd : ch.getChequeDetailList()) {
+
+				ErrorDetail error = validateBranch(cd.getBankBranchID(), cd.getAccHolderName(), cd.getAccountNo());
+
+				if (error != null) {
+					return error;
+				}
+			}
+		}
+
+		return validateBranch(ch.getBankBranchID(), ch.getAccHolderName(), ch.getAccountNo());
+	}
+
+	private ErrorDetail validateBranch(long bankBranchID, String accountHolderName, String accountNo) {
+		if (Long.valueOf(bankBranchID) == 0) {
 			return getError("90502", "BankBranchID");
 		}
 
-		BankBranch bankBranch = bankBranchDAO.getBankBranchById(ch.getBankBranchID(), "");
+		BankBranch bankBranch = bankBranchDAO.getBankBranchById(bankBranchID, "");
 
 		if (bankBranch == null) {
 			return getError("RU0040", "BankBranchID");
 		}
 
-		if (bankBranch.getBankBranchID() != ch.getBankBranchID()) {
+		if (bankBranch.getBankBranchID() != bankBranchID) {
 			return getError("RU0040", "BankBranch");
 		}
 
-		if (StringUtils.isBlank(ch.getAccHolderName())) {
+		if (StringUtils.isBlank(accountHolderName)) {
 			return getError("90502", "AccHolderName");
 		}
 
-		if (StringUtils.isBlank(ch.getAccountNo())) {
+		if (StringUtils.isBlank(accountNo)) {
 			return getError("90502", "AccountNo");
 		}
 
-		if (ch.getAccountNo().length() > 15) {
+		if (accountNo.length() > 15) {
 			return getError("30565", "AccountLength", "or Equal to 15");
 		}
 

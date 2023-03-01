@@ -1065,7 +1065,7 @@ public class FileUploadList extends Window implements Serializable {
 		String uploadIDs = uploadService.isValidateApprove(selectedHeaders);
 		if (StringUtils.isNotEmpty(uploadIDs)) {
 			MessageUtil.showError(
-					Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "Upload ID : (" + uploadIDs + ")," }));
+					Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "Upload ID : (" + uploadIDs + ")" }));
 			return;
 		}
 
@@ -1084,7 +1084,7 @@ public class FileUploadList extends Window implements Serializable {
 		String uploadIDs = uploadService.isValidateApprove(selectedHeaders);
 		if (StringUtils.isNotEmpty(uploadIDs)) {
 			MessageUtil.showError(
-					Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "Upload ID : (" + uploadIDs + ")," }));
+					Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "Upload ID : (" + uploadIDs + ")" }));
 			return;
 		}
 
