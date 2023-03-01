@@ -39,7 +39,6 @@ import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.paymentupload.exception.PaymentUploadError;
@@ -131,8 +130,7 @@ public class PaymentInstUploadThreadProcess {
 			ph.setPaymentAmount(detail.getPayAmount());
 			ph.setApprovedOn(appDate);
 			ph.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
-			ph.setPaymentInstruction(refundBeneficiary.getBeneficiary(finId, appDate, alwRefundByCheque));
+			ph.setPaymentInstruction(refundBeneficiary.getBeneficiary(finId, appDate, true));
 			ph.getPaymentInstruction().setPaymentAmount(detail.getPayAmount());
 			ph.getPaymentInstruction().setPostDate(appDate);
 			if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(detail.getExcessType())) {

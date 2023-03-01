@@ -550,9 +550,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		if (pi == null) {
 			Date appDate = SysParamUtil.getAppDate();
-			boolean alwRefundByCheque = SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE);
-
-			pi = refundBeneficiary.getBeneficiary(this.financeMain.getFinID(), appDate, alwRefundByCheque);
+			pi = refundBeneficiary.getBeneficiary(this.financeMain.getFinID(), appDate, true);
 
 			if (pi == null) {
 				pi = new PaymentInstruction();
@@ -1220,9 +1218,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					pd.setNewRecord(true);
 					pd.setReferenceId(fea.getId());
 					BigDecimal refAmount = BigDecimal.ZERO;
-					
+
 					BigDecimal amount = crossLoanKnockOffDAO.getTransferAmount(fea.getExcessID());
-					
+
 					for (PaymentDetail pDtl : paymentHeader.getPaymentDetailList()) {
 						if (fea.getExcessID() == pDtl.getReferenceId()) {
 							refAmount = pDtl.getAmount();
