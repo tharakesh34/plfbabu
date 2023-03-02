@@ -2,8 +2,6 @@ package com.pennant.backend.service.pmay;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -14,15 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
 
-import com.pennant.backend.util.PennantConstants;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pennant.pff.databind.JsonMapperUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -122,16 +116,7 @@ public class PmayDetailsService {
 	public String getRequestString(Object requestData) {
 		logger.debug(Literal.ENTERING);
 
-		ObjectMapper mapper = new ObjectMapper();
-
-		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
-		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
-		DateFormat dateFormat = new SimpleDateFormat(PennantConstants.APIDateFormatter);
-		dateFormat.setLenient(false);
-		mapper.setDateFormat(dateFormat);
-		mapper.setSerializationInclusion(Inclusion.NON_NULL);
-		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
-		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		ObjectMapper mapper = JsonMapperUtil.objectMapper();
 
 		try {
 			return mapper.writeValueAsString(requestData);

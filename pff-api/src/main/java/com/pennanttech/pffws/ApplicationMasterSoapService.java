@@ -1,14 +1,14 @@
 package com.pennanttech.pffws;
 
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-
 import com.pennant.backend.model.applicationmaster.ReasonCodeResponse;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.deviation.ManualDeviationAuthReq;
 import com.pennanttech.ws.model.deviation.ManualDeviationAuthorities;
 import com.pennanttech.ws.model.deviation.ManualDeviationList;
+
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 @WebService
 public interface ApplicationMasterSoapService {

@@ -1,14 +1,14 @@
 package com.pennanttech.pffws;
 
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.vas.VASRecordingDetail;
+
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 @WebService
 public interface VASSoapService {

@@ -96,7 +96,7 @@ public class CustomerDetails implements java.io.Serializable {
 	private CustEmployeeDetail custEmployeeDetail;
 	private CustomerDocument customerDocument;
 
-	@XmlElement(name = "extendedDetail")
+	// @XmlElement(name = "extendedDetail")
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
 

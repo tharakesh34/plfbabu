@@ -35,8 +35,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -49,6 +49,8 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessor;
@@ -65,6 +67,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LogManager.getLogger(ExternalUploadListCtrl.class);
 
 	protected Window window_ExternalUploadsList;
 	protected Button btnImport;

@@ -53,7 +53,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jsoup.helper.StringUtil;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
@@ -879,7 +878,7 @@ public class ScheduleCalculator {
 		fm.setRecalToDate(lpiMaxDate);
 		fm.setEventFromDate(lpiMinDate);
 		fm.setEventToDate(lpiMaxDate);
-		
+
 		setFinScheduleData(calSchdProcess(schdData, false, false));
 	}
 
@@ -5225,7 +5224,7 @@ public class ScheduleCalculator {
 			Date recalToDate = fm.getRecalToDate();
 			boolean flag = !PROC_CHANGEREPAY.equals(module) && !PROC_ADDDISBURSEMENT.equals(module)
 					&& !PROC_CHANGERATE.equals(module) && !PROC_RECALSCHD.equals(module);
-			if (StringUtil.isBlank(curSchd.getBpiOrHoliday()) && flag
+			if (StringUtils.isBlank(curSchd.getBpiOrHoliday()) && flag
 					&& CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())
 					&& DateUtil.compare(recalToDate, derivedMDT) != 0
 					&& DateUtil.compare(curSchDate, recalToDate) == 0) {
@@ -5462,7 +5461,7 @@ public class ScheduleCalculator {
 					fm.setPftForSelectedPeriod(fm.getPftForSelectedPeriod().add(curSchd.getProfitCalc()));
 				}
 
-				if (StringUtil.isBlank(curSchd.getBpiOrHoliday()) && !PROC_CHANGEREPAY.equals(module)
+				if (StringUtils.isBlank(curSchd.getBpiOrHoliday()) && !PROC_CHANGEREPAY.equals(module)
 						&& CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())
 						&& DateUtil.compare(recalToDate, derivedMDT) != 0
 						&& DateUtil.compare(curSchDate, recalToDate) == 0) {
@@ -7448,7 +7447,7 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			if (StringUtil.isBlank(curSchd.getBpiOrHoliday())) {
+			if (StringUtils.isBlank(curSchd.getBpiOrHoliday())) {
 				calTerms = calTerms + 1;
 			}
 
@@ -7513,7 +7512,7 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			if (StringUtil.isBlank(curSchd.getBpiOrHoliday())) {
+			if (StringUtils.isBlank(curSchd.getBpiOrHoliday())) {
 				calTerms = calTerms + 1;
 			}
 		}
@@ -8055,7 +8054,7 @@ public class ScheduleCalculator {
 
 			}
 			// endBalance = curSchd.getClosingBalance();
-			if (StringUtil.isBlank(curSchd.getBpiOrHoliday())) {
+			if (StringUtils.isBlank(curSchd.getBpiOrHoliday())) {
 				calTerms = calTerms + 1;
 			}
 		}
@@ -8372,7 +8371,7 @@ public class ScheduleCalculator {
 		for (FinanceScheduleDetail schedule : schedules) {
 			index++;
 
-			if (!StringUtil.isBlank(schedule.getBpiOrHoliday())) {
+			if (!StringUtils.isBlank(schedule.getBpiOrHoliday())) {
 				if (schedule.getSchDate().compareTo(recalFromDate) == 0) {
 					recalFromInHldy = true;
 				}
