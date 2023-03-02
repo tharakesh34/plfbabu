@@ -1,9 +1,5 @@
 package com.pennant.webui.finance.financemain;
 
-import java.io.Serializable;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Label;
@@ -25,9 +21,8 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.overdraft.model.OverdraftScheduleDetail;
 
-public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDetail> implements Serializable {
+public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = LogManager.getLogger(OverdraftScheduleDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

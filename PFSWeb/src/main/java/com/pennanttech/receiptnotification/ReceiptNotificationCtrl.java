@@ -1,9 +1,5 @@
 package com.pennanttech.receiptnotification;
 
-import java.io.Serializable;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
@@ -17,14 +13,11 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.eod.ReceiptNotificationService;
 
-public class ReceiptNotificationCtrl extends GFCBaseListCtrl<String> implements Serializable {
-
+public class ReceiptNotificationCtrl extends GFCBaseListCtrl<String> {
 	private static final long serialVersionUID = 433563597371675777L;
 
 	@Autowired(required = false)
 	ReceiptNotificationService receiptNotificationService;
-
-	Logger logger = LogManager.getLogger(ReceiptNotificationCtrl.class);
 
 	protected Window window_ReceiptNotificationCtrl;
 	protected Borderlayout borderLayout_ReceiptNotification;

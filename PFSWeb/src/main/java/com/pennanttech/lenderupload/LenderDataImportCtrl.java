@@ -22,13 +22,11 @@
  * 17-12-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
-
 package com.pennanttech.lenderupload;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,8 +36,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -95,10 +91,8 @@ import com.pennanttech.pff.constants.FinServiceEvent;
  * ************************************************************<br>
  * 
  */
-public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> implements Serializable {
-
+public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(LenderDataImportCtrl.class);
 
 	protected Window window_LenderDataImportList;
 	protected Borderlayout borderLayout_LenderDataImportList;
