@@ -634,10 +634,6 @@ public class FileUploadList extends Window implements Serializable {
 	public void onChangeEntityCode(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		this.entityCode.setConstraint("");
-		this.entityCode.setErrorMessage("");
-		Clients.clearWrongValue(entityCode);
-
 		if (StringUtils.isBlank(this.entityCode.getValue())) {
 			this.entityCode.setValue("", "");
 		}
@@ -817,10 +813,11 @@ public class FileUploadList extends Window implements Serializable {
 		if ("M".equals(this.stage)) {
 			this.fromDate.setConstraint(new PTDateValidator("From Date", true));
 			this.toDate.setConstraint(new PTDateValidator("To Date", true));
-		} else {
-			this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
 		}
 
+		if (!this.entityCode.isReadonly()) {
+			this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
+		}
 	}
 
 	private void doRemoveValidation() {
@@ -996,7 +993,6 @@ public class FileUploadList extends Window implements Serializable {
 
 		this.fromDate.setConstraint("");
 		this.fromDate.setErrorMessage("");
-		this.fromDate.setValue(null);
 
 		this.toDate.setConstraint("");
 		this.toDate.setErrorMessage("");
@@ -1035,6 +1031,9 @@ public class FileUploadList extends Window implements Serializable {
 		if (this.fromDate.getValue() != null && this.toDate.getValue() != null) {
 			search(false);
 		}
+
+		this.fromDate.setValue(null);
+
 	}
 
 	private void headerRefresh() {

@@ -1017,7 +1017,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		/* DPD Days validation against System parameter Configuration */
 		if (dpdDays >= arl.getAutoRefCheckDPD() && isEOD) {
 			logger.debug(Literal.LEAVING);
-			return ErrorUtil.getError("REFUND_001", String.valueOf(dpdDays) + 1,
+			return ErrorUtil.getError("REFUND_001", String.valueOf(dpdDays + 1),
 					String.valueOf(arl.getAutoRefCheckDPD() + 1));
 		}
 

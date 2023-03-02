@@ -16,9 +16,9 @@ public enum LPPUploadError {
 
 	LPP06(" Calculated On Possible values should be 'STOT','SPRI' Or 'SPFT'. If you are penalty type captured as 'P','D','M' OR 'E'. "),
 
-	LPP07(" Amount Possible values should be '0-9999999' and Calculated On should be blank if you are penalty type captured as 'F' OR 'A'. "),
+	LPP07(" Amount Possible values should be '0-9999999' if you are penalty type captured as 'F' OR 'A'. "),
 
-	LPP08(" Percentage Possible values should be '1-100' and Calculated On should not blank if you are penalty type captured as 'P','D','M' OR 'E'. "),
+	LPP08(" Percentage Possible values should be '1-100' if you are penalty type captured as 'P','D','M' OR 'E'. "),
 
 	LPP09(" If ApplyOverDue captured as 'N' then following fields ( AmountOrPercent, GraceDays, MaxWaiver, AllowWaiver, Calculated On, IncludeGraceDays, PenaltyType) should  be kept as Blank. "),
 
@@ -36,15 +36,21 @@ public enum LPPUploadError {
 
 	LPP16(" GraceDays Should be Blank if includegracedays captured as 'N' "),
 
-	LPP17(" It should be blank if you choose loan reference."),
+	LPP17(" Apply to existing loans should be blank if you choose loan reference."),
 
-	LPP18(" It should not be blank if allow waiver captured as 'y'."),
+	LPP18(" Max Waiver should not be blank if allow waiver captured as 'y'."),
 
 	LPP19(" IncludeGraceDays Possible values should be 'Y' or 'N'. "),
 
 	LPP20("Grace days should be 0, since Include Grace Days is N."),
 
-	LPP21("Max Waiver should be 0, since Allow Waiver is N.");
+	LPP21("Max Waiver should be 0, since Allow Waiver is N."),
+
+	LPP22("Calculated On should be blank if you are penalty type captured as 'F' OR 'A'."),
+
+	LPP23("Calculated On should not blank if you are penalty type captured as 'P','D','M' OR 'E'."),
+
+	LPP24("Not allowed to maintain the LAN as It is already initiated.");
 
 	private String description;
 

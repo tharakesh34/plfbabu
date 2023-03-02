@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -271,6 +272,14 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				setError(detail, LPPUploadError.LPP13);
 				return;
 			}
+
+			String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
+			if (StringUtils.isNotEmpty(rcdMntnSts)) {
+				detail.setProgress(EodConstants.PROGRESS_FAILED);
+				detail.setErrorCode("LPP_999");
+				detail.setErrorDesc(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
+				return;
+			}
 		}
 
 		String existingLoans = detail.getApplyToExistingLoans();
@@ -345,7 +354,8 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 
-			if (allowWaiver && detail.getMaxWaiver().compareTo(new BigDecimal(100)) > 1) {
+			if (allowWaiver && (detail.getMaxWaiver().compareTo(BigDecimal.ZERO) < 0
+					|| detail.getMaxWaiver().compareTo(new BigDecimal(100)) > 1)) {
 				setError(detail, LPPUploadError.LPP10);
 				return;
 			}
@@ -372,11 +382,16 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			case ChargeType.FLAT_ON_PD_MTH:
 				amountOrPercent = amountOrPercent.divide(new BigDecimal(100));
 				if ((amountOrPercent.compareTo(BigDecimal.ZERO)) < 0
-						|| (amountOrPercent.compareTo(new BigDecimal(9999999)) > 0)
-						|| StringUtils.isNotBlank(calculatedOn)) {
+						|| (amountOrPercent.compareTo(new BigDecimal(9999999)) > 0)) {
 					setError(detail, LPPUploadError.LPP07);
 					return;
 				}
+
+				if (StringUtils.isNotBlank(calculatedOn)) {
+					setError(detail, LPPUploadError.LPP22);
+					return;
+				}
+
 				break;
 			case ChargeType.PERC_ONE_TIME:
 			case ChargeType.PERC_ON_PD_MTH:
@@ -384,16 +399,25 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			case ChargeType.PERC_ON_EFF_DUE_DAYS:
 				amountOrPercent = amountOrPercent.divide(new BigDecimal(100));
 				if ((amountOrPercent.compareTo(BigDecimal.ZERO)) <= 0
-						|| (amountOrPercent.compareTo(new BigDecimal(100)) > 0) || StringUtils.isBlank(calculatedOn)) {
+						|| (amountOrPercent.compareTo(new BigDecimal(100)) > 0)) {
 					setError(detail, LPPUploadError.LPP08);
 					return;
 				}
+
+				if (StringUtils.isBlank(calculatedOn)) {
+					setError(detail, LPPUploadError.LPP23);
+					return;
+				}
+
 				if (!(FinanceConstants.ODCALON_STOT.equals(calculatedOn)
 						|| FinanceConstants.ODCALON_SPRI.equals(calculatedOn)
 						|| FinanceConstants.ODCALON_SPFT.equals(calculatedOn))) {
 					setError(detail, LPPUploadError.LPP06);
 					return;
 				}
+
+				break;
+			default:
 				break;
 			}
 		}
