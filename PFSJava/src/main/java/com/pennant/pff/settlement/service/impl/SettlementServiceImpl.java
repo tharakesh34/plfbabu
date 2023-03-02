@@ -722,6 +722,9 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 	public void loadSettlementData(FinSettlementHeader header) {
 		header.setFrd(receiptService.getFinReceiptDataById(header.getFinReference(), header.getAppDate(),
 				AccountingEvent.EARLYSTL, FinServiceEvent.RECEIPT, ""));
+
+		header.setReceiptList(finReceiptHeaderDAO.getSettlementReceipts(header.getFinID(), header.getOtsDate()));
+		header.setFinanceMain(header.getFrd().getFinanceDetail().getFinScheduleData().getFinanceMain());
 	}
 
 	@Override
@@ -849,11 +852,40 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		receiptData = receiptCalculator.initiateReceipt(receiptData, false);
 
 		receiptData.setOTSByEod(true);
+
 		try {
 			receiptService.doApproveReceipt(receiptData);
+			updatExcess(fsh);
 			settlementDAO.updateSettlementStatus(fsh.getFinID(), RepayConstants.SETTLEMENT_STATUS_PROCESSED);
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+		}
+
+	}
+
+	private void updatExcess(FinSettlementHeader fsh) {
+		FinReceiptData receiptData = fsh.getFrd();
+		long newRecId = receiptData.getReceiptHeader().getReceiptID();
+
+		List<FinReceiptHeader> rl = fsh.getReceiptList();
+
+		for (FinReceiptHeader receipt : rl) {
+			long recID = receipt.getReceiptID();
+
+			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(fsh.getFinID(),
+					RepayConstants.EXAMOUNTTYPE_SETTLEMENT, recID);
+
+			finExcessAmountDAO.updateUtiliseOnly(fea.getExcessID(), fea.getBalanceAmt());
+
+			FinExcessMovement movement = new FinExcessMovement();
+			movement.setExcessID(fea.getExcessID());
+			movement.setReceiptID(newRecId);
+			movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+			movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+			movement.setAmount(fea.getBalanceAmt());
+
+			finExcessAmountDAO.saveExcessMovement(movement);
 		}
 	}
 

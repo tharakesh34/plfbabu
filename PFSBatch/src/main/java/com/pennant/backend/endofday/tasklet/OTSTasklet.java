@@ -104,13 +104,8 @@ public class OTSTasklet implements Tasklet {
 				validSettlementCancellation = !validSettlementProcess;
 			}
 
-			if (validSettlementCancellation || isValidSettlementCencellation(fsh)) {
-				fsh = settlementService.loadDataForCancellation(fsh.getFinID(), fsh.getOtsDate());
-				if (fsh == null) {
-					continue;
-				}
+			if (validSettlementCancellation || isValidSettlementCancellation(fsh)) {
 				settlementService.loadSettlementData(fsh);
-				fsh.setAppDate(appDate);
 				validSettlementCancellation = true;
 			}
 
@@ -155,7 +150,7 @@ public class OTSTasklet implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	private boolean isValidSettlementCencellation(FinSettlementHeader fsh) {
+	private boolean isValidSettlementCancellation(FinSettlementHeader fsh) {
 		return fsh.getAppDate().compareTo(fsh.getEndDate()) == 0 && fsh.getNoOfGraceDays() >= 0;
 	}
 

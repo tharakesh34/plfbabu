@@ -784,20 +784,23 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 			throw new WrongValuesException(wvea);
 		}
 
-		Map<String, List> settlementSchDetails = settlementScheduleInlineEditCtrl.preparesettlementSchdData(
-				this.listBoxSettlementScheduleInlineEdit, header.getSettlementScheduleList(), header.getId());
+		if (RepayConstants.SETTLEMENT_STATUS_INITIATED.equals(this.settlementStatus.getValue())) {
 
-		if (settlementSchDetails.get("errorList") != null) {
-			showErrorDetails(settlementSchDetails.get("errorList"), null);
-		}
+			Map<String, List> settlementSchDetails = settlementScheduleInlineEditCtrl.preparesettlementSchdData(
+					this.listBoxSettlementScheduleInlineEdit, header.getSettlementScheduleList(), header.getId());
 
-		if (settlementSchDetails.get("settlementSchedule") != null) {
-			setSettlementScheduleDetailList(settlementSchDetails.get("settlementSchedule"));
-		}
+			if (settlementSchDetails.get("errorList") != null) {
+				showErrorDetails(settlementSchDetails.get("errorList"), null);
+			}
 
-		header.getSettlementScheduleList().clear();
-		for (SettlementSchedule schedule : settlementScheduleDetailList) {
-			header.getSettlementScheduleList().add(schedule.copyEntity());
+			if (settlementSchDetails.get("settlementSchedule") != null) {
+				setSettlementScheduleDetailList(settlementSchDetails.get("settlementSchedule"));
+			}
+
+			header.getSettlementScheduleList().clear();
+			for (SettlementSchedule schedule : settlementScheduleDetailList) {
+				header.getSettlementScheduleList().add(schedule.copyEntity());
+			}
 		}
 
 		header.setRecordStatus(this.recordStatus.getValue());
@@ -814,7 +817,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 			if (parentTab != null) {
 				parentTab.setSelected(true);
 			}
-			
+
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
