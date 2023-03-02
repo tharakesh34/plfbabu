@@ -856,10 +856,18 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		if (error != null) {
 			return error;
 		}
+		boolean chequeType = true;
 
-		// FIXME this should come from loan type
-		if (existingCH.getNoOfCheques() + ch.getNoOfCheques() <= 2) {
-			return getError("30569", "NoOfCheques ", "Three");
+		List<ChequeDetail> cheques = ch.getChequeDetailList();
+		for (ChequeDetail cd : cheques) {
+			if (InstrumentType.isPDC(cd.getChequeType())) {
+				chequeType = false;
+			}
+
+			// FIXME this should come from loan type
+			if (existingCH.getNoOfCheques() + ch.getNoOfCheques() <= 2 && chequeType) {
+				return getError("30569", "NoOfCheques ", "Three");
+			}
 		}
 
 		error = validateBranchDetails(ch);
@@ -1060,6 +1068,12 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		if (fm.isWriteoffLoan()) {
 			return getError("FWF001", "");
 		}
+		String repaymethod = financeMainDAO.getApprovedRepayMethod(finID, "");
+		if (InstrumentType.isPDC(chequeHeader.getChequeDetailList().get(0).getChequeType())
+				&& !InstrumentType.isPDC(repaymethod)) {
+			return getError("90204", "Cheques are not allowed for this finRepayMethod is NACH.");
+
+		}
 
 		schdData.setFinanceMain(fm);
 		fd.setFinID(finID);
@@ -1145,9 +1159,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	private ErrorDetail validateCheques(ChequeHeader ch) {
 		List<ChequeDetail> cheques = ch.getChequeDetailList();
 
-		if (ch.getNoOfCheques() == 0) {
-			return getError("90502", "NoOfCheques");
-		}
+		boolean spdcCount = isSpdcAvail(cheques);
+
 		int chequeSize = 0;
 
 		for (ChequeDetail cd : cheques) {
@@ -1155,11 +1168,26 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				chequeSize++;
 			}
 		}
+
+		if (chequeSize == 0 && spdcCount) {
+			return getError("90502", "NoOfCheques");
+		}
+
 		if (chequeSize != ch.getNoOfCheques()) {
 			return getError("30540", "ChequeDetails ", " total no cheques");
 		}
 
 		return null;
+	}
+
+	private boolean isSpdcAvail(List<ChequeDetail> cheques) {
+		boolean spdcCount = true;
+		for (ChequeDetail cd : cheques) {
+			if (InstrumentType.isSPDC(cd.getChequeType())) {
+				spdcCount = false;
+			}
+		}
+		return spdcCount;
 	}
 
 	private ErrorDetail validateChequeSerialNo(ChequeHeader ch) {
