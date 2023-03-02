@@ -993,12 +993,15 @@ public class FileUploadList extends Window implements Serializable {
 
 		this.fromDate.setConstraint("");
 		this.fromDate.setErrorMessage("");
+		this.fromDate.setValue(null);
 
 		this.toDate.setConstraint("");
 		this.toDate.setErrorMessage("");
 		this.toDate.setValue(null);
 
 		this.fileName.setValue("", "");
+		this.fileName.setConstraint("");
+		this.fileName.setErrorMessage("");
 
 		if (!"M".equals(this.stage)) {
 
@@ -1031,8 +1034,6 @@ public class FileUploadList extends Window implements Serializable {
 		if (this.fromDate.getValue() != null && this.toDate.getValue() != null) {
 			search(false);
 		}
-
-		this.fromDate.setValue(null);
 
 	}
 
@@ -1094,6 +1095,8 @@ public class FileUploadList extends Window implements Serializable {
 		}
 
 		uploadService.doApprove(selectedHeaders);
+
+		selectedHeaders.clear();
 
 		search(true);
 	}
