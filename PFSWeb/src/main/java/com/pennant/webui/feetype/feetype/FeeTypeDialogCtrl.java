@@ -804,7 +804,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		if (!this.accountingSetID.isReadonly()) {
 			this.accountingSetID.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, false));
+					new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, true));
 		}
 
 		if (!this.dueAccSet.isReadonly() && dueCreationReq && this.dueAccReq.isChecked()) {
@@ -933,13 +933,14 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		this.active.setDisabled(!allowDelete && isReadOnly("FeeTypeDialog_Active"));
 
-		if (this.btnDelete.isVisible() && allowDelete) {
+		if (this.btnDelete.isVisible() && !allowDelete) {
 			this.btnDelete.setVisible(allowDelete);
 		}
 	}
 
 	private void doDisplayAccountingSet(String feeTypeCode) {
 		this.accountingSetIdRow.setVisible(Allocation.BOUNCE.equals(feeTypeCode));
+		this.accountingSetID.setMandatoryStyle(true);
 	}
 
 	private void doDisplayAmortz(String feeTypeCode) {
