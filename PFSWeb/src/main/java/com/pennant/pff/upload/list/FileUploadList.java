@@ -638,17 +638,6 @@ public class FileUploadList extends Window implements Serializable {
 			this.entityCode.setValue("", "");
 		}
 
-		if (isValidCluster()) {
-			if (StringUtils.isNotEmpty(this.entityCode.getValue())) {
-				Filter[] filters = new Filter[1];
-				filters[0] = new Filter("Entity", this.entityCode.getValue(), Filter.OP_EQUAL);
-				this.clusterName.setFilters(filters);
-			} else {
-				this.clusterName.setFilters(null);
-				this.clusterName.setValue("", "");
-			}
-		}
-
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
@@ -1025,8 +1014,8 @@ public class FileUploadList extends Window implements Serializable {
 				this.clusterName.setErrorMessage("");
 				this.clusterName.setValue(null);
 			}
-
-			checkBoxComp.setChecked(selectedHeaders.size() == listbox.getItems().size());
+			selectedHeaders.clear();
+			checkBoxComp.setChecked(false);
 			listbox.getItems().clear();
 			listbox.clearSelection();
 		}
@@ -1308,6 +1297,10 @@ public class FileUploadList extends Window implements Serializable {
 			return listBoxHeight - 125 + "px";
 		}
 
+		if (isValidCluster()) {
+			return listBoxHeight - 1 + "px";
+		}
+
 		return listBoxHeight + 30 + "px";
 	}
 
@@ -1345,9 +1338,19 @@ public class FileUploadList extends Window implements Serializable {
 				return;
 			}
 
+			item.setAttribute("id", id);
+			item.setAttribute("data", uph);
+
 			if (!"M".equals(uph.getStage())) {
 				Listcell lc = new Listcell();
-				lc.appendChild(appendSelectBox());
+				Checkbox cb = appendSelectBox();
+
+				if (checkBoxComp.isChecked()) {
+					cb.setChecked(true);
+					selectedHeaders.add(uph);
+				}
+
+				lc.appendChild(cb);
 				lc.setParent(item);
 			}
 
