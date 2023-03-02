@@ -209,7 +209,7 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 		Date fEndDate = getFinancialYearEnd(appDate);
 
 		BigDecimal totalAmount = null;
-		BigDecimal curPartPayAmount = receiptData.getRemBal();
+		BigDecimal curPartPayAmount = recieptAmount;
 		BigDecimal oldPartPayAmount = BG_ZERO;
 		BigDecimal partPayDisAmount = BG_ZERO;
 
