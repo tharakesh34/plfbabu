@@ -846,7 +846,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String holdStatus;
 	private String reason;
 	private boolean underSettlement;
-	private transient List<FinLPIRateChange> lpiRateChangeList = new ArrayList<>();
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -5581,13 +5580,5 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setUnderSettlement(boolean underSettlement) {
 		this.underSettlement = underSettlement;
-	}
-
-	public List<FinLPIRateChange> getLpiRateChangeList() {
-		return lpiRateChangeList;
-	}
-
-	public void setLpiRateChangeList(List<FinLPIRateChange> lpiRateChangeList) {
-		this.lpiRateChangeList = lpiRateChangeList;
 	}
 }

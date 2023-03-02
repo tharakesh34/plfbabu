@@ -8362,10 +8362,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
 
 		if (CollectionUtils.isNotEmpty(overdueList)) {
-			if (CollectionUtils.isEmpty(fm.getLpiRateChangeList())) {
-				fm.setLpiRateChangeList(finODPenaltyRateDAO.getFinLPIRateChanges(finID));
-			}
-
 			for (FinODDetails fod : overdueList) {
 				for (FinanceScheduleDetail fsd : schdList) {
 					if (DateUtil.compare(fsd.getSchDate(), fod.getFinODSchdDate()) == 0) {

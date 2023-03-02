@@ -3,7 +3,6 @@ package com.pennant.backend.dao.finance;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.finance.FinLPIRateChange;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 
 public interface FinODPenaltyRateDAO {
@@ -25,6 +24,4 @@ public interface FinODPenaltyRateDAO {
 	List<FinODPenaltyRate> getFinODPenaltyRateForLMSEvent(long finID);
 
 	int getExtnODGrcDays(long finID);
-
-	List<FinLPIRateChange> getFinLPIRateChanges(long finID);
 }
