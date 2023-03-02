@@ -53,7 +53,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			mndts.setAccHolderName(rs.getString("AccHolderName"));
 			mndts.setJointAccHolderName(rs.getString("JointAccHolderName"));
 			mndts.setAccType(rs.getString("AccType"));
-			mndts.setOpenMandate(rs.getBoolean("OpenMandate"));
+			mndts.setOpenMandate((rs.getString("OpenMandate").equals("T")));
 			mndts.setStartDate(rs.getTimestamp("StartDate"));
 			mndts.setExpiryDate(rs.getTimestamp("ExpiryDate"));
 			mndts.setMaxLimit(rs.getBigDecimal("MaxLimit"));
@@ -73,21 +73,21 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			mndts.setDocumentName(rs.getString("DocumentName"));
 			mndts.setDocumentRef(JdbcUtil.getLong(rs.getObject("DocumentRef")));
 			mndts.setBarCodeNumber(rs.getString("BarCodeNumber"));
-			mndts.setSwapIsActive(rs.getBoolean("SwapIsActive"));
+			mndts.setSwapIsActive((rs.getString("SwapIsActive").equals("T")));
 			mndts.setPrimaryMandateId(rs.getLong("PrimaryMandateId"));
 			mndts.setEntityCode(rs.getString("EntityCode"));
 			mndts.setPartnerBankId(rs.getLong("PartnerBankId"));
-			mndts.setDefaultMandate(rs.getBoolean("DefaultMandate"));
+			mndts.setDefaultMandate((rs.getString("DefaultMandate").equals("T")));
 			mndts.seteMandateSource(rs.getString("EMandateSource"));
 			mndts.seteMandateReferenceNo(rs.getString("EMandateReferenceNo"));
 			mndts.setSwapEffectiveDate(rs.getTimestamp("SwapEffectiveDate"));
 			mndts.setHoldReason(rs.getString("HoldReason"));
-			mndts.setSecurityMandate(rs.getBoolean("SecurityMandate"));
+			mndts.setSecurityMandate((rs.getString("SecurityMandate").equals("T")));
 			mndts.setEmployerID(JdbcUtil.getLong(rs.getObject("EmployerID")));
 			mndts.setEmployeeNo(rs.getString("EmployeeNo"));
 			mndts.setIFSC(rs.getString("Ifsc"));
 			mndts.setMICR(rs.getString("Micr"));
-			mndts.setExternalMandate(rs.getBoolean("ExternalMandate"));
+			mndts.setExternalMandate((rs.getString("ExternalMandate").equals("T")));
 
 			upload.setMandate(mndts);
 
