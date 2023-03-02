@@ -222,7 +222,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			this.referenceId.setValueColumn("AdviseID");
 			this.referenceId.setDescColumn("BalanceAmt");
 			this.referenceId.setValidateColumns(new String[] { "AdviseID" });
-			this.referenceId.setWhereClause(null);
+			this.referenceId.setWhereClause("(BalanceAmt > 0)");
 			break;
 		default:
 			break;
