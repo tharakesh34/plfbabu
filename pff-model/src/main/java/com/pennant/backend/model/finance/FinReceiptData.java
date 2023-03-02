@@ -123,7 +123,7 @@ public class FinReceiptData implements Serializable {
 	private boolean isClosrMaturedLAN = false;
 	private String excessType;
 	private BigDecimal calculatedClosureAmt = BigDecimal.ZERO;
-	private RequestSource requestSource;
+	private RequestSource requestSource = RequestSource.UI;
 
 	private boolean isOTSByEod = false;
 	private boolean isSettlement = false;
