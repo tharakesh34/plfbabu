@@ -2,15 +2,15 @@ package com.pennanttech.pffws;
 
 import java.util.List;
 
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 import com.pennanttech.ws.model.disbursement.DisbursementRequestDetail;
+
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 @WebService
 public interface DisbursementSOAPService {

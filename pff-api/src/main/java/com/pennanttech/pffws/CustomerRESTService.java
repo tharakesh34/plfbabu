@@ -2,7 +2,6 @@ package com.pennanttech.pffws;
 
 import java.util.List;
 
-import javax.jws.WebParam;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -35,6 +34,8 @@ import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
 import com.pennanttech.ws.model.customer.SRMCustRequest;
 import com.pennanttech.ws.model.eligibility.AgreementData;
+
+import jakarta.jws.WebParam;
 
 @Produces(MediaType.APPLICATION_JSON)
 public interface CustomerRESTService {

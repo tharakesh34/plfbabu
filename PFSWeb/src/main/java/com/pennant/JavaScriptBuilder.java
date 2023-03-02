@@ -230,7 +230,7 @@ public class JavaScriptBuilder extends Groupbox {
 		this.splCodemirror = new Codemirror();
 		this.splCodemirror.setWidth("100%");
 		this.splCodemirror.setReadonly(false);
-		this.splCodemirror.setConfig("lineNumbers:true");
+		// this.splCodemirror.setConfig("lineNumbers:true");
 		this.splCodemirror.setSyntax("js");
 		this.splCodemirror.setHeight(tabPanelboxHeight + "px");
 		this.splCodemirror.setStyle("overflow:auto;");
@@ -239,7 +239,7 @@ public class JavaScriptBuilder extends Groupbox {
 		this.codemirror = new Codemirror();
 		this.codemirror.setWidth("100%");
 		this.codemirror.setReadonly(true);
-		this.codemirror.setConfig("lineNumbers:true");
+		// this.codemirror.setConfig("lineNumbers:true");
 		this.codemirror.setSyntax("js");
 		this.codemirror.setHeight(tabPanelboxHeight + "px");
 		this.codemirror.setStyle("overflow:auto;");

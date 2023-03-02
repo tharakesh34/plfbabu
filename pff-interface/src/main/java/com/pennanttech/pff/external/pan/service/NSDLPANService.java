@@ -22,6 +22,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -42,11 +43,11 @@ import org.apache.logging.log4j.Logger;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.util.encoders.Base64;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.aspose.pdf.internal.imaging.internal.bouncycastle.jce.provider.BouncyCastleProvider;
 import com.pennant.backend.model.PrimaryAccount;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -258,7 +259,7 @@ public class NSDLPANService {
 			// data to be signed
 			byte[] dataToSign = data.getBytes();
 			CMSSignedDataGenerator sgen = new CMSSignedDataGenerator();
-			Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+			Security.addProvider(new BouncyCastleProvider());
 			sgen.addSigner(privateKey, myPubCert, CMSSignedDataGenerator.DIGEST_SHA1);
 			Certificate[] certChain = keystore.getCertificateChain(alias);
 
@@ -273,7 +274,7 @@ public class NSDLPANService {
 			CMSSignedData csd = sgen.generate(new CMSProcessableByteArray(dataToSign), true, "BC");
 
 			byte[] signedData = csd.getEncoded();
-			byte[] signedData64 = Base64.encode(signedData);
+			byte[] signedData64 = Base64.getEncoder().encode(signedData);
 
 			logger.debug(Literal.LEAVING);
 			return new String(signedData64);

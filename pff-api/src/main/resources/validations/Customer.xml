@@ -18,7 +18,7 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Pattern">
+			<constraint annotation="jakarta.validation.constraints.Pattern">
 				<message>firstName  invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
@@ -41,7 +41,7 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Pattern">
+			<constraint annotation="jakarta.validation.constraints.Pattern">
 				<message>middleName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
@@ -64,7 +64,7 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-			<!-- <constraint annotation="javax.validation.constraints.Pattern">
+			<!-- <constraint annotation="jakarta.validation.constraints.Pattern">
 				<message>lastName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
@@ -99,7 +99,7 @@
 				</groups>
 				<element name="max">100</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Pattern">
+			<constraint annotation="jakarta.validation.constraints.Pattern">
 				<message>shortName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z 0-9].
 			</message>
 				<groups>
@@ -121,7 +121,7 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Pattern">
+			<constraint annotation="jakarta.validation.constraints.Pattern">
 				<message>fatherName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and
 					must starts with [a-z A-Z].
 				</message>
@@ -143,7 +143,7 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Pattern">
+			<constraint annotation="jakarta.validation.constraints.Pattern">
 				<message>fatherName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and
 					must starts with [a-z A-Z].
 				</message>
@@ -169,7 +169,7 @@
 		</field>
 
 		<field name="custDOB">
-			<constraint annotation="javax.validation.constraints.NotNull">
+			<constraint annotation="jakarta.validation.constraints.NotNull">
 				<message>dateofBirth is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -231,7 +231,7 @@
 		</field>
 
 		<field name="noOfDependents">
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>numofDependents allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -338,7 +338,7 @@
 		</field>
 
 		<field name="custGroupID">
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>groupID allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

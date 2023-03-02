@@ -459,7 +459,6 @@ import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.finance.tds.cerificate.model.TanDetail;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.model.dms.DMSDocumentDetails;
-import com.pennanttech.pennapps.core.cache.CacheStats;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -2748,9 +2747,6 @@ public class PennantJavaUtil {
 						new String[] { "CHEQUEDETAIL", "CHEQUEDETAIL_AView" }, CHEQUE_WF, new String[] { "HeaderID",
 								"BankBranchID", "AccountNo", "ChequeSerialNo", "ChequeDate", "ChequeCcy", "Status" },
 						null, 600));
-
-		ModuleUtil.register("CacheStats", new ModuleMapping("CacheStats", CacheStats.class,
-				new String[] { "CACHE_PARAMETERS", "CACHE_PARAMETERS" }, null, new String[] { "" }, null, 600));
 
 		/* Interface Mapping */
 
