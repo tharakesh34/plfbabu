@@ -20,6 +20,7 @@ import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -149,4 +150,6 @@ public interface ReceiptService {
 	boolean doProcessTerminationExcess(FinReceiptData receiptData);
 
 	List<FinReceiptDetail> prepareReceiptDetails(List<FinExcessAmount> excessList, ReceiptUploadDetail rud);
+
+	List<OverdueChargeRecovery> prepareODCRecovery(Long finID);
 }

@@ -96,6 +96,7 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
+import com.pennant.backend.dao.finance.FinODCAmountDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
@@ -152,6 +153,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -179,6 +181,7 @@ import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.XcessPayables;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
@@ -344,6 +347,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private AccountingSetDAO accountingSetDAO;
 	private PartPayAndEarlySettleValidator partPayAndEarlySettleValidator;
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
+	private FinODCAmountDAO finODCAmountDAO;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -8582,6 +8586,69 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		return false;
 	}
 
+	@Override
+	public List<OverdueChargeRecovery> prepareODCRecovery(Long finID) {
+		List<OverdueChargeRecovery> odcList = new ArrayList<>();
+		List<FinODDetails> finOddetails = finODDetailsDAO.getFinODBalByFinRef(finID);
+
+		if (CollectionUtils.isEmpty(finOddetails)) {
+			return odcList;
+		}
+
+		List<FinOverDueCharges> odcAmounts = finODCAmountDAO.getFinODCAmtByRef(finID, RepayConstants.FEE_TYPE_LPP);
+
+		for (FinODDetails fod : finOddetails) {
+			BigDecimal penPaid = BigDecimal.ZERO;
+			BigDecimal penWaived = BigDecimal.ZERO;
+			BigDecimal penDue = BigDecimal.ZERO;
+
+			for (FinOverDueCharges odcAmount : odcAmounts) {
+				if (fod.getFinODSchdDate().compareTo(odcAmount.getSchDate()) != 0) {
+					continue;
+				}
+
+				OverdueChargeRecovery odcr = new OverdueChargeRecovery();
+				odcr.setFinID(odcAmount.getFinID());
+				odcr.setFinReference(fod.getFinReference());
+				odcr.setFinODSchdDate(odcAmount.getSchDate());
+				odcr.setMovementDate(odcAmount.getValueDate());
+				odcr.setPenalty(odcAmount.getAmount());
+				odcr.setPenaltyBal(odcAmount.getBalanceAmt());
+				odcr.setPenaltyPaid(odcAmount.getPaidAmount());
+				penPaid = penPaid.add(odcAmount.getPaidAmount());
+				penDue = penDue.add(odcAmount.getAmount());
+				penWaived = penWaived.add(odcAmount.getWaivedAmount());
+				odcr.setWaivedAmt(odcAmount.getWaivedAmount());
+				odcr.setFinCurODPri(odcAmount.getOdPri());
+				odcr.setFinCurODPft(odcAmount.getOdPft());
+				odcr.setFinCurODAmt(odcAmount.getOdPri().add(odcAmount.getOdPft()));
+				odcr.setODDays(odcAmount.getDueDays());
+				odcr.setFinODFor(fod.getFinODFor());
+				odcList.add(odcr);
+			}
+
+			BigDecimal penalBal = fod.getTotPenaltyAmt().subtract(fod.getLppDueAmt());
+
+			if (penalBal.compareTo(BigDecimal.ZERO) > 0) {
+				OverdueChargeRecovery odcr = new OverdueChargeRecovery();
+				odcr.setFinReference(fod.getFinReference());
+				odcr.setFinODSchdDate(fod.getFinODSchdDate());
+				odcr.setMovementDate(fod.getFinODTillDate());
+				odcr.setFinODFor(fod.getFinODFor());
+				odcr.setPenalty(fod.getTotPenaltyAmt().subtract(fod.getLppDueAmt()));
+				odcr.setPenaltyBal(fod.getTotPenaltyBal());
+				odcr.setPenaltyPaid(fod.getTotPenaltyPaid().subtract(penPaid));
+				odcr.setWaivedAmt(fod.getTotWaived().subtract(penWaived));
+				odcr.setFinCurODPri(fod.getFinCurODPri());
+				odcr.setFinCurODPft(fod.getFinCurODPft());
+				odcr.setFinCurODAmt(fod.getFinCurODAmt());
+				odcr.setODDays(fod.getFinCurODDays());
+				odcList.add(odcr);
+			}
+		}
+		return odcList;
+	}
+
 	@Autowired
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;
@@ -8972,6 +9039,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	@Autowired
 	public void setFeeCalculator(FeeCalculator feeCalculator) {
 		this.feeCalculator = feeCalculator;
+	}
+
+	@Autowired
+	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
+		this.finODCAmountDAO = finODCAmountDAO;
 	}
 
 }

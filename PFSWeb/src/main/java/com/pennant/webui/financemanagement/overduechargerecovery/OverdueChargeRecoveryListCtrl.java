@@ -24,9 +24,11 @@
  */
 package com.pennant.webui.financemanagement.overduechargerecovery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -59,8 +61,8 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -140,6 +142,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 	private transient OverdueChargeRecoveryService overdueChargeRecoveryService;
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
+	private ReceiptService receiptService;
 
 	public OverdueChargeRecoveryListCtrl() {
 		super();
@@ -306,23 +309,10 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	public void findSearchObject() {
 		logger.debug("Entering");
 
-		// ++ create the searchObject and init sorting ++//
-		this.detailSearchObject = new JdbcSearchObject<>(OverdueChargeRecovery.class);
-		this.detailSearchObject.addTabelName("FinODCRecovery_View");
-		this.detailSearchObject.addFilter(new Filter("FinReference", this.finReference, Filter.OP_EQUAL));
-		this.detailSearchObject.addFilter(new Filter("FinODFor", FinanceConstants.SCH_TYPE_SCHEDULE, Filter.OP_EQUAL));
-
-		Filter[] filter = new Filter[2];
-		filter[0] = new Filter("PenaltyPaid", 0, Filter.OP_NOT_EQUAL);
-		filter[1] = new Filter("WaivedAmt", 0, Filter.OP_NOT_EQUAL);
-		this.detailSearchObject.addFilter(Filter.or(filter));
-
-		// Defualt Sort on the table
-		this.detailSearchObject.addSort("FinReference", false);
-
+		List<OverdueChargeRecovery> odcrList = receiptService.prepareODCRecovery(finID);
 		this.listBoxOverdueChargeRecovery
-				.setModel(new GroupsModelArray(pagedListService.getBySearchObject(detailSearchObject).toArray(),
-						new OverdueChargeRecoveryComparator()));
+				.setModel(new GroupsModelArray(odcrList.toArray(), new OverdueChargeRecoveryComparator()));
+
 		logger.debug("Leaving");
 	}
 
@@ -649,6 +639,11 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	@Autowired
 	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
+	}
+
+	@Autowired
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
 	}
 
 }
