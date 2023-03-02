@@ -2207,12 +2207,10 @@ public class ReceiptCalculator {
 
 	private FinReceiptData earlySettleAllocation(FinReceiptData receiptData) {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		ReceiptPurpose receiptPurpose = receiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstruction()
-				.getReceiptPurpose();
-		RequestSource requestSource = receiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstruction()
-				.getRequestSource();
+		String receiptPurpose = rch.getReceiptPurpose();
+		RequestSource requestSource = receiptData.getRequestSource();
 
-		if (!(RequestSource.EOD.equals(requestSource) && ReceiptPurpose.EARLYSETTLE == receiptPurpose)) {
+		if (!(RequestSource.EOD.equals(requestSource) && ReceiptPurpose.EARLYSETTLE.code().equals(receiptPurpose))) {
 			if (rch.getXcessPayables() != null && rch.getXcessPayables().size() > 0) {
 				receiptData = adjustAdvanceInt(receiptData);
 				for (XcessPayables xcess : rch.getXcessPayables()) {
