@@ -1,7 +1,6 @@
 package com.pennant.webui.financemanagement.receipts;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +18,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
-import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
@@ -31,6 +29,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -79,7 +78,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 	protected Button btnApprove;
 	protected Longbox receiptId;
 	protected Datebox receiptDate;
-	protected Decimalbox receiptAmount;
+	protected CurrencyBox receiptAmount;
 	protected Combobox receiptMode;
 	protected Combobox receiptPurpose;
 	protected ExtendedCombobox partnerBank;
@@ -219,7 +218,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			filters[0] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
 			this.searchObject.addFilters(filters);
 		} else if (FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER.equals(this.module)) {
-			
+
 			Filter[] filters = new Filter[3];
 			filters[0] = new Filter("RECEIPTPURPOSE", "SchdlRepayment", Filter.OP_EQUAL);
 			filters[1] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
@@ -249,11 +248,6 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			Filter filter = searchControl.getFilter();
 			if (filter != null) {
 
-				if (filter.getProperty().equals("receiptAmount")) {
-					filter.setValue(PennantApplicationUtil.unFormateAmount((BigDecimal) filter.getValue(),
-							PennantConstants.defaultCCYDecPos));
-				}
-
 				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
 						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
 					Filter[] filters = new Filter[2];
@@ -279,6 +273,8 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		liCheckbox.appendChild(lcCheckbox);
 
 		this.receiptDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
+		this.receiptAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 
 		this.finType.setModuleName("FinanceType");
 		this.finType.setValueColumn("FinType");

@@ -4827,7 +4827,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
 		CrossLoanTransfer crossLoanTransfer = crossLoanHeader.getCrossLoanTransfer();
 		FinanceEnquiry aFinanceEnq = new FinanceEnquiry();
-		aFinanceEnq.setFinID(finReceiptHeader.getFinID());
+		aFinanceEnq.setFinID(crossLoanTransfer.getFromFinID());
 		aFinanceEnq.setFinReference(crossLoanTransfer.getFromFinReference());
 		aFinanceEnq.setFinType(finReceiptHeader.getFinType());
 		aFinanceEnq.setLovDescFinTypeName(finReceiptHeader.getFinTypeDesc());
@@ -4860,7 +4860,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
 		CrossLoanTransfer crossLoanTransfer = crossLoanHeader.getCrossLoanTransfer();
 		FinanceEnquiry aFinanceEnq = new FinanceEnquiry();
-		aFinanceEnq.setFinID(finReceiptHeader.getFinID());
+		aFinanceEnq.setFinID(crossLoanTransfer.getToFinID());
 		aFinanceEnq.setFinReference(crossLoanTransfer.getToFinReference());
 		aFinanceEnq.setFinType(finReceiptHeader.getFinType());
 		aFinanceEnq.setLovDescFinTypeName(finReceiptHeader.getFinTypeDesc());

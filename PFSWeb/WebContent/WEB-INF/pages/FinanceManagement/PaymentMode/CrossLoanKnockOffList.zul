@@ -75,7 +75,7 @@
 									<extendedcombobox id="finType" />
 									<label value="${c:l('label_ReceiptList_TransferReceiptAmount.value')}" />
 									<listbox id="soReceiptAmount" width="43px" mold="select" rows="1" />
-									<decimalbox id="receiptAmount" width="163px" maxlength="19" />
+									<currencyBox id="receiptAmount" width="163px"/>
 								</row>
 								<row visible="true">
 									<label value="${c:l('label_ReceiptList_Customer.value')}" />
