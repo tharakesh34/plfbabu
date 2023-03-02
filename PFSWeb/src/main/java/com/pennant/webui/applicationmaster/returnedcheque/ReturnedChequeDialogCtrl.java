@@ -35,11 +35,9 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -157,13 +155,6 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		this.custCIF.setDescColumn("CustShrtName");
 		this.custCIF.setValidateColumns(new String[] { "CustCIF" });
 
-		Filter[] coreCustFilter = new Filter[1];
-		if (App.DATABASE == App.Database.ORACLE) {
-			coreCustFilter[0] = new Filter("CustCoreBank", null, Filter.OP_EQUAL);
-		} else {
-			coreCustFilter[0] = new Filter("CustCoreBank", " ", Filter.OP_NOT_EQUAL);
-		}
-		this.custCIF.setFilters(coreCustFilter);
 		this.currency.setMaxlength(3);
 		this.currency.setMandatoryStyle(true);
 		this.currency.setModuleName("Currency");
