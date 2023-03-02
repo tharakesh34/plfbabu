@@ -2862,6 +2862,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								}
 								rcuVerificationData.setVerificationType(StringUtils.trimToEmpty(rcuDocVerficationType));
 								rcuVerificationData.setDocumentName(StringUtils.trimToEmpty(rcuDocument.getDocName()));
+								rcuVerificationData
+										.setDocumentNameDesc(StringUtils.trimToEmpty(rcuDocument.getDescription()));
 								rcuVerificationData.setDocumentStatus(StringUtils.trimToEmpty(rcuDocStatus));
 								if (null != rcuDocument.getReinitid() && rcuDocument.getReinitid() > 0) {
 									rcuVerificationData.setFinalDecision("Re-initiate");
@@ -4057,6 +4059,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 				coapplicant.setCustSalutation(customer.getLovDescCustSalutationCodeName());
 				coapplicant.setCustFatherName(customer.getCustMotherMaiden());
+				coapplicant.setCustNatureOfBusiness(PennantStaticListUtil.getlabelDesc(customer.getNatureOfBusiness(),
+						PennantStaticListUtil.getNatureofBusinessList()));
 
 				if (aggModuleDetails.contains(PennantConstants.AGG_LNAPPCB) && null != customer
 						&& StringUtils.isNotBlank(customer.getCustCoreBank())) {

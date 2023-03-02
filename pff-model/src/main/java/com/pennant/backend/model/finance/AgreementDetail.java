@@ -5395,6 +5395,7 @@ public class AgreementDetail {
 		private String custEmpName = "";
 		private String custType = "";
 		private String custSubCategory = "";
+		private String custNatureOfBusiness = "";
 
 		private Map<String, String> extMap = new HashMap<>();
 
@@ -5712,6 +5713,14 @@ public class AgreementDetail {
 
 		public void setCustSubCategory(String custSubCategory) {
 			this.custSubCategory = custSubCategory;
+		}
+
+		public String getCustNatureOfBusiness() {
+			return custNatureOfBusiness;
+		}
+
+		public void setCustNatureOfBusiness(String custNatureOfBusiness) {
+			this.custNatureOfBusiness = custNatureOfBusiness;
 		}
 
 		public Map<String, String> getExtMap() {
@@ -9063,6 +9072,7 @@ public class AgreementDetail {
 		private String collateralReference = "";
 		private String verificationType = "";
 		private String documentName = "";
+		private String documentNameDesc = "";
 		private String documentStatus = "";
 		private String recommanditionStatus = "";
 		private String finalDecision = "";
@@ -9161,6 +9171,14 @@ public class AgreementDetail {
 
 		public void setDocumentName(String documentName) {
 			this.documentName = documentName;
+		}
+
+		public String getDocumentNameDesc() {
+			return documentNameDesc;
+		}
+
+		public void setDocumentNameDesc(String documentNameDesc) {
+			this.documentNameDesc = documentNameDesc;
 		}
 
 		public String getDocumentStatus() {
