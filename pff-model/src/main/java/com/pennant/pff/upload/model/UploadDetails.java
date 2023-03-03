@@ -2,6 +2,7 @@ package com.pennant.pff.upload.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class UploadDetails implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -20,6 +21,7 @@ public class UploadDetails implements Serializable {
 	private Timestamp approvedOn;
 	private String name;
 	private String recordStatus;
+	private Date appDate;
 
 	public UploadDetails() {
 		super();
@@ -135,6 +137,14 @@ public class UploadDetails implements Serializable {
 
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
 	}
 
 }

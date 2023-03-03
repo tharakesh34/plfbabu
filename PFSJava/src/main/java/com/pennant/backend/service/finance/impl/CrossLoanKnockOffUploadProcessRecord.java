@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffUploadDAO;
 import com.pennant.backend.model.crossloanknockoff.CrossLoanKnockoffUpload;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.pff.manualknockoff.service.impl.ManualKnockOffUploadProcessRecord;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.Table;
@@ -25,7 +24,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 
 public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
-	private static final Logger logger = LogManager.getLogger(ManualKnockOffUploadProcessRecord.class);
+	private static final Logger logger = LogManager.getLogger(CrossLoanKnockOffUploadProcessRecord.class);
 
 	private CrossLoanKnockOffUploadDAO crossLoanKnockOffUploadDAO;
 

@@ -1,6 +1,5 @@
 package com.pennant.pff.upload.service.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.upload.dao.UploadDAO;
@@ -56,9 +54,9 @@ public abstract class AUploadServiceImpl implements UploadService {
 
 	@Override
 	public List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate, String type, String stage, String code) {
+			Date toDate, String type, String stage) {
 		List<FileUploadHeader> headerList = uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate, type,
-				stage, code);
+				stage);
 
 		for (FileUploadHeader header : headerList) {
 			if (header.getFailureRecords() > 0) {
@@ -122,11 +120,6 @@ public abstract class AUploadServiceImpl implements UploadService {
 	}
 
 	@Override
-	public List<Cluster> getClusterName(String code) {
-		return new ArrayList<>();
-	}
-
-	@Override
 	public void updateDownloadStatus(long headerID, int status) {
 		this.uploadDAO.updateDownloadStatus(headerID, status);
 	}
@@ -167,7 +160,7 @@ public abstract class AUploadServiceImpl implements UploadService {
 				builder.append(header.getId());
 			}
 		}
-		
+
 		return builder.toString();
 	}
 

@@ -24,8 +24,6 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -365,32 +363,6 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 		}
 
 		return clusterid;
-	}
-
-	@Override
-	public List<Cluster> getClusterName(String code) {
-		if (StringUtils.isNotEmpty(code)) {
-			return this.jdbcOperations.query("Select Code, Name From Clusters Where Entity = ?", new ClusterRM(), code);
-		} else {
-			return this.jdbcOperations.query("Select Code, Name From Clusters", new ClusterRM());
-		}
-	}
-
-	private class ClusterRM implements RowMapper<Cluster> {
-		private ClusterRM() {
-			super();
-		}
-
-		@Override
-		public Cluster mapRow(ResultSet rs, int rowNum) throws SQLException {
-			Cluster et = new Cluster();
-
-			et.setCode(rs.getString("Code"));
-			et.setName(rs.getString("Name"));
-
-			return et;
-		}
-
 	}
 
 }

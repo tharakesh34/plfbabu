@@ -3,7 +3,6 @@ package com.pennant.pff.upload.service;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.dataengine.ProcessRecord;
@@ -19,7 +18,7 @@ public interface UploadService {
 	void doValidate(FileUploadHeader header, Object detail);
 
 	List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate, String type, String stage, String code);
+			Date toDate, String type, String stage);
 
 	List<Entity> getEntities();
 
@@ -45,5 +44,4 @@ public interface UploadService {
 
 	void updateFailRecords(int sucessRecords, int faildrecords, long headerId);
 
-	List<Cluster> getClusterName(String code);
 }

@@ -12932,21 +12932,6 @@
 	<bean id="paymentInstructionUploadService"
 	class="com.pennant.backend.service.payment.impl.PaymentInstructionUploadServiceImpl" parent="aUploadService" />
 
-	<bean id="paymentInstUploadApprovalProcess"
-		class="com.pennant.backend.service.payment.impl.PaymentInstUploadApprovalProcess">
-		<property name="dataSource" ref="dataSource" />
-		<property name="projectedPaymentInstUploadDAO" ref="projectedPaymentInstUploadDAO" />
-		<property name="paymentInstructionUploadDAO" ref="paymentInstructionUploadDAO" />
-		<property name="paymentHeaderService" ref="paymentHeaderService" />
-		<property name="refundBeneficiary" ref="refundBeneficiary" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-	</bean>
-
-	<bean id="projectedPaymentInstUploadDAO"
-		class="com.pennant.backend.dao.paymentinstupload.ProjectedPaymentInstUploadDAOImpl" parent="sequenceDao">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
 	<bean id="financeHoldReleaseProcess" class="com.pennanttech.pff.holdrelease.FinanceHoldReleaseProcess" />
 
 	<bean id="feeRefundHeaderDAO" class="com.pennant.backend.dao.feerefund.impl.FeeRefundHeaderDAOImpl"
