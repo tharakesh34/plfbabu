@@ -2769,8 +2769,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								soaTranReport = new SOATransactionReport();
 								if (StringUtils.isNotBlank(feeTypeDesc)) {
 									finFeeDetailNotInDISBorPOSP = feeTypeDesc;
-								} else {
+								} else if (StringUtils.isNotBlank(vasProduct)) {
 									finFeeDetailNotInDISBorPOSP = vasProduct;
+								} else {
+									finFeeDetailNotInDISBorPOSP = finFeeDetail.getFinEvent();
 								}
 								soaTranReport.setEvent(finFeeDetailNotInDISBorPOSP + " Amount" + finRef);
 								if (StringUtils.isNotBlank(exclusive)) {

@@ -7958,8 +7958,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			afd.getFinScheduleData().setVasRecordingList(vasRecordings);
-		} else {
-			afd.getFinScheduleData().setVasRecordingList(Collections.emptyList());
 		}
 
 		if (StringUtils.isBlank(this.custCIF.getValue())) {
