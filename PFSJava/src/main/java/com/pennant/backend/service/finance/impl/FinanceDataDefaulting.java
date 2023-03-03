@@ -175,7 +175,6 @@ public class FinanceDataDefaulting {
 		String finBranch = fm.getFinBranch();
 		String profitDaysBasis = fm.getProfitDaysBasis();
 		String repayMethod = fm.getFinRepayMethod();
-		String stepPolicy = fm.getStepPolicy();
 		String stepType = fm.getStepType();
 		String grcProfitDaysBasis = fm.getGrcProfitDaysBasis();
 		String grcPftFrq = fm.getGrcPftFrq();
@@ -1035,10 +1034,9 @@ public class FinanceDataDefaulting {
 			String odChargeType = opr.getODChargeType();
 			int ccyFormat = CurrencyUtil.getFormat(finType.getFinCcy());
 
-			if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)
+			if (ChargeType.PERC_ONE_TIME.equals(odChargeType) || ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType)
 					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(odChargeType)) {
+					|| ChargeType.PERC_ON_PD_MTH.equals(odChargeType)) {
 
 				opr.setODChargeAmtOrPerc(PennantApplicationUtil.unFormateAmount(opr.getODChargeAmtOrPerc(), ccyFormat));
 			}
