@@ -860,7 +860,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		List<ChequeDetail> cheques = ch.getChequeDetailList();
 		for (ChequeDetail cd : cheques) {
-			if (InstrumentType.isPDC(cd.getChequeType())) {
+			if (!cd.isUpload() && InstrumentType.isPDC(cd.getChequeType())) {
 				chequeType = false;
 			}
 
