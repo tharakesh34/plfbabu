@@ -784,7 +784,8 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 			throw new WrongValuesException(wvea);
 		}
 
-		if (RepayConstants.SETTLEMENT_STATUS_INITIATED.equals(this.settlementStatus.getValue())) {
+		if (RepayConstants.SETTLEMENT_STATUS_INIT_MSG.equals(this.settlementStatus.getValue())
+				&& FinanceConstants.SETTLEMENT.equals(this.module)) {
 
 			Map<String, List> settlementSchDetails = settlementScheduleInlineEditCtrl.preparesettlementSchdData(
 					this.listBoxSettlementScheduleInlineEdit, header.getSettlementScheduleList(), header.getId());
