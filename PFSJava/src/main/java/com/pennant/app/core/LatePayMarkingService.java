@@ -90,6 +90,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.eod.EODUtil;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 import com.pennanttech.pff.receipt.constants.Allocation;
 
@@ -420,7 +421,7 @@ public class LatePayMarkingService extends ServiceHelper {
 	}
 
 	public boolean isLPCpzRequired(FinODDetails fod) {
-		if (!FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(fod.getODChargeType())) {
+		if (!ChargeType.PERC_ON_DUE_DAYS.equals(fod.getODChargeType())) {
 			return false;
 		}
 

@@ -1186,16 +1186,15 @@ public class PennantStaticListUtil {
 
 		if (overDuechargeTypes == null) {
 			overDuechargeTypes = new ArrayList<ValueLabel>(6);
+			overDuechargeTypes.add(new ValueLabel(ChargeType.FLAT, Labels.getLabel("label_FlatOneTime")));
+			overDuechargeTypes.add(
+					new ValueLabel(ChargeType.FLAT_ON_PD_MTH, Labels.getLabel("label_FixedAmtOnEveryPastDueMonth")));
 			overDuechargeTypes
-					.add(new ValueLabel(FinanceConstants.PENALTYTYPE_FLAT, Labels.getLabel("label_FlatOneTime")));
-			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH,
-					Labels.getLabel("label_FixedAmtOnEveryPastDueMonth")));
-			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ONETIME,
-					Labels.getLabel("label_PercentageOneTime")));
-			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH,
-					Labels.getLabel("label_PercentageOnEveryPastDueMonth")));
-			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS,
-					Labels.getLabel("label_PercentageOnDueDays")));
+					.add(new ValueLabel(ChargeType.PERC_ONE_TIME, Labels.getLabel("label_PercentageOneTime")));
+			overDuechargeTypes.add(
+					new ValueLabel(ChargeType.PERC_ON_PD_MTH, Labels.getLabel("label_PercentageOnEveryPastDueMonth")));
+			overDuechargeTypes
+					.add(new ValueLabel(ChargeType.PERC_ON_DUE_DAYS, Labels.getLabel("label_PercentageOnDueDays")));
 			overDuechargeTypes.add(new ValueLabel(ChargeType.PERC_ON_EFF_DUE_DAYS,
 					Labels.getLabel("label_PercentageOnDueDaysOnEffectiveDate")));
 			if (ImplementationConstants.ALW_LPP_RULE_FIXED) {

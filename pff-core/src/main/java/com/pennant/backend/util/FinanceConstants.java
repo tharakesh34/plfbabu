@@ -31,10 +31,7 @@
  * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ******************************************************************************************** 
  */
-
 package com.pennant.backend.util;
-
-import com.pennanttech.pff.overdue.constants.ChargeType;
 
 /**
  * This stores all constants required for running the application
@@ -109,19 +106,6 @@ public class FinanceConstants {
 	public static final String PAY_APPORTIONMENT_TO_PASTDUE = "PASTDUE";
 	public static final String PAY_APPORTIONMENT_TO_SUSPENSE = "SUSPENSE";
 	public static final String PAY_APPORTIONMENT_TO_ALL = "ALL";
-
-	@Deprecated
-	public static final String PENALTYTYPE_NA = ChargeType.NA;
-	@Deprecated
-	public static final String PENALTYTYPE_FLAT = ChargeType.FLAT;
-	@Deprecated
-	public static final String PENALTYTYPE_PERC_ONETIME = ChargeType.PERC_ONE_TIME;
-	@Deprecated
-	public static final String PENALTYTYPE_PERC_ON_DUEDAYS = ChargeType.PERC_ON_DUE_DAYS;
-	@Deprecated
-	public static final String PENALTYTYPE_PERC_ON_PD_MTH = ChargeType.PERC_ON_PD_MTH;
-	@Deprecated
-	public static final String PENALTYTYPE_FLAT_ON_PD_MTH = ChargeType.FLAT_ON_PD_MTH;
 
 	// Schedule Types
 	public static final String SCH_TYPE_SCHEDULE = "S";
