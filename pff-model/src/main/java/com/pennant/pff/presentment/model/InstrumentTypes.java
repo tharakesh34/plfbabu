@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pennant.pff.presentment.model.DueExtractionConfig;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class InstrumentTypes extends AbstractWorkflowEntity {
