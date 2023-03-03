@@ -746,10 +746,9 @@ public class CollateralController extends ExtendedTestClass {
 			// call collateral create method
 			auditHeader = collateralSetupService.saveOrUpdate(auditHeader);
 
-			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-				}
+			if (CollectionUtils.isNotEmpty(auditHeader.getErrorMessage())) {
+				ErrorDetail errorDetail = auditHeader.getErrorMessage().get(0);
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		} catch (BadSqlGrammarException badSqlE) {
 			logger.error(badSqlE);

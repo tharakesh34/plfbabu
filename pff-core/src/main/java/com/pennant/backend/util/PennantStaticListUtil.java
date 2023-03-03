@@ -1908,8 +1908,6 @@ public class PennantStaticListUtil {
 			// remFeeSchdMethodList.add(new
 			// ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
 			// Labels.getLabel("label_ScheduleToNinstalments")));
-			// remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PAID_BY_CUSTOMER,
-			// Labels.getLabel("label_RemFee_PaidByCustomer")));
 			// remFeeSchdMethodList.add(new
 			// ValueLabel(CalculationConstants.REMFEE_WAIVED_BY_BANK,
 			// Labels.getLabel("label_RemFee_WaivedByBank")));

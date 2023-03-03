@@ -1380,9 +1380,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				fee.setNetAmountGST(taxSplit.gettGST());
 				fee.setNetAmount(totalNetFee.subtract(fee.getNetTDS()));
 
-				BigDecimal netFeeOriginal = taxSplit.getNetAmount();
-				BigDecimal netTGST = taxSplit.gettGST();
-
 				// Actual Amounts
 				fee.setActualAmountOriginal(fee.getNetAmountOriginal());
 				fee.setActualAmountGST(fee.getNetAmountGST());
@@ -1393,24 +1390,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				igstTax.setActualTax(taxSplit.getiGST());
 				ugstTax.setActualTax(taxSplit.getuGST());
 				cessTax.setActualTax(taxSplit.getCess());
-
-				/*
-				 * if (BigDecimal.ZERO.compareTo(waivedAmount) == 0) {
-				 * fee.setActualAmountOriginal(fee.getNetAmountOriginal());
-				 * fee.setActualAmountGST(fee.getNetAmountGST()); fee.setActualAmount(fee.getNetAmount());
-				 * 
-				 * cgstTax.setActualTax(taxSplit.getcGST()); sgstTax.setActualTax(taxSplit.getsGST());
-				 * igstTax.setActualTax(taxSplit.getiGST()); ugstTax.setActualTax(taxSplit.getuGST());
-				 * cessTax.setActualTax(taxSplit.getCess()); } else { taxSplit =
-				 * GSTCalculator.getInclusiveGST(netFeeOriginal.subtract(waivedAmount), taxPercentages);
-				 * fee.setActualAmountOriginal(totalNetFee.subtract(netTGST));
-				 * fee.setActualAmountGST(taxSplit.gettGST());
-				 * fee.setActualAmount(fee.getActualAmountOriginal().add(taxSplit.gettGST()));
-				 * 
-				 * cgstTax.setActualTax(taxSplit.getcGST()); sgstTax.setActualTax(taxSplit.getsGST());
-				 * igstTax.setActualTax(taxSplit.getiGST()); ugstTax.setActualTax(taxSplit.getuGST());
-				 * cessTax.setActualTax(taxSplit.getCess()); }
-				 */
 
 				// Paid Amounts
 				BigDecimal totalPaidFee = fee.getPaidAmount().add(fee.getPaidTDS());

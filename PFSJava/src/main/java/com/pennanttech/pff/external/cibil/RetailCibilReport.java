@@ -727,9 +727,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 		cell = row.createCell(55);
 		cell.setCellValue(writeCollateralType(customerDetal));
 
-		/* Rate of Interest */
-		cell = row.createCell(58);
-
 		/* Payment Frequency */
 		cell = row.createCell(64);
 		cell.setCellValue(writePaymentFrq(finance.getRepayFrq()));
@@ -765,13 +762,17 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/* Valid codes are: 01 = Salaried 02 = Self Employed Professional 03 = Self Employed 04 = Others */
 	private String writeOccupationCode(String subCategory) {
 		if (StringUtils.equals(PennantConstants.EMPLOYMENTTYPE_SALARIED, subCategory)) {
-			return subCategory = "01";
+			subCategory = "01";
+			return subCategory;
 		} else if (StringUtils.equals(PennantConstants.EMPLOYMENTTYPE_SENP, subCategory)) {
-			return subCategory = "03";
+			subCategory = "03";
+			return subCategory;
 		} else if (StringUtils.equals(PennantConstants.EMPLOYMENTTYPE_SEP, subCategory)) {
-			return subCategory = "02";
+			subCategory = "02";
+			return subCategory;
 		} else {
-			return subCategory = "04";
+			subCategory = "04";
+			return subCategory;
 		}
 	}
 
@@ -795,18 +796,18 @@ public class RetailCibilReport extends BasicDao<Object> {
 		String frequencyCode = FrequencyUtil.getFrequencyCode(repayFrq);
 		String code = "";
 		if (StringUtils.equals(FrequencyCodeTypes.FRQ_WEEKLY, frequencyCode)) {
-			return code = "01";
+			code = "01";
+			return code;
 		} else if (StringUtils.equals(FrequencyCodeTypes.FRQ_FORTNIGHTLY, frequencyCode)) {
-			return code = "02";
+			code = "02";
+			return code;
 		} else if (StringUtils.equals(FrequencyCodeTypes.FRQ_MONTHLY, frequencyCode)) {
-			return code = "03";
+			code = "03";
+			return code;
 		} else if (StringUtils.equals(FrequencyCodeTypes.FRQ_QUARTERLY, frequencyCode)) {
-			return code = "04";
-		} // to be implement future
-		/*
-		 * else if (StringUtils.equals(FrequencyCodeTypes.FRQ_HALF_YEARLY, frequencyCode)) { // return code = "01"; }
-		 * else if (StringUtils.equals(FrequencyCodeTypes.FRQ_YEARLY, frequencyCode)) { // return code = "01"; }
-		 */
+			code = "04";
+			return code;
+		}
 		return code;
 	}
 
@@ -826,12 +827,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 			}
 		}
 
-		/*
-		 * List<FinanceEnquiry> customerFinances = customerDetal.getCustomerFinances(); for (FinanceEnquiry finance :
-		 * customerFinances) { List<CollateralSetup> collateralSetupDetails = finance.getCollateralSetupDetails(); if
-		 * (CollectionUtils.isNotEmpty(collateralSetupDetails)) { for (CollateralSetup collateralSetup :
-		 * collateralSetupDetails) { collateralvalue = collateralvalue.add(collateralSetup.getBankValuation()); } } }
-		 */
 		return collateralvalue;
 	}
 

@@ -280,11 +280,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 			if (!enqiryModule) {
 				doSetScreenData(appSheet, applicantDataMap);
-				try {
-					doSetVarificationData(appSheet);
-				} catch (Exception e) {
-
-				}
+				doSetVarificationData(appSheet);
 			}
 
 			spreadSheet.setSelectedSheet(appSheet.getSheetName());
@@ -666,43 +662,47 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			return;
 		}
 
-		String marketValueFiedls = SysParamUtil.getValueAsString("CREDIT_MARKET_VALUATION");
-		if (StringUtils.isEmpty(marketValueFiedls)) {
-			return;
-		}
-		BigDecimal value1 = null;
-		BigDecimal value2 = null;
-		String arr[] = marketValueFiedls.split(",");
-		for (int i = 0; i < this.verifications.size(); i++) {
-			Verification verification = this.verifications.get(i);
-			if (verification.getReinitid() == null && !StringUtils.isEmpty(verification.getFinalValDecision())) {
-				if (verification.getAgencyName() == null) {
-					continue;
-				}
+		try {
 
-				if (value1 == null) {
-					value1 = verification.getValuationAmount();
-					continue;
-				}
+			String marketValueFiedls = SysParamUtil.getValueAsString("CREDIT_MARKET_VALUATION");
+			if (StringUtils.isEmpty(marketValueFiedls)) {
+				return;
+			}
+			BigDecimal value1 = null;
+			BigDecimal value2 = null;
+			String[] arr = marketValueFiedls.split(",");
+			for (int i = 0; i < this.verifications.size(); i++) {
+				Verification verification = this.verifications.get(i);
+				if (verification.getReinitid() == null && !StringUtils.isEmpty(verification.getFinalValDecision())) {
+					if (verification.getAgencyName() == null) {
+						continue;
+					}
 
-				if (value2 == null) {
+					if (value1 == null) {
+						value1 = verification.getValuationAmount();
+						continue;
+					}
+
 					value2 = verification.getValuationAmount();
 					break;
+
 				}
-
 			}
-		}
 
-		if (value1 == null) {
-			value1 = BigDecimal.ZERO;
-		}
+			if (value1 == null) {
+				value1 = BigDecimal.ZERO;
+			}
 
-		if (value2 == null) {
-			value2 = BigDecimal.ZERO;
-		}
+			if (value2 == null) {
+				value2 = BigDecimal.ZERO;
+			}
 
-		setCellValue(sheet, arr[0], PennantApplicationUtil.formateAmount(value1, 2));
-		setCellValue(sheet, arr[1], PennantApplicationUtil.formateAmount(value2, 2));
+			setCellValue(sheet, arr[0], PennantApplicationUtil.formateAmount(value1, 2));
+			setCellValue(sheet, arr[1], PennantApplicationUtil.formateAmount(value2, 2));
+
+		} catch (Exception e) {
+			logger.error(e);
+		}
 	}
 
 	/**

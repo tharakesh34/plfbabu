@@ -1,5 +1,6 @@
 package com.pennanttech.service.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -247,10 +248,9 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 					.getCollateralSetupDetails(collateralSetup.getCollateralRef(), "_Temp");
 			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "update", true);
 
-			if (auditDetail.getErrorDetails() != null) {
-				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-				}
+			if (CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())) {
+				ErrorDetail errorDetail = auditDetail.getErrorDetails().get(0);
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 			// call create collateral controller service
 			if (collateral != null) {
