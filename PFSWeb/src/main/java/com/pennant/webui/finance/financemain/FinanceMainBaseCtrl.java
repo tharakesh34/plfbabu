@@ -23857,7 +23857,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setPdVerificationDialogCtrl(PDVerificationDialogCtrl pdVerificationDialogCtrl) {
 		this.pdVerificationDialogCtrl = pdVerificationDialogCtrl;
-		this.customerDialogCtrl.setPDVerificationDialogCtrl(pdVerificationDialogCtrl);
 	}
 
 	public List<LowerTaxDeduction> getOldLowerTaxDeductionDetail() {
