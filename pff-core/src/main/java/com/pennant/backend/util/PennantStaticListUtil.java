@@ -35,6 +35,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.overdraft.OverdraftConstants;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
@@ -1195,11 +1196,10 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PercentageOnEveryPastDueMonth")));
 			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS,
 					Labels.getLabel("label_PercentageOnDueDays")));
-			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS,
+			overDuechargeTypes.add(new ValueLabel(ChargeType.PERC_ON_EFF_DUE_DAYS,
 					Labels.getLabel("label_PercentageOnDueDaysOnEffectiveDate")));
 			if (ImplementationConstants.ALW_LPP_RULE_FIXED) {
-				overDuechargeTypes.add(
-						new ValueLabel(FinanceConstants.PENALTYTYPE_RULEFXDD, Labels.getLabel("label_FixedByDueDays")));
+				overDuechargeTypes.add(new ValueLabel(ChargeType.RULE, Labels.getLabel("label_FixedByDueDays")));
 			}
 
 		}

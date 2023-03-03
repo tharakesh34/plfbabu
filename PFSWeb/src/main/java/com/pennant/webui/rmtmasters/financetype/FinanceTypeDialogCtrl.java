@@ -1809,11 +1809,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(aFinanceType.getODChargeAmtOrPerc(), format));
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
-				|| FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+				|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))
-						&& !FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
+						&& !ChargeType.RULE.equals(getComboboxValue(this.oDChargeType))) {
 			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(aFinanceType.getODChargeAmtOrPerc(), 2));
-		} else if (FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
+		} else if (ChargeType.RULE.equals(getComboboxValue(this.oDChargeType))) {
 			if (isOverdraft) {
 				this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(false);
 				this.label_FinanceTypeDialog_LPPRULE.setVisible(true);
@@ -3777,8 +3777,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				aFinanceType.setODChargeAmtOrPerc(CurrencyUtil.unFormat(this.oDChargeAmtOrPerc.getValue(), format));
 			} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS
-							.equals(getComboboxValue(this.oDChargeType))
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 				aFinanceType.setODChargeAmtOrPerc(CurrencyUtil.unFormat(this.oDChargeAmtOrPerc.getValue(), 2));
 			}
@@ -4650,8 +4649,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 								format, true, false, 9999999));
 			} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS
-							.equals(getComboboxValue(this.oDChargeType))
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(getComboboxValue(this.oDChargeType))
 					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 				this.oDChargeAmtOrPerc.setConstraint(new PTDecimalValidator(
 						Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value"), 2, true, false, 100));
@@ -7007,7 +7005,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_ODMinCapAmount.setSclass("");
 		}
 
-		if (isOverdraft && getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_RULEFXDD)) {
+		if (isOverdraft && getComboboxValue(this.oDChargeType).equals(ChargeType.RULE)) {
 			this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(false);
 			this.label_FinanceTypeDialog_LPPRULE.setVisible(true);
 			this.space_oDChargeAmtOrPerc.setVisible(false);
@@ -7083,7 +7081,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		if (isOverdraft && getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_RULEFXDD)) {
+		if (isOverdraft && getComboboxValue(this.oDChargeType).equals(ChargeType.RULE)) {
 			this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(false);
 			this.label_FinanceTypeDialog_LPPRULE.setVisible(true);
 			this.space_oDChargeAmtOrPerc.setVisible(false);

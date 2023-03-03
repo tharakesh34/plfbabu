@@ -131,6 +131,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.rits.cloning.Cloner;
 
 /**
@@ -1692,8 +1693,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS
-								.equals(getComboboxValue(this.oDChargeType))) {
+						|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc.setConstraint(new PTDecimalValidator(
 							Labels.getLabel("label_FinanceMainDialog_ODChargeAmtOrPerc.value"), 2, true, false, 100));
 				}
@@ -3507,8 +3507,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.mandateRef.setFilters(filters);
 		StringBuilder whereCaluse = new StringBuilder("(OpenMandate = 1 OR");
 		whereCaluse.append("((MANDATEID in (SELECT FM.MANDATEID FROM FINANCEMAIN FM");
-		whereCaluse.append(
-				" Inner Join Mandates m on m.MandateID = FM.MandateID and m.OpenMandate = 1 WHERE FM.CUSTID= ");
+		whereCaluse
+				.append(" Inner Join Mandates m on m.MandateID = FM.MandateID and m.OpenMandate = 1 WHERE FM.CUSTID= ");
 		whereCaluse.append(custid);
 		whereCaluse.append(" AND FM.FINREFERENCE != '");
 		whereCaluse.append(getFinanceMain().getFinReference());

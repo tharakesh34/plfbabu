@@ -4556,10 +4556,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 						|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))
-								&& !FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
+								&& !ChargeType.RULE.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc
 							.setValue(PennantApplicationUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), 2));
-				} else if (FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
+				} else if (ChargeType.RULE.equals(getComboboxValue(this.oDChargeType))) {
 					if (isOverdraft) {
 						if (aFinanceMain.isNewRecord()) {
 							this.label_FinanceMainDialog_ODChargeAmtOrPerc.setVisible(false);
@@ -19690,7 +19690,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.space_collectionAmt.setSclass("");
 		}
 
-		if (isOverDraft && getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_RULEFXDD)) {
+		if (isOverDraft && getComboboxValue(this.oDChargeType).equals(ChargeType.RULE)) {
 			this.label_FinanceMainDialog_ODChargeAmtOrPerc.setVisible(false);
 			this.label_FinanceMainDialog_LPPRULE.setVisible(true);
 			this.space_oDChargeAmtOrPerc.setVisible(false);
@@ -19887,7 +19887,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oDIncGrcDays.setChecked(true);
 		}
 
-		if (isOverDraft && getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_RULEFXDD)) {
+		if (isOverDraft && getComboboxValue(this.oDChargeType).equals(ChargeType.RULE)) {
 			this.label_FinanceMainDialog_ODChargeAmtOrPerc.setVisible(false);
 			this.label_FinanceMainDialog_LPPRULE.setVisible(true);
 			this.space_oDChargeAmtOrPerc.setVisible(false);

@@ -122,10 +122,6 @@ public class FinanceConstants {
 	public static final String PENALTYTYPE_PERC_ON_PD_MTH = ChargeType.PERC_ON_PD_MTH;
 	@Deprecated
 	public static final String PENALTYTYPE_FLAT_ON_PD_MTH = ChargeType.FLAT_ON_PD_MTH;
-	@Deprecated
-	public static final String PENALTYTYPE_RULEFXDD = ChargeType.RULE;
-	@Deprecated
-	public static final String PENALTYTYPE_PERC_ON_EFFECTIVE_DUEDAYS = ChargeType.PERC_ON_EFF_DUE_DAYS;
 
 	// Schedule Types
 	public static final String SCH_TYPE_SCHEDULE = "S";
