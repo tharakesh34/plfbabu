@@ -4693,7 +4693,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (StringUtils.isNotBlank(customer.getCustCoreBank()) && customer.getCustID() != 0 && customer.isNewRecord()) {
 			isDuplicateCoreBankId = customerDAO.isDuplicateCoreBankId(customer.getCustID(), customer.getCustCoreBank());
 		}
-		if (isDuplicateCoreBankId) {
+		if (isDuplicateCoreBankId && !customer.isProspectAsCIF()) {
 			String[] errorParameters = new String[1];
 			errorParameters[0] = PennantJavaUtil.getLabel("label_CustCoreBank") + ":" + customer.getCustCoreBank();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
@@ -8433,6 +8433,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	public CustomerDetails prospectAsCIF(String cif) {
+		logger.debug(Literal.ENTERING);
+
 		Customer customer = checkCustomerByCIF(cif, TableType.MAIN_TAB.getSuffix());
 
 		if (customer == null) {
@@ -8606,7 +8608,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customer.setprospectAsCIF(true);
 		customer.setCustCIF(getNewProspectCustomerCIF());
 		customer.setCustID(Long.MIN_VALUE);
-		customer.setCustCoreBank(null);
 		customer.setNewRecord(true);
 		customer.setprospectAsCIF(true);
 
@@ -8617,6 +8618,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customer.setLovDescCustRO1Name(null);
 		customer.setLovDescCustRO1Name(null);
 		customer.setCkycOrRefNo(null);
+
+		logger.debug(Literal.LEAVING);
 		return cd;
 	}
 

@@ -45,6 +45,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -1183,10 +1184,11 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			whereClause.append("')) AND");
 		}
 
-		whereClause.append(" ((DepositorId = ");
-		whereClause.append(customerId).append(") ");
-		whereClause.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
-		whereClause.append(customerId).append(")) ) ");
+		whereClause.append(" DepositorId in( ");
+		whereClause.append(getInnerQuery()).append(")) ");
+		whereClause
+				.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId in(");
+		whereClause.append(getInnerQuery()).append("))) ) ");
 		// Adding Where Condition to Filter Not Collateral References which are not allowed to Multi Assignment
 		// in Loans
 		whereClause.append(" AND (((MultiLoanAssignment = 0 and CollateralRef NOT IN (");
@@ -1198,6 +1200,32 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		whereClause.append(" OR expirydate >= '" + JdbcUtil.getDate(SysParamUtil.getAppDate()) + "')");
 
 		return whereClause;
+	}
+
+	private String getInnerQuery() {
+		StringBuilder sql = new StringBuilder();
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" Select distinct CustID From (");
+			sql.append(
+					" Select CustID from Customers Where CustCoreBank = (Select CustCoreBank From Customers Where CustID = "
+							+ customerId + ")");
+			sql.append(" Union All");
+			sql.append(
+					" Select CustID from Customers_Temp Where CustCoreBank = (Select CustCoreBank From Customers_Temp Where CustID = "
+							+ customerId + ")");
+			sql.append(") T");
+		} else {
+
+			sql.append("Select distinct CustID From (");
+			sql.append("Select CustID from Customers Where CustID = " + customerId + ")");
+			sql.append("Union All");
+			sql.append("Select CustID from Customers_Temp Where CustID = " + customerId + ")");
+			sql.append(") T");
+
+		}
+
+		return sql.toString();
 	}
 
 	// WorkFlow Components
