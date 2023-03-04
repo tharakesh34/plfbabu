@@ -802,7 +802,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 							PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
 
-		if (!this.accountingSetID.isReadonly()) {
+		if (!this.accountingSetID.isReadonly() && this.accountingSetID.isVisible()) {
 			this.accountingSetID.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, true));
 		}
@@ -853,6 +853,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.payableLinkTo.setConstraint("");
 		this.incomeOrExpenseAcType.setConstraint("");
 		this.waiverOrRefundAcType.setConstraint("");
+		this.accountingSetID.setConstraint("");
 	}
 
 	/**
@@ -940,6 +941,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	private void doDisplayAccountingSet(String feeTypeCode) {
 		this.accountingSetIdRow.setVisible(Allocation.BOUNCE.equals(feeTypeCode));
+		this.accountingSetID.setVisible(Allocation.BOUNCE.equals(feeTypeCode));
 		this.accountingSetID.setMandatoryStyle(true);
 	}
 
