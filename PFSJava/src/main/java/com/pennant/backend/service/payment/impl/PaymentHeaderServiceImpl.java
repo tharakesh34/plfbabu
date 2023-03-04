@@ -941,7 +941,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		LoggedInUser userDetails = PFSBatchAdmin.loggedInUser;
 		Timestamp sysDate = new Timestamp(System.currentTimeMillis());
-		Date appDate = arl.getAppDate();
+		Date businessDate = arl.getBusinessDate();
 
 		PaymentHeader ph = new PaymentHeader();
 		ph.setFinID(arl.getFinID());
@@ -975,9 +975,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		ph.setPaymentAmount(totRefund);
 
-		payInst.setPostDate(appDate);
+		payInst.setPostDate(businessDate);
 		payInst.setPaymentAmount(totRefund);
-		payInst.setValueDate(appDate);
+		payInst.setValueDate(businessDate);
 		payInst.setPaymentCCy(arl.getFinCcy());
 		payInst.setStatus(DisbursementConstants.STATUS_NEW);
 		payInst.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

@@ -90,7 +90,7 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 			arl.setActiveNDate(DateUtil.addDays(appDate, -autoRefundDaysForActive));
 			arl.setClosedNDate(DateUtil.addDays(appDate, -autoRefundDaysForClosed));
 			arl.setAlwRefundByCheque(ep.isAutoRefundByCheque());
-
+			arl.setBusinessDate(ep.getBusinessDate());
 			arl.setAppDate(appDate);
 
 			Date maxValueDate = null;

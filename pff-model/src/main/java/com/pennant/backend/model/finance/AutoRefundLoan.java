@@ -25,7 +25,6 @@ public class AutoRefundLoan implements Serializable {
 	private String finCcy;
 	private String holdStatus;
 	private BigDecimal refundAmt = BigDecimal.ZERO;
-	private Date appDate;
 	private Timestamp executionTime;
 	private String status;
 	private String finType;
@@ -42,6 +41,8 @@ public class AutoRefundLoan implements Serializable {
 	private List<PaymentDetail> paymentDetails = new ArrayList<>();
 	private PaymentInstruction paymentInstruction;
 	private boolean writeOffLoan;
+	private Date businessDate;
+	private Date appDate;
 
 	private ErrorDetail error = new ErrorDetail();
 
@@ -143,14 +144,6 @@ public class AutoRefundLoan implements Serializable {
 
 	public void setRefundAmt(BigDecimal refundAmt) {
 		this.refundAmt = refundAmt;
-	}
-
-	public Date getAppDate() {
-		return appDate;
-	}
-
-	public void setAppDate(Date appDate) {
-		this.appDate = appDate;
 	}
 
 	public Timestamp getExecutionTime() {
@@ -279,6 +272,22 @@ public class AutoRefundLoan implements Serializable {
 
 	public void setWriteOffLoan(boolean writeOffLoan) {
 		this.writeOffLoan = writeOffLoan;
+	}
+
+	public Date getBusinessDate() {
+		return businessDate;
+	}
+
+	public void setBusinessDate(Date businessDate) {
+		this.businessDate = businessDate;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
 	}
 
 	public ErrorDetail getError() {

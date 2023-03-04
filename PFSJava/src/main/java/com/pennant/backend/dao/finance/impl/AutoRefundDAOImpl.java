@@ -133,7 +133,7 @@ public class AutoRefundDAOImpl extends BasicDao<AutoRefundLoan> implements AutoR
 				int index = 0;
 				ps.setLong(++index, arl.getFinID());
 				ps.setBigDecimal(++index, arl.getRefundAmt());
-				ps.setDate(++index, JdbcUtil.getDate(arl.getAppDate()));
+				ps.setDate(++index, JdbcUtil.getDate(arl.getBusinessDate()));
 				ps.setTimestamp(++index, JdbcUtil.getTimestamp(arl.getExecutionTime()));
 				ps.setString(++index, arl.getStatus());
 				ps.setString(++index, arl.getError().getCode());
