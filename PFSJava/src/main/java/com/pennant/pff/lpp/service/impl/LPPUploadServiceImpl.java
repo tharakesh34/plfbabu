@@ -339,19 +339,12 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 
-			if (!allowWaiver && detail.getMaxWaiver().compareTo(BigDecimal.ZERO) != 0) {
-				setError(detail, LPPUploadError.LPP21);
-				return;
-			}
-
-			if (allowWaiver && (detail.getMaxWaiver().compareTo(BigDecimal.ZERO) < 0
-					|| detail.getMaxWaiver().compareTo(new BigDecimal(100)) > 0)) {
-				setError(detail, LPPUploadError.LPP10);
-				return;
-			}
-
 			if (allowWaiver && StringUtils.isBlank(String.valueOf(detail.getMaxWaiver()))) {
 				setError(detail, LPPUploadError.LPP18);
+				return;
+			} else if (allowWaiver && (detail.getMaxWaiver().compareTo(BigDecimal.ZERO) < 0
+					|| detail.getMaxWaiver().compareTo(new BigDecimal(100)) > 0)) {
+				setError(detail, LPPUploadError.LPP10);
 				return;
 			}
 
