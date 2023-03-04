@@ -325,7 +325,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			boolean includeGraceDays = PennantConstants.YES.equals(detail.getIncludeGraceDays());
 
 			if (!(PennantConstants.NO.equals(detail.getAllowWaiver()) || allowWaiver)) {
-				setError(detail, LPPUploadError.LPP04);
+				setError(detail, LPPUploadError.LPP20);
 				return;
 			}
 
@@ -334,18 +334,8 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 
-			if (!includeGraceDays && detail.getGraceDays() != 0) {
-				setError(detail, LPPUploadError.LPP20);
-				return;
-			}
-
 			if (includeGraceDays && (detail.getGraceDays() < 0 || detail.getGraceDays() > 999)) {
 				setError(detail, LPPUploadError.LPP15);
-				return;
-			}
-
-			if (!includeGraceDays && detail.getGraceDays() > 0) {
-				setError(detail, LPPUploadError.LPP16);
 				return;
 			}
 
@@ -355,7 +345,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			}
 
 			if (allowWaiver && (detail.getMaxWaiver().compareTo(BigDecimal.ZERO) < 0
-					|| detail.getMaxWaiver().compareTo(new BigDecimal(100)) > 1)) {
+					|| detail.getMaxWaiver().compareTo(new BigDecimal(100)) > 0)) {
 				setError(detail, LPPUploadError.LPP10);
 				return;
 			}

@@ -42,7 +42,7 @@ public enum LPPUploadError {
 
 	LPP19(" IncludeGraceDays Possible values should be 'Y' or 'N'. "),
 
-	LPP20("Grace days should be 0, since Include Grace Days is N."),
+	LPP20("Allow Waivers Possible values should be 'Y' or 'N'."),
 
 	LPP21("Max Waiver should be 0, since Allow Waiver is N."),
 
