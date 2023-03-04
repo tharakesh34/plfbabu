@@ -10,6 +10,7 @@ import com.pennant.backend.dao.payment.PaymentInstructionUploadDAO;
 import com.pennant.backend.model.payment.PaymentInstUploadDetail;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -47,7 +48,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 
 	@Override
 	public List<PaymentInstUploadDetail> getDetails(long headerID) {
-		String sql = "Select HeaderId, Id, FinReference, ExcessType, FeeType, PayAmount, Remarks, OverRideOverDue, Progress, ErrorCode, ErrorDesc From PAYMINS_UPLOADS Where HeaderId = ?";
+		String sql = "Select HeaderId, Id, FinID, FinReference, ExcessType, FeeType, PayAmount, Remarks, OverRideOverDue, Progress, Status, ErrorCode, ErrorDesc From PAYMINS_UPLOADS Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -56,6 +57,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 
 			piud.setHeaderId(rs.getLong("HeaderId"));
 			piud.setId(rs.getLong("Id"));
+			piud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			piud.setReference(rs.getString("FinReference"));
 			piud.setExcessType(rs.getString("ExcessType"));
 			piud.setFeeType(rs.getString("FeeType"));
@@ -63,6 +65,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 			piud.setRemarks(rs.getString("Remarks"));
 			piud.setOverRide(rs.getString("OverRideOverDue"));
 			piud.setProgress(rs.getInt("Progress"));
+			piud.setStatus(rs.getString("Status"));
 			piud.setErrorCode(rs.getString("ErrorCode"));
 			piud.setErrorDesc(rs.getString("ErrorDesc"));
 			return piud;

@@ -31,7 +31,6 @@ import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
-import com.pennanttech.pff.file.UploadTypes;
 
 public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements UploadDAO {
 
@@ -197,7 +196,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 	@Override
 	public List<FileUploadHeader> getHeaderData(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate, String type, String stage, String code) {
+			Date toDate, String type, String stage) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" uh.Id, uh.EntityCode, uh.Type, uh.FileName, uh.TotalRecords");
 		sql.append(", uh.SuccessRecords, uh.FailureRecords, uh.ExecutionID, uh.Progress");
@@ -205,10 +204,6 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		sql.append(", uh.Version, uh.RecordStatus, uh.RoleCode, uh.NextRoleCode");
 		sql.append(", uh.TaskId, uh.NextTaskId, uh.RecordType, uh.WorkflowId");
 		sql.append(" From FILE_UPLOAD_HEADER uh");
-
-		if (StringUtils.isNotEmpty(code) && "A".equals(stage) && UploadTypes.PAYINS_REFUND.name().equals(type)) {
-			sql.append(" Inner Join Clusters cl on cl.Entity = uh.EntityCode and cl.Code = ?");
-		}
 
 		sql.append(" Where uh.Type = ? and uh.Progress != ?");
 
@@ -224,10 +219,6 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
-
-			if (StringUtils.isNotEmpty(code) && "A".equals(stage) && UploadTypes.PAYINS_REFUND.name().equals(type)) {
-				ps.setString(++index, code);
-			}
 
 			ps.setString(++index, type);
 			ps.setInt(++index, Status.IN_PROCESS.getValue());

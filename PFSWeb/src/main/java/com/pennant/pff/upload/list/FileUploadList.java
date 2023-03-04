@@ -66,7 +66,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.upload.model.FieUploadDTO;
@@ -123,7 +122,6 @@ public class FileUploadList extends Window implements Serializable {
 
 	private ExtendedCombobox entityCode;
 	private ExtendedCombobox fileName;
-	private ExtendedCombobox clusterName;
 
 	private List<FileUploadHeader> selectedHeaders = new ArrayList<>();
 
@@ -339,10 +337,6 @@ public class FileUploadList extends Window implements Serializable {
 		rows.appendChild(appendDateFilters());
 		rows.appendChild(appendECBFileName());
 
-		if (isValidCluster()) {
-			rows.appendChild(appendClusterName());
-		}
-
 		grid.appendChild(columns);
 		grid.appendChild(rows);
 
@@ -401,49 +395,6 @@ public class FileUploadList extends Window implements Serializable {
 			this.entityCode.setValue(entity.get(0).getEntityCode());
 			this.entityCode.setDescColumn(entity.get(0).getEntityDesc());
 			this.entityCode.setReadonly(true);
-		}
-
-		return row;
-	}
-
-	private Row appendClusterName() {
-		Row row = new Row();
-
-		String entityCd = StringUtils.trimToEmpty(this.entityCode.getValue());
-
-		this.clusterName = new ExtendedCombobox();
-		this.clusterName.setModuleName("Cluster");
-		this.clusterName.setDisplayStyle(2);
-		this.clusterName.setValueColumn("Code");
-		this.clusterName.setDescColumn("Name");
-		this.clusterName.setValidateColumns(new String[] { "Code", "Name" });
-		this.clusterName.addForward(ExtendedCombobox.ON_FUL_FILL, this, "onChangeClusterName", null);
-
-		if (StringUtils.isNotEmpty(entityCd)) {
-			Filter[] filters = new Filter[1];
-			filters[0] = new Filter("Entity", entityCd, Filter.OP_EQUAL);
-			this.clusterName.setFilters(filters);
-		}
-
-		Cell cell = new Cell();
-		cell.appendChild(new Label(Labels.getLabel("label_ClusterName")));
-		row.appendChild(cell);
-
-		cell = new Cell();
-		cell.appendChild(getOperators(Filter.OP_EQUAL));
-		row.appendChild(cell);
-
-		cell = new Cell();
-		cell.appendChild(this.clusterName);
-
-		row.appendChild(cell);
-
-		List<Cluster> cluster = uploadService.getClusterName(entityCd);
-
-		if (cluster.size() == 1) {
-			this.clusterName.setValue(cluster.get(0).getCode());
-			this.clusterName.setDescColumn(cluster.get(0).getName());
-			this.clusterName.setReadonly(true);
 		}
 
 		return row;
@@ -641,28 +592,10 @@ public class FileUploadList extends Window implements Serializable {
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void onChangeClusterName(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
-
-		this.clusterName.setConstraint("");
-		this.clusterName.setErrorMessage("");
-		Clients.clearWrongValue(clusterName);
-
-		if (StringUtils.isBlank(this.clusterName.getValue())) {
-			this.clusterName.setValue("", "");
-		}
-
-		logger.debug(Literal.LEAVING.concat(event.toString()));
-	}
-
 	public void onClickButtonImport() {
 		logger.debug(Literal.ENTERING);
 
 		this.entityCode.clearErrorMessage();
-
-		if (isValidCluster()) {
-			this.clusterName.clearErrorMessage();
-		}
 
 		DataEngineStatus status = new DataEngineStatus();
 		status.setName(this.type.name().concat("_UPLOAD"));
@@ -750,7 +683,6 @@ public class FileUploadList extends Window implements Serializable {
 		Date dataTo = null;
 		Long fileID = null;
 		String eCode = null;
-		String cluster = null;
 
 		List<WrongValueException> wve = new ArrayList<>();
 
@@ -782,31 +714,25 @@ public class FileUploadList extends Window implements Serializable {
 			wve.add(we);
 		}
 
-		if (isValidCluster()) {
-			try {
-				cluster = this.clusterName.getValue();
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-		}
-
 		doRemoveValidation();
 
 		showErrorMessage(wve);
 
 		return uploadService.getUploadHeaderById(this.workflowRoles, eCode, fileID, dataFrom, dataTo, type.name(),
-				this.stage, cluster);
+				this.stage);
 	}
 
 	private void setConstraints() {
 		if ("M".equals(this.stage)) {
 			this.fromDate.setConstraint(new PTDateValidator("From Date", true));
 			this.toDate.setConstraint(new PTDateValidator("To Date", true));
+		} else {
+			if (!this.entityCode.isReadonly()) {
+				this.entityCode
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
+			}
 		}
 
-		if (!this.entityCode.isReadonly()) {
-			this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityCode"), null, true, true));
-		}
 	}
 
 	private void doRemoveValidation() {
@@ -823,11 +749,6 @@ public class FileUploadList extends Window implements Serializable {
 
 		this.entityCode.setConstraint("");
 		this.entityCode.setErrorMessage("");
-
-		if (isValidCluster()) {
-			this.clusterName.setConstraint("");
-			this.clusterName.setErrorMessage("");
-		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -864,18 +785,6 @@ public class FileUploadList extends Window implements Serializable {
 			}
 		} catch (WrongValueException e) {
 			wve.add(new WrongValueException(this.entityCode, e.getMessage()));
-		}
-
-		if (isValidCluster()) {
-			try {
-				if (!this.clusterName.isReadonly()) {
-					this.clusterName.setConstraint(
-							new PTStringValidator(Labels.getLabel("label_ClusterName"), null, true, true));
-					header.setEntityCode(this.clusterName.getValue());
-				}
-			} catch (WrongValueException e) {
-				wve.add(new WrongValueException(this.clusterName, e.getMessage()));
-			}
 		}
 
 		doRemoveValidation();
@@ -980,17 +889,19 @@ public class FileUploadList extends Window implements Serializable {
 	private void downloadRefresh() {
 		headerRefresh();
 
+		this.fromDate.setRawValue("");
 		this.fromDate.setConstraint("");
 		this.fromDate.setErrorMessage("");
-		this.fromDate.setValue(null);
 
-		this.toDate.setConstraint("");
-		this.toDate.setErrorMessage("");
-		this.toDate.setValue(null);
+		this.toDate.setRawValue("");
+		this.fromDate.setConstraint("");
+		this.fromDate.setErrorMessage("");
 
 		this.fileName.setValue("", "");
 		this.fileName.setConstraint("");
 		this.fileName.setErrorMessage("");
+		this.fromDate.setValue(null);
+		this.toDate.setValue(null);
 
 		if (!"M".equals(this.stage)) {
 
@@ -1009,19 +920,10 @@ public class FileUploadList extends Window implements Serializable {
 			this.toDate.setErrorMessage("");
 			this.toDate.setValue(null);
 
-			if (isValidCluster()) {
-				this.clusterName.setConstraint("");
-				this.clusterName.setErrorMessage("");
-				this.clusterName.setValue(null);
-			}
 			selectedHeaders.clear();
 			checkBoxComp.setChecked(false);
 			listbox.getItems().clear();
 			listbox.clearSelection();
-		}
-
-		if (this.fromDate.getValue() != null && this.toDate.getValue() != null) {
-			search(false);
 		}
 
 	}
@@ -1064,6 +966,7 @@ public class FileUploadList extends Window implements Serializable {
 	}
 
 	private void onClickApprove() {
+		logger.debug(Literal.ENTERING);
 
 		if (CollectionUtils.isEmpty(selectedHeaders)) {
 			MessageUtil.showError(Labels.getLabel("DataList_NoEmpty"));
@@ -1077,17 +980,20 @@ public class FileUploadList extends Window implements Serializable {
 			return;
 		}
 
+		List<FileUploadHeader> headers = new ArrayList<>();
 		for (FileUploadHeader header : selectedHeaders) {
 			header.setLastMntBy(this.userId);
 			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			uploadService.updateInProcessStatus(header.getId(), Status.IN_PROCESS.getValue());
+			headers.add(header);
 		}
-
-		uploadService.doApprove(selectedHeaders);
 
 		selectedHeaders.clear();
 
+		uploadService.doApprove(headers);
+
 		search(true);
+		logger.debug(Literal.LEAVING);
 	}
 
 	private Space getSpace(String width, boolean mandatory) {
@@ -1237,12 +1143,6 @@ public class FileUploadList extends Window implements Serializable {
 		return toolBar;
 	}
 
-	private Toolbar getToolbar(String align, String label) {
-		Toolbar toolBar = getToolbar(align);
-		toolBar.appendChild(new Label(label));
-		return toolBar;
-	}
-
 	private Button getTollBarButton(String label, String evtnm, EventListener<Event> eventListener) {
 		Button btn = new Button();
 		btn.setLabel(label);
@@ -1295,10 +1195,6 @@ public class FileUploadList extends Window implements Serializable {
 
 		if ("M".equals(this.stage)) {
 			return listBoxHeight - 125 + "px";
-		}
-
-		if (isValidCluster()) {
-			return listBoxHeight - 1 + "px";
 		}
 
 		return listBoxHeight + 30 + "px";
@@ -1608,10 +1504,6 @@ public class FileUploadList extends Window implements Serializable {
 
 			this.processDTO.getService().update(uploadHeader);
 		}
-	}
-
-	private boolean isValidCluster() {
-		return "A".equals(this.stage) && this.type == UploadTypes.PAYINS_REFUND;
 	}
 
 }

@@ -6,6 +6,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.upload.model.UploadDetails;
 
 public class PaymentInstUploadDetail extends UploadDetails {
+	private static final long serialVersionUID = -4126772392388677874L;
 
 	private String excessType;
 	private String feeType;

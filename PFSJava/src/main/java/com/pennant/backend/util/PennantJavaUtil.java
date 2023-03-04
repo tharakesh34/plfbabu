@@ -514,14 +514,11 @@ public class PennantJavaUtil {
 
 	private static String custDetailWF = "CUSTOMER_MSTGRP";
 	private static String facilityWF = "FACILITY_TERM_SHEET";
-	// private static String retailWF = "AUTO_FIN_PROCESS";
 	private static String finMaintainWF = "FIN_RATECHANGE";
 	private static String securityWF = "SECURITY_USERS";
 	private static String crReviewCommWF = "CREDIT_REVIEW_COMMERCIAL";
-	// private static String crReviewCorpWF = "CREDIT_REVIEW_CORPORATE";sa
 	private static String crReviewCorpWF = "CORPORATECREDITREVIEW";
 	private static String facilityCommitWF = "MSTGRP1";
-	// private static String scoreGrpWF = "SCORGRP";
 	private static String realizationWF = "RECEIPT_REALIZATION";
 	private static String receiptBounceWF = "RECEIPT_BOUNCE";
 	private static String receiptCancelWF = "RECEIPT_CANCEL";
@@ -557,18 +554,12 @@ public class PennantJavaUtil {
 	private final static String org_School_WF = "ORGANIZATION_SCHOOL";
 	private static String feeWaiverWF = "FEE_WAIVER";
 	private final static String PaymentWF = "PAYMENTINSTRUCTION";
-	private static String insuranceDetails = "INSURANCE_DETAILS";
 	private static String ReceiptProcessWF = "RECEIPT_PROCESS";
 	private final static String WF_VERIFICATION_PD = "VERIFICATION_PD";
 	private final static String WF_RECEIPTUPLOAD = "RECEIPTUPLOAD";
 	private static String FEEREFUND_WF = "FINFEEREFUND_PROCESS";
-	// private static String WF_DEPOSITDETAILS = "DEPOSITDETAILS";
-	// private static String WF_HOLDDISBURSEMENT = "HOLDDISBURSEMENT";
-	private static String WF_EXPENSEUPLOAD = "EXPENSEUPLOAD";
 	private static String WF_OCRMAINTENANCE = "OCRMAINTENANCE";
 	private final static String EXT_FIELDS_MAINT = "EXT_FIELDS_MAINT";
-	private final static String baseRate_WF = "BASERATE_WORKFLOW";
-	private final static String WF_REPRESENT_UPLOAD = "REPRESENT_UPLOAD";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {

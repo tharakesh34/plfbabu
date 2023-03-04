@@ -48,8 +48,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
-import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
-import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -86,9 +84,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	private AuditHeaderDAO auditHeaderDAO;
 	private FeePostingsDAO feePostingsDAO;
 	private AccountEngineExecution engineExecution;
-	private PostingsDAO postingsDAO;
 	private FinanceMainDAO financeMainDAO;
-	private AccountingSetDAO accountingSetDAO;
 	private CustomerDAO customerDAO;
 	private CollateralSetupDAO collateralSetupDAO;
 	private PartnerBankDAO partnerBankDAO;
@@ -729,16 +725,8 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		this.engineExecution = engineExecution;
 	}
 
-	public void setPostingsDAO(PostingsDAO postingsDAO) {
-		this.postingsDAO = postingsDAO;
-	}
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
-		this.accountingSetDAO = accountingSetDAO;
 	}
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
@@ -768,5 +756,4 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
 		this.financeWriteoffDAO = financeWriteoffDAO;
 	}
-
 }

@@ -95,6 +95,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 
 public class OverDueRecoveryPostingsUtil implements Serializable {
@@ -732,8 +733,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			if (searchForPenalty) {
 				prvRecovery = recoveryDAO.getMaxOverdueChargeRecoveryById(finID, schdDate, odFor, "_AMView");
 
-				if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && prvRecovery != null
-						&& prvRecovery.isRcdCanDel() && !isEnqPurpose) {
+				if (ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType) && prvRecovery != null && prvRecovery.isRcdCanDel()
+						&& !isEnqPurpose) {
 					recoveryDAO.deleteUnpaid(finID, schdDate, odFor, "");
 				}
 			} else if (!searchForPenalty) {
@@ -769,7 +770,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				BigDecimal prvPenalty = BigDecimal.ZERO;
 				BigDecimal prvPenaltyBal = BigDecimal.ZERO;
 
-				if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && prvRecovery != null
+				if (ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType) && prvRecovery != null
 						&& prvRecovery.isRcdCanDel()) {
 
 					String tableType = "_AMView";
@@ -785,7 +786,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				boolean resetTotals = true;
 				int seqNo = 1;
 				// Stop calculation for paid penalty for Charge Type 'FLAT' & 'PERCONETIME'
-				if (!FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && recovery != null
+				if (!ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType) && recovery != null
 						&& (recovery.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0
 								|| recovery.getWaivedAmt().compareTo(BigDecimal.ZERO) > 0)) {
 
@@ -804,7 +805,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 						resetTotals = false;
 					}
 
-					if (!FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && prvRecovery != null) {
+					if (!ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType) && prvRecovery != null) {
 						if (!isEnqPurpose) {
 							recoveryDAO.deleteUnpaid(finID, schdDate, odFor, "");
 						}
@@ -854,13 +855,13 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 				// Overdue Penalty Amount Calculation Depends on applied Charge Type
 				switch (odChargeType) {
-				case FinanceConstants.PENALTYTYPE_FLAT:
+				case ChargeType.FLAT:
 					recovery.setPenalty(od.getODChargeAmtOrPerc());
 					break;
-				case FinanceConstants.PENALTYTYPE_PERC_ONETIME:
+				case ChargeType.PERC_ONE_TIME:
 					penatlyOnOneTime(od, recovery);
 					break;
-				case FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS:
+				case ChargeType.PERC_ON_DUE_DAYS:
 					penaltyOnDueDays(od, valueDate, profitDayBasis, isAfterRecovery, recovery, odDate);
 					break;
 				default:
@@ -871,7 +872,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				prvPenalty = recovery.getPenalty().add(prvPenalty);
 				prvPenaltyBal = recovery.getPenalty().add(prvPenaltyBal);
 
-				if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)) {
+				if (ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType)) {
 					recovery.setPenaltyBal(recovery.getPenalty().add(recovery.getPenaltyBal()));
 					recovery.setPenaltyPaid(BigDecimal.ZERO);
 					recovery.setWaivedAmt(BigDecimal.ZERO);
