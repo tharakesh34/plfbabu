@@ -14047,12 +14047,51 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#218079.0_pre" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE MANDATES_UPLOAD DROP CONSTRAINT DF_MU_DEFAULTMANDATE; 
+				ALTER TABLE MANDATES_UPLOAD DROP CONSTRAINT DF_MU_SWAPISACTIVE;
+				ALTER TABLE MANDATES_UPLOAD DROP CONSTRAINT DF_MU_SECURITYMANDATE ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#218079.1_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates_upload');
+				
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="PSD#218079.1" author="saikiran.n">
 		<modifyDataType tableName="MANDATES_UPLOAD" columnName="OPENMANDATE" newDataType="varchar(1)" />
 		<modifyDataType tableName="MANDATES_UPLOAD" columnName="SWAPISACTIVE" newDataType="varchar(1)" />
 		<modifyDataType tableName="MANDATES_UPLOAD" columnName="DEFAULTMANDATE" newDataType="varchar(1)" />
 		<modifyDataType tableName="MANDATES_UPLOAD" columnName="SECURITYMANDATE" newDataType="varchar(1)" />
 		<modifyDataType tableName="MANDATES_UPLOAD" columnName="EXTERNALMANDATE" newDataType="varchar(1)" />
+	</changeSet>
+	
+	
+	<changeSet id="PSD#218079.1_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates_upload');
+				
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#218079.0_post" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE MANDATES_UPLOAD ADD  CONSTRAINT DF_MU_DEFAULTMANDATE  DEFAULT 0 FOR DefaultMandate;
+				ALTER TABLE MANDATES_UPLOAD ADD  CONSTRAINT DF_MU_SWAPISACTIVE  DEFAULT 0 FOR SwapIsActive;
+				ALTER TABLE MANDATES_UPLOAD ADD  CONSTRAINT DF_MU_SECURITYMANDATE  DEFAULT 0 FOR SecurityMandate;
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="PSD#218079.2" author="saikiran.n">
@@ -14066,7 +14105,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
 	
 </databaseChangeLog> 
