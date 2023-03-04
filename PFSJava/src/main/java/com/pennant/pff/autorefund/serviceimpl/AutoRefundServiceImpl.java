@@ -437,8 +437,10 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 				FinanceScheduleDetail next2Schd = financeScheduleDetailDAO.getNextSchd(finID, nextSchd.getSchDate(),
 						false);
 
+				next2EMIAmount = nextEMIAmount;
+
 				if (next2Schd != null) {
-					next2EMIAmount = nextEMIAmount.add(next2Schd.getRepayAmount());
+					next2EMIAmount = next2EMIAmount.add(next2Schd.getRepayAmount());
 				}
 			}
 
