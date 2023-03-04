@@ -479,6 +479,10 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		BigDecimal balAmt = bud.getPayAmount();
 
 		for (FinExcessAmount fea : feaList) {
+			if (balAmt.compareTo(BigDecimal.ZERO) <= 0) {
+				break;
+			}
+
 			if (!RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fea.getAmountType())) {
 				continue;
 			}
@@ -493,25 +497,22 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 
 			if (fea.getBalanceAmt().compareTo(bud.getPayAmount()) <= 0) {
 				pd.setAmount(fea.getBalanceAmt());
+				balAmt = bud.getPayAmount().subtract(pd.getAvailableAmount());
 			} else {
 				pd.setAmount(balAmt);
+				balAmt = BigDecimal.ZERO;
 			}
 
-			balAmt = pd.getAvailableAmount().subtract(bud.getPayAmount());
-
-			if (balAmt.compareTo(BigDecimal.ZERO) < 0) {
-				bud.setProgress(EodConstants.PROGRESS_FAILED);
-				bud.setErrorCode(PaymentUploadError.REFUP008.name());
-				bud.setErrorDesc(PaymentUploadError.REFUP008.description());
-			}
-
-			bud.setProgress(EodConstants.PROGRESS_SUCCESS);
 			pdList.add(pd);
 		}
 
-		if (!excessExists) {
+		if (!excessExists || balAmt.compareTo(BigDecimal.ZERO) > 0) {
 			bud.setProgress(EodConstants.PROGRESS_FAILED);
 			bud.setErrorDesc("Excess Details are not found for the Loan Reference :" + bud.getReference());
+		} else {
+			bud.setProgress(EodConstants.PROGRESS_SUCCESS);
+			bud.setErrorCode("");
+			bud.setErrorDesc("");
 		}
 
 		return pdList;
