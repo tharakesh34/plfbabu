@@ -732,14 +732,16 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		Filter filter[] = null;
 
-		if (StringUtils.equals(adviseTypeValue, PennantConstants.List_Select)) {
-			filter = new Filter[1];
-			filter[0] = new Filter("ManualAdvice", 1, Filter.OP_EQUAL);
-		} else {
-			filter = new Filter[2];
-			filter[0] = new Filter("ManualAdvice", 1, Filter.OP_EQUAL);
-			filter[1] = new Filter("AdviseType", Integer.parseInt(adviseTypeValue), Filter.OP_EQUAL);
+		if (!PennantConstants.List_Select.equals(adviseTypeValue)) {
+			if (Integer.parseInt(adviseTypeValue) == AdviseType.RECEIVABLE.id()) {
+				filter = new Filter[1];
+				filter[0] = new Filter("AdviseType", AdviseType.PAYABLE.id(), Filter.OP_NOT_EQUAL);
+			} else {
+				filter = new Filter[1];
+				filter[0] = new Filter("AdviseType", AdviseType.PAYABLE.id(), Filter.OP_EQUAL);
+			}
 		}
+
 		this.feeTypeID.setFilters(filter);
 		this.feeTypeID.setValue("");
 		this.feeTypeID.setDescription("");
