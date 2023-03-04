@@ -1176,6 +1176,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.label_FinTypeFeesDialog_PercRule.setVisible(true);
 			this.percentage.setValue(BigDecimal.ZERO);
 			this.percentage.setDisabled(true);
+		} else {
+			this.percentage.setDisabled(false);
 		}
 	}
 
