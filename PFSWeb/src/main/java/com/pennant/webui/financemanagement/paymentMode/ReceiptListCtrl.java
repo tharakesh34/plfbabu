@@ -300,23 +300,26 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	public void addRegisteredFilters() {
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filter = searchControl.getFilter();
-			if (filter != null) {
 
-				if (filter.getProperty().equals("receiptAmount")) {
-					filter.setValue(PennantApplicationUtil.unFormateAmount((BigDecimal) filter.getValue(),
-							PennantConstants.defaultCCYDecPos));
-				}
+			if (filter == null) {
+				continue;
+			}
 
-				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
-						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
-					Filter[] filters = new Filter[2];
-					filters[0] = Filter.isNull(filter.getProperty());
-					filters[1] = filter;
+			String property = filter.getProperty();
+			if (property.equals("receiptAmount")) {
+				filter.setValue(PennantApplicationUtil.unFormateAmount((BigDecimal) filter.getValue(),
+						PennantConstants.defaultCCYDecPos));
+			}
 
-					this.searchObject.addFilterOr(filters);
-				} else {
-					this.searchObject.addFilter(filter);
-				}
+			if (App.DATABASE == Database.ORACLE && "recordType".equals(property)
+					&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
+				Filter[] filters = new Filter[2];
+				filters[0] = Filter.isNull(property);
+				filters[1] = filter;
+
+				this.searchObject.addFilterOr(filters);
+			} else {
+				this.searchObject.addFilter(filter);
 			}
 		}
 	}

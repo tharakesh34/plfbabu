@@ -1,6 +1,7 @@
 package com.pennant.webui.financemanagement.receipts;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
@@ -29,7 +31,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -78,7 +79,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 	protected Button btnApprove;
 	protected Longbox receiptId;
 	protected Datebox receiptDate;
-	protected CurrencyBox receiptAmount;
+	protected Decimalbox receiptAmount;
 	protected Combobox receiptMode;
 	protected Combobox receiptPurpose;
 	protected ExtendedCombobox partnerBank;
@@ -198,6 +199,8 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		doSetFieldProperties();
 		doRenderPage();
 
+		search();
+		
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
@@ -246,18 +249,27 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 	public void addRegisteredFilters() {
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filter = searchControl.getFilter();
-			if (filter != null) {
 
-				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
-						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
-					Filter[] filters = new Filter[2];
-					filters[0] = Filter.isNull(filter.getProperty());
-					filters[1] = filter;
+			if (filter == null) {
+				continue;
+			}
 
-					this.searchObject.addFilterOr(filters);
-				} else {
-					this.searchObject.addFilter(filter);
-				}
+			String property = filter.getProperty();
+
+			if (property.equals("receiptAmount")) {
+				filter.setValue(PennantApplicationUtil.unFormateAmount((BigDecimal) filter.getValue(),
+						PennantConstants.defaultCCYDecPos));
+			}
+
+			if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
+					&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
+				Filter[] filters = new Filter[2];
+				filters[0] = Filter.isNull(filter.getProperty());
+				filters[1] = filter;
+
+				this.searchObject.addFilterOr(filters);
+			} else {
+				this.searchObject.addFilter(filter);
 			}
 		}
 	}
@@ -274,7 +286,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 
 		this.receiptDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
-		this.receiptAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
+		// this.receiptAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 
 		this.finType.setModuleName("FinanceType");
 		this.finType.setValueColumn("FinType");
