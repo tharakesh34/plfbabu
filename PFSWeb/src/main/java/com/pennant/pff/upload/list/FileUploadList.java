@@ -772,7 +772,7 @@ public class FileUploadList extends Window implements Serializable {
 		setConstraints();
 
 		try {
-			ExcelUtil.isValidFile(name, 200, "^[a-zA-Z0-9 ._]*$");
+			ExcelUtil.isValidFile(name, 100, "^[a-zA-Z0-9 ._]*$");
 		} catch (AppException e) {
 			wve.add(new WrongValueException(this.uploadFileName, e.getMessage()));
 		}
