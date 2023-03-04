@@ -33,6 +33,7 @@ import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
+import com.pennant.pff.presentment.service.PresentmentEngine;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -1859,36 +1860,62 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public int logRespDetail(long id) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO PRESENTMENT_RESP_DTLS_LOG");
-		sql.append("(HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO, AMOUNT_CLEARED");
-		sql.append(", CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE, BANK_CODE, BANK_NAME");
-		sql.append(", BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
-		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
-		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG, PROCESS_FLAG");
-		sql.append(", THREAD_ID, UTR_NUMBER, FATECORRECTION, ERROR_CODE, ERROR_DESCRIPTION)");
-		sql.append(" SELECT HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO ");
-		sql.append(", AMOUNT_CLEARED, CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE");
-		sql.append(", BANK_CODE, BANK_NAME, BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
-		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
-		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG, PROCESS_FLAG");
-		sql.append(", THREAD_ID, UTR_NUMBER, FATECORRECTION, ERROR_CODE, ERROR_DESCRIPTION");
-		sql.append(" From PRESENTMENT_RESP_DTLS PRD");
-		sql.append(" WHERE ID = ?");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		return jdbcOperations.update(sql.toString(), id);
-	}
-
-	@Override
-	public int clearRespDetail(long id) {
-		String sql = "DELETE FROM PRESENTMENT_RESP_DTLS WHERE ID = ?";
+	public List<String> getInstrumentTypes(long batchID) {
+		String sql = "Select distinct MandateType From PresentmentHeader Where BatchID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.update(sql, id);
+		return jdbcOperations.queryForList(sql.toString(), String.class, batchID);
+	}
+
+	@Override
+	public void groupByInclude(long batchID, String instrumentType, PresentmentEngine presentmentEngine,
+			Map<Long, Integer> headerMap, Integer batchSize, List<PresentmentDetail> list) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select pd.ID, ph.Id HeaderId, ph.MandateType");
+		sql.append(" From PresentmentHeader ph");
+		sql.append(" Inner Join PresentmentDetails pd on pd.PresentmentID = ph.ID");
+		sql.append(" Where ph.BatchID = ? and ph.MandateType = ? and ExcludeReason = ?");
+		sql.append(" order by ph.Id");
+
+		jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, batchID);
+			ps.setString(2, instrumentType);
+			ps.setInt(3, RepayConstants.PEXC_EMIINCLUDE);
+		}, (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setId(rs.getLong("ID"));
+			pd.setHeaderId(rs.getLong("HeaderId"));
+			pd.setMandateType(rs.getString("MandateType"));
+
+			presentmentEngine.groupByInclude(pd, headerMap, batchSize, list);
+
+			return pd;
+		});
+	}
+
+	@Override
+	public void updateHeaderByInclude(List<PresentmentDetail> list) {
+		String sql = "Update PresentmentDetails set PresentmentID = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				PresentmentDetail pd = list.get(i);
+
+				ps.setLong(1, pd.getHeaderId());
+				ps.setLong(2, pd.getId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
 	}
 
 	@Override
@@ -1900,5 +1927,4 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public long getSeqNumber(String tableName) {
 		return getNextValue(tableName);
 	}
-
 }

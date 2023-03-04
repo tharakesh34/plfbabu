@@ -27,6 +27,7 @@ import com.pennant.pff.presentment.tasklet.CreateBatchesTasklet;
 import com.pennant.pff.presentment.tasklet.ExtractionClearTasklet;
 import com.pennant.pff.presentment.tasklet.ExtractionQueueTasklet;
 import com.pennant.pff.presentment.tasklet.ExtractionTasklet;
+import com.pennant.pff.presentment.tasklet.GroupingByIncludeTasklet;
 import com.pennant.pff.presentment.tasklet.GroupingTasklet;
 
 @Configuration
@@ -49,10 +50,6 @@ public class ExtractionJob extends BatchConfiguration {
 
 	private BatchJobQueueDAO ebjqDAO;
 
-	public PresentmentJobListener presentmentJobListener() {
-		return new PresentmentJobListener(presentmentDAO);
-	}
-
 	@Bean
 	public Job peExtractionJob() throws Exception {
 		this.job = this.jobBuilderFactory.get("peExtractionJob")
@@ -66,6 +63,8 @@ public class ExtractionJob extends BatchConfiguration {
 				.next(extractionQueueStep()).on("FAILED").fail()
 
 				.next(extractionMasterStep()).on("FAILED").fail()
+
+				.next(groupingByIncludeStep()).on("FAILED").fail()
 
 				.next(approvalQueueStep()).on("FAILED").fail()
 
@@ -82,16 +81,20 @@ public class ExtractionJob extends BatchConfiguration {
 		return this.job;
 	}
 
-	public TaskletStep groupingStep() {
+	private PresentmentJobListener presentmentJobListener() {
+		return new PresentmentJobListener(presentmentDAO);
+	}
+
+	private TaskletStep groupingStep() {
 		return this.stepBuilderFactory.get("GROUPING").tasklet(new GroupingTasklet(dataSource, presentmentEngine))
 				.build();
 	}
 
-	public TaskletStep extractionQueueStep() {
+	private TaskletStep extractionQueueStep() {
 		return this.stepBuilderFactory.get("EXTRACTION_QUIENG").tasklet(new ExtractionQueueTasklet(ebjqDAO)).build();
 	}
 
-	public Step extractionMasterStep() throws Exception {
+	private Step extractionMasterStep() throws Exception {
 		ExtractionPartitioner partitioner = new ExtractionPartitioner(ebjqDAO);
 		return stepBuilderFactory.get("EXTRACTION_MASTER")
 
@@ -104,7 +107,12 @@ public class ExtractionJob extends BatchConfiguration {
 				.listener(new ExtractionStepListener(presentmentDAO)).build();
 	}
 
-	public TaskletStep extractionStep() {
+	private Step groupingByIncludeStep() {
+		return this.stepBuilderFactory.get("GROUPING_INCLUDE").tasklet(new GroupingByIncludeTasklet(presentmentEngine))
+				.build();
+	}
+
+	private TaskletStep extractionStep() {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
@@ -123,12 +131,12 @@ public class ExtractionJob extends BatchConfiguration {
 				.build();
 	}
 
-	public TaskletStep approvalQueueStep() {
+	private TaskletStep approvalQueueStep() {
 		return this.stepBuilderFactory.get("APPROVAL_QUIENG").tasklet(new ApprovalQueueTasklet(ebjqDAO, presentmentDAO))
 				.build();
 	}
 
-	public Step approvalMasterStep() throws Exception {
+	private Step approvalMasterStep() throws Exception {
 		ApprovalPartitioner partitioner = new ApprovalPartitioner(ebjqDAO);
 		return stepBuilderFactory.get("APPROVAL_MASTER")
 
@@ -141,7 +149,7 @@ public class ExtractionJob extends BatchConfiguration {
 				.listener(new ApprovalStepListener(presentmentDAO)).build();
 	}
 
-	public TaskletStep approvalStep() {
+	private TaskletStep approvalStep() {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
@@ -162,16 +170,16 @@ public class ExtractionJob extends BatchConfiguration {
 				.build();
 	}
 
-	public TaskletStep createBatchesStep() {
+	private TaskletStep createBatchesStep() {
 		return this.stepBuilderFactory.get("BATCH_CREATION").tasklet(new CreateBatchesTasklet(presentmentEngine))
 				.build();
 	}
 
-	public TaskletStep clear() {
+	private TaskletStep clear() {
 		return this.stepBuilderFactory.get("CLEAR").tasklet(clearQueueTasklet()).build();
 	}
 
-	public ExtractionClearTasklet clearQueueTasklet() {
+	private ExtractionClearTasklet clearQueueTasklet() {
 		return new ExtractionClearTasklet(presentmentDAO, ebjqDAO);
 	}
 

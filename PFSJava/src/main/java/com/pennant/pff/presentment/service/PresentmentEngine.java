@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -344,16 +345,14 @@ public class PresentmentEngine {
 		return count;
 	}
 
-	public List<PresentmentDetail> grouping(ResultSet rs, PresentmentHeader ph) throws SQLException {
+	public void grouping(ResultSet rs, PresentmentHeader ph) throws SQLException {
+		logger.debug(Literal.ENTERING);
 		Map<String, Integer> batchMap = presentmentDAO.batchSizeByInstrumentType();
 
 		Map<String, PresentmentHeader> headerMap = new HashMap<>();
 		Map<String, Integer> instrumentBatch = new HashMap<>();
 
 		List<PresentmentDetail> list = new ArrayList<>();
-
-		logger.debug("Presentment Engine Grouping started..");
-		logger.info("Presentment Engine Grouping started..");
 
 		Date appDate = ph.getAppDate();
 
@@ -364,8 +363,6 @@ public class PresentmentEngine {
 		}
 
 		while (rs.next()) {
-			logger.debug("Result Set loop started...");
-			logger.info("Result Set loop started...");
 			PresentmentDetail pd = new PresentmentDetail();
 
 			pd.setId(rs.getLong("ID"));
@@ -406,26 +403,81 @@ public class PresentmentEngine {
 			}
 
 			if (list.size() == PennantConstants.CHUNK_SIZE) {
-				logger.debug("Chunk size matched... updating header");
-				logger.info("Chunk size matched... updating header");
 				presentmentDAO.updateHeader(list);
 				list.clear();
 			}
-
-			logger.debug("Result Set loop continue...");
-			logger.info("Result Set loop continue...");
 		}
 
-		logger.debug("Result Set loop completed...");
-		logger.info("Result Set loop completed...");
-
 		if (!list.isEmpty()) {
-			logger.debug("updating header....");
-			logger.info("updating header.....");
 			presentmentDAO.updateHeader(list);
 		}
 
-		return new ArrayList<>();
+		logger.debug(Literal.ENTERING);
+	}
+
+	public void groupByInclude(long batchID) throws SQLException {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Integer> batchMap = presentmentDAO.batchSizeByInstrumentType();
+
+		List<String> instrumentTypes = presentmentDAO.getInstrumentTypes(batchID);
+
+		List<PresentmentDetail> list = new ArrayList<>();
+
+		for (String instrumentType : instrumentTypes) {
+			Map<Long, Integer> headerMap = new LinkedHashMap<>();
+			Integer batchSize = batchMap.get(instrumentType);
+
+			presentmentDAO.groupByInclude(batchID, instrumentType, this, headerMap, batchSize, list);
+
+			if (!list.isEmpty()) {
+				presentmentDAO.updateHeaderByInclude(list);
+				list.clear();
+			}
+		}
+
+		logger.debug(Literal.ENTERING);
+	}
+
+	public void groupByInclude(PresentmentDetail pd, Map<Long, Integer> headerMap, Integer batchSize,
+			List<PresentmentDetail> list) {
+
+		if (batchSize == null || batchSize <= 0) {
+			return;
+		}
+
+		Long headerID = null;
+
+		if (headerMap.size() > 0) {
+			headerID = new ArrayList<>(headerMap.keySet()).get(headerMap.size() - 1);
+		}
+
+		if (headerID == null) {
+			headerID = pd.getHeaderId();
+		}
+
+		Integer size = headerMap.get(headerID);
+
+		if (size == null) {
+			size = 0;
+		}
+
+		if (size < batchSize) {
+			size++;
+			pd.setHeaderId(headerID);
+
+			headerMap.put(headerID, size);
+			list.add(pd);
+		}
+
+		if (size == batchSize) {
+			headerMap.remove(headerID);
+		}
+
+		if (list.size() == PennantConstants.CHUNK_SIZE) {
+			presentmentDAO.updateHeaderByInclude(list);
+			list.clear();
+		}
 	}
 
 	private PresentmentHeader saveHeader(PresentmentHeader ph, Map<String, Date> dueDates, PresentmentDetail pd) {
