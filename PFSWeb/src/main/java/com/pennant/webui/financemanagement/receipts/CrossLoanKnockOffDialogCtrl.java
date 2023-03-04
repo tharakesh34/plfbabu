@@ -4870,6 +4870,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		aFinanceEnq.setFinBranch(finReceiptHeader.getFinBranch());
 		aFinanceEnq.setLovDescFinBranchName(finReceiptHeader.getFinBranchDesc());
 		aFinanceEnq.setLovDescCustCIF(finReceiptHeader.getCustCIF());
+		aFinanceEnq.setFinIsActive(finReceiptHeader.isFinIsActive());
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("moduleCode", moduleCode);
