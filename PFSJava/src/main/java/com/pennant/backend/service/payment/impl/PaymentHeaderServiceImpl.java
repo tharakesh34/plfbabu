@@ -44,6 +44,7 @@ import com.pennant.app.core.FinOverDueService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -939,7 +940,17 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		PaymentInstruction payInst = arl.getPaymentInstruction();
 
-		LoggedInUser userDetails = PFSBatchAdmin.loggedInUser;
+		LoggedInUser userDetails = null;
+		long userid = 0;
+		if (PFSBatchAdmin.startedBy != null) {
+			userDetails = PFSBatchAdmin.loggedInUser;
+			userid = userDetails.getUserId();
+		} else if (SessionUserDetails.getLogiedInUser() != null) {
+			userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			userid = userDetails.getUserId();
+		} else {
+			userid = 1000L;
+		}
 		Timestamp sysDate = new Timestamp(System.currentTimeMillis());
 		Date businessDate = arl.getBusinessDate();
 
@@ -953,7 +964,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		ph.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		ph.setNewRecord(true);
 		ph.setVersion(1);
-		ph.setLastMntBy(userDetails.getUserId());
+		ph.setLastMntBy(userid);
 		ph.setLastMntOn(sysDate);
 		ph.setCreatedOn(sysDate);
 		ph.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -966,7 +977,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			pd.setNewRecord(true);
 			pd.setVersion(1);
 			pd.setUserDetails(userDetails);
-			pd.setLastMntBy(userDetails.getUserId());
+			pd.setLastMntBy(userid);
 			pd.setLastMntOn(sysDate);
 			pd.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
@@ -984,7 +995,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		payInst.setRecordType(PennantConstants.RCD_ADD);
 		payInst.setNewRecord(true);
 		payInst.setVersion(1);
-		payInst.setLastMntBy(userDetails.getUserId());
+		payInst.setLastMntBy(userid);
 		payInst.setLastMntOn(sysDate);
 
 		ph.setPaymentDetailList(payDtlList);

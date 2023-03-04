@@ -499,32 +499,20 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 	}
 
 	@Override
-	public void updateJobDetails(EODConfig eODConfig) {
-		logger.debug(Literal.ENTERING);
+	public void updateJobDetails(String jobKey, String frequency, boolean jobEnabled) {
+		String sql = "Update Job_details set cron_expression = ?, enabled = ? Where JobKey = ?";
 
-		StringBuilder sql = new StringBuilder("Update");
-		sql.append(" Job_details");
-		sql.append(" set cron_expression = ?, enabled = ?");
-		sql.append(" Where JobKey = ?");
+		logger.debug(Literal.SQL.concat(sql));
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		int recordCount = this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
-
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
-				ps.setString(index++, eODConfig.getEODStartJobFrequency());
-				ps.setBoolean(index++, eODConfig.isEnableAutoEod());
-				ps.setString(index++, "AUTO_EOD_JOB");
-			}
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
+			ps.setString(1, frequency);
+			ps.setBoolean(2, jobEnabled);
+			ps.setString(3, jobKey);
 		});
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 }

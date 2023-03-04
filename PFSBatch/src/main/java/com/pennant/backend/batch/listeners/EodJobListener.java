@@ -157,6 +157,7 @@ public class EodJobListener implements JobExecutionListener {
 
 			body.setText(result, StandardCharsets.UTF_8.name(), EmailBodyType.HTML.getValue());
 
+			instance.setSender(eodConfig.getFromEmailAddress(), eodConfig.getFromName());
 			instance.send(toMailAddress, ccMailAddress, subject, body, getAttachments(jobExecution));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -274,6 +275,7 @@ public class EodJobListener implements JobExecutionListener {
 			eod.setStartTime(DateUtil.format(startTime, DateFormat.LONG_TIME));
 			eod.setEndTime(DateUtil.format(endTime, DateFormat.LONG_TIME));
 			eod.setCompletedTime(DateUtility.timeBetween(endTime, startTime));
+			eod.setTotalLoans("0");
 
 			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
 				if (stepExecution.getStepName().startsWith("microEOD")) {
