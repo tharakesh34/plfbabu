@@ -9,7 +9,7 @@ public enum CrossLoanKnockOffUploadError {
 
 	CLKU_002("Excess Type should not be empty"),
 
-	CLKU_003("Excess Type should be always E"),
+	CLKU_003("Excess Type should be always E(Excess) or P(Payable)"),
 
 	CLKU_004("Excess Amount should not be empty"),
 
@@ -31,7 +31,7 @@ public enum CrossLoanKnockOffUploadError {
 
 	CLKU_013("Excess amount not available for the given From Loan Reference"),
 
-	CLKU_014("Excess Amount should be less than/equal to the knockoff amount"),
+	CLKU_014("Excess Amount should be less than/equal to the Balance amount"),
 
 	CLKU_015("Only Active and Write off loans are allowed for To Loan Reference"),
 
@@ -39,7 +39,13 @@ public enum CrossLoanKnockOffUploadError {
 
 	CLKU_017("Fee Type header not matching with fee type codes in the system"),
 
-	CLKU_018("Invalid From and To Loan reference's");
+	CLKU_018("Invalid From and To Loan reference's"),
+
+	CLKU_019("Manual Advise is not found."),
+
+	CLKU_020("Its not a payable advise"),
+
+	CLKU_021("AdviseId is mandatory if Excess Type is P(Payable)");
 
 	private String description;
 

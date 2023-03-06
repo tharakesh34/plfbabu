@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.pff.upload.model.UploadDetails;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -33,6 +34,8 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 	private LoggedInUser userDetails;
 	private Long crossLoanId;
 	private Date appDate;
+	private ManualAdvise manualAdvise;
+	private Long adviseId;
 
 	public CrossLoanKnockoffUpload() {
 		super();
@@ -188,6 +191,22 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 
 	public void setAppDate(Date appDate) {
 		this.appDate = appDate;
+	}
+
+	public ManualAdvise getManualAdvise() {
+		return manualAdvise;
+	}
+
+	public void setManualAdvise(ManualAdvise manualAdvise) {
+		this.manualAdvise = manualAdvise;
+	}
+
+	public Long getAdviseId() {
+		return adviseId;
+	}
+
+	public void setAdviseId(Long adviseId) {
+		this.adviseId = adviseId;
 	}
 
 }
