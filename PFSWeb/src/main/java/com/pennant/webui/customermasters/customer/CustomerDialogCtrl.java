@@ -7271,7 +7271,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		byte[] cibildata = FileUtils.readFileToByteArray(ftlFile);
 		loader.putTemplate("CIBILFinalTemplate.FTL", new String(cibildata));
 
-		Configuration config = new Configuration();
+		Configuration config = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		config.setClassForTemplateLoading(CustomerDialogCtrl.class, "CIBILFinalTemplate.FTL");
 		config.setTemplateLoader(loader);
 		config.setDefaultEncoding("UTF-8");

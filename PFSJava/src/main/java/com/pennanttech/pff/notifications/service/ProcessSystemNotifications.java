@@ -189,7 +189,8 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		logger.debug("Entering");
 		String result = "";
 		try {
-			Configuration freemarkerMailConfiguration = new Configuration();
+			Configuration freemarkerMailConfiguration = new Configuration(
+					Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 			StringTemplateLoader loader = new StringTemplateLoader();
 			loader.putTemplate("template", content);
 			freemarkerMailConfiguration.setTemplateLoader(loader);
@@ -456,7 +457,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		String result = "";
 		StringTemplateLoader loader = new StringTemplateLoader();
 		loader.putTemplate("smsTemplate", detail.getSubject());
-		Configuration configuration = new Configuration();
+		Configuration configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		configuration.setTemplateLoader(loader);
 		Template template = configuration.getTemplate("smsTemplate");
 
@@ -484,12 +485,11 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		Configuration configuration = null;
 
 		StringTemplateLoader loader = new StringTemplateLoader();
-		configuration = new Configuration();
+		configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		loader.putTemplate("mailSubject", detail.getSubject());
 		configuration.setTemplateLoader(loader);
 		Template templateSubject = configuration.getTemplate("mailSubject");
 
-		String data = new String(detail.getNotificationData(), "UTF-8");
 		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 				.parse(new InputSource(new StringReader(new String(detail.getNotificationData(), "UTF-8"))));
 
@@ -515,7 +515,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		byte[] contentData = FileUtils.readFileToByteArray(ftlFile);
 		contentloader.putTemplate(detail.getContentFileName(), new String(contentData));
 
-		Configuration config = new Configuration();
+		Configuration config = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		config.setClassForTemplateLoading(ProcessSystemNotifications.class, detail.getContentFileName());
 		config.setTemplateLoader(contentloader);
 		config.setDefaultEncoding("UTF-8");

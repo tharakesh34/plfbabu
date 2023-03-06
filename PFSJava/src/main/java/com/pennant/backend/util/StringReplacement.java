@@ -28,7 +28,7 @@ public class StringReplacement {
 		StringWriter result = new StringWriter();
 
 		try {
-			Configuration cfg = new Configuration();
+			Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 			// Create a data-model
 			Map<String, String> root = new LinkedHashMap<String, String>();
 
@@ -67,7 +67,7 @@ public class StringReplacement {
 		StringWriter result = new StringWriter();
 		try {
 
-			Configuration cfg = new Configuration();
+			Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 			// Create a data-model
 			Map<String, String> root = new LinkedHashMap<String, String>();
 
