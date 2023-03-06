@@ -2038,6 +2038,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			// fin Advance Payments List
 			if (finAdvancePaymentsList != null && !finAdvancePaymentsList.isEmpty()) {
 				for (FinAdvancePayments fap : finAdvancePaymentsList) {
+					if ("VAS".equals(fap.getPaymentDetail())) {
+						continue;
+					}
 					advancePayment = "Amount Paid Vide ";
 					String status = "";
 					if (StringUtils.equals(fap.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
