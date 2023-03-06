@@ -8606,12 +8606,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		cd.setNewRecord(true);
 		cd.setCustID(Long.MIN_VALUE);
+		cd.setCustCoreBank(null);
 		customer.setprospectAsCIF(true);
 		customer.setCustCIF(getNewProspectCustomerCIF());
 		customer.setCustID(Long.MIN_VALUE);
 		customer.setNewRecord(true);
 		customer.setprospectAsCIF(true);
 
+		customer.setCustCoreBank(null);
 		customer.setCustDSA(null);
 		customer.setCustDSADept(null);
 		customer.setLovDescCustDSADeptName(null);
