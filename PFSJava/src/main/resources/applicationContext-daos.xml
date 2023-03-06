@@ -4343,7 +4343,6 @@
 
 	<bean name="manualPaymentServiceTarget" class="com.pennant.backend.service.finance.impl.ManualPaymentServiceImpl">
 		<property name="financeRepayPriorityDAO" ref="financeRepayPriorityDAO" />
-		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
 		<property name="repaymentPostingsUtil" ref="repaymentPostingsUtil" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
@@ -4365,8 +4364,6 @@
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="limitInterfaceDAO" ref="limitInterfaceDAO" />
-		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="dMSService" ref="dMSService" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
