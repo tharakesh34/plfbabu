@@ -28,8 +28,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -82,6 +84,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -524,20 +527,42 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * Method for Showing Customer Search Window
 	 */
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		List<Filter> filterList = new ArrayList<>();
+		Set<String> cifSet = new HashSet<>();
+
 		for (int i = 0; i < this.cif.length; i++) {
-			filterList.add(new Filter("CustCIF", this.cif[i], Filter.OP_NOT_EQUAL));
+			cifSet.add(this.cif[i]);
+		}
+
+		StringBuilder filter = new StringBuilder();
+
+		for (String cif : cifSet) {
+			if (filter.length() > 0) {
+				filter.append(", ");
+			}
+
+			filter.append("'");
+			filter.append(cif);
+			filter.append("'");
+		}
+
+		String whereClause = " CustCIF not in (".concat(filter.toString()).concat(")");
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			whereClause = "CustCoreBank not in (Select CustCoreBank From Customers Where CustCIF in ("
+					.concat(filter.toString()).concat("))");
 		}
 
 		Map<String, Object> map = getDefaultArguments();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);
-		map.put("filtersList", filterList);
+		map.put("whereClause", whereClause);
+
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
