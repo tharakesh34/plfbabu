@@ -50,7 +50,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -70,10 +69,9 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class RepayCalculator implements Serializable {
-
 	private static final long serialVersionUID = 8062681791631293126L;
 	private static Logger logger = LogManager.getLogger(RepayCalculator.class);
-	private RepayData repayData;
+
 	private BigDecimal balanceRepayAmount = BigDecimal.ZERO;
 	private boolean setEarlyPayAmt = false;
 	private boolean setPastPenalties = false;
@@ -83,7 +81,6 @@ public class RepayCalculator implements Serializable {
 
 	Date curBussniessDate = SysParamUtil.getAppDate();
 	private OverDueRecoveryPostingsUtil recoveryPostingsUtil;
-	private FinanceMainDAO financeMainDAO;
 	private OverdueChargeRecoveryDAO recoveryDAO;
 
 	// Default Constructor
