@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -19,6 +18,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
@@ -131,7 +131,7 @@ public class CustomerDocumentValidation {
 		}
 
 		// Check whether the document id exists for another customer.
-		if (!ImplementationConstants.PAN_DUPLICATE_NOT_ALLOWED) {
+		if (!CustomerExtension.ALLOW_DUPLICATE_PAN) {
 			if (StringUtils.isNotEmpty(document.getCustDocTitle())) {
 				String docCategory = custDocCategory;
 				String docNumber = document.getCustDocTitle();
