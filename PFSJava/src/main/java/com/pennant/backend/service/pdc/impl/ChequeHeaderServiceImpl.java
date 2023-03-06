@@ -856,12 +856,13 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		if (error != null) {
 			return error;
 		}
-		boolean chequeType = true;
+		boolean chequeType = false;
 
 		List<ChequeDetail> cheques = ch.getChequeDetailList();
 		for (ChequeDetail cd : cheques) {
-			if (!cd.isUpload() && InstrumentType.isPDC(cd.getChequeType())) {
-				chequeType = false;
+			String sourceId = ch.getSourceId();
+			if (!RequestSource.UPLOAD.name().equals(sourceId) && InstrumentType.isPDC(cd.getChequeType())) {
+				chequeType = true;
 			}
 
 			// FIXME this should come from loan type
@@ -1071,8 +1072,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		String repaymethod = financeMainDAO.getApprovedRepayMethod(finID, "");
 		if (InstrumentType.isPDC(chequeHeader.getChequeDetailList().get(0).getChequeType())
 				&& !InstrumentType.isPDC(repaymethod)) {
-			return getError("90204", "Cheques are not allowed for this finRepayMethod is NACH.");
 
+			return getError("90204", "Cheques", "finRepayMethod is " + repaymethod);
 		}
 
 		schdData.setFinanceMain(fm);
