@@ -675,7 +675,9 @@ public class FileUploadList extends Window implements Serializable {
 		List<FileUploadHeader> list = getUploadHeaders();
 
 		selectedHeaders.clear();
-		checkBoxComp.setChecked(false);
+		if (!"M".equals(this.stage) && !list.isEmpty()) {
+			this.checkBoxComp.setDisabled(false);
+		}
 		listbox.clearSelection();
 
 		list.forEach(h1 -> {
