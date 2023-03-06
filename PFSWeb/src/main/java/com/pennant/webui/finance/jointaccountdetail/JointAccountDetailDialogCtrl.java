@@ -26,8 +26,10 @@ package com.pennant.webui.finance.jointaccountdetail;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -83,6 +85,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -476,11 +479,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	public void onChange$custCIF(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
+
 		this.custCIF.clearErrorMessage();
-		List<Filter> list = null;
+
+		List<Filter> list = new ArrayList<>();
 		if (cif != null) {
-			list = new ArrayList<>();
 			list.add(new Filter("CustCIF", cif, Filter.OP_NOT_IN));
 		}
 
@@ -512,8 +516,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				this.repayAccountId.setValue("");
 			}
 		}
+
 		setCustomerDetails(customer);
-		logger.debug("Leaving" + event.toString());
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
@@ -573,25 +579,47 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	/**
 	 * Method for Showing Customer Search Window
 	 */
-	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering");
+	private void doSearchCustomerCIF() {
+		logger.debug(Literal.ENTERING);
 
-		List<Filter> filterList = new ArrayList<>();
+		Set<String> cifSet = new HashSet<>();
+
 		for (int i = 0; i < this.cif.length; i++) {
-			filterList.add(new Filter("CustCIF", this.cif[i], Filter.OP_NOT_EQUAL));
+			cifSet.add(this.cif[i]);
 		}
 
 		for (int i = 0; i < this.coapplicantCif.length; i++) {
-			filterList.add(new Filter("CustCIF", this.coapplicantCif[i], Filter.OP_NOT_EQUAL));
+			cifSet.add(this.coapplicantCif[i]);
+		}
+
+		StringBuilder filter = new StringBuilder();
+
+		for (String cif : cifSet) {
+			if (filter.length() > 0) {
+				filter.append(", ");
+			}
+
+			filter.append("'");
+			filter.append(cif);
+			filter.append("'");
+		}
+
+		String whereClause = " CustCIF not in (".concat(filter.toString()).concat(")");
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			whereClause = "CustCoreBank not in (Select CustCoreBank From Customers Where CustCIF in ("
+					.concat(filter.toString()).concat("))");
 		}
 
 		Map<String, Object> map = getDefaultArguments();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);
-		map.put("filtersList", filterList);
+		map.put("whereClause", whereClause);
+
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -626,54 +654,51 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	public void setCustomerDetails(Customer customer) {
-		if (customer != null) {
-			BigDecimal currentExpoSure = BigDecimal.ZERO;
-			getJointAccountDetail().setCustCIF(customer.getCustCIF());
-
-			this.primaryList = getJointAccountDetailService().getPrimaryExposureList(getJointAccountDetail());
-			currentExpoSure = getJointAccountDetailService().doFillExposureDetails(this.primaryList,
-					getJointAccountDetail());
-			getJointAccountDetail().setPrimaryExposure(String.valueOf(currentExpoSure));
-
-			this.secoundaryList = getJointAccountDetailService().getSecondaryExposureList(getJointAccountDetail());
-			currentExpoSure = getJointAccountDetailService().doFillExposureDetails(this.secoundaryList,
-					getJointAccountDetail());
-			getJointAccountDetail().setSecondaryExposure(String.valueOf(currentExpoSure));
-
-			this.guarantorList = getJointAccountDetailService().getGuarantorExposureList(getJointAccountDetail());
-			currentExpoSure = getJointAccountDetailService().doFillExposureDetails(this.guarantorList,
-					getJointAccountDetail());
-			getJointAccountDetail().setGuarantorExposure(String.valueOf(currentExpoSure));
-
-			this.sumPrimaryDetails = getJointAccountDetailService().getExposureSummaryDetail(primaryList);
-			this.sumSecondaryDetails = getJointAccountDetailService().getExposureSummaryDetail(secoundaryList);
-			this.sumGurantorDetails = getJointAccountDetailService().getExposureSummaryDetail(guarantorList);
-
-			getJointAccountDetail().setCustomerIncomeList(
-					getJointAccountDetailService().getJointAccountIncomeList(customer.getCustID()));
-			getJointAccountDetail().setCustomerExtLiabilityList(
-					getJointAccountDetailService().getJointExtLiabilityByCustomer(customer.getCustID()));
-			getJointAccountDetail().setCustFinanceExposureList(
-					getJointAccountDetailService().getJointCustFinanceExposureByCustomer(customer));
-
-			if (this.primaryList != null) {
-				doFillPrimaryExposureDetails(this.primaryList);
-			}
-
-			if (this.secoundaryList != null) {
-				doFillSecoundaryExposureDetails(this.secoundaryList);
-			}
-
-			if (this.guarantorList != null) {
-				doFillGuarantorExposureDetails(this.guarantorList);
-			}
-
-			setVisibleGrid();
-		} else {
+		if (customer == null) {
 			this.primaryList = null;
 			this.secoundaryList = null;
 			this.guarantorList = null;
+
+			return;
 		}
+
+		BigDecimal currentExpoSure = BigDecimal.ZERO;
+		JointAccountDetail jad = getJointAccountDetail();
+		jad.setCustCIF(customer.getCustCIF());
+
+		this.primaryList = jointAccountDetailService.getPrimaryExposureList(jad);
+		currentExpoSure = jointAccountDetailService.doFillExposureDetails(this.primaryList, jad);
+		jad.setPrimaryExposure(String.valueOf(currentExpoSure));
+
+		this.secoundaryList = jointAccountDetailService.getSecondaryExposureList(jad);
+		currentExpoSure = jointAccountDetailService.doFillExposureDetails(this.secoundaryList, jad);
+		jad.setSecondaryExposure(String.valueOf(currentExpoSure));
+
+		this.guarantorList = jointAccountDetailService.getGuarantorExposureList(jad);
+		currentExpoSure = jointAccountDetailService.doFillExposureDetails(this.guarantorList, jad);
+		jad.setGuarantorExposure(String.valueOf(currentExpoSure));
+
+		this.sumPrimaryDetails = jointAccountDetailService.getExposureSummaryDetail(primaryList);
+		this.sumSecondaryDetails = jointAccountDetailService.getExposureSummaryDetail(secoundaryList);
+		this.sumGurantorDetails = jointAccountDetailService.getExposureSummaryDetail(guarantorList);
+
+		jad.setCustomerIncomeList(jointAccountDetailService.getJointAccountIncomeList(customer.getCustID()));
+		jad.setCustomerExtLiabilityList(jointAccountDetailService.getJointExtLiabilityByCustomer(customer.getCustID()));
+		jad.setCustFinanceExposureList(jointAccountDetailService.getJointCustFinanceExposureByCustomer(customer));
+
+		if (this.primaryList != null) {
+			doFillPrimaryExposureDetails(this.primaryList);
+		}
+
+		if (this.secoundaryList != null) {
+			doFillSecoundaryExposureDetails(this.secoundaryList);
+		}
+
+		if (this.guarantorList != null) {
+			doFillGuarantorExposureDetails(this.guarantorList);
+		}
+
+		setVisibleGrid();
 	}
 
 	/**
