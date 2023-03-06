@@ -3404,7 +3404,6 @@
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 		<property name="finAssetTypeDAO" ref="finAssetTypeDAO"></property>
 		<property name="vasRecordingDAO" ref="vASRecordingDAO" />
-		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
 		<property name="finPlanEmiHolidayDAO" ref="finPlanEmiHolidayDAO" />
 		<property name="promotionDAO" ref="promotionDAO" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
@@ -3415,7 +3414,6 @@
 		<property name="finTypeExpenseDAO" ref="finTypeExpenseDAO" />
 		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
 		<property name="finIRRDetailsDAO" ref="finIRRDetailsDAO" />
-		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="irrScheduleDetailDAO" ref="irrScheduleDetailDAO" />
 		<property name="pmayService" ref="pmayService" />
@@ -3485,7 +3483,6 @@
 		<property name="feeCalculator" ref="feeCalculator" />
 		<property name="finFeeConfigService" ref="finFeeConfigService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
-		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="taxHeaderDetailsService" ref="taxHeaderDetailsService" />
 		<property name="holdRefundUploadDAO" ref="holdRefundUploadDAO" />
 	</bean>
