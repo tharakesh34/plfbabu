@@ -7130,12 +7130,10 @@
 	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper" />
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
-		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
