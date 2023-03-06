@@ -227,7 +227,9 @@ public class MicroEOD implements Tasklet {
 				jobQueue.setProgress(EodConstants.PROGRESS_SUCCESS);
 				eodCustomerQueueDAO.updateProgress(jobQueue);
 
-				transactionManager.commit(txStatus);
+				if (txStatus != null) {
+					transactionManager.rollback(txStatus);
+				}
 
 				sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 
@@ -238,7 +240,11 @@ public class MicroEOD implements Tasklet {
 			} catch (Exception e) {
 				status.setFailedRecords(failedCount++);
 				logError(e);
-				transactionManager.rollback(txStatus);
+
+				if (txStatus != null) {
+					transactionManager.rollback(txStatus);
+				}
+
 				exceptions.add(e);
 				sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 				logger.info("Micro EOD failed on {} for the customer ID {}", sysDate, custId);
@@ -253,6 +259,8 @@ public class MicroEOD implements Tasklet {
 
 				jobQueue.setError(errorMsg);
 				eodCustomerQueueDAO.updateProgress(jobQueue);
+			} finally {
+				txStatus = null;
 			}
 		}
 
