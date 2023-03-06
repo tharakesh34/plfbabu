@@ -14106,8 +14106,26 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#220110_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'lpp_upload');
+				
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="PSD#220110" author="Gireesh.G">
 		<modifyDataType tableName="LPP_UPLOAD" columnName="AmountOrPercent" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet id="PSD#220110_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'lpp_upload');
+				
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="PSD#220110.4" author="Gireesh.G">
