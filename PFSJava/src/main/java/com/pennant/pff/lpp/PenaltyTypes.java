@@ -3,7 +3,7 @@ package com.pennant.pff.lpp;
 import java.util.Arrays;
 import java.util.List;
 
-public enum LPPTypes {
+public enum PenaltyTypes {
 
 	FLAT("F"),
 
@@ -19,7 +19,7 @@ public enum LPPTypes {
 
 	private String code;
 
-	private LPPTypes(String code) {
+	private PenaltyTypes(String code) {
 		this.code = code;
 	}
 
@@ -27,10 +27,10 @@ public enum LPPTypes {
 		return code;
 	}
 
-	public static LPPTypes getTypes(String code) {
-		List<LPPTypes> list = Arrays.asList(LPPTypes.values());
+	public static PenaltyTypes getTypes(String code) {
+		List<PenaltyTypes> list = Arrays.asList(PenaltyTypes.values());
 
-		for (LPPTypes it : list) {
+		for (PenaltyTypes it : list) {
 			if (it.code().equals(code)) {
 				return it;
 			}
@@ -39,8 +39,8 @@ public enum LPPTypes {
 		return null;
 	}
 
-	public static boolean isValidLppType(String code) {
-		LPPTypes type = LPPTypes.getTypes(code);
+	public static boolean isValid(String code) {
+		PenaltyTypes type = PenaltyTypes.getTypes(code);
 
 		if (type == null) {
 			return false;

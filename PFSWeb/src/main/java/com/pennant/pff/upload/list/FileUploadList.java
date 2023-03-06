@@ -229,11 +229,11 @@ public class FileUploadList extends Window implements Serializable {
 
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_UploadId"), FLEX_MIN));
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_FileName"), FLEX_MIN));
-		
+
 		if ("A".equals(this.stage)) {
 			listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_UserName"), FLEX_MIN));
 		}
-		
+
 		listhead.appendChild(getListHeader(Labels.getLabel("label_TotalRecords"), FLEX_MIN, ALIGN_RIGHT));
 		listhead.appendChild(getListHeader(Labels.getLabel("label_ProcessedRecords"), FLEX_MIN, ALIGN_RIGHT));
 		listhead.appendChild(getListHeader(Labels.getLabel("label_SuccessRecords"), FLEX_MIN, ALIGN_RIGHT));

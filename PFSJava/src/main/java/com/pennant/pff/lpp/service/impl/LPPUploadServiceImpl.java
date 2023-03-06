@@ -29,7 +29,7 @@ import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
-import com.pennant.pff.lpp.LPPTypes;
+import com.pennant.pff.lpp.PenaltyTypes;
 import com.pennant.pff.lpp.dao.LPPUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
@@ -302,11 +302,17 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		BigDecimal amountOrPercent = detail.getAmountOrPercent();
 		String calculatedOn = detail.getCalculatedOn();
 
+		BigDecimal maxWaiver = detail.getMaxWaiver();
+
+		if (maxWaiver == null) {
+			maxWaiver = BigDecimal.ZERO;
+		}
+
 		if (PennantConstants.NO.equals(detail.getApplyOverDue())
 				&& (StringUtils.isNotBlank(reference) || StringUtils.isNotBlank(loanType))) {
 			if (StringUtils.isNotBlank(calculatedOn) || (StringUtils.isNotBlank(detail.getIncludeGraceDays()))
 					|| (StringUtils.isNotBlank(penaltyType)) || StringUtils.isNotBlank(detail.getAllowWaiver())
-					|| (detail.getMaxWaiver().compareTo(BigDecimal.ZERO)) > 0 || detail.getGraceDays() > 0
+					|| (maxWaiver.compareTo(BigDecimal.ZERO)) > 0 || detail.getGraceDays() > 0
 					|| amountOrPercent.compareTo(BigDecimal.ZERO) > 0) {
 				setError(detail, LPPUploadError.LPP09);
 				return;
@@ -332,23 +338,23 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 
-			if (allowWaiver && StringUtils.isBlank(String.valueOf(detail.getMaxWaiver()))) {
+			if (allowWaiver && StringUtils.isBlank(String.valueOf(maxWaiver))) {
 				setError(detail, LPPUploadError.LPP18);
 				return;
-			} else if (allowWaiver && (detail.getMaxWaiver().compareTo(BigDecimal.ZERO) < 0
-					|| detail.getMaxWaiver().compareTo(new BigDecimal(100)) > 0)) {
+			} else if (allowWaiver
+					&& (maxWaiver.compareTo(BigDecimal.ZERO) < 0 || maxWaiver.compareTo(new BigDecimal(100)) > 0)) {
 				setError(detail, LPPUploadError.LPP10);
 				return;
 			}
 
-			if (StringUtils.isNotBlank(String.valueOf(detail.getMaxWaiver()))) {
-				if (!allowWaiver && detail.getMaxWaiver().compareTo(BigDecimal.ZERO) > 0) {
+			if (StringUtils.isNotBlank(String.valueOf(maxWaiver))) {
+				if (!allowWaiver && maxWaiver.compareTo(BigDecimal.ZERO) > 0) {
 					setError(detail, LPPUploadError.LPP11);
 					return;
 				}
 			}
 
-			LPPTypes lppType = LPPTypes.getTypes(penaltyType);
+			PenaltyTypes lppType = PenaltyTypes.getTypes(penaltyType);
 
 			if (lppType == null) {
 				setError(detail, LPPUploadError.LPP05);
