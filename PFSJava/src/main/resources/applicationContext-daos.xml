@@ -7102,6 +7102,7 @@
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="overdraftLoanDAO" ref="overdraftLoanDAO" />
 		<property name="overdrafLoanService" ref="overdrafLoanService" />
