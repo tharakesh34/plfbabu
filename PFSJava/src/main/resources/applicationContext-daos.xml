@@ -4667,8 +4667,6 @@
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
-		<property name="limitInterfaceDAO" ref="limitInterfaceDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
