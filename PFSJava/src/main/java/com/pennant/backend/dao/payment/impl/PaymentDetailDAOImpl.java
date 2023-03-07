@@ -285,16 +285,13 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 
 	@Override
 	public boolean getPaymentId(long excessID) {
-		String sql = " Select PaymentID from PaymentDetails_Temp Where ReferenceID = ? ";
+		StringBuilder sql = new StringBuilder("Select Count(PaymentID) From");
+		sql.append(" (Select PaymentID From PaymentDetails Where ReferenceID = ?");
+		sql.append(" Union All");
+		sql.append(" Select PaymentID From PaymentDetails_Temp Where ReferenceID = ?)");
 
-		logger.debug(Literal.SQL.concat(sql));
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, excessID) != null ? true : false;
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return false;
-		}
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, excessID, excessID) > 0;
 	}
 }

@@ -540,6 +540,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		map.put("financeEnquiry", aFinanceEnq);
 		map.put("ReceiptDialog", this);
 		map.put("enquiryType", "FINENQ");
+		map.put("isModelWindow", true);
 		map.put("ReceiptDialogPage", true);
 		map.put("window_ReceiptDialog", this.windowCrossLoanKnockOffDialog);
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
@@ -4846,6 +4847,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		map.put("financeEnquiry", aFinanceEnq);
 		map.put("ReceiptDialog", this);
 		map.put("enquiryType", "FINENQ");
+		map.put("isModelWindow", true);
 		map.put("ReceiptDialogPage", true);
 		map.put("window_ReceiptDialog", this.windowCrossLoanKnockOffDialog);
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
@@ -4880,6 +4882,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		map.put("financeEnquiry", aFinanceEnq);
 		map.put("ReceiptDialog", this);
 		map.put("enquiryType", "FINENQ");
+		map.put("isModelWindow", true);
 		map.put("ReceiptDialogPage", true);
 		map.put("window_ReceiptDialog", this.windowCrossLoanKnockOffDialog);
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",

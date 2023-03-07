@@ -2533,8 +2533,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					}
 
 					// Cancelled Manual TDS
-					if (rh.getTdsAmount().compareTo(BigDecimal.ZERO) > 0 && "B".equalsIgnoreCase(rd.getStatus())
-							|| "C".equalsIgnoreCase(rd.getStatus())) {
+					if (rh.getTdsAmount().compareTo(BigDecimal.ZERO) > 0
+							&& ("B".equalsIgnoreCase(rd.getStatus()) || "C".equalsIgnoreCase(rd.getStatus()))) {
 						soaTranReport = new SOATransactionReport();
 						soaTranReport.setEvent(rHManualTdsReversalAmount.concat(String.valueOf(receiptID)));
 						soaTranReport.setTransactionDate(receiptDate);
