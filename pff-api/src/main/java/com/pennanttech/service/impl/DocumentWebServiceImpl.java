@@ -83,7 +83,7 @@ public class DocumentWebServiceImpl extends ExtendedTestClass implements Documen
 
 		// validate finReference
 		if (StringUtils.isNotBlank(documentDetails.getReferenceId())) {
-			Long finID = financeMainDAO.getActiveFinID(documentDetails.getReferenceId(), TableType.MAIN_TAB);
+			Long finID = financeMainDAO.getActiveFinID(documentDetails.getReferenceId(), TableType.VIEW);
 			if (finID == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "finreference: " + documentDetails.getReferenceId();
