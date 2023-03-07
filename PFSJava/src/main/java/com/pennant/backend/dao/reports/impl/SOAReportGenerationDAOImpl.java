@@ -1046,7 +1046,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select finreference, fwh.valuedate,fwd.CURRWAIVERAMOUNT, fwd.FeetypeCode ");
-		sql.append(", fwd.waiverId, fwd.feetypedesc, fwh,postingdate, fwh.valuedate ");
+		sql.append(", fwd.waiverId, fwd.feetypedesc, fwh.postingdate, fwh.valuedate ");
 		sql.append(" From FEEWAIVERHEADER fwh ");
 		sql.append(" inner join  FEEWAIVERdetails fwd on fwh.WAIVERID=fwd.WAIVERID  ");
 		sql.append(" where   fwh.FinReference =:FinReference");
