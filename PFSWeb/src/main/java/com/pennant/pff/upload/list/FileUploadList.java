@@ -68,6 +68,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.component.Uppercasebox;
 import com.pennant.pff.upload.model.FieUploadDTO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
@@ -103,7 +104,7 @@ public class FileUploadList extends Window implements Serializable {
 	private Paging paging;
 	private PagedListWrapper<FileUploadHeader> listWrapper;
 	private Textbox uploadFileName;
-	private Textbox userName;
+	private Uppercasebox usrLogin;
 	private Datebox fromDate;
 	private Datebox toDate;
 
@@ -378,6 +379,7 @@ public class FileUploadList extends Window implements Serializable {
 		Row row = new Row();
 
 		this.entityCode = new ExtendedCombobox();
+		// this.entityCode.setRemoveSpace(true);
 		this.entityCode.setModuleName("Entity");
 		this.entityCode.setMandatoryStyle(true);
 		this.entityCode.setDisplayStyle(2);
@@ -427,11 +429,11 @@ public class FileUploadList extends Window implements Serializable {
 
 		Hbox hbox = new Hbox();
 
-		this.userName = new Textbox();
-		userName.setWidth("200px");
-		userName.setReadonly(false);
-
-		hbox.appendChild(userName);
+		this.usrLogin = new Uppercasebox();
+		this.usrLogin.setWidth("240px");
+		this.usrLogin.setReadonly(false);
+		hbox.appendChild(getSpace("2px", false));
+		hbox.appendChild(this.usrLogin);
 
 		cell.appendChild(hbox);
 		row.appendChild(cell);
@@ -538,7 +540,6 @@ public class FileUploadList extends Window implements Serializable {
 
 		this.fileName = new ExtendedCombobox();
 		this.fileName.setModuleName("FileUploadHeader");
-		this.fileName.setMandatoryStyle(true);
 		this.fileName.setDisplayStyle(2);
 		this.fileName.setValueColumn("Id");
 		this.fileName.setDescColumn("FileName");
@@ -555,8 +556,6 @@ public class FileUploadList extends Window implements Serializable {
 			filters[1] = new Filter("NextRoleCode", this.workflowRoles, Filter.OP_IN);
 			this.fileName.setFilters(filters);
 		}
-
-		removeSpace(this.fileName);
 
 		if (!"M".equals(this.stage)) {
 			row = appendEntityCode();
@@ -722,7 +721,7 @@ public class FileUploadList extends Window implements Serializable {
 		Date dataTo = null;
 		Long fileID = null;
 		String eCode = null;
-		String user = null;
+		String usrLogin = null;
 
 		List<WrongValueException> wve = new ArrayList<>();
 
@@ -756,7 +755,7 @@ public class FileUploadList extends Window implements Serializable {
 
 		if ("A".equals(this.stage)) {
 			try {
-				user = this.userName.getValue();
+				usrLogin = this.usrLogin.getValue();
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -767,7 +766,7 @@ public class FileUploadList extends Window implements Serializable {
 		showErrorMessage(wve);
 
 		return uploadService.getUploadHeaderById(this.workflowRoles, eCode, fileID, dataFrom, dataTo, type.name(),
-				this.stage, user);
+				this.stage, usrLogin);
 	}
 
 	private void setConstraints() {
@@ -799,8 +798,8 @@ public class FileUploadList extends Window implements Serializable {
 		this.entityCode.setErrorMessage("");
 
 		if ("A".equals(this.stage)) {
-			this.userName.setConstraint("");
-			this.userName.setErrorMessage("");
+			this.usrLogin.setConstraint("");
+			this.usrLogin.setErrorMessage("");
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -974,9 +973,9 @@ public class FileUploadList extends Window implements Serializable {
 			this.toDate.setValue(null);
 
 			if ("A".equals(this.stage)) {
-				this.userName.setValue("");
-				this.userName.setConstraint("");
-				this.userName.setErrorMessage("");
+				this.usrLogin.setValue("");
+				this.usrLogin.setConstraint("");
+				this.usrLogin.setErrorMessage("");
 			}
 
 			selectedHeaders.clear();

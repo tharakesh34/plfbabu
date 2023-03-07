@@ -24,7 +24,7 @@ public interface UploadDAO {
 	boolean isFileDownlaoded(long id);
 
 	List<FileUploadHeader> getHeaderData(List<String> roleCodes, String entityCode, Long id, Date fromDate, Date toDate,
-			String type, String stage, String user);
+			String type, String stage, String usrLogin);
 
 	void deleteHeader(FileUploadHeader header, TableType tableType);
 

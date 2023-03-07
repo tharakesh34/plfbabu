@@ -54,9 +54,9 @@ public abstract class AUploadServiceImpl implements UploadService {
 
 	@Override
 	public List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate, String type, String stage, String user) {
+			Date toDate, String type, String stage, String usrLogin) {
 		List<FileUploadHeader> headerList = uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate, type,
-				stage, user);
+				stage, usrLogin);
 
 		for (FileUploadHeader header : headerList) {
 			if (header.getFailureRecords() > 0) {
