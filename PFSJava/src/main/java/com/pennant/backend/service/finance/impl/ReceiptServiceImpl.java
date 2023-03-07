@@ -1107,7 +1107,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					if (taxHeader != null && CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
 						List<Taxes> taxDetails = taxHeader.getTaxDetails();
 						for (Taxes taxes : taxDetails) {
-							if (StringUtils.equals(taxes.getTaxType(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+							if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(payAdvMovement.getTaxComponent())) {
 								payableAmt = payableAmt.subtract(taxes.getPaidTax());
 							}
 						}
