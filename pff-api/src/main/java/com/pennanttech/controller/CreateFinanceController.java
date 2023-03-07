@@ -4540,7 +4540,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			} else {
 				financeDetail = financeDetailService.getFinanceDetailById(financeMain.getFinID(), false, "", false,
 						FinServiceEvent.ORG, "");
-				setDocUri(financeDetail);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			}
 
