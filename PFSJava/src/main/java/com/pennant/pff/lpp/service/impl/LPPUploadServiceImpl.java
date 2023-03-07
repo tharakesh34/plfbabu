@@ -308,6 +308,10 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			maxWaiver = BigDecimal.ZERO;
 		}
 
+		if (amountOrPercent == null) {
+			amountOrPercent = BigDecimal.ZERO;
+		}
+
 		if (PennantConstants.NO.equals(detail.getApplyOverDue())
 				&& (StringUtils.isNotBlank(reference) || StringUtils.isNotBlank(loanType))) {
 			if (StringUtils.isNotBlank(calculatedOn) || (StringUtils.isNotBlank(detail.getIncludeGraceDays()))
