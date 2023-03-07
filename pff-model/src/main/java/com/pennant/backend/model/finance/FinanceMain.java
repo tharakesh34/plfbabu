@@ -89,6 +89,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String investmentRef = "";
 	@XmlElement
 	private String finType;
+	@XmlElement
 	private String lovDescFinTypeName;
 	@XmlElement
 	private String promotionCode;
@@ -199,8 +200,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String lovDescSourcingBranch;
 	@XmlElement
 	private String sourChannelCategory;
-	private Long asmName;
 	@XmlElement(name = "asmName")
+	private Long asmName;
 	private String lovDescAsmName;
 
 	// Payment type check
@@ -603,7 +604,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String dmaCode;
 	@XmlElement(name = "dmaCode")
 	private String dmaCodeReference;
+	@XmlElement
 	private String dmaCodeDesc;
+	@XmlElement
 	private String dmaName;
 	@XmlElement
 	private String referralId;
@@ -715,6 +718,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean chgDropLineSchd = false;
 	private Long assignmentId;
 	private long promotionSeqId = 0;
+	@XmlElement
 	private String loanCategory;
 	private boolean allowSubvention;
 	private Map<String, Object> glSubHeadCodes = new HashMap<>();

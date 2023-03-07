@@ -99,7 +99,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 
 	@XmlElement(name = "bankCode")
 	private String branchBankCode;
-	@XmlElement
+	@XmlElement(name = "bankName")
 	private String branchBankName;
 
 	@XmlElement
@@ -131,6 +131,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	@XmlElement
 	private String phoneNumber;
 	private Date clearingDate;
+	@XmlElement(name = "DisbStatus")
 	private String status;
 	private String clearingStatus;
 	private boolean active;

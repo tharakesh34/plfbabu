@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class ExtendedFieldRender extends AbstractWorkflowEntity {
@@ -14,6 +16,7 @@ public class ExtendedFieldRender extends AbstractWorkflowEntity {
 	private String tableName;
 	private String typeCode;
 	private String typeCodeDesc;
+	@XmlElement
 	private Map<String, Object> mapValues = null;
 	private Map<String, Object> auditMapValues = null;
 	private ExtendedFieldRender befImage;

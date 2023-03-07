@@ -145,6 +145,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	@XmlElementWrapper(name = "documents")
 	@XmlElement(name = "document")
 	private List<DocumentDetails> documents = null;
+	@XmlElement
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<FinFlagsDetail> finFlagsDetailsList;
