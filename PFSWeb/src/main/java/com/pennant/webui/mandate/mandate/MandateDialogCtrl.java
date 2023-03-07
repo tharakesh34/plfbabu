@@ -1011,6 +1011,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("BankCode", bankcode, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filters);
+			this.micr.setFilters(filters);
 		}
 
 		switch (instrumentType) {
@@ -1030,6 +1031,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 			this.bankBranchID.setFilters(new Filter[] { new Filter(instrumentType.name(), 1, Filter.OP_EQUAL) });
+			this.micr.setFilters(new Filter[] { new Filter(instrumentType.name(), 1, Filter.OP_EQUAL) });
 			break;
 		default:
 			break;

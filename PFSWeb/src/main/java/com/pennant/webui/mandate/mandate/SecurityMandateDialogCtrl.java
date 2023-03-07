@@ -1015,6 +1015,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 			this.bankBranchID.setFilters(new Filter[] { new Filter(instrumentType.name(), 1, Filter.OP_EQUAL) });
+			this.micr.setFilters(new Filter[] { new Filter(instrumentType.name(), 1, Filter.OP_EQUAL) });
 			break;
 		default:
 			break;
