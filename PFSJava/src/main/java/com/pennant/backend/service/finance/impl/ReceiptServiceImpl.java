@@ -7011,7 +7011,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return;
 		}
 
-		for (ReceiptAllocationDetail allocate : allocations) {
+		for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());
 			allocate.setWaivedAvailable(allocate.getWaivedAmount());
 			allocate.setBalance(allocate.getTotalDue());
@@ -8114,10 +8114,36 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 	@Override
 	public void waiveThresholdLimit(FinReceiptData receiptData) {
+		boolean isAllocated = false;
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		BigDecimal treshHold = rch.getClosureThresholdLimit();
 		List<ReceiptAllocationDetail> allocations = rch.getAllocations();
-		List<ReceiptAllocationDetail> allocationsSummary = rch.getAllocationsSummary();
+		List<ReceiptAllocationDetail> allocationsSummary = new ArrayList<>();
+		receiptData.getReceiptHeader().setAllocations(new ArrayList<>());
+
+		if (CollectionUtils.isNotEmpty(receiptData.getAllocList())) {
+			isAllocated = true;
+		}
+
+		allocations = receiptCalculator.resetAllocationList(receiptData);
+		receiptData.getReceiptHeader().setAllocations(allocations);
+		Date valueDate = receiptData.getValueDate();
+
+		receiptData = receiptCalculator.fetchODPenalties(receiptData, valueDate, new ArrayList<>());
+		receiptCalculator.fetchManualAdviseDetails(receiptData, valueDate);
+		receiptData = receiptCalculator.fetchEventFees(receiptData, isAllocated);
+
+		for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocations()) {
+			allocate.setPaidAvailable(allocate.getTotalDue().subtract(allocate.getWaivedAmount()));
+		}
+
+		receiptCalculator.recalAutoAllocationHierarchy(receiptData, false);
+
+		for (ReceiptAllocationDetail rad : receiptData.getReceiptHeader().getAllocations()) {
+			allocationsSummary = receiptCalculator.setAllocationSummary(allocationsSummary, rad);
+		}
+
+		rch.setAllocationsSummary(allocationsSummary);
 
 		updateWaiverAllocations(receiptData, rch, treshHold, allocations);
 		updateWaiverAllocations(receiptData, rch, treshHold, allocationsSummary);

@@ -228,7 +228,7 @@ public class MicroEOD implements Tasklet {
 				eodCustomerQueueDAO.updateProgress(jobQueue);
 
 				if (txStatus != null) {
-					transactionManager.rollback(txStatus);
+					transactionManager.commit(txStatus);
 				}
 
 				sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);

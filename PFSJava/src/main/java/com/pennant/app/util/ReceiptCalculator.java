@@ -648,7 +648,7 @@ public class ReceiptCalculator {
 		return index;
 	}
 
-	private List<ReceiptAllocationDetail> resetAllocationList(FinReceiptData rd) {
+	public List<ReceiptAllocationDetail> resetAllocationList(FinReceiptData rd) {
 		List<ReceiptAllocationDetail> allocationsList = new ArrayList<>(1);
 		FinanceProfitDetail pfd = rd.getFinanceDetail().getFinScheduleData().getFinPftDeatil();
 		RepayMain rm = rd.getRepayMain();
