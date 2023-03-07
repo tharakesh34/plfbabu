@@ -1354,7 +1354,7 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		schedule.setNewRecord(true);
 		schedule.setWorkflowId(0);
 		schedule.setSettlementHeaderID(settlement.getId());
-		schedule.setRecordType(PennantConstants.RCD_ADD);
+		schedule.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		schedule.setModule(this.module);
 		this.settlementScheduleDetailList.add(schedule);
 
@@ -1390,10 +1390,6 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		sd.setSettlementInstalDate(date.getValue());
 		Listitem selectecListItem = (Listitem) event.getOrigin().getTarget().getParent().getParent().getParent();
 		Listcell cellRecordType = (Listcell) selectecListItem.getChildren().get(3);
-
-		if (cellRecordType != null) {
-			cellRecordType.setLabel(PennantJavaUtil.getLabel(PennantConstants.RCD_EDT));
-		}
 
 		logger.debug(Literal.LEAVING);
 	}

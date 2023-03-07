@@ -803,18 +803,21 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
 			for (ReceiptAllocationDetail rad : radList) {
-				if (excessAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				if (excessAmount.compareTo(BigDecimal.ZERO) <= 0
+						|| rad.getWaivedAmount().compareTo(BigDecimal.ZERO) <= 0) {
 					break;
 				}
 				BigDecimal waivedAMount = rad.getWaivedAmount();
 				BigDecimal allocAmount = excessAmount;
 
-				if (excessAmount.compareTo(waivedAMount) >= 0) {
+				if (waivedAMount.compareTo(excessAmount) < 0) {
 					allocAmount = waivedAMount;
 				}
 
-				rad.setPaidAmount(rad.getPaidAmount().add(excessAmount));
-				rad.setWaivedAmount(rad.getWaivedAmount().subtract(excessAmount));
+				rad.setPaidAmount(rad.getPaidAmount().add(allocAmount));
+				if (rad.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
+					rad.setWaivedAmount(rad.getWaivedAmount().subtract(allocAmount));
+				}
 				actualReceiptAmount = actualReceiptAmount.add(allocAmount);
 				excessAmount = excessAmount.subtract(allocAmount);
 				rad.setBalance(rad.getTotalDue().subtract(rad.getWaivedAmount().add(rad.getPaidAmount())));
