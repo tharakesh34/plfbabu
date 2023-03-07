@@ -1355,10 +1355,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 
 		if (finSchdDetList != null && !finSchdDetList.isEmpty()) {
+			Date appDate = SysParamUtil.getAppDate();
 
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
 
-				if ((DateUtility.compare(finSchdDetail.getSchDate(), SysParamUtil.getAppDate()) <= 0)) {
+				if ((DateUtil.compare(finSchdDetail.getSchDate(), appDate) <= 0)) {
 
 					if (finSchdDetail.getProfitSchd() != null) {
 						totalProfitSchd = totalProfitSchd.add(finSchdDetail.getProfitSchd());
@@ -1438,9 +1439,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Principal Component");
 				soaSummaryReport.setDue(due.add(fm.getAdvanceEMI()));
-				soaSummaryReport.setReceipt(receipt.add(fm.getAdvanceEMI()).subtract(priWaivedOff));
+				soaSummaryReport.setReceipt(receipt.subtract(priWaivedOff));
 				soaSummaryReport.setWaiver(priWaivedOff.add(principalWaived));
-				soaSummaryReport.setOverDue(overDue);
+				soaSummaryReport.setOverDue(overDue.add(fm.getAdvanceEMI()));
 				soaSummaryReportsList.add(soaSummaryReport);
 
 				due = totalProfitSchd.add(profitDue);
