@@ -49,7 +49,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
@@ -58,8 +57,6 @@ import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
-import com.pennant.backend.dao.limits.LimitInterfaceDAO;
-import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -112,9 +109,6 @@ import com.rits.cloning.Cloner;
 public class FinanceCancellationServiceImpl extends GenericFinanceDetailService implements FinanceCancellationService {
 	private static final Logger logger = LogManager.getLogger(FinanceCancellationServiceImpl.class);
 
-	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
-	private LimitInterfaceDAO limitInterfaceDAO;
-	private CustomerLimitIntefaceService custLimitIntefaceService;
 	private LimitCheckDetails limitCheckDetails;
 	private LimitManagement limitManagement;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
@@ -127,7 +121,6 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private VASRecordingDAO vASRecordingDAO;
 	private long tempWorkflowId;
 	private ReasonDetailDAO reasonDetailDAO;
-	private CollateralAssignmentValidation collateralAssignmentValidation;
 	private FinChequeHeaderService finChequeHeaderService;
 
 	public FinanceCancellationServiceImpl() {
@@ -1009,18 +1002,6 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		return auditDetails;
 	}
 
-	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-
-	public void setLimitInterfaceDAO(LimitInterfaceDAO limitInterfaceDAO) {
-		this.limitInterfaceDAO = limitInterfaceDAO;
-	}
-
-	public void setCustLimitIntefaceService(CustomerLimitIntefaceService custLimitIntefaceService) {
-		this.custLimitIntefaceService = custLimitIntefaceService;
-	}
-
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;
 	}
@@ -1063,10 +1044,6 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
 		this.reasonDetailDAO = reasonDetailDAO;
-	}
-
-	public void setCollateralAssignmentValidation(CollateralAssignmentValidation collateralAssignmentValidation) {
-		this.collateralAssignmentValidation = collateralAssignmentValidation;
 	}
 
 	public CollateralAssignmentValidation getCollateralAssignmentValidation() {

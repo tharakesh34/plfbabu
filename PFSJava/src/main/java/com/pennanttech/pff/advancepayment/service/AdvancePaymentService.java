@@ -24,12 +24,8 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
-import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
-import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.AdvancePaymentDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
-import com.pennant.backend.dao.finance.ManualAdviseDAO;
-import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
@@ -78,12 +74,8 @@ public class AdvancePaymentService extends ServiceHelper {
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
-	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private ReceiptCalculator receiptCalculator;
-	private FeeTypeDAO feeTypeDAO;
-	private ManualAdviseDAO manualAdviseDAO;
 	private AdvancePaymentDetailDAO advancePaymentDetailDAO;
-	private FinExcessAmountDAO finExcessAmountDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
 
 	public void processAdvansePayments(CustEODEvent custEODEvent) throws Exception {
@@ -1106,33 +1098,13 @@ public class AdvancePaymentService extends ServiceHelper {
 	}
 
 	@Autowired
-	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
-		this.financeRepaymentsDAO = financeRepaymentsDAO;
-	}
-
-	@Autowired
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
 	}
 
 	@Autowired
-	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
-		this.feeTypeDAO = feeTypeDAO;
-	}
-
-	@Autowired
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	@Autowired
 	public void setAdvancePaymentDetailDAO(AdvancePaymentDetailDAO advancePaymentDetailDAO) {
 		this.advancePaymentDetailDAO = advancePaymentDetailDAO;
-	}
-
-	@Autowired
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 	public FinFeeDetailDAO getFinFeeDetailDAO() {
@@ -1142,5 +1114,4 @@ public class AdvancePaymentService extends ServiceHelper {
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
-
 }

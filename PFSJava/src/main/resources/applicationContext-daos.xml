@@ -3404,7 +3404,6 @@
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 		<property name="finAssetTypeDAO" ref="finAssetTypeDAO"></property>
 		<property name="vasRecordingDAO" ref="vASRecordingDAO" />
-		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
 		<property name="finPlanEmiHolidayDAO" ref="finPlanEmiHolidayDAO" />
 		<property name="promotionDAO" ref="promotionDAO" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
@@ -3415,7 +3414,6 @@
 		<property name="finTypeExpenseDAO" ref="finTypeExpenseDAO" />
 		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
 		<property name="finIRRDetailsDAO" ref="finIRRDetailsDAO" />
-		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="irrScheduleDetailDAO" ref="irrScheduleDetailDAO" />
 		<property name="pmayService" ref="pmayService" />
@@ -3485,7 +3483,6 @@
 		<property name="feeCalculator" ref="feeCalculator" />
 		<property name="finFeeConfigService" ref="finFeeConfigService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
-		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="taxHeaderDetailsService" ref="taxHeaderDetailsService" />
 		<property name="holdRefundUploadDAO" ref="holdRefundUploadDAO" />
 	</bean>
@@ -4346,7 +4343,6 @@
 
 	<bean name="manualPaymentServiceTarget" class="com.pennant.backend.service.finance.impl.ManualPaymentServiceImpl">
 		<property name="financeRepayPriorityDAO" ref="financeRepayPriorityDAO" />
-		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
 		<property name="repaymentPostingsUtil" ref="repaymentPostingsUtil" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
@@ -4368,8 +4364,6 @@
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="limitInterfaceDAO" ref="limitInterfaceDAO" />
-		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="dMSService" ref="dMSService" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
@@ -4667,8 +4661,6 @@
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
-		<property name="limitInterfaceDAO" ref="limitInterfaceDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
@@ -5195,7 +5187,6 @@
 		<property name="nPAProvisionDetailDAO" ref="nPAProvisionDetailDAO" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 	</bean>
 
@@ -7103,6 +7094,7 @@
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="overdraftLoanDAO" ref="overdraftLoanDAO" />
 		<property name="overdrafLoanService" ref="overdrafLoanService" />
@@ -7130,12 +7122,10 @@
 	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper" />
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
-		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />

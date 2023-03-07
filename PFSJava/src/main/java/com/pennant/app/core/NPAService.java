@@ -57,7 +57,6 @@ import com.pennant.backend.dao.applicationmaster.NPAProvisionHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -88,7 +87,6 @@ public class NPAService extends ServiceHelper {
 	private NPAProvisionHeaderDAO nPAProvisionHeaderDAO;
 	private NPAProvisionDetailDAO nPAProvisionDetailDAO;
 	private CollateralAssignmentDAO collateralAssignmentDAO;
-	private RuleDAO ruleDAO;
 	private VASRecordingDAO vASRecordingDAO;
 	private ExtendedFieldService extendedFieldServiceHook;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
@@ -747,10 +745,6 @@ public class NPAService extends ServiceHelper {
 
 	public void setnPAProvisionDetailDAO(NPAProvisionDetailDAO nPAProvisionDetailDAO) {
 		this.nPAProvisionDetailDAO = nPAProvisionDetailDAO;
-	}
-
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
 	}
 
 	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {

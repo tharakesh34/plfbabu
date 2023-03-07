@@ -115,6 +115,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 
 	private JdbcSearchObject<Customer> searchObj;
 	private List<Filter> filterList = new ArrayList<Filter>();
+	private String whereClause = null;
 	protected Button btnClear;
 	private String finDivision = null;
 	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
@@ -190,6 +191,10 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 
 		if (arguments.containsKey("filtersList")) {
 			filterList = (List<Filter>) arguments.get("filtersList");
+		}
+
+		if (arguments.containsKey("whereClause")) {
+			whereClause = (String) arguments.get("whereClause");
 		}
 
 		doSetFieldProperties();
@@ -582,7 +587,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	// ******************************************************//
 
 	public JdbcSearchObject<Customer> getSearchObj() {
-
 		searchObj = new JdbcSearchObject<Customer>(Customer.class, getListRows());
 		searchObj.addTabelName("Customers_AEView");
 		if (filterList != null && filterList.size() > 0) {
@@ -590,6 +594,11 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				searchObj.addFilter(filterList.get(k));
 			}
 		}
+
+		if (whereClause != null) {
+			searchObj.addWhereClause(whereClause);
+		}
+
 		return this.searchObj;
 	}
 

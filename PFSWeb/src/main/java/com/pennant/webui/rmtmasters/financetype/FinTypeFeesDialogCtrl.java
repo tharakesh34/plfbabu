@@ -1173,11 +1173,15 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 				&& PennantConstants.PERC_TYPE_VARIABLE.equals(perType)) {
 			this.percRule.setVisible(true);
 			this.percRule.clearErrorMessage();
+			this.feeOrder.setErrorMessage("");
 			this.label_FinTypeFeesDialog_PercRule.setVisible(true);
 			this.percentage.setValue(BigDecimal.ZERO);
 			this.percentage.setDisabled(true);
 		} else {
 			this.percentage.setDisabled(false);
+			this.percRule.setErrorMessage("");
+			this.feeOrder.setErrorMessage("");
+
 		}
 	}
 

@@ -53,11 +53,8 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.LookupMethods;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
-import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
-import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
-import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -97,15 +94,11 @@ import com.pennanttech.pff.receipt.constants.Allocation;
 public class LatePayMarkingService extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(LatePayMarkingService.class);
 
-	private FinODPenaltyRateDAO finODPenaltyRateDAO;
-	private LatePayPenaltyService latePayPenaltyService;
 	private LatePayInterestService latePayInterestService;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private CustomerAddresDAO customerAddresDAO;
-	private FeeTypeDAO feeTypeDAO;
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
-	private ManualAdviseDAO manualAdviseDAO;
 
 	/**
 	 * Default constructor
@@ -1078,14 +1071,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		return feeList;
 	}
 
-	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
-		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
-	}
-
-	public void setLatePayPenaltyService(LatePayPenaltyService latePayPenaltyService) {
-		this.latePayPenaltyService = latePayPenaltyService;
-	}
-
 	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
 		this.latePayInterestService = latePayInterestService;
 	}
@@ -1098,10 +1083,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		this.customerAddresDAO = customerAddresDAO;
 	}
 
-	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
-		this.feeTypeDAO = feeTypeDAO;
-	}
-
 	public void setFinODAmzTaxDetailDAO(FinODAmzTaxDetailDAO finODAmzTaxDetailDAO) {
 		this.finODAmzTaxDetailDAO = finODAmzTaxDetailDAO;
 	}
@@ -1109,9 +1090,4 @@ public class LatePayMarkingService extends ServiceHelper {
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
-
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
 }

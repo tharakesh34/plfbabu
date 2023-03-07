@@ -72,7 +72,6 @@ public class ImplementationConstants {
 		ALLOW_ADDDBSF = getValueAsBoolean("ALLOW_ADDDBSF", false);
 		UPFRONT_ADJUST_PAYABLEADVISE = getValueAsBoolean("UPFRONT_ADJUST_PAYABLEADVISE", false);
 		CO_APP_ENQ_SAME_AS_CUST_ENQ = getValueAsBoolean("CO_APP_ENQ_SAME_AS_CUST_ENQ", true);
-		PAN_DUPLICATE_NOT_ALLOWED = getValueAsBoolean("PAN_DUPLICATE_NOT_ALLOWED", true);
 		ALLOW_AUTO_DISBURSEMENTS = getValueAsBoolean("ALLOW_AUTO_DISBURSEMENTS", false);
 
 		ALLOW_COSTOFFUNDS = getValueAsBoolean("ALLOW_COSTOFFUNDS", true);
@@ -343,7 +342,6 @@ public class ImplementationConstants {
 	public static boolean ALLOW_ADDDBSF;
 	public static boolean UPFRONT_ADJUST_PAYABLEADVISE;
 	public static boolean CO_APP_ENQ_SAME_AS_CUST_ENQ;
-	public static boolean PAN_DUPLICATE_NOT_ALLOWED;
 	public static boolean ALLOW_AUTO_DISBURSEMENTS;
 
 	public static boolean ALLOW_COSTOFFUNDS;

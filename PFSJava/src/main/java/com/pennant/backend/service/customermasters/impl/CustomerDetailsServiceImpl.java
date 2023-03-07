@@ -205,6 +205,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
@@ -8605,12 +8606,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		cd.setNewRecord(true);
 		cd.setCustID(Long.MIN_VALUE);
+		cd.setCustCoreBank(null);
 		customer.setprospectAsCIF(true);
 		customer.setCustCIF(getNewProspectCustomerCIF());
 		customer.setCustID(Long.MIN_VALUE);
 		customer.setNewRecord(true);
 		customer.setprospectAsCIF(true);
 
+		customer.setCustCoreBank(null);
 		customer.setCustDSA(null);
 		customer.setCustDSADept(null);
 		customer.setLovDescCustDSADeptName(null);
@@ -8648,23 +8651,31 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	private void isDuplicateCRCPR(AuditDetail auditDetail, Customer customer, boolean categoryReq) {
-		List<String> cifs;
+		if (CustomerExtension.ALLOW_DUPLICATE_PAN) {
+			return;
+		}
+
 		String[] errorParameters = new String[2];
+
 		String custCtgCode = null;
+
 		if (categoryReq) {
 			custCtgCode = customer.getCustCtgCode();
 		}
-		cifs = customerDAO.isDuplicateCRCPR(customer.getCustID(), customer.getCustCRCPR(), custCtgCode);
-		if (CollectionUtils.isNotEmpty(cifs)) {
-			for (String detail : cifs) {
-				if (!StringUtils.equals(customer.getCustCIF(), detail)) {
-					errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
-							+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
-					errorParameters[1] = PennantJavaUtil.getLabel("label_Cif") + ": {" + detail + "}";
 
-					auditDetail.setErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errorParameters, null));
-				}
+		List<String> cifs = customerDAO.isDuplicateCRCPR(customer.getCustID(), customer.getCustCRCPR(), custCtgCode);
+
+		if (CollectionUtils.isEmpty(cifs)) {
+			return;
+		}
+
+		for (String detail : cifs) {
+			if (!StringUtils.equals(customer.getCustCIF(), detail)) {
+				errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
+						+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
+				errorParameters[1] = PennantJavaUtil.getLabel("label_Cif") + ": {" + detail + "}";
+
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errorParameters, null));
 			}
 		}
 	}

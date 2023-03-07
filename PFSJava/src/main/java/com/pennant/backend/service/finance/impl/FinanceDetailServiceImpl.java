@@ -85,11 +85,7 @@ import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.CreditReviewDetailDAO;
 import com.pennant.backend.dao.finance.ExtendedFieldMaintenanceDAO;
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
-import com.pennant.backend.dao.finance.FinFeeDetailDAO;
-import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinFlagsHeaderDAO;
-import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
-import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.HoldDisbursementDAO;
@@ -101,11 +97,8 @@ import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RisksAndMitigantsDAO;
 import com.pennant.backend.dao.finance.financialSummary.SanctionConditionsDAO;
-import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
-import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
-import com.pennant.backend.dao.psl.PSLDetailDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
@@ -339,8 +332,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private CustomerIncomeDAO customerIncomeDAO;
 	private IncomeTypeDAO incomeTypeDAO;
-	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
-	private RuleDAO ruleDAO;
 	private AccountTypeDAO accountTypeDAO;
 	private CustomerLimitIntefaceService custLimitIntefaceService;
 	private FinanceWriteoffDAO financeWriteoffDAO;
@@ -359,16 +350,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private LimitCheckDetails limitCheckDetails;
 	private OverdraftScheduleDetailDAO overdraftScheduleDetailDAO;
 	private FlagDetailValidation flagDetailValidation;
-	private FinFlagDetailsDAO finFlagDetailsDAO;
 	private FinChequeHeaderService finChequeHeaderService;
 	private VASRecordingDAO vasRecordingDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private VasRecordingValidation vasRecordingValidation;
-	private FinTypeVASProductsDAO finTypeVASProductsDAO;
 	private PromotionDAO promotionDAO;
-	private FinFeeDetailDAO finFeeDetailDAO;
-	private FinanceTaxDetailDAO financeTaxDetailDAO;
-	private PSLDetailDAO pSLDetailDAO;
 	private FinanceTaxDetailService financeTaxDetailService;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
@@ -385,7 +371,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private CollateralSetupService collateralSetupService;
 	private HoldDisbursementDAO holdDisbursementDAO;
 	private PaymentsProcessService paymentsProcessService;
-	private ProvisionDAO provisionDAO;
 	private HoldRefundUploadDAO holdRefundUploadDAO;
 	private FinFlagsHeaderDAO finFlagsHeaderDAO;
 
@@ -1451,8 +1436,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Fetch Stage Accounting AccountingSetId List
 		List<Long> accSetIdList = new ArrayList<Long>();
-		accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType.getFinType(),
-				FinServiceEvent.ORG, null, "_ACView"));
+		accSetIdList.addAll(financeReferenceDetailDAO.getRefIdListByFinType(finType.getFinType(), FinServiceEvent.ORG,
+				null, "_ACView"));
 		if (accSetId != Long.MIN_VALUE) {
 			accSetIdList.add(Long.valueOf(accSetId));
 		}
@@ -6188,7 +6173,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				return auditHeader;
 			}
 		}
-		String tranType = PennantConstants.TRAN_DEL;
+
 		// PSD #139669 - Rejection of Loan under loan queue gives 900 error
 		fm.setFinIsActive(false);
 		FinanceMain financeMainAvl = financeMainDAO.getFinanceMainById(finID, "_Temp", false);
@@ -9648,20 +9633,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.customerIncomeDAO = customerIncomeDAO;
 	}
 
-	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-
-	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
-		return financeReferenceDetailDAO;
-	}
-
 	public RuleDAO getRuleDAO() {
 		return ruleDAO;
-	}
-
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
 	}
 
 	public CustomerLimitIntefaceService getCustLimitIntefaceService() {
@@ -9830,10 +9803,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return this.flagDetailValidation;
 	}
 
-	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {
-		this.finFlagDetailsDAO = finFlagDetailsDAO;
-	}
-
 	public void setVasRecordingDAO(VASRecordingDAO vasRecordingDAO) {
 		this.vasRecordingDAO = vasRecordingDAO;
 	}
@@ -9845,10 +9814,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return this.vasRecordingValidation;
 	}
 
-	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {
-		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
-	}
-
 	@Override
 	public BigDecimal getFinAssetValue(long finID) {
 		return financeMainDAO.getFinAssetValue(finID);
@@ -9856,14 +9821,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setPromotionDAO(PromotionDAO promotionDAO) {
 		this.promotionDAO = promotionDAO;
-	}
-
-	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
-		this.finFeeDetailDAO = finFeeDetailDAO;
-	}
-
-	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
-		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
 
 	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
@@ -11304,10 +11261,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.pSLDetailService = pSLDetailService;
 	}
 
-	public void setpSLDetailDAO(PSLDetailDAO pSLDetailDAO) {
-		this.pSLDetailDAO = pSLDetailDAO;
-	}
-
 	public void setLegalDetailService(LegalDetailService legalDetailService) {
 		this.legalDetailService = legalDetailService;
 	}
@@ -11401,10 +11354,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.postExteranalServiceHook = postExteranalServiceHook;
 	}
 
-	public void setProvisionDAO(ProvisionDAO provisionDAO) {
-		this.provisionDAO = provisionDAO;
-	}
-
 	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {
 		this.taxHeaderDetailsService = taxHeaderDetailsService;
 	}
@@ -11466,5 +11415,4 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setFinFlagsHeaderDAO(FinFlagsHeaderDAO finFlagsHeaderDAO) {
 		this.finFlagsHeaderDAO = finFlagsHeaderDAO;
 	}
-
 }

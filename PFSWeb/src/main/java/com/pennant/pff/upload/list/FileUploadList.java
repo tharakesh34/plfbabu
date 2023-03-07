@@ -103,6 +103,7 @@ public class FileUploadList extends Window implements Serializable {
 	private Paging paging;
 	private PagedListWrapper<FileUploadHeader> listWrapper;
 	private Textbox uploadFileName;
+	private Textbox userName;
 	private Datebox fromDate;
 	private Datebox toDate;
 
@@ -228,6 +229,11 @@ public class FileUploadList extends Window implements Serializable {
 
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_UploadId"), FLEX_MIN));
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_FileName"), FLEX_MIN));
+
+		if ("A".equals(this.stage)) {
+			listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_UserName"), FLEX_MIN));
+		}
+
 		listhead.appendChild(getListHeader(Labels.getLabel("label_TotalRecords"), FLEX_MIN, ALIGN_RIGHT));
 		listhead.appendChild(getListHeader(Labels.getLabel("label_ProcessedRecords"), FLEX_MIN, ALIGN_RIGHT));
 		listhead.appendChild(getListHeader(Labels.getLabel("label_SuccessRecords"), FLEX_MIN, ALIGN_RIGHT));
@@ -337,6 +343,10 @@ public class FileUploadList extends Window implements Serializable {
 		rows.appendChild(appendDateFilters());
 		rows.appendChild(appendECBFileName());
 
+		if ("A".equals(this.stage)) {
+			rows.appendChild(appendUserName());
+		}
+
 		grid.appendChild(columns);
 		grid.appendChild(rows);
 
@@ -396,6 +406,35 @@ public class FileUploadList extends Window implements Serializable {
 			this.entityCode.setDescColumn(entity.get(0).getEntityDesc());
 			this.entityCode.setReadonly(true);
 		}
+
+		return row;
+	}
+
+	private Row appendUserName() {
+		Row row = new Row();
+
+		Cell cell = new Cell();
+		cell.appendChild(new Label(Labels.getLabel("label_UserName")));
+		row.appendChild(cell);
+
+		cell = new Cell();
+		cell.appendChild(getOperators(Filter.OP_EQUAL));
+		row.appendChild(cell);
+
+		cell = new Cell();
+
+		cell.setColspan(2);
+
+		Hbox hbox = new Hbox();
+
+		this.userName = new Textbox();
+		userName.setWidth("200px");
+		userName.setReadonly(false);
+
+		hbox.appendChild(userName);
+
+		cell.appendChild(hbox);
+		row.appendChild(cell);
 
 		return row;
 	}
@@ -635,11 +674,11 @@ public class FileUploadList extends Window implements Serializable {
 	private void search(boolean isApprove) {
 		List<FileUploadHeader> list = getUploadHeaders();
 
-		listbox.clearSelection();
-
+		selectedHeaders.clear();
 		if (!"M".equals(this.stage) && !list.isEmpty()) {
 			this.checkBoxComp.setDisabled(false);
 		}
+		listbox.clearSelection();
 
 		list.forEach(h1 -> {
 			h1.setUserDetails(this.fileUploadHeader.getUserDetails());
@@ -683,6 +722,7 @@ public class FileUploadList extends Window implements Serializable {
 		Date dataTo = null;
 		Long fileID = null;
 		String eCode = null;
+		String user = null;
 
 		List<WrongValueException> wve = new ArrayList<>();
 
@@ -714,12 +754,20 @@ public class FileUploadList extends Window implements Serializable {
 			wve.add(we);
 		}
 
+		if ("A".equals(this.stage)) {
+			try {
+				user = this.userName.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+
 		doRemoveValidation();
 
 		showErrorMessage(wve);
 
 		return uploadService.getUploadHeaderById(this.workflowRoles, eCode, fileID, dataFrom, dataTo, type.name(),
-				this.stage);
+				this.stage, user);
 	}
 
 	private void setConstraints() {
@@ -749,6 +797,11 @@ public class FileUploadList extends Window implements Serializable {
 
 		this.entityCode.setConstraint("");
 		this.entityCode.setErrorMessage("");
+
+		if ("A".equals(this.stage)) {
+			this.userName.setConstraint("");
+			this.userName.setErrorMessage("");
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -920,6 +973,12 @@ public class FileUploadList extends Window implements Serializable {
 			this.toDate.setErrorMessage("");
 			this.toDate.setValue(null);
 
+			if ("A".equals(this.stage)) {
+				this.userName.setValue("");
+				this.userName.setConstraint("");
+				this.userName.setErrorMessage("");
+			}
+
 			selectedHeaders.clear();
 			checkBoxComp.setChecked(false);
 			listbox.getItems().clear();
@@ -987,8 +1046,6 @@ public class FileUploadList extends Window implements Serializable {
 			uploadService.updateInProcessStatus(header.getId(), Status.IN_PROCESS.getValue());
 			headers.add(header);
 		}
-
-		selectedHeaders.clear();
 
 		uploadService.doApprove(headers);
 
@@ -1255,6 +1312,11 @@ public class FileUploadList extends Window implements Serializable {
 
 			lc = new Listcell(uph.getFileName());
 			lc.setParent(item);
+
+			if ("A".equals(uph.getStage())) {
+				lc = new Listcell(uph.getUserDetails().getUserName());
+				lc.setParent(item);
+			}
 
 			lc = new Listcell(String.valueOf(uph.getTotalRecords()));
 			lc.setParent(item);

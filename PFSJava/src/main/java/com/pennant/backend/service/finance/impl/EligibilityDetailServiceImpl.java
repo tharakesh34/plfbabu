@@ -58,7 +58,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> implements EligibilityDetailService {
-	private static final Logger logger = LogManager.getLogger(FinanceDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(EligibilityDetailServiceImpl.class);
 
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceEligibilityDetailDAO financeEligibilityDetailDAO;

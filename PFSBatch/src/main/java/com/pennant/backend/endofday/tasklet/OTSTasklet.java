@@ -132,6 +132,8 @@ public class OTSTasklet implements Tasklet {
 				}
 
 				logger.info(FAILED_MSG, strSysDate, fsh.getFinID());
+			} finally {
+				txStatus = null;
 			}
 		}
 

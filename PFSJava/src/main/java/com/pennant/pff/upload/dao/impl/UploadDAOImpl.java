@@ -196,18 +196,18 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 	@Override
 	public List<FileUploadHeader> getHeaderData(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate, String type, String stage) {
+			Date toDate, String type, String stage, String user) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" uh.Id, uh.EntityCode, uh.Type, uh.FileName, uh.TotalRecords");
 		sql.append(", uh.SuccessRecords, uh.FailureRecords, uh.ExecutionID, uh.Progress");
 		sql.append(", uh.CreatedBy, uh.CreatedOn, uh.ApprovedBy, uh.ApprovedOn, uh.LastMntOn, uh.LastMntBy");
 		sql.append(", uh.Version, uh.RecordStatus, uh.RoleCode, uh.NextRoleCode");
-		sql.append(", uh.TaskId, uh.NextTaskId, uh.RecordType, uh.WorkflowId");
+		sql.append(", uh.TaskId, uh.NextTaskId, uh.RecordType, uh.WorkflowId, su.UsrLogin");
 		sql.append(" From FILE_UPLOAD_HEADER uh");
-
+		sql.append(" Inner Join SecUsers su on su.UsrID = uh.CreatedBy");
 		sql.append(" Where uh.Type = ? and uh.Progress != ?");
 
-		StringBuilder whereClause = prepareWhereClause(roleCodes, entityCode, id, fromDate, toDate, stage);
+		StringBuilder whereClause = prepareWhereClause(roleCodes, entityCode, id, fromDate, toDate, stage, user);
 
 		if (whereClause.length() < 0) {
 			return new ArrayList<>();
@@ -241,6 +241,11 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 				ps.setDate(++index, JdbcUtil.getDate(fromDate));
 				ps.setDate(++index, JdbcUtil.getDate(DateUtil.addDays(toDate, 1)));
 			}
+
+			if (StringUtils.isNotEmpty(user) && "A".equals(stage)) {
+				ps.setString(++index, user);
+			}
+
 		}, (rs, rowNum) -> {
 			FileUploadHeader ruh = new FileUploadHeader();
 
@@ -273,7 +278,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	}
 
 	private StringBuilder prepareWhereClause(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate, String stage) {
+			Date toDate, String stage, String user) {
 		StringBuilder whereClause = new StringBuilder();
 
 		if (CollectionUtils.isNotEmpty(roleCodes)) {
@@ -302,6 +307,10 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			whereClause.append(" (uh.CreatedOn >= ? and uh.CreatedOn < ?)");
 		}
 
+		if (StringUtils.isNotEmpty(user) && "A".equals(stage)) {
+			whereClause.append(" and ");
+			whereClause.append(" su.UsrLogin = ?");
+		}
 		return whereClause;
 	}
 

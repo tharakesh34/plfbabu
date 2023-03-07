@@ -1,6 +1,7 @@
 package com.pennant.pff.lpp.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +29,12 @@ import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.lpp.PenaltyTypes;
 import com.pennant.pff.lpp.dao.LPPUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.RequestSource;
-import com.pennanttech.pff.overdue.constants.ChargeType;
 
 public class LPPUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(LPPUploadServiceImpl.class);
@@ -83,9 +84,29 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				}
 
 				try {
+					header.setSuccessRecords(sucessRecords);
+					header.setFailureRecords(failRecords);
+
+					StringBuilder remarks = new StringBuilder("Process Completed");
+
+					if (failRecords > 0) {
+						remarks.append(" with exceptions, ");
+					}
+
+					remarks.append(" Total Records : ").append(header.getTotalRecords());
+					remarks.append(" Success Records : ").append(sucessRecords);
+					remarks.append(" Failed Records : ").append(failRecords);
+
+					logger.info("Processed the File {}", header.getFileName());
+
 					txStatus = transactionManager.getTransaction(txDef);
 
 					lppUploadDAO.update(details);
+
+					List<FileUploadHeader> headerList = new ArrayList<>();
+					headerList.add(header);
+					updateHeader(headers, true);
+
 					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
@@ -96,39 +117,6 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				} finally {
 					txStatus = null;
 				}
-
-				header.setSuccessRecords(sucessRecords);
-				header.setFailureRecords(failRecords);
-
-				StringBuilder remarks = new StringBuilder("Process Completed");
-
-				if (failRecords > 0) {
-					remarks.append(" with exceptions, ");
-				}
-
-				remarks.append(" Total Records : ").append(header.getTotalRecords());
-				remarks.append(" Success Records : ").append(sucessRecords);
-				remarks.append(" Failed Records : ").append(failRecords);
-
-				logger.info("Processed the File {}", header.getFileName());
-			}
-
-			try {
-				txStatus = transactionManager.getTransaction(txDef);
-
-				updateHeader(headers, true);
-
-				logger.info("LPP Process is Initiated");
-
-				transactionManager.commit(txStatus);
-			} catch (Exception e) {
-				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
-
-				if (txStatus != null) {
-					transactionManager.rollback(txStatus);
-				}
-			} finally {
-				txStatus = null;
 			}
 
 		}).start();
@@ -171,6 +159,11 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		pr.setRequestSource(RequestSource.UPLOAD);
 
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", false);
+
+		if (fm == null) {
+			setError(detail, LPPUploadError.LPP02);
+			return;
+		}
 
 		fm.setUserDetails(detail.getUserDetails());
 		fm.setNewRecord(false);
@@ -309,11 +302,17 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		BigDecimal amountOrPercent = detail.getAmountOrPercent();
 		String calculatedOn = detail.getCalculatedOn();
 
+		BigDecimal maxWaiver = detail.getMaxWaiver();
+
+		if (maxWaiver == null) {
+			maxWaiver = BigDecimal.ZERO;
+		}
+
 		if (PennantConstants.NO.equals(detail.getApplyOverDue())
 				&& (StringUtils.isNotBlank(reference) || StringUtils.isNotBlank(loanType))) {
 			if (StringUtils.isNotBlank(calculatedOn) || (StringUtils.isNotBlank(detail.getIncludeGraceDays()))
 					|| (StringUtils.isNotBlank(penaltyType)) || StringUtils.isNotBlank(detail.getAllowWaiver())
-					|| (detail.getMaxWaiver().compareTo(BigDecimal.ZERO)) > 0 || detail.getGraceDays() > 0
+					|| (maxWaiver.compareTo(BigDecimal.ZERO)) > 0 || detail.getGraceDays() > 0
 					|| amountOrPercent.compareTo(BigDecimal.ZERO) > 0) {
 				setError(detail, LPPUploadError.LPP09);
 				return;
@@ -339,30 +338,32 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 
-			if (allowWaiver && StringUtils.isBlank(String.valueOf(detail.getMaxWaiver()))) {
+			if (allowWaiver && StringUtils.isBlank(String.valueOf(maxWaiver))) {
 				setError(detail, LPPUploadError.LPP18);
 				return;
-			} else if (allowWaiver && (detail.getMaxWaiver().compareTo(BigDecimal.ZERO) < 0
-					|| detail.getMaxWaiver().compareTo(new BigDecimal(100)) > 0)) {
+			} else if (allowWaiver
+					&& (maxWaiver.compareTo(BigDecimal.ZERO) < 0 || maxWaiver.compareTo(new BigDecimal(100)) > 0)) {
 				setError(detail, LPPUploadError.LPP10);
 				return;
 			}
 
-			if (StringUtils.isNotBlank(String.valueOf(detail.getMaxWaiver()))) {
-				if (!allowWaiver && detail.getMaxWaiver().compareTo(BigDecimal.ZERO) > 0) {
+			if (StringUtils.isNotBlank(String.valueOf(maxWaiver))) {
+				if (!allowWaiver && maxWaiver.compareTo(BigDecimal.ZERO) > 0) {
 					setError(detail, LPPUploadError.LPP11);
 					return;
 				}
 			}
 
-			if (StringUtils.isBlank(penaltyType)) {
+			PenaltyTypes lppType = PenaltyTypes.getTypes(penaltyType);
+
+			if (lppType == null) {
 				setError(detail, LPPUploadError.LPP05);
 				return;
 			}
 
-			switch (penaltyType) {
-			case ChargeType.FLAT:
-			case ChargeType.FLAT_ON_PD_MTH:
+			switch (lppType) {
+			case FLAT:
+			case FLAT_ON_PD_MTH:
 				amountOrPercent = amountOrPercent.divide(new BigDecimal(100));
 				if ((amountOrPercent.compareTo(BigDecimal.ZERO)) < 0
 						|| (amountOrPercent.compareTo(new BigDecimal(9999999)) > 0)) {
@@ -376,10 +377,10 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				}
 
 				break;
-			case ChargeType.PERC_ONE_TIME:
-			case ChargeType.PERC_ON_PD_MTH:
-			case ChargeType.PERC_ON_DUE_DAYS:
-			case ChargeType.PERC_ON_EFF_DUE_DAYS:
+			case PERC_ONE_TIME:
+			case PERC_ON_PD_MTH:
+			case PERC_ON_DUE_DAYS:
+			case PERC_ON_EFF_DUE_DAYS:
 				amountOrPercent = amountOrPercent.divide(new BigDecimal(100));
 				if ((amountOrPercent.compareTo(BigDecimal.ZERO)) <= 0
 						|| (amountOrPercent.compareTo(new BigDecimal(100)) > 0)) {

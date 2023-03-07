@@ -56,12 +56,9 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
-import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.JointAccountDetailDAO;
-import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
@@ -88,7 +85,6 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.customermasters.impl.CustomerDataService;
@@ -122,19 +118,15 @@ import com.rits.cloning.Cloner;
 public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService implements FinanceMaintenanceService {
 	private static final Logger logger = LogManager.getLogger(FinanceMaintenanceServiceImpl.class);
 
-	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceWriteoffDAO financeWriteoffDAO;
 	private GuarantorDetailDAO guarantorDetailDAO;
 	private JointAccountDetailDAO jointAccountDetailDAO;
 	private FlagDetailValidation flagDetailValidation;
 	private FinJointAccountDetailValidation finJointAccountDetailValidation;
 	private FinGuarantorDetailValidation finGuarantorDetailValidation;
-	private FinFlagDetailsDAO finFlagDetailsDAO;
 	private MandateDAO mandateDAO;
-	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ChequeHeaderDAO chequeHeaderDAO;
-	private VehicleDealerService vehicleDealerService;
 	private ISRADetailService israDetailService;
 	private CustomerDataService customerDataService;
 	private CollateralSetupService collateralSetupService;
@@ -2085,10 +2077,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return financeMainDAO.getSchdVersion(finID);
 	}
 
-	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-
 	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
 		this.financeWriteoffDAO = financeWriteoffDAO;
 	}
@@ -2108,10 +2096,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return this.flagDetailValidation;
 	}
 
-	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {
-		this.finFlagDetailsDAO = finFlagDetailsDAO;
-	}
-
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
 	}
@@ -2126,10 +2110,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 	public void setFinJointAccountDetailValidation(FinJointAccountDetailValidation finJointAccountDetailValidation) {
 		this.finJointAccountDetailValidation = finJointAccountDetailValidation;
-	}
-
-	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
-		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
 
 	public FinGuarantorDetailValidation getFinGuarantorDetailValidation() {
@@ -2150,10 +2130,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
-	}
-
-	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
-		this.vehicleDealerService = vehicleDealerService;
 	}
 
 	public void setIsraDetailService(ISRADetailService israDetailService) {

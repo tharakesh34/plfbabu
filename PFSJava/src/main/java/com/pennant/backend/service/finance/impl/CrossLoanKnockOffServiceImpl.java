@@ -488,7 +488,8 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		rud.setReceivedDate(appDate);
 		rud.setReceiptAmount(clku.getExcessAmount());
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rud.setReceiptMode(ReceiptMode.EXCESS);
+		rud.setReceiptMode((RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clku.getExcessType())) ? ReceiptMode.EXCESS
+				: ReceiptMode.PAYABLE);
 		rud.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		rud.setReceiptChannel(PennantConstants.List_Select);
@@ -524,8 +525,14 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		fsi.setLoggedInUser(clku.getUserDetails());
 		fsi.setKnockOffReceipt(true);
 		fsi.setUploadAllocationDetails(list);
-		fsi.setReceiptDetail(null);
-		fsi.setReceiptDetails(receiptService.prepareReceiptDetails(clku.getExcessList(), rud));
+
+		if (ReceiptMode.EXCESS.equals(rud.getReceiptMode())) {
+			fsi.setReceiptDetail(null);
+			fsi.setReceiptDetails(receiptService.prepareReceiptDetails(clku.getExcessList(), rud));
+		} else if (ReceiptMode.PAYABLE.equals(rud.getReceiptMode())) {
+			fsi.setAdviseId(clku.getManualAdvise().getAdviseID());
+		}
+
 		fsi.setKnockOffReceipt(true);
 		fsi.setKnockoffType(KnockOffType.CROSS_LOAN.code());
 

@@ -55,7 +55,7 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 		for (Cell cell : headerRow) {
 			rowCell = row.getCell(readColumn);
 
-			if (cell.getColumnIndex() > 4) {
+			if (cell.getColumnIndex() > 5) {
 				break;
 			}
 
@@ -82,6 +82,13 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 				break;
 			case 4:
 				clku.setAllocationType(rowCell.toString());
+				break;
+
+			case 5:
+				String strAdviseID = rowCell.toString();
+				if (strAdviseID != null && StringUtils.isNotEmpty(strAdviseID)) {
+					clku.setAdviseId(Long.valueOf(strAdviseID));
+				}
 				break;
 			default:
 				break;
