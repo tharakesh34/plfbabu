@@ -424,7 +424,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 		List<FinExcessAmount> excessList = clku.getExcessList();
 		CrossLoanTransfer clt = new CrossLoanTransfer();
-		BigDecimal excessAmount = getExcessAmount(excessList, BigDecimal.ZERO);
+
 		ManualAdvise ma = clku.getManualAdvise();
 
 		if (CollectionUtils.isNotEmpty(excessList)) {
@@ -432,7 +432,8 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			clt.setExcessAmount(getAmount(clku));
 			clt.setUtiliseAmount(getUtilizedAmount(clku, excessList, BigDecimal.ZERO));
 			clt.setReserveAmount(getReservedAmount(excessList, BigDecimal.ZERO));
-			clt.setAvailableAmount(getBalanceAmount(clku, BigDecimal.ZERO, excessAmount));
+			clt.setAvailableAmount(
+					getBalanceAmount(clku, BigDecimal.ZERO, getExcessAmount(excessList, BigDecimal.ZERO)));
 			clt.setFinExcessAmountList(excessList);
 			for (FinExcessAmount fea : excessList) {
 				if (fea.getExcessID() == clt.getExcessId()) {
