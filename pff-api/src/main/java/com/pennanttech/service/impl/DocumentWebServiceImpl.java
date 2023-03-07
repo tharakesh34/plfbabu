@@ -11,6 +11,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.validation.GetFinDocumentDetailsGroup;
 import com.pennant.validation.ValidationUtility;
@@ -22,7 +23,6 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pffws.DocumentRestService;
 import com.pennanttech.pffws.DocumentSoapService;
-import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.DocumentList;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -172,24 +172,74 @@ public class DocumentWebServiceImpl extends ExtendedTestClass implements Documen
 		return response;
 	}
 
-	@Autowired
-	public void setValidationUtility(ValidationUtility validationUtility) {
-		this.validationUtility = validationUtility;
-	}
+	private WSReturnStatus validateFinDocument(DocumentDetails documentDetails) {
+		logger.debug(Literal.ENTERING);
 
-	@Autowired
-	public void setDocumentController(DocumentController documentController) {
-		this.documentController = documentController;
-	}
+		AuditDetail auditDetail = null;
 
-	@Autowired
-	public void setDocumentService(DocumentService documentService) {
-		this.documentService = documentService;
-	}
+		if (StringUtils.isEmpty(documentDetails.getFinReference())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
 
-	@Autowired
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
+		if (StringUtils.isEmpty(documentDetails.getDocCategory())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "docCategory";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else if (documentDetails.getDocCategory().length() > 50) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "docCategory";
+			valueParm[1] = "50";
+			return APIErrorHandlerService.getFailedStatus("90300", valueParm);
+		}
+
+		if (StringUtils.isEmpty(documentDetails.getDoctype())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "docFormat";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else if (documentDetails.getDoctype().length() > 10) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "docFormat";
+			valueParm[1] = "10";
+			return APIErrorHandlerService.getFailedStatus("90300", valueParm);
+		}
+
+		if (StringUtils.isEmpty(documentDetails.getDocName())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "docName";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else if (documentDetails.getDocName().length() > 300) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "docName";
+			valueParm[1] = "300";
+			return APIErrorHandlerService.getFailedStatus("90300", valueParm);
+		}
+
+		// validate finReference
+		if (StringUtils.isNotBlank(documentDetails.getReferenceId())) {
+			Long finID = financeMainDAO.getActiveFinID(documentDetails.getReferenceId(), TableType.VIEW);
+			if (finID == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "finreference: " + documentDetails.getReferenceId();
+				return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+			}
+		} else {
+			String[] valueParm = new String[2];
+			valueParm[0] = "finreference ";
+			valueParm[1] = documentDetails.getReferenceId();
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		// Document Details Validation
+		auditDetail = documentService.doDocumentValidation(documentDetails);
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Override
@@ -208,17 +258,43 @@ public class DocumentWebServiceImpl extends ExtendedTestClass implements Documen
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
+		FinanceDetail financeDetail = new FinanceDetail();
+		financeDetail.setFinReference(documentDetails.getReferenceId());
+
 		for (DocumentDetails doc : documentDetails.getDocuments()) {
 			doc.setFinReference(documentDetails.getReferenceId());
 			doc.setReferenceId(documentDetails.getReferenceId());
-			WSReturnStatus ws = addDocument(doc);
-			if (!APIConstants.RES_SUCCESS_CODE.equals(ws.getReturnCode())) {
-				return ws;
+			WSReturnStatus status = validateFinDocument(doc);
+			if (status != null) {
+				return status;
 			}
 		}
 
+		financeDetail.setDocumentDetailsList(documentDetails.getDocuments());
+		WSReturnStatus status = documentController.processFinDocumentDetails(financeDetail);
+
 		logger.debug(Literal.LEAVING);
-		return APIErrorHandlerService.getSuccessStatus();
+		return status;
+	}
+
+	@Autowired
+	public void setValidationUtility(ValidationUtility validationUtility) {
+		this.validationUtility = validationUtility;
+	}
+
+	@Autowired
+	public void setDocumentController(DocumentController documentController) {
+		this.documentController = documentController;
+	}
+
+	@Autowired
+	public void setDocumentService(DocumentService documentService) {
+		this.documentService = documentService;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }
