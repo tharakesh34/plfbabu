@@ -18893,7 +18893,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (collateralHeaderDialogCtrl != null) {
 			custElibCheck.setExtendedFields(collateralHeaderDialogCtrl.getRules());
 		} else {
-			custElibCheck.addExtendedField("Collaterals_Total_Assigned", 0);
+			custElibCheck.addExtendedField("Collaterals_Total_Assigned", BigDecimal.ZERO);
 			custElibCheck.addExtendedField("Collaterals_Total_UN_Assigned", 0);
 			custElibCheck.addExtendedField("Collateral_Bank_Valuation", 0);
 			custElibCheck.addExtendedField("Collateral_Average_LTV", 0);
