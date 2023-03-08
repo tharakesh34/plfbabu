@@ -14174,4 +14174,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#220270" author="Gopal.p">
+		<sql>
+			<![CDATA[
+              	UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'PAN' WHERE SYSPARMCODE = 'CUST_PRIMARY_ID_RETL_DOC_TYPE';   
+              	UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'PAN' WHERE SYSPARMCODE = 'CUST_PRIMARY_ID_CORP_DOC_TYPE';   
+            ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
