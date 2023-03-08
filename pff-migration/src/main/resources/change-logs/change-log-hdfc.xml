@@ -702,10 +702,10 @@
 	</changeSet>
 	
 	
-	<changeSet id="PSD#207349" author="saikrishna.b">
+	<changeSet id="PSD#207349.1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
-				UPDATE JOB_DETAILS SET CRON_EXPRESSION = '0 */5 * ? * *' WHERE JOBKEY = 'USER_AUTO_LOCKING_JOB';
+				UPDATE JOB_DETAILS SET CRON_EXPRESSION = '0 0 0/1 1/1 * ? *' WHERE JOBKEY = 'USER_AUTO_LOCKING_JOB';
 			]]>
 		</sql>
 	</changeSet>
