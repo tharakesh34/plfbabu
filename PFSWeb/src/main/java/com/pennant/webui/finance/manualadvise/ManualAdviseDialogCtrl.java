@@ -465,10 +465,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				this.feeTypeID.setAttribute("TaxApplicable", feeType.isTaxApplicable());
 				this.feeTypeID.setAttribute("TDSApplicable", feeType.isTdsReq());
 				this.feeTypeID.setAttribute("TaxComponent", feeType.getTaxComponent());
-			} else {
-				this.feeTypeID.setAttribute("TaxApplicable", false);
-				this.feeTypeID.setAttribute("TDSApplicable", false);
-				this.feeTypeID.setAttribute("TaxComponent", "");
 			}
 		}
 
