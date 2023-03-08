@@ -358,10 +358,19 @@ public class ReceiptCalculator {
 					if (allocate.getAllocationType().equals(alloc.getAllocationType())
 							&& allocate.getAllocationTo() == alloc.getAllocationTo()) {
 						if (!receiptData.isForeClosure()) {
-							allocate.setPaidAmount(alloc.getPaidAmount());
-							allocate.setTotalPaid(alloc.getPaidAmount().add(alloc.getTdsPaid()));
-							allocate.setPaidGST(allocate.getDueGST());
-							allocate.setTdsPaid(alloc.getTdsPaid());
+							if (allocate.getAllocationType().equals(Allocation.FEE)) {
+								allocate.setWaivedAmount(alloc.getWaivedAmount());
+								allocate.setPaidAmount(alloc.getTotalDue());
+								allocate.setPaidGST(allocate.getDueGST());
+								allocate.setTotalPaid(alloc.getTotalDue().add(alloc.getTdsPaid()));
+								allocate.setTdsPaid(alloc.getTdsPaid());
+							} else {
+								allocate.setPaidAmount(alloc.getPaidAmount());
+								allocate.setPaidGST(alloc.getPaidGST());
+								allocate.setTotalPaid(alloc.getPaidAmount().add(alloc.getTdsPaid()));
+								allocate.setTdsPaid(alloc.getTdsPaid());
+							}
+
 							allocate.setWaivedAmount(alloc.getWaivedAmount());
 							allocate.setWaivedGST(alloc.getWaivedGST());
 						} else {
