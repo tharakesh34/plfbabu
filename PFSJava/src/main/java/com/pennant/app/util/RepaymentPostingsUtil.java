@@ -81,6 +81,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinOverDueChargeMovement;
 import com.pennant.backend.model.finance.FinOverDueCharges;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinStatusDetail;
@@ -91,6 +92,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.InvoiceDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RestructureDetail;
@@ -1500,6 +1502,21 @@ public class RepaymentPostingsUtil {
 					feeTypeCodes.add(rad.getFeeTypeCode());
 				}
 			}
+
+			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
+				if ("PAYABLE".equals(rcd.getPaymentType())) {
+					List<ManualAdvise> ma = rch.getPayableAdvises();
+					String feeTypeCode = "";
+					for (ManualAdvise ma1 : ma) {
+						if (ma1.getAdviseID() == rcd.getPayAgainstID()) {
+							feeTypeCode = ma1.getFeeTypeCode();
+							break;
+						}
+					}
+					feeTypeCodes.add(feeTypeCode);
+				}
+			}
+
 			if (CollectionUtils.isNotEmpty(fees)) {
 				for (FinFeeDetail finFeeDetail : fees) {
 					feeTypeCodes.add(finFeeDetail.getFeeTypeCode());

@@ -662,7 +662,14 @@ public class AccountEngineExecution implements Serializable {
 		if (rule != null) {
 			String sqlRule = rule.getSQLRule();
 			String ccy = aeEvent.getCcy();
-			txnEntry.setAccount((String) RuleExecutionUtil.executeRule(sqlRule, dataMap, ccy, RuleReturnType.STRING));
+
+			String accountNumber = (String) RuleExecutionUtil.executeRule(sqlRule, dataMap, ccy, RuleReturnType.STRING);
+
+			if ("null".equals(accountNumber.toLowerCase())) {
+				accountNumber = "";
+			}
+
+			txnEntry.setAccount(accountNumber);
 
 			if (aeEvent.isEOD()) {
 				txnEntry.setGlCode(AccountingConfigCache.getCacheAccountMapping(txnEntry.getAccount()));
