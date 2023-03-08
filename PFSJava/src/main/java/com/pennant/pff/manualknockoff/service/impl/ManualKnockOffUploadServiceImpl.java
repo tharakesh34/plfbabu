@@ -124,7 +124,13 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 		String excessType = detail.getExcessType();
 
-		if ((!"E".equals(excessType) && !"A".equals(excessType)) && (detail.getAdviseId() == null || detail.getAdviseId() <= 0)) {
+		if ("P".equals(excessType) && (detail.getAdviseId() == null || detail.getAdviseId() <= 0)) {
+			setError(detail, ManualKnockOffUploadError.MKOU_1013);
+			return;
+		}
+
+		if ((!"E".equals(excessType) && !"A".equals(excessType))
+				&& (detail.getAdviseId() == null || detail.getAdviseId() <= 0)) {
 			setError(detail, ManualKnockOffUploadError.MKOU_108);
 			return;
 		}

@@ -29,7 +29,9 @@ public enum ManualKnockOffUploadError {
 
 	MKOU_1011("Manual Advise is not found."),
 
-	MKOU_1012("Its not a payable advise");
+	MKOU_1012("Its not a payable advise"),
+
+	MKOU_1013("AdviseID is Mandatory when excess type is Payable");
 
 	private String description;
 
