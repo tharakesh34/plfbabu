@@ -122,6 +122,7 @@ import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.payment.model.LoanPayment;
 import com.pennanttech.pff.payment.service.LoanPaymentService;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class RepaymentPostingsUtil {
 	private static Logger logger = LogManager.getLogger(RepaymentPostingsUtil.class);
@@ -1504,7 +1505,7 @@ public class RepaymentPostingsUtil {
 			}
 
 			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
-				if ("PAYABLE".equals(rcd.getPaymentType())) {
+				if (ReceiptMode.PAYABLE.equals(rcd.getPaymentType())) {
 					List<ManualAdvise> ma = rch.getPayableAdvises();
 					String feeTypeCode = "";
 					for (ManualAdvise ma1 : ma) {
