@@ -131,6 +131,8 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		Long finID = financeMainDAO.getFinID(detail.getReference());
 
 		if (PennantConstants.NO.equals(detail.getApplyOverDue())) {
+			pr.setODAllowWaiver(false);
+			pr.setODIncGrcDays(false);
 			pr.setApplyODPenalty(false);
 		} else {
 			pr.setApplyODPenalty(true);
@@ -249,15 +251,15 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		if (StringUtils.isNotBlank(reference)) {
-			FinanceMain fm = financeMainDAO.getFinanceMain(reference);
-
-			if (StringUtils.isNotBlank(reference) && !fm.isFinIsActive()) {
-				setError(detail, LPPUploadError.LPP12);
-				return;
-			}
+			FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
 
 			if (StringUtils.isNotBlank(reference) && fm == null) {
 				setError(detail, LPPUploadError.LPP02);
+				return;
+			}
+
+			if (StringUtils.isNotBlank(reference) && !fm.isFinIsActive()) {
+				setError(detail, LPPUploadError.LPP12);
 				return;
 			}
 
