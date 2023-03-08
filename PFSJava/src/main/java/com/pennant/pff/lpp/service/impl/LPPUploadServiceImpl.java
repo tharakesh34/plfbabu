@@ -346,7 +346,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				setError(detail, LPPUploadError.LPP18);
 				return;
 			} else if (allowWaiver
-					&& (maxWaiver.compareTo(BigDecimal.ZERO) < 0 || maxWaiver.compareTo(new BigDecimal(100)) > 0)) {
+					&& (maxWaiver.compareTo(BigDecimal.ZERO) <= 0 || maxWaiver.compareTo(new BigDecimal(100)) > 0)) {
 				setError(detail, LPPUploadError.LPP10);
 				return;
 			}
