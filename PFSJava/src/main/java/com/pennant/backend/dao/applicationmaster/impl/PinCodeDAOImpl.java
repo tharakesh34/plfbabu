@@ -253,7 +253,7 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		sql.append(" pinCodeId, pinCode, city, areaName, active,groupId, serviceable,");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append("pCCountry,pCProvince,");
+			sql.append(" pCCountry, pCProvince, LovDescPCProvinceName, pCCityName,");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");

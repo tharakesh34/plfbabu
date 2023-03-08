@@ -45,10 +45,10 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
+import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
@@ -57,6 +57,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.masters.LocalityDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
@@ -70,6 +71,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -85,7 +87,6 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -128,6 +129,7 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.masters.Locality;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonHeader;
@@ -255,7 +257,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	private RuleDAO ruleDAO;
 	private TechnicalVerificationDAO technicalVerificationDAO;
 	private CollateralAssignmentDAO collateralAssignmentDAO;
-	private DocumentManagerDAO documentManagerDAO;
+	private PinCodeDAO pinCodeDAO;
+	private LocalityDAO localityDAO;
 
 	public FinanceDetail doCreateFinance(FinanceDetail fd, boolean loanWithWIF) {
 		logger.info(Literal.ENTERING);
@@ -4582,6 +4585,20 @@ public class CreateFinanceController extends SummaryDetailService {
 						.getTvListByCollRefAndFinRef(setup.getCollateralRef(), finReference);
 
 				setup.setVerificationList(tvList);
+
+				String areaLocalty = (String) setup.getExtendedFieldRenderList().get(0).getMapValues()
+						.get("AREALOCALTY");
+				String pinCode = (String) setup.getExtendedFieldRenderList().get(0).getMapValues().get("PINCODE");
+
+				if (areaLocalty != null) {
+					Locality locality = localityDAO.getLocality(Integer.valueOf(areaLocalty), "");
+					setup.setAreaLocalityName(locality.getName());
+				}
+				PinCode pincode = pinCodeDAO.getPinCode(pinCode, "_AView");
+				if (pincode != null) {
+					setup.setStateName(pincode.getLovDescPCProvinceName());
+					setup.setCityName(pincode.getpCCityName());
+				}
 			}
 
 			financeDetail.setCollaterals(collateralSetupList);
@@ -4595,19 +4612,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		logger.debug("Leaving");
 		return financeDetail;
-	}
-
-	private void setDocUri(FinanceDetail financeDetail) {
-		if (CollectionUtils.isNotEmpty(financeDetail.getDocumentDetailsList())) {
-			for (DocumentDetails docDetails : financeDetail.getDocumentDetailsList()) {
-				if (StringUtils.isBlank(docDetails.getDocUri())) {
-					DocumentManager docManager = documentManagerDAO.getById(docDetails.getDocRefId());
-					if (null != docManager) {
-						docDetails.setDocUri(docManager.getDocURI());
-					}
-				}
-			}
-		}
 	}
 
 	public AuditHeader getAuditHeader(String finreference) {
@@ -4890,9 +4894,22 @@ public class CreateFinanceController extends SummaryDetailService {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
 	}
 
+	public PinCodeDAO getPinCodeDAO() {
+		return pinCodeDAO;
+	}
+
 	@Autowired
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
+	}
+
+	public LocalityDAO getLocalityDAO() {
+		return localityDAO;
+	}
+
+	@Autowired
+	public void setLocalityDAO(LocalityDAO localityDAO) {
+		this.localityDAO = localityDAO;
 	}
 
 }
