@@ -183,11 +183,12 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 
 		StringBuilder insertSql = new StringBuilder("Insert Into DocumentDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId, FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal, DocBarcode, Remarks");
+		insertSql.append("(DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId, FinEvent, DocImage");
+		insertSql.append(", DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal, DocBarcode, Remarks");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID)");
-		insertSql.append(" Values(:DocId, :DocModule, :DocCategory, :Doctype, :DocName, :ReferenceId, :FinEvent,");
+		insertSql.append(
+				" Values(:DocId, :DocModule, :DocCategory, :Doctype, :DocName, :ReferenceId, :FinEvent, :DocImage,");
 		insertSql.append(
 				" :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived , :docOriginal, :DocBarcode , :Remarks, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId, :instructionUID)");
