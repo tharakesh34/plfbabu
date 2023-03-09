@@ -1293,7 +1293,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 				if (null != detail.getFinScheduleData()
 						&& CollectionUtils.isNotEmpty(detail.getFinScheduleData().getFinFeeDetailList())) {
-					setFeeChargeDetails(agreement, formatter, detail.getFinScheduleData().getFinFeeDetailList());
+					totalDeduction = setFeeChargeDetails(agreement, formatter,
+							detail.getFinScheduleData().getFinFeeDetailList());
 				}
 			}
 			if (CollectionUtils.isEmpty(agreement.getCusCharges())) {
@@ -2802,6 +2803,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								.concat(StringUtils.trimToEmpty(legalVerification.getAgentName())));
 						verificationData
 								.setVerifiedDate(DateUtil.formatToLongDate(legalVerification.getVerificationDate()));
+						verificationData
+								.setCollateralReference(StringUtils.trimToEmpty(legalVerification.getReferenceFor()));
+
 					}
 					agreement.getLegalVerification().add(verificationData);
 					break;
@@ -3615,10 +3619,11 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void setFeeChargeDetails(AgreementDetail agreement, int formatter, List<FinFeeDetail> finFeeDetails) {
+	private BigDecimal setFeeChargeDetails(AgreementDetail agreement, int formatter, List<FinFeeDetail> finFeeDetails) {
 		BigDecimal vasPremium = BigDecimal.ZERO;
+		BigDecimal totalDeduction = BigDecimal.ZERO;
 		if (CollectionUtils.isEmpty(finFeeDetails)) {
-			return;
+			return BigDecimal.ZERO;
 		}
 
 		for (FinFeeDetail fee : finFeeDetails) {
@@ -3632,7 +3637,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			}
 			charge.setChargeAmt(PennantApplicationUtil.amountFormate(fee.getActualAmount(), formatter));
 			String scheduleMethod = fee.getFeeScheduleMethod();
-			BigDecimal totalDeduction = BigDecimal.ZERO;
+
 			if (StringUtils.isNotBlank(scheduleMethod) && scheduleMethod.equals("DISB")) {
 				totalDeduction = totalDeduction.add(fee.getRemainingFee());
 			}
@@ -3672,6 +3677,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 		}
 		agreement.setVasPremium(amountFormate(vasPremium, formatter));
+		return totalDeduction;
 	}
 
 	private void setRepaymentDetails(AgreementDetail agreement, Mandate mandate) {
