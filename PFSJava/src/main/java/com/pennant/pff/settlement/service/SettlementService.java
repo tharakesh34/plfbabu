@@ -34,4 +34,12 @@ public interface SettlementService {
 	boolean isValidSettlementProcess(FinSettlementHeader fsh);
 
 	FinSettlementHeader loadDataForCancellation(long finID, Date settlementDate);
+
+	long getQueueCount();
+
+	int updateThreadID(long from, long to, int threadID);
+
+	long prepareQueue();
+
+	void updateProgress(long settlementId, int progress);
 }

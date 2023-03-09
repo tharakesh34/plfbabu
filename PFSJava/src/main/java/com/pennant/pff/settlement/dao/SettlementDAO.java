@@ -32,9 +32,17 @@ public interface SettlementDAO {
 
 	List<SettlementAllocationDetail> getSettlementAllcDetailByHdrID(long headerId, String tableType);
 
-
 	boolean isSettlementTypeUsed(long settlementType, TableType tableType);
 
 	void updateSettlementStatus(long finId, String status);
 
+	void deleteQueue();
+
+	long prepareQueue();
+
+	long getQueueCount();
+
+	int updateThreadID(long from, long to, int threadID);
+
+	void updateProgress(long finID, int progress);
 }

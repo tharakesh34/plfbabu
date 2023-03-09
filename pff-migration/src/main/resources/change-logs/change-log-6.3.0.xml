@@ -14183,4 +14183,63 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#909.0" author="sravanthi.g">
+		<createTable tableName="OTS_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+				</column>
+			<column name="SettlementID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ThreadID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#909.1" author="sravanthi.g">
+		<addPrimaryKey tableName="OTS_QUEUE" columnNames="Id" constraintName="pk_ots_queue"/>
+	</changeSet>
+
+	<changeSet id="ST#909.2" author="sravanthi.g" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE OTS_QUEUE ADD CONSTRAINT DF_OTS_QUE_TID DEFAULT 0 FOR THREADID;
+				ALTER TABLE OTS_QUEUE ADD CONSTRAINT DF_OTS_QUE_PRO DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#909.2" author="sravanthi.g" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ThreadID" tableName="OTS_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="Progress" tableName="OTS_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#909.3" author="sravanthi.g">
+		<createIndex tableName="OTS_QUEUE" indexName="idx_ots_queue_tid">
+			<column name="ThreadID" type="int" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#909.4" author="sravanthi.g">
+		<createIndex tableName="OTS_QUEUE" indexName="idx_ots_queue_sid_progress">
+			<column name="SettlementID" type="bigint" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#909.5" author="sravanthi.g">
+		<sql>
+		    <![CDATA[
+		        DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'OTS_THREAD_COUNT';
+                INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('OTS_THREAD_COUNT', 'Ots Thread Count', 'string', 0, '10', 3, 0, NULL, NULL, 'Ots Thread Count', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		     ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

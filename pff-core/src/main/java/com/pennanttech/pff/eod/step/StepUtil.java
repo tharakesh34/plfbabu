@@ -52,6 +52,8 @@ public class StepUtil {
 
 	public static final DataEngineStatus NPA_CLASSIFICATION = new DataEngineStatus("NPA_CLASSIFICATION");
 
+	public static final DataEngineStatus OTS = new DataEngineStatus("OTS");
+
 	public static final DataEngineStatus EFF_NPA_CLASSIFICATION = new DataEngineStatus("EFF_NPA_CLASSIFICATION");
 
 	public static final DataEngineStatus PROVISION_CALC = new DataEngineStatus("PROVISION_CALC");

@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.settlement.dao.SettlementDAO;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.pff.settlement.model.SettlementAllocationDetail;
@@ -21,6 +22,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -448,5 +450,81 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 			ps.setString(index++, status);
 			ps.setLong(index++, finId);
 		});
+	}
+
+	@Override
+	public void deleteQueue() {
+		this.jdbcOperations.update("Delete From OTS_QUEUE");
+	}
+
+	@Override
+	public long prepareQueue() {
+		String sql = "Insert Into OTS_QUEUE (Id, SettlementID) Select row_number() over(order by ID) ID, Id From (Select Id From Fin_Settlement_Header Where SettlementStatus = 'I') T";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.update(sql);
+	}
+
+	@Override
+	public long getQueueCount() {
+		String sql = "Select count(SettlementID) From OTS_QUEUE where Progress = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+		
+		return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
+	}
+
+	@Override
+	public int updateThreadID(long from, long to, int threadId) {
+		String sql = "Update OTS_QUEUE Set ThreadId = ? Where ID > ? and ID <= ?  and ThreadId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.update(sql, threadId, from, to, 0);
+		} catch (DataAccessException dae) {
+			logger.error(Literal.EXCEPTION, dae);
+			return 0;
+		}
+	}
+
+	@Override
+	public void updateProgress(long settlementId, int progress) {
+		String sql = null;
+		
+		if (progress == EodConstants.PROGRESS_IN_PROCESS) {
+			sql = "Update OTS_QUEUE Set Progress = ?, StartTime = ? Where SettlementID = ? and Progress = ?";
+
+			logger.debug(Literal.SQL.concat(sql));
+
+			this.jdbcOperations.update(sql, ps -> {
+				ps.setInt(1, progress);
+				ps.setDate(2, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setLong(3, settlementId);
+				ps.setInt(4, EodConstants.PROGRESS_WAIT);
+			});
+		} else if (progress == EodConstants.PROGRESS_SUCCESS) {
+			sql = "Update OTS_QUEUE Set EndTime = ?, Progress = ? where SettlementID = ?";
+
+			logger.debug(Literal.SQL.concat(sql));
+
+			this.jdbcOperations.update(sql, ps -> {
+				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setInt(2, EodConstants.PROGRESS_SUCCESS);
+				ps.setLong(3, settlementId);
+			});
+		} else if (progress == EodConstants.PROGRESS_FAILED) {
+			sql = "Update OTS_QUEUE Set EndTime = ?, ThreadId = ?, Progress = ? Where SettlementID = ?";
+
+			logger.debug(Literal.SQL.concat(sql));
+
+			this.jdbcOperations.update(sql, ps -> {
+				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setInt(2, 0);
+				ps.setInt(3, EodConstants.PROGRESS_WAIT);
+				ps.setLong(4, settlementId);
+			});
+		}
 	}
 }

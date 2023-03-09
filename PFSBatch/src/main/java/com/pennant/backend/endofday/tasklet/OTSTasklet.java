@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.DataSource;
 
@@ -21,6 +23,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.pff.settlement.model.SettlementAllocationDetail;
 import com.pennant.pff.settlement.service.SettlementService;
@@ -36,13 +39,16 @@ public class OTSTasklet implements Tasklet {
 	private DataSource dataSource;
 	private SettlementService settlementService;
 
+	private static final String QUEUE_QUERY = "Select SettlementID From OTS_Queue Where ThreadID = ? and Progress = ?";
+
 	private static final String START_MSG = "OTS Process started at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String FAILED_MSG = "OTS Process failed on {} for the FinReference {}";
 	private static final String SUCCESS_MSG = "OTS Process completed at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String EXCEPTION_MSG = "OTS Process failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\nLocalizedMessage {}\nStackTrace {}";
 
-	private static final String QUEUE_QUERY = "Select ID From Fin_Settlement_Header Where SettlementStatus = ?";
+	public static AtomicLong processedCount = new AtomicLong(0);
+	public static AtomicLong failedCount = new AtomicLong(0);
 
 	public OTSTasklet() {
 		super();
@@ -51,12 +57,15 @@ public class OTSTasklet implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, chunkContext);
+		Map<String, Object> stepExecutionContext = chunkContext.getStepContext().getStepExecutionContext();
 
 		if (!eventProperties.isAllowOTSOnEOD()) {
 			return RepeatStatus.FINISHED;
 		}
 
 		Date appDate = eventProperties.getAppDate();
+
+		final int threadId = Integer.parseInt(stepExecutionContext.get(EodConstants.THREAD).toString());
 
 		String strSysDate = DateUtil.format(appDate, DateFormat.LONG_DATE_TIME);
 		String strAppDate = DateUtil.formatToLongDate(appDate);
@@ -77,13 +86,16 @@ public class OTSTasklet implements Tasklet {
 			return rs.getLong(1);
 		});
 		itemReader.setPreparedStatementSetter(ps -> {
-			ps.setString(1, "I");
+			ps.setLong(1, threadId);
+			ps.setInt(2, EodConstants.PROGRESS_WAIT);
 		});
 
 		itemReader.open(chunkContext.getStepContext().getStepExecution().getExecutionContext());
 
 		Long id = null;
 		while ((id = itemReader.read()) != null) {
+			settlementService.updateProgress(id, EodConstants.PROGRESS_IN_PROCESS);
+			
 			FinSettlementHeader fsh = settlementService.getsettlementById(id);
 
 			if (fsh == null) {
@@ -119,7 +131,8 @@ public class OTSTasklet implements Tasklet {
 				if (validSettlementCancellation) {
 					settlementService.processSettlementCancellation(fsh);
 				}
-
+				
+				settlementService.updateProgress(id, EodConstants.PROGRESS_SUCCESS);
 				transactionManager.commit(txStatus);
 			} catch (Exception e) {
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
@@ -131,6 +144,7 @@ public class OTSTasklet implements Tasklet {
 					transactionManager.rollback(txStatus);
 				}
 
+				settlementService.updateProgress(id, EodConstants.PROGRESS_FAILED);
 				logger.info(FAILED_MSG, strSysDate, fsh.getFinID());
 			} finally {
 				txStatus = null;

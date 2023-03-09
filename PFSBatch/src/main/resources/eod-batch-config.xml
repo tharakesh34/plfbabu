@@ -77,13 +77,18 @@
 
 		<step id="processInActiveFinances">
 			<tasklet ref="processInActiveFinancesTaskLet" />
+			<next on="*" to="oTSQueue" />
+			<fail on="FAILED" />
+		</step>
+		<step id="oTSQueue">
+			<tasklet ref="oTsQueueTasklet" />
 			<next on="*" to="oTSettlement" />
 			<fail on="FAILED" />
 		</step>
 		<step id="oTSettlement">
-			<tasklet ref="oTSTaskLet">
-				<transaction-attributes propagation="NEVER" />
-			</tasklet>
+			<partition step="oTSMaster" partitioner="otsPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
 			<next on="*" to="beforeAssetClassification" />
 			<fail on="FAILED" />
 		</step>
@@ -276,6 +281,12 @@
 			<transaction-attributes propagation="NEVER" />
 		</tasklet>
 	</step>
+	
+	<step id="oTSMaster" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="oTSTaskLet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
 
 	<step id="assetClassification" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="assetClassificationTaskLet" allow-start-if-complete="true">
@@ -315,6 +326,7 @@
 	</step>
 
 	<bean id="ledgerDownloadPartition" class="com.pennant.backend.ledger.eod.tasklet.LedgerDownloadPartition" />
-
+	
+	 <bean id="otsPartition" class="com.pennant.backend.endofday.tasklet.OTSPartition" />
 
 </beans>

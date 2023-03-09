@@ -968,4 +968,24 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
+	@Override
+	public long prepareQueue() {
+		settlementDAO.deleteQueue();
+		return settlementDAO.prepareQueue();
+	}
+
+	@Override
+	public long getQueueCount() {
+		return settlementDAO.getQueueCount();
+	}
+
+	@Override
+	public int updateThreadID(long from, long to, int threadID) {
+		return settlementDAO.updateThreadID(from, to, threadID);
+	}
+
+	@Override
+	public void updateProgress(long settlementId, int progress) {
+		settlementDAO.updateProgress(settlementId, progress);
+	}
 }
