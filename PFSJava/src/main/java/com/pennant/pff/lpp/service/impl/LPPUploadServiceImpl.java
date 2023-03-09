@@ -138,18 +138,19 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			pr.setApplyODPenalty(true);
 		}
 
-		if (PennantConstants.NO.equals(detail.getIncludeGraceDays())) {
-			pr.setODIncGrcDays(false);
-		} else {
-			pr.setODIncGrcDays(true);
-		}
+		if (PennantConstants.YES.equals(detail.getApplyOverDue())) {
+			if (PennantConstants.NO.equals(detail.getIncludeGraceDays())) {
+				pr.setODIncGrcDays(false);
+			} else {
+				pr.setODIncGrcDays(true);
+			}
 
-		if (PennantConstants.NO.equals(detail.getAllowWaiver())) {
-			pr.setODAllowWaiver(false);
-		} else {
-			pr.setODAllowWaiver(true);
+			if (PennantConstants.NO.equals(detail.getAllowWaiver())) {
+				pr.setODAllowWaiver(false);
+			} else {
+				pr.setODAllowWaiver(true);
+			}
 		}
-
 		pr.setODChargeType(detail.getPenaltyType());
 		pr.setODChargeAmtOrPerc(detail.getAmountOrPercent());
 		pr.setODChargeCalOn(detail.getCalculatedOn());
