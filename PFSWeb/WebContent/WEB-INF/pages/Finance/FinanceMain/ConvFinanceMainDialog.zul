@@ -29,6 +29,8 @@
 				.z-tabs-content { display: table; width: 2000% !important; height: 100% !important; border-collapse:
 				separate; border-spacing: 0; margin: 0; padding: 0; list-style-image: none; list-style-position:
 				outside; list-style-type: none; } .z-groupbox-content {overflow: auto;}
+				
+				.z-groupbox-notitle { border-top: 0px; }
 			</style>
 
 			<borderlayout id="borderlayoutFinanceMain" sclass="east-centered">
@@ -414,8 +416,7 @@
 									</groupbox>
 									<groupbox id="gb_basicDetails">
 										<caption label="${c:l('finKeyDetails')}" />
-										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
-											vflex="1">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
 												<column width="220px" />
 												<column />
@@ -978,8 +979,7 @@
 									</groupbox>
 									<groupbox id="gb_repaymentDetails">
 										<caption label="${c:l('finRepaymentDetails')}" />
-										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
-											vflex="1">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
 												<column width="220px" />
 												<column />
@@ -1392,8 +1392,7 @@
 									<!-- Subvention Details End -->
 									<groupbox id="gb_OverDuePenalty" visible="false" closable="true">
 										<caption label="${c:l('label_FinanceMainDialog_ODPenalty')}" />
-										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
-											vflex="1">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
 												<column width="220px" />
 												<column />
@@ -1506,8 +1505,7 @@
 									</groupbox>
 									<groupbox id="gb_ddaRequest" visible="false" closable="true">
 										<caption label="${c:l('label_FinanceMainDialog_dda')}" />
-										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
-											vflex="1">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
 												<column width="220px" />
 												<column />
@@ -1544,6 +1542,7 @@
 											</rows>
 										</grid>
 									</groupbox>
+									<space height="1px" />
 								</div>
 							</tabpanel>
 						</tabpanels>
