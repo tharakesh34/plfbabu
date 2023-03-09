@@ -173,6 +173,9 @@ public class RefundBeneficiary {
 			for (FinTypePartnerBank ftpb : fintypePartnerbank) {
 				BankBranch bb = bankBranchDAO.getPrintingLoc(pi.getFinID(), ftpb.getIssuingBankCode(), paymentType);
 
+				pi.setPartnerBankAcType(ftpb.getAccountType());
+				pi.setPartnerBankAc(ftpb.getAccountNo());
+
 				if (bb != null) {
 					pi.setPrintingLoc(bb.getBranchCode());
 					pi.setPrintingLocDesc(bb.getBranchDesc());
