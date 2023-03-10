@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -217,7 +218,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		List<FileUploadHeader> list = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
 
 			ps.setString(++index, type);
@@ -275,6 +276,8 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 			return ruh;
 		});
+
+		return list.stream().sorted((l1, l2) -> Long.compare(l2.getId(), l1.getId())).collect(Collectors.toList());
 	}
 
 	private StringBuilder prepareWhereClause(List<String> roleCodes, String entityCode, Long id, Date fromDate,

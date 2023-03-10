@@ -651,8 +651,17 @@ public class FileUploadList extends Window implements Serializable {
 
 		doWriteComponentsToBean(this.fileUploadHeader);
 
+		DataEngineImport engine = prepareDataEngine(status, processDTO);
+
 		try {
-			new Process(processDTO).run();
+			engine.checkFileSanity(status.getName());
+		} catch (AppException e) {
+			MessageUtil.showError(e.getMessage());
+			return;
+		}
+
+		try {
+			new Process(engine, processDTO).run();
 		} catch (AppException e) {
 			MessageUtil.showError(e.getMessage());
 			return;
@@ -668,6 +677,28 @@ public class FileUploadList extends Window implements Serializable {
 		doSearch(true);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private DataEngineImport prepareDataEngine(DataEngineStatus status, ProcessDTO processDTO) {
+		FileUploadHeader uploadHeader = processDTO.getHeader();
+		Date appDate = uploadHeader.getAppDate();
+		DataEngineImport engine = new DataEngineImport(processDTO.getDataSource(), processDTO.getUserID(),
+				App.DATABASE.name(), true, appDate);
+
+		engine.setExecutionStatus(status);
+		engine.setFile(uploadHeader.getFile());
+		engine.setMedia(uploadHeader.getMedia());
+		engine.setValueDate(appDate);
+
+		Map<String, Object> parameterMap = new HashMap<>();
+		parameterMap.put("HEADER_ID", uploadHeader.getId());
+
+		engine.setParameterMap(parameterMap);
+
+		if (processDTO.getService().getProcessRecord() != null) {
+			engine.setProcessRecord(processDTO.getService().getProcessRecord());
+		}
+		return engine;
 	}
 
 	private void search(boolean isApprove) {
@@ -1475,38 +1506,22 @@ public class FileUploadList extends Window implements Serializable {
 
 	private class Process implements Runnable {
 		private ProcessDTO processDTO;
+		private DataEngineImport engine;
 
-		public Process(ProcessDTO processDTO) {
+		public Process(DataEngineImport engine, ProcessDTO processDTO) {
+			this.engine = engine;
 			this.processDTO = processDTO;
 		}
 
 		@Override
 		public void run() {
 			FileUploadHeader uploadHeader = this.processDTO.getHeader();
-
 			Date appDate = uploadHeader.getAppDate();
 
 			uploadHeader.setId(this.processDTO.getService().saveHeader(uploadHeader, TableType.MAIN_TAB));
 			uploadHeader.setAppDate(appDate == null ? SysParamUtil.getAppDate() : appDate);
 
 			DataEngineStatus status = uploadHeader.getDeStatus();
-
-			DataEngineImport engine = new DataEngineImport(this.processDTO.getDataSource(), this.processDTO.getUserID(),
-					App.DATABASE.name(), true, appDate);
-
-			engine.setExecutionStatus(status);
-			engine.setFile(uploadHeader.getFile());
-			engine.setMedia(uploadHeader.getMedia());
-			engine.setValueDate(appDate);
-
-			Map<String, Object> parameterMap = new HashMap<>();
-			parameterMap.put("HEADER_ID", uploadHeader.getId());
-
-			engine.setParameterMap(parameterMap);
-
-			if (this.processDTO.getService().getProcessRecord() != null) {
-				engine.setProcessRecord(this.processDTO.getService().getProcessRecord());
-			}
 
 			try {
 				engine.importData(status.getName());
