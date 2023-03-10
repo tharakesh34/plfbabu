@@ -8634,6 +8634,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			OverdueChargeRecovery movement = new OverdueChargeRecovery();
 
 			for (FinOverDueCharges odcAmount : odcAmounts) {
+				boolean dueCreated = true;
 				if (fod.getFinODSchdDate().compareTo(odcAmount.getSchDate()) != 0) {
 					continue;
 				}
@@ -8642,7 +8643,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 				FinOverDueChargeMovement fodm = finODCAmountDAO.getFinODCAmtMovementsById(odcAmount.getId());
 
-				if (fodm != null && fodm.getMovementDate().compareTo(odcAmount.getPostDate()) != 0) {
+				if (fodm != null && fodm.getMovementDate().compareTo(odcAmount.getPostDate()) == 0) {
+					dueCreated = false;
+				}
+
+				if (dueCreated) {
 					OverdueChargeRecovery odcr = new OverdueChargeRecovery();
 					odcr.setFinID(odcAmount.getFinID());
 					odcr.setFinReference(fod.getFinReference());
