@@ -65,4 +65,7 @@ public interface ChequeDetailDAO {
 	void deleteCheques(ChequeDetail cheque);
 
 	String getChequeStatus(String chequeSerial, String accountNo);
+
+	boolean isDuplicateKeyPresent(String accountNo, String chequeSerial, TableType type);
+
 }

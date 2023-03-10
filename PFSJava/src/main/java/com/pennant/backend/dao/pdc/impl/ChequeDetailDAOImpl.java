@@ -521,4 +521,32 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		}
 	}
 
+	@Override
+	public boolean isDuplicateKeyPresent(String accountNo, String chequeSerial, TableType type) {
+		String serialNo = String.valueOf(chequeSerial);
+
+		String sql;
+
+		String whereClause = "AccountNo = ? and ChequeSerialNo = ? ";
+
+		Object[] obj = new Object[] { accountNo, serialNo };
+
+		switch (type) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("ChequeDetail", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("ChequeDetail_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "ChequeDetail_Temp", "ChequeDetail" }, whereClause);
+			obj = new Object[] { accountNo, serialNo, accountNo, serialNo };
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
+	}
+
 }

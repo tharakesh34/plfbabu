@@ -28,6 +28,7 @@ import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.cheques.dao.ChequeUploadDAO;
@@ -37,6 +38,7 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class ChequeUploadServiceImpl extends AUploadServiceImpl {
@@ -57,9 +59,8 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 			TransactionStatus txStatus = null;
 
-			Map<String, List<ChequeUpload>> map = new HashMap<>();
-
 			for (FileUploadHeader header : headers) {
+				Map<String, List<ChequeUpload>> map = new HashMap<>();
 				List<ChequeUpload> details = chequeUploadDAO.getDetails(header.getId());
 
 				header.setTotalRecords(details.size());
@@ -113,6 +114,21 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 					for (ChequeUpload upload : chequeUploads) {
 						upload.setReferenceID(finID);
 						String action = upload.getAction();
+
+						if (chequeDetailDAO.isDuplicateKeyPresent(upload.getChequeDetail().getAccountNo(),
+								upload.getChequeDetail().getChequeSerialNumber(), TableType.MAIN_TAB)) {
+
+							String[] parameters = new String[2];
+
+							parameters[0] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_AccNumber.value") + ": "
+									+ upload.getChequeDetail().getAccountNo();
+							parameters[1] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_ChequeSerialNo.value")
+									+ ": " + upload.getChequeDetail().getChequeSerialNumber();
+
+							ErrorDetail error = ErrorUtil.getError("41008", parameters);
+							setError(chequeUploads, error);
+							continue;
+						}
 
 						doValidate(header, upload);
 
