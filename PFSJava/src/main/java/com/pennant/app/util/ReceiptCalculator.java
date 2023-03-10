@@ -4116,6 +4116,13 @@ public class ReceiptCalculator {
 			return;
 		}
 
+		allocation.setPaidCGST(BigDecimal.ZERO);
+		allocation.setPaidSGST(BigDecimal.ZERO);
+		allocation.setPaidUGST(BigDecimal.ZERO);
+		allocation.setPaidIGST(BigDecimal.ZERO);
+		allocation.setPaidCESS(BigDecimal.ZERO);
+		allocation.setPaidGST(BigDecimal.ZERO);
+
 		calAllocationPaidGST(fd, paidNow, allocation, taxType);
 		calAllocationWaiverGST(fd, allocation.getWaivedAmount(), allocation);
 
