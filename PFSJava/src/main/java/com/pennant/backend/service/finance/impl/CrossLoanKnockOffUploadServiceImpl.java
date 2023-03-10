@@ -108,13 +108,13 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 					if (fromFm == null || toFm == null) {
 						setError(clk, CrossLoanKnockOffUploadError.CLKU_018);
-						return;
+					} else {
+						clk.setFromFm(fromFm);
+						clk.setFromFinID(fromFm.getFinID());
+						clk.setToFm(toFm);
+						clk.setToFinID(toFm.getFinID());
 					}
 
-					clk.setFromFm(fromFm);
-					clk.setFromFinID(fromFm.getFinID());
-					clk.setToFm(toFm);
-					clk.setToFinID(toFm.getFinID());
 					clk.setEntityCode(header.getEntityCode());
 
 					if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clk.getExcessType())) {
@@ -124,8 +124,10 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 						clk.setManualAdvise(manualAdviseDAO.getManualAdviseById(clk.getAdviseId(), ""));
 					}
 
-					doValidate(header, clk);
-					doBasicValidations(clk);
+					if (clk.getProgress() != EodConstants.PROGRESS_FAILED) {
+						doValidate(header, clk);
+						doBasicValidations(clk);
+					}
 
 					if (clk.getProgress() != EodConstants.PROGRESS_FAILED) {
 						doAllocationTypeValidations(clk);
@@ -437,7 +439,11 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			clt.setFinExcessAmountList(excessList);
 			for (FinExcessAmount fea : excessList) {
 				if (fea.getExcessID() == clt.getExcessId()) {
-					clt.setValueDate(fea.getValueDate());
+					if (fea.getValueDate() == null) {
+						clt.setValueDate(clku.getAppDate());
+					} else {
+						clt.setValueDate(fea.getValueDate());
+					}
 				}
 			}
 		} else {
