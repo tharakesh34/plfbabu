@@ -18,7 +18,7 @@
 							</toolbar>
 							<!-- SEARCH AREA -->
 						<toolbar align="center" style="toolbar-center">
-							<label value="${c:l('window_CrossLoan_KnockOff_Dialog.title')}" sclass="label-heading" />
+							<label value="${c:l('window_CrossLoan_KnockOff_Dialog.title')}" sclass="label-heading" style="white-space: nowrap;"/>
 						</toolbar>
 						
 							<toolbar align="end" sclass="toolbar-end">

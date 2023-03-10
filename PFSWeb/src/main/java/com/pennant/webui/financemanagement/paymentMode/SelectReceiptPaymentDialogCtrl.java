@@ -71,6 +71,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -84,7 +85,6 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.SubReceiptPaymentModes;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
@@ -431,18 +431,27 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private void addFilter(Customer customer) {
 		logger.debug("Entering ");
 
-		if (customer != null && customer.getCustID() != 0) {
-			this.custId = customer.getCustID();
-			this.custCIF.setValue(customer.getCustCIF());
-			this.finReference.setValue("");
-			this.finReference.setObject("");
-			this.finReference.setFilters(new Filter[] { new Filter("CustId", this.custId, Filter.OP_EQUAL) });
-		} else {
-			this.finReference.setValue("");
-			this.finReference.setObject("");
-			this.custCIF.setValue("");
-			this.finReference.setFilters(null);
+		this.finReference.setValue("");
+		this.finReference.setObject("");
+		this.custCIF.setValue("");
+		this.finReference.setFilters(null);
+
+		if (customer == null) {
+			return;
 		}
+
+		this.custId = customer.getCustID();
+		this.custCIF.setValue(customer.getCustCIF());
+
+		Filter[] finreference = new Filter[1];
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			finreference[0] = new Filter("CustCoreBank", customer.getCustCoreBank(), Filter.OP_EQUAL);
+		} else {
+			finreference[0] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
+		}
+
+		this.finReference.setFilters(finreference);
 
 		logger.debug("Leaving ");
 	}
@@ -783,7 +792,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			this.custId = 0;
 			label_ReceiptPayment_CustomerName.setValue("");
 		} else {
-			customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.MAIN_TAB.getSuffix());
+			customer = this.customerDetailsService.getCustomer(cif);
 			if (customer != null) {
 				label_ReceiptPayment_CustomerName.setValue(customer.getCustShrtName());
 				this.custId = customer.getCustID();

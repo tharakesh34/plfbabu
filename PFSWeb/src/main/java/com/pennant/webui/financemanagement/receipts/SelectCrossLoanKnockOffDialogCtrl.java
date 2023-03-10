@@ -71,7 +71,6 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.web.util.ComponentUtil;
@@ -205,6 +204,10 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	}
 
 	private void onChangeKnockOffFrom() {
+
+		this.toFinReference.setValue("");
+		this.toFinReference.setObject("");
+
 		this.referenceId.setMandatoryStyle(true);
 		this.referenceId.setDescColumn("BalanceAmt");
 		this.referenceId.setConstraint("");
@@ -238,7 +241,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	}
 
 	public void onFulfill$referenceId(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		boolean isDisabled = false;
 		Date receiptDt = receiptDate.getValue();
@@ -322,41 +325,49 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	private void addFilter(Customer customer) {
 		logger.debug(Literal.ENTERING);
 
-		if (customer != null && customer.getCustID() != 0) {
-			this.custId = customer.getCustID();
-			this.custCIF.setValue(customer.getCustCIF());
-			this.fromFinReference.setValue("");
-			this.fromFinReference.setObject("");
-			this.fromFinReference.setFilters(new Filter[] { new Filter("CustId", this.custId, Filter.OP_EQUAL) });
-			this.custId = customer.getCustID();
-			this.custCIF.setValue(customer.getCustCIF());
-			this.toFinReference.setValue("");
-			this.toFinReference.setObject("");
-			this.toFinReference.setFilters(new Filter[] { new Filter("CustId", this.custId, Filter.OP_EQUAL) });
-		} else {
-			this.fromFinReference.setValue("");
-			this.fromFinReference.setObject("");
-			this.custCIF.setValue("");
-			this.fromFinReference.setFilters(null);
-			this.toFinReference.setValue("");
-			this.toFinReference.setObject("");
-			this.custCIF.setValue("");
-			this.toFinReference.setFilters(null);
+		this.fromFinReference.setValue("");
+		this.fromFinReference.setObject("");
+		this.custCIF.setValue("");
+		this.fromFinReference.setFilters(null);
+		this.toFinReference.setValue("");
+		this.toFinReference.setObject("");
+		this.custCIF.setValue("");
+		this.toFinReference.setFilters(null);
+
+		if (customer == null) {
+			return;
 		}
+
+		this.custId = customer.getCustID();
+		this.custCIF.setValue(customer.getCustCIF());
+
+		Filter[] fromLoan = new Filter[1];
+		Filter[] toLoan = new Filter[1];
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			fromLoan[0] = new Filter("CustCoreBank", customer.getCustCoreBank(), Filter.OP_EQUAL);
+			toLoan[0] = new Filter("CustCoreBank", customer.getCustCoreBank(), Filter.OP_EQUAL);
+		} else {
+			fromLoan[0] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
+			toLoan[0] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
+		}
+
+		this.fromFinReference.setFilters(fromLoan);
+		this.toFinReference.setFilters(toLoan);
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChange$custCIF(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		addFilter(fetchCustomerDataByCIF());
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnProceed(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		receiptData.setEnquiry(true);
 		doSetValidation();
@@ -482,7 +493,8 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	}
 
 	public Customer fetchCustomerDataByCIF() {
-		Customer customer = new Customer();
+		Customer cust = new Customer();
+
 		this.custCIF.setConstraint("");
 		this.custCIF.setErrorMessage("");
 		this.custCIF.clearErrorMessage();
@@ -494,14 +506,15 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			this.custId = 0;
 			labelCustomerName.setValue("");
 		} else {
-			customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.MAIN_TAB.getSuffix());
-			if (customer != null) {
-				labelCustomerName.setValue(customer.getCustShrtName());
-				this.custId = customer.getCustID();
+			cust = this.customerDetailsService.getCustomer(cif);
+
+			if (cust != null) {
+				labelCustomerName.setValue(cust.getCustShrtName());
+				this.custId = cust.getCustID();
 			}
 		}
 
-		return customer;
+		return cust;
 	}
 
 	public Customer fetchCustomerDataByID(long custID) {
@@ -900,9 +913,18 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			}
 		}
 
+		Customer customer = customerDetailsService.getCustomer(this.custId);
+
 		Filter filter[] = new Filter[2];
 		filter[0] = new Filter("FinReference", this.fromFinReference.getValue(), Filter.OP_NOT_EQUAL);
-		filter[1] = new Filter("CustId", this.custId, Filter.OP_EQUAL);
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			filter[1] = new Filter("CustCoreBank", customer.getCustCoreBank(), Filter.OP_EQUAL);
+
+		} else {
+			filter[1] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
+
+		}
 
 		this.toFinReference.setFilters(filter);
 
