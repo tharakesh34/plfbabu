@@ -742,23 +742,28 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-			PaymentInstruction pi = new PaymentInstruction();
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PaymentInstruction pi = new PaymentInstruction();
 
-			pi.setBankBranchId(rs.getLong("BankBranchId"));
-			pi.setBankBranchCode(rs.getString("BranchCode"));
-			pi.setBranchDesc(rs.getString("BranchDesc"));
-			pi.setBankName(rs.getString("BankName"));
-			pi.setBankBranchIFSC(rs.getString("IFSC"));
-			pi.setpCCityName(rs.getString("City"));
-			pi.setPrintingLoc(rs.getString("BankCode"));
-			pi.setPrintingLocDesc(rs.getString("BranchDesc"));
-			pi.setFinType(rs.getString("FinType"));
-			pi.setFinBranch(rs.getString("FinBranch"));
-			pi.setFavourName(rs.getString("CustShrtName"));
+				pi.setBankBranchId(rs.getLong("BankBranchId"));
+				pi.setBankBranchCode(rs.getString("BranchCode"));
+				pi.setBranchDesc(rs.getString("BranchDesc"));
+				pi.setBankName(rs.getString("BankName"));
+				pi.setBankBranchIFSC(rs.getString("IFSC"));
+				pi.setpCCityName(rs.getString("City"));
+				pi.setPrintingLoc(rs.getString("BankCode"));
+				pi.setPrintingLocDesc(rs.getString("BranchDesc"));
+				pi.setFinType(rs.getString("FinType"));
+				pi.setFinBranch(rs.getString("FinBranch"));
+				pi.setFavourName(rs.getString("CustShrtName"));
 
-			return pi;
-		}, finID);
+				return pi;
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 
 	}
 }
