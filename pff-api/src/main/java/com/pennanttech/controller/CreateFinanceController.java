@@ -4534,6 +4534,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	public FinanceDetail getFinDetailsByFinReference(String finReference) {
 		logger.debug("Enetring");
 		FinanceDetail financeDetail = null;
+		String moduleName = FinanceConstants.MODULE_NAME;
 		try {
 			FinanceMain financeMain = financeDetailService.getFinanceMain(finReference, TableType.VIEW);
 			if (financeMain == null) {
@@ -4573,8 +4574,32 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.setInterfaceDetailList(primaryDetailsList);
 
 			if (financeDetail.getCollateralAssignmentList().isEmpty()) {
-				financeDetail.setCollateralAssignmentList(collateralAssignmentDAO
-						.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "enq_View"));
+				/* Collateral Details */
+				List<CollateralAssignment> assignmentListMain = null;
+				if (ImplementationConstants.COLLATERAL_INTERNAL) {
+					assignmentListMain = collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
+							moduleName, "_TView");
+				}
+
+				/* Collateral setup details and assignment details */
+				List<CollateralSetup> collateralSetupList = null;
+				if (StringUtils.isNotBlank(financeMain.getParentRef())) {
+					collateralSetupList = collateralSetupService.getCollateralDetails(financeMain.getParentRef(),
+							false);
+				} else {
+					collateralSetupList = collateralSetupService.getCollateralDetails(finReference, false);
+				}
+
+				List<CollateralAssignment> assignmentListTemp = null;
+				if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+					if (ImplementationConstants.COLLATERAL_INTERNAL) {
+						assignmentListTemp = collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
+								moduleName, "_CTView");
+					}
+				}
+
+				financeDetail.setCollaterals(collateralSetupList);
+				financeDetail = setCollateralAssignments(financeDetail, assignmentListMain, assignmentListTemp);
 			}
 			List<CollateralSetup> collateralSetupList = collateralSetupService
 					.getCollateralSetupList(financeDetail.getCollateralAssignmentList(), "_View");
@@ -4612,6 +4637,43 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		logger.debug("Leaving");
 		return financeDetail;
+	}
+
+	private FinanceDetail setCollateralAssignments(FinanceDetail fd, List<CollateralAssignment> assignmentListMain,
+			List<CollateralAssignment> assignmentListTemp) {
+		if (CollectionUtils.isEmpty(assignmentListMain) && CollectionUtils.isEmpty(assignmentListTemp)) {
+			return fd;
+		}
+
+		if (CollectionUtils.isEmpty(assignmentListMain)) {
+			fd.getCollateralAssignmentList().addAll(assignmentListTemp);
+			return fd;
+		}
+
+		if (CollectionUtils.isEmpty(assignmentListTemp)) {
+			fd.getCollateralAssignmentList().addAll(assignmentListMain);
+			return fd;
+		}
+
+		List<CollateralAssignment> resultantList = new ArrayList<>();
+		resultantList.addAll(assignmentListMain);
+
+		for (CollateralAssignment assignmentTemp : assignmentListTemp) {
+			boolean equal = false;
+			for (CollateralAssignment assignmentMain : assignmentListMain) {
+				if (assignmentTemp.getCollateralRef().equals(assignmentMain.getCollateralRef())) {
+					equal = true;
+					break;
+				}
+			}
+			if (!equal) {
+				resultantList.add(assignmentTemp);
+			}
+		}
+
+		fd.getCollateralAssignmentList().addAll(resultantList);
+
+		return fd;
 	}
 
 	public AuditHeader getAuditHeader(String finreference) {
