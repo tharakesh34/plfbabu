@@ -99,7 +99,7 @@ public interface CustomerDetailsService {
 
 	void setCustomerBasicDetails(CustomerDetails customerDetails);
 
-	Customer checkCustomerByID(long custID, String type);
+	Customer getCustomer(long custID);
 
 	String getEIDNumberById(String eidNumber, String custctgCode, String type);
 

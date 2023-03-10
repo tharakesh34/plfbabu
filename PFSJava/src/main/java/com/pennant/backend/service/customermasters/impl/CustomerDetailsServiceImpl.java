@@ -8686,8 +8686,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
-	public Customer checkCustomerByID(long custID, String type) {
-		return customerDAO.checkCustomerByID(custID, type);
+	public Customer getCustomer(long custID) {
+		return customerDAO.getCustomer(custID);
 	}
 
 	@Override

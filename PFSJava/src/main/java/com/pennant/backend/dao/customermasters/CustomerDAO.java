@@ -60,6 +60,8 @@ public interface CustomerDAO {
 
 	Customer getCustomer(String cif);
 
+	Customer getCustomer(long custID);
+
 	WIFCustomer getWIFCustomerByCIF(long cifId, String type);
 
 	Customer getCustomerForPostings(long custId);
@@ -159,8 +161,6 @@ public interface CustomerDAO {
 	boolean isReligionExist(long religionId, String type);
 
 	int getCustomerCountByCustID(long custID, String type);
-
-	Customer checkCustomerByID(long custID, String type);
 
 	List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type);
 

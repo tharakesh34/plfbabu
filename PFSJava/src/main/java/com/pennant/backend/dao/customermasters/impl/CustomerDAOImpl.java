@@ -951,6 +951,27 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	@Override
+	public Customer getCustomer(long custID) {
+		String sql = "Select CustID, CustCIF, CustCoreBank, CustShrtname FROM  Customers Where CustID = ?";
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				Customer c = new Customer();
+
+				c.setCustID(rs.getLong("CustID"));
+				c.setCustCIF(rs.getString("CustCIF"));
+				c.setCustCoreBank(rs.getString("CustCoreBank"));
+				c.setCustShrtName(rs.getString("CustShrtname"));
+
+				return c;
+			}, custID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
 	public Customer getCustomerCoreBankID(String custCoreBank) {
 		String sql = "Select CustID, CustCIF, CustCoreBank, CustShrtName From Customers Where CustCoreBank = ?";
 
@@ -2214,31 +2235,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-	}
-
-	@Override
-	public Customer checkCustomerByID(long custID, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustID, CustCIF, CustShrtname");
-		sql.append(" FROM  Customers");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CustID = ?");
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custID }, (rs, rowNum) -> {
-				Customer c = new Customer();
-
-				c.setCustID(rs.getLong("CustID"));
-				c.setCustCIF(rs.getString("CustCIF"));
-				c.setCustShrtName(rs.getString("CustShrtname"));
-
-				return c;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in Customers{} for the customer Id >> {}", type, custID);
-		}
-
-		return null;
 	}
 
 	@Override

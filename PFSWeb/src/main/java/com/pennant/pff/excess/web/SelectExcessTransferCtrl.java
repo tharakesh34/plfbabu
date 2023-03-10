@@ -204,14 +204,17 @@ public class SelectExcessTransferCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public Customer fetchCustomerDataByID(long custID) {
-		customer = new Customer();
 		this.custCIF.setConstraint("");
 		this.custCIF.setErrorMessage("");
 		this.custCIF.clearErrorMessage();
-		customer = this.customerDetailsService.checkCustomerByID(custID, TableType.MAIN_TAB.getSuffix());
+
+		Customer customer = this.customerDetailsService.getCustomer(custID);
+
 		this.finReference.setFilters(new Filter[] { new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL) });
+
 		this.custId = customer.getCustID();
 		this.custCIF.setValue(customer.getCustCIF());
+
 		return customer;
 	}
 
