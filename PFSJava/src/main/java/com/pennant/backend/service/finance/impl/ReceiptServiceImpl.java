@@ -153,6 +153,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinOverDueChargeMovement;
 import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -2078,6 +2079,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		if (!ImplementationConstants.LPP_CALC_SOD) {
 			reqMaxODDate = DateUtil.addDays(valueDate, -1);
 		}
+
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
 
 		overdueList = calPenalty(scheduleData, rd, reqMaxODDate, overdueList);
@@ -8616,6 +8618,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	public List<OverdueChargeRecovery> prepareODCRecovery(Long finID) {
 		List<OverdueChargeRecovery> odcList = new ArrayList<>();
 		List<FinODDetails> finOddetails = finODDetailsDAO.getFinODBalByFinRef(finID);
+		int dueDays = 0;
 
 		if (CollectionUtils.isEmpty(finOddetails)) {
 			return odcList;
@@ -8624,33 +8627,53 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		List<FinOverDueCharges> odcAmounts = finODCAmountDAO.getFinODCAmtByRef(finID, RepayConstants.FEE_TYPE_LPP);
 
 		for (FinODDetails fod : finOddetails) {
-			BigDecimal penPaid = BigDecimal.ZERO;
-			BigDecimal penWaived = BigDecimal.ZERO;
-			BigDecimal penDue = BigDecimal.ZERO;
+			BigDecimal penaltyPaid = BigDecimal.ZERO;
+			BigDecimal penaltyWaived = BigDecimal.ZERO;
+			BigDecimal penaltyDue = BigDecimal.ZERO;
+
+			OverdueChargeRecovery movement = new OverdueChargeRecovery();
 
 			for (FinOverDueCharges odcAmount : odcAmounts) {
 				if (fod.getFinODSchdDate().compareTo(odcAmount.getSchDate()) != 0) {
 					continue;
 				}
 
-				OverdueChargeRecovery odcr = new OverdueChargeRecovery();
-				odcr.setFinID(odcAmount.getFinID());
-				odcr.setFinReference(fod.getFinReference());
-				odcr.setFinODSchdDate(odcAmount.getSchDate());
-				odcr.setMovementDate(odcAmount.getValueDate());
-				odcr.setPenalty(odcAmount.getAmount());
-				odcr.setPenaltyBal(odcAmount.getBalanceAmt());
-				odcr.setPenaltyPaid(odcAmount.getPaidAmount());
-				penPaid = penPaid.add(odcAmount.getPaidAmount());
-				penDue = penDue.add(odcAmount.getAmount());
-				penWaived = penWaived.add(odcAmount.getWaivedAmount());
-				odcr.setWaivedAmt(odcAmount.getWaivedAmount());
-				odcr.setFinCurODPri(odcAmount.getOdPri());
-				odcr.setFinCurODPft(odcAmount.getOdPft());
-				odcr.setFinCurODAmt(odcAmount.getOdPri().add(odcAmount.getOdPft()));
-				odcr.setODDays(odcAmount.getDueDays());
-				odcr.setFinODFor(fod.getFinODFor());
-				odcList.add(odcr);
+				dueDays = 0;
+
+				FinOverDueChargeMovement fodm = finODCAmountDAO.getFinODCAmtMovementsById(odcAmount.getId());
+
+				if (fodm != null && fodm.getMovementDate().compareTo(odcAmount.getPostDate()) != 0) {
+					OverdueChargeRecovery odcr = new OverdueChargeRecovery();
+					odcr.setFinID(odcAmount.getFinID());
+					odcr.setFinReference(fod.getFinReference());
+					odcr.setFinODSchdDate(odcAmount.getSchDate());
+					odcr.setMovementDate(odcAmount.getValueDate());
+					odcr.setPenalty(odcAmount.getAmount());
+					odcr.setPenaltyBal(odcAmount.getBalanceAmt());
+					odcr.setPenaltyPaid(odcAmount.getPaidAmount());
+					odcr.setWaivedAmt(odcAmount.getWaivedAmount());
+					odcr.setFinCurODPri(odcAmount.getOdPri());
+					odcr.setFinCurODPft(odcAmount.getOdPft());
+					odcr.setFinCurODAmt(odcAmount.getOdPri().add(odcAmount.getOdPft()));
+					odcr.setODDays(odcAmount.getDueDays());
+					odcr.setFinODFor(fod.getFinODFor());
+
+					penaltyPaid = penaltyPaid.add(odcAmount.getPaidAmount());
+					penaltyDue = penaltyDue.add(odcAmount.getAmount());
+					penaltyWaived = penaltyWaived.add(odcAmount.getWaivedAmount());
+
+					dueDays = DateUtil.getDaysBetween(odcAmount.getPostDate(), fod.getFinODTillDate());
+
+					odcList.add(odcr);
+				}
+
+				if (fodm != null && fodm.getReceiptID() != 0) {
+					movement = getMovement(fodm, fod, odcAmount, movement);
+				}
+			}
+
+			if (movement.getMovementDate() != null) {
+				odcList.add(movement);
 			}
 
 			BigDecimal penalBal = fod.getTotPenaltyAmt().subtract(fod.getLppDueAmt());
@@ -8663,16 +8686,43 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				odcr.setFinODFor(fod.getFinODFor());
 				odcr.setPenalty(fod.getTotPenaltyAmt().subtract(fod.getLppDueAmt()));
 				odcr.setPenaltyBal(fod.getTotPenaltyBal());
-				odcr.setPenaltyPaid(fod.getTotPenaltyPaid().subtract(penPaid));
-				odcr.setWaivedAmt(fod.getTotWaived().subtract(penWaived));
+				odcr.setPenaltyPaid(fod.getTotPenaltyPaid().subtract(penaltyPaid));
+				odcr.setWaivedAmt(fod.getTotWaived().subtract(penaltyWaived));
 				odcr.setFinCurODPri(fod.getFinCurODPri());
 				odcr.setFinCurODPft(fod.getFinCurODPft());
 				odcr.setFinCurODAmt(fod.getFinCurODAmt());
-				odcr.setODDays(fod.getFinCurODDays());
+				odcr.setODDays(dueDays == 0 ? fod.getFinCurODDays() : dueDays);
+				dueDays = 0;
 				odcList.add(odcr);
 			}
 		}
 		return odcList;
+	}
+
+	private OverdueChargeRecovery getMovement(FinOverDueChargeMovement fodm, FinODDetails fod,
+			FinOverDueCharges odcAmount, OverdueChargeRecovery odcr) {
+		odcr.setFinID(fod.getFinID());
+		odcr.setFinReference(fod.getFinReference());
+		odcr.setFinODSchdDate(fod.getFinODSchdDate());
+		odcr.setMovementDate(fodm.getMovementDate());
+		odcr.setDueCreation(false);
+		odcr.setPenalty(odcAmount.getAmount().add(odcr.getPenalty()));
+		odcr.setPenaltyBal(odcAmount.getBalanceAmt().add(odcr.getPenaltyBal()));
+		odcr.setPenaltyPaid(fodm.getPaidAmount().add(odcr.getPenaltyPaid()));
+		odcr.setWaivedAmt(fodm.getWaivedAmount().add(odcr.getWaivedAmt()));
+		odcr.setFinCurODPri(odcAmount.getOdPri());
+		odcr.setFinCurODPft(odcAmount.getOdPft());
+		odcr.setFinCurODAmt(odcAmount.getOdPri().add(odcAmount.getOdPft()));
+
+		if (odcAmount.getPostDate().compareTo(fodm.getMovementDate()) == 0) {
+			odcr.setODDays(fod.getFinCurODDays());
+		} else {
+			odcr.setODDays(DateUtil.getDaysBetween(odcAmount.getPostDate(), fodm.getMovementDate()));
+		}
+
+		odcr.setFinODFor(fod.getFinODFor());
+
+		return odcr;
 	}
 
 	@Autowired

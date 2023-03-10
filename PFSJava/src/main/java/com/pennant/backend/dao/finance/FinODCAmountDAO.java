@@ -28,4 +28,6 @@ public interface FinODCAmountDAO {
 
 	List<FinOverDueCharges> getFinODCAmtByRef(long finID, String chargeType);
 
+	FinOverDueChargeMovement getFinODCAmtMovementsById(long chargeId);
+
 }

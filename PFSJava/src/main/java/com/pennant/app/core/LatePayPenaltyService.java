@@ -186,6 +186,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	public void postLatePayAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
 		Date monthEndDate = custEODEvent.getEodDate();
+		int dueDays = 0;
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
 
@@ -209,10 +210,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 				FinOverDueCharges finODCAmount = createODCAmounts(fod, totPenaltyAmt, monthEndDate);
 				saveList.add(finODCAmount);
 			} else {
+
 				FinOverDueCharges prvFinODCAmount = null;
 
 				for (FinOverDueCharges finODCAmount : finODCAmounts) {
 					Date postDate = finODCAmount.getPostDate();
+					dueDays = DateUtil.getDaysBetween(postDate, monthEndDate);
 					if (postDate.compareTo(monthEndDate) < 0) {
 						prvMnthPenaltyAmt = prvMnthPenaltyAmt.add(finODCAmount.getAmount());
 					} else if (postDate.compareTo(monthEndDate) == 0) {
@@ -223,10 +226,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 					prvFinODCAmount.setAmount(totPenaltyAmt.subtract(prvMnthPenaltyAmt));
 					prvFinODCAmount.setBalanceAmt(prvFinODCAmount.getAmount().subtract(prvFinODCAmount.getPaidAmount())
 							.subtract(prvFinODCAmount.getWaivedAmount()));
+					prvFinODCAmount.setDueDays(dueDays);
 					saveList.add(prvFinODCAmount);
 				} else {
 					FinOverDueCharges finODCAmount = createODCAmounts(fod, totPenaltyAmt.subtract(prvMnthPenaltyAmt),
 							monthEndDate);
+					finODCAmount.setDueDays(dueDays);
 					saveList.add(finODCAmount);
 				}
 			}
@@ -248,7 +253,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		finod.setOdPri(od.getFinCurODPri());
 		finod.setOdPft(od.getFinCurODPft());
 		finod.setFinOdTillDate(od.getFinODTillDate());
-		finod.setDueDays(DateUtility.getDaysBetween(od.getFinODSchdDate(), od.getFinODTillDate()));
+		finod.setDueDays(DateUtility.getDaysBetween(od.getFinODSchdDate(), monthEndDate));
 		finod.setChargeType(RepayConstants.FEE_TYPE_LPP);
 
 		return finod;

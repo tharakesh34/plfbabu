@@ -764,7 +764,7 @@ public class RepaymentPostingsUtil {
 							odcAmt.setWaivedAmount(odcAmt.getWaivedAmount().add(waiveNow));
 							odcAmt.setBalanceAmt(odcAmt.getBalanceAmt().subtract(payNow.add(waiveNow)));
 							FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-							movement.setMovementDate(appDate);
+							movement.setMovementDate(valueDate);
 							movement.setChargeId(odcAmt.getId());
 							movement.setMovementAmount(payNow.add(waiveNow));
 							movement.setPaidAmount(payNow);
@@ -791,14 +791,14 @@ public class RepaymentPostingsUtil {
 					odDetail.setTotPenaltyAmt(odDetail.getTotPenaltyAmt().subtract(prvMnthPenaltyAmt));
 
 					if (penaltyPayNow.compareTo(BigDecimal.ZERO) > 0 || waivedAmount.compareTo(BigDecimal.ZERO) > 0) {
-						odc = createDueAmounts(odDetail, valueDate, penaltyPayNow, waivedAmount, appDate,
-								RepayConstants.FEE_TYPE_LPP);
+						odc = createDueAmounts(odDetail, valueDate, penaltyPayNow, waivedAmount, valueDate,
+								RepayConstants.FEE_TYPE_LPP, finODCAmounts);
 					}
 
 					if (odc != null) {
 						long referenceID = finODCAmountDAO.saveFinODCAmt(odc);
 						FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-						movement.setMovementDate(appDate);
+						movement.setMovementDate(valueDate);
 						movement.setChargeId(referenceID);
 						movement.setMovementAmount(odc.getPaidAmount().add(odc.getWaivedAmount()));
 						movement.setPaidAmount(odc.getPaidAmount());
@@ -817,22 +817,21 @@ public class RepaymentPostingsUtil {
 		}
 	}
 
-	private void saveFinLPPAmount(FinRepayQueue finRepayQueue, Date dateValueDate, FinRepayQueueHeader rpyQueueHeader,
-			FinODDetails detail) {
+	private void saveFinLPPAmount(FinRepayQueue frq, Date valueDate, FinRepayQueueHeader frqh, FinODDetails detail) {
 		boolean createLpiDue = true;
 		FinOverDueCharges lpi = null;
 		FinODDetails odDetail = null;
 		List<FinOverDueChargeMovement> movements = new ArrayList<>();
-		BigDecimal lpiPayNow = finRepayQueue.getLatePayPftPayNow();
-		BigDecimal lpiWaivedAmount = finRepayQueue.getLatePayPftWaivedNow();
+		BigDecimal lpiPayNow = frq.getLatePayPftPayNow();
+		BigDecimal lpiWaivedAmount = frq.getLatePayPftWaivedNow();
 		Date appDate = SysParamUtil.getAppDate();
 
-		List<FinOverDueCharges> finLPIAmtList = finODCAmountDAO.getFinODCAmtByFinRef(finRepayQueue.getFinID(),
-				finRepayQueue.getRpyDate(), RepayConstants.FEE_TYPE_LPI);
+		List<FinOverDueCharges> finLPIAmtList = finODCAmountDAO.getFinODCAmtByFinRef(frq.getFinID(), frq.getRpyDate(),
+				RepayConstants.FEE_TYPE_LPI);
 
-		if (CollectionUtils.isNotEmpty(rpyQueueHeader.getFinOdList())) {
-			for (FinODDetails fod : rpyQueueHeader.getFinOdList()) {
-				if (fod.getFinODSchdDate().compareTo(finRepayQueue.getRpyDate()) != 0) {
+		if (CollectionUtils.isNotEmpty(frqh.getFinOdList())) {
+			for (FinODDetails fod : frqh.getFinOdList()) {
+				if (fod.getFinODSchdDate().compareTo(frq.getRpyDate()) != 0) {
 					continue;
 				}
 				odDetail = fod;
@@ -843,9 +842,9 @@ public class RepaymentPostingsUtil {
 					break;
 				}
 				if (fod.getLpiDueTillDate() != null) {
-					if (dateValueDate.compareTo(fod.getLpiDueTillDate()) > 0) {
+					if (valueDate.compareTo(fod.getLpiDueTillDate()) > 0) {
 						for (FinOverDueCharges lpiAmount : finLPIAmtList) {
-							if (lpiAmount.getValueDate().compareTo(dateValueDate) == 0) {
+							if (lpiAmount.getValueDate().compareTo(valueDate) == 0) {
 								lpi = lpiAmount;
 								break;
 							}
@@ -896,18 +895,18 @@ public class RepaymentPostingsUtil {
 							odcAmt.setWaivedAmount(odcAmt.getWaivedAmount().add(waiveNow));
 							odcAmt.setBalanceAmt(odcAmt.getBalanceAmt().subtract(payNow.add(waiveNow)));
 							FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-							movement.setMovementDate(appDate);
+							movement.setMovementDate(valueDate);
 							movement.setChargeId(odcAmt.getId());
 							movement.setMovementAmount(payNow.add(waiveNow));
 							movement.setPaidAmount(payNow);
 							movement.setWaivedAmount(waiveNow);
-							movement.setReceiptID(rpyQueueHeader.getReceiptId());
+							movement.setReceiptID(frqh.getReceiptId());
 							movements.add(movement);
 						}
 					}
 				}
 
-				if (dateValueDate.compareTo(lpichargeAmt.getValueDate()) == 0) {
+				if (valueDate.compareTo(lpichargeAmt.getValueDate()) == 0) {
 					lpichargeAmt.setOdPri(odDetail.getFinCurODPri());
 					lpichargeAmt.setOdPft(odDetail.getFinCurODPft());
 				}
@@ -917,19 +916,19 @@ public class RepaymentPostingsUtil {
 			detail.setLpiDueAmt(odDetail.getLpiDueAmt());
 
 			if (createLpiDue) {
-				detail.setLpiDueTillDate(dateValueDate);
+				detail.setLpiDueTillDate(valueDate);
 				if (lpi == null) {
 					odDetail.setLPIAmt(odDetail.getLPIAmt().subtract(prvMnthLPIAmt));
-					lpi = createDueAmounts(odDetail, dateValueDate, lpiPayNow, lpiWaivedAmount, appDate,
-							RepayConstants.FEE_TYPE_LPI);
+					lpi = createDueAmounts(odDetail, valueDate, lpiPayNow, lpiWaivedAmount, valueDate,
+							RepayConstants.FEE_TYPE_LPI, finLPIAmtList);
 					long referenceID = finODCAmountDAO.saveFinODCAmt(lpi);
 					FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-					movement.setMovementDate(appDate);
+					movement.setMovementDate(valueDate);
 					movement.setChargeId(referenceID);
 					movement.setMovementAmount(lpi.getPaidAmount().add(lpi.getWaivedAmount()));
 					movement.setPaidAmount(lpi.getPaidAmount());
 					movement.setWaivedAmount(lpi.getWaivedAmount());
-					movement.setReceiptID(rpyQueueHeader.getReceiptId());
+					movement.setReceiptID(frqh.getReceiptId());
 					movements.add(movement);
 					detail.setLpiDueAmt(detail.getLpiDueAmt().add(lpi.getAmount()));
 				}
@@ -944,7 +943,7 @@ public class RepaymentPostingsUtil {
 	}
 
 	public FinOverDueCharges createDueAmounts(FinODDetails finODDetail, Date valueDate, BigDecimal paidamt,
-			BigDecimal waivedAmount, Date appDate, String chargeType) {
+			BigDecimal waivedAmount, Date appDate, String chargeType, List<FinOverDueCharges> finODCAmounts) {
 
 		FinOverDueCharges finLPIAmt = new FinOverDueCharges();
 
@@ -963,7 +962,6 @@ public class RepaymentPostingsUtil {
 			finLPIAmt.setOdPri(finODDetail.getFinCurODPri());
 			finLPIAmt.setOdPft(finODDetail.getFinCurODPft());
 			finLPIAmt.setFinOdTillDate(valueDate);
-			finLPIAmt.setDueDays(DateUtility.getDaysBetween(finODDetail.getFinODSchdDate(), valueDate));
 			finLPIAmt.setChargeType(chargeType);
 		}
 
@@ -982,11 +980,22 @@ public class RepaymentPostingsUtil {
 			finLPIAmt.setOdPri(finODDetail.getFinCurODPri());
 			finLPIAmt.setOdPft(finODDetail.getFinCurODPft());
 			finLPIAmt.setFinOdTillDate(valueDate);
-			finLPIAmt.setDueDays(DateUtility.getDaysBetween(finODDetail.getFinODSchdDate(), valueDate));
 			finLPIAmt.setChargeType(chargeType);
 		}
 
+		finLPIAmt.setDueDays(getDueDays(finODCAmounts, valueDate, finODDetail));
+
 		return finLPIAmt;
+	}
+
+	private int getDueDays(List<FinOverDueCharges> finODCAmounts, Date valueDate, FinODDetails finODDetail) {
+		Date dueDate = finODDetail.getFinODSchdDate();
+
+		if (CollectionUtils.isNotEmpty(finODCAmounts)) {
+			dueDate = finODCAmounts.get(finODCAmounts.size() - 1).getPostDate();
+		}
+
+		return DateUtil.getDaysBetween(dueDate, valueDate);
 	}
 
 	public void recalOldestDueKnockOff(FinanceMain fm, FinanceProfitDetail fpd, Date valuedate,

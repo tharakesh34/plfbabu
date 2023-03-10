@@ -213,6 +213,7 @@ public class LatePayInterestService extends ServiceHelper {
 		List<FinOverDueCharges> saveList = new ArrayList<>();
 
 		Date monthEndDate = custEODEvent.getEodDate();
+		int dueDays = 0;
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinODDetails> odList = finEODEvent.getFinODDetails();
 
@@ -238,6 +239,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 				for (FinOverDueCharges odc : odcList) {
 					Date postDate = odc.getPostDate();
+					dueDays = DateUtility.getDaysBetween(postDate, monthEndDate);
 					if (postDate.compareTo(monthEndDate) < 0) {
 						prvMnthLPIAmt = prvMnthLPIAmt.add(odc.getAmount());
 					} else if (postDate.compareTo(monthEndDate) == 0) {
@@ -249,10 +251,12 @@ public class LatePayInterestService extends ServiceHelper {
 					prvFinLPIAmount.setAmount(totLPIAmt.subtract(prvMnthLPIAmt));
 					prvFinLPIAmount.setBalanceAmt(prvFinLPIAmount.getAmount().subtract(prvFinLPIAmount.getPaidAmount())
 							.subtract(prvFinLPIAmount.getWaivedAmount()));
+					prvFinLPIAmount.setDueDays(dueDays);
 					saveList.add(prvFinLPIAmount);
 				} else {
 					FinOverDueCharges finODCAmount = createLPIAmounts(fod, totLPIAmt.subtract(prvMnthLPIAmt),
 							monthEndDate);
+					finODCAmount.setDueDays(dueDays);
 					saveList.add(finODCAmount);
 				}
 
