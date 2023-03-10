@@ -41,7 +41,7 @@
 										value="${c:l('label_ReceiptPayment_Customer.value')}" style="padding-left:12px;" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<textbox id="custCIF" width="150px" maxlength="8" />
+										<textbox id="custCIF" width="150px" />
 										<button id="btnSearchCustCIF"
 											tooltiptext="${c:l('label_SelectFinanceTypeDialog_CustID.tooltiptext')}" image="/images/icons/more.png"
 											autodisable="btnSearchCustCIF" />
