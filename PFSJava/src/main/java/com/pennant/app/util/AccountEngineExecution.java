@@ -280,6 +280,13 @@ public class AccountEngineExecution implements Serializable {
 				}
 
 				setSingleFeeWaiverOrRefundTxn(singleFeeTxn, txnEntries);
+
+				String feeIncomeOrExpenseAcType = StringUtils.trimToNull(feeType.getIncomeOrExpenseAcType());
+				if (feeIncomeOrExpenseAcType == null) {
+					throw new AppException("SingelFee", "Account Type for the Fee Type [" + feeType.getFeeTypeCode()
+							+ "] not configured. Please contact the system administrator.");
+				}
+
 			}
 
 			addTxnEntry(singleFeeTxn, txnEntries, feeTypes);
