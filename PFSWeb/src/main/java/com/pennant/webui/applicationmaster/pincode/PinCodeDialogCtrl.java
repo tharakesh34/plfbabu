@@ -464,7 +464,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		}
 		if (!this.areaName.isReadonly()) {
 			this.areaName.setConstraint(new PTStringValidator(Labels.getLabel("label_PinCodeDialog_AreaName.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true, 3, 100));
+					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true, 3, 100));
 		}
 
 		logger.debug(Literal.LEAVING);
