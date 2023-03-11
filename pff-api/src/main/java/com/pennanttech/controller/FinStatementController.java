@@ -21,7 +21,6 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +41,9 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.agreement.InterestCertificate;
-import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -72,7 +69,6 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.reports.ReportConfiguration;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -87,13 +83,14 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.document.generator.TemplateEngine;
-import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.CustomerUtil;
+import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.util.APIConstants;
@@ -112,7 +109,6 @@ public class FinStatementController extends SummaryDetailService {
 	private CollateralSetupService collateralSetupService;
 	private FeeDetailService feeDetailService;
 
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private ReceiptService receiptService;
 	private SOAReportGenerationService soaReportGenerationService;
 	private InterestCertificateService interestCertificateService;
@@ -121,46 +117,32 @@ public class FinStatementController extends SummaryDetailService {
 	private FeeTypeDAO feeTypeDAO;
 	private CustomerDetailsService customerDetailsService;
 
-	/**
-	 * get the FinStatement Details by the given FinReferences.
-	 * 
-	 * @param finreferencecList
-	 * @throws ServiceException
-	 */
 	public FinStatementResponse getStatement(List<Long> finIDList, String serviceName) {
 		logger.debug(Literal.ENTERING);
+
+		StringBuilder logMsg = new StringBuilder();
+		logMsg.append("\n");
+		logMsg.append("========================================================\n");
+		logMsg.append("Service-Name").append(serviceName).append("\n");
+		logMsg.append("\n");
+		logMsg.append("=======================================================\n");
+
+		logger.info(logMsg);
 
 		FinStatementResponse stmtResponse = new FinStatementResponse();
 		List<FinanceDetail> fdList = new ArrayList<>();
 
 		try {
 			for (long finID : finIDList) {
-				FinanceDetail fd = financeDetailService.getFinanceDetailById(finID, false, "", false,
-						FinServiceEvent.ORG, "");
+				FinanceDetail fd = getFinanceDetail(finID, serviceName);
+
 				if (fd == null) {
 					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 					return stmtResponse;
 				}
 
-				String finReference = fd.getFinScheduleData().getFinanceMain().getFinReference();
-
-				if (StringUtils.equals(APIConstants.STMT_ACCOUNT, serviceName)) {
-					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finReference, true);
-					fd.setReturnDataSetList(postingsList);
-				}
-				if (StringUtils.equals(APIConstants.STMT_INST_CERT, serviceName)) {
-					long custId = fd.getCustomerDetails().getCustomer().getCustID();
-					if (custId != 0) {
-						List<CollateralSetup> collatSetupList = collateralSetupService
-								.getCollateralSetupByCustId(custId);
-						fd.setCollaterals(collatSetupList);
-					}
-				}
-
-				// generate response info
 				prepareResponse(fd, serviceName);
 
-				// for logging purpose
 				if (StringUtils.isNotBlank(fd.getFinReference())) {
 					APIErrorHandlerService.logReference(fd.getFinReference());
 				}
@@ -172,23 +154,21 @@ public class FinStatementController extends SummaryDetailService {
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+
 			APIErrorHandlerService.logUnhandledException(e);
 			stmtResponse = new FinStatementResponse();
 			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return stmtResponse;
 		}
+
 		stmtResponse.setFinance(fdList);
 		stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
 		logger.debug(Literal.LEAVING);
+
 		return stmtResponse;
 	}
 
-	/**
-	 * get the FinStatement Details by the given FinReferences.
-	 * 
-	 * @param finreferencecList
-	 * @throws ServiceException
-	 */
 	public FinStatementResponse getStatement(List<Long> finIDList, String serviceName, int days, Date fromDate) {
 		logger.debug(Literal.ENTERING);
 
@@ -196,56 +176,28 @@ public class FinStatementController extends SummaryDetailService {
 		List<FinanceDetail> finDetailList = new ArrayList<>();
 		try {
 
-			FinanceDetail fd = null;
 			for (Long finID : finIDList) {
-				fd = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
+				FinanceDetail fd = getFinanceDetail(finID, serviceName);
 
 				if (fd == null) {
 					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 					return stmtResponse;
 				}
 
+				FinScheduleData schdData = fd.getFinScheduleData();
 				String finReference = fd.getFinScheduleData().getFinanceMain().getFinReference();
 
-				fd.setFinID(finID);
-
-				if (StringUtils.equals(APIConstants.STMT_ACCOUNT, serviceName)) {
-					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finReference, true);
-					fd.setReturnDataSetList(postingsList);
-				}
-				if (StringUtils.equals(APIConstants.STMT_INST_CERT, serviceName)) {
-					long custId = fd.getCustomerDetails().getCustomer().getCustID();
-					if (custId != 0) {
-						List<CollateralSetup> collatSetupList = collateralSetupService
-								.getCollateralSetupByCustId(custId);
-						fd.setCollaterals(collatSetupList);
-					}
+				if (APIConstants.STMT_FORECLOSURE.equals(serviceName)) {
+					schdData.setFinODDetails(finODDetailsDAO.getFinODDByFinRef(finID, null));
+					setForeClosureDetails(fd, days, fromDate);
 				}
 
-				if (StringUtils.equals(APIConstants.STMT_FORECLOSURE, serviceName)) {
-					Cloner cloner = new Cloner();
-					FinanceDetail aFinanceDetail = cloner.deepClone(fd);
-					// get FinODDetails
-					List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finID, null);
-					aFinanceDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
-					fd.getFinScheduleData().setFinODDetails(finODDetailsList);
-					fd = getForeClosureDetails(fd, days, fromDate);
-
-					FinScheduleData schdData = fd.getFinScheduleData();
-					schdData.setFinanceScheduleDetails(aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails());
-					// setting old values
-					fd.setCustomerDetails(aFinanceDetail.getCustomerDetails());
-					schdData.setFinanceMain(aFinanceDetail.getFinScheduleData().getFinanceMain());
-					schdData.setFinODDetails(aFinanceDetail.getFinScheduleData().getFinODDetails());
-				}
-
-				if (StringUtils.equals(APIConstants.STMT_FORECLOSUREV1, serviceName)) {
+				if (APIConstants.STMT_FORECLOSUREV1.equals(serviceName)) {
 					FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference, fromDate,
 							AccountingEvent.EARLYSTL, FinServiceEvent.RECEIPT, "");
-					getForeClosureReport(receiptData, stmtResponse);
+					setForeClosureReport(receiptData, stmtResponse);
 				}
 
-				// generate response info
 				prepareResponse(fd, serviceName);
 
 				// for logging purpose
@@ -274,12 +226,34 @@ public class FinStatementController extends SummaryDetailService {
 		return stmtResponse;
 	}
 
-	/**
-	 * 
-	 * @param fd
-	 * @return
-	 */
-	private FinanceDetail getForeClosureDetails(FinanceDetail fd, int days, Date fromDate) {
+	private FinanceDetail getFinanceDetail(long finID, String serviceName) {
+		FinanceDetail fd = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
+
+		if (fd == null) {
+			return fd;
+		}
+
+		fd.setFinID(finID);
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String finReference = fm.getFinReference();
+
+		switch (serviceName) {
+		case APIConstants.STMT_ACCOUNT:
+			fd.setReturnDataSetList(postingsDAO.getPostingsByFinRef(finReference, true));
+			break;
+		case APIConstants.STMT_INST_CERT:
+			fd.setCollaterals(collateralSetupService.getCollateralSetupByCustId(fm.getCustID()));
+			break;
+		default:
+			break;
+		}
+
+		return fd;
+	}
+
+	private void setForeClosureDetails(FinanceDetail fd, int days, Date fromDate) {
 		logger.debug(Literal.ENTERING);
 
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -287,72 +261,73 @@ public class FinStatementController extends SummaryDetailService {
 		Long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
-		// Fetch Total Repayment Amount till Maturity date for Early Settlement
-		BigDecimal repayAmt = financeScheduleDetailDAO.getTotalRepayAmount(finID);
+		BigDecimal repayAmt = SchdUtil.getTotalRepayAmount(schdData.getFinanceScheduleDetails());
 
-		FinServiceInstruction serviceInstruction = new FinServiceInstruction();
-		serviceInstruction.setAmount(repayAmt);
-		serviceInstruction.setModuleDefiner(FinServiceEvent.EARLYSTLENQ);
+		FinServiceInstruction fsi = new FinServiceInstruction();
+		fsi.setAmount(repayAmt);
+		fsi.setModuleDefiner(FinServiceEvent.EARLYSTLENQ);
 		fm.setRcdMaintainSts(FinServiceEvent.EARLYSTLENQ);
-		if (serviceInstruction.getToDate() == null) {
-			serviceInstruction.setToDate(schdData.getFinanceMain().getMaturityDate());
-		}
-		FinanceDetail finStmtDetail = new FinanceDetail();
-		FinScheduleData scheduleData = new FinScheduleData();
-		List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>();
-		List<FinODDetails> finOdDetaiList = new ArrayList<FinODDetails>();
-		List<FinFeeDetail> foreClosureFees = new ArrayList<FinFeeDetail>();
-		List<FinFeeDetail> feeDues = new ArrayList<FinFeeDetail>();
-		try {
-			if (fromDate != null) {
-				Cloner cloner = new Cloner();
-				FinanceDetail aFinanceDetail = cloner.deepClone(fd);
-				serviceInstruction.setFromDate(fromDate);
-				aFinanceDetail = doProcessPayments(aFinanceDetail, serviceInstruction);
 
-				scheduleData.setOutstandingPri(aFinanceDetail.getFinScheduleData().getOutstandingPri());
-				feeDues = aFinanceDetail.getFinScheduleData().getFeeDues();
-				foreClosureFees = aFinanceDetail.getFinScheduleData().getForeClosureFees();
-				foreClosureList.add(aFinanceDetail.getForeClosureDetails().get(0));
-				finOdDetaiList.add(aFinanceDetail.getFinScheduleData().getFinODDetails().get(0));
+		if (fsi.getToDate() == null) {
+			fsi.setToDate(fm.getMaturityDate());
+		}
+
+		List<ForeClosure> foreClosureList = new ArrayList<>();
+		List<FinODDetails> finOdDetaiList = new ArrayList<>();
+		List<FinFeeDetail> foreClosureFees = new ArrayList<>();
+		List<FinFeeDetail> feeDues = new ArrayList<FinFeeDetail>();
+
+		try {
+
+			if (fromDate != null) {
+				FinanceDetail afd = new FinanceDetail();
+				afd.setFinScheduleData(schdData.copyEntity());
+				fsi.setFromDate(fromDate);
+
+				doProcessPayments(afd, fsi);
+
+				schdData.setOutstandingPri(afd.getFinScheduleData().getOutstandingPri());
+				feeDues = afd.getFinScheduleData().getFeeDues();
+				foreClosureFees = afd.getFinScheduleData().getForeClosureFees();
+				foreClosureList.add(afd.getForeClosureDetails().get(0));
+				finOdDetaiList.add(afd.getFinScheduleData().getFinODDetails().get(0));
 			} else {
 				for (int i = 0; i < days; i++) {
-					Cloner cloner = new Cloner();
-					FinanceDetail aFinanceDetail = cloner.deepClone(fd);
-					serviceInstruction.setFromDate(DateUtility.addDays(SysParamUtil.getAppDate(), i));
-					aFinanceDetail = doProcessPayments(aFinanceDetail, serviceInstruction);
+					FinanceDetail afd = new FinanceDetail();
+					afd.setFinScheduleData(schdData.copyEntity());
+					fsi.setFromDate(DateUtility.addDays(SysParamUtil.getAppDate(), i));
 
-					scheduleData.setOutstandingPri(aFinanceDetail.getFinScheduleData().getOutstandingPri());
-					feeDues = aFinanceDetail.getFinScheduleData().getFeeDues();
-					foreClosureFees = aFinanceDetail.getFinScheduleData().getForeClosureFees();
-					foreClosureList.add(aFinanceDetail.getForeClosureDetails().get(0));
-					finOdDetaiList.add(aFinanceDetail.getFinScheduleData().getFinODDetails().get(0));
+					doProcessPayments(afd, fsi);
+
+					schdData.setOutstandingPri(afd.getFinScheduleData().getOutstandingPri());
+					feeDues = afd.getFinScheduleData().getFeeDues();
+					foreClosureFees = afd.getFinScheduleData().getForeClosureFees();
+					foreClosureList.add(afd.getForeClosureDetails().get(0));
+					finOdDetaiList.add(afd.getFinScheduleData().getFinODDetails().get(0));
 				}
 			}
 
-			scheduleData.setFinID(finID);
-			scheduleData.setFinReference(finReference);
-			scheduleData.setFinODDetails(finOdDetaiList);
-			scheduleData.setForeClosureFees(foreClosureFees);
-			scheduleData.setFeeDues(feeDues);
+			schdData.setFinID(finID);
+			schdData.setFinReference(finReference);
+			schdData.setFinODDetails(finOdDetaiList);
+			schdData.setForeClosureFees(foreClosureFees);
+			schdData.setFeeDues(feeDues);
 
 			// process origination fees
-			scheduleData.getFeeDues().addAll(getUpdatedFees(fd.getFinScheduleData().getFinFeeDetailList()));
+			schdData.getFeeDues().addAll(getUpdatedFees(fd.getFinScheduleData().getFinFeeDetailList()));
 
-			finStmtDetail.setForeClosureDetails(foreClosureList);
-			finStmtDetail.setFinScheduleData(scheduleData);
+			fd.setForeClosureDetails(foreClosureList);
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			throw e;
 		}
+
 		logger.debug(Literal.LEAVING);
-		return finStmtDetail;
 	}
 
 	private void processFeesAndCharges(FinScheduleData schdData, List<FinFeeDetail> finFeeDetails) throws AppException {
-		// finance level fees and charges
 		for (FinFeeDetail feeDetail : finFeeDetails) {
 			feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_LOAN);
 		}
@@ -364,17 +339,18 @@ public class FinStatementController extends SummaryDetailService {
 
 		List<FinFeeDetail> feeDues = new ArrayList<>();
 
-		// Bounce and manual advice fees if applicable
 		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getReceivableAdvises(finID, "_View");
 
 		for (ManualAdvise advisedFees : manualAdviseFees) {
 			FinFeeDetail feeDetail = new FinFeeDetail();
+
 			if (advisedFees.getBounceID() > 0) {
 				feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
 				feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
 			} else {
 				feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 			}
+
 			feeDetail.setFeeTypeCode(advisedFees.getFeeTypeCode());
 			feeDetail.setActualAmount(advisedFees.getAdviseAmount());
 			feeDetail.setPaidAmount(advisedFees.getPaidAmount());
@@ -395,6 +371,8 @@ public class FinStatementController extends SummaryDetailService {
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
+		Date appDate = SysParamUtil.getAppDate();
+
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
@@ -404,10 +382,6 @@ public class FinStatementController extends SummaryDetailService {
 		schdData.setStepPolicyDetails(null);
 		schdData.setPlanEMIHDates(null);
 		schdData.setPlanEMIHmonths(null);
-		/*
-		 * if (!StringUtils.equals(APIConstants.STMT_REPAY_SCHD, servicName)) {
-		 * financeDetail.getFinScheduleData().setFinanceScheduleDetails(null); }
-		 */
 		schdData.setRateInstruction(null);
 		schdData.setRepayInstructions(null);
 
@@ -418,6 +392,8 @@ public class FinStatementController extends SummaryDetailService {
 		fd.setGurantorsDetailList(null);
 		fd.setDocumentDetailsList(null);
 		fd.setCollateralAssignmentList(null);
+		fd.setCovenants(null);
+		fd.setCollaterals(null);
 
 		List<FinanceDisbursement> disbList = schdData.getDisbursementDetails().stream()
 				.sorted((b1, b2) -> Integer.compare(b1.getDisbSeq(), b2.getDisbSeq())).collect(Collectors.toList());
@@ -434,21 +410,35 @@ public class FinStatementController extends SummaryDetailService {
 
 		if (APIConstants.STMT_ACCOUNT.equals(servicName)) {
 			List<FinFeeDetail> finFeeDetail = schdData.getFinFeeDetailList();
-			FinScheduleData finScheduleData = schdData;
-			finScheduleData.setFinReference(finScheduleData.getFinanceMain().getFinReference());
-			processFeesAndCharges(finScheduleData, finFeeDetail);
+
+			schdData.setFinReference(schdData.getFinanceMain().getFinReference());
+
+			processFeesAndCharges(schdData, finFeeDetail);
+
 			fd.setFinFeeDetails(getUpdatedFees(schdData.getFeeDues()));
 			schdData.setFeeDues(null);
 		}
 
-		// Fetch summary details
 		FinanceSummary summary = getFinanceSummary(fd);
 		summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
 		summary.setOutStandPrincipal(schdData.getOutstandingPri());
+		summary.setTotalPriSchd(SchdUtil.getTotalPrincipalSchd(schdData.getFinanceScheduleDetails()));
+
+		FinanceScheduleDetail curSchd = SchdUtil.getNextInstalment(appDate, schdData.getFinanceScheduleDetails());
+
+		if (curSchd != null) {
+			summary.setInstallmentNo(curSchd.getInstNumber());
+			summary.setLoanEMI(curSchd.getRepayAmount());
+			summary.setDueDate(curSchd.getSchDate());
+			summary.setLoanPri(curSchd.getPrincipalSchd());
+			summary.setLoanPft(curSchd.getProfitSchd());
+		}
+
 		schdData.setFinanceSummary(summary);
 
 		schdData.setDisbursementDetails(null);
 		schdData.setFinFeeDetailList(null);
+
 		if (!APIConstants.STMT_FORECLOSURE.equals(servicName)) {
 			schdData.setFinODDetails(null);
 		} else {
@@ -462,6 +452,8 @@ public class FinStatementController extends SummaryDetailService {
 		// customer details
 		CustomerDetails cd = fd.getCustomerDetails();
 		Customer customer = cd.getCustomer();
+
+		customer.setFullName(CustomerUtil.getCustomerFullName(customer));
 
 		cd.setCustCIF(customer.getCustCIF());
 		cd.setCustCoreBank(customer.getCustCoreBank());
@@ -479,14 +471,7 @@ public class FinStatementController extends SummaryDetailService {
 		cd.setCustomerChequeInfoList(null);
 	}
 
-	/**
-	 * Method for process Early settlement and partial payment requests
-	 * 
-	 * @param fd
-	 * @param fsi
-	 * @return
-	 */
-	public FinanceDetail doProcessPayments(FinanceDetail fd, FinServiceInstruction fsi) {
+	private void doProcessPayments(FinanceDetail fd, FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
 		if (fsi.getFromDate() == null) {
@@ -633,12 +618,14 @@ public class FinStatementController extends SummaryDetailService {
 		schdData.setFinODDetails(finODDetailList);
 
 		logger.debug(Literal.LEAVING);
-		return fd;
 	}
 
-	public FinStatementResponse getForeClosureReport(FinReceiptData receiptData, FinStatementResponse finStmtResponse) {
+	public void setForeClosureReport(FinReceiptData receiptData, FinStatementResponse finStmtResponse) {
 		logger.debug(Literal.ENTERING);
 		ForeClosureReport closureReport = new ForeClosureReport();
+
+		Date appDate = SysParamUtil.getAppDate();
+
 		try {
 			FinanceDetail fd = receiptData.getFinanceDetail();
 			FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
@@ -659,13 +646,13 @@ public class FinStatementController extends SummaryDetailService {
 			rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 
 			rch.getReceiptDetails().add(rcd);
-			rch.setValueDate(SysParamUtil.getAppDate());
+			rch.setValueDate(appDate);
 
 			receiptData.setReceiptHeader(rch);
 			receiptData.setFinID(fm.getFinID());
 			receiptData.setFinReference(fm.getFinReference());
 			receiptData.setBuildProcess("I");
-			receiptData.setValueDate(SysParamUtil.getAppDate());
+			receiptData.setValueDate(appDate);
 			receiptData.setReceiptHeader(rch);
 			receiptData.setForeClosureEnq(true);
 			receiptData = receiptService.calcuateDues(receiptData);
@@ -677,303 +664,296 @@ public class FinStatementController extends SummaryDetailService {
 				closureReport.setActPercentage(finFeeDetail.getActPercentage());
 			}
 
-			if (fm != null) {
-				Date applDate = SysParamUtil.getAppDate();
-				String appDate = DateFormatUtils.format(applDate, "dd MMMM yyyy");
-				String disDate = DateFormatUtils.format(fm.getFinStartDate(), "dd'th' MMMM yyyy");
-				Date chrgTillDate;
-				int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-				String finCCy = SysParamUtil.getAppCurrency();
-				int validityDays = SysParamUtil.getValueAsInt(SMTParameterConstants.FORECLOSURE_VALIDITY_DAYS);
-				Date addDays = DateUtility.addDays(applDate, validityDays);
-				String validTill = DateFormatUtils.format(addDays, "dd.MM.yyyy");
+			String disDate = DateUtil.format(fm.getFinStartDate(), "dd'th' MMMM yyyy");
+			int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
+			String finCCy = SysParamUtil.getAppCurrency();
+			int validityDays = SysParamUtil.getValueAsInt(SMTParameterConstants.FORECLOSURE_VALIDITY_DAYS);
+			String validTill = DateUtil.format(DateUtil.addDays(appDate, validityDays), "dd.MM.yyyy");
 
-				Date prvEmiDate = receiptData.getOrgFinPftDtls().getPrvRpySchDate();
-				chrgTillDate = applDate;
-				int noOfIntDays = DateUtility.getDaysBetween(chrgTillDate, prvEmiDate);
+			Date prvEmiDate = receiptData.getOrgFinPftDtls().getPrvRpySchDate();
+			int noOfIntDays = DateUtil.getDaysBetween(appDate, prvEmiDate);
 
-				closureReport.setCalDate(appDate);
-				closureReport.setValidTill(validTill);
-				closureReport.setFinID(fm.getFinID());
-				closureReport.setFinReference(fm.getFinReference());
-				closureReport.setVanNumber(fm.getVanCode() == null ? "" : fm.getVanCode());
-				closureReport.setFinAmount(PennantApplicationUtil.formateAmount(fm.getFinAmount(), formatter));
-				closureReport.setFinAmountInWords(NumberToEnglishWords
-						.getAmountInText(PennantApplicationUtil.formateAmount(fm.getFinAmount(), formatter), finCCy));
-				closureReport.setFinAssetValue(PennantApplicationUtil.formateAmount(fm.getFinAssetValue(), formatter));
-				closureReport.setFinAssetValueInWords(NumberToEnglishWords.getAmountInText(
-						PennantApplicationUtil.formateAmount(fm.getFinAssetValue(), formatter), finCCy));
+			closureReport.setCalDate(DateUtil.format(appDate, "dd MMMM yyyy"));
+			closureReport.setValidTill(validTill);
+			closureReport.setFinID(fm.getFinID());
+			closureReport.setFinReference(fm.getFinReference());
+			closureReport.setVanNumber(fm.getVanCode() == null ? "" : fm.getVanCode());
+			closureReport.setFinAmount(PennantApplicationUtil.formateAmount(fm.getFinAmount(), formatter));
+			closureReport.setFinAmountInWords(NumberToEnglishWords
+					.getAmountInText(PennantApplicationUtil.formateAmount(fm.getFinAmount(), formatter), finCCy));
+			closureReport.setFinAssetValue(PennantApplicationUtil.formateAmount(fm.getFinAssetValue(), formatter));
+			closureReport.setFinAssetValueInWords(NumberToEnglishWords
+					.getAmountInText(PennantApplicationUtil.formateAmount(fm.getFinAssetValue(), formatter), finCCy));
 
-				closureReport.setDisbursalDate(disDate);
-				closureReport.setChrgTillDate(DateFormatUtils.format(chrgTillDate, "MMM  dd,yyyy"));
-				if (fd.getCustomerDetails() != null && fd.getCustomerDetails().getCustomer() != null) {
-					closureReport.setCustName(fd.getCustomerDetails().getCustomer().getCustShrtName());
-					closureReport.setCustCIF(fd.getCustomerDetails().getCustomer().getCustCIF());
-					CustomerDetails customerDetails = customerDetailsService
-							.getCustomerDetailsbyIdandPhoneType(fd.getCustomerDetails().getCustID(), "MOBILE");
-					CustomerAddres custAdd = customerDetails.getAddressList().stream()
-							.filter(addr -> addr.getCustAddrPriority() == 5).findFirst().orElse(new CustomerAddres());
+			closureReport.setDisbursalDate(disDate);
+			closureReport.setChrgTillDate(DateUtil.format(appDate, "MMM  dd,yyyy"));
+			if (fd.getCustomerDetails() != null && fd.getCustomerDetails().getCustomer() != null) {
+				closureReport.setCustName(fd.getCustomerDetails().getCustomer().getCustShrtName());
+				closureReport.setCustCIF(fd.getCustomerDetails().getCustomer().getCustCIF());
+				CustomerDetails customerDetails = customerDetailsService
+						.getCustomerDetailsbyIdandPhoneType(fd.getCustomerDetails().getCustID(), "MOBILE");
+				CustomerAddres custAdd = customerDetails.getAddressList().stream()
+						.filter(addr -> addr.getCustAddrPriority() == 5).findFirst().orElse(new CustomerAddres());
 
-					String combinedString = null;
-					String custflatnbr = null;
-					if (StringUtils.trimToEmpty(custAdd.getCustFlatNbr()).equals("")) {
-						custflatnbr = " ";
-					} else {
-						custflatnbr = " " + StringUtils.trimToEmpty(custAdd.getCustFlatNbr()) + " ";
-					}
-
-					combinedString = StringUtils.trimToEmpty(custAdd.getCustAddrHNbr()) + " "
-							+ StringUtils.trimToEmpty(custflatnbr) + " "
-							+ StringUtils.trimToEmpty(custAdd.getCustAddrStreet()) + "\n"
-							+ StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCityName()) + "\n"
-							+ StringUtils.trimToEmpty(custAdd.getLovDescCustAddrProvinceName()) + "-"
-							+ StringUtils.trimToEmpty(custAdd.getCustAddrZIP()) + "\n"
-							+ StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCountryName());
-
-					closureReport.setAddress(combinedString);
-
-					closureReport.setCustAddrHNbr(StringUtils.trimToEmpty(custAdd.getCustAddrHNbr()));
-					closureReport.setCustFlatNo(StringUtils.trimToEmpty(custflatnbr));
-					closureReport.setCustAddrStreet(StringUtils.trimToEmpty(custAdd.getCustAddrStreet()));
-					closureReport.setCustAddrCityName(StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCityName()));
-					closureReport
-							.setCustAddrProvinceName(StringUtils.trimToEmpty(custAdd.getLovDescCustAddrProvinceName()));
-					closureReport.setCustAddrZIP(StringUtils.trimToEmpty(custAdd.getCustAddrZIP()));
-					closureReport
-							.setCustAddrCountryName(StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCountryName()));
-
-					String salutation = fd.getCustomerDetails().getCustomer().getLovDescCustSalutationCodeName();
-					String nameString = StringUtils.trimToEmpty(salutation).equals("")
-							? StringUtils.trimToEmpty(closureReport.getCustName())
-							: StringUtils.trimToEmpty(salutation) + " "
-									+ StringUtils.trimToEmpty(closureReport.getCustName());
-					if (CollectionUtils.isNotEmpty(fd.getJointAccountDetailList())) {
-						for (JointAccountDetail jointAccountDetail : fd.getJointAccountDetailList()) {
-							if (StringUtils.isNotEmpty(nameString)) {
-								nameString = nameString + "\n";
-							}
-
-							if (jointAccountDetail.getCustomerDetails() != null
-									&& jointAccountDetail.getCustomerDetails().getCustomer() != null) {
-								nameString = nameString + (StringUtils.trimToEmpty(jointAccountDetail
-										.getCustomerDetails().getCustomer().getLovDescCustSalutationCodeName())
-										.equals("")
-												? StringUtils.trimToEmpty(jointAccountDetail.getCustomerDetails()
-														.getCustomer().getCustShrtName())
-												: StringUtils
-														.trimToEmpty(jointAccountDetail.getCustomerDetails()
-																.getCustomer().getLovDescCustSalutationCodeName())
-														+ " " + StringUtils.trimToEmpty(jointAccountDetail
-																.getCustomerDetails().getCustomer().getCustShrtName()));
-							}
-						}
-					}
-					if (CollectionUtils.isNotEmpty(fd.getGurantorsDetailList())) {
-						for (GuarantorDetail gurantorsDetail : fd.getGurantorsDetailList()) {
-							if (StringUtils.isNotEmpty(nameString)) {
-								nameString = nameString + "\n";
-							}
-							nameString = nameString + "\n"
-									+ StringUtils.trimToEmpty(gurantorsDetail.getGuarantorCIFName());
-						}
-					}
-					closureReport.setNameOftheBorrowers(nameString);
-
-					String custSalutation = fd.getCustomerDetails().getCustomer().getLovDescCustSalutationCodeName();
-					closureReport.setCustSalutation(StringUtils.trimToEmpty(custSalutation));
-
-					List<ReceiptAllocationDetail> receiptAllocationDetails = receiptData.getReceiptHeader()
-							.getAllocationsSummary();
-					Cloner cloner = new Cloner();
-					receiptData.getFinanceDetail().getFinScheduleData()
-							.setFinanceScheduleDetails(fd.getFinScheduleData().getFinanceScheduleDetails());
-					FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
-					tempReceiptData.setForeClosureEnq(true);
-					// setOrgReceiptData(tempReceiptData);
-					receiptAllocationDetails = tempReceiptData.getReceiptHeader().getAllocationsSummary();
-
-					BigDecimal receivableAmt = BigDecimal.ZERO;
-					BigDecimal bncCharge = BigDecimal.ZERO;
-					BigDecimal profitAmt = BigDecimal.ZERO;
-					BigDecimal principleAmt = BigDecimal.ZERO;
-					BigDecimal tdsAmt = BigDecimal.ZERO;
-					BigDecimal futTdsAmt = BigDecimal.ZERO;
-
-					for (ReceiptAllocationDetail rad : receiptAllocationDetails) {
-						switch (rad.getAllocationType()) {
-						case Allocation.FUT_PRI:
-							closureReport.setOutstandingPri(
-									PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter));
-							closureReport.setOutstandingPriInWords(NumberToEnglishWords.getAmountInText(
-									PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter), finCCy));
-							break;
-						case Allocation.ODC:
-							closureReport.setLatePayCharges(
-									PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter));
-							closureReport.setLatePayChargesInWords(NumberToEnglishWords.getAmountInText(
-									PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter), finCCy));
-							break;
-						case Allocation.BOUNCE:
-							bncCharge = rad.getTotRecv();
-							break;
-						case Allocation.MANADV:
-							receivableAmt = receivableAmt.add(rad.getTotRecv());
-							break;
-						case Allocation.FUT_PFT:
-							closureReport.setInstForTheMonth(
-									PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter));
-							closureReport.setInstForTheMonthInWords(NumberToEnglishWords.getAmountInText(
-									PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter), finCCy));
-							break;
-						case Allocation.PFT:
-							profitAmt = rad.getTotRecv();
-							break;
-						case Allocation.PRI:
-							principleAmt = rad.getTotRecv();
-							break;
-						case Allocation.TDS:
-							tdsAmt = rad.getTotRecv();
-							break;
-						case Allocation.FUT_TDS:
-							futTdsAmt = rad.getTotRecv();
-							break;
-						case Allocation.FEE:
-							BigDecimal amountWithGST = rad.getTotRecv();
-							BigDecimal gstAmt = rad.getDueGST();
-							BigDecimal fcFeeAmtWithoutGst = amountWithGST.subtract(gstAmt);
-							BigDecimal fcFee = closureReport.getForeClosFees().add(amountWithGST);
-							closureReport.setForeClosFees(PennantApplicationUtil.formateAmount(fcFee, formatter));
-							closureReport.setForeClosFeesInWords(NumberToEnglishWords
-									.getAmountInText(PennantApplicationUtil.formateAmount(fcFee, formatter), finCCy));
-							closureReport.setGstOnForeClosFees((PennantApplicationUtil
-									.formateAmount(fcFeeAmtWithoutGst, formatter).multiply(new BigDecimal(18)))
-											.divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN));
-							closureReport.setForeClosFeesExGST(
-									closureReport.getForeClosFees().subtract(closureReport.getGstOnForeClosFees()));
-
-							closureReport.setGstOnForeClosFees(closureReport.getGstOnForeClosFees());
-							break;
-						default:
-							break;
-						}
-					}
-					// Other Charges
-					closureReport.setManualAdviceAmt(PennantApplicationUtil.formateAmount(receivableAmt, formatter));
-
-					// Cheque Bounce Charges
-					closureReport.setCheqBncCharges(PennantApplicationUtil.formateAmount(bncCharge, formatter));
-					closureReport.setCheqBncChargesInWords(NumberToEnglishWords
-							.getAmountInText(PennantApplicationUtil.formateAmount(bncCharge, formatter), finCCy));
-
-					// Pending Installments
-					closureReport.setPrincipalAmt(PennantApplicationUtil.formateAmount(principleAmt, formatter));
-					closureReport.setInterestAmt(PennantApplicationUtil.formateAmount(profitAmt, formatter));
-					closureReport.setPendingInsts(
-							PennantApplicationUtil.formateAmount(profitAmt.add(principleAmt), formatter));
-
-					// TDS
-					closureReport.setTds(PennantApplicationUtil.formateAmount(tdsAmt.add(futTdsAmt), formatter));
-
-					List<FinExcessAmount> excessList = receiptData.getReceiptHeader().getExcessAmounts();
-
-					// Refunds (Excess Amount + EMI in advance)
-					BigDecimal refund = BigDecimal.ZERO;
-					for (FinExcessAmount finExcessAmount : excessList) {
-						refund = refund.add(finExcessAmount.getBalanceAmt());
-					}
-					closureReport.setRefund(PennantApplicationUtil.formateAmount(refund, formatter));
-
-					// Advance EMI
-					for (FinExcessAmount finExcessAmount : excessList) {
-						if (StringUtils.equals(finExcessAmount.getAmountType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
-							closureReport.setAdvInsts(
-									PennantApplicationUtil.formateAmount(finExcessAmount.getBalanceAmt(), formatter));
-						}
-					}
-					closureReport.setTotalDues(closureReport.getLatePayCharges().add(closureReport.getPendingInsts())
-							.add(closureReport.getCheqBncCharges()).add(closureReport.getOutstandingPri())
-							.add(closureReport.getInstForTheMonth())
-							.add(closureReport.getForeClosFees().add(closureReport.getManualAdviceAmt()))
-							.subtract(closureReport.getTds()).subtract(closureReport.getTotWaiver()));
-					if (noOfIntDays > 0) {
-						closureReport.setIntPerday(closureReport.getInstForTheMonth()
-								.divide(new BigDecimal(noOfIntDays), RoundingMode.CEILING));
-					}
-
-					// Charges Inclusive of GST
-					closureReport.setChargesIncGST(closureReport.getLatePayCharges()
-							.add(closureReport.getCheqBncCharges()).add(closureReport.getManualAdviceAmt()));
-					closureReport.setChargesIncGSTInWords(NumberToEnglishWords
-							.getAmountInText((closureReport.getLatePayCharges().add(closureReport.getCheqBncCharges())
-									.add(closureReport.getManualAdviceAmt())), finCCy));
-
-					// Issue Fixed 141142
-					List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
-					BigDecimal payableAmt = BigDecimal.ZERO;
-					for (ManualAdvise manualAdvise : payableList) {
-						payableAmt = payableAmt.add(manualAdvise.getBalanceAmt());
-					}
-
-					// Other Refunds (All payable Advise)
-					closureReport.setOtherRefunds(PennantApplicationUtil.formateAmount(payableAmt, formatter));
-					closureReport.setOtherRefundsInWords(NumberToEnglishWords
-							.getAmountInText(PennantApplicationUtil.formateAmount(payableAmt, formatter), finCCy));
-
-					// Refunds + other Refunds
-					closureReport.setTotalRefunds(closureReport.getRefund().add(closureReport.getOtherRefunds()));
-					closureReport.setTotalRefundsInWords(
-							NumberToEnglishWords.getAmountInText(closureReport.getTotalRefunds(), finCCy));
-
-					// Net Receivable
-					int format = 0;
-					closureReport.setNetReceivable(
-							closureReport.getTotalDues().subtract(closureReport.getTotalRefunds()).abs());
-					BigDecimal netAmtRecievable = PennantApplicationUtil
-							.unFormateAmount(closureReport.getNetReceivable(), format);
-					closureReport
-							.setNetReceivableInWords(NumberToEnglishWords.getAmountInText(netAmtRecievable, finCCy));
-
-					if ((closureReport.getTotalDues().subtract(closureReport.getTotalRefunds()))
-							.compareTo(BigDecimal.ZERO) < 0) {
-						closureReport.setTotal("Net Payable");
-					} else {
-						closureReport.setTotal("Net Receivable");
-					}
-
-					int defaultDays = 7;
-					int noOfdays = DateUtility.getDaysBetween(chrgTillDate, fm.getMaturityDate());
-					if (defaultDays >= noOfdays) {
-						defaultDays = noOfdays;
-					}
-
-					List<FinanceMain> financeMainList = financeDetailService
-							.getFinanceMainForLinkedLoans(fm.getFinReference());
-					StringBuilder linkedFinRef = new StringBuilder(" ");
-					if (financeMainList != null) {
-						for (FinanceMain finance : financeMainList) {
-							if (!finance.getFinReference().equals(closureReport.getFinReference())) {
-								linkedFinRef.append(" " + finance.getFinReference());
-								linkedFinRef.append(",");
-							}
-						}
-						linkedFinRef.setLength(linkedFinRef.length() - 1);
-					}
-
-					// Linked Loan Reference
-					closureReport.setLinkedFinRef(linkedFinRef.toString());
-
-					closureReport.setEntityDesc(fm.getEntityDesc());
-					finStmtResponse.setForeclosureReport(closureReport);
+				String combinedString = null;
+				String custflatnbr = null;
+				if (StringUtils.trimToEmpty(custAdd.getCustFlatNbr()).equals("")) {
+					custflatnbr = " ";
+				} else {
+					custflatnbr = " " + StringUtils.trimToEmpty(custAdd.getCustFlatNbr()) + " ";
 				}
+
+				combinedString = StringUtils.trimToEmpty(custAdd.getCustAddrHNbr()) + " "
+						+ StringUtils.trimToEmpty(custflatnbr) + " "
+						+ StringUtils.trimToEmpty(custAdd.getCustAddrStreet()) + "\n"
+						+ StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCityName()) + "\n"
+						+ StringUtils.trimToEmpty(custAdd.getLovDescCustAddrProvinceName()) + "-"
+						+ StringUtils.trimToEmpty(custAdd.getCustAddrZIP()) + "\n"
+						+ StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCountryName());
+
+				closureReport.setAddress(combinedString);
+
+				closureReport.setCustAddrHNbr(StringUtils.trimToEmpty(custAdd.getCustAddrHNbr()));
+				closureReport.setCustFlatNo(StringUtils.trimToEmpty(custflatnbr));
+				closureReport.setCustAddrStreet(StringUtils.trimToEmpty(custAdd.getCustAddrStreet()));
+				closureReport.setCustAddrCityName(StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCityName()));
+				closureReport
+						.setCustAddrProvinceName(StringUtils.trimToEmpty(custAdd.getLovDescCustAddrProvinceName()));
+				closureReport.setCustAddrZIP(StringUtils.trimToEmpty(custAdd.getCustAddrZIP()));
+				closureReport.setCustAddrCountryName(StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCountryName()));
+
+				String salutation = fd.getCustomerDetails().getCustomer().getLovDescCustSalutationCodeName();
+				String nameString = StringUtils.trimToEmpty(salutation).equals("")
+						? StringUtils.trimToEmpty(closureReport.getCustName())
+						: StringUtils.trimToEmpty(salutation) + " "
+								+ StringUtils.trimToEmpty(closureReport.getCustName());
+				if (CollectionUtils.isNotEmpty(fd.getJointAccountDetailList())) {
+					for (JointAccountDetail jointAccountDetail : fd.getJointAccountDetailList()) {
+						if (StringUtils.isNotEmpty(nameString)) {
+							nameString = nameString + "\n";
+						}
+
+						if (jointAccountDetail.getCustomerDetails() != null
+								&& jointAccountDetail.getCustomerDetails().getCustomer() != null) {
+							nameString = nameString
+									+ (StringUtils
+											.trimToEmpty(jointAccountDetail.getCustomerDetails().getCustomer()
+													.getLovDescCustSalutationCodeName())
+											.equals("")
+													? StringUtils.trimToEmpty(jointAccountDetail.getCustomerDetails()
+															.getCustomer().getCustShrtName())
+													: StringUtils
+															.trimToEmpty(jointAccountDetail.getCustomerDetails()
+																	.getCustomer().getLovDescCustSalutationCodeName())
+															+ " "
+															+ StringUtils
+																	.trimToEmpty(jointAccountDetail.getCustomerDetails()
+																			.getCustomer().getCustShrtName()));
+						}
+					}
+				}
+				if (CollectionUtils.isNotEmpty(fd.getGurantorsDetailList())) {
+					for (GuarantorDetail gurantorsDetail : fd.getGurantorsDetailList()) {
+						if (StringUtils.isNotEmpty(nameString)) {
+							nameString = nameString + "\n";
+						}
+						nameString = nameString + "\n" + StringUtils.trimToEmpty(gurantorsDetail.getGuarantorCIFName());
+					}
+				}
+				closureReport.setNameOftheBorrowers(nameString);
+
+				String custSalutation = fd.getCustomerDetails().getCustomer().getLovDescCustSalutationCodeName();
+				closureReport.setCustSalutation(StringUtils.trimToEmpty(custSalutation));
+
+				List<ReceiptAllocationDetail> receiptAllocationDetails = receiptData.getReceiptHeader()
+						.getAllocationsSummary();
+				Cloner cloner = new Cloner();
+				receiptData.getFinanceDetail().getFinScheduleData()
+						.setFinanceScheduleDetails(fd.getFinScheduleData().getFinanceScheduleDetails());
+				FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+				tempReceiptData.setForeClosureEnq(true);
+				// setOrgReceiptData(tempReceiptData);
+				receiptAllocationDetails = tempReceiptData.getReceiptHeader().getAllocationsSummary();
+
+				BigDecimal receivableAmt = BigDecimal.ZERO;
+				BigDecimal bncCharge = BigDecimal.ZERO;
+				BigDecimal profitAmt = BigDecimal.ZERO;
+				BigDecimal principleAmt = BigDecimal.ZERO;
+				BigDecimal tdsAmt = BigDecimal.ZERO;
+				BigDecimal futTdsAmt = BigDecimal.ZERO;
+
+				for (ReceiptAllocationDetail rad : receiptAllocationDetails) {
+					switch (rad.getAllocationType()) {
+					case Allocation.FUT_PRI:
+						closureReport
+								.setOutstandingPri(PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter));
+						closureReport.setOutstandingPriInWords(NumberToEnglishWords.getAmountInText(
+								PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter), finCCy));
+						break;
+					case Allocation.ODC:
+						closureReport
+								.setLatePayCharges(PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter));
+						closureReport.setLatePayChargesInWords(NumberToEnglishWords.getAmountInText(
+								PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter), finCCy));
+						break;
+					case Allocation.BOUNCE:
+						bncCharge = rad.getTotRecv();
+						break;
+					case Allocation.MANADV:
+						receivableAmt = receivableAmt.add(rad.getTotRecv());
+						break;
+					case Allocation.FUT_PFT:
+						closureReport
+								.setInstForTheMonth(PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter));
+						closureReport.setInstForTheMonthInWords(NumberToEnglishWords.getAmountInText(
+								PennantApplicationUtil.formateAmount(rad.getTotRecv(), formatter), finCCy));
+						break;
+					case Allocation.PFT:
+						profitAmt = rad.getTotRecv();
+						break;
+					case Allocation.PRI:
+						principleAmt = rad.getTotRecv();
+						break;
+					case Allocation.TDS:
+						tdsAmt = rad.getTotRecv();
+						break;
+					case Allocation.FUT_TDS:
+						futTdsAmt = rad.getTotRecv();
+						break;
+					case Allocation.FEE:
+						BigDecimal amountWithGST = rad.getTotRecv();
+						BigDecimal gstAmt = rad.getDueGST();
+						BigDecimal fcFeeAmtWithoutGst = amountWithGST.subtract(gstAmt);
+						BigDecimal fcFee = closureReport.getForeClosFees().add(amountWithGST);
+						closureReport.setForeClosFees(PennantApplicationUtil.formateAmount(fcFee, formatter));
+						closureReport.setForeClosFeesInWords(NumberToEnglishWords
+								.getAmountInText(PennantApplicationUtil.formateAmount(fcFee, formatter), finCCy));
+						closureReport.setGstOnForeClosFees((PennantApplicationUtil
+								.formateAmount(fcFeeAmtWithoutGst, formatter).multiply(new BigDecimal(18)))
+										.divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN));
+						closureReport.setForeClosFeesExGST(
+								closureReport.getForeClosFees().subtract(closureReport.getGstOnForeClosFees()));
+
+						closureReport.setGstOnForeClosFees(closureReport.getGstOnForeClosFees());
+						break;
+					default:
+						break;
+					}
+				}
+				// Other Charges
+				closureReport.setManualAdviceAmt(PennantApplicationUtil.formateAmount(receivableAmt, formatter));
+
+				// Cheque Bounce Charges
+				closureReport.setCheqBncCharges(PennantApplicationUtil.formateAmount(bncCharge, formatter));
+				closureReport.setCheqBncChargesInWords(NumberToEnglishWords
+						.getAmountInText(PennantApplicationUtil.formateAmount(bncCharge, formatter), finCCy));
+
+				// Pending Installments
+				closureReport.setPrincipalAmt(PennantApplicationUtil.formateAmount(principleAmt, formatter));
+				closureReport.setInterestAmt(PennantApplicationUtil.formateAmount(profitAmt, formatter));
+				closureReport
+						.setPendingInsts(PennantApplicationUtil.formateAmount(profitAmt.add(principleAmt), formatter));
+
+				// TDS
+				closureReport.setTds(PennantApplicationUtil.formateAmount(tdsAmt.add(futTdsAmt), formatter));
+
+				List<FinExcessAmount> excessList = receiptData.getReceiptHeader().getExcessAmounts();
+
+				// Refunds (Excess Amount + EMI in advance)
+				BigDecimal refund = BigDecimal.ZERO;
+				for (FinExcessAmount finExcessAmount : excessList) {
+					refund = refund.add(finExcessAmount.getBalanceAmt());
+				}
+				closureReport.setRefund(PennantApplicationUtil.formateAmount(refund, formatter));
+
+				// Advance EMI
+				for (FinExcessAmount finExcessAmount : excessList) {
+					if (StringUtils.equals(finExcessAmount.getAmountType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+						closureReport.setAdvInsts(
+								PennantApplicationUtil.formateAmount(finExcessAmount.getBalanceAmt(), formatter));
+					}
+				}
+				closureReport.setTotalDues(closureReport.getLatePayCharges().add(closureReport.getPendingInsts())
+						.add(closureReport.getCheqBncCharges()).add(closureReport.getOutstandingPri())
+						.add(closureReport.getInstForTheMonth())
+						.add(closureReport.getForeClosFees().add(closureReport.getManualAdviceAmt()))
+						.subtract(closureReport.getTds()).subtract(closureReport.getTotWaiver()));
+				if (noOfIntDays > 0) {
+					closureReport.setIntPerday(closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays),
+							RoundingMode.CEILING));
+				}
+
+				// Charges Inclusive of GST
+				closureReport.setChargesIncGST(closureReport.getLatePayCharges().add(closureReport.getCheqBncCharges())
+						.add(closureReport.getManualAdviceAmt()));
+				closureReport.setChargesIncGSTInWords(NumberToEnglishWords
+						.getAmountInText((closureReport.getLatePayCharges().add(closureReport.getCheqBncCharges())
+								.add(closureReport.getManualAdviceAmt())), finCCy));
+
+				// Issue Fixed 141142
+				List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
+				BigDecimal payableAmt = BigDecimal.ZERO;
+				for (ManualAdvise manualAdvise : payableList) {
+					payableAmt = payableAmt.add(manualAdvise.getBalanceAmt());
+				}
+
+				// Other Refunds (All payable Advise)
+				closureReport.setOtherRefunds(PennantApplicationUtil.formateAmount(payableAmt, formatter));
+				closureReport.setOtherRefundsInWords(NumberToEnglishWords
+						.getAmountInText(PennantApplicationUtil.formateAmount(payableAmt, formatter), finCCy));
+
+				// Refunds + other Refunds
+				closureReport.setTotalRefunds(closureReport.getRefund().add(closureReport.getOtherRefunds()));
+				closureReport.setTotalRefundsInWords(
+						NumberToEnglishWords.getAmountInText(closureReport.getTotalRefunds(), finCCy));
+
+				// Net Receivable
+				int format = 0;
+				closureReport
+						.setNetReceivable(closureReport.getTotalDues().subtract(closureReport.getTotalRefunds()).abs());
+				BigDecimal netAmtRecievable = PennantApplicationUtil.unFormateAmount(closureReport.getNetReceivable(),
+						format);
+				closureReport.setNetReceivableInWords(NumberToEnglishWords.getAmountInText(netAmtRecievable, finCCy));
+
+				if ((closureReport.getTotalDues().subtract(closureReport.getTotalRefunds()))
+						.compareTo(BigDecimal.ZERO) < 0) {
+					closureReport.setTotal("Net Payable");
+				} else {
+					closureReport.setTotal("Net Receivable");
+				}
+
+				int defaultDays = 7;
+				int noOfdays = DateUtility.getDaysBetween(appDate, fm.getMaturityDate());
+				if (defaultDays >= noOfdays) {
+					defaultDays = noOfdays;
+				}
+
+				List<FinanceMain> financeMainList = financeDetailService
+						.getFinanceMainForLinkedLoans(fm.getFinReference());
+				StringBuilder linkedFinRef = new StringBuilder(" ");
+				if (financeMainList != null) {
+					for (FinanceMain finance : financeMainList) {
+						if (!finance.getFinReference().equals(closureReport.getFinReference())) {
+							linkedFinRef.append(" " + finance.getFinReference());
+							linkedFinRef.append(",");
+						}
+					}
+					linkedFinRef.setLength(linkedFinRef.length() - 1);
+				}
+
+				// Linked Loan Reference
+				closureReport.setLinkedFinRef(linkedFinRef.toString());
+
+				closureReport.setEntityDesc(fm.getEntityDesc());
+				finStmtResponse.setForeclosureReport(closureReport);
 			}
 		} catch (Exception e) {
 			finStmtResponse = new FinStatementResponse();
 			finStmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			logger.debug(Literal.LEAVING);
-			return finStmtResponse;
 		}
+
 		logger.debug(Literal.LEAVING);
-		return finStmtResponse;
 	}
 
 	public FinStatementResponse getForeClosureReport(FinReceiptData frd, FinStatementResponse stmtResp, int days) {
@@ -1479,28 +1459,28 @@ public class FinStatementController extends SummaryDetailService {
 		Long finID = fm.getFinID();
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODDByFinRef(finID, null);
 		if (DateUtil.compare(valueDate, appDate) != 0) {
-			if (overdueList != null) {
-				for (FinODDetails odDetail : overdueList) {
-					if (odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
-						overdueList = getReceiptService().getValueDatePenalties(schdData,
-								priBalance.add(pftAmt).add(totFeeAmount), valueDate, null, true);
-					}
+
+			for (FinODDetails odDetail : overdueList) {
+				if (odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
+					overdueList = receiptService.getValueDatePenalties(schdData,
+							priBalance.add(pftAmt).add(totFeeAmount), valueDate, null, true);
 				}
 			}
+
 		}
 
 		// Calculating Actual Sum of Penalty Amount & Late Pay Interest
 		BigDecimal latePayPftBal = BigDecimal.ZERO;
 		BigDecimal penaltyBal = BigDecimal.ZERO;
-		if (overdueList != null && !overdueList.isEmpty()) {
-			for (int i = 0; i < overdueList.size(); i++) {
-				FinODDetails finODDetail = overdueList.get(i);
-				if (finODDetail.getFinODSchdDate().compareTo(valueDate) > 0) {
-					continue;
-				}
-				latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
-				penaltyBal = penaltyBal.add(finODDetail.getTotPenaltyBal());
+
+		for (FinODDetails finODDetail : overdueList) {
+
+			if (finODDetail.getFinODSchdDate().compareTo(valueDate) > 0) {
+				continue;
 			}
+
+			latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
+			penaltyBal = penaltyBal.add(finODDetail.getTotPenaltyBal());
 		}
 
 		ad = new ReceiptAllocationDetail();
@@ -1931,10 +1911,6 @@ public class FinStatementController extends SummaryDetailService {
 
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
-	}
-
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 	public void setFeeDetailService(FeeDetailService feeDetailService) {

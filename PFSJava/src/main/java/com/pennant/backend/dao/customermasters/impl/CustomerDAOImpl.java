@@ -891,7 +891,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, CustCoreBank, CustCIF, CustFName, CustMName, CustLName, CustDOB, CustShrtName, CustCRCPR");
 		sql.append(", CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy");
-		sql.append(", PhoneNumber, EmailID, CustRO1, CasteId, ReligionId, SubCategory");
+		sql.append(", PhoneNumber, EmailID, CustRO1, CasteId, ReligionId, SubCategory, NatureOfBusiness, CustTypeCode");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCustStsName, CasteCode, CasteDesc, ReligionCode, ReligionDesc");

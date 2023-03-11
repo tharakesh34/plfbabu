@@ -320,7 +320,9 @@ import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
 import com.pennanttech.pff.overdraft.model.OverdraftScheduleDetail;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.overdraft.service.VariableOverdraftSchdService;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.service.sampling.SamplingService;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 import com.rits.cloning.Cloner;
 
 /**
@@ -1647,43 +1649,38 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		schdData.setFinFeeDetailList(finOriginationFeeList);
 
 		// Finance Fee Schedule Details
-		if (finOriginationFeeList != null && !finOriginationFeeList.isEmpty()) {
-			List<Long> feeIDList = new ArrayList<>();
-			for (FinFeeDetail feeDetail : finOriginationFeeList) {
-				feeIDList.add(feeDetail.getFeeID());
-				feeDetail.setRcdVisible(false);
+		List<Long> feeIDList = new ArrayList<>();
+		for (FinFeeDetail feeDetail : finOriginationFeeList) {
+			feeIDList.add(feeDetail.getFeeID());
+			feeDetail.setRcdVisible(false);
+		}
+
+		List<FinFeeScheduleDetail> feeScheduleList = new ArrayList<>();
+
+		if (CollectionUtils.isNotEmpty(feeIDList)) {
+			feeScheduleList.addAll(finFeeScheduleDetailDAO.getFeeScheduleByFinID(feeIDList, false, ""));
+		}
+
+		Map<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
+		for (FinFeeScheduleDetail schdFee : feeScheduleList) {
+			List<FinFeeScheduleDetail> schList = new ArrayList<>();
+
+			if (schFeeMap.containsKey(schdFee.getFeeID())) {
+				schList = schFeeMap.get(schdFee.getFeeID());
+				schFeeMap.remove(schdFee.getFeeID());
 			}
 
-			if (!feeIDList.isEmpty()) {
-				List<FinFeeScheduleDetail> feeScheduleList = finFeeScheduleDetailDAO.getFeeScheduleByFinID(feeIDList,
-						false, "");
+			schList.add(schdFee);
+			schFeeMap.put(schdFee.getFeeID(), schList);
 
-				if (feeScheduleList != null && !feeScheduleList.isEmpty()) {
-					Map<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
-					for (int i = 0; i < feeScheduleList.size(); i++) {
-						FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
+		}
 
-						List<FinFeeScheduleDetail> schList = new ArrayList<>();
-						if (schFeeMap.containsKey(schdFee.getFeeID())) {
-							schList = schFeeMap.get(schdFee.getFeeID());
-							schFeeMap.remove(schdFee.getFeeID());
-						}
-						schList.add(schdFee);
-						schFeeMap.put(schdFee.getFeeID(), schList);
-
-					}
-
-					for (int i = 0; i < finOriginationFeeList.size(); i++) {
-						FinFeeDetail feeDetail = finOriginationFeeList.get(i);
-						if (schFeeMap.containsKey(feeDetail.getFeeID())) {
-							feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
-						}
-					}
-				}
+		for (FinFeeDetail feeDetail : finOriginationFeeList) {
+			if (schFeeMap.containsKey(feeDetail.getFeeID())) {
+				feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
 			}
 		}
 
-		// Finance Overdue Penalty Rate Details
 		if (!isWIF) {
 			fd.setFinFlagsDetails(
 					finFlagDetailsDAO.getFinFlagsByFinRef(finReference, FinanceConstants.MODULE_NAME, type));
@@ -11414,5 +11411,29 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired
 	public void setFinFlagsHeaderDAO(FinFlagsHeaderDAO finFlagsHeaderDAO) {
 		this.finFlagsHeaderDAO = finFlagsHeaderDAO;
+	}
+
+	@Override
+	public ReceiptDTO prepareReceiptDTO(FinanceDetail fd) {
+		Date appDate = SysParamUtil.getAppDate();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceType financeType = schdData.getFinanceType();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		ReceiptDTO receiptDTO = new ReceiptDTO();
+
+		receiptDTO.setFinanceMain(fm);
+		receiptDTO.setSchedules(schdData.getFinanceScheduleDetails());
+		receiptDTO.setOdDetails(schdData.getFinODDetails());
+		receiptDTO.setManualAdvises(manualAdviseDAO.getReceivableAdvises(fm.getFinID(), appDate, "_AView"));
+		receiptDTO.getFees().addAll(schdData.getFinFeeDetailList());
+
+		receiptDTO.setRoundAdjMth(SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD));
+		receiptDTO.setLppFeeType(feeTypeDAO.getTaxDetailByCode(Allocation.ODC));
+		receiptDTO.setFinType(financeType);
+		receiptDTO.setValuedate(appDate);
+
+		return receiptDTO;
 	}
 }

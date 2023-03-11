@@ -78,7 +78,6 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
-import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FacilityConstants;
@@ -100,6 +99,7 @@ import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.CustomerRESTService;
 import com.pennanttech.pffws.CustomerSOAPService;
 import com.pennanttech.util.APIConstants;
@@ -157,7 +157,6 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	private DirectorDetailService directorDetailService;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO;
-	private FinanceMainService financeMainService;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
 	private JointAccountDetailDAO jointAccountDetailDAO;
@@ -4215,11 +4214,6 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	}
 
 	@Autowired
-	public void setFinanceMainService(FinanceMainService financeMainService) {
-		this.financeMainService = financeMainService;
-	}
-
-	@Autowired
 	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
 		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
 	}
@@ -4258,5 +4252,4 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	public void setCustomerIncomeDAO(CustomerIncomeDAO customerIncomeDAO) {
 		this.customerIncomeDAO = customerIncomeDAO;
 	}
-
 }

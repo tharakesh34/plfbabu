@@ -36,13 +36,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "effectiveRateOfReturn", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft", "totalCpz",
-		"totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms", "loanTenor", "maturityDate", "firstDisbDate",
-		"lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst", "futureTenor",
-		"firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate", "totalOutStanding",
-		"outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit", "overDueInstlments",
-		"overDueCharges", "totalOverDueIncCharges", "finODDetail", "advPaymentAmount", "finStatus", "fullyDisb",
-		"sanctionAmt", "utilizedAmt", "availableAmt" })
+@XmlType(propOrder = { "effectiveRateOfReturn", "totalPriSchd", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft",
+		"totalCpz", "totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms", "loanTenor", "maturityDate",
+		"firstDisbDate", "lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst",
+		"futureTenor", "firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate",
+		"totalOutStanding", "outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit",
+		"overDueInstlments", "overDueCharges", "totalOverDueIncCharges", "finODDetail", "advPaymentAmount", "finStatus",
+		"fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt", "finCurODDays", "foreClosureAmount", "installmentNo",
+		"dueDate" })
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
@@ -51,6 +52,7 @@ public class FinanceSummary implements Serializable {
 	private long finID;
 	private String finReference;
 	private BigDecimal totalDisbursement = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal totalPriSchd = BigDecimal.ZERO;
 	private BigDecimal totalPftSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchd = BigDecimal.ZERO;
@@ -67,6 +69,7 @@ public class FinanceSummary implements Serializable {
 	@XmlElement
 	private BigDecimal totalCpz = BigDecimal.ZERO;
 
+	@XmlElement(name = "odDays")
 	private int finCurODDays = 0;
 	private String assetCode;
 	private BigDecimal finODTotPenaltyAmt = BigDecimal.ZERO;
@@ -213,6 +216,18 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal totalOutStandCharges = BigDecimal.ZERO;
 	private BigDecimal OutStandIncludeCharges = BigDecimal.ZERO;
 	private BigDecimal availableAmtExcludeCharges = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal loanEMI = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal foreClosureAmount = BigDecimal.ZERO;
+	@XmlElement(name = "loanInstallmentNo")
+	private int installmentNo;
+	@XmlElement
+	private Date dueDate;
+	@XmlElement
+	private BigDecimal loanPri = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal loanPft = BigDecimal.ZERO;
 
 	public FinanceSummary() {
 		super();
@@ -1161,6 +1176,54 @@ public class FinanceSummary implements Serializable {
 
 	public void setAvailableAmtExcludeCharges(BigDecimal availableAmtExcludeCharges) {
 		this.availableAmtExcludeCharges = availableAmtExcludeCharges;
+	}
+
+	public BigDecimal getLoanEMI() {
+		return loanEMI;
+	}
+
+	public void setLoanEMI(BigDecimal loanEMI) {
+		this.loanEMI = loanEMI;
+	}
+
+	public BigDecimal getForeClosureAmount() {
+		return foreClosureAmount;
+	}
+
+	public void setForeClosureAmount(BigDecimal foreClosureAmount) {
+		this.foreClosureAmount = foreClosureAmount;
+	}
+
+	public Date getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
+	}
+
+	public BigDecimal getLoanPri() {
+		return loanPri;
+	}
+
+	public void setLoanPri(BigDecimal loanPri) {
+		this.loanPri = loanPri;
+	}
+
+	public BigDecimal getLoanPft() {
+		return loanPft;
+	}
+
+	public void setLoanPft(BigDecimal loanPft) {
+		this.loanPft = loanPft;
+	}
+
+	public int getInstallmentNo() {
+		return installmentNo;
+	}
+
+	public void setInstallmentNo(int installmentNo) {
+		this.installmentNo = installmentNo;
 	}
 
 }

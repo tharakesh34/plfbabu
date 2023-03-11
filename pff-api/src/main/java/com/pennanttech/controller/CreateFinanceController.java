@@ -51,6 +51,7 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -106,9 +107,11 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.ForeClosureLetter;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -167,6 +170,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.AgreementEngine;
@@ -184,7 +188,9 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.document.DocumentService;
+import com.pennanttech.pff.foreclosure.service.ForeClosureService;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.service.impl.RemarksWebServiceImpl;
@@ -194,7 +200,9 @@ import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
+import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class CreateFinanceController extends SummaryDetailService {
 	private static final Logger logger = LogManager.getLogger(CreateFinanceController.class);
@@ -249,6 +257,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	private PromotionDAO promotionDAO;
 	private RuleDAO ruleDAO;
 	private FinFeeDetailService finFeeDetailService;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private ForeClosureService foreClosureService;
 
 	public FinanceDetail doCreateFinance(FinanceDetail fd, boolean loanWithWIF) {
 		logger.info(Literal.ENTERING);
@@ -1189,13 +1199,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		CustomerDetails customerDetails = null;
-		// setting required values which are not received from API
-		// FIXME: PV 28AUG19. Same data has been fetched two times. below and
-		// line around 1204 with different methods. Only difference found is
-		// order and
-		// later method even fetching VAS details.. SO tried to make as one
-		// query.
-		// REF: CUST28AUG19
 
 		if (custID > 0) {
 			customerDetails = customerDetailsService.getApprovedCustomerById(custID);
@@ -1421,18 +1424,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		}
 
-		// setting required values which are not received from API
-		// FIXME: PV 28AUG19. Same data has been fetched two times. below and
-		// line 1204 with different methods. Only difference found is order and
-		// later method even fetching VAS details.. SO tried to make as one
-		// query.
-		// REF: CUST28AUG19
-		/*
-		 * financeDetail.setFinScheduleData(finScheduleData); if (financeMain.getCustID() > 0) { CustomerDetails
-		 * custDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID( ));
-		 * financeDetail.setCustomerDetails(custDetails); }
-		 */
-
 		// CollateralAssignment details
 		for (CollateralAssignment ca : fd.getCollateralAssignmentList()) {
 
@@ -1476,8 +1467,6 @@ public class CreateFinanceController extends SummaryDetailService {
 							curAssignValue = curAssignValue.add(collsetup.getBankValuation()
 									.multiply(detail.getAssignPerc() == null ? BigDecimal.ZERO : detail.getAssignPerc())
 									.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
-							// TODO:FIXME: Check with Srikanth regarding totalAvailAssignValue when 100 percent
-							// assignment is given
 							totalAvailAssignValue = totalAvailAssignValue.add(collsetup.getBankValuation());
 						}
 					}
@@ -1594,12 +1583,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
-		// FIXME: 28AUG19. Moved to post schedule creation to handle Consumer
-		// Durables where default down payment calculated. METHOD.
-		// setDisbursements
-
-		// FIX ME: this should be removed from SetDisbursements
-		// validate disbursement instructions
 		if (!loanWithWIF
 				&& !schdData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 			if (!approve && !moveLoanStage) {
@@ -2299,18 +2282,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		advPayment.setAmtToBeReleased(
 				fm.getFinAmount().subtract(fm.getDeductFeeDisb()).subtract(fm.getDownPayment()).subtract(dbdAmount));
 		advPayment.setPaymentType(DisbursementConstants.PAYMENT_TYPE_IST);
-		advPayment.setPartnerBankID(Long.valueOf(SysParamUtil.getValueAsInt("DISB_PARTNERBANK")));// FIXME
-																									// SIVA
-																									// 28AUG19
-																									// :
-																									// PartnerBank
-																									// ID
-																									// To
-																									// be
-																									// decide
-																									// for
-																									// IFT
-																									// Transaction
+		advPayment.setPartnerBankID(Long.valueOf(SysParamUtil.getValueAsInt("DISB_PARTNERBANK")));
 		advPayment.setLLDate(fm.getFinStartDate());
 		// fetch partner bank details
 		PartnerBank partnerBank = partnerBankService.getApprovedPartnerBankById(advPayment.getPartnerBankID());
@@ -2326,18 +2298,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		advPayment.setTaskId(fm.getTaskId());
 		advPayment.setNextTaskId(fm.getNextTaskId());
 
-		BankBranch bankBranch = new BankBranch();
-		/*
-		 * if (true) { //if (StringUtils.isNotBlank(advPayment.getiFSC())) { //FIXME SIVA 28AUG19 : IFSC Code To be
-		 * decide for IFT Transaction bankBranch = bankBranchService.getBankBrachByIFSC("SBIN0000003"); } else if
-		 * (StringUtils.isNotBlank(advPayment.getBranchBankCode()) &&
-		 * StringUtils.isNotBlank(advPayment.getBranchCode())) { bankBranch =
-		 * bankBranchService.getBankBrachByCode(advPayment.getBranchBankCode(), advPayment.getBranchCode()); }
-		 * 
-		 * if (bankBranch != null) { advPayment.setiFSC(bankBranch.getIFSC());
-		 * advPayment.setBranchBankCode(bankBranch.getBankCode()); advPayment.setBranchCode(bankBranch.getBranchCode());
-		 * advPayment.setBankBranchID(bankBranch.getBankBranchID()); }
-		 */
 		return advPayment;
 	}
 
@@ -2580,7 +2540,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			// set required mandatory values into finance details object
 			doSetRequiredDetails(fd, false, userDetails, stp, true, false);
-			// Temporary FIXME
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(fm.getFinReference(),
 					FinanceConstants.MODULE_NAME, FinServiceEvent.ORG, "_View");
 			fd.setDocumentDetailsList(documentList);
@@ -2655,8 +2614,11 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public FinanceDetail getFinInquiryDetails(long finID) {
 		logger.debug(Literal.ENTERING);
+
 		FinanceDetail fd = null;
+		Date appDate = SysParamUtil.getAppDate();
 		try {
+
 			fd = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
 
 			if (fd == null) {
@@ -2669,11 +2631,12 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			FinScheduleData schdData = fd.getFinScheduleData();
 			FinanceMain fm = schdData.getFinanceMain();
+			List<FinanceScheduleDetail> fsdl = schdData.getFinanceScheduleDetails();
 
-			if (schdData != null && fm != null) {
-				if (!fm.isFinIsActive()) {
-					fm.setClosedDate(financeMainService.getFinClosedDate(finID));
-				}
+			FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinID());
+
+			if (!fm.isFinIsActive()) {
+				fm.setClosedDate(financeMainService.getFinClosedDate(finID));
 			}
 
 			String finReference = fm.getFinReference();
@@ -2690,7 +2653,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					schedules = financeScheduleDetailDAO.getFinScheduleDetails(detail, "", false);
 					if (schedules != null) {
 						for (FinanceScheduleDetail schd : schedules) {
-							if (SysParamUtil.getAppDate().compareTo(schd.getSchDate()) == -1) {
+							if (appDate.compareTo(schd.getSchDate()) == -1) {
 								if (!(schd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0)) {
 									totEMIAmount = totEMIAmount.add(schd.getRepayAmount());
 									break;
@@ -2717,7 +2680,22 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 
 			schdData.setFinODPenaltyRate(odPenaltyRate);
+
 			prepareResponse(fd);
+
+			FinanceSummary financeSummary = schdData.getFinanceSummary();
+			Date businessDate = appDate;
+			if (appDate.compareTo(fm.getMaturityDate()) >= 0) {
+				businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
+			}
+
+			financeSummary.setLoanEMI(SchdUtil.getNextEMI(businessDate, fsdl));
+			financeSummary.setForeClosureAmount(getForeClosureAmount(fd));
+			financeSummary.setFutureInst(SchdUtil.getFutureInstalments(appDate, fsdl));
+
+			if (fpd != null) {
+				financeSummary.setFinCurODDays(fpd.getCurODDays());
+			}
 
 			List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
 					ExtendedFieldConstants.MODULE_LOAN, finCategory, FinServiceEvent.ORG, finReference);
@@ -2734,6 +2712,12 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		logger.debug(Literal.LEAVING);
 		return fd;
+	}
+
+	private BigDecimal getForeClosureAmount(FinanceDetail fd) {
+		ReceiptDTO receiptDTO = financeDetailService.prepareReceiptDTO(fd);
+
+		return LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 	}
 
 	private void processPlanEmiDays(long finid, FinanceDetail fd) {
@@ -2766,6 +2750,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public FinanceInquiry getFinanceDetailsById(String reference, String serviceType, boolean isPending) {
 		logger.debug(Literal.ENTERING);
+
 		try {
 			FinanceInquiry financeInquiry = new FinanceInquiry();
 			List<FinanceMain> fmList = null;
@@ -3808,15 +3793,10 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 		List<FinanceScheduleDetail> schdList = findetail.getFinScheduleData().getFinanceScheduleDetails();
-		FinanceScheduleDetail bpiSchedule = null;
-		for (int i = 1; i < schdList.size(); i++) {
-			FinanceScheduleDetail curSchd = schdList.get(i);
-			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
-				bpiSchedule = curSchd;
-				continue;
-			}
+		Date appDate = SysParamUtil.getAppDate();
 
-			if (curSchd.getSchDate().compareTo(SysParamUtil.getAppDate()) <= 0) {
+		for (FinanceScheduleDetail curSchd : schdList) {
+			if (curSchd.getSchDate().compareTo(appDate) <= 0) {
 				ErrorDetail ed = ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "60407", null, null), userDetails.getLanguage());
 
@@ -4557,6 +4537,18 @@ public class CreateFinanceController extends SummaryDetailService {
 		ch.setTotalAmount(totalChequeAmount);
 	}
 
+	private BigDecimal getClosureAmount(FinanceMain financeMain) {
+		FinStatementRequest statementReq = new FinStatementRequest();
+		statementReq.setFinReference(financeMain.getFinReference());
+		statementReq.setFinID(financeMain.getFinID());
+		statementReq.setDays(1);
+		Date appDate = SysParamUtil.getAppDate();
+		statementReq.setFromDate(appDate);
+
+		ForeClosureLetter forclosureDetails = foreClosureService.getForeClosureAmt(statementReq);
+		return forclosureDetails.getForeCloseAmount();
+	}
+
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -4816,6 +4808,16 @@ public class CreateFinanceController extends SummaryDetailService {
 	@Autowired
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	@Autowired
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	@Autowired
+	public void setForeClosureService(ForeClosureService foreClosureService) {
+		this.foreClosureService = foreClosureService;
 	}
 
 }
