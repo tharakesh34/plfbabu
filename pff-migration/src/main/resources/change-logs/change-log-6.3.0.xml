@@ -14203,7 +14203,7 @@
 	</changeSet>
 
 	<changeSet id="ST#909.1" author="sravanthi.g">
-		<addPrimaryKey tableName="OTS_QUEUE" columnNames="Id" constraintName="pk_ots_queue"/>
+		<addPrimaryKey tableName="OTS_QUEUE" columnNames="Id" constraintName="pk_ots_queue_id"/>
 	</changeSet>
 
 	<changeSet id="ST#909.2" author="sravanthi.g" dbms="mssql">
