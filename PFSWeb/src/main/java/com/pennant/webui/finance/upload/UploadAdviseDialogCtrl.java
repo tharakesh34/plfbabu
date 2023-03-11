@@ -335,6 +335,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		this.txtFileName.setText("");
 		this.fileImport = null;
+		Clients.clearWrongValue(this.btnBrowse);
 
 		doRemoveValidation();
 		this.media = event.getMedia();
@@ -488,14 +489,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		try {
 			uploadHeader.setFileName(this.txtFileName.getValue());
-			getUploadedAdvises(uploadHeader);
-
 		} catch (WrongValueException we) {
 			wve.add(we);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			MessageUtil.showError(e);
-			return false;
 		}
 
 		doRemoveValidation();
@@ -507,6 +502,14 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
+		}
+
+		try {
+			getUploadedAdvises(uploadHeader);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			MessageUtil.showError(e);
+			return false;
 		}
 
 		uploadHeader.setRecordStatus(this.recordStatus.getValue());
@@ -1100,8 +1103,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		try {
 			if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
-				// throw new WrongValueException(this.btnBrowse,
-				// Labels.getLabel("empty_file"));
+				throw new WrongValueException(this.btnBrowse, Labels.getLabel("empty_file"));
 			} else {
 				boolean fileExist = this.uploadHeaderService.isFileNameExist(this.txtFileName.getValue());
 				if (fileExist) {
