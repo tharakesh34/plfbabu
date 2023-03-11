@@ -2979,7 +2979,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!this.motherMaidenName.isReadonly()) {
 				this.motherMaidenName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMotherMaiden.value"),
-								PennantRegularExpressions.REGEX_RETAIL_CUST_NAME, isMandValidate));
+								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
 			}
 
 			if (!this.custLocalLngName.isReadonly()) {
