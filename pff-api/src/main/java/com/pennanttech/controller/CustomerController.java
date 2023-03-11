@@ -948,7 +948,7 @@ public class CustomerController extends GenericService<Object> {
 		CustomerDetails response = new CustomerDetails();
 
 		try {
-			response = customerDetailsService.getApprovedCustomerById(customerId);
+			response = customerDetailsService.getCustById(customerId);
 			if (response != null) {
 				response.setCustCIF(response.getCustomer().getCustCIF());
 				response.setCustCoreBank(response.getCustomer().getCustCoreBank());
