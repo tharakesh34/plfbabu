@@ -8,9 +8,9 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Constraint;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class PTDateValidator implements Constraint {
 
@@ -67,7 +67,7 @@ public class PTDateValidator implements Constraint {
 		Date compValue = null;
 
 		if (fromDate == null) {
-			fromDate = DateUtility.addDays(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"), 1);
+			fromDate = DateUtil.addDays(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"), 1);
 			fromValid = true;
 		}
 		if (toDate == null) {
@@ -98,15 +98,13 @@ public class PTDateValidator implements Constraint {
 		if (fromValid && toValid) {
 			if (equal) {
 				if (compValue.before(fromDate) || compValue.after(toDate)) {
-					return Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
-							new String[] { fieldParm, DateUtility.format(fromDate, PennantConstants.dateFormat),
-									DateUtility.format(toDate, PennantConstants.dateFormat) });
+					return Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL", new String[] { fieldParm,
+							DateUtil.formatToShortDate(fromDate), DateUtil.formatToShortDate(toDate) });
 				}
 			} else {
 				if (!compValue.after(fromDate) || !compValue.before(toDate)) {
-					return Labels.getLabel("DATE_ALLOWED_RANGE",
-							new String[] { fieldParm, DateUtility.format(fromDate, PennantConstants.dateFormat),
-									DateUtility.format(toDate, PennantConstants.dateFormat) });
+					return Labels.getLabel("DATE_ALLOWED_RANGE", new String[] { fieldParm,
+							DateUtil.formatToShortDate(fromDate), DateUtil.formatToShortDate(toDate) });
 				}
 			}
 		}
@@ -117,12 +115,12 @@ public class PTDateValidator implements Constraint {
 			if (equal) {
 				if (comp < 0) {
 					return Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL",
-							new String[] { fieldParm, DateUtility.format(fromDate, PennantConstants.dateFormat) });
+							new String[] { fieldParm, DateUtil.formatToShortDate(fromDate) });
 				}
 			} else {
 				if (comp <= 0) {
 					return Labels.getLabel("DATE_ALLOWED_MINDATE",
-							new String[] { fieldParm, DateUtility.format(fromDate, PennantConstants.dateFormat) });
+							new String[] { fieldParm, DateUtil.formatToShortDate(fromDate) });
 				}
 			}
 		}
@@ -134,12 +132,12 @@ public class PTDateValidator implements Constraint {
 			if (equal) {
 				if (comp > 0) {
 					return Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
-							new String[] { fieldParm, DateUtility.format(toDate, PennantConstants.dateFormat) });
+							new String[] { fieldParm, DateUtil.formatToShortDate(toDate) });
 				}
 			} else {
 				if (comp >= 0) {
 					return Labels.getLabel("DATE_ALLOWED_MAXDATE",
-							new String[] { fieldParm, DateUtility.format(toDate, PennantConstants.dateFormat) });
+							new String[] { fieldParm, DateUtil.formatToShortDate(toDate) });
 				}
 			}
 		}
