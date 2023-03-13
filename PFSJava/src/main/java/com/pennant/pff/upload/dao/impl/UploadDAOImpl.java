@@ -240,7 +240,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 
 			if (fromDate != null && toDate != null) {
 				ps.setDate(++index, JdbcUtil.getDate(fromDate));
-				ps.setDate(++index, JdbcUtil.getDate(toDate));
+				ps.setDate(++index, JdbcUtil.getDate(DateUtil.addDays(toDate, 1)));
 			} else if (fromDate != null && toDate == null) {
 				ps.setDate(++index, JdbcUtil.getDate(fromDate));
 				ps.setDate(++index, JdbcUtil.getDate(DateUtil.addDays(fromDate, 1)));
@@ -311,13 +311,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			whereClause.append(" uh.ID = ?");
 		}
 
-		if (fromDate != null && toDate != null) {
-			whereClause.append(" and ");
-			whereClause.append(" (uh.CreatedOn >= ? and uh.CreatedOn <= ?)");
-		} else if (fromDate != null && toDate == null) {
-			whereClause.append(" and ");
-			whereClause.append(" (uh.CreatedOn >= ? and uh.CreatedOn < ?)");
-		} else if (fromDate == null && toDate != null) {
+		if (fromDate != null || toDate != null) {
 			whereClause.append(" and ");
 			whereClause.append(" (uh.CreatedOn >= ? and uh.CreatedOn < ?)");
 		}

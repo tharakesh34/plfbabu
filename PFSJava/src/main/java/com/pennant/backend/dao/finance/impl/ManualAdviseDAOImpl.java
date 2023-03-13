@@ -727,7 +727,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("Select schd.SchDate From ManualAdvise ma");
 		sql.append(" Inner Join PresentmentDetails pd on pd.ReceiptId = ma.ReceiptId");
 		sql.append(" Inner Join FinscheduleDetails schd on schd.FinID = pd.FinID and schd.Schdate = pd.Schdate");
-		sql.append(" Where M.AdviseType <> 2 and m.AdviseAmount > 0 and m.ReceiptId = ?");
+		sql.append(" Where ma.AdviseType <> 2 and ma.AdviseAmount > 0 and ma.ReceiptId = ?");
 		sql.append(" and FeeTypeId not in (Select FeeTypeId From FeeTypes)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
