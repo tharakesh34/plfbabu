@@ -131,6 +131,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private String entityCode;
 	private String cancelRemarks;
 	private String knockOffType;
+	private String fromLanReference;
+	private long fromLanFinId;
 
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<>(1);
@@ -358,6 +360,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		excludeFields.add("taxPercentages");
 		excludeFields.add("moduleType");
 		excludeFields.add("closureThresholdLimit");
+		excludeFields.add("fromLanReference");
+		excludeFields.add("fromLanFinId");
 
 		return excludeFields;
 	}
@@ -2009,6 +2013,22 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 
 	public void setClosureThresholdLimit(BigDecimal closureThresholdLimit) {
 		this.closureThresholdLimit = closureThresholdLimit;
+	}
+
+	public String getFromLanReference() {
+		return fromLanReference;
+	}
+
+	public void setFromLanReference(String fromLanReference) {
+		this.fromLanReference = fromLanReference;
+	}
+
+	public long getFromLanFinId() {
+		return fromLanFinId;
+	}
+
+	public void setFromLanFinId(long fromLanFinId) {
+		this.fromLanFinId = fromLanFinId;
 	}
 
 }

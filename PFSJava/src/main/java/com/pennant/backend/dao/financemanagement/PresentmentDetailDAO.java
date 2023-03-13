@@ -27,6 +27,7 @@ package com.pennant.backend.dao.financemanagement;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.financemanagement.impl.PresentmentDetailExtractService;
 import com.pennanttech.dataengine.model.DataEngineLog;
@@ -61,7 +62,7 @@ public interface PresentmentDetailDAO {
 
 	void updateReceptId(PresentmentDetail pd);
 
-	List<PresentmentDetail> getPresentmenToPost(long custId, Date schData);
+	List<PresentmentDetail> getPresentmenToPost(Customer customer, Date schData);
 
 	List<PresentmentDetail> getPresentmentDetail(long presentmentId, boolean includeData);
 
@@ -180,4 +181,5 @@ public interface PresentmentDetailDAO {
 
 	String getBackOfficeNameByBranchCode(String branchCode);
 
+	Long getLatestMandateId(long finID);
 }

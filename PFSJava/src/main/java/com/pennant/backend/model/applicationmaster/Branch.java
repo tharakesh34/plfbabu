@@ -80,6 +80,7 @@ public class Branch extends AbstractWorkflowEntity {
 	private String pinCode;
 	private String pinAreaDesc;
 	private Long pinCodeId;
+	private String defChequeDDPrintLoc;
 
 	public Branch() {
 		super();
@@ -452,4 +453,13 @@ public class Branch extends AbstractWorkflowEntity {
 	public void setPinCodeId(Long pinCodeId) {
 		this.pinCodeId = pinCodeId;
 	}
+
+	public String getDefChequeDDPrintLoc() {
+		return defChequeDDPrintLoc;
+	}
+
+	public void setDefChequeDDPrintLoc(String defChequeDDPrintLoc) {
+		this.defChequeDDPrintLoc = defChequeDDPrintLoc;
+	}
+
 }

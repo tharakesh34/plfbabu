@@ -9,7 +9,6 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
@@ -29,7 +28,6 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
-@Configuration
 public class SuccessResponseJob extends BatchConfiguration {
 
 	public SuccessResponseJob(@Autowired DataSource dataSource) throws Exception {
@@ -48,10 +46,16 @@ public class SuccessResponseJob extends BatchConfiguration {
 	private EventPropertiesService eventPropertiesService;
 
 	private BatchJobQueueDAO bjqDAO;
+	private boolean initialize = false;
 
 	@Scheduled(cron = "0 */5 * ? * *")
 	public void successResponseJob() throws Exception {
 		logger.info("Presentment Success Response Job invoked at {}", DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
+
+		if (this.initialize) {
+			bjqDAO.clearQueue();
+			this.initialize = false;
+		}
 
 		if (bjqDAO.getQueueCount() > 0) {
 			logger.info("Previous Job still in progress");
@@ -162,5 +166,6 @@ public class SuccessResponseJob extends BatchConfiguration {
 
 	private void initilizeVariables() {
 		this.bjqDAO = new SuccessResponseJobQueueDAOImpl(dataSource);
+		this.initialize = true;
 	}
 }

@@ -44,6 +44,7 @@ import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -314,7 +315,6 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 	@Override
 	public Long getClustersFilter(String branchCode) {
 		Long clusterid = null;
-		int level = 0;
 		String sql = "Select ClusterId From RMTBranches where BranchCode = ?";
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -326,11 +326,7 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 			return null;
 		}
 
-		if (clusterid == 0) {
-			return null;
-		}
-
-		while (clusterid != 0) {
+		while (clusterid != null && clusterid != 0) {
 			Cluster cluster = null;
 			sql = "Select Id, Code, ClusterType, Parent From Clusters where Id = ?";
 
@@ -341,6 +337,7 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 					item.setId(rs.getLong("Id"));
 					item.setCode(rs.getString("Code"));
 					item.setClusterType(rs.getString("ClusterType"));
+					item.setParent(JdbcUtil.getLong(rs.getObject("Parent")));
 
 					return item;
 				}, clusterid);
@@ -349,12 +346,9 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 				return null;
 			}
 
-			if (PartnerBankExtension.MAPPING.equals(cluster.getClusterType())) {
-				cluster.getId();
+			if (PartnerBankExtension.CLUSTER_TYPE.equals(cluster.getClusterType())) {
 				break;
 			}
-
-			level++;
 
 			if (cluster.getParent() != null) {
 				if (cluster.getParent() == 0) {
@@ -363,7 +357,7 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 					clusterid = cluster.getParent();
 				}
 			} else {
-				clusterid = 0L;
+				clusterid = null;
 			}
 
 		}

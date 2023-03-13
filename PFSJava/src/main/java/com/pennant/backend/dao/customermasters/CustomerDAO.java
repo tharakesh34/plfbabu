@@ -28,7 +28,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerCoreBank;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -57,6 +59,8 @@ public interface CustomerDAO {
 	Customer checkCustomerByCIF(String cifId, String type);
 
 	Customer getCustomer(String cif);
+
+	Customer getCustomer(long custID);
 
 	WIFCustomer getWIFCustomerByCIF(long cifId, String type);
 
@@ -102,7 +106,7 @@ public interface CustomerDAO {
 
 	Customer getCustomerByID(final long id);
 
-	List<FinanceEnquiry> getCustomerFinanceDetailById(long custId);
+	List<FinanceEnquiry> getCustomerFinanceDetailById(Customer customer);
 
 	boolean financeExistForCustomer(long id);
 
@@ -136,11 +140,13 @@ public interface CustomerDAO {
 
 	String getCustomerStatus(long custId);
 
-	Customer getCustomerEOD(long id);
+	Customer getCustomerEOD(long custId);
+
+	Customer getCustomerEOD(String coreBankId);
 
 	Date getCustAppDate(long custId);
 
-	void updateCustAppDate(long custId, Date custAppDate, String newCustStatus);
+	void updateCustAppDate(CustEODEvent custEODEvent);
 
 	List<Customer> getCustomerByGroupID(long custGroupID);
 
@@ -155,8 +161,6 @@ public interface CustomerDAO {
 	boolean isReligionExist(long religionId, String type);
 
 	int getCustomerCountByCustID(long custID, String type);
-
-	Customer checkCustomerByID(long custID, String type);
 
 	List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type);
 
@@ -197,4 +201,14 @@ public interface CustomerDAO {
 	String getCustDefaulBranchByCIF(String custCIF);
 
 	long getCustIDByCIF(String custCIF);
+
+	Customer getCustomerForAutoRefund(long custID);
+
+	Customer getCustomerCoreBankID(String cif);
+
+	String getCustShrtNameByFinID(long finID);
+
+	CustomerCoreBank getCoreBankByFinID(long finID);
+
+	CustomerCoreBank getCoreBankByCustID(long custID);
 }

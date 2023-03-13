@@ -11,6 +11,7 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -93,6 +94,7 @@ public class FinEODEvent implements Serializable {
 	private SubventionDetail subventionDetail = new SubventionDetail();
 	private List<FinanceStepPolicyDetail> stepPolicyDetails = new ArrayList<>(1);
 	private boolean npaStage;
+	private List<FinOverDueCharges> finODCAmounts = new ArrayList<>(1);
 
 	public FinEODEvent copyEntity() {
 		FinEODEvent entity = new FinEODEvent();
@@ -621,4 +623,11 @@ public class FinEODEvent implements Serializable {
 		this.npaStage = npaStage;
 	}
 
+	public List<FinOverDueCharges> getFinODCAmounts() {
+		return finODCAmounts;
+	}
+
+	public void setFinODCAmounts(List<FinOverDueCharges> finODCAmounts) {
+		this.finODCAmounts = finODCAmounts;
+	}
 }

@@ -454,7 +454,7 @@ public class RepaymentProcessUtil {
 		}
 		BigDecimal receiptFromBank = BigDecimal.ZERO;
 		BigDecimal totXcessAmount = BigDecimal.ZERO;
-		Map<String, BigDecimal> extDataMap = new HashMap<>();
+		Map<String, BigDecimal> extMap = new HashMap<>();
 
 		long linkedTranId = 0;
 		long finID = fm.getFinID();
@@ -496,9 +496,9 @@ public class RepaymentProcessUtil {
 			String paymentType = rcd.getPaymentType();
 			movements.addAll(rcd.getAdvMovements());
 			if (!ReceiptMode.EMIINADV.equals(paymentType) && !ReceiptMode.EXCESS.equals(paymentType)
-					&& !ReceiptMode.PAYABLE.equals(paymentType) && !ReceiptMode.ADVINT.equals(paymentType)
-					&& !ReceiptMode.ADVEMI.equals(paymentType) && !ReceiptMode.CASHCLT.equals(paymentType)
-					&& !ReceiptMode.DSF.equals(paymentType)) {
+					&& !ReceiptMode.TEXCESS.equals(paymentType) && !ReceiptMode.PAYABLE.equals(paymentType)
+					&& !ReceiptMode.ADVINT.equals(paymentType) && !ReceiptMode.ADVEMI.equals(paymentType)
+					&& !ReceiptMode.CASHCLT.equals(paymentType) && !ReceiptMode.DSF.equals(paymentType)) {
 				receiptFromBank = receiptFromBank.add(rcd.getAmount());
 			}
 		}
@@ -540,63 +540,78 @@ public class RepaymentProcessUtil {
 		/**
 		 * Defaulting with ZERO
 		 */
-		extDataMap.put("EX_ReceiptAmount", BigDecimal.ZERO);
-		extDataMap.put("EA_ReceiptAmount", BigDecimal.ZERO);
-		extDataMap.put("EAI_ReceiptAmount", BigDecimal.ZERO);
-		extDataMap.put("EAM_ReceiptAmount", BigDecimal.ZERO);
-		extDataMap.put("CACLT_ReceiptAmount", BigDecimal.ZERO);
-		extDataMap.put("DSF_ReceiptAmount", BigDecimal.ZERO);
-		extDataMap.put("PB_ReceiptAmount", BigDecimal.ZERO);
-		extDataMap.put("Restruct_Bpi", rch.getBpiAmount());
+		extMap.put("EX_ReceiptAmount", BigDecimal.ZERO);
+		extMap.put("ET_ReceiptAmount", BigDecimal.ZERO);
+		extMap.put("EA_ReceiptAmount", BigDecimal.ZERO);
+		extMap.put("EAI_ReceiptAmount", BigDecimal.ZERO);
+		extMap.put("EAM_ReceiptAmount", BigDecimal.ZERO);
+		extMap.put("CACLT_ReceiptAmount", BigDecimal.ZERO);
+		extMap.put("DSF_ReceiptAmount", BigDecimal.ZERO);
+		extMap.put("PB_ReceiptAmount", BigDecimal.ZERO);
+		extMap.put("Restruct_Bpi", rch.getBpiAmount());
+		extMap.put("SETTLE_ReceiptAmount", BigDecimal.ZERO);
 
 		List<ManualAdviseMovements> payableAdvMovements = new ArrayList<>();
 
 		// Put Xcess Payables to Map along with GST
 		List<XcessPayables> xcessPayables = rch.getXcessPayables();
 		Map<String, BigDecimal> taxPercmap = GSTCalculator.getTaxPercentages(fm);
-		for (XcessPayables xcessPayable : xcessPayables) {
-			BigDecimal totPaidNow = xcessPayable.getTotPaidNow();
+		for (XcessPayables xcess : xcessPayables) {
+			BigDecimal totPaidNow = xcess.getTotPaidNow();
 			if (totPaidNow.compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
 
-			String payableType = xcessPayable.getPayableType();
-			String feeTypeCode = xcessPayable.getFeeTypeCode();
+			String payableType = xcess.getPayableType();
+			String feeCode = xcess.getFeeTypeCode();
+
+			addZeroifNotContains(extMap, feeCode + "_P");
+			addZeroifNotContains(extMap, feeCode + "_CGST_P");
+			addZeroifNotContains(extMap, feeCode + "_SGST_P");
+			addZeroifNotContains(extMap, feeCode + "_IGST_P");
+			addZeroifNotContains(extMap, feeCode + "_UGST_P");
+			addZeroifNotContains(extMap, feeCode + "_CESS_P");
+			addZeroifNotContains(extMap, feeCode + "_TDS_P");
 
 			switch (payableType) {
 			case RepayConstants.EXAMOUNTTYPE_EXCESS:
-				extDataMap.put("EX_ReceiptAmount", xcessPayable.getTotPaidNow());
+				extMap.put("EX_ReceiptAmount", extMap.get("EX_ReceiptAmount").add(xcess.getTotPaidNow()));
 				break;
 			case RepayConstants.EXAMOUNTTYPE_EMIINADV:
-				extDataMap.put("EA_ReceiptAmount", totPaidNow);
+				extMap.put("EA_ReceiptAmount", extMap.get("EA_ReceiptAmount").add(totPaidNow));
 				break;
 			case RepayConstants.EXAMOUNTTYPE_ADVINT:
-				extDataMap.put("EAI_ReceiptAmount", totPaidNow);
+				extMap.put("EAI_ReceiptAmount", extMap.get("EAI_ReceiptAmount").add(totPaidNow));
 				break;
 			case RepayConstants.EXAMOUNTTYPE_ADVEMI:
-				extDataMap.put("EAM_ReceiptAmount", totPaidNow);
+				extMap.put("EAM_ReceiptAmount", extMap.get("EAM_ReceiptAmount").add(totPaidNow));
 				break;
 			case RepayConstants.EXAMOUNTTYPE_CASHCLT:
-				extDataMap.put("CACLT_ReceiptAmount", totPaidNow);
+				extMap.put("CACLT_ReceiptAmount", extMap.get("CACLT_ReceiptAmount").add(totPaidNow));
 				break;
 			case RepayConstants.EXAMOUNTTYPE_DSF:
-				extDataMap.put("DSF_ReceiptAmount", totPaidNow);
+				extMap.put("DSF_ReceiptAmount", extMap.get("DSF_ReceiptAmount").add(totPaidNow));
 				break;
-
+			case RepayConstants.EXAMOUNTTYPE_TEXCESS:
+				extMap.put("ET_ReceiptAmount", extMap.get("ET_ReceiptAmount").add(totPaidNow));
+				break;
+			case RepayConstants.EXAMOUNTTYPE_SETTLEMENT:
+				extMap.put("SETTLE_ReceiptAmount", extMap.get("SETTLE_ReceiptAmount").add(totPaidNow));
+				break;
 			default:
-				extDataMap.put((feeTypeCode + "_P"), totPaidNow);
-				extDataMap.put((feeTypeCode + "_CGST_P"), xcessPayable.getPaidCGST());
-				extDataMap.put((feeTypeCode + "_SGST_P"), xcessPayable.getPaidSGST());
-				extDataMap.put((feeTypeCode + "_UGST_P"), xcessPayable.getPaidUGST());
-				extDataMap.put((feeTypeCode + "_IGST_P"), xcessPayable.getPaidIGST());
-				extDataMap.put((feeTypeCode + "_TDS_P"), xcessPayable.getTdsAmount());
-				extDataMap.put((feeTypeCode + "_CESS_P"), xcessPayable.getPaidCESS());
+				extMap.put((feeCode + "_P"), extMap.get(feeCode + "_P").add(totPaidNow));
+				extMap.put((feeCode + "_CGST_P"), extMap.get(feeCode + "_CGST_P").add(xcess.getPaidCGST()));
+				extMap.put((feeCode + "_SGST_P"), extMap.get(feeCode + "_SGST_P").add(xcess.getPaidSGST()));
+				extMap.put((feeCode + "_UGST_P"), extMap.get(feeCode + "_UGST_P").add(xcess.getPaidUGST()));
+				extMap.put((feeCode + "_IGST_P"), extMap.get(feeCode + "_IGST_P").add(xcess.getPaidIGST()));
+				extMap.put((feeCode + "_TDS_P"), extMap.get(feeCode + "_TDS_P").add(xcess.getTdsAmount()));
+				extMap.put((feeCode + "_CESS_P"), extMap.get(feeCode + "_CESS_P").add(xcess.getPaidCESS()));
 
 				if (taxPercmap == null) {
 					taxPercmap = GSTCalculator.getTaxPercentages(fm);
 				}
 
-				ManualAdviseMovements adviseMovements = preparePayableMovement(taxPercmap, xcessPayable);
+				ManualAdviseMovements adviseMovements = preparePayableMovement(taxPercmap, xcess);
 				if (adviseMovements != null) {
 					payableAdvMovements.add(adviseMovements);
 				}
@@ -611,20 +626,22 @@ public class RepaymentProcessUtil {
 		// Put Receipt amount from Bank/Cash Map along with GST
 		// receiptFromBank = totXcessAmount.subtract(receiptFromBank);
 		if (receiptFromBank.compareTo(BigDecimal.ZERO) > 0) {
-			extDataMap.put("PB_ReceiptAmount", receiptFromBank);
+			extMap.put("PB_ReceiptAmount", receiptFromBank);
 		}
 
 		// FIXME: NO SURE ON GOLD LOAN. SO FOR LOOP KEPT AS IS
 		for (FinReceiptDetail frd : rcdList) {
 			if (ReceiptMode.REPLEDGE.equals(frd.getPaymentType())) {
-				extDataMap.put("PR_ReceiptAmount", frd.getAmount());
+				extMap.put("PR_ReceiptAmount", frd.getAmount());
 			}
 		}
 
-		addZeroifNotContains(extDataMap, "EX_ReceiptAmount");
-		addZeroifNotContains(extDataMap, "EA_ReceiptAmount");
-		addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
-		addZeroifNotContains(extDataMap, "Restruct_Bpi");
+		addZeroifNotContains(extMap, "EX_ReceiptAmount");
+		addZeroifNotContains(extMap, "ET_ReceiptAmount");
+		addZeroifNotContains(extMap, "EA_ReceiptAmount");
+		addZeroifNotContains(extMap, "PB_ReceiptAmount");
+		addZeroifNotContains(extMap, "Restruct_Bpi");
+		addZeroifNotContains(extMap, "SETTLE_ReceiptAmount");
 
 		// Branch Cash Update
 		/*
@@ -639,7 +656,7 @@ public class RepaymentProcessUtil {
 
 		if (FinanceConstants.PRODUCT_GOLD.equals(fm.getProductCategory())
 				&& rch.getRefWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
-			extDataMap.put("ae_refWaiver", rch.getRefWaiverAmt());
+			extMap.put("ae_refWaiver", rch.getRefWaiverAmt());
 		}
 
 		aeEvent.setCustID(fm.getCustID());
@@ -696,7 +713,7 @@ public class RepaymentProcessUtil {
 			}
 		}
 
-		extDataMap.putAll(prepareMovementMap(movements));
+		extMap.putAll(prepareMovementMap(movements));
 
 		BigDecimal adjustedToReceipt = BigDecimal.ZERO;
 		adjustedToReceipt = rch.getTotalPastDues().getPaidAmount();
@@ -719,32 +736,36 @@ public class RepaymentProcessUtil {
 				&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			unAdjAdvIntTds = financeScheduleDetailDAO.getUnpaidTdsAmount(fm.getFinReference());
 		}
-		extDataMap.put("ae_intTdsUnpaid", unAdjAdvIntTds);
+		extMap.put("ae_intTdsUnpaid", unAdjAdvIntTds);
 
 		if (toExcess.compareTo(BigDecimal.ZERO) > 0) {
 			switch (rch.getExcessAdjustTo()) {
 			case RepayConstants.EXCESSADJUSTTO_EMIINADV:
-				extDataMap.put("ae_toEmiAdvance", toExcess);
+				extMap.put("ae_toEmiAdvance", toExcess);
 				break;
 			case RepayConstants.EXCESSADJUSTTO_BOUNCE:
-				extDataMap.put("ae_toBounce", toExcess);
+				extMap.put("ae_toBounce", toExcess);
 				break;
 			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
-				extDataMap.put("ae_toSettlement", toExcess);
+				extMap.put("ae_toSettlement", toExcess);
 				break;
 			case RepayConstants.EXCESSADJUSTTO_EXCESS:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
-				extDataMap.put("ae_toExcessAmt", toExcess);
+				extMap.put("ae_toExcessAmt", toExcess);
 				break;
 			case ReceiptMode.DSF:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
-				extDataMap.put("ae_toDSFAmt", toExcess);
+				extMap.put("ae_toDSFAmt", toExcess);
 				dataMap.put("ae_toDSFAmt", toExcess);
 				break;
 			case ReceiptMode.CASHCLT:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
-				extDataMap.put("ae_toCashCollAmt", toExcess);
+				extMap.put("ae_toCashCollAmt", toExcess);
 				dataMap.put("ae_toCashCollAmt", toExcess);
+				break;
+			case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
+				extMap.put("ae_toTExcessAmt", toExcess);
 				break;
 
 			default:
@@ -763,13 +784,13 @@ public class RepaymentProcessUtil {
 			if (finFeeDetailList != null) {
 				prepareFeeRulesMap(feeMap, finFeeDetailList, rcd.getPaymentType());
 			}
-			extDataMap.putAll(feeMap);
+			extMap.putAll(feeMap);
 		}
 
 		List<Object> returnList = null;
 
 		if (adjustedToReceipt.compareTo(BigDecimal.ZERO) <= 0 && !rch.isClosureWithFullWaiver()) {
-			dataMap.putAll(extDataMap);
+			dataMap.putAll(extMap);
 			Map<String, Object> glSubHeadCodes = fm.getGlSubHeadCodes();
 			dataMap.put("emptype", glSubHeadCodes.get("EMPTYPE"));
 			dataMap.put("ae_receiptChannel", fm.getReceiptChannel());
@@ -778,7 +799,7 @@ public class RepaymentProcessUtil {
 			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 			rph.setLinkedTranId(aeEvent.getLinkedTranId());
 
-			extDataMap = null;
+			extMap = null;
 			returnList = new ArrayList<>();
 			returnList.add(schedules);
 			returnList.add(uAmz);
@@ -804,7 +825,7 @@ public class RepaymentProcessUtil {
 		 * postDate
 		 */
 
-		returnList = doRepayPostings(financeDetail, rch, extDataMap, gstExecutionMap, postingDate, rph.getRepayID());
+		returnList = doRepayPostings(financeDetail, rch, extMap, gstExecutionMap, postingDate, rph.getRepayID());
 
 		if (!(Boolean) returnList.get(0)) {
 			String errParm = (String) returnList.get(1);
@@ -845,7 +866,7 @@ public class RepaymentProcessUtil {
 		rcdList.get(rcdList.size() - 1).setLogKey(logKey);
 
 		if (fm.isSimulateAccounting()) {
-			extDataMap = null;
+			extMap = null;
 			returnList = new ArrayList<>();
 			returnList.add(schedules);
 			returnList.add(uAmz);
@@ -889,7 +910,7 @@ public class RepaymentProcessUtil {
 			}
 		}
 
-		extDataMap = null;
+		extMap = null;
 		returnList = new ArrayList<>();
 		returnList.add(schedules);
 		returnList.add(uAmz);
@@ -1556,6 +1577,8 @@ public class RepaymentProcessUtil {
 		List<FinReceiptDetail> rcdList = sortReceiptDetails(rch.getReceiptDetails());
 		Date appValueDate = SysParamUtil.getAppValueDate();
 
+		BigDecimal excessAmount = BigDecimal.ZERO;
+
 		for (FinReceiptDetail rcd : rcdList) {
 			rcd.setReceiptID(receiptID);
 			if (isApproval) {
@@ -1569,8 +1592,8 @@ public class RepaymentProcessUtil {
 			if (ReceiptMode.EXCESS.equals(rcd.getPaymentType()) || ReceiptMode.EMIINADV.equals(rcd.getPaymentType())
 					|| ReceiptMode.ADVINT.equals(rcd.getPaymentType())
 					|| ReceiptMode.ADVEMI.equals(rcd.getPaymentType())
-					|| ReceiptMode.CASHCLT.equals(rcd.getPaymentType())
-					|| ReceiptMode.DSF.equals(rcd.getPaymentType())) {
+					|| ReceiptMode.CASHCLT.equals(rcd.getPaymentType()) || ReceiptMode.DSF.equals(rcd.getPaymentType())
+					|| ReceiptMode.TEXCESS.equals(rcd.getPaymentType())) {
 
 				long payAgainstID = rcd.getPayAgainstID();
 
@@ -1601,7 +1624,7 @@ public class RepaymentProcessUtil {
 
 						// Excess Amount make utilization
 						FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(receiptSeqID,
-								payAgainstID);
+								payAgainstID, RepayConstants.RECEIPTTYPE_RECIPT);
 						if (exReserve != null) {
 
 							// Update Reserve Amount in FinExcessAmount
@@ -1710,25 +1733,7 @@ public class RepaymentProcessUtil {
 			rph.setFinEvent(rch.getReceiptPurpose());
 
 			if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-				FinExcessAmount excess = new FinExcessAmount();
-				excess.setFinID(rch.getFinID());
-				excess.setFinReference(rch.getReference());
-				excess.setAmountType(rch.getExcessAdjustTo());
-				excess.setAmount(rph.getExcessAmount());
-				excess.setUtilisedAmt(BigDecimal.ZERO);
-				excess.setBalanceAmt(rph.getExcessAmount());
-				excess.setReservedAmt(BigDecimal.ZERO);
-				excess.setReceiptID(rch.getReceiptID());
-				excess.setValueDate(rch.getValueDate());
-				excess.setPostDate(SysParamUtil.getAppDate());
-
-				if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
-					excess.setBalanceAmt(BigDecimal.ZERO);
-					excess.setReservedAmt(rph.getExcessAmount());
-					excess.setAmount(rph.getExcessAmount());
-				}
-
-				finExcessAmountDAO.saveExcess(excess);
+				excessAmount = excessAmount.add(rph.getExcessAmount());
 			}
 
 			// Saving record while doing receipt for OD loans
@@ -1772,6 +1777,28 @@ public class RepaymentProcessUtil {
 				// Save Repayment Schedule Details
 				financeRepaymentsDAO.saveRpySchdList(rpySchdList, TableType.MAIN_TAB);
 			}
+		}
+
+		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
+			FinExcessAmount excess = new FinExcessAmount();
+			excess.setFinID(rch.getFinID());
+			excess.setFinReference(rch.getReference());
+			excess.setAmountType(rch.getExcessAdjustTo());
+			excess.setAmount(excessAmount);
+			excess.setUtilisedAmt(BigDecimal.ZERO);
+			excess.setBalanceAmt(excessAmount);
+			excess.setReservedAmt(BigDecimal.ZERO);
+			excess.setReceiptID(rch.getReceiptID());
+			excess.setValueDate(rch.getValueDate());
+			excess.setPostDate(SysParamUtil.getAppDate());
+
+			if (RepayConstants.PAYSTATUS_DEPOSITED.equals(rch.getReceiptModeStatus())) {
+				excess.setBalanceAmt(BigDecimal.ZERO);
+				excess.setReservedAmt(excessAmount);
+				excess.setAmount(excessAmount);
+			}
+
+			finExcessAmountDAO.saveExcess(excess);
 		}
 
 		allocationPaidMap = null;
@@ -2030,6 +2057,7 @@ public class RepaymentProcessUtil {
 		FinRepayQueueHeader rpyQueueHeader = new FinRepayQueueHeader();
 
 		FinScheduleData fsd = financeDetail.getFinScheduleData();
+		rpyQueueHeader.setFinOdList(fsd.getFinODDetails());
 		FinanceMain fm = fsd.getFinanceMain();
 		List<FinReceiptDetail> rcdList = rch.getReceiptDetails();
 		rcdList = sortReceiptDetails(rcdList);
@@ -2080,6 +2108,12 @@ public class RepaymentProcessUtil {
 					curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
 					curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
 
+					curRpySchd.setWaivedAmt(curRpySchd.getWaivedAmt().add(rpySchd.getWaivedAmt()));
+					curRpySchd.setPriSchdWaivedNow(curRpySchd.getPriSchdWaivedNow().add(rpySchd.getPriSchdWaivedNow()));
+					curRpySchd.setPftSchdWaivedNow(curRpySchd.getPftSchdWaivedNow().add(rpySchd.getPftSchdWaivedNow()));
+					curRpySchd.setLatePftSchdWaivedNow(
+							curRpySchd.getLatePftSchdWaivedNow().add(rpySchd.getLatePftSchdWaivedNow()));
+					curRpySchd.setSchdFeeWaivedNow(curRpySchd.getSchdFeeWaivedNow().add(rpySchd.getSchdFeeWaivedNow()));
 					rpySchdMap.remove(rpySchd.getSchDate());
 				} else {
 					curRpySchd = rpySchd;
@@ -2559,7 +2593,8 @@ public class RepaymentProcessUtil {
 			// updating fixexcess amount after realization
 			if (FinServiceEvent.SCHDRPY.equals(rch.getReceiptPurpose())) {
 				if (rph != null && rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-					finExcessAmountDAO.updExcessAfterRealize(rph.getFinID(), excessAdjustTo, rph.getExcessAmount());
+					finExcessAmountDAO.updExcessAfterRealize(rph.getFinID(), excessAdjustTo, rph.getExcessAmount(),
+							rch.getReceiptID());
 				}
 			}
 		}

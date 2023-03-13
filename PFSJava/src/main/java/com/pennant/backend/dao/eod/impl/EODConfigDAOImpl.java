@@ -498,4 +498,21 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		}
 	}
 
+	@Override
+	public void updateJobDetails(String jobKey, String frequency, boolean jobEnabled) {
+		String sql = "Update Job_details set cron_expression = ?, enabled = ? Where JobKey = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
+			ps.setString(1, frequency);
+			ps.setBoolean(2, jobEnabled);
+			ps.setString(3, jobKey);
+		});
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
 }

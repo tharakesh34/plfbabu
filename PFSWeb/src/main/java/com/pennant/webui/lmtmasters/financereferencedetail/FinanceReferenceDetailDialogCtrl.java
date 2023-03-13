@@ -852,9 +852,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 
 		// get the tabs
 		for (Listitem initListItem : listBoxLimitService.getItems()) {
-			FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) initListItem.getAttribute("data");
-			if (!financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-				tabs.add(financeReferenceDetail.getLovDescNamelov());
+			FinanceReferenceDetail frd = (FinanceReferenceDetail) initListItem.getAttribute("data");
+			if (!PennantConstants.RECORD_TYPE_DEL.equals(frd.getRecordType())) {
+				tabs.add(frd.getLovDescNamelov());
 			}
 		}
 
@@ -879,12 +879,12 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 
 		// get the Initiation Stages and Approval Stage
 		for (Listitem initListItem : listBoxLimitService.getItems()) {
-			FinanceReferenceDetail financeReferenceDetail = (FinanceReferenceDetail) initListItem.getAttribute("data");
-			if (!financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-				if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), initId)) {
-					initStages = financeReferenceDetail.getMandInputInStage().split(",");
-				} else if (StringUtils.equals(financeReferenceDetail.getLovDescNamelov(), approvalId)) {
-					apprStages = financeReferenceDetail.getMandInputInStage().split(",");
+			FinanceReferenceDetail frd = (FinanceReferenceDetail) initListItem.getAttribute("data");
+			if (!PennantConstants.RECORD_TYPE_DEL.equals(frd.getRecordType())) {
+				if (StringUtils.equals(frd.getLovDescNamelov(), initId)) {
+					initStages = frd.getMandInputInStage().split(",");
+				} else if (StringUtils.equals(frd.getLovDescNamelov(), approvalId)) {
+					apprStages = frd.getMandInputInStage().split(",");
 				}
 			}
 		}
@@ -1026,7 +1026,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			return;
 		}
 
-		final FinanceReferenceDetail aFinanceReferenceDetail = new FinanceReferenceDetail();
+		final FinanceReferenceDetail afrd = new FinanceReferenceDetail();
 		List<Listitem> items = new ArrayList<Listitem>();
 		items.addAll(this.listBoxFinanceCheckList.getItems());
 		items.addAll(this.listboxFinanceAgreementLink.getItems());
@@ -1047,33 +1047,33 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			FinanceReferenceDetail lsFinanceReferenceDetail = (FinanceReferenceDetail) items.get(i)
 					.getAttribute("data");
 			setFinanceReferenceDetail(lsFinanceReferenceDetail);
-			BeanUtils.copyProperties(getFinanceReferenceDetail(), aFinanceReferenceDetail);
+			BeanUtils.copyProperties(getFinanceReferenceDetail(), afrd);
 			boolean isNew = false;
-			isNew = aFinanceReferenceDetail.isNewRecord();
+			isNew = afrd.isNewRecord();
 			String tranType = "";
-			aFinanceReferenceDetail.setVersion(aFinanceReferenceDetail.getVersion() + 1);
+			afrd.setVersion(afrd.getVersion() + 1);
 			if (isNew) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
-				if (aFinanceReferenceDetail.getRecordType().equals(PennantConstants.RCD_DEL)) {
+				if (PennantConstants.RCD_DEL.equals(afrd.getRecordType())) {
 					tranType = PennantConstants.TRAN_DEL;
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
 				}
 			}
-			if (aFinanceReferenceDetail.getRecordType().equals(PennantConstants.RCD_ADD)) {
+			if (PennantConstants.RCD_ADD.equals(afrd.getRecordType())) {
 				tranType = "";
 			}
 			// save it to database
-			aFinanceReferenceDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			aFinanceReferenceDetail.setRecordType(PennantConstants.RCD_ADD);
+			afrd.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			afrd.setRecordType(PennantConstants.RCD_ADD);
 
-			if (FinServiceEvent.ADDDISB.equals(aFinanceReferenceDetail.getFinEvent())) {
-				aFinanceReferenceDetail.setRecordType("");
+			if (FinServiceEvent.ADDDISB.equals(afrd.getFinEvent())) {
+				afrd.setRecordType("");
 			}
 
 			if (StringUtils.isNotEmpty(tranType)) {
-				doProcess(aFinanceReferenceDetail, tranType);
+				doProcess(afrd, tranType);
 			}
 
 		}

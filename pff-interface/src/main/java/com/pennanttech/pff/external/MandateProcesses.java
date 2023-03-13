@@ -25,4 +25,5 @@ public interface MandateProcesses {
 	public void processUploadToDownLoadFile(long userId, File file, Media media, DataEngineStatus status)
 			throws Exception;
 
+	public void processAutoResponseFiles(String job);
 }

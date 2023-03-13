@@ -35,8 +35,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -73,10 +71,8 @@ import com.pennanttech.service.AmazonS3Bucket;
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
-
+public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(FileDownloadListCtrl.class);
 
 	protected Window window_FleDownloadList;
 	protected Borderlayout borderLayout_FileDownloadList;

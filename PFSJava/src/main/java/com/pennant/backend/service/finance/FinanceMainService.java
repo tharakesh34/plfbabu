@@ -77,4 +77,6 @@ public interface FinanceMainService {
 	FinanceMain getFinanceMainForAdviseUpload(String finRefernce);
 
 	Long getFinID(String finReference, TableType tableType);
+
+	String getFinanceMainByRcdMaintenance(long finID);
 }

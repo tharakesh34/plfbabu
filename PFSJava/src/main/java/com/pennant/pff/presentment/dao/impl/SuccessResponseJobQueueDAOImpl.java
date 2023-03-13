@@ -129,7 +129,7 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 				ps.setLong(3, queueId);
 			});
 		} else if (process == EodConstants.PROGRESS_FAILED) {
-			sql = "Update PRMNT_RESP_SUCCESS_QUEUE Set EndTime = ?, ThreadId = ?, Progress = ? Where Id = ?";
+			sql = "Update PRMNT_RESP_SUCCESS_QUEUE Set EndTime = ?, ThreadId = ?, Progress = ?, ErrorLog = ? Where Id = ?";
 
 			logger.debug(Literal.SQL.concat(sql));
 
@@ -137,7 +137,8 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
 				ps.setInt(2, 0);
 				ps.setInt(3, EodConstants.PROGRESS_FAILED);
-				ps.setLong(4, queueId);
+				ps.setString(4, jobQueue.getError());
+				ps.setLong(5, queueId);
 			});
 		}
 	}
@@ -227,6 +228,24 @@ public class SuccessResponseJobQueueDAOImpl extends SequenceDao<BatchJobQueue> i
 
 	@Override
 	public int updateThreadID(long from, long to, int i) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void logQueue() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void logQueue(int progress) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int getCount() {
 		// TODO Auto-generated method stub
 		return 0;
 	}

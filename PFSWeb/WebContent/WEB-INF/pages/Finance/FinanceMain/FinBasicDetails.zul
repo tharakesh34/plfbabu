@@ -6,10 +6,12 @@
 	<window>
 		<window id="window_FinBasicDetails" border="none" apply="${finBasicDetailsCtrl}" width="100%" height="100%"
 			sizable="false">
-
+			<style>
+				.z-groupbox-notitle { border-top: 0px; }
+			</style>
 			<groupbox>
 				<!-- <caption label="Key Details" /> -->
-				<grid fixedLayout="true" vflex="1">
+				<grid fixedLayout="true">
 					<columns>
 						<column width="150px" />
 						<column width="350px" />

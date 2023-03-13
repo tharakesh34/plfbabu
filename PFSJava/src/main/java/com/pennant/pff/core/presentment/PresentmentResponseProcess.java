@@ -599,7 +599,8 @@ public class PresentmentResponseProcess implements Runnable {
 		for (FinRepayHeader rph : repayHeaders) {
 			if (FinServiceEvent.SCHDRPY.equals(rh.getReceiptPurpose())) {
 				if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-					finExcessAmountDAO.updExcessAfterRealize(rph.getFinID(), excessAdjustTo, rph.getExcessAmount());
+					finExcessAmountDAO.updExcessAfterRealize(rph.getFinID(), excessAdjustTo, rph.getExcessAmount(),
+							rh.getReceiptID());
 				}
 			}
 		}

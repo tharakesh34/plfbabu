@@ -19,11 +19,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.api.Importer;
@@ -41,6 +36,11 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Window;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.CharMatcher;
 import com.penanttech.pff.model.external.bre.ApplicantOutElement;
 import com.penanttech.pff.model.external.bre.BREService;
@@ -262,7 +262,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 	public static Map<String, Object> convertStringToMap(String payload) {
 		logger.debug(Literal.ENTERING);
 
-		org.codehaus.jackson.map.ObjectMapper mapper = new org.codehaus.jackson.map.ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper();
 		HashMap<String, Object> map = null;
 
 		try {
@@ -304,7 +304,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		// Unprotect Final Eligibility fields block
 		String incomeUserEntryFields = this.extCreditReviewConfig.getFinalEligIncomeUserEntryFields();
 		for (int i = 0; i <= coApplicantsList.size() + 1; i++) {
-			incomeUserEntryFields = CharMatcher.BREAKING_WHITESPACE.removeFrom(incomeUserEntryFields);
+			incomeUserEntryFields = CharMatcher.breakingWhitespace().removeFrom(incomeUserEntryFields);
 			unProtectCells(incomeUserEntryFields, finalEligibilitySheet);
 			incomeUserEntryFields = incomeUserEntryFields.replace(incomeUserEntryFields.charAt(0),
 					(char) (incomeUserEntryFields.charAt(0) + 1));
@@ -332,7 +332,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		}
 
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		BREService response = null;
 		try {
 
@@ -395,7 +395,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 							}
 						}
 
-						incomeDetailsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(incomeDetailsRange);
+						incomeDetailsRange = CharMatcher.breakingWhitespace().removeFrom(incomeDetailsRange);
 						String incomeDetailsCells[] = incomeDetailsRange.split(",");
 
 						for (int i = 0; i < incomeDetailsCells.length; i++) {
@@ -412,7 +412,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 								getEligibileFoir(alFoir, eligibilityApclOutElement);
 							}
 						}
-						incomeFoirRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(incomeFoirRange);
+						incomeFoirRange = CharMatcher.breakingWhitespace().removeFrom(incomeFoirRange);
 						String incomeFoirCells[] = incomeFoirRange.split(",");
 
 						for (int i = 0; i < incomeFoirCells.length; i++) {
@@ -448,7 +448,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 
 		// Populate Final Eligibility block
 		String finalEligFieldsRange = this.extCreditReviewConfig.getFinalEligibilityFields();
-		finalEligFieldsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(finalEligFieldsRange);
+		finalEligFieldsRange = CharMatcher.breakingWhitespace().removeFrom(finalEligFieldsRange);
 		String finalEligCells[] = finalEligFieldsRange.split(",");
 		List finalEligList = new ArrayList<>();
 		if (ObjectUtils.isNotEmpty(response) && ObjectUtils
@@ -553,7 +553,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		else if (ObjectUtils.isNotEmpty(response) && ObjectUtils.isNotEmpty(response.getDaXMLDocument().getPchflOut()
 				.getApplicationOut().getFinalEligibility().getSuperHigherLoan())) {
 			String superHigherRange = this.extCreditReviewConfig.getFinalEligSuperHigherFields();
-			superHigherRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(superHigherRange);
+			superHigherRange = CharMatcher.breakingWhitespace().removeFrom(superHigherRange);
 			String superHigherCells[] = superHigherRange.split(",");
 			List<Double> superHigherList = new ArrayList<>();
 			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
@@ -587,7 +587,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		if (ObjectUtils.isNotEmpty(response) && ObjectUtils.isNotEmpty(
 				response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getAdvantage())) {
 			String advFieldsRange = this.extCreditReviewConfig.getFinalEligAdvantageFields();
-			advFieldsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(advFieldsRange);
+			advFieldsRange = CharMatcher.breakingWhitespace().removeFrom(advFieldsRange);
 			String advantageCells[] = advFieldsRange.split(",");
 			List<Double> advList = new ArrayList<>();
 			advList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
@@ -625,7 +625,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 	private void populateCifAndName(List<JointAccountDetail> coApplicantsList, Sheet finalEligibilitySheet) {
 		logger.debug(Literal.ENTERING);
 		String incomeCellsRange = this.extCreditReviewConfig.getFinalEligIncomeDetailsFields();
-		incomeCellsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(incomeCellsRange);
+		incomeCellsRange = CharMatcher.breakingWhitespace().removeFrom(incomeCellsRange);
 		Range range;
 		String incmCellRange[] = incomeCellsRange.split(",");
 
@@ -731,7 +731,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		spreadSheet.setSelectedSheet("Consolidated_Financials");
 
 		String sepCellsRange = this.extCreditReviewConfig.getSepFields();
-		sepCellsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(sepCellsRange);
+		sepCellsRange = CharMatcher.breakingWhitespace().removeFrom(sepCellsRange);
 
 		if (auditYr != 0) {
 			Range range0 = Ranges.range(consolFinancialsSheet, "C4");
@@ -942,7 +942,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 					+ custDetails.getCustomer().getCustCIF());
 		}
 		String sepCellsRange = this.extCreditReviewConfig.getSepFields().trim();
-		sepCellsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(sepCellsRange);
+		sepCellsRange = CharMatcher.breakingWhitespace().removeFrom(sepCellsRange);
 		List<String> auditYearsList = creditReviewSummaryDao
 				.getAuditYearsbyCustdId(custDetails.getCustomer().getCustID());
 		List<Integer> auditYears = auditYearsList.stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
@@ -970,7 +970,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 
 		// Prepare Banking Info block
 		String consldtdBnkCellsRange = this.extCreditReviewConfig.getConsolidatedBankingFields();
-		consldtdBnkCellsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(consldtdBnkCellsRange);
+		consldtdBnkCellsRange = CharMatcher.breakingWhitespace().removeFrom(consldtdBnkCellsRange);
 		String bankInfoFieldsRange[] = consldtdBnkCellsRange.split("##");
 		List<CustomerBankInfo> custBnkInfoList = custDetails.getCustomerBankInfoList();
 

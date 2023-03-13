@@ -103,7 +103,7 @@ public class CustomerDataService {
 		cd.setGstDetailsList(gstDetailDAO.getGSTDetailById(id, type));
 		cd.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(id, type));
 		cd.setCustCardSales(customerCardSalesInfoDAO.getCardSalesInfoByCustomer(id, type));
-		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
+		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(cd.getCustomer()));
 
 		loadEmployementDetails(id, type, cd);
 		loadCustomerBankingInfo(type, cd);

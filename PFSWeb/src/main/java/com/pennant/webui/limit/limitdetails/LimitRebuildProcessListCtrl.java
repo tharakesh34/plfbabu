@@ -24,12 +24,8 @@
  */
 package com.pennant.webui.limit.limitdetails;
 
-import java.io.Serializable;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
@@ -44,9 +40,8 @@ import com.pennant.webui.util.GFCBaseListCtrl;
  * This is the controller class for the /WEB-INF/pages/Limit/LimitDetails/LimitDetailsList.zul file.<br>
  * ************************************************************<br>
  */
-public class LimitRebuildProcessListCtrl extends GFCBaseListCtrl<LimitHeader> implements Serializable {
+public class LimitRebuildProcessListCtrl extends GFCBaseListCtrl<LimitHeader> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(LimitRebuildProcessListCtrl.class);
 
 	protected Window window_limitRebuildProcessList;
 	protected Borderlayout borderLayout_LimitRebuildProcessList;

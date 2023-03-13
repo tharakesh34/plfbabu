@@ -42,7 +42,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlType(propOrder = { "custEmpId", "custEmpName", "custEmpType", "custEmpDesg", "custEmpDept", "custEmpFrom",
-		"custEmpTo" })
+		"custEmpTo", "occupation", "companyName", "industryDesc" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerEmploymentDetail extends AbstractWorkflowEntity {
 
@@ -53,6 +53,7 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity {
 	private long custEmpId = Long.MIN_VALUE;
 	@XmlElement(name = "employerId")
 	private Long custEmpName;
+	@XmlElement(name = "companyName")
 	private String lovDesccustEmpName;
 	@XmlElement(name = "startDate")
 	private Date custEmpFrom;
@@ -61,9 +62,11 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity {
 	private boolean currentEmployer;
 	@XmlElement(name = "designation")
 	private String custEmpDesg;
+	@XmlElement(name = "occupation")
 	private String lovDescCustEmpDesgName;
 	@XmlElement(name = "department")
 	private String custEmpDept;
+	@XmlElement(name = "industryDesc")
 	private String lovDescCustEmpDeptName;
 	@XmlElement
 	private String custEmpType;

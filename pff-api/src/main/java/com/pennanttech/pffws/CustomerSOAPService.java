@@ -2,9 +2,6 @@ package com.pennanttech.pffws;
 
 import java.util.List;
 
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
 import javax.ws.rs.PathParam;
 
 import com.pennant.backend.model.WSReturnStatus;
@@ -30,6 +27,10 @@ import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
 import com.pennanttech.ws.model.customer.SRMCustRequest;
 import com.pennanttech.ws.model.eligibility.AgreementData;
+
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 @WebService
 public interface CustomerSOAPService {

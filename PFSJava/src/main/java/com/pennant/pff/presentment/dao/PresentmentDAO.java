@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.presentment.service.PresentmentEngine;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
@@ -68,6 +69,8 @@ public interface PresentmentDAO {
 	List<PresentmentDetail> getGroupByBank(long batchID);
 
 	List<PresentmentDetail> getGroupByPartnerBank(long batchID);
+
+	void updateHeader(List<PresentmentDetail> list);
 
 	void updateHeaderIdByDefault(long batchID, List<PresentmentDetail> list);
 
@@ -144,11 +147,14 @@ public interface PresentmentDAO {
 
 	void updateResposeStatus(long responseID, String pexcFailure, String errorMessage, int processFlag);
 
-	int logRespDetail(long responseID);
-
-	int clearRespDetail(long responseID);
-
 	Map<String, Integer> batchSizeByInstrumentType();
 
 	int updateRespProcessFlag(long batchID, String responseType);
+
+	List<String> getInstrumentTypes(long batchID);
+
+	void groupByInclude(long batchID, String instrumentType, PresentmentEngine presentmentEngine,
+			Map<Long, Integer> headerMap, Integer batchSize, List<PresentmentDetail> list);
+
+	void updateHeaderByInclude(List<PresentmentDetail> list);
 }

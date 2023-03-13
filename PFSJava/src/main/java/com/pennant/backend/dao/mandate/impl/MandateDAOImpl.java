@@ -38,8 +38,10 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -893,7 +895,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", finType, CustCIF, CustShrtName, BankCode, BranchCode");
 			sql.append(", BranchDesc, BankName, City, MICR, IFSC, PccityName, UseExisting, EntityDesc");
-			sql.append(", PartnerBankCode, PartnerBankName, EmpName");
+			sql.append(", PartnerBankCode, PartnerBankName, EmpName, CustCoreBank");
 		}
 
 		sql.append(" From Mandates");
@@ -1039,6 +1041,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				mndts.setPartnerBankCode(rs.getString("PartnerBankCode"));
 				mndts.setPartnerBankName(rs.getString("PartnerBankName"));
 				mndts.setEmployerName(rs.getString("EmpName"));
+				mndts.setCustCoreBank(rs.getString("CustCoreBank"));
 			}
 
 			return mndts;
@@ -1046,4 +1049,155 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 	}
 
+	@Override
+	public PaymentInstruction getBeneficiary(long mandateId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" m.PartnerBankID, pb.PartnerBankCode, pb.PartnerBankName, bb.BankBranchID");
+		sql.append(", bb.BankCode, bb.BranchDesc, bd.BankName, bb.Ifsc, pvc.PCCityName, m.AccNumber");
+		sql.append(", m.AccHolderName, m.PhoneNumber, pb.AcType, pb.AccountNo, fm.FinType, fm.FinBranch");
+		sql.append(" From Mandates m");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference");
+		sql.append(" Inner Join PartnerBanks pb on m.PartnerBankID = pb.PartnerBankID");
+		sql.append(" Inner Join BankBranches bb on m.BankBranchID = bb.BankBranchID");
+		sql.append(" Inner Join BMTBankDetail bd on bd.BankCode = bb.BankCode");
+		sql.append(" Inner Join RMTProvincevsCity pvc on pvc.PCCity = bb.City");
+		sql.append(" Where m.MandateID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PaymentInstruction pi = new PaymentInstruction();
+
+				pi.setPartnerBankId(rs.getLong("PartnerBankID"));
+				pi.setPartnerBankCode(rs.getString("PartnerBankCode"));
+				pi.setPartnerBankName(rs.getString("PartnerBankName"));
+				pi.setBankBranchId(rs.getLong("BankBranchID"));
+				pi.setBankBranchCode(rs.getString("BankCode"));
+				pi.setBranchDesc(rs.getString("BranchDesc"));
+				pi.setBankName(rs.getString("BankName"));
+				pi.setBankBranchIFSC(rs.getString("Ifsc"));
+				pi.setpCCityName(rs.getString("PCCityName"));
+				pi.setAccountNo(rs.getString("AccNumber"));
+				pi.setAcctHolderName(rs.getString("AccHolderName"));
+				pi.setPhoneNumber(rs.getString("PhoneNumber"));
+				pi.setPartnerBankAcType(rs.getString("AcType"));
+				pi.setPartnerBankAc(rs.getString("AccountNo"));
+				pi.setFinType(rs.getString("FinType"));
+				pi.setFinBranch(rs.getString("FinBranch"));
+
+				return pi;
+			}, mandateId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public PaymentInstruction getBeneficiaryForSI(Long mandateId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" m.PartnerBankID, bb.BankBranchID, bb.BankCode, bb.BranchDesc,");
+		sql.append(" bd.BankName, bb.Ifsc, pvc.PCCityName, m.AccNumber");
+		sql.append(", m.AccHolderName, m.PhoneNumber, fm.FinType, fm.FinBranch");
+		sql.append(" From Mandates m");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference");
+		sql.append(" Inner Join BankBranches bb on m.BankBranchID = bb.BankBranchID");
+		sql.append(" Inner Join BMTBankDetail bd on bd.BankCode = bb.BankCode");
+		sql.append(" Inner Join RMTProvincevsCity pvc on pvc.PCCity = bb.City");
+		sql.append(" Where m.MandateID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PaymentInstruction pi = new PaymentInstruction();
+
+				pi.setPartnerBankId(rs.getLong("PartnerBankID"));
+				pi.setBankBranchId(rs.getLong("BankBranchID"));
+				pi.setBankBranchCode(rs.getString("BankCode"));
+				pi.setBranchDesc(rs.getString("BranchDesc"));
+				pi.setBankName(rs.getString("BankName"));
+				pi.setBankBranchIFSC(rs.getString("Ifsc"));
+				pi.setpCCityName(rs.getString("PCCityName"));
+				pi.setAccountNo(rs.getString("AccNumber"));
+				pi.setAcctHolderName(rs.getString("AccHolderName"));
+				pi.setPhoneNumber(rs.getString("PhoneNumber"));
+				pi.setFinType(rs.getString("FinType"));
+				pi.setFinBranch(rs.getString("FinBranch"));
+
+				return pi;
+			}, mandateId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public Long getMandateId(long finID) {
+		String sql = "Select fm.MandateId From FinanceMain fm Inner Join Mandates m on fm.MandateId = m.MandateId Where fm.FinID = ? and m.Mandatetype in (?, ?, ?) and m.Status = ? and m.SecurityMandate = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql, Long.class, finID, InstrumentType.NACH.name(),
+					InstrumentType.SI.name(), InstrumentType.EMANDATE.name(), "APPROVED", 0);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+
+	}
+
+	@Override
+	public BigDecimal getMaxRepayAmount(String finreference) {
+		StringBuilder sql = new StringBuilder("Select Coalesce(max(RepayAmount),0) From (");
+		sql.append(" Select RepayAmount From FinScheduleDetails_Temp schd");
+		sql.append(" Inner Join FinanceMain_Temp fm on fm.FinId = schd.FinId and fm.finreference = ?");
+		sql.append(" Union all");
+		sql.append(" Select RepayAmount From FinScheduleDetails schd");
+		sql.append(" Inner Join FinanceMain fm on fm.FinId = schd.FinId and fm.finreference = ?) T");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finreference, finreference);
+	}
+
+	@Override
+	public String getMandateTypeById(Long mandateId, String string) {
+		String sql = "Select MandateType From Mandates Where MandateID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, mandateId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public void updateFinMandateId(Long mandateId, String finreference) {
+		String sql = "Update FinanceMain Set SecurityMandateId = ? Where FinReference = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, mandateId, finreference);
+	}
+
+	@Override
+	public Long getSecurityMandateIdByRef(String finreference) {
+		String sql = "Select SecurityMandateId From FinanceMain Where Finreference = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finreference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

@@ -36,7 +36,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -50,7 +49,6 @@ import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 

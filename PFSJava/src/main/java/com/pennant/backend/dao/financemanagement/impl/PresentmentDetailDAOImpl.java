@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,12 +53,14 @@ import org.springframework.jdbc.support.KeyHolder;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.financemanagement.impl.PresentmentDetailExtractService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.presentment.PresentmentResponseRowmapper;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.model.presentment.Presentment;
@@ -1098,7 +1101,10 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	@Override
-	public List<PresentmentDetail> getPresentmenToPost(long custId, Date schData) {
+	public List<PresentmentDetail> getPresentmenToPost(Customer customer, Date schData) {
+		long custID = customer.getCustID();
+		String corBankID = customer.getCustCoreBank();
+
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.CustId, fm.FinBranch, fm.FinType, pd.Id, pd.PresentmentId");
 		sql.append(", fm.FinID, pd.FinReference, pd.SchDate, pd.MandateId, ph.MandateType, pd.AdvanceAmt, pd.ExcessID");
@@ -1106,14 +1112,26 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(" From PresentmentDetails pd ");
 		sql.append(" Inner join PresentmentHeader ph on ph.Id = pd.PresentmentId");
 		sql.append(" Left join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
-		sql.append(" Inner join Financemain fm on pd.FinID = fm.FinID");
-		sql.append(" Where fm.CustId = ? and pd.SchDate = ? and pd.Status = ?");
+		sql.append(" Inner join FinanceMain fm on pd.FinID = fm.FinID");
+		sql.append(" Inner Join Customers cu on cu.CustID = fm.CustID");
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" Where fm.CustId = ? and pd.SchDate = ? and pd.Status = ?");
+		} else {
+			sql.append(" Where cu.CustCoreBank = ? and pd.SchDate = ? and pd.Status = ?");
+		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, custId);
+
+			if (CustomerExtension.CUST_CORE_BANK_ID) {
+				ps.setString(index++, corBankID);
+			} else {
+				ps.setLong(index++, custID);
+			}
+
 			ps.setDate(index++, JdbcUtil.getDate(schData));
 			ps.setString(index, RepayConstants.PEXC_APPROV);
 		}, (rs, rowNum) -> {
@@ -2255,4 +2273,42 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		}
 
 	}
+
+	@Override
+	public Long getLatestMandateId(long finID) {
+		String sql = "Select pd.ID, pd.MandateID From PresentmentHeader ph Inner Join PresentmentDetails pd on pd.PresentmentID = ph.ID Where pd.FinID = ? and ph.MandateType in (?, ?, ?, ?) and pd.Status not in (?, ?) and  pd.ExcludeReason in (?, ?)";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		List<PresentmentDetail> list = this.jdbcOperations.query(sql, ps -> {
+			int index = 0;
+
+			ps.setLong(++index, finID);
+			ps.setString(++index, InstrumentType.NACH.code());
+			ps.setString(++index, InstrumentType.SI.code());
+			ps.setString(++index, InstrumentType.EMANDATE.name());
+			ps.setString(++index, InstrumentType.PDC.code());
+			ps.setString(++index, "I");
+			ps.setString(++index, "F");
+			ps.setLong(++index, RepayConstants.PEXC_EMIINCLUDE);
+			ps.setLong(++index, RepayConstants.PEXC_MANUAL_EXCLUDE);
+		}, (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setId(rs.getLong("ID"));
+			pd.setMandateId(rs.getLong("MandateID"));
+
+			return pd;
+		});
+
+		list = list.stream().sorted((l1, l2) -> Long.valueOf(l2.getId()).compareTo(Long.valueOf(l1.getId())))
+				.collect(Collectors.toList());
+
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
+		return list.get(0).getMandateId();
+	}
+
 }

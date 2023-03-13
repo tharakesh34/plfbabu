@@ -6,6 +6,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.finance.manual.schedule.ManualScheduleDAO;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -164,6 +165,7 @@ public class ManualScheduleServiceImpl implements ManualScheduleService {
 		return false;
 	}
 
+	@Autowired
 	public void setManualScheduleDAO(ManualScheduleDAO manualScheduleDAO) {
 		this.manualScheduleDAO = manualScheduleDAO;
 	}

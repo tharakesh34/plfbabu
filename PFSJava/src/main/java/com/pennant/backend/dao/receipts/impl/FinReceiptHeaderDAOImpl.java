@@ -38,6 +38,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -1637,6 +1638,69 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;
+		}
+	}
+
+	@Override
+	public List<FinReceiptHeader> getSettlementReceipts(long finID, Date fromDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ReceiptId, ReceiptModeStatus From FinReceiptHeader");
+		sql.append(" Where FinId = ? and receiptDate <= ? and excessAdjustTo = ? and ReceiptModeStatus  in (?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinReceiptHeader rch = new FinReceiptHeader();
+
+			rch.setReceiptID(rs.getLong("ReceiptId"));
+			rch.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
+
+			return rch;
+		}, finID, JdbcUtil.getDate(fromDate), "S", "R", "D");
+	}
+
+	@Override
+	public BigDecimal getReceiptAmount(Date fromDate, Date toDate) {
+		String sql = "Select sum(ReceiptAmount) From FinReceiptHeader Where ReceiptDate >=  ? and ReceiptDate <= ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, fromDate, toDate);
+		} catch (DataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
+	}
+
+	@Override
+	public void updateExcessAdjustTo(long receiptID, String excessAdjustTo) {
+		String sql = "Update FinReceiptHeader Set ExcessAdjustTo= ? Where ReceiptID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, excessAdjustTo, receiptID);
+	}
+
+	@Override
+	public String getReceiptModeStatuByExcessId(long excessID) {
+		StringBuilder sql = new StringBuilder("Select ReceiptModeStatus From (");
+		sql.append(" Select ReceiptModeStatus From FinReceiptHeader_Temp fh");
+		sql.append(" Inner Join FinExcessAmount fa on fa.ReceiptID = fh.ReceiptID");
+		sql.append(" Where fa.ExcessId = ?");
+		sql.append(" union all");
+		sql.append(" Select ReceiptModeStatus From FinReceiptHeader fh");
+		sql.append(" Inner Join FinExcessAmount fa on fa.ReceiptID = fh.ReceiptID");
+		sql.append(" Where fa.ExcessId = ? and Not Exists");
+		sql.append(" (Select 1 From FinReceiptHeader_Temp WHERE ReceiptId = fh.ReceiptId)) T");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, excessID, excessID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
 	}
 }

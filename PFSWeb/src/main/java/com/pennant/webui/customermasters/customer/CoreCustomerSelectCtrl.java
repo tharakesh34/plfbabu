@@ -57,7 +57,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
@@ -115,6 +114,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private transient boolean validationOn;
 	protected Radio exsiting;
 	protected Radio prospect;
+	protected Radio prospectAsCif;
 	protected Combobox custCtgType;
 	protected Row row_custCtgType;
 	protected Row row_CustCIF;
@@ -463,6 +463,15 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					customerDetails = proceedAsNewCustomer(customerDetails, ctgType, primaryIdNumber, primaryIdName,
 							true, ctgTypeDesc);
 				}
+			} else if (prospectAsCif.isChecked()) {
+				newRecord = true;
+				if (StringUtils.isEmpty(cif)) {
+					throw new WrongValueException(custCIF, Labels.getLabel("FIELD_NO_EMPTY",
+							new String[] { Labels.getLabel("label_CoreCustomerDialog_CoreCustID.value") }));
+				} else {
+					customerDetails = customerDetailsService.prospectAsCIF(cif);
+				}
+
 			}
 
 			if (customerDetails != null && customerDetails.getCustomer() != null
@@ -682,6 +691,14 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doSetPrimaryIdAttributes();
 	}
 
+	public void onCheck$prospectAsCif(Event event) {
+		custCIF.setDisabled(false);
+		row_custCtgType.setVisible(false);
+		row_custCountry.setVisible(false);
+		row_CustCIF.setVisible(true);
+		row_PrimaryID.setVisible(false);
+	}
+
 	/**
 	 * when the "close" button is clicked. <br>
 	 * 
@@ -706,7 +723,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		custNationality.setValueColumn("NationalityCode");
 		custNationality.setDescColumn("NationalityDesc");
 		custNationality.setValidateColumns(new String[] { "NationalityCode" });
-		custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		logger.debug("Leaving");
 	}
 

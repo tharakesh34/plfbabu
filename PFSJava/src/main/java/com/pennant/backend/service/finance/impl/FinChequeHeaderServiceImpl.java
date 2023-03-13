@@ -568,7 +568,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 					}
 					if (chequeDetail.isNewRecord() && chequeDetailDAO.isDuplicateKey(chequeDetail.getChequeDetailsID(),
 							chequeDetail.getBankBranchID(), chequeDetail.getAccountNo(),
-							chequeDetail.getChequeSerialNo(), TableType.BOTH_TAB)) {
+							chequeDetail.getChequeSerialNumber(), TableType.BOTH_TAB)) {
 
 						String[] parameters = new String[3];
 
@@ -577,7 +577,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 						parameters[1] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_AccNumber.value") + ": "
 								+ chequeDetail.getAccountNo();
 						parameters[2] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_ChequeSerialNo.value") + ": "
-								+ chequeDetail.getChequeSerialNo();
+								+ chequeDetail.getChequeSerialNumber();
 
 						auditDetail
 								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));

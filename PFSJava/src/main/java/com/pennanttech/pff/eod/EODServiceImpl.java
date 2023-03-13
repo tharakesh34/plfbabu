@@ -363,7 +363,7 @@ public class EODServiceImpl implements EODService {
 	}
 
 	private Configuration setConfiguration() {
-		Configuration config = new Configuration();
+		Configuration config = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
 		try {
 			config.setClassForTemplateLoading(EODServiceImpl.class, "/");

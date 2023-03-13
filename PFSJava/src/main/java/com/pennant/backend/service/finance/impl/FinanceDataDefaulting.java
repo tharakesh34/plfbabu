@@ -46,6 +46,7 @@ import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 
 public class FinanceDataDefaulting {
 
@@ -99,6 +100,7 @@ public class FinanceDataDefaulting {
 			}
 
 			fm.setLovDescCustCIF(custCIF);
+			fm.setLovDescCustCoreBank(customer.getCustCoreBank());
 			fm.setCustID(customer.getCustID());
 			fd.getCustomerDetails().setCustomer(customer);
 		}
@@ -173,7 +175,6 @@ public class FinanceDataDefaulting {
 		String finBranch = fm.getFinBranch();
 		String profitDaysBasis = fm.getProfitDaysBasis();
 		String repayMethod = fm.getFinRepayMethod();
-		String stepPolicy = fm.getStepPolicy();
 		String stepType = fm.getStepType();
 		String grcProfitDaysBasis = fm.getGrcProfitDaysBasis();
 		String grcPftFrq = fm.getGrcPftFrq();
@@ -207,6 +208,11 @@ public class FinanceDataDefaulting {
 		if (StringUtils.isBlank(finCcy)) {
 			finCcy = SysParamUtil.getAppCurrency();
 			fm.setFinCcy(finCcy);
+		}
+
+		if (StringUtils.isEmpty(fm.getAdvStage()) && StringUtils.equals(fm.getAdvType(), financeType.getAdvType())
+				&& fm.getAdvTerms() > 0) {
+			fm.setAdvStage(financeType.getAdvStage());
 		}
 
 		if (StringUtils.isNotBlank(promotionCode)) {
@@ -1028,9 +1034,9 @@ public class FinanceDataDefaulting {
 			String odChargeType = opr.getODChargeType();
 			int ccyFormat = CurrencyUtil.getFormat(finType.getFinCcy());
 
-			if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(odChargeType)) {
+			if (ChargeType.PERC_ONE_TIME.equals(odChargeType) || ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_PD_MTH.equals(odChargeType)) {
 
 				opr.setODChargeAmtOrPerc(PennantApplicationUtil.unFormateAmount(opr.getODChargeAmtOrPerc(), ccyFormat));
 			}

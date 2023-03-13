@@ -68,6 +68,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private String favourName;
 	private String payableLoc;
 	private String printingLoc;
+	private String printingLocDesc;
 	private Date valueDate;
 	private String favourNumber;// Cheque/DD Number
 	private String accountNo;// beneficiaryAccNo
@@ -104,6 +105,8 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private boolean paymentProcReq = false;
 	private String branchBankCode;
 	private String lei;
+	private String finType;
+	private String finBranch;
 
 	public long getPartnerBankId() {
 		return partnerBankId;
@@ -148,6 +151,9 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 		excludeFields.add("paymentProcReq");
 		excludeFields.add("branchBankCode");
 		excludeFields.add("clearingStatus");
+		excludeFields.add("finType");
+		excludeFields.add("finBranch");
+		excludeFields.add("printingLocDesc");
 		return excludeFields;
 	}
 
@@ -221,6 +227,14 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 
 	public void setPrintingLoc(String printingLoc) {
 		this.printingLoc = printingLoc;
+	}
+
+	public String getPrintingLocDesc() {
+		return printingLocDesc;
+	}
+
+	public void setPrintingLocDesc(String printingLocDesc) {
+		this.printingLocDesc = printingLocDesc;
 	}
 
 	public Date getValueDate() {
@@ -506,4 +520,21 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	public void setLei(String lei) {
 		this.lei = lei;
 	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
+	}
+
+	public String getFinBranch() {
+		return finBranch;
+	}
+
+	public void setFinBranch(String finBranch) {
+		this.finBranch = finBranch;
+	}
+
 }

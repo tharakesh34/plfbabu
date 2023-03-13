@@ -205,6 +205,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
@@ -221,6 +222,7 @@ import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.external.Crm;
@@ -505,7 +507,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 
-		customerDetails.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
+		customerDetails
+				.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(customerDetails.getCustomer()));
 
 		customerDetails.setFinanceMainList(financeMainDAO.getFinanceByCustId(id, ""));
 		customerDetails.setCollateraldetailList(collateralSetupService.getCollateralByCustId(id, type));
@@ -655,7 +658,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						customerCardSalesInfoDAO.getCardSalesInfoSubDetailById(customerCardSalesInfo.getId(), type));
 			}
 		}
-		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
+		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(cd.getCustomer()));
 
 		logger.debug(Literal.LEAVING);
 		return cd;
@@ -722,8 +725,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
-	public Customer getCustomer(String coreBankingID) {
-		return customerDAO.getCustomer(coreBankingID);
+	public Customer getCustomer(String cif) {
+		return customerDAO.getCustomer(cif);
+	}
+
+	@Override
+	public Customer getCustomerCoreBankID(String custCoreBank) {
+		return customerDAO.getCustomerCoreBankID(custCoreBank);
 	}
 
 	/**
@@ -3605,11 +3613,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private AuditDetail validatePersonalInfo(AuditDetail auditDetail, Customer customer) {
 		logger.debug(Literal.ENTERING);
 
-		if (StringUtils.isBlank(customer.getCustCRCPR())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "panNumber";
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-		}
+		/*
+		 * if (StringUtils.isBlank(customer.getCustCRCPR())) { String[] valueParm = new String[1]; valueParm[0] =
+		 * "panNumber"; auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm))); }
+		 */
 
 		if (StringUtils.isNotBlank(customer.getCustCRCPR())) {
 			String regExp = PennantRegularExpressions.REGEX_PANNUMBER;
@@ -3806,16 +3813,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 		auditDetail.setErrorDetail(validateMasterCode("CustomerType", customer.getCustTypeCode()));
 		// validating the CoreBank
-		if (StringUtils.isNotBlank(customer.getCustCoreBank())) {
-			Customer cust = customerDAO.getCustomerByCoreBankId(customer.getCustCoreBank(), "");
-			if (cust != null) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "CustCoreBankId: ";
-				valueParm[1] = customer.getCustCoreBank();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm)));
-				return auditDetail;
-			}
-		}
+		/*
+		 * if (StringUtils.isNotBlank(customer.getCustCoreBank())) { Customer cust =
+		 * customerDAO.getCustomerByCoreBankId(customer.getCustCoreBank(), ""); if (cust != null) { String[] valueParm =
+		 * new String[2]; valueParm[0] = "CustCoreBankId: "; valueParm[1] = customer.getCustCoreBank();
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm))); return
+		 * auditDetail; } }
+		 */
 
 		// validate custTypeCode against the category code
 		int custTypeCount = customerTypeDAO.validateTypeAndCategory(customer.getCustTypeCode(),
@@ -4687,10 +4691,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		boolean isDuplicateCoreBankId = false;
-		if (StringUtils.isNotBlank(customer.getCustCoreBank())) {
+		if (StringUtils.isNotBlank(customer.getCustCoreBank()) && customer.getCustID() != 0 && customer.isNewRecord()) {
 			isDuplicateCoreBankId = customerDAO.isDuplicateCoreBankId(customer.getCustID(), customer.getCustCoreBank());
 		}
-		if (isDuplicateCoreBankId) {
+		if (isDuplicateCoreBankId && !customer.isProspectAsCIF()) {
 			String[] errorParameters = new String[1];
 			errorParameters[0] = PennantJavaUtil.getLabel("label_CustCoreBank") + ":" + customer.getCustCoreBank();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
@@ -8429,6 +8433,199 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetail;
 	}
 
+	public CustomerDetails prospectAsCIF(String cif) {
+		logger.debug(Literal.ENTERING);
+
+		Customer customer = checkCustomerByCIF(cif, TableType.MAIN_TAB.getSuffix());
+
+		if (customer == null) {
+			throw new AppException("9999", Labels.getLabel("Cust_NotFound"));
+		}
+
+		CustomerDetails cd = getCustomerDetailsById(customer.getId(), true, "_AView");
+
+		customer = cd.getCustomer();
+		customer.setCustID(Long.MIN_VALUE);
+		cd.setCustID(Long.MIN_VALUE);
+
+		if (cd.getRatingsList() != null && cd.getRatingsList().size() > 0) {
+			for (int i = 0; i < cd.getRatingsList().size(); i++) {
+				CustomerRating customerRating = cd.getRatingsList().get(i);
+				customerRating.setNewRecord(true);
+				customerRating.setRecordType(PennantConstants.RCD_ADD);
+				customerRating.setId(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getEmploymentDetailsList() != null && cd.getEmploymentDetailsList().size() > 0) {
+			for (int i = 0; i < cd.getEmploymentDetailsList().size(); i++) {
+				CustomerEmploymentDetail customerEmploymentDetail = cd.getEmploymentDetailsList().get(i);
+				customerEmploymentDetail.setNewRecord(true);
+				customerEmploymentDetail.setRecordType(PennantConstants.RCD_ADD);
+				customerEmploymentDetail.setCustEmpId(Long.MIN_VALUE);
+				customerEmploymentDetail.setCustID(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getCustomerPhoneNumList() != null && cd.getCustomerPhoneNumList().size() > 0) {
+			for (int i = 0; i < cd.getCustomerPhoneNumList().size(); i++) {
+				CustomerPhoneNumber phoneNumber = cd.getCustomerPhoneNumList().get(i);
+				phoneNumber.setNewRecord(true);
+				phoneNumber.setRecordType(PennantConstants.RCD_ADD);
+				phoneNumber.setPhoneCustID(Long.MIN_VALUE);
+				phoneNumber.setId(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getCustomerIncomeList() != null && cd.getCustomerIncomeList().size() > 0) {
+			for (int i = 0; i < cd.getCustomerIncomeList().size(); i++) {
+				CustomerIncome customerIncome = cd.getCustomerIncomeList().get(i);
+				customerIncome.setNewRecord(true);
+				customerIncome.setRecordType(PennantConstants.RCD_ADD);
+				customerIncome.setLinkId(Long.MIN_VALUE);
+				customerIncome.setCustId(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getCustomerEMailList() != null && cd.getCustomerEMailList().size() > 0) {
+			for (int i = 0; i < cd.getCustomerEMailList().size(); i++) {
+				CustomerEMail eMail = cd.getCustomerEMailList().get(i);
+				eMail.setNewRecord(true);
+				eMail.setRecordType(PennantConstants.RCD_ADD);
+				eMail.setId(Long.MIN_VALUE);
+				eMail.setCustID(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getAddressList() != null && cd.getAddressList().size() > 0) {
+			for (int i = 0; i < cd.getAddressList().size(); i++) {
+				CustomerAddres address = cd.getAddressList().get(i);
+				address.setNewRecord(true);
+				address.setRecordType(PennantConstants.RCD_ADD);
+				address.setCustAddressId(Long.MIN_VALUE);
+				address.setId(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getCustomerDocumentsList() != null && cd.getCustomerDocumentsList().size() > 0) {
+			for (int i = 0; i < cd.getCustomerDocumentsList().size(); i++) {
+				CustomerDocument customerDocument = cd.getCustomerDocumentsList().get(i);
+				customerDocument.setNewRecord(true);
+				customerDocument.setRecordType(PennantConstants.RCD_ADD);
+				customerDocument.setID(Long.MIN_VALUE);
+				customerDocument.setCustID(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getCustomerDirectorList() != null && cd.getCustomerDirectorList().size() > 0) {
+			for (int i = 0; i < cd.getCustomerDirectorList().size(); i++) {
+				DirectorDetail directorDetail = cd.getCustomerDirectorList().get(i);
+				directorDetail.setNewRecord(true);
+				directorDetail.setRecordType(PennantConstants.RCD_ADD);
+				directorDetail.setDirectorId(Long.MIN_VALUE);
+				directorDetail.setCustID(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getCustomerBankInfoList() != null && cd.getCustomerBankInfoList().size() > 0) {
+			for (int i = 0; i < cd.getCustomerBankInfoList().size(); i++) {
+				CustomerBankInfo bankInfo = cd.getCustomerBankInfoList().get(i);
+				bankInfo.setNewRecord(true);
+				bankInfo.setRecordType(PennantConstants.RCD_ADD);
+				bankInfo.setBankId(Long.MIN_VALUE);
+				bankInfo.setCustID(Long.MIN_VALUE);
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(cd.getCustomerGstList())) {
+			for (int i = 0; i < cd.getCustomerGstList().size(); i++) {
+				CustomerGST customerGST = cd.getCustomerGstList().get(i);
+				customerGST.setNewRecord(true);
+				customerGST.setRecordType(PennantConstants.RCD_ADD);
+				customerGST.setId(Long.MIN_VALUE);
+				customerGST.setCustId(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getCustomerChequeInfoList() != null && cd.getCustomerChequeInfoList().size() > 0) {
+			for (int i = 0; i < cd.getCustomerChequeInfoList().size(); i++) {
+				CustomerChequeInfo chequeInfo = cd.getCustomerChequeInfoList().get(i);
+				chequeInfo.setNewRecord(true);
+				chequeInfo.setRecordType(PennantConstants.RCD_ADD);
+				chequeInfo.setId(Long.MIN_VALUE);
+				chequeInfo.setCustID(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getCustomerExtLiabilityList() != null && cd.getCustomerExtLiabilityList().size() > 0) {
+			for (int i = 0; i < cd.getCustomerExtLiabilityList().size(); i++) {
+				CustomerExtLiability liability = cd.getCustomerExtLiabilityList().get(i);
+				liability.setNewRecord(true);
+				liability.setRecordType(PennantConstants.RCD_ADD);
+				liability.setId(0);
+				liability.setLinkId(0);
+				liability.setCustId(Long.MIN_VALUE);
+			}
+		}
+
+		if (cd.getExtendedFieldRender() != null) {
+			ExtendedFieldRender efr = cd.getExtendedFieldRender();
+			efr.setNewRecord(true);
+			efr.setRecordType(PennantConstants.RCD_ADD);
+			efr.setId(0);
+			efr.setInstructionUID(Long.MIN_VALUE);
+		}
+
+		if (cd.getCustCardSales() != null && cd.getCustCardSales().size() > 0) {
+			for (int i = 0; i < cd.getCustCardSales().size(); i++) {
+				CustCardSales custCardSalesData = cd.getCustCardSales().get(i);
+				custCardSalesData.setNewRecord(true);
+				custCardSalesData.setRecordType(PennantConstants.RCD_ADD);
+				custCardSalesData.setId(Long.MIN_VALUE);
+				custCardSalesData.setCustID(Long.MIN_VALUE);
+
+				for (int j = 0; j < custCardSalesData.getCustCardMonthSales().size(); j++) {
+					CustCardSalesDetails cardSalesInfo = custCardSalesData.getCustCardMonthSales().get(j);
+					cardSalesInfo.setNewRecord(true);
+					cardSalesInfo.setRecordType(PennantConstants.RCD_ADD);
+					cardSalesInfo.setId(Long.MIN_VALUE);
+					cardSalesInfo.setCardSalesId(Long.MIN_VALUE);
+				}
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(cd.getGstDetailsList())) {
+			List<GSTDetail> gstDetailsList = cd.getGstDetailsList();
+			for (GSTDetail gst : gstDetailsList) {
+				gst.setNewRecord(true);
+				gst.setRecordType(PennantConstants.RCD_ADD);
+				gst.setId(Long.MIN_VALUE);
+				gst.setCustID(Long.MIN_VALUE);
+			}
+		}
+
+		cd.setNewRecord(true);
+		cd.setCustID(Long.MIN_VALUE);
+		cd.setCustCoreBank(null);
+		customer.setprospectAsCIF(true);
+		customer.setCustCIF(getNewProspectCustomerCIF());
+		customer.setCustID(Long.MIN_VALUE);
+		customer.setNewRecord(true);
+		customer.setprospectAsCIF(true);
+
+		customer.setCustCoreBank(null);
+		customer.setCustDSA(null);
+		customer.setCustDSADept(null);
+		customer.setLovDescCustDSADeptName(null);
+		customer.setCustRO1(Long.MIN_VALUE);
+		customer.setLovDescCustRO1Name(null);
+		customer.setLovDescCustRO1Name(null);
+		customer.setCkycOrRefNo(null);
+
+		logger.debug(Literal.LEAVING);
+		return cd;
+	}
+
 	@Override
 	public int getCustomerCountByCIF(String custCIF, String type) {
 		return customerDAO.getCustomerCountByCIF(custCIF, type);
@@ -8454,23 +8651,31 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	private void isDuplicateCRCPR(AuditDetail auditDetail, Customer customer, boolean categoryReq) {
-		List<String> cifs;
+		if (CustomerExtension.ALLOW_DUPLICATE_PAN) {
+			return;
+		}
+
 		String[] errorParameters = new String[2];
+
 		String custCtgCode = null;
+
 		if (categoryReq) {
 			custCtgCode = customer.getCustCtgCode();
 		}
-		cifs = customerDAO.isDuplicateCRCPR(customer.getCustID(), customer.getCustCRCPR(), custCtgCode);
-		if (CollectionUtils.isNotEmpty(cifs)) {
-			for (String detail : cifs) {
-				if (!StringUtils.equals(customer.getCustCIF(), detail)) {
-					errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
-							+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
-					errorParameters[1] = PennantJavaUtil.getLabel("label_Cif") + ": {" + detail + "}";
 
-					auditDetail.setErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errorParameters, null));
-				}
+		List<String> cifs = customerDAO.isDuplicateCRCPR(customer.getCustID(), customer.getCustCRCPR(), custCtgCode);
+
+		if (CollectionUtils.isEmpty(cifs)) {
+			return;
+		}
+
+		for (String detail : cifs) {
+			if (!StringUtils.equals(customer.getCustCIF(), detail)) {
+				errorParameters[0] = PennantJavaUtil.getLabel("label_CustCRCPR") + ":"
+						+ PennantApplicationUtil.formatEIDNumber(customer.getCustCRCPR());
+				errorParameters[1] = PennantJavaUtil.getLabel("label_Cif") + ": {" + detail + "}";
+
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errorParameters, null));
 			}
 		}
 	}
@@ -8481,8 +8686,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
-	public Customer checkCustomerByID(long custID, String type) {
-		return customerDAO.checkCustomerByID(custID, type);
+	public Customer getCustomer(long custID) {
+		return customerDAO.getCustomer(custID);
 	}
 
 	@Override

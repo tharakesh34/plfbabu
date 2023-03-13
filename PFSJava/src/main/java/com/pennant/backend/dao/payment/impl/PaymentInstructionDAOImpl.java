@@ -405,15 +405,15 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 	}
 
 	@Override
-	public boolean isInstructionInProgress(String finReference) {
-		StringBuilder sql = new StringBuilder("select count(*)");
+	public boolean isInProgress(long finID) {
+		StringBuilder sql = new StringBuilder("Select count(ph.FinID)");
 		sql.append(" From PaymentInstructions_Temp pi");
 		sql.append(" Left Join PaymentHeader_Temp ph on ph.PaymentID = pi.PaymentID");
 		sql.append(" Left Join PaymentDetails_Temp pd on pd.PaymentID = ph.PaymentID");
-		sql.append(" Where ph.FinReference = ?");
+		sql.append(" Where ph.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finReference) > 0;
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
 	}
 }

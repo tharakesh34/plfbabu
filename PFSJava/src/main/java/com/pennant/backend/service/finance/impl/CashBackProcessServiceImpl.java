@@ -2,6 +2,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -415,13 +416,15 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		long bankBranchId = 0;
 		Date appDate = SysParamUtil.getAppDate();
 
+		Timestamp sysDate = new Timestamp(System.currentTimeMillis());
+
 		// Payment Header
 		PaymentHeader ph = new PaymentHeader();
 		ph.setFinID(finMain.getFinID());
 		ph.setFinReference(finMain.getFinReference());
 		ph.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
-		ph.setCreatedOn(appDate);
-		ph.setApprovedOn(appDate);
+		ph.setCreatedOn(sysDate);
+		ph.setApprovedOn(sysDate);
 		ph.setStatus(RepayConstants.PAYMENT_APPROVE);
 		ph.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		ph.setNewRecord(true);

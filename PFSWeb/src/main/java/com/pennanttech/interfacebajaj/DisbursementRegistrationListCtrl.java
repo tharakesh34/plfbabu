@@ -34,8 +34,6 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -111,10 +109,8 @@ import com.pennanttech.pff.external.disbursement.DisbursementRequestService;
  * ************************************************************<br>
  * 
  */
-public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvancePayments> implements Serializable {
-
+public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvancePayments> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(DisbursementRegistrationListCtrl.class);
 
 	protected Window window_DisbursementRegistrationList;
 	protected Borderlayout borderLayout_DisbursementList;
@@ -230,11 +226,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			searchObject.addFilters(filters);
 		}
 
-		if (qdp != null) {
-			Filter[] filters = new Filter[1];
-			filters[0] = new Filter("QUICKDISB", this.qdp.isChecked(), Filter.OP_EQUAL);
-			searchObject.addFilters(filters);
-		}
+		/*
+		 * if (qdp != null) { Filter[] filters = new Filter[1]; filters[0] = new Filter("QUICKDISB",
+		 * this.qdp.isChecked(), Filter.OP_EQUAL); searchObject.addFilters(filters); }
+		 */
 
 		// Adding filter to download only if the Download Type is Offline.
 		Filter[] filters = new Filter[1];
@@ -378,10 +373,13 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		String valueColumn = "BranchCode";
 		String descColumn = "BranchDesc";
 
-		if (PartnerBankExtension.MAPPING.equals("C")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			moduleName = "Cluster";
 			valueColumn = "Code";
 			descColumn = "Name";
+
+			this.branchOrCluster.setFilters(
+					new Filter[] { new Filter("CLUSTERTYPE", PartnerBankExtension.CLUSTER_TYPE, Filter.OP_EQUAL) });
 		}
 
 		this.branchOrCluster.setModuleName(moduleName);
@@ -561,7 +559,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 
 		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
-			if (PartnerBankExtension.MAPPING.equals("C")) {
+			if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 				if (this.branchOrCluster.getValue() != null) {
 					String whereCondition = " Finreference In (Select Finreference from Financemain_view where FinBranch in (Select BranchCode from RMTBranches where ClusterId in("
 							+ Long.valueOf(this.branchOrCluster.getId()) + ")))";
@@ -921,20 +919,21 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			return;
 		}
 
-		Filter[] filters = new Filter[2];
+		Filter[] filters = new Filter[3];
 		filters[0] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+		filters[1] = new Filter("PaymentMode", this.disbTypes.getSelectedItem().getValue(), Filter.OP_EQUAL);
 
 		String branchCode = getUserWorkspace().getLoggedInUser().getBranchCode();
 		Long clusterId = null;
 
 		List<String> branchlist = new ArrayList<>();
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
-			filters[1] = new Filter("BranchCode", branchCode, Filter.OP_EQUAL);
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
+			filters[2] = new Filter("BranchCode", branchCode, Filter.OP_EQUAL);
 
 			branchlist.add(branchCode);
 
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			clusterId = clusterService.getClustersFilter(branchCode);
 			branchlist.addAll(branchService.getBranchCodeByClusterId(clusterId));
 
@@ -943,7 +942,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				this.partnerBank.setButtonDisabled(true);
 			}
 
-			filters[1] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+			filters[2] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
 		}
 
 		List<FinTypePartnerBank> list = finTypePartnerBankService.getFintypePartnerBankByBranch(branchlist, clusterId);
@@ -981,7 +980,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		Long partnerBankID = details.getPartnerBankID();
 		this.partnerBank.setAttribute("Id", partnerBankID);
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("PartnerbankId", partnerBankID, Filter.OP_EQUAL);
 			filters[1] = new Filter("BranchCode", "", Filter.OP_NOT_NULL);
@@ -989,7 +988,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			this.branchOrCluster.setFilters(filters);
 			this.branchOrCluster.setButtonDisabled(false);
 			this.branchOrCluster.setMandatoryStyle(true);
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			List<Long> clusterList = new ArrayList<Long>();
 			clusterList = finTypePartnerBankService.getByClusterAndPartnerbank(partnerBankID);
 
@@ -1017,23 +1016,41 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	public void onFulfill$branchOrCluster(Event event) {
+
 		logger.debug(Literal.ENTERING);
 
-		Cluster cluster = (Cluster) this.branchOrCluster.getObject();
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
+			FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) this.branchOrCluster.getObject();
 
-		if (cluster == null) {
-			return;
+			if (finTypePartnerBank == null) {
+				return;
+			}
+			Search search = new Search(FinTypePartnerBank.class);
+			search.addFilterEqual("Id", finTypePartnerBank.getId());
+
+			SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+			FinTypePartnerBank fpb = (FinTypePartnerBank) searchProcessor.getResults(search).get(0);
+			this.branchOrCluster.setId(String.valueOf(fpb.getId()));
+			this.branchOrCluster.setValue(fpb.getBranchCode());
+			this.branchOrCluster.setDescription(fpb.getBranchDesc());
+		} else {
+			Cluster cluster = (Cluster) this.branchOrCluster.getObject();
+
+			if (cluster == null) {
+				return;
+			}
+			Search search = new Search(Cluster.class);
+			search.addFilterEqual("Id", cluster.getId());
+
+			SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+			Cluster clusterData = (Cluster) searchProcessor.getResults(search).get(0);
+			this.branchOrCluster.setId(String.valueOf(clusterData.getId()));
+			this.branchOrCluster.setValue(clusterData.getCode());
+			this.branchOrCluster.setDescription(clusterData.getName());
 		}
-		Search search = new Search(Cluster.class);
-		search.addFilterEqual("Id", cluster.getId());
 
-		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
-		Cluster clusterData = (Cluster) searchProcessor.getResults(search).get(0);
-
-		this.branchOrCluster.setId(String.valueOf(clusterData.getId()));
-		this.branchOrCluster.setValue(clusterData.getCode());
-		this.branchOrCluster.setDescription(clusterData.getName());
 		logger.debug(Literal.LEAVING + event.toString());
+
 	}
 
 	public List<FinAdvancePayments> getFinAdvancePaymentsList() {

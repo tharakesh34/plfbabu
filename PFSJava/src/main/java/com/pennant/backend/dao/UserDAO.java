@@ -76,4 +76,6 @@ public interface UserDAO {
 
 	List<String> getRoleCodes(final String roleCode);
 
+	List<SecurityRole> getMenuRoles(long userID);
+
 }

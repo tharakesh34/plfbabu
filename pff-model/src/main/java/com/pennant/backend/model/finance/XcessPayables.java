@@ -27,9 +27,10 @@ public class XcessPayables {
 	private boolean tdsApplicable = false;
 	private BigDecimal tdsAmount = BigDecimal.ZERO;
 	private String finreference;
+	private Long receiptID;
 
 	public XcessPayables() {
-
+		super();
 	}
 
 	public XcessPayables copyEntity() {
@@ -57,6 +58,7 @@ public class XcessPayables {
 		entity.setTdsApplicable(this.tdsApplicable);
 		entity.setTdsAmount(this.tdsAmount);
 		entity.setFinreference(this.finreference);
+		entity.setReceiptID(receiptID);
 		return entity;
 	}
 
@@ -242,6 +244,14 @@ public class XcessPayables {
 
 	public void setFinreference(String finreference) {
 		this.finreference = finreference;
+	}
+
+	public Long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(Long receiptID) {
+		this.receiptID = receiptID;
 	}
 
 }

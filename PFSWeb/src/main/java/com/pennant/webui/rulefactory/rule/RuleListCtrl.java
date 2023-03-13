@@ -37,8 +37,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -68,7 +66,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	private static final long serialVersionUID = -6345351842301484405L;
-	private static final Logger logger = LogManager.getLogger(RuleListCtrl.class);
 
 	protected Window window_RuleList;
 	protected Borderlayout borderLayout_RuleList;

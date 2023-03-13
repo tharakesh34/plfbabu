@@ -2,8 +2,6 @@ package com.pennant.webui.tds.receivables.tdsreceivable;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -32,7 +30,6 @@ import com.pennanttech.pff.core.TableType;
 
 public class TdsReceivableCancelListCtrl extends GFCBaseListCtrl<TdsReceivable> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(TdsReceivableCancelListCtrl.class);
 
 	protected Window window_TdsReceivableCancelList;
 	protected Borderlayout borderLayout_TdsReceivableCancelList;

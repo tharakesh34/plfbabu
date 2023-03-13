@@ -529,6 +529,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		case RuleConstants.MODULE_DUEDATERULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
 			break;
+		case RuleConstants.MODULE_AUTOREFUND:
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			break;
 		}
 
 		// Window Title
@@ -538,6 +541,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		} else if (StringUtils.equals(RuleConstants.EVENT_CUSTOMER, event)) {
 			this.label_RuleTitle
 					.setValue("Customer " + Labels.getLabel("window_RuleDialog_" + ruleModuleName + ".title"));
+		} else if (RuleConstants.EVENT_AUTOTREFUND.equals(event)) {
+			this.label_RuleTitle.setValue("Auto Refund Reserve " + Labels.getLabel("window_RuleDialog.title"));
 		} else {
 			this.label_RuleTitle.setValue(Labels.getLabel("window_RuleDialog_" + ruleModuleName + ".title"));
 		}

@@ -86,7 +86,7 @@ public class ExtractionService {
 		logger.debug(Literal.ENTERING);
 
 		Date appDate = SysParamUtil.getAppDate();
-		long batchID = presentmentDAO.createBatch("EXTRACTOIN", 0);
+		long batchID = presentmentDAO.createBatch("EXTRACTION", 0);
 
 		ph.setBatchID(batchID);
 		ph.setAppDate(appDate);
@@ -112,7 +112,6 @@ public class ExtractionService {
 				presentmentDAO.updateTotalRecords(count, batchID);
 				start(ph);
 			} catch (Exception e) {
-				presentmentDAO.clearQueue(batchID);
 				throw new AppException("Presentment extraction failed", e);
 			}
 		} else {

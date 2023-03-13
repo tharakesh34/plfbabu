@@ -53,7 +53,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jsoup.helper.StringUtil;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
@@ -230,6 +229,10 @@ public class ScheduleCalculator {
 			Date earlyPayOnNextSchdl, BigDecimal earlyPayAmt, String method) {
 		return new ScheduleCalculator(finScheduleData, earlyPayOnSchdl, earlyPayOnNextSchdl, earlyPayAmt, method)
 				.getFinScheduleData();
+	}
+
+	public static FinScheduleData recalLPISchedule(FinScheduleData finScheduleData, Date lpiMinDate, Date lpiMaxDate) {
+		return new ScheduleCalculator(finScheduleData, lpiMinDate, lpiMaxDate).getFinScheduleData();
 	}
 
 	public static FinScheduleData addSubSchedule(FinScheduleData finScheduleData, int noOfTerms, Date subSchStartDate,
@@ -868,6 +871,16 @@ public class ScheduleCalculator {
 	 * time of initial schedule creation by BUILD SCHEDULE FUNCTION
 	 * ========================================================================= =======================================
 	 */
+
+	public ScheduleCalculator(FinScheduleData schdData, Date lpiMinDate, Date lpiMaxDate) {
+		FinanceMain fm = schdData.getFinanceMain();
+		fm.setRecalFromDate(lpiMinDate);
+		fm.setRecalToDate(lpiMaxDate);
+		fm.setEventFromDate(lpiMinDate);
+		fm.setEventToDate(lpiMaxDate);
+
+		setFinScheduleData(calSchdProcess(schdData, false, false));
+	}
 
 	private FinScheduleData procGetCalSchd(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
@@ -4363,15 +4376,15 @@ public class ScheduleCalculator {
 
 		finScheduleData = getRpyInstructDetails(finScheduleData);
 
-		/* Grace Schedule calculation */
-		finScheduleData = graceSchdCal(finScheduleData);
-
 		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
 				&& fm.getAdvTerms() > 0) {
 			fm.setAdjustClosingBal(true);
 			int idx = finScheduleData.getFinanceScheduleDetails().size() - fm.getAdvTerms() - 1;
 			fm.setRecalToDate(finScheduleData.getFinanceScheduleDetails().get(idx).getSchDate());
 		}
+
+		/* Grace Schedule calculation */
+		finScheduleData = graceSchdCal(finScheduleData);
 
 		if (isFirstRun) {
 			finScheduleData = prepareFirstSchdCal(finScheduleData);
@@ -5211,7 +5224,7 @@ public class ScheduleCalculator {
 			Date recalToDate = fm.getRecalToDate();
 			boolean flag = !PROC_CHANGEREPAY.equals(module) && !PROC_ADDDISBURSEMENT.equals(module)
 					&& !PROC_CHANGERATE.equals(module) && !PROC_RECALSCHD.equals(module);
-			if (StringUtil.isBlank(curSchd.getBpiOrHoliday()) && flag
+			if (StringUtils.isBlank(curSchd.getBpiOrHoliday()) && flag
 					&& CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())
 					&& DateUtil.compare(recalToDate, derivedMDT) != 0
 					&& DateUtil.compare(curSchDate, recalToDate) == 0) {
@@ -5448,7 +5461,7 @@ public class ScheduleCalculator {
 					fm.setPftForSelectedPeriod(fm.getPftForSelectedPeriod().add(curSchd.getProfitCalc()));
 				}
 
-				if (StringUtil.isBlank(curSchd.getBpiOrHoliday()) && !PROC_CHANGEREPAY.equals(module)
+				if (StringUtils.isBlank(curSchd.getBpiOrHoliday()) && !PROC_CHANGEREPAY.equals(module)
 						&& CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())
 						&& DateUtil.compare(recalToDate, derivedMDT) != 0
 						&& DateUtil.compare(curSchDate, recalToDate) == 0) {
@@ -7312,11 +7325,17 @@ public class ScheduleCalculator {
 			fm.setAdjustClosingBal(isAdjustClosingBal);
 
 			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
-					&& fm.getAdvTerms() > 0) {
+					&& fm.getAdvTerms() > 0 && !PROC_GETCALSCHD.equals(schdData.getModuleDefiner())) {
 				fm.setAdjustClosingBal(false);
 			}
 
 			schdData = getRpyInstructDetails(schdData);
+
+			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
+					&& fm.getAdvTerms() > 0) {
+				fm.setAdjustClosingBal(true);
+			}
+
 			schdData = graceSchdCal(schdData);
 			schdData = repaySchdCal(schdData, false);
 
@@ -7428,7 +7447,7 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			if (StringUtil.isBlank(curSchd.getBpiOrHoliday())) {
+			if (StringUtils.isBlank(curSchd.getBpiOrHoliday())) {
 				calTerms = calTerms + 1;
 			}
 
@@ -7493,7 +7512,7 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			if (StringUtil.isBlank(curSchd.getBpiOrHoliday())) {
+			if (StringUtils.isBlank(curSchd.getBpiOrHoliday())) {
 				calTerms = calTerms + 1;
 			}
 		}
@@ -8035,7 +8054,7 @@ public class ScheduleCalculator {
 
 			}
 			// endBalance = curSchd.getClosingBalance();
-			if (StringUtil.isBlank(curSchd.getBpiOrHoliday())) {
+			if (StringUtils.isBlank(curSchd.getBpiOrHoliday())) {
 				calTerms = calTerms + 1;
 			}
 		}
@@ -8352,7 +8371,7 @@ public class ScheduleCalculator {
 		for (FinanceScheduleDetail schedule : schedules) {
 			index++;
 
-			if (!StringUtil.isBlank(schedule.getBpiOrHoliday())) {
+			if (!StringUtils.isBlank(schedule.getBpiOrHoliday())) {
 				if (schedule.getSchDate().compareTo(recalFromDate) == 0) {
 					recalFromInHldy = true;
 				}

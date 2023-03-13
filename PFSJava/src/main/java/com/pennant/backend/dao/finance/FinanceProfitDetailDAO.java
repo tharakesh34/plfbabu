@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 
 /**
@@ -57,7 +58,7 @@ public interface FinanceProfitDetailDAO {
 
 	FinanceProfitDetail getFinProfitDetailsForSummary(long finID);
 
-	List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID, boolean isActive);
+	List<FinanceProfitDetail> getFinProfitDetailsByCustId(Customer customer);
 
 	FinanceProfitDetail getFinProfitDetailsByFinRef(long finID, boolean isActive);
 
@@ -95,4 +96,7 @@ public interface FinanceProfitDetailDAO {
 	void updateClosingSts(long finID, boolean writeoffLoan);
 
 	FinanceProfitDetail getFinProfitDetailsByFinRef(long finID);
+
+	BigDecimal getOverDueAmount(long finID);
+
 }

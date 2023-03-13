@@ -10,6 +10,8 @@ public interface BatchJobQueueDAO {
 
 	void handleFailures(BatchJobQueue jobQueue);
 
+	int getCount();
+
 	int getQueueCount();
 
 	int getQueueCount(BatchJobQueue jobQueue);
@@ -25,4 +27,8 @@ public interface BatchJobQueueDAO {
 	void resetSequence();
 
 	Long getIdBySequence(long sequence);
+
+	void logQueue();
+
+	void logQueue(int progress);
 }

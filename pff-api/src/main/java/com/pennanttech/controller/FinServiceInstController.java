@@ -928,8 +928,9 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 
 				// validate disbursement instructions
-				List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(fd.getAdvancePaymentsList(),
-						list, schdData.getFinanceMain(), true);
+				schdData.setDisbursementDetails(list);
+				List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(fd, true);
+				schdData.setDisbursementDetails(new ArrayList<>());
 				for (ErrorDetail ed : errors) {
 					schdData.setErrorDetail(
 							ErrorUtil.getErrorDetail(new ErrorDetail(ed.getCode(), ed.getParameters())));
@@ -1326,20 +1327,35 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	}
 
-	/**
-	 * Method for updateLoanPenaltyDetails
-	 * 
-	 * @param finODPenaltyRate
-	 * @return WSReturnStatus
-	 */
-	public WSReturnStatus updateLoanPenaltyDetails(FinODPenaltyRate finODPenaltyRate) {
+	public WSReturnStatus updateLoanPenaltyDetails(FinODPenaltyRate pr) {
 		logger.debug(Literal.ENTERING);
 		try {
-			// save the OdPenaltyDetais
-			FinODPenaltyRate oldFinODPenaltyRate = finODPenaltyRateDAO
-					.getFinODPenaltyRateByRef(finODPenaltyRate.getFinID(), "");
-			finODPenaltyRateDAO.saveLog(oldFinODPenaltyRate, "_Log");
-			finODPenaltyRateDAO.update(finODPenaltyRate, "");
+			List<FinODPenaltyRate> list = finODPenaltyRateDAO.getFinODPenaltyRateByRef(pr.getFinID(), "");
+
+			FinODPenaltyRate effectiveDue = null;
+			FinODPenaltyRate otherDue = null;
+
+			for (FinODPenaltyRate penaltyRate : list) {
+				if ("E".equals(penaltyRate.getODChargeType())) {
+					effectiveDue = penaltyRate;
+					if (effectiveDue != null && effectiveDue.getFinEffectDate().compareTo(pr.getFinEffectDate()) == 0) {
+						finODPenaltyRateDAO.saveLog(effectiveDue, "_Log");
+						finODPenaltyRateDAO.update(pr, "");
+					} else {
+						finODPenaltyRateDAO.save(pr, "");
+					}
+				} else {
+					otherDue = penaltyRate;
+				}
+			}
+
+			if (otherDue != null) {
+				finODPenaltyRateDAO.saveLog(otherDue, "_Log");
+				finODPenaltyRateDAO.update(pr, "");
+				logger.debug(Literal.LEAVING);
+				return APIErrorHandlerService.getSuccessStatus();
+			}
+
 		} catch (Exception e) {
 			logger.error("Exception:" + e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -2996,7 +3012,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		prepareChequeHeader(ch, fm, loggedInUser);
 
 		List<ChequeDetail> cheques = ch.getChequeDetailList();
-		int serialNum = ch.getChequeSerialNo();
+		int serialNum = Integer.valueOf(ch.getChequeSerialNumber());
 
 		String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 
@@ -3005,7 +3021,8 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			cheque.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			cheque.setNewRecord(true);
-			cheque.setChequeSerialNo(serialNum++);
+			serialNum = serialNum + 1;
+			cheque.setChequeSerialNumber(StringUtils.leftPad("" + serialNum, 6, "0"));
 
 			ch.setTotalAmount(ch.getTotalAmount().add(cheque.getAmount()));
 		}
@@ -3033,7 +3050,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 		List<ChequeDetail> cheques = ch.getChequeDetailList();
-		int chequeSerialNum = ch.getChequeSerialNo();
+		int serialNum = Integer.valueOf(ch.getChequeSerialNumber());
 
 		for (ChequeDetail cheque : cheques) {
 			if (cheque.isDelete()) {
@@ -3041,7 +3058,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			} else {
 				prepareChequeDetails(tableType, ch, fm, loggedInUser, ccy, cheque);
 
-				cheque.setChequeSerialNo(chequeSerialNum++);
+				serialNum = serialNum + 1;
+				cheque.setChequeSerialNumber(StringUtils.leftPad("" + serialNum, 6, "0"));
 				ch.setTotalAmount(ch.getTotalAmount().add(cheque.getAmount()));
 			}
 		}
@@ -3076,7 +3094,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 				for (ChequeDetail chqDetail : existingCheques) {
 					if (chqDetail.getChequeDetailsID() == cheque.getChequeDetailsID()) {
-						cheque.setChequeSerialNo((chqDetail.getChequeSerialNo()));
+						cheque.setChequeSerialNumber((chqDetail.getChequeSerialNumber()));
 					}
 				}
 

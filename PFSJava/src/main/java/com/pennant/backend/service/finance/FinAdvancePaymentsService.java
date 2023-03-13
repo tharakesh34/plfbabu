@@ -32,8 +32,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.FinanceDisbursement;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
@@ -65,8 +63,7 @@ public interface FinAdvancePaymentsService {
 
 	int getFinAdvCountByRef(long finID, String type);
 
-	List<ErrorDetail> validateFinAdvPayments(List<FinAdvancePayments> advancePaymentsList,
-			List<FinanceDisbursement> disbursementDetails, FinanceMain financeMain, boolean loanApproved);
+	List<ErrorDetail> validateFinAdvPayments(FinanceDetail fd, boolean loanApproved);
 
 	List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
 

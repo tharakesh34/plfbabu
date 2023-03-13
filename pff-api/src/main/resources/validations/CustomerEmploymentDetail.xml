@@ -9,7 +9,7 @@
 	<bean class="com.pennant.backend.model.customermasters.CustomerEmploymentDetail">
 
 		<field name="custEmpId">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>employmentId is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -17,14 +17,14 @@
 				<element name="value">1</element>
 
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Max">
+			<constraint annotation="jakarta.validation.constraints.Max">
 				<message>employmentId Applicable only for update Customer</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
 				<element name="value">-1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>employmentId allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -33,7 +33,7 @@
 			</constraint>
 		</field>
 		<field name="custEmpName">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>employerId should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -41,7 +41,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>employerId allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -102,7 +102,7 @@
 		</field>
 
 		<field name="custEmpFrom">
-			<constraint annotation="javax.validation.constraints.NotNull">
+			<constraint annotation="jakarta.validation.constraints.NotNull">
 				<message>startDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

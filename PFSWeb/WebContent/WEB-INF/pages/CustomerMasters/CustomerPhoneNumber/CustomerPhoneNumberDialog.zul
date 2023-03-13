@@ -59,7 +59,7 @@
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<longbox id="phoneCustID" maxlength="19" width="165px" visible="false" />
-									<textbox id="custCIF" maxlength="19" style="overflow: hidden;" width="154px" />
+									<textbox id="custCIF" style="overflow: hidden;" width="154px" />
 									<label id="custShrtName" style="margin-left:10px;display:inline-block;padding-top:3px;" />
 									<button id="btnSearchPRCustid" image="/images/icons/LOVSearch.png" />
 								</hbox>

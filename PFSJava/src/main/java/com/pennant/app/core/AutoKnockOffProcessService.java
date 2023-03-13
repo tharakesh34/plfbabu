@@ -72,6 +72,7 @@ import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -113,7 +114,7 @@ public class AutoKnockOffProcessService {
 		rch.setValueDate(knockOffData.getValueDate());
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		rch.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_AUTO);
+		rch.setKnockOffType(KnockOffType.AUTO.code());
 		// header.setPayAgainstId(knockOffData.getPayableId());
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
@@ -376,7 +377,8 @@ public class AutoKnockOffProcessService {
 		schdData.setFeeEvent(eventCode);
 
 		// Overdue Penalty Rates from main veiw
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView"));
+
+		fm.setPenaltyRates(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView"));
 
 		// Profit details from main table
 		FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(finID);

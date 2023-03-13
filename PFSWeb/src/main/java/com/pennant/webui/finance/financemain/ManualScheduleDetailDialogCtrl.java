@@ -24,7 +24,6 @@
  */
 package com.pennant.webui.finance.financemain;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -35,8 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -91,9 +88,8 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
  */
-public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDetail> implements Serializable {
+public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = LogManager.getLogger(ManualScheduleDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -219,8 +215,6 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 */
 	private void doSetLabels() {
 		logger.debug("Entering");
-
-		String product = getFinScheduleData().getFinanceType().getFinCategory();
 
 		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 		this.schdl_finType.setValue(financeMain.getFinType() + " - " + financeMain.getLovDescFinTypeName());

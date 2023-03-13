@@ -8,7 +8,7 @@ import org.quartz.PersistJobDataAfterExecution;
 
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.external.mandate.DefaultMandateProcess;
+import com.pennanttech.pff.external.MandateProcesses;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
@@ -24,9 +24,9 @@ public class AutoMandateUploadJob extends AbstractJob {
 		}
 	}
 
-	private DefaultMandateProcess getMandateProcess(JobExecutionContext context) {
+	private MandateProcesses getMandateProcess(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (DefaultMandateProcess) jobDataMap.get("mandateProcess");
+		return (MandateProcesses) jobDataMap.get("mandateProcess");
 	}
 
 }

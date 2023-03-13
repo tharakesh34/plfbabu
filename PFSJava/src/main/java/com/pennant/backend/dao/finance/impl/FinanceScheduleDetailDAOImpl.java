@@ -34,7 +34,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -656,27 +655,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			return schedule;
 
 		}, finID);
-	}
-
-	@Override
-	public FinanceScheduleDetail getNextSchPayment(long finID, Date curBussDate) {
-		StringBuilder sql = new StringBuilder("Select * from (");
-		sql.append(" Select row_number() Over(order by Schdate) row_num, ");
-		appendSchdColumns(false, sql);
-		sql.append(" From FinScheduleDetails");
-		sql.append(" Where FinID = ? and  SchDate >= ?) T");
-		sql.append(" Where row_num = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, curBussDate, 1);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
 	}
 
 	@Override
@@ -1307,40 +1285,85 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	@Override
-	public BigDecimal getPartPayDisAmount(long finID, Date fromDate, Date toDate) {
-		String sql = "Select sum(DisbAmount) From FinscheduleDetails Where FinID = ? and SchDate >= ? and SchDate <= ? and Specifier = ?";
+	public void updateSchdTotals(List<FinanceScheduleDetail> schdDtls) {
+		StringBuilder sql = new StringBuilder("Update FinScheduleDetails");
+		sql.append(" Set SchdPftPaid = SchdPftPaid + ?, SchPftPaid = SchPftPaid + ?");
+		sql.append(", SchdPriPaid = SchdPriPaid + ?, SchPriPaid = SchPriPaid + ?");
+		sql.append(", TDSPaid = TDSPaid + ?,  SchdPftWaiver = SchdPftWaiver + ?");
+		sql.append(" Where FinID = ? and SchDate = ?");
 
-		logger.debug(Literal.SQL.concat(sql));
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		try {
-			return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, fromDate, toDate, "R");
-		} catch (EmptyResultDataAccessException eda) {
-			return BigDecimal.ZERO;
-		}
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceScheduleDetail curSchd = schdDtls.get(i);
+				int index = 0;
+
+				ps.setBigDecimal(++index, curSchd.getSchdPftPaid());
+				ps.setBoolean(++index, curSchd.isSchPftPaid());
+				ps.setBigDecimal(++index, curSchd.getSchdPriPaid());
+				ps.setBoolean(++index, curSchd.isSchPriPaid());
+				ps.setBigDecimal(++index, curSchd.getTDSPaid());
+				ps.setBigDecimal(++index, curSchd.getSchdPftWaiver());
+				ps.setLong(++index, curSchd.getFinID());
+				ps.setDate(++index, JdbcUtil.getDate(curSchd.getSchDate()));
+			}
+
+			@Override
+			public int getBatchSize() {
+				return schdDtls.size();
+			}
+
+		});
 	}
 
 	@Override
-	public BigDecimal getClosureBalance(long finID, Date date) {
-		String sql = "Select ClosingBalance, SchDate From FinscheduleDetails Where FinID = ? And SchDate < ?";
+	public Date getNextSchdDate(long finID, Date appDate) {
+		String sql = "Select min(SchDate) from FinScheduleDetails Where FinID = ? and SchDate > ? and RepayOnSchDate = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		List<FinanceScheduleDetail> list = this.jdbcOperations.query(sql, (rs, rowNum) -> {
-			FinanceScheduleDetail fsd = new FinanceScheduleDetail();
-
-			fsd.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
-			fsd.setSchDate(JdbcUtil.getDate(rs.getDate("SchDate")));
-
-			return fsd;
-		}, finID, date);
-
-		if (CollectionUtils.isEmpty(list)) {
-			return BigDecimal.ZERO;
-		}
-
-		list = list.stream().sorted((l1, l2) -> l2.getSchDate().compareTo(l1.getSchDate()))
-				.collect(Collectors.toList());
-
-		return list.get(0).getClosingBalance();
+		return this.jdbcOperations.queryForObject(sql, Date.class, finID, appDate, 1);
 	}
+
+	@Override
+	public Date getSchdDateForKnockOff(long finID, Date appDate) {
+		String sql = "Select Max(Schdate) From FinScheduleDetails Where FinID = ? and SchDate <= ? and RepayAmount > ? and SchdPriPaid = ? and SchdPftPaid = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Date.class, finID, appDate, 0, 0, 0);
+	}
+
+	@Override
+	public FinanceScheduleDetail getNextSchd(long finID, Date appDate, boolean businessDate) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select SchDate, RepayAmount from FinScheduleDetails");
+		sql.append(" Where FinID = ? and SchDate = (Select min(SchDate) From FinScheduleDetails");
+		if (businessDate) {
+			sql.append(" Where FinID = ? and SchDate >= ? and RepayOnSchDate = ?)");
+		} else {
+			sql.append(" Where FinID = ? and SchDate > ? and RepayOnSchDate = ?)");
+		}
+		sql.append(" and RepayOnSchDate = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceScheduleDetail schd = new FinanceScheduleDetail();
+
+				schd.setSchDate(rs.getDate("SchDate"));
+				schd.setRepayAmount(rs.getBigDecimal("RepayAmount"));
+
+				return schd;
+			}, finID, finID, appDate, 1, 1);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }

@@ -506,6 +506,20 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		logger.debug(Literal.ENTERING);
 
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
+
+			if (CalculationConstants.REMFEE_PART_OF_DISBURSE.equals(finFeeDetail.getFeeScheduleMethod())) {
+				finFeeDetail.setPaidAmount(finFeeDetail.getPaidAmount().add(finFeeDetail.getRemainingFee()));
+				finFeeDetail.setPaidAmountOriginal(
+						finFeeDetail.getPaidAmountOriginal().add(finFeeDetail.getRemainingFeeOriginal()));
+				finFeeDetail.setPaidAmountGST(finFeeDetail.getPaidAmountGST().add(finFeeDetail.getRemainingFeeGST()));
+				finFeeDetail.setPaidTDS(finFeeDetail.getPaidTDS().add(finFeeDetail.getRemTDS()));
+
+				finFeeDetail.setRemainingFee(BigDecimal.ZERO);
+				finFeeDetail.setRemainingFeeOriginal(BigDecimal.ZERO);
+				finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
+				finFeeDetail.setRemTDS(BigDecimal.ZERO);
+			}
+
 			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
 			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord()
 					&& (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0)))) {
@@ -1766,6 +1780,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Override
+	public List<FinFeeDetail> getFinFeeDetailByFinRef(long finID, boolean isWIF, String type) {
+		return finFeeDetailDAO.getFinFeeDetailByFinRef(finID, isWIF, type);
 	}
 
 }

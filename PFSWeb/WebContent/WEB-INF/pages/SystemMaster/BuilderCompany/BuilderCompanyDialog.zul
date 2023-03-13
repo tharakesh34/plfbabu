@@ -59,7 +59,7 @@
 									<label id="label_CustCif" value="${c:l('label_BuilderCompanyDialog_custCif.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="custCIF" maxlength="20">
+										<textbox id="custCIF" >
 										</textbox>
 										<longbox id="custId" visible="false" />
 										<button id="btnSearchCustId" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png" />

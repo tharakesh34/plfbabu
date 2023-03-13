@@ -31,6 +31,8 @@
 	<bean id="retailcibilTaskLet" class="com.pennant.backend.endofday.tasklet.RetailCibil" />
 
 	<bean id="corporatecibilTaskLet" class="com.pennant.backend.endofday.tasklet.CorporateCibil" />
+	
+	<bean id="financeHoldReleaseTasklet" class="com.pennant.backend.endofday.tasklet.FinanceHoldReleaseTasklet" />
 
 	<bean id="datesUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.DatesUpdate" parent="sequenceDao" />
 
@@ -41,6 +43,7 @@
 	<!-- End Of Month Decider -->
 	<bean id="endOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.EndOfMonthDecider" />
 
+	<bean id="oTSTaskLet" class="com.pennant.backend.endofday.tasklet.OTSTasklet" />
 
 	<!-- To be deleted -->
 
@@ -217,4 +220,8 @@
 	</bean>
 	
 	<bean id="presentmentPreparationTasklet" class="com.pennant.pff.presentment.tasklet.PreparationTasklet"/>
+	
+	<bean id="waiverCancellationTasklet" class="com.pennant.backend.endofday.tasklet.WaiverCancellationTasklet" />
+	
+	<bean id="oTsQueueTasklet" class="com.pennant.backend.endofday.tasklet.OTSQueue" />
 </beans>

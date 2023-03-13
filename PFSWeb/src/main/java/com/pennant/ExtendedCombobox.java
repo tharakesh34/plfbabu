@@ -1037,4 +1037,9 @@ public class ExtendedCombobox extends Hbox {
 	public void setFilterColumns(String[] filterColumns) {
 		this.filterColumns = filterColumns;
 	}
+
+	public void setRemoveSpace(boolean removeSpace) {
+		space.setVisible(!removeSpace);
+	}
+
 }

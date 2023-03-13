@@ -1203,7 +1203,7 @@ public class LegalVettingInitiationCtrl extends GFCBaseCtrl<Verification> {
 		if (tab != null && tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_LEGAL_VETTING_APPROVAL))) {
 			return validateReinitiation(financeDetail.getLegalVetting().getVerifications());
 		} else {
-			prepareVerifications();
+			// prepareVerifications();
 			if (!recSave) {
 				return validateCollateralDocuments(tab);
 			}

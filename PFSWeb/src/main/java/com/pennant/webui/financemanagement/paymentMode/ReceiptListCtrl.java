@@ -10,8 +10,6 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -41,11 +39,13 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
@@ -56,6 +56,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -75,9 +76,7 @@ import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
-
 	private static final long serialVersionUID = 778410382420505812L;
-	private static final Logger logger = LogManager.getLogger(ReceiptListCtrl.class);
 
 	protected Window window_ReceiptList;
 	protected Borderlayout borderLayout_ReceiptList;
@@ -301,23 +300,26 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	public void addRegisteredFilters() {
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filter = searchControl.getFilter();
-			if (filter != null) {
 
-				if (filter.getProperty().equals("receiptAmount")) {
-					filter.setValue(PennantApplicationUtil.unFormateAmount((BigDecimal) filter.getValue(),
-							PennantConstants.defaultCCYDecPos));
-				}
+			if (filter == null) {
+				continue;
+			}
 
-				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
-						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
-					Filter[] filters = new Filter[2];
-					filters[0] = Filter.isNull(filter.getProperty());
-					filters[1] = filter;
+			String property = filter.getProperty();
+			if (property.equals("receiptAmount")) {
+				filter.setValue(PennantApplicationUtil.unFormateAmount((BigDecimal) filter.getValue(),
+						PennantConstants.defaultCCYDecPos));
+			}
 
-					this.searchObject.addFilterOr(filters);
-				} else {
-					this.searchObject.addFilter(filter);
-				}
+			if (App.DATABASE == Database.ORACLE && "recordType".equals(property)
+					&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
+				Filter[] filters = new Filter[2];
+				filters[0] = Filter.isNull(property);
+				filters[1] = filter;
+
+				this.searchObject.addFilterOr(filters);
+			} else {
+				this.searchObject.addFilter(filter);
 			}
 		}
 	}
@@ -362,7 +364,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			} else if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment' and ((RECEIPTMODESTATUS = 'R' and ReceiptMode != 'ADVINT' and (NEXTROLECODE is null Or NEXTROLECODE = '')) or NEXTROLECODE='"
-								+ module + "')");
+								+ module + "')  and (KnockOffType != '" + KnockOffType.CROSS_LOAN.code()
+								+ "' or KnockOffType  is null)");
 			} else if (FinanceConstants.KNOCKOFFCAN_APPROVER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment'  and (NEXTROLECODE='" + module + "')");
@@ -631,10 +634,12 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc.setParent(item);
 
 			String knockOffType = finReceiptHeader.getKnockOffType();
-			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(knockOffType)) {
+			if (KnockOffType.AUTO.code().equals(knockOffType)) {
 				lc = new Listcell("Auto");
-			} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(knockOffType)) {
+			} else if (KnockOffType.MANUAL.code().equals(knockOffType)) {
 				lc = new Listcell("Manual");
+			} else if (KnockOffType.CROSS_LOAN.code().equals(knockOffType)) {
+				lc = new Listcell("Cross Loan");
 			} else {
 				lc = new Listcell("");
 			}
@@ -806,7 +811,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		}
 
 		if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(module) || FinanceConstants.KNOCKOFFCAN_APPROVER.equals(module)) {
-			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(finRcptHeader.getKnockOffType())) {
+			if (KnockOffType.AUTO.code().equals(finRcptHeader.getKnockOffType())) {
 				ErrorDetail ed = receiptService.receiptCancelValidation(rch.getFinID(), rch.getReceiptDate());
 				if (ed != null) {
 					MessageUtil.showError(ed.getError());
@@ -885,6 +890,11 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					|| StringUtils.equals(rch.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
 
 				logUserAccess(menuItemName, finReceiptData.getReceiptHeader().getReference());
+
+				if (!enqiryModule && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+					validateTerminationExcess(finReceiptData);
+				}
+
 				doShowReceiptView(rch, finReceiptData);
 			} else {
 				MessageUtil.showError(Labels.getLabel("info.not_authorized"));
@@ -894,6 +904,11 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					|| StringUtils.equals(rch.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
 
 				logUserAccess(menuItemName, finReceiptData.getReceiptHeader().getReference());
+
+				if (!enqiryModule && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+					validateTerminationExcess(finReceiptData);
+				}
+
 				doShowReceiptView(rch, finReceiptData);
 			} else {
 				MessageUtil.showError(Labels.getLabel("info.not_authorized"));
@@ -901,6 +916,27 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	private void validateTerminationExcess(FinReceiptData finReceiptData) {
+		if (FinanceConstants.CLOSURE_APPROVER.equals(module) || FinanceConstants.CLOSURE_MAKER.equals(module)) {
+			return;
+		}
+
+		if (receiptService.doProcessTerminationExcess(finReceiptData)) {
+			String msg = "Receipt Amount is insuffient to settle the loan, do you wish to move the receipt amount to termination excess?";
+			if (MessageUtil.YES == MessageUtil.confirm(msg)) {
+				finReceiptData.getReceiptHeader().setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+				finReceiptData.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+				List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
+
+				List<FinTypeFees> finTypeFeesList = new ArrayList<>();
+
+				finReceiptData.getFinanceDetail().setFinTypeFeesList(finTypeFeesList);
+				finReceiptData.getFinanceDetail().getFinScheduleData().setFinFeeDetailList(finFeeDetailList);
+			}
+		}
+
 	}
 
 	private void setWorkflowDetails(String finType, boolean isPromotion) {

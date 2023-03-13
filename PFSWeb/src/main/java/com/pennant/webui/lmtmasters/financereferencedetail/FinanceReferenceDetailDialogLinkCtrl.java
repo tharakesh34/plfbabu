@@ -2135,72 +2135,71 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	}
 
 	// =====ADD or Update========//
-	private void processFinRefDetails(FinanceReferenceDetail financeReferenceDetail) throws InterruptedException {
+	private void processFinRefDetails(FinanceReferenceDetail frd) throws InterruptedException {
 		logger.debug("Entering");
 
-		if (financeReferenceDetail.getRecordType() != null) {
-			if (financeReferenceDetail.getRecordType().equals(PennantConstants.RCD_ADD)
-					|| financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
-					|| financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
-				if ("Save".equals(financeReferenceDetail.getUserAction())) {
-					financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+		if (frd.getRecordType() != null) {
+			if (frd.getRecordType().equals(PennantConstants.RCD_ADD)
+					|| frd.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
+					|| frd.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+				if ("Save".equals(frd.getUserAction())) {
+					frd.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 			} else {
-				if (financeReferenceDetail.getRecordType().equals(PennantConstants.RCD_DEL)) {
-					financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				} else if (StringUtils.isEmpty(financeReferenceDetail.getRecordType())) {
+				if (frd.getRecordType().equals(PennantConstants.RCD_DEL)) {
+					frd.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				} else if (StringUtils.isEmpty(frd.getRecordType())) {
 					// setting record type as Update while changing approved record,since record type is empty ""
-					financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					frd.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 			}
 		} else {
-			financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			financeReferenceDetail.setNewRecord(true);
+			frd.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			frd.setNewRecord(true);
 		}
 
-		switch (financeReferenceDetail.getFinRefType()) {
+		switch (frd.getFinRefType()) {
 		case FinanceConstants.PROCEDT_CHECKLIST:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxFinanceCheckList);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxFinanceCheckList);
 			break;
 		case FinanceConstants.PROCEDT_AGREEMENT:
-			processAddOrUpdate(financeReferenceDetail,
-					getFinanceReferenceDetailDialogCtrl().listboxFinanceAgreementLink);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listboxFinanceAgreementLink);
 			break;
 		case FinanceConstants.PROCEDT_ELIGIBILITY:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxEligibilityRules);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxEligibilityRules);
 			break;
 		case FinanceConstants.PROCEDT_RTLSCORE:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxScoringGroup);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxScoringGroup);
 			break;
 		case FinanceConstants.PROCEDT_CORPSCORE:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxCorpScoringGroup);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxCorpScoringGroup);
 			break;
 		case FinanceConstants.PROCEDT_STAGEACC:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxAccounts);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxAccounts);
 			break;
 		case FinanceConstants.PROCEDT_TEMPLATE:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxTemplates);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxTemplates);
 			break;
 		case FinanceConstants.PROCEDT_FINDEDUP:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxDedupRules);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxDedupRules);
 			break;
 		case FinanceConstants.PROCEDT_CUSTDEDUP:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxCustDedupRules);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxCustDedupRules);
 			break;
 		case FinanceConstants.PROCEDT_BLACKLIST:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxBlackListRules);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxBlackListRules);
 			break;
 		case FinanceConstants.PROCEDT_RETURNCHQ:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxReturnCheques);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxReturnCheques);
 			break;
 		case FinanceConstants.PROCEDT_LIMIT:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxLimitService);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxLimitService);
 			break;
 		case FinanceConstants.PROCEDT_TATNOTIFICATION:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxTatNotification);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listBoxTatNotification);
 			break;
 		case FinanceConstants.PROCEDT_FINANCETABS:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listboxFinanceTabs);
+			processAddOrUpdate(frd, getFinanceReferenceDetailDialogCtrl().listboxFinanceTabs);
 			break;
 		default:
 			break;
@@ -2219,7 +2218,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			if (finRefDet.getFinRefId() == newFinrefDet.getFinRefId()) {
 				if (newFinrefDet.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 					listbox.removeItemAt(avlFinRef.get(i).getIndex());
-				} else if (finRefDet.getRecordType().equals(PennantConstants.RCD_DEL)) {
+				} else if (PennantConstants.RCD_DEL.equals(finRefDet.getRecordType())) {
 					listbox.removeItemAt(avlFinRef.get(i).getIndex());
 					newFinrefDet.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					newFinrefDet.setNewRecord(false);

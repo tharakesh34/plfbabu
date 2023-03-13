@@ -19,8 +19,6 @@ import com.pennant.backend.model.legal.LegalDocument;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.cache.Cache;
-import com.pennanttech.pennapps.core.cache.CacheManager;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.dms.service.DMSService;
@@ -28,7 +26,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public abstract class GenericService<T> {
 	protected static Logger log = LogManager.getLogger(GenericService.class.getClass());
-	protected Cache<String, T> cache;
 	protected DMSService dMSService;
 
 	public GenericService() {
@@ -37,7 +34,6 @@ public abstract class GenericService<T> {
 
 	public GenericService(boolean cacheRequired, String moduleName) {
 		super();
-		cache = new Cache<String, T>(moduleName);
 	}
 
 	/**
@@ -107,28 +103,7 @@ public abstract class GenericService<T> {
 	}
 
 	protected T getCachedEntity(String key) {
-		if (!CacheManager.isEnabled()) {
-			return getEntity(key);
-		}
-
-		if (cache == null) {
-			throw new IllegalStateException(
-					String.format("Cache is not enabled for the module or class %s", this.getClass().getSimpleName()));
-		}
-
-		T entity = cache.getEntity(key);
-		if (entity == null) {
-			entity = getEntity(key);
-
-			if (entity != null) {
-				try {
-					setEntity(key, entity);
-				} catch (AppException e) {
-					//
-				}
-			}
-		}
-		return entity;
+		return getEntity(key);
 	}
 
 	protected T getEntity(String code) {
@@ -136,15 +111,11 @@ public abstract class GenericService<T> {
 	}
 
 	protected void setEntity(String key, T entity) {
-		cache.setEntity(key, entity);
+		//
 	}
 
 	protected void invalidateEntity(String key) {
-		if (cache == null) {
-			throw new IllegalStateException(
-					String.format("Cache is not enabled for the module or class %s", this.getClass().getSimpleName()));
-		}
-		cache.invalidateEntity(key);
+		//
 	}
 
 	protected void saveDocument(DMSModule dm, DMSModule dsm, DocumentDetails dd) {

@@ -56,7 +56,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -573,7 +572,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		this.coOwnerCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.coOwnerIDNumber.setMaxlength(20);
 		this.coOwnerCIFName.setMaxlength(100);
 		this.coOwnerPercentage.setMaxlength(6);

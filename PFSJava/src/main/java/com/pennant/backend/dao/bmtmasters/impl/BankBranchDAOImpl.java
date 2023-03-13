@@ -609,6 +609,40 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		});
 	}
 
+	@Override
+	public BankBranch getPrintingLoc(long finID, String issuingBank, String paymentType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" bb.BankBranchID, bb.BankCode, bb.BranchCode, bb.BranchDesc");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join RMTBranches b on b.BranchCode = fm.FinBranch");
+		sql.append(" Inner Join BankBranches bb on bb.BranchCode = b.DefChequeDDPrintLoc");
+		sql.append(" Where FinID = ? and BankCode = ?");
+
+		if ("DD".equals(paymentType)) {
+			sql.append(" and DD = ?");
+		} else {
+			sql.append(" and CHEQUE = ?");
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BankBranch bb = new BankBranch();
+
+				bb.setBankBranchID(rs.getLong("BankBranchID"));
+				bb.setBankCode(rs.getString("BankCode"));
+				bb.setBranchCode(rs.getString("BranchCode"));
+				bb.setBranchDesc(rs.getString("BranchDesc"));
+
+				return bb;
+			}, finID, issuingBank, 1);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR");
@@ -674,5 +708,4 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			return bb;
 		}
 	}
-
 }

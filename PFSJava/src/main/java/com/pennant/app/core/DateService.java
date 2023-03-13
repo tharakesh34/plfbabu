@@ -2,23 +2,33 @@ package com.pennant.app.core;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.eod.extension.AppDateChangeServiceHook;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
 
-public class DateService extends ServiceHelper {
+public class DateService extends SequenceDao<Object> {
 	private static Logger logger = LogManager.getLogger(DateService.class);
+
+	private EODConfigDAO eodConfigDAO;
+	private AppDateChangeServiceHook appDateChangeServiceHook;
 
 	/**
 	 * TO update system parameters before start of the end of day
@@ -114,8 +124,62 @@ public class DateService extends ServiceHelper {
 			SysParamUtil.updateParamDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_DAY);
 		}
 
+		postAppDateChange();
+
 		logger.debug(Literal.LEAVING);
 		return true;
+	}
+
+	private EODConfig getEodConfig() {
+		return eodConfig;
+	}
+
+	private static EODConfig eodConfig;
+
+	public void loadEODConfig() {
+		try {
+			List<EODConfig> list = eodConfigDAO.getEODConfig();
+			if (!list.isEmpty()) {
+				eodConfig = list.get(0);
+			}
+
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
+	}
+
+	private void postAppDateChange() {
+		resetSequences("SeqCollateralSetup", 1);
+		resetSequences("SeqVasReference", 1);
+		resetSequences("SeqInvestment", 1);
+
+		if (appDateChangeServiceHook != null) {
+			appDateChangeServiceHook.postAppDateChange();
+		}
+	}
+
+	private void resetSequences(String seqName, long sequence) {
+		switch (App.DATABASE) {
+		case ORACLE:
+		case MY_SQL:
+			jdbcOperations.execute("ALTER SEQUENCE " + seqName + " RESTART START WITH " + sequence);
+			break;
+		case POSTGRES:
+			jdbcOperations.execute("ALTER SEQUENCE " + seqName + " RESTART WITH " + sequence);
+			break;
+		default:
+			//
+		}
+	}
+
+	@Autowired
+	public void setEodConfigDAO(EODConfigDAO eodConfigDAO) {
+		this.eodConfigDAO = eodConfigDAO;
+	}
+
+	@Autowired(required = false)
+	public void setAppDateChangeServiceHook(AppDateChangeServiceHook appDateChangeServiceHook) {
+		this.appDateChangeServiceHook = appDateChangeServiceHook;
 	}
 
 }

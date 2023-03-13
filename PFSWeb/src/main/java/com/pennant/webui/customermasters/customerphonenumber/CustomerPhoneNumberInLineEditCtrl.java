@@ -77,13 +77,13 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 	}
 
 	public void doRenderPhoneNumberList(List<CustomerPhoneNumber> customerPhoneNumbers, Listbox listbox, String custcif,
-			boolean isFinance) {
+			boolean isFinance, boolean isEnquiry) {
 		// render start
 		listbox.getItems().clear();
 		if (CollectionUtils.isNotEmpty(customerPhoneNumbers)) {
 			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
 				customerPhoneNumber.setLovDescCustCIF(custcif);
-				doFillPhoneNumbers(customerPhoneNumber, listbox, isFinance);
+				doFillPhoneNumbers(customerPhoneNumber, listbox, isFinance, isEnquiry);
 			}
 		}
 	}
@@ -95,7 +95,8 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 	 * @param listbox
 	 * @param isFinance
 	 */
-	public void doFillPhoneNumbers(CustomerPhoneNumber customerPhoneNumber, Listbox listbox, boolean isFinance) {
+	public void doFillPhoneNumbers(CustomerPhoneNumber customerPhoneNumber, Listbox listbox, boolean isFinance,
+			boolean isEnquiry) {
 		logger.debug(Literal.ENTERING);
 		isFinanceProcess = isFinance;
 		String regex = "";
@@ -128,7 +129,7 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 		regex = (String) custPhoneType.getAttribute("regex");
 		phoneNumberData[0] = cellPhoneNumber;
 		custPhoneType.addForward("onFulfill", self, "onFulfillCustPhoneType", phoneNumberData);
-		custPhoneType.setReadonly(getUserWorkspace().isReadOnly("CustomerDialog_custPhoneType"));
+		custPhoneType.setReadonly(isEnquiry || getUserWorkspace().isReadOnly("CustomerDialog_custPhoneType"));
 		custPhoneType.setTextBoxWidth(150);
 		if (!customerPhoneNumber.isNewRecord()) {
 			custPhoneType.setReadonly(true);
@@ -141,7 +142,7 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 		space.setSpacing("2px");
 		space.setSclass(PennantConstants.mandateSclass);
 		phoneNumber.setMaxlength(dosetFieldLength(regex));
-		phoneNumber.setReadonly(getUserWorkspace().isReadOnly("CustomerDialog_custPhoneNumber"));
+		phoneNumber.setReadonly(isEnquiry || getUserWorkspace().isReadOnly("CustomerDialog_custPhoneNumber"));
 		phoneNumber.setValue(customerPhoneNumber.getPhoneNumber());
 		hbox.appendChild(space);
 		hbox.appendChild(phoneNumber);
@@ -155,7 +156,7 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 		space.setSpacing("2px");
 		space.setSclass(PennantConstants.mandateSclass);
 		priority.setMaxlength(30);
-		priority.setDisabled(getUserWorkspace().isReadOnly("CustomerDialog_custPhonePriority"));
+		priority.setDisabled(isEnquiry || getUserWorkspace().isReadOnly("CustomerDialog_custPhonePriority"));
 		fillComboBox(priority, String.valueOf(customerPhoneNumber.getPhoneTypePriority()), customerPriorityList, "");
 		hbox.appendChild(space);
 		hbox.appendChild(priority);
@@ -171,7 +172,7 @@ public class CustomerPhoneNumberInLineEditCtrl extends GFCBaseCtrl<CustomerDetai
 		Button button = new Button();
 		button.setSclass("z-toolbarbutton");
 		button.setLabel(Labels.getLabel("btnDelete.label"));
-		button.setDisabled(getUserWorkspace().isReadOnly("CustomerDialog_custPhoneButtonDelete"));
+		button.setDisabled(isEnquiry || getUserWorkspace().isReadOnly("CustomerDialog_custPhoneButtonDelete"));
 		button.addForward("onClick", self, "onClickPhoneNumberButtonDelete", item);
 		hbox.appendChild(space);
 		hbox.appendChild(button);

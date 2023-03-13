@@ -48,12 +48,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Customer table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "custFName", "custMName", "custLName", "custSalutationCode", "custShrtName", "custMotherMaiden",
-		"custFNameLclLng", "custLng", "custDOB", "custCOB", "custNationality", "custResidentialSts", "custGenderCode",
-		"custMaritalSts", "noOfDependents", "custTypeCode", "custSector", "custSubSector", "custSegment",
-		"custSubSegment", "custIndustry", "custGroupID", "custParentCountry", "custRiskCountry", "custIsStaff",
-		"custStaffID", "custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "subCategory", "casteId", "religionId",
-		"custShrtNameLclLng", "returnStatus", "custCRCPR", "custResidentialSts" })
+@XmlType(propOrder = { "custFName", "custMName", "custLName", "custSalutationCode", "custShrtName", "fullName",
+		"custMotherMaiden", "custFNameLclLng", "custLng", "custDOB", "custCOB", "custNationality", "custResidentialSts",
+		"custGenderCode", "custMaritalSts", "noOfDependents", "custTypeCode", "lovDescCustTypeCodeName", "custSector",
+		"custSubSector", "custSegment", "custSubSegment", "custIndustry", "custGroupID", "custParentCountry",
+		"custRiskCountry", "custIsStaff", "custStaffID", "custEmpSts", "custDSA", "custDSADept", "custAddlDec1",
+		"subCategory", "casteId", "religionId", "custShrtNameLclLng", "returnStatus", "custCRCPR", "natureOfBusiness",
+		"custResidentialSts" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class Customer extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 2198471029043076055L;
@@ -70,6 +71,7 @@ public class Customer extends AbstractWorkflowEntity {
 
 	@XmlElement(name = "type")
 	private String custTypeCode;
+	@XmlElement(name = "typeDesc")
 	private String lovDescCustTypeCodeName;
 
 	@XmlElement(name = "salutation")
@@ -335,6 +337,7 @@ public class Customer extends AbstractWorkflowEntity {
 	private String otherReligion;
 	private String otherCaste;
 	private String ckycOrRefNo;
+	@XmlElement
 	private String natureOfBusiness;
 	private String lovDescNatureOfBusiness;
 	private String entityType;
@@ -355,6 +358,9 @@ public class Customer extends AbstractWorkflowEntity {
 	private String lovDescCustAddrCountry;
 	private String lovDescCustAddrCity;
 	private String lovDescCustAddrProvince;
+	private boolean prospectAsCIF = false;
+	@XmlElement
+	private String fullName;
 
 	public Customer() {
 		super();
@@ -363,6 +369,12 @@ public class Customer extends AbstractWorkflowEntity {
 	public Customer(long id) {
 		super();
 		this.setId(id);
+	}
+
+	public Customer(long id, String custCoreBank) {
+		super();
+		this.setId(id);
+		this.setCustCoreBank(custCoreBank);
 	}
 
 	public Set<String> getExcludeFields() {
@@ -429,6 +441,7 @@ public class Customer extends AbstractWorkflowEntity {
 		excludeFields.add("lovDescCustAddrCountry");
 		excludeFields.add("lovDescCustAddrCity");
 		excludeFields.add("lovDescCustAddrProvince");
+		excludeFields.add("prospectAsCIF");
 
 		return excludeFields;
 	}
@@ -2239,6 +2252,22 @@ public class Customer extends AbstractWorkflowEntity {
 
 	public void setLovDescCustAddrProvince(String lovDescCustAddrProvince) {
 		this.lovDescCustAddrProvince = lovDescCustAddrProvince;
+	}
+
+	public boolean isProspectAsCIF() {
+		return prospectAsCIF;
+	}
+
+	public void setprospectAsCIF(boolean prospectAsCIF) {
+		this.prospectAsCIF = prospectAsCIF;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 }

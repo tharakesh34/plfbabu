@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -76,7 +77,6 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 	private String finDivision = null;
 
 	List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
-	List<ValueLabel> paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
 
 	private transient FinTypePartnerbankMappingListCtrl finTypeParterbankMappingListCtrl;
 	FinTypePartnerBankService finTypePartnerBankService;
@@ -158,7 +158,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		this.partnerBankID.setValidateColumns(new String[] { "PartnerBankCode" });
 		this.partnerBankID.setMandatoryStyle(true);
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			this.row_Branch.setVisible(true);
 			this.label_Branch.setVisible(true);
 			this.branch.setVisible(true);
@@ -170,7 +170,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			this.branch.setDescColumn("BranchDesc");
 			this.branch.setMandatoryStyle(true);
 			this.branch.setValidateColumns(new String[] { "BranchCode" });
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			this.row_Branch.setVisible(false);
 			this.label_Branch.setVisible(false);
 			this.branch.setVisible(false);
@@ -182,9 +182,8 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			this.cluster.setDescColumn("Name");
 			this.cluster.setValidateColumns(new String[] { "Code", "Name" });
 			this.cluster.setMandatoryStyle(true);
-			// Filter filter[] = new Filter[1];
-			// filter[0] = new Filter("CLUSTERTYPE", PartnerBankExtension.MAPPING, Filter.OP_EQUAL);
-			// this.cluster.setFilters(filter);
+			this.cluster.setFilters(
+					new Filter[] { new Filter("CLUSTERTYPE", PartnerBankExtension.CLUSTER_TYPE, Filter.OP_EQUAL) });
 		} else {
 			this.row_Branch.setVisible(false);
 			this.label_Branch.setVisible(false);
@@ -352,6 +351,18 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		this.finType.setDescription(aFinTypePartnerBank.getFinTypeDesc());
 
 		fillComboBox(this.purpose, aFinTypePartnerBank.getPurpose(), purposeList, "");
+
+		String purposeValue = this.purpose.getSelectedItem().getValue();
+
+		List<ValueLabel> paymentModesList = new ArrayList<>();
+
+		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)
+				|| StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_PAYMENT)) {
+			paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
+		} else {
+			paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
+		}
+
 		fillComboBox(this.paymentMode, aFinTypePartnerBank.getPaymentMode(), paymentModesList, "");
 
 		setPartnerBankProperties();
@@ -370,6 +381,8 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			this.cluster.setValue(aFinTypePartnerBank.getClusterCode());
 			this.cluster.setDescription(aFinTypePartnerBank.getName());
 		}
+		this.recordStatus.setValue(aFinTypePartnerBank.getRecordStatus());
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -517,12 +530,20 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 			}
 		}
 
+		try {
+			// fill the components with the data
+			setDialog(DialogType.EMBEDDED);
+		} catch (UiException e) {
+			logger.error("Exception: ", e);
+			this.window_FinTypePartnerBankMappingDialog.onClose();
+		} catch (Exception e) {
+			throw e;
+		}
+
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
 		}
-
-		this.window_FinTypePartnerBankMappingDialog.doModal();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -539,24 +560,21 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 						isMandValidate ? this.partnerBankID.isMandatory() : false, true));
 
 		if (!this.finType.isReadonly()) {
-			this.finType.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_FinType.value.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
-			this.finType.getValue();
+			this.finType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_FinType.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			if (!this.branch.isReadonly())
 				this.branch.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_BranchOrCluster.value"),
 						PennantRegularExpressions.REGEX_DESCRIPTION, true));
-			this.branch.getValue();
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			if (!this.cluster.isReadonly())
 				this.cluster.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_LoanTypePartnerbankMappingDialogue_BranchOrCluster.value"),
 						PennantRegularExpressions.REGEX_DESCRIPTION, true));
-			this.cluster.getValue();
 		}
 		logger.debug(Literal.LEAVING);
 
@@ -572,6 +590,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		this.purpose.setConstraint("");
 		this.paymentMode.setConstraint("");
 		this.partnerBankID.setConstraint("");
+		this.cluster.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -622,14 +641,18 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 	 */
 	private void doEdit() {
 		logger.debug(Literal.LEAVING);
+		if (getFinTypePartnerBank().isNewRecord()) {
+			this.finType.setReadonly(false);
+		} else {
+			this.finType.setReadonly(true);
+		}
 		doWriteBeanToComponents(finTypePartnerBank);
 
-		readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_finType"), this.finType);
 		readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_Purpose"), this.purpose);
 		readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_PaymentMode"), this.paymentMode);
 		readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_PartnerBankID"), this.partnerBankID);
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_branch"), this.branch);
 		} else {
 			readOnlyComponent(isReadOnly("FinTypePartnerBankMappingDialog_branch"), this.cluster);
@@ -666,7 +689,7 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		readOnlyComponent(true, this.purpose);
 		readOnlyComponent(true, this.paymentMode);
 		readOnlyComponent(true, this.partnerBankID);
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			readOnlyComponent(true, this.branch);
 		} else {
 			readOnlyComponent(true, this.cluster);
@@ -695,10 +718,13 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 
 		String purposeValue = this.purpose.getSelectedItem().getValue();
 
-		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)) {
-			this.paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
+		List<ValueLabel> paymentModesList = new ArrayList<>();
+
+		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)
+				|| StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_PAYMENT)) {
+			paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
 		} else {
-			this.paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
+			paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
 		}
 
 		fillComboBox(this.paymentMode, "", paymentModesList, "");

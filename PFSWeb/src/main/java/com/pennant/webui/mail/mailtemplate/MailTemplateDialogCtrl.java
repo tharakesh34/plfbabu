@@ -1209,7 +1209,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 								NotificationConstants.MAIL_MODULE_CREDIT)
 						|| StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
 								NotificationConstants.MAIL_MODULE_PROVIDER)
-						|| NotificationConstants.TEMPLATE_FOR_OTP.equals(this.templateModule.getSelectedItem().getValue().toString()))) {
+						|| NotificationConstants.TEMPLATE_FOR_OTP
+								.equals(this.templateModule.getSelectedItem().getValue().toString()))) {
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData,
 					this.templateEvent.getSelectedItem().getValue());
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData1,
@@ -1450,7 +1451,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 
 			loader.putTemplate("Template", content);
 
-			Configuration configuration = new Configuration();
+			Configuration configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 			configuration.setTemplateLoader(loader);
 			Template template = configuration.getTemplate("Template");
 

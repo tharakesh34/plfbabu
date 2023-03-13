@@ -61,6 +61,8 @@ public class CustomerSelectItemRenderer implements ListitemRenderer<Customer>, S
 		Listcell lc;
 		lc = new Listcell(customer.getCustCIF());
 		lc.setParent(item);
+		lc = new Listcell(customer.getCustCoreBank());
+		lc.setParent(item);
 		lc = new Listcell(customer.getCustShrtName());
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(customer.getCustDOB()));

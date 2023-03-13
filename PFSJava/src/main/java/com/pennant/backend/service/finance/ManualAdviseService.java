@@ -77,4 +77,14 @@ public interface ManualAdviseService {
 	boolean isDuplicatePayble(long finID, long feeTypeId, String linkTo);
 
 	boolean isPaybleExist(long finID, long feeTypeID, String linkTo);
+
+	boolean isManualAdviseExist(long finID);
+
+	boolean isunAdjustablePayables(long finID);
+
+	boolean isAdviseUploadExist(long finID);
+
+	BigDecimal getRefundedAmount(long finID, long feeTypeID);
+
+	public BigDecimal getRefundedAmt(long finID, long receivableID, long receivableFeeTypeID);
 }

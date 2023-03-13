@@ -104,6 +104,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.rits.cloning.Cloner;
 
 /**
@@ -2258,8 +2259,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getComboboxValue(this.oDChargeType).equals(PennantConstants.List_Select)) {
 			readOnlyComponent(true, this.oDChargeAmtOrPerc);
 			this.space_oDChargeAmtOrPerc.setSclass("");
-		} else if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT)
-				|| getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
+		} else if (getComboboxValue(this.oDChargeType).equals(ChargeType.FLAT)
+				|| getComboboxValue(this.oDChargeType).equals(ChargeType.FLAT_ON_PD_MTH)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			this.oDChargeAmtOrPerc.setMaxlength(15);
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(

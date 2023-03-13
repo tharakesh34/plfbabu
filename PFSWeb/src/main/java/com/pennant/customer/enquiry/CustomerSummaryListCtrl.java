@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -72,7 +70,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = LogManager.getLogger(CustomerSummaryListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

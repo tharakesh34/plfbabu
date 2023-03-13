@@ -36,8 +36,6 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -72,7 +70,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -127,8 +124,6 @@ import com.pennanttech.pff.model.mandate.MandateData;
 public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LogManager.getLogger(MandateRegistrationListCtrl.class);
-
 	protected Window window_MandateRegistrationList;
 	protected Borderlayout borderLayout_MandateList;
 	protected Paging pagingMandateList;
@@ -144,6 +139,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	protected Listheader listheader_ExpiryDate;
 	protected Listheader listheader_Status;
 	protected Listheader listheader_InputDate;
+	protected Listheader listheader_BranchOrClster;
 
 	protected Listheader listHeader_CheckBox_Name;
 	protected Listcell listCell_Checkbox;
@@ -184,6 +180,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	protected Listbox sortOperator_entityCode;
 	protected ExtendedCombobox partnerBank;
 	protected Listbox sortOperator_partnerBank;
+	protected Listbox sortOperator_BranchOrCluster;
 	protected Row row_partnerBank;
 	private transient MandateService mandateService;
 	private transient boolean validationOn;
@@ -294,35 +291,42 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			this.space_MandateType.setSclass("");
 		}
 
-		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
-			this.row_partnerBank.setVisible(true);
-			this.partnerBank.setModuleName("FinTypePartner");
-			this.partnerBank.setMandatoryStyle(true);
-			this.partnerBank.setValueColumn("PartnerBankCode");
-			this.partnerBank.setDescColumn("PartnerBankName");
-			this.partnerBank.setMaxlength(14);
-			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
+			if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
+				this.row_partnerBank.setVisible(true);
+				this.partnerBank.setModuleName("FinTypePartner");
+				this.partnerBank.setMandatoryStyle(true);
+				this.partnerBank.setValueColumn("PartnerBankCode");
+				this.partnerBank.setDescColumn("PartnerBankName");
+				this.partnerBank.setMaxlength(14);
+				this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 
-			this.branchOrCluster.setButtonDisabled(false);
-			this.branchOrCluster.setMandatoryStyle(true);
+				Filter[] filter = new Filter[1];
+				filter[0] = new Filter("Purpose", "R", Filter.OP_EQUAL);
+				this.partnerBank.setFilters(filter);
 
-			String moduleName = "FinTypePartnerBankBranch";
-			String valueColumn = "BranchCode";
-			String descColumn = "BranchDesc";
+				this.branchOrCluster.setButtonDisabled(false);
+				this.branchOrCluster.setMandatoryStyle(true);
 
-			if (PartnerBankExtension.MAPPING.equals("C")) {
-				moduleName = "Cluster";
-				valueColumn = "Code";
-				descColumn = "Name";
-			}
+				String moduleName = "FinTypePartnerBankBranch";
+				String valueColumn = "BranchCode";
+				String descColumn = "BranchDesc";
 
-			this.branchOrCluster.setModuleName(moduleName);
-			this.branchOrCluster.setValueColumn(valueColumn);
-			this.branchOrCluster.setDescColumn(descColumn);
-			this.branchOrCluster.setValidateColumns(new String[] { valueColumn, descColumn });
+				if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
+					moduleName = "Cluster";
+					valueColumn = "Code";
+					descColumn = "Name";
 
-		} else {
-			if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION) {
+					this.branchOrCluster.setFilters(new Filter[] {
+							new Filter("CLUSTERTYPE", PartnerBankExtension.CLUSTER_TYPE, Filter.OP_EQUAL) });
+				}
+
+				this.branchOrCluster.setModuleName(moduleName);
+				this.branchOrCluster.setValueColumn(valueColumn);
+				this.branchOrCluster.setDescColumn(descColumn);
+				this.branchOrCluster.setValidateColumns(new String[] { valueColumn, descColumn });
+
+			} else {
 				this.row_partnerBank.setVisible(true);
 
 				this.partnerBank.setMaxlength(8);
@@ -343,7 +347,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
 
-		if (ImplementationConstants.MANDATE_AUTO_DOWNLOAD
+		if (MandateExtension.AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD_JOB_ENABLED)) {
 			this.btnDownload.setDisabled(true);
 		}
@@ -388,14 +392,21 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		Long clusterId = null;
 		List<String> branchlist = new ArrayList<String>();
 
-		Filter[] filters = new Filter[1];
+		Filter[] filters = new Filter[2];
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			filters[0] = new Filter("BranchCode", branchCode, Filter.OP_EQUAL);
 			branchlist.add(branchCode);
 
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			clusterId = clusterService.getClustersFilter(branchCode);
+
+			if (clusterId == null) {
+				this.branchOrCluster.setErrorMessage("please configure the cluster with Branches.");
+				this.branchOrCluster.setButtonDisabled(true);
+				return;
+			}
+
 			branchlist = branchService.getBranchCodeByClusterId(clusterId);
 			if (CollectionUtils.isNotEmpty(branchlist)) {
 				filters[0] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
@@ -404,6 +415,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 				this.partnerBank.setErrorMessage("please configure the branch with partnerbank.");
 				this.partnerBank.setButtonDisabled(true);
 			}
+		}
+
+		if (MandateExtension.PARTNER_BANK_WISE_EXTARCTION && PartnerBankExtension.BRANCH_WISE_MAPPING) {
+			filters[1] = new Filter("Purpose", "R", Filter.OP_EQUAL);
 		}
 
 		List<FinTypePartnerBank> list = finTypePartnerBankService.getFintypePartnerBankByBranch(branchlist, clusterId);
@@ -458,14 +473,14 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		}
 
 		FinTypePartnerBank details = (FinTypePartnerBank) dataObject;
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("PartnerbankId", details.getPartnerBankID(), Filter.OP_EQUAL);
 			filters[1] = new Filter("BranchCode", "", Filter.OP_NOT_NULL);
 			this.branchOrCluster.setFilters(filters);
 			this.branchOrCluster.setButtonDisabled(false);
 			this.branchOrCluster.setMandatoryStyle(true);
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			List<Long> clusterList = new ArrayList<Long>();
 			clusterList = finTypePartnerBankService.getByClusterAndPartnerbank(details.getPartnerBankID());
 			if (CollectionUtils.isNotEmpty(clusterList)) {
@@ -695,7 +710,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 				.append("'").append(toDate).append("'").append(")");
 
 		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
-			if (PartnerBankExtension.MAPPING.equals("C")) {
+			if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 				if (this.branchOrCluster.getValue() != null) {
 					whereClause.append(" And BRANCHCODE In (Select BranchCode from RMTBranches where ClusterId in (");
 					whereClause.append(this.branchOrCluster.getId());
@@ -834,12 +849,16 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 	private void doRemoveValidation() {
 		logger.debug("Entering ");
+
+		this.mandateType.setErrorMessage("");
 		this.fromDate.setConstraint("");
 		this.toDate.setConstraint("");
 		this.entityCode.setConstraint("");
 		this.entityCode.setErrorMessage("");
 		this.partnerBank.setConstraint("");
 		this.partnerBank.setErrorMessage("");
+		this.branchOrCluster.setConstraint("");
+		this.branchOrCluster.setErrorMessage("");
 		logger.debug("Leaving ");
 
 	}
@@ -860,10 +879,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		this.entityCode.setValue("");
 		this.entityCode.setDescColumn("");
 
-		this.partnerBank.setButtonDisabled(true);
+		this.partnerBank.setButtonDisabled(false);
 		this.partnerBank.setMandatoryStyle(false);
 		this.partnerBank.setValue("");
 		this.partnerBank.setDescColumn("");
+
+		this.branchOrCluster.setValue("");
+		this.branchOrCluster.setDescColumn("");
 
 		this.listheader_AccNumber.setSort("none");
 		this.listheader_AccType.setSort("none");
@@ -959,6 +981,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		logger.debug(Literal.ENTERING);
 
 		List<Long> mandateIdList;
+		String mandateCount = String.valueOf(MandateExtension.MANDATE_SPLIT_COUNT);
 
 		if (listHeader_CheckBox_Comp.isChecked()) {
 			mandateIdList = getMandateList();
@@ -968,6 +991,12 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 		if (mandateIdList.isEmpty()) {
 			MessageUtil.showError(Labels.getLabel("MandateDataList_NoEmpty"));
+			return;
+		}
+
+		if (MandateExtension.MANDATE_SPLIT_COUNT > 0
+				&& this.mandateIdMap.size() > MandateExtension.MANDATE_SPLIT_COUNT) {
+			MessageUtil.showError(Labels.getLabel("MandateDataList_TooLong", new String[] { mandateCount }));
 			return;
 		}
 

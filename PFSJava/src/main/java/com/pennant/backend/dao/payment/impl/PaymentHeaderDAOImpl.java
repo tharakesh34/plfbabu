@@ -24,9 +24,12 @@
  */
 package com.pennant.backend.dao.payment.impl;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,12 +37,15 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -64,7 +70,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" PaymentId, PaymentType, PaymentAmount, CreatedOn, ApprovedOn, Status, FinID, FinReference");
 		if (type.contains("View")) {
-			sql.append(", PaymentType, Status");
+			sql.append(", PaymentType, Status, CustId, CustCoreBank");
 		}
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -89,6 +95,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				if (type.contains("View")) {
 					ph.setPaymentType(rs.getString("PaymentType"));
 					ph.setStatus(rs.getString("Status"));
+					ph.setCustID(rs.getLong("CustId"));
+					ph.setCustCoreBank(rs.getString("CustCoreBank"));
 				}
 
 				ph.setVersion(rs.getInt("Version"));
@@ -245,13 +253,14 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append(" fm.FinID, fm.FinReference, ft.FinType, ft.FinTypeDesc, ft.FinDivision");
 		sql.append(", fm.CalRoundingMode, fm.RoundingTarget, fm.FinBranch, fm.CustID, cu.CustCif");
 		sql.append(", cu.CustShrtName, curr.CcyCode, fm.FinStartDate, fm.MaturityDate, div.EntityCode");
-		sql.append(", fm.ClosingStatus");
+		sql.append(", fm.ClosingStatus, fm.WRITEOFFLOAN, h.HoldStatus ");
 		sql.append(" From FinanceMainMaintenance_View fm");
 		sql.append(" Inner Join Customers cu on cu.CustID = fm.CustID");
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join RMTCurrencies curr on curr.CcyCode = fm.FinCcy");
 		sql.append(" Inner Join SMTDivisionDetail div on div.DivisionCode = ft.FinDivision");
-		sql.append(" Where FinID = ?");
+		sql.append(" LEFT JOIN Fin_Hold_Details h ON fm.FINID = h.FINID ");
+		sql.append(" Where fm.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -276,6 +285,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				fm.setEntityCode(rs.getString("EntityCode"));
 				fm.setLovDescEntityCode(rs.getString("EntityCode"));
 				fm.setClosingStatus(rs.getString("ClosingStatus"));
+				fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+				fm.setHoldStatus(rs.getString("HoldStatus"));
 
 				return fm;
 			}, finID);
@@ -288,12 +299,12 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	@Override
 	public List<FinExcessAmount> getfinExcessAmount(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, BalanceAmt, ReservedAmt, ReceiptID, ValueDate");
-		sql.append(" From FinExcessAmount Where FinID = ?");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, BalanceAmt, ReservedAmt, ReceiptID");
+		sql.append(", ValueDate, PostDate From FinExcessAmount Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			FinExcessAmount fea = new FinExcessAmount();
 
 			fea.setExcessID(rs.getLong("ExcessID"));
@@ -305,22 +316,22 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			fea.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
 			fea.setReceiptID(JdbcUtil.getLong(rs.getObject("ReceiptID")));
 			fea.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+			fea.setPostDate(JdbcUtil.getDate(rs.getDate("PostDate")));
 
 			return fea;
-		});
+		}, finID);
 	}
 
 	@Override
 	public List<ManualAdvise> getManualAdvise(long finID) {
 		StringBuilder sql = getSqlQuery();
-		sql.append(" Where FinID = ? and ma.AdviseType = ? and HoldDue = ?");
+		sql.append(" Where FinID = ? and ma.AdviseType = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		List<ManualAdvise> list = jdbcOperations.query(sql.toString(), ps -> {
 			ps.setLong(1, finID);
 			ps.setInt(2, 2);
-			ps.setInt(3, 0);
 		}, (rs, i) -> {
 			return getRowMapper(rs);
 		});
@@ -375,6 +386,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
 		ma.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
 		ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+		ma.setHoldDue(rs.getBoolean("HoldDue"));
+		ma.setRefundable(rs.getBoolean("Refundable"));
 		return ma;
 	}
 
@@ -383,7 +396,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append(" AdviseID, FinID, FinReference, BalanceAmt, ma.AdviseType, AdviseAmount, ReservedAmt, ValueDate");
 		sql.append(", PaidAmount, WaivedAmount, FeeTypeCode, FeeTypeDesc, ft.TaxApplicable, ft.TaxComponent");
 		sql.append(", PaidCGST, PaidIGST, PaidSGST, PaidUGST, PaidCESS");
-		sql.append(", WaivedCGST, WaivedIGST, WaivedSGST, WaivedUGST, WaivedCESS");
+		sql.append(", WaivedCGST, WaivedIGST, WaivedSGST, WaivedUGST, WaivedCESS, HoldDue, Refundable");
 		sql.append(" From ManualAdvise ma");
 		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeId = ma.FeeTypeId");
 
@@ -400,4 +413,121 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		return getNextValue("SeqPaymentHeader");
 	}
 
+	@Override
+	public Map<Long, BigDecimal> getAdvisesInProgess(long finId) {
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" SUM(AMOUNT) AMOUNT,FRD.PAYAGAINSTID FROM FINRECEIPTDETAIL_TEMP FRD ");
+		sql.append(" INNER JOIN FINRECEIPTHEADER_TEMP FR ON FR.RECEIPTID = FRD.RECEIPTID ");
+		sql.append(" WHERE FRD.PAYMENTTYPE IN('PAYABLE') AND FINID = ? ");
+		sql.append(" GROUP BY FRD.PAYAGAINSTID");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), ps -> {
+				ps.setLong(1, finId);
+			}, new ResultSetExtractor<Map<Long, BigDecimal>>() {
+
+				@Override
+				public Map<Long, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					Map<Long, BigDecimal> rcMap = new HashMap<>();
+					while (rs.next()) {
+						rcMap.put(rs.getLong("PAYAGAINSTID"), rs.getBigDecimal("AMOUNT"));
+					}
+					return rcMap;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("No advises are inprogress for the finId >> " + finId);
+		}
+
+		return new HashMap<>();
+	}
+
+	@Override
+	public BigDecimal getInProgressExcessAmt(long finId, Long receiptId) {
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" COALESCE(EXCESSAMOUNT,0) AMOUNT,FINID FROM FINREPAYHEADER WHERE RECEIPTSEQID IN ( ");
+		sql.append(" SELECT RECEIPTSEQID FROM FINRECEIPTDETAIL_TEMP WHERE STATUS IN (?, ?)");
+		if (receiptId != null) {
+			sql.append(" and ReceiptId = ?");
+		}
+		sql.append(")");
+		sql.append(" AND EXCESSAMOUNT > 0  AND FINID = ? ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), ps -> {
+				int index = 1;
+				ps.setString(index++, RepayConstants.PAYSTATUS_BOUNCE);
+				ps.setString(index++, RepayConstants.PAYSTATUS_CANCEL);
+				if (receiptId != null) {
+					ps.setLong(index++, receiptId);
+				}
+				ps.setLong(index++, finId);
+			}, new ResultSetExtractor<BigDecimal>() {
+				@Override
+				public BigDecimal extractData(ResultSet rs) throws SQLException, DataAccessException {
+					BigDecimal amount = BigDecimal.ZERO;
+					while (rs.next()) {
+						amount = rs.getBigDecimal("AMOUNT");
+					}
+					return amount;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("No Excess Receipts are inprogress for the finId >> " + finId);
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public boolean isRefundInProcess(long finId) {
+		String sql = "Select count(FinId) From PaymentHeader_Temp Where FinId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finId) > 0;
+	}
+
+	@Override
+	public Long getPaymetIDByReceiptID(long receiptId) {
+		StringBuilder sql = new StringBuilder("Select ph.PaymentID");
+		sql.append(" From FinexcessAmount fa");
+		sql.append(" Inner Join PaymentDetails_Temp pd on pd.ReferenceID = fa.ExcessID");
+		sql.append(" Inner Join PaymentHeader_Temp ph on ph.PaymentID = pd.PaymentID");
+		sql.append(" Where fa.ReceiptId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, receiptId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+
+	}
+
+	@Override
+	public List<Long> getReceiptPurpose(long receiptId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" rch.ReceiptID From FinReceiptHeader_Temp rch");
+		sql.append(" Inner Join FinReceiptDetail_Temp rcd on rcd.receiptId = rch.receiptId");
+		sql.append(" Where rcd.PayAgainstId = ? and rch.ReceiptModeStatus not in (?, ?) and rch.KnockOffType != ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				return rs.getLong(1);
+			}, receiptId, RepayConstants.PAYSTATUS_BOUNCE, RepayConstants.PAYSTATUS_CANCEL,
+					KnockOffType.CROSS_LOAN.code());
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

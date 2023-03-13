@@ -33,8 +33,6 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -112,7 +110,6 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = -5901195042041627750L;
-	private static final Logger logger = LogManager.getLogger(FinanceMainListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -200,9 +197,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected int oldVar_sortOperator_Branch = -1; // autowired
 
 	private String CREATE_CIF = "CREATECIF";
-	private String CREATE_ACCOUNT = "CREATACCOUNT";
 	private List<String> usrfinRolesList = new ArrayList<String>();
-	private List<ValueLabel> betaConfig = PennantStaticListUtil.getBetaConfiguration();
 
 	private FinanceDetailService financeDetailService;
 	private DedupParmService dedupParmService;
@@ -1377,8 +1372,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.custID.setMaxlength(LengthConstants.LEN_CIF);
-		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.finReference.setMaxlength(LengthConstants.LEN_REF);
 		this.fincustName.setMaxlength(50);
 		this.finMobileNumber.setMaxlength(LengthConstants.LEN_MOBILE);

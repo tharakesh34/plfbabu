@@ -152,6 +152,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Textbox custCIF;
 	protected Radio newCust;
 	protected Radio existingCust;
+	protected Radio prospectAsCif;
 	protected Radio preApprovedCust;
 	protected Row promotionCodeRow;
 	protected Row customerRow;
@@ -592,6 +593,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (StringUtils.isEmpty(screenCode) || "DDE".equals(screenCode)) {
 			this.row_selectCustomer.setVisible(true);
 			if (this.existingCust.isChecked()) {
+				this.customerRow.setVisible(true);
+				this.custCIF.setDisabled(false);
+			} else if (this.prospectAsCif.isChecked()) {
 				this.customerRow.setVisible(true);
 				this.custCIF.setDisabled(false);
 			} else {
@@ -1355,6 +1359,17 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				wve.add(e);
 			}
 
+			try {
+				if (this.prospectAsCif.isChecked()) {
+					if (StringUtils.isEmpty(this.custCIF.getValue())) {
+						throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
+								new String[] { Labels.getLabel("label_SelectFinanceTypeDialog_CustCIF.value") }));
+					}
+				}
+			} catch (WrongValueException e) {
+				wve.add(e);
+			}
+
 			this.eidNumber.clearErrorMessage();
 			this.eidNumber.setConstraint("");
 
@@ -1549,6 +1564,15 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void onCheck$prospectAsCif(Event event) {
+		logger.debug(Literal.ENTERING);
+		setCustomerRowProperties(false, false);
+		Clients.clearWrongValue(this.finType);
+		Clients.clearWrongValue(this.eidNumber);
+		Clients.clearWrongValue(this.mobileNo);
+		logger.debug(Literal.LEAVING);
+	}
+
 	public void onCheck$newCust(Event event) {
 		logger.debug("Entering" + event.toString());
 		setCustomerRowProperties(true, false);
@@ -1592,25 +1616,13 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.row_custCtgType.setVisible(true);
 		} else {
 			this.custCIF.setDisabled(false);
-			this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 			this.customerRow.setVisible(true);
 			this.row_EIDNumber.setVisible(false);
 			this.row_MobileNumber.setVisible(false);
 			this.row_custCtgType.setVisible(false);
 		}
+	}
 
-		// FIXME: preApproved will be only if requestSource is Preapproved. why
-		// it is required again?
-		/*
-		 * if (StringUtils.equals(requestSource, FinServiceEvent.PREAPPROVAL)) { this.labelRow.setVisible(false);
-		 * this.wIfReferenceRow.setVisible(false); }
-		 */}
-
-	/**
-	 * Call the Customer dialog with a new empty entry. <br>
-	 * 
-	 * @param event
-	 */
 	public CustomerDetails fetchCustomerData(boolean isRetail) {
 		logger.debug("Entering");
 
@@ -1624,12 +1636,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
 			// If customer exist is checked
 			if (this.existingCust.isChecked()) {
-				// FIXME comment need to be removed when the version issue get
-				// resolved
-				// check Customer Data in LOCAL PFF system
-				// customer =
-				// this.customerDetailsService.checkCustomerByCIF(cif,
-				// TableType.TEMP_TAB.getSuffix());
 				Customer customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.TEMP_TAB.getSuffix());
 				if (customer != null) {
 					MessageUtil.showMessage("Customer is Maintainance");
@@ -1642,7 +1648,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				}
 
 				if (customer != null) {
-
 					if (isCustFromTemp) {
 						customerDetails = this.customerDetailsService.getCustomerDetailsById(customer.getId(), true,
 								"_TView");
@@ -1668,15 +1673,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 					if (customerDetails == null) {
 						throw new InterfaceException("9999", "Customer Not found.");
-
 					}
-
-					/*
-					 * if (isRetailCustomer) { customerDetails.getCustomer().setCustCtgCode("RETAIL"); } else {
-					 * customerDetails.getCustomer().setCustCtgCode("CORP");
-					 * customerDetails.getCustomer().setCustShrtName( customerDetails.getCustomer().getCustFName()); }
-					 * customerDetails.getCustomer().setCustCoreBank(cif);
-					 */
 
 				}
 
@@ -1684,6 +1681,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					throw new InterfaceException("----", "Customer Not found.");
 				}
 
+			} else if (this.prospectAsCif.isChecked()) {
+				customerDetails = this.customerDetailsService.prospectAsCIF(cif);
 			} else if (this.newCust.isChecked()) {
 				customerDetails = getNewCustomerDetail(customerDetails);
 			}

@@ -13,8 +13,8 @@
 package com.pennant.backend.service.finance;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -316,15 +316,15 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	public PaymentHeader preparePayments(RefundUpload refundUpload) {
 		logger.debug("Entering");
 
-		Date appDate = SysParamUtil.getAppDate();
+		Timestamp sysDate = new Timestamp(System.currentTimeMillis());
 		long bankBranchId = 0;
 		// Payment Header
 		PaymentHeader paymentHeader = new PaymentHeader();
 		paymentHeader.setFinReference(refundUpload.getFinReference());
 		paymentHeader.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
 		paymentHeader.setPaymentAmount(refundUpload.getPayableAmount());
-		paymentHeader.setCreatedOn(appDate);
-		paymentHeader.setApprovedOn(appDate);
+		paymentHeader.setCreatedOn(sysDate);
+		paymentHeader.setApprovedOn(sysDate);
 		paymentHeader.setStatus(RepayConstants.PAYMENT_APPROVE);
 		paymentHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		paymentHeader.setNewRecord(true);
@@ -950,22 +950,24 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	private void validateData(RefundUpload refundUpload) {
 		int errorCount = 0;
 		String reason = "";
-		FinanceMain fm = null;
 		BigDecimal availableAmount = BigDecimal.ZERO;
 
 		// FinReference
 		String finReference = refundUpload.getFinReference();
+		Long finID = null;
+		String finType = null;
 		if (StringUtils.isBlank(finReference)) {
 			errorCount++;
 			reason = "Reference is mandatory";
 		} else {
-			fm = financeMainDAO.getFinanceMain(finReference, TableType.MAIN_TAB);
-			if (fm == null) {
+			finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
+			finType = financeMainDAO.getFinanceType(finID, TableType.MAIN_TAB);
+			if (finID == null) {
 				errorCount++;
 				reason = "Invalid Reference";
 			} else {
-				boolean recordMaintainance = this.paymentHeaderService.getPaymentHeadersByFinReference(fm.getFinID(),
-						"_Temp");
+				finType = financeMainDAO.getFinanceType(finID, TableType.MAIN_TAB);
+				boolean recordMaintainance = this.paymentHeaderService.isInProgress(finID);
 				if (!recordMaintainance) {
 					recordMaintainance = this.refundUploadDAO.getRefundUploadsByFinReference(finReference,
 							refundUpload.getUploadId(), "_Temp");
@@ -1014,7 +1016,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 					errorCount++;
 					reason = "Fee Type is mandatory for Type is M.";
 				} else {
-					List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRefAndFeeCode(fm.getFinID(),
+					List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRefAndFeeCode(finID,
 							AdviseType.PAYABLE.id(), refundUpload.getFeeType());
 					if (CollectionUtils.isNotEmpty(advises)) {
 						for (ManualAdvise advise : advises) {
@@ -1040,7 +1042,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 						reason = "Payable Amount should be greater than 0 and less than or equal to available amount";
 					}
 				} else {
-					List<FinExcessAmount> excessList = finExcessAmountDAO.getExcessAmountsByRefAndType(fm.getFinID(),
+					List<FinExcessAmount> excessList = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
 							refundUpload.getType());
 
 					BigDecimal balanceAmt = BigDecimal.ZERO;
@@ -1062,9 +1064,9 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 				reason = "Partner Bank name should be available in the applicable partner banks selected in the loan type";
 			} else {
 				// Condition should be add
-				FinTypePartnerBank finTypePartnerBank = finTypePartnerBankDAO.getFinTypePartnerBankByPartnerBankCode(
-						refundUpload.getPartnerBank(), fm.getFinType(), refundUpload.getPaymentType());
-				if (finTypePartnerBank == null) {
+				FinTypePartnerBank pb = finTypePartnerBankDAO.getFinTypePartnerBankByPartnerBankCode(
+						refundUpload.getPartnerBank(), finType, refundUpload.getPaymentType());
+				if (pb == null) {
 					errorCount++;
 					reason = "Partner Bank name should be available in the applicable partner banks selected in the loan type";
 				}
@@ -1185,7 +1187,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 					payableAmountsMap.put(key, refundUpload.getPayableAmount());
 				}
 			} else {
-				List<FinExcessAmount> excessList = finExcessAmountDAO.getExcessAmountsByRefAndType(fm.getFinID(),
+				List<FinExcessAmount> excessList = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
 						refundUpload.getType());
 
 				BigDecimal balanceAmt = BigDecimal.ZERO;

@@ -168,7 +168,6 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		logger.debug("Entering");
 
 		// Empty sent any required attributes
-		this.countryCode.setMaxlength(2);
 		this.countryDesc.setMaxlength(50);
 		this.countryParentLimit.setMaxlength(21);
 		this.countryParentLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
@@ -430,7 +429,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		if (!this.countryCode.isReadonly()) {
 			this.countryCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_CountryDialog_CountryCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true, 2, 2));
 		}
 
 		if (!this.countryDesc.isReadonly()) {

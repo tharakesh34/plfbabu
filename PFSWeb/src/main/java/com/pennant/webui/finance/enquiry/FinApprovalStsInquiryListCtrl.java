@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -66,7 +64,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinanceDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(FinApprovalStsInquiryListCtrl.class);
 
 	protected Window window_FinApprovalStsInquiryList;
 	protected Borderlayout borderLayout_FinApprovalStsInquiryList;

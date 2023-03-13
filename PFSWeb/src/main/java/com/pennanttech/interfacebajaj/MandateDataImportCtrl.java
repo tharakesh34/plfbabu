@@ -25,7 +25,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.DataEngineConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -151,7 +150,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * Set the component level properties.
 	 */
 	private void doSetFieldProperties() {
-		if (ImplementationConstants.MANDATE_AUTO_UPLOAD
+		if (MandateExtension.AUTO_UPLOAD
 				&& (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD_JOB_ENABLED)
 						|| SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED))) {
 

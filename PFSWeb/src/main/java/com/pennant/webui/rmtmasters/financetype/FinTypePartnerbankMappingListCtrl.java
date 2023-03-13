@@ -1,12 +1,9 @@
 package com.pennant.webui.rmtmasters.financetype;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -27,7 +24,6 @@ import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.component.Uppercasebox;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -41,7 +37,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePartnerBank> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(FinTypePartnerbankMappingListCtrl.class);
 
 	protected Window window_FinTypeParterbankMappingList;
 	protected Borderlayout borderLayout_FinTypeParterbankMappingList;
@@ -59,9 +54,10 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	// checkRights
 	protected Button button_FinTypeParterbankMappingList_NewFinTypeParterbankMapping;
 	protected Button button_FinTypeParterbankMappingList_FinTypeParterbankMappingSearchDialog;
+	protected Button button_FinTypeParterbankMappingList_PrintList;
 
 	// Search Fields
-	protected Uppercasebox finType;
+	protected ExtendedCombobox finType;
 	protected Textbox finTypeDesc;
 	protected Combobox purpose;
 	protected Combobox paymentType;
@@ -80,7 +76,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 
 	private transient FinTypePartnerBankService finTypePartnerBankService;
 	List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
-	List<ValueLabel> paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
+	List<ValueLabel> paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
 
 	/**
 	 * default constructor.<br>
@@ -110,6 +106,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 
 		// Register buttons and fields.
 		registerButton(button_FinTypeParterbankMappingList_FinTypeParterbankMappingSearchDialog);
+		registerButton(button_FinTypeParterbankMappingList_PrintList);
 		registerButton(button_FinTypeParterbankMappingList_NewFinTypeParterbankMapping,
 				"button_FinTypeParterbankMappingList_NewFinTypeParterbankMapping", true);
 		registerField("Id");
@@ -121,11 +118,11 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 		registerField("FinType", listheader_FinType, SortOrder.NONE, finType, sortOperator_finType, Operators.STRING);
 		registerField("finTypeDesc", finTypeDesc, SortOrder.NONE, sortOperator_finTypeDesc, Operators.STRING);
 		registerField("BranchCode");
-		registerField("ClusterCode");
+		registerField("ClusterCode", listheader_BranchOrClster, SortOrder.NONE, branchOrCluster,
+				sortOperator_branchOrCluster, Operators.STRING);
 		registerField("BranchDesc");
 		registerField("Name");
-		registerField("ClusterId", listheader_BranchOrClster, SortOrder.NONE, branchOrCluster,
-				sortOperator_branchOrCluster, Operators.STRING);
+		registerField("ClusterId");
 		registerField("suspenseAc", listheader_SuspenseAc, SortOrder.NONE, suspenseAc, sortOperator_SuspenseAc,
 				Operators.STRING);
 
@@ -141,13 +138,13 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 		super.doAddFilters();
 		String id = this.branchOrCluster.getId();
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			if (StringUtils.isNotEmpty(id) && !id.equals("branchOrCluster")) {
 				this.searchObject.addFilterEqual("BRANCHCODE", this.branchOrCluster.getValue());
 			} else {
 				this.searchObject.addFilterNotEqual("BRANCHCODE", "");
 			}
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			if (StringUtils.isNotEmpty(id) && !id.equals("branchOrCluster")) {
 				this.searchObject.addFilterEqual("CLUSTERID", Long.valueOf(id));
 			} else {
@@ -158,24 +155,28 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	}
 
 	public void doSetFieldProperties() {
-		this.partnerBank.setModuleName("PartnerBankModes");
+		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setValueColumn("PartnerBankCode");
 		this.partnerBank.setDescColumn("PartnerBankName");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		this.finType.setModuleName("FinanceType");
+		this.finType.setValueColumn("FinType");
+		this.finType.setDescColumn("FinTypeDesc");
+		this.finType.setValidateColumns(new String[] { "FinType" });
+
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			this.branchOrCluster.setModuleName("Branch");
 			this.branchOrCluster.setValueColumn("BranchCode");
 			this.branchOrCluster.setDescColumn("BranchDesc");
 			this.branchOrCluster.setValidateColumns(new String[] { "BranchCode" });
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			this.branchOrCluster.setModuleName("Cluster");
 			this.branchOrCluster.setValueColumn("Code");
 			this.branchOrCluster.setDescColumn("Name");
 			this.branchOrCluster.setValidateColumns(new String[] { "Code" });
-			Filter filter[] = new Filter[1];
-			filter[0] = new Filter("CLUSTERTYPE", PartnerBankExtension.MAPPING, Filter.OP_EQUAL);
-			this.branchOrCluster.setFilters(filter);
+			this.branchOrCluster.setFilters(
+					new Filter[] { new Filter("CLUSTERTYPE", PartnerBankExtension.CLUSTER_TYPE, Filter.OP_EQUAL) });
 		}
 
 	}
@@ -227,7 +228,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	private void doShowDialogPage(FinTypePartnerBank fintypepartnerbank) {
 		logger.debug(Literal.ENTERING);
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = getDefaultArguments();
 		map.put("fintypepartnerbank", fintypepartnerbank);
 		map.put("fintypepartnerbankMappingListCtrl", this);
 
@@ -245,7 +246,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 	public void onFulfill$branchOrCluster(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		if (PartnerBankExtension.MAPPING.equals("C")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			Cluster cluster = (Cluster) this.branchOrCluster.getObject();
 
 			if (cluster == null) {
@@ -277,7 +278,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 		search();
 	}
 
-	public void onClick$print(Event event) {
+	public void onClick$button_FinTypeParterbankMappingList_PrintList(Event event) {
 		doPrintResults();
 	}
 

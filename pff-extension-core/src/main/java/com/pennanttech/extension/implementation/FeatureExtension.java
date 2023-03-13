@@ -9,12 +9,14 @@ import com.pennanttech.pff.provision.ProvisionReversalStage;
 
 public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> defaultExtensions = new HashMap<>();
+	static Map<String, Object> customerExtensions = new HashMap<>();
 	static Map<String, Object> mandateExtensions = new HashMap<>();
 	static Map<String, Object> presentmentExtensions = new HashMap<>();
 	static Map<String, Object> accountingExtensions = new HashMap<>();
 	static Map<String, Object> feeExtensions = new HashMap<>();
 	static Map<String, Object> dpdExtensions = new HashMap<>();
 	static Map<String, Object> partnerBankExtensions = new HashMap<>();
+	static Map<String, Object> receiptExtensions = new HashMap<>();
 
 	/**
 	 * <p>
@@ -141,6 +143,12 @@ public class FeatureExtension implements IFeatureExtension {
 
 		defaultExtensions.put("RECEIPT_ALLOW_FULL_WAIVER", true);
 
+		defaultExtensions.put("MANDATE_SPLIT_COUNT", 0);
+
+		defaultExtensions.put("COLLECTION_DOWNLOAD_REQ", false);
+
+		customerExtensions();
+
 		mandateExtensaions();
 
 		getPresentmentExtensions();
@@ -153,6 +161,12 @@ public class FeatureExtension implements IFeatureExtension {
 
 		getPartnerBankExtensions();
 
+		getReceiptExtensions();
+
+	}
+
+	private void customerExtensions() {
+		customerExtensions.put("CUST_CORE_BANK_ID", true);
 	}
 
 	private void mandateExtensaions() {
@@ -163,6 +177,11 @@ public class FeatureExtension implements IFeatureExtension {
 	@Override
 	public Map<String, Object> getCustomConstants() {
 		return defaultExtensions;
+	}
+
+	@Override
+	public Map<String, Object> getCustomerExtensions() {
+		return customerExtensions;
 	}
 
 	@Override
@@ -198,4 +217,11 @@ public class FeatureExtension implements IFeatureExtension {
 
 		return partnerBankExtensions;
 	}
+
+	@Override
+	public Map<String, Object> getReceiptExtensions() {
+		receiptExtensions.put("STOP_BACK_DATED_EARLY_SETTLE", true);
+		return receiptExtensions;
+	}
+
 }

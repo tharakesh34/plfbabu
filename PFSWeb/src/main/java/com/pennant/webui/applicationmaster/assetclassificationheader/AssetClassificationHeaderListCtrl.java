@@ -27,8 +27,6 @@ package com.pennant.webui.applicationmaster.assetclassificationheader;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -58,7 +56,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class AssetClassificationHeaderListCtrl extends GFCBaseListCtrl<AssetClassificationHeader> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(AssetClassificationHeaderListCtrl.class);
 
 	protected Window window_AssetClassificationHeaderList;
 	protected Borderlayout borderLayout_AssetClassificationHeaderList;

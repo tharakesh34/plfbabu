@@ -15,6 +15,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -34,6 +35,7 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	private RePresentmentUploadDAO representmentUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -163,8 +165,6 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 
 		Date appDate = header.getAppDate();
 
-		int appDateMonth = DateUtil.getMonth(appDate);
-
 		detail.setHeaderId(header.getId());
 
 		String reference = detail.getReference();
@@ -181,13 +181,13 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
+		detail.setFm(fm);
+		detail.setReferenceID(fm.getFinID());
+
 		if (!fm.isFinIsActive()) {
 			setError(detail, PresentmentError.REPRMNT515);
 			return;
 		}
-
-		detail.setFm(fm);
-		detail.setReferenceID(fm.getFinID());
 
 		Date dueDate = detail.getDueDate();
 		if (dueDate == null) {
@@ -240,9 +240,9 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		int curSchdMonth = DateUtil.getMonth(dueDate);
+		Date nextSchdDate = financeScheduleDetailDAO.getNextSchdDate(fm.getFinID(), dueDate);
 
-		if (curSchdMonth != appDateMonth) {
+		if (nextSchdDate != null && nextSchdDate.compareTo(appDate) <= 0) {
 			setError(detail, PresentmentError.REPRMNT522);
 			return;
 		}
@@ -283,6 +283,11 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 }

@@ -942,4 +942,9 @@ public class PennantConstants {
 	public static final String PREPYMT_CALCTN_TYPE_MIN_EMI = "MINEMI";
 	public static final String PREPYMT_CALCTN_TYPE_MIN_POS_AMT = "POSAMT";
 	public static final String PREPYMT_CALCULATEDON_SANCTIONLOANAMOUNT = "SANLAMT";
+
+	public static final int FEE_REFUND_APPROVAL_FAILED = 0;
+	public static final int FEE_REFUND_APPROVAL_SUCCESS = 1;
+	public static final int FEE_REFUND_APPROVAL_HOLD = 2;
+	public static final int FEE_REFUND_APPROVAL_DOWNLOADED = 3;
 }

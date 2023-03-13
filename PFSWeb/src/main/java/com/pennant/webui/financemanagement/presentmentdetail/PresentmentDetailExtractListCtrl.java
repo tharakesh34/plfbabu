@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -80,7 +78,6 @@ import com.pennanttech.pff.presentment.model.PresentmentHeader;
  */
 public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<PresentmentDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(PresentmentDetailExtractListCtrl.class);
 
 	protected Window window_PresentmentExtractDetailList;
 	protected Borderlayout borderLayout_PresentmentExtractDetailList;

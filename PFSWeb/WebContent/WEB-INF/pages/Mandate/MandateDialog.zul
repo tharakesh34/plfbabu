@@ -247,7 +247,7 @@
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_Micr.value')}" />
-									<textbox id="micr" maxlength="50" width="200px" />
+									<extendedcombobox id="micr" />
 									<label value="${c:l('label_MandateDialog_Ifsc.value')}" />
 									<textbox id="ifsc" maxlength="50" width="200px" readonly="true" />
 								</row>

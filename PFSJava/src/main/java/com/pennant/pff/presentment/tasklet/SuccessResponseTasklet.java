@@ -3,6 +3,7 @@ package com.pennant.pff.presentment.tasklet;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -97,12 +98,20 @@ public class SuccessResponseTasklet implements Tasklet {
 
 				presentmentEngine.updateResponse(responseID);
 			} catch (Exception e) {
+				String errorMsg = ExceptionUtils.getStackTrace(e);
+
+				if (errorMsg != null && errorMsg.length() > 2000) {
+					errorMsg = errorMsg.substring(0, 1999);
+				}
+
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
 
 				strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 				logger.info(FAILED_MSG, strSysDate, responseID);
 
+				jobQueue.setError(errorMsg);
 				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
+
 				ebjqDAO.updateProgress(jobQueue);
 
 				presentmentEngine.updateResponse(responseID, e);
@@ -127,6 +136,7 @@ public class SuccessResponseTasklet implements Tasklet {
 
 		ReceiptDTO receiptDTO = presentmentEngine.prepareReceiptDTO(pd);
 		receiptDTO.setValuedate(appDate);
+		receiptDTO.setPostDate(appDate);
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);

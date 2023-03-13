@@ -27,6 +27,7 @@ import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.customermasters.Customer;
@@ -38,6 +39,7 @@ import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -73,31 +75,22 @@ public class EodService {
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ClosureService closureService;
+	private AutoRefundService autoRefundService;
 
 	public EodService() {
 		super();
 	}
 
 	public void doUpdate(CustEODEvent custEODEvent) throws Exception {
-		Customer customer = custEODEvent.getCustomer();
-		// update customer EOD
 		loadFinanceData.updateFinEODEvents(custEODEvent);
-		// receipt postings on SOD
+
 		if (custEODEvent.isCheckPresentment()) {
 			createPresentmentReceipts(custEODEvent);
 		}
 
 		limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(), true);
 
-		// customer Date update
-		String newCustStatus = null;
-		if (custEODEvent.isUpdCustomer()) {
-			newCustStatus = customer.getCustSts();
-		}
-
-		Date nextDate = custEODEvent.getEventProperties().getNextDate();
-		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus,
-				nextDate);
+		loadFinanceData.updateCustomerDate(custEODEvent);
 	}
 
 	private PresentmentDetail getPresentmentDetail(List<PresentmentDetail> pd, String finReference, Date schDate) {
@@ -115,9 +108,8 @@ public class EodService {
 
 		Date businessDate = custEODEvent.getEodValueDate();
 		Customer customer = custEODEvent.getCustomer();
-		long custID = customer.getCustID();
 
-		List<PresentmentDetail> presentments = presentmentDetailDAO.getPresentmenToPost(custID, businessDate);
+		List<PresentmentDetail> presentments = presentmentDetailDAO.getPresentmenToPost(customer, businessDate);
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			FinanceMain fm = finEODEvent.getFinanceMain();
@@ -148,8 +140,10 @@ public class EodService {
 				continue;
 			}
 
-			pd.setExcessMovements(
-					finExcessAmountDAO.getExcessMovementList(pd.getId(), RepayConstants.RECEIPTTYPE_PRESENTMENT));
+			if (pd != null) {
+				pd.setExcessMovements(
+						finExcessAmountDAO.getExcessMovementList(pd.getId(), RepayConstants.RECEIPTTYPE_PRESENTMENT));
+			}
 
 			ReceiptDTO receiptDTO = new ReceiptDTO();
 			receiptDTO.setRequestSource(RequestSource.EOD);
@@ -171,8 +165,10 @@ public class EodService {
 	}
 
 	public void doUpdate(CustEODEvent custEODEvent, boolean isLimitRebuild) throws Exception {
-		Customer customer = custEODEvent.getCustomer();
 		// update customer EOD
+
+		autoRefundService.updateRefunds(custEODEvent);
+
 		loadFinanceData.updateFinEODEvents(custEODEvent);
 		// receipt postings on SOD
 		if (custEODEvent.isCheckPresentment()) {
@@ -180,21 +176,15 @@ public class EodService {
 		}
 
 		if (isLimitRebuild) {
+			// FIXME Customer CorBank-ID
 			this.limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(), true);
 		}
 
-		// customer Date update
-		String newCustStatus = null;
-		if (custEODEvent.isUpdCustomer()) {
-			newCustStatus = customer.getCustSts();
-		}
-
-		Date nextDate = custEODEvent.getEventProperties().getNextDate();
-		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus,
-				nextDate);
+		loadFinanceData.updateCustomerDate(custEODEvent);
 	}
 
 	public void processCustomerRebuild(long custID, boolean rebuildOnStrChg) {
+		// FIXME Customer CorBank-ID
 		limitRebuild.processCustomerRebuild(custID, rebuildOnStrChg);
 	}
 
@@ -210,13 +200,9 @@ public class EodService {
 			eodAutoKnockOffService.processKnockOff(custId, appDate);
 			logger.info("Auto-Knock-Off process completed for the Customer ID >> {} ", custId);
 		}
-
-		logger.info("Preparing EOD Events for the Customer ID {} >> started...", custId);
-		loadFinanceData.prepareFinEODEvents(custEODEvent, custId);
-		logger.info("Preparing EOD Events for the Customer ID {} >> completed.", custId);
-
 		if (!eventProperties.isSkipLatePay()) {
 			// late pay marking
+
 			if (custEODEvent.isPastDueExist()) {
 				// overdue calculated on EOD
 				// LPP calculated on the SOD
@@ -237,6 +223,8 @@ public class EodService {
 
 		// LatePay Due creation Service
 		latePayDueCreationService.processLatePayAccrual(custEODEvent);
+
+		autoRefundService.executeRefund(custEODEvent);
 
 		/**************** SOD ***********/
 		// moving customer date to sod
@@ -259,6 +247,15 @@ public class EodService {
 			logger.info("Processing Rate Review completed.");
 		}
 
+		// if month end then only it should run
+		if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0
+				|| eventProperties.isEomOnEOD()) {
+			// Calculate MonthEnd LPI
+			logger.info("Processing Late Pay interest started...");
+			custEODEvent = latePayMarkingService.processLPIAccrual(custEODEvent);
+			logger.info("Processing Late Pay interest Completed...");
+		}
+
 		// Accrual posted on EOD only
 		logger.info("Processing Accruals started...");
 		accrualService.processAccrual(custEODEvent);
@@ -275,6 +272,14 @@ public class EodService {
 			logger.info("Processing MonthEndAccruals started...");
 			projectedAmortizationService.prepareMonthEndAccruals(custEODEvent);
 			logger.info("Processing MonthEndAccruals completed.");
+		}
+
+		if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0
+				|| eventProperties.isEomOnEOD()) {
+			// Calculate MonthEnd Penalty
+			logger.info("Processing Late Pay Accruals started...");
+			latePayMarkingService.processLatePayAccrual(custEODEvent);
+			logger.info("Processing Late Pay Accruals completed...");
 		}
 
 		// Auto disbursements
@@ -303,8 +308,6 @@ public class EodService {
 			advancePaymentService.processAdvansePayments(custEODEvent);
 			logger.info("Advance payment process completed.");
 		}
-		// Auto Increment Grace End
-		changeGraceEndService.processChangeGraceEnd(custEODEvent);
 
 		logger.info("Auto grace extension process started...");
 		changeGraceEndService.processChangeGraceEnd(custEODEvent);
@@ -322,7 +325,21 @@ public class EodService {
 		if (ImplementationConstants.ALLOW_NPA) {
 			assetClassificationService.process(custEODEvent);
 		}
+	}
 
+	public void processAutoRefund(CustEODEvent custEODEvent) {
+		logger.info("Process the auto Refund for the Customer who is no active loans");
+		autoRefundService.executeRefund(custEODEvent);
+
+		autoRefundService.updateRefunds(custEODEvent);
+	}
+
+	public void prepareFinEODEvents(CustEODEvent custEODEvent) {
+		loadFinanceData.prepareFinEODEvents(custEODEvent);
+	}
+
+	public void loadAutoRefund(CustEODEvent custEODEvent) {
+		autoRefundService.loadAutoRefund(custEODEvent);
 	}
 
 	@Autowired
@@ -430,8 +447,18 @@ public class EodService {
 	}
 
 	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Autowired
 	public void setClosureService(ClosureService closureService) {
 		this.closureService = closureService;
+	}
+
+	@Autowired
+	public void setAutoRefundService(AutoRefundService autoRefundService) {
+		this.autoRefundService = autoRefundService;
 	}
 
 }

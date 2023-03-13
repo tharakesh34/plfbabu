@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>6.3.0-HDFC_R1.0-SNAPSHOT</version>
+		<version>6.3.0</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
@@ -40,85 +40,6 @@
 			<artifactId>pff-extension-${client.code}</artifactId>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-			<version>2.2.2</version>
-		</dependency>
-
-		<!-- CXF Framwork -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxws</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
-			<version>${cxf.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.annotation</groupId>
-					<artifactId>javax.annotation-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-rs-service-description</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-rs-client</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-
-		<!-- jackson json parser framework dependency -->
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-jaxrs</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-xc -->
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-xc</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-
-		<!-- web services and rest services API dependency -->
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.ws</groupId>
-			<artifactId>jaxws-rt</artifactId>
-			<version>3.0.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.codehaus.woodstox</groupId>
-					<artifactId>stax2-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sun.mail</groupId>
-					<artifactId>jakarta.mail</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.pennanttech.pennapps</groupId>
-			<artifactId>notification-engine</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>com.sun.mail</groupId>
-					<artifactId>jakarta.mail</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 

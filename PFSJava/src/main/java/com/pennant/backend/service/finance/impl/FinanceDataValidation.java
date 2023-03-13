@@ -181,6 +181,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.staticlist.AppStaticList;
 
 public class FinanceDataValidation {
@@ -1352,18 +1353,17 @@ public class FinanceDataValidation {
 				String[] valueParm = new String[1];
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90314", valueParm)));
 			}
-			if (FinanceConstants.PENALTYTYPE_FLAT.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(odChargeType)) {
+			if (ChargeType.FLAT.equals(odChargeType) || ChargeType.FLAT_ON_PD_MTH.equals(odChargeType)) {
 				odPenalRate.setODChargeCalOn("");
 			}
-			if ((StringUtils.isBlank(odChargeCalOn)) && (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(odChargeType))) {
+			if ((StringUtils.isBlank(odChargeCalOn)) && (ChargeType.PERC_ONE_TIME.equals(odChargeType)
+					|| ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_PD_MTH.equals(odChargeType))) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "odChargeCalOn";
-				valueParm[1] = "odChargeType" + FinanceConstants.PENALTYTYPE_PERC_ONETIME + ","
-						+ FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
-						+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH;
+				valueParm[1] = "odChargeType" + ChargeType.PERC_ONE_TIME + "," + ChargeType.PERC_ON_DUE_DAYS + ","
+						+ ChargeType.PERC_ON_EFF_DUE_DAYS + "," + ChargeType.PERC_ON_PD_MTH;
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
 			}
 		}
@@ -1389,9 +1389,9 @@ public class FinanceDataValidation {
 			}
 		}
 
-		if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odChargeType)
-				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)
-				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(odChargeType)) {
+		if (ChargeType.PERC_ONE_TIME.equals(odChargeType) || ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType)
+				|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(odChargeType)
+				|| ChargeType.PERC_ON_PD_MTH.equals(odChargeType)) {
 			BigDecimal totPerc = PennantApplicationUtil.formateAmount(odChargeAmtOrPerc, 2);
 			if (totPerc.compareTo(new BigDecimal(100)) > 0) {
 				String[] valueParm = new String[2];
@@ -1414,9 +1414,9 @@ public class FinanceDataValidation {
 			if (!finODChargeTypeSts) {
 				String[] valueParm = new String[2];
 				valueParm[0] = odChargeType;
-				valueParm[1] = FinanceConstants.PENALTYTYPE_FLAT + "," + FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH
-						+ "," + FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
-						+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH + "," + FinanceConstants.PENALTYTYPE_PERC_ONETIME;
+				valueParm[1] = ChargeType.FLAT + "," + ChargeType.FLAT_ON_PD_MTH + "," + ChargeType.PERC_ON_DUE_DAYS
+						+ "," + ChargeType.PERC_ON_EFF_DUE_DAYS + "," + ChargeType.PERC_ON_PD_MTH + ","
+						+ ChargeType.PERC_ONE_TIME;
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90316", valueParm)));
 			}
 		}
@@ -1430,9 +1430,10 @@ public class FinanceDataValidation {
 					break;
 				}
 			}
-			if (!finODCCalculatedOnSts && (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(odChargeType))) {
+			if (!finODCCalculatedOnSts && (ChargeType.PERC_ONE_TIME.equals(odChargeType)
+					|| ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(odChargeType)
+					|| ChargeType.PERC_ON_PD_MTH.equals(odChargeType))) {
 				String[] valueParm = new String[2];
 				valueParm[0] = odChargeCalOn;
 				valueParm[1] = FinanceConstants.ODCALON_STOT + "," + FinanceConstants.ODCALON_SPFT + ","
@@ -3874,7 +3875,8 @@ public class FinanceDataValidation {
 				break;
 			}
 
-			if (advTerms >= numberOfTerms) {
+			if (fm.getAdvTerms() >= fm.getNumberOfTerms() && AdvanceType.UT.name().equals(fm.getAdvType())
+					&& fm.getMaturityDate() == null) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Advance Intrest/EMI" + String.valueOf(advTerms);
 				valueParm[1] = " Number of terms : " + String.valueOf(numberOfTerms);

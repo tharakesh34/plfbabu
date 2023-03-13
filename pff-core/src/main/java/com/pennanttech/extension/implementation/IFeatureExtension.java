@@ -5,6 +5,8 @@ import java.util.Map;
 public interface IFeatureExtension {
 	Map<String, Object> getCustomConstants();
 
+	Map<String, Object> getCustomerExtensions();
+
 	Map<String, Object> getMandateExtensions();
 
 	Map<String, Object> getPresentmentExtensions();
@@ -16,4 +18,6 @@ public interface IFeatureExtension {
 	Map<String, Object> getDPDExtensions();
 
 	Map<String, Object> getPartnerBankExtensions();
+
+	Map<String, Object> getReceiptExtensions();
 }

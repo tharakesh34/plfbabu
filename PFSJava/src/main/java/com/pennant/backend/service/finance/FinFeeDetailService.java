@@ -116,4 +116,6 @@ public interface FinFeeDetailService {
 	Map<String, Object> prepareGstMapping(String fromStateCode, String toStateCode);
 
 	List<FinFeeDetail> convertToFinanceFees(FinanceDetail fd, String userBranch);
+
+	List<FinFeeDetail> getFinFeeDetailByFinRef(long finID, boolean isWIF, String type);
 }

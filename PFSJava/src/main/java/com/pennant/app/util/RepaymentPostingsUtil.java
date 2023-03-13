@@ -61,6 +61,7 @@ import com.pennant.backend.dao.applicationmaster.AssignmentDealDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FinODCAmountDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinStatusDetailDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -78,6 +79,9 @@ import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinOverDueChargeMovement;
+import com.pennant.backend.model.finance.FinOverDueCharges;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinStatusDetail;
@@ -88,6 +92,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.InvoiceDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RestructureDetail;
@@ -110,12 +115,14 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.payment.model.LoanPayment;
 import com.pennanttech.pff.payment.service.LoanPaymentService;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class RepaymentPostingsUtil {
 	private static Logger logger = LogManager.getLogger(RepaymentPostingsUtil.class);
@@ -145,6 +152,7 @@ public class RepaymentPostingsUtil {
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private AssetClassificationService assetClassificationService;
 	private FeeTypeService feeTypeService;
+	private FinODCAmountDAO finODCAmountDAO;
 
 	public RepaymentPostingsUtil() {
 		super();
@@ -585,12 +593,25 @@ public class RepaymentPostingsUtil {
 				scheduleMap.put(sqlDate, scheduleDetail);
 
 				FinODDetails latePftODTotal = getLatePftODTotal(repayQueue);
+
 				if (latePftODTotal != null) {
+					if (!financeMain.isSimulateAccounting()
+							&& (repayQueue.getLatePayPftPayNow().compareTo(BigDecimal.ZERO) > 0
+									|| repayQueue.getLatePayPftWaivedNow().compareTo(BigDecimal.ZERO) > 0)) {
+						saveFinLPPAmount(repayQueue, valueDate, rpyQueueHeader, latePftODTotal);
+					}
+
 					latePftODTotals.add(latePftODTotal);
 				}
 
 				FinODDetails odDetail = getODDetail(repayQueue);
 				if (odDetail != null) {
+					if (!financeMain.isSimulateAccounting()
+							&& (repayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0
+									|| repayQueue.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0)) {
+						saveFinODCAmount(repayQueue, valueDate, rpyQueueHeader, odDetail);
+					}
+
 					odDetails.add(odDetail);
 				}
 
@@ -659,6 +680,322 @@ public class RepaymentPostingsUtil {
 		}
 
 		return null;
+	}
+
+	private void saveFinODCAmount(FinRepayQueue repayQueue, Date valueDate, FinRepayQueueHeader rqh,
+			FinODDetails finOd) {
+		FinOverDueCharges odc = null;
+		boolean createLppDue = true;
+		FinODDetails odDetail = null;
+		BigDecimal waivedAmount = repayQueue.getWaivedAmount();
+		BigDecimal penaltyPayNow = repayQueue.getPenaltyPayNow();
+		Date appDate = SysParamUtil.getAppDate();
+
+		List<FinOverDueChargeMovement> movements = new ArrayList<>();
+
+		List<FinOverDueCharges> finODCAmounts = finODCAmountDAO.getFinODCAmtByFinRef(repayQueue.getFinID(),
+				repayQueue.getRpyDate(), RepayConstants.FEE_TYPE_LPP);
+
+		if (CollectionUtils.isNotEmpty(rqh.getFinOdList())) {
+			for (FinODDetails fod : rqh.getFinOdList()) {
+				if (fod.getFinODSchdDate().compareTo(repayQueue.getRpyDate()) != 0) {
+					continue;
+				}
+				odDetail = fod;
+
+				if (odDetail.getLppDueAmt().compareTo(fod.getTotPenaltyAmt()) >= 0) {
+					createLppDue = false;
+					finOd.setLppDueAmt(fod.getLppDueAmt());
+					break;
+				}
+				if (fod.getLppDueTillDate() != null) {
+					if (valueDate.compareTo(fod.getLppDueTillDate()) > 0) {
+						for (FinOverDueCharges odcAmount : finODCAmounts) {
+							if (odcAmount.getValueDate().compareTo(valueDate) == 0) {
+								odc = odcAmount;
+								break;
+							}
+						}
+					} else {
+						createLppDue = false;
+					}
+
+				}
+			}
+		}
+
+		if (odDetail != null) {
+
+			BigDecimal prvMnthPenaltyAmt = BigDecimal.ZERO;
+			for (FinOverDueCharges odchargeAmt : finODCAmounts) {
+				// if (dateValueDate.compareTo(odchargeAmt.getValueDate())>=0){
+				prvMnthPenaltyAmt = prvMnthPenaltyAmt.add(odchargeAmt.getAmount());
+				BigDecimal balanceAmt = odchargeAmt.getBalanceAmt();
+				BigDecimal payNow = BigDecimal.ZERO;
+				BigDecimal waiveNow = BigDecimal.ZERO;
+
+				if (balanceAmt.compareTo(BigDecimal.ZERO) > 0) {
+
+					// Waived Amount Update
+					if (waivedAmount.compareTo(balanceAmt) > 0) {
+						waiveNow = balanceAmt;
+						balanceAmt = BigDecimal.ZERO;
+					} else {
+						waiveNow = waivedAmount;
+						balanceAmt = balanceAmt.subtract(waiveNow);
+					}
+					// Paid Amount Update
+					if (penaltyPayNow.compareTo(balanceAmt) > 0) {
+						payNow = balanceAmt;
+						balanceAmt = BigDecimal.ZERO;
+					} else {
+						payNow = penaltyPayNow;
+						balanceAmt = balanceAmt.subtract(payNow);
+					}
+					waivedAmount = waivedAmount.subtract(waiveNow);
+					penaltyPayNow = penaltyPayNow.subtract(payNow);
+				}
+
+				if (waiveNow.compareTo(BigDecimal.ZERO) > 0 || payNow.compareTo(BigDecimal.ZERO) > 0) {
+					for (FinOverDueCharges odcAmt : finODCAmounts) {
+						BigDecimal balAmt = odcAmt.getBalanceAmt();
+						if (balAmt.compareTo(BigDecimal.ZERO) > 0 && odcAmt.getId() == odchargeAmt.getId()) {
+							odcAmt.setPaidAmount(odcAmt.getPaidAmount().add(payNow));
+							odcAmt.setWaivedAmount(odcAmt.getWaivedAmount().add(waiveNow));
+							odcAmt.setBalanceAmt(odcAmt.getBalanceAmt().subtract(payNow.add(waiveNow)));
+							FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
+							movement.setMovementDate(valueDate);
+							movement.setChargeId(odcAmt.getId());
+							movement.setMovementAmount(payNow.add(waiveNow));
+							movement.setPaidAmount(payNow);
+							movement.setWaivedAmount(waiveNow);
+							movement.setReceiptID(rqh.getReceiptId());
+							movements.add(movement);
+						}
+					}
+				}
+
+				if (valueDate.compareTo(odchargeAmt.getValueDate()) == 0) {
+					odchargeAmt.setOdPri(odDetail.getFinCurODPri());
+					odchargeAmt.setOdPft(odDetail.getFinCurODPft());
+				}
+				// }
+			}
+
+			finOd.setLppDueTillDate(odDetail.getLppDueTillDate());
+			finOd.setLppDueAmt(odDetail.getLppDueAmt());
+
+			if (createLppDue) {
+				finOd.setLppDueTillDate(valueDate);
+				if (odc == null) {
+					odDetail.setTotPenaltyAmt(odDetail.getTotPenaltyAmt().subtract(prvMnthPenaltyAmt));
+
+					if (penaltyPayNow.compareTo(BigDecimal.ZERO) > 0 || waivedAmount.compareTo(BigDecimal.ZERO) > 0) {
+						odc = createDueAmounts(odDetail, valueDate, penaltyPayNow, waivedAmount, valueDate,
+								RepayConstants.FEE_TYPE_LPP, finODCAmounts);
+					}
+
+					if (odc != null) {
+						long referenceID = finODCAmountDAO.saveFinODCAmt(odc);
+						FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
+						movement.setMovementDate(valueDate);
+						movement.setChargeId(referenceID);
+						movement.setMovementAmount(odc.getPaidAmount().add(odc.getWaivedAmount()));
+						movement.setPaidAmount(odc.getPaidAmount());
+						movement.setWaivedAmount(odc.getWaivedAmount());
+						movement.setReceiptID(rqh.getReceiptId());
+						movements.add(movement);
+						finOd.setLppDueAmt(finOd.getLppDueAmt().add(odc.getAmount()));
+					}
+				}
+			}
+
+			if (!CollectionUtils.isEmpty(movements)) {
+				finODCAmountDAO.saveMovement(movements);
+			}
+			finODCAmountDAO.updateFinODCBalAmts(finODCAmounts);
+		}
+	}
+
+	private void saveFinLPPAmount(FinRepayQueue frq, Date valueDate, FinRepayQueueHeader frqh, FinODDetails detail) {
+		boolean createLpiDue = true;
+		FinOverDueCharges lpi = null;
+		FinODDetails odDetail = null;
+		List<FinOverDueChargeMovement> movements = new ArrayList<>();
+		BigDecimal lpiPayNow = frq.getLatePayPftPayNow();
+		BigDecimal lpiWaivedAmount = frq.getLatePayPftWaivedNow();
+		Date appDate = SysParamUtil.getAppDate();
+
+		List<FinOverDueCharges> finLPIAmtList = finODCAmountDAO.getFinODCAmtByFinRef(frq.getFinID(), frq.getRpyDate(),
+				RepayConstants.FEE_TYPE_LPI);
+
+		if (CollectionUtils.isNotEmpty(frqh.getFinOdList())) {
+			for (FinODDetails fod : frqh.getFinOdList()) {
+				if (fod.getFinODSchdDate().compareTo(frq.getRpyDate()) != 0) {
+					continue;
+				}
+				odDetail = fod;
+
+				if (odDetail.getLpiDueAmt().compareTo(fod.getLPIAmt()) >= 0) {
+					createLpiDue = false;
+					detail.setLpiDueAmt(fod.getLpiDueAmt());
+					break;
+				}
+				if (fod.getLpiDueTillDate() != null) {
+					if (valueDate.compareTo(fod.getLpiDueTillDate()) > 0) {
+						for (FinOverDueCharges lpiAmount : finLPIAmtList) {
+							if (lpiAmount.getValueDate().compareTo(valueDate) == 0) {
+								lpi = lpiAmount;
+								break;
+							}
+						}
+					} else {
+						createLpiDue = false;
+					}
+
+				}
+			}
+		}
+
+		if (odDetail != null) {
+			BigDecimal prvMnthLPIAmt = BigDecimal.ZERO;
+			for (FinOverDueCharges lpichargeAmt : finLPIAmtList) {
+				// if (dateValueDate.compareTo(odchargeAmt.getValueDate())>=0){
+				prvMnthLPIAmt = prvMnthLPIAmt.add(lpichargeAmt.getAmount());
+				BigDecimal balanceAmt = lpichargeAmt.getBalanceAmt();
+				BigDecimal payNow = BigDecimal.ZERO;
+				BigDecimal waiveNow = BigDecimal.ZERO;
+				if (balanceAmt.compareTo(BigDecimal.ZERO) > 0) {
+
+					// Waived Amount Update
+					if (lpiWaivedAmount.compareTo(balanceAmt) > 0) {
+						waiveNow = balanceAmt;
+						balanceAmt = BigDecimal.ZERO;
+					} else {
+						waiveNow = lpiWaivedAmount;
+						balanceAmt = balanceAmt.subtract(waiveNow);
+					}
+					// Paid Amount Update
+					if (lpiPayNow.compareTo(balanceAmt) > 0) {
+						payNow = balanceAmt;
+						balanceAmt = BigDecimal.ZERO;
+					} else {
+						payNow = lpiPayNow;
+						balanceAmt = balanceAmt.subtract(payNow);
+					}
+					lpiWaivedAmount = lpiWaivedAmount.subtract(waiveNow);
+					lpiPayNow = lpiPayNow.subtract(payNow);
+				}
+
+				if (waiveNow.compareTo(BigDecimal.ZERO) > 0 || payNow.compareTo(BigDecimal.ZERO) > 0) {
+					for (FinOverDueCharges odcAmt : finLPIAmtList) {
+						BigDecimal balAmt = odcAmt.getBalanceAmt();
+						if (balAmt.compareTo(BigDecimal.ZERO) > 0 && odcAmt.getId() == lpichargeAmt.getId()) {
+							odcAmt.setPaidAmount(odcAmt.getPaidAmount().add(payNow));
+							odcAmt.setWaivedAmount(odcAmt.getWaivedAmount().add(waiveNow));
+							odcAmt.setBalanceAmt(odcAmt.getBalanceAmt().subtract(payNow.add(waiveNow)));
+							FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
+							movement.setMovementDate(valueDate);
+							movement.setChargeId(odcAmt.getId());
+							movement.setMovementAmount(payNow.add(waiveNow));
+							movement.setPaidAmount(payNow);
+							movement.setWaivedAmount(waiveNow);
+							movement.setReceiptID(frqh.getReceiptId());
+							movements.add(movement);
+						}
+					}
+				}
+
+				if (valueDate.compareTo(lpichargeAmt.getValueDate()) == 0) {
+					lpichargeAmt.setOdPri(odDetail.getFinCurODPri());
+					lpichargeAmt.setOdPft(odDetail.getFinCurODPft());
+				}
+				// }
+			}
+			detail.setLpiDueTillDate(odDetail.getLpiDueTillDate());
+			detail.setLpiDueAmt(odDetail.getLpiDueAmt());
+
+			if (createLpiDue) {
+				detail.setLpiDueTillDate(valueDate);
+				if (lpi == null) {
+					odDetail.setLPIAmt(odDetail.getLPIAmt().subtract(prvMnthLPIAmt));
+					lpi = createDueAmounts(odDetail, valueDate, lpiPayNow, lpiWaivedAmount, valueDate,
+							RepayConstants.FEE_TYPE_LPI, finLPIAmtList);
+					long referenceID = finODCAmountDAO.saveFinODCAmt(lpi);
+					FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
+					movement.setMovementDate(valueDate);
+					movement.setChargeId(referenceID);
+					movement.setMovementAmount(lpi.getPaidAmount().add(lpi.getWaivedAmount()));
+					movement.setPaidAmount(lpi.getPaidAmount());
+					movement.setWaivedAmount(lpi.getWaivedAmount());
+					movement.setReceiptID(frqh.getReceiptId());
+					movements.add(movement);
+					detail.setLpiDueAmt(detail.getLpiDueAmt().add(lpi.getAmount()));
+				}
+			}
+
+			if (!CollectionUtils.isEmpty(movements)) {
+				finODCAmountDAO.saveMovement(movements);
+			}
+			finODCAmountDAO.updateFinODCBalAmts(finLPIAmtList);
+		}
+
+	}
+
+	public FinOverDueCharges createDueAmounts(FinODDetails finODDetail, Date valueDate, BigDecimal paidamt,
+			BigDecimal waivedAmount, Date appDate, String chargeType, List<FinOverDueCharges> finODCAmounts) {
+
+		FinOverDueCharges finLPIAmt = new FinOverDueCharges();
+
+		if (chargeType.equals(RepayConstants.FEE_TYPE_LPI)) {
+
+			BigDecimal lpiAmt = finODDetail.getLPIAmt().subtract(paidamt.add(waivedAmount));
+			finLPIAmt.setFinID(finODDetail.getFinID());
+			finLPIAmt.setSchDate(finODDetail.getFinODSchdDate());
+			finLPIAmt.setPostDate(appDate);
+			finLPIAmt.setValueDate(valueDate);
+			finLPIAmt.setAmount(finODDetail.getLPIAmt());
+			finLPIAmt.setPaidAmount(paidamt);
+			finLPIAmt.setWaivedAmount(waivedAmount);
+			finLPIAmt.setNewRecord(true);
+			finLPIAmt.setBalanceAmt(lpiAmt.compareTo(BigDecimal.ZERO) > 0 ? lpiAmt : BigDecimal.ZERO);
+			finLPIAmt.setOdPri(finODDetail.getFinCurODPri());
+			finLPIAmt.setOdPft(finODDetail.getFinCurODPft());
+			finLPIAmt.setFinOdTillDate(valueDate);
+			finLPIAmt.setChargeType(chargeType);
+		}
+
+		if (chargeType.equals(RepayConstants.FEE_TYPE_LPP)) {
+
+			BigDecimal penaltyAmt = finODDetail.getTotPenaltyAmt().subtract(paidamt.add(waivedAmount));
+			finLPIAmt.setFinID(finODDetail.getFinID());
+			finLPIAmt.setSchDate(finODDetail.getFinODSchdDate());
+			finLPIAmt.setPostDate(appDate);
+			finLPIAmt.setValueDate(valueDate);
+			finLPIAmt.setAmount(finODDetail.getTotPenaltyAmt());
+			finLPIAmt.setPaidAmount(paidamt);
+			finLPIAmt.setWaivedAmount(waivedAmount);
+			finLPIAmt.setNewRecord(true);
+			finLPIAmt.setBalanceAmt(penaltyAmt.compareTo(BigDecimal.ZERO) > 0 ? penaltyAmt : BigDecimal.ZERO);
+			finLPIAmt.setOdPri(finODDetail.getFinCurODPri());
+			finLPIAmt.setOdPft(finODDetail.getFinCurODPft());
+			finLPIAmt.setFinOdTillDate(valueDate);
+			finLPIAmt.setChargeType(chargeType);
+		}
+
+		finLPIAmt.setDueDays(getDueDays(finODCAmounts, valueDate, finODDetail));
+
+		return finLPIAmt;
+	}
+
+	private int getDueDays(List<FinOverDueCharges> finODCAmounts, Date valueDate, FinODDetails finODDetail) {
+		Date dueDate = finODDetail.getFinODSchdDate();
+
+		if (CollectionUtils.isNotEmpty(finODCAmounts)) {
+			dueDate = finODCAmounts.get(finODCAmounts.size() - 1).getPostDate();
+		}
+
+		return DateUtil.getDaysBetween(dueDate, valueDate);
 	}
 
 	public void recalOldestDueKnockOff(FinanceMain fm, FinanceProfitDetail fpd, Date valuedate,
@@ -740,7 +1077,7 @@ public class RepaymentPostingsUtil {
 			if (fullyPaid) {
 				pftDetail.setSvnAcrCalReq(false);
 				fm.setFinIsActive(false);
-				fm.setClosedDate(appDate);
+				fm.setClosedDate(FinanceUtil.deriveClosedDate(fm));
 				fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 
 				if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
@@ -1175,6 +1512,21 @@ public class RepaymentPostingsUtil {
 					feeTypeCodes.add(rad.getFeeTypeCode());
 				}
 			}
+
+			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
+				if (ReceiptMode.PAYABLE.equals(rcd.getPaymentType())) {
+					List<ManualAdvise> ma = rch.getPayableAdvises();
+					String feeTypeCode = "";
+					for (ManualAdvise ma1 : ma) {
+						if (ma1.getAdviseID() == rcd.getPayAgainstID()) {
+							feeTypeCode = ma1.getFeeTypeCode();
+							break;
+						}
+					}
+					feeTypeCodes.add(feeTypeCode);
+				}
+			}
+
 			if (CollectionUtils.isNotEmpty(fees)) {
 				for (FinFeeDetail finFeeDetail : fees) {
 					feeTypeCodes.add(finFeeDetail.getFeeTypeCode());
@@ -2030,7 +2382,7 @@ public class RepaymentPostingsUtil {
 		if (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCIP)) {
 			if (totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0) {
 				financeMain.setFinIsActive(false);
-				financeMain.setClosedDate(SysParamUtil.getAppDate());
+				financeMain.setClosedDate(FinanceUtil.deriveClosedDate(financeMain));
 				financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 			}
 		} else if (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FIPC)
@@ -2038,7 +2390,7 @@ public class RepaymentPostingsUtil {
 			if (!isPenaltyAvail
 					&& totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0) {
 				financeMain.setFinIsActive(false);
-				financeMain.setClosedDate(SysParamUtil.getAppDate());
+				financeMain.setClosedDate(FinanceUtil.deriveClosedDate(financeMain));
 				financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 			}
 		} else if (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCPI)
@@ -2230,6 +2582,11 @@ public class RepaymentPostingsUtil {
 	@Autowired
 	public void setFeeTypeService(FeeTypeService feeTypeService) {
 		this.feeTypeService = feeTypeService;
+	}
+
+	@Autowired
+	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
+		this.finODCAmountDAO = finODCAmountDAO;
 	}
 
 }

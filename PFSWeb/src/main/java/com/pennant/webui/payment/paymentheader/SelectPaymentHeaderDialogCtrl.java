@@ -26,11 +26,13 @@ package com.pennant.webui.payment.paymentheader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -41,13 +43,18 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.core.FinOverDueService;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.web.util.ComponentUtil;
@@ -64,6 +71,10 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	private PaymentHeader paymentHeader;
 	private PaymentHeaderService paymentHeaderService;
 	private FinanceDetailService financeDetailService;
+	private FeeRefundHeaderService feeRefundHeaderService;
+	private FinOverDueService finOverDueService;
+
+	List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
 	public SelectPaymentHeaderDialogCtrl() {
 		super();
@@ -113,12 +124,32 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
+		String list = "";
+		int len = allowedExcesTypes.size();
+		for (int i = 0; i < len; i++) {
+			if (i == 0) {
+				list = StringUtils.trimToEmpty(list).concat("'" + allowedExcesTypes.get(i) + "'");
+			} else if (i != 0 && i < len - 1) {
+				list = list.concat("," + "'" + allowedExcesTypes.get(i) + "'");
+			} else if (i == len - 1) {
+				list = list.concat("," + "'" + allowedExcesTypes.get(i) + "'");
+			}
+		}
+
 		// Query for faetching the finreferences only avalable in FinExcessAmount and ManualAdvise.
 		StringBuilder sql = new StringBuilder();
-		sql.append(" FinReference in (Select FinReference from FinExcessAmount  where BalanceAmt > 0 union ");
-		sql.append(" Select FinReference from ManualAdvise Where  AdviseType = ");
+		sql.append(" FinReference in (Select FinReference from FinExcessAmount Where (BalanceAmt > 0 ");
+		sql.append(" or ReservedAmt > 0 and ExcessID in (Select ExcessID From Cross_Loan_Transfer_Temp))");
+		sql.append(" and AmountType in (");
+		sql.append(list);
+		sql.append(") union ");
+		sql.append(" Select FinReference from ManualAdvise M");
+		sql.append(" Inner JOIN FEETYPES ft on ft.feetypeid = M.FeeTypeId ");
+		sql.append(" Where M.AdviseType = ");
 		sql.append(AdviseType.PAYABLE.id());
-		sql.append(" AND HoldDue=0 And adviseAmount - PaidAmount > 0)");
+		sql.append(" AND HoldDue=0 And ((adviseAmount - PaidAmount - WaivedAmount) > 0");
+		sql.append(" or ReservedAmt > 0 and AdviseId in (Select ExcessID From Cross_Loan_Transfer_Temp))");
+		sql.append(" And ft.Refundable = 1) ");
 
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
@@ -144,21 +175,38 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		}
 
 		long finID = ComponentUtil.getFinID(this.finReference);
-		boolean payInstInProgess = this.paymentHeaderService.isInstructionInProgress(this.finReference.getValue());
 
-		if (payInstInProgess) {
+		if (this.paymentHeaderService.isInProgress(finID)) {
 			MessageUtil.showMessage("Payment instruction already in progress for - " + this.finReference.getValue());
 			return;
 		}
 
-		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+		if (this.feeRefundHeaderService.isInProgress(finID)) {
+			MessageUtil.showMessage("Fee Refund already in progress for - " + this.finReference.getValue());
+			return;
+		}
+
 		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
+
 		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.PAYMENTINST.equals(rcdMntnSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
 		}
 
 		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(finID);
+
+		if (financeMain.isWriteoffLoan()) {
+			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_WriteOffLoan"));
+			return;
+		}
+
+		if (FinanceConstants.FEE_REFUND_HOLD.equals(financeMain.getHoldStatus())) {
+			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_HoldLoan"));
+			return;
+		}
+
+		paymentHeader.setOdAgainstLoan(finOverDueService.getDueAgnistLoan(finID));
+		paymentHeader.setOdAgainstCustomer(finOverDueService.getDueAgnistCustomer(finID, false));
 
 		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("paymentHeader", paymentHeader);
@@ -223,13 +271,13 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	 * @param event
 	 */
 	public void onFulfill$finReference(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		Clients.clearWrongValue(this.finReference);
 		this.finReference.setConstraint("");
 		this.finReference.setErrorMessage("");
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
@@ -238,6 +286,15 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
+	}
+
+	public void setFeeRefundHeaderService(FeeRefundHeaderService feeRefundHeaderService) {
+		this.feeRefundHeaderService = feeRefundHeaderService;
+	}
+
+	@Autowired
+	public void setFinOverDueService(FinOverDueService finOverDueService) {
+		this.finOverDueService = finOverDueService;
 	}
 
 }

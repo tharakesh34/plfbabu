@@ -302,7 +302,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		ft.setFinTypeFeesList(finTypeFeesService.getFinTypeFeesById(finType, moduleID));
 		ft.setFinTypeAccountingList(finTypeAccountingService.getFinTypeAccountingListByID(finType, moduleID));
-		ft.setFinTypePartnerBankList(finTypePartnerBankService.getPartnerBanks(finType, TableType.VIEW));
+		/* ft.setFinTypePartnerBankList(finTypePartnerBankService.getPartnerBanks(finType, TableType.VIEW)); */
 		ft.setFinTypeExpenseList(finTypeExpenseService.getFinTypeExpenseById(finType));
 		ft.setIrrFinanceTypeList(irrFinanceTypeDAO.getIRRFinanceTypeList(finType, "_View"));
 

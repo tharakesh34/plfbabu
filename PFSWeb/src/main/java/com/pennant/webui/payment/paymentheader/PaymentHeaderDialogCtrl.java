@@ -27,6 +27,7 @@ package com.pennant.webui.payment.paymentheader;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -75,6 +75,7 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FeeType;
@@ -105,12 +106,13 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.feerefund.FeeRefundUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -118,6 +120,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.autorefund.RefundBeneficiary;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
@@ -149,6 +152,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	protected Label lbl_Currency;
 	protected Label lbl_startDate;
 	protected Label lbl_MaturityDate;
+	protected Label lbl_ODAgainstLoan;
+	protected Label lbl_ODAgainstCustomer;
 
 	protected Textbox tranModule;
 	protected Textbox tranReference;
@@ -173,7 +178,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private transient PostingsPreparationUtil postingsPreparationUtil;
 	private transient PaymentInstructionDialogCtrl disbursementInstructionsDialogCtrl;
 	private int ccyFormatter = 0;
-	private List<PaymentDetail> paymentDetailList = new ArrayList<PaymentDetail>();
+	private List<PaymentDetail> paymentDetailList = new ArrayList<>();
 	protected String selectMethodName = "onSelectTab";
 	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
 	private boolean isAccountingExecuted = false;
@@ -187,6 +192,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private transient FinAdvancePaymentsService finAdvancePaymentsService;
 	private Button btnSave_payment;
 	private FeeTypeService feeTypeService;
+	private RefundBeneficiary refundBeneficiary;
+	private CrossLoanKnockOffDAO crossLoanKnockOffDAO;
+
+	private List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
 	/**
 	 * default constructor.<br>
@@ -431,11 +440,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		logger.debug(Literal.ENTERING);
 		doClose(this.btnSave.isVisible());
 
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	protected void doPostClose() {
 		if (getDisbursementInstructionsDialogCtrl() != null) {
 			getDisbursementInstructionsDialogCtrl().closeDialog();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -494,17 +506,16 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				.setValue(DateUtility.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate
 				.setValue(DateUtility.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
-
+		this.lbl_ODAgainstLoan
+				.setValue(PennantApplicationUtil.amountFormate(aPaymentHeader.getOdAgainstLoan(), ccyFormatter));
+		this.lbl_ODAgainstCustomer
+				.setValue(PennantApplicationUtil.amountFormate(aPaymentHeader.getOdAgainstCustomer(), ccyFormatter));
 		// Disbursement Instructions tab.
 		appendDisbursementInstructionTab(aPaymentHeader);
 
 		// Fill PaymentType Instructions.
-		if (this.enqiryModule) {
-			calculatePaymentDetail(aPaymentHeader);
-			setPaymentDetailList(aPaymentHeader.getPaymentDetailList());
-		} else {
-			calculatePaymentDetail(aPaymentHeader);
-		}
+
+		calculatePaymentDetail(aPaymentHeader);
 
 		this.recordStatus.setValue(aPaymentHeader.getRecordStatus());
 
@@ -532,30 +543,40 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		return tabID.replace("TAB", "");
 	}
 
-	/**
-	 * Method for Append Disbursement Instruction Tab
-	 */
 	private void appendDisbursementInstructionTab(PaymentHeader aPaymentHeader) {
-		try {
-			PaymentInstruction paymentInstruction = aPaymentHeader.getPaymentInstruction();
-			if (paymentInstruction == null) {
-				paymentInstruction = new PaymentInstruction();
-			}
-			Map<String, Object> map = new HashMap<>();
-			map.put("paymentInstruction", paymentInstruction);
-			map.put("roleCode", getRole());
-			map.put("paymentHeader", aPaymentHeader);
-			map.put("paymentHeaderDialogCtrl", this);
-			map.put("financeMain", this.financeMain);
-			map.put("tab", this.tabDisbInstructions);
-			map.put("ccyFormatter", ccyFormatter);
-			map.put("enqiryModule", this.enqiryModule);
+		logger.debug(Literal.ENTERING);
 
+		PaymentInstruction pi = aPaymentHeader.getPaymentInstruction();
+
+		if (pi == null) {
+			Date appDate = SysParamUtil.getAppDate();
+			pi = refundBeneficiary.getBeneficiary(this.financeMain.getFinID(), appDate, true);
+
+			if (pi == null) {
+				pi = new PaymentInstruction();
+			}
+		} else {
+			pi = FeeRefundUtil.getPI(aPaymentHeader, pi);
+		}
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("paymentInstruction", pi);
+		map.put("roleCode", getRole());
+		map.put("paymentHeader", aPaymentHeader);
+		map.put("paymentHeaderDialogCtrl", this);
+		map.put("financeMain", this.financeMain);
+		map.put("tab", this.tabDisbInstructions);
+		map.put("ccyFormatter", ccyFormatter);
+		map.put("enqiryModule", this.enqiryModule);
+
+		try {
 			Executions.createComponents("/WEB-INF/pages/Payment/PaymentInstructionDialog.zul",
 					tabDisbInstructionsTabPanel, map);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(Literal.EXCEPTION);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -745,7 +766,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		try {
 			if (aPaymentHeader.isNewRecord()) {
 				aPaymentHeader.setStatus(RepayConstants.PAYMENT_INTIATED);
-				aPaymentHeader.setCreatedOn(SysParamUtil.getAppDate());
+				Timestamp sysDate = new Timestamp(System.currentTimeMillis());
+				aPaymentHeader.setCreatedOn(sysDate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -875,7 +897,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * Saves the components to table. <br>
 	 */
 	public void doSave() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final PaymentHeader aPaymentHeader = new PaymentHeader();
 		BeanUtils.copyProperties(this.paymentHeader, aPaymentHeader);
 		boolean isNew = false;
@@ -953,17 +975,12 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				}
 
 			}
-		} catch (final DataAccessException e) {
-			logger.error(e);
-			MessageUtil.showError(e);
-		} catch (final InterfaceException e) {
-			logger.error(e);
-			MessageUtil.showError(e);
-		} catch (final ConcurrencyException e) {
+		} catch (final Exception e) {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private boolean validateAccounting(boolean validate) {
@@ -1001,10 +1018,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
 			aPaymentHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-
+			Timestamp sysDate = new Timestamp(System.currentTimeMillis());
 			if (PennantConstants.RCD_STATUS_APPROVED.equals(aPaymentHeader.getRecordStatus())) {
 				aPaymentHeader.setStatus(RepayConstants.PAYMENT_APPROVE);
-				aPaymentHeader.setApprovedOn(SysParamUtil.getAppDate());
+				aPaymentHeader.setApprovedOn(sysDate);
 			}
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
@@ -1180,21 +1197,46 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private void calculatePaymentDetail(PaymentHeader aPaymentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		List<PaymentDetail> detailList = new ArrayList<PaymentDetail>();
+		List<PaymentDetail> detailList = new ArrayList<>();
 
 		List<FinExcessAmount> excessList = processFinExcessAmount(aPaymentHeader);
 
 		for (FinExcessAmount fea : excessList) {
 			PaymentDetail pd = new PaymentDetail();
+			if (allowedExcesTypes.contains(fea.getAmountType())) {
+				if (enqiryModule) {
+					pd.setNewRecord(true);
+					pd.setReferenceId(fea.getId());
+					pd.setAvailableAmount(fea.getBalanceAmt());
+					pd.setAmountType(fea.getAmountType());
+					pd.setReceiptID(fea.getReceiptID());
+					pd.setValueDate(fea.getValueDate());
+				} else {
+					/*
+					 * BigDecimal progressAmt = paymentHeaderService.getInProgressExcessAmt(this.financeMain.getFinID(),
+					 * fea.getReceiptID());
+					 */
+					pd.setNewRecord(true);
+					pd.setReferenceId(fea.getId());
+					BigDecimal refAmount = BigDecimal.ZERO;
 
-			pd.setNewRecord(true);
-			pd.setReferenceId(fea.getId());
-			pd.setAvailableAmount(fea.getBalanceAmt());
-			pd.setAmountType(fea.getAmountType());
-			pd.setReceiptID(fea.getReceiptID());
-			pd.setValueDate(fea.getValueDate());
+					BigDecimal amount = crossLoanKnockOffDAO.getTransferAmount(fea.getExcessID());
 
-			detailList.add(pd);
+					for (PaymentDetail pDtl : paymentHeader.getPaymentDetailList()) {
+						if (fea.getExcessID() == pDtl.getReferenceId()) {
+							refAmount = pDtl.getAmount();
+						}
+					}
+					if (fea.getBalanceAmt().compareTo(BigDecimal.ZERO) == 0) {
+						amount = fea.getReservedAmt().subtract(refAmount);
+					}
+					pd.setAvailableAmount(fea.getBalanceAmt().add(amount)/* .subtract(progressAmt) */);
+					pd.setAmountType(fea.getAmountType());
+					pd.setReceiptID(fea.getReceiptID());
+					pd.setValueDate(fea.getValueDate());
+				}
+				detailList.add(pd);
+			}
 		}
 
 		List<ManualAdvise> manualAdviseList = null;
@@ -1204,12 +1246,21 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			manualAdviseList = this.paymentHeaderService.getManualAdvise(this.financeMain.getFinID());
 		}
 
+		Map<Long, BigDecimal> advisesInProgess = new HashMap<Long, BigDecimal>();
+		advisesInProgess = this.paymentHeaderService.getAdvisesInProgess(this.financeMain.getFinID());
+
 		for (ManualAdvise ma : manualAdviseList) {
 			PaymentDetail pd = new PaymentDetail();
 
 			pd.setNewRecord(true);
 			pd.setReferenceId(ma.getAdviseID());
-			pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
+			if (advisesInProgess.containsKey(ma.getAdviseID())) {
+				BigDecimal progressAmt = advisesInProgess.get(ma.getAdviseID());
+				pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount())
+						.subtract(progressAmt));
+			} else {
+				pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
+			}
 			pd.setAmountType(String.valueOf(ma.getAdviseType()));
 			pd.setFeeTypeCode(ma.getFeeTypeCode());
 			pd.setFeeTypeDesc(ma.getFeeTypeDesc());
@@ -1231,6 +1282,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			}
 		} else {
 			updatePaybleAmounts(detailList, aPaymentHeader.getPaymentDetailList());
+		}
+
+		if (CollectionUtils.isEmpty(getPaymentDetailList()) && !this.enqiryModule) {
+			throw new AppException("There is no available amount to proceed for Refund.");
 		}
 
 		for (PaymentDetail detail : getPaymentDetailList()) {
@@ -1473,6 +1528,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 					if (AdviseType.isPayable(amountType)) {
 						oldDetail.setAvailableAmount(newDetail.getAvailableAmount());
+					} else if (this.enqiryModule) {
+						oldDetail.setAvailableAmount((newDetail.getAvailableAmount()));
 					} else {
 						oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
 					}
@@ -2147,6 +2204,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	public void setFeeTypeService(FeeTypeService feeTypeService) {
 		this.feeTypeService = feeTypeService;
+	}
+
+	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
+		this.refundBeneficiary = refundBeneficiary;
+	}
+
+	public void setCrossLoanKnockOffDAO(CrossLoanKnockOffDAO crossLoanKnockOffDAO) {
+		this.crossLoanKnockOffDAO = crossLoanKnockOffDAO;
 	}
 
 }

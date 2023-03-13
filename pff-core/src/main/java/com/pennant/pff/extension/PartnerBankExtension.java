@@ -9,11 +9,13 @@ public class PartnerBankExtension {
 	}
 
 	public static boolean BRANCH_WISE_MAPPING;
-	public static String MAPPING;
+	public static String BRANCH_OR_CLUSTER;
+	public static String CLUSTER_TYPE;
 
 	static {
 		BRANCH_WISE_MAPPING = getValueAsBoolean("BRANCH_WISE_MAPPING", false);
-		MAPPING = getValueAsString("MAPPING", "B");
+		BRANCH_OR_CLUSTER = getValueAsString("BRANCH_OR_CLUSTER", "B");
+		CLUSTER_TYPE = getValueAsString("CLUSTER_TYPE", "");
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {

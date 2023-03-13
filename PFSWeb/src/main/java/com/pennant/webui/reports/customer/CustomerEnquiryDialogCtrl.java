@@ -158,7 +158,6 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	 */
 	private void doSetFieldProperties() {
 		this.dftBranch.setMaxlength(LengthConstants.LEN_BRANCH);
-		this.custCIF.setMaxlength(12);
 		this.custCIF.setModuleName("Customer");
 		this.custCIF.setValueColumn("CustCIF");
 		this.custCIF.setDescColumn("CustShrtName");

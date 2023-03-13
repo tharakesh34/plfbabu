@@ -24,11 +24,8 @@
  */
 package com.pennant.webui.limit.limitgroup;
 
-import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -57,9 +54,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * ************************************************************<br>
  * 
  */
-public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements Serializable {
+public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(LimitGroupListCtrl.class);
 
 	/*
 	 * ************************************************************************ * All the components that are defined

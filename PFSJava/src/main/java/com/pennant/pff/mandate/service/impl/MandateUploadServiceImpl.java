@@ -17,10 +17,14 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateUpload;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.excess.MandateUploadError;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.RequestSource;
 
 public class MandateUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(MandateUploadServiceImpl.class);
@@ -54,8 +58,13 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 					for (MandateUpload detail : details) {
 						doValidate(header, detail);
 
+						if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
+							failRecords++;
+							continue;
+						}
 						Mandate mandate = detail.getMandate();
 						mandate.setUserDetails(header.getUserDetails());
+						mandate.setSourceId(RequestSource.UPLOAD.name());
 						Mandate response = mandateService.createMandates(mandate);
 
 						ErrorDetail error = response.getError();
@@ -66,6 +75,10 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 							detail.setErrorDesc(error.getError());
 						} else {
 							sucessRecords++;
+							detail.setProgress(EodConstants.PROGRESS_SUCCESS);
+							detail.setErrorCode("");
+							detail.setErrorDesc("");
+							detail.setReferenceID(response.getMandateID());
 						}
 					}
 
@@ -143,9 +156,86 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object detail) {
-		/**
-		 * All the validations are handled in Service layer.
-		 */
+
+		MandateUpload mu = null;
+
+		if (detail instanceof MandateUpload) {
+			mu = (MandateUpload) detail;
+		}
+
+		if (mu == null) {
+			throw new AppException("Invalid Data transferred...");
+		}
+
+		Mandate mandate = mu.getMandate();
+
+		String extMndt = mandate.getStrExternalMandate();
+		String swapMndt = mandate.getStrSwapIsActive();
+		String openMndt = mandate.getStrOpenMandate();
+
+		InstrumentType instrumentType = InstrumentType.getType(mandate.getMandateType());
+
+		switch (instrumentType) {
+		case ECS:
+		case DD:
+		case NACH:
+		case EMANDATE:
+
+			externalMandateRequired(mu, mandate, extMndt);
+
+			swapMandateRequired(mu, mandate, swapMndt);
+
+			openMandateRequired(mu, mandate, openMndt);
+
+			break;
+
+		case SI:
+			break;
+
+		case DAS:
+			swapMandateRequired(mu, mandate, swapMndt);
+			break;
+
+		default:
+			break;
+		}
+
+	}
+
+	private void openMandateRequired(MandateUpload mu, Mandate mandate, String openMndt) {
+		if ("T".equals(openMndt)) {
+			mandate.setOpenMandate(true);
+		} else if ("F".equals(openMndt)) {
+			mandate.setOpenMandate(false);
+		} else {
+			setError(mu, MandateUploadError.MANUP_013);
+		}
+	}
+
+	private void swapMandateRequired(MandateUpload mu, Mandate mandate, String swapMndt) {
+		if ("T".equals(swapMndt)) {
+			mandate.setSwapIsActive(true);
+		} else if ("F".equals(swapMndt)) {
+			mandate.setSwapIsActive(false);
+		} else {
+			setError(mu, MandateUploadError.MANUP_014);
+		}
+	}
+
+	private void externalMandateRequired(MandateUpload mu, Mandate mandate, String extMndt) {
+		if ("T".equals(extMndt)) {
+			mandate.setExternalMandate(true);
+		} else if ("F".equals(extMndt)) {
+			mandate.setExternalMandate(false);
+		} else {
+			setError(mu, MandateUploadError.MANUP_015);
+		}
+	}
+
+	private void setError(MandateUpload detail, MandateUploadError error) {
+		detail.setProgress(EodConstants.PROGRESS_FAILED);
+		detail.setErrorCode(error.name());
+		detail.setErrorDesc(error.description());
 	}
 
 	@Override

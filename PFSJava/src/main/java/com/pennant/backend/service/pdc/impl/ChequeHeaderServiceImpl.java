@@ -39,6 +39,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
@@ -99,6 +100,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
@@ -165,6 +167,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		}
 
 		if (CollectionUtils.isNotEmpty(ch.getChequeDetailList())) {
+
 			List<AuditDetail> details = ch.getAuditDetailMap().get("ChequeDetail");
 			details = processingChequeDetailList(details, tableType, ch.getHeaderID());
 			auditDetails.addAll(details);
@@ -448,7 +451,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		ChequeHeader ch = new ChequeHeader();
 		BeanUtils.copyProperties((ChequeHeader) auditHeader.getAuditDetail().getModelData(), ch);
 
-		if (ch.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (PennantConstants.RECORD_TYPE_DEL.equals(ch.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
 			chequeHeaderDAO.delete(ch, TableType.MAIN_TAB);
 			auditDetails.addAll(listDeletion(ch, TableType.MAIN_TAB, auditHeader.getAuditTranType()));
@@ -462,7 +465,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 			processDocument(ch);
 
-			if (ch.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (PennantConstants.RECORD_TYPE_NEW.equals(ch.getRecordType())) {
 				tranType = PennantConstants.TRAN_ADD;
 				ch.setRecordType("");
 				chequeHeaderDAO.save(ch, TableType.MAIN_TAB);
@@ -484,7 +487,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			details = processingChequeDetailList(details, TableType.MAIN_TAB, ch.getHeaderID());
 			auditDetails.addAll(details);
 		}
-		if (!StringUtils.equals(ch.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+		if (!PennantConstants.FINSOURCE_ID_API.equals(ch.getSourceId())
+				&& !RequestSource.UPLOAD.name().equals(ch.getSourceId())) {
 			auditHeader.setAuditDetails(
 					getListAuditDetails(listDeletion(ch, TableType.TEMP_TAB, auditHeader.getAuditTranType())));// FIXME
 			chequeHeaderDAO.delete(ch, TableType.TEMP_TAB);
@@ -638,7 +642,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		for (ChequeDetail cd : cdList) {
 			if (cd.isNewRecord() && chequeDetailDAO.isDuplicateKey(cd.getChequeDetailsID(), cd.getBankBranchID(),
-					cd.getAccountNo(), cd.getChequeSerialNo(), TableType.BOTH_TAB)) {
+					cd.getAccountNo(), cd.getChequeSerialNumber(), TableType.BOTH_TAB)) {
 
 				String[] parameters = new String[3];
 
@@ -647,7 +651,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				parameters[1] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_AccNumber.value") + ": "
 						+ cd.getAccountNo();
 				parameters[2] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_ChequeSerialNo.value") + ": "
-						+ cd.getChequeSerialNo();
+						+ cd.getChequeSerialNumber();
 
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
 			}
@@ -763,7 +767,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 						customerCardSalesInfoDAO.getCardSalesInfoSubDetailById(customerCardSalesInfo.getId(), type));
 			}
 		}
-		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
+		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(cd.getCustomer()));
 
 		logger.debug(Literal.LEAVING);
 		return cd;
@@ -852,10 +856,19 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		if (error != null) {
 			return error;
 		}
+		boolean chequeType = false;
 
-		// FIXME this should come from loan type
-		if (ch.getNoOfCheques() <= 2) {
-			return getError("30569", "NoOfCheques ", "Three");
+		List<ChequeDetail> cheques = ch.getChequeDetailList();
+		for (ChequeDetail cd : cheques) {
+			String sourceId = ch.getSourceId();
+			if (!RequestSource.UPLOAD.name().equals(sourceId) && InstrumentType.isPDC(cd.getChequeType())) {
+				chequeType = true;
+			}
+
+			// FIXME this should come from loan type
+			if (existingCH.getNoOfCheques() + ch.getNoOfCheques() <= 2 && chequeType) {
+				return getError("30569", "NoOfCheques ", "Three");
+			}
 		}
 
 		error = validateBranchDetails(ch);
@@ -897,7 +910,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		prepareChequeHeader(ch, fm, loggedInUser);
 
 		List<ChequeDetail> cheques = ch.getChequeDetailList();
-		int serialNum = ch.getChequeSerialNo();
+		String serialNum = String.valueOf(ch.getChequeSerialNumber());
 
 		String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 
@@ -906,9 +919,15 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 			cheque.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			cheque.setNewRecord(true);
-			cheque.setChequeSerialNo(serialNum++);
 
-			ch.setTotalAmount(ch.getTotalAmount().add(cheque.getAmount()));
+			if (RequestSource.API.name().equals(ch.getSourceId())) {
+				serialNum = serialNum + 1;
+				cheque.setChequeSerialNumber(StringUtils.leftPad("" + serialNum, 6, "0"));
+			}
+
+			if ("PDC".equals(cheque.getChequeType())) {
+				ch.setTotalAmount(ch.getTotalAmount().add(cheque.getAmount()));
+			}
 		}
 
 		return processCheques(tableType, ch);
@@ -924,7 +943,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		ch.setNextRoleCode(fm.getNextRoleCode());
 		ch.setWorkflowId(fm.getWorkflowId());
 		ch.setActive(true);
-		ch.setSourceId(PennantConstants.FINSOURCE_ID_API);
+		ch.setSourceId(StringUtils.isEmpty(ch.getSourceId()) ? RequestSource.API.name() : ch.getSourceId());
 		ch.setFinID(fm.getFinID());
 		ch.setFinReference(fm.getFinReference());
 	}
@@ -949,9 +968,11 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		cheque.setNextRoleCode(fm.getNextRoleCode());
 		cheque.setWorkflowId(fm.getWorkflowId());
 
-		cheque.setBankBranchID(ch.getBankBranchID());
-		cheque.setAccHolderName(ch.getAccHolderName());
-		cheque.setAccountNo(ch.getAccountNo());
+		if (RequestSource.UPLOAD.name().equals(ch.getSourceId())) {
+			cheque.setBankBranchID(ch.getBankBranchID());
+			cheque.setAccHolderName(ch.getAccHolderName());
+			cheque.setAccountNo(ch.getAccountNo());
+		}
 
 		cheque.setStatus(ChequeSatus.NEW);
 		cheque.setChequeStatus(ChequeSatus.NEW);
@@ -982,7 +1003,9 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		AuditHeader ah = new AuditHeader(ch.getFinReference(), null, null, null, new AuditDetail(tranType, 1, null, ch),
 				ch.getUserDetails(), new HashMap<>());
 
-		ah.setApiHeader(PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY));
+		if (RequestSource.API.name().equals(ch.getSourceId())) {
+			ah.setApiHeader(PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY));
+		}
 
 		return ah;
 	}
@@ -1045,6 +1068,12 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		if (fm.isWriteoffLoan()) {
 			return getError("FWF001", "");
+		}
+		String repaymethod = financeMainDAO.getApprovedRepayMethod(finID, "");
+		if (InstrumentType.isPDC(chequeHeader.getChequeDetailList().get(0).getChequeType())
+				&& !InstrumentType.isPDC(repaymethod)) {
+
+			return getError("90204", "Cheques", "finRepayMethod is " + repaymethod);
 		}
 
 		schdData.setFinanceMain(fm);
@@ -1131,23 +1160,43 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	private ErrorDetail validateCheques(ChequeHeader ch) {
 		List<ChequeDetail> cheques = ch.getChequeDetailList();
 
-		if (ch.getNoOfCheques() == 0) {
+		boolean spdcCount = isSpdcAvail(cheques);
+
+		int chequeSize = 0;
+
+		for (ChequeDetail cd : cheques) {
+			if (InstrumentType.isPDC(cd.getChequeType())) {
+				chequeSize++;
+			}
+		}
+
+		if (chequeSize == 0 && spdcCount) {
 			return getError("90502", "NoOfCheques");
 		}
 
-		if (cheques.size() != ch.getNoOfCheques()) {
+		if (chequeSize != ch.getNoOfCheques()) {
 			return getError("30540", "ChequeDetails ", " total no cheques");
 		}
 
 		return null;
 	}
 
+	private boolean isSpdcAvail(List<ChequeDetail> cheques) {
+		boolean spdcCount = true;
+		for (ChequeDetail cd : cheques) {
+			if (InstrumentType.isSPDC(cd.getChequeType())) {
+				spdcCount = false;
+			}
+		}
+		return spdcCount;
+	}
+
 	private ErrorDetail validateChequeSerialNo(ChequeHeader ch) {
-		if (ch.getChequeSerialNo() == 0) {
+		if (Integer.valueOf(ch.getChequeSerialNumber()) == 0) {
 			return getError("90502", "ChequeSerialNo");
 		}
 
-		if (String.valueOf(ch.getChequeSerialNo()).length() > 6) {
+		if (String.valueOf(ch.getChequeSerialNumber()).length() > 6) {
 			return getError("30565", "ChequeSerialNo", "or Equal to size Six");
 		}
 
@@ -1216,29 +1265,44 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	}
 
 	private ErrorDetail validateBranchDetails(ChequeHeader ch) {
-		if (Long.valueOf(ch.getBankBranchID()) == 0) {
+		if (RequestSource.UPLOAD.name().equals(ch.getSourceId())) {
+			for (ChequeDetail cd : ch.getChequeDetailList()) {
+
+				ErrorDetail error = validateBranch(cd.getBankBranchID(), cd.getAccHolderName(), cd.getAccountNo());
+
+				if (error != null) {
+					return error;
+				}
+			}
+		}
+
+		return validateBranch(ch.getBankBranchID(), ch.getAccHolderName(), ch.getAccountNo());
+	}
+
+	private ErrorDetail validateBranch(long bankBranchID, String accountHolderName, String accountNo) {
+		if (Long.valueOf(bankBranchID) == 0) {
 			return getError("90502", "BankBranchID");
 		}
 
-		BankBranch bankBranch = bankBranchDAO.getBankBranchById(ch.getBankBranchID(), "");
+		BankBranch bankBranch = bankBranchDAO.getBankBranchById(bankBranchID, "");
 
 		if (bankBranch == null) {
 			return getError("RU0040", "BankBranchID");
 		}
 
-		if (bankBranch.getBankBranchID() != ch.getBankBranchID()) {
+		if (bankBranch.getBankBranchID() != bankBranchID) {
 			return getError("RU0040", "BankBranch");
 		}
 
-		if (StringUtils.isBlank(ch.getAccHolderName())) {
+		if (StringUtils.isBlank(accountHolderName)) {
 			return getError("90502", "AccHolderName");
 		}
 
-		if (StringUtils.isBlank(ch.getAccountNo())) {
+		if (StringUtils.isBlank(accountNo)) {
 			return getError("90502", "AccountNo");
 		}
 
-		if (ch.getAccountNo().length() > 15) {
+		if (accountNo.length() > 15) {
 			return getError("30565", "AccountLength", "or Equal to 15");
 		}
 
@@ -1287,12 +1351,14 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		}
 
 		if (cheque.getAmount() == null) {
-			return getError("90502", "Amount");
+			if (chequeType.contains(cheque.getChequeType()) && "PDC".equals(cheque.getChequeType()))
+				return getError("90502", "Amount");
 		}
 
-		// FIXME :: Error code is wrong
-		if (cheque.getAmount().toString().length() >= 18) {
-			return getError("RU0039", "chequeDate for UDC");
+		if (chequeType.contains(cheque.getChequeType()) && "PDC".equals(cheque.getChequeType())) {
+			if (cheque.getAmount().toString().length() >= 18) {
+				return getError("RU0039", "chequeDate for UDC");
+			}
 		}
 
 		if (InstrumentType.isPDC(cheque.getChequeType()) && cheque.getChequeDate() == null) {
@@ -1426,4 +1492,18 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		this.customerDocumentDAO = customerDocumentDAO;
 	}
 
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Override
+	public ChequeHeader getApprovedChequeHeaderForEnq(long finID) {
+		ChequeHeader ch = chequeHeaderDAO.getChequeHeaderForEnq(finID);
+		if (ch != null) {
+			ch.setChequeDetailList(chequeDetailDAO.getChequeDetailList(ch.getHeaderID(), "_AView"));
+		}
+		return ch;
+
+	}
 }

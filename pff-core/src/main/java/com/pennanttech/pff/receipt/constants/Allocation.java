@@ -46,8 +46,10 @@ public class Allocation {
 			return "EM";
 		case Allocation.MANADV:
 			return "M";
-		default:
+		case Allocation.BOUNCE:
 			return "B";
+		default:
+			return "M";
 		}
 	}
 }

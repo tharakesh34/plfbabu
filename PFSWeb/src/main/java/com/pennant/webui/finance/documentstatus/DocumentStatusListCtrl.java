@@ -3,8 +3,6 @@ package com.pennant.webui.finance.documentstatus;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
@@ -35,7 +33,6 @@ import com.pennanttech.pff.documents.model.DocumentStatus;
 
 public class DocumentStatusListCtrl extends GFCBaseListCtrl<DocumentStatus> {
 	private static final long serialVersionUID = 5230337712682701210L;
-	private static final Logger logger = LogManager.getLogger(DocumentStatusListCtrl.class);
 
 	protected Window window_DocumentStatusList;
 	protected Borderlayout borderlayout_DocumentStatusList;

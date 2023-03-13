@@ -36,6 +36,8 @@
 										</radio>
 										<radio id="prospect" label="${c:l('label_CoreCustomerDialog_Prospect.value')}">
 										</radio>
+										<radio id="prospectAsCif" label="${c:l('label_CoreCustomerDialog_ProspectAsCif.value')}">
+										</radio>
 									</radiogroup>
 								</cell>
 							</row>
@@ -44,7 +46,7 @@
 									style="padding-left:12px;" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<textbox id="custCIF" width="108px" maxlength="6" />
+									<textbox id="custCIF" width="108px" />
 									<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png"
 										autodisable="btnSearchCustCIF,btnSearchBranch,btnSearchFinType" />
 								</hbox>

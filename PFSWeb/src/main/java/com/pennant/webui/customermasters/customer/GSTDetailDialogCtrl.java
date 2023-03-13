@@ -212,6 +212,13 @@ public class GSTDetailDialogCtrl extends GFCBaseCtrl<GSTDetail> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_GST_Details_Dialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
+		if (this.enqiryModule) {
+			this.btnNew.setVisible(false);
+			this.btnEdit.setVisible(false);
+			this.btnDelete.setVisible(false);
+			this.btnSave.setVisible(false);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -24,6 +24,8 @@ public final class FeatureExtension {
 
 	private static Map<String, Object> getFeatureExtension(Module module) {
 		switch (module) {
+		case CUSTOMER:
+			return extension.getCustomerExtensions();
 		case MANDATE:
 			return extension.getMandateExtensions();
 		case PRESENTMENT:
@@ -38,6 +40,8 @@ public final class FeatureExtension {
 			return extension.getDPDExtensions();
 		case PARTNERBANK:
 			return extension.getPartnerBankExtensions();
+		case RECEIPT:
+			return extension.getReceiptExtensions();
 
 		default:
 			return extension.getCustomConstants();

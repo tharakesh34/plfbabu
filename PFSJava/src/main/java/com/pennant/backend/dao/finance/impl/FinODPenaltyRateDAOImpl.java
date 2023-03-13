@@ -1,10 +1,16 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -21,7 +27,18 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 	}
 
 	@Override
-	public FinODPenaltyRate getFinODPenaltyRateByRef(long finID, String type) {
+	public FinODPenaltyRate getEffectivePenaltyRate(long finID, String type) {
+		List<FinODPenaltyRate> list = getFinODPenaltyRateByRef(finID, type);
+
+		if (list.isEmpty()) {
+			return null;
+		}
+
+		return list.get(list.size() - 1);
+	}
+
+	@Override
+	public List<FinODPenaltyRate> getFinODPenaltyRateByRef(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
 		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode");
@@ -30,49 +47,66 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FinODPenaltyRate pr = new FinODPenaltyRate();
+		List<FinODPenaltyRate> list = jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinODPenaltyRate pr = new FinODPenaltyRate();
 
-				pr.setFinID(rs.getLong("FinID"));
-				pr.setFinReference(rs.getString("FinReference"));
-				pr.setFinEffectDate(rs.getTimestamp("FinEffectDate"));
-				pr.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
-				pr.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
-				pr.setODChargeType(rs.getString("ODChargeType"));
-				pr.setODGraceDays(rs.getInt("ODGraceDays"));
-				pr.setODChargeCalOn(rs.getString("ODChargeCalOn"));
-				pr.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
-				pr.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
-				pr.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
-				pr.setODRuleCode(rs.getString("ODRuleCode"));
-				pr.setoDMinCapAmount(rs.getBigDecimal("ODMinCapAmount"));
-				pr.setoDTDSReq(rs.getBoolean("ODTDSReq"));
-				pr.setOverDraftExtGraceDays(rs.getInt("OverDraftExtGraceDays"));
-				pr.setOverDraftColChrgFeeType(rs.getLong("OverDraftColChrgFeeType"));
-				pr.setOverDraftColAmt(rs.getBigDecimal("OverDraftColAmt"));
+			pr.setFinID(rs.getLong("FinID"));
+			pr.setFinReference(rs.getString("FinReference"));
+			pr.setFinEffectDate(rs.getTimestamp("FinEffectDate"));
+			pr.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
+			pr.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
+			pr.setODChargeType(rs.getString("ODChargeType"));
+			pr.setODGraceDays(rs.getInt("ODGraceDays"));
+			pr.setODChargeCalOn(rs.getString("ODChargeCalOn"));
+			pr.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
+			pr.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
+			pr.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
+			pr.setODRuleCode(rs.getString("ODRuleCode"));
+			pr.setoDMinCapAmount(rs.getBigDecimal("ODMinCapAmount"));
+			pr.setoDTDSReq(rs.getBoolean("ODTDSReq"));
+			pr.setOverDraftExtGraceDays(rs.getInt("OverDraftExtGraceDays"));
+			pr.setOverDraftColChrgFeeType(rs.getLong("OverDraftColChrgFeeType"));
+			pr.setOverDraftColAmt(rs.getBigDecimal("OverDraftColAmt"));
 
-				return pr;
-			}, finID);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
+			return pr;
+		}, finID);
+
+		if (list.isEmpty()) {
+			return list;
 		}
+
+		Collections.sort(list, new Comparator<FinODPenaltyRate>() {
+			@Override
+			public int compare(FinODPenaltyRate obj1, FinODPenaltyRate obj2) {
+				return DateUtility.compare(obj1.getFinEffectDate(), obj2.getFinEffectDate());
+			}
+		});
+
+		return list;
 	}
 
-	public void delete(long finID, String type) {
+	public void delete(long finID, Date finEffDate, String type) {
 		StringBuilder sql = new StringBuilder("Delete From FinODPenaltyRates");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
 
+		if (finEffDate != null) {
+			sql.append(" and FinEffectDate = ?");
+		}
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setLong(index, finID);
+			ps.setLong(++index, finID);
+
+			if (finEffDate != null) {
+				ps.setDate(++index, JdbcUtil.getDate(finEffDate));
+			}
+
 		});
 	}
 
@@ -167,7 +201,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		sql.append(", ODChargeCalOn = ?, ODAllowWaiver = ?, ODMaxWaiverPerc = ?");
 		sql.append(", ODRuleCode = ?, ODMinCapAmount = ?, ODTDSReq = ?");
 		sql.append(", OverDraftExtGraceDays = ?, OverDraftColChrgFeeType = ?, OverDraftColAmt = ?");
-		sql.append(" Where  FinID = ?");
+		sql.append(" Where  FinID = ? and FinEffectDate = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -190,7 +224,8 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			ps.setLong(index++, odpr.getOverDraftColChrgFeeType());
 			ps.setBigDecimal(index++, odpr.getOverDraftColAmt());
 
-			ps.setLong(index, odpr.getFinID());
+			ps.setLong(index++, odpr.getFinID());
+			ps.setDate(index++, JdbcUtil.getDate(odpr.getFinEffectDate()));
 		});
 
 		if (recordCount <= 0) {
@@ -199,12 +234,12 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 	}
 
 	@Override
-	public FinODPenaltyRate getDMFinODPenaltyRateByRef(final long finID, String type) {
+	public List<FinODPenaltyRate> getDMFinODPenaltyRateByRef(final long finID, String type) {
 		return getFinODPenaltyRateByRef(finID, type);
 	}
 
 	@Override
-	public FinODPenaltyRate getFinODPenaltyRateForLMSEvent(long finID) {
+	public List<FinODPenaltyRate> getFinODPenaltyRateForLMSEvent(long finID) {
 		return getFinODPenaltyRateByRef(finID, "");
 	}
 
@@ -221,5 +256,4 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			return 0;
 		}
 	}
-
 }

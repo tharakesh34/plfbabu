@@ -702,8 +702,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Long businessVertical;
 	private String businessVerticalCode;
 	private String businessVerticalDesc;
-
+	@XmlElement
 	private String grcAdvType;
+	@XmlElement(name = "grcadvEMITerms")
 	private int grcAdvTerms;
 	@XmlElement
 	private String advType;
@@ -838,9 +839,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal sanBasedPft = BigDecimal.ZERO;
 	private String moduleDefiner;
 	private Date sanctionedDate;
-	private FinODPenaltyRate penaltyRate = null;
+	private List<FinODPenaltyRate> penaltyRates = new ArrayList<>();
 	private boolean resetFromLastStep;
 	private boolean wifLoan = false;
+
+	private String holdStatus;
+	private String reason;
+	private boolean underSettlement;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1074,7 +1079,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("overdraftTxnChrgFeeType");
 		excludeFields.add("receiptChannel");
 		excludeFields.add("taxPercentages");
-		excludeFields.add("penaltyRate");
+		excludeFields.add("penaltyRates");
 		excludeFields.add("oldSchedules");
 		excludeFields.add("restructureDate");
 		excludeFields.add("effSchdMethod");
@@ -1083,7 +1088,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("moduleDefiner");
 		excludeFields.add("resetFromLastStep");
 		excludeFields.add("wifLoan");
-
+		excludeFields.add("holdStatus");
+		excludeFields.add("reason");
 		return excludeFields;
 	}
 
@@ -1541,7 +1547,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setPartnerBankAc(this.partnerBankAc);
 		entity.setWriteoffLoan(this.writeoffLoan);
 		entity.setRestructure(this.restructure);
-		entity.setEventProperties(this.eventProperties == null ? null : this.eventProperties.copyEntity());
 		entity.setTdsType(this.tdsType);
 		entity.setCalcOfSteps(this.calcOfSteps);
 		entity.setStepsAppliedFor(this.stepsAppliedFor);
@@ -1575,7 +1580,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setReceiptChannel(this.receiptChannel);
 		entity.setSanctionedDate(this.sanctionedDate);
 		entity.setTaxPercentages(this.taxPercentages);
-		entity.setPenaltyRate(this.penaltyRate);
+		this.penaltyRates.stream().forEach(e -> entity.getPenaltyRates().add(e));
 		entity.setOldSchedules(this.oldSchedules);
 		entity.setRestructureDate(this.restructureDate);
 		entity.setEffSchdMethod(this.effSchdMethod);
@@ -5473,12 +5478,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.sanctionedDate = sanctionedDate;
 	}
 
-	public FinODPenaltyRate getPenaltyRate() {
-		return penaltyRate;
+	public List<FinODPenaltyRate> getPenaltyRates() {
+		return penaltyRates;
 	}
 
-	public void setPenaltyRate(FinODPenaltyRate penaltyRate) {
-		this.penaltyRate = penaltyRate;
+	public void setPenaltyRates(List<FinODPenaltyRate> penaltyRates) {
+		this.penaltyRates = penaltyRates;
 	}
 
 	public List<FinanceScheduleDetail> getOldSchedules() {
@@ -5553,4 +5558,27 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.wifLoan = wifLoan;
 	}
 
+	public String getHoldStatus() {
+		return holdStatus;
+	}
+
+	public void setHoldStatus(String holdStatus) {
+		this.holdStatus = holdStatus;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public boolean isUnderSettlement() {
+		return underSettlement;
+	}
+
+	public void setUnderSettlement(boolean underSettlement) {
+		this.underSettlement = underSettlement;
+	}
 }

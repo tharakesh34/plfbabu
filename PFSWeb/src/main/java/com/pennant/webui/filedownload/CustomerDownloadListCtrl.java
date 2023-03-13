@@ -39,8 +39,6 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -92,10 +90,8 @@ import com.pennanttech.pff.external.GLEMSCustomerProcess;
  * ************************************************************<br>
  * 
  */
-public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implements Serializable {
-
+public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(CustomerDownloadListCtrl.class);
 
 	protected Window window_CustomerDownloadList;
 	protected Borderlayout borderLayout_CustomerDownloadList;

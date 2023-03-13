@@ -52,7 +52,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
@@ -60,14 +59,9 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepayCalculator;
-import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
-import com.pennant.backend.dao.limits.LimitInterfaceDAO;
-import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -95,7 +89,6 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.rulefactory.SubHeadRule;
-import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ManualPaymentService;
@@ -120,19 +113,12 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	private static final Logger logger = LogManager.getLogger(ManualPaymentServiceImpl.class);
 
 	private FinanceRepayPriorityDAO financeRepayPriorityDAO;
-	private FinRepayQueueDAO finRepayQueueDAO;
-	private RepaymentPostingsUtil repaymentPostingsUtil;
-	private AccountingSetDAO accountingSetDAO;
-	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
-	private LimitInterfaceDAO limitInterfaceDAO;
-	private CustomerLimitIntefaceService custLimitIntefaceService;
 	private LimitCheckDetails limitCheckDetails;
 	private RuleService ruleService;
 	private FinanceDetailService financeDetailService;
 	private RepayCalculator repayCalculator;
 	private LimitManagement limitManagement;
 	private FinTypeFeesDAO finTypeFeesDAO;
-	private FinFeeDetailService finFeeDetailService;
 
 	public ManualPaymentServiceImpl() {
 		super();
@@ -600,7 +586,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		boolean emptyRepayInstructions = schdData.getRepayInstructions() == null ? true : false;
 
-		FinanceScheduleDetail orgNextSchd = financeScheduleDetailDAO.getNextSchPayment(finID, appDate);
 		FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(finID);
 
 		List<RepayScheduleDetail> rsdList = repayData.getRepayScheduleDetails();
@@ -1413,30 +1398,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		this.financeRepayPriorityDAO = financeRepayPriorityDAO;
 	}
 
-	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
-		this.repaymentPostingsUtil = repaymentPostingsUtil;
-	}
-
-	public void setFinRepayQueueDAO(FinRepayQueueDAO finRepayQueueDAO) {
-		this.finRepayQueueDAO = finRepayQueueDAO;
-	}
-
-	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
-		this.accountingSetDAO = accountingSetDAO;
-	}
-
-	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-
-	public void setLimitInterfaceDAO(LimitInterfaceDAO limitInterfaceDAO) {
-		this.limitInterfaceDAO = limitInterfaceDAO;
-	}
-
-	public void setCustLimitIntefaceService(CustomerLimitIntefaceService custLimitIntefaceService) {
-		this.custLimitIntefaceService = custLimitIntefaceService;
-	}
-
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;
 	}
@@ -1460,9 +1421,4 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
 		this.finTypeFeesDAO = finTypeFeesDAO;
 	}
-
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
-	}
-
 }

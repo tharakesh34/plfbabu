@@ -35,7 +35,7 @@
 
 			<borderlayout id="borderLayout_RuleList">
 				<north border="none">
-					<textbox id="ruleModule" value="REFUND" visible="false" />
+					<textbox id="ruleModule" value="FEE_AUTO_REFUND" visible="false" />
 				</north>
 
 				<center border="none">

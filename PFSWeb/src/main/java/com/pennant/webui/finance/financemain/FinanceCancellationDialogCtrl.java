@@ -74,6 +74,7 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.rits.cloning.Cloner;
 
 public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
@@ -221,7 +222,6 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		super.doSetFieldProperties();
 		this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.downPaySupl.setScale(formatter);
-		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
 		this.finAssetValue.setProperties(false, formatter);
 		this.finCurrentAssetValue.setProperties(false, formatter);
@@ -1161,10 +1161,10 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 			} else {
 				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-					String finreference = afinanceMain.getFinReference();
+					long finID = afinanceMain.getFinID();
 					String errormsg = "";
 
-					List<ManualAdvise> manualAdvise = manualAdviseDAO.getAdviseStatus(finreference, "");
+					List<ManualAdvise> manualAdvise = manualAdviseDAO.getAdviseStatus(finID);
 
 					List<ManualAdvise> updateList = new ArrayList<>();
 
@@ -1311,8 +1311,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		if (getComboboxValue(this.oDChargeType).equals(PennantConstants.List_Select)) {
 			readOnlyComponent(true, this.oDChargeAmtOrPerc);
 			this.space_oDChargeAmtOrPerc.setSclass("");
-		} else if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT)
-				|| getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
+		} else if (getComboboxValue(this.oDChargeType).equals(ChargeType.FLAT)
+				|| getComboboxValue(this.oDChargeType).equals(ChargeType.FLAT_ON_PD_MTH)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			this.oDChargeAmtOrPerc.setMaxlength(15);
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(

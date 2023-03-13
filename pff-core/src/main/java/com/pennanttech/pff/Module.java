@@ -4,6 +4,8 @@ public enum Module {
 
 	DEFAULT,
 
+	CUSTOMER,
+
 	FINANCE,
 
 	MANDATE,
@@ -18,5 +20,7 @@ public enum Module {
 
 	DPD,
 
-	PARTNERBANK
+	PARTNERBANK,
+
+	RECEIPT
 }

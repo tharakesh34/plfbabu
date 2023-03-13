@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>6.3.0-HDFC_R1.0-SNAPSHOT</version>
+		<version>6.3.0</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
@@ -22,15 +22,6 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- Spring Framework -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-core</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt</artifactId>

@@ -156,17 +156,45 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	List<ManualAdvise> getAdvises(long finID, String type);
 
-	List<ManualAdvise> getAdviseStatus(String finReference, String type);
+	List<ManualAdvise> getAdviseStatus(long finID);
 
 	void updateStatus(List<ManualAdvise> list, String type);
 
-	BigDecimal getExistingPayableAmount(String reference, long feeTypeId);
+	BigDecimal getExistingPayableAmount(long finID, long feeTypeId);
 
-	BigDecimal getPaidAmountsByFeeType(String reference, Long feeTypeId, Date valueDate);
+	BigDecimal getRefundedAmount(long finID, long feeTypeId);
 
-	BigDecimal getPaidAmountsbyAllocation(String reference, String payableLinkTo, Date valueDate);
+	BigDecimal getPaidAmount(long finID, Long feeTypeId, Date valueDate);
+
+	BigDecimal getFeePaidAmount(long finID, Long feeTypeId);
+
+	BigDecimal getPaidAmountsbyAllocation(long finID, String payableLinkTo, Date valueDate);
 
 	boolean isDuplicatePayble(long finID, long feeTypeId, String payablelinkTo);
 
 	boolean isPaybleExist(long finID, long feeTypeId, String payablelinkTo);
+
+	List<ManualAdvise> getPayableAdviseList(long finID, Date maxValueDate);
+
+	List<ManualAdviseMovements> getAdviseMovementsByWaiver(long waiverId, String type);
+
+	ManualAdvise getBounceChargesByReceiptID(Long bcReceiptID);
+
+	void revertBounceCharges(long adviseID, BigDecimal remainingAmount);
+
+	boolean isManualAdviseExist(long finID);
+
+	boolean isunAdjustablePayables(long finID);
+
+	BigDecimal getOverDueAmount(long finID);
+
+	BigDecimal getPayableBalance(long finID, long feeTypeID);
+
+	boolean isAdviseUploadExist(long finID);
+
+	List<ManualAdvise> getReceivableAdvises(long finID);
+
+	BigDecimal getRefundedAmt(long finID, long receivableID, long receivableFeeTypeID);
+
+	List<ManualAdvise> getAdvisesList(long finID, int adviseType, String type);
 }

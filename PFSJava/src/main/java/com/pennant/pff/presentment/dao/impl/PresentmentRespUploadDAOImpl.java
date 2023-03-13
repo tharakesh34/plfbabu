@@ -253,11 +253,12 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 	@Override
 	public PresentmentDetail getPresentmentDetail(String reference, Date clearingDate) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.FinID, pd.PresentmentRef, pd.Status, b.BranchSwiftBrnCde");
+		sql.append(" fm.FinID, pd.PresentmentRef, pd.Status, b.BranchSwiftBrnCde, ph.PresentmentType");
 		sql.append(" From PresentmentDetails pd");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = pd.FinID");
 		sql.append(" Inner Join RMTBranches b on b.BranchCode = fm.FinBranch");
-		sql.append(" Where fm.FinReference = ? and SchDate = ?");
+		sql.append(" Inner Join PresentmentHeader ph on ph.id = pd.PresentmentId");
+		sql.append(" Where fm.FinReference = ? and pd.SchDate = ?");
 		sql.append(" Order by PresentmentID desc");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -272,6 +273,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 			pd.setPresentmentRef(rs.getString("PresentmentRef"));
 			pd.setStatus(rs.getString("Status"));
 			pd.setBranchCode(rs.getString("BranchSwiftBrnCde"));
+			pd.setPresentmentType(rs.getString("PresentmentType"));
 
 			return pd;
 		});

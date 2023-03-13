@@ -1,12 +1,12 @@
 package com.pennanttech.pffws;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
-
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.beneficiary.BeneficiaryDetail;
+
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 
 @WebService
 public interface BeneficiarySoapService {

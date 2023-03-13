@@ -39,6 +39,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -82,6 +84,7 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 	private String accountNo;
 	@XmlElement
 	private int chequeSerialNo;
+	private String chequeSerialNumber;
 	private String sourceId;
 
 	@XmlElement
@@ -107,6 +110,7 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 		excludeFields.add("sourceId");
 		excludeFields.add("returnStatus");
 		excludeFields.add("error");
+		excludeFields.add("chequeSerialNumber");
 		return excludeFields;
 	}
 
@@ -222,16 +226,29 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 		this.accountNo = accountNo;
 	}
 
+	public long getBankBranchID() {
+		return bankBranchID;
+	}
+
 	public int getChequeSerialNo() {
-		return chequeSerialNo;
+		return Integer.valueOf(getChequeSerialNumber());
 	}
 
 	public void setChequeSerialNo(int chequeSerialNo) {
 		this.chequeSerialNo = chequeSerialNo;
+		this.chequeSerialNumber = StringUtils.leftPad("" + chequeSerialNo, 6, "0");
 	}
 
-	public long getBankBranchID() {
-		return bankBranchID;
+	public String getChequeSerialNumber() {
+		if (chequeSerialNumber == null) {
+			this.chequeSerialNumber = StringUtils.leftPad("" + chequeSerialNo, 6, "0");
+		}
+
+		return chequeSerialNumber;
+	}
+
+	public void setChequeSerialNumber(String chequeSerialNumber) {
+		this.chequeSerialNumber = chequeSerialNumber;
 	}
 
 	public void setBankBranchID(long bankBranchID) {

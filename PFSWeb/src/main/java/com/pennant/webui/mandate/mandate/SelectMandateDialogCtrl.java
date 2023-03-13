@@ -56,6 +56,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Window window_SelectMandateDialog;
 	protected ExtendedCombobox finReference;
 	protected Textbox custCIF;
+	protected Textbox custCoreBank;
 	protected Combobox mandateTypes;
 	protected Checkbox securityMandate;
 
@@ -106,6 +107,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING);
 
 		this.custCIF.clearErrorMessage();
+		this.custCoreBank.clearErrorMessage();
 		Customer customer = (Customer) nCustomer;
 
 		setCustomerData(customer);
@@ -118,10 +120,12 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		addFilter(customer);
 		if (customer == null || customer.getCustID() == 0) {
 			this.custCIF.setValue("");
+			this.custCoreBank.setValue("");
 			return;
 		}
 
 		this.custCIF.setValue(customer.getCustCIF());
+		this.custCoreBank.setValue(customer.getCustCoreBank());
 		this.customerNameLabel.setValue(customer.getCustShrtName());
 
 	}
@@ -131,11 +135,19 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		setCustomerData(customer);
 	}
 
+	public void onChange$custCoreBank(Event event) {
+		setCustomerData(fetchCustomerDataByCustCoreBank(this.custCoreBank.getValue()));
+	}
+
 	public Customer fetchCustomerDataByCIF(String custCIF) {
 		Customer customer = new Customer();
 		this.custCIF.setConstraint("");
 		this.custCIF.setErrorMessage("");
 		this.custCIF.clearErrorMessage();
+
+		this.custCoreBank.setConstraint("");
+		this.custCoreBank.setErrorMessage("");
+		this.custCoreBank.clearErrorMessage();
 
 		String cif = StringUtils.trimToEmpty(custCIF);
 
@@ -146,6 +158,37 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		customer = this.customerDetailsService.getCustomer(cif);
+
+		if (customer != null) {
+			customerNameLabel.setValue(customer.getCustShrtName());
+		} else {
+			customerNameLabel.setValue("");
+			MessageUtil.showError("Invalid Customer Please Select valid Customer");
+		}
+
+		return customer;
+	}
+
+	public Customer fetchCustomerDataByCustCoreBank(String custCoreBank) {
+		Customer customer = new Customer();
+
+		this.custCIF.setConstraint("");
+		this.custCIF.setErrorMessage("");
+		this.custCIF.clearErrorMessage();
+
+		this.custCoreBank.setConstraint("");
+		this.custCoreBank.setErrorMessage("");
+		this.custCoreBank.clearErrorMessage();
+
+		String coreBank = StringUtils.trimToEmpty(custCoreBank);
+
+		if (this.custCoreBank.getValue().trim().isEmpty()) {
+			customerNameLabel.setValue("");
+
+			return null;
+		}
+
+		customer = this.customerDetailsService.getCustomerCoreBankID(coreBank);
 
 		if (customer != null) {
 			customerNameLabel.setValue(customer.getCustShrtName());
@@ -302,8 +345,15 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		List<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		String custCIF = null;
+		String custCoreBankID = null;
 		try {
 			custCIF = this.custCIF.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			custCoreBankID = this.custCoreBank.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -364,6 +414,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finReference.setValue("");
 		this.finReference.setObject("");
 		this.custCIF.setValue("");
+		this.custCoreBank.setValue("");
 
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
@@ -371,6 +422,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (customer != null && customer.getCustID() != 0) {
 			this.custCIF.setValue(customer.getCustCIF());
+			this.custCoreBank.setValue(customer.getCustCoreBank());
 
 			filters = new Filter[2];
 			filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
@@ -424,7 +476,12 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.finReference.setValue(fm.getFinReference());
 				this.finReference.setDescription(fm.getFinType());
 				this.custCIF.setValue(String.valueOf(fm.getCustCIF()));
-				this.customerNameLabel.setValue(fm.getCustShrtName());
+
+				Customer cust = this.customerDetailsService.getCustomer(fm.getCustCIF());
+				if (cust.getCustCoreBank() != null) {
+					this.custCoreBank.setValue(String.valueOf(cust.getCustCoreBank()));
+					this.customerNameLabel.setValue(cust.getCustShrtName());
+				}
 				this.finType = fm.getFinType();
 				this.mandate.setLoanMaturityDate(fm.getMaturityDate());
 			}

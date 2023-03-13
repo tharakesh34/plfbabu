@@ -53,7 +53,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			mndts.setAccHolderName(rs.getString("AccHolderName"));
 			mndts.setJointAccHolderName(rs.getString("JointAccHolderName"));
 			mndts.setAccType(rs.getString("AccType"));
-			mndts.setOpenMandate(rs.getBoolean("OpenMandate"));
+			mndts.setStrOpenMandate(rs.getString("OpenMandate"));
 			mndts.setStartDate(rs.getTimestamp("StartDate"));
 			mndts.setExpiryDate(rs.getTimestamp("ExpiryDate"));
 			mndts.setMaxLimit(rs.getBigDecimal("MaxLimit"));
@@ -73,7 +73,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			mndts.setDocumentName(rs.getString("DocumentName"));
 			mndts.setDocumentRef(JdbcUtil.getLong(rs.getObject("DocumentRef")));
 			mndts.setBarCodeNumber(rs.getString("BarCodeNumber"));
-			mndts.setSwapIsActive(rs.getBoolean("SwapIsActive"));
+			mndts.setStrSwapIsActive(rs.getString("SwapIsActive"));
 			mndts.setPrimaryMandateId(rs.getLong("PrimaryMandateId"));
 			mndts.setEntityCode(rs.getString("EntityCode"));
 			mndts.setPartnerBankId(rs.getLong("PartnerBankId"));
@@ -87,7 +87,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			mndts.setEmployeeNo(rs.getString("EmployeeNo"));
 			mndts.setIFSC(rs.getString("Ifsc"));
 			mndts.setMICR(rs.getString("Micr"));
-			// mndts.setExternalMandate(rs.getBoolean("ExternalMandate"));
+			mndts.setStrExternalMandate(rs.getString("ExternalMandate"));
 
 			upload.setMandate(mndts);
 
@@ -126,7 +126,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 
 	@Override
 	public void update(List<MandateUpload> details) {
-		String sql = "Update Mandates_Upload set  Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
+		String sql = "Update Mandates_Upload set MandateID = ?, Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -137,6 +137,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 				int index = 0;
 				MandateUpload detail = details.get(i);
 
+				ps.setObject(++index, detail.getReferenceID());
 				ps.setInt(++index, detail.getProgress());
 				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, detail.getErrorCode());
@@ -155,14 +156,17 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 	@Override
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" mu.EntityCode, mu.CustID, mu.OrgReference, mu.MandateType, mu.Micr, mu.Ifsc, mu.AccNumber");
+		sql.append(" mu.EntityCode, mu.CustCIF, mu.OrgReference, mu.MandateType, mu.Micr, mu.Ifsc, mu.AccNumber");
 		sql.append(", mu.AccHolderName, mu.JointAccHolderName, mu.AccType, mu.MaxLimit, mu.Periodicity");
 		sql.append(", mu.OpenMandate, mu.StartDate, mu.ExpiryDate, mu.PartnerBankID, mu.MandateRef");
 		sql.append(", mu.ExternalMandate, mu.SwapIsActive, mu.SwapEffectiveDate, mu.EmandateSource");
 		sql.append(", mu.EmandateReferenceNo, mu.EmployerID, mu.EmployeeNo, mu.MandateStatus, mu.Reason");
-		sql.append(", uh.CreatedOn, uh.ApprovedOn, uh.CreatedBy, uh.ApprovedBy, uh.Status, mu.ErrorCode, mu.ErrorDesc");
+		sql.append(", uh.CreatedOn, uh.ApprovedOn, mu.Status, mu.ErrorCode, mu.ErrorDesc");
+		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");
 		sql.append(" From Mandates_Upload mu");
 		sql.append(" Inner Join File_Upload_Header uh on uh.ID = mu.HeaderID");
+		sql.append(" Inner Join SecUsers su1 on su1.UsrID = uh.CreatedBy");
+		sql.append(" Left Join SecUsers su2 on su2.UsrID = uh.ApprovedBy");
 		sql.append(" Where uh.ID = :HEADER_ID");
 
 		return sql.toString();

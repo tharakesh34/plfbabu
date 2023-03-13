@@ -24,15 +24,19 @@
  */
 package com.pennant.backend.service.payment;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface PaymentHeaderService {
 
@@ -54,13 +58,22 @@ public interface PaymentHeaderService {
 
 	List<ManualAdvise> getManualAdvise(long finID);
 
-	boolean getPaymentHeadersByFinReference(long finID, String type);
-
 	List<ManualAdvise> getManualAdviseForEnquiry(long finID);
 
 	PaymentInstruction getPaymentInstruction(long paymentId);
 
 	void executeAccountingProcess(AEEvent aeEvent, PaymentHeader paymentHeader);
 
-	boolean isInstructionInProgress(String finReference);
+	boolean isInProgress(long finID);
+
+	Map<Long, BigDecimal> getAdvisesInProgess(long finId);
+
+	PaymentHeader prepareRefund(AutoRefundLoan arl);
+
+	ErrorDetail validateRefund(AutoRefundLoan arl, boolean isEOD);
+
+	BigDecimal getInProgressExcessAmt(long finId, Long receiptId);
+
+	void cancelPaymentInstruction(long receiptId);
+
 }
