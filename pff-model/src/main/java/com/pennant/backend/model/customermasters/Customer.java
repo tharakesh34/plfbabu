@@ -442,6 +442,7 @@ public class Customer extends AbstractWorkflowEntity {
 		excludeFields.add("lovDescCustAddrCity");
 		excludeFields.add("lovDescCustAddrProvince");
 		excludeFields.add("prospectAsCIF");
+		excludeFields.add("fullName");
 
 		return excludeFields;
 	}
